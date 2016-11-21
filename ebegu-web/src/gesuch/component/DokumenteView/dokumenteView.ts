@@ -13,6 +13,7 @@ import DokumenteRS from '../../service/dokumenteRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import GlobalCacheService from '../../service/globalCacheService';
 import ICacheFactoryService = angular.ICacheFactoryService;
 let template = require('./dokumenteView.html');
@@ -95,8 +96,9 @@ export class DokumenteViewController extends AbstractGesuchViewController {
             }
         }
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
+        // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
+        this.resetAntragStatusIfNecessary();
     }
-
 
     removeDokument(dokumentGrund: TSDokumentGrund, dokument: TSDokument, dokumente: TSDokumentGrund[]) {
 
@@ -137,5 +139,13 @@ export class DokumenteViewController extends AbstractGesuchViewController {
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
     }
 
-
+    private resetAntragStatusIfNecessary() : void {
+        // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
+        let status = this.gesuchModelManager.getGesuch().status;
+        if (TSAntragStatus.ERSTE_MAHNUNG === status) {
+            this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        } else if (TSAntragStatus.ZWEITE_MAHNUNG === status) {
+            this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        }
+    }
 }

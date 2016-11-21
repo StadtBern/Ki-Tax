@@ -61,6 +61,7 @@ import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 import {DvUserNameComponentConfig} from './component/dv-user-name/dv-user-name';
 import {NavigationLogger} from './service/NavigationLogger';
 import GlobalCacheService from '../gesuch/service/globalCacheService';
+import MahnungRS from '../gesuch/service/mahnungRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -167,5 +168,6 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvUserName', new DvUserNameComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
-    .component('dvAntragList', new DVAntragListConfig());
+    .component('dvAntragList', new DVAntragListConfig())
+    .service('MahnungRS', MahnungRS);
 

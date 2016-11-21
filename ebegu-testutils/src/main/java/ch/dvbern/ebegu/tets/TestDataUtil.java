@@ -739,4 +739,18 @@ public final class TestDataUtil {
 			gesuch.getGesuchsteller2().setAdressen(adressen2);
 		}
 	}
+
+	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch) {
+		return createMahnung(typ, gesuch, LocalDate.now().plusWeeks(2));
+	}
+
+	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch, LocalDate firstAblauf) {
+		Mahnung mahnung = new Mahnung();
+		mahnung.setMahnungTyp(typ);
+		mahnung.setActive(true);
+		mahnung.setBemerkungen("Test-Mahnung");
+		mahnung.setDatumFristablauf(firstAblauf);
+		mahnung.setGesuch(gesuch);
+		return mahnung;
+	}
 }

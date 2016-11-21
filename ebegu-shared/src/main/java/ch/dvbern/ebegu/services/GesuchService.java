@@ -96,14 +96,18 @@ public interface GesuchService {
 									@Nonnull LocalDate eingangsdatum);
 
 	/**
-	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück
+	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück,
+	 * ACHTUNG: Dies kann ein neueres oder aelteres als das uebergebene Gesuch sein, oder sogar das uebergebene
+	 * Gesuch selber!
 	 */
 	@Nonnull
 	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch);
 
+	/**
+	 * Gibt das letzte verfuegte Gesuch zurueck, also rekursiv ueber die Vorgaenger, nie das uebergebene Gesuch.
+     */
 	@Nonnull
-	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall);
-
+	Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch);
 
 	/**
 	 * fuellt die laufnummern der Gesuche/Mutationen eines Falls auf (nach timestamperstellt)

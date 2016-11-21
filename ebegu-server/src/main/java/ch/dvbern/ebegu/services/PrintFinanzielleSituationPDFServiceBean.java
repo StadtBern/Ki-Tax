@@ -11,14 +11,6 @@ package ch.dvbern.ebegu.services;
 * Ersteller: zeab am: 19.08.2016
 */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
@@ -29,6 +21,13 @@ import ch.dvbern.ebegu.vorlagen.finanziellesituation.BerechnungsgrundlagenInform
 import ch.dvbern.ebegu.vorlagen.finanziellesituation.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * Implementiert PrintFinanzielleSituationService
@@ -48,7 +47,7 @@ public class PrintFinanzielleSituationPDFServiceBean extends AbstractPrintServic
 		try {
 			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
-				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_FINANZIELLE_SITUATION, "/vorlagen/Berechnungsgrundlagen.docx");
+				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_FINANZIELLE_SITUATION);
 			Objects.requireNonNull(is, "Vorlage fuer Berechnungsgrundlagen nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
 					docxME.getDocument(is, new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung))));

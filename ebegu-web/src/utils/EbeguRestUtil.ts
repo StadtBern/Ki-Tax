@@ -50,6 +50,7 @@ import TSEbeguVorlage from '../models/TSEbeguVorlage';
 import TSVorlage from '../models/TSVorlage';
 import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
 import TSFile from '../models/TSFile';
+import TSMahnung from '../models/TSMahnung';
 
 
 export default class EbeguRestUtil {
@@ -1515,4 +1516,29 @@ export default class EbeguRestUtil {
         return restAntragStatusHistory;
     }
 
+    public parseMahnungen(data: Array<any>): TSMahnung[] {
+        var mahnungen: TSMahnung[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                mahnungen[i] = this.parseMahnung(new TSMahnung(), data[i]);
+            }
+        } else {
+            mahnungen[0] = this.parseMahnung(new TSMahnung(), data);
+        }
+        return mahnungen;
+    }
+
+    public parseMahnung(tsMahnung: TSMahnung, mahnungFromServer: any): TSMahnung {
+        if (mahnungFromServer) {
+            this.parseAbstractEntity(tsMahnung, mahnungFromServer);
+
+            tsMahnung.gesuch = this.parseGesuch(new TSGesuch(), mahnungFromServer.gesuch);
+            tsMahnung.mahnungTyp = mahnungFromServer.mahnungTyp;
+            tsMahnung.datumFristablauf = DateUtil.localDateToMoment(mahnungFromServer.datumFristablauf);
+            tsMahnung.bemerkungen = mahnungFromServer.bemerkungen;
+            tsMahnung.active = mahnungFromServer.active;
+            return tsMahnung;
+        }
+        return undefined;
+    }
 }
