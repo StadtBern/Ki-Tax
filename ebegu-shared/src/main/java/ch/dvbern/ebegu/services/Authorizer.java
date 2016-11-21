@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.*;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -41,30 +38,30 @@ public interface Authorizer {
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer den Fall mit id schreibend bearbeiten darf
 	 */
-	void checkWriteAuthorizationFall(String fallId);
+	void checkWriteAuthorizationFall(@Nullable  String fallId);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer den fall lesen darf
 	 */
-	void checkReadAuthorizationFall(Fall fall);
+	void checkReadAuthorizationFall(@Nullable Fall fall);
 
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer fuer ALLE uebergebnen faelle berechtigt ist
 	 * @param faelle
 	 */
-	void checkReadAuthorizationFaelle(Collection<Fall> faelle);
+	void checkReadAuthorizationFaelle(@Nullable  Collection<Fall> faelle);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer die betreuung lesen darf
 	 */
-	void checkReadAuthorization(Betreuung betr);
+	void checkReadAuthorization(@Nullable  Betreuung betr);
 
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer die betreuung schreibend bearbeiten darf
 	 */
-	void checkWriteAuthorization(Betreuung betreuungToRemove);
+	void checkWriteAuthorization(@Nullable  Betreuung betreuungToRemove);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer ALLE betreuung in der Liste lesen darf
@@ -75,15 +72,24 @@ public interface Authorizer {
 	/**
 	 * prueft ob der aktuell eingeloggte Benutzer die Verfuegung lesen darf
 	 */
-	void checkReadAuthorization(Verfuegung verfuegung);
+	void checkReadAuthorization(@Nullable  Verfuegung verfuegung);
 
 	/**
 	 * prueft ob der aktuell eingeloggte Benutzer die ALLE verfuegungen in der liste lesen darf
 	 */
-	void checkReadAuthorizationVerfuegungen(Collection<Verfuegung> verfuegungen);
+	void checkReadAuthorizationVerfuegungen(@Nullable  Collection<Verfuegung> verfuegungen);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer die verfuegung schreibend bearbeiten darf
 	 */
-	void checkWriteAuthorization(Verfuegung verfuegung);
+	void checkWriteAuthorization(@Nullable  Verfuegung verfuegung);
+
+	void checkReadAuthorization(@Nullable FinanzielleSituationContainer finanzielleSituation);
+
+	void checkReadAuthorization(Collection<FinanzielleSituationContainer> finanzielleSituationen);
+
+
+	void checkWriteAuthorization(FinanzielleSituationContainer finanzielleSituation);
+
+	void checkCreateAuthorizationFinSit(FinanzielleSituationContainer finanzielleSituation);
 }

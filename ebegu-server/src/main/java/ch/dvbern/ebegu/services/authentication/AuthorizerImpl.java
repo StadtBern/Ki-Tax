@@ -26,6 +26,10 @@ public class AuthorizerImpl implements Authorizer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AuthorizerImpl.class);
 
+
+	private static final UserRole[] JA_OR_ADM = {UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SACHBEARBEITER_JA};
+	private static final UserRole[] ALL_EXCEPT_INST_TRAEG = {UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SACHBEARBEITER_JA, UserRole.REVISOR, UserRole.JURIST, UserRole.SCHULAMT, UserRole.STEUERAMT};
+
 	@Inject
 	private PrincipalBean principalBean;
 
@@ -63,6 +67,21 @@ public class AuthorizerImpl implements Authorizer {
 			return;
 		}
 		throwCreateViolation();
+	}
+
+	@Override
+	public void checkCreateAuthorizationFinSit(FinanzielleSituationContainer finanzielleSituation) {
+		if (principalBean.isCallerInAnyOfRole(UserRole.ADMIN, UserRole.SUPER_ADMIN)) {
+			return;
+		}
+		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER)) {
+			//gesuchsteller darf nur welche machen wenn nicht mutation, ausserdem muss ihm das zugehoerige geusch gehoeren
+			boolean isMutation = finanzielleSituation.getVorgaengerId() != null;
+			String parentOwner = finanzielleSituation.getGesuchsteller().getUserErstellt() != null  ? finanzielleSituation.getGesuchsteller().getUserErstellt() : "";
+			if (isMutation || !parentOwner.equals(principalBean.getPrincipal().getName())) {
+				throwCreateViolation();
+			}
+		}
 	}
 
 	@Override
@@ -104,6 +123,13 @@ public class AuthorizerImpl implements Authorizer {
 		return false;
 	}
 
+	/**
+	 * @deprecated
+	 * @param entity
+	 * @param principalName
+	 * @return
+	 */
+	@Deprecated
 	private boolean isSachbearbeiterJAOrGSOwner(AbstractEntity entity, String principalName) {
 		if (principalBean.isCallerInAnyOfRole(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SACHBEARBEITER_JA)) {
 			return true;
@@ -165,7 +191,18 @@ public class AuthorizerImpl implements Authorizer {
 		if (!principalBean.isCallerInAnyOfRole(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SACHBEARBEITER_JA)) {
 			throwViolation(verfuegung);
 		}
+	}
 
+	@Override
+	public void checkWriteAuthorization(FinanzielleSituationContainer finanzielleSituation) {
+		String name = principalBean.getPrincipal().getName();
+		boolean writeAllowed = isWriteAuthorized(finanzielleSituation, name);
+		boolean isMutation = finanzielleSituation.getVorgaengerId() != null;
+
+		if (!writeAllowed || (isMutation && principalBean.isCallerInRole(UserRole.GESUCHSTELLER))) {
+			throwViolation(finanzielleSituation);
+
+		}
 	}
 
 	@Override
@@ -211,9 +248,41 @@ public class AuthorizerImpl implements Authorizer {
 		}
 	}
 
+	@Override
+	public void checkReadAuthorization(@Nullable FinanzielleSituationContainer finanzielleSituation) {
+		if (finanzielleSituation != null) {
+			isInRoleOrGSOwner(JA_OR_ADM, finanzielleSituation, principalBean.getPrincipal().getName());
+			// hier fuer alle lesbar ausser fuer institution/traegerschaft
+			String name = principalBean.getPrincipal().getName();
+			boolean allowed = isInRoleOrGSOwner(ALL_EXCEPT_INST_TRAEG, finanzielleSituation, name);
+			if(allowed){
+				throwViolation(finanzielleSituation);
+			}
+		}
+	}
+
+	@Override
+	public void checkReadAuthorization(Collection<FinanzielleSituationContainer> finanzielleSituationen) {
+		finanzielleSituationen.forEach(this::checkReadAuthorization);
+	}
+
+
+
+	private boolean isInRoleOrGSOwner(UserRole[] allowedRoles, AbstractEntity entity, String principalName) {
+
+		if (principalBean.isCallerInAnyOfRole(allowedRoles)) {
+			return true;
+		}
+
+		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER.name())
+			&& (entity.getUserErstellt() != null && entity.getUserErstellt().equals(principalName))) {
+			return true;
+		}
+		return false;
+	}
 
 	private boolean isReadAuthorized(Betreuung betreuung) {
-		boolean isOwnerOrAdmin = isSachbearbeiterJAOrGSOwner(betreuung, principalBean.getPrincipal().getName());
+		boolean isOwnerOrAdmin = isInRoleOrGSOwner(JA_OR_ADM, betreuung, principalBean.getPrincipal().getName());
 		if (isOwnerOrAdmin) {
 			return true;
 		}
@@ -237,7 +306,7 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	private boolean isReadAuthorized(Gesuch entity) {
-		boolean isOwnerOrAdmin = isSachbearbeiterJAOrGSOwner(entity, principalBean.getPrincipal().getName());
+		boolean isOwnerOrAdmin = isInRoleOrGSOwner(JA_OR_ADM, entity, principalBean.getPrincipal().getName());
 		if (isOwnerOrAdmin) {
 			return true;
 		}
@@ -261,7 +330,7 @@ public class AuthorizerImpl implements Authorizer {
 
 
 	private boolean isWriteAuthorized(AbstractEntity entity, String principalName) {
-		return isSachbearbeiterJAOrGSOwner(entity, principalName);
+		return isInRoleOrGSOwner(JA_OR_ADM, entity, principalName);
 	}
 
 

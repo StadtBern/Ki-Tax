@@ -169,7 +169,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA)
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Betreuung nichtEintreten(@Nonnull Betreuung betreuung) {
 		return closeBetreuung(betreuung, Betreuungsstatus.NICHT_EINGETRETEN);
 	}
