@@ -65,4 +65,14 @@ export default class TSFamiliensituation extends TSAbstractEntity {
         //wir sollten hier nie hinkommen
         return false;
     }
+
+    public isSameFamiliensituation(other: TSFamiliensituation) {
+        return this.familienstatus === other.familienstatus && this.gesuchstellerKardinalitaet === other.gesuchstellerKardinalitaet;
+    }
+
+    public revertFamiliensituation(other: TSFamiliensituation) {
+        this.familienstatus = other.familienstatus;
+        this.gesuchstellerKardinalitaet = other.gesuchstellerKardinalitaet;
+    }
+
 }

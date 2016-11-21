@@ -43,7 +43,6 @@ import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import TSMutationsdaten from '../../models/TSMutationsdaten';
 import EbeguUtil from '../../utils/EbeguUtil';
 import ErrorService from '../../core/errors/service/ErrorService';
 import TSExceptionReport from '../../models/TSExceptionReport';
@@ -145,6 +144,13 @@ export default class GesuchModelManager {
     public getFamiliensituation(): TSFamiliensituation {
         if (this.gesuch) {
             return this.gesuch.familiensituation;
+        }
+        return undefined;
+    }
+
+    public getFamiliensituationErstgesuch(): TSFamiliensituation {
+        if (this.gesuch) {
+            return this.gesuch.familiensituationErstgesuch;
         }
         return undefined;
     }
@@ -520,9 +526,8 @@ export default class GesuchModelManager {
 
     /**
      * Diese Methode erstellt eine Fake-Mutation als gesuch fuer das GesuchModelManager. Die Mutation ist noch leer und hat
-     * das ID des Gesuchs aus dem sie erstellt wurde. Damit laden wir die erste Seite auf, in der der Benutzer die Mutationsdaten
-     * eingeben darf. Wenn der Benutzer auf speichern klickt, wird der Service "antragMutieren" mit dem ID des alten Gesuchs
-     * und die neue Mutationsdaten aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
+     * das ID des Gesuchs aus dem sie erstellt wurde. Wenn der Benutzer auf speichern klickt, wird der Service "antragMutieren"
+     * mit dem ID des alten Gesuchs aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
      * Daten ueberschreiben
      * @param gesuchID
      */
@@ -530,7 +535,6 @@ export default class GesuchModelManager {
         let gesuchsperiode: TSGesuchsperiode = this.gesuch.gesuchsperiode;
         this.initAntrag(TSAntragTyp.MUTATION);
         this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
-        this.gesuch.mutationsdaten = new TSMutationsdaten();
         this.gesuch.gesuchsperiode = gesuchsperiode;
     }
 
@@ -979,7 +983,7 @@ export default class GesuchModelManager {
                             let msg = 'ACHTUNG unvorhergesehener Zustand. Anzahl Betreuungen eines Kindes stimmt nicht' +
                                 ' mit der berechneten Anzahl Betreuungen ueberein; erwartet: ' +
                                 this.gesuch.kindContainers[i].betreuungen.length + ' erhalten: ' + kinderWithVerfuegungen[j].betreuungen.length;
-                            this.log.error(msg, this.gesuch.kindContainers[i],  kinderWithVerfuegungen[j]);
+                            this.log.error(msg, this.gesuch.kindContainers[i], kinderWithVerfuegungen[j]);
                             this.errorService.addMesageAsError(msg);
                         }
                         this.gesuch.kindContainers[i].betreuungen[k] = kinderWithVerfuegungen[j].betreuungen[k];
@@ -1120,7 +1124,7 @@ export default class GesuchModelManager {
      * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT
      * @returns {boolean}
      */
-    public isGesuchStatusVerfuegenVerfuegt() {
+    public isGesuchStatusVerfuegenVerfuegt(): boolean {
         return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT);
     }
 
@@ -1158,7 +1162,7 @@ export default class GesuchModelManager {
     }
 
     public saveMutation(): IPromise<TSGesuch> {
-        return this.gesuchRS.antragMutieren(this.gesuch.id, this.gesuch.mutationsdaten, this.gesuch.eingangsdatum)
+        return this.gesuchRS.antragMutieren(this.gesuch.id, this.gesuch.eingangsdatum)
             .then((response: TSGesuch) => {
                 this.setGesuch(response);
                 return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {

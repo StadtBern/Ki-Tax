@@ -41,7 +41,6 @@ public interface FamiliensituationService {
 	 * entfernt eine Familiensituation aus der Database
 	 * @param familiensituation die Familiensituation als DTO
 	 */
-	@Nonnull
 	void removeFamiliensituation(@Nonnull Familiensituation familiensituation);
 
 }

@@ -283,6 +283,14 @@ export default class WizardStepManager {
     }
 
     /**
+     * Prueft fuer den gegebenen Step ob sein Status OK oder MUTIERT ist
+     */
+    public isStepStatusOk(wizardStepName: TSWizardStepName) {
+        return this.hasStepGivenStatus(wizardStepName, TSWizardStepStatus.OK)
+        || this.hasStepGivenStatus(wizardStepName, TSWizardStepStatus.MUTIERT);
+    }
+
+    /**
      * Gibt true zurueck wenn der Step existiert und sein Status OK ist
      * @param stepName
      * @param status
