@@ -16,16 +16,18 @@
                        class="table table-striped fixedtable">
                     <thead>
                     <tr>
-                        <th st-sort="fallNummer" class="sortable" data-translate="FALL_UPPER"></th>
-                        <th st-sort="familienName" class="sortable" data-translate="FAMILIE_UPPER"></th>
-                        <th st-sort="antragTyp" class="sortable" data-translate="TYP_UPPER"></th>
-                        <th st-sort="gesuchsperiodeString" class="sortable" data-translate="PERIODE_UPPER"></th>
-                        <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable"
+                        <th st-sort="fallNummer" class="sortable row-fallnr" data-translate="FALL_UPPER"></th>
+                        <th st-sort="familienName" class="sortable row-name" data-translate="FAMILIE_UPPER"></th>
+                        <th st-sort="antragTyp" class="sortable row-antrag" data-translate="TYP_UPPER"></th>
+                        <th st-sort="gesuchsperiodeString" class="sortable row-periode"
+                            data-translate="PERIODE_UPPER"></th>
+                        <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable row-geandert"
                             data-translate="EINGANG_UPPER"></th>
-                        <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
-                        <th st-sort="angebote" class="sortable" data-translate="ANGEBOT_UPPER"></th>
-                        <th st-sort="institutionen" class="sortable" data-translate="INSTITUTION_UPPER"></th>
-                        <th st-sort="verantwortlicher" class="sortable" data-translate="VERANTWORTLICH_UPPER"></th>
+                        <th st-sort="status" class="sortable row-status" data-translate="STATUS_UPPER"></th>
+                        <th st-sort="angebote" class="sortable row-angebot" data-translate="ANGEBOT_UPPER"></th>
+                        <th st-sort="institutionen" class="sortable row-inst" data-translate="INSTITUTION_UPPER"></th>
+                        <th st-sort="verantwortlicher" class="sortable row-ver"
+                            data-translate="VERANTWORTLICH_UPPER"></th>
                     </tr>
                     <tr>
                         <th><input st-search="fallNummer" class="form-control" type="text"/></th>

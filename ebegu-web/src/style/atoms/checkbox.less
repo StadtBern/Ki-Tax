@@ -2,9 +2,20 @@
 @import '../mixins.less';
 
 .checkbox {
-    margin: 0 0 2rem;
+    margin: 0 0;
+    height: auto;
+    dv-error-messages {
+        display: block;
+    }
+
 }
 md-checkbox {
+    //  position: absolute;
+    position: relative;
+    min-height: unset;
+    min-width: unset;
+    height: 2rem;
+    width: auto;
     &[disabled] {
         color: @contrast;
         .md-label {
@@ -27,8 +38,8 @@ md-checkbox {
         //TODO Focus  border:red 20px solid;
     }
     .md-container {
-        width: 1.7rem;
-        height: 1.7rem;
+        width: 2rem;
+        height: 2rem;
         &:before {
             content: none !important;
         }
@@ -36,16 +47,24 @@ md-checkbox {
     margin-top: 0;
     margin-bottom: 2rem;
     .md-label {
+        display: block;
+        margin-left: 3rem;
+        line-height: 2rem;
+        height: 2rem;
         span {
             .h3();
+            line-height: 2rem;
+            margin: 0;
+            display: inline-block;
+            height: 2rem;
         }
     }
     .md-icon {
         border: 0.1rem solid @contrast-darkest;
         border-radius: 0.2rem;
-        width: 1.7rem;
-        height: 1.7rem;
-        line-height: 1.7rem;
+        width: 2rem;
+        height: 2rem;
+        line-height: 2rem;
     }
     &.md-checked {
         .md-icon {
