@@ -60,6 +60,7 @@ import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
 import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 import {DvUserNameComponentConfig} from './component/dv-user-name/dv-user-name';
 import {NavigationLogger} from './service/NavigationLogger';
+import GlobalCacheService from '../gesuch/service/globalCacheService';
 
 let dynamicDependencies = function (): string[] {
 
@@ -140,6 +141,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('DownloadRS', DownloadRS)
     .service('WizardStepRS', WizardStepRS)
     .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
+    .service('GlobalCacheService', GlobalCacheService)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())
