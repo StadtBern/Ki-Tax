@@ -95,7 +95,7 @@
                 <div class="row" ng-if="vm.showVerfuegungsDetails()">
                     <div class="col-md-12 table-responsive">
                         <table st-table="displayedCollection" st-safe-src="vm.getVerfuegungZeitabschnitte()"
-                               class="table table-striped">
+                               class="table">
                             <thead>
                             <tr>
                                 <th class="text-right" data-translate="VON"></th>
@@ -156,7 +156,7 @@
                 <div class="row marginTop20 text-left">
                     <div class="col-md-4" ng-if="vm.showVerfuegungPdfLink()">
                         <i class="fa fa-file-text-o"></i>
-                        <button type="button" class="btn btn-link"
+                        <button type="button" class="btn-link"
                                 ng-click="vm.openVerfuegungPDF()">
                             <span data-translate="PDF_VERFUEGUNG_ANZEIGEN"></span>
                         </button>
@@ -197,24 +197,29 @@
                     <div class="col-md-4">
                         <span data-translate="IDENTISCHE_BERECHNUNG"></span>
                     </div>
-                    <div class="col-md-4"  ng-show="vm.showVerfuegen()">
+                    <div class="col-md-4" ng-show="vm.showVerfuegen()">
                         <dv-loading-button type="submit"
                                            button-click="vm.schliessenOhneVerfuegen(form)"
-                                           button-class="dv-btn-sm color-success">
+                                           button-class="">
                             <span data-translate="VERFUEGEN_VERZICHTEN_UPPER"></span>
                         </dv-loading-button>
                     </div>
                     <div class="col-md-4" ng-show="vm.showVerfuegen()">
-                        <dv-loading-button type="submit"  button-click="vm.save(form)"
-                                           button-class="dv-btn-sm color-success">
+                        <dv-loading-button type="submit" button-click="vm.save(form)"
+                                           button-class="">
                             <span data-translate="TROTZDEM_VERFUEGEN_UPPER"></span>
                         </dv-loading-button>
                     </div>
                 </div>
 
                 <!-- Navigation Buttons -->
-                <dv-navigation dv-cancel="vm.cancel(form)" dv-next="false" dv-sub-step="2">
-                </dv-navigation>
+                <div class="row marginTop50">
+                    <div class="col-md-12">
+                        <dv-navigation dv-cancel="vm.cancel(form)" dv-next="false" dv-sub-step="2">
+                        </dv-navigation>
+                    </div>
+                </div>
+
             </form>
         </div>
     </div>

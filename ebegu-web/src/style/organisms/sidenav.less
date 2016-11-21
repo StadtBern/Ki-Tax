@@ -48,6 +48,7 @@
                 color: @contrast-dark;
             }
             span {
+                .normal();
                 margin-left: 2.5rem;
                 letter-spacing: 0.1rem;
                 line-height: @sidebar-height;
@@ -60,6 +61,7 @@
         }
 
         span {
+            .normal();
             letter-spacing: 0.1rem;
             line-height: @sidebar-height;
             height: @sidebar-height;
@@ -87,14 +89,17 @@
             left: 2.5rem;
 
         }
-        span {
-            margin-left: 2.5rem;
-            .bold();
-            color: @primary;
+        button {
+            span {
+                margin-left: 2.5rem;
+                .bold();
+                color: @primary;
 
+            }
         }
-        .fa {
+        span {
             margin: 0;
+            .normal();
         }
 
     }
