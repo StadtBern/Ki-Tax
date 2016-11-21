@@ -37,9 +37,8 @@ md-input-container label:not(.md-container-ignore), label {
     color: @danger;
     &:after {
         .label();
+        display: inline-block;
         color: @danger;
-    }
-    .dv-error-messages {
     }
 }
 
@@ -49,8 +48,17 @@ md-input-container:not(.md-input-invalid).md-input-has-value, md-input-container
         color: @contrast-darkest;
         &:after {
             .label();
+            display: inline-block;
             color: @contrast-darkest;
         }
+    }
+}
+
+md-input-container label:not(.md-container-ignore).md-required {
+    &:after {
+        .label();
+        display: inline-block;
+        color: @contrast-darkest;
     }
 }
 
