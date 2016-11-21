@@ -18,10 +18,14 @@ public class DailyBatchBean extends AbstractBaseService implements DailyBatch {
 	@Inject
 	DownloadFileService downloadFileService;
 
+	@Inject
+	private MahnungService mahnungService;
+
 
 	@Override
 	@Asynchronous
 	public void runBackgroundTasksAsync() {
 		downloadFileService.cleanUp();
+		mahnungService.fristAblaufTimer();
 	}
 }

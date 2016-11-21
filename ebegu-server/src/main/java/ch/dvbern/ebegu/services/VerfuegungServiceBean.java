@@ -118,7 +118,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		Boolean enableDebugOutput = applicationPropertyService.findApplicationPropertyAsBoolean(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, true);
 		BetreuungsgutscheinEvaluator bgEvaluator = new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);
 		BGRechnerParameterDTO calculatorParameters = loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());
-		final Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch);
+		final Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = gesuchService.getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(gesuch);
 
 
 		// Wir überprüfen of in der Vorgängerverfügung eine Verfügung ist, welche geschlossen wurde ohne neu zu verfügen

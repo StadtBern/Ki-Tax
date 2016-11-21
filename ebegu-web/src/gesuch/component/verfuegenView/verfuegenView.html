@@ -4,7 +4,8 @@
             <form role="form" name="form" class="" novalidate unsaved-warning-form>
 
                 <!-- Abzuege -->
-                <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
+                <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                     dv-show-expression="vm.showVerfuegungsDetails()">
                     <div class="row marginTop20">
                         <div class="col-md-12">
                         <span data-translate="AUFGRUND_FIN_SITUATION"
@@ -91,7 +92,7 @@
                 <br>
 
                 <!-- Tabelle -->
-                <div class="row">
+                <div class="row" ng-if="vm.showVerfuegungsDetails()">
                     <div class="col-md-12 table-responsive">
                         <table st-table="displayedCollection" st-safe-src="vm.getVerfuegungZeitabschnitte()"
                                class="table table-striped">
@@ -139,7 +140,8 @@
                 </div>
 
                 <!--bemerkungen-->
-                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
+                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]"
+                     dv-show-expression="vm.showVerfuegungsDetails()">
                     <div class="col-md-12">
                         <label class="md-no-float" class="inlineHint" for="manuelle_notes"
                                data-translate="BEMERKUNGEN"></label>
@@ -152,42 +154,63 @@
 
                 <!--VerfuegungPDF anzeigen-->
                 <div class="row marginTop20 text-left">
-                    <div class="col-md-12">
+                    <div class="col-md-4" ng-if="vm.showVerfuegungPdfLink()">
                         <i class="fa fa-file-text-o"></i>
                         <button type="button" class="btn btn-link"
                                 ng-click="vm.openVerfuegungPDF()">
                             <span data-translate="PDF_VERFUEGUNG_ANZEIGEN"></span>
                         </button>
                     </div>
+                    <div class="col-md-4" ng-if="vm.showNichtEintretenPdfLink()">
+                        <i class="fa fa-file-text-o"></i>
+                        <button type="button" class="btn btn-link"
+                                ng-click="vm.openVerfuegungPDF()">
+                            <span data-translate="PDF_NICHT_EINTRETEN_ANZEIGEN"></span>
+                        </button>
+                    </div>
                 </div>
 
-            <div class="row marginTop20" ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen()">
-                <div class="col-md-12 text-center">
-                    <dv-loading-button type="submit"  button-click="vm.save(form)"
-                                       button-class="dv-btn-sm color-success">
-                        <span data-translate="VERFUEGEN_UPPER"></span>
-                    </dv-loading-button>
+                <div class="row marginTop20" ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen()">
+                    <div class="col-md-4 text-center">
+                        <dv-loading-button type="submit"  button-click="vm.save(form)"
+                                           button-class="dv-btn-sm color-success">
+                            <span data-translate="VERFUEGEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
+                    <div class="col-md-4"  ng-show="vm.gesuchModelManager.isErstgesuch()">
+                        <dv-loading-button type="submit"
+                                           button-click="vm.nichtEintreten(form)"
+                                           button-class="dv-btn-sm color-success">
+                            <span data-translate="VERFUEGEN_NICHT_EINTRETEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
+                    <div class="col-md-4"  ng-show="!vm.gesuchModelManager.isErstgesuch()">
+                        <dv-loading-button type="submit"
+                                           button-click="vm.schliessenOhneVerfuegen(form)"
+                                           button-class="dv-btn-sm color-success">
+                            <span data-translate="VERFUEGEN_ABLEHNEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row marginTop20" ng-show="vm.isSameVerfuegungdaten()">
-                <div class="col-md-4">
-                    <span data-translate="IDENTISCHE_BERECHNUNG"></span>
+                <div class="row marginTop20" ng-show="vm.isSameVerfuegungdaten()">
+                    <div class="col-md-4">
+                        <span data-translate="IDENTISCHE_BERECHNUNG"></span>
+                    </div>
+                    <div class="col-md-4"  ng-show="vm.showVerfuegen()">
+                        <dv-loading-button type="submit"
+                                           button-click="vm.schliessenOhneVerfuegen(form)"
+                                           button-class="dv-btn-sm color-success">
+                            <span data-translate="VERFUEGEN_VERZICHTEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
+                    <div class="col-md-4" ng-show="vm.showVerfuegen()">
+                        <dv-loading-button type="submit"  button-click="vm.save(form)"
+                                           button-class="dv-btn-sm color-success">
+                            <span data-translate="TROTZDEM_VERFUEGEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
                 </div>
-                <div class="col-md-4"  ng-show="vm.showVerfuegen()">
-                    <dv-loading-button type="submit"
-                                       button-click="vm.schliessenOhneVerfuegen(form)"
-                                       button-class="dv-btn-sm color-success">
-                        <span data-translate="VERFUEGEN_VERZICHTEN_UPPER"></span>
-                    </dv-loading-button>
-                </div>
-                <div class="col-md-4" ng-show="vm.showVerfuegen()">
-                    <dv-loading-button type="submit"  button-click="vm.save(form)"
-                                       button-class="dv-btn-sm color-success">
-                        <span data-translate="TROTZDEM_VERFUEGEN_UPPER"></span>
-                    </dv-loading-button>
-                </div>
-            </div>
 
                 <!-- Navigation Buttons -->
                 <dv-navigation dv-cancel="vm.cancel(form)" dv-next="false" dv-sub-step="2">

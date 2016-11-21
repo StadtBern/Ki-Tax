@@ -108,9 +108,9 @@ public class BetreuungsgutscheinConfigurator {
 	private void berechnenAnspruchRegeln() {
 		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
 
-		// - Nicht Eingetreten
-		NichtEingetretenCalcRule nichtEingetretenCalcRule = new NichtEingetretenCalcRule(defaultGueltigkeit);
-		rules.add(nichtEingetretenCalcRule);
+		// - Gekuendigt vor Eintritt
+		GekuendigtVorEintrittCalcRule gekuendigtVorEintrittCalcRule = new GekuendigtVorEintrittCalcRule(defaultGueltigkeit);
+		rules.add(gekuendigtVorEintrittCalcRule);
 
 		// - Erwerbspensum
 		ErwerbspensumCalcRule erwerbspensumCalcRule = new ErwerbspensumCalcRule(defaultGueltigkeit);
