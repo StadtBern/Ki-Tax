@@ -430,8 +430,8 @@ public class JaxBConverter {
 
 		// Einkommensverschlechterung
 		if (persistedGesuchsteller.getEinkommensverschlechterungContainer() != null) {
-			final JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = einkommensverschlechterungContainerToJAX(persistedGesuchsteller.getEinkommensverschlechterungContainer());
-			jaxGesuchsteller.setEinkommensverschlechterungContainer(jaxEinkommensverschlechterungContainer);
+			final JaxEinkommensverschlechterungContainer jaxEinkVerContainer = einkommensverschlechterungContainerToJAX(persistedGesuchsteller.getEinkommensverschlechterungContainer());
+			jaxGesuchsteller.setEinkommensverschlechterungContainer(jaxEinkVerContainer);
 		}
 		return jaxGesuchsteller;
 	}
@@ -1351,10 +1351,8 @@ public class JaxBConverter {
 				.reduce(StreamsUtil.toOnlyElement())
 				.orElse(new AbwesenheitContainer());
 			final String oldID = containerToMergeWith.getId();
-			final String oldVorgaengerID = containerToMergeWith.getVorgaengerId();
 			final AbwesenheitContainer contToAdd = abwesenheitContainerToEntity(jaxAbwesenheitContainer, containerToMergeWith);
 			contToAdd.setId(oldID);
-			contToAdd.setVorgaengerId(oldVorgaengerID);
 			final boolean added = transformedAbwesenheitContainers.add(contToAdd);
 			if (!added) {
 				LOGGER.warn("dropped duplicate container " + contToAdd);
@@ -1405,10 +1403,8 @@ public class JaxBConverter {
 			}
 			// Das Setzen von alten IDs ist noetigt im Fall dass Betreuungsangebot fuer eine existierende Abwesenheit geaendert wird, da sonst doppelte Verknuepfungen gemacht werden
 			final String oldID = abwesenheitGS.getId();
-			final String oldVorgaengerID = abwesenheitGS.getVorgaengerId();
 			final Abwesenheit convertedAbwesenheitGS = abwesenheitToEntity(jaxAbwesenheitContainers.getAbwensenheitGS(), abwesenheitGS);
 			convertedAbwesenheitGS.setId(oldID);
-			convertedAbwesenheitGS.setVorgaengerId(oldVorgaengerID);
 			abwesenheitContainer.setAbwesenheitGS(convertedAbwesenheitGS);
 		}
 		if (jaxAbwesenheitContainers.getAbwesenheitJA() != null) {
@@ -1418,10 +1414,8 @@ public class JaxBConverter {
 			}
 			//siehe Kommentar oben bei abwesenheitGS
 			final String oldID = abwesenheitJA.getId();
-			final String oldVorgaengerID = abwesenheitJA.getVorgaengerId();
 			final Abwesenheit convertedAbwesenheitJA = abwesenheitToEntity(jaxAbwesenheitContainers.getAbwesenheitJA(), abwesenheitJA);
 			convertedAbwesenheitJA.setId(oldID);
-			convertedAbwesenheitJA.setVorgaengerId(oldVorgaengerID);
 			abwesenheitContainer.setAbwesenheitJA(convertedAbwesenheitJA);
 		}
 		return abwesenheitContainer;
