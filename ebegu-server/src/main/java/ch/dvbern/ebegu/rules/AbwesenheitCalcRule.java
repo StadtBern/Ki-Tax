@@ -23,11 +23,9 @@ public class AbwesenheitCalcRule extends AbstractCalcRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
-			if (verfuegungZeitabschnitt.isLongAbwesenheit()) {
-				verfuegungZeitabschnitt.setBezahltVollkosten(true);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.ABWESENHEIT, MsgKey.ABWESENHEIT_MSG);
-			}
+		if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind() && verfuegungZeitabschnitt.isLongAbwesenheit()) {
+			verfuegungZeitabschnitt.setBezahltVollkosten(true);
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.ABWESENHEIT, MsgKey.ABWESENHEIT_MSG);
 		}
 	}
 }
