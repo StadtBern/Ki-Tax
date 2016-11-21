@@ -2,35 +2,32 @@
 @import '../../../style/mixins.less';
 
 .dv-error-messages, dv-error-messages {
-    display: inline-block;
     box-sizing: border-box;
     color: @danger;
-    height: 2.5rem;
-    line-height: 2.5rem;
+    line-height: 2.75rem;
     font-size: 1.4rem;
 
 }
 
 dv-error-messages {
-    margin: 0rem 0 0rem;
+    height: 2.75rem;
+    display: block;
+    max-height: 2.75rem;
+    overflow: hidden;
+    margin: 0;
     min-width: 1px;
 }
 
 .dv-error-messages {
     & > div > div {
-        height: 2.5rem;
         padding: 0;
         box-sizing: border-box;
         vertical-align: middle;
-        line-height: 2.5rem;
-    }
-    & > div {
-        height: 2.5rem;
     }
 }
 
-.md-errors-spacer {
+md-input-container .md-errors-spacer, .md-errors-spacer {
     display: none;
     height: 2.5rem;
-    min-height: 2.5rem;
+    min-height: 2.5rem !important;
 }
