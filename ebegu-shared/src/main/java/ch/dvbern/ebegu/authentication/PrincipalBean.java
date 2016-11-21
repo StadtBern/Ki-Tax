@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Resource;
-import javax.annotation.security.PermitAll;
 import javax.ejb.EJBContext;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -17,7 +16,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * ACHTUNG:  Das  injecten funktioniert anscheinend leider nicht
  */
-@PermitAll
 @RequestScoped
 public class PrincipalBean {
 
