@@ -69,8 +69,7 @@
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
 
-                                <dv-error-messages for="form.geburtsdatum.$error"
-                                                   class="error hint"></dv-error-messages>
+                                <dv-error-messages for="form.geburtsdatum.$error"></dv-error-messages>
                                 <dv-bisher gs="vm.getContainer().kindGS.geburtsdatum"
                                            ja="vm.getContainer().kindJA.geburtsdatum"></dv-bisher>
                             </dv-input-container>
@@ -101,8 +100,11 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="md-no-float" data-translate="FAM_ERGAENZENDE_BETREUUNG"></label>
-                                <dv-tooltip text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate"></dv-tooltip>
+                                <label class="md-no-float">
+                                    <span data-translate="FAM_ERGAENZENDE_BETREUUNG"></span>
+                                    <dv-tooltip text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate"></dv-tooltip>
+                                </label>
+
                                 <dv-radio-container name="familienErgaenzendeBetreuung" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
@@ -121,8 +123,10 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
-                                <label class="md-no-float"><span data-translate="MUTTERSPRACHE_DEUTSCH"> <dv-tooltip
-                                    text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip></span></label>
+                                <label class="md-no-float"><span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
+                                    <dv-tooltip
+                                        text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
+                                </label>
 
                                 <dv-radio-container name="mutterspracheDeutsch" class="input-element"
                                                     dv-enable-element
@@ -144,8 +148,9 @@
                                 <label class="md-no-float">
                                 <span data-translate="EINSCHULUNG"
                                       data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}">
-                                    <dv-tooltip text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
+
                                 </span>
+                                    <dv-tooltip text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
                                 </label>
 
                                 <dv-radio-container name="einschulung" class="input-element"
@@ -175,7 +180,7 @@
                                            ng-required="vm.getModel().familienErgaenzendeBetreuung"
                                            ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                     <dv-error-messages for="form.gleichemHaushalt.$error"
-                                                       class="error hint"></dv-error-messages>
+                                                       class="error"></dv-error-messages>
                                     <dv-bisher gs="vm.getContainer().kindGS.wohnhaftImGleichenHaushalt"
                                                ja="vm.getContainer().kindJA.wohnhaftImGleichenHaushalt"></dv-bisher>
                                 </dv-input-container>
@@ -231,7 +236,7 @@
                                            ng-required="vm.isFachstelleRequired()"
                                            ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                     <dv-error-messages for="form.betreuungspensumFachstelle.$error"
-                                                       class="error hint"></dv-error-messages>
+                                                       class="error"></dv-error-messages>
                                     <dv-bisher gs="vm.getContainer().kindGS.pensum"
                                                ja="vm.getContainer().kindJA.pensum"></dv-bisher>
                                 </dv-input-container>
@@ -251,7 +256,7 @@
                                                    ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                     </dv-datepicker>
                                     <dv-error-messages for="form.datumAb.$error"
-                                                       class="error hint"></dv-error-messages>
+                                                       class="error"></dv-error-messages>
                                     <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.gueltigkeit.gueltigAb"
                                                ja="vm.getContainer().kindJA.pensumFachstelle.gueltigkeit.gueltigAb"></dv-bisher>
                                 </dv-input-container>
@@ -268,7 +273,7 @@
                                                    ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                     </dv-datepicker>
                                     <dv-error-messages for="form.datumBis.$error"
-                                                       class="error hint"></dv-error-messages>
+                                                       class="error"></dv-error-messages>
                                     <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.gueltigkeit.gueltigBis"
                                                ja="vm.getContainer().kindJA.pensumFachstelle.gueltigkeit.gueltigBis"></dv-bisher>
                                 </dv-input-container>

@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-sm-12 col-md-6 text-right">
+    <div class="col-xs-12" flex-gt-sm="50" layout="row" layout-align="end center" layout-align-sm="center center">
         <dv-loading-button ng-if="vm.dvPrevious()" button-click="vm.previousStep()" button-class="previous">
             <span ng-bind="vm.getPreviousButtonName()"></span>
         </dv-loading-button>
@@ -8,7 +8,7 @@
         </dv-loading-button>
     </div>
 
-    <div class="col-sm-12 col-md-6">
+    <div class="col-xs-12" flex-gt-sm="50" layout="row" layout-align="start center" layout-align-sm="center center">
         <dv-loading-button ng-if="vm.dvNext()" button-click="vm.nextStep()" button-class="next"   type="submit"
                            button-disabled="vm.isNextButtonDisabled()" title="{{vm.getTooltip()}}">
             <span ng-bind="vm.getNextButtonName()"></span>
