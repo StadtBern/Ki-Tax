@@ -526,9 +526,8 @@ export default class GesuchModelManager {
 
     /**
      * Diese Methode erstellt eine Fake-Mutation als gesuch fuer das GesuchModelManager. Die Mutation ist noch leer und hat
-     * das ID des Gesuchs aus dem sie erstellt wurde. Damit laden wir die erste Seite auf, in der der Benutzer die Mutationsdaten
-     * eingeben darf. Wenn der Benutzer auf speichern klickt, wird der Service "antragMutieren" mit dem ID des alten Gesuchs
-     * und die neue Mutationsdaten aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
+     * das ID des Gesuchs aus dem sie erstellt wurde. Wenn der Benutzer auf speichern klickt, wird der Service "antragMutieren"
+     * mit dem ID des alten Gesuchs aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
      * Daten ueberschreiben
      * @param gesuchID
      */

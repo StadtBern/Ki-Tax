@@ -47,7 +47,7 @@ public interface WizardStepService {
 
 	/**
 	 * Erstellt eine Liste mit allen notwendigen WizardSteps fuer das gegebene Gesuch. Fuer Mutationen bekommen alle Steps
-	 * den Status OK und werden verfuegbar nur wenn die entsprechenden Mutationsdaten ausgewaehlt wurden
+	 * den Status OK und werden verfuegbar.
 	 * @param gesuch
 	 * @return
 	 */

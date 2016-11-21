@@ -70,7 +70,7 @@ export default class TSFamiliensituation extends TSAbstractEntity {
         return this.familienstatus === other.familienstatus && this.gesuchstellerKardinalitaet === other.gesuchstellerKardinalitaet;
     }
 
-    public isRevertFamiliensituation(other: TSFamiliensituation) {
+    public revertFamiliensituation(other: TSFamiliensituation) {
         this.familienstatus = other.familienstatus;
         this.gesuchstellerKardinalitaet = other.gesuchstellerKardinalitaet;
     }

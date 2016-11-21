@@ -2,9 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
-import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -86,7 +84,7 @@ public interface GesuchService {
 
 	/**
 	 * Erstellt eine neue Mutation fuer die Gesuchsperiode und Fall des uebergebenen Antrags. Es wird immer der letzt
-	 * verfuegte Antrag kopiert fuer die Mutation. Die Uebergebenen Mutationsdaten werden angehaengt
+	 * verfuegte Antrag kopiert fuer die Mutation.
 	 */
 	@Nonnull
 	Optional<Gesuch> antragMutieren(@Nonnull String antragId, LocalDate eingangsdatum);

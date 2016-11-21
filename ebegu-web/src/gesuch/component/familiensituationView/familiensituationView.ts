@@ -162,7 +162,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     public resetFamsit() {
-        this.getFamiliensituation().isRevertFamiliensituation(this.getFamiliensituationErstgesuch())
+        this.getFamiliensituation().revertFamiliensituation(this.getFamiliensituationErstgesuch())
     }
 
     public hasError(): boolean {

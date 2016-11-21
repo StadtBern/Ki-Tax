@@ -1516,6 +1516,19 @@ export default class EbeguRestUtil {
         return restAntragStatusHistory;
     }
 
+    public mahnungToRestObject(restMahnung: any, tsMahnung: TSMahnung): any {
+        if (tsMahnung) {
+                this.abstractEntityToRestObject(restMahnung, tsMahnung);
+                restMahnung.gesuch = this.gesuchToRestObject({}, tsMahnung.gesuch);
+                restMahnung.mahnungTyp = tsMahnung.mahnungTyp;
+                restMahnung.datumFristablauf = DateUtil.momentToLocalDate(tsMahnung.datumFristablauf);
+                restMahnung.bemerkungen = tsMahnung.bemerkungen;
+                restMahnung.active = tsMahnung.active;
+                return restMahnung;
+            }
+        return undefined;
+    }
+
     public parseMahnungen(data: Array<any>): TSMahnung[] {
         var mahnungen: TSMahnung[] = [];
         if (data && Array.isArray(data)) {

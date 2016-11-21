@@ -44,7 +44,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 		Objects.requireNonNull(newFamiliensituation);
 		Objects.requireNonNull(gesuch);
 
-		// Falls noch nicht vorhanden, werden die GemeinsameSteuererklaerung fuer FS und EV auf false gesetzt, auch die Mutationsdaten werden aktualisiert
+		// Falls noch nicht vorhanden, werden die GemeinsameSteuererklaerung fuer FS und EV auf false gesetzt
 		if (gesuch.isMutation() && EbeguUtil.fromOneGSToTwoGS(oldFamiliensituation, newFamiliensituation)) {
 
 			if (newFamiliensituation.getGemeinsameSteuererklaerung() == null) {
@@ -91,7 +91,6 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 		return new ArrayList<>(criteriaQueryHelper.getAll(Familiensituation.class));
 	}
 
-	@Nonnull
 	@Override
 	public void removeFamiliensituation(@Nonnull Familiensituation familiensituation) {
 		Validate.notNull(familiensituation);
