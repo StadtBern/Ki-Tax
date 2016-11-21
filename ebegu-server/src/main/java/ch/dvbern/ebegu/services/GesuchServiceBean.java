@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ import java.util.*;
  */
 @Stateless
 @Local(GesuchService.class)
+@PermitAll
 public class GesuchServiceBean extends AbstractBaseService implements GesuchService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());

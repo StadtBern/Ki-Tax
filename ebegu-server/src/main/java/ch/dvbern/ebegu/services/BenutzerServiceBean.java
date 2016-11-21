@@ -1,15 +1,17 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -22,9 +24,12 @@ import java.util.Optional;
 /**
  * Service fuer Benutzer
  */
+@PermitAll
 @Stateless
 @Local(BenutzerService.class)
 public class BenutzerServiceBean extends AbstractBaseService implements BenutzerService {
+
+	public static final String ID_SUPER_ADMIN = "22222222-2222-2222-2222-222222222222";
 
 	@Inject
 	private Persistence<Benutzer> persistence;
@@ -33,7 +38,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Inject
-	private ISessionContextService sessionContext;
+	private PrincipalBean principalBean;
 
 
 	@Nonnull
@@ -68,13 +73,14 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Override
 	public Optional<Benutzer> getCurrentBenutzer() {
 		String username = null;
-		if (sessionContext != null) {
-			final Principal principal = sessionContext.getCallerPrincipal();
-			if (principal != null) {
-				username = principal.getName();
-			}
+		if (principalBean != null) {
+			final Principal principal = principalBean.getPrincipal();
+			username = principal.getName();
 		}
 		if (StringUtils.isNotEmpty(username)) {
+			if ("anonymous".equals(username) && principalBean.isCallerInRole(UserRole.SUPER_ADMIN.name())) {
+				return loadSuperAdmin();
+			}
 			return findBenutzer(username);
 		}
 		return Optional.empty();
@@ -93,5 +99,10 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 		}
 		return this.saveBenutzer(benutzer);
+	}
+
+	private Optional<Benutzer> loadSuperAdmin() {
+		Benutzer benutzer = persistence.find(Benutzer.class, ID_SUPER_ADMIN);
+		return Optional.ofNullable(benutzer);
 	}
 }

@@ -1,10 +1,15 @@
 package ch.dvbern.ebegu.authentication;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Resource;
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJBContext;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.security.Principal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -12,8 +17,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * ACHTUNG:  Das  injecten funktioniert anscheinend leider nicht
  */
+@PermitAll
 @RequestScoped
 public class PrincipalBean {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalBean.class);
 
 
 	@Inject
@@ -22,6 +30,8 @@ public class PrincipalBean {
 	@Resource
 	private EJBContext ejbContext;
 
+	@Resource
+	private TransactionSynchronizationRegistry txReg;
 
 
 	@Nonnull
@@ -29,8 +39,8 @@ public class PrincipalBean {
 		return principal;
 	}
 
-
 	public boolean isCallerInRole(@Nonnull String roleName) {
+		LOGGER.debug("isCallerInRole 1: {}/{}", txReg.getTransactionKey(), txReg.getRollbackOnly());
 		checkNotNull(roleName);
 		return ejbContext.isCallerInRole(roleName);
 	}

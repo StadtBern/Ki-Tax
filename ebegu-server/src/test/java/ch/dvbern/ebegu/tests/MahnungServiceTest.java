@@ -8,7 +8,6 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.MahnungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -17,7 +16,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJBException;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -108,7 +106,7 @@ public class MahnungServiceTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void dokumenteKomplettErhalten() {
+	public void mahnlaufBeenden() {
 		Assert.assertNotNull(mahnungService);
 		TestDataUtil.createAndPersistBenutzer(persistence);
 
@@ -123,7 +121,7 @@ public class MahnungServiceTest extends AbstractEbeguTest {
 			Assert.assertTrue(mahnung.isActive());
 		}
 
-		mahnungService.dokumenteKomplettErhalten(gesuch);
+		mahnungService.mahnlaufBeenden(gesuch);
 
 		// Alle Mahnungen sind geschlossen
 		mahnungenForGesuch = mahnungService.findMahnungenForGesuch(gesuch);
