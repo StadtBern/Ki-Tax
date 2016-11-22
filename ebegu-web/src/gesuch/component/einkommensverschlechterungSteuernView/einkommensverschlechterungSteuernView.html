@@ -9,13 +9,15 @@
 
                     <div ng-if="vm.showFragen_BjP1()">
 
-
-                        <h1 class="mainTitle">
+                        <div class="row viewTitle">
+                            <div class="col-md-12">
+                                <h1>
                     <span data-translate="EKVI_ZUSAETZLICHE_FRAGEN"
                           translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></span>
-                        </h1>
-                        <hr class="header"/>
-
+                                </h1>
+                                <hr class="header"/>
+                            </div>
+                        </div>
                         <!-- Gemeinsame Steuererklaerung -->
                         <div class="row">
                             <div class="col-md-12">
@@ -82,14 +84,18 @@
 
                     <div ng-if="vm.showFragen_BjP2()">
                         <!-- Gemeinsame Steuererklaerung -->
-                        <h1 class="mainTitle">
+                        <div class="row viewTitle">
+                            <div class="col-md-12">
+                                <h1>
                     <span data-translate="EKVI_ZUSAETZLICHE_FRAGEN"
                           translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(2)}}}"></span>
-                        </h1>
-                        <hr class="header"/>
+                                </h1>
+                                <hr class="header"/>
+                            </div>
+                        </div>
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="2ol-md-12">
                                 <div class="form-group">
                                     <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
                                         translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2)}"></h4>
