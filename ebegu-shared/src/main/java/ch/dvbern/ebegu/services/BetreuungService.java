@@ -20,7 +20,7 @@ public interface BetreuungService {
 	 * @param betreuung Die Betreuung als DTO
 	 */
 	@Nonnull
-	Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, Boolean abwesenheit);
+	Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit);
 
 	/**
 	 * @param key PK (id) der Betreuung
