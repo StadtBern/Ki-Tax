@@ -40,7 +40,6 @@
 		<description>pseude token for any role</description>
 		<role-name>*</role-name>
 	</security-role>
-
 	<security-role>
 		<role-name>SUPER_ADMIN</role-name>
 	</security-role>
