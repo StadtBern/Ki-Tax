@@ -65,7 +65,7 @@ public abstract class AbstractEbeguRestTest {
 			.addAsLibraries(testDeps)
 			.addAsManifestResource("META-INF/TEST-MANIFEST.MF", "MANIFEST.MF")
 
-			// entfernt unnoetige Klassen, die vielleicht Dependency-Konflikten ergeben wuerden
+			// entfernt unnoetige Klassen, die vielleicht Dependency-Konflikten ergeben wuerden, login erfolgt im test nicht ueber openam
 			.deleteClass(AuthResource.class)
 			.deleteClass(FedletSamlServlet.class)
 			.deleteClass(FedletURLInitializer.class)
