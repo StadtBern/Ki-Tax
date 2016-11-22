@@ -31,6 +31,16 @@ export default class DokumenteRS {
             });
     }
 
+
+    public getDokumenteByTypeCached(gesuch: TSGesuch, dokumentGrundTyp: TSDokumentGrundTyp, cache: any): IPromise<TSDokumenteDTO> {
+        return this.http.get(this.serviceURL + '/byTyp/' + encodeURIComponent(gesuch.id) + '/'
+            + encodeURIComponent(TSDokumentGrundTyp[dokumentGrundTyp]), {cache: cache})
+            .then((response: any) => {
+                this.log.debug('PARSING dokumentDTA REST object ', response.data);
+                return this.ebeguRestUtil.parseDokumenteDTO(new TSDokumenteDTO(), response.data);
+            });
+    }
+
     public getDokumenteByType(gesuch: TSGesuch, dokumentGrundTyp: TSDokumentGrundTyp): IPromise<TSDokumenteDTO> {
         return this.http.get(this.serviceURL + '/byTyp/' + encodeURIComponent(gesuch.id) + '/' + encodeURIComponent(TSDokumentGrundTyp[dokumentGrundTyp]))
             .then((response: any) => {

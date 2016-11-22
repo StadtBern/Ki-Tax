@@ -289,7 +289,7 @@ export default class WizardStepManager {
      */
     public isStepStatusOk(wizardStepName: TSWizardStepName) {
         return this.hasStepGivenStatus(wizardStepName, TSWizardStepStatus.OK)
-            || this.hasStepGivenStatus(wizardStepName, TSWizardStepStatus.MUTIERT);
+        || this.hasStepGivenStatus(wizardStepName, TSWizardStepStatus.MUTIERT);
     }
 
     /**

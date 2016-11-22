@@ -13,12 +13,17 @@
         font-weight: bold;
     }
 
-    .mainTitle {
-
+    .viewTitle {
+        margin-bottom: 3.5rem;
     }
 
     .subTitle {
         font-size: 1.8rem;
+    }
+
+    .subTitleBold {
+        font-size: 1.8rem;
+        font-weight: bold;
     }
 
     .bisher {
@@ -46,7 +51,6 @@
         font-family: FontAwesome;
         content: "\f106\A\f107";
         white-space: pre;
-        width: 3.0rem;
         padding-left: 1em;
 
     }
@@ -67,11 +71,12 @@
 
     hr.header {
         height: 0.1rem;
+        min-height: 1px;
         border: none;
         color: #333;
         background-color: #333;
-        margin-top: 0;
-        margin-bottom: 5rem;
+        margin-bottom: 0.5rem;
+        margin-top: 0.5rem;
     }
     .marginLeft10 {
         margin-left: 1rem;
@@ -83,16 +88,24 @@
     .marginTop20 {
         margin-top: 2rem;
     }
-
+    .marginTop30 {
+        margin-top: 3rem;
+    }
     .marginTop40 {
         margin-top: 4rem;
+    }
+    .marginTop50 {
+        margin-top: 5rem;
+    }
+    .marginBottom30 {
+        margin-bottom: 3rem;
     }
 
     //errors sofort nach verlassen des feldes anzeigen oder sobald das form submitted wurde
     form:not(.ng-submitted) .form-group {
         //geschwisterelement von .formcontrol feldern oder .input-element feldern sollen Fehlermeldung noch nicht anzeigen wenn input untouched ist
-        .form-control.ng-untouched ~ .error,
-        .input-element.ng-untouched ~ .error {
+        .form-control.ng-untouched ~ dv-error-messages > .dv-error-messages > .error,
+        .input-element.ng-untouched ~ dv-error-messages > .dv-error-messages > .error {
             display: none;
         }
 
@@ -113,13 +126,13 @@
     }
 
     md-input-container .error.hint [ng-messages] {
-        position: relative;
-        -webkit-order: 4;
-        -ms-flex-order: 4;
-        order: 4;
-        overflow: hidden;
-        top: 1.6rem;
-        clear: left;
+        /* position: relative;
+         -webkit-order: 4;
+         -ms-flex- order: 4;
+         order: 4;
+         overflow: hidden;
+         top: 1.6rem;
+         clear: left;*/
     }
 
     ._md-open-menu-container, .md-open-menu-container {

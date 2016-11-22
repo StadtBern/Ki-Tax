@@ -1,15 +1,65 @@
 @import '../variables.less';
 @import '../mixins.less';
 
+.row-fallnr {
+    width: 5%;
+}
+
+.row-name {
+    width: 10%;
+
+}
+
+.row-antrag {
+    width: 7.5%;
+
+}
+
+.row-periode {
+    width: 7.5%;
+
+}
+
+.row-geandert {
+    width: 7.5%;
+
+}
+
+.row-status {
+    width: 12.5%;
+
+}
+
+.row-angebot {
+    width: 15%;
+
+}
+
+.row-inst {
+    width: 15%;
+
+}
+
+.row-ver {
+    width: 10%;
+
+}
+
+.row-action {
+    width: 10%;
+}
+
 .table > tbody {
     & > tr, & > tr:first-child {
         &:hover {
             background: #fafafa;
+            color: @contrast-darkest;
         }
     }
 }
 
 table, .table > tbody, .table > thead, .table > thead:first-child {
+    margin-bottom: 2rem;
     & > tr {
         & > td {
             .h3();
@@ -34,6 +84,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             border: 0.1rem solid @contrast;
             border-left: none;
             border-right: none;
+            border-radius: 0;
             display: table-cell !important;
             padding: 0 0.25rem 0;
             color: @contrast-darkest;
@@ -75,6 +126,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             border: 0.1rem solid @contrast-darkest;
             border-left: none;
             border-right: none;
+            border-radius: 0;
             display: table-cell !important;
             padding: 0 0.8rem 0;
             color: @contrast-darkest;

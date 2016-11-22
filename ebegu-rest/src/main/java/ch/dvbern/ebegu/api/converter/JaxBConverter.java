@@ -77,8 +77,6 @@ public class JaxBConverter {
 	@Inject
 	private BetreuungService betreuungService;
 	@Inject
-	private MutationsdatenService mutationsdatenService;
-	@Inject
 	private VerfuegungService verfuegungService;
 
 
@@ -577,6 +575,14 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituation().getId());
 			}
 		}
+		if (antragJAXP.getFamiliensituationErstgesuch() != null && antragJAXP.getFamiliensituationErstgesuch().getId() != null) {
+			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituationErstgesuch().getId());
+			if (famSituation.isPresent()) {
+				antrag.setFamiliensituationErstgesuch(familiensituationToEntity(antragJAXP.getFamiliensituationErstgesuch(), famSituation.get()));
+			} else {
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituationErstgesuch().getId());
+			}
+		}
 		if (antragJAXP.getEinkommensverschlechterungInfo() != null) {
 			if (antragJAXP.getEinkommensverschlechterungInfo().getId() != null) {
 				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfo().getId());
@@ -589,37 +595,13 @@ public class JaxBConverter {
 				antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
 			}
 		}
-		if (antragJAXP.getMutationsdaten() != null) {
-			if (antragJAXP.getMutationsdaten().getId() != null) {
-				final Optional<Mutationsdaten> mutationsdaten = mutationsdatenService.findMutationsdaten(antragJAXP.getMutationsdaten().getId());
-				if (mutationsdaten.isPresent()) {
-					antrag.setMutationsdaten(this.mutationsdatenToEntity(antragJAXP.getMutationsdaten(), mutationsdaten.get()));
-				} else {
-					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getMutationsdaten().getId());
-				}
-			} else {
-				antrag.setMutationsdaten(this.mutationsdatenToEntity(antragJAXP.getMutationsdaten(), new Mutationsdaten()));
-			}
-		}
+
 		antrag.setBemerkungen(antragJAXP.getBemerkungen());
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
 
 		return antrag;
 	}
 
-	//TODO (team ) zwei fast identische methoden. Fällt aber wohl sowieso weg?
-	private Mutationsdaten mutationsdatenToEntity(@Nonnull JaxMutationsdaten jaxMutationsdaten, @Nonnull Mutationsdaten mutationsdaten) {
-		mutationsdaten.setMutationFamiliensituation(jaxMutationsdaten.getMutationFamiliensituation());
-		mutationsdaten.setMutationGesuchsteller(jaxMutationsdaten.getMutationGesuchsteller());
-		mutationsdaten.setMutationUmzug(jaxMutationsdaten.getMutationUmzug());
-		mutationsdaten.setMutationKind(jaxMutationsdaten.getMutationKind());
-		mutationsdaten.setMutationBetreuung(jaxMutationsdaten.getMutationBetreuung());
-		mutationsdaten.setMutationAbwesenheit(jaxMutationsdaten.getMutationAbwesenheit());
-		mutationsdaten.setMutationErwerbspensum(jaxMutationsdaten.getMutationErwerbspensum());
-		mutationsdaten.setMutationFinanzielleSituation(jaxMutationsdaten.getMutationFinanzielleSituation());
-		mutationsdaten.setMutationEinkommensverschlechterung(jaxMutationsdaten.getMutationEinkommensverschlechterung());
-		return mutationsdaten;
-	}
 
 	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch) {
 		final JaxGesuch jaxGesuch = new JaxGesuch();
@@ -631,9 +613,7 @@ public class JaxBConverter {
 		jaxGesuch.setEingangsdatum(persistedGesuch.getEingangsdatum());
 		jaxGesuch.setStatus(AntragStatusConverterUtil.convertStatusToDTO(persistedGesuch, persistedGesuch.getStatus()));
 		jaxGesuch.setTyp(persistedGesuch.getTyp());
-		if (persistedGesuch.getMutationsdaten() != null) {
-			jaxGesuch.setMutationsdaten(mutationsdatenToJAX(persistedGesuch.getMutationsdaten()));
-		}
+
 		if (persistedGesuch.getGesuchsteller1() != null) {
 			jaxGesuch.setGesuchsteller1(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller1()));
 		}
@@ -642,6 +622,9 @@ public class JaxBConverter {
 		}
 		if (persistedGesuch.getFamiliensituation() != null) {
 			jaxGesuch.setFamiliensituation(this.familiensituationToJAX(persistedGesuch.getFamiliensituation()));
+		}
+		if (persistedGesuch.getFamiliensituationErstgesuch() != null) {
+			jaxGesuch.setFamiliensituationErstgesuch(this.familiensituationToJAX(persistedGesuch.getFamiliensituationErstgesuch()));
 		}
 		for (final KindContainer kind : persistedGesuch.getKindContainers()) {
 			jaxGesuch.getKindContainers().add(kindContainerToJAX(kind));
@@ -653,20 +636,6 @@ public class JaxBConverter {
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
 
 		return jaxGesuch;
-	}
-
-	private JaxMutationsdaten mutationsdatenToJAX(Mutationsdaten persistedMutationsdaten) {
-		final JaxMutationsdaten mutationsdaten = new JaxMutationsdaten();
-		mutationsdaten.setMutationFamiliensituation(persistedMutationsdaten.getMutationFamiliensituation());
-		mutationsdaten.setMutationGesuchsteller(persistedMutationsdaten.getMutationGesuchsteller());
-		mutationsdaten.setMutationUmzug(persistedMutationsdaten.getMutationUmzug());
-		mutationsdaten.setMutationKind(persistedMutationsdaten.getMutationKind());
-		mutationsdaten.setMutationBetreuung(persistedMutationsdaten.getMutationBetreuung());
-		mutationsdaten.setMutationAbwesenheit(persistedMutationsdaten.getMutationAbwesenheit());
-		mutationsdaten.setMutationErwerbspensum(persistedMutationsdaten.getMutationErwerbspensum());
-		mutationsdaten.setMutationFinanzielleSituation(persistedMutationsdaten.getMutationFinanzielleSituation());
-		mutationsdaten.setMutationEinkommensverschlechterung(persistedMutationsdaten.getMutationEinkommensverschlechterung());
-		return mutationsdaten;
 	}
 
 	public JaxMandant mandantToJAX(@Nonnull final Mandant persistedMandant) {
@@ -1968,18 +1937,4 @@ public class JaxBConverter {
 		return resultSet;
 	}
 
-	//TODO (team ) zwei fast identische methoden. Fällt aber wohl sowieso weg?
-	public Mutationsdaten mutationsDatenToEntity(JaxMutationsdaten jaxMutationsdaten, Mutationsdaten mutationsdaten) {
-		convertAbstractFieldsToEntity(jaxMutationsdaten, mutationsdaten);
-		mutationsdaten.setMutationFamiliensituation(jaxMutationsdaten.getMutationFamiliensituation());
-		mutationsdaten.setMutationGesuchsteller(jaxMutationsdaten.getMutationGesuchsteller());
-		mutationsdaten.setMutationUmzug(jaxMutationsdaten.getMutationUmzug());
-		mutationsdaten.setMutationKind(jaxMutationsdaten.getMutationKind());
-		mutationsdaten.setMutationBetreuung(jaxMutationsdaten.getMutationBetreuung());
-		mutationsdaten.setMutationAbwesenheit(jaxMutationsdaten.getMutationAbwesenheit());
-		mutationsdaten.setMutationErwerbspensum(jaxMutationsdaten.getMutationErwerbspensum());
-		mutationsdaten.setMutationFinanzielleSituation(jaxMutationsdaten.getMutationFinanzielleSituation());
-		mutationsdaten.setMutationEinkommensverschlechterung(jaxMutationsdaten.getMutationEinkommensverschlechterung());
-		return mutationsdaten;
-	}
 }

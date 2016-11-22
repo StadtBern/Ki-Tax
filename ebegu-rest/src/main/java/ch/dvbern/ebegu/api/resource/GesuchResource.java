@@ -4,12 +4,14 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxMutationsdaten;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -264,7 +266,8 @@ public class GesuchResource {
 
 	/**
 	 * iteriert durch eine Liste von Antragen und gibt jeweils pro Fall nur den Antrag mit dem neusten Eingangsdatum zurueck
-	 * @param foundAntraege  Liste mit Antraegen, kann mehrere pro Fall enthalten
+	 *
+	 * @param foundAntraege Liste mit Antraegen, kann mehrere pro Fall enthalten
 	 * @return Set mit Antraegen, jeweils nur der neuste zu einem bestimmten Fall
 	 */
 	@Nonnull
@@ -304,7 +307,6 @@ public class GesuchResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response antragMutieren(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
-		@Nonnull @NotNull JaxMutationsdaten jaxMutationsdaten,
 		@Nonnull @QueryParam("date") String stringDate,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -314,9 +316,9 @@ public class GesuchResource {
 
 		final LocalDate eingangsdatum = DateUtil.parseStringToDateOrReturnNow(stringDate);
 		final String antragId = converter.toEntityId(antragJaxId);
-		final Mutationsdaten mutationsdaten = converter.mutationsDatenToEntity(jaxMutationsdaten, new Mutationsdaten());
 
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(antragId, mutationsdaten, eingangsdatum);
+
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(antragId, eingangsdatum);
 
 		if (!gesuchOptional.isPresent()) {
 			return Response.noContent().build();
