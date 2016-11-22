@@ -23,7 +23,7 @@ describe('fallCreationView', function () {
         it('should return Art der Mutation', () => {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
             spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(false);
-            expect(gesuchRouteController.getGesuchErstellenStepTitle()).toBe('Mutation');
+            expect(gesuchRouteController.getGesuchErstellenStepTitle()).toBe('Erstellen einer Mutation');
         });
         it('should return Art der Mutation', () => {
             let gesuch: TSGesuch = new TSGesuch();
