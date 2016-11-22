@@ -4,14 +4,13 @@ import {TSRole} from '../models/enums/TSRole';
  */
 export class TSRoleUtil {
 
-    static getAllRolesButGesuchsteller(): Array<string> {
+    public static getAllRolesButGesuchsteller(): Array<string> {
         return TSRoleUtil.getAllRoles().filter(element =>
             element !== TSRole[TSRole.GESUCHSTELLER]
         );
     }
 
     public static getAllRoles(): Array<string> {
-        // return Object.keys(TSRole).map(k => TSRole[k]);
         let result: Array<string> = [];
         for (var prop in TSRole) {
             if ((isNaN(parseInt(prop)))) {
@@ -53,18 +52,5 @@ export class TSRoleUtil {
 
     public static getAllRolesForKommentarSpalte(): Array<TSRole> {
         return [TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.STEUERAMT, TSRole.SCHULAMT]; //TODO Superadmin
-    }
-
-    public static getAllRolesForJugendamtInstitutionenTraegerschaftenSchulamt(): Array<TSRole> {
-        return [TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, TSRole.SCHULAMT]; //TODO Superadmin
-    }
-
-    public static getAllRolesForJugendamtInstitutionenTraegerschaften(): Array<TSRole> {
-        return [TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT]; //TODO Superadmin
-    }
-
-    public static getAllJugendamtInstitutionenTraegerschaftenRolesNames(): Array<string> {
-        return [TSRole[TSRole.ADMIN], TSRole[TSRole.SACHBEARBEITER_JA], TSRole[TSRole.SACHBEARBEITER_INSTITUTION],
-            TSRole[TSRole.SACHBEARBEITER_TRAEGERSCHAFT]]; //TODO Superadmin
     }
 }
