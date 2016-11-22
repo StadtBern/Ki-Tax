@@ -11,6 +11,7 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -20,11 +21,14 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
+
 /**
  * Service fuer {@link ErwerbspensumContainer} diese beinhalten einzelne Objekte mit den Daten von GS und JA
  */
 @Stateless
 @Local(ErwerbspensumService.class)
+@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  GESUCHSTELLER})
 public class ErwerbspensumServiceBean extends AbstractBaseService implements ErwerbspensumService {
 
 	@Inject
@@ -35,6 +39,8 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	private GesuchService gesuchService;
 	@Inject
 	private WizardStepService wizardStepService;
+	@Inject
+	private Authorizer authorizer;
 
 	@Nonnull
 	@Override
@@ -47,13 +53,16 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Nonnull
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
 	public Optional<ErwerbspensumContainer> findErwerbspensum(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		ErwerbspensumContainer ewpCnt =  persistence.find(ErwerbspensumContainer.class, key);
+		authorizer.checkReadAuthorization(ewpCnt);
 		return Optional.ofNullable(ewpCnt);
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
 	public Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
 		return criteriaQueryHelper.getEntitiesByAttribute(ErwerbspensumContainer.class, gesuchsteller, ErwerbspensumContainer_.gesuchsteller);
 	}
@@ -61,15 +70,17 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Override
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
 	public Collection<ErwerbspensumContainer> findErwerbspensenFromGesuch(@Nonnull String gesuchId) {
 		Collection<ErwerbspensumContainer> result = new ArrayList<>();
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId);
-		if (gesuch.isPresent()) {
-			if (gesuch.get().getGesuchsteller1() != null) {
-				result.addAll(findErwerbspensenForGesuchsteller(gesuch.get().getGesuchsteller1()));
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
+		if (gesuchOptional.isPresent()) {
+			authorizer.checkReadAuthorization(gesuchOptional.get());
+			if (gesuchOptional.get().getGesuchsteller1() != null) {
+				result.addAll(findErwerbspensenForGesuchsteller(gesuchOptional.get().getGesuchsteller1()));
 			}
-			if (gesuch.get().getGesuchsteller2() != null) {
-				result.addAll(findErwerbspensenForGesuchsteller(gesuch.get().getGesuchsteller2()));
+			if (gesuchOptional.get().getGesuchsteller2() != null) {
+				result.addAll(findErwerbspensenForGesuchsteller(gesuchOptional.get().getGesuchsteller2()));
 			}
 		}
 		return result;
@@ -77,11 +88,15 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Nonnull
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  REVISOR, JURIST, })
 	public Collection<ErwerbspensumContainer> getAllErwerbspensenenContainer() {
-		return criteriaQueryHelper.getAll(ErwerbspensumContainer.class);
+		Collection<ErwerbspensumContainer> ewpContainers = criteriaQueryHelper.getAll(ErwerbspensumContainer.class);
+		ewpContainers.forEach(ewpContainer -> authorizer.checkReadAuthorization(ewpContainer));
+		return ewpContainers;
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
 	public void removeErwerbspensum(@Nonnull String erwerbspensumContainerID, Gesuch gesuch) {
 		Objects.requireNonNull(erwerbspensumContainerID);
 		Optional<ErwerbspensumContainer> ewpCont = this.findErwerbspensum(erwerbspensumContainerID);

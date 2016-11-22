@@ -53,7 +53,7 @@ public abstract class AbstractEbeguRestTest {
 		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben doppelt eingefuegt werden
 		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "rest-test.war")
 
-			.addClasses(AbstractEbeguRestTest.class, Persistence.class,
+			.addClasses(AbstractEbeguRestLoginTest.class, Persistence.class,
 				ISessionContextService.class, AbstractEntity.class)
 
 			.addPackages(true, "ch/dvbern/ebegu/api")
@@ -65,6 +65,10 @@ public abstract class AbstractEbeguRestTest {
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 			.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
 			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
+			//deploy our test loginmodule
+			.addAsResource("testogin-users.properties","users.properties")
+			.addAsResource("testlogin-roles.properties", "roles.properties")
+			.addAsWebInfResource("META-INF/test-jboss-web.xml",  "jboss-web.xml")
 			// Deploy our test datasource
 			.addAsWebInfResource("test-ds.xml");
 		//add openam dependencies

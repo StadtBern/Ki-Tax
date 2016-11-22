@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class AntragStatusHistoryServiceTest extends AbstractEbeguTest {
+public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 
 
 	@Inject
@@ -39,8 +39,8 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguTest {
 
 	@Before
 	public void setUp() {
+		benutzer = getDummySuperadmin(); // wir erstellen in superklasse schon einen superadmin
 		gesuch = TestDataUtil.createAndPersistGesuch(persistence);
-		benutzer = TestDataUtil.createAndPersistBenutzer(persistence);
 	}
 
 	@Test

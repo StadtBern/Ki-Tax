@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)  //disabeln sonst existiert in changeVerantwortlicherOfFallTest der Benutzer noch gar nicht
-public class FallServiceTest extends AbstractEbeguTest {
+public class FallServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private FallService fallService;
@@ -74,7 +74,7 @@ public class FallServiceTest extends AbstractEbeguTest {
 		Assert.assertTrue(loadedFallOpt.isPresent());
 		Fall loadedFall = loadedFallOpt.get();
 		Assert.assertNull(loadedFall.getVerantwortlicher());
-		Benutzer benutzerToSet = TestDataUtil.createDummyAdminAnonymous(persistence);
+		Benutzer benutzerToSet = getDummySuperadmin();
 		Benutzer storedBenutzer = persistence.find(Benutzer.class, benutzerToSet.getId());
 		loadedFall.setVerantwortlicher(storedBenutzer);
 

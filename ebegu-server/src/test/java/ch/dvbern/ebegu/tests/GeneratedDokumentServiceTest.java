@@ -26,7 +26,7 @@ import java.time.Month;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class GeneratedDokumentServiceTest extends AbstractEbeguTest {
+public class GeneratedDokumentServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private GeneratedDokumentService generatedDokumentService;

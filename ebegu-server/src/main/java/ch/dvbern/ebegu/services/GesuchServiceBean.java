@@ -202,6 +202,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		// Special role based predicates
 		switch (role) {
+			case SUPER_ADMIN:
 			case ADMIN:
 			case REVISOR:
 				break;

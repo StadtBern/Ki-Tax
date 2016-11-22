@@ -97,22 +97,14 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT})
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
-		FinanzielleSituationContainer fs1 =  gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getFinanzielleSituationContainer(): null;
-		FinanzielleSituationContainer fs2 = gesuch.getGesuchsteller2() != null ? gesuch.getGesuchsteller2() .getFinanzielleSituationContainer(): null;
-		authorizer.checkReadAuthorization(fs1);
-		authorizer.checkReadAuthorization(fs2);
-
+		authorizer.checkReadAuthorizationFinSit(gesuch);
 		return finSitRechner.calculateResultateFinanzielleSituation(gesuch);
 	}
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT})
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
-		FinanzielleSituationContainer fs1 =  gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getFinanzielleSituationContainer(): null;
-		FinanzielleSituationContainer fs2 = gesuch.getGesuchsteller2() != null ? gesuch.getGesuchsteller2() .getFinanzielleSituationContainer(): null;
-		authorizer.checkReadAuthorization(fs1);
-		authorizer.checkReadAuthorization(fs2);
-
+		authorizer.checkReadAuthorizationFinSit(gesuch);
 		finSitRechner.calculateFinanzDaten(gesuch);
 	}
 }

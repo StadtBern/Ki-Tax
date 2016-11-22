@@ -10,6 +10,7 @@ import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.beanutils.BeanUtils;
@@ -22,15 +23,23 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.security.PrivilegedAction;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
 import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuch;
+import static ch.dvbern.ebegu.tets.util.JBossLoginContextFactory.createLoginContext;
 
 /**
  * Arquillian Tests fuer die Klasse GesuchService
@@ -38,7 +47,9 @@ import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuc
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class GesuchServiceTest extends AbstractEbeguTest {
+public class GesuchServiceTest extends AbstractEbeguLoginTest {
+
+	private final Logger LOG = LoggerFactory.getLogger(GesuchServiceTest.class.getSimpleName());
 
 	@Inject
 	private GesuchService gesuchService;
@@ -58,17 +69,17 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	@Test
 	public void createGesuch() {
 		Assert.assertNotNull(gesuchService);
-		TestDataUtil.createAndPersistBenutzer(persistence);
+		loginAsSachbearbeiterJA();
 		persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 
-		final Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
+		final Collection<Gesuch> allGesuche = readGesucheAsAdmin();
 		Assert.assertEquals(1, allGesuche.size());
 	}
 
 	@Test
 	public void updateGesuch() {
 		Assert.assertNotNull(gesuchService);
-		TestDataUtil.createAndPersistBenutzer(persistence);
+		loginAsSachbearbeiterJA();
 		final Gesuch insertedGesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(insertedGesuch.getId());
@@ -83,22 +94,22 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	@Test
 	public void removeGesuchTest() {
 		Assert.assertNotNull(gesuchService);
-		TestDataUtil.createAndPersistBenutzer(persistence);
+		loginAsSachbearbeiterJA();
 		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
-		Assert.assertEquals(1, gesuchService.getAllGesuche().size());
+		Assert.assertEquals(1, readGesucheAsAdmin().size());
 
 		final List<WizardStep> wizardStepsFromGesuch = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
 		wizardStepsFromGesuch.forEach(wizardStep -> persistence.remove(WizardStep.class, wizardStep.getId()));
 		gesuchService.removeGesuch(gesuch);
-		Assert.assertEquals(0, gesuchService.getAllGesuche().size());
+		Assert.assertEquals(0, readGesucheAsAdmin().size());
 	}
 
 	@Test
 	public void createEinkommensverschlechterungsGesuch() {
 		Assert.assertNotNull(gesuchService);
-		TestDataUtil.createAndPersistBenutzer(persistence);
+		loginAsSachbearbeiterJA();
 		persistEinkommensverschlechterungEntity();
-		final Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
+		final Collection<Gesuch> allGesuche = readGesucheAsAdmin();
 		Assert.assertEquals(1, allGesuche.size());
 		Gesuch gesuch = allGesuche.iterator().next();
 		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.getEinkommensverschlechterungInfo();
@@ -110,7 +121,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void testGetAllActiveGesucheAllActive() {
-		TestDataUtil.createAndPersistBenutzer(persistence);
+		loginAsSachbearbeiterJA();
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
 		persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 
@@ -120,7 +131,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void testGetAllActiveGesucheNotAllActive() {
-		TestDataUtil.createAndPersistBenutzer(persistence);
+		loginAsSachbearbeiterJA();
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
 		persistNewEntity(AntragStatus.VERFUEGT);
 
@@ -130,7 +141,6 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void testSearchAntraegeOrder() {
-		TestDataUtil.createDummyAdminAnonymous(persistence);
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
 		persistNewEntity(AntragStatus.VERFUEGT);
 
@@ -157,7 +167,6 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void testPaginationEdgeCases() {
-		TestDataUtil.createDummyAdminAnonymous(persistence);
 		TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
@@ -186,26 +195,24 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void testSearchByGesuchsperiode() {
-		TestDataUtil.createDummyAdminAnonymous(persistence);
-
 		TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		Gesuchsperiode periode = TestDataUtil.createGesuchsperiode1617();
 
-		Gesuchsperiode nextPeriode  = TestDataUtil.createGesuchsperiode1617();
+		Gesuchsperiode nextPeriode = TestDataUtil.createGesuchsperiode1617();
 		nextPeriode.setGueltigkeit(new DateRange(periode.getGueltigkeit().getGueltigAb().plusYears(1), periode.getGueltigkeit().getGueltigBis().plusYears(1)));
 		nextPeriode = persistence.merge(nextPeriode);
 		gesuch.setGesuchsperiode(nextPeriode);
 		gesuch = persistence.merge(gesuch);
-		Assert.assertEquals("gesuch fuer naechste Periode muss vorhanden sein" ,gesuch.getGesuchsperiode(), nextPeriode);
+		Assert.assertEquals("gesuch fuer naechste Periode muss vorhanden sein", gesuch.getGesuchsperiode(), nextPeriode);
 		gesuchService.findGesuch(gesuch.getId());
 
 		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
 		Assert.assertEquals("2016/2017", periode.getGesuchsperiodeString());
 		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString(periode.getGesuchsperiodeString());
 
-		Pair<Long, List<Gesuch>> firstResult =  gesuchService.searchAntraege(filterDTO);
+		Pair<Long, List<Gesuch>> firstResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(2), firstResult.getLeft());
 
 		Assert.assertEquals("2017/2018", nextPeriode.getGesuchsperiodeString());
@@ -219,25 +226,23 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void testSearchWithRoleGesuchsteller() {
-		Benutzer user = TestDataUtil.createDummyAdminAnonymous(persistence);
 		TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 
 		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
-		Pair<Long, List<Gesuch>> firstResult =  gesuchService.searchAntraege(filterDTO);
+		Pair<Long, List<Gesuch>> firstResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(2), firstResult.getLeft());
 
-		user.setRole(UserRole.GESUCHSTELLER); //Gesuchsteller darf nichts suchen
-		persistence.merge(user);
-		Pair<Long, List<Gesuch>> secondResult =  gesuchService.searchAntraege(filterDTO);
+		loginAsGesuchsteller("gesuchst");
+		Pair<Long, List<Gesuch>> secondResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(0), secondResult.getLeft());
 		Assert.assertEquals(0, secondResult.getRight().size());
 	}
 
 	@Test
 	public void testSearchWithRoleSachbearbeiterInst() {
-		Benutzer user = TestDataUtil.createDummyAdminAnonymous(persistence);
-		Gesuch gesDagmar =  TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		loginAsAdmin();
+		Gesuch gesDagmar = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		gesDagmar.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
 		gesDagmar = persistence.merge(gesDagmar);
 		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
@@ -245,48 +250,43 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		gesuch = persistence.merge(gesuch);
 
 		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
-		Pair<Long, List<Gesuch>> firstResult =  gesuchService.searchAntraege(filterDTO);
+		Pair<Long, List<Gesuch>> firstResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(1), firstResult.getLeft()); //Admin sieht Gesuch im Status IN_BEARBEITUNG_GS nicht, soll anscheinend so sein
 
 		//Die Gesuche sollten im Status IN_BEARBEITUNG_GS sein und zu keinem oder einem Traegerschafts Sachbearbeiter gehoeren, trotzdem sollten wir sie finden
-		user.setRole(UserRole.SACHBEARBEITER_INSTITUTION); //Sachbearbeiter findet gesuche die bei seiner institution sind
+//		Benutzer user = TestDataUtil.createDummySuperAdmin(persistence);
 		//kita aaregg
-		user.setTraegerschaft(null);
-		user.setInstitution(gesuch.extractAllBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution());
-		user = persistence.merge(user);
-		Pair<Long, List<Gesuch>> secondResult =  gesuchService.searchAntraege(filterDTO);
+		Institution institutionToSet = gesuch.extractAllBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution();
+		loginAsSachbearbeiterInst("sainst", institutionToSet);
+		Pair<Long, List<Gesuch>> secondResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(2), secondResult.getLeft());
 		Assert.assertEquals(2, secondResult.getRight().size());
 
 		gesuch.getFall().setVerantwortlicher(null);
 		persistence.merge(gesuch);
 		//traegerschaftbenutzer setzten
-		Traegerschaft traegerschaft = user.getInstitution().getTraegerschaft();
-		Assert.assertNotNull("Unser testaufbau sieht vor, dass die institution zu einer traegerschaft gehoert",traegerschaft);
-		Benutzer verantwortlicherUser = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, traegerschaft, null, TestDataUtil.createDefaultMandant());
+		Traegerschaft traegerschaft =institutionToSet.getTraegerschaft();
+		Assert.assertNotNull("Unser testaufbau sieht vor, dass die institution zu einer traegerschaft gehoert", traegerschaft);
+		Benutzer verantwortlicherUser = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "anonymous", traegerschaft, null, TestDataUtil.createDefaultMandant());
 		gesDagmar.getFall().setVerantwortlicher(verantwortlicherUser);
 		gesDagmar = persistence.merge(gesDagmar);
 		//es muessen immer noch beide gefunden werden da die betreuungen immer noch zu inst des users gehoeren
-		Pair<Long, List<Gesuch>> thirdResult =  gesuchService.searchAntraege(filterDTO);
+		Pair<Long, List<Gesuch>> thirdResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(2), thirdResult.getLeft());
 		Assert.assertEquals(2, thirdResult.getRight().size());
 
 		//aendere user zu einer anderen institution  -> darf nichts mehr finden
-		Institution institution = TestDataUtil.createAndPersistDefaultInstitution(persistence);
-		user.setInstitution(institution);
-		persistence.merge(user);
+		Institution otherInst = TestDataUtil.createAndPersistDefaultInstitution(persistence);
+		loginAsSachbearbeiterInst("sainst2",otherInst);
 
-		Pair<Long, List<Gesuch>> fourthResult =  gesuchService.searchAntraege(filterDTO);
+		Pair<Long, List<Gesuch>> fourthResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(0), fourthResult.getLeft());
 		Assert.assertEquals(0, fourthResult.getRight().size());
 
 	}
 
-
 	@Test
 	public void testAntragMutieren() throws Exception {
-
-		TestDataUtil.createDummyAdminAnonymous(persistence);
 
 		// Voraussetzung: Ich habe einen verfuegten Antrag
 		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
@@ -311,37 +311,38 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		mutation.setFamiliensituationErstgesuch(oldFamSit);
 		mutation = gesuchService.updateGesuch(mutation, false);
 
-        anzahlObjekte = 0;
-        Set<String> idsErstgesuch = new HashSet<>();
-        findAllIdsOfAbstractEntities(gesuchVerfuegt, idsErstgesuch);
-        int anzahlObjekteErstgesuch = anzahlObjekte;
+		anzahlObjekte = 0;
+		Set<String> idsErstgesuch = new HashSet<>();
+		findAllIdsOfAbstractEntities(gesuchVerfuegt, idsErstgesuch);
+		int anzahlObjekteErstgesuch = anzahlObjekte;
 
-        anzahlObjekte = 0;
-        Set<String> idsMutation = new HashSet<>();
-        findAllIdsOfAbstractEntities(mutation, idsMutation);
-        int anzahlObjekteMutation = anzahlObjekte;
+		anzahlObjekte = 0;
+		Set<String> idsMutation = new HashSet<>();
+		findAllIdsOfAbstractEntities(mutation, idsMutation);
+		int anzahlObjekteMutation = anzahlObjekte;
 
 		// Die Mutation hat immer 2 Objekte mehr als Erstgesuch, und zwar "Mutationsdaten" und "FamiliensituationErstgesuch.
 		// Deswegen muessen wir 2 subtrahieren
-        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1 - 1);
+		Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1 - 1);
 
-        // Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
-        // werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
-        Set<String> intersection = new HashSet<>(idsErstgesuch);
-        intersection.retainAll(idsMutation);
-        if (!intersection.isEmpty()) {
-            // Die korrekterweise umgehaengten Ids rausnehmen
-            findAbstractEntitiesWithIds(gesuchVerfuegt, intersection);
-        }
-        // Jetzt sollten keine Ids mehr drinn sein.
-        Assert.assertTrue(intersection.isEmpty());
+		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
+		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
+		Set<String> intersection = new HashSet<>(idsErstgesuch);
+		intersection.retainAll(idsMutation);
+		if (!intersection.isEmpty()) {
+			// Die korrekterweise umgehaengten Ids rausnehmen
+			findAbstractEntitiesWithIds(gesuchVerfuegt, intersection);
+		}
+		// Jetzt sollten keine Ids mehr drinn sein.
+		Assert.assertTrue(intersection.isEmpty());
 	}
 
 	// HELP METHOD
 
+
 	/**
 	 * Schreibt alle Ids von AbstractEntities (rekursiv vom Gesuch) ins Set.
-     */
+	 */
 	private void findAllIdsOfAbstractEntities(AbstractEntity entity, Set<String> ids) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		String id = BeanUtils.getProperty(entity, "id");
 		if (!ids.contains(id)) {
@@ -360,14 +361,14 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	/**
 	 * Ermittelt die Entites, deren Ids im Set enthalten sind.
-     */
+	 */
 	private void findAbstractEntitiesWithIds(AbstractEntity entity, Set<String> ids) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		if (ids.isEmpty()) {
 			return;
 		}
 		String id = BeanUtils.getProperty(entity, "id");
 		if (ids.contains(id)) {
-			if (entity instanceof Fall|| entity instanceof Mandant || entity instanceof Gesuchsperiode) {
+			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode) {
 				// Diese Entitaeten wurden korrekterweise nur umgehaengt und nicht kopiert.
 				// Aus der Liste entfernen
 				ids.remove(id);
@@ -398,6 +399,92 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		gesuch.setFall(persistence.persist(gesuch.getFall()));
 		gesuchService.createGesuch(gesuch);
 		return gesuch;
+	}
+
+	private void loginAsSachbearbeiterJA() {
+		try {
+			createLoginContext("saja", "saja").login();
+		} catch (LoginException e) {
+			LOG.error("could not login as sachbearbeiter jugendamt saja for tests");
+		}
+
+		Mandant mandant = persistence.persist(TestDataUtil.createDefaultMandant());
+		Benutzer saja = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
+		persistence.persist(saja);
+	}
+	private void loginAsAdmin() {
+		try {
+			createLoginContext("admin", "admin").login();
+		} catch (LoginException e) {
+			LOG.error("could not login as sachbearbeiter jugendamt admin for tests");
+		}
+
+		Mandant mandant = persistence.persist(TestDataUtil.createDefaultMandant());
+		Benutzer saja = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
+		persistence.persist(saja);
+	}
+
+	private void loginAsSachbearbeiterInst(String username , Institution institutionToSet) {
+		Benutzer user = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, username, null, institutionToSet, institutionToSet.getMandant());
+		user = persistence.merge(user);
+		try {
+			createLoginContext(username, username).login();
+		} catch (LoginException e) {
+			LOG.error("could not login as sachbearbeiter jugendamt {} for tests", username);
+		}
+		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
+	}
+
+	private void loginAsGesuchsteller(String username) {
+		Mandant mandant = persistence.merge(TestDataUtil.createDefaultMandant());
+		Benutzer user = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, username, null, null, mandant);
+		user = persistence.merge(user);
+		try {
+			createLoginContext(username, username).login();
+		} catch (LoginException e) {
+			LOG.error("could not login as gesuchsteller {} for tests", username);
+		}
+		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
+	}
+
+
+	/**
+	 * da nur der admin getAllGesuche aufrufen darf logen wir uns kurz als admin ein und dann weider aus ...
+	 */
+	@Nonnull
+	private Collection<Gesuch> readGesucheAsAdmin() {
+
+		Collection<Gesuch> foundGesuche = Collections.emptyList();
+
+		LoginContext loginContext = null;
+		try {
+			loginContext = JBossLoginContextFactory.createLoginContext("admin", "admin");
+			loginContext.login();
+
+			foundGesuche = Subject.doAs(loginContext.getSubject(), new PrivilegedAction<Collection<Gesuch>>() {
+
+				@Override
+				public Collection<Gesuch> run() {
+					Collection<Gesuch> gesuche = gesuchService.getAllGesuche();
+					return gesuche;
+				}
+
+			});
+
+
+		} catch (LoginException e) {
+			LOG.error("Could not login as admin to read Gesuche");
+		} finally {
+			if (loginContext != null) {
+				try {
+					loginContext.logout();
+				} catch (LoginException e) {
+					LOG.error("could not logout");
+				}
+			}
+		}
+
+		return foundGesuche;
 	}
 
 }

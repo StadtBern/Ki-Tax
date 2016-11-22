@@ -17,7 +17,7 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class DailyBatchSchedulerTest extends AbstractEbeguTest {
+public class DailyBatchSchedulerTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private DailyBatch dailyBatch;

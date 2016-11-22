@@ -25,7 +25,7 @@ import java.util.List;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/applicationPropertyAudited.xml")
 @Transactional(TransactionMode.DISABLED)
-public class HistorizationServiceTest extends AbstractEbeguTest {
+public class HistorizationServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private HistorizationService historizationService;

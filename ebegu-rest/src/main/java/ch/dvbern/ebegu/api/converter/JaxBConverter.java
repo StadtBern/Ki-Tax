@@ -424,7 +424,7 @@ public class JaxBConverter {
 			jaxGesuchsteller.setFinanzielleSituationContainer(jaxFinanzielleSituationContainer);
 		}
 		// Erwerbspensen
-		final Collection<ErwerbspensumContainer> persistedPensen = erwerbspensumService.findErwerbspensenForGesuchsteller(persistedGesuchsteller);
+		final Collection<ErwerbspensumContainer> persistedPensen = persistedGesuchsteller.getErwerbspensenContainers();
 		final List<JaxErwerbspensumContainer> listOfPensen = persistedPensen.stream().map(this::erwerbspensumContainerToJAX).collect(Collectors.toList());
 		jaxGesuchsteller.setErwerbspensenContainers(listOfPensen);
 

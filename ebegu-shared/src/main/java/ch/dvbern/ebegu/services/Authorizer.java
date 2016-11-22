@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
@@ -11,14 +12,14 @@ import java.util.Collection;
  */
 public interface Authorizer {
 
-	void checkReadAuthorization(Gesuch gesuch);
+	void checkReadAuthorization(@Nullable  Gesuch gesuch);
 
 	void checkReadAuthorizationGesuchId(String gesuchId);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer das gesuch schreiben darf
 	 */
-	void checkWriteAuthorization(Gesuch gesuch);
+	void checkWriteAuthorization(@Nullable  Gesuch gesuch);
 
 	/**
 	 * prueft ob der aktuelle user berechtigt ist ein gesuch zu erstellen
@@ -38,7 +39,7 @@ public interface Authorizer {
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer den Fall mit id schreibend bearbeiten darf
 	 */
-	void checkWriteAuthorizationFall(@Nullable  String fallId);
+	void checkWriteAuthorizationFall(@Nonnull  String fallId);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer den fall lesen darf
@@ -86,10 +87,17 @@ public interface Authorizer {
 
 	void checkReadAuthorization(@Nullable FinanzielleSituationContainer finanzielleSituation);
 
-	void checkReadAuthorization(Collection<FinanzielleSituationContainer> finanzielleSituationen);
+	void checkReadAuthorization(@Nonnull Collection<FinanzielleSituationContainer> finanzielleSituationen);
 
 
-	void checkWriteAuthorization(FinanzielleSituationContainer finanzielleSituation);
+	void checkWriteAuthorization(@Nullable  FinanzielleSituationContainer finanzielleSituation);
 
-	void checkCreateAuthorizationFinSit(FinanzielleSituationContainer finanzielleSituation);
+	void checkCreateAuthorizationFinSit(@Nonnull FinanzielleSituationContainer finanzielleSituation);
+
+	void checkReadAuthorization(@Nullable ErwerbspensumContainer ewpCnt);
+
+	/**
+	 * extrahiert die {@link FinanzielleSituation} von beiden GS wenn vorhanden und  prueft ob der aktuelle Benutzer berechtigt ist
+	 */
+	void checkReadAuthorizationFinSit(@Nullable Gesuch gesuch);
 }

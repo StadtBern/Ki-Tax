@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.rest.test;
 
-import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.resource.PendenzResource;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -8,6 +7,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -28,7 +28,7 @@ import java.util.Set;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class PendenzResourceTest extends AbstractEbeguRestTest {
+public class PendenzResourceTest extends AbstractEbeguRestLoginTest {
 
 	@Inject
 	private PendenzResource pendenzResource;

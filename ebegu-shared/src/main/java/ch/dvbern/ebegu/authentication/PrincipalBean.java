@@ -55,7 +55,7 @@ public class PrincipalBean {
 
 	@Nonnull
 	public Benutzer getBenutzer() {
-		if (benutzer == null) {
+		if (benutzer == null || !benutzer.getUsername().equals(principal.getName())) {
 			loadNormalUser();
 		}
 		return benutzer;
@@ -63,7 +63,7 @@ public class PrincipalBean {
 
 	@Nullable
 	public Mandant getMandant() {
-		if (mandant == null) {
+		if (mandant == null || !getBenutzer().getUsername().equals(principal.getName())) {
 			mandant = getBenutzer().getMandant();
 		}
 		return mandant;

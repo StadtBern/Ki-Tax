@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -21,6 +22,7 @@ import java.util.Optional;
  */
 @Stateless
 @Local(MandantService.class)
+@PermitAll
 public class MandantServiceBean extends AbstractBaseService implements MandantService {
 
 	@Inject

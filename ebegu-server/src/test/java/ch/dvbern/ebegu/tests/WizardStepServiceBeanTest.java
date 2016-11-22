@@ -29,7 +29,7 @@ import java.util.List;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class WizardStepServiceBeanTest extends AbstractEbeguTest {
+public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
 
 	@Inject

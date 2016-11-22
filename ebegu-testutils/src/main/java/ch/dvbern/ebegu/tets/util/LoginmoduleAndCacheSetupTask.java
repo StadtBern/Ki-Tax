@@ -41,6 +41,7 @@ public class LoginmoduleAndCacheSetupTask implements ServerSetupTask {
 
 	private void addEbeguTestLoginModule(ManagementClient managementClient) {
 		ModelNode step1 = WildflyCLIUtil.createOpNode("subsystem=security/security-domain=ebegu-test/", "add");
+		step1.get("cache-type").set("default");
 		ModelNode step2 = WildflyCLIUtil.createOpNode("subsystem=security/security-domain=ebegu-test/authentication=classic", "add");
 		ModelNode step3 = WildflyCLIUtil.createOpNode("subsystem=security/security-domain=ebegu-test/authentication=classic/login-module=UsersRoles", "add");
 		step3.get("code").set("UsersRoles");

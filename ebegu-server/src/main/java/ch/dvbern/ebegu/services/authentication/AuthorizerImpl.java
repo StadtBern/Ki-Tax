@@ -11,12 +11,15 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.EJBAccessException;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Optional;
+
+import static ch.dvbern.ebegu.enums.UserRole.*;
 
 /**
  * Authorizer Implementation
@@ -27,8 +30,8 @@ public class AuthorizerImpl implements Authorizer {
 	private static final Logger LOG = LoggerFactory.getLogger(AuthorizerImpl.class);
 
 
-	private static final UserRole[] JA_OR_ADM = {UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SACHBEARBEITER_JA};
-	private static final UserRole[] ALL_EXCEPT_INST_TRAEG = {UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SACHBEARBEITER_JA, UserRole.REVISOR, UserRole.JURIST, UserRole.SCHULAMT, UserRole.STEUERAMT};
+	private static final UserRole[] JA_OR_ADM = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA};
+	private static final UserRole[] ALL_EXCEPT_INST_TRAEG = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, SCHULAMT, STEUERAMT};
 
 	@Inject
 	private PrincipalBean principalBean;
@@ -63,21 +66,21 @@ public class AuthorizerImpl implements Authorizer {
 
 	@Override
 	public void checkCreateAuthorizationGesuch() {
-		if (principalBean.isCallerInAnyOfRole(UserRole.GESUCHSTELLER, UserRole.SACHBEARBEITER_JA, UserRole.ADMIN, UserRole.SUPER_ADMIN)) {
+		if (principalBean.isCallerInAnyOfRole(GESUCHSTELLER, SACHBEARBEITER_JA, ADMIN, SUPER_ADMIN)) {
 			return;
 		}
 		throwCreateViolation();
 	}
 
 	@Override
-	public void checkCreateAuthorizationFinSit(FinanzielleSituationContainer finanzielleSituation) {
-		if (principalBean.isCallerInAnyOfRole(UserRole.ADMIN, UserRole.SUPER_ADMIN)) {
+	public void checkCreateAuthorizationFinSit(@Nonnull FinanzielleSituationContainer finanzielleSituation) {
+		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN)) {
 			return;
 		}
-		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER)) {
+		if (principalBean.isCallerInRole(GESUCHSTELLER)) {
 			//gesuchsteller darf nur welche machen wenn nicht mutation, ausserdem muss ihm das zugehoerige geusch gehoeren
 			boolean isMutation = finanzielleSituation.getVorgaengerId() != null;
-			String parentOwner = finanzielleSituation.getGesuchsteller().getUserErstellt() != null  ? finanzielleSituation.getGesuchsteller().getUserErstellt() : "";
+			String parentOwner = finanzielleSituation.getGesuchsteller().getUserErstellt() != null ? finanzielleSituation.getGesuchsteller().getUserErstellt() : "";
 			if (isMutation || !parentOwner.equals(principalBean.getPrincipal().getName())) {
 				throwCreateViolation();
 			}
@@ -94,7 +97,7 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	@Override
-	public void checkReadAuthorizationFall(Fall fall) {
+	public void checkReadAuthorizationFall(@Nullable Fall fall) {
 		boolean allowed = isReadAuthorizedFall(fall);
 
 		if (!allowed) {
@@ -110,46 +113,34 @@ public class AuthorizerImpl implements Authorizer {
 		}
 	}
 
-	private boolean isReadAuthorizedFall(Fall fall) {
-		validateMandantMatches(fall);
-		if (principalBean.isCallerInAnyOfRole(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SACHBEARBEITER_JA, UserRole.SACHBEARBEITER_TRAEGERSCHAFT, UserRole.SACHBEARBEITER_INSTITUTION)) {
+	private boolean isReadAuthorizedFall(@Nullable Fall fall) {
+		if (fall == null) {
 			return true;
 		}
 
-		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER.name())
+		validateMandantMatches(fall);
+		if (principalBean.isCallerInAnyOfRole(SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION)) {
+			return true;
+		}
+
+		//noinspection RedundantIfStatement
+		if (principalBean.isCallerInRole(GESUCHSTELLER.name())
 			&& (fall.getUserErstellt() != null && fall.getUserErstellt().equals(principalBean.getPrincipal().getName()))) {
 			return true;
 		}
 		return false;
 	}
 
-	/**
-	 * @deprecated
-	 * @param entity
-	 * @param principalName
-	 * @return
-	 */
-	@Deprecated
-	private boolean isSachbearbeiterJAOrGSOwner(AbstractEntity entity, String principalName) {
-		if (principalBean.isCallerInAnyOfRole(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SACHBEARBEITER_JA)) {
-			return true;
-		}
-
-		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER.name())
-			&& (entity.getUserErstellt() != null && entity.getUserErstellt().equals(principalName))) {
-			return true;
-		}
-		return false;
-	}
 
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
-	private void validateMandantMatches(HasMandant mandantEntity) {
-		Mandant mandant = mandantEntity.getMandant();
-		if (mandant == null) {
+	private void validateMandantMatches(@Nullable  HasMandant mandantEntity) {
+		//noinspection ConstantConditions
+		if (mandantEntity == null || mandantEntity.getMandant() == null) {
 			return;
 		}
+		Mandant mandant = mandantEntity.getMandant();
 		if (!mandant.equals(principalBean.getMandant())) {
-			if (!principalBean.isCallerInRole(UserRole.SUPER_ADMIN)) {
+			if (!principalBean.isCallerInRole(SUPER_ADMIN)) {
 				throwMandantViolation(mandantEntity); // super admin darf auch wenn er keinen mandant hat
 			}
 
@@ -168,7 +159,7 @@ public class AuthorizerImpl implements Authorizer {
 
 	@Override
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
-	public void checkWriteAuthorizationFall(String fallId) {
+	public void checkWriteAuthorizationFall(@Nonnull String fallId) {
 		Optional<Fall> fallOptional = fallService.findFall(fallId);
 		if (!fallOptional.isPresent()) {
 			return;
@@ -188,18 +179,21 @@ public class AuthorizerImpl implements Authorizer {
 	@Override
 	public void checkWriteAuthorization(Verfuegung verfuegung) {
 		//nur sachbearbeiter ja und admins duefen verfuegen
-		if (!principalBean.isCallerInAnyOfRole(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SACHBEARBEITER_JA)) {
+		if (!principalBean.isCallerInAnyOfRole(SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA)) {
 			throwViolation(verfuegung);
 		}
 	}
 
 	@Override
-	public void checkWriteAuthorization(FinanzielleSituationContainer finanzielleSituation) {
+	public void checkWriteAuthorization(@Nullable FinanzielleSituationContainer finanzielleSituation) {
+		if (finanzielleSituation == null) {
+			return;
+		}
 		String name = principalBean.getPrincipal().getName();
 		boolean writeAllowed = isWriteAuthorized(finanzielleSituation, name);
 		boolean isMutation = finanzielleSituation.getVorgaengerId() != null;
 
-		if (!writeAllowed || (isMutation && principalBean.isCallerInRole(UserRole.GESUCHSTELLER))) {
+		if (!writeAllowed || (isMutation && principalBean.isCallerInRole(GESUCHSTELLER))) {
 			throwViolation(finanzielleSituation);
 
 		}
@@ -249,20 +243,30 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	@Override
+	public void checkReadAuthorization(@Nullable ErwerbspensumContainer ewpCnt) {
+		if (ewpCnt != null) {
+			UserRole[] allowedRoles = {SACHBEARBEITER_JA, SUPER_ADMIN, ADMIN, REVISOR, JURIST};
+			boolean allowed = isInRoleOrGSOwner(allowedRoles, ewpCnt, principalBean.getPrincipal().getName());
+			if (!allowed) {
+				throwViolation(ewpCnt);
+			}
+		}
+	}
+
+	@Override
 	public void checkReadAuthorization(@Nullable FinanzielleSituationContainer finanzielleSituation) {
 		if (finanzielleSituation != null) {
-			isInRoleOrGSOwner(JA_OR_ADM, finanzielleSituation, principalBean.getPrincipal().getName());
 			// hier fuer alle lesbar ausser fuer institution/traegerschaft
 			String name = principalBean.getPrincipal().getName();
 			boolean allowed = isInRoleOrGSOwner(ALL_EXCEPT_INST_TRAEG, finanzielleSituation, name);
-			if(allowed){
+			if(!allowed){
 				throwViolation(finanzielleSituation);
 			}
 		}
 	}
 
 	@Override
-	public void checkReadAuthorization(Collection<FinanzielleSituationContainer> finanzielleSituationen) {
+	public void checkReadAuthorization(@Nonnull Collection<FinanzielleSituationContainer> finanzielleSituationen) {
 		finanzielleSituationen.forEach(this::checkReadAuthorization);
 	}
 
@@ -274,7 +278,7 @@ public class AuthorizerImpl implements Authorizer {
 			return true;
 		}
 
-		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER.name())
+		if (principalBean.isCallerInRole(GESUCHSTELLER.name())
 			&& (entity.getUserErstellt() != null && entity.getUserErstellt().equals(principalName))) {
 			return true;
 		}
@@ -287,21 +291,30 @@ public class AuthorizerImpl implements Authorizer {
 			return true;
 		}
 
-		if (principalBean.isCallerInRole(UserRole.SACHBEARBEITER_INSTITUTION)) {
+		if (principalBean.isCallerInRole(SACHBEARBEITER_INSTITUTION)) {
 			Institution institution = principalBean.getBenutzer().getInstitution();
 			Validate.notNull(institution, "Institution des Sachbearbeiters muss gesetzt sein " + principalBean.getBenutzer());
 			return betreuung.getInstitutionStammdaten().getInstitution().equals(institution);
 		}
-		if (principalBean.isCallerInRole(UserRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
+		if (principalBean.isCallerInRole(SACHBEARBEITER_TRAEGERSCHAFT)) {
 			Traegerschaft traegerschaft = principalBean.getBenutzer().getTraegerschaft();
 			Validate.notNull(traegerschaft, "Traegerschaft des des Sachbearbeiters muss gesetzt sein " + principalBean.getBenutzer());
 			Collection<Institution> institutions = institutionService.getAllInstitutionenFromTraegerschaft(traegerschaft.getId());
 			Institution instToMatch = betreuung.getInstitutionStammdaten().getInstitution();
 			return institutions.stream().anyMatch(instToMatch::equals);
 		}
-
 		return false;
 
+	}
+
+	@Override
+	public void checkReadAuthorizationFinSit(@Nullable Gesuch gesuch) {
+		if (gesuch != null) {
+			FinanzielleSituationContainer finSitGs1 = gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getFinanzielleSituationContainer() : null;
+			FinanzielleSituationContainer finSitGs2 = gesuch.getGesuchsteller2() != null ? gesuch.getGesuchsteller2().getFinanzielleSituationContainer() : null;
+			checkReadAuthorization(finSitGs1);
+			checkReadAuthorization(finSitGs2);
+		}
 
 	}
 
@@ -311,13 +324,13 @@ public class AuthorizerImpl implements Authorizer {
 			return true;
 		}
 
-		if (principalBean.isCallerInRole(UserRole.SACHBEARBEITER_INSTITUTION)) {
+		if (principalBean.isCallerInRole(SACHBEARBEITER_INSTITUTION)) {
 			Institution institution = principalBean.getBenutzer().getInstitution();
 			Validate.notNull(institution, "Institution des Sachbearbeiters muss gesetzt sein " + principalBean.getBenutzer());
 			return entity.hasBetreuungOfInstitution(institution); //@reviewer: oder besser ueber service ?
 		}
 
-		if (principalBean.isCallerInRole(UserRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
+		if (principalBean.isCallerInRole(SACHBEARBEITER_TRAEGERSCHAFT)) {
 			Traegerschaft traegerschaft = principalBean.getBenutzer().getTraegerschaft();
 			Validate.notNull(traegerschaft, "Traegerschaft des des Sachbearbeiters muss gesetzt sein " + principalBean.getBenutzer());
 			Collection<Institution> institutions = institutionService.getAllInstitutionenFromTraegerschaft(traegerschaft.getId());
@@ -347,6 +360,7 @@ public class AuthorizerImpl implements Authorizer {
 			"Access Violation"
 				+ " for Entity: " + abstractEntity.getClass().getSimpleName() + "(id=" + abstractEntity.getId() + "):"
 				+ " for current user: " + principalBean.getPrincipal()
+				+ " in role(s): " + principalBean.discoverRoles()
 		);
 	}
 

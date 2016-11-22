@@ -45,7 +45,7 @@ import static org.junit.Assert.assertTrue;
  * Integration tests demonstrating access to user roles.
  */
 @RunWith(Arquillian.class)
-public class ArquillianCallerInRoleDemoLoginTest extends AbstractEbeguTest{
+public class ArquillianCallerInRoleDemoLoginTest extends AbstractEbeguLoginTest {
 
     @Inject
     private ISessionContextService sessionContextService;
