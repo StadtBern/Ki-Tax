@@ -3,12 +3,14 @@ import TSInstitutionStammdaten from './TSInstitutionStammdaten';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 import TSBetreuungspensumContainer from './TSBetreuungspensumContainer';
 import TSVerfuegung from './TSVerfuegung';
+import TSAbwesenheitContainer from './TSAbwesenheitContainer';
 
 export default class TSBetreuung extends TSAbstractEntity {
 
     private _institutionStammdaten: TSInstitutionStammdaten;
     private _betreuungsstatus: TSBetreuungsstatus;
     private _betreuungspensumContainers: Array<TSBetreuungspensumContainer>;
+    private _abwesenheitContainers: Array<TSAbwesenheitContainer>;
     private _grundAblehnung: string;
     private _betreuungNummer: number;
     private _verfuegung: TSVerfuegung;
@@ -19,13 +21,14 @@ export default class TSBetreuung extends TSAbstractEntity {
 
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
-                betreuungspensumContainers?: Array<TSBetreuungspensumContainer>,
+                betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,
                 grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
         this._betreuungspensumContainers = betreuungspensumContainers ? betreuungspensumContainers : [];
+        this._abwesenheitContainers = abwesenheitContainers ? abwesenheitContainers : [];
         this._grundAblehnung = grundAblehnung;
         this._betreuungNummer = betreuungNummer;
         this._verfuegung = verfuegung;
@@ -57,6 +60,14 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     set betreuungspensumContainers(value: Array<TSBetreuungspensumContainer>) {
         this._betreuungspensumContainers = value;
+    }
+
+    get abwesenheitContainers(): Array<TSAbwesenheitContainer> {
+        return this._abwesenheitContainers;
+    }
+
+    set abwesenheitContainers(value: Array<TSAbwesenheitContainer>) {
+        this._abwesenheitContainers = value;
     }
 
     get grundAblehnung(): string {

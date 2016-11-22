@@ -1319,7 +1319,9 @@ public class JaxBConverter {
 				.filter(existingAbwesenheitEntity -> existingAbwesenheitEntity.getId().equals(jaxAbwesenheitContainer.getId()))
 				.reduce(StreamsUtil.toOnlyElement())
 				.orElse(new AbwesenheitContainer());
+			final String oldID = containerToMergeWith.getId();
 			final AbwesenheitContainer contToAdd = abwesenheitContainerToEntity(jaxAbwesenheitContainer, containerToMergeWith);
+			contToAdd.setId(oldID);
 			final boolean added = transformedAbwesenheitContainers.add(contToAdd);
 			if (!added) {
 				LOGGER.warn("dropped duplicate container " + contToAdd);
@@ -1368,14 +1370,22 @@ public class JaxBConverter {
 			if (abwesenheitContainer.getAbwesenheitGS() != null) {
 				abwesenheitGS = abwesenheitContainer.getAbwesenheitGS();
 			}
-			abwesenheitContainer.setAbwesenheitGS(abwesenheitToEntity(jaxAbwesenheitContainers.getAbwensenheitGS(), abwesenheitGS));
+			// Das Setzen vom alten ID ist noetigt im Fall wenn das Betreuungsangebot fuer eine existierende Abwesenheit geaendert wird, da sonst doppelte Verknuepfungen gemacht werden
+			final String oldID = abwesenheitGS.getId();
+			final Abwesenheit convertedAbwesenheitGS = abwesenheitToEntity(jaxAbwesenheitContainers.getAbwensenheitGS(), abwesenheitGS);
+			convertedAbwesenheitGS.setId(oldID);
+			abwesenheitContainer.setAbwesenheitGS(convertedAbwesenheitGS);
 		}
 		if (jaxAbwesenheitContainers.getAbwesenheitJA() != null) {
 			Abwesenheit abwesenheitJA = new Abwesenheit();
 			if (abwesenheitContainer.getAbwesenheitJA() != null) {
 				abwesenheitJA = abwesenheitContainer.getAbwesenheitJA();
 			}
-			abwesenheitContainer.setAbwesenheitJA(abwesenheitToEntity(jaxAbwesenheitContainers.getAbwesenheitJA(), abwesenheitJA));
+			//siehe Kommentar oben bei abwesenheitGS
+			final String oldID = abwesenheitJA.getId();
+			final Abwesenheit convertedAbwesenheitJA = abwesenheitToEntity(jaxAbwesenheitContainers.getAbwesenheitJA(), abwesenheitJA);
+			convertedAbwesenheitJA.setId(oldID);
+			abwesenheitContainer.setAbwesenheitJA(convertedAbwesenheitJA);
 		}
 		return abwesenheitContainer;
 	}
@@ -1560,6 +1570,7 @@ public class JaxBConverter {
 		if (abwesenheit != null) {
 			final JaxAbwesenheit jaxAbwesenheit = new JaxAbwesenheit();
 			convertAbstractDateRangedFieldsToJAX(abwesenheit, jaxAbwesenheit);
+			return jaxAbwesenheit;
 		}
 		return null;
 	}
@@ -1568,7 +1579,7 @@ public class JaxBConverter {
 		if (abwesenheitContainer != null) {
 			final JaxAbwesenheitContainer jaxAbwesenheitContainer = new JaxAbwesenheitContainer();
 			convertAbstractFieldsToJAX(abwesenheitContainer, jaxAbwesenheitContainer);
-			if (abwesenheitContainer.getAbwesenheitJA() != null) {
+			if (abwesenheitContainer.getAbwesenheitGS() != null) {
 				jaxAbwesenheitContainer.setAbwensenheitGS(abwesenheitToJax(abwesenheitContainer.getAbwesenheitGS()));
 			}
 			if (abwesenheitContainer.getAbwesenheitJA() != null) {

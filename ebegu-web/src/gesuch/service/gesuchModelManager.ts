@@ -49,6 +49,7 @@ import TSExceptionReport from '../../models/TSExceptionReport';
 import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
+import IQService = angular.IQService;
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -65,7 +66,7 @@ export default class GesuchModelManager {
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
         'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS',
-        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS'];
+        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS', '$q'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -74,7 +75,7 @@ export default class GesuchModelManager {
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService,
-                private adresseRS: AdresseRS) {
+                private adresseRS: AdresseRS, private $q: IQService) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -100,7 +101,15 @@ export default class GesuchModelManager {
      * Mit den Daten vom Gesuch, werden die entsprechenden Steps der Liste hiddenSteps hinzugefuegt.
      * Oder ggf. aus der Liste entfernt
      */
-    private setHiddenSteps() {
+    private setHiddenSteps(): void {
+        //Abwesenheit
+        if (!this.gesuch.isMutation()) {
+            this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
+        } else {
+            this.wizardStepManager.unhideStep(TSWizardStepName.ABWESENHEIT);
+        }
+
+        //Umzug
         if (!this.gesuch.isMutation() && !this.getGesuch().isThereAnyUmzug()) {
             this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
         } else {
@@ -695,8 +704,8 @@ export default class GesuchModelManager {
         }
     }
 
-    public updateBetreuung(): IPromise<TSBetreuung> {
-        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
+    public updateBetreuung(abwesenheit: boolean): IPromise<TSBetreuung> {
+        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
             .then((betreuungResponse: any) => {
                 this.getKindFromServer();
                 this.backupCurrentGesuch();
@@ -1172,4 +1181,39 @@ export default class GesuchModelManager {
             });
     }
 
+    /**
+     * Aktualisiert alle gegebenen Betreuungen.
+     * ACHTUNG. Die Betreuungen muessen existieren damit alles richtig funktioniert
+     */
+    public updateBetreuungen(betreuungenToUpdate: Array<TSBetreuung>, saveForAbwesenheit: boolean): IPromise<Array<TSBetreuung>> {
+        if (betreuungenToUpdate && betreuungenToUpdate.length > 0) {
+            return this.betreuungRS.saveBetreuungen(betreuungenToUpdate, this.gesuch.id, saveForAbwesenheit).then((updatedBetreuungen: Array<TSBetreuung>) => {
+                //update data of Betreuungen
+                this.gesuch.kindContainers.forEach((kindContainer: TSKindContainer) => {
+                    for (let i = 0; i < kindContainer.betreuungen.length; i++) {
+                        let indexOfUpdatedBetreuung = this.wasBetreuungUpdated(kindContainer.betreuungen[i], updatedBetreuungen);
+                        if (indexOfUpdatedBetreuung >= 0) {
+                            kindContainer.betreuungen[i] = updatedBetreuungen[indexOfUpdatedBetreuung];
+                        }
+                    }
+                });
+                return updatedBetreuungen;
+            });
+        } else {
+            let defer = this.$q.defer();
+            defer.resolve();
+            return defer.promise;
+        }
+    }
+
+    private wasBetreuungUpdated(betreuung: TSBetreuung, updatedBetreuungen: Array<TSBetreuung>): number {
+        if (betreuung && updatedBetreuungen) {
+            for (let i = 0; i < updatedBetreuungen.length; i++) {
+                if (updatedBetreuungen[i].id === betreuung.id) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
 }
