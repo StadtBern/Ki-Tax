@@ -33,6 +33,10 @@ export class TSRoleUtil {
         return [TSRole.ADMIN, TSRole.SACHBEARBEITER_JA];
     }
 
+    public static getAllButAdministratorJugendamtRole(): Array<TSRole> {
+        return [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, TSRole.GESUCHSTELLER, TSRole.JURIST, TSRole.REVISOR, TSRole.STEUERAMT, TSRole.SCHULAMT];
+    }
+
     public static getAllRolesButTraegerschaftInstitution(): Array<string> {
         return TSRoleUtil.getAllRoles().filter(element =>
             element !== TSRole[TSRole.SACHBEARBEITER_INSTITUTION] && element !== TSRole[TSRole.SACHBEARBEITER_TRAEGERSCHAFT]

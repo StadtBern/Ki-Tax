@@ -39,4 +39,18 @@ public class BenutzerResource {
 			.map(benutzer -> converter.benutzerToAuthLoginElement(benutzer))
 			.collect(Collectors.toList());
 	}
+
+	/**
+	 * nur Benutzer Sachbearbeiter_JA oder Admin
+	 */
+	@Nonnull
+	@GET
+	@Path("/JAorAdmin")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxAuthLoginElement> getBenutzerJAorAdmin() {
+		return benutzerService.getBenutzerJAorAdmin().stream()
+			.map(benutzer -> converter.benutzerToAuthLoginElement(benutzer))
+			.collect(Collectors.toList());
+	}
 }
