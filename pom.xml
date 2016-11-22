@@ -489,7 +489,7 @@
         </profile>
 
         <profile>
-            <id>wildfy10-embedded</id>
+            <id>wildfly10-embedded</id>
 
             <properties>
                 <!--embedded wird ans gleiche ort enpackt wie managed-->
