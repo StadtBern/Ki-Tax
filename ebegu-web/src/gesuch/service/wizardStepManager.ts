@@ -9,6 +9,7 @@ import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 
 export default class WizardStepManager {
 
@@ -243,7 +244,7 @@ export default class WizardStepManager {
     public isStepClickableForCurrentRole(step: TSWizardStep, gesuch: TSGesuch) {
         if (step.wizardStepName === TSWizardStepName.VERFUEGEN) {
             //verfuegen step fuer alle ausser admin und sachbearbeiter nur verfuegbar wenn status verfuegt
-            if (!this.authServiceRS.isOneOfRoles(TSRole.ADMIN, TSRole.SACHBEARBEITER_JA)
+            if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole()) 
                 && gesuch.status !== TSAntragStatus.VERFUEGT) {
                 return false;    //disabled
             }

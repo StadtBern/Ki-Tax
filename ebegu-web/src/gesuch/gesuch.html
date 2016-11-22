@@ -4,7 +4,7 @@
 </gesuch-toolbar>
 
 <gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller" gesuchid="{{vm.getGesuchId()}}"
-                              dv-show-element dv-show-allowed-roles="['GESUCHSTELLER']">
+                              dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerRoles()">
 </gesuch-toolbar-gesuchsteller>
 
 <div layout="row" flex="auto" class="overflow-auto">
@@ -172,7 +172,7 @@
     </div>
     <div id="kommentarContainer"
          dv-show-element
-         dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.STEUERAMT ,vm.TSRole.SCHULAMT]" layout="column"
+         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesForKommentarSpalte()" layout="column"
          layout-align="stretch center">
         <div ui-view="kommentarViewPort" flex="100"></div>
     </div>

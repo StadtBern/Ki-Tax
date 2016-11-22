@@ -140,7 +140,7 @@
                 </div>
 
                 <!--bemerkungen-->
-                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]"
+                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
                      dv-show-expression="vm.showVerfuegungsDetails()">
                     <div class="col-md-12">
                         <label class="md-no-float" class="inlineHint" for="manuelle_notes"

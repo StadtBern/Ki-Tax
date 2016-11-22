@@ -68,7 +68,7 @@ export class FaelleListViewController {
      */
     public editFall(antrag: TSAntragDTO): void {
         if (antrag) {
-            if (this.authServiceRS.isOneOfRoles(TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
+            if (this.authServiceRS.isOneOfRolesA(TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
                 if (antrag.status === TSAntragStatus.VERFUEGT) {
                     this.openGesuch(antrag.antragId, 'gesuch.verfuegen');
                 } else {
