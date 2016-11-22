@@ -33,32 +33,6 @@
                 </configuration>
             </plugin>
 
-            <!--openam hat noch ein paar libs die wir nur als jar haben (13.5.0 ist nicht im repo), dise sind im webinf lib, fuer testing kopieren-->
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <!--im parent ist noch eine execution definiert welche das standalone.xml kopoiert-->
-                    <execution>
-                        <id>copy-openam-resources-for-test</id>
-                        <!-- here the phase you need -->
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/openam-resources</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/src/main/webapp/WEB-INF/lib</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 
@@ -193,6 +167,12 @@
             <groupId>org.forgerock.commons</groupId>
             <artifactId>forgerock-guice-core</artifactId>
             <version>1.1.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>testng</artifactId>
+                    <groupId>org.testng</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -507,7 +487,7 @@
 
     <profiles>
         <profile>
-            <id>wildfy10-embedded</id>
+            <id>wildfly10-embedded</id>
             <build>
                 <plugins>
                     <plugin>
