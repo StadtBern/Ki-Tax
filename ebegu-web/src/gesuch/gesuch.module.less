@@ -8,6 +8,28 @@
     background: @contrast-light;
     overflow-y: scroll;
     flex: 1 1 auto;
+    .nav-row {
+        position: absolute !important;
+        bottom: 4rem;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0 -2rem 0;
+        .col-xs-12 {
+            padding: 0 2rem 0;
+        }
+    }
+    & > div {
+        height: 100%;
+        & > * {
+            height: 100%;
+            .gesuchModul {
+                min-height: 100%;
+                & div {
+
+                }
+            }
+        }
+    }
 }
 
 #kommentarContainer {
@@ -27,7 +49,12 @@
 }
 
 .gesuchModul {
-    padding: 5rem 2.5rem 2.5rem 5rem;
+    padding: 5rem 2.5rem 10rem 5rem;
+    position: relative;
+
+    & div {
+        position: static;
+    }
 }
 
 .betreuung-status {

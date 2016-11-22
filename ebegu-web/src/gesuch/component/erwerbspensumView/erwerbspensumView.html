@@ -1,9 +1,10 @@
 <div class="erwerbspensumView gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle" ng-bind="vm.gesuchsteller.getFullName()"></h1>
+            <h1 ng-bind="vm.gesuchsteller.getFullName()"></h1>
             <hr class="header"/>
             <p data-translate="INFOTEXT_ERWERBSPENSUM"></p>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
         </div>
     </div>
     <div class="row">
@@ -11,9 +12,6 @@
             <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
                   unsaved-warning-form ng-if="vm.erwerbspensum">
                 <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
-
-                    <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
-                    <br/>
 
                     <!--Bezeichnung-->
                     <div class="row">
@@ -24,6 +22,7 @@
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.bezeichnung"
                                        dv-max-length class="form-control" ng-required="false"
                                        ng-disabled="vm.erwerbspensumDisabled()">
+                                <dv-error-messages for="form.bezeichnung.$error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -32,9 +31,11 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small">
                             <div class="form-group">
-                                <label class="md-no-float" data-translate="TAETIGKEIT_WAEHLEN" for="taetigkeit">
+                                <label class="md-no-float" for="taetigkeit">
+                                    <span data-translate="TAETIGKEIT_WAEHLEN"></span>
+                                    <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
-                                <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
+
                                 <select name="taetigkeit" id="taetigkeit"
                                         ng-model="vm.erwerbspensum.erwerbspensumJA.taetigkeit"
                                         class="form-control"
