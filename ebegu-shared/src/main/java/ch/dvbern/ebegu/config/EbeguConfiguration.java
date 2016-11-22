@@ -35,4 +35,9 @@ public interface EbeguConfiguration {
 	 */
 	boolean isClientUsingHTTPS();
 
+	String getOpenIdmURL();
+
+	String getOpenIdmUser();
+
+	String getOpenIdmPassword();
 }
