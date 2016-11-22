@@ -76,6 +76,7 @@ export default class WizardStepManager {
         this.allowedSteps.push(TSWizardStepName.GESUCHSTELLER);
         this.allowedSteps.push(TSWizardStepName.UMZUG);
         this.allowedSteps.push(TSWizardStepName.BETREUUNG);
+        this.allowedSteps.push(TSWizardStepName.ABWESENHEIT);
         this.allowedSteps.push(TSWizardStepName.VERFUEGEN);
     }
 
@@ -270,6 +271,7 @@ export default class WizardStepManager {
                 }
 
             } else if (this.wizardSteps[i].wizardStepName !== TSWizardStepName.VERFUEGEN
+                && this.wizardSteps[i].wizardStepName !== TSWizardStepName.ABWESENHEIT
                 && this.wizardSteps[i].wizardStepName !== TSWizardStepName.UMZUG
                 && !this.isStatusOk(this.wizardSteps[i].wizardStepStatus)) {
                 return false;

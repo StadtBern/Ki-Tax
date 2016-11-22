@@ -72,7 +72,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		final Gesuch myGesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(myGesuch);
 		Assert.assertNotNull(wizardStepList);
-		Assert.assertEquals(11, wizardStepList.size());
+		Assert.assertEquals(12, wizardStepList.size());
 
 		wizardStepList.forEach(wizardStep -> {
 			if (WizardStepName.GESUCH_ERSTELLEN.equals(wizardStep.getWizardStepName())) {

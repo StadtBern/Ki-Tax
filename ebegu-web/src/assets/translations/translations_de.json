@@ -385,6 +385,7 @@
     "KIND_LOESCHEN": "Wollen Sie das Kind {{kindname}} wirklich löschen?",
     "KIND_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
     "UMZUG_LOESCHEN": "Wollen Sie die Umzugsadresse wirklich löschen?",
+    "ABWESENHEIT_LOESCHEN": "Wollen Sie die Abwesenheit wirklich löschen?",
     "FAM_ERGAENZENDE_BETREUUNG": "Haben oder möchten Sie familienergänzende Betreuung für das Kind?",
     "MUTTERSPRACHE_DEUTSCH": "Ist die Muttersprache des Kindes deutsch?",
     "EINSCHULUNG": "Wird das Kind per {{date}} eingeschult? (auch Kindergarten)",
@@ -770,5 +771,8 @@
     "BEIDE_GESUCHSTELLER": "beide Gesuchsteller",
     "UMZUG_ENTFERNEN": "Umzug löschen",
     "UMZUG_HINZUFUEGEN": "Umzug hinzufügen",
-    "UMZUG_HINT": "Umzüge, die in der Zukunft liegen, können bereits zum jetzigen Punkt angegeben werden"
+    "UMZUG_HINT": "Umzüge, die in der Zukunft liegen, können bereits zum jetzigen Punkt angegeben werden",
+    "ABWESENHEIT": "Abwesenheit",
+    "ABWESENHEIT_ENTFERNEN": "Abwesenheit löschen",
+    "ABWESENHEIT_ERFASSEN": "Abwesenheit erfassen"
 }
