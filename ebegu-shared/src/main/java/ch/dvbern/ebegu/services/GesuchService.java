@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Mutationsdaten;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
