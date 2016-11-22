@@ -41,11 +41,8 @@ public class EbeguConstraintValidationExceptionMapper extends AbstractEbeguExcep
 		if (rootCause instanceof EJBAccessException) {
 			return RestUtil.sendErrorNotAuthorized();    // nackte 403 status antwort
 		}
-
-
 		// wir bauen hier auch eine eigene response fuer EJBTransactionRolledbackException die wir nicht erwarten
 		return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
 	}
-
 }
 

@@ -35,7 +35,6 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	private WizardStepService wizardStepService;
 	@Inject
 	private InstitutionService institutionService;
-
 	@Inject
 	private Authorizer authorizer;
 
