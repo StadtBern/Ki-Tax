@@ -63,7 +63,7 @@
                         </div>
                     </div>
                     <!--Institutionen-->
-                    <div class="row">
+                    <div class="row" ng-if="vm.isEnabled()">
                         <div class="col-sm-12 dv-input-container-small form-group">
                             <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                             </label>
@@ -74,6 +74,19 @@
                                     ng-disabled="!vm.isEnabled()">
                             </select>
                             <dv-error-messages for="form.institution.$error"
+                                               class="error"></dv-error-messages>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="!vm.isEnabled()">
+                        <div class="col-sm-12 dv-input-container-small form-group">
+                            <label class="md-no-float" data-translate="INSTITUTION" for="institution">
+                            </label>
+                            <input name="institution" id="institutioninput" ng-model="vm.getInstitutionSD().institution.name"
+                                    class="form-control"
+                                    ng-required="true"
+                                    ng-disabled="!vm.isEnabled()">
+                            </input>
+                            <dv-error-messages for="form.institutioninput.$error"
                                                class="error"></dv-error-messages>
                         </div>
                     </div>
