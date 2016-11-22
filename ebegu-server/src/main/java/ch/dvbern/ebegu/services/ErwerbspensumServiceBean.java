@@ -106,6 +106,5 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 			)
 		);
 		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.ERWERBSPENSUM);
-
 	}
 }

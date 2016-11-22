@@ -57,9 +57,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 		if(gesuchId != null) {
 			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.FINANZIELLE_SITUATION);
 		}
-
 		return finanzielleSituationPersisted;
-
 	}
 
 	@Nonnull
