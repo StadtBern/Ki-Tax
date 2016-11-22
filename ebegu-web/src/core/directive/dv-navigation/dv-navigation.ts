@@ -317,6 +317,11 @@ export class NavigatorController {
                 gesuchId: gesuchId
             });
 
+        } else if (stepName === TSWizardStepName.ABWESENHEIT) {
+            this.state.go('gesuch.abwesenheit', {
+                gesuchId: gesuchId
+            });
+
         } else if (stepName === TSWizardStepName.ERWERBSPENSUM) {
             this.state.go('gesuch.erwerbsPensen', {
                 gesuchId: gesuchId

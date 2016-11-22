@@ -162,16 +162,13 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Validate.notNull(fallNummer);
 		Validate.notNull(aenderungPer);
 
-
-		Mutationsdaten md = getMutationsdaten();
-
 		Familiensituation newFamsit = new Familiensituation();
 		newFamsit.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		newFamsit.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		newFamsit.setGemeinsameSteuererklaerung(true);
 		newFamsit.setAenderungPer(aenderungPer);
 
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, md, eingangsdatum);
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituation(), newFamsit);
@@ -194,15 +191,12 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Validate.notNull(fallNummer);
 		Validate.notNull(aenderungPer);
 
-
-		Mutationsdaten md = getMutationsdaten();
-
 		Familiensituation newFamsit = new Familiensituation();
 		newFamsit.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		newFamsit.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		newFamsit.setAenderungPer(aenderungPer);
 
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, md, eingangsdatum);
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituation(), newFamsit);
@@ -213,19 +207,6 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		return gesuchOptional.orElse(null);
 	}
-
-	private Mutationsdaten getMutationsdaten() {
-		Mutationsdaten md = new Mutationsdaten();
-		md.setMutationFamiliensituation(true);
-		md.setMutationErwerbspensum(true);
-		md.setMutationBetreuung(true);
-		md.setMutationEinkommensverschlechterung(true);
-		md.setMutationFinanzielleSituation(true);
-		md.setMutationGesuchsteller(true);
-		md.setMutationKind(true);
-		return md;
-	}
-
 
 	private Gesuchsperiode getGesuchsperiode() {
 		Collection<Gesuchsperiode> allActiveGesuchsperioden = gesuchsperiodeService.getAllActiveGesuchsperioden();
@@ -377,7 +358,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	private void saveBetreuungen(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
 		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.BETREUUNG, WizardStepStatus.IN_BEARBEITUNG);
 		gesuch.getKindContainers().forEach(kindContainer
-			-> kindContainer.getBetreuungen().forEach(betreuung -> betreuungService.saveBetreuung(betreuung)));
+			-> kindContainer.getBetreuungen().forEach(betreuung -> betreuungService.saveBetreuung(betreuung, false)));
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.BETREUUNG);
 	}
 

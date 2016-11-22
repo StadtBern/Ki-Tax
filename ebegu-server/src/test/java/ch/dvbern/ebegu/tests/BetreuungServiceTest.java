@@ -46,7 +46,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		Betreuung betreuung = betreuungOpt.get();
 		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), betreuung.getBetreuungsstatus());
 
-		betreuungService.saveBetreuung(betreuung);
+		betreuungService.saveBetreuung(betreuung, false);
 		Optional<Betreuung> updatedBetreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertTrue(updatedBetreuung.isPresent());
 
@@ -86,7 +86,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 		betreuung.getKind().setGesuch(gesuch);
 		persistence.persist(betreuung.getKind());
 
-		betreuungService.saveBetreuung(betreuung);
+		betreuungService.saveBetreuung(betreuung, false);
 
 		return betreuung;
 

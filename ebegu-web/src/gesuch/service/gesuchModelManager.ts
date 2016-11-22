@@ -43,13 +43,13 @@ import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import TSMutationsdaten from '../../models/TSMutationsdaten';
 import EbeguUtil from '../../utils/EbeguUtil';
 import ErrorService from '../../core/errors/service/ErrorService';
 import TSExceptionReport from '../../models/TSExceptionReport';
 import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
+import IQService = angular.IQService;
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -66,7 +66,7 @@ export default class GesuchModelManager {
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
         'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS',
-        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS'];
+        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS', '$q'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -75,7 +75,7 @@ export default class GesuchModelManager {
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService,
-                private adresseRS: AdresseRS) {
+                private adresseRS: AdresseRS, private $q: IQService) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -101,7 +101,15 @@ export default class GesuchModelManager {
      * Mit den Daten vom Gesuch, werden die entsprechenden Steps der Liste hiddenSteps hinzugefuegt.
      * Oder ggf. aus der Liste entfernt
      */
-    private setHiddenSteps() {
+    private setHiddenSteps(): void {
+        //Abwesenheit
+        if (!this.gesuch.isMutation()) {
+            this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
+        } else {
+            this.wizardStepManager.unhideStep(TSWizardStepName.ABWESENHEIT);
+        }
+
+        //Umzug
         if (!this.gesuch.isMutation() && !this.getGesuch().isThereAnyUmzug()) {
             this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
         } else {
@@ -145,6 +153,13 @@ export default class GesuchModelManager {
     public getFamiliensituation(): TSFamiliensituation {
         if (this.gesuch) {
             return this.gesuch.familiensituation;
+        }
+        return undefined;
+    }
+
+    public getFamiliensituationErstgesuch(): TSFamiliensituation {
+        if (this.gesuch) {
+            return this.gesuch.familiensituationErstgesuch;
         }
         return undefined;
     }
@@ -520,9 +535,8 @@ export default class GesuchModelManager {
 
     /**
      * Diese Methode erstellt eine Fake-Mutation als gesuch fuer das GesuchModelManager. Die Mutation ist noch leer und hat
-     * das ID des Gesuchs aus dem sie erstellt wurde. Damit laden wir die erste Seite auf, in der der Benutzer die Mutationsdaten
-     * eingeben darf. Wenn der Benutzer auf speichern klickt, wird der Service "antragMutieren" mit dem ID des alten Gesuchs
-     * und die neue Mutationsdaten aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
+     * das ID des Gesuchs aus dem sie erstellt wurde. Wenn der Benutzer auf speichern klickt, wird der Service "antragMutieren"
+     * mit dem ID des alten Gesuchs aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
      * Daten ueberschreiben
      * @param gesuchID
      */
@@ -530,7 +544,6 @@ export default class GesuchModelManager {
         let gesuchsperiode: TSGesuchsperiode = this.gesuch.gesuchsperiode;
         this.initAntrag(TSAntragTyp.MUTATION);
         this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
-        this.gesuch.mutationsdaten = new TSMutationsdaten();
         this.gesuch.gesuchsperiode = gesuchsperiode;
     }
 
@@ -691,8 +704,8 @@ export default class GesuchModelManager {
         }
     }
 
-    public updateBetreuung(): IPromise<TSBetreuung> {
-        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
+    public updateBetreuung(abwesenheit: boolean): IPromise<TSBetreuung> {
+        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
             .then((betreuungResponse: any) => {
                 this.getKindFromServer();
                 this.backupCurrentGesuch();
@@ -979,7 +992,7 @@ export default class GesuchModelManager {
                             let msg = 'ACHTUNG unvorhergesehener Zustand. Anzahl Betreuungen eines Kindes stimmt nicht' +
                                 ' mit der berechneten Anzahl Betreuungen ueberein; erwartet: ' +
                                 this.gesuch.kindContainers[i].betreuungen.length + ' erhalten: ' + kinderWithVerfuegungen[j].betreuungen.length;
-                            this.log.error(msg, this.gesuch.kindContainers[i],  kinderWithVerfuegungen[j]);
+                            this.log.error(msg, this.gesuch.kindContainers[i], kinderWithVerfuegungen[j]);
                             this.errorService.addMesageAsError(msg);
                         }
                         this.gesuch.kindContainers[i].betreuungen[k] = kinderWithVerfuegungen[j].betreuungen[k];
@@ -1120,7 +1133,7 @@ export default class GesuchModelManager {
      * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT
      * @returns {boolean}
      */
-    public isGesuchStatusVerfuegenVerfuegt() {
+    public isGesuchStatusVerfuegenVerfuegt(): boolean {
         return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT);
     }
 
@@ -1158,7 +1171,7 @@ export default class GesuchModelManager {
     }
 
     public saveMutation(): IPromise<TSGesuch> {
-        return this.gesuchRS.antragMutieren(this.gesuch.id, this.gesuch.mutationsdaten, this.gesuch.eingangsdatum)
+        return this.gesuchRS.antragMutieren(this.gesuch.id, this.gesuch.eingangsdatum)
             .then((response: TSGesuch) => {
                 this.setGesuch(response);
                 return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {
@@ -1168,4 +1181,39 @@ export default class GesuchModelManager {
             });
     }
 
+    /**
+     * Aktualisiert alle gegebenen Betreuungen.
+     * ACHTUNG. Die Betreuungen muessen existieren damit alles richtig funktioniert
+     */
+    public updateBetreuungen(betreuungenToUpdate: Array<TSBetreuung>, saveForAbwesenheit: boolean): IPromise<Array<TSBetreuung>> {
+        if (betreuungenToUpdate && betreuungenToUpdate.length > 0) {
+            return this.betreuungRS.saveBetreuungen(betreuungenToUpdate, this.gesuch.id, saveForAbwesenheit).then((updatedBetreuungen: Array<TSBetreuung>) => {
+                //update data of Betreuungen
+                this.gesuch.kindContainers.forEach((kindContainer: TSKindContainer) => {
+                    for (let i = 0; i < kindContainer.betreuungen.length; i++) {
+                        let indexOfUpdatedBetreuung = this.wasBetreuungUpdated(kindContainer.betreuungen[i], updatedBetreuungen);
+                        if (indexOfUpdatedBetreuung >= 0) {
+                            kindContainer.betreuungen[i] = updatedBetreuungen[indexOfUpdatedBetreuung];
+                        }
+                    }
+                });
+                return updatedBetreuungen;
+            });
+        } else {
+            let defer = this.$q.defer();
+            defer.resolve();
+            return defer.promise;
+        }
+    }
+
+    private wasBetreuungUpdated(betreuung: TSBetreuung, updatedBetreuungen: Array<TSBetreuung>): number {
+        if (betreuung && updatedBetreuungen) {
+            for (let i = 0; i < updatedBetreuungen.length; i++) {
+                if (updatedBetreuungen[i].id === betreuung.id) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
 }

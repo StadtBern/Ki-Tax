@@ -36,7 +36,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	private List<JaxBetreuungspensumContainer> betreuungspensumContainers = new ArrayList<>();
 
 	@NotNull
-	private List<JaxAbwesenheitContainer> abwesenheiten = new ArrayList<>();
+	private List<JaxAbwesenheitContainer> abwesenheitContainers = new ArrayList<>();
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -88,11 +88,11 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	}
 
 	public List<JaxAbwesenheitContainer> getAbwesenheitContainers() {
-		return abwesenheiten;
+		return abwesenheitContainers;
 	}
 
 	public void setAbwesenheitContainers(List<JaxAbwesenheitContainer> abwesenheiten) {
-		this.abwesenheiten = abwesenheiten;
+		this.abwesenheitContainers = abwesenheiten;
 	}
 
 	@Nullable

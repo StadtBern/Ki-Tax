@@ -45,13 +45,17 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Override
 	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
-	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung) {
+	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit) {
 		Objects.requireNonNull(betreuung);
 
 		final Betreuung mergedBetreuung = persistence.merge(betreuung);
 
 		//jetzt noch wizard step updaten
-		wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
+		if (isAbwesenheit) {
+			wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.ABWESENHEIT);
+		} else {
+			wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
+		}
 
 		return mergedBetreuung;
 	}
@@ -178,7 +182,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	private Betreuung closeBetreuung(@Nonnull Betreuung betreuung, @Nonnull Betreuungsstatus status) {
 		betreuung.setBetreuungsstatus(status);
-		final Betreuung persistedBetreuung = saveBetreuung(betreuung);
+		final Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		authorizer.checkWriteAuthorization(persistedBetreuung);
 		wizardStepService.updateSteps(persistedBetreuung.extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedBetreuung;

@@ -85,16 +85,16 @@ public interface GesuchService {
 
 	/**
 	 * Erstellt eine neue Mutation fuer die Gesuchsperiode und Fall des uebergebenen Antrags. Es wird immer der letzt
-	 * verfuegte Antrag kopiert fuer die Mutation. Die Uebergebenen Mutationsdaten werden angehaengt
-     */
+	 * verfuegte Antrag kopiert fuer die Mutation.
+	 */
 	@Nonnull
-	Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nonnull Mutationsdaten mutationsdaten, LocalDate eingangsdatum);
+	Optional<Gesuch> antragMutieren(@Nonnull String antragId, LocalDate eingangsdatum);
 
 	/**
 	 * hilfsmethode zur mutation von faellen ueber das gui. Wird fuer testzwecke benoetigt
 	 */
 	@Nonnull
-	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull Mutationsdaten mutationsdaten,
+	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
 									@Nonnull LocalDate eingangsdatum);
 
 	/**
@@ -113,6 +113,7 @@ public interface GesuchService {
 
 	/**
 	 * fuellt die laufnummern der Gesuche/Mutationen eines Falls auf (nach timestamperstellt)
+	 *
 	 * @param fallId
 	 */
 	void updateLaufnummerOfAllGesucheOfFall(String fallId);

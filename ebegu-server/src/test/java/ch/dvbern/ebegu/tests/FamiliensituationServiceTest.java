@@ -82,7 +82,6 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuch.setTyp(AntragTyp.MUTATION);
 
-		gesuch.setMutationsdaten(new Mutationsdaten());
 
 		final EinkommensverschlechterungInfo evInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfo(gesuch);
 		final Optional<EinkommensverschlechterungInfo> einkommensverschlechterungInfo = evInfoService.createEinkommensverschlechterungInfo(evInfo);
@@ -99,7 +98,6 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(persistedFamiliensituation.getGemeinsameSteuererklaerung());
 		Assert.assertFalse(gesuch.getEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1());
 		Assert.assertFalse(gesuch.getEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2());
-		Assert.assertTrue(gesuch.getMutationsdaten().getMutationGesuchsteller());
 	}
 
 

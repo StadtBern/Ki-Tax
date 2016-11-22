@@ -32,6 +32,7 @@ function getStates(): IState[] {
         new EbeguErwerbspensumState(),
         new EbeguBetreuungListState(),
         new EbeguBetreuungState(),
+        new EbeguAbwesenheitState(),
         new EbeguNewFallState(),
         new EbeguMutationState(),
         new EbeguVerfuegenListState(),
@@ -207,6 +208,24 @@ export class EbeguBetreuungState implements IState {
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<betreuung-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
+}
+
+export class EbeguAbwesenheitState implements IState {
+    name = 'gesuch.abwesenheit';
+    url = '/abwesenheit/:gesuchId';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<abwesenheit-view>'
         },
         'kommentarViewPort': {
             template: '<kommentar-view>'

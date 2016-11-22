@@ -118,8 +118,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.persist(antragStatusHistory);
 		persistence.merge(gesuch);
 
-		Mutationsdaten mutationsdaten = new Mutationsdaten();
-		Optional<Gesuch> gesuchOptional = this.gesuchService.antragMutieren(gesuch.getId(), mutationsdaten, LocalDate.now());
+		Optional<Gesuch> gesuchOptional = this.gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
 		Assert.assertTrue(gesuchOptional.isPresent());
 		Gesuch mutation = persistence.merge(gesuchOptional.get());
 

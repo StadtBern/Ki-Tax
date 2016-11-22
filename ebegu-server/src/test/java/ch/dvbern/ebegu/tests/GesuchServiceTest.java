@@ -292,8 +292,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		gesuchVerfuegt.setStatus(AntragStatus.VERFUEGT);
 		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true);
-		Mutationsdaten mutationsdaten = new Mutationsdaten();
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId(), mutationsdaten, LocalDate.of(1980, Month.MARCH, 25));
+
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId(), LocalDate.of(1980, Month.MARCH, 25));
 
 		Assert.assertTrue(gesuchOptional.isPresent());
 		Assert.assertEquals(AntragTyp.MUTATION, gesuchOptional.get().getTyp());
@@ -321,9 +321,9 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		findAllIdsOfAbstractEntities(mutation, idsMutation);
 		int anzahlObjekteMutation = anzahlObjekte;
 
-		// Die Mutation hat immer 2 Objekte mehr als Erstgesuch, und zwar "Mutationsdaten" und "FamiliensituationErstgesuch.
-		// Deswegen muessen wir 2 subtrahieren
-		Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1 - 1);
+		// Die Mutation hat immer 1 Objekte mehr als Erstgesuch, und die "FamiliensituationErstgesuch.
+		// Deswegen muessen wir 1 subtrahieren
+        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
 
 		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
 		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.

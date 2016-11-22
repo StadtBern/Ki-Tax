@@ -426,14 +426,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	public Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nonnull Mutationsdaten mutationsdaten,
+	public Optional<Gesuch> antragMutieren(@Nonnull String antragId,
 										   @Nonnull LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
 			authorizer.checkWriteAuthorization(gesuch.get());
 			Optional<Gesuch> gesuchForMutation = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.get());
-			return getGesuchMutation(mutationsdaten, eingangsdatum, gesuchForMutation);
+			return getGesuchMutation(eingangsdatum, gesuchForMutation);
 		}
 		return Optional.empty();
 	}
@@ -441,7 +441,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@Nonnull
 	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
-	public Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull Mutationsdaten mutationsdaten,
+	public Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
 										   @Nonnull LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
 
@@ -450,16 +450,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		if (fall.isPresent() && gesuchsperiode.isPresent()) {
 			Optional<Gesuch> gesuchForMutation = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode.get(), fall.get());
-			return getGesuchMutation(mutationsdaten, eingangsdatum, gesuchForMutation);
+			return getGesuchMutation(eingangsdatum, gesuchForMutation);
 		}
 		return Optional.empty();
 	}
 
-	private Optional<Gesuch> getGesuchMutation(@Nonnull Mutationsdaten mutationsdaten, @Nonnull LocalDate eingangsdatum, Optional<Gesuch> gesuchForMutation) {
+	private Optional<Gesuch> getGesuchMutation(@Nonnull LocalDate eingangsdatum, Optional<Gesuch> gesuchForMutation) {
 		if (gesuchForMutation.isPresent()) {
 			Gesuch mutation = new Gesuch(gesuchForMutation.get());
 			mutation.setEingangsdatum(eingangsdatum);
-			mutation.setMutationsdaten(mutationsdaten);
 			mutation.setStatus(AntragStatus.IN_BEARBEITUNG_JA); // todo im gesuch online darf dies auch IN_BEARBEITUNG_GS sein
 			return Optional.of(mutation);
 		}
