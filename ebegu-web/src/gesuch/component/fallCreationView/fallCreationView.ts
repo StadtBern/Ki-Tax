@@ -7,7 +7,6 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import {INewFallStateParams} from '../../gesuch.route';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import TSMutationsdaten from '../../../models/TSMutationsdaten';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
@@ -118,25 +117,6 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         } else {
             return this.$translate.instant('ART_DER_MUTATION');
         }
-    }
-
-    public getMutationsdaten(): TSMutationsdaten {
-        if (this.gesuchModelManager.getGesuch()) {
-            return this.gesuchModelManager.getGesuch().mutationsdaten;
-        }
-        return undefined;
-    }
-
-    public isMutationFeldRequired(): boolean {
-        return !(this.getMutationsdaten().mutationFamiliensituation
-        || this.getMutationsdaten().mutationGesuchsteller
-        || this.getMutationsdaten().mutationUmzug
-        || this.getMutationsdaten().mutationKind
-        || this.getMutationsdaten().mutationBetreuung
-        || this.getMutationsdaten().mutationAbwesenheit
-        || this.getMutationsdaten().mutationErwerbspensum
-        || this.getMutationsdaten().mutationFinanzielleSituation
-        || this.getMutationsdaten().mutationEinkommensverschlechterung);
     }
 
 }

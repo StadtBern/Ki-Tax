@@ -4,7 +4,7 @@
 
         <!-- Adresse Zusatz-->
         <div class="row" ng-if="vm.organisation">
-            <div class="col-sm-12 dv-input-container-small">
+            <div class="col-xs-12 dv-input-container-small">
                 <dv-input-container class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_ORGANISATION" for="{{vm.prefix}}-organisation">
                     </label>
@@ -92,7 +92,7 @@
             </div>
         </div>
         <!-- Land-->
-        <div class="row" style="margin-bottom:2rem;">
+        <div class="row">
             <div class="col-sm-12 dv-input-container-small">
                 <div class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_LAND" for="{{vm.prefix}}-land">
@@ -143,7 +143,7 @@
                     <!--<i class="fa fa-calendar"></i></button>-->
                     <!--</span>-->
                     <dv-error-messages for="adresseForm.gueltigAb.$error"
-                                       class="error hint"></dv-error-messages>
+                                       class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
         </div>

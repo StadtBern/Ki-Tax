@@ -22,6 +22,7 @@ import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
+import IPromise = angular.IPromise;
 
 describe('gesuchModelManager', function () {
 
@@ -102,10 +103,10 @@ describe('gesuchModelManager', function () {
                 spyOn(betreuungRS, 'saveBetreuung').and.returnValue($q.when(gesuchModelManager.getBetreuungToWorkWith()));
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
 
-                gesuchModelManager.updateBetreuung();
+                gesuchModelManager.updateBetreuung(false);
                 scope.$apply();
 
-                expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined);
+                expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined, false);
                 expect(kindRS.findKind).toHaveBeenCalledWith('2afc9d9a-957e-4550-9a22-97624a000feb');
                 expect(gesuchModelManager.getKindToWorkWith().nextNumberBetreuung).toEqual(5);
             });
@@ -322,16 +323,17 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('hideSteps', function () {
-            it('should hide the step UMZUG for Erstgesuch without umzug', function() {
+            it('should hide the steps ABWESENHEIT and UMZUG for Erstgesuch without umzug', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
                 gesuchModelManager.initGesuch(true);
 
                 expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
                 expect(wizardStepManager.unhideStep).not.toHaveBeenCalled();
             });
-            it('should unhide the step UMZUG for Mutation', function() {
+            it('should unhide the steps ABWESENHEIT and UMZUG for Mutation', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
@@ -341,8 +343,9 @@ describe('gesuchModelManager', function () {
 
                 expect(wizardStepManager.hideStep).not.toHaveBeenCalled();
                 expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
             });
-            it('should unhide the step UMZUG for Erstgesuch with umzug', function() {
+            it('should unhide the step UMZUG for Erstgesuch with umzug and hide ABWESENHEIT', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
@@ -353,8 +356,66 @@ describe('gesuchModelManager', function () {
                 gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('umzug', '2'));
                 gesuchModelManager.setGesuch(gesuch);
 
-                expect(wizardStepManager.hideStep).not.toHaveBeenCalled();
+                expect(wizardStepManager.hideStep).not.toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
                 expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.unhideStep).not.toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
+            });
+        });
+        describe('updateBetreuungen', function () {
+            it('should return empty Promise for undefined betreuung list', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(undefined, true);
+                expect(promise).toBeDefined();
+                let promiseExecuted: boolean = false;
+                promise.then(() => {
+                    promiseExecuted = true;
+                });
+                $httpBackend.flush();
+                expect(promiseExecuted).toBe(true);
+            });
+            it('should return empty Promise for empty betreuung list', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen([], true);
+                expect(promise).toBeDefined();
+                let promiseExecuted: boolean = false;
+                promise.then(() => {
+                    promiseExecuted = true;
+                });
+                $httpBackend.flush();
+                expect(promiseExecuted).toBe(true);
+            });
+            it('should return a Promise with the Betreuung that was updated', function() {
+                let myGesuch = new TSGesuch();
+                myGesuch.id = 'gesuchID';
+                TestDataUtil.setAbstractFieldsUndefined(myGesuch);
+                let betreuung: TSBetreuung = new TSBetreuung();
+                betreuung.id = 'betreuungId';
+                let betreuungen: Array<TSBetreuung> = [betreuung];
+                let kindContainer: TSKindContainer = new TSKindContainer(undefined, undefined, betreuungen);
+                kindContainer.id = 'kindID';
+                myGesuch.kindContainers = [kindContainer];
+
+                spyOn(betreuungRS, 'saveBetreuungen').and.returnValue($q.when([betreuung]));
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when(undefined));
+                spyOn(gesuchModelManager, 'setHiddenSteps').and.returnValue(undefined);
+                gesuchModelManager.setGesuch(myGesuch);
+
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
+                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(betreuungen, true);
+
+                expect(promise).toBeDefined();
+                let promiseExecuted: Array<TSBetreuung> = undefined;
+                promise.then((response) => {
+                    promiseExecuted = response;
+                });
+
+                $httpBackend.flush();
+
+                expect(betreuungRS.saveBetreuungen).toHaveBeenCalledWith(betreuungen, myGesuch.id, true);
+                expect(promiseExecuted.length).toBe(1);
+                expect(promiseExecuted[0]).toEqual(betreuung);
             });
         });
     });

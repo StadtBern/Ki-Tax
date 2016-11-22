@@ -72,7 +72,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		final Gesuch myGesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(myGesuch);
 		Assert.assertNotNull(wizardStepList);
-		Assert.assertEquals(11, wizardStepList.size());
+		Assert.assertEquals(12, wizardStepList.size());
 
 		wizardStepList.forEach(wizardStep -> {
 			if (WizardStepName.GESUCH_ERSTELLEN.equals(wizardStep.getWizardStepName())) {
@@ -81,41 +81,6 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 			} else {
 				Assert.assertFalse(wizardStep.getVerfuegbar());
 				Assert.assertEquals(WizardStepStatus.UNBESUCHT, wizardStep.getWizardStepStatus());
-			}
-		});
-	}
-
-	@Test
-	public void createWizardStepListForMutationTest() {
-		final Gesuch mutation = TestDataUtil.createAndPersistGesuch(persistence);
-		mutation.setTyp(AntragTyp.MUTATION);
-		final Mutationsdaten mutationsdaten = new Mutationsdaten();
-		mutationsdaten.setMutationEinkommensverschlechterung(true);
-		mutationsdaten.setMutationErwerbspensum(true);
-		mutation.setMutationsdaten(mutationsdaten);
-
-		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(mutation);
-
-		Assert.assertNotNull(wizardStepList);
-		Assert.assertEquals(11, wizardStepList.size());
-
-		wizardStepList.forEach(wizardStep -> {
-			// status
-			if (WizardStepName.VERFUEGEN.equals(wizardStep.getWizardStepName())) {
-				Assert.assertEquals(WizardStepStatus.WARTEN, wizardStep.getWizardStepStatus());
-			} else {
-				Assert.assertEquals(WizardStepStatus.OK, wizardStep.getWizardStepStatus());
-			}
-
-			//verfuegbarkeit
-			if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())
-				|| WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())
-				|| WizardStepName.GESUCH_ERSTELLEN.equals(wizardStep.getWizardStepName())
-				|| WizardStepName.DOKUMENTE.equals(wizardStep.getWizardStepName())
-				|| WizardStepName.VERFUEGEN.equals(wizardStep.getWizardStepName())) {
-				Assert.assertTrue(wizardStep.getVerfuegbar());
-			} else {
-				Assert.assertFalse(wizardStep.getVerfuegbar());
 			}
 		});
 	}

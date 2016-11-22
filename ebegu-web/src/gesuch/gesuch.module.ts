@@ -27,6 +27,7 @@ import {DokumenteViewComponentConfig} from './component/DokumenteView/dokumenteV
 import {VerfuegenViewComponentConfig} from './component/verfuegenView/verfuegenView';
 import {KommentarViewComponentConfig} from './component/kommentarView/kommentarView';
 import {UmzugViewComponentConfig} from './component/umzugView/umzugView';
+import {AbwesenheitViewComponentConfig} from './component/abwesenheitView/abwesenheitView';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
@@ -41,6 +42,7 @@ export const EbeguWebGesuch =
         .component('kindView', new KindViewComponentConfig())
         .component('betreuungListView', new BetreuungListViewComponentConfig())
         .component('betreuungView', new BetreuungViewComponentConfig())
+        .component('abwesenheitView', new AbwesenheitViewComponentConfig())
         .component('erwerbspensumListView', new ErwerbspensumListViewComponentConfig())
         .component('erwerbspensumView', new ErwerbspensumViewComponentConfig())
         .component('fallCreationView', new FallCreationViewComponentConfig())
