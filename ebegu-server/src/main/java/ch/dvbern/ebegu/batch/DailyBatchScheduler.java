@@ -6,12 +6,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RunAs;
 import javax.ejb.Schedule;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-@Stateless
+@Singleton
 @RunAs(value = "SUPER_ADMIN")
 public class DailyBatchScheduler {
 
@@ -25,7 +25,7 @@ public class DailyBatchScheduler {
 		dailyBatch.runBatchCleanDownloadFiles();
 	}
 
-	@Schedule(second = "0", minute = "*/30", hour = "*", persistent = false) // TODO (team) nur fuer Tests, spaeter 1x taeglich
+	@Schedule(second = "0", minute = "*/1", hour = "*", persistent = false) // TODO (team) nur fuer Tests, spaeter 1x taeglich
 	public void runBatchMahnungFristablauf() {
 		Future<Boolean> booleanFuture = dailyBatch.runBatchMahnungFristablauf();
 		try {

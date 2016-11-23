@@ -4,11 +4,12 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.BenutzerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -92,7 +93,7 @@ public class PrincipalBean {
 	}
 
 	public boolean isCallerInRole(@Nonnull String roleName) {
-		LOGGER.debug("isCallerInRole 1: {}/{}", txReg.getTransactionKey(), txReg.getRollbackOnly());
+		LOGGER.trace("isCallerInRole: {}/{}", txReg.getTransactionKey(), txReg.getRollbackOnly());
 		checkNotNull(roleName);
 		return sessionContext.isCallerInRole(roleName);
 	}
