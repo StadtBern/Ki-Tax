@@ -25,31 +25,19 @@ export class TSRoleUtil {
     }
 
     public static getTraegerschaftInstitutionRoles(): Array<TSRole> {
-        return this.getTraegerschaftInstitutionRoles(false);
+        return [TSRole.SUPER_ADMIN, TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
     }
 
-    public static getTraegerschaftInstitutionRoles(excludeSuperAdmin: boolean): Array<TSRole> {
-        if (excludeSuperAdmin) {
-            return [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
-        } else {
-            return [TSRole.SUPER_ADMIN, TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
-        }
+    public static getTraegerschaftInstitutionOnlyRoles(): Array<TSRole> {
+        return [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
     }
 
     public static getGesuchstellerJugendamtRoles(): Array<TSRole> {
-        return [TSRole.SUPER_ADMIN, TSRole.GESUCHSTELLER, TSRole.SACHBEARBEITER_JA, TSRole.ADMIN]; // TODO Superadmin
+        return [TSRole.SUPER_ADMIN, TSRole.GESUCHSTELLER, TSRole.SACHBEARBEITER_JA, TSRole.ADMIN]; 
     }
 
     public static getAdministratorJugendamtRole(): Array<TSRole> {
-        return this.getAdministratorJugendamtRole(false);
-    }
-
-    public static getAdministratorJugendamtRole(excludeSuperAdmin :boolean): Array<TSRole> {
-        if (excludeSuperAdmin) {
-            return [TSRole.ADMIN, TSRole.SACHBEARBEITER_JA];
-        } else {
-            return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA];
-        }
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA];
     }
 
     public static getAllButAdministratorJugendamtRole(): Array<string> {
@@ -66,31 +54,19 @@ export class TSRoleUtil {
         );
     }
 
-    public static getSchulamtRoles(): Array<TSRole> {
-        return this.getSchulamtRoles(false);
-    }
-
-    public static getSchulamtRoles(excludeSuperAdmin :boolean): Array<TSRole> {
-        if (excludeSuperAdmin) {
-            return [TSRole.SCHULAMT];
-        } else {
-            return [TSRole.SUPER_ADMIN, TSRole.SCHULAMT];
-        }
+    public static getSchulamtOnlyRoles(): Array<TSRole> {
+        return [TSRole.SCHULAMT];
     }
 
     public static getGesuchstellerRoles(): Array<TSRole> {
-        return this.getGesuchstellerRoles(false);
+        return [TSRole.SUPER_ADMIN, TSRole.GESUCHSTELLER];
     }
 
-    public static getGesuchstellerRoles(excludeSuperAdmin :boolean): Array<TSRole> {
-        if (excludeSuperAdmin) {
-            return [TSRole.GESUCHSTELLER];
-        } else {
-            return [TSRole.SUPER_ADMIN, TSRole.GESUCHSTELLER];
-        }
+    public static getGesuchstellerOnlyRoles(): Array<TSRole> {
+        return [TSRole.GESUCHSTELLER];
     }
 
     public static getAllRolesForKommentarSpalte(): Array<TSRole> {
-        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.STEUERAMT, TSRole.SCHULAMT]; //TODO Superadmin
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.STEUERAMT, TSRole.SCHULAMT]; 
     }
 }

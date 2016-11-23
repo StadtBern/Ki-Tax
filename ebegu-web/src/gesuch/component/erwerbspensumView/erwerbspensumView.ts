@@ -81,7 +81,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     }
 
     getZuschlagsgrundList(): Array<TSZuschlagsgrund> {
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerRoles(true))) {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
             return getTSZuschlagsgruendeForGS();
         } else {
             return getTSZuschlagsgrunde();
@@ -147,6 +147,6 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
 
     erwerbspensumDisabled(): boolean {
         // Disabled wenn Mutation, ausser bei Bearbeiter Jugendamt
-        return this.erwerbspensum.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole(true));
+        return this.erwerbspensum.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
     }
 }

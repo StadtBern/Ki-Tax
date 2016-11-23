@@ -10,11 +10,11 @@ export default class AuthenticationUtil {
     public static navigateToStartPageForRole(user: TSUser, $state: IStateService): void {
         if (TSRoleUtil.getAdministratorJugendamtRole().indexOf(user.role) > -1) {
             $state.go('pendenzen');
-        } else if (TSRoleUtil.getTraegerschaftInstitutionRoles(true).indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(user.role) > -1) {
             $state.go('pendenzenInstitution');
-        } else if (TSRoleUtil.getSchulamtRoles(true).indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(user.role) > -1) {
             $state.go('faelle');
-        } else if (TSRoleUtil.getGesuchstellerRoles(true).indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getGesuchstellerOnlyRoles().indexOf(user.role) > -1) {
             $state.go('gesuchstellerDashboard');
         } else {
             console.error('Achtung, keine Startpage definiert fuer Rolle ', user.getRoleKey(), ', nehme gesuchstellerDashboard');
