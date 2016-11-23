@@ -8,7 +8,7 @@
             <hr class="header"/>
         </div>
     </div>
-    <div class="row" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()">
+    <div class="row" ng-if="!vm.isGesuchReadonly()">
         <div class="col-md-12">
             <p class="inlineHint" data-translate="UMZUG_HINT"></p>
         </div>
@@ -26,7 +26,7 @@
             <form role="form" name="form" class="" novalidate unsaved-warning-form>
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                          dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                          dv-enable-expression="!vm.isGesuchReadonly()">
 
                     <div ng-repeat="umzugAdresse in vm.getUmzugAdressenList()">
 
@@ -56,7 +56,7 @@
                         <div class="col-md-12" style="margin-bottom: 2rem"
                              dv-show-element
                              dv-show-allowed-roles = "vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                             dv-show-expression = "!vm.isGesuchStatusVerfuegenVerfuegt()">
+                             dv-show-expression = "!vm.isGesuchReadonly()">
                             <dv-loading-button type="button" button-click="vm.removeUmzugAdresse(umzugAdresse)"
                                                button-class="dv-btn-sm color-success">
                                 <i class="glyphicon glyphicon-trash"></i>
@@ -69,7 +69,7 @@
                     <!-- Umzug hinzufuegen -->
                     <div class="col-md-12" style="margin-bottom: 2rem" dv-show-element
                          dv-show-allowed-roles = "vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                         dv-show-expression = "!vm.isGesuchStatusVerfuegenVerfuegt()">
+                         dv-show-expression = "!vm.isGesuchReadonly()">
                         <dv-loading-button type="button" button-click="vm.createUmzugAdresse()"
                                            button-class="dv-btn-sm color-success">
                             <i class="glyphicon glyphicon-plus"></i>

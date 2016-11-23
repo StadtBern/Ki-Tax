@@ -147,7 +147,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     public isEnabled(): boolean {
-        if (this.isMutationAndDateSet() && !this.isGesuchStatusVerfuegenVerfuegt()) {
+        if (this.isMutationAndDateSet() && !this.isGesuchReadonly()) {
             return true
         } else {
             return false;

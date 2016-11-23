@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-12">
             <form role="form" name="form" class="" novalidate unsaved-warning-form>
-                <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
 
 
                     <!--Geschlecht-->
@@ -22,7 +22,7 @@
                                 <dv-radio-container name="geschlecht" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                                                    dv-enable-expression="!vm.isGesuchReadonly()"
                                                     ng-required="true" items="vm.geschlechter"
                                                     ng-model="vm.getModel().geschlecht">
                                 </dv-radio-container>
@@ -85,7 +85,7 @@
                                                     ng-required="true"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                                                    dv-enable-expression="!vm.isGesuchReadonly()"
                                                     class="input-element" items="vm.kinderabzugValues">
                                 </dv-radio-container>
                                 <dv-error-messages for="form.kinderabzug.$error"
@@ -108,7 +108,7 @@
                                 <dv-radio-container name="familienErgaenzendeBetreuung" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                                                    dv-enable-expression="!vm.isGesuchReadonly()"
                                                     ng-required="true"
                                                     ng-model="vm.getModel().familienErgaenzendeBetreuung"
                                                     ng-change="vm.familienErgaenzendeBetreuungClicked()">
@@ -131,7 +131,7 @@
                                 <dv-radio-container name="mutterspracheDeutsch" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                                                    dv-enable-expression="!vm.isGesuchReadonly()"
                                                     ng-required="vm.getModel().familienErgaenzendeBetreuung"
                                                     ng-model="vm.getModel().mutterspracheDeutsch">
                                 </dv-radio-container>
@@ -156,7 +156,7 @@
                                 <dv-radio-container name="einschulung" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                                                    dv-enable-expression="!vm.isGesuchReadonly()"
                                                     ng-required="vm.getModel().familienErgaenzendeBetreuung"
                                                     ng-model="vm.getModel().einschulung">
                                 </dv-radio-container>
@@ -194,7 +194,7 @@
                             <div class=" checkbox" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                                 <md-checkbox ng-model="vm.showFachstelle" name="showFachstelle"
                                              aria-label="showFachstelle"
-                                             ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()"
+                                             ng-disabled="vm.isGesuchReadonly()"
                                              ng-change="vm.showFachstelleClicked()">
                                     <span data-translate="INVOLVIERTE_FACHSTELLE"></span>
                                     <dv-tooltip text="'INVOLVIERTE_FACHSTELLE_HELP' | translate"></dv-tooltip>

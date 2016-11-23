@@ -71,7 +71,7 @@ export class NavigatorController {
      * @returns {string}
      */
     public getPreviousButtonName(): string {
-        if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
+        if (this.gesuchModelManager.isGesuchReadonly()) {
             return this.$translate.instant('ZURUECK_ONLY_UPPER');
         } else if (this.dvSave) {
             return this.$translate.instant('ZURUECK_UPPER');
@@ -85,7 +85,7 @@ export class NavigatorController {
      * @returns {string}
      */
     public getNextButtonName(): string {
-        if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
+        if (this.gesuchModelManager.isGesuchReadonly()) {
             return this.$translate.instant('WEITER_ONLY_UPPER');
         } else if (this.dvSave) {
             return this.$translate.instant('WEITER_UPPER');
@@ -100,7 +100,7 @@ export class NavigatorController {
      * wird dann direkt zum naechsten Step geleitet.
      */
     public nextStep(): void {
-        if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
+        if (!this.gesuchModelManager.isGesuchReadonly() && this.dvSave) {
             let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
             if (returnValue !== undefined) {
                 this.$q.when(returnValue).then(() => {
@@ -118,7 +118,7 @@ export class NavigatorController {
      * wird dann direkt zum vorherigen Step geleitet.
      */
     public previousStep(): void {
-        if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
+        if (!this.gesuchModelManager.isGesuchReadonly() && this.dvSave) {
             let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
             if(returnValue !== undefined) {
                 this.$q.when(returnValue).then(() => {

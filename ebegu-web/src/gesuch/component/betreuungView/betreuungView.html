@@ -14,7 +14,7 @@
         <div class="col-md-12">
             <form role="form" name="form" class="" novalidate
                   unsaved-warning-form>
-                <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
                     <!--Schuljahr -->
                     <div class="row">
                         <div class="col-md-12" ng-if="vm.isTagesschule()">
@@ -341,14 +341,6 @@
                         <dv-loading-button button-click="vm.cancel(form)" button-class=" btn-link cancel"
                                            type="reset">
                             <span data-translate="ABBRECHEN_UPPER"></span>
-                        </dv-loading-button>
-                    </div>
-                    <div class="col-md-6" dv-show-element
-                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                         dv-show-expression="vm.isBetreuungsstatusSchulamt()">
-                        <dv-loading-button button-click="vm.saveSchulamt(form)" type="submit"
-                                           button-class=" btn-link save">
-                            <span data-translate="SPEICHERN_UPPER"></span>
                         </dv-loading-button>
                     </div>
                 </div>

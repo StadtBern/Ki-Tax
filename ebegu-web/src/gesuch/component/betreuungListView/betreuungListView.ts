@@ -103,7 +103,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
     }
 
     public canRemoveBetreuung(betreuung: TSBetreuung): boolean {
-        return !this.isGesuchStatusVerfuegenVerfuegt() && !betreuung.vorgaengerId;
+        return !this.isGesuchReadonly() && !betreuung.vorgaengerId;
     }
 
 }
