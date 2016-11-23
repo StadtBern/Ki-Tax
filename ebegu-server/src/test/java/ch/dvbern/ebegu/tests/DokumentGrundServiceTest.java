@@ -22,7 +22,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class DokumentGrundServiceTest extends AbstractEbeguTest {
+public class DokumentGrundServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private DokumentGrundService dokumentGrundService;

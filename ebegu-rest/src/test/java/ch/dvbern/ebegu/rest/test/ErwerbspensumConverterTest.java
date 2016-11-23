@@ -23,7 +23,7 @@ import javax.inject.Inject;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class ErwerbspensumConverterTest extends AbstractEbeguRestTest {
+public class ErwerbspensumConverterTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject

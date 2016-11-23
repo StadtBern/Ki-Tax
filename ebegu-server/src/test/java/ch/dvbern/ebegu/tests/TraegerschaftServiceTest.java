@@ -22,7 +22,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class TraegerschaftServiceTest extends AbstractEbeguTest {
+public class TraegerschaftServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private TraegerschaftService traegerschaftService;

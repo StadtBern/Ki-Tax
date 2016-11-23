@@ -23,6 +23,9 @@ export default class HttpAuthInterceptor implements IHttpInterceptor {
                 this.httpBuffer.append(response.config, deferred);
                 this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.NOT_AUTHENTICATED], response);
                 return deferred.promise;
+            case 403:
+                this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.NOT_AUTHORISED], response);
+                return this.$q.reject(response);
         }
         return this.$q.reject(response);
     };

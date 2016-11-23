@@ -23,7 +23,7 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class DownloadFileServiceTest extends AbstractEbeguTest {
+public class DownloadFileServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private Persistence<Gesuch> persistence;
