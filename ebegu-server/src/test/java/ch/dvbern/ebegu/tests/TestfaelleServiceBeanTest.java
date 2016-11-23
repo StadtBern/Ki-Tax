@@ -26,6 +26,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Iterator;
@@ -232,7 +233,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	public VerfuegungszeitabschnitteData getExpectedVerfuegungszeitabschnitt(String fullName, String betreuung, Integer betreuungNummer, String addText) {
 
 		final String fileNamePath = getFileNamePath(fullName, betreuung, betreuungNummer, addText);
-		final java.io.File resultFile = new java.io.File(fileNamePath);
+		final File resultFile = new File(fileNamePath);
 		VerfuegungszeitabschnitteData expectedVerfuegungszeitabschnitteData = null;
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(VerfuegungszeitabschnitteData.class);
@@ -254,7 +255,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 			String pathname = getFileNamePath(fullName, betreuung, betreuungNummer, addText);
 
 			try {
-				java.io.File file = new java.io.File(pathname);
+				File file = new File(pathname);
 				JAXBContext jaxbContext = JAXBContext.newInstance(VerfuegungszeitabschnitteData.class);
 				Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 

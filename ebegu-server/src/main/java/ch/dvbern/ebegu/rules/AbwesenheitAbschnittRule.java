@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Abwesenheit;
+import ch.dvbern.ebegu.entities.AbwesenheitContainer;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 
@@ -34,38 +37,33 @@ public class AbwesenheitAbschnittRule extends AbstractAbschnittRule {
 	@Nonnull
 	@Override
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
+		List<VerfuegungZeitabschnitt> resultlist = new ArrayList<>();
 		if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+
 			final List<AbwesenheitContainer> sortedAbwesenheiten = betreuung.getAbwesenheitContainers().stream().sorted().collect(Collectors.toList());
 			for (final AbwesenheitContainer abwesenheit : sortedAbwesenheiten) {
 				final Abwesenheit abwesenheitJA = abwesenheit.getAbwesenheitJA();
 				if (abwesenheitJA != null && exceedsAbwesenheitTimeLimit(abwesenheitJA)) {
 					LocalDate volltarifStart = calculateStartVolltarif(abwesenheitJA);
-					return createAbwesenheitZeitAbschnitte(betreuung, volltarifStart);
+					LocalDate volltarifEnd = abwesenheitJA.getGueltigkeit().getGueltigBis();
+					VerfuegungZeitabschnitt abschnitt = createAbwesenheitZeitAbschnitte(volltarifStart, volltarifEnd);
+					resultlist.add(abschnitt);
 				}
 			}
 		}
-		return new ArrayList<>();
+		return resultlist;
 	}
 
 	/**
 	 * Es werden 2 Zeitabschnitte erstellt: [START_PERIODE, START_VOLLTARIF - 1Tag] und [START_VOLLTARIF, ENDE_PERIODE]
 	 */
-	private List<VerfuegungZeitabschnitt> createAbwesenheitZeitAbschnitte(@Nonnull Betreuung betreuung, @Nonnull LocalDate volltarifStart) {
-		final Gesuchsperiode gesuchsperiode = betreuung.extractGesuchsperiode();
+	private VerfuegungZeitabschnitt createAbwesenheitZeitAbschnitte(@Nonnull LocalDate volltarifStart, @Nonnull LocalDate volltarifEnd) {
 
-		List<VerfuegungZeitabschnitt> zeitAbschnitte = new ArrayList<>();
-
-		final VerfuegungZeitabschnitt zeitabschnitt1 = new VerfuegungZeitabschnitt(
-			new DateRange(gesuchsperiode.getGueltigkeit().getGueltigAb(), volltarifStart.minusDays(1)));
-		zeitabschnitt1.setLongAbwesenheit(false);
-		zeitAbschnitte.add(zeitabschnitt1);
 
 		final VerfuegungZeitabschnitt zeitabschnitt2 = new VerfuegungZeitabschnitt(
-			new DateRange(volltarifStart, gesuchsperiode.getGueltigkeit().getGueltigBis()));
+			new DateRange(volltarifStart, volltarifEnd));
 		zeitabschnitt2.setLongAbwesenheit(true);
-		zeitAbschnitte.add(zeitabschnitt2);
-
-		return zeitAbschnitte;
+		return zeitabschnitt2;
 	}
 
 	@NotNull

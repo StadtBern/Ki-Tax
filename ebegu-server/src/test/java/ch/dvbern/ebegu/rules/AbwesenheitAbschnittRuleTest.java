@@ -56,9 +56,9 @@ public class AbwesenheitAbschnittRuleTest {
 		final List<VerfuegungZeitabschnitt> zeitabschnitte = abwesenheitRule.createVerfuegungsZeitabschnitte(betreuung, new ArrayList<>());
 
 		Assert.assertNotNull(zeitabschnitte);
-		Assert.assertEquals(2, zeitabschnitte.size());
+		Assert.assertEquals(1, zeitabschnitte.size());
 
-		checkAbwesenheitAbschnitte(betreuung, abwesenheit, zeitabschnitte);
+		checkAbwesenheitAbschnitte(abwesenheit, null, zeitabschnitte);
 	}
 
 	@Test
@@ -70,19 +70,19 @@ public class AbwesenheitAbschnittRuleTest {
 		abwenseheitContList.add(abwesenheit1);
 
 		//neue lange Abwesenheit die 3 Monate spaeter stattfindet
-		final AbwesenheitContainer lateAbwesenheit = TestDataUtil.createLongAbwesenheitContainer(betreuung.extractGesuchsperiode());
-		lateAbwesenheit.getAbwesenheitJA().getGueltigkeit().setGueltigAb(lateAbwesenheit.getAbwesenheitJA().getGueltigkeit().getGueltigAb().plusMonths(3));
-		lateAbwesenheit.getAbwesenheitJA().getGueltigkeit().setGueltigBis(lateAbwesenheit.getAbwesenheitJA().getGueltigkeit().getGueltigBis().plusMonths(3));
-		abwenseheitContList.add(lateAbwesenheit);
+		final AbwesenheitContainer secondAbwesenheit = TestDataUtil.createLongAbwesenheitContainer(betreuung.extractGesuchsperiode());
+		secondAbwesenheit.getAbwesenheitJA().getGueltigkeit().setGueltigAb(secondAbwesenheit.getAbwesenheitJA().getGueltigkeit().getGueltigAb().plusMonths(3));
+		secondAbwesenheit.getAbwesenheitJA().getGueltigkeit().setGueltigBis(secondAbwesenheit.getAbwesenheitJA().getGueltigkeit().getGueltigBis().plusMonths(3));
+		abwenseheitContList.add(secondAbwesenheit);
 
 		betreuung.setAbwesenheitContainers(abwenseheitContList);
 
 		final List<VerfuegungZeitabschnitt> zeitabschnitte = abwesenheitRule.createVerfuegungsZeitabschnitte(betreuung, new ArrayList<>());
 
 		Assert.assertNotNull(zeitabschnitte);
-		Assert.assertEquals("Trotz 2 Abwesenheiten nur die erste wird beruecksichtigt", 2, zeitabschnitte.size());
+		Assert.assertEquals("Es werden beide Abwesenheiten beruecksichtigt", 2, zeitabschnitte.size());
 
-		checkAbwesenheitAbschnitte(betreuung, abwesenheit1, zeitabschnitte);
+		checkAbwesenheitAbschnitte(abwesenheit1, secondAbwesenheit, zeitabschnitte);
 	}
 
 	@Test
@@ -104,18 +104,21 @@ public class AbwesenheitAbschnittRuleTest {
 		final List<VerfuegungZeitabschnitt> zeitabschnitte = abwesenheitRule.createVerfuegungsZeitabschnitte(betreuung, new ArrayList<>());
 
 		Assert.assertNotNull(zeitabschnitte);
-		Assert.assertEquals("Die erste Abwesenheit wird nicht beruecksichtigt da sie kurz ist. Nur die 2 erstellt die Zeitabschnitte", 2, zeitabschnitte.size());
+		Assert.assertEquals("Die erste Abwesenheit wird nicht beruecksichtigt da sie kurz ist. Nur die 2 erstellt die Zeitabschnitte", 1, zeitabschnitte.size());
 
-		checkAbwesenheitAbschnitte(betreuung, lateAbwesenheit, zeitabschnitte);
+		checkAbwesenheitAbschnitte(lateAbwesenheit, null, zeitabschnitte);
 	}
 
-	private void checkAbwesenheitAbschnitte(Betreuung betreuung, AbwesenheitContainer abwesenheit, List<VerfuegungZeitabschnitt> zeitabschnitte) {
-		Assert.assertFalse(zeitabschnitte.get(0).isLongAbwesenheit());
-		Assert.assertEquals(betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigAb(), zeitabschnitte.get(0).getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(abwesenheit.getAbwesenheitJA().getGueltigkeit().getGueltigAb().plusDays(Constants.ABWESENHEIT_DAYS_LIMIT - 1), zeitabschnitte.get(0).getGueltigkeit().getGueltigBis());
+	private void checkAbwesenheitAbschnitte(AbwesenheitContainer abwesenheit, AbwesenheitContainer second, List<VerfuegungZeitabschnitt> zeitabschnitte) {
+		Assert.assertTrue(zeitabschnitte.get(0).isLongAbwesenheit());
+		Assert.assertEquals(abwesenheit.getAbwesenheitJA().getGueltigkeit().getGueltigAb().plusDays(Constants.ABWESENHEIT_DAYS_LIMIT), zeitabschnitte.get(0).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(abwesenheit.getAbwesenheitJA().getGueltigkeit().getGueltigBis(), zeitabschnitte.get(0).getGueltigkeit().getGueltigBis());
 
-		Assert.assertTrue(zeitabschnitte.get(1).isLongAbwesenheit());
-		Assert.assertEquals(abwesenheit.getAbwesenheitJA().getGueltigkeit().getGueltigAb().plusDays(Constants.ABWESENHEIT_DAYS_LIMIT), zeitabschnitte.get(1).getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis(), zeitabschnitte.get(1).getGueltigkeit().getGueltigBis());
+		if (second != null) {
+			Assert.assertTrue(zeitabschnitte.get(1).isLongAbwesenheit());
+			Assert.assertEquals(second.getAbwesenheitJA().getGueltigkeit().getGueltigAb().plusDays(Constants.ABWESENHEIT_DAYS_LIMIT), zeitabschnitte.get(1).getGueltigkeit().getGueltigAb());
+			Assert.assertEquals(second.getAbwesenheitJA().getGueltigkeit().getGueltigBis(), zeitabschnitte.get(1).getGueltigkeit().getGueltigBis());
+		}
+
 	}
 }

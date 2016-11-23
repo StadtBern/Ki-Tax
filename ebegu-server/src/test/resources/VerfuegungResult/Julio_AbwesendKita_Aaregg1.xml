@@ -52,18 +52,29 @@
         <anspruchberechtigtesPensum>80</anspruchberechtigtesPensum>
         <bemerkungen>ABWESENHEIT: Ab dem 31. Tag einer Abwesenheit (Krankheit oder Unfall des Kinds und bei Mutterschaft ausgeschlossen) entfällt der Gutschein.</bemerkungen>
         <betreuungspensum>80</betreuungspensum>
-        <elternbeitrag>1245.70</elternbeitrag>
+        <elternbeitrag>996.55</elternbeitrag>
         <famGroesse>2.0</famGroesse>
         <gueltigAb>10.11.2016</gueltigAb>
-        <gueltigBis>30.11.2016</gueltigBis>
-        <vollkosten>1245.70</vollkosten>
+        <gueltigBis>25.11.2016</gueltigBis>
+        <vollkosten>996.55</vollkosten>
     </verfuegungszeitabschnitte>
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>80</anspruchberechtigtesPensum>
-        <bemerkungen>ABWESENHEIT: Ab dem 31. Tag einer Abwesenheit (Krankheit oder Unfall des Kinds und bei Mutterschaft ausgeschlossen) entfällt der Gutschein.</bemerkungen>
+        <bemerkungen></bemerkungen>
         <betreuungspensum>80</betreuungspensum>
-        <elternbeitrag>1827.05</elternbeitrag>
+        <elternbeitrag>36.10</elternbeitrag>
+        <famGroesse>2.0</famGroesse>
+        <gueltigAb>26.11.2016</gueltigAb>
+        <gueltigBis>30.11.2016</gueltigBis>
+        <vollkosten>249.15</vollkosten>
+    </verfuegungszeitabschnitte>
+    <verfuegungszeitabschnitte>
+        <abzugFamGroesse>0</abzugFamGroesse>
+        <anspruchberechtigtesPensum>80</anspruchberechtigtesPensum>
+        <bemerkungen></bemerkungen>
+        <betreuungspensum>80</betreuungspensum>
+        <elternbeitrag>264.80</elternbeitrag>
         <famGroesse>2.0</famGroesse>
         <gueltigAb>01.12.2016</gueltigAb>
         <gueltigBis>31.12.2016</gueltigBis>
@@ -72,9 +83,9 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>80</anspruchberechtigtesPensum>
-        <bemerkungen>ABWESENHEIT: Ab dem 31. Tag einer Abwesenheit (Krankheit oder Unfall des Kinds und bei Mutterschaft ausgeschlossen) entfällt der Gutschein.</bemerkungen>
+        <bemerkungen></bemerkungen>
         <betreuungspensum>80</betreuungspensum>
-        <elternbeitrag>1827.05</elternbeitrag>
+        <elternbeitrag>264.80</elternbeitrag>
         <famGroesse>2.0</famGroesse>
         <gueltigAb>01.01.2017</gueltigAb>
         <gueltigBis>31.01.2017</gueltigBis>
@@ -83,7 +94,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>80</anspruchberechtigtesPensum>
-        <bemerkungen>ABWESENHEIT: Ab dem 31. Tag einer Abwesenheit (Krankheit oder Unfall des Kinds und bei Mutterschaft ausgeschlossen) entfällt der Gutschein.</bemerkungen>
+        <bemerkungen></bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -94,7 +105,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>80</anspruchberechtigtesPensum>
-        <bemerkungen>ABWESENHEIT: Ab dem 31. Tag einer Abwesenheit (Krankheit oder Unfall des Kinds und bei Mutterschaft ausgeschlossen) entfällt der Gutschein.</bemerkungen>
+        <bemerkungen></bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -105,7 +116,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>80</anspruchberechtigtesPensum>
-        <bemerkungen>ABWESENHEIT: Ab dem 31. Tag einer Abwesenheit (Krankheit oder Unfall des Kinds und bei Mutterschaft ausgeschlossen) entfällt der Gutschein.</bemerkungen>
+        <bemerkungen></bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -116,7 +127,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>80</anspruchberechtigtesPensum>
-        <bemerkungen>ABWESENHEIT: Ab dem 31. Tag einer Abwesenheit (Krankheit oder Unfall des Kinds und bei Mutterschaft ausgeschlossen) entfällt der Gutschein.</bemerkungen>
+        <bemerkungen></bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -127,7 +138,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>80</anspruchberechtigtesPensum>
-        <bemerkungen>ABWESENHEIT: Ab dem 31. Tag einer Abwesenheit (Krankheit oder Unfall des Kinds und bei Mutterschaft ausgeschlossen) entfällt der Gutschein.</bemerkungen>
+        <bemerkungen></bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -138,7 +149,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>80</anspruchberechtigtesPensum>
-        <bemerkungen>ABWESENHEIT: Ab dem 31. Tag einer Abwesenheit (Krankheit oder Unfall des Kinds und bei Mutterschaft ausgeschlossen) entfällt der Gutschein.</bemerkungen>
+        <bemerkungen></bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
