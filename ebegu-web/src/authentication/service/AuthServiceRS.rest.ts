@@ -93,9 +93,9 @@ export default class AuthServiceRS {
     }
 
     /**
-     * gibt true urueck wenn der aktuelle Benutzer eine der uebergebenen Rollen innehat
+     * gibt true zurueck wenn der aktuelle Benutzer eine der uebergebenen Rollen innehat
      */
-    public isOneOfRoles(...roles: TSRole[]): boolean {
+    public isOneOfRoles(roles: Array<TSRole>): boolean {
         if (roles !== undefined && roles !== null && this.principal) {
             for (var i = 0; i < roles.length; i++) {
                 var role = roles[i];

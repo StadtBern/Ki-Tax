@@ -16,6 +16,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import WizardStepManager from '../../service/wizardStepManager';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -80,7 +81,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     }
 
     getZuschlagsgrundList(): Array<TSZuschlagsgrund> {
-        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerRoles())) {
             return getTSZuschlagsgruendeForGS();
         } else {
             return getTSZuschlagsgrunde();
@@ -146,6 +147,6 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
 
     erwerbspensumDisabled(): boolean {
         // Disabled wenn Mutation, ausser bei Bearbeiter Jugendamt
-        return this.erwerbspensum.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isRole(TSRole.SACHBEARBEITER_JA);
+        return this.erwerbspensum.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
     }
 }
