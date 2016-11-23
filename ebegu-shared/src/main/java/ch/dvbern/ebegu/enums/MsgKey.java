@@ -23,6 +23,8 @@ public enum MsgKey {
 
 	MINDESTALTER_MSG(RuleKey.MINDESTALTER),
 
+	ABWESENHEIT_MSG(RuleKey.ABWESENHEIT),
+
 	WOHNHAFT_MSG(RuleKey.WOHNHAFT_IM_GLEICHEN_HAUSHALT),
 	WOHNSITZ_MSG(RuleKey.WOHNSITZ),
 	FACHSTELLE_MSG(RuleKey.FACHSTELLE),
@@ -34,9 +36,6 @@ public enum MsgKey {
 
 	GEKUENDIGT_VOR_EINTRITT_MSG(RuleKey.GEKUENDIGT_VOR_EINTRITT);
 
-	//todo Mutation
-	//Abwesenheit
-	//Familiensituation
 
 	private RuleKey referencedRuleKey;
 
