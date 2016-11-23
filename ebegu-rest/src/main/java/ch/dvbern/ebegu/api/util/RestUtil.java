@@ -124,4 +124,9 @@ public final class RestUtil {
 		}
 		return false;
 	}
+
+	public static Response sendErrorNotAuthorized() {
+		return Response.status(Response.Status.FORBIDDEN).build();
+	}
+
 }

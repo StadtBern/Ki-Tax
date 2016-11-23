@@ -23,7 +23,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class FachstelleServiceTest extends AbstractEbeguTest {
+public class FachstelleServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private FachstelleService fachstelleService;

@@ -63,10 +63,17 @@ public interface GesuchService {
 	 *
 	 * @param gesuch der Gesuch zu entfernen
 	 */
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	void removeGesuch(@Nonnull Gesuch gesuch);
 
 	@Nonnull
 	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
+
+	/**
+	 * Gibt alle Antraege des Benutzers mit demn uebergebenen Benutzernamen zurueck.
+     */
+	@Nonnull
+	List<Gesuch> getAntraegeForUsername(String username);
 
 	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
@@ -89,6 +96,9 @@ public interface GesuchService {
 	@Nonnull
 	Optional<Gesuch> antragMutieren(@Nonnull String antragId, LocalDate eingangsdatum);
 
+	/**
+	 * hilfsmethode zur mutation von faellen ueber das gui. Wird fuer testzwecke benoetigt
+	 */
 	@Nonnull
 	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
 									@Nonnull LocalDate eingangsdatum);

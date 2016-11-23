@@ -24,6 +24,7 @@ import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
@@ -35,11 +36,15 @@ import java.util.Objects;
 @Local(PrintBegleitschreibenPDFService.class)
 public class PrintBegleitschreibenPDFServiceBean extends AbstractPrintService implements PrintBegleitschreibenPDFService {
 
+	@Inject
+	private Authorizer authorizer;
+
 	@Nonnull
 	@Override
 	public byte[] printBegleitschreiben(@Nonnull Gesuch gesuch) throws MergeDocException {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
+		authorizer.checkReadAuthorization(gesuch);
 
 		DOCXMergeEngine docxME = new DOCXMergeEngine("Begleitschreiben");
 

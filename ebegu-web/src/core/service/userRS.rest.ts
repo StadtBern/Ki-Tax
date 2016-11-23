@@ -23,6 +23,13 @@ export default class UserRS implements IEntityRS {
         });
     }
 
+    public getBenutzerJAorAdmin(): IPromise<TSUser[]> {
+        return this.http.get(this.serviceURL +'/JAorAdmin').then((response: any) => {
+            this.$log.debug('PARSING user REST array object', response.data);
+            return this.ebeguRestUtil.parseUserList(response.data);
+        });
+    }
+
     public getServiceName(): string {
         return 'UserRS';
     }

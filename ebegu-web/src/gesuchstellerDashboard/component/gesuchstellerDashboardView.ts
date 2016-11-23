@@ -2,6 +2,7 @@ import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import PendenzRS from '../../pendenzen/service/PendenzRS.rest';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
@@ -21,10 +22,10 @@ export class GesuchstellerDashboardListViewController {
     totalResultCount: string = '-';
 
 
-    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'PendenzRS'];
+    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS'];
 
     constructor(private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
-                private pendenzRS: PendenzRS) {
+                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS) {
         this.initViewModel();
     }
 
@@ -33,8 +34,7 @@ export class GesuchstellerDashboardListViewController {
     }
 
     private updateAntragList() {
-        //TODO: This is just for testing and writing styles on view. Here we need a service to get Antaege for Gesuchsteller!
-        this.pendenzRS.getPendenzenList().then((response: any) => {
+        this.pendenzRS.getAntraegeGesuchstellerList(this.authServiceRS.getPrincipal().username).then((response: any) => {
             this.antragList = angular.copy(response);
         });
     }

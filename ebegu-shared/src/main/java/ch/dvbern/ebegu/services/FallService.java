@@ -25,7 +25,7 @@ public interface FallService {
 	 * @return Fall mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<Fall> findFall(@Nonnull String key);
+ 	Optional<Fall> findFall(@Nonnull String key);
 
 	@Nonnull
 	Optional<Fall> findFallByNumber(@Nonnull Long fallnummer);
@@ -43,7 +43,6 @@ public interface FallService {
 	 *
 	 * @param fall der Fall als DTO
 	 */
-	@Nonnull
 	void removeFall(@Nonnull Fall fall);
 
 }

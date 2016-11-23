@@ -666,9 +666,9 @@ public final class TestDataUtil {
 
 	}
 
-	public static Benutzer createBenutzer(UserRole role, Traegerschaft traegerschaft, Institution institution, Mandant mandant) {
+	public static Benutzer createBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, Institution institution, Mandant mandant) {
 		final Benutzer benutzer = new Benutzer();
-		benutzer.setUsername("anonymous");
+		benutzer.setUsername(userName);
 		benutzer.setNachname("anonymous");
 		benutzer.setVorname("anonymous");
 		benutzer.setEmail("e@e");
@@ -684,7 +684,7 @@ public final class TestDataUtil {
 		persistence.persist(traegerschaft);
 		final Mandant mandant = TestDataUtil.createDefaultMandant();
 		persistence.persist(mandant);
-		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, traegerschaft, null, mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "satraeg", traegerschaft, null, mandant);
 		persistence.persist(benutzer);
 		return benutzer;
 	}
@@ -699,14 +699,12 @@ public final class TestDataUtil {
 		return dokument;
 	}
 
-	public static Benutzer createDummyAdminAnonymous(Persistence<?> persistence) {
+	public static Benutzer createDummySuperAdmin(Persistence<?> persistence) {
 		//machmal brauchen wir einen dummy admin in der DB
-		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
-		persistence.persist(traegerschaft);
 		final Mandant mandant = TestDataUtil.createDefaultMandant();
 		persistence.persist(mandant);
-		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.ADMIN, null, null, mandant);
-		persistence.persist(benutzer);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SUPER_ADMIN, "superadmin", null, null, mandant);
+		persistence.merge(benutzer);
 		return benutzer;
 	}
 

@@ -188,9 +188,11 @@ public class VerfuegungResource {
 		}
 		if (gesuch.getGesuchsteller1() != null) {
 			gesuch.getGesuchsteller1().getAdressen().forEach(GesuchstellerAdresse::getAdresseTyp);
+			gesuch.getGesuchsteller1().getErwerbspensenContainers().size();
 		}
 		if (gesuch.getGesuchsteller2() != null) {
 			gesuch.getGesuchsteller2().getAdressen().forEach(GesuchstellerAdresse::getAdresseTyp);
+			gesuch.getGesuchsteller2().getErwerbspensenContainers().size();
 		}
 		persistence.getEntityManager().detach(gesuch);
 	}

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,11 +19,14 @@ import javax.persistence.criteria.*;
 import javax.validation.Valid;
 import java.util.*;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
+
 /**
  * Service fuer Betreuung
  */
 @Stateless
 @Local(BetreuungService.class)
+@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT})
 public class BetreuungServiceBean extends AbstractBaseService implements BetreuungService {
 
 	@Inject
@@ -31,12 +35,15 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	private WizardStepService wizardStepService;
 	@Inject
 	private InstitutionService institutionService;
+	@Inject
+	private Authorizer authorizer;
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
 
 	@Override
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit) {
 		Objects.requireNonNull(betreuung);
 
@@ -54,15 +61,20 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public Optional<Betreuung> findBetreuung(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Betreuung a = persistence.find(Betreuung.class, key);
-		return Optional.ofNullable(a);
+		Betreuung betr = persistence.find(Betreuung.class, key);
+		if (betr != null) {
+			authorizer.checkReadAuthorization(betr);
+		}
+		return Optional.ofNullable(betr);
 	}
 
 	@Override
 	@Nonnull
-	public Betreuung findBetreuungWithBetreuungsPensen(@Nonnull String key) {
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	public Optional<Betreuung> findBetreuungWithBetreuungsPensen(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
@@ -72,26 +84,36 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		query.select(root);
 		Predicate idPred = cb.equal(root.get(Betreuung_.id), key);
 		query.where(idPred);
-		return persistence.getCriteriaSingleResult(query);
+		Betreuung result = persistence.getCriteriaSingleResult(query);
+		if (result != null) {
+			authorizer.checkReadAuthorization(result);
+		}
+		return Optional.ofNullable(result);
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public void removeBetreuung(@Nonnull String betreuungId) {
 		Objects.requireNonNull(betreuungId);
-		Optional<Betreuung> betreuungToRemove = findBetreuung(betreuungId);
-		betreuungToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId));
-		final String gesuchId = betreuungToRemove.get().getKind().getGesuch().getId();
-		persistence.remove(betreuungToRemove.get());
+		Optional<Betreuung> betrToRemoveOpt = findBetreuung(betreuungId);
+		Betreuung betreuungToRemove = betrToRemoveOpt.orElseThrow(() -> new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId));
+		final String gesuchId = betreuungToRemove.getKind().getGesuch().getId();
+		authorizer.checkWriteAuthorization(betreuungToRemove);
+		persistence.remove(betreuungToRemove);
 		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG); //auch bei entfernen wizard updaten
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public void removeBetreuung(@Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung);
+		authorizer.checkWriteAuthorization(betreuung);
 		persistence.remove(betreuung);
 	}
 
 	@Override
 	@Nonnull
+	@RolesAllowed(value ={ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser() {
 		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
 		if (!instForCurrBenutzer.isEmpty()) {
@@ -102,6 +124,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public List<Betreuung> findAllBetreuungenFromGesuch(@Nonnull String gesuchId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
@@ -110,6 +133,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		Predicate predicateInstitution = root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchId);
 
 		query.where(predicateInstitution);
+		authorizer.checkReadAuthorizationGesuchId(gesuchId);
 		return persistence.getCriteriaResults(query);
 	}
 
@@ -132,7 +156,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
 
 			query.where(predicateStatus, predicateInstitution);
-			return persistence.getCriteriaResults(query);
+			List<Betreuung> betreuungen = persistence.getCriteriaResults(query);
+			authorizer.checkReadAuthorizationBetreuungen(betreuungen);
 		}
 		LOG.warn("Tried to read Pendenzen for institution but no institutionen specified");
 		return Collections.emptyList();
@@ -140,20 +165,24 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Betreuung schliessenOhneVerfuegen(@Nonnull Betreuung betreuung) {
 		return closeBetreuung(betreuung, Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG);
 	}
 
 	@Override
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Betreuung nichtEintreten(@Nonnull Betreuung betreuung) {
 		return closeBetreuung(betreuung, Betreuungsstatus.NICHT_EINGETRETEN);
 	}
 
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	private Betreuung closeBetreuung(@Nonnull Betreuung betreuung, @Nonnull Betreuungsstatus status) {
 		betreuung.setBetreuungsstatus(status);
 		final Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
+		authorizer.checkWriteAuthorization(persistedBetreuung);
 		wizardStepService.updateSteps(persistedBetreuung.extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedBetreuung;
 	}

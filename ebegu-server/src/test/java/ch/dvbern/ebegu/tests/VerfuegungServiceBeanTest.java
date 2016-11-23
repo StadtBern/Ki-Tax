@@ -31,7 +31,7 @@ import static ch.dvbern.ebegu.rechner.AbstractBGRechnerTest.checkTestfall01Waelt
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
+public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private VerfuegungService verfuegungService;

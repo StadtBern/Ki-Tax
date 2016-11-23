@@ -125,9 +125,12 @@ export class NavigatorController {
      */
     public previousStep(): void {
         if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
-            this.dvSave().then(() => {
-                this.navigateToPreviousStep();
-            });
+            let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
+            if(returnValue !== undefined) {
+                this.$q.when(returnValue).then(() => {
+                    this.navigateToPreviousStep();
+                });
+            }
         } else {
             this.navigateToPreviousStep();
         }

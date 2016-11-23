@@ -21,7 +21,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class PensumFachstelleServiceTest extends AbstractEbeguTest {
+public class PensumFachstelleServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private PensumFachstelleService pensumFachstelleService;
