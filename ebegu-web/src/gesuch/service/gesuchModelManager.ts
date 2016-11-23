@@ -1092,6 +1092,7 @@ export default class GesuchModelManager {
             for (let betreuung of kind.betreuungen) {
                 if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.NICHT_EINGETRETEN
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
                     return true;
                 }

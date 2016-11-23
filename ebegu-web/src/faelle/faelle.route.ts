@@ -18,6 +18,6 @@ function getStates(): IState[] {
 
 export class EbeguFaelleListState implements IState {
     name = 'faelle';
-    template = '<faelle-list-view flex="auto" class="overflow-auto">';
+    template = '<faelle-list-view flex="auto" class="overflow-scroll">';
     url = '/faelle';
 }

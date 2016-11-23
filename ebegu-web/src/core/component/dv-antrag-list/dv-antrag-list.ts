@@ -95,7 +95,7 @@ export class DVAntragListController {
     }
 
     public updateInstitutionenList(): void {
-        this.institutionRS.getAllInstitutionen().then((response: any) => {
+        this.institutionRS.getInstitutionenForCurrentBenutzer().then((response: any) => {
             this.institutionenList = angular.copy(response);
         });
     }

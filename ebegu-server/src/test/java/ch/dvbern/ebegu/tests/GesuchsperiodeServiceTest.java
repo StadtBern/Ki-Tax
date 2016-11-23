@@ -21,7 +21,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class GesuchsperiodeServiceTest extends AbstractEbeguTest {
+public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;

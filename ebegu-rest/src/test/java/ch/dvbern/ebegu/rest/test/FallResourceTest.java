@@ -33,7 +33,7 @@ import java.time.Month;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class FallResourceTest extends AbstractEbeguRestTest {
+public class FallResourceTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject
@@ -54,7 +54,6 @@ public class FallResourceTest extends AbstractEbeguRestTest {
 	public void testFindGesuchForInstitution() throws EbeguException {
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
-		TestDataUtil.createDummyAdminAnonymous(persistence);
 		final JaxFall foundFall = fallResource.findFall(converter.toJaxId(gesuch.getFall()));
 
 		Assert.assertNotNull(foundFall);
@@ -69,17 +68,17 @@ public class FallResourceTest extends AbstractEbeguRestTest {
 	public void testUpdateVerantwortlicherUserForFall() throws EbeguException {
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
-		Benutzer admin = TestDataUtil.createDummyAdminAnonymous(persistence);
+		Benutzer sachbearbeiter = TestDataUtil.createAndPersistBenutzer(persistence);
 		final JaxFall foundFall = fallResource.findFall(converter.toJaxId(gesuch.getFall()));
 
 		Assert.assertNotNull(foundFall);
 		Assert.assertNull(foundFall.getVerantwortlicher());
 
-		JaxAuthLoginElement userToSet = converter.benutzerToAuthLoginElement(admin);
+		JaxAuthLoginElement userToSet = converter.benutzerToAuthLoginElement(sachbearbeiter);
 		foundFall.setVerantwortlicher(userToSet);
 		JaxFall updatedFall = fallResource.saveFall(foundFall, null, null);
 		Assert.assertNotNull(updatedFall.getVerantwortlicher());
-		Assert.assertEquals(admin.getUsername(), updatedFall.getVerantwortlicher().getUsername());
+		Assert.assertEquals(sachbearbeiter.getUsername(), updatedFall.getVerantwortlicher().getUsername());
 	}
 
 	// HELP METHODS

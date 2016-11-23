@@ -5,8 +5,8 @@ import GesuchModelManager from './service/gesuchModelManager';
 import TSGesuch from '../models/TSGesuch';
 import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
-import IPromise = angular.IPromise;
 import MahnungRS from './service/mahnungRS.rest';
+import IPromise = angular.IPromise;
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];

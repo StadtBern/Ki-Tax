@@ -27,7 +27,7 @@ import java.time.LocalDate;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
+public class GesuchstellerResourceTest extends AbstractEbeguRestLoginTest {
 
 
 

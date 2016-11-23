@@ -1,12 +1,14 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -19,6 +21,7 @@ import java.util.List;
  */
 @Stateless
 @Local(HistorizationService.class)
+@RolesAllowed({UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
 public class HistorizationServiceBean extends AbstractBaseService implements HistorizationService {
 
 	@Inject
