@@ -51,7 +51,7 @@ public class Sequence extends AbstractEntity implements HasMandant{
 	@SuppressWarnings("ConstantConditions")
 	@SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "JPA instantiation only")
 	protected Sequence() {
-		this(null, null);
+		this(SequenceType.FALL_NUMMER, -1L);
 	}
 
 	public Sequence(@Nonnull SequenceType sequenceType, @Nonnull Long currentValue) {
