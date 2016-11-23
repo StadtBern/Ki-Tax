@@ -77,6 +77,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Inject
 	private RulesService rulesService;
 
+	@Inject
+	private Authorizer authorizer;
+
 
 	@Override
 	@Nonnull
@@ -152,6 +155,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
 			|| persistedDokument == null) {
 			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+			authorizer.checkReadAuthorizationFinSit(gesuch);
 			finanzielleSituationService.calculateFinanzDaten(gesuch);
 
 			byte[] data;

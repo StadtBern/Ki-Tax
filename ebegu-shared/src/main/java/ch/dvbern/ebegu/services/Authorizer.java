@@ -102,4 +102,6 @@ public interface Authorizer {
 	 * extrahiert die {@link FinanzielleSituation} von beiden GS wenn vorhanden und  prueft ob der aktuelle Benutzer berechtigt ist
 	 */
 	void checkReadAuthorizationFinSit(@Nullable Gesuch gesuch);
+
+	void checkReadAuthorization(@Nullable WizardStep step);
 }
