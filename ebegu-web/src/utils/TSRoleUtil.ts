@@ -4,14 +4,13 @@ import {TSRole} from '../models/enums/TSRole';
  */
 export class TSRoleUtil {
 
-    static getAllRolesButGesuchsteller(): Array<string> {
+    public static getAllRolesButGesuchsteller(): Array<string> {
         return TSRoleUtil.getAllRoles().filter(element =>
             element !== TSRole[TSRole.GESUCHSTELLER]
         );
     }
 
     public static getAllRoles(): Array<string> {
-        // return Object.keys(TSRole).map(k => TSRole[k]);
         let result: Array<string> = [];
         for (var prop in TSRole) {
             if ((isNaN(parseInt(prop)))) {
@@ -21,12 +20,16 @@ export class TSRoleUtil {
         return result;
     }
 
+    public static getAdministratorRoles(): Array<TSRole> {
+        return [TSRole.ADMIN]; //TODO (team) Superadmin
+    }
+
     public static getTraegerschaftInstitutionRoles(): Array<TSRole> {
         return [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
     }
 
     public static getGesuchstellerJugendamtRoles(): Array<TSRole> {
-        return [TSRole.GESUCHSTELLER, TSRole.SACHBEARBEITER_JA];
+        return [TSRole.GESUCHSTELLER, TSRole.SACHBEARBEITER_JA, TSRole.ADMIN]; // TODO Superadmin
     }
 
     public static getAdministratorJugendamtRole(): Array<TSRole> {
@@ -45,4 +48,15 @@ export class TSRoleUtil {
         );
     }
 
+    public static getSchulamtRoles(): Array<TSRole> {
+        return [TSRole.SCHULAMT]; //TODO Superadmin
+    }
+
+    public static getGesuchstellerRoles(): Array<TSRole> {
+        return [TSRole.GESUCHSTELLER]; //TODO Superadmin?
+    }
+
+    public static getAllRolesForKommentarSpalte(): Array<TSRole> {
+        return [TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.STEUERAMT, TSRole.SCHULAMT]; //TODO Superadmin
+    }
 }
