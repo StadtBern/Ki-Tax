@@ -72,7 +72,10 @@ public abstract class AbstractEbeguTest {
 				.addAsResource("vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx", "vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx")
 				.addAsResource("vorlagen/Verfuegungsmuster_tagesstaette_schulkinder.docx", "vorlagen/Verfuegungsmuster_tagesstaette_schulkinder.docx")
 				.addAsResource("vorlagen/Berechnungsgrundlagen.docx", "vorlagen/Berechnungsgrundlagen.docx")
-				.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx").addAsResource("font/sRGB.profile", "font/sRGB.profile")
+				.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx")
+				.addAsResource("vorlagen/1_Mahnung.docx", "vorlagen/1_Mahnung.docx")
+				.addAsResource("vorlagen/2_Mahnung.docx", "vorlagen/2_Mahnung.docx")
+				.addAsResource("font/sRGB.profile", "font/sRGB.profile")
 				.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml").addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
 				.addAsManifestResource("META-INF/TEST-MANIFEST.MF", "MANIFEST.MF")
 				// Deploy our test datasource
@@ -102,13 +105,14 @@ public abstract class AbstractEbeguTest {
 		FileOutputStream fos = null;
 		try {
 			// create temp file in junit temp folder
-			tempFile = tempFolder.newFile(fileName);
+			//tempFile = tempFolder.newFile(fileName);
+			tempFile = new File("C:/Development/EBEGU/JUnitTestTemp", fileName);
 			System.out.println("Writing tempfile to: " + tempFile);
 			fos = new FileOutputStream(tempFile);
 			fos.write(data);
 			fos.close();
 			// File external oeffnen
-//			openPDF(tempFile);
+			//openPDF(tempFile);
 		} finally {
 			if (fos != null) {
 				fos.close();

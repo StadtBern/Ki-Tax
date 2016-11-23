@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.types.DateRange;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,6 +49,7 @@ public abstract class AbstractTestfall {
 	public Fall createFall(Benutzer verantwortlicher) {
 		fall = new Fall();
 		fall.setVerantwortlicher(verantwortlicher);
+		fall.setTimestampErstellt(LocalDateTime.now().minusDays(7));
 		return fall;
 	}
 

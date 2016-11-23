@@ -20,6 +20,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
 
@@ -748,8 +749,10 @@ public final class TestDataUtil {
 		Mahnung mahnung = new Mahnung();
 		mahnung.setMahnungTyp(typ);
 		mahnung.setActive(true);
-		mahnung.setBemerkungen("Test-Mahnung");
+		mahnung.setBemerkungen("Test Dokument 1\nTest Dokument 2\nTest Dokument 3");
 		mahnung.setDatumFristablauf(firstAblauf);
+		mahnung.setTimestampErstellt(LocalDateTime.now());
+		mahnung.setUserMutiert("Hans Muster");
 		mahnung.setGesuch(gesuch);
 		return mahnung;
 	}
