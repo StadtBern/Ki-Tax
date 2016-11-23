@@ -111,7 +111,9 @@
     form:not(.ng-submitted) .form-group {
         //geschwisterelement von .formcontrol feldern oder .input-element feldern sollen Fehlermeldung noch nicht anzeigen wenn input untouched ist
         .form-control.ng-untouched ~ dv-error-messages > .dv-error-messages > .error,
-        .input-element.ng-untouched ~ dv-error-messages > .dv-error-messages > .error {
+        .input-element.ng-untouched ~ dv-error-messages > .dv-error-messages > .error,
+        .form-group.ng-untouched ~ dv-error-messages > .dv-error-messages > .error,
+        .md-input-container.ng-untouched ~ dv-error-messages > .dv-error-messages > .error {
             display: none;
         }
 

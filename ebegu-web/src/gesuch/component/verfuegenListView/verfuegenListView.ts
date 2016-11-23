@@ -178,8 +178,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     public showZweiteMahnungErstellen(): boolean {
-        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
-        this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN))
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN)
             && this.mahnung === undefined;
     }
 
@@ -187,14 +186,22 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG;
     }
 
-    public showDokumenteKomplett(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+    public showMahnlaufBeenden(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
     }
 
     public showDokumenteNichtKomplett(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+    }
+
+    public showZweiteMahnungNichtEingetreten(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
     }
 
     public ersteMahnungErstellen(): void {
@@ -229,10 +236,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         });
     }
 
-    public dokumenteKomplett(): void {
+    public mahnlaufBeenden(): void {
         // Gesuchstatus zuruecksetzen UND die Mahnungen auf erledigt setzen
         this.setGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA).then(any => {
-            this.mahnungRS.dokumenteKomplettErhalten(this.getGesuch()).then(any => {
+            this.mahnungRS.mahnlaufBeenden(this.getGesuch()).then(any => {
                 this.mahnungRS.findMahnungen(this.getGesuch()).then(reloadedMahnungen => {
                     this.mahnungList = reloadedMahnungen;
                 });
@@ -247,6 +254,12 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         } else if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
             this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG);
         }
+    }
+
+    public zweiteMahnungNichtEingetreten(): void {
+        // Auf die zweite Mahnung wurde nicht reagiert. Den Status des Gesuchs wieder auf IN_BEARBEITUNG setzen
+        // damit die Betreuungen auf NICHT_EINGETRETEN verfügt werden können. Die Mahnungen bleiben aber offen!
+        this.setGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA);
     }
 
     /**

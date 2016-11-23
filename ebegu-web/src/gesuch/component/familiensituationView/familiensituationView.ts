@@ -148,7 +148,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     public isEnabled(): boolean {
         if (this.isMutationAndDateSet() && !this.isGesuchReadonly()) {
-            return true
+            return true;
         } else {
             return false;
         }
@@ -162,7 +162,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     public resetFamsit() {
-        this.getFamiliensituation().revertFamiliensituation(this.getFamiliensituationErstgesuch())
+        this.getFamiliensituation().revertFamiliensituation(this.getFamiliensituationErstgesuch());
     }
 
     public hasError(): boolean {

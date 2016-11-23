@@ -14,6 +14,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -29,6 +30,7 @@ import java.util.*;
  */
 @Stateless
 @Local(MahnungService.class)
+@PermitAll
 public class MahnungServiceBean extends AbstractBaseService implements MahnungService {
 
 	@Inject
@@ -39,6 +41,9 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 
 	@Inject
 	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
+
+	@Inject
+	private GesuchService gesuchService;
 
 
 	@Override
@@ -79,7 +84,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	}
 
 	@Override
-	public void dokumenteKomplettErhalten(@Nonnull Gesuch gesuch) {
+	public void mahnlaufBeenden(@Nonnull Gesuch gesuch) {
 		// Alle Mahnungen auf erledigt stellen
 		Collection<Mahnung> mahnungenForGesuch = findMahnungenForGesuch(gesuch);
 		for (Mahnung mahnung : mahnungenForGesuch) {
@@ -98,7 +103,6 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		StringBuilder bemerkungenBuilder = new StringBuilder();
 		for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
 			if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
-				bemerkungenBuilder.append("- ");
 				bemerkungenBuilder.append(ServerMessageUtil.translateEnumValue(dokumentGrund.getDokumentTyp()));
 				if (StringUtils.isNotEmpty(dokumentGrund.getFullName())) {
 					bemerkungenBuilder.append(" (");
@@ -120,7 +124,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		query.distinct(true);
 
 		Predicate predicateAktiv = cb.equal(root.get(Mahnung_.active), Boolean.TRUE);
-		Predicate predicateAbgelaufen = cb.lessThan(root.get(Mahnung_.datumFristablauf), LocalDate.now());
+		Predicate predicateAbgelaufen = cb.lessThanOrEqualTo(root.get(Mahnung_.datumFristablauf), LocalDate.now());
 		query.where(predicateAktiv, predicateAbgelaufen);
 
 
@@ -132,8 +136,11 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 			} else if (AntragStatus.ZWEITE_MAHNUNG.equals(gesuch.getStatus())) {
 				gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
 			} else {
-				throw new IllegalArgumentException("Mahnung abgelaufen fuer ein Gesuch, welches nicht im Status MAHNUNG war");
+				if (!(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN.equals(gesuch.getStatus()) || AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN.equals(gesuch.getStatus()))) {
+					throw new IllegalArgumentException("Mahnung abgelaufen fuer ein Gesuch, welches nicht im Status MAHNUNG war");
+				}
 			}
+			gesuchService.updateGesuch(gesuch, true);
 		}
 	}
 
