@@ -227,15 +227,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Optional<InstitutionStammdaten> optionalBruennen = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
 		Optional<InstitutionStammdaten> optionalTagiAaregg = institutionStammdatenService.findInstitutionStammdaten("11111111-1111-1111-1111-111111111174");
 
-		if (optionalAaregg.isPresent()) {
-			institutionStammdatenList.add(optionalAaregg.get());
-		}
-		if (optionalBruennen.isPresent()) {
-			institutionStammdatenList.add(optionalBruennen.get());
-		}
-		if (optionalTagiAaregg.isPresent()) {
-			institutionStammdatenList.add(optionalTagiAaregg.get());
-		}
+		optionalAaregg.ifPresent(institutionStammdatenList::add);
+		optionalBruennen.ifPresent(institutionStammdatenList::add);
+		optionalTagiAaregg.ifPresent(institutionStammdatenList::add);
 		return institutionStammdatenList;
 	}
 
