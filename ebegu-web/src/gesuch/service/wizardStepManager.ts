@@ -64,9 +64,9 @@ export default class WizardStepManager {
     }
 
     public setAllowedStepsForRole(role: TSRole): void {
-        if (TSRoleUtil.getTraegerschaftInstitutionRoles().indexOf(role) > -1) {
+        if (TSRoleUtil.getTraegerschaftInstitutionRoles(true).indexOf(role) > -1) {
             this.setAllowedStepsForInstitutionTraegerschaft();
-        } else if (TSRoleUtil.getSchulamtRoles().indexOf(role) > -1) {
+        } else if (TSRoleUtil.getSchulamtRoles(true).indexOf(role) > -1) {
             this.setAllowedStepsForSchulamt();
         } else {
             this.setAllAllowedSteps();
@@ -254,7 +254,7 @@ export default class WizardStepManager {
     public isStepClickableForCurrentRole(step: TSWizardStep, gesuch: TSGesuch) {
         if (step.wizardStepName === TSWizardStepName.VERFUEGEN) {
             //verfuegen step fuer alle ausser admin und sachbearbeiter nur verfuegbar wenn status verfuegt
-            if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())
+            if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole(true))
                 && gesuch.status !== TSAntragStatus.VERFUEGT) {
                 return false;    //disabled
             }
