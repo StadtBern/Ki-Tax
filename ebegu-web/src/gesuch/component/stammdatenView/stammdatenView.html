@@ -1,7 +1,7 @@
 <div class="stammdatenView gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle">
+            <h1>
                 <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.getGesuchstellerNumber()}}
             </h1>
             <hr class="header"/>
@@ -70,7 +70,8 @@
                     </div>
 
                     <!-- Adresse. Bei Mutationen nicht editierbar-->
-                    <fieldset ng-disabled="vm.disableWohnadresseFor2GS()"> <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
+                    <fieldset ng-disabled="vm.disableWohnadresseFor2GS()">
+                        <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
                         <dv-adresse adresse="vm.getModel().getWohnAdresse()" show-nicht-in-gemeinde="true"
                                     prefix="wohn"></dv-adresse>
                     </fieldset>
@@ -187,13 +188,19 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-show-element
-                               dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                               dv-previous="true" dv-next="true" dv-save="vm.save(form)">
-                </dv-navigation>
-                <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                               dv-previous="true" dv-next="true">
-                </dv-navigation>
+                <div class="row">
+                    <div class="col-md-12">
+                        <dv-navigation dv-show-element
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                       dv-previous="true" dv-next="true" dv-save="vm.save(form)">
+                        </dv-navigation>
+                        <dv-navigation dv-show-element
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                                       dv-previous="true" dv-next="true">
+                        </dv-navigation>
+                    </div>
+                </div>
+
             </form>
         </div>
     </div>

@@ -52,6 +52,11 @@ body {
 .overflow-auto {
     overflow: auto;
 }
+
+.overflow-scroll {
+    overflow-x: auto;
+    overflow-y: scroll;
+}
 .dv-progressbar {
     position: fixed;
     width: 100%;
@@ -162,6 +167,13 @@ form {
 md-backdrop.md-dialog-backdrop {
 
     z-index: @z-index-dialog;
+}
+
+md-dialog.md-default-theme, md-dialog {
+    border-radius: 0;
+    .md-dialog-content {
+        padding: 2.5rem;
+    }
 }
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and
