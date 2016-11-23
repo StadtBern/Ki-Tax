@@ -418,6 +418,40 @@ describe('gesuchModelManager', function () {
                 expect(promiseExecuted[0]).toEqual(betreuung);
             });
         });
+        describe('openGesuch', function () {
+            it('should call findGesuchForInstitution for role Institution or Traegerschaft', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
+                let gesuch: TSGesuch = new TSGesuch();
+                gesuch.id = '123';
+                spyOn(gesuchRS, 'findGesuchForInstitution').and.returnValue($q.when(gesuch));
+                spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue($q.when({}));
+
+                gesuchModelManager.openGesuch(gesuch.id);
+                scope.$apply();
+
+                expect(gesuchRS.findGesuchForInstitution).toHaveBeenCalledWith(gesuch.id);
+                expect(gesuchModelManager.getGesuch()).toEqual(gesuch);
+            });
+            it('should call findGesuch for other role but Institution/Traegerschaft', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
+                let gesuch: TSGesuch = new TSGesuch();
+                gesuch.id = '123';
+                spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(false);
+                spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(gesuch));
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue($q.when({}));
+
+                gesuchModelManager.openGesuch(gesuch.id);
+                scope.$apply();
+
+                expect(gesuchRS.findGesuch).toHaveBeenCalledWith(gesuch.id);
+                expect(gesuchModelManager.getGesuch()).toEqual(gesuch);
+            });
+        });
     });
 
 
