@@ -15,6 +15,7 @@ import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.entities.ApplicationProperty_;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -22,6 +23,8 @@ import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -36,6 +39,7 @@ import java.util.Optional;
  */
 @Stateless
 @Local(ApplicationPropertyService.class)
+@PermitAll
 public class ApplicationPropertyServiceBean extends AbstractBaseService implements ApplicationPropertyService {
 
 
@@ -49,6 +53,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Nonnull
 	@Override
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public ApplicationProperty  saveOrUpdateApplicationProperty(@Nonnull final ApplicationPropertyKey key, @Nonnull final String value) {
 		Validate.notNull(key);
 		Validate.notNull(value);
@@ -86,6 +91,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 
 	@Override
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public void removeApplicationProperty(@Nonnull ApplicationPropertyKey key) {
 		Validate.notNull(key);
 		Optional<ApplicationProperty> propertyToRemove = readApplicationProperty(key);

@@ -12,10 +12,8 @@ import io.swagger.annotations.Api;
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -91,5 +89,18 @@ public class PendenzResource {
 		return pendenzenList;
 	}
 
-
+	/**
+	 * Gibt eine Liste der Faelle des Gesuchstellers zurueck.
+	 */
+	@Nonnull
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/gesuchsteller/{username}")
+	public List<JaxAntragDTO> getAllAntraegeGesuchsteller(@Nonnull @NotNull @PathParam("username") String username) {
+		List<Gesuch> antraege = gesuchService.getAntraegeForUsername(username);
+		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
+		antraege.stream().forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch)));
+		return pendenzenList;
+	}
 }

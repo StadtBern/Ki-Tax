@@ -1,7 +1,7 @@
 <div class="betreuungView gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle">
+            <h1>
                     <span data-translate="BETREUUNGSANGEBOT_NUMBER"
                           data-translate-value-kindname="{{vm.getKindModel().kindJA.getFullName()}}"
                           data-translate-value-betreuungnumber="{{vm.gesuchModelManager.betreuungNumber}}"></span>
@@ -47,18 +47,19 @@
                     <div class="row marginTop20">
                         <div class="col-sm-12 dv-input-container-small ">
                             <div class="form-group">
-                                <label class="md-no-float" data-translate="BETREUUNGSANGEBOT_WAEHLEN"
+                                <label class="md-no-float"
                                        for="betreuungsangebot">
+                                    <span data-translate="BETREUUNGSANGEBOT_WAEHLEN"></span>
+                                    <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
-                                <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
+
                                 <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot"
                                         class="form-control"
                                         ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
                                         ng-required="true" ng-disabled="!vm.isEnabled()"
                                         ng-change="vm.changedAngebot()">
                                 </select>
-                                <dv-error-messages for="form.betreuungsangebot.$error"
-                                                   class="error"></dv-error-messages>
+                                <dv-error-messages for="form.betreuungsangebot.$error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -73,8 +74,7 @@
                                     ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()"
                                     ng-disabled="!vm.isEnabled()">
                             </select>
-                            <dv-error-messages for="form.institution.$error"
-                                               class="error"></dv-error-messages>
+                            <dv-error-messages for="form.institution.$error"></dv-error-messages>
                         </div>
                     </div>
 
@@ -83,14 +83,14 @@
                     <div class="row" dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                          dv-show-expression="!vm.isTagesschule()">
-                        <div class="col-sm-12 dv-input-container-small">
+                        <div class="col-sm-6">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
                                              aria-label="vertrag" ng-disabled="!vm.isEnabled()"
                                              ng-class="{true:'checkbox-error', false:''}[vm.flagErrorVertrag]">
                                     <span data-translate="VERTRAG"></span>
                                 </md-checkbox>
-                                <div class="dv-error-messages error" ng-if="vm.flagErrorVertrag === true">
+                                <div class="dv-error-messages" ng-if="vm.flagErrorVertrag === true">
                                     <span data-translate="ERROR_VERTRAG_REQUIRED"></span>
                                 </div>
                             </div>
@@ -120,8 +120,8 @@
                                                    ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
                                                    ng-required="true"
                                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                                            <dv-error-messages for="form['betreuungspensum-' + $index].$error"
-                                                               class="error"></dv-error-messages>
+                                            <dv-error-messages
+                                                for="form['betreuungspensum-' + $index].$error"></dv-error-messages>
                                             <dv-bisher gs="vm.getModel().pensum"></dv-bisher>
                                         </dv-input-container>
                                     </div>
@@ -139,8 +139,8 @@
                                                            ng-required="true"
                                                            ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                             </dv-datepicker>
-                                            <dv-error-messages for="form['datumAb-' + $index].$error"
-                                                               class="error"></dv-error-messages>
+                                            <dv-error-messages
+                                                for="form['datumAb-' + $index].$error"></dv-error-messages>
                                         </dv-input-container>
                                     </div>
 
@@ -154,8 +154,8 @@
                                                            ng-required="false"
                                                            ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                             </dv-datepicker>
-                                            <dv-error-messages for="form['datumBis-' + $index].$error"
-                                                               class="error"></dv-error-messages>
+                                            <dv-error-messages
+                                                for="form['datumBis-' + $index].$error"></dv-error-messages>
                                         </dv-input-container>
                                     </div>
                                 </div>
@@ -209,7 +209,7 @@
 
                         <!--erweiterte Beduerfnisse-->
                         <div class="row" ng-if="vm.showErweiterteBeduerfnisse()">
-                            <div class="col-md-6">
+                            <div class="col-sm-6">
                                 <div class="checkbox">
                                     <md-checkbox ng-model="vm.getBetreuungModel().erweiterteBeduerfnisse"
                                                  name="erweiterteBeduerfnisse"
@@ -218,8 +218,7 @@
                                                  dv-enable-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
                                         <span data-translate="ERWEITERTE_BEDUERFNISSE"></span>
                                     </md-checkbox>
-                                    <dv-error-messages for="form.erweiterteBeduerfnisse.$error"
-                                                       class="error"></dv-error-messages>
+                                    <dv-error-messages for="form.erweiterteBeduerfnisse.$error"></dv-error-messages>
                                 </div>
                             </div>
                         </div>
@@ -329,7 +328,7 @@
 
                         <!--Hint-->
                         <p class="inlineHint marginTop20" data-translate="BETREUUNGSPENSUM_HINT1"
-                           dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER]"></p>
+                           dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerRoles()"></p>
 
                     </div>
                 </fieldset>
@@ -337,7 +336,7 @@
                 <!--Buttons-->
                 <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
                     wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
-                <div class="row marginTop20">
+                <div class="row nav-row">
                     <div class="col-md-6 text-right">
                         <dv-loading-button button-click="vm.cancel(form)" button-class=" btn-link cancel"
                                            type="reset">

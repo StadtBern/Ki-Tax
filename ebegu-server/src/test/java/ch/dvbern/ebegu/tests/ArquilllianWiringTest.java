@@ -29,7 +29,7 @@ import javax.inject.Inject;
  * @author <a href="http://community.jboss.org/people/dan.j.allen">Dan Allen</a>
  */
 @RunWith(Arquillian.class)
-public class ArquilllianWiringTest extends AbstractEbeguTest{
+public class ArquilllianWiringTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	BenutzerService benutzerService;

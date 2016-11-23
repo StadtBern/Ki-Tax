@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.SequenceType;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.KindService;
-import ch.dvbern.ebegu.services.MandantService;
 import ch.dvbern.ebegu.services.SequenceService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
@@ -24,7 +23,6 @@ public class AbstractEntityListener {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEntityListener.class);
 
 	private static PrincipalBean principalBean = null;
-	private static MandantService mandantService = null;
 	private FallService fallService;
 	private KindService kindService;
 	private SequenceService sequenceService;
@@ -37,16 +35,6 @@ public class AbstractEntityListener {
 			principalBean = CDI.current().select(PrincipalBean.class).get();
 		}
 		return principalBean;
-	}
-
-	@SuppressFBWarnings(value = "LI_LAZY_INIT_STATIC", justification = "Auch wenn das vlt. mehrfach initialisiert wird... das macht nix, solange am Ende was Richtiges drinsteht")
-	private static MandantService getMandantService() {
-		if (mandantService == null) {
-			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection (mal wieder) buggy ist.
-			//noinspection NonThreadSafeLazyInitialization
-			mandantService = CDI.current().select(MandantService.class).get();
-		}
-		return mandantService;
 	}
 
 	@PrePersist
@@ -78,7 +66,7 @@ public class AbstractEntityListener {
 		}
 		else if (entity instanceof Fall) {
 			Fall fall = (Fall) entity;
-			Mandant mandant = getMandantService().getFirst(); //todo team der mandant sollte aus dem prinipal gelesen werden
+			Mandant mandant = getPrincipalBean().getMandant();
 			Long nextFallNr = getSequenceService().createNumberTransactional(SequenceType.FALL_NUMMER, mandant);
 			fall.setFallNummer(nextFallNr);
 			fall.setMandant(mandant);

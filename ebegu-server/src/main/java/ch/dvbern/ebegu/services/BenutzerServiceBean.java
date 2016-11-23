@@ -15,11 +15,12 @@ import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service fuer Benutzer
@@ -60,6 +61,21 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	public Collection<Benutzer> getAllBenutzer() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Benutzer.class));
 	}
+
+	@Nonnull
+	@Override
+	public Collection<Benutzer> getBenutzerJAorAdmin() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Benutzer> query = cb.createQuery(Benutzer.class);
+		Root<Benutzer> root = query.from(Benutzer.class);
+		query.select(root);
+		Predicate isAdmin = cb.equal(root.get(Benutzer_.role), UserRole.ADMIN);
+		Predicate isSachbearbeiterJA = cb.equal(root.get(Benutzer_.role), UserRole.SACHBEARBEITER_JA);
+		Predicate orRoles = cb.or(isAdmin, isSachbearbeiterJA);
+		query.where(orRoles);
+		return persistence.getCriteriaResults(query);
+	}
+
 
 	@Override
 	public void removeBenutzer(@Nonnull String username) {

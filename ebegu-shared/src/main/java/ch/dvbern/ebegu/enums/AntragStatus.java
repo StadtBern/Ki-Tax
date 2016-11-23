@@ -41,7 +41,8 @@ public enum AntragStatus {
      */
     public static Set<AntragStatus> allowedforRole(UserRole userRole) {
         switch (userRole) {
-            case ADMIN: return forAdminRole;
+			case SUPER_ADMIN: return  all;
+			case ADMIN: return forAdminRole;
             case GESUCHSTELLER: return none;
             case JURIST: return forJuristRole;
             case REVISOR: return forRevisorRole;

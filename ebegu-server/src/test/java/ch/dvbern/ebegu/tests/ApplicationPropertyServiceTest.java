@@ -39,7 +39,7 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class ApplicationPropertyServiceTest extends AbstractEbeguTest {
+public class ApplicationPropertyServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;

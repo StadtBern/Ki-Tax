@@ -10,7 +10,6 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.PensumFachstelleService;
-import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -28,7 +27,7 @@ import javax.ws.rs.core.UriInfo;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class KindResourceTest extends AbstractEbeguRestTest {
+public class KindResourceTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject
@@ -56,7 +55,6 @@ public class KindResourceTest extends AbstractEbeguRestTest {
 	public void createKindTest() throws EbeguException {
 		UriInfo uri = new ResteasyUriInfo("test", "test", "test");
 		JaxGesuch jaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
-		TestDataUtil.createDummyAdminAnonymous(persistence);
 		Mandant persistedMandant = persistence.persist(converter.mandantToEntity(TestJaxDataUtil.createTestMandant(), new Mandant()));
 		jaxGesuch.getFall().getVerantwortlicher().setMandant(converter.mandantToJAX(persistedMandant));
 		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(jaxGesuch.getFall().getVerantwortlicher(), new Benutzer()));

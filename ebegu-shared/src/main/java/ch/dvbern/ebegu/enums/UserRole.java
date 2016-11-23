@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.enums;
 
+
 public enum UserRole {
 	SUPER_ADMIN,
 	ADMIN,

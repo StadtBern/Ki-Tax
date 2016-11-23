@@ -16,10 +16,10 @@ import org.slf4j.LoggerFactory;
  /subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache/expiration=EXPIRATION:add(lifespan=1800000)
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class InfinispanTestCacheSetupTask implements ServerSetupTask {
+public class LoginmoduleAndCacheSetupTask implements ServerSetupTask {
 
 
-	private static final Logger LOG = LoggerFactory.getLogger(InfinispanTestCacheSetupTask.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LoginmoduleAndCacheSetupTask.class);
 
     private static final String JBOSSAS_CONTAINER = "wildfly-container";
 
@@ -29,8 +29,33 @@ public class InfinispanTestCacheSetupTask implements ServerSetupTask {
             return;
         }
 
+		//add login module
+		addEbeguTestLoginModule(managementClient);
 
-        ModelNode step1 = WildflyCLIUtil.createOpNode("subsystem=infinispan/cache-container=ebeguCache", "add");
+		// add infinispan cache subsystem
+		addInfinispanCacheForTest(managementClient);
+
+//        // FIXME reload is not working due to https://bugzilla.redhat.com/show_bug.cgi?id=900065
+//         managementClient.getControllerClient().execute(ModelUtil.createOpNode(null, "reload"));
+    }
+
+	private void addEbeguTestLoginModule(ManagementClient managementClient) {
+		ModelNode step1 = WildflyCLIUtil.createOpNode("subsystem=security/security-domain=ebegu-test/", "add");
+		step1.get("cache-type").set("default");
+		ModelNode step2 = WildflyCLIUtil.createOpNode("subsystem=security/security-domain=ebegu-test/authentication=classic", "add");
+		ModelNode step3 = WildflyCLIUtil.createOpNode("subsystem=security/security-domain=ebegu-test/authentication=classic/login-module=UsersRoles", "add");
+		step3.get("code").set("UsersRoles");
+		step3.get("flag").set("sufficient");
+
+		ModelNode op = WildflyCLIUtil.createCompositeNode(step1, step2, step3);
+
+		boolean success = WildflyCLIUtil.execute(managementClient, op);
+		LOG.info("Installing ebegu dummy demo login module   for ebegu application {}",
+				new Object[] { success ? "passed" : "failed" });
+	}
+
+	private void addInfinispanCacheForTest(ManagementClient managementClient) {
+		ModelNode step1 = WildflyCLIUtil.createOpNode("subsystem=infinispan/cache-container=ebeguCache", "add");
 		step1.get("default-cache").set("ebeguAuthorizationCache");
 		ModelNode step2 = WildflyCLIUtil.createOpNode("subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache", "add");
 		ModelNode step3 = WildflyCLIUtil.createOpNode("subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache/transaction=TRANSACTION", "add");
@@ -39,18 +64,15 @@ public class InfinispanTestCacheSetupTask implements ServerSetupTask {
 		step4.get("strategy").set("LRU");
 		step4.get("max-entries").set("100");
 
-        ModelNode op = WildflyCLIUtil.createCompositeNode(step1, step2, step3, step4);
+		ModelNode op = WildflyCLIUtil.createCompositeNode(step1, step2, step3, step4);
 
-        // add infinispan cache subsystem
-        boolean success = WildflyCLIUtil.execute(managementClient, op);
-        LOG.info("Installing infinispan cache for ebegu application {}",
-                new Object[] { success ? "passed" : "failed" });
+		// add infinispan cache subsystem
+		boolean success = WildflyCLIUtil.execute(managementClient, op);
+		LOG.info("Installing infinispan cache for ebegu application {}",
+				new Object[] { success ? "passed" : "failed" });
+	}
 
-//        // FIXME reload is not working due to https://bugzilla.redhat.com/show_bug.cgi?id=900065
-//         managementClient.getControllerClient().execute(ModelUtil.createOpNode(null, "reload"));
-    }
-
-    @Override
+	@Override
     public void tearDown(ManagementClient managementClient, String containerId){
 
         if (!containerId.startsWith(JBOSSAS_CONTAINER)) {
@@ -60,13 +82,16 @@ public class InfinispanTestCacheSetupTask implements ServerSetupTask {
         LOG.info( "starting removal of  Infinispan cache for ebegu testing");
 
         ModelNode op = WildflyCLIUtil.createOpNode("subsystem=infinispan/cache-container=ebeguCache", "remove");
-
         // remove picketlink subsystem
-        boolean success = WildflyCLIUtil.execute(managementClient, op);
+		boolean success = WildflyCLIUtil.execute(managementClient, op);
 		LOG.info("Uninstalling infinispan cache for ebegu application {}",
                 new Object[] { success ? "passed" : "failed" });
+		ModelNode op2 = WildflyCLIUtil.createOpNode("subsystem=security/security-domain=ebegu-test", "remove");
+		boolean success2 = WildflyCLIUtil.execute(managementClient, op2);
+		LOG.info("Uninstalling demo login module  for ebegu application {}",
+                new Object[] { success2 ? "passed" : "failed" });
 
-        // FIXME reload is not working due to https://bugzilla.redhat.com/show_bug.cgi?id=900065
+		// FIXME reload is not working due to https://bugzilla.redhat.com/show_bug.cgi?id=900065
         // managementClient.getControllerClient().execute(ModelUtil.createOpNode(null, "reload"));
     }
 }

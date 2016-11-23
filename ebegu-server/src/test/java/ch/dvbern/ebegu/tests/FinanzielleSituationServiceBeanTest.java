@@ -25,7 +25,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class FinanzielleSituationServiceBeanTest extends AbstractEbeguTest {
+public class FinanzielleSituationServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;

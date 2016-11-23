@@ -31,7 +31,7 @@ import java.util.Locale;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
+public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguLoginTest {
 
 	protected BetreuungsgutscheinEvaluator evaluator;
 

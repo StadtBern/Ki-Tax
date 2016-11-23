@@ -1,7 +1,7 @@
 <div class="betreuungListView gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle">
+            <h1>
                 <span data-translate="KINDER_MIT_BETREUUNG"></span>
             </h1>
             <hr class="header"/>
@@ -11,7 +11,7 @@
     <!--Fuer jedes Kind Tabelle anzeigen-->
     <div class="row">
         <div class="col-md-12">
-            <div ng-repeat="kind in vm.getKinderWithBetreuungList()" style="margin:2rem;">
+            <div ng-repeat="kind in vm.getKinderWithBetreuungList()">
                 <div class="row">
                     <div class="col-md-12">
                         <h1 class="mainTitle">
