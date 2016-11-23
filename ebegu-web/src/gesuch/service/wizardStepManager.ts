@@ -66,6 +66,8 @@ export default class WizardStepManager {
     public setAllowedStepsForRole(role: TSRole): void {
         if (TSRoleUtil.getTraegerschaftInstitutionRoles().indexOf(role) > -1) {
             this.setAllowedStepsForInstitutionTraegerschaft();
+        } else if (TSRoleUtil.getSchulamtRoles().indexOf(role) > -1) {
+            this.setAllowedStepsForSchulamt();
         } else {
             this.setAllAllowedSteps();
         }
@@ -79,6 +81,14 @@ export default class WizardStepManager {
         this.allowedSteps.push(TSWizardStepName.BETREUUNG);
         this.allowedSteps.push(TSWizardStepName.ABWESENHEIT);
         this.allowedSteps.push(TSWizardStepName.VERFUEGEN);
+    }
+
+    private setAllowedStepsForSchulamt(): void {
+        this.allowedSteps = getTSWizardStepNameValues().filter(element =>
+            (element !== TSWizardStepName.ERWERBSPENSUM &&
+            element !== TSWizardStepName.ABWESENHEIT &&
+            element !== TSWizardStepName.VERFUEGEN)
+        );
     }
 
     private setAllAllowedSteps(): void {

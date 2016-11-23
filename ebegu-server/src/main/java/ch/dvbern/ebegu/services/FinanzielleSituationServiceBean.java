@@ -62,7 +62,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT, SCHULAMT})
 	public Optional<FinanzielleSituationContainer> findFinanzielleSituation(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		FinanzielleSituationContainer finanzielleSituation = persistence.find(FinanzielleSituationContainer.class, id);
@@ -93,14 +93,14 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT, SCHULAMT})
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
 		authorizer.checkReadAuthorizationFinSit(gesuch);
 		return finSitRechner.calculateResultateFinanzielleSituation(gesuch);
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT, SCHULAMT})
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
 		authorizer.checkReadAuthorizationFinSit(gesuch);
 		finSitRechner.calculateFinanzDaten(gesuch);

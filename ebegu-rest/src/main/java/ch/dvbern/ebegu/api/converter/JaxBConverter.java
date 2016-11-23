@@ -4,10 +4,7 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
@@ -1139,7 +1136,8 @@ public class JaxBConverter {
 	public ErwerbspensumContainer erwerbspensumContainerToStoreableEntity(@Nonnull final JaxErwerbspensumContainer jaxEwpCont) {
 		Validate.notNull(jaxEwpCont);
 		ErwerbspensumContainer containerToMergeWith = new ErwerbspensumContainer();
-		if (jaxEwpCont.getId() != null) {
+		//TODO (team) ACHTUNG, das Erwerspensum darf von Schulamt nicht gelesen werden. Muss dann spaeter gepurged werden
+		if (jaxEwpCont.getId() != null && !(benutzerToAuthLoginElement(benutzerService.getCurrentBenutzer().get()).getRole().equals(UserRole.SCHULAMT))) {
 			final Optional<ErwerbspensumContainer> existingEwpCont = erwerbspensumService.findErwerbspensum(jaxEwpCont.getId());
 			if (existingEwpCont.isPresent()) {
 				containerToMergeWith = existingEwpCont.get();
@@ -1171,8 +1169,8 @@ public class JaxBConverter {
 		Validate.notNull(storedErwerbspensumCont);
 		final JaxErwerbspensumContainer jaxEwpCont = new JaxErwerbspensumContainer();
 		convertAbstractFieldsToJAX(storedErwerbspensumCont, jaxEwpCont);
-		jaxEwpCont.setErwerbspensumGS(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumGS()));
-		jaxEwpCont.setErwerbspensumJA(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumJA()));
+			jaxEwpCont.setErwerbspensumGS(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumGS()));
+			jaxEwpCont.setErwerbspensumJA(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumJA()));
 		return jaxEwpCont;
 	}
 

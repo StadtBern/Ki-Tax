@@ -124,7 +124,8 @@ public class AuthorizerImpl implements Authorizer {
 		}
 
 		validateMandantMatches(fall);
-		if (principalBean.isCallerInAnyOfRole(SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION)) {
+		if (principalBean.isCallerInAnyOfRole(SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
+				SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT)) {
 			return true;
 		}
 
@@ -212,12 +213,12 @@ public class AuthorizerImpl implements Authorizer {
 	@Override
 	public void checkReadAuthorizationBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
 		if (betreuungen != null) {
-			betreuungen.stream()
-				.filter(betreuung -> !isReadAuthorized(betreuung))
-				.findAny()
-				.ifPresent(this::throwViolation);
+				betreuungen.stream()
+					.filter(betreuung -> !isReadAuthorized(betreuung))
+					.findAny()
+					.ifPresent(this::throwViolation);
+			}
 		}
-	}
 
 	@Override
 	public void checkReadAuthorization(Verfuegung verfuegung) {
