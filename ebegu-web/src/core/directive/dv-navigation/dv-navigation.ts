@@ -120,7 +120,7 @@ export class NavigatorController {
     public previousStep(): void {
         if (!this.gesuchModelManager.isGesuchReadonly() && this.dvSave) {
             let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
-            if(returnValue !== undefined) {
+            if (returnValue !== undefined) {
                 this.$q.when(returnValue).then(() => {
                     this.navigateToPreviousStep();
                 });

@@ -43,10 +43,10 @@ export class UserselectController {
     /* @ngInject */
     constructor(private userRS: UserRS, private authService: AuthServiceRS) {
         this.updateUserList();
-        if(!this.initialAll){ //tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
+        if (!this.initialAll) { //tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
             this.selectedUser = authService.getPrincipal();
-        }else{
-            this.selectedUser=undefined;
+        } else {
+            this.selectedUser = undefined;
         }
     }
 
