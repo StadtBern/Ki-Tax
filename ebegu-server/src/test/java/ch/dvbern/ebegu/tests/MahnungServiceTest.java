@@ -106,7 +106,7 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void dokumenteKomplettErhalten() {
+	public void mahnlaufBeenden() {
 		Assert.assertNotNull(mahnungService);
 		TestDataUtil.createAndPersistBenutzer(persistence);
 
@@ -121,7 +121,7 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 			Assert.assertTrue(mahnung.isActive());
 		}
 
-		mahnungService.dokumenteKomplettErhalten(gesuch);
+		mahnungService.mahnlaufBeenden(gesuch);
 
 		// Alle Mahnungen sind geschlossen
 		mahnungenForGesuch = mahnungService.findMahnungenForGesuch(gesuch);
