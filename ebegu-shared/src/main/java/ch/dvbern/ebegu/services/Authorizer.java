@@ -14,6 +14,8 @@ public interface Authorizer {
 
 	void checkReadAuthorization(@Nullable  Gesuch gesuch);
 
+	void checkReadAuthorizationGesuche(@Nullable  Collection<Gesuch> gesuche);
+
 	void checkReadAuthorizationGesuchId(String gesuchId);
 
 	/**

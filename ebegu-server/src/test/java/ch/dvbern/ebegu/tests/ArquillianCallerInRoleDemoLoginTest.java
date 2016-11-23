@@ -63,7 +63,6 @@ public class ArquillianCallerInRoleDemoLoginTest extends AbstractEbeguLoginTest 
 		Principal anonPrincipal = sessionContextService.getCallerPrincipal();
 		Assert.assertNotNull(anonPrincipal);
 		Assert.assertNotNull(anonPrincipal.getName(), "anonymous");
-
 	}
 
     @Test
@@ -91,5 +90,4 @@ public class ArquillianCallerInRoleDemoLoginTest extends AbstractEbeguLoginTest 
             loginContext.logout();
         }
     }
-
 }

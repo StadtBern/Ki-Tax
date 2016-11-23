@@ -61,6 +61,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<Institution> findInstitution(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		Institution a =  persistence.find(Institution.class, id);
@@ -89,6 +90,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<Institution> getAllInstitutionenFromTraegerschaft(String traegerschaftId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Institution> query = cb.createQuery(Institution.class);
@@ -102,6 +104,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<Institution> getAllActiveInstitutionenFromTraegerschaft(String traegerschaftId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Institution> query = cb.createQuery(Institution.class);
@@ -115,18 +118,21 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<Institution> getAllActiveInstitutionen() {
 		return criteriaQueryHelper.getEntitiesByAttribute(Institution.class, true, Institution_.active);
 	}
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<Institution> getAllInstitutionen() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Institution.class));
 	}
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<Institution> getInstitutionenForCurrentBenutzer() {
 		Optional<Benutzer> benutzerOptional = benutzerService.getCurrentBenutzer();
 		if (benutzerOptional.isPresent()) {

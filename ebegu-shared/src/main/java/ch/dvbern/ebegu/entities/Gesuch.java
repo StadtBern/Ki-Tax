@@ -366,4 +366,11 @@ public class Gesuch extends AbstractEntity {
 			.anyMatch(betreuung -> betreuung.getInstitutionStammdaten().getInstitution().equals(institution));
 
 	}
+
+	@Transient
+	public boolean hasBetreuungOfSchulamt() {
+		return kindContainers.stream()
+			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
+	}
 }

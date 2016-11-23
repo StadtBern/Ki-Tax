@@ -94,7 +94,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void removeGesuchTest() {
 		Assert.assertNotNull(gesuchService);
-		loginAsSachbearbeiterJA();
 		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 		Assert.assertEquals(1, readGesucheAsAdmin().size());
 
@@ -412,6 +411,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Benutzer saja = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
 		persistence.persist(saja);
 	}
+
 	private void loginAsAdmin() {
 		try {
 			createLoginContext("admin", "admin").login();

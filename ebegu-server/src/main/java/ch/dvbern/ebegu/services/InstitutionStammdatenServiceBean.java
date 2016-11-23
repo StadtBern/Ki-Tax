@@ -52,6 +52,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<InstitutionStammdaten> findInstitutionStammdaten(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		InstitutionStammdaten a =  persistence.find(InstitutionStammdaten.class, id);
@@ -60,6 +61,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdaten() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(InstitutionStammdaten.class));
 	}
@@ -74,18 +76,21 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	}
 
 	@Override
+	@PermitAll
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByDate(@Nonnull LocalDate date) {
 		return new ArrayList<>(criteriaQueryHelper.getAllInInterval(InstitutionStammdaten.class, date));
 	}
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitution(String institutionId) {
 		List<InstitutionStammdaten> resultList = getQueryAllInstitutionStammdatenByInstitution(institutionId).getResultList();
 		return resultList;
 	}
 
 	@Override
+	@PermitAll
 	public Collection<BetreuungsangebotTyp> getBetreuungsangeboteForInstitutionenOfCurrentBenutzer() {
 		Collection<Institution> institutionenForCurrentBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
 		if (institutionenForCurrentBenutzer.isEmpty()) {

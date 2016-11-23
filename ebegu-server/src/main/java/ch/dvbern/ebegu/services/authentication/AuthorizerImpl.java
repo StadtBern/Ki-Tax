@@ -50,7 +50,6 @@ public class AuthorizerImpl implements Authorizer {
 		if (gesuchId != null) {
 			LOG.warn("homa: Ineffiziente Authorisierungspruefung. Gesuchid sollte moeglichst nicht verwendet werden");
 			checkReadAuthorization(getGesuchById(gesuchId));
-
 		}
 	}
 
@@ -63,6 +62,14 @@ public class AuthorizerImpl implements Authorizer {
 			}
 		}
 	}
+
+	@Override
+	public void checkReadAuthorizationGesuche(@Nullable Collection<Gesuch> gesuche) {
+		if (gesuche != null){
+			gesuche.forEach(this::checkReadAuthorization);
+		}
+	}
+
 
 	@Override
 	public void checkCreateAuthorizationGesuch() {
@@ -99,11 +106,9 @@ public class AuthorizerImpl implements Authorizer {
 	@Override
 	public void checkReadAuthorizationFall(@Nullable Fall fall) {
 		boolean allowed = isReadAuthorizedFall(fall);
-
 		if (!allowed) {
 			throwViolation(fall);
 		}
-
 	}
 
 	@Override
@@ -131,7 +136,6 @@ public class AuthorizerImpl implements Authorizer {
 		return false;
 	}
 
-
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	private void validateMandantMatches(@Nullable  HasMandant mandantEntity) {
 		//noinspection ConstantConditions
@@ -143,7 +147,6 @@ public class AuthorizerImpl implements Authorizer {
 			if (!principalBean.isCallerInRole(SUPER_ADMIN)) {
 				throwMandantViolation(mandantEntity); // super admin darf auch wenn er keinen mandant hat
 			}
-
 		}
 	}
 
@@ -195,7 +198,6 @@ public class AuthorizerImpl implements Authorizer {
 
 		if (!writeAllowed || (isMutation && principalBean.isCallerInRole(GESUCHSTELLER))) {
 			throwViolation(finanzielleSituation);
-
 		}
 	}
 
@@ -207,7 +209,6 @@ public class AuthorizerImpl implements Authorizer {
 		}
 	}
 
-
 	@Override
 	public void checkReadAuthorizationBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
 		if (betreuungen != null) {
@@ -217,7 +218,6 @@ public class AuthorizerImpl implements Authorizer {
 				.ifPresent(this::throwViolation);
 		}
 	}
-
 
 	@Override
 	public void checkReadAuthorization(Verfuegung verfuegung) {
@@ -270,8 +270,6 @@ public class AuthorizerImpl implements Authorizer {
 		finanzielleSituationen.forEach(this::checkReadAuthorization);
 	}
 
-
-
 	private boolean isInRoleOrGSOwner(UserRole[] allowedRoles, AbstractEntity entity, String principalName) {
 
 		if (principalBean.isCallerInAnyOfRole(allowedRoles)) {
@@ -279,7 +277,7 @@ public class AuthorizerImpl implements Authorizer {
 		}
 
 		if (principalBean.isCallerInRole(GESUCHSTELLER.name())
-			&& (entity.getUserErstellt() != null && entity.getUserErstellt().equals(principalName))) {
+			&& (entity.getUserErstellt() == null || entity.getUserErstellt().equals(principalName))) {
 			return true;
 		}
 		return false;
@@ -315,7 +313,6 @@ public class AuthorizerImpl implements Authorizer {
 			checkReadAuthorization(finSitGs1);
 			checkReadAuthorization(finSitGs2);
 		}
-
 	}
 
 	private boolean isReadAuthorized(Gesuch entity) {
@@ -323,22 +320,21 @@ public class AuthorizerImpl implements Authorizer {
 		if (isOwnerOrAdmin) {
 			return true;
 		}
-
 		if (principalBean.isCallerInRole(SACHBEARBEITER_INSTITUTION)) {
 			Institution institution = principalBean.getBenutzer().getInstitution();
 			Validate.notNull(institution, "Institution des Sachbearbeiters muss gesetzt sein " + principalBean.getBenutzer());
 			return entity.hasBetreuungOfInstitution(institution); //@reviewer: oder besser ueber service ?
 		}
-
 		if (principalBean.isCallerInRole(SACHBEARBEITER_TRAEGERSCHAFT)) {
 			Traegerschaft traegerschaft = principalBean.getBenutzer().getTraegerschaft();
 			Validate.notNull(traegerschaft, "Traegerschaft des des Sachbearbeiters muss gesetzt sein " + principalBean.getBenutzer());
 			Collection<Institution> institutions = institutionService.getAllInstitutionenFromTraegerschaft(traegerschaft.getId());
 			return institutions.stream().anyMatch(entity::hasBetreuungOfInstitution);  // irgend eine der betreuungen des gesuchs matched
 		}
-
+		if (principalBean.isCallerInRole(SCHULAMT)) {
+			return entity.hasBetreuungOfSchulamt();
+		}
 		return false;
-
 	}
 
 
@@ -370,9 +366,7 @@ public class AuthorizerImpl implements Authorizer {
 				+ " for Entity: " + mandantEntity.getClass().getSimpleName() + "(id=" + mandantEntity.getId() + "):"
 				+ " for current user: " + principalBean.getPrincipal()
 		);
-
 	}
-
 
 	public Gesuch getGesuchById(String gesuchID) {
 		return persistence.find(Gesuch.class, gesuchID);

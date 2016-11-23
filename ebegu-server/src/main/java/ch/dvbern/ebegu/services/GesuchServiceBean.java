@@ -55,12 +55,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private FallService fallService;
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
-
 	@Inject
 	private Authorizer authorizer;
 
 	@Nonnull
 	@Override
+	@RolesAllowed(value ={UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
 	public Gesuch createGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
 		authorizer.checkCreateAuthorizationGesuch();
@@ -73,6 +73,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory) {
 		authorizer.checkWriteAuthorization(gesuch);
 		Objects.requireNonNull(gesuch);
@@ -85,6 +86,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<Gesuch> findGesuch(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Gesuch a = persistence.find(Gesuch.class, key);
@@ -114,6 +116,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@RolesAllowed(value ={UserRoleName.SUPER_ADMIN})
 	public void removeGesuch(@Nonnull Gesuch gesuch) {
 		Validate.notNull(gesuch);
 		Optional<Gesuch> gesuchToRemove = findGesuch(gesuch.getId());
@@ -143,6 +146,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		q.setParameter(vornameParam, vorname);
 
 		return Optional.ofNullable(q.getResultList());
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed(value ={UserRoleName.GESUCHSTELLER, UserRoleName.SUPER_ADMIN})
+	public List<Gesuch> getAntraegeForUsername(String username) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicate = cb.equal(root.get(Gesuch_.userErstellt), username);
+		query.where(predicate);
+
+		List<Gesuch> gesuche = persistence.getCriteriaResults(query);
+		authorizer.checkReadAuthorizationGesuche(gesuche);
+		return gesuche;
 	}
 
 	@Override
@@ -370,6 +390,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public List<JaxAntragDTO> getAllAntragDTOForFall(String fallId) {
 		authorizer.checkReadAuthorizationFall(fallId);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -426,6 +447,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN,
+		UserRoleName.SACHBEARBEITER_JA,	UserRoleName.GESUCHSTELLER})
 	public Optional<Gesuch> antragMutieren(@Nonnull String antragId,
 										   @Nonnull LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
@@ -467,6 +490,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch) {
 		if (StringUtils.isNotEmpty(gesuch.getVorgaengerId())) {
 			Optional<Gesuch> gesuchOptional = findGesuch(gesuch.getVorgaengerId());
@@ -484,6 +508,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch) {
 		authorizer.checkReadAuthorization(gesuch);
 		return getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
