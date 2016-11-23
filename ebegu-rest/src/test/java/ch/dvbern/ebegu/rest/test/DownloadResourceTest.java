@@ -41,7 +41,7 @@ import static org.easymock.EasyMock.*;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class DownloadResourceTest extends AbstractEbeguRestTest {
+public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 
 	@Inject
 	private DownloadResource downloadResource;

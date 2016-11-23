@@ -428,6 +428,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 * Ein Kind mit einem Betreuungspensum von 60% und einem anspruchsberechtigten Pensum von 40% hat ein BG-Pensum von 40%.
 	 * Ein Kind mit einem Betreuungspensum von 40% und einem anspruchsberechtigten Pensum von 60% hat ein BG-Pensum von 40%.
 	 */
+	@Transient
 	public int getBgPensum() {
 		return Math.min(getBetreuungspensum(), getAnspruchberechtigtesPensum());
 	}

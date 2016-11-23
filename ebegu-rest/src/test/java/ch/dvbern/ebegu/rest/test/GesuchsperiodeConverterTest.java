@@ -20,7 +20,7 @@ import java.time.LocalDate;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class GesuchsperiodeConverterTest extends AbstractEbeguRestTest {
+public class GesuchsperiodeConverterTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject

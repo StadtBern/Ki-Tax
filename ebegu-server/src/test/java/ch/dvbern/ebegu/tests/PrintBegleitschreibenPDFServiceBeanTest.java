@@ -29,7 +29,7 @@ import java.util.List;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
+public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguLoginTest {
 
 	protected BetreuungsgutscheinEvaluator evaluator;
 

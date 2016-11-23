@@ -31,7 +31,7 @@ import javax.ws.rs.core.UriInfo;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRestTest{
+public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRestLoginTest {
 
 
 
@@ -86,7 +86,6 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 		JaxFall returnedFall = fallResource.saveFall(testJaxGesuch.getFall(), uri, null);
 		testJaxGesuch.setGesuchsperiode(gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuch.getGesuchsperiode(), uri, null));
 		testJaxGesuch.setFall(returnedFall);
-		TestDataUtil.createDummyAdminAnonymous(persistence);
 		return (JaxGesuch) gesuchResource.create(testJaxGesuch, uri, null).getEntity();
 	}
 

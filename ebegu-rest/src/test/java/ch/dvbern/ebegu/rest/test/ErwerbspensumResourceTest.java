@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class ErwerbspensumResourceTest extends AbstractEbeguRestTest{
+public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject

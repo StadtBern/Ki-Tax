@@ -2,7 +2,7 @@
 
     <form role="form" name="formMahnung" class="" novalidate unsaved-warning-form>
 
-    <div class="row">
+        <div class="row viewTitle">
         <div class="col-md-12">
             <h1 data-translate="VERFUEGUNGEN_UPPER"></h1>
             <hr class="header"/>
@@ -75,13 +75,18 @@
                     <h1 data-translate="MAHNUNGEN_ZURUECKSTELLUNG"></h1>
                     <hr class="header"/>
                 </div>
-                <div ng-repeat="mahn in vm.getMahnungList()">
+                <div class="col-md-12" ng-repeat="mahn in vm.getMahnungList()">
                     <i class="fa fa-file-text-o"></i>
                     <button type="button" class=" btn-link" ng-click="vm.openMahnungPDF(mahn)">
                         <span data-translate="MAHNUNG_DETAIL"
                               data-translate-value-mahnung-typ="{{mahn.mahnungTyp | translate}}"
                               data-translate-value-date="{{mahn.timestampErstellt | amDateFormat : 'DD.MM.YYYY'}}"></span>
                         <span ng-if="!mahn.active" data-translate="MAHNUNG_ABGESCHLOSSEN"></span>
+                        <span ng-if="mahn.active && mahn.datumFristablauf.diff(moment.now) > 0"
+                              data-translate="MAHNUNG_AKTIV"
+                              data-translate-value-date="{{mahn.datumFristablauf | amDateFormat : 'DD.MM.YYYY'}}"></span>
+                        <span ng-if="mahn.active && mahn.datumFristablauf.diff(moment.now) <= 0"
+                              data-translate="MAHNUNG_NICHT_EINGETRETEN"></span>
                     </button>
                 </div>
             </div>
@@ -93,7 +98,7 @@
                     <h1 data-translate="ZWEITE_MAHNUNG" ng-if="vm.showZweiteMahnungAusloesen()"></h1>
                     <hr class="header"/>
 
-                    <dv-input-container class="form-group kommentar-feld">
+                    <dv-input-container class="col-md-12 form-group kommentar-feld">
                         <label class="md-no-float" for="bemerkungenID" data-translate="MAHNUNG_FEHLENDE_DOKUMENTE"></label>
                         <textarea name="bemerkungen" md-no-autogrow class="form-control input-element" rows="4" id="bemerkungenID"
                             ng-model="vm.mahnung.bemerkungen" ng-required="true" maxlength="1000">
@@ -101,18 +106,20 @@
                         <dv-error-messages for="formMahnung.bemerkungen.$error" class="error"></dv-error-messages>
                     </dv-input-container>
 
-                    <dv-input-container class="form-group">
+                    <dv-input-container class="col-sm-12 form-group dv-input-container-small">
                         <label class="md-no-float" for="datumFristablaufID" data-translate="MAHNUNG_FRISTABLAUF"></label>
-                        <dv-datepicker input-id="datumFristablaufID" name="datumFristablauf" class="form-control dv-input-container-small input-element"
+                        <dv-datepicker input-id="datumFristablaufID" name="datumFristablauf" class="input-element-small"
                                        ng-model="vm.mahnung.datumFristablauf" ng-required="true">
                         </dv-datepicker>
                         <dv-error-messages for="formMahnung.datumFristablauf.$error" class="error"></dv-error-messages>
                     </dv-input-container>
 
-                    <i class="fa fa-file-text-o"></i>
-                    <button type="button" class=" btn-link" ng-click="vm.openMahnungPDF()">
-                        <span data-translate="PDF_MAHNUNG_ANZEIGEN"></span>
-                    </button>
+                    <div class="col-md-12">
+                        <i class="fa fa-file-text-o"></i>
+                        <button type="button" class=" btn-link" ng-click="vm.openMahnungPDF()">
+                            <span data-translate="PDF_MAHNUNG_ANZEIGEN"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -160,18 +167,25 @@
                         <span data-translate="ZWEITE_MAHNUNG_AUSLOESEN_UPPER"></span>
                     </dv-loading-button>
                 </span>
-                 <span class="col-md-4" ng-show="vm.showDokumenteKomplett()">
-                    <dv-loading-button button-click="vm.dokumenteKomplett()"
+                 <span class="col-md-4" ng-show="vm.showMahnlaufBeenden()">
+                    <dv-loading-button button-click="vm.mahnlaufBeenden()"
                                        button-class="dv-btn-sm"
                                        aria-label="{{DOKUMENTE_KOMPLETT_UPPER | translate}}">
-                        <span data-translate="DOKUMENTE_KOMPLETT_UPPER"></span>
+                        <span data-translate="MAHNLAUF_BEENDEN"></span>
                     </dv-loading-button>
                 </span>
-                 <span class="col-md-4" ng-show="vm.showDokumenteNichtKomplett()">
+                <span class="col-md-4" ng-show="vm.showDokumenteNichtKomplett()">
                     <dv-loading-button button-click="vm.dokumenteNichtKomplett()"
                                        button-class="dv-btn-sm"
                                        aria-label="{{DOKUMENTE_NICHT_KOMPLETT_UPPER | translate}}">
                         <span data-translate="DOKUMENTE_NICHT_KOMPLETT_UPPER"></span>
+                    </dv-loading-button>
+                </span>
+                <span class="col-md-4" ng-show="vm.showZweiteMahnungNichtEingetreten()">
+                    <dv-loading-button button-click="vm.zweiteMahnungNichtEingetreten()"
+                                       button-class="dv-btn-sm"
+                                       aria-label="{{ZWEITE_MAHNUNG_NCINT_EINGETRETEN | translate}}">
+                        <span data-translate="ZWEITE_MAHNUNG_NCINT_EINGETRETEN"></span>
                     </dv-loading-button>
                 </span>
 

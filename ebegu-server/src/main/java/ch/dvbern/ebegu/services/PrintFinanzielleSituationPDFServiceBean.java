@@ -25,6 +25,7 @@ import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
@@ -36,6 +37,9 @@ import java.util.Objects;
 @Local(PrintFinanzielleSituationPDFService.class)
 public class PrintFinanzielleSituationPDFServiceBean extends AbstractPrintService implements PrintFinanzielleSituationPDFService {
 
+	@Inject
+	private Authorizer authorizer;
+
 	@Nonnull
 	@Override
 	public byte[] printFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung) throws MergeDocException {
@@ -43,6 +47,7 @@ public class PrintFinanzielleSituationPDFServiceBean extends AbstractPrintServic
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
 		DOCXMergeEngine docxME = new DOCXMergeEngine("FinanzielleSituation");
+		authorizer.checkReadAuthorizationFinSit(gesuch);
 
 		try {
 			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();

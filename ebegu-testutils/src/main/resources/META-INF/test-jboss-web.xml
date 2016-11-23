@@ -1,0 +1,5 @@
+<!--suppress ALL -->
+
+<jboss-web>
+	<security-domain>ebegu-test</security-domain>
+</jboss-web>

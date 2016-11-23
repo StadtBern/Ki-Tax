@@ -23,7 +23,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguTest {
+public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLoginTest {
 
 	public static final String TEST_123 = "test123";
 

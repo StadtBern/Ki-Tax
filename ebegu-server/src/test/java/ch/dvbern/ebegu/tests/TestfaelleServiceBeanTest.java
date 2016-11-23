@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.data.VerfuegungZeitabschnittData;
 import ch.dvbern.ebegu.tets.data.VerfuegungszeitabschnitteData;
+import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -16,8 +17,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.security.auth.login.LoginException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -37,7 +41,9 @@ import java.util.List;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
+public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(TestfaelleServiceBeanTest.class);
 
 	@Inject
 	private TestfaelleService testfaelleService;
@@ -344,7 +350,13 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	 * Helper für init. Speichert Benutzer in DB
 	 */
 	private void createBenutzer(Mandant mandant) {
-		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, null, null, mandant);
+		try{
+			JBossLoginContextFactory.createLoginContext("admin", "admin").login();
+		} catch (LoginException ex){
+			LOG.error("could not login as admin user for test");
+		}
+
+		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
 		persistence.persist(i);
 	}
 

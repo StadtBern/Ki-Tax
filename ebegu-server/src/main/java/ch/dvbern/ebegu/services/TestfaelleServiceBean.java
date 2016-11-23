@@ -9,6 +9,7 @@ import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -24,6 +25,7 @@ import java.util.Optional;
  */
 @Stateless
 @Local(TestfaelleService.class)
+@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 public class TestfaelleServiceBean extends AbstractBaseService implements TestfaelleService {
 
 

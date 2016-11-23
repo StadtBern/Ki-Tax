@@ -1,18 +1,18 @@
 <div class="kindView gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle">
+            <h1>
                 <span data-translate="KIND"></span> {{vm.gesuchModelManager.kindNumber}}
             </h1>
             <hr class="header"/>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <form role="form" name="form" class="" novalidate unsaved-warning-form>
                 <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
-                    <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
-                    <br/>
+
 
                     <!--Geschlecht-->
                     <div class="row">

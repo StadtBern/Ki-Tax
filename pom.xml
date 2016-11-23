@@ -332,6 +332,13 @@
             </dependency>
 
             <dependency>
+                <groupId>org.jboss.spec.javax.annotation</groupId>
+                <artifactId>jboss-annotations-api_1.2_spec</artifactId>
+                <scope>provided</scope>
+                <version>1.0.0.Final</version>
+            </dependency>
+
+            <dependency>
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
                 <version>1.1.1</version>
@@ -489,7 +496,7 @@
         </profile>
 
         <profile>
-            <id>wildfy10-embedded</id>
+            <id>wildfly10-embedded</id>
 
             <properties>
                 <!--embedded wird ans gleiche ort enpackt wie managed-->

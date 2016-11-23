@@ -32,7 +32,7 @@ import java.util.Set;
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
 //@ServerSetup(InstallPicketLinkFileBasedSetupTask.class)
-public class BetreuungResourceTest extends AbstractEbeguRestTest {
+public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 
 	private static final UriInfo RESTEASY_URI_INFO = new ResteasyUriInfo("test", "test", "test");
 
@@ -62,7 +62,6 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void createBetreuung() throws EbeguException {
-		TestDataUtil.createDummyAdminAnonymous(persistence);
 		KindContainer returnedKind = persistKindAndDependingObjects(RESTEASY_URI_INFO);
 		Betreuung testBetreuung = TestDataUtil.createDefaultBetreuung();
 		persistStammdaten(testBetreuung.getInstitutionStammdaten());
@@ -159,7 +158,6 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 	}
 
 	private Betreuung storeInitialBetreung() throws EbeguException {
-		TestDataUtil.createDummyAdminAnonymous(persistence);
 		KindContainer returnedKind = persistKindAndDependingObjects(RESTEASY_URI_INFO);
 		Betreuung testBetreuung = TestDataUtil.createDefaultBetreuung();
 		persistStammdaten(testBetreuung.getInstitutionStammdaten());

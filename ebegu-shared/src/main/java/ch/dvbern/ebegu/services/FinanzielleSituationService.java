@@ -22,11 +22,11 @@ public interface FinanzielleSituationService {
 	FinanzielleSituationContainer saveFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation, String gesuchId);
 
 	/**
-	 * @param key PK (id) der FinanzielleSituation
+	 * @param id PK (id) der FinanzielleSituation
 	 * @return FinanzielleSituation mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<FinanzielleSituationContainer> findFinanzielleSituation(@Nonnull String key);
+	Optional<FinanzielleSituationContainer> findFinanzielleSituation(@Nonnull String id);
 
 	/**
 	 * @return Liste aller FinanzielleSituationContainer aus der DB

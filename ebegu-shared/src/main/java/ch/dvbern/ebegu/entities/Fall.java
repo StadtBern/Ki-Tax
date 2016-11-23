@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 		@Index(name = "IX_fall_mandant", columnList = "mandant_id")
 	}
 )
-public class Fall extends AbstractEntity {
+public class Fall extends AbstractEntity implements HasMandant{
 
 	private static final long serialVersionUID = -9154456879261811678L;
 
@@ -71,6 +71,7 @@ public class Fall extends AbstractEntity {
 		this.nextNumberKind = nextNumberKind;
 	}
 
+	@Override
 	public Mandant getMandant() {
 		return mandant;
 	}
