@@ -4,14 +4,16 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.BenutzerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,6 +27,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @RequestScoped
 public class PrincipalBean {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalBean.class);
+
 
 	@Inject
 	private Principal principal;
@@ -32,8 +36,10 @@ public class PrincipalBean {
 	@Resource
  	private SessionContext sessionContext;
 
-	@EJB
+	@Inject
 	private BenutzerService benutzerService;
+	@Resource
+	private TransactionSynchronizationRegistry txReg;
 
 
 	private Benutzer benutzer = null;
@@ -86,8 +92,8 @@ public class PrincipalBean {
 		return principal;
 	}
 
-
 	public boolean isCallerInRole(@Nonnull String roleName) {
+		LOGGER.trace("isCallerInRole: {}/{}", txReg.getTransactionKey(), txReg.getRollbackOnly());
 		checkNotNull(roleName);
 		return sessionContext.isCallerInRole(roleName);
 	}
