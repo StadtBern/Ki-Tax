@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 		@Index(name = "sequence_ix1", columnList = "mandant_id"),
 	}
 )
-public class Sequence extends AbstractEntity {
+public class Sequence extends AbstractEntity implements HasMandant{
 
 	private static final long serialVersionUID = -8310781486097591752L;
 
@@ -51,7 +51,7 @@ public class Sequence extends AbstractEntity {
 	@SuppressWarnings("ConstantConditions")
 	@SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "JPA instantiation only")
 	protected Sequence() {
-		this(null, null);
+		this(SequenceType.FALL_NUMMER, -1L);
 	}
 
 	public Sequence(@Nonnull SequenceType sequenceType, @Nonnull Long currentValue) {

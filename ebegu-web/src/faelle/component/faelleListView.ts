@@ -7,8 +7,8 @@ import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import {TSRole} from '../../models/enums/TSRole';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
@@ -68,7 +68,7 @@ export class FaelleListViewController {
      */
     public editFall(antrag: TSAntragDTO): void {
         if (antrag) {
-            if (this.authServiceRS.isOneOfRoles(TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
+            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
                 if (antrag.status === TSAntragStatus.VERFUEGT) {
                     this.openGesuch(antrag.antragId, 'gesuch.verfuegen');
                 } else {

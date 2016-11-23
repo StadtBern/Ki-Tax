@@ -13,7 +13,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-8 form-group">
                             <label class="md-no-float"
                                    data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                    for="finSitEinkommen_ID"></label>
@@ -31,7 +31,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-8 form-group">
                                 <label class="md-no-float"
                                        data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                        for="einVersEinkommen1_ID"></label>
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-8 form-group">
                                 <label class="md-no-float"
                                        data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                        for="einVersEinkommen2_ID"></label>
@@ -140,9 +140,9 @@
                 </div>
 
                 <!--bemerkungen-->
-                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]"
+                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
                      dv-show-expression="vm.showVerfuegungsDetails()">
-                    <div class="col-md-12">
+                    <div class="col-md-12 form-group">
                         <label class="md-no-float" class="inlineHint" for="manuelle_notes"
                                data-translate="BEMERKUNGEN"></label>
                         <textarea md-no-autogrow class="form-control" rows="6" id="manuelle_notes"
@@ -163,7 +163,7 @@
                     </div>
                     <div class="col-md-4" ng-if="vm.showNichtEintretenPdfLink()">
                         <i class="fa fa-file-text-o"></i>
-                        <button type="button" class="btn btn-link"
+                        <button type="button" class="btn-link"
                                 ng-click="vm.openVerfuegungPDF()">
                             <span data-translate="PDF_NICHT_EINTRETEN_ANZEIGEN"></span>
                         </button>

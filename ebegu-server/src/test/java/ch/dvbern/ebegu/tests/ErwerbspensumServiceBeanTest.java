@@ -29,7 +29,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
+public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 
 
 

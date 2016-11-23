@@ -29,7 +29,7 @@ import java.time.Month;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class VerfuegungResourceTest extends AbstractEbeguRestTest {
+public class VerfuegungResourceTest extends AbstractEbeguRestLoginTest {
 
 	@Inject
 	private VerfuegungResource verfuegungResource;

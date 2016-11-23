@@ -25,7 +25,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class BetreuungServiceTest extends AbstractEbeguTest {
+public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private BetreuungService betreuungService;
@@ -41,9 +41,9 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 	public void createAndUpdateBetreuungTest() {
 		Assert.assertNotNull(betreuungService);
 		Betreuung persitedBetreuung = persistBetreuung();
-		Betreuung betreuung = betreuungService.findBetreuungWithBetreuungsPensen(persitedBetreuung.getId());
-		Assert.assertNotNull(betreuung);
-
+		Optional<Betreuung> betreuungOpt = betreuungService.findBetreuungWithBetreuungsPensen(persitedBetreuung.getId());
+		Assert.assertTrue(betreuungOpt.isPresent());
+		Betreuung betreuung = betreuungOpt.get();
 		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), betreuung.getBetreuungsstatus());
 
 		betreuungService.saveBetreuung(betreuung, false);

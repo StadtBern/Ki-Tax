@@ -1,10 +1,12 @@
 package ch.dvbern.ebegu.api.errors;
 
+import ch.dvbern.ebegu.api.util.RestUtil;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jboss.resteasy.api.validation.ResteasyViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ejb.EJBAccessException;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.MediaType;
@@ -36,9 +38,11 @@ public class EbeguConstraintValidationExceptionMapper extends AbstractEbeguExcep
 			return ViolationReportCreator.
 				buildViolationReportResponse(resteasyViolationException, Status.INTERNAL_SERVER_ERROR, getAcceptMediaType(resteasyViolationException.getAccept()));
 		}
+		if (rootCause instanceof EJBAccessException) {
+			return RestUtil.sendErrorNotAuthorized();    // nackte 403 status antwort
+		}
 		// wir bauen hier auch eine eigene response fuer EJBTransactionRolledbackException die wir nicht erwarten
 		return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
 	}
-
 }
 

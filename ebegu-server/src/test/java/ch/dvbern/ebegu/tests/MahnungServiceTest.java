@@ -8,7 +8,6 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.MahnungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -17,7 +16,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJBException;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -29,7 +27,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class MahnungServiceTest extends AbstractEbeguTest {
+public class MahnungServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private MahnungService mahnungService;

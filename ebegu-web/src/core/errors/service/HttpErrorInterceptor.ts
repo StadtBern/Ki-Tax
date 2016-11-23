@@ -14,7 +14,11 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
 
 
     public responseError = (response: any) => {
-        //here we handle all errorcodes except 401, 401 is handeld in HttpAuthInterceptor
+        if(response.status === 403){
+            this.errorService.addMesageAsError("ERROR_UNAUTHORIZED")
+            return this.$q.reject(response);
+        }
+        //here we handle all errorcodes except 401 and 403, 401 is handeld in HttpAuthInterceptor
         if (response.status !== 401) {
             //here we could analyze the http status of the response. But instead we check if the  response has the format
             // of a known response such as errortypes such as violationReport or ExceptionReport and transform it

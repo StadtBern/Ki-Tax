@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
 import ch.dvbern.ebegu.entities.Institution_;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
@@ -13,6 +14,8 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -26,6 +29,7 @@ import java.util.*;
  */
 @Stateless
 @Local(InstitutionStammdatenService.class)
+@PermitAll
 public class InstitutionStammdatenServiceBean extends AbstractBaseService implements InstitutionStammdatenService {
 
 	@Inject
@@ -40,6 +44,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 	@Nonnull
 	@Override
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public InstitutionStammdaten saveInstitutionStammdaten(@Nonnull InstitutionStammdaten institutionStammdaten) {
 		Objects.requireNonNull(institutionStammdaten);
 		return persistence.merge(institutionStammdaten);
@@ -47,6 +52,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<InstitutionStammdaten> findInstitutionStammdaten(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		InstitutionStammdaten a =  persistence.find(InstitutionStammdaten.class, id);
@@ -55,11 +61,13 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdaten() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(InstitutionStammdaten.class));
 	}
 
 	@Override
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public void removeInstitutionStammdaten(@Nonnull String institutionStammdatenId) {
 		Validate.notNull(institutionStammdatenId);
 		Optional<InstitutionStammdaten> institutionStammdatenToRemove = findInstitutionStammdaten(institutionStammdatenId);
@@ -68,6 +76,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	}
 
 	@Override
+	@PermitAll
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByDate(@Nonnull LocalDate date) {
 		return new ArrayList<>(criteriaQueryHelper.getAllInInterval(InstitutionStammdaten.class, date));
 	}
@@ -92,12 +101,14 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitution(String institutionId) {
 		List<InstitutionStammdaten> resultList = getQueryAllInstitutionStammdatenByInstitution(institutionId).getResultList();
 		return resultList;
 	}
 
 	@Override
+	@PermitAll
 	public Collection<BetreuungsangebotTyp> getBetreuungsangeboteForInstitutionenOfCurrentBenutzer() {
 		Collection<Institution> institutionenForCurrentBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
 		if (institutionenForCurrentBenutzer.isEmpty()) {

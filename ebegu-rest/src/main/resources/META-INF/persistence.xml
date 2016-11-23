@@ -11,6 +11,7 @@
 
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+			<property name="hibernate.cache.use_second_level_cache" value="true" />
 			<property name="hibernate.physical_naming_strategy" value="ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl"/>
 
 			<!-- SQL Logging bitte via Logger konfigurieren -->

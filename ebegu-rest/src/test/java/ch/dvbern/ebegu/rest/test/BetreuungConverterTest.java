@@ -21,7 +21,7 @@ import javax.inject.Inject;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class BetreuungConverterTest extends AbstractEbeguRestTest {
+public class BetreuungConverterTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject

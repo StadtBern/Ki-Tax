@@ -101,6 +101,9 @@
 }
 
 .gesuch-toolbar {
+    .bold-menu {
+        .bold()
+    }
     span {
         .menu-item-link();
         background: none;
@@ -257,17 +260,16 @@ i.ellipsis-icon {
     font-size: 1.4rem;
 }
 
-
-    .toolbar-gesuchname {
-        font-size: 1.6rem;
-        line-height: @navbar-height;
-        height: @navbar-height;
-        padding: 0;
-        box-sizing: border-box;
-        .bold();
-        text-align: center;
-        text-decoration: none;
-        letter-spacing: 0.15rem;
-        color: @contrast-lightest;
-        text-transform: none;
-    }
+.toolbar-gesuchname {
+    font-size: 1.6rem;
+    line-height: @navbar-height;
+    height: @navbar-height;
+    padding: 0;
+    box-sizing: border-box;
+    .bold();
+    text-align: center;
+    text-decoration: none;
+    letter-spacing: 0.15rem;
+    color: @contrast-lightest;
+    text-transform: none;
+}
