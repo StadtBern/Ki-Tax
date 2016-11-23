@@ -80,7 +80,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
      */
     private startEmptyListOfBetreuungspensen() {
         if ((!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0)
-            && (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()))) {
+            && (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()))) {
             // nur fuer Institutionen wird ein Betreuungspensum by default erstellt
             this.createBetreuungspensum();
         }
