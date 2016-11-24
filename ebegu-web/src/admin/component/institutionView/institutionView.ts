@@ -13,11 +13,13 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSDateRange} from '../../../models/types/TSDateRange';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
+import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
+let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
 
 export class InstitutionViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -109,6 +111,7 @@ export class InstitutionViewController {
                 }
             });
         });
+
     }
 
     createInstitution(): void {
@@ -127,6 +130,13 @@ export class InstitutionViewController {
                 this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
                     this.institutionen.push(institution);
                     this.resetInstitutionSelection();
+                    if(!institution.synchronizedWithOpenIdm){
+                        this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                            title: 'INSTITUTION_CREATE_SYNCHRONIZE'
+                        }).then(() => {
+                            //do nothing
+                        });
+                    }
                 });
             } else {
                 this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
@@ -134,6 +144,13 @@ export class InstitutionViewController {
                     if (index > -1) {
                         this.institutionen[index] = institution;
                         this.resetInstitutionSelection();
+                        if(!institution.synchronizedWithOpenIdm){
+                            this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                                title: 'INSTITUTION_UPDATE_SYNCHRONIZE'
+                            }).then(() => {
+                                //do nothing
+                            });
+                        }
                     }
                 });
             }
@@ -211,6 +228,7 @@ export class InstitutionViewController {
                 this.isSelectedStammdaten = false;
             });
         });
+
     }
 
     private setBetreuungsangebotTypValues(): void {
@@ -237,6 +255,16 @@ export class InstitutionViewController {
         } else {
             return dateRange.gueltigAb.format(format) + ' - ' + dateRange.gueltigBis.format(format);
         }
+    }
+
+    private syncWithOpenIdm(): void{
+        this.institutionRS.synchronizeInstitutions().then((respone) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: respone.data
+            }).then(() => {
+                //do nothing
+            });
+        });
     }
 
 }

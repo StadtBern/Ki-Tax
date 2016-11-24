@@ -1,13 +1,18 @@
 package ch.dvbern.ebegu.api.resource;
 
+import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
+import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
+import ch.dvbern.ebegu.api.client.OpenIdmRestClient;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.entities.Institution;
+
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.TraegerschaftService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -25,7 +30,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -38,10 +45,16 @@ import java.util.stream.Collectors;
 public class InstitutionResource {
 
 	@Inject
-	private InstitutionService institutionService;
+	InstitutionService institutionService;
 
 	@Inject
 	private JaxBConverter converter;
+
+	@Inject
+	OpenIdmRestClient openIdmRestClient;
+
+	@Inject
+	TraegerschaftService traegerschaftService;
 
 	@ApiOperation(value = "Creates a new Institution in the database.")
 	@Nullable
@@ -63,6 +76,11 @@ public class InstitutionResource {
 
 		JaxInstitution jaxInstitution = converter.institutionToJAX(persistedInstitution);
 
+		final Optional<JaxOpenIdmResult> openIdmRestClientInstitution = openIdmRestClient.createInstitution(persistedInstitution);
+		if (openIdmRestClientInstitution.isPresent()) {
+			jaxInstitution.setSynchronizedWithOpenIdm(true);
+		}
+
 		return Response.created(uri).entity(jaxInstitution).build();
 	}
 
@@ -83,7 +101,14 @@ public class InstitutionResource {
 		Institution institutionToMerge = converter.institutionToEntity(institutionJAXP, institutionFromDB);
 		Institution modifiedInstitution = this.institutionService.updateInstitution(institutionToMerge);
 
-		return converter.institutionToJAX(modifiedInstitution);
+		final Optional<JaxOpenIdmResult> openIdmRestClientInstitution = openIdmRestClient.updateInstitution(modifiedInstitution);
+
+		final JaxInstitution jaxInstitution = converter.institutionToJAX(modifiedInstitution);
+		if (openIdmRestClientInstitution.isPresent()) {
+			jaxInstitution.setSynchronizedWithOpenIdm(true);
+		}
+
+		return jaxInstitution;
 	}
 
 	@ApiOperation(value = "Find and return an Institution by his institution id as parameter")
@@ -116,6 +141,9 @@ public class InstitutionResource {
 
 		Validate.notNull(institutionJAXPId.getId());
 		institutionService.setInstitutionInactive(converter.toEntityId(institutionJAXPId));
+
+		openIdmRestClient.delete(institutionJAXPId.getId());
+
 		return Response.ok().build();
 	}
 
@@ -171,4 +199,62 @@ public class InstitutionResource {
 			.map(inst -> converter.institutionToJAX(inst))
 			.collect(Collectors.toList());
 	}
+
+	@ApiOperation(value = "Synchronize DB Institutions with OpenIdm Institutions.")
+	@Nullable
+	@POST
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Path("/synchronizeWithOpenIdm")
+	public Response synchronizeWithOpenIdm(
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		final StringBuilder stringBuilder = synchronizeInstitutions(true);
+
+		URI uri = uriInfo.getBaseUriBuilder()
+			.path(InstitutionResource.class)
+			.build();
+
+		return Response.created(uri).entity(stringBuilder).build();
+	}
+
+	public StringBuilder synchronizeInstitutions(boolean deleteOrphan) {
+		final Optional<JaxOpenIdmResponse> optAllInstitutions = openIdmRestClient.getAll();
+		final Collection<Institution> allActiveInstitutionen = institutionService.getAllActiveInstitutionen();
+		StringBuilder responseString = new StringBuilder("");
+
+		if (optAllInstitutions.isPresent()) {
+			final JaxOpenIdmResponse allInstitutions = optAllInstitutions.get();
+			Objects.requireNonNull(allInstitutions);
+			Objects.requireNonNull(allActiveInstitutionen);
+
+			// Create in OpenIDM those Institutions where exist in EBEGU but not in OpenIDM
+			allActiveInstitutionen.forEach(ebeguInstitution -> {
+				if (allInstitutions.getResult().stream().noneMatch(jaxOpenIdmResult ->
+					jaxOpenIdmResult.get_id().equals(ebeguInstitution.getId()) && jaxOpenIdmResult.getType().equals(OpenIdmRestClient.INSTITUTION))) {
+					// if none match -> create
+					final Optional<JaxOpenIdmResult> institutionCreated = openIdmRestClient.createInstitution(ebeguInstitution);
+					openIdmRestClient.generateResponseString(responseString, ebeguInstitution.getId(), ebeguInstitution.getName(), institutionCreated.isPresent(), "Create");
+				}
+			});
+
+			if (deleteOrphan && allInstitutions.getResult() != null) {
+				// Delete in OpenIDM those Institutions where exist in OpenIdm but not in EBEGU
+				allInstitutions.getResult().forEach(openIdmInstitution -> {
+					if (openIdmInstitution.getType().equals(OpenIdmRestClient.INSTITUTION) && allActiveInstitutionen.stream().noneMatch(
+						ebeguInstitution -> ebeguInstitution.getId().equals(openIdmInstitution.get_id()))) {
+						// if none match -> delete
+						final boolean sucess = openIdmRestClient.delete(openIdmInstitution.get_id());
+						openIdmRestClient.generateResponseString(responseString, openIdmInstitution.get_id(), openIdmInstitution.getName(), sucess, "Delete");
+					}
+				});
+			}
+		}else{
+			responseString.append("Error: Can't communicate with OpenIdm server");
+		}
+		return responseString;
+	}
+
+
+
 }

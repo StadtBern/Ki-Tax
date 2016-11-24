@@ -25,20 +25,22 @@ import java.io.IOException;
 public class ClientRequestLogger implements ClientRequestFilter {
 
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(ClientRequestLogger.class.getSimpleName());
 
 	@Override
 	public void filter(ClientRequestContext requestContext) throws IOException {
-		logger.info("ClientRequest Header for call to : " + requestContext.getUri());
+		LOG.info("ClientRequest Header for call to : " + requestContext.getUri());
 
 		Joiner.MapJoiner mapJoiner = Joiner.on(',').withKeyValueSeparator("=");
-		logger.info(mapJoiner.join(requestContext.getStringHeaders()));
+		LOG.info(mapJoiner.join(requestContext.getStringHeaders()));
 
-		logger.info("ClientReqeust Body: ");
+		LOG.info("ClientReqeust Body: ");
 		if (requestContext.getEntity() instanceof Form) {
-			logger.info(mapJoiner.join(((Form) requestContext.getEntity()).asMap()));
-		} else {
-			logger.info(requestContext.getEntity().toString());
+			LOG.info(mapJoiner.join(((Form) requestContext.getEntity()).asMap()));
+		} else if (requestContext.getEntity() != null){
+			LOG.info(requestContext.getEntity().toString());
+		}else {
+			LOG.info("no body");
 		}
 	}
 }

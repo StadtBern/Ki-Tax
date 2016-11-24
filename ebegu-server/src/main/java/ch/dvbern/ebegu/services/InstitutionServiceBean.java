@@ -25,7 +25,6 @@ import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
-
 /**
  * Service fuer Institution
  */
@@ -70,13 +69,14 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Override
 	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
-	public void setInstitutionInactive(@Nonnull String institutionId) {
+	public Optional<Institution> setInstitutionInactive(@Nonnull String institutionId) {
 		Validate.notNull(institutionId);
 		Optional<Institution> institutionToRemove = findInstitution(institutionId);
 
 		Institution institution = institutionToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionId));
 		institution.setActive(false);
-		persistence.merge(institution);
+		final Institution merge = persistence.merge(institution);
+		return Optional.ofNullable(merge);
 	}
 
 	@Override
@@ -133,16 +133,16 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	@Override
 	@Nonnull
 	@PermitAll
-	public Collection<Institution> getAllowedInstitutionenForCurrentBenutzer() {
+	public Collection<Institution> getInstitutionenForCurrentBenutzer() {
 		Optional<Benutzer> benutzerOptional = benutzerService.getCurrentBenutzer();
 		if (benutzerOptional.isPresent()) {
 			Benutzer benutzer = benutzerOptional.get();
 			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(benutzer.getRole()) && benutzer.getTraegerschaft() != null) {
-				return getAllInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
+				return getAllActiveInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
 			}
-			else if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
+			if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
 				List<Institution> institutionList = new ArrayList<>();
-				if (benutzer.getInstitution() != null) {
+				if (benutzer.getInstitution() != null && benutzer.getInstitution().getActive()) {
 					institutionList.add(benutzer.getInstitution());
 				}
 				return institutionList;

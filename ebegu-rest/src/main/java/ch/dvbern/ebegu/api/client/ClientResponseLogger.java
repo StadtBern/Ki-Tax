@@ -11,29 +11,34 @@
 package ch.dvbern.ebegu.api.client;
 
 import com.google.common.base.Joiner;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.MalformedJsonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class ClientResponseLogger implements ClientResponseFilter {
 
-
-	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-
+	private static final Logger LOG = LoggerFactory.getLogger(ClientResponseLogger.class.getSimpleName());
 
 	@Override
 	public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
-		logger.info("ClientResponse Header: ");
+		LOG.info("ClientResponse Header: ");
 		Joiner.MapJoiner mapJoiner = Joiner.on(',').withKeyValueSeparator("=");
-		logger.info(mapJoiner.join(responseContext.getHeaders()));
+		LOG.info(mapJoiner.join(responseContext.getHeaders()));
 
-		logger.info("ClientResponse Body: ");
-		logger.info("Status: " + responseContext.getStatus() + "; StatusInfo: " + responseContext.getStatusInfo());
-		logger.info("EntityTag: " + responseContext.getEntityTag() + "; length: " +responseContext.getLength());
+		LOG.info("ClientResponse Body: ");
+		LOG.info("Status: " + responseContext.getStatus() + "; StatusInfo: " + responseContext.getStatusInfo());
+		LOG.info("EntityTag: " + responseContext.getEntityTag() + "; length: " + responseContext.getLength());
 
 	}
 }
