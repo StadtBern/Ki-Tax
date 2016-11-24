@@ -59,7 +59,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_JA, SCHULAMT,  STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT,  STEUERAMT})
 	public Optional<EbeguParameter> findEbeguParameter(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		EbeguParameter a = persistence.find(EbeguParameter.class, id);
@@ -76,21 +76,21 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_JA, SCHULAMT,  STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT,  STEUERAMT})
 	public Collection<EbeguParameter> getAllEbeguParameter() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(EbeguParameter.class));
 	}
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_JA, SCHULAMT,  STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT,  STEUERAMT})
 	public Collection<EbeguParameter> getAllEbeguParameterByDate(@Nonnull LocalDate date) {
 		return new ArrayList<>(criteriaQueryHelper.getAllInInterval(EbeguParameter.class, date));
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_JA, SCHULAMT,  STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT,  STEUERAMT})
 	public Collection<EbeguParameter> getEbeguParameterByGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Collection<EbeguParameter> ebeguParameters = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb());
 		List<EbeguParameter> collect = ebeguParameters.stream().filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
@@ -105,7 +105,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_JA, SCHULAMT,  STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT,  STEUERAMT})
 	public Collection<EbeguParameter> getEbeguParametersByJahr(@Nonnull Integer jahr) {
 		Collection<EbeguParameter> ebeguParameters = getAllEbeguParameterByDate(LocalDate.of(jahr, Month.JANUARY, 1));
 		List<EbeguParameter> collect = ebeguParameters.stream().filter(ebeguParameter -> !ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
@@ -120,7 +120,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_JA, SCHULAMT,  STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT,  STEUERAMT})
 	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date) {
 		return getEbeguParameterByKeyAndDate(key, date, persistence.getEntityManager());
 	}
@@ -137,7 +137,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	 */
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_JA, SCHULAMT,  STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT,  STEUERAMT})
 	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date, final EntityManager em) {
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<EbeguParameter> query = cb.createQuery(EbeguParameter.class);
@@ -189,7 +189,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_JA, SCHULAMT,  STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT,  STEUERAMT})
 	public Map<EbeguParameterKey, EbeguParameter> getEbeguParameterByGesuchsperiodeAsMap(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Map<EbeguParameterKey, EbeguParameter> result = new HashMap<>();
 		Collection<EbeguParameter> paramsForPeriode = getEbeguParameterByGesuchsperiode(gesuchsperiode);
