@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
@@ -8,6 +9,7 @@ import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,11 +20,14 @@ import javax.persistence.criteria.Root;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ch.dvbern.ebegu.enums.UserRole.*;
+
 /**
  * Service fuer Gesuch
  */
 @Stateless
 @Local(WizardStepService.class)
+@PermitAll
 public class WizardStepServiceBean extends AbstractBaseService implements WizardStepService {
 
 	@Inject
@@ -39,6 +44,10 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
 	@Inject
 	private AntragStatusHistoryService antragStatusHistoryService;
+	@Inject
+	private Authorizer authorizer;
+	@Inject
+	private PrincipalBean principalBean;
 
 
 	@Override
@@ -53,6 +62,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	public Optional<WizardStep> findWizardStep(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		WizardStep a = persistence.find(WizardStep.class, key);
+		authorizer.checkReadAuthorization(a);
 		return Optional.ofNullable(a);
 	}
 
@@ -64,7 +74,11 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		Predicate predWizardStepFromGesuch = cb.equal(root.get(WizardStep_.gesuch).get(Gesuch_.id), gesuchId);
 
 		query.where(predWizardStepFromGesuch);
-		return persistence.getCriteriaResults(query);
+		final List<WizardStep> criteriaResults = persistence.getCriteriaResults(query);
+		criteriaResults.forEach(result -> {
+			authorizer.checkReadAuthorization(result);
+		});
+		return criteriaResults;
 	}
 
 	@Override
@@ -291,7 +305,10 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
 				if (WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
 					checkStepStatusForBetreuung(wizardStep, false);
-				} else if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
+				} else if (!principalBean.isCallerInAnyOfRole(SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT)
+					&& WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
+					// SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION und SCHULAMT duerfen beim Aendern einer Betreuung
+					// den Status von ERWERBPENSUM nicht aendern
 					checkStepStatusForErwerbspensum(wizardStep, true);
 				}
 			}

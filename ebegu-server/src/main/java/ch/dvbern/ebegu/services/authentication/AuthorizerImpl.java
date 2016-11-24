@@ -228,6 +228,13 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	@Override
+	public void checkReadAuthorization(@Nullable WizardStep step) {
+		if (step != null) {
+			checkReadAuthorization(step.getGesuch());
+		}
+	}
+
+	@Override
 	public void checkReadAuthorizationVerfuegungen(Collection<Verfuegung> verfuegungen) {
 		if (verfuegungen != null) {
 			verfuegungen.forEach(this::checkReadAuthorization);

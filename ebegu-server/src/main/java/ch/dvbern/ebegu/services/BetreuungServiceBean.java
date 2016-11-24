@@ -158,6 +158,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			query.where(predicateStatus, predicateInstitution);
 			List<Betreuung> betreuungen = persistence.getCriteriaResults(query);
 			authorizer.checkReadAuthorizationBetreuungen(betreuungen);
+			return betreuungen;
 		}
 		LOG.warn("Tried to read Pendenzen for institution but no institutionen specified");
 		return Collections.emptyList();

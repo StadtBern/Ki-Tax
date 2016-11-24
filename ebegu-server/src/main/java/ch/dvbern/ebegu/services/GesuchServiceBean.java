@@ -393,27 +393,64 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@PermitAll
 	public List<JaxAntragDTO> getAllAntragDTOForFall(String fallId) {
 		authorizer.checkReadAuthorizationFall(fallId);
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<JaxAntragDTO> query = cb.createQuery(JaxAntragDTO.class);
-		Root<Gesuch> root = query.from(Gesuch.class);
-		query.multiselect(
-			root.get(Gesuch_.id),
-			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb),
-			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis),
-			root.get(Gesuch_.eingangsdatum),
-			root.get(Gesuch_.typ),
-			root.get(Gesuch_.status),
-			root.get(Gesuch_.laufnummer)).distinct(true);
 
-		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
-		Predicate predicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
+		final Optional<Benutzer> optBenutzer = benutzerService.getCurrentBenutzer();
+		if (optBenutzer.isPresent()) {
+			final Benutzer benutzer = optBenutzer.get();
 
-		query.where(predicate);
-		query.orderBy(cb.asc(root.get(Gesuch_.laufnummer)));
-		TypedQuery<JaxAntragDTO> q = persistence.getEntityManager().createQuery(query);
-		q.setParameter(fallIdParam, fallId);
-		List<JaxAntragDTO> resultList = q.getResultList();
-		return resultList;
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<JaxAntragDTO> query = cb.createQuery(JaxAntragDTO.class);
+			Root<Gesuch> root = query.from(Gesuch.class);
+
+
+			Join<InstitutionStammdaten, Institution> institutionJoin = null;
+
+			if (benutzer.getRole().equals(UserRole.SACHBEARBEITER_TRAEGERSCHAFT)
+				|| benutzer.getRole().equals(UserRole.SACHBEARBEITER_INSTITUTION)) {
+				// Join all the relevant relations only when the User belongs to Institution or Traegerschaft
+				SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
+				SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.LEFT);
+				Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
+				institutionJoin = institutionstammdaten.join(InstitutionStammdaten_.institution, JoinType.LEFT);
+			}
+
+			query.multiselect(
+				root.get(Gesuch_.id),
+				root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb),
+				root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis),
+				root.get(Gesuch_.eingangsdatum),
+				root.get(Gesuch_.typ),
+				root.get(Gesuch_.status),
+				root.get(Gesuch_.laufnummer)).distinct(true);
+
+			ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
+
+			List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+			Expression<Boolean> fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
+			predicatesToUse.add(fallPredicate);
+
+			if (institutionJoin != null) {
+				// only if the institutionJoin was set
+				if (benutzer.getRole().equals(UserRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
+					predicatesToUse.add(cb.equal(institutionJoin.get(Institution_.traegerschaft), benutzer.getTraegerschaft()));
+				}
+				if (benutzer.getRole().equals(UserRole.SACHBEARBEITER_INSTITUTION)) {
+					// es geht hier nicht um die institutionJoin des zugewiesenen benutzers sondern um die institutionJoin des eingeloggten benutzers
+					predicatesToUse.add(cb.equal(institutionJoin, benutzer.getInstitution()));
+				}
+			}
+
+			query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicatesToUse));
+
+			query.orderBy(cb.asc(root.get(Gesuch_.laufnummer)));
+			TypedQuery<JaxAntragDTO> q = persistence.getEntityManager().createQuery(query);
+			q.setParameter(fallIdParam, fallId);
+
+			return q.getResultList();
+
+		}
+
+		return new ArrayList<>();
 	}
 
 	@Override
