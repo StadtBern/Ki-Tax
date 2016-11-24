@@ -1136,8 +1136,7 @@ public class JaxBConverter {
 	public ErwerbspensumContainer erwerbspensumContainerToStoreableEntity(@Nonnull final JaxErwerbspensumContainer jaxEwpCont) {
 		Validate.notNull(jaxEwpCont);
 		ErwerbspensumContainer containerToMergeWith = new ErwerbspensumContainer();
-		//TODO (team) ACHTUNG, das Erwerspensum darf von Schulamt nicht gelesen werden. Muss dann spaeter gepurged werden
-		if (jaxEwpCont.getId() != null && !(benutzerToAuthLoginElement(benutzerService.getCurrentBenutzer().get()).getRole().equals(UserRole.SCHULAMT))) {
+		if (jaxEwpCont.getId() != null) {
 			final Optional<ErwerbspensumContainer> existingEwpCont = erwerbspensumService.findErwerbspensum(jaxEwpCont.getId());
 			if (existingEwpCont.isPresent()) {
 				containerToMergeWith = existingEwpCont.get();

@@ -126,7 +126,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT})
 	public Gesuch calculateVerfuegung(@Nonnull Gesuch gesuch) {
 		this.finanzielleSituationService.calculateFinanzDaten(gesuch);
 		Mandant mandant = mandantService.getFirst();   //gesuch get mandant?

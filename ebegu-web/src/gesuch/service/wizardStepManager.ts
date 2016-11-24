@@ -86,8 +86,7 @@ export default class WizardStepManager {
     private setAllowedStepsForSchulamt(): void {
         this.allowedSteps = getTSWizardStepNameValues().filter(element =>
             (element !== TSWizardStepName.ERWERBSPENSUM &&
-            element !== TSWizardStepName.ABWESENHEIT &&
-            element !== TSWizardStepName.VERFUEGEN)
+            element !== TSWizardStepName.ABWESENHEIT)
         );
     }
 
@@ -254,9 +253,19 @@ export default class WizardStepManager {
     public isStepClickableForCurrentRole(step: TSWizardStep, gesuch: TSGesuch) {
         if (step.wizardStepName === TSWizardStepName.VERFUEGEN) {
             //verfuegen step fuer alle ausser admin und sachbearbeiter nur verfuegbar wenn status verfuegt
-            if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())
-                && gesuch.status !== TSAntragStatus.VERFUEGT) {
-                return false;    //disabled
+            if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
+                // Von allen nicht-JA und nicht-Administratoren
+                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
+                    // ... duerfen Schulamt ab Geprueft gucken
+                    if (gesuch.status !== TSAntragStatus.GEPRUEFT && gesuch.status !== TSAntragStatus.VERFUEGEN && gesuch.status !== TSAntragStatus.VERFUEGT) {
+                        return false;
+                    }
+                } else {
+                    // ... alle anderen ab VERFUEGT
+                    if (gesuch.status !== TSAntragStatus.VERFUEGT) {
+                        return false;
+                    }
+                }
             }
         }
         return step.verfuegbar === true;  //wenn keine Sonderbedingung gehen wir davon aus dass der step nicht disabled ist

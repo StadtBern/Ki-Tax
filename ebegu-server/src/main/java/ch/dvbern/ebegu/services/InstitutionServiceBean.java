@@ -147,7 +147,9 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 				}
 				return institutionList;
 			}
-			if (UserRole.SUPER_ADMIN.equals(benutzer.getRole())) {
+			if (UserRole.SUPER_ADMIN.equals(benutzer.getRole()) ||
+				    UserRole.ADMIN.equals(benutzer.getRole()) ||
+				    UserRole.SCHULAMT.equals(benutzer.getRole())) {
 				return getAllActiveInstitutionen();
 			}
 		}

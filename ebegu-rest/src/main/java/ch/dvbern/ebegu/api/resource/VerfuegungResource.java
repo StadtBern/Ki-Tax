@@ -8,12 +8,10 @@ import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.BetreuungService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.VerfuegungService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -58,6 +56,9 @@ public class VerfuegungResource {
 	@Inject
 	private InstitutionService institutionService;
 
+	@Inject
+	private BenutzerService benutzerService;
+
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
 	private JaxBConverter converter;
@@ -96,11 +97,16 @@ public class VerfuegungResource {
 
 			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
 
-			Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
-
 			Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
-			if (!instForCurrBenutzer.isEmpty()) {
-				RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
+			Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
+			if (currentBenutzer.isPresent()) {
+				UserRole currentUserRole = currentBenutzer.get().getRole();
+				// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
+				// damit nur die relevanten Kinder geschickt werden
+				if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(currentUserRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(currentUserRole)) {
+					Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+					RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
+				}
 			}
 			return Response.ok(kindContainers).build();
 
