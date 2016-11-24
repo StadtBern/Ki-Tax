@@ -98,6 +98,7 @@ public class InstitutionStammdatenResource {
 			.collect(Collectors.toList());
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Nullable
 	@DELETE
 	@Path("/{institutionStammdatenId}")
@@ -128,6 +129,27 @@ public class InstitutionStammdatenResource {
 
 		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stringDate);
 		return institutionStammdatenService.getAllInstitutionStammdatenByDate(date).stream()
+			.map(institutionStammdaten -> converter.institutionStammdatenToJAX(institutionStammdaten))
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * Sucht in der DB alle aktiven InstitutionStammdaten, bei welchen das gegebene Datum zwischen DatumVon und DatumBis liegt
+	 * Wenn das Datum null ist, wird dieses automatisch als heutiges Datum gesetzt.
+	 *
+	 * @param stringDate Date als String mit Format "yyyy-MM-dd". Wenn null, heutiges Datum gesetzt
+	 * @return Liste mit allen InstitutionStammdaten die den Bedingungen folgen
+     */
+	@Nonnull
+	@GET
+	@Path("/date/active")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxInstitutionStammdaten> getAllActiveInstitutionStammdatenByDate(
+		@Nullable @QueryParam("date") String stringDate){
+
+		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stringDate);
+		return institutionStammdatenService.getAllActiveInstitutionStammdatenByDate(date).stream()
 			.map(institutionStammdaten -> converter.institutionStammdatenToJAX(institutionStammdaten))
 			.collect(Collectors.toList());
 	}
