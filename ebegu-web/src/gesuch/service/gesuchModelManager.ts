@@ -52,6 +52,7 @@ import AdresseRS from '../../core/service/adresseRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import IQService = angular.IQService;
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -1114,6 +1115,25 @@ export default class GesuchModelManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind SCHULAMT.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public areThereOnlySchulamtAngebote(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.institutionStammdaten.betreuungsangebotTyp !== TSBetreuungsangebotTyp.TAGESSCHULE) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

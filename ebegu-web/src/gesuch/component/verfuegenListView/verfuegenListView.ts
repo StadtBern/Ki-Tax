@@ -159,12 +159,21 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     public setGesuchStatusVerfuegen(): IPromise<TSAntragStatus> {
+        //by default wird alles auf VERFUEGEN gesetzt, da es der normale Fall ist
+        let newStatus: TSAntragStatus = TSAntragStatus.VERFUEGEN;
+        let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
+
+        if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
+            newStatus = TSAntragStatus.NUR_SCHULAMT;
+            deleteTextValue = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT';
+        }
+
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
-            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+            deleteText: deleteTextValue
         }).then(() => {
             return this.createNeededPDFs().then(() => {
-                return this.setGesuchStatus(TSAntragStatus.VERFUEGEN);
+                return this.setGesuchStatus(newStatus);
             });
         });
     }

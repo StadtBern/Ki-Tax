@@ -222,7 +222,8 @@ public class AuthorizerImpl implements Authorizer {
 
 	@Override
 	public void checkReadAuthorizationForAnyBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
-		if (betreuungen != null && betreuungen.stream().noneMatch(this::isReadAuthorized)) {
+		if (betreuungen != null && !betreuungen.isEmpty()
+			&& betreuungen.stream().noneMatch(this::isReadAuthorized)) {
 			throw new EJBAccessException(
 				"Access Violation"
 					+ " user is not allowed for any of these betreuungen");
