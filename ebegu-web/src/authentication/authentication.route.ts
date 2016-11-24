@@ -28,7 +28,7 @@ export class EbeguLoginState implements IState {
 
 export class EbeguLocalLoginState implements IState {
     name = 'locallogin';
-    template = '<dummy-authentication-view>';
+    template = '<dummy-authentication-view flex="auto" class="overflow-scroll">';
     url = '/locallogin';
 }
 
