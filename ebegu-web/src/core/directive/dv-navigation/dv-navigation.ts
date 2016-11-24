@@ -31,7 +31,8 @@ export class DVNavigation implements IDirective {
         dvCancel: '&?',
         dvNextDisabled: '&?',
         dvSubStep: '<',
-        dvSave: '&?'
+        dvSave: '&?',
+        dvTranslateNext:'@'
     };
     controller = NavigatorController;
     controllerAs = 'vm';
@@ -55,6 +56,7 @@ export class NavigatorController {
     dvCancel: () => any;
     dvNextDisabled: () => any;
     dvSubStep: number;
+    dvTranslateNext: string;
 
     static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', '$translate', 'ErrorService', '$q'];
     /* @ngInject */
@@ -85,12 +87,16 @@ export class NavigatorController {
      * @returns {string}
      */
     public getNextButtonName(): string {
-        if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
-            return this.$translate.instant('WEITER_ONLY_UPPER');
-        } else if (this.dvSave) {
-            return this.$translate.instant('WEITER_UPPER');
-        } else {
-            return this.$translate.instant('WEITER_ONLY_UPPER');
+        if(this.dvTranslateNext){
+            return this.$translate.instant(this.dvTranslateNext);
+        }else {
+            if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
+                return this.$translate.instant('WEITER_ONLY_UPPER');
+            } else if (this.dvSave) {
+                return this.$translate.instant('WEITER_UPPER');
+            } else {
+                return this.$translate.instant('WEITER_ONLY_UPPER');
+            }
         }
     }
 
@@ -119,9 +125,12 @@ export class NavigatorController {
      */
     public previousStep(): void {
         if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
-            this.dvSave().then(() => {
-                this.navigateToPreviousStep();
-            });
+            let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
+            if(returnValue !== undefined) {
+                this.$q.when(returnValue).then(() => {
+                    this.navigateToPreviousStep();
+                });
+            }
         } else {
             this.navigateToPreviousStep();
         }

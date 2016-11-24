@@ -25,7 +25,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class KindServiceBeanTest extends AbstractEbeguTest {
+public class KindServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private KindService kindService;

@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -33,6 +35,7 @@ import java.util.*;
  */
 @Stateless
 @Local(GesuchService.class)
+@PermitAll
 public class GesuchServiceBean extends AbstractBaseService implements GesuchService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
@@ -52,11 +55,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private FallService fallService;
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
+	@Inject
+	private Authorizer authorizer;
 
 	@Nonnull
 	@Override
+	@RolesAllowed(value ={UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
 	public Gesuch createGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
+		authorizer.checkCreateAuthorizationGesuch();
 		final Gesuch persistedGesuch = persistence.persist(gesuch);
 		// Die WizsrdSteps werden direkt erstellt wenn das Gesuch erstellt wird. So vergewissern wir uns dass es kein Gesuch ohne WizardSteps gibt
 		wizardStepService.createWizardStepList(persistedGesuch);
@@ -66,7 +73,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory) {
+		authorizer.checkWriteAuthorization(gesuch);
 		Objects.requireNonNull(gesuch);
 		final Gesuch merged = persistence.merge(gesuch);
 		if (saveInStatusHistory) {
@@ -77,20 +86,24 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<Gesuch> findGesuch(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Gesuch a = persistence.find(Gesuch.class, key);
+		authorizer.checkReadAuthorization(a);
 		return Optional.ofNullable(a);
 	}
 
 	@Nonnull
 	@Override
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public Collection<Gesuch> getAllGesuche() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Gesuch.class));
 	}
 
 	@Nonnull
 	@Override
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public Collection<Gesuch> getAllActiveGesuche() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -103,15 +116,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@RolesAllowed(value ={UserRoleName.SUPER_ADMIN})
 	public void removeGesuch(@Nonnull Gesuch gesuch) {
 		Validate.notNull(gesuch);
 		Optional<Gesuch> gesuchToRemove = findGesuch(gesuch.getId());
+		authorizer.checkWriteAuthorization(gesuch);
 		gesuchToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuch));
 		persistence.remove(gesuchToRemove.get());
 	}
 
 	@Nonnull
 	@Override
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -133,6 +149,24 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@Nonnull
+	@RolesAllowed(value ={UserRoleName.GESUCHSTELLER, UserRoleName.SUPER_ADMIN})
+	public List<Gesuch> getAntraegeForUsername(String username) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicate = cb.equal(root.get(Gesuch_.userErstellt), username);
+		query.where(predicate);
+
+		List<Gesuch> gesuche = persistence.getCriteriaResults(query);
+		authorizer.checkReadAuthorizationGesuche(gesuche);
+		return gesuche;
+	}
+
+	@Override
+	@PermitAll
 	public Pair<Long, List<Gesuch>> searchAntraege(@Nonnull AntragTableFilterDTO antragTableFilterDto) {
 		Pair<Long, List<Gesuch>> result;
 		Long countResult = searchAntraege(antragTableFilterDto, Mode.COUNT).getLeft();
@@ -188,6 +222,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		// Special role based predicates
 		switch (role) {
+			case SUPER_ADMIN:
 			case ADMIN:
 			case REVISOR:
 				break;
@@ -355,31 +390,71 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public List<JaxAntragDTO> getAllAntragDTOForFall(String fallId) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<JaxAntragDTO> query = cb.createQuery(JaxAntragDTO.class);
-		Root<Gesuch> root = query.from(Gesuch.class);
-		query.multiselect(
-			root.get(Gesuch_.id),
-			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb),
-			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis),
-			root.get(Gesuch_.eingangsdatum),
-			root.get(Gesuch_.typ),
-			root.get(Gesuch_.status),
-			root.get(Gesuch_.laufnummer)).distinct(true);
+		authorizer.checkReadAuthorizationFall(fallId);
 
-		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
-		Predicate predicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
+		final Optional<Benutzer> optBenutzer = benutzerService.getCurrentBenutzer();
+		if (optBenutzer.isPresent()) {
+			final Benutzer benutzer = optBenutzer.get();
 
-		query.where(predicate);
-		query.orderBy(cb.asc(root.get(Gesuch_.laufnummer)));
-		TypedQuery<JaxAntragDTO> q = persistence.getEntityManager().createQuery(query);
-		q.setParameter(fallIdParam, fallId);
-		List<JaxAntragDTO> resultList = q.getResultList();
-		return resultList;
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<JaxAntragDTO> query = cb.createQuery(JaxAntragDTO.class);
+			Root<Gesuch> root = query.from(Gesuch.class);
+
+
+			Join<InstitutionStammdaten, Institution> institutionJoin = null;
+
+			if (benutzer.getRole().equals(UserRole.SACHBEARBEITER_TRAEGERSCHAFT)
+				|| benutzer.getRole().equals(UserRole.SACHBEARBEITER_INSTITUTION)) {
+				// Join all the relevant relations only when the User belongs to Institution or Traegerschaft
+				SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
+				SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.LEFT);
+				Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
+				institutionJoin = institutionstammdaten.join(InstitutionStammdaten_.institution, JoinType.LEFT);
+			}
+
+			query.multiselect(
+				root.get(Gesuch_.id),
+				root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb),
+				root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis),
+				root.get(Gesuch_.eingangsdatum),
+				root.get(Gesuch_.typ),
+				root.get(Gesuch_.status),
+				root.get(Gesuch_.laufnummer)).distinct(true);
+
+			ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
+
+			List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+			Expression<Boolean> fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
+			predicatesToUse.add(fallPredicate);
+
+			if (institutionJoin != null) {
+				// only if the institutionJoin was set
+				if (benutzer.getRole().equals(UserRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
+					predicatesToUse.add(cb.equal(institutionJoin.get(Institution_.traegerschaft), benutzer.getTraegerschaft()));
+				}
+				if (benutzer.getRole().equals(UserRole.SACHBEARBEITER_INSTITUTION)) {
+					// es geht hier nicht um die institutionJoin des zugewiesenen benutzers sondern um die institutionJoin des eingeloggten benutzers
+					predicatesToUse.add(cb.equal(institutionJoin, benutzer.getInstitution()));
+				}
+			}
+
+			query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicatesToUse));
+
+			query.orderBy(cb.asc(root.get(Gesuch_.laufnummer)));
+			TypedQuery<JaxAntragDTO> q = persistence.getEntityManager().createQuery(query);
+			q.setParameter(fallIdParam, fallId);
+
+			return q.getResultList();
+
+		}
+
+		return new ArrayList<>();
 	}
 
 	@Override
+	@PermitAll // diser service wird von flyway gebraucht
 	public void updateLaufnummerOfAllGesucheOfFall(String fallId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -409,12 +484,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN,
+		UserRoleName.SACHBEARBEITER_JA,	UserRoleName.GESUCHSTELLER})
 	public Optional<Gesuch> antragMutieren(@Nonnull String antragId,
 										   @Nonnull LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
-
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
+			authorizer.checkWriteAuthorization(gesuch.get());
 			Optional<Gesuch> gesuchForMutation = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.get());
 			return getGesuchMutation(eingangsdatum, gesuchForMutation);
 		}
@@ -423,6 +500,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
 										   @Nonnull LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
@@ -449,6 +527,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch) {
 		if (StringUtils.isNotEmpty(gesuch.getVorgaengerId())) {
 			Optional<Gesuch> gesuchOptional = findGesuch(gesuch.getVorgaengerId());
@@ -466,12 +545,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch) {
+		authorizer.checkReadAuthorization(gesuch);
 		return getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
 	}
 
 	@Nonnull
 	private Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
+		authorizer.checkReadAuthorizationFall(fall);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
@@ -490,8 +572,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (criteriaResults.isEmpty()) {
 			return Optional.empty();
 		}
-
-		return Optional.of(criteriaResults.get(0));
+		Gesuch gesuch = criteriaResults.get(0);
+		authorizer.checkReadAuthorization(gesuch);
+		return Optional.of(gesuch);
 	}
 
 	private List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {

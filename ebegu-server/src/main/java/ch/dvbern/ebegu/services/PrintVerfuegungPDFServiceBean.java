@@ -48,6 +48,9 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 	@Inject
 	VerfuegungService verfuegungService;
 
+	@Inject
+	private Authorizer authorizer;
+
 	@Nonnull
 	@Override
 	@SuppressFBWarnings(value = "UI_INHERITANCE_UNSAFE_GETRESOURCE")
@@ -61,6 +64,7 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
                 // Pro Betreuung ein Dokument
 				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
 				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
+				authorizer.checkReadAuthorization(betreuung);
 				result.add(printVerfuegungForBetreuung(betreuung, letztesVerfDatum));
             }
         }
@@ -76,7 +80,7 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 		EbeguVorlageKey vorlageFromBetreuungsangebottyp = getVorlageFromBetreuungsangebottyp(betreuung);
 		InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageFromBetreuungsangebottyp);
 		Objects.requireNonNull(is, "Vorlage fuer die Verfuegung nicht gefunden");
-
+		authorizer.checkReadAuthorization(betreuung);
 		try {
 			VerfuegungPrintMergeSource mergeSource = new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung, letzteVerfuegungDatum));
 			byte[] document = docxME.getDocument(is, mergeSource);

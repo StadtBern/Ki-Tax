@@ -13,8 +13,11 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSDateRange} from '../../../models/types/TSDateRange';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
+let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 
 export class InstitutionViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -45,9 +48,10 @@ export class InstitutionViewController {
     selectedInstitutionStammdatenBetreuungsangebot: any = null;
 
 
-    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService'];
+    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog'];
     /* @ngInject */
-    constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS, private errorService: ErrorService) {
+    constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS,
+                private errorService: ErrorService, private dvDialog: DvDialog) {
         this.institutionRS = institutionRS;
         this.ebeguUtil = ebeguUtil;
         this.institutionStammdatenRS = institutionStammdatenRS;
@@ -91,15 +95,20 @@ export class InstitutionViewController {
     }
 
     removeInstitution(institution: any): void {
-        this.selectedInstitution = null;
-        this.isSelected = false;
-        this.institutionRS.removeInstitution(institution.id).then((response) => {
-            var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
-            if (index > -1) {
-                this.institutionen.splice(index, 1);
-            }
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            deleteText: '',
+            title: 'LOESCHEN_DIALOG_TITLE'
+        })
+        .then(() => {   //User confirmed removal
+            this.selectedInstitution = null;
+            this.isSelected = false;
+            this.institutionRS.removeInstitution(institution.id).then((response) => {
+                var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
+                if (index > -1) {
+                    this.institutionen.splice(index, 1);
+                }
+            });
         });
-
     }
 
     createInstitution(): void {
@@ -189,15 +198,19 @@ export class InstitutionViewController {
     }
 
     removeInstitutionStammdaten(institutionStammdaten: TSInstitutionStammdaten): void {
-        this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {
-
-            var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
-            if (index > -1) {
-                this.instStammdatenList.splice(index, 1);
-            }
-            this.isSelectedStammdaten = false;
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            deleteText: '',
+            title: 'LOESCHEN_DIALOG_TITLE'
+        })
+        .then(() => {   //User confirmed removal
+            this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {
+                var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
+                if (index > -1) {
+                    this.instStammdatenList.splice(index, 1);
+                }
+                this.isSelectedStammdaten = false;
+            });
         });
-
     }
 
     private setBetreuungsangebotTypValues(): void {

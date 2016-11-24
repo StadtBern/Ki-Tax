@@ -48,7 +48,7 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class EbeguParameterServiceTest extends AbstractEbeguTest {
+public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private EbeguParameterService parameterService;

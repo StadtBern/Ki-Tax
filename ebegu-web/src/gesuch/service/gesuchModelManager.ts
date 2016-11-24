@@ -50,6 +50,7 @@ import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
 import IQService = angular.IQService;
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -86,15 +87,28 @@ export default class GesuchModelManager {
     }
 
 
+    /**
+     * Je nach dem welche Rolle der Benutzer hat, wird das Gesuch aus der DB anders geholt.
+     * Fuer Institutionen z.B. wird das Gesuch nur mit den relevanten Daten geholt
+     */
     public openGesuch(gesuchId: string): IPromise<TSGesuch> {
-        return this.gesuchRS.findGesuch(gesuchId)
-            .then((response) => {
-                if (response) {
-                    this.setGesuch(response);
-                    this.setHiddenSteps();
-                }
-                return response;
-            });
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+            return this.gesuchRS.findGesuchForInstitution(gesuchId)
+                .then((response) => {
+                    if (response) {
+                        this.setGesuch(response);
+                    }
+                    return response;
+                });
+        } else {
+            return this.gesuchRS.findGesuch(gesuchId)
+                .then((response) => {
+                    if (response) {
+                        this.setGesuch(response);
+                    }
+                    return response;
+                });
+        }
     }
 
     /**
@@ -1092,6 +1106,7 @@ export default class GesuchModelManager {
             for (let betreuung of kind.betreuungen) {
                 if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.NICHT_EINGETRETEN
                     && betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
                     return true;
                 }

@@ -85,7 +85,7 @@ public class MahnungResource {
 	@Path("/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response dokumenteKomplettErhalten(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) {
+	public Response mahnlaufBeenden(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) {
 		Validate.notNull(gesuchJAXPId.getId());
 		String gesuchID = converter.toEntityId(gesuchJAXPId);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
@@ -94,7 +94,7 @@ public class MahnungResource {
 			return Response.serverError().build();
 		}
 		Gesuch gesuchToReturn = gesuchOptional.get();
-		mahnungService.dokumenteKomplettErhalten(gesuchToReturn);
+		mahnungService.mahnlaufBeenden(gesuchToReturn);
 		return Response.ok().build();
 	}
 

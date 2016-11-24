@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.util.Constants;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -44,5 +45,14 @@ public class GeneratedDokument extends File {
 
 	public void setGesuch(Gesuch gesuch) {
 		this.gesuch = gesuch;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.appendSuper(super.toString())
+			.append("typ", typ)
+			.append("gesuch", gesuch)
+			.toString();
 	}
 }

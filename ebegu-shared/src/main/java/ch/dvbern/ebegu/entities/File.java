@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -72,5 +73,13 @@ public abstract class File extends AbstractEntity {
 
 	public void setFilesize(String dokumentSize) {
 		this.filesize = dokumentSize;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("filename", filename)
+			.append("filepfad", filepfad)
+			.toString();
 	}
 }

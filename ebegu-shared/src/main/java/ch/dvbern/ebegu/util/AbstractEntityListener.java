@@ -5,11 +5,13 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.SequenceType;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.KindService;
-import ch.dvbern.ebegu.services.MandantService;
 import ch.dvbern.ebegu.services.SequenceService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.spi.CDI;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -18,8 +20,9 @@ import java.util.Optional;
 
 public class AbstractEntityListener {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEntityListener.class);
+
 	private static PrincipalBean principalBean = null;
-	private static MandantService mandantService = null;
 	private FallService fallService;
 	private KindService kindService;
 	private SequenceService sequenceService;
@@ -34,23 +37,13 @@ public class AbstractEntityListener {
 		return principalBean;
 	}
 
-	@SuppressFBWarnings(value = "LI_LAZY_INIT_STATIC", justification = "Auch wenn das vlt. mehrfach initialisiert wird... das macht nix, solange am Ende was Richtiges drinsteht")
-	private static MandantService getMandantService() {
-		if (mandantService == null) {
-			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection (mal wieder) buggy ist.
-			//noinspection NonThreadSafeLazyInitialization
-			mandantService = CDI.current().select(MandantService.class).get();
-		}
-		return mandantService;
-	}
-
 	@PrePersist
 	protected void prePersist(@Nonnull AbstractEntity entity) {
 		LocalDateTime now = LocalDateTime.now();
 		entity.setTimestampErstellt(now);
 		entity.setTimestampMutiert(now);
-		entity.setUserErstellt(getPrincipalBean().getPrincipal().getName());
-		entity.setUserMutiert(getPrincipalBean().getPrincipal().getName());
+		entity.setUserErstellt(getPrincipalName());
+		entity.setUserMutiert(getPrincipalName());
 		if (entity instanceof KindContainer && !entity.hasVorgaenger()) {
 			// Neue Kind-Nummer: nur setzen, wenn es nicht ein "kopiertes" Kind ist
 			KindContainer kind = (KindContainer) entity;
@@ -73,7 +66,7 @@ public class AbstractEntityListener {
 		}
 		else if (entity instanceof Fall) {
 			Fall fall = (Fall) entity;
-			Mandant mandant = getMandantService().getFirst(); //todo team der mandant sollte aus dem prinipal gelesen werden
+			Mandant mandant = getPrincipalBean().getMandant();
 			Long nextFallNr = getSequenceService().createNumberTransactional(SequenceType.FALL_NUMMER, mandant);
 			fall.setFallNummer(nextFallNr);
 			fall.setMandant(mandant);
@@ -90,8 +83,7 @@ public class AbstractEntityListener {
 	@PreUpdate
 	public void preUpdate(@Nonnull AbstractEntity entity) {
 		entity.setTimestampMutiert(LocalDateTime.now());
-		entity.setUserMutiert(getPrincipalBean().getPrincipal().getName());
-
+		entity.setUserMutiert(getPrincipalName());
 		if (entity instanceof Verfuegung) {
 			throw new IllegalStateException("Verfuegung darf eigentlich nur einmal erstellt werden, wenn die Betreuung verfuegt ist, und nie mehr veraendert");
 		}
@@ -122,5 +114,14 @@ public class AbstractEntityListener {
 			sequenceService = CDI.current().select(SequenceService.class).get();
 		}
 		return sequenceService;
+	}
+
+	private String getPrincipalName() {
+		try {
+			return getPrincipalBean().getPrincipal().getName();
+		} catch (ContextNotActiveException e) {
+			LOGGER.error("No context when persisting entity.");
+			throw e;
+		}
 	}
 }
