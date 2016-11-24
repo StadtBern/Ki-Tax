@@ -1,1 +1,2 @@
 ALTER TABLE verfuegung_zeitabschnitt DROP bg_pensum;
+ALTER TABLE verfuegung_zeitabschnitt_aud DROP bg_pensum;
