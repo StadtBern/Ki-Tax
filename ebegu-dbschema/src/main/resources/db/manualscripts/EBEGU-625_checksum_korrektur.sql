@@ -1,0 +1,1 @@
+update schema_version set checksum = 1938248626 where version = '0010';

@@ -49,8 +49,8 @@ import TSExceptionReport from '../../models/TSExceptionReport';
 import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
-import IQService = angular.IQService;
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
+import IQService = angular.IQService;
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -697,7 +697,7 @@ export default class GesuchModelManager {
     }
 
     public createKind(): void {
-        var tsKindContainer = new TSKindContainer(undefined, new TSKind());
+        let tsKindContainer = new TSKindContainer(undefined, new TSKind());
         this.gesuch.kindContainers.push(tsKindContainer);
         this.kindNumber = this.gesuch.kindContainers.length;
         tsKindContainer.kindNummer = this.kindNumber;
