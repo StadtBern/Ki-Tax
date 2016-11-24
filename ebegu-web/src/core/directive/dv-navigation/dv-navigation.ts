@@ -1,4 +1,4 @@
-import {IDirective, IDirectiveFactory} from 'angular';
+import {IDirective, IDirectiveFactory, IQService} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
@@ -7,9 +7,9 @@ import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import ITranslateService = angular.translate.ITranslateService;
-import IPromise = angular.IPromise;
-import IQService = angular.IQService;
 let template = require('./dv-navigation.html');
+let style = require('./dv-navigation.less');
+
 
 /**
  * Diese Direktive wird benutzt, um die Navigation Buttons darzustellen. Folgende Parameter koennen benutzt werden,
