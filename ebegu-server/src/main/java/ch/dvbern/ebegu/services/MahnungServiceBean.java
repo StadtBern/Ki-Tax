@@ -124,7 +124,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		query.distinct(true);
 
 		Predicate predicateAktiv = cb.equal(root.get(Mahnung_.active), Boolean.TRUE);
-		Predicate predicateAbgelaufen = cb.lessThanOrEqualTo(root.get(Mahnung_.datumFristablauf), LocalDate.now());
+		Predicate predicateAbgelaufen = cb.lessThan(root.get(Mahnung_.datumFristablauf), LocalDate.now());
 		query.where(predicateAktiv, predicateAbgelaufen);
 
 
