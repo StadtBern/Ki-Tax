@@ -35,10 +35,12 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 		super(mahnung.getGesuch());
 		this.mahnung = mahnung;
 
-		if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && vorgaengerMahnung.isPresent())
+		if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && vorgaengerMahnung.isPresent()) {
 			this.vorgaengerMahnung = vorgaengerMahnung.get();
-		else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG)
+		}
+		else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG) {
 			throw new UnsupportedOperationException("Vorganger Mahnung für zweite Mahnung fehlt!");
+		}
 	}
 
 	@Override
@@ -99,10 +101,12 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 	@Override
 	public String getErsteMahnDatum() {
-		if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && vorgaengerMahnung != null)
+		if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && vorgaengerMahnung != null) {
 			return Constants.DATE_FORMATTER.format(vorgaengerMahnung.getTimestampErstellt());
-		else
+		}
+		else {
 			return "";
+		}
 	}
 
 	@Override

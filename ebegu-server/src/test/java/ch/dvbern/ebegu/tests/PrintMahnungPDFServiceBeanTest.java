@@ -16,7 +16,9 @@ import de.akquinet.jbosscc.needle.junit.NeedleRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,7 +45,8 @@ public class PrintMahnungPDFServiceBeanTest {
 
 	@Rule
 	public NeedleRule needleRule = new NeedleRule();
-
+	@Rule
+	public TemporaryFolder tempFolder = new TemporaryFolder();
 	@ObjectUnderTest
 	private PrintMahnungPDFServiceBean printMahnungPDFService;
 
@@ -111,8 +114,8 @@ public class PrintMahnungPDFServiceBeanTest {
 		FileOutputStream fos = null;
 		try {
 			// create temp file in junit temp folder
-			//tempFile = tempFolder.newFile(fileName);
-			tempFile = new File("C:/Development/EBEGU/JUnitTestTemp", fileName);
+			tempFile = tempFolder.newFile(fileName);
+			//tempFile = new File("C:/Development/EBEGU/JUnitTestTemp", fileName);
 			System.out.println("Writing tempfile to: " + tempFile);
 			fos = new FileOutputStream(tempFile);
 			fos.write(data);
@@ -126,5 +129,13 @@ public class PrintMahnungPDFServiceBeanTest {
 
 		}
 		return tempFile;
+	}
+	private void openPDF(File file) {
+
+		try {
+			Desktop.getDesktop().open(file);
+		} catch (IOException ex) {
+			// no application registered for PDFs
+		}
 	}
 }

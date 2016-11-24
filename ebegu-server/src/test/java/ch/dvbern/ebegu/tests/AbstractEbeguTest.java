@@ -109,8 +109,8 @@ public abstract class AbstractEbeguTest {
 		FileOutputStream fos = null;
 		try {
 			// create temp file in junit temp folder
-			//tempFile = tempFolder.newFile(fileName);
-			tempFile = new File("C:/Development/EBEGU/JUnitTestTemp", fileName);
+			tempFile = tempFolder.newFile(fileName);
+			//tempFile = new File("C:/Development/EBEGU/JUnitTestTemp", fileName);
 			System.out.println("Writing tempfile to: " + tempFile);
 			fos = new FileOutputStream(tempFile);
 			fos.write(data);

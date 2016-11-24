@@ -11,7 +11,6 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static ch.dvbern.ebegu.enums.EbeguVorlageKey.*;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland

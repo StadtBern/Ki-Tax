@@ -32,18 +32,21 @@ public class BriefPrintImpl implements BriefPrint {
 		String zustellAdresse = "";
 		String organisation = PrintUtil.getOrganisation(gesuch);
 
-		if (StringUtils.isNotEmpty(organisation))
+		if (StringUtils.isNotEmpty(organisation)) {
 			zustellAdresse += organisation;
-		else
+		}
+		else {
 			zustellAdresse += "Familie";  //TODO: resources/localisation?
+		}
 
 		zustellAdresse += newlineMSWord + PrintUtil.getGesuchstellerName(gesuch);
 		zustellAdresse += newlineMSWord + PrintUtil.getGesuchstellerStrasse(gesuch);
 
 		String adrZusatz = PrintUtil.getAdresszusatz(gesuch);
 
-		if (StringUtils.isNotEmpty(adrZusatz))
+		if (StringUtils.isNotEmpty(adrZusatz)) {
 			zustellAdresse += newlineMSWord + adrZusatz;
+		}
 
 		zustellAdresse += newlineMSWord + PrintUtil.getGesuchstellerPLZStadt(gesuch);
 
