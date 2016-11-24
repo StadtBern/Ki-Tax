@@ -16,6 +16,7 @@ import java.security.spec.InvalidKeySpecException;
  * To use this first generate the hash with createHash and store it. Next time you need to validate the password
  * call the validatePassword function using the plain text password input and the stored hash
  */
+@SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
 public class PBKDF2PasswordHash {
 	public static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA512";
 
@@ -97,14 +98,15 @@ public class PBKDF2PasswordHash {
 	 * is used so that password hashes cannot be extracted from an on-line
 	 * system using a timing attack and then attacked off-line.
 	 *
-	 * @param a the first byte array
-	 * @param b the second byte array
+	 * @param firstBA the first byte array
+	 * @param secondBA the second byte array
 	 * @return true if both byte arrays are the same, false if not
 	 */
-	private static boolean slowEquals(byte[] a, byte[] b) {
-		int diff = a.length ^ b.length;
-		for (int i = 0; i < a.length && i < b.length; i++)
-			diff |= a[i] ^ b[i];
+	private static boolean slowEquals(byte[] firstBA, byte[] secondBA) {
+		int diff = firstBA.length ^ secondBA.length;
+		for (int i = 0; i < firstBA.length && i < secondBA.length; i++) {
+			diff |= firstBA[i] ^ secondBA[i];
+		}
 		return diff == 0;
 	}
 
