@@ -96,14 +96,12 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
-//		authorizer.checkReadAuthorizationFinSit(gesuch);
 		return finSitRechner.calculateResultateFinanzielleSituation(gesuch);
 	}
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
-//		authorizer.checkReadAuthorizationFinSit(gesuch);
 		finSitRechner.calculateFinanzDaten(gesuch);
 	}
 }
