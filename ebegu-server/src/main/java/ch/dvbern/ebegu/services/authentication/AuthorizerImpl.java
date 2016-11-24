@@ -65,7 +65,7 @@ public class AuthorizerImpl implements Authorizer {
 
 	@Override
 	public void checkReadAuthorizationGesuche(@Nullable Collection<Gesuch> gesuche) {
-		if (gesuche != null){
+		if (gesuche != null) {
 			gesuche.forEach(this::checkReadAuthorization);
 		}
 	}
@@ -138,7 +138,7 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
-	private void validateMandantMatches(@Nullable  HasMandant mandantEntity) {
+	private void validateMandantMatches(@Nullable HasMandant mandantEntity) {
 		//noinspection ConstantConditions
 		if (mandantEntity == null || mandantEntity.getMandant() == null) {
 			return;
@@ -211,7 +211,7 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	@Override
-	public void checkReadAuthorizationBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
+	public void checkReadAuthorizationForAllBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
 		if (betreuungen != null) {
 				betreuungen.stream()
 					.filter(betreuung -> !isReadAuthorized(betreuung))
@@ -219,6 +219,17 @@ public class AuthorizerImpl implements Authorizer {
 					.ifPresent(this::throwViolation);
 			}
 		}
+
+	@Override
+	public void checkReadAuthorizationForAnyBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
+		if (betreuungen != null) {
+			if (betreuungen.stream().noneMatch(this::isReadAuthorized)) {
+				throw new EJBAccessException(
+					"Access Violation"
+						+ " user is not allowed for any of these betreuungen");
+			}
+		}
+	}
 
 	@Override
 	public void checkReadAuthorization(Verfuegung verfuegung) {
@@ -267,7 +278,7 @@ public class AuthorizerImpl implements Authorizer {
 			// hier fuer alle lesbar ausser fuer institution/traegerschaft
 			String name = principalBean.getPrincipal().getName();
 			boolean allowed = isInRoleOrGSOwner(ALL_EXCEPT_INST_TRAEG, finanzielleSituation, name);
-			if(!allowed){
+			if (!allowed) {
 				throwViolation(finanzielleSituation);
 			}
 		}
