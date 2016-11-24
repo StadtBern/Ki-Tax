@@ -98,6 +98,7 @@ public class InstitutionStammdatenResource {
 			.collect(Collectors.toList());
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Nullable
 	@DELETE
 	@Path("/{institutionStammdatenId}")
