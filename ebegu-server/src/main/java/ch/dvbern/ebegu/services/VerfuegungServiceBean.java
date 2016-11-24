@@ -159,7 +159,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		}
 
 		bgEvaluator.evaluate(gesuch, calculatorParameters, neustesVerfuegtesGesuchFuerGesuch.orElse(null));
-		authorizer.checkReadAuthorizationBetreuungen(gesuch.extractAllBetreuungen()); // betreuungen pruefen reicht hier glaub
+		authorizer.checkReadAuthorizationForAnyBetreuungen(gesuch.extractAllBetreuungen()); // betreuungen pruefen reicht hier glaub
 		return gesuch;
 	}
 

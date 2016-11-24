@@ -9,14 +9,12 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
@@ -70,8 +68,9 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 
 	@Nonnull
 	@Override
+	@PermitAll // todo diser service wird von flyway gebraucht, wir sollten ein run as wrapper machen
 	public Collection<Fall> getAllFalle() {
-		ArrayList<Fall> faelle = new ArrayList<>(criteriaQueryHelper.getAll(Fall.class));
+		List<Fall> faelle = new ArrayList<>(criteriaQueryHelper.getAll(Fall.class));
 		authorizer.checkReadAuthorizationFaelle(faelle);
 		return faelle;
 	}
