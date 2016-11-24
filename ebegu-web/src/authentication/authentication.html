@@ -7,11 +7,7 @@
             <p ng-show="vm.redirecting">
                 Sie werden in {{vm.countdown}} Sekunden an das Login Portal des Kanton Berns weitergeleitet
             </p>
-            <!--<div class="col-md-5 col-md-offset-3">-->
 
-            <!--<a href="http://localhost:8080/ebegu/saml2/jsp/fedletSSOInit.jsp?metaAlias=/egov_bern/sp&idpEntityID=https://elogin-test.bern.ch/am&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=http%3A%2F%2Fapp.ebegu.ch%3A3000%2F%23%2Ffaelle?sendRedirectForValidationNow=true">manuelles-->
-            <!--Login</a>-->
-            <!--</div>-->
             <div class="col-md-5 col-md-offset-3">
                 <a href="{{vm.redirectionHref}}">Login mit IAM</a>
             </div>

@@ -96,11 +96,13 @@ public class FedletSamlServlet extends HttpServlet {
 
 			map = SPACSUtils.processResponseForFedlet(request, response, printer);
 		} catch (SAML2Exception | IOException | SessionException sme) {
+			LOG.error("EBEGU SAML Servlet failed to process SSO Response", sme);
 			SAMLUtils.sendError(request, response,
 				HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "failedToProcessSSOResponse",
 				sme.getMessage());
 			return;
 		} catch (ServletException se) {
+			LOG.error("SAML Servlet failed to process SSO Response", se);
 			SAMLUtils.sendError(request, response,
 				HttpServletResponse.SC_BAD_REQUEST, "failedToProcessSSOResponse",
 				se.getMessage());
@@ -140,11 +142,8 @@ public class FedletSamlServlet extends HttpServlet {
 
 		String relayUrl = (String) map.get(SAML2Constants.RELAY_STATE);
 		if ((relayUrl != null) && (!relayUrl.isEmpty())) {
-			// something special for validation to send redirect, this parameter could be removed if it is also removed on the client side
-			int stringPos = relayUrl.indexOf("sendRedirectForValidationNow=true");
-			if (stringPos != -1) {
-				response.sendRedirect(relayUrl);
-			}
+			LOG.trace("Received SAML2 response with RelayState. Redirecting to " + relayUrl);
+			response.sendRedirect(relayUrl);
 		} else {
 			LOG.warn("Received SAML2 response without RelayState. Staying on page");
 			displayMinimalInfo(printer, userAuth);
