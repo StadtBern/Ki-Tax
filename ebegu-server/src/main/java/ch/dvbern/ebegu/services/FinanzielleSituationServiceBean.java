@@ -87,22 +87,21 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 		persistence.merge(finanzielleSituation.getGesuchsteller());
 		authorizer.checkWriteAuthorization(finanzielleSituation);
 		Optional<FinanzielleSituationContainer> propertyToRemove = findFinanzielleSituation(finanzielleSituation.getId());
-		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, finanzielleSituation));
-		persistence.remove(FinanzielleSituationContainer.class, propertyToRemove.get().getId());
+		final FinanzielleSituationContainer finSitToRemove = propertyToRemove.orElseThrow(()
+			-> new EbeguEntityNotFoundException("removeFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, finanzielleSituation));
+		persistence.remove(FinanzielleSituationContainer.class, finSitToRemove.getId());
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT, SCHULAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT})
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
-		authorizer.checkReadAuthorizationFinSit(gesuch);
 		return finSitRechner.calculateResultateFinanzielleSituation(gesuch);
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR,  GESUCHSTELLER, STEUERAMT, SCHULAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT})
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
-		authorizer.checkReadAuthorizationFinSit(gesuch);
 		finSitRechner.calculateFinanzDaten(gesuch);
 	}
 }

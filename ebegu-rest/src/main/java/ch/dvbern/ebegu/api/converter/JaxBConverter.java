@@ -425,8 +425,8 @@ public class JaxBConverter {
 
 		// Einkommensverschlechterung
 		if (persistedGesuchsteller.getEinkommensverschlechterungContainer() != null) {
-			final JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = einkommensverschlechterungContainerToJAX(persistedGesuchsteller.getEinkommensverschlechterungContainer());
-			jaxGesuchsteller.setEinkommensverschlechterungContainer(jaxEinkommensverschlechterungContainer);
+			final JaxEinkommensverschlechterungContainer jaxEinkVerContainer = einkommensverschlechterungContainerToJAX(persistedGesuchsteller.getEinkommensverschlechterungContainer());
+			jaxGesuchsteller.setEinkommensverschlechterungContainer(jaxEinkVerContainer);
 		}
 		return jaxGesuchsteller;
 	}
@@ -1368,7 +1368,7 @@ public class JaxBConverter {
 			if (abwesenheitContainer.getAbwesenheitGS() != null) {
 				abwesenheitGS = abwesenheitContainer.getAbwesenheitGS();
 			}
-			// Das Setzen vom alten ID ist noetigt im Fall wenn das Betreuungsangebot fuer eine existierende Abwesenheit geaendert wird, da sonst doppelte Verknuepfungen gemacht werden
+			// Das Setzen von alten IDs ist noetigt im Fall dass Betreuungsangebot fuer eine existierende Abwesenheit geaendert wird, da sonst doppelte Verknuepfungen gemacht werden
 			final String oldID = abwesenheitGS.getId();
 			final Abwesenheit convertedAbwesenheitGS = abwesenheitToEntity(jaxAbwesenheitContainers.getAbwensenheitGS(), abwesenheitGS);
 			convertedAbwesenheitGS.setId(oldID);

@@ -100,6 +100,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			} else if (UmzugAusInAusBern.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				responseString.append("Fall Umzug Aus-In-Aus Bern Fallnummer ").append(gesuch.getFall().getFallNummer());
+			} else if (Abwesenheit.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				responseString.append("Fall Abwesenheit Fallnummer ").append(gesuch.getFall().getFallNummer());
 			} else if ("all".equals(fallid)) {
 				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
@@ -108,9 +111,11 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 				createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Testfaelle 1-7 erstellt");
+				createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				responseString.append("Testfaelle 1-9 erstellt");
 			} else {
-				responseString.append("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-6. '/all' erstellt alle Testfaelle");
+				responseString.append("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-9. '/all' erstellt alle Testfaelle");
 			}
 
 		}
@@ -150,6 +155,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 		if (UmzugAusInAusBern.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+		}
+		if (Abwesenheit.equals(fallid)) {
+			return createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 		}
 
 		return null;
@@ -219,15 +227,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Optional<InstitutionStammdaten> optionalBruennen = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
 		Optional<InstitutionStammdaten> optionalTagiAaregg = institutionStammdatenService.findInstitutionStammdaten("11111111-1111-1111-1111-111111111174");
 
-		if (optionalAaregg.isPresent()) {
-			institutionStammdatenList.add(optionalAaregg.get());
-		}
-		if (optionalBruennen.isPresent()) {
-			institutionStammdatenList.add(optionalBruennen.get());
-		}
-		if (optionalTagiAaregg.isPresent()) {
-			institutionStammdatenList.add(optionalTagiAaregg.get());
-		}
+		optionalAaregg.ifPresent(institutionStammdatenList::add);
+		optionalBruennen.ifPresent(institutionStammdatenList::add);
+		optionalTagiAaregg.ifPresent(institutionStammdatenList::add);
 		return institutionStammdatenList;
 	}
 
