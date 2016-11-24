@@ -32,7 +32,7 @@ export class DVNavigation implements IDirective {
         dvNextDisabled: '&?',
         dvSubStep: '<',
         dvSave: '&?',
-        dvTranslateNext:'@'
+        dvTranslateNext: '@'
     };
     controller = NavigatorController;
     controllerAs = 'vm';
@@ -87,9 +87,9 @@ export class NavigatorController {
      * @returns {string}
      */
     public getNextButtonName(): string {
-        if(this.dvTranslateNext){
+        if (this.dvTranslateNext) {
             return this.$translate.instant(this.dvTranslateNext);
-        }else {
+        } else {
             if (this.gesuchModelManager.isGesuchReadonly()) {
                 return this.$translate.instant('WEITER_ONLY_UPPER');
             } else if (this.dvSave) {
