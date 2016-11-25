@@ -10,6 +10,7 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.UserRole;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -198,5 +199,14 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 
 	public void setSamlIDPEntityID(@Nullable String samlIDPEntityID) {
 		this.samlIDPEntityID = samlIDPEntityID;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("username", username)
+			.append("role", role)
+			.append("sessionIndex", sessionIndex)
+			.toString();
 	}
 }

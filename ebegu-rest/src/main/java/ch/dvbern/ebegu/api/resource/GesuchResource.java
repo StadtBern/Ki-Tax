@@ -155,7 +155,7 @@ public class GesuchResource {
 
 		final Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(this.principal.getName());
 		if (optBenutzer.isPresent()) {
-			Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+			Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 			return cleanGesuchForInstitutionTraegerschaft(completeGesuch, instForCurrBenutzer);
 		}
 		return null; // aus sicherheitsgruenden geben wir null zurueck wenn etwas nicht stimmmt

@@ -165,7 +165,6 @@ public class AuthResource {
 		if (optBenutzer.isPresent()) {
 			benutzer = optBenutzer.get();
 		}
-		//todo homa imanol fragen ich glaube das sollten wir nach dem container login
 		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer));
 
 		Optional<AuthAccessElement> accessElement = authService.login(login);

@@ -8,5 +8,9 @@
                  ng-bind="user.vorname + ' ' + user.nachname + ', ' + user.email + ', ' + 'Rolle ' + (user.getRoleKey() | translate) + ' '
                           + user.institution.name + user.traegerschaft.name"></div>
         </div>
+
+        <div class="mark-hover panel-body" ng-click="vm.logIn(vm.superadmin)" ng-hide="true"
+             ng-bind="vm.superadmin.vorname + ' ' + vm.superadmin.nachname + ', ' + vm.superadmin.email + ', ' + 'Rolle ' + (vm.superadmin.getRoleKey() | translate) + ' '
+                          + vm.superadmin.institution.name + vm.superadmin.traegerschaft.name"></div>
     </div>
 </div>

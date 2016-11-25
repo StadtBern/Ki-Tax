@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-md-12">
             <form role="form" name="form" class="" novalidate unsaved-warning-form>
-                <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Eingangsdatum-->
                     <div class="row">
@@ -42,7 +42,7 @@
                                     <md-radio-button
                                         ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
                                         ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
-                                        ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
+                                        ng-disabled="vm.isGesuchReadonly()">
                                         <span>{{current.gesuchsperiodeString}}</span>
                                     </md-radio-button>
                                 </md-radio-group>

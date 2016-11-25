@@ -7,9 +7,9 @@ import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
-import {TSRoleUtil} from '../../utils/TSRoleUtil';
 
 export default class WizardStepManager {
 
@@ -64,8 +64,10 @@ export default class WizardStepManager {
     }
 
     public setAllowedStepsForRole(role: TSRole): void {
-        if (TSRoleUtil.getTraegerschaftInstitutionRoles().indexOf(role) > -1) {
+        if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(role) > -1) {
             this.setAllowedStepsForInstitutionTraegerschaft();
+        } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(role) > -1) {
+            this.setAllowedStepsForSchulamt();
         } else {
             this.setAllAllowedSteps();
         }
@@ -79,6 +81,13 @@ export default class WizardStepManager {
         this.allowedSteps.push(TSWizardStepName.BETREUUNG);
         this.allowedSteps.push(TSWizardStepName.ABWESENHEIT);
         this.allowedSteps.push(TSWizardStepName.VERFUEGEN);
+    }
+
+    private setAllowedStepsForSchulamt(): void {
+        this.allowedSteps = getTSWizardStepNameValues().filter(element =>
+            (element !== TSWizardStepName.ERWERBSPENSUM &&
+            element !== TSWizardStepName.ABWESENHEIT)
+        );
     }
 
     private setAllAllowedSteps(): void {
@@ -243,10 +252,19 @@ export default class WizardStepManager {
      */
     public isStepClickableForCurrentRole(step: TSWizardStep, gesuch: TSGesuch) {
         if (step.wizardStepName === TSWizardStepName.VERFUEGEN) {
-            //verfuegen step fuer alle ausser admin und sachbearbeiter nur verfuegbar wenn status verfuegt
-            if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())
-                && gesuch.status !== TSAntragStatus.VERFUEGT) {
-                return false;    //disabled
+            //verfuegen fuer admin und jugendamt  immer sichtbar
+            if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
+                // schulamt darf ab geprueft den screen sehen,
+                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
+                    if (gesuch.status !== TSAntragStatus.GEPRUEFT && gesuch.status !== TSAntragStatus.VERFUEGEN && gesuch.status !== TSAntragStatus.VERFUEGT) {
+                        return false;
+                    }
+                } else {
+                    // ... alle anderen ab VERFUEGT
+                    if (gesuch.status !== TSAntragStatus.VERFUEGT) {
+                        return false;
+                    }
+                }
             }
         }
         return step.verfuegbar === true;  //wenn keine Sonderbedingung gehen wir davon aus dass der step nicht disabled ist
