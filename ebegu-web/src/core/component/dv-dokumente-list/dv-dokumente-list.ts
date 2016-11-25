@@ -58,7 +58,7 @@ export class DVDokumenteListController {
 
     uploadAnhaenge(files: any[], selectDokument: TSDokumentGrund) {
 
-        if (!this.isGesuchStatusVerfuegenVerfuegt() && this.gesuchModelManager.getGesuch()) {
+        if (!this.isGesuchReadonly() && this.gesuchModelManager.getGesuch()) {
             let gesuchID = this.gesuchModelManager.getGesuch().id;
             this.$log.debug('Uploading files on gesuch ' + gesuchID);
             for (var file of files) {
@@ -125,8 +125,8 @@ export class DVDokumenteListController {
         }
     }
 
-    public isGesuchStatusVerfuegenVerfuegt(): boolean {
-        return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
+    public isGesuchReadonly(): boolean {
+        return this.gesuchModelManager.isGesuchReadonly();
     }
 
 

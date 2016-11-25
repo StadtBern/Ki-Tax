@@ -49,6 +49,7 @@ import TSExceptionReport from '../../models/TSExceptionReport';
 import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
+import {TSRole} from '../../models/enums/TSRole';
 import IQService = angular.IQService;
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 
@@ -1150,6 +1151,14 @@ export default class GesuchModelManager {
      */
     public isGesuchStatusVerfuegenVerfuegt(): boolean {
         return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT);
+    }
+
+    /**
+     * Returns true when the Gesuch must be readonly
+     * @returns {boolean}
+     */
+    public isGesuchReadonly(): boolean {
+        return this.isGesuchStatusVerfuegenVerfuegt() || this.authServiceRS.isRole(TSRole.SCHULAMT);
     }
 
     /**

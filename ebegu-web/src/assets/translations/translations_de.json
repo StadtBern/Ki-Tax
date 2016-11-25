@@ -590,6 +590,7 @@
     "AUSLOGGEN": "Ausloggen",
     "EINLOGGEN": "Einloggen",
     "PARAMETER": "Parameter",
+    "TSRole_SUPER_ADMIN": "System",
     "TSRole_ADMIN": "Administrator",
     "TSRole_SACHBEARBEITER_JA": "Sachbearbeiter Jugendamt",
     "TSRole_SACHBEARBEITER_INSTITUTION": "Sachbearbeiter Institution",
