@@ -150,7 +150,6 @@ public class UsernameRoleChecker {
 		}
 	}
 
-
 	/**
 	 * Create the set of roles the user belongs to by parsing the roles.properties
 	 * data for username=role1,role2,... and username.XXX=role1,role2,...
