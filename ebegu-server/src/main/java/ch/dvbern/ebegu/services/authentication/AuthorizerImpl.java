@@ -213,10 +213,10 @@ public class AuthorizerImpl implements Authorizer {
 	@Override
 	public void checkReadAuthorizationForAllBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
 		if (betreuungen != null) {
-				betreuungen.stream()
-					.filter(betreuung -> !isReadAuthorized(betreuung))
-					.findAny()
-					.ifPresent(this::throwViolation);
+            betreuungen.stream()
+                .filter(betreuung -> !isReadAuthorized(betreuung))
+                .findAny()
+                .ifPresent(this::throwViolation);
 		}
 	}
 

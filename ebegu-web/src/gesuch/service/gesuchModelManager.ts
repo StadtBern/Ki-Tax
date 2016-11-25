@@ -1166,11 +1166,12 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT
+     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT or NUR_SCHULAMT
      * @returns {boolean}
      */
     public isGesuchStatusVerfuegenVerfuegt(): boolean {
-        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT);
+        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT)
+            || this.isGesuchStatus(TSAntragStatus.NUR_SCHULAMT);
     }
 
     /**
