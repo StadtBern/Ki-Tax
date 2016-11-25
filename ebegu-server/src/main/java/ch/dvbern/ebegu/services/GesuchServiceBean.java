@@ -454,7 +454,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@PermitAll // diser service wird von flyway gebraucht
 	public void updateLaufnummerOfAllGesucheOfFall(String fallId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
