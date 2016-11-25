@@ -138,7 +138,7 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 		if (benutzerOptional.isPresent()) {
 			Benutzer benutzer = benutzerOptional.get();
 			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(benutzer.getRole()) && benutzer.getTraegerschaft() != null) {
-				return getAllActiveInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
+				return getAllInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
 			}
 			if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
 				List<Institution> institutionList = new ArrayList<>();

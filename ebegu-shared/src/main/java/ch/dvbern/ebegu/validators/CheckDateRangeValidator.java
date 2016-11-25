@@ -13,8 +13,11 @@ public class CheckDateRangeValidator implements ConstraintValidator<CheckDateRan
 		// nop
 	}
 
+	/**
+	 * gueltigAb und gueltigBis duerfen auch gleich sein. Dies bedeutet eine Zeitspannung von 1 Tag
+	 */
 	@Override
 	public boolean isValid(@Nonnull DateRange instance, ConstraintValidatorContext context) {
-		return instance.getGueltigAb().isBefore(instance.getGueltigBis());
+		return !instance.getGueltigAb().isAfter(instance.getGueltigBis());
 	}
 }
