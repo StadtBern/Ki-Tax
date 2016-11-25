@@ -49,6 +49,7 @@ import TSExceptionReport from '../../models/TSExceptionReport';
 import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
+import {TSRole} from '../../models/enums/TSRole';
 import IQService = angular.IQService;
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 
@@ -60,7 +61,7 @@ export default class GesuchModelManager {
     private kindNumber: number;
     private betreuungNumber: number;
     private fachstellenList: Array<TSFachstelle>;
-    private institutionenList: Array<TSInstitutionStammdaten>;
+    private activInstitutionenList : Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
 
@@ -79,10 +80,10 @@ export default class GesuchModelManager {
                 private adresseRS: AdresseRS, private $q: IQService) {
 
         this.fachstellenList = [];
-        this.institutionenList = [];
+        this.activInstitutionenList = [];
         this.activeGesuchsperiodenList = [];
         this.updateFachstellenList();
-        this.updateInstitutionenList();
+        this.updateActiveInstitutionenList();
         this.updateActiveGesuchsperiodenList();
     }
 
@@ -187,9 +188,9 @@ export default class GesuchModelManager {
     /**
      * Retrieves the list of InstitutionStammdaten for the date of today.
      */
-    public updateInstitutionenList(): void {
-        this.instStamRS.getAllInstitutionStammdatenByDate(DateUtil.today()).then((response: any) => {
-            this.institutionenList = angular.copy(response);
+    public updateActiveInstitutionenList(): void {
+        this.instStamRS.getAllActiveInstitutionStammdatenByDate(DateUtil.today()).then((response: any) => {
+            this.activInstitutionenList = angular.copy(response);
         });
     }
 
@@ -363,8 +364,8 @@ export default class GesuchModelManager {
         return this.fachstellenList;
     }
 
-    public getInstitutionenList(): Array<TSInstitutionStammdaten> {
-        return this.institutionenList;
+    public getActiveInstitutionenList(): Array<TSInstitutionStammdaten> {
+        return this.activInstitutionenList;
     }
 
     public getAllActiveGesuchsperioden(): Array<TSGesuchsperiode> {
@@ -1150,6 +1151,14 @@ export default class GesuchModelManager {
      */
     public isGesuchStatusVerfuegenVerfuegt(): boolean {
         return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT);
+    }
+
+    /**
+     * Returns true when the Gesuch must be readonly
+     * @returns {boolean}
+     */
+    public isGesuchReadonly(): boolean {
+        return this.isGesuchStatusVerfuegenVerfuegt() || this.authServiceRS.isRole(TSRole.SCHULAMT);
     }
 
     /**

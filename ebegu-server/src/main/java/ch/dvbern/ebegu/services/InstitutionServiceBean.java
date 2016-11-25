@@ -133,12 +133,12 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	@Override
 	@Nonnull
 	@PermitAll
-	public Collection<Institution> getInstitutionenForCurrentBenutzer() {
+	public Collection<Institution> getAllowedInstitutionenForCurrentBenutzer() {
 		Optional<Benutzer> benutzerOptional = benutzerService.getCurrentBenutzer();
 		if (benutzerOptional.isPresent()) {
 			Benutzer benutzer = benutzerOptional.get();
 			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(benutzer.getRole()) && benutzer.getTraegerschaft() != null) {
-				return getAllActiveInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
+				return getAllInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
 			}
 			if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
 				List<Institution> institutionList = new ArrayList<>();
@@ -146,6 +146,11 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 					institutionList.add(benutzer.getInstitution());
 				}
 				return institutionList;
+			}
+			if (UserRole.SUPER_ADMIN.equals(benutzer.getRole()) ||
+				    UserRole.ADMIN.equals(benutzer.getRole()) ||
+				    UserRole.SCHULAMT.equals(benutzer.getRole())) {
+				return getAllActiveInstitutionen();
 			}
 		}
 		return Collections.emptyList();

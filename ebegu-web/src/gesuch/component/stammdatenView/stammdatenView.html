@@ -13,7 +13,7 @@
                   unsaved-warning-form>
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                          dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                          dv-enable-expression="!vm.isGesuchReadonly()">
                     <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
                     <!--Geschlecht-->
                     <div class="row">
@@ -24,7 +24,7 @@
                                                     ng-required="true" items="vm.geschlechter"
                                                     ng-model="vm.getModel().geschlecht" dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly()">
                                 </dv-radio-container>
                                 <dv-error-messages for="form.geschlecht.$error"
                                                    class="error"></dv-error-messages>
@@ -84,7 +84,7 @@
                                              aria-label="korrespondenzAdr" ng-change="vm.korrespondenzAdrClicked()"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                             dv-enable-expression="!vm.isGesuchReadonly()">
                                     <span data-translate="KORRESPONDENZADR"></span>
                                     <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
                                 </md-checkbox>
@@ -106,7 +106,7 @@
                                              aria-label="diplomatenstatus"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                             dv-enable-expression="!vm.isGesuchReadonly()">
                                     <span data-translate="GESUCHSTELLER_DIPLOMATENSTATUS"></span>
                                 </md-checkbox>
                                 <dv-error-messages for="form.diplomatenstatus.$error" class="error"></dv-error-messages>
@@ -121,7 +121,7 @@
                                 <md-checkbox ng-model="vm.getModel().showUmzug" name="umzug" aria-label="umzug"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt() && !vm.isThereAnyUmzug()">
+                                             dv-enable-expression="!vm.isGesuchReadonly() && !vm.isThereAnyUmzug()">
                                     <span data-translate="UMZUG"></span>
                                 </md-checkbox>
                                 <dv-error-messages for="form.umzug.$error"
@@ -195,7 +195,7 @@
                                        dv-previous="true" dv-next="true" dv-save="vm.save(form)">
                         </dv-navigation>
                         <dv-navigation dv-show-element
-                                       dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"
                                        dv-previous="true" dv-next="true">
                         </dv-navigation>
                     </div>

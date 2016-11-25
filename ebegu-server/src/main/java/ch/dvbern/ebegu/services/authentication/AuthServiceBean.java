@@ -126,8 +126,12 @@ public class AuthServiceBean implements AuthService {
 
 	@Override
 	public AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer) {
-
-		entityManager.persist(authorisierterBenutzer);
+		try {
+			entityManager.persist(authorisierterBenutzer);
+		} catch (RuntimeException ex) {
+			LOG.error("Could not create Login from IAM for user " + authorisierterBenutzer);
+			throw ex;
+		}
 		Benutzer existingUser = authorisierterBenutzer.getBenutzer();
 		return new AuthAccessElement(
 			authorisierterBenutzer.getUsername(),

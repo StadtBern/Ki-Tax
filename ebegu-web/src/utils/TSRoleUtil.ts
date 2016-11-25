@@ -21,24 +21,34 @@ export class TSRoleUtil {
     }
 
     public static getAdministratorRoles(): Array<TSRole> {
-        return [TSRole.ADMIN]; //TODO (team) Superadmin
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN];
     }
 
     public static getTraegerschaftInstitutionRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
+    }
+
+    public static getTraegerschaftInstitutionOnlyRoles(): Array<TSRole> {
         return [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
     }
 
     public static getGesuchstellerJugendamtRoles(): Array<TSRole> {
-        return [TSRole.GESUCHSTELLER, TSRole.SACHBEARBEITER_JA, TSRole.ADMIN]; // TODO Superadmin
+        return [TSRole.SUPER_ADMIN, TSRole.GESUCHSTELLER, TSRole.SACHBEARBEITER_JA, TSRole.ADMIN];
     }
 
     public static getAdministratorJugendamtRole(): Array<TSRole> {
-        return [TSRole.ADMIN, TSRole.SACHBEARBEITER_JA];
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA];
+    }
+
+    public static getAdministratorJugendamtSchulamtRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.SCHULAMT];
     }
 
     public static getAllButAdministratorJugendamtRole(): Array<string> {
         return TSRoleUtil.getAllRoles().filter(element =>
-            element !== TSRole[TSRole.SACHBEARBEITER_JA] && element !== TSRole[TSRole.ADMIN]
+            element !== TSRole[TSRole.SACHBEARBEITER_JA] &&
+            element !== TSRole[TSRole.ADMIN] &&
+            element !== TSRole[TSRole.SUPER_ADMIN]
         );
     }
 
@@ -48,15 +58,19 @@ export class TSRoleUtil {
         );
     }
 
-    public static getSchulamtRoles(): Array<TSRole> {
-        return [TSRole.SCHULAMT]; //TODO Superadmin
+    public static getSchulamtOnlyRoles(): Array<TSRole> {
+        return [TSRole.SCHULAMT];
     }
 
     public static getGesuchstellerRoles(): Array<TSRole> {
-        return [TSRole.GESUCHSTELLER]; //TODO Superadmin?
+        return [TSRole.SUPER_ADMIN, TSRole.GESUCHSTELLER];
+    }
+
+    public static getGesuchstellerOnlyRoles(): Array<TSRole> {
+        return [TSRole.GESUCHSTELLER];
     }
 
     public static getAllRolesForKommentarSpalte(): Array<TSRole> {
-        return [TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.STEUERAMT, TSRole.SCHULAMT]; //TODO Superadmin
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.STEUERAMT, TSRole.SCHULAMT];
     }
 }

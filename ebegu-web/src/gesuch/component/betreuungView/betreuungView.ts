@@ -68,8 +68,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
         this.startEmptyListOfBetreuungspensen();
         //institutionen lazy laden
-        if (this.gesuchModelManager.getInstitutionenList() || this.gesuchModelManager.getInstitutionenList().length <= 0) {
-            this.gesuchModelManager.updateInstitutionenList();
+        if (this.gesuchModelManager.getActiveInstitutionenList() || this.gesuchModelManager.getActiveInstitutionenList().length <= 0) {
+            this.gesuchModelManager.updateActiveInstitutionenList();
         }
         this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
     }
@@ -80,7 +80,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
      */
     private startEmptyListOfBetreuungspensen() {
         if ((!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0)
-            && (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()))) {
+            && (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()))) {
             // nur fuer Institutionen wird ein Betreuungspensum by default erstellt
             this.createBetreuungspensum();
         }
@@ -166,7 +166,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     public getInstitutionenSDList(): Array<TSInstitutionStammdaten> {
         let result: Array<TSInstitutionStammdaten> = [];
         if (this.betreuungsangebot) {
-            this.gesuchModelManager.getInstitutionenList().forEach((instStamm: TSInstitutionStammdaten) => {
+            this.gesuchModelManager.getActiveInstitutionenList().forEach((instStamm: TSInstitutionStammdaten) => {
                 if (instStamm.betreuungsangebotTyp === this.betreuungsangebot.key) {
                     result.push(instStamm);
                 }
@@ -211,7 +211,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public setSelectedInstitutionStammdaten(): void {
-        let instStamList = this.gesuchModelManager.getInstitutionenList();
+        let instStamList = this.gesuchModelManager.getActiveInstitutionenList();
         for (let i: number = 0; i < instStamList.length; i++) {
             if (instStamList[i].id === this.instStammId) {
                 this.gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = instStamList[i];
@@ -341,12 +341,12 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public showFalscheAngaben(): boolean {
-        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchStatusVerfuegenVerfuegt()
+        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchReadonly()
             && !this.isFromMutation();
     }
 
     public showAngabenKorrigieren(): boolean {
-        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchStatusVerfuegenVerfuegt()
+        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchReadonly()
             && this.isFromMutation();
     }
 
@@ -361,6 +361,6 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public showAngabeKorrigieren(): boolean {
         return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen())
-            && !this.isGesuchStatusVerfuegenVerfuegt() && this.isFromMutation();
+            && !this.isGesuchReadonly() && this.isFromMutation();
     }
 }

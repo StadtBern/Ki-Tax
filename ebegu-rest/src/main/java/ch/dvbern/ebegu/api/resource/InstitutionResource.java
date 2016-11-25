@@ -169,14 +169,14 @@ public class InstitutionResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Find and return a list of all Institutionen of the currently logged in Benutzer.")
+	@ApiOperation(value = "Find and return a list of all Institutionen of the currently logged in Benutzer. Retruns all for admins")
 	@Nonnull
 	@GET
 	@Path("/currentuser")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxInstitution> getInstitutionenForCurrentBenutzer() {
-		return institutionService.getInstitutionenForCurrentBenutzer().stream()
+	public List<JaxInstitution> getAllowedInstitutionenForCurrentBenutzer() {
+		return institutionService.getAllowedInstitutionenForCurrentBenutzer().stream()
 			.map(inst -> converter.institutionToJAX(inst))
 			.collect(Collectors.toList());
 	}

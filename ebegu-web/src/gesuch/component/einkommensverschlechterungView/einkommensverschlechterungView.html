@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-md-12">
             <form role="form" name="form" class="" unsaved-warning-form="" novalidate>
-                <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Steuerveranlagung -->
                     <div class="row">
@@ -27,7 +27,7 @@
                                                     ng-change="vm.steuerveranlagungClicked()"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly()">
                                 </dv-radio-container>
                                 <dv-error-messages for="form.steuerveranlagung.$error"
                                                    class="error"></dv-error-messages>
@@ -46,7 +46,7 @@
                                                     ng-required="true" class="radio input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly()">
                                 </dv-radio-container>
                                 <dv-error-messages for="form.steuererklaerung.$error" class="error"></dv-error-messages>
                             </div>
@@ -342,7 +342,7 @@
                                 <md-checkbox ng-model="vm.showSelbstaendig" name="showSelbstaendig"
                                              aria-label="{{FINANZIELLE_SITUATION_SELBSTAENDIGKEIT | translate}}"
                                              ng-change="vm.showSelbstaendigClicked()"
-                                             ng-disabled="evm.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig() || vm.isGesuchStatusVerfuegenVerfuegt()">
+                                             ng-disabled="evm.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig() || vm.isGesuchReadonly()">
                                     <span data-translate="FINANZIELLE_SITUATION_SELBSTAENDIGKEIT"></span>
                                 </md-checkbox>
                             </div>
