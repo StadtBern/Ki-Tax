@@ -16,6 +16,6 @@ public enum Betreuungsstatus {
 	GESCHLOSSEN_OHNE_VERFUEGUNG;
 
 	public boolean isGeschlossen() {
-		return VERFUEGT.equals(this) || GESCHLOSSEN_OHNE_VERFUEGUNG.equals(this);
+		return VERFUEGT.equals(this) || GESCHLOSSEN_OHNE_VERFUEGUNG.equals(this) || NICHT_EINGETRETEN.equals(this);
 	}
 }
