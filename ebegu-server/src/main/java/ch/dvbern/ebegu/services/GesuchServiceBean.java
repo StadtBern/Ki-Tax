@@ -189,7 +189,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		CriteriaQuery query = null;
+		CriteriaQuery query;
 		switch (mode) {
 			case SEARCH:
 				query = cb.createQuery(String.class);
@@ -388,6 +388,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		SEARCH
 	}
 
+	/**
+	 * Diese Methode sucht alle Antraege die zu dem gegebenen Fall gehoeren.
+	 * Die Antraege werden aber je nach Benutzerrolle gefiltert.
+	 * - SACHBEARBEITER_TRAEGERSCHAFT oder SACHBEARBEITER_INSTITUTION - werden nur diejenige Antraege zurueckgegeben,
+* 			die mindestens ein Angebot fuer die InstituionEn des Benutzers haben
+	 * - SCHULAMT - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von Typ Schulamt haben
+	 * - SACHBEARBEITER_JA oder ADMIN - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von einem anderen Typ als Schulamt haben
+	 */
 	@Nonnull
 	@Override
 	@PermitAll
@@ -404,14 +412,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 
 			Join<InstitutionStammdaten, Institution> institutionJoin = null;
+			Join<Betreuung, InstitutionStammdaten> institutionstammdatenJoin = null;
 
 			if (benutzer.getRole().equals(UserRole.SACHBEARBEITER_TRAEGERSCHAFT)
-				|| benutzer.getRole().equals(UserRole.SACHBEARBEITER_INSTITUTION)) {
-				// Join all the relevant relations only when the User belongs to Institution or Traegerschaft
+				|| benutzer.getRole().equals(UserRole.SACHBEARBEITER_INSTITUTION)
+				|| benutzer.getRole().equals(UserRole.SCHULAMT)
+				|| benutzer.getRole().equals(UserRole.ADMIN)
+				|| benutzer.getRole().equals(UserRole.SACHBEARBEITER_JA)) {
+				// Join all the relevant relations only when the User belongs to Admin, JA, Schulamt, Institution or Traegerschaft
 				SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
 				SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.LEFT);
-				Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
-				institutionJoin = institutionstammdaten.join(InstitutionStammdaten_.institution, JoinType.LEFT);
+				institutionstammdatenJoin = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
+				institutionJoin = institutionstammdatenJoin.join(InstitutionStammdaten_.institution, JoinType.LEFT);
 			}
 
 			query.multiselect(
@@ -429,6 +441,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			Expression<Boolean> fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 			predicatesToUse.add(fallPredicate);
 
+			if (institutionstammdatenJoin != null) {
+				if (benutzer.getRole().equals(UserRole.ADMIN) || benutzer.getRole().equals(UserRole.SACHBEARBEITER_JA)) {
+					predicatesToUse.add(cb.notEqual(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+				}
+				if (benutzer.getRole().equals(UserRole.SCHULAMT)) {
+					predicatesToUse.add(cb.equal(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+				}
+			}
 			if (institutionJoin != null) {
 				// only if the institutionJoin was set
 				if (benutzer.getRole().equals(UserRole.SACHBEARBEITER_TRAEGERSCHAFT)) {

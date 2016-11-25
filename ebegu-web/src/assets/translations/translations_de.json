@@ -724,7 +724,7 @@
     "CONFIRM_GESUCH_STATUS_GEPRUEFT": "Möchten Sie das Gesuch wirklich als \"geprüft\" setzen?",
     "CONFIRM_GESUCH_STATUS_VERFUEGEN": "Möchten Sie den Verfügungsprozess wirklich starten?",
     "BESCHREIBUNG_GESUCH_STATUS_WECHSELN": "Diese Änderung können Sie nicht mehr rückgängig machen",
-    "BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT": "Da das Gesuch nur Schulamtangebote hat, wird der Status automatische auf \"schulamt\" gesetzt. Diese Änderung können Sie nicht mehr rückgängig machen.",
+    "BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT": "Da das Gesuch nur Schulamtangebote hat, wird der Status automatisch auf \"schulamt\" gesetzt. Diese Änderung können Sie nicht mehr rückgängig machen.",
     "CONFIRM_SAVE_VERFUEGUNG": "Möchten Sie das Betreuungsangebot wirklich verfügen?",
     "CONFIRM_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN": "Möchten Sie das Betreuungsangebot wirklich schliessen ohne neu zu verfügen?",
     "CONFIRM_CLOSE_VERFUEGUNG_NICHT_EINTRETEN": "Möchten Sie wirklich nicht auf das Betreuungsangebot eintreten?",
