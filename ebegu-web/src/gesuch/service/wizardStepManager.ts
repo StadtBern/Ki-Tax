@@ -7,9 +7,9 @@ import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
-import {TSRoleUtil} from '../../utils/TSRoleUtil';
 
 export default class WizardStepManager {
 
@@ -252,11 +252,10 @@ export default class WizardStepManager {
      */
     public isStepClickableForCurrentRole(step: TSWizardStep, gesuch: TSGesuch) {
         if (step.wizardStepName === TSWizardStepName.VERFUEGEN) {
-            //verfuegen step fuer alle ausser admin und sachbearbeiter nur verfuegbar wenn status verfuegt
+            //verfuegen fuer admin und jugendamt  immer sichtbar
             if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
-                // Von allen nicht-JA und nicht-Administratoren
+                // schulamt darf ab geprueft den screen sehen,
                 if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
-                    // ... duerfen Schulamt ab Geprueft gucken
                     if (gesuch.status !== TSAntragStatus.GEPRUEFT && gesuch.status !== TSAntragStatus.VERFUEGEN && gesuch.status !== TSAntragStatus.VERFUEGT) {
                         return false;
                     }
