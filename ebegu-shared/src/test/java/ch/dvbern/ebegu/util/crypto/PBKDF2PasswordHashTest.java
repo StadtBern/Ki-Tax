@@ -5,6 +5,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import static ch.dvbern.ebegu.util.crypto.PBKDF2PasswordHash.createHash;
 import static ch.dvbern.ebegu.util.crypto.PBKDF2PasswordHash.validatePassword;
 
@@ -39,4 +42,10 @@ public class PBKDF2PasswordHashTest {
 		}
 	}
 
+	@Test
+	public void testCreate() throws InvalidKeySpecException, NoSuchAlgorithmException {
+		String hash = createHash("password10");
+		Assert.assertNotNull(hash);
+//		System.out.println(hash);
+	}
 }
