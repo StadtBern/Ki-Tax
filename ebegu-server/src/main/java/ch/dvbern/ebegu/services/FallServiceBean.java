@@ -9,7 +9,6 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -60,15 +59,12 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	public Optional<Fall> findFallByNumber(@Nonnull Long fallnummer) {
 		Objects.requireNonNull(fallnummer, "fallnummer muss gesetzt sein");
 		Optional<Fall> fallOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, fallnummer, Fall_.fallNummer);
-		if (fallOptional.isPresent()) {
-			authorizer.checkReadAuthorizationFall(fallOptional.get());
-		}
+		fallOptional.ifPresent(fall -> authorizer.checkReadAuthorizationFall(fall));
 		return fallOptional;
 	}
 
 	@Nonnull
 	@Override
-	@PermitAll // todo diser service wird von flyway gebraucht, wir sollten ein run as wrapper machen
 	public Collection<Fall> getAllFalle() {
 		List<Fall> faelle = new ArrayList<>(criteriaQueryHelper.getAll(Fall.class));
 		authorizer.checkReadAuthorizationFaelle(faelle);

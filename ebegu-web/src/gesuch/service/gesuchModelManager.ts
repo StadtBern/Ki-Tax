@@ -698,7 +698,7 @@ export default class GesuchModelManager {
     }
 
     public createKind(): void {
-        var tsKindContainer = new TSKindContainer(undefined, new TSKind());
+        let tsKindContainer = new TSKindContainer(undefined, new TSKind());
         this.gesuch.kindContainers.push(tsKindContainer);
         this.kindNumber = this.gesuch.kindContainers.length;
         tsKindContainer.kindNummer = this.kindNumber;
