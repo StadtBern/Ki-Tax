@@ -20,7 +20,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 })
 @Audited
 @CheckBenutzerRoles
-@Cacheable      //@Reviewer cache oder nicht cache ist hier die frage
+@Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Benutzer extends AbstractEntity {
 

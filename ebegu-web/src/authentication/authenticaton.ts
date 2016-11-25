@@ -35,7 +35,7 @@ export class AuthenticationListViewController {
                 private $window: IWindowService, private $httpParamSerializer: IHttpParamSerializer,
                 private $timeout: ITimeoutService, private authService: AuthServiceRS, private $location: ILocationService) {
         //wir leiten hier mal direkt weiter, theoretisch koennte man auch eine auswahl praesentieren
-        this.relayString = angular.copy(this.$stateParams.relayPath ? (this.$stateParams.relayPath + '?sendRedirectForValidationNow=true') : '');
+        this.relayString = angular.copy(this.$stateParams.relayPath ? (this.$stateParams.relayPath) : '');
         this.authService.initSSOLogin(this.relayString).then((response) => {
             this.redirectionUrl = response;
             this.redirectionHref = response;
@@ -43,7 +43,7 @@ export class AuthenticationListViewController {
                 this.doLogout();
             } else {
                 this.redirecting = true;
-                this.$timeout(this.doCountdown, 1000);
+                if (this.countdown > 0) {this.$timeout(this.doCountdown, 1000);}
                 this.$timeout(this.redirect, this.countdown * 1000);
             }
         });
