@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
 import ch.dvbern.ebegu.entities.File;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
@@ -103,17 +104,15 @@ public final class RestUtil {
 	}
 
 	public static void purgeSingleKindAndBetreuungenOfInstitutionen(JaxKindContainer kind, Collection<Institution> userInstitutionen) {
-		final Iterator<JaxBetreuung> betreuungIterator = kind.getBetreuungen().iterator();
-		while (betreuungIterator.hasNext()) {
-			final JaxBetreuung betreuung = betreuungIterator.next();
-			if (!RestUtil.isInstitutionInList(userInstitutionen, betreuung.getInstitutionStammdaten().getInstitution())
-				|| !(Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())
-					|| Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())
-					|| Betreuungsstatus.BESTAETIGT.equals(betreuung.getBetreuungsstatus())
-					|| Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus()))) {
-				betreuungIterator.remove();
-			}
-		}
+		kind.getBetreuungen()
+			.removeIf(betreuung ->
+				!RestUtil.isInstitutionInList(userInstitutionen, betreuung.getInstitutionStammdaten().getInstitution())
+					|| !isVisibleForInstOrTraegerschaft(betreuung));
+	}
+
+	private static boolean isVisibleForInstOrTraegerschaft(JaxBetreuung betreuung) {
+		return Betreuungsstatus.allowedRoles(UserRole.SACHBEARBEITER_INSTITUTION).contains(betreuung.getBetreuungsstatus()) ||
+			Betreuungsstatus.allowedRoles(UserRole.SACHBEARBEITER_TRAEGERSCHAFT).contains(betreuung.getBetreuungsstatus());
 	}
 
 	private static boolean isInstitutionInList(Collection<Institution> userInstitutionen, JaxInstitution institutionToLookFor) {

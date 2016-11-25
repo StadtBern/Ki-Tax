@@ -20,7 +20,7 @@
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS1()" table-id="erwerbspensenGS1"
                                table-title="Erwerbspensen Gesuchsteller 1"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
-                               add-button-Visible="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                               add-button-Visible="!vm.isGesuchReadonly()"
                                on-add="vm.createErwerbspensum(1)"
                                on-edit="vm.editPensum(pensum, 1)"
                                on-remove="vm.removePensum(pensum, 1)"></dv-erwerbspensum-list>
@@ -32,7 +32,7 @@
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS2()" table-id="erwerbspensenGS2"
                                table-title="Erwerbspensen Gesuchsteller 2"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
-                               add-button-Visible="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                               add-button-Visible="!vm.isGesuchReadonly()"
                                on-add="vm.createErwerbspensum(2)"
                                on-edit="vm.editPensum(pensum, 2)"
                                on-remove="vm.removePensum(pensum, 2)"></dv-erwerbspensum-list>

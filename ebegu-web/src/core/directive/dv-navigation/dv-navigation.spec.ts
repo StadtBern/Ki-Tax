@@ -37,7 +37,7 @@ describe('dvNavigation', function () {
             return $q.when({});
         };
         isStatusVerfuegen = true;
-        spyOn(gesuchModelManager, 'isGesuchStatusVerfuegenVerfuegt').and.callFake(() => {
+        spyOn(gesuchModelManager, 'isGesuchReadonly').and.callFake(() => {
             return isStatusVerfuegen;
         });
     }));

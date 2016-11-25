@@ -73,6 +73,6 @@ public interface InstitutionService {
 	/**
 	 * Gibt alle aktiven Institutionen zurueck, fuer welche der aktuell eingeloggte Benutzer berechtigt ist.
      */
-	Collection<Institution> getInstitutionenForCurrentBenutzer();
+	Collection<Institution> getAllowedInstitutionenForCurrentBenutzer();
 
 }

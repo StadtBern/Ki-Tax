@@ -312,6 +312,10 @@
                     <artifactId>xercesImpl</artifactId>
                     <groupId>xerces</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <!--eigentlich waere es 13.5.0 aber unsere Freunde bei forgerock bieten das nicht an in ihrem repo-->

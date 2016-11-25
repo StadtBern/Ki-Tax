@@ -23,6 +23,7 @@ export class DummyAuthenticationComponentConfig implements IComponentOptions {
 export class DummyAuthenticationListViewController {
 
     public usersList: Array<TSUser>;
+    public superadmin: TSUser;
     private mandant: TSMandant;
     private institution: TSInstitution;
     private traegerschaftStadtBern: TSTraegerschaft;
@@ -54,6 +55,7 @@ export class DummyAuthenticationListViewController {
         this.usersList.push(new TSUser('Emma', 'Gerber', 'geem', 'password6', 'emma.gerber@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
 
         this.usersList.push(new TSUser('Julien', 'Schuler', 'scju', 'password9', 'julien.schuler@myemail.ch', this.mandant, TSRole.SCHULAMT));
+        this.superadmin = new TSUser('E-BEGU', 'Superuser', 'ebegu', 'password10', 'hallo@dvbern.ch', this.mandant, TSRole.SUPER_ADMIN);
     }
 
 

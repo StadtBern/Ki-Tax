@@ -80,7 +80,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
      */
     private startEmptyListOfBetreuungspensen() {
         if ((!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0)
-            && (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()))) {
+            && (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()))) {
             // nur fuer Institutionen wird ein Betreuungspensum by default erstellt
             this.createBetreuungspensum();
         }
@@ -341,12 +341,12 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public showFalscheAngaben(): boolean {
-        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchStatusVerfuegenVerfuegt()
+        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchReadonly()
             && !this.isFromMutation();
     }
 
     public showAngabenKorrigieren(): boolean {
-        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchStatusVerfuegenVerfuegt()
+        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchReadonly()
             && this.isFromMutation();
     }
 
@@ -361,6 +361,6 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public showAngabeKorrigieren(): boolean {
         return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen())
-            && !this.isGesuchStatusVerfuegenVerfuegt() && this.isFromMutation();
+            && !this.isGesuchReadonly() && this.isFromMutation();
     }
 }
