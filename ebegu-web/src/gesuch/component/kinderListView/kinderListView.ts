@@ -88,9 +88,9 @@ export class KinderListViewController extends AbstractGesuchViewController {
      * @returns {boolean}
      */
     public canRemoveKind(kind: TSKindContainer): boolean {
-        return !this.isGesuchStatusVerfuegenVerfuegt()
-            && (this.gesuchModelManager.getGesuch().isMutation() && (!kind.betreuungen || kind.betreuungen.length <= 0))
-                || !kind.kindJA.vorgaengerId;
+        return !this.isGesuchReadonly()
+            && ((this.gesuchModelManager.getGesuch().isMutation() && (!kind.betreuungen || kind.betreuungen.length <= 0))
+                || !kind.kindJA.vorgaengerId);
     }
 
 }

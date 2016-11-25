@@ -143,8 +143,8 @@ export class KommentarViewController {
         return this.wizardStepManager.getCurrentStep();
     }
 
-    public isGesuchStatusVerfuegenVerfuegt(): boolean {
-        return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
+    public isGesuchReadonly(): boolean {
+        return this.gesuchModelManager.isGesuchReadonly();
     }
 
     /**
@@ -154,7 +154,7 @@ export class KommentarViewController {
      */
     public isStepCommentDisabled(): boolean {
         return (this.wizardStepManager.getCurrentStepName() !== TSWizardStepName.VERFUEGEN
-            && this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt())
+            && this.gesuchModelManager.isGesuchReadonly())
             || (this.wizardStepManager.getCurrentStepName() === TSWizardStepName.VERFUEGEN
             && this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT));
     }

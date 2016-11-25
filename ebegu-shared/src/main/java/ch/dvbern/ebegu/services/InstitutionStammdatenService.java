@@ -47,6 +47,13 @@ public interface InstitutionStammdatenService {
 
 	/**
 	 *
+	 * @param date Das Datum fuer welches die InstitutionStammdaten gesucht werden muessen
+	 * @return Alle aktiven InstitutionStammdaten bei denen das gegebene Datum zwischen datumVon und datumBis liegt
+     */
+	Collection<InstitutionStammdaten> getAllActiveInstitutionStammdatenByDate(LocalDate date);
+
+	/**
+	 *
 	 * @param institutionId Die Institutions-id für welche alle Stammdaten gesucht werden sollen
 	 * @return Alle InstitutionStammdaten, bei denen die Institution dem übergebenen id-Wert entspricht
 	 */

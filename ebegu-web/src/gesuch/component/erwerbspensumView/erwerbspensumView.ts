@@ -81,7 +81,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     }
 
     getZuschlagsgrundList(): Array<TSZuschlagsgrund> {
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerRoles())) {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
             return getTSZuschlagsgruendeForGS();
         } else {
             return getTSZuschlagsgrunde();

@@ -82,6 +82,24 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	}
 
 	@Override
+	public Collection<InstitutionStammdaten> getAllActiveInstitutionStammdatenByDate(@Nonnull LocalDate date) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<InstitutionStammdaten> query = cb.createQuery(InstitutionStammdaten.class);
+		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
+		query.select(root);
+		Join<InstitutionStammdaten, Institution> institution = root.join(InstitutionStammdaten_.institution, JoinType.INNER);
+		Predicate isActivePredicate = cb.equal(institution.get(Institution_.active), Boolean.TRUE);
+
+		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
+		Predicate intervalPredicate = cb.between(dateParam,
+				root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb),
+				root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis));
+
+		query.where(intervalPredicate, isActivePredicate);
+		return persistence.getEntityManager().createQuery(query).setParameter(dateParam, date).getResultList();
+	}
+
+	@Override
 	@Nonnull
 	@PermitAll
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitution(String institutionId) {
@@ -92,7 +110,7 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@Override
 	@PermitAll
 	public Collection<BetreuungsangebotTyp> getBetreuungsangeboteForInstitutionenOfCurrentBenutzer() {
-		Collection<Institution> institutionenForCurrentBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+		Collection<Institution> institutionenForCurrentBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 		if (institutionenForCurrentBenutzer.isEmpty()) {
 			return new ArrayList<>();
 		}

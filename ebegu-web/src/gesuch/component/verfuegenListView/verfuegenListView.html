@@ -82,10 +82,10 @@
                               data-translate-value-mahnung-typ="{{mahn.mahnungTyp | translate}}"
                               data-translate-value-date="{{mahn.timestampErstellt | amDateFormat : 'DD.MM.YYYY'}}"></span>
                         <span ng-if="!mahn.active" data-translate="MAHNUNG_ABGESCHLOSSEN"></span>
-                        <span ng-if="mahn.active && mahn.datumFristablauf.diff(moment.now) > 0"
-                              data-translate="MAHNUNG_AKTIV"
+                        <span ng-if="mahn.active && !(vm.isGesuchInStatus('ERSTE_MAHNUNG_ABGELAUFEN') || vm.isGesuchInStatus('ZWEITE_MAHNUNG_ABGELAUFEN'))"
+                              data-translate="MAHNUNG_OFFEN"
                               data-translate-value-date="{{mahn.datumFristablauf | amDateFormat : 'DD.MM.YYYY'}}"></span>
-                        <span ng-if="mahn.active && mahn.datumFristablauf.diff(moment.now) <= 0"
+                        <span ng-if="mahn.active && (vm.isGesuchInStatus('ERSTE_MAHNUNG_ABGELAUFEN') || vm.isGesuchInStatus('ZWEITE_MAHNUNG_ABGELAUFEN'))"
                               data-translate="MAHNUNG_NICHT_EINGETRETEN"></span>
                     </button>
                 </div>
@@ -123,7 +123,7 @@
                 </div>
             </div>
 
-        <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
+        <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
             <div class="col-md-12 text-center row">
                 <span class="col-md-4" ng-show="vm.showGeprueft()">
                     <dv-loading-button type="button" button-click="vm.setGesuchStatusGeprueft()"
@@ -186,13 +186,6 @@
                                        button-class="dv-btn-sm"
                                        aria-label="{{ZWEITE_MAHNUNG_NCINT_EINGETRETEN | translate}}">
                         <span data-translate="ZWEITE_MAHNUNG_NCINT_EINGETRETEN"></span>
-                    </dv-loading-button>
-                </span>
-
-                <span class="col-md-4" ng-show="vm.showGeprueft()">
-                    <dv-loading-button button-class="dv-btn-sm"
-                                       aria-label="{{ZURUECK_GESUCHSTELLER_UPPER | translate}}">
-                        <span data-translate="ZURUECK_GESUCHSTELLER_UPPER"></span>
                     </dv-loading-button>
                 </span>
             </div>

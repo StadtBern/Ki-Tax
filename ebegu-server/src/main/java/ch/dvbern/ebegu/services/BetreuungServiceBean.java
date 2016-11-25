@@ -115,7 +115,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	@RolesAllowed(value ={ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser() {
-		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+		Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 		if (!instForCurrBenutzer.isEmpty()) {
 			return getPendenzenForInstitution((Institution[]) instForCurrBenutzer.toArray(new Institution[instForCurrBenutzer.size()]));
 		}
@@ -157,7 +157,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 			query.where(predicateStatus, predicateInstitution);
 			List<Betreuung> betreuungen = persistence.getCriteriaResults(query);
-			authorizer.checkReadAuthorizationBetreuungen(betreuungen);
+			authorizer.checkReadAuthorizationForAllBetreuungen(betreuungen);
 			return betreuungen;
 		}
 		LOG.warn("Tried to read Pendenzen for institution but no institutionen specified");

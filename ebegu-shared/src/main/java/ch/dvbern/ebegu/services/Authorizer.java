@@ -69,8 +69,13 @@ public interface Authorizer {
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer ALLE betreuung in der Liste lesen darf
 	 */
-	void checkReadAuthorizationBetreuungen(Collection<Betreuung> betreuungen);
+	void checkReadAuthorizationForAllBetreuungen(@Nullable Collection<Betreuung> betreuungen);
 
+
+	/**
+	 * prueft ob der  eingeloggte benutzer EINE der  betreuung in der Liste lesen darf
+	 */
+	void checkReadAuthorizationForAnyBetreuungen(@Nullable Collection<Betreuung> betreuungen);
 
 	/**
 	 * prueft ob der aktuell eingeloggte Benutzer die Verfuegung lesen darf
@@ -89,8 +94,8 @@ public interface Authorizer {
 
 	void checkReadAuthorization(@Nullable FinanzielleSituationContainer finanzielleSituation);
 
-	void checkReadAuthorization(@Nonnull Collection<FinanzielleSituationContainer> finanzielleSituationen);
 
+	void checkReadAuthorization(@Nonnull Collection<FinanzielleSituationContainer> finanzielleSituationen);
 
 	void checkWriteAuthorization(@Nullable  FinanzielleSituationContainer finanzielleSituation);
 

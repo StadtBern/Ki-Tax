@@ -13,10 +13,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
@@ -25,7 +22,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.*;
  */
 @Stateless
 @Local(FallService.class)
-@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT})
+@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT})
 public class FallServiceBean extends AbstractBaseService implements FallService {
 
 	@Inject
@@ -62,16 +59,14 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	public Optional<Fall> findFallByNumber(@Nonnull Long fallnummer) {
 		Objects.requireNonNull(fallnummer, "fallnummer muss gesetzt sein");
 		Optional<Fall> fallOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, fallnummer, Fall_.fallNummer);
-		if (fallOptional.isPresent()) {
-			authorizer.checkReadAuthorizationFall(fallOptional.get());
-		}
+		fallOptional.ifPresent(fall -> authorizer.checkReadAuthorizationFall(fall));
 		return fallOptional;
 	}
 
 	@Nonnull
 	@Override
 	public Collection<Fall> getAllFalle() {
-		ArrayList<Fall> faelle = new ArrayList<>(criteriaQueryHelper.getAll(Fall.class));
+		List<Fall> faelle = new ArrayList<>(criteriaQueryHelper.getAll(Fall.class));
 		authorizer.checkReadAuthorizationFaelle(faelle);
 		return faelle;
 	}

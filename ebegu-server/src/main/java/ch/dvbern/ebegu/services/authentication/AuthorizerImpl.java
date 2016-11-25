@@ -65,7 +65,7 @@ public class AuthorizerImpl implements Authorizer {
 
 	@Override
 	public void checkReadAuthorizationGesuche(@Nullable Collection<Gesuch> gesuche) {
-		if (gesuche != null){
+		if (gesuche != null) {
 			gesuche.forEach(this::checkReadAuthorization);
 		}
 	}
@@ -124,7 +124,8 @@ public class AuthorizerImpl implements Authorizer {
 		}
 
 		validateMandantMatches(fall);
-		if (principalBean.isCallerInAnyOfRole(SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION)) {
+		if (principalBean.isCallerInAnyOfRole(SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
+				SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT)) {
 			return true;
 		}
 
@@ -137,7 +138,7 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
-	private void validateMandantMatches(@Nullable  HasMandant mandantEntity) {
+	private void validateMandantMatches(@Nullable HasMandant mandantEntity) {
 		//noinspection ConstantConditions
 		if (mandantEntity == null || mandantEntity.getMandant() == null) {
 			return;
@@ -210,12 +211,21 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	@Override
-	public void checkReadAuthorizationBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
+	public void checkReadAuthorizationForAllBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
 		if (betreuungen != null) {
-			betreuungen.stream()
-				.filter(betreuung -> !isReadAuthorized(betreuung))
-				.findAny()
-				.ifPresent(this::throwViolation);
+				betreuungen.stream()
+					.filter(betreuung -> !isReadAuthorized(betreuung))
+					.findAny()
+					.ifPresent(this::throwViolation);
+		}
+	}
+
+	@Override
+	public void checkReadAuthorizationForAnyBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
+		if (betreuungen != null && betreuungen.stream().noneMatch(this::isReadAuthorized)) {
+			throw new EJBAccessException(
+				"Access Violation"
+					+ " user is not allowed for any of these betreuungen");
 		}
 	}
 
@@ -252,7 +262,7 @@ public class AuthorizerImpl implements Authorizer {
 	@Override
 	public void checkReadAuthorization(@Nullable ErwerbspensumContainer ewpCnt) {
 		if (ewpCnt != null) {
-			UserRole[] allowedRoles = {SACHBEARBEITER_JA, SUPER_ADMIN, ADMIN, REVISOR, JURIST};
+			UserRole[] allowedRoles = {SACHBEARBEITER_JA, SUPER_ADMIN, ADMIN, REVISOR, JURIST, SCHULAMT};
 			boolean allowed = isInRoleOrGSOwner(allowedRoles, ewpCnt, principalBean.getPrincipal().getName());
 			if (!allowed) {
 				throwViolation(ewpCnt);
@@ -266,7 +276,7 @@ public class AuthorizerImpl implements Authorizer {
 			// hier fuer alle lesbar ausser fuer institution/traegerschaft
 			String name = principalBean.getPrincipal().getName();
 			boolean allowed = isInRoleOrGSOwner(ALL_EXCEPT_INST_TRAEG, finanzielleSituation, name);
-			if(!allowed){
+			if (!allowed) {
 				throwViolation(finanzielleSituation);
 			}
 		}
@@ -307,6 +317,9 @@ public class AuthorizerImpl implements Authorizer {
 			Collection<Institution> institutions = institutionService.getAllInstitutionenFromTraegerschaft(traegerschaft.getId());
 			Institution instToMatch = betreuung.getInstitutionStammdaten().getInstitution();
 			return institutions.stream().anyMatch(instToMatch::equals);
+		}
+		if (principalBean.isCallerInRole(SCHULAMT)) {
+			return betreuung.getBetreuungsangebotTyp().isSchulamt();
 		}
 		return false;
 

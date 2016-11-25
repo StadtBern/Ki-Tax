@@ -53,7 +53,7 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER, SCHULAMT})
 	public Optional<ErwerbspensumContainer> findErwerbspensum(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		ErwerbspensumContainer ewpCnt =  persistence.find(ErwerbspensumContainer.class, key);
