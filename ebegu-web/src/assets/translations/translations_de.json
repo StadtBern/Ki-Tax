@@ -382,6 +382,7 @@
     "WOHNHAFT_IM_GLEICHEN_HAUSHALT": "Wohnt das Kind im gleichen Haushalt?",
     "KINDER_MIT_BETREUUNG": "Kinder mit familienergänzender Betreuung",
     "KIND": "Kind",
+    "KINDER": "Kinder",
     "KIND_HINZUFUEGEN": "Kind hinzufügen",
     "KIND_LOESCHEN": "Wollen Sie das Kind {{kindname}} wirklich löschen?",
     "KIND_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
