@@ -7,15 +7,17 @@ import ch.dvbern.ebegu.rechner.AbstractBGRechner;
 import ch.dvbern.ebegu.rechner.BGRechnerFactory;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.initalizer.RestanspruchInitializer;
+import ch.dvbern.ebegu.rules.util.BemerkungsMerger;
 import ch.dvbern.ebegu.util.BetreuungComparator;
 import ch.dvbern.ebegu.util.Constants;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -155,10 +157,8 @@ public class BetreuungsgutscheinEvaluator {
 				}
 				// Und die Resultate in die Verfügung schreiben
 				betreuung.getVerfuegung().setZeitabschnitte(zeitabschnitte);
-				Set<String> bemerkungenOfAbschnitte = zeitabschnitte.stream()
-					.map(VerfuegungZeitabschnitt::getBemerkungen)
-					.filter(s -> !StringUtils.isEmpty(s)).collect(Collectors.toSet());
-				betreuung.getVerfuegung().setGeneratedBemerkungen(String.join(";\n", bemerkungenOfAbschnitte));
+				String bemerkungenToShow = BemerkungsMerger.evaluateBemerkungenForVerfuegung(zeitabschnitte);
+				betreuung.getVerfuegung().setGeneratedBemerkungen(bemerkungenToShow);
 
 				// Ueberpruefen, ob sich die Verfuegungsdaten veraendert haben
 				betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung, gesuchForMutaion));
