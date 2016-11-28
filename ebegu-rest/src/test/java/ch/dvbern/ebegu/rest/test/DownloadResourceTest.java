@@ -1,11 +1,15 @@
 package ch.dvbern.ebegu.rest.test;
 
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxMahnung;
 import ch.dvbern.ebegu.api.resource.DownloadResource;
 import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.GeneratedDokument_;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
+import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.EbeguParameterService;
@@ -53,6 +57,8 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 	private CriteriaQueryHelper queryHelper;
 	@Inject
 	private EbeguParameterService parameterService;
+	@Inject
+	private JaxBConverter converter;
 
 	@Test
 	public void getVerfuegungDokumentAccessTokenGeneratedDokumentTest() throws MergeDocException, IOException, DocTemplateException, MimeTypeParseException {
@@ -95,6 +101,22 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 			.getDokumentAccessTokenGeneratedDokument(new JaxId(gesuch.getId()), GeneratedDokumentTyp.FINANZIELLE_SITUATION, true, request, uri);
 
 		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.FINANZIELLE_SITUATION);
+	}
+
+	@Test
+	public void getMahnungDokumentAccessTokenGeneratedDokumentTest() throws MergeDocException, IOException, DocTemplateException, MimeTypeParseException {
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
+
+		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch);
+
+		HttpServletRequest request = mockRequest();
+		UriInfo uri = new ResteasyUriInfo("uri", "query", "path");
+
+		final Response dokumentResponse = downloadResource
+			.getMahnungDokumentAccessTokenGeneratedDokument(converter.mahnungToJAX(mahnung), true, request, uri);
+
+		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.MAHNUNG);
 	}
 
 	// HELP METHODS

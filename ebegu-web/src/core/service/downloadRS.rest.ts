@@ -2,6 +2,7 @@ import {IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSDownloadFile from '../../models/TSDownloadFile';
 import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp';
+import TSMahnung from "../../models/TSMahnung";
 
 
 export class DownloadRS {
@@ -44,9 +45,23 @@ export class DownloadRS {
             });
     }
 
+    public getAccessTokenMahnungGeneratedDokument(mahnung: TSMahnung, forceCreation: boolean): IPromise<TSDownloadFile> {
+        let restMahnung = {};
+        restMahnung = this.ebeguRestUtil.mahnungToRestObject(restMahnung, mahnung);
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.MAHNUNG])
+            + '/' + forceCreation + '/generated', restMahnung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.log.debug('PARSING DownloadFile REST object ', response.data);
+            return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+        });
+    }
+
     public getAccessTokenVerfuegungGeneratedDokument(gesuchId: string, betreuungId: string, forceCreation: boolean, manuelleBemerkungen: string): IPromise<TSDownloadFile> {
-        return this.http.post(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
-            + encodeURIComponent(betreuungId) + '/' + forceCreation + '/generatedVerfuegung', manuelleBemerkungen, {
+        return this.http.post(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/' + encodeURIComponent(betreuungId)
+            + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.VERFUEGUNG]) +  '/' + forceCreation + '/generated', manuelleBemerkungen, {
             headers: {
                 'Content-Type': 'text/plain'
             }

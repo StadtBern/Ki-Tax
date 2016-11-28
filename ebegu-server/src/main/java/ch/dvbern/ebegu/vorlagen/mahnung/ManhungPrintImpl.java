@@ -73,6 +73,12 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 	}
 
 	@Override
+	public String getPeriode() {
+		return '(' + String.valueOf(mahnung.getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear())
+			+ '/' + String.valueOf(mahnung.getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear()) + ')';
+	}
+
+	@Override
 	public String getFallNummer() {
 		return PrintUtil.createFallNummerString(mahnung.getGesuch());
 	}
@@ -117,7 +123,7 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 	@Override
 	public String getUnterzeichner() {
-		return mahnung.getUserMutiert();
+		return mahnung.getGesuch().getFall().getVerantwortlicher().getFullName();
 	}
 
 }

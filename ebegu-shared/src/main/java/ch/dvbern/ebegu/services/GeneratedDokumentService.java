@@ -3,7 +3,9 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
+import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 
 import javax.activation.MimeTypeParseException;
@@ -35,4 +37,7 @@ public interface GeneratedDokumentService {
 
 	GeneratedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(Gesuch gesuch, Betreuung betreuung, String manuelleBemerkungen,
 																		Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException;
+
+	GeneratedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung,
+																		Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
 }

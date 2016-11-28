@@ -39,7 +39,6 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguLoginT
 	@Inject
 	private GesuchService gesuchService;
 
-
 	@Before
 	public void setUpCalcuator() {
 
@@ -65,7 +64,7 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguLoginT
 
 		byte[] bytes = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 
-		writeToTempDir(bytes, "BegleitschreibenWaelti.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "BegleitschreibenWaelti.pdf");
 	}
 
 	@Test
@@ -87,6 +86,6 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguLoginT
 
 		byte[] bytes = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 
-		writeToTempDir(bytes, "BegleitschreibenFeutz.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "BegleitschreibenFeutz.pdf");
 	}
 }

@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
@@ -63,10 +64,16 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
 
 	@Inject
+	private	PrintMahnungPDFService mahnungPDFService;
+
+	@Inject
 	private VerfuegungService verfuegungService;
 
 	@Inject
 	private MandantService mandantService;
+
+	@Inject
+	private MahnungService mahnungService;
 
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
@@ -249,5 +256,38 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			}
 		}
 		return persistedDokument;
+	}
+
+	@Override
+	public GeneratedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung, Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException {
+
+		Gesuch gesuch = mahnung.getGesuch();
+		GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.MAHNUNG;
+
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
+
+		GeneratedDokument persistedDokument = null;
+
+		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
+				ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+		}
+
+		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
+			|| persistedDokument == null) {
+			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+
+			Optional<Mahnung> vorgaengerMahnung = null;
+
+			if (mahnung.hasVorgaenger())
+				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
+
+			byte[] data = mahnungPDFService.printMahnung(mahnung, vorgaengerMahnung);
+
+			persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
+				fileNameForGeneratedDokumentTyp);
+		}
+		return persistedDokument;
+
 	}
 }

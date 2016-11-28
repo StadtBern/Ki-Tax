@@ -3,11 +3,13 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxMahnung;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -174,7 +176,7 @@ public class DownloadResource {
 
 	@Nonnull
 	@POST
-	@Path("/{gesuchid}/{betreuungId}/{forceCreation}/generatedVerfuegung")
+	@Path("/{gesuchid}/{betreuungId}/{dokumentTyp}/{forceCreation}/generated")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
 	public Response getVerfuegungDokumentAccessTokenGeneratedDokument(
@@ -203,6 +205,29 @@ public class DownloadResource {
 		}
 		throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId not found: " + jaxGesuchId.getId());
+	}
+
+	@Nonnull
+	@PUT
+	@Path("/MAHNUNG/{forceCreation}/generated")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.WILDCARD)
+	public Response getMahnungDokumentAccessTokenGeneratedDokument(
+		@Nonnull @NotNull @Valid JaxMahnung jaxMahnung,
+		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException,
+		IOException, MimeTypeParseException, MergeDocException {
+
+		Validate.notNull(jaxMahnung);
+		String ip = getIP(request);
+
+		Mahnung mahnung = converter.mahnungToEntity(jaxMahnung, new Mahnung());
+
+		GeneratedDokument persistedDokument = generatedDokumentService
+			.getMahnungDokumentAccessTokenGeneratedDokument(mahnung, forceCreation);
+
+		return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+
 	}
 
 

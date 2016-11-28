@@ -71,6 +71,7 @@ public class DokumenteUtil {
 			case BEGLEITSCHREIBEN: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.BEGLEITSCHREIBEN, identificationNumber);
 			case FINANZIELLE_SITUATION: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.FINANZIELLE_SITUATION, identificationNumber);
 			case VERFUEGUNG: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.VERFUEGUNG, identificationNumber);
+			case MAHNUNG: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG, identificationNumber);
 			default: return "file.pdf";
 		}
 	}

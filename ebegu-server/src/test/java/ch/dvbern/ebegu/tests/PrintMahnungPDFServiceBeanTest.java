@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.services.EbeguVorlageService;
 import ch.dvbern.ebegu.services.PrintMahnungPDFServiceBean;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
+import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import de.akquinet.jbosscc.needle.annotation.InjectIntoMany;
 import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
@@ -16,12 +17,7 @@ import de.akquinet.jbosscc.needle.junit.NeedleRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -44,9 +40,11 @@ public class PrintMahnungPDFServiceBeanTest {
 	protected BetreuungsgutscheinEvaluator evaluator;
 
 	@Rule
-	public NeedleRule needleRule = new NeedleRule();
+	public UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();
+
 	@Rule
-	public TemporaryFolder tempFolder = new TemporaryFolder();
+	public NeedleRule needleRule = new NeedleRule();
+
 	@ObjectUnderTest
 	private PrintMahnungPDFServiceBean printMahnungPDFService;
 
@@ -68,7 +66,7 @@ public class PrintMahnungPDFServiceBeanTest {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		testfall.createFall(null);
+		testfall.createFall(TestDataUtil.createDefaultBenutzer());
 		testfall.createGesuch(LocalDate.of(2016, Month.DECEMBER, 12));
 
 		Gesuch gesuch = testfall.fillInGesuch();
@@ -79,7 +77,7 @@ public class PrintMahnungPDFServiceBeanTest {
 
 		byte[] bytes = printMahnungPDFService.printMahnung(mahnung, null);
 
-		writeToTempDir(bytes, "1_Mahnung.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "1_Mahnung.pdf");
 	}
 
 	@Test
@@ -91,7 +89,7 @@ public class PrintMahnungPDFServiceBeanTest {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		testfall.createFall(null);
+		testfall.createFall(TestDataUtil.createDefaultBenutzer());
 		testfall.createGesuch(LocalDate.of(2016, Month.DECEMBER, 12));
 
 		Gesuch gesuch = testfall.fillInGesuch();
@@ -104,24 +102,25 @@ public class PrintMahnungPDFServiceBeanTest {
 
 		byte[] bytes = printMahnungPDFService.printMahnung(zweiteMahnung, Optional.of(ersteMahnung));
 
-		writeToTempDir(bytes, "2_Mahnung.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "2_Mahnung.pdf");
 	}
 
-	private final File writeToTempDir(final byte[] data, final String fileName) throws IOException {
+	/*private final File writeToTempDir(final byte[] data, final String fileName) throws IOException {
 
+		String persistPfad = System.getProperty("persistTestDateienPfad");
 		File tempFile = null;
 
 		FileOutputStream fos = null;
 		try {
 			// create temp file in junit temp folder
-			tempFile = tempFolder.newFile(fileName);
-			//tempFile = new File("C:/Development/EBEGU/JUnitTestTemp", fileName);
+			if (persistPfad == null)
+				tempFile = tempFolder.newFile(fileName);
+			else
+				tempFile = new File(persistPfad, fileName);
 			System.out.println("Writing tempfile to: " + tempFile);
 			fos = new FileOutputStream(tempFile);
 			fos.write(data);
 			fos.close();
-			// File external oeffnen
-			//openPDF(tempFile);
 		} finally {
 			if (fos != null) {
 				fos.close();
@@ -137,5 +136,5 @@ public class PrintMahnungPDFServiceBeanTest {
 		} catch (IOException ex) {
 			// no application registered for PDFs
 		}
-	}
+	}*/
 }

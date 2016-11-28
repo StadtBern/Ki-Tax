@@ -26,6 +26,8 @@ public interface ManhungPrint {
 
 	String getAngebotShort();
 
+	String getPeriode();
+
 	String getFallNummer();
 
 	String getFallDatum();
