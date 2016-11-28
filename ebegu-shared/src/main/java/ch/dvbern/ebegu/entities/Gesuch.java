@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
@@ -372,5 +373,21 @@ public class Gesuch extends AbstractEntity {
 		return kindContainers.stream()
 			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
 			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
+	}
+
+	//todo @reviewer weider loeschen? ist wohl zu gefahrlich wegen attached
+	@Deprecated
+	public void purgeForRole(UserRole currentRole, Collection<Institution> allowedInst) {
+		//achtung nicht auf attached elementen ausfuehren
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(currentRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(currentRole)) {
+			for (Iterator<KindContainer> iterator = kindContainers.iterator(); iterator.hasNext(); ) {
+				KindContainer currentKind = iterator.next();
+				currentKind.getBetreuungen().removeIf(betreuung -> !allowedInst.contains(betreuung.getInstitutionStammdaten().getInstitution()));
+				if(currentKind.getBetreuungen().isEmpty()){
+					iterator.remove();
+				}
+
+			}
+		}
 	}
 }

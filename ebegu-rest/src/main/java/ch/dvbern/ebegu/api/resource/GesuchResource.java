@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
@@ -43,7 +44,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.security.Principal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -67,7 +67,7 @@ public class GesuchResource {
 	private final Logger LOG = LoggerFactory.getLogger(GesuchResource.class.getSimpleName());
 
 	@Inject
-	private Principal principal;
+	private PrincipalBean principalBean;
 
 	@Inject
 	private JaxBConverter converter;
@@ -153,7 +153,7 @@ public class GesuchResource {
 
 		final JaxGesuch completeGesuch = findGesuch(gesuchJAXPId);
 
-		final Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(this.principal.getName());
+		final Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(this.principalBean.getPrincipal().getName());
 		if (optBenutzer.isPresent()) {
 			Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 			return cleanGesuchForInstitutionTraegerschaft(completeGesuch, instForCurrBenutzer);
@@ -249,9 +249,14 @@ public class GesuchResource {
 			Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
 			List<Gesuch> foundAntraege = searchResultPair.getRight();
 
+			Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+
 			List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
 			foundAntraege.forEach(gesuch -> {
-				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
+				//todo @reviewer wenn wir hier das geusch kopieren klappt es wohl auch, was ist besser?
+				//Geusch copyGesuch = new Gesuch(gesuch);
+//				copyGesuch.purgeForRole(principalBean.discoverMostPrivilegedRole(), allowedInst);
+				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole(), allowedInst);
 				antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
 				antragDTOList.add(antragDTO);
 			});
