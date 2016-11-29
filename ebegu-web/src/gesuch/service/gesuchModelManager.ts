@@ -50,9 +50,9 @@ import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
-import IQService = angular.IQService;
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import IQService = angular.IQService;
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -62,7 +62,7 @@ export default class GesuchModelManager {
     private kindNumber: number;
     private betreuungNumber: number;
     private fachstellenList: Array<TSFachstelle>;
-    private activInstitutionenList : Array<TSInstitutionStammdaten>;
+    private activInstitutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
 
@@ -1260,5 +1260,11 @@ export default class GesuchModelManager {
             }
         }
         return -1;
+    }
+
+    public reloadGesuch(): void {
+        if (this.gesuch && this.gesuch.id) {
+            this.openGesuch(this.gesuch.id);
+        }
     }
 }

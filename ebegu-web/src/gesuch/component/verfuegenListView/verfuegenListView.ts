@@ -260,7 +260,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         // Nur Gesuchstatus zuruecksetzen, und zwar zurueck auf MAHNUNG (die jeweils relevante)
         if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
             this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG);
-        } else if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
+        } else if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
             this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG);
         }
     }

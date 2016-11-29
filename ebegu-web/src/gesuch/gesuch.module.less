@@ -1,13 +1,16 @@
 @import '../style/variables.less';
 @import '../style/mixins.less';
 @import '../style/organisms/sidenav.less';
+
 .mainTitle {
     margin-top: 0;
 }
+
 #gesuchContainer {
     background: @contrast-light;
     overflow-y: scroll;
-    flex: 1 1 auto;
+    flex: 1 0 auto;
+    min-width: 3rem;
     .nav-row {
         position: absolute !important;
         bottom: 4rem;
@@ -58,7 +61,39 @@
 }
 
 .betreuung-status {
-    font-style: italic;
+    position: relative !important;
+    div {
+        line-height: 5rem;
+        height: 100% !important;
+        display: block;
+        position: relative !important;
+        .italic();
+    }
+
+    .betreuung-bar {
+        position: absolute;
+        left: 0.8rem;
+        bottom: 0;
+        width: 3rem;
+        height: 0.5rem;
+        border-bottom: 0.5rem solid;
+
+    }
+    &.BESTAETIGT.verfuegenView .betreuung-bar {
+        left: 0;
+    }
+    &.BESTAETIGT .betreuung-bar {
+        border-color: @success;
+    }
+    &.WARTEN .betreuung-bar {
+        border-color: @warning;
+    }
+    &.ABGEWIESEN .betreuung-bar {
+        border-color: @danger;
+    }
+    &.VERFUEGT .betreuung-bar {
+        border-color: @purple;
+    }
 }
 
 .AUSSTEHEND {
