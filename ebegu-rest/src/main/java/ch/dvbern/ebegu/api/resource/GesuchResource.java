@@ -253,9 +253,6 @@ public class GesuchResource {
 
 			List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
 			foundAntraege.forEach(gesuch -> {
-				//todo @reviewer wenn wir hier das geusch kopieren klappt es wohl auch, was ist besser?
-				//Geusch copyGesuch = new Gesuch(gesuch);
-//				copyGesuch.purgeForRole(principalBean.discoverMostPrivilegedRole(), allowedInst);
 				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole(), allowedInst);
 				antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
 				antragDTOList.add(antragDTO);

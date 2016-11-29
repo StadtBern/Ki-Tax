@@ -374,20 +374,4 @@ public class Gesuch extends AbstractEntity {
 			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
 			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
 	}
-
-	//todo @reviewer weider loeschen? ist wohl zu gefahrlich wegen attached
-	@Deprecated
-	public void purgeForRole(UserRole currentRole, Collection<Institution> allowedInst) {
-		//achtung nicht auf attached elementen ausfuehren
-		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(currentRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(currentRole)) {
-			for (Iterator<KindContainer> iterator = kindContainers.iterator(); iterator.hasNext(); ) {
-				KindContainer currentKind = iterator.next();
-				currentKind.getBetreuungen().removeIf(betreuung -> !allowedInst.contains(betreuung.getInstitutionStammdaten().getInstitution()));
-				if(currentKind.getBetreuungen().isEmpty()){
-					iterator.remove();
-				}
-
-			}
-		}
-	}
 }
