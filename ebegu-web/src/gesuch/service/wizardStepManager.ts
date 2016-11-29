@@ -113,6 +113,7 @@ export default class WizardStepManager {
     }
 
     public getStepByName(stepName: TSWizardStepName): TSWizardStep {
+
         return this.wizardSteps.filter((step: TSWizardStep) => {
             return step.wizardStepName === stepName;
         })[0];

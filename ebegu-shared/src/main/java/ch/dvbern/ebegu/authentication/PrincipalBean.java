@@ -87,6 +87,22 @@ public class PrincipalBean {
 		return roleNames;
 	}
 
+
+	/**
+	 * @return exactly one role, should be the most privileged role
+	 */
+	@Nullable
+	public UserRole discoverMostPrivilegedRole() {
+		//reihenfolge wie in UserRole definiert, wir sollten eh immer nur 1 haben
+		for (UserRole userRole : UserRole.values()) {
+			if (isCallerInRole(userRole)) {
+				return userRole;
+			}
+		}
+
+		return null;
+	}
+
 	@Nonnull
 	public Principal getPrincipal() {
 		return principal;

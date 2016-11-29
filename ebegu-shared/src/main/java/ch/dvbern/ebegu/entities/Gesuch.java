@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
