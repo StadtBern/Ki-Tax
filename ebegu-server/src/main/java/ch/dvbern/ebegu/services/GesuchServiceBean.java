@@ -110,8 +110,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Root<Gesuch> root = query.from(Gesuch.class);
 
-		Predicate predicateGesuch = cb.notEqual(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
-		query.where(predicateGesuch);
+		Predicate predicateVerfuegt = cb.notEqual(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
+		Predicate predicateSchulamt = cb.notEqual(root.get(Gesuch_.status), AntragStatus.NUR_SCHULAMT);
+		query.where(predicateVerfuegt, predicateSchulamt);
 		return persistence.getCriteriaResults(query);
 	}
 
@@ -392,7 +393,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	 * Diese Methode sucht alle Antraege die zu dem gegebenen Fall gehoeren.
 	 * Die Antraege werden aber je nach Benutzerrolle gefiltert.
 	 * - SACHBEARBEITER_TRAEGERSCHAFT oder SACHBEARBEITER_INSTITUTION - werden nur diejenige Antraege zurueckgegeben,
-* 			die mindestens ein Angebot fuer die InstituionEn des Benutzers haben
+     * 			die mindestens ein Angebot fuer die InstituionEn des Benutzers haben
 	 * - SCHULAMT - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von Typ Schulamt haben
 	 * - SACHBEARBEITER_JA oder ADMIN - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von einem anderen Typ als Schulamt haben
 	 */
@@ -442,7 +443,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			predicatesToUse.add(fallPredicate);
 
 			if (institutionstammdatenJoin != null) {
-				if (benutzer.getRole().equals(UserRole.ADMIN) || benutzer.getRole().equals(UserRole.SACHBEARBEITER_JA)) {
+				if (benutzer.getRole().equals(UserRole.SUPER_ADMIN) || benutzer.getRole().equals(UserRole.ADMIN) || benutzer.getRole().equals(UserRole.SACHBEARBEITER_JA)) {
 					predicatesToUse.add(cb.notEqual(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
 				}
 				if (benutzer.getRole().equals(UserRole.SCHULAMT)) {
