@@ -113,9 +113,9 @@
                     <!--Diese Felder werden fuer Betreuungsangebottyp TAGESSCHULE ausgeblendet. Fuer alle anderen eingeblendet-->
                     <!--Nur Institutionen duerfen neue Pensen eintragen. Bei anderen Rollen werden nur die existierenden Pensen angezeigt-->
                     <div ng-if="!vm.isTagesschule()">
-                        <fieldset dv-show-element
-                                  dv-show-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData"
-                                  dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                        <fieldset dv-enabled-element
+                                  dv-enabled-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData"
+                                  dv-enabled-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
                             <!--Betreuungspensen-->
                             <div ng-repeat="betpen in vm.getBetreuungspensen()">
                                 <!--Betreuungspensum-->
