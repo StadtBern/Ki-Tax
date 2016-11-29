@@ -1242,6 +1242,8 @@ export default class GesuchModelManager {
     }
 
     public reloadGesuch(): void {
-        this.openGesuch(this.gesuch.id);
+        if (this.gesuch && this.gesuch.id) {
+            this.openGesuch(this.gesuch.id);
+        }
     }
 }

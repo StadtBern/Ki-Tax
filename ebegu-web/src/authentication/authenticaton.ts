@@ -43,7 +43,9 @@ export class AuthenticationListViewController {
                 this.doLogout();
             } else {
                 this.redirecting = true;
-                if (this.countdown > 0) {this.$timeout(this.doCountdown, 1000);}
+                if (this.countdown > 0) {
+                    this.$timeout(this.doCountdown, 1000);
+                }
                 this.$timeout(this.redirect, this.countdown * 1000);
             }
         });
