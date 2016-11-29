@@ -106,6 +106,10 @@ export class PendenzenInstitutionListViewController {
             let betreuungNumber: number = this.gesuchModelManager.findBetreuungById(pendenz.betreuungsId);
             if (betreuungNumber > 0) {
                 this.berechnungsManager.clear(); // nur um sicher zu gehen, dass alle alte Werte geloescht sind
+
+                // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
+                this.gesuchModelManager.reloadGesuch();
+
                 this.$state.go('gesuch.betreuung', {gesuchId: pendenz.gesuchId});
             }
         }

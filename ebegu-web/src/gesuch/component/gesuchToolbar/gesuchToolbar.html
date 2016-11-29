@@ -50,10 +50,14 @@
 
             <!-- Mutieren -->
 
-            <button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag"
-                    aria-label="{{TOOLBAR_MUTIEREN | translate}}">
-                <span data-translate="TOOLBAR_MUTIEREN"></span>
-            </button>
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                 dv-show-expression="vmx.mutierenPossibleForCurrentAntrag">
+                <button ng-click="vmx.antragMutieren()"
+                        aria-label="{{TOOLBAR_MUTIEREN | translate}}">
+                    <span data-translate="TOOLBAR_MUTIEREN"></span>
+                </button>
+            </div>
 
             <!--Kontakt-->
             <md-menu ng-if="vmx.showKontaktMenu()">

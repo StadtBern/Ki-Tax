@@ -41,7 +41,7 @@ public class JaxAntragDTO {
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
 		this.eingangsdatum = eingangsdatum;
 		this.antragTyp = antragTyp;
-		this.verfuegt = AntragStatus.VERFUEGT.equals(antragStatus);
+		this.verfuegt = (AntragStatus.VERFUEGT.equals(antragStatus) || AntragStatus.NUR_SCHULAMT.equals(antragStatus));
 		this.laufnummer = laufnummer;
 	}
 
