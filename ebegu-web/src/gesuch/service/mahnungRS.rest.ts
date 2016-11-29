@@ -31,8 +31,8 @@ export default class MahnungRS implements IEntityRS {
         });
     }
 
-    public findMahnungen(gesuch: TSGesuch): IPromise<TSMahnung[]> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuch.id))
+    public findMahnungen(gesuchId: string): IPromise<TSMahnung[]> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId))
             .then((response: any) => {
                 return this.ebeguRestUtil.parseMahnungen(response.data);
             });
