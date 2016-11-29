@@ -16,7 +16,7 @@ import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 
 
-describe('faelleListeView', function () {
+describe('faelleListView', function () {
 
     let authServiceRS: AuthServiceRS;
     let gesuchRS: GesuchRS;

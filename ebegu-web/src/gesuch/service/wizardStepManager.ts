@@ -254,9 +254,10 @@ export default class WizardStepManager {
         if (step.wizardStepName === TSWizardStepName.VERFUEGEN) {
             //verfuegen fuer admin und jugendamt  immer sichtbar
             if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
-                // schulamt darf ab geprueft den screen sehen,
+                // schulamt darf ab geprueft den screen sehen, oder wenn der Status schon NUR_SCHULAMT ist
                 if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
-                    if (gesuch.status !== TSAntragStatus.GEPRUEFT && gesuch.status !== TSAntragStatus.VERFUEGEN && gesuch.status !== TSAntragStatus.VERFUEGT) {
+                    if (gesuch.status !== TSAntragStatus.GEPRUEFT && gesuch.status !== TSAntragStatus.VERFUEGEN
+                        && gesuch.status !== TSAntragStatus.VERFUEGT && gesuch.status !== TSAntragStatus.NUR_SCHULAMT) {
                         return false;
                     }
                 } else {

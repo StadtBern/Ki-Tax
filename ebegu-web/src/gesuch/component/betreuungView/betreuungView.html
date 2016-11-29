@@ -352,7 +352,7 @@
                     wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
                 <div class="row nav-row">
                     <div class="col-md-6 text-right">
-                        <dv-loading-button button-click="vm.cancel(form)" button-class=" btn-link cancel"
+                        <dv-loading-button button-click="vm.cancel(form)" button-class="cancel"
                                            type="reset">
                             <span data-translate="ABBRECHEN_UPPER"></span>
                         </dv-loading-button>
@@ -361,7 +361,7 @@
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                          dv-show-expression="vm.isBetreuungsstatusSchulamt()">
                         <dv-loading-button button-click="vm.saveSchulamt(form)" type="submit"
-                                           button-class=" btn-link save">
+                                           button-class="save">
                             <span data-translate="SPEICHERN_UPPER"></span>
                         </dv-loading-button>
                     </div>
