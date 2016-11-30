@@ -164,7 +164,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
 				if (!newEntity.getEinkommensverschlechterung()) {
 					wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
-				} else if (oldEntity != null && !oldEntity.getEinkommensverschlechterung()) {
+				} else if (oldEntity == null || !oldEntity.getEinkommensverschlechterung()
+					|| (!oldEntity.getEkvFuerBasisJahrPlus2() && newEntity.getEkvFuerBasisJahrPlus2())) {
+					// beim Wechseln von KEIN_EV auf EV oder von KEIN_EV_FUER_BASISJAHR2 auf EV_FUER_BASISJAHR2
 					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 				} else if (wizardStep.getGesuch().isMutation()) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
