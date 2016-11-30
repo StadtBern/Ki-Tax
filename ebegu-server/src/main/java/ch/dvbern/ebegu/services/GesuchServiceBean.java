@@ -550,13 +550,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@PermitAll
 	public Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch) {
 		if (StringUtils.isNotEmpty(gesuch.getVorgaengerId())) {
-			Optional<Gesuch> gesuchOptional = findGesuch(gesuch.getVorgaengerId());
-			if (gesuchOptional.isPresent()) {
-				Gesuch gesuchToEvaluate = gesuchOptional.get();
-				if (AntragStatus.VERFUEGT.equals(gesuchToEvaluate.getStatus())) {
-					return gesuchOptional;
+			// Achtung, hier wird persistence.find() verwendet, da ich fuer das Vorgaengergesuch evt. nicht
+			// Leseberechtigt bin, fuer die Mutation aber schon!
+			Gesuch vorgaengerGesuch = persistence.find(Gesuch.class, gesuch.getVorgaengerId());
+			if (vorgaengerGesuch != null) {
+				if (AntragStatus.VERFUEGT.equals(vorgaengerGesuch.getStatus())) {
+					return Optional.of(vorgaengerGesuch);
 				} else {
-					return getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(gesuchToEvaluate);
+					return getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(vorgaengerGesuch);
 				}
 			}
 		}
