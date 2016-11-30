@@ -45,7 +45,7 @@ export default class WizardStepManager {
      */
     public initWizardSteps() {
         this.wizardSteps = [new TSWizardStep(undefined, TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepStatus.IN_BEARBEITUNG, undefined, true)];
-        this.wizardSteps.push(new TSWizardStep(undefined, TSWizardStepName.FAMILIENSITUATION, TSWizardStepStatus.UNBESUCHT, 'init dummy', false));
+        this.wizardSteps.push(new TSWizardStep(undefined, TSWizardStepName.FAMILIENSITUATION, TSWizardStepStatus.UNBESUCHT, 'initFinSit dummy', false));
         this.currentStepName = TSWizardStepName.GESUCH_ERSTELLEN;
     }
 

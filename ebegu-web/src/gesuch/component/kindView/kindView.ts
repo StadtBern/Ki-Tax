@@ -26,7 +26,7 @@ export class KindViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class KindViewController extends AbstractGesuchViewController {
+export class KindViewController extends AbstractGesuchViewController<TSKindContainer> {
     geschlechter: Array<string>;
     kinderabzugValues: Array<TSKinderabzug>;
     showFachstelle: boolean;
@@ -41,25 +41,15 @@ export class KindViewController extends AbstractGesuchViewController {
                 wizardStepManager: WizardStepManager, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
+        this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith());
         this.initViewModel();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
-
-        //Wir verlassen uns hier darauf, dass zuerst das Popup vom unsavedChanges Plugin kommt welches den User fragt ob er die ungesp. changes verwerfen will
-        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
-            // wenn der user die changes verwerfen will koennen wir die view resetten, ansonsten machen wir nichts da wir hier bleiben
-            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
-                //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
-                this.reset();
-            }
-        });
-
     }
 
     private initViewModel(): void {
-        this.gesuchModelManager.initGesuch(false);  //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.kinderabzugValues = getTSKinderabzugValues();
-        this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindJA.pensumFachstelle) ? true : false;
+        this.showFachstelle = (this.model.kindJA.pensumFachstelle) ? true : false;
         if (this.getPensumFachstelle() && this.getPensumFachstelle().fachstelle) {
             this.fachstelleId = this.getPensumFachstelle().fachstelle.id;
         }
@@ -70,10 +60,11 @@ export class KindViewController extends AbstractGesuchViewController {
 
     save(form: IFormController): IPromise<TSKindContainer> {
         if (form.$valid) {
+            this.gesuchModelManager.setKindToWorkWith(this.model);
             if (!form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
-                return this.$q.when(this.gesuchModelManager.getKindToWorkWith());
+                return this.$q.when(this.model);
             }
 
             this.errorService.clearAll();
@@ -88,12 +79,11 @@ export class KindViewController extends AbstractGesuchViewController {
     }
 
     reset() {
-        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
         this.removeKindFromList();
     }
 
     private removeKindFromList() {
-        if (!this.gesuchModelManager.getKindToWorkWith().timestampErstellt) {
+        if (!this.model.timestampErstellt) {
             //wenn das Kind noch nicht erstellt wurde, löschen wir das Kind vom Array
             this.gesuchModelManager.removeKindFromList();
         }
@@ -134,15 +124,15 @@ export class KindViewController extends AbstractGesuchViewController {
     }
 
     public getModel(): TSKind {
-        if (this.gesuchModelManager.getKindToWorkWith()) {
-            return this.gesuchModelManager.getKindToWorkWith().kindJA;
+        if (this.model) {
+            return this.model.kindJA;
         }
         return undefined;
     }
 
     public getContainer(): TSKindContainer {
-        if (this.gesuchModelManager.getKindToWorkWith()) {
-            return this.gesuchModelManager.getKindToWorkWith();
+        if (this.model) {
+            return this.model;
         }
         return undefined;
     }

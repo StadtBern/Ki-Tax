@@ -50,7 +50,7 @@ describe('pendenzenInstitutionListView', function () {
     }));
 
     describe('API Usage', function () {
-        describe('init Pendenzenliste', function () {
+        describe('initFinSit Pendenzenliste', function () {
             it('should return the list with all pendenzen', function () {
                 let mockPendenz: TSPendenzInstitution = mockGetPendenzenList();
                 mockRestCalls();

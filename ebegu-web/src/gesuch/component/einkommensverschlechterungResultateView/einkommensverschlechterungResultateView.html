@@ -20,10 +20,10 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS"
                                        for="einkommenBeiderGesuchsteller"
-                                       ng-if="vm.gesuchModelManager.isGesuchsteller2Required()"></label>
+                                       ng-if="vm.model.isGesuchsteller2Required()"></label>
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_EINKOMMEN_EIN_GS"
                                        for="einkommenBeiderGesuchsteller"
-                                       ng-if="!vm.gesuchModelManager.isGesuchsteller2Required()"></label>
+                                       ng-if="!vm.model.isGesuchsteller2Required()"></label>
                                 <input id="einkommenBeiderGesuchsteller" type="text" name="einkommenBeiderGesuchsteller"
                                        ui-number-mask="0"
                                        aria-label="{{FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS|translate}}"

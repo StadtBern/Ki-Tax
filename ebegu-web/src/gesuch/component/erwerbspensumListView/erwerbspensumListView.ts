@@ -37,7 +37,7 @@ export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
 }
 
 
-export class ErwerbspensumListViewController extends AbstractGesuchViewController {
+export class ErwerbspensumListViewController extends AbstractGesuchViewController<any> {
 
     erwerbspensenGS1: Array<TSErwerbspensumContainer> = undefined;
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;

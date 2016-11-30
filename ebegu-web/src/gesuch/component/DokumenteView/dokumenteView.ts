@@ -29,7 +29,7 @@ export class DokumenteViewComponentConfig implements IComponentOptions {
 /**
  * Controller fuer den Dokumenten Upload
  */
-export class DokumenteViewController extends AbstractGesuchViewController {
+export class DokumenteViewController extends AbstractGesuchViewController<any> {
     parsedNum: number;
     dokumenteEkv: TSDokumentGrund[] = [];
     dokumenteFinSit: TSDokumentGrund[] = [];

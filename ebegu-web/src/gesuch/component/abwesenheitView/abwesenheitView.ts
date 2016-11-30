@@ -42,9 +42,8 @@ export class AbwesenheitUI {
     }
 }
 
-export class AbwesenheitViewController extends AbstractGesuchViewController {
+export class AbwesenheitViewController extends AbstractGesuchViewController<Array<AbwesenheitUI>> {
 
-    abwesenheitList: Array<AbwesenheitUI> = [];
     betreuungList: Array<KindBetreuungUI>;
     private removed: boolean;
     private changedBetreuungen: Array<TSBetreuung> = [];
@@ -88,11 +87,11 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
     }
 
     private initAbwesenheitList(): void {
-        this.abwesenheitList = [];
+        this.model = [];
         this.betreuungList.forEach((kindBetreuung) => {
             if (kindBetreuung.betreuung.abwesenheitContainers) {
                 kindBetreuung.betreuung.abwesenheitContainers.forEach((abwesenheitCont: TSAbwesenheitContainer) => {
-                    this.abwesenheitList.push(new AbwesenheitUI(kindBetreuung, abwesenheitCont));
+                    this.model.push(new AbwesenheitUI(kindBetreuung, abwesenheitCont));
                 });
             }
         });
@@ -119,7 +118,7 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
                 });
             });
             //Jetzt koennen wir alle geaenderten Abwesenheiten nochmal hinzufuegen
-            this.abwesenheitList.forEach((abwesenheit: AbwesenheitUI) => {
+            this.model.forEach((abwesenheit: AbwesenheitUI) => {
                 if (!abwesenheit.kindBetreuung.betreuung.abwesenheitContainers) {
                     abwesenheit.kindBetreuung.betreuung.abwesenheitContainers = [];
                 }
@@ -167,25 +166,25 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
     }
 
     private removeAbwesenheit(abwesenheit: AbwesenheitUI) {
-        let indexOf = this.abwesenheitList.lastIndexOf(abwesenheit);
+        let indexOf = this.model.lastIndexOf(abwesenheit);
         if (indexOf >= 0) {
             if (abwesenheit.kindBetreuung) {
                 this.removed = true;
                 this.addChangedBetreuungToList(abwesenheit.kindBetreuung.betreuung);
             }
-            this.abwesenheitList.splice(indexOf, 1);
+            this.model.splice(indexOf, 1);
         }
     }
 
     public createAbwesenheit(): void {
-        if (!this.abwesenheitList) {
-            this.abwesenheitList = [];
+        if (!this.model) {
+            this.model = [];
         }
-        this.abwesenheitList.push(new AbwesenheitUI(undefined, new TSAbwesenheitContainer()));
+        this.model.push(new AbwesenheitUI(undefined, new TSAbwesenheitContainer()));
     }
 
     public getAbwesenheiten(): Array<AbwesenheitUI> {
-        return this.abwesenheitList;
+        return this.model;
     }
 
     /**

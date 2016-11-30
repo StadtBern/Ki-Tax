@@ -218,7 +218,7 @@
                         <div class="row">
                             <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group"
-                                                    ng-if="vm.gesuchModelManager.gesuchstellerNumber === 1">
+                                                    ng-if="vm.model.getGesuchstellerNumber() === 1">
                                     <label class="md-no-float"
                                            data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT"
                                            for="geschaeftsgewinnDurchschnittGS1"></label>
@@ -228,7 +228,7 @@
                                            dv-max-length max="999999999999" class="form-control" disabled>
                                 </dv-input-container>
                                 <dv-input-container class="form-group"
-                                                    ng-if="vm.gesuchModelManager.gesuchstellerNumber === 2">
+                                                    ng-if="vm.model.getGesuchstellerNumber() === 2">
                                     <label class="md-no-float"
                                            data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT"
                                            for="geschaeftsgewinnDurchschnittGS2"></label>

@@ -38,9 +38,10 @@ describe('stammdatenView', function () {
             expect(stammdatenViewController.disableWohnadresseFor2GS()).toBe(false);
         });
         it('should return false for new 2GS und Mutation', function () {
-            gesuchModelManager.setGesuchstellerNumber(2);
+            stammdatenViewController.gesuchstellerNumber = 2;
             gesuchModelManager.setStammdatenToWorkWith(new TSGesuchsteller());
             gesuchModelManager.getGesuch().typ = TSAntragTyp.MUTATION;
+            stammdatenViewController.model = gesuchModelManager.getStammdatenToWorkWith();
             expect(stammdatenViewController.disableWohnadresseFor2GS()).toBe(false);
         });
         it('should return true for old 2GS und Mutation', function () {

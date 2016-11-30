@@ -11,17 +11,24 @@ import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
 import TSGesuch from '../models/TSGesuch';
 import TSUser from '../models/TSUser';
 import ITranslateService = angular.translate.ITranslateService;
+import {TSRoleUtil} from '../utils/TSRoleUtil';
+import {TSRole} from '../models/enums/TSRole';
 
-export class GesuchRouteController extends AbstractGesuchViewController {
+export class GesuchRouteController {
+
+    TSRole: any;
+    TSRoleUtil: any;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
         'AntragStatusHistoryRS', '$translate'];
     /* @ngInject */
-    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
+    constructor(private gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        //super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.loadLastStatusChange(this.gesuchModelManager.getGesuch());
+        this.TSRole = TSRole;
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     showFinanzsituationStart(): boolean {

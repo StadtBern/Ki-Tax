@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-md-12">
             <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
-                  unsaved-warning-form ng-if="vm.erwerbspensum">
+                  unsaved-warning-form ng-if="vm.model">
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Bezeichnung-->
@@ -19,7 +19,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="BEZEICHNUNG" for="bezeichnung"></label>
                                 <input id="bezeichnung" type="text" name="bezeichnung"
-                                       ng-model="vm.erwerbspensum.erwerbspensumJA.bezeichnung"
+                                       ng-model="vm.model.erwerbspensumJA.bezeichnung"
                                        dv-max-length class="form-control" ng-required="false"
                                        ng-disabled="vm.erwerbspensumDisabled()">
                                 <dv-error-messages for="form.bezeichnung.$error"></dv-error-messages>
@@ -37,7 +37,7 @@
                                 </label>
 
                                 <select name="taetigkeit" id="taetigkeit"
-                                        ng-model="vm.erwerbspensum.erwerbspensumJA.taetigkeit"
+                                        ng-model="vm.model.erwerbspensumJA.taetigkeit"
                                         class="form-control"
                                         ng-options="(taetigkeit| translate) for taetigkeit in vm.getTaetigkeitenList() "
                                         ng-required="true" ng-change="vm.taetigkeitChanged()"
@@ -55,14 +55,14 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="PENSUM" for="taetigkeitPensum"></label>
                                 <input id="taetigkeitPensum" type="text" name="taetigkeitPensum"
-                                       ng-model="vm.erwerbspensum.erwerbspensumJA.pensum"
+                                       ng-model="vm.model.erwerbspensumJA.pensum"
                                        dv-max-length class="form-control" max="100"
                                        ng-required="true" ng-pattern="vm.patternPercentage"
                                        ng-disabled="vm.erwerbspensumDisabled()"
                                        ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                 <dv-error-messages for="form.taetigkeitPensum.$error"
                                                    class="error"></dv-error-messages>
-                                <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.pensum"></dv-bisher>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.pensum"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                                 <label class="md-no-float" data-translate="AB" for="taetigkeitAbID">
                                 </label>
                                 <dv-datepicker input-id="taetigkeitAbID" name="taetigkeitAb"
-                                               ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigAb"
+                                               ng-model="vm.model.erwerbspensumJA.gueltigkeit.gueltigAb"
                                                ng-required="true" class="input-element" placeholder=""
                                                ng-disabled="vm.erwerbspensumDisabled()"
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
@@ -88,7 +88,7 @@
                                 <label class="md-no-float" data-translate="BIS" for="taetigkeitBisID">
                                 </label>
                                 <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis"
-                                               ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigBis"
+                                               ng-model="vm.model.erwerbspensumJA.gueltigkeit.gueltigBis"
                                                ng-required="false" class="input-element"
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
@@ -102,7 +102,7 @@
                     <div class="row" ng-if="vm.viewZuschlag()">
                         <div class="col-md-12">
                             <div class="checkbox">
-                                <md-checkbox ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum"
+                                <md-checkbox ng-model="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
                                              name="zuschlag"
                                              ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled()"
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
@@ -116,14 +116,14 @@
                     </div>
 
                     <!--Zuschlagsgrund-->
-                    <div class="row" ng-if="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum">
+                    <div class="row" ng-if="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum">
                         <div class="col-sm-12 dv-input-container-small">
                             <div class="form-group">
                                 <label class="md-no-float" data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
                                 </label>
 
                             <select name="zuschlagsgrund" id="zuschlagsgrund"
-                                    ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagsgrund"
+                                    ng-model="vm.model.erwerbspensumJA.zuschlagsgrund"
                                     class="form-control"
                                     ng-options="zuschlagsgrund | translate for zuschlagsgrund in vm.getZuschlagsgrundList() "
                                     ng-required="true"
@@ -136,19 +136,19 @@
                 </div>
 
                 <!--Zuschlagsprozent-->
-                <div class="row" ng-if="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum">
+                <div class="row" ng-if="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum">
                     <div class="col-sm-12 dv-input-container-small">
                         <dv-input-container class="form-group">
                             <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT" for="zuschlagsprozent"></label>
                             <input type="number" id="zuschlagsprozent" type="text" name="zuschlagsprozent"
-                                   ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagsprozent"
+                                   ng-model="vm.model.erwerbspensumJA.zuschlagsprozent"
                                    dv-max-length class="form-control" max="100"
                                    ng-required="true" ng-pattern="vm.patternPercentage"
                                    ng-disabled="vm.erwerbspensumDisabled()"
                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                             <dv-error-messages for="form.zuschlagsprozent.$error"
                                                class="error"></dv-error-messages>
-                            <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.zuschlagsprozent"></dv-bisher>
+                            <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsprozent"></dv-bisher>
                         </dv-input-container>
                     </div>
                 </div>
@@ -162,7 +162,7 @@
 
             </form>
 
-            <p ng-if="!vm.erwerbspensum">Keine Erwerbspensum Daten vorhanden</p>
+            <p ng-if="!vm.model">Keine Erwerbspensum Daten vorhanden</p>
 
         </div>
     </div>

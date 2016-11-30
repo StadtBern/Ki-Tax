@@ -28,8 +28,9 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class VerfuegenViewController extends AbstractGesuchViewController {
+export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
+    //this is the model...
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
@@ -43,24 +44,12 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
                 private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.setBemerkungen();
-
-        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
-            console.log('resetting state due to navigation change, ');
-            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
-                //Wenn die Maske verlassen wird, werden automatisch die Eintraege entfernt, die noch nicht in der DB gespeichert wurden
-                this.reset();
-            }
-        });
     }
 
     cancel(form: IFormController): void {
-        this.reset();
         form.$setPristine();
     }
 
-    reset(): void {
-        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
-    }
 
     save(form: IFormController): void {
         if (form.$valid) {
