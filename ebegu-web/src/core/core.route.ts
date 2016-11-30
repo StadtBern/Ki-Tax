@@ -7,15 +7,23 @@ import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
 import ILocationService = angular.ILocationService;
+import ILogService = angular.ILogService;
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$rootScope', 'hotkeys',
-    '$timeout', 'AuthServiceRS', '$state', '$location', '$window'];
+    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log'];
 
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
-                       authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService) {
+                       authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService,  $log: ILogService) {
     // navigationLogger.toggle();
+
+    // Fehler beim Navigieren ueber ui-route ins Log schreiben
+    $rootScope.$on('$stateChangeError',  (event, toState, toParams, fromState, fromParams, error) => {
+        $log.error('Fehler beim Navigieren');
+        $log.error('$stateChangeError --- event, toState, toParams, fromState, fromParams, error');
+        $log.error(event, toState, toParams, fromState, fromParams, error);
+    });
     routerHelper.configureStates(getStates(), '/start');
     angularMomentConfig.format = 'DD.MM.YYYY';
     // dieser call macht mit tests probleme, daher wird er fuer test auskommentiert

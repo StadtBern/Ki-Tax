@@ -200,6 +200,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         if (this.getBetreuungModel() && (this.getBetreuungspensen() === undefined || this.getBetreuungspensen() === null)) {
             this.getBetreuungModel().betreuungspensumContainers = [];
         }
+        //todo kann entfernt werden sobald f5 auf dieser seite funktioniert
+        if(!this.getBetreuungModel()) {
+            this.errorService.addMesageAsError("Betreuungsmodel ist nicht korrekt initialisiert. Die Seite unterstuetzt noch keine direktnavigation")
+        }
         this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(false, undefined, new TSDateRange())));
     }
 

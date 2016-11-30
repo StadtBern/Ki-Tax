@@ -50,8 +50,9 @@ import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
-import IQService = angular.IQService;
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import IQService = angular.IQService;
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -61,7 +62,7 @@ export default class GesuchModelManager {
     private kindNumber: number;
     private betreuungNumber: number;
     private fachstellenList: Array<TSFachstelle>;
-    private activInstitutionenList : Array<TSInstitutionStammdaten>;
+    private activInstitutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
 
@@ -95,19 +96,23 @@ export default class GesuchModelManager {
     public openGesuch(gesuchId: string): IPromise<TSGesuch> {
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
             return this.gesuchRS.findGesuchForInstitution(gesuchId)
-                .then((response) => {
-                    if (response) {
-                        this.setGesuch(response);
-                    }
-                    return response;
+                .then((response : TSGesuch) => {
+                    return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(bla => {
+                        if (response) {
+                            this.setGesuch(response);
+                        }
+                        return response;
+                    });
                 });
         } else {
             return this.gesuchRS.findGesuch(gesuchId)
-                .then((response) => {
-                    if (response) {
-                        this.setGesuch(response);
-                    }
-                    return response;
+                .then((response: TSGesuch) => {
+                    return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(bla => {
+                        if (response) {
+                            this.setGesuch(response);
+                        }
+                        return response;
+                    });
                 });
         }
     }
@@ -139,7 +144,6 @@ export default class GesuchModelManager {
      */
     public setGesuch(gesuch: TSGesuch): void {
         this.gesuch = gesuch;
-        this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
         this.setHiddenSteps();
     }
 
@@ -860,7 +864,8 @@ export default class GesuchModelManager {
         if (this.gesuch.kindContainers) {
             for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
                 if (this.gesuch.kindContainers[i].id === kindID) {
-                    return this.kindNumber = i + 1;
+                    this.kindNumber = i + 1;
+                    return this.kindNumber;
                 }
             }
         }
@@ -1050,12 +1055,13 @@ export default class GesuchModelManager {
         });
     }
 
-    public verfuegungSchliessenNichtEintreten(): IPromise<void> {
-        return this.verfuegungRS.nichtEintreten(this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
+    public verfuegungSchliessenNichtEintreten():  IPromise<TSVerfuegung> {
+        return this.verfuegungRS.nichtEintreten(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response: TSVerfuegung) => {
+            this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.NICHT_EINGETRETEN;
             this.calculateGesuchStatus();
             this.backupCurrentGesuch();
-            return;
+            return this.getVerfuegenToWorkWith();
         });
     }
 
@@ -1117,6 +1123,25 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Returns true when all Betreuungen are of kind SCHULAMT.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public areThereOnlySchulamtAngebote(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.institutionStammdaten.betreuungsangebotTyp !== TSBetreuungsangebotTyp.TAGESSCHULE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Setzt den Status des Gesuchs und speichert es in der Datenbank. Anstatt das ganze Gesuch zu schicken, rufen wir den Service auf
      * der den Status aktualisiert und erst wenn das geklappt hat, aktualisieren wir den Status auf dem Client.
      * Wird nur durchgefuehrt, wenn der gegebene Status nicht der aktuelle Status ist
@@ -1146,11 +1171,12 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT
+     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT or NUR_SCHULAMT
      * @returns {boolean}
      */
     public isGesuchStatusVerfuegenVerfuegt(): boolean {
-        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT);
+        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT)
+            || this.isGesuchStatus(TSAntragStatus.NUR_SCHULAMT);
     }
 
     /**
@@ -1239,5 +1265,9 @@ export default class GesuchModelManager {
             }
         }
         return -1;
+    }
+
+    public clearGesuch(): void {
+        this.gesuch = undefined;
     }
 }

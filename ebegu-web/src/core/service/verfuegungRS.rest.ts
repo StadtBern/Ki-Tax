@@ -59,15 +59,16 @@ export default class VerfuegungRS {
         });
     }
 
-    public nichtEintreten(gesuchId: string, betreuungId: string): IPromise<void> {
-        return this.http.post(this.serviceURL + '/nichtEintreten/' + encodeURIComponent(betreuungId), {
+    public nichtEintreten(verfuegung: TSVerfuegung, gesuchId: string, betreuungId: string): IPromise<TSVerfuegung> {
+        let restVerfuegung = this.ebeguRestUtil.verfuegungToRestObject({}, verfuegung);
+        return this.http.put(this.serviceURL + '/nichtEintreten/' + encodeURIComponent(betreuungId), restVerfuegung, {
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then((response: any) => {
             return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
                 this.log.debug('PARSING Verfuegung REST object ', response.data);
-                return;
+                return this.ebeguRestUtil.parseVerfuegung(new TSVerfuegung(), response.data);
             });
         });
     }

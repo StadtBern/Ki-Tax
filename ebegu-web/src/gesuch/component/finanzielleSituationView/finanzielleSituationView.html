@@ -16,7 +16,7 @@
 
                     <!--Steuerveranlagung -->
                     <div class="row">
-                        <div class="col-xs-12" ng-if="vm.showSteuerveranlagung()">
+                        <div class="col-md-6" ng-if="vm.showSteuerveranlagung()">
                             <div class="form-group">
                                 <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                                     translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h4>
@@ -124,10 +124,8 @@
                         </div>
                     </div>
 
-                    <hr/>
-
                     <!--Checkbox Selbstaendigkeit -->
-                    <div class="row">
+                    <div class="row marginBottom20">
                         <div class="col-md-6">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.showSelbstaendig" name="showSelbstaendig"
@@ -154,9 +152,12 @@
                                            ng-blur="vm.calculate()"
                                            dv-max-length max="999999999999" class="form-control" ui-negative-number
                                            ng-required="vm.isGeschaeftsgewinnRequired()">
-                                    <div ng-messages="form.geschaeftsgewinnBasisjahr.$error" role="alert" class="error">
-                                        <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                             for="form.geschaeftsgewinnBasisjahr.$error"></div>
+                                    <div class="dv-error-messages">
+                                        <div ng-messages="form.geschaeftsgewinnBasisjahr.$error" role="alert"
+                                             class="error">
+                                            <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
+                                                 for="form.geschaeftsgewinnBasisjahr.$error"></div>
+                                        </div>
                                     </div>
                                     <dv-bisher gs="vm.getModel().finanzielleSituationGS.geschaeftsgewinnBasisjahr"
                                                ja="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr"></dv-bisher>
@@ -178,10 +179,12 @@
                                            ng-blur="vm.calculate()"
                                            dv-max-length max="999999999999" class="form-control" ui-negative-number
                                            ng-required="vm.isGeschaeftsgewinnRequired()">
-                                    <div ng-messages="form.geschaeftsgewinnBasisjahrMinus1.$error" role="alert"
-                                         class="error">
-                                        <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                             for="form.geschaeftsgewinnBasisjahrMinus1.$error"></div>
+                                    <div class="dv-error-messages">
+                                        <div ng-messages="form.geschaeftsgewinnBasisjahrMinus1.$error" role="alert"
+                                             class="error">
+                                            <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
+                                                 for="form.geschaeftsgewinnBasisjahrMinus1.$error"></div>
+                                        </div>
                                     </div>
                                     <dv-bisher gs="vm.getModel().finanzielleSituationGS.geschaeftsgewinnBasisjahrMinus1"
                                                ja="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1"></dv-bisher>
@@ -203,10 +206,12 @@
                                            ng-blur="vm.calculate()"
                                            dv-max-length max="999999999999" class="form-control" ui-negative-number
                                            ng-required="vm.isGeschaeftsgewinnRequired()">
-                                    <div ng-messages="form.geschaeftsgewinnBasisjahrMinus2.$error" role="alert"
-                                         class="error">
-                                        <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                             for="form.geschaeftsgewinnBasisjahrMinus2.$error"></div>
+                                    <div class="dv-error-messages">
+                                        <div ng-messages="form.geschaeftsgewinnBasisjahrMinus2.$error" role="alert"
+                                             class="error">
+                                            <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
+                                                 for="form.geschaeftsgewinnBasisjahrMinus2.$error"></div>
+                                        </div>
                                     </div>
                                     <dv-bisher gs="vm.getModel().finanzielleSituationGS.geschaeftsgewinnBasisjahrMinus2"
                                                ja="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2"></dv-bisher>

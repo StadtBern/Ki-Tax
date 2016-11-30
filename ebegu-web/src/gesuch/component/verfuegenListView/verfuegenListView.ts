@@ -19,6 +19,8 @@ import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSMahnung from '../../../models/TSMahnung';
 import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
 import MahnungRS from '../../service/mahnungRS.rest';
+import TSGesuch from '../../../models/TSGesuch';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -133,14 +135,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         return undefined;
     }
 
-    public getGesuch() {
+    public getGesuch(): TSGesuch {
         if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
             return this.gesuchModelManager.getGesuch();
         }
         return undefined;
     }
 
-    public getGesuchsperiode() {
+    public getGesuchsperiode() : TSGesuchsperiode {
         if (this.gesuchModelManager) {
             return this.gesuchModelManager.getGesuchsperiode();
         }
@@ -159,12 +161,21 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     public setGesuchStatusVerfuegen(): IPromise<TSAntragStatus> {
+        //by default wird alles auf VERFUEGEN gesetzt, da es der normale Fall ist
+        let newStatus: TSAntragStatus = TSAntragStatus.VERFUEGEN;
+        let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
+
+        if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
+            newStatus = TSAntragStatus.NUR_SCHULAMT;
+            deleteTextValue = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT';
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+        }
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
-            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+            deleteText: deleteTextValue
         }).then(() => {
             return this.createNeededPDFs().then(() => {
-                return this.setGesuchStatus(TSAntragStatus.VERFUEGEN);
+                return this.setGesuchStatus(newStatus);
             });
         });
     }
@@ -240,7 +251,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         // Gesuchstatus zuruecksetzen UND die Mahnungen auf erledigt setzen
         this.setGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA).then(any => {
             this.mahnungRS.mahnlaufBeenden(this.getGesuch()).then(any => {
-                this.mahnungRS.findMahnungen(this.getGesuch()).then(reloadedMahnungen => {
+                this.mahnungRS.findMahnungen(this.getGesuch().id).then(reloadedMahnungen => {
                     this.mahnungList = reloadedMahnungen;
                 });
             });
