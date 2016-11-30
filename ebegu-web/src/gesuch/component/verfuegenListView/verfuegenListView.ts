@@ -21,6 +21,7 @@ import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
 import MahnungRS from '../../service/mahnungRS.rest';
 import TSGesuch from '../../../models/TSGesuch';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import DateUtil from '../../../utils/DateUtil';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -180,8 +181,22 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         });
     }
 
+    private hasOffeneMahnungen(): boolean {
+        for (let mahn of this.mahnungList) {
+            if (mahn.active) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public isFristAbgelaufen(mahnung : TSMahnung): boolean {
+        return mahnung.datumFristablauf.isBefore(DateUtil.today());
+    }
+
     public showErsteMahnungErstellen(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) && this.mahnung === undefined;
+        // Nur wenn keine offenen Mahnungen vorhanden!
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) && this.mahnung === undefined && !this.hasOffeneMahnungen();
     }
 
     public showErsteMahnungAusloesen(): boolean {
