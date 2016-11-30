@@ -40,8 +40,8 @@ public class NichteintretenPrintImpl extends BriefPrintImpl implements Nichteint
 
 	@Override
 	public String getPeriode() {
-		return '(' + String.valueOf(getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear())
-			+ '/' + String.valueOf(getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear()) + ')';
+		return "(" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()
+			+ "/" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear() + ")";
 	}
 
 	@Override

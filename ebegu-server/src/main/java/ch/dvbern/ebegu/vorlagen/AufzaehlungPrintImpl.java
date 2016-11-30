@@ -17,7 +17,7 @@ public class AufzaehlungPrintImpl implements AufzaehlungPrint {
 	private String text;
 
 	public AufzaehlungPrintImpl(String text) {
-		this.text = text.replaceAll("^(-|\\s)*","");
+		this.text = text.replaceAll("^(-|\\s)*", "");
 	}
 
 	@Override

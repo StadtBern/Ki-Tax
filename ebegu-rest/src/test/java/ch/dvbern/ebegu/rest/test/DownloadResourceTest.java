@@ -23,6 +23,7 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -116,7 +117,7 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 		final Response dokumentResponse = downloadResource
 			.getMahnungDokumentAccessTokenGeneratedDokument(converter.mahnungToJAX(mahnung), true, request, uri);
 
-		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.MAHNUNG);
+		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.MAHNUNG_VORSCHAU);
 	}
 
 	@Test
@@ -132,7 +133,7 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 		final Response dokumentResponse = downloadResource
 			.getNichteintretenDokumentAccessTokenGeneratedDokument(new JaxId(betreuungID), true, request, uri);
 
-		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.MAHNUNG);
+		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.NICHTEINTRETEN);
 	}
 
 	// HELP METHODS

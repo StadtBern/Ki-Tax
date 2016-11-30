@@ -50,11 +50,10 @@ public class PDFServiceBeanTest {
 	@InjectIntoMany
 	EbeguVorlageService vorlageService = new EbeguVorlageServiceMock();
 
-	private	Gesuch gesuch;
+	private Gesuch gesuch;
 
 	@Before
-	public void setupTestData()
-	{
+	public void setupTestData() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
@@ -80,7 +79,7 @@ public class PDFServiceBeanTest {
 			byte[] bytes = pdfService.generateNichteintreten(betreuung.get());
 			Assert.assertNotNull(bytes);
 			unitTestTempfolder.writeToTempDir(bytes, "Nichteintreten(" + betreuung.get().getBGNummer() + ").pdf");
-		}else {
+		} else {
 			throw new Exception(String.format("%s", "testPrintNichteintreten()"));
 		}
 
@@ -97,7 +96,7 @@ public class PDFServiceBeanTest {
 			byte[] bytes = pdfService.generateNichteintreten(betreuung.get());
 			Assert.assertNotNull(bytes);
 			unitTestTempfolder.writeToTempDir(bytes, "Infoschreiben(" + betreuung.get().getBGNummer() + ").pdf");
-		}else {
+		} else {
 			throw new Exception(String.format("%s", "testPrintInfoschreiben()"));
 		}
 

@@ -22,7 +22,6 @@ import org.junit.Rule;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss von allen Testklassen
@@ -77,9 +76,9 @@ public abstract class AbstractEbeguTest {
 			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
 			.addAsManifestResource("META-INF/TEST-MANIFEST.MF", "MANIFEST.MF")
 			//deploy our test loginmodule
-			.addAsResource("testogin-users.properties","users.properties")
+			.addAsResource("testogin-users.properties", "users.properties")
 			.addAsResource("testlogin-roles.properties", "roles.properties")
-			.addAsWebInfResource("META-INF/test-jboss-web.xml",  "jboss-web.xml")
+			.addAsWebInfResource("META-INF/test-jboss-web.xml", "jboss-web.xml")
 			// Deploy our test datasource
 			.addAsWebInfResource("test-ds.xml");
 		if (classesToAdd != null) {

@@ -13,10 +13,10 @@ package ch.dvbern.ebegu.vorlagen;
  */
 
 /**
- *****************************************************************************************************************
- Achtung, die Methodennamen in dieser Klassen duerfen nicht veraendert werden. Sie muessen identisch sein
- mit den Platzhaltern im Word-Template!
- ****************************************************************************************************************
+ * ****************************************************************************************************************
+ * Achtung, die Methodennamen in dieser Klassen duerfen nicht veraendert werden. Sie muessen identisch sein
+ * mit den Platzhaltern im Word-Template!
+ * ***************************************************************************************************************
  */
 
 public interface BriefPrint {

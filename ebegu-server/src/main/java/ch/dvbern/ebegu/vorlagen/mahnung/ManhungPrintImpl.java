@@ -37,8 +37,7 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 		if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && vorgaengerMahnung.isPresent()) {
 			this.vorgaengerMahnung = vorgaengerMahnung.get();
-		}
-		else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG) {
+		} else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG) {
 			throw new UnsupportedOperationException("Vorganger Mahnung für zweite Mahnung fehlt!");
 		}
 	}
@@ -51,8 +50,8 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 		for (KindContainer kindContainer : getGesuch().getKindContainers()) {
 			angebotFull.addAll(
 				kindContainer.getBetreuungen().stream()
-				.map(betreuung -> betreuung.getKind().getKindGS().getFullName() + " (" + betreuung.getInstitutionStammdaten().getInstitution().getName() + ")" )
-				.collect(Collectors.toList())
+					.map(betreuung -> betreuung.getKind().getKindGS().getFullName() + " (" + betreuung.getInstitutionStammdaten().getInstitution().getName() + ")")
+					.collect(Collectors.toList())
 			);
 		}
 
@@ -74,8 +73,8 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 	@Override
 	public String getPeriode() {
-		return '(' + String.valueOf(getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear())
-			+ '/' + String.valueOf(getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear()) + ')';
+		return "(" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()
+			+ "/" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear() + ")";
 	}
 
 	@Override
@@ -109,8 +108,7 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 	public String getErsteMahnDatum() {
 		if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && vorgaengerMahnung != null) {
 			return Constants.DATE_FORMATTER.format(vorgaengerMahnung.getTimestampErstellt());
-		}
-		else {
+		} else {
 			return "";
 		}
 	}

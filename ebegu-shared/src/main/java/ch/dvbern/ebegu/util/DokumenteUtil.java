@@ -62,6 +62,7 @@ public class DokumenteUtil {
 
 	/**
 	 * Fuer den gegebenen GeneratedDokumentTyp gibt die Methode den entsprechenden Dateinamen zurueck.
+	 *
 	 * @param typ
 	 * @return
 	 */
@@ -69,13 +70,20 @@ public class DokumenteUtil {
 	public static String getFileNameForGeneratedDokumentTyp(final GeneratedDokumentTyp typ, final String identificationNumber) {
 		//Liste in server-messages.properties erganzen.
 		switch (typ) {
-			case BEGLEITSCHREIBEN: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.BEGLEITSCHREIBEN, identificationNumber);
-			case FINANZIELLE_SITUATION: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.FINANZIELLE_SITUATION, identificationNumber);
-			case VERFUEGUNG: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.VERFUEGUNG, identificationNumber);
-			case MAHNUNG: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG, identificationNumber);
-			case MAHNUNG_VORSCHAU: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG_VORSCHAU, identificationNumber);
-			case NICHTEINTRETEN: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.NICHTEINTRETEN, identificationNumber);
-			default: return "file.pdf";
+			case BEGLEITSCHREIBEN:
+				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.BEGLEITSCHREIBEN, identificationNumber);
+			case FINANZIELLE_SITUATION:
+				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.FINANZIELLE_SITUATION, identificationNumber);
+			case VERFUEGUNG:
+				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.VERFUEGUNG, identificationNumber);
+			case MAHNUNG:
+				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG, identificationNumber);
+			case MAHNUNG_VORSCHAU:
+				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG_VORSCHAU, identificationNumber);
+			case NICHTEINTRETEN:
+				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.NICHTEINTRETEN, identificationNumber);
+			default:
+				return "file.pdf";
 		}
 	}
 }

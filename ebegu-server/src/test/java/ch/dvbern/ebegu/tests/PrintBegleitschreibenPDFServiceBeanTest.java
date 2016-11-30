@@ -73,7 +73,7 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguLoginT
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen()); // sollte tagi aareg sein
-																								// ist aber hier egal
+		// ist aber hier egal
 
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		testfall.createFall(null);

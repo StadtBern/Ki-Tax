@@ -25,7 +25,6 @@ public abstract class AbstractTestfall {
 	public static final String ID_INSTITUTION_AAREGG_TAGI = "11111111-1111-1111-1111-111111111174";
 
 
-
 	protected Gesuchsperiode gesuchsperiode;
 	protected Collection<InstitutionStammdaten> institutionStammdatenList;
 

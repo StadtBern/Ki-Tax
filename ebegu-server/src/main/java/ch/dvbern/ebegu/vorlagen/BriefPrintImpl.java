@@ -21,7 +21,7 @@ public class BriefPrintImpl implements BriefPrint {
 
 	protected Gesuch gesuch;
 
-	public BriefPrintImpl(Gesuch gesuch){
+	public BriefPrintImpl(Gesuch gesuch) {
 		this.gesuch = gesuch;
 	}
 
@@ -38,8 +38,7 @@ public class BriefPrintImpl implements BriefPrint {
 
 		if (StringUtils.isNotEmpty(organisation)) {
 			zustellAdresse += organisation;
-		}
-		else {
+		} else {
 			zustellAdresse += "Familie";  //TODO: resources/localisation?
 		}
 

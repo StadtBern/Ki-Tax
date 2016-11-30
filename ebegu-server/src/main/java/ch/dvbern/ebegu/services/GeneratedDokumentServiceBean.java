@@ -118,6 +118,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	/**
 	 * Sucht ein GeneratedDokument mit demselben Namen und Pfad und vom selben Gesuch. Wen das Dokument existiert, wird dieses gelöscht
 	 * und mit dem Neuen ersetzt. Wenn es nicht existiert, ein neues wird erstellt.
+	 *
 	 * @param dokumentTyp
 	 * @param gesuch
 	 * @param fileName
@@ -131,7 +132,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			fileName, ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
 
 		return updateGeneratedDokument(generatedDokument, data, dokumentTyp, gesuch, fileName);
-
 	}
 
 	private GeneratedDokument updateGeneratedDokument(GeneratedDokument generatedDokument, byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName) throws MimeTypeParseException {
@@ -143,8 +143,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		if (generatedDokument == null) {
 			generatedDokument = new GeneratedDokument();
-		}
-		else {
+		} else {
 			//Die Datei wird am Ende geloscht, um unvollstaenige Daten zu vermeiden falls was kaputt geht
 			filePathToRemove = generatedDokument.getFilepfad();
 		}
@@ -188,7 +187,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 			} else {
-				LOG.warn("Unerwarter Dokumenttyp " +dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
+				LOG.warn("Unerwarter Dokumenttyp " + dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
 				return null;
 			}
 
@@ -257,7 +256,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				final byte[] verfuegungsPDF;
 				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
 				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
-				verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum );
+				verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum);
 
 
 				final String fileNameForDocTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
@@ -287,25 +286,22 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.MAHNUNG,
 				Constants.FILENAME_DATE_TIME_FORMATTER.format(mahnungDB.getTimestampErstellt()));
 
-		GeneratedDokument vorschauDokument = null;
-		GeneratedDokument persistedDokument = null;
-
 		//überprufen ob ein Vorschau existiert
-		vorschauDokument = findGeneratedDokument(gesuch.getId(), previewNameForGeneratedDokumentTyp,
+		GeneratedDokument vorschauDokument = findGeneratedDokument(gesuch.getId(), previewNameForGeneratedDokumentTyp,
 			ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
 
 		//überprufen ob die Mahnung existiert
-		if (persistedDokument == null)
-			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
-				ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+		GeneratedDokument persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
+			ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
 
 		// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 		if (persistedDokument == null || dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU || forceCreation) {
 
 			Optional<Mahnung> vorgaengerMahnung = null;
 
-			if (mahnung.hasVorgaenger())
+			if (mahnung.hasVorgaenger()) {
 				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
+			}
 
 			byte[] data = pdfService.printMahnung(mahnung, vorgaengerMahnung);
 
@@ -338,8 +334,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
 			|| persistedDokument == null) {
 			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
-
-			Optional<Mahnung> vorgaengerMahnung = null;
 
 			byte[] data = pdfService.generateNichteintreten(betreuung);
 

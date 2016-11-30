@@ -23,7 +23,7 @@ import java.util.Optional;
  * <p>
  * Created by medu on 21/11/2016.
  */
-public class EbeguVorlageServiceMock extends EbeguVorlageServiceBean{
+public class EbeguVorlageServiceMock extends EbeguVorlageServiceBean {
 
 	@Nonnull
 	@Override

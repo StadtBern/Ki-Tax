@@ -142,7 +142,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         return undefined;
     }
 
-    public getGesuchsperiode() : TSGesuchsperiode {
+    public getGesuchsperiode(): TSGesuchsperiode {
         if (this.gesuchModelManager) {
             return this.gesuchModelManager.getGesuchsperiode();
         }
@@ -308,7 +308,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
             });
     }
 
-    public openMahnungPDF(mahnung : TSMahnung): void {
+    public openMahnungPDF(mahnung: TSMahnung): void {
         if (mahnung == null)
             mahnung = this.mahnung;
 

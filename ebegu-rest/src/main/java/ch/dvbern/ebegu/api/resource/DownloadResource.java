@@ -176,6 +176,7 @@ public class DownloadResource {
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId());
 	}
 
+	//TODO: (medu) DokumentType ist überflüssig?!
 	@Nonnull
 	@POST
 	@Path("/{gesuchid}/{betreuungId}/{dokumentTyp}/{forceCreation}/generated")

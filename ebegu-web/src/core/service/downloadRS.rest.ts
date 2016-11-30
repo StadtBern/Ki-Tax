@@ -2,7 +2,7 @@ import {IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSDownloadFile from '../../models/TSDownloadFile';
 import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp';
-import TSMahnung from "../../models/TSMahnung";
+import TSMahnung from '../../models/TSMahnung';
 
 
 export class DownloadRS {
@@ -61,7 +61,7 @@ export class DownloadRS {
 
     public getAccessTokenVerfuegungGeneratedDokument(gesuchId: string, betreuungId: string, forceCreation: boolean, manuelleBemerkungen: string): IPromise<TSDownloadFile> {
         return this.http.post(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/' + encodeURIComponent(betreuungId)
-            +  '/' + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.VERFUEGUNG]) +  '/' + forceCreation + '/generated', manuelleBemerkungen, {
+            + '/' + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.VERFUEGUNG]) + '/' + forceCreation + '/generated', manuelleBemerkungen, {
             headers: {
                 'Content-Type': 'text/plain'
             }
@@ -73,11 +73,11 @@ export class DownloadRS {
 
     public getAccessTokenNichteintretenGeneratedDokument(betreuungId: string, forceCreation: boolean): IPromise<TSDownloadFile> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(betreuungId)
-            +  '/' + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.NICHTEINTRETEN]) +  '/' + forceCreation + '/generated')
+            + '/' + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.NICHTEINTRETEN]) + '/' + forceCreation + '/generated')
             .then((response: any) => {
-            this.log.debug('PARSING DownloadFile REST object ', response.data);
-            return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
-        });
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
     }
 
 

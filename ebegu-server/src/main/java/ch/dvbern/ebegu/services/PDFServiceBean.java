@@ -35,7 +35,7 @@ import java.util.Optional;
  */
 @Stateless
 @Local(PDFService.class)
-public class PDFServiceBean extends AbstractPrintService implements PDFService{
+public class PDFServiceBean extends AbstractPrintService implements PDFService {
 	@Nonnull
 	@Override
 	public byte[] generateNichteintreten(Betreuung betreuung) throws MergeDocException {
@@ -46,20 +46,15 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService{
 		BetreuungsangebotTyp angebotTyp = betreuung.getBetreuungsangebotTyp();
 
 		if (angebotTyp == BetreuungsangebotTyp.KITA
-			|| angebotTyp == BetreuungsangebotTyp.TAGESELTERN_KLEINKIND)
-		{
+			|| angebotTyp == BetreuungsangebotTyp.TAGESELTERN_KLEINKIND) {
 			docxME = new DOCXMergeEngine("Nichteintretensverfügung");
 			vorlageKey = EbeguVorlageKey.VORLAGE_NICHT_EINTRETENSVERFUEGUNG;
-		}
-		else if (angebotTyp == BetreuungsangebotTyp.TAGI
+		} else if (angebotTyp == BetreuungsangebotTyp.TAGI
 			|| angebotTyp == BetreuungsangebotTyp.TAGESELTERN_SCHULKIND
-			|| angebotTyp == BetreuungsangebotTyp.TAGESSCHULE)
-		{
+			|| angebotTyp == BetreuungsangebotTyp.TAGESSCHULE) {
 			docxME = new DOCXMergeEngine("InfoschreibenMaximaltarif");
 			vorlageKey = EbeguVorlageKey.VORLAGE_INFOSCHREIBEN_MAXIMALTARIF;
-		}
-		else
-		{
+		} else {
 			throw new MergeDocException("generateNichteintreten()",
 				"Unexpected Betreuung Type", null, new Objects[]{});
 		}
@@ -68,14 +63,14 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService{
 			Objects.requireNonNull(betreuung, "Das Argument 'betreuung' darf nicht leer sein");
 			final DateRange gueltigkeit = betreuung.extractGesuch().getGesuchsperiode().getGueltigkeit();
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
-			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() +  "' nicht gefunden");
+			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
 				docxME.getDocument(is, new NichteintretenPrintMergeSource(new NichteintretenPrintImpl(betreuung))));
 			is.close();
 			return bytes;
 		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("generateNichteintreten()",
-				"Bei der Generierung der Nichteintreten ist ein Fehler aufgetreten", e, new Objects[] {});
+				"Bei der Generierung der Nichteintreten ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
 
 	}
@@ -87,8 +82,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService{
 		DOCXMergeEngine docxME;
 		EbeguVorlageKey vorlageKey;
 
-		switch (mahnung.getMahnungTyp())
-		{
+		switch (mahnung.getMahnungTyp()) {
 			case ERSTE_MAHNUNG:
 				docxME = new DOCXMergeEngine("ErsteMahnung");
 				vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_1;
@@ -106,14 +100,14 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService{
 			Objects.requireNonNull(mahnung, "Das Argument 'gesuch' darf nicht leer sein");
 			final DateRange gueltigkeit = mahnung.getGesuch().getGesuchsperiode().getGueltigkeit();
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
-			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() +  "' nicht gefunden");
+			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
 				docxME.getDocument(is, new MahnungPrintMergeSource(new ManhungPrintImpl(mahnung, vorgaengerMahnung))));
 			is.close();
 			return bytes;
 		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("printMahnung()",
-				"Bei der Generierung der Mahnung ist ein Fehler aufgetreten", e, new Objects[] {});
+				"Bei der Generierung der Mahnung ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
 
 	}
