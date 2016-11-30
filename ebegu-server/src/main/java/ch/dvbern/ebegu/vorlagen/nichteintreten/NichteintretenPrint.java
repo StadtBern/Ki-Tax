@@ -1,9 +1,5 @@
 package ch.dvbern.ebegu.vorlagen.nichteintreten;
 
-import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
-
-import java.util.List;
-
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
  * <p>
