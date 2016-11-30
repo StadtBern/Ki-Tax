@@ -78,7 +78,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     private save(form: angular.IFormController): IPromise<void> {
         if (form.$valid) {
-
+            //todo team refactoren so dass nur eine resource methode aufgerufen wird (fuer transaktionssicherzheit)
             if (!form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately

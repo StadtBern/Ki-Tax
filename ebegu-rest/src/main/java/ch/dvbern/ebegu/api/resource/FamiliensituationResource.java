@@ -57,9 +57,11 @@ public class FamiliensituationResource {
 		if (gesuch.isPresent()) {
 			Familiensituation oldData = new Familiensituation();
 			Familiensituation familiensituationToMerge = new Familiensituation();
+			//wenn es sich um ein update handelt
 			if (familiensituationJAXP.getId() != null) {
 				Optional<Familiensituation> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationJAXP.getId());
 				familiensituationToMerge = loadedFamiliensituation.orElse(new Familiensituation());
+				//wenn mutation dann alte daten = bisherige daten
 				if (AntragTyp.MUTATION.equals(gesuch.get().getTyp())) {
 					oldData = gesuch.get().getFamiliensituationErstgesuch();
 				}
