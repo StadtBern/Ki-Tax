@@ -82,13 +82,11 @@
                     <button type="button" class=" btn-link" ng-click="vm.openMahnungPDF(mahn)">
                         <span data-translate="MAHNUNG_DETAIL"
                               data-translate-value-mahnung-typ="{{mahn.mahnungTyp | translate}}"
-                              data-translate-value-date="{{mahn.timestampErstellt | amDateFormat : 'DD.MM.YYYY'}}"></span>
+                              data-translate-value-date="{{mahn.timestampErstellt | amDateFormat : 'DD.MM.YYYY'}}"
+                              data-translate-value-fristablauf="{{mahn.datumFristablauf | amDateFormat : 'DD.MM.YYYY'}}"></span>
                         <span ng-if="!mahn.active" data-translate="MAHNUNG_ABGESCHLOSSEN"></span>
-                        <span ng-if="mahn.active && !vm.isFristAbgelaufen(mahn)"
-                              data-translate="MAHNUNG_OFFEN"
-                              data-translate-value-date="{{mahn.datumFristablauf | amDateFormat : 'DD.MM.YYYY'}}"></span>
-                        <span ng-if="mahn.active && vm.isFristAbgelaufen(mahn)"
-                              data-translate="MAHNUNG_NICHT_EINGETRETEN"></span>
+                        <span ng-if="mahn.active && !vm.isFristAbgelaufen(mahn)" data-translate="MAHNUNG_OFFEN"></span>
+                        <span ng-if="mahn.active && vm.isFristAbgelaufen(mahn)" data-translate="MAHNUNG_NICHT_EINGETRETEN"></span>
                     </button>
                 </div>
             </div>
