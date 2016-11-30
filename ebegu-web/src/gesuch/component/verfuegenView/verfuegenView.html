@@ -6,14 +6,15 @@
                 <!-- Abzuege -->
                 <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                      dv-show-expression="vm.showVerfuegungsDetails()">
-                    <div class="row marginTop20">
+                    <div class="row viewTitle">
                         <div class="col-md-12">
-                        <span data-translate="AUFGRUND_FIN_SITUATION"
-                              data-translate-value-jahr="{{vm.gesuchModelManager.getBasisjahr()}}"></span>
+                            <h2 data-translate="AUFGRUND_FIN_SITUATION"
+                                data-translate-value-jahr="{{vm.gesuchModelManager.getBasisjahr()}}"></h2>
+                            <hr class="header"/>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-8 form-group">
+                    <div class="row marginBottom10">
+                        <div class=" col-xs-12 dv-input-container-small form-group">
                             <label class="md-no-float"
                                    data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                    for="finSitEinkommen_ID"></label>
@@ -84,12 +85,14 @@
                 <!-- Status -->
                 <div class="row">
                     <div class="col-md-12">
-                    <span class="betreuung-status ng-class:betreuung.betreuungsstatus;"
+                        <div class="betreuung-status verfuegenView ng-class:vm.getBetreuungsstatus();">
+                            <div
                           ng-bind="vm.getBetreuungsstatus() | translate">
-                    </span>
+                    </div>
+                            <span class="betreuung-bar"></span>
+                        </div>
                     </div>
                 </div>
-                <br>
 
                 <!-- Tabelle -->
                 <div class="row" ng-if="vm.showVerfuegungsDetails()">
@@ -153,7 +156,7 @@
                 </div>
 
                 <!--VerfuegungPDF anzeigen-->
-                <div class="row marginTop20 text-left" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                <div class="row marginTop20 text-left" >
                     <div class="col-md-4" ng-if="vm.showVerfuegungPdfLink()">
                         <i class="fa fa-file-text-o"></i>
                         <button type="button" class="btn-link"

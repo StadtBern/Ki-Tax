@@ -48,7 +48,6 @@ public class PendenzResource {
 		Collection<Gesuch> gesucheList = gesuchService.getAllActiveGesuche();
 
 		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
-		// todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
 		gesucheList.stream().filter(gesuch -> gesuch.getFall() != null)
 			.forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch)));
 		return pendenzenList;

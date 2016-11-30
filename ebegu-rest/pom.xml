@@ -307,6 +307,7 @@
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
             <version>2.1.0</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <artifactId>xercesImpl</artifactId>

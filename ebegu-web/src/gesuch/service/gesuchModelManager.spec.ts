@@ -23,6 +23,8 @@ import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import IPromise = angular.IPromise;
+import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 
 describe('gesuchModelManager', function () {
 
@@ -450,6 +452,46 @@ describe('gesuchModelManager', function () {
 
                 expect(gesuchRS.findGesuch).toHaveBeenCalledWith(gesuch.id);
                 expect(gesuchModelManager.getGesuch()).toEqual(gesuch);
+            });
+        });
+        describe('areThereOnlySchulamtAngebote', function () {
+            it('should be true if only Schulamtangebote', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false);
+                createKindContainer();
+                gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
+                gesuchModelManager.createBetreuung();
+                gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+                let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
+                institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.TAGESSCHULE;
+                gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+
+                expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(true);
+            });
+            it('should be false if not only Schulamtangebote', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false);
+                createKindContainer();
+                gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
+                gesuchModelManager.createBetreuung();
+                gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+                let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
+                institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.KITA;
+                gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+
+                expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
+            });
+            it('should be false if there are no Betreuungen or Kinds', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false);
+                // createKindContainer();
+                // gesuchModelManager.createBetreuung();
+                // gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+                // let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
+                // institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.KITA;
+                // gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+
+                expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
             });
         });
     });
