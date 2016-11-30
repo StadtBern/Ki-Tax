@@ -58,6 +58,9 @@ eingangsdatum.row-status {
         &.disabled-row, &.disabled-row:hover {
             background: @contrast;
             cursor: text;
+            & > td {
+                border-color: @contrast-dark;
+            }
         }
     }
 }
