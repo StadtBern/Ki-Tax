@@ -1,21 +1,22 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.rechner.AbstractBGRechner;
 import ch.dvbern.ebegu.rechner.BGRechnerFactory;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.initalizer.RestanspruchInitializer;
+import ch.dvbern.ebegu.rules.util.BemerkungsMerger;
 import ch.dvbern.ebegu.util.BetreuungComparator;
 import ch.dvbern.ebegu.util.Constants;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -110,13 +111,13 @@ public class BetreuungsgutscheinEvaluator {
 
 				if (!betreuung.getBetreuungsangebotTyp().isSchulamt()) {
 
-					if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
-						// Verfuegte Betreuungen duerfen nicht neu berechnet werden
-						LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
-						// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
-						restanspruchZeitabschnitte = getRestanspruchForVerfuegteBetreung(betreuung);
-						continue;
-					}
+				if (betreuung.getBetreuungsstatus() != null && betreuung.getBetreuungsstatus().isGeschlossen()) {
+					// Verfuegte Betreuungen duerfen nicht neu berechnet werden
+					LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
+					// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
+					restanspruchZeitabschnitte = getRestanspruchForVerfuegteBetreung(betreuung);
+					continue;
+				}
 
 					// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
 					List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
@@ -148,19 +149,17 @@ public class BetreuungsgutscheinEvaluator {
 						verfuegung.setBetreuung(betreuung);
 					}
 
-					// Den richtigen Rechner anwerfen
-					AbstractBGRechner rechner = BGRechnerFactory.getRechner(betreuung);
-					if (rechner != null) {
-						for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
-							rechner.calculate(verfuegungZeitabschnitt, betreuung.getVerfuegung(), bgRechnerParameterDTO);
-						}
+				// Den richtigen Rechner anwerfen
+				AbstractBGRechner rechner = BGRechnerFactory.getRechner(betreuung);
+				if (rechner != null) {
+					for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
+						rechner.calculate(verfuegungZeitabschnitt, betreuung.getVerfuegung(), bgRechnerParameterDTO);
 					}
-					// Und die Resultate in die Verfügung schreiben
-					betreuung.getVerfuegung().setZeitabschnitte(zeitabschnitte);
-					Set<String> bemerkungenOfAbschnitte = zeitabschnitte.stream()
-						.map(VerfuegungZeitabschnitt::getBemerkungen)
-						.filter(s -> !StringUtils.isEmpty(s)).collect(Collectors.toSet());
-					betreuung.getVerfuegung().setGeneratedBemerkungen(String.join(";\n", bemerkungenOfAbschnitte));
+				}
+				// Und die Resultate in die Verfügung schreiben
+				betreuung.getVerfuegung().setZeitabschnitte(zeitabschnitte);
+				String bemerkungenToShow = BemerkungsMerger.evaluateBemerkungenForVerfuegung(zeitabschnitte);
+				betreuung.getVerfuegung().setGeneratedBemerkungen(bemerkungenToShow);
 
 					// Ueberpruefen, ob sich die Verfuegungsdaten veraendert haben
 					betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung, gesuchForMutaion));
