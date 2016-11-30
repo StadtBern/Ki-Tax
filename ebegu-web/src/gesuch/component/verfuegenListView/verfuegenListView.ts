@@ -271,6 +271,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         // Auf die zweite Mahnung wurde nicht reagiert. Den Status des Gesuchs wieder auf IN_BEARBEITUNG setzen
         // damit die Betreuungen auf NICHT_EINGETRETEN verfügt werden können. Die Mahnungen bleiben aber offen!
         this.setGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA);
+        this.mahnungRS.mahnlaufBeenden(this.getGesuch()).then(any => {
+            this.mahnungRS.findMahnungen(this.getGesuch().id).then(reloadedMahnungen => {
+                this.mahnungList = reloadedMahnungen;
+            });
+        });
     }
 
     /**
