@@ -5,6 +5,7 @@
                 <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.getGesuchstellerNumber()}}
             </h1>
             <hr class="header"/>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
         </div>
     </div>
     <div class="row">
@@ -14,7 +15,6 @@
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                           dv-enable-expression="!vm.isGesuchReadonly()">
-                    <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
                     <!--Geschlecht-->
                     <div class="row">
                         <div class="col-sm-12">

@@ -495,7 +495,7 @@ export class IEinkommensverschlechterungResultateStateParams implements IStatePa
 // FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
 getMahnungen.$inject = ['MahnungRS', '$stateParams', '$q', '$log'];
 /* @ngInject */
-export function getMahnungen($stateParams: IGesuchStateParams, MahnungRS: MahnungRS, $q: IQService, $log: ILogService) {
+export function getMahnungen(MahnungRS: MahnungRS, $stateParams: IGesuchStateParams, $q: IQService, $log: ILogService) {
     // return [];
     if ($stateParams) {
         let gesuchIdParam = $stateParams.gesuchId;
