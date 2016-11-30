@@ -370,6 +370,13 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 			.toString();
 	}
 
+	public String toRangeString() {
+		String gueltigAbString = Constants.DATE_FORMATTER.format(gueltigAb);
+		String gueltigBisString = Constants.DATE_FORMATTER.format(gueltigBis);
+		return gueltigAbString + " - " + gueltigBisString;
+
+	}
+
 	/**
 	 * Natural ordering: zuerst gueltigAb vergleichen, dann gueltigBis
 	 */
