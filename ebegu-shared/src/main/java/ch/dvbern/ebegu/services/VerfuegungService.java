@@ -6,14 +6,9 @@ import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 
 import javax.annotation.Nonnull;
-import javax.annotation.security.RolesAllowed;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
-
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service zum berechnen und speichern der Verfuegung
@@ -27,7 +22,6 @@ public interface VerfuegungService {
 	 * @param betreuungId Id der Betreuung auf die die verfuegung gespeichet werden soll
 	 */
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId);
 
 	/**
@@ -37,7 +31,6 @@ public interface VerfuegungService {
 	 * @param betreuungId Id der Betreuung auf die die verfuegung gespeichet werden soll
 	 */
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	Verfuegung nichtEintreten(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId);
 
 	/**
