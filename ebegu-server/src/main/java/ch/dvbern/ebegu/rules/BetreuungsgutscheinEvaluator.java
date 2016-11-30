@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.rechner.AbstractBGRechner;
 import ch.dvbern.ebegu.rechner.BGRechnerFactory;
@@ -110,13 +109,13 @@ public class BetreuungsgutscheinEvaluator {
 
 				if (!betreuung.getBetreuungsangebotTyp().isSchulamt()) {
 
-					if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
-						// Verfuegte Betreuungen duerfen nicht neu berechnet werden
-						LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
-						// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
-						restanspruchZeitabschnitte = getRestanspruchForVerfuegteBetreung(betreuung);
-						continue;
-					}
+				if (betreuung.getBetreuungsstatus() != null && betreuung.getBetreuungsstatus().isGeschlossen()) {
+					// Verfuegte Betreuungen duerfen nicht neu berechnet werden
+					LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
+					// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
+					restanspruchZeitabschnitte = getRestanspruchForVerfuegteBetreung(betreuung);
+					continue;
+				}
 
 					// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
 					List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;

@@ -64,9 +64,4 @@ public interface BetreuungService {
 	@Nonnull
 	Betreuung schliessenOhneVerfuegen(@Nonnull Betreuung betreuung);
 
-	/**
-	 * Schliesst die Betreuung mit Status NICHT_EINGETRETEN.
-     */
-	@Nonnull
-	Betreuung nichtEintreten(@Nonnull Betreuung betreuung);
 }

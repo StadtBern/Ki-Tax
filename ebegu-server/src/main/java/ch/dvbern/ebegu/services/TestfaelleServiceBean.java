@@ -295,7 +295,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			verfuegungService.calculateVerfuegung(gesuch);
 			gesuch.getKindContainers().stream().forEach(kindContainer -> {
 				kindContainer.getBetreuungen().stream().forEach(betreuung -> {
-					verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId());
+					verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT);
 				});
 			});
 		}
