@@ -37,6 +37,7 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		// Kinder
 		KindContainer kind = createKind(Geschlecht.MAENNLICH, "Wälti", "Simon", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, true);
 		kind.setGesuch(gesuch);
+		kind.setKindGS(kind.getKindJA());
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
 		// Kita Aaregg
@@ -60,6 +61,7 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		finanzielleSituationContainer.getFinanzielleSituationJA().setBruttovermoegen(MathUtil.DEFAULT.from(12147));
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
+
 		return gesuch;
 	}
 

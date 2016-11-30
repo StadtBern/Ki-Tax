@@ -8,9 +8,11 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.Rule;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,10 +65,16 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
 
 	@Inject
+	private PDFService pdfService;
+
+	@Inject
 	private VerfuegungService verfuegungService;
 
 	@Inject
 	private MandantService mandantService;
+
+	@Inject
+	private MahnungService mahnungService;
 
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
@@ -91,20 +99,26 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Override
 	@Nullable
 	public GeneratedDokument findGeneratedDokument(String gesuchId, String filename, String path) {
+
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<GeneratedDokument> query = cb.createQuery(GeneratedDokument.class);
 		Root<GeneratedDokument> root = query.from(GeneratedDokument.class);
+
+		path = path.replace("\\", "\\\\"); //dirty fix fuer windows pfad mit backslash
+
 		Predicate predGesuch = cb.equal(root.get(GeneratedDokument_.gesuch).get(Gesuch_.id), gesuchId);
 		Predicate predFileName = cb.equal(root.get(GeneratedDokument_.filename), filename);
 		Predicate predPath = cb.like(root.get(GeneratedDokument_.filepfad), path + "%");
 
 		query.where(predGesuch, predFileName, predPath);
 		return persistence.getCriteriaSingleResult(query);
+
 	}
 
 	/**
 	 * Sucht ein GeneratedDokument mit demselben Namen und Pfad und vom selben Gesuch. Wen das Dokument existiert, wird dieses gelöscht
 	 * und mit dem Neuen ersetzt. Wenn es nicht existiert, ein neues wird erstellt.
+	 *
 	 * @param dokumentTyp
 	 * @param gesuch
 	 * @param fileName
@@ -113,16 +127,23 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Nonnull
 	@Override
 	public GeneratedDokument updateGeneratedDokument(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName) throws MimeTypeParseException {
-		final UploadFileInfo savedDokument = fileSaverService.save(data,
-			fileName, gesuch.getId());
-		String filePathToRemove = null;
 
 		GeneratedDokument generatedDokument = this.findGeneratedDokument(gesuch.getId(),
-			savedDokument.getFilename(), savedDokument.getPathWithoutFileName());
+			fileName, ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+
+		return updateGeneratedDokument(generatedDokument, data, dokumentTyp, gesuch, fileName);
+	}
+
+	private GeneratedDokument updateGeneratedDokument(GeneratedDokument generatedDokument, byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName) throws MimeTypeParseException {
+
+		final UploadFileInfo savedDokument = fileSaverService.save(data,
+			fileName, gesuch.getId());
+
+		String filePathToRemove = null;
+
 		if (generatedDokument == null) {
 			generatedDokument = new GeneratedDokument();
-		}
-		else {
+		} else {
 			//Die Datei wird am Ende geloscht, um unvollstaenige Daten zu vermeiden falls was kaputt geht
 			filePathToRemove = generatedDokument.getFilepfad();
 		}
@@ -166,7 +187,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 			} else {
-				LOG.warn("Unerwarter Dokumenttyp " +dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
+				LOG.warn("Unerwarter Dokumenttyp " + dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
 				return null;
 			}
 
@@ -235,7 +256,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				final byte[] verfuegungsPDF;
 				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
 				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
-				verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum );
+				verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum);
 
 
 				final String fileNameForDocTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
@@ -249,5 +270,77 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			}
 		}
 		return persistedDokument;
+	}
+
+	@Override
+	public GeneratedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung, Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException {
+
+		Gesuch gesuch = mahnung.getGesuch();
+		Mahnung mahnungDB = persistence.find(Mahnung.class, mahnung.getId());
+		GeneratedDokumentTyp dokumentTyp = mahnungDB == null ? GeneratedDokumentTyp.MAHNUNG_VORSCHAU : GeneratedDokumentTyp.MAHNUNG;
+
+		final String previewNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.MAHNUNG_VORSCHAU, StringUtils.EMPTY);
+
+		final String fileNameForGeneratedDokumentTyp = mahnungDB == null ?
+			previewNameForGeneratedDokumentTyp :
+			DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.MAHNUNG,
+				Constants.FILENAME_DATE_TIME_FORMATTER.format(mahnungDB.getTimestampErstellt()));
+
+		//überprufen ob ein Vorschau existiert
+		GeneratedDokument vorschauDokument = findGeneratedDokument(gesuch.getId(), previewNameForGeneratedDokumentTyp,
+			ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+
+		//überprufen ob die Mahnung existiert
+		GeneratedDokument persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
+			ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+
+		// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+		if (persistedDokument == null || dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU || forceCreation) {
+
+			Optional<Mahnung> vorgaengerMahnung = null;
+
+			if (mahnung.hasVorgaenger()) {
+				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
+			}
+
+			byte[] data = pdfService.printMahnung(mahnung, vorgaengerMahnung);
+
+			persistedDokument = vorschauDokument == null ?
+				updateGeneratedDokument(data, dokumentTyp, gesuch,
+					fileNameForGeneratedDokumentTyp) :
+				updateGeneratedDokument(vorschauDokument, data, dokumentTyp, gesuch,
+					fileNameForGeneratedDokumentTyp);
+
+		}
+		return persistedDokument;
+
+	}
+
+	@Override
+	public GeneratedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung, Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException {
+
+		Gesuch gesuch = betreuung.extractGesuch();
+		GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.NICHTEINTRETEN;
+
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, betreuung.getBGNummer());
+
+		GeneratedDokument persistedDokument = null;
+
+		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
+				ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+		}
+
+		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
+			|| persistedDokument == null) {
+			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+
+			byte[] data = pdfService.generateNichteintreten(betreuung);
+
+			persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
+				fileNameForGeneratedDokumentTyp);
+		}
+		return persistedDokument;
+
 	}
 }

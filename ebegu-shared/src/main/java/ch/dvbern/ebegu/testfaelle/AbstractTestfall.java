@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.types.DateRange;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +23,6 @@ public abstract class AbstractTestfall {
 	public static final String ID_INSTITUTION_AAREGG = "11111111-1111-1111-1111-111111111101";
 	public static final String ID_INSTITUTION_BRUENNEN = "11111111-1111-1111-1111-111111111107";
 	public static final String ID_INSTITUTION_AAREGG_TAGI = "11111111-1111-1111-1111-111111111174";
-
 
 
 	protected Gesuchsperiode gesuchsperiode;
@@ -48,6 +48,7 @@ public abstract class AbstractTestfall {
 	public Fall createFall(Benutzer verantwortlicher) {
 		fall = new Fall();
 		fall.setVerantwortlicher(verantwortlicher);
+		fall.setTimestampErstellt(LocalDateTime.now().minusDays(7));
 		return fall;
 	}
 

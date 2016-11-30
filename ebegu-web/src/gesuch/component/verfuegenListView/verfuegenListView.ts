@@ -143,7 +143,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         return undefined;
     }
 
-    public getGesuchsperiode() : TSGesuchsperiode {
+    public getGesuchsperiode(): TSGesuchsperiode {
         if (this.gesuchModelManager) {
             return this.gesuchModelManager.getGesuchsperiode();
         }
@@ -323,8 +323,15 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
             });
     }
 
-    public openMahnungPDF(mahnung : TSMahnung): void {
-        window.alert('Not yet implemented');
+    public openMahnungPDF(mahnung: TSMahnung): void {
+        if (mahnung == null)
+            mahnung = this.mahnung;
+
+        this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnung, false)
+            .then((downloadFile: TSDownloadFile) => {
+                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+            });
     }
 
     private createNeededPDFs(): IPromise<TSDownloadFile> {
