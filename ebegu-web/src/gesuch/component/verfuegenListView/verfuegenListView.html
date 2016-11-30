@@ -84,10 +84,10 @@
                               data-translate-value-mahnung-typ="{{mahn.mahnungTyp | translate}}"
                               data-translate-value-date="{{mahn.timestampErstellt | amDateFormat : 'DD.MM.YYYY'}}"></span>
                         <span ng-if="!mahn.active" data-translate="MAHNUNG_ABGESCHLOSSEN"></span>
-                        <span ng-if="mahn.active && !(vm.isGesuchInStatus('ERSTE_MAHNUNG_ABGELAUFEN') || vm.isGesuchInStatus('ZWEITE_MAHNUNG_ABGELAUFEN'))"
+                        <span ng-if="mahn.active && !vm.isFristAbgelaufen(mahn)"
                               data-translate="MAHNUNG_OFFEN"
                               data-translate-value-date="{{mahn.datumFristablauf | amDateFormat : 'DD.MM.YYYY'}}"></span>
-                        <span ng-if="mahn.active && (vm.isGesuchInStatus('ERSTE_MAHNUNG_ABGELAUFEN') || vm.isGesuchInStatus('ZWEITE_MAHNUNG_ABGELAUFEN'))"
+                        <span ng-if="mahn.active && vm.isFristAbgelaufen(mahn)"
                               data-translate="MAHNUNG_NICHT_EINGETRETEN"></span>
                     </button>
                 </div>

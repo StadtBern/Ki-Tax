@@ -127,7 +127,6 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		Predicate predicateAbgelaufen = cb.lessThan(root.get(Mahnung_.datumFristablauf), LocalDate.now());
 		query.where(predicateAktiv, predicateAbgelaufen);
 
-
 		query.select(root.get(Mahnung_.gesuch));
 		List<Gesuch> gesucheMitAbgelaufenenMahnungen = persistence.getCriteriaResults(query);
 		for (Gesuch gesuch : gesucheMitAbgelaufenenMahnungen) {
@@ -135,10 +134,6 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 				gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN);
 			} else if (AntragStatus.ZWEITE_MAHNUNG.equals(gesuch.getStatus()) || AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN.equals(gesuch.getStatus())) {
 				gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
-			} else {
-				if (!(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN.equals(gesuch.getStatus()) || AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN.equals(gesuch.getStatus()))) {
-					throw new IllegalArgumentException("Mahnung abgelaufen fuer ein Gesuch, welches nicht im Status MAHNUNG war");
-				}
 			}
 			gesuchService.updateGesuch(gesuch, true);
 		}
