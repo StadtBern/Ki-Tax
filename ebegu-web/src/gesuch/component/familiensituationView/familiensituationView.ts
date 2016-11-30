@@ -72,23 +72,26 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     public confirmAndSave(form: angular.IFormController): IPromise<TSFamiliensituation> {
-        if (this.isConfirmationRequired()) {
-            let descriptionText: any = this.$translate.instant('FAMILIENSITUATION_WARNING_BESCHREIBUNG', {
-                gsfullname: this.gesuchModelManager.getGesuch().gesuchsteller2 ? this.gesuchModelManager.getGesuch().gesuchsteller2.getFullName() : ''
-            });
-            return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-                title: 'FAMILIENSITUATION_WARNING',
-                deleteText: descriptionText
-            }).then(() => {   //User confirmed changes
+        this.savedClicked = true;
+        if (!this.hasError()) {
+            if (this.isConfirmationRequired()) {
+                let descriptionText: any = this.$translate.instant('FAMILIENSITUATION_WARNING_BESCHREIBUNG', {
+                    gsfullname: this.gesuchModelManager.getGesuch().gesuchsteller2 ? this.gesuchModelManager.getGesuch().gesuchsteller2.getFullName() : ''
+                });
+                return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                    title: 'FAMILIENSITUATION_WARNING',
+                    deleteText: descriptionText
+                }).then(() => {   //User confirmed changes
+                    return this.save(form);
+                });
+            } else {
                 return this.save(form);
-            });
-        } else {
-            return this.save(form);
+            }
         }
+        return undefined;
     }
 
     private save(form: angular.IFormController): IPromise<TSFamiliensituation> {
-        this.savedClicked = true;
         if (form.$valid && !this.hasEmptyAenderungPer() && !this.hasError()) {
             if (!form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
@@ -124,8 +127,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
      * @returns {boolean}
      */
     private isConfirmationRequired(): boolean {
-        return ((!this.isMutation() && this.checkChanged2To1GS())) ||
-            (this.isMutation() && this.checkChanged2To1GS() && !this.gesuchModelManager.getGesuch().gesuchsteller2.vorgaengerId );
+        return this.checkChanged2To1GS();
     }
 
     private checkChanged2To1GS() {
@@ -155,7 +157,8 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     public hasEmptyAenderungPer(): boolean {
-        if (this.isMutation() && !this.getFamiliensituation().aenderungPer && !this.getFamiliensituationErstgesuch().isSameFamiliensituation(this.getFamiliensituation())) {
+        if (this.isMutation() && !this.getFamiliensituation().aenderungPer
+            && !this.getFamiliensituationErstgesuch().isSameFamiliensituation(this.getFamiliensituation())) {
             return true;
         }
         return false;
@@ -166,7 +169,8 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     public hasError(): boolean {
-        if (this.isMutation() && this.getFamiliensituation().aenderungPer && this.getFamiliensituationErstgesuch().isSameFamiliensituation(this.getFamiliensituation())) {
+        if (this.isMutation() && this.getFamiliensituation().aenderungPer
+            && this.getFamiliensituationErstgesuch().isSameFamiliensituation(this.getFamiliensituation())) {
             return true;
         }
         return false;
