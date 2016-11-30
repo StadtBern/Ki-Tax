@@ -29,7 +29,7 @@ public enum AntragStatus {
 	private static final Set<AntragStatus> forSachbearbeiterInstitutionRole = EnumSet.range(IN_BEARBEITUNG_GS, VERFUEGT);
 	private static final Set<AntragStatus> forSachbearbeiterTraegerschaftRole = forSachbearbeiterInstitutionRole;
     private static final Set<AntragStatus> forSachbearbeiterJugendamtRole = forAdminRole;
-    private static final Set<AntragStatus> forSchulamtRole = forAdminRole;
+    private static final Set<AntragStatus> forSchulamtRole = EnumSet.range(NUR_SCHULAMT, VERFUEGT);
     private static final Set<AntragStatus> forJuristRole = forSachbearbeiterJugendamtRole;
     private static final Set<AntragStatus> forRevisorRole = forAdminRole;
 

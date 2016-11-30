@@ -198,13 +198,13 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
             });
     }
 
-    public verfuegungNichtEintreten(): IPromise<void> {
+    public verfuegungNichtEintreten(): IPromise<TSVerfuegung> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_CLOSE_VERFUEGUNG_NICHT_EINTRETEN',
             deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_NICHT_EINTRETEN'
         }).then(() => {
             this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
-            this.gesuchModelManager.verfuegungSchliessenNichtEintreten();
+            return this.gesuchModelManager.verfuegungSchliessenNichtEintreten();
         });
     }
 

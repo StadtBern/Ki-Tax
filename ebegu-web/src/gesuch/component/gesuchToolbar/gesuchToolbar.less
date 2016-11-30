@@ -162,10 +162,17 @@
 }
 
 .gesuch-toolbar-gesuchsteller {
-    .gesuchName {
+    .gesuchName > span {
         .bold();
         font-size: 1.6rem;
+        white-space: nowrap;
     }
+    .gesuchName {
+        width: 1rem;
+        overflow: visible;
+        white-space: nowrap;
+    }
+
     span {
         .menu-item-link();
         background: none;

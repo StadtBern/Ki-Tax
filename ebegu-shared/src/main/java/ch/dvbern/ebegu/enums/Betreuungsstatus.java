@@ -9,7 +9,8 @@ import java.util.Set;
  */
 public enum Betreuungsstatus {
 
-	AUSSTEHEND,
+	@Deprecated //wir glauben das gibts gar nicht mehr
+		AUSSTEHEND,
 	WARTEN,
 	SCHULAMT,
 	ABGEWIESEN,
@@ -22,12 +23,12 @@ public enum Betreuungsstatus {
 	private static final Set<Betreuungsstatus> all = EnumSet.allOf(Betreuungsstatus.class);
 	private static final Set<Betreuungsstatus> none = EnumSet.noneOf(Betreuungsstatus.class);
 
-	private static final Set<Betreuungsstatus> forSachbearbeiterInstitutionRole = EnumSet.of(WARTEN, VERFUEGT, BESTAETIGT, ABGEWIESEN);
+	private static final Set<Betreuungsstatus> forSachbearbeiterInstitutionRole = EnumSet.of(WARTEN, VERFUEGT, BESTAETIGT, ABGEWIESEN, NICHT_EINGETRETEN, GEKUENDIGT_VOR_EINTRITT, GESCHLOSSEN_OHNE_VERFUEGUNG);
 	private static final Set<Betreuungsstatus> forSachbearbeiterTraegerschaftRole = forSachbearbeiterInstitutionRole;
 
 
 	public boolean isGeschlossen() {
-		return VERFUEGT.equals(this) || GESCHLOSSEN_OHNE_VERFUEGUNG.equals(this);
+		return VERFUEGT.equals(this) || GESCHLOSSEN_OHNE_VERFUEGUNG.equals(this) || NICHT_EINGETRETEN.equals(this);
 	}
 
 	@SuppressWarnings("Duplicates")

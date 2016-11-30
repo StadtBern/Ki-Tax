@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.converter;
 
 import ch.dvbern.ebegu.api.dtos.*;
+import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
@@ -1851,7 +1852,38 @@ public class JaxBConverter {
 
 	}
 
+	/**
+	 * transformiert ein gesuch in ein JaxAntragDTO unter beruecksichtigung der rollen und erlaubten institutionen
+	 */
+	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, UserRole userRole, Collection<Institution> allowedInst) {
+		//wir koennen nicht mit den container auf dem gesuch arbeiten weil das gesuch attached ist. hibernate
+		//wuerde uns dann die kinder wegloeschen, daher besser transformieren
+		Collection<JaxKindContainer> jaxKindContainers = new ArrayList<>(gesuch.getKindContainers().size());
+		for (final KindContainer kind : gesuch.getKindContainers()) {
+			jaxKindContainers.add(kindContainerToJAX(kind));
+		}
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
+			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(jaxKindContainers, allowedInst);
+		}
+
+		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
+
+		antrag.setAngebote(createAngeboteList(jaxKindContainers));
+		antrag.setInstitutionen(createInstitutionenList(jaxKindContainers));
+
+		return antrag;
+	}
+
+
 	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch) {
+		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
+		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
+		antrag.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
+		return antrag;
+	}
+
+	@Nonnull
+	private JaxAntragDTO gesuchToAntragDTOBasic(Gesuch gesuch) {
 		JaxAntragDTO antrag = new JaxAntragDTO();
 		antrag.setAntragId(gesuch.getId());
 		antrag.setFallNummer(gesuch.getFall().getFallNummer());
@@ -1859,10 +1891,8 @@ public class JaxBConverter {
 		antrag.setEingangsdatum(gesuch.getEingangsdatum());
 		//todo team, hier das datum des letzten statusuebergangs verwenden?
 		antrag.setAenderungsdatum(gesuch.getTimestampMutiert());
-		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
 		antrag.setAntragTyp(gesuch.getTyp());
 		antrag.setStatus(AntragStatusConverterUtil.convertStatusToDTO(gesuch, gesuch.getStatus()));
-		antrag.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
 		antrag.setGesuchsperiodeGueltigAb(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
 		antrag.setGesuchsperiodeGueltigBis(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis());
 		if (gesuch.getFall().getVerantwortlicher() != null) {
@@ -1918,6 +1948,17 @@ public class JaxBConverter {
 		return resultSet;
 	}
 
+	private Set<BetreuungsangebotTyp> createAngeboteList(Collection<JaxKindContainer> jaxKindContainers) {
+
+		Set<BetreuungsangebotTyp> resultSet = new HashSet<>();
+		jaxKindContainers.forEach(kindContainer -> {
+			kindContainer.getBetreuungen().forEach(betreuung -> {
+				resultSet.add(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
+			});
+		});
+		return resultSet;
+	}
+
 	/**
 	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den Namen aller Institutionen zurueck.
 	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
@@ -1934,4 +1975,15 @@ public class JaxBConverter {
 		return resultSet;
 	}
 
+	private Set<String> createInstitutionenList(Collection<JaxKindContainer> jaxKindContainers) {
+		Set<String> resultSet = new HashSet<>();
+		jaxKindContainers.forEach(kindContainer -> {
+			kindContainer.getBetreuungen().forEach(betreuung -> {
+				if (betreuung.getInstitutionStammdaten() != null && betreuung.getInstitutionStammdaten().getInstitution() != null) {
+					resultSet.add(betreuung.getInstitutionStammdaten().getInstitution().getName());
+				}
+			});
+		});
+		return resultSet;
+	}
 }

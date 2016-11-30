@@ -135,7 +135,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertNull(gesuchForInstitution.getGesuchsteller2()); //GS2 ist von Anfang an nicht gesetzt
 
 		Assert.assertNotNull(gesuchForInstitution.getKindContainers());
-		Assert.assertEquals(0, gesuchForInstitution.getKindContainers().size());
+		Assert.assertEquals(1, gesuchForInstitution.getKindContainers().size());
 	}
 
 	@Test

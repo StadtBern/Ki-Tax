@@ -135,15 +135,6 @@ public class InstitutionResource {
 			.collect(Collectors.toList());
 	}
 
-	@Nonnull
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxInstitution> getAllFachstellen() {
-		return institutionService.getAllInstitutionen().stream()
-			.map(institution -> converter.institutionToJAX(institution))
-			.collect(Collectors.toList());
-	}
 
 
 	@ApiOperation(value = "Find and return a list of all Institutionen")

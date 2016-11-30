@@ -1,5 +1,5 @@
 <div class="dvb-error-messages-panel" uib-collapse="vm.errors.length === 0">
-    <div class="container floating-text">
+    <div class="container">
         <i ng-show="vm.errors.length > 0" class="alarm-icon fa fa-exclamation-circle"></i>
         <div>
             <div ng-repeat="error in vm.errors | orderBy:'severity'">
