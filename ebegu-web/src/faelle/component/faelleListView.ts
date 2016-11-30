@@ -69,6 +69,8 @@ export class FaelleListViewController {
     public editFall(antrag: TSAntragDTO): void {
         if (antrag) {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+                // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
+                this.gesuchModelManager.clearGesuch();
                 if (antrag.status === TSAntragStatus.VERFUEGT) {
                     this.openGesuch(antrag.antragId, 'gesuch.verfuegen');
                 } else {

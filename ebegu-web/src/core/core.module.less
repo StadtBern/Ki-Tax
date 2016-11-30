@@ -100,6 +100,9 @@
     .marginTop50 {
         margin-top: 5rem;
     }
+    .marginBottom10 {
+        margin-bottom: 1rem;
+    }
     .marginBottom20 {
         margin-bottom: 2rem;
     }
@@ -113,7 +116,9 @@
         .form-control.ng-untouched ~ dv-error-messages > .dv-error-messages > .error,
         .input-element.ng-untouched ~ dv-error-messages > .dv-error-messages > .error,
         .form-group.ng-untouched ~ dv-error-messages > .dv-error-messages > .error,
-        .md-input-container.ng-untouched ~ dv-error-messages > .dv-error-messages > .error {
+        .md-input-container.ng-untouched ~ dv-error-messages > .dv-error-messages > .error,
+        .input-element.ng-untouched ~ .dv-error-messages > .error,
+        input[type="text"].ng-untouched ~ .dv-error-messages > .error {
             display: none;
         }
 
