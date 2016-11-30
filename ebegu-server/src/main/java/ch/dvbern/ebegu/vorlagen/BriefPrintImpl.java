@@ -19,10 +19,14 @@ import java.time.LocalDate;
  */
 public class BriefPrintImpl implements BriefPrint {
 
-	private Gesuch gesuch;
+	protected Gesuch gesuch;
 
 	public BriefPrintImpl(Gesuch gesuch){
 		this.gesuch = gesuch;
+	}
+
+	public Gesuch getGesuch() {
+		return gesuch;
 	}
 
 	@Override
@@ -61,6 +65,6 @@ public class BriefPrintImpl implements BriefPrint {
 
 	@Override
 	public String getUnterzeichner() {
-		return gesuch.getUserMutiert();
+		return gesuch.getFall().getVerantwortlicher().getFullName();
 	}
 }

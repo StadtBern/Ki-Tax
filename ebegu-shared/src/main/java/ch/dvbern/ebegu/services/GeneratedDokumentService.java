@@ -40,4 +40,8 @@ public interface GeneratedDokumentService {
 
 	GeneratedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung,
 																		Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
+
+	GeneratedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung,
+																	   Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
+
 }

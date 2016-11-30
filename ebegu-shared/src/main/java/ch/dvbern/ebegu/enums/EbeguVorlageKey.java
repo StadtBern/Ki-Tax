@@ -18,7 +18,7 @@ public enum EbeguVorlageKey {
 	VORLAGE_NICHT_EINTRETENSVERFUEGUNG("/vorlagen/Nichteintretensverfuegung.docx"),
 
 	// Vorlage fuer Nicht-Eintreten bei Schulkindern
-	VORLAGE_INFOSCHREIBEN_MAXIMALTARIF("/vorlagen/Infoschreiben Maxtarif.docx"),
+	VORLAGE_INFOSCHREIBEN_MAXIMALTARIF("/vorlagen/Infoschreiben_Maxtarif.docx"),
 
 	// Verfügung des Angebots Tageseltern Kleinkinder
 	VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER("/vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx"),

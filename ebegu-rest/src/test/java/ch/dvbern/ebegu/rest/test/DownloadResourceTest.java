@@ -119,6 +119,22 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.MAHNUNG);
 	}
 
+	@Test
+	public void getNichteintretenDokumentAccessTokenGeneratedDokumentTest() throws MergeDocException, IOException, DocTemplateException, MimeTypeParseException {
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
+
+		String betreuungID = gesuch.extractAllBetreuungen().get(0).getId();
+
+		HttpServletRequest request = mockRequest();
+		UriInfo uri = new ResteasyUriInfo("uri", "query", "path");
+
+		final Response dokumentResponse = downloadResource
+			.getNichteintretenDokumentAccessTokenGeneratedDokument(new JaxId(betreuungID), true, request, uri);
+
+		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.MAHNUNG);
+	}
+
 	// HELP METHODS
 
 	@Nonnull

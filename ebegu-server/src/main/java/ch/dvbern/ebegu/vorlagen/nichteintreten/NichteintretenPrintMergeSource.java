@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen.mahnung;
+package ch.dvbern.ebegu.vorlagen.nichteintreten;
 
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
@@ -18,32 +18,32 @@ import java.util.List;
  * <p>
  * Created by medu on 28/11/2016.
  */
-public class MahnungPrintMergeSource implements MergeSource {
+public class NichteintretenPrintMergeSource implements MergeSource {
 
-	private ManhungPrint mahnung;
+	private NichteintretenPrint nichteintreten;
 
-	public MahnungPrintMergeSource(ManhungPrint mahnung) {
-		this.mahnung = mahnung;
+	public NichteintretenPrintMergeSource(NichteintretenPrint nichteintreten) {
+		this.nichteintreten = nichteintreten;
 	}
 
 	@Override
 	public Object getData(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		if (key.startsWith("mahnung")) {
-			return new BeanMergeSource(mahnung, "mahnung.").getData(mergeContext, key);
+		if (key.startsWith("printMerge")) {
+			return new BeanMergeSource(nichteintreten, "printMerge.").getData(mergeContext, key);
 		}
 		return null;
 	}
 
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
-		return new BeanMergeSource(mahnung, "mahnung.").ifStatement(mergeContext, key);
+		return new BeanMergeSource(nichteintreten, "printMerge.").ifStatement(mergeContext, key);
 	}
 
 	@Override
 	public List<MergeSource> whileStatement(MergeContext mergeContext, String key) throws DocTemplateException {
-		if (key.startsWith("mahnung")) {
-			return new BeanMergeSource(mahnung, "mahnung.").whileStatement(mergeContext, key);
+		if (key.startsWith("printMerge")) {
+			return new BeanMergeSource(nichteintreten, "printMerge.").whileStatement(mergeContext, key);
 		}
 		return null;
 	}

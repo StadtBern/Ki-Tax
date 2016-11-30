@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.errors.MergeDocException;
 
@@ -17,7 +18,10 @@ import java.util.Optional;
 *
 * Ersteller: zeab am: 09.08.2016
 */
-public interface PrintMahnungPDFService {
+public interface PDFService {
+
+	@Nonnull
+	byte[] generateNichteintreten(Betreuung betreuung) throws MergeDocException;
 
 	@Nonnull
 	byte[] printMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) throws MergeDocException;

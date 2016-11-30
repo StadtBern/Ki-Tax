@@ -4,14 +4,15 @@ import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.Rule;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +65,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
 
 	@Inject
-	private	PrintMahnungPDFService mahnungPDFService;
+	private PDFService pdfService;
 
 	@Inject
 	private VerfuegungService verfuegungService;
@@ -98,15 +99,20 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Override
 	@Nullable
 	public GeneratedDokument findGeneratedDokument(String gesuchId, String filename, String path) {
+
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<GeneratedDokument> query = cb.createQuery(GeneratedDokument.class);
 		Root<GeneratedDokument> root = query.from(GeneratedDokument.class);
+
+		path = path.replace("\\", "\\\\"); //dirty fix für windows pfad mit backslash
+
 		Predicate predGesuch = cb.equal(root.get(GeneratedDokument_.gesuch).get(Gesuch_.id), gesuchId);
 		Predicate predFileName = cb.equal(root.get(GeneratedDokument_.filename), filename);
 		Predicate predPath = cb.like(root.get(GeneratedDokument_.filepfad), path + "%");
 
 		query.where(predGesuch, predFileName, predPath);
 		return persistence.getCriteriaSingleResult(query);
+
 	}
 
 	/**
@@ -120,12 +126,21 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Nonnull
 	@Override
 	public GeneratedDokument updateGeneratedDokument(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName) throws MimeTypeParseException {
-		final UploadFileInfo savedDokument = fileSaverService.save(data,
-			fileName, gesuch.getId());
-		String filePathToRemove = null;
 
 		GeneratedDokument generatedDokument = this.findGeneratedDokument(gesuch.getId(),
-			savedDokument.getFilename(), savedDokument.getPathWithoutFileName());
+			fileName, ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+
+		return updateGeneratedDokument(generatedDokument, data, dokumentTyp, gesuch, fileName);
+
+	}
+
+	private GeneratedDokument updateGeneratedDokument(GeneratedDokument generatedDokument, byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName) throws MimeTypeParseException {
+
+		final UploadFileInfo savedDokument = fileSaverService.save(data,
+			fileName, gesuch.getId());
+
+		String filePathToRemove = null;
+
 		if (generatedDokument == null) {
 			generatedDokument = new GeneratedDokument();
 		}
@@ -262,9 +277,56 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	public GeneratedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung, Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException {
 
 		Gesuch gesuch = mahnung.getGesuch();
-		GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.MAHNUNG;
+		Mahnung mahnungDB = persistence.find(Mahnung.class, mahnung.getId());
+		GeneratedDokumentTyp dokumentTyp = mahnungDB == null ? GeneratedDokumentTyp.MAHNUNG_VORSCHAU : GeneratedDokumentTyp.MAHNUNG;
 
-		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
+		final String previewNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.MAHNUNG_VORSCHAU, StringUtils.EMPTY);
+
+		final String fileNameForGeneratedDokumentTyp = mahnungDB == null ?
+			previewNameForGeneratedDokumentTyp :
+			DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.MAHNUNG,
+				Constants.FILENAME_DATE_TIME_FORMATTER.format(mahnungDB.getTimestampErstellt()));
+
+		GeneratedDokument vorschauDokument = null;
+		GeneratedDokument persistedDokument = null;
+
+		//überprufen ob ein Vorschau existiert
+		vorschauDokument = findGeneratedDokument(gesuch.getId(), previewNameForGeneratedDokumentTyp,
+			ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+
+		//überprufen ob die Mahnung existiert
+		if (persistedDokument == null)
+			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
+				ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+
+		// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+		if (persistedDokument == null || dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU || forceCreation) {
+
+			Optional<Mahnung> vorgaengerMahnung = null;
+
+			if (mahnung.hasVorgaenger())
+				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
+
+			byte[] data = pdfService.printMahnung(mahnung, vorgaengerMahnung);
+
+			persistedDokument = vorschauDokument == null ?
+				updateGeneratedDokument(data, dokumentTyp, gesuch,
+					fileNameForGeneratedDokumentTyp) :
+				updateGeneratedDokument(vorschauDokument, data, dokumentTyp, gesuch,
+					fileNameForGeneratedDokumentTyp);
+
+		}
+		return persistedDokument;
+
+	}
+
+	@Override
+	public GeneratedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung, Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException {
+
+		Gesuch gesuch = betreuung.extractGesuch();
+		GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.NICHTEINTRETEN;
+
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, betreuung.getBGNummer());
 
 		GeneratedDokument persistedDokument = null;
 
@@ -279,10 +341,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			Optional<Mahnung> vorgaengerMahnung = null;
 
-			if (mahnung.hasVorgaenger())
-				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
-
-			byte[] data = mahnungPDFService.printMahnung(mahnung, vorgaengerMahnung);
+			byte[] data = pdfService.generateNichteintreten(betreuung);
 
 			persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
 				fileNameForGeneratedDokumentTyp);

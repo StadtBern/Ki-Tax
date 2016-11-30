@@ -48,7 +48,7 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 		List<String> angebotFull = new ArrayList<>();
 
-		for (KindContainer kindContainer : mahnung.getGesuch().getKindContainers()) {
+		for (KindContainer kindContainer : getGesuch().getKindContainers()) {
 			angebotFull.addAll(
 				kindContainer.getBetreuungen().stream()
 				.map(betreuung -> betreuung.getKind().getKindGS().getFullName() + " (" + betreuung.getInstitutionStammdaten().getInstitution().getName() + ")" )
@@ -64,7 +64,7 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 	@Override
 	public String getAngebotShort() {
 
-		String angebotShort = mahnung.getGesuch().getKindContainers().stream()
+		String angebotShort = getGesuch().getKindContainers().stream()
 			.map(kindContainer -> kindContainer.getKindGS().getFullName())
 			.collect(Collectors.joining(", "));
 
@@ -74,13 +74,13 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 	@Override
 	public String getPeriode() {
-		return '(' + String.valueOf(mahnung.getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear())
-			+ '/' + String.valueOf(mahnung.getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear()) + ')';
+		return '(' + String.valueOf(getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear())
+			+ '/' + String.valueOf(getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear()) + ')';
 	}
 
 	@Override
 	public String getFallNummer() {
-		return PrintUtil.createFallNummerString(mahnung.getGesuch());
+		return PrintUtil.createFallNummerString(getGesuch());
 	}
 
 	@Override
@@ -119,11 +119,6 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 	public String getKontaktStelle() {
 		//TODO: this text should be dynamic and depends on a certain requirement being met
 		return "Montag bis Donnerstag von 13.00–17.00 Uhr unter der Telefonnummer 031 321 51 15";
-	}
-
-	@Override
-	public String getUnterzeichner() {
-		return mahnung.getGesuch().getFall().getVerantwortlicher().getFullName();
 	}
 
 }
