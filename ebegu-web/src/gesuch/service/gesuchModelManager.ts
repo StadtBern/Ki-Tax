@@ -96,19 +96,23 @@ export default class GesuchModelManager {
     public openGesuch(gesuchId: string): IPromise<TSGesuch> {
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
             return this.gesuchRS.findGesuchForInstitution(gesuchId)
-                .then((response) => {
-                    if (response) {
-                        this.setGesuch(response);
-                    }
-                    return response;
+                .then((response : TSGesuch) => {
+                    return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(bla => {
+                        if (response) {
+                            this.setGesuch(response);
+                        }
+                        return response;
+                    });
                 });
         } else {
             return this.gesuchRS.findGesuch(gesuchId)
-                .then((response) => {
-                    if (response) {
-                        this.setGesuch(response);
-                    }
-                    return response;
+                .then((response: TSGesuch) => {
+                    return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(bla => {
+                        if (response) {
+                            this.setGesuch(response);
+                        }
+                        return response;
+                    });
                 });
         }
     }
@@ -140,7 +144,6 @@ export default class GesuchModelManager {
      */
     public setGesuch(gesuch: TSGesuch): void {
         this.gesuch = gesuch;
-        this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
         this.setHiddenSteps();
     }
 
@@ -861,7 +864,8 @@ export default class GesuchModelManager {
         if (this.gesuch.kindContainers) {
             for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
                 if (this.gesuch.kindContainers[i].id === kindID) {
-                    return this.kindNumber = i + 1;
+                    this.kindNumber = i + 1;
+                    return this.kindNumber;
                 }
             }
         }
@@ -1051,12 +1055,13 @@ export default class GesuchModelManager {
         });
     }
 
-    public verfuegungSchliessenNichtEintreten(): IPromise<void> {
-        return this.verfuegungRS.nichtEintreten(this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
+    public verfuegungSchliessenNichtEintreten():  IPromise<TSVerfuegung> {
+        return this.verfuegungRS.nichtEintreten(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response: TSVerfuegung) => {
+            this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.NICHT_EINGETRETEN;
             this.calculateGesuchStatus();
             this.backupCurrentGesuch();
-            return;
+            return this.getVerfuegenToWorkWith();
         });
     }
 
@@ -1262,9 +1267,7 @@ export default class GesuchModelManager {
         return -1;
     }
 
-    public reloadGesuch(): void {
-        if (this.gesuch && this.gesuch.id) {
-            this.openGesuch(this.gesuch.id);
-        }
+    public clearGesuch(): void {
+        this.gesuch = undefined;
     }
 }

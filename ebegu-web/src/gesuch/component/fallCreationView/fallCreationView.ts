@@ -59,10 +59,6 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     }
 
     private initViewModel(): void {
-        // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
-        if (this.createNewParam === false) {
-            this.gesuchModelManager.reloadGesuch();
-        }
         this.gesuchModelManager.initGesuch(this.createNewParam);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
         if (this.gesuchModelManager.getGesuchsperiode()) {
