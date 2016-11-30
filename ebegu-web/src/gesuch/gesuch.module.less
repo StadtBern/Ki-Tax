@@ -12,6 +12,12 @@
     flex: 1 1 auto;
     min-width: 3rem;
     .nav-row {
+        -ms-box-orient: horizontal;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -moz-flex;
+        display: -webkit-flex;
         display: flex;
         flex-direction: column-reverse;
         position: absolute !important;
@@ -19,8 +25,15 @@
         left: 50%;
         transform: translateX(-50%);
         margin: 0;
+        align-items: center;
         & > div {
+            clear: both;
+            position: static;
             padding: 0 2rem 0;
+            width: auto;
+            min-width: 50%;
+            &:nth-of-type(1) {
+            }
             &:nth-of-type(2) {
                 margin-bottom: 2rem;
             }
