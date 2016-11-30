@@ -28,24 +28,38 @@ public class AntragStatusConverterUtil {
 	 */
 	public static AntragStatusDTO convertStatusToDTO(Gesuch antrag, AntragStatus status) {
 		switch (status) {
-			case IN_BEARBEITUNG_GS: return AntragStatusDTO.IN_BEARBEITUNG_GS;
-			case FREIGABEQUITTUNG: return AntragStatusDTO.FREIGABEQUITTUNG;
-			case NUR_SCHULAMT: return AntragStatusDTO.NUR_SCHULAMT;
-			case FREIGEGEBEN: return AntragStatusDTO.FREIGEGEBEN;
-			case IN_BEARBEITUNG_JA: return AntragStatusDTO.IN_BEARBEITUNG_JA;
-			case ZURUECKGEWIESEN: return AntragStatusDTO.ZURUECKGEWIESEN;
-			case ERSTE_MAHNUNG: return AntragStatusDTO.ERSTE_MAHNUNG;
-			case ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN: return AntragStatusDTO.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
-			case ERSTE_MAHNUNG_ABGELAUFEN: return AntragStatusDTO.ERSTE_MAHNUNG_ABGELAUFEN;
-			case ZWEITE_MAHNUNG: return AntragStatusDTO.ZWEITE_MAHNUNG;
-			case ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN: return AntragStatusDTO.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
-			case ZWEITE_MAHNUNG_ABGELAUFEN: return AntragStatusDTO.ZWEITE_MAHNUNG_ABGELAUFEN;
-			case GEPRUEFT: {
+			case IN_BEARBEITUNG_GS:
+				return AntragStatusDTO.IN_BEARBEITUNG_GS;
+			case FREIGABEQUITTUNG:
+				return AntragStatusDTO.FREIGABEQUITTUNG;
+			case NUR_SCHULAMT:
+				return AntragStatusDTO.NUR_SCHULAMT;
+			case FREIGEGEBEN:
+				return AntragStatusDTO.FREIGEGEBEN;
+			case IN_BEARBEITUNG_JA:
+				return AntragStatusDTO.IN_BEARBEITUNG_JA;
+			case ZURUECKGEWIESEN:
+				return AntragStatusDTO.ZURUECKGEWIESEN;
+			case ERSTE_MAHNUNG:
+				return AntragStatusDTO.ERSTE_MAHNUNG;
+			case ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
+				return AntragStatusDTO.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
+			case ERSTE_MAHNUNG_ABGELAUFEN:
+				return AntragStatusDTO.ERSTE_MAHNUNG_ABGELAUFEN;
+			case ZWEITE_MAHNUNG:
+				return AntragStatusDTO.ZWEITE_MAHNUNG;
+			case ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
+				return AntragStatusDTO.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
+			case ZWEITE_MAHNUNG_ABGELAUFEN:
+				return AntragStatusDTO.ZWEITE_MAHNUNG_ABGELAUFEN;
+			case GEPRUEFT:
 				return convertGeprueftStatusToDTO(antrag);
-			}
-			case VERFUEGEN: return AntragStatusDTO.VERFUEGEN;
-			case VERFUEGT: return AntragStatusDTO.VERFUEGT;
-			default: return null;
+			case VERFUEGEN:
+				return AntragStatusDTO.VERFUEGEN;
+			case VERFUEGT:
+				return AntragStatusDTO.VERFUEGT;
+			default:
+				return null;
 		}
 	}
 
@@ -77,24 +91,40 @@ public class AntragStatusConverterUtil {
 	 */
 	public static AntragStatus convertStatusToEntity(AntragStatusDTO statusDTO) {
 		switch (statusDTO) {
-			case IN_BEARBEITUNG_GS: return AntragStatus.IN_BEARBEITUNG_GS;
-			case FREIGABEQUITTUNG: return AntragStatus.FREIGABEQUITTUNG;
-			case NUR_SCHULAMT: return AntragStatus.NUR_SCHULAMT;
-			case FREIGEGEBEN: return AntragStatus.FREIGEGEBEN;
-			case IN_BEARBEITUNG_JA: return AntragStatus.IN_BEARBEITUNG_JA;
-			case ZURUECKGEWIESEN: return AntragStatus.ZURUECKGEWIESEN;
-			case ERSTE_MAHNUNG: return AntragStatus.ERSTE_MAHNUNG;
-			case ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN: return AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
-			case ERSTE_MAHNUNG_ABGELAUFEN: return AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN;
-			case ZWEITE_MAHNUNG: return AntragStatus.ZWEITE_MAHNUNG;
-			case ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN: return AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
-			case ZWEITE_MAHNUNG_ABGELAUFEN: return AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN;
+			case IN_BEARBEITUNG_GS:
+				return AntragStatus.IN_BEARBEITUNG_GS;
+			case FREIGABEQUITTUNG:
+				return AntragStatus.FREIGABEQUITTUNG;
+			case NUR_SCHULAMT:
+				return AntragStatus.NUR_SCHULAMT;
+			case FREIGEGEBEN:
+				return AntragStatus.FREIGEGEBEN;
+			case IN_BEARBEITUNG_JA:
+				return AntragStatus.IN_BEARBEITUNG_JA;
+			case ZURUECKGEWIESEN:
+				return AntragStatus.ZURUECKGEWIESEN;
+			case ERSTE_MAHNUNG:
+				return AntragStatus.ERSTE_MAHNUNG;
+			case ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
+				return AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
+			case ERSTE_MAHNUNG_ABGELAUFEN:
+				return AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN;
+			case ZWEITE_MAHNUNG:
+				return AntragStatus.ZWEITE_MAHNUNG;
+			case ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN:
+				return AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN;
+			case ZWEITE_MAHNUNG_ABGELAUFEN:
+				return AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN;
 			case PLATZBESTAETIGUNG_ABGEWIESEN:
 			case PLATZBESTAETIGUNG_WARTEN:
-			case GEPRUEFT: return AntragStatus.GEPRUEFT;
-			case VERFUEGEN: return AntragStatus.VERFUEGEN;
-			case VERFUEGT: return AntragStatus.VERFUEGT;
-			default: return null;
+			case GEPRUEFT:
+				return AntragStatus.GEPRUEFT;
+			case VERFUEGEN:
+				return AntragStatus.VERFUEGEN;
+			case VERFUEGT:
+				return AntragStatus.VERFUEGT;
+			default:
+				return null;
 		}
 	}
 }

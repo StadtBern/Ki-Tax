@@ -6,10 +6,10 @@ package ch.dvbern.ebegu.enums;
 public enum EbeguVorlageKey {
 
 	// Die erste Mahnung, falls das Gesuch unvollständig eingereicht wurde
-	VORLAGE_MAHNUNG_1,
+	VORLAGE_MAHNUNG_1("/vorlagen/1_Mahnung.docx"),
 
 	// Die zweite Mahnung, falls das Gesuch unvollständig eingereicht wurde
-	VORLAGE_MAHNUNG_2,
+	VORLAGE_MAHNUNG_2("/vorlagen/2_Mahnung.docx"),
 
 	// Verfügung des Angebots KITA
 	VORLAGE_VERFUEGUNG_KITA("/vorlagen/Verfuegungsmuster_kita.docx"),
@@ -18,7 +18,7 @@ public enum EbeguVorlageKey {
 	VORLAGE_NICHT_EINTRETENSVERFUEGUNG("/vorlagen/Nichteintretensverfuegung.docx"),
 
 	// Vorlage fuer Nicht-Eintreten bei Schulkindern
-	VORLAGE_INFOSCHREIBEN_MAXIMALTARIF("/vorlagen/Infoschreiben Maxtarif.docx"),
+	VORLAGE_INFOSCHREIBEN_MAXIMALTARIF("/vorlagen/Infoschreiben_Maxtarif.docx"),
 
 	// Verfügung des Angebots Tageseltern Kleinkinder
 	VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER("/vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx"),

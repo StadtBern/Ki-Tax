@@ -56,7 +56,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 			if (erstMahnung.isPresent()) {
 				mahnung.setVorgaengerId(erstMahnung.get().getId());
 			} else {
-				throw new EbeguRuntimeException("createMahnung", "Zweitmahnung erstellt ohne aktive Erstmahnung! "+mahnung.getId(), mahnung.getId());
+				throw new EbeguRuntimeException("createMahnung", "Zweitmahnung erstellt ohne aktive Erstmahnung! " + mahnung.getId(), mahnung.getId());
 			}
 		}
 		return persistence.persist(mahnung);
@@ -66,7 +66,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Nonnull
 	public Optional<Mahnung> findMahnung(@Nonnull String mahnungId) {
 		Objects.requireNonNull(mahnungId, "mahnungId muss gesetzt sein");
-		Mahnung mahnung =  persistence.find(Mahnung.class, mahnungId);
+		Mahnung mahnung = persistence.find(Mahnung.class, mahnungId);
 		return Optional.ofNullable(mahnung);
 	}
 
@@ -96,9 +96,11 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Override
 	@Nonnull
 	public String getInitialeBemerkungen(@Nonnull Gesuch gesuch) {
-		final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil
+		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
+		dokumentGrundsMerged.addAll(DokumenteUtil
 			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
-				dokumentGrundService.getAllDokumentGrundByGesuch(gesuch));
+				dokumentGrundService.getAllDokumentGrundByGesuch(gesuch)));
+		Collections.sort(dokumentGrundsMerged);
 
 		StringBuilder bemerkungenBuilder = new StringBuilder();
 		for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
@@ -107,6 +109,9 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 				if (StringUtils.isNotEmpty(dokumentGrund.getFullName())) {
 					bemerkungenBuilder.append(" (");
 					bemerkungenBuilder.append(dokumentGrund.getFullName());
+					if (dokumentGrund.getTag() != null) {
+						bemerkungenBuilder.append(" / ").append(dokumentGrund.getTag());
+					}
 					bemerkungenBuilder.append(")");
 				}
 				bemerkungenBuilder.append("\n");
