@@ -68,7 +68,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguLoginTest {
 		int i = 0;
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
-			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			unitTestTempfolder.writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
 			i++;
 		}
 	}
@@ -94,7 +94,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguLoginTest {
 		int i = 0;
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
-			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			unitTestTempfolder.writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
 			i++;
 		}
 	}
@@ -119,7 +119,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguLoginTest {
 		int i = 0;
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
-			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			unitTestTempfolder.writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
 			i++;
 		}
 	}
@@ -145,7 +145,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguLoginTest {
 		int i = 0;
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
-			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			unitTestTempfolder.writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
 			i++;
 		}
 	}
