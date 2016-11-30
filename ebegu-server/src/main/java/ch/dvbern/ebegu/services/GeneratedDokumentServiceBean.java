@@ -104,7 +104,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		final CriteriaQuery<GeneratedDokument> query = cb.createQuery(GeneratedDokument.class);
 		Root<GeneratedDokument> root = query.from(GeneratedDokument.class);
 
-		path = path.replace("\\", "\\\\"); //dirty fix für windows pfad mit backslash
+		path = path.replace("\\", "\\\\"); //dirty fix fuer windows pfad mit backslash
 
 		Predicate predGesuch = cb.equal(root.get(GeneratedDokument_.gesuch).get(Gesuch_.id), gesuchId);
 		Predicate predFileName = cb.equal(root.get(GeneratedDokument_.filename), filename);
