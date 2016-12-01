@@ -127,12 +127,24 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
      * @returns {boolean}
      */
     private isConfirmationRequired(): boolean {
-        return this.checkChanged2To1GS();
+        return (!this.isMutation() && this.checkChanged2To1GS()) ||
+            (this.isMutation() && this.checkChanged2To1GSMutation());
     }
 
     private checkChanged2To1GS() {
         return this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
-            && this.initialFamiliensituation.hasSecondGesuchsteller()
+            && this.isScheidung();
+    }
+
+    private checkChanged2To1GSMutation() {
+        return this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
+            && this.isScheidung()
+            && this.gesuchModelManager.getGesuch().familiensituationErstgesuch
+            && !this.gesuchModelManager.getGesuch().familiensituationErstgesuch.hasSecondGesuchsteller();
+    }
+
+    private isScheidung() {
+        return this.initialFamiliensituation.hasSecondGesuchsteller()
             && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller();
     }
 
