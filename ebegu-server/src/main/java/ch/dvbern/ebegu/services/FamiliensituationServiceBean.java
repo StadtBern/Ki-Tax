@@ -65,8 +65,9 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 
 		gesuch.setFamiliensituation(mergedFamiliensituation);
 
+
 		//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
-		if (gesuch.getGesuchsteller2() != null && isNeededToRemoveGesuchsteller2(gesuch, mergedFamiliensituation, oldFamiliensituation)) {
+		if (gesuch.getGesuchsteller2() != null && isNeededToRemoveGesuchsteller2(gesuch, mergedFamiliensituation, gesuch.getFamiliensituationErstgesuch())) {
 			gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
 			gesuch.setGesuchsteller2(null);
 		}
@@ -81,7 +82,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	@Override
 	public Optional<Familiensituation> findFamiliensituation(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Familiensituation a =  persistence.find(Familiensituation.class, key);
+		Familiensituation a = persistence.find(Familiensituation.class, key);
 		return Optional.ofNullable(a);
 	}
 
@@ -103,11 +104,18 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	 * Wenn die neue Familiensituation nur 1GS hat und der zweite GS schon existiert, wird dieser
 	 * und seine Daten endgueltig geloescht. Dies gilt aber nur fuer ERSTGESUCH. Bei Mutationen wird
 	 * der 2GS nie geloescht
+	 *
 	 * @return
 	 */
-	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation newFamiliensituation, Familiensituation oldFamiliensituation) {
+	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation newFamiliensituation,
+												   Familiensituation familiensituationErstgesuch) {
 		return (!gesuch.isMutation() && gesuch.getGesuchsteller2() != null && !newFamiliensituation.hasSecondGesuchsteller())
-			|| (gesuch.isMutation() && gesuch.getGesuchsteller2() != null && !oldFamiliensituation.hasSecondGesuchsteller());
+			|| (gesuch.isMutation() && isChanged1To2Reverted(gesuch, newFamiliensituation, familiensituationErstgesuch));
+	}
+
+	private boolean isChanged1To2Reverted(Gesuch gesuch, Familiensituation newFamiliensituation, Familiensituation familiensituationErstgesuch) {
+		return gesuch.getGesuchsteller2() != null && !familiensituationErstgesuch.hasSecondGesuchsteller()
+			&& !newFamiliensituation.hasSecondGesuchsteller();
 	}
 
 }
