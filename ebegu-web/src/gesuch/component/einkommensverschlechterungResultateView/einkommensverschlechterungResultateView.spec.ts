@@ -60,7 +60,7 @@ describe('einkommensverschlechterungResultateView', function () {
     describe('calculateVeraenderung', () => {
         beforeEach(function () {
             ekvrvc = new EinkommensverschlechterungResultateViewController(stateParams, gesuchModelManager,
-                berechnungsManager, consta, errorservice, wizardStepManager);
+                berechnungsManager, consta, errorservice, wizardStepManager, null);
 
         });
         it('should return + 100.0%', () => {

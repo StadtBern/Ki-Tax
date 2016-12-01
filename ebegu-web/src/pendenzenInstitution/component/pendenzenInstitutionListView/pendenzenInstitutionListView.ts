@@ -97,7 +97,8 @@ export class PendenzenInstitutionListViewController {
         }
     }
 
-    //TODO (team) Hier wird mit findBetreuungById die Kind-Id auf dem GMM gespeichert, spaeter soll diese als Parameter in die URL kommen. Dann kann in editPendenzInstitution() das openGesuch() entfernt werden
+    //TODO (team) Hier wird mit findBetreuungById die Kind-Id auf dem GMM gespeichert, spaeter soll diese als
+    // Parameter in die URL kommen. Dann kann in editPendenzInstitution() das openGesuch() entfernt werden
     private openBetreuung(pendenz: TSPendenzInstitution): void {
         if (this.gesuchModelManager.getGesuch() && pendenz) {
             this.gesuchModelManager.findKindById(pendenz.kindId);

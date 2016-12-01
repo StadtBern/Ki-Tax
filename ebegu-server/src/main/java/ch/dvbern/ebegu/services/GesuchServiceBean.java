@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -287,7 +288,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				predicates.add(cb.equal(root.get(Gesuch_.eingangsdatum), LocalDate.parse(predicateObjectDto.getEingangsdatum(), DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
 			}
 			if (predicateObjectDto.getStatus() != null) {
-				predicates.add(cb.equal(root.get(Gesuch_.status), AntragStatus.valueOf(predicateObjectDto.getStatus())));
+				// Achtung, hier muss von Client zu Server Status konvertiert werden!
+				AntragStatus antragStatus = AntragStatusConverterUtil.convertStatusToEntity(AntragStatusDTO.valueOf(predicateObjectDto.getStatus()));
+				predicates.add(cb.equal(root.get(Gesuch_.status), antragStatus));
 			}
 			if (predicateObjectDto.getAngebote() != null) {
 				predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.valueOf(predicateObjectDto.getAngebote())));

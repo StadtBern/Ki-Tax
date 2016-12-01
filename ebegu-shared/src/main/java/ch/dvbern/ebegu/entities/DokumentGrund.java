@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -19,7 +20,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
  */
 @Audited
 @Entity
-public class DokumentGrund extends AbstractEntity {
+public class DokumentGrund extends AbstractEntity implements Comparable<DokumentGrund> {
 
 	private static final long serialVersionUID = 5417585258130227434L;
 
@@ -173,6 +174,19 @@ public class DokumentGrund extends AbstractEntity {
 			", year='" + tag + '\'' +
 			", dokumente=" + dokumente +
 			'}';
+	}
+
+	@Override
+	public int compareTo(DokumentGrund o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getDokumentGrundTyp(), o.getDokumentGrundTyp());
+		if(this.getFullName() != null && o.getFullName() != null){
+			builder.append(this.getFullName(), o.getFullName());
+		}
+		if(this.getTag() != null && o.getTag() != null){
+			builder.append(this.getTag(), o.getTag());
+		}
+		return builder.toComparison();
 	}
 
 	public boolean isEmpty() {
