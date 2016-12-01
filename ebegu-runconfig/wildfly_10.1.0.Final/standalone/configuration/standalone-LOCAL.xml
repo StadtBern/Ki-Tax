@@ -29,7 +29,7 @@
         <extension module="org.wildfly.extension.request-controller"/>
         <extension module="org.wildfly.extension.security.manager"/>
         <extension module="org.wildfly.extension.undertow"/>
-        <extension module="org.modeshape"/>
+        <!--<extension module="org.modeshape"/>-->
     </extensions>
 
     <system-properties>
@@ -52,8 +52,8 @@
                 <server-identities>
                     <ssl>
 						<!--wildfly 10.1 hat eigentlich schon seinen eigenen keystore-->
-                        <!--<keystore path="application.keystore" relative-to="jboss.server.config.dir" keystore-password="password" alias="server" key-password="password" generate-self-signed-certificate-host="localhost"/>-->
-						<keystore path="server.jks" relative-to="jboss.server.config.dir" keystore-password="ebegupassword" alias="serverkey"/>
+                        <keystore path="application.keystore" relative-to="jboss.server.config.dir" keystore-password="password" alias="server" key-password="password" generate-self-signed-certificate-host="localhost"/>
+						<!--<keystore path="server.jks" relative-to="jboss.server.config.dir" keystore-password="ebegupassword" alias="serverkey"/>-->
                     </ssl>
                 </server-identities>
                 <authentication>
@@ -433,8 +433,8 @@
             <server name="default-server">
                 <http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="true"/>
 				<!--wildfly 10.1 hat eigentlich schon einen https konfiguriert-->
-                <!--<https-listener name="https" socket-binding="https" security-realm="ApplicationRealm" enable-http2="true"/>-->
-				<https-listener name="default-https" security-realm="ApplicationRealm" socket-binding="https"/>
+                <https-listener name="https" socket-binding="https" security-realm="ApplicationRealm" enable-http2="true"/>
+				<!--<https-listener name="default-https" security-realm="ApplicationRealm" socket-binding="https"/>-->
                 <host name="default-host" alias="localhost">
                     <location name="/" handler="welcome-content"/>
                     <filter-ref name="server-header"/>
