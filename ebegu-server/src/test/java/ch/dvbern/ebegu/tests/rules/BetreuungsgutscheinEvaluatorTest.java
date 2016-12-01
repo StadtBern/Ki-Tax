@@ -76,7 +76,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 				Assert.assertFalse(betreuung.getVerfuegung().getGeneratedBemerkungen().isEmpty());
-				Assert.assertTrue(betreuung.getVerfuegung().getGeneratedBemerkungen().startsWith(RuleKey.EINKOMMEN.name()));
+				Assert.assertTrue(betreuung.getVerfuegung().getGeneratedBemerkungen().contains(RuleKey.EINKOMMEN.name()));
 			}
 		}
 	}

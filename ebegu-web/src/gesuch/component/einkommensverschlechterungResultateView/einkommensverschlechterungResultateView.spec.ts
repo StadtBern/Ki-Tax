@@ -64,7 +64,7 @@ describe('einkommensverschlechterungResultateView', function () {
     describe('calculateVeraenderung', () => {
         beforeEach(function () {
             ekvrvc = new EinkommensverschlechterungResultateViewController(stateParams, gesuchModelManager,
-                berechnungsManager, consta, errorservice, wizardStepManager);
+                berechnungsManager, consta, errorservice, wizardStepManager, null);
             ekvrvc.model = new TSFinanzModel(gesuchModelManager.getBasisjahr(), gesuchModelManager.isGesuchsteller2Required(), null, null);
             ekvrvc.model.copyEkvDataFromGesuch(gesuchModelManager.getGesuch());
             ekvrvc.model.copyFinSitDataFromGesuch(gesuchModelManager.getGesuch());

@@ -241,6 +241,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
             });
     }
 
+    public openNichteintretenPDF(): void {
+        this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(this.getBetreuung().id, false)
+            .then((downloadFile: TSDownloadFile) => {
+                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+            });
+    }
+
     public isSameVerfuegungdaten(): boolean {
         if (this.getVerfuegenToWorkWith()) {
             return this.getVerfuegenToWorkWith().sameVerfuegungsdaten;

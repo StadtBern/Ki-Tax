@@ -91,8 +91,9 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
             this.errorService.clearAll();
             this.model.copyEkvSitDataToGesuch(this.gesuchModelManager.getGesuch());
             return this.gesuchModelManager.updateGesuch().then((gesuch: TSGesuch) => {
-                // Nötig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht bemerkt werden
-                if (this.gesuchModelManager.getGesuch().isMutation()) {
+                // Noetig, da nur das ganze Gesuch upgedated wird und die Aenderng bei der FinSit sonst nicht bemerkt werden
+                if (this.gesuchModelManager.getGesuch().isMutation() && this.wizardStepManager.getCurrentStep().wizardStepStatus !== TSWizardStepStatus.NOK) {
+                    //wenn es NOK wir duerfen es erst im letzten Schritt aendern
                     this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
                 }
                 return gesuch;

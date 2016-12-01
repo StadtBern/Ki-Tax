@@ -21,6 +21,7 @@ import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
 import MahnungRS from '../../service/mahnungRS.rest';
 import TSGesuch from '../../../models/TSGesuch';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import DateUtil from '../../../utils/DateUtil';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -142,7 +143,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return undefined;
     }
 
-    public getGesuchsperiode() : TSGesuchsperiode {
+    public getGesuchsperiode(): TSGesuchsperiode {
         if (this.gesuchModelManager) {
             return this.gesuchModelManager.getGesuchsperiode();
         }
@@ -180,8 +181,22 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         });
     }
 
+    private hasOffeneMahnungen(): boolean {
+        for (let mahn of this.mahnungList) {
+            if (mahn.active) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public isFristAbgelaufen(mahnung : TSMahnung): boolean {
+        return mahnung.datumFristablauf.isBefore(DateUtil.today());
+    }
+
     public showErsteMahnungErstellen(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) && this.mahnung === undefined;
+        // Nur wenn keine offenen Mahnungen vorhanden!
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) && this.mahnung === undefined && !this.hasOffeneMahnungen();
     }
 
     public showErsteMahnungAusloesen(): boolean {
@@ -308,8 +323,15 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             });
     }
 
-    public openMahnungPDF(mahnung : TSMahnung): void {
-        window.alert('Not yet implemented');
+    public openMahnungPDF(mahnung: TSMahnung): void {
+        if (mahnung == null)
+            mahnung = this.mahnung;
+
+        this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnung, false)
+            .then((downloadFile: TSDownloadFile) => {
+                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+            });
     }
 
     private createNeededPDFs(): IPromise<TSDownloadFile> {

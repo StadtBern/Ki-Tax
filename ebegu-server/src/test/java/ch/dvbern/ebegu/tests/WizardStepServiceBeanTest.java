@@ -374,6 +374,21 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
+	public void updateWizardStepEinkommensverschlechterungNOKNull() {
+		updateStatus(einkVerStep, WizardStepStatus.IN_BEARBEITUNG);
+		EinkommensverschlechterungInfo oldData = null;
+		EinkommensverschlechterungInfo newData = new EinkommensverschlechterungInfo();
+		newData.setEinkommensverschlechterung(true);
+
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldData,
+			newData, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+		Assert.assertEquals(10, wizardSteps.size());
+
+		//status is NOK weil die Daten noch nicht eingetragen sind
+		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getWizardStepStatus());
+	}
+
+	@Test
 	public void updateWizardStepDokumente() {
 		updateStatus(dokStep, WizardStepStatus.IN_BEARBEITUNG);
 
@@ -474,11 +489,14 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	public void updateWizardStepEkvMutiert() {
 		updateStatusMutiert(einkVerStep, WizardStepStatus.OK);
 
+		EinkommensverschlechterungInfo oldData = new EinkommensverschlechterungInfo();
+		oldData.setEinkommensverschlechterung(true);
+
 		EinkommensverschlechterungInfo newData = new EinkommensverschlechterungInfo();
-		newData.setEinkommensverschlechterung(true);
+		newData.setEinkommensverschlechterung(false);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(),
-			null, newData, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+			oldData, newData, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 		Assert.assertEquals(10, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getWizardStepStatus());

@@ -138,6 +138,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	}
 
 
+	@SuppressWarnings("OptionalIsPresent")
 	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT})
@@ -154,22 +155,15 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		// Wir überprüfen of in der Vorgängerverfügung eine Verfügung ist, welche geschlossen wurde ohne neu zu verfügen
 		// und somit keine neue Verfügung hat
 		if (neustesVerfuegtesGesuchFuerGesuch.isPresent()) {
-			final Gesuch nvg = neustesVerfuegtesGesuchFuerGesuch.get();
 
-			for (KindContainer kc : nvg.getKindContainers()) {
-				for (Betreuung betreuung : kc.getBetreuungen()) {
-					if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
-						// Wenn wir eine solche nicht verfügte Betruung haben, suchen wir die letzte verfügte betreuung
-						// und kopieren deren Verfügung um sie später vergleichen und mergen zu können
+			gesuch.getKindContainers()
+				.stream()
+				.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+				.forEach(betreuung -> {
 						Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
-						if(vorgaengerVerfuegung.isPresent()){
-							betreuung.setVorgaengerVerfuegung(vorgaengerVerfuegung.get());
-						}else{
-							throw new EbeguEntityNotFoundException("calculateVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "VorgaengerVerfuegung of Betreuung not found even though state is GESCHLOSSEN_OHNE_VERFUEGUNG. BetreuungID: " + betreuung.getId());
-						}
+						betreuung.setVorgaengerVerfuegung(vorgaengerVerfuegung.orElse(null));
 					}
-				}
-			}
+				);
 		}
 
 		bgEvaluator.evaluate(gesuch, calculatorParameters, neustesVerfuegtesGesuchFuerGesuch.orElse(null));
