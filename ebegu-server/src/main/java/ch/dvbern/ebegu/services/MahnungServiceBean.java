@@ -56,7 +56,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 			if (erstMahnung.isPresent()) {
 				mahnung.setVorgaengerId(erstMahnung.get().getId());
 			} else {
-				throw new EbeguRuntimeException("createMahnung", "Zweitmahnung erstellt ohne aktive Erstmahnung! "+mahnung.getId(), mahnung.getId());
+				throw new EbeguRuntimeException("createMahnung", "Zweitmahnung erstellt ohne aktive Erstmahnung! " + mahnung.getId(), mahnung.getId());
 			}
 		}
 		return persistence.persist(mahnung);
@@ -66,7 +66,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Nonnull
 	public Optional<Mahnung> findMahnung(@Nonnull String mahnungId) {
 		Objects.requireNonNull(mahnungId, "mahnungId muss gesetzt sein");
-		Mahnung mahnung =  persistence.find(Mahnung.class, mahnungId);
+		Mahnung mahnung = persistence.find(Mahnung.class, mahnungId);
 		return Optional.ofNullable(mahnung);
 	}
 
@@ -96,9 +96,11 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Override
 	@Nonnull
 	public String getInitialeBemerkungen(@Nonnull Gesuch gesuch) {
-		final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil
+		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
+		dokumentGrundsMerged.addAll(DokumenteUtil
 			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
-				dokumentGrundService.getAllDokumentGrundByGesuch(gesuch));
+				dokumentGrundService.getAllDokumentGrundByGesuch(gesuch)));
+		Collections.sort(dokumentGrundsMerged);
 
 		StringBuilder bemerkungenBuilder = new StringBuilder();
 		for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
@@ -107,6 +109,9 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 				if (StringUtils.isNotEmpty(dokumentGrund.getFullName())) {
 					bemerkungenBuilder.append(" (");
 					bemerkungenBuilder.append(dokumentGrund.getFullName());
+					if (dokumentGrund.getTag() != null) {
+						bemerkungenBuilder.append(" / ").append(dokumentGrund.getTag());
+					}
 					bemerkungenBuilder.append(")");
 				}
 				bemerkungenBuilder.append("\n");
@@ -127,18 +132,13 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		Predicate predicateAbgelaufen = cb.lessThan(root.get(Mahnung_.datumFristablauf), LocalDate.now());
 		query.where(predicateAktiv, predicateAbgelaufen);
 
-
 		query.select(root.get(Mahnung_.gesuch));
 		List<Gesuch> gesucheMitAbgelaufenenMahnungen = persistence.getCriteriaResults(query);
 		for (Gesuch gesuch : gesucheMitAbgelaufenenMahnungen) {
-			if (AntragStatus.ERSTE_MAHNUNG.equals(gesuch.getStatus())) {
+			if (AntragStatus.ERSTE_MAHNUNG.equals(gesuch.getStatus()) || AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN.equals(gesuch.getStatus())) {
 				gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN);
-			} else if (AntragStatus.ZWEITE_MAHNUNG.equals(gesuch.getStatus())) {
+			} else if (AntragStatus.ZWEITE_MAHNUNG.equals(gesuch.getStatus()) || AntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN.equals(gesuch.getStatus())) {
 				gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
-			} else {
-				if (!(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN.equals(gesuch.getStatus()) || AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN.equals(gesuch.getStatus()))) {
-					throw new IllegalArgumentException("Mahnung abgelaufen fuer ein Gesuch, welches nicht im Status MAHNUNG war");
-				}
 			}
 			gesuchService.updateGesuch(gesuch, true);
 		}

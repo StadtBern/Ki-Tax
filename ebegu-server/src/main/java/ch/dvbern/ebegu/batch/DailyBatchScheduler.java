@@ -25,7 +25,7 @@ public class DailyBatchScheduler {
 		dailyBatch.runBatchCleanDownloadFiles();
 	}
 
-	@Schedule(second = "0", minute = "*/5", hour = "*", persistent = false) // TODO (team) nur fuer Tests, spaeter 1x taeglich
+	@Schedule(second = "0", minute = "*/2", hour = "*", persistent = false) // TODO (team) nur fuer Tests, spaeter 1x taeglich
 	public void runBatchMahnungFristablauf() {
 		Future<Boolean> booleanFuture = dailyBatch.runBatchMahnungFristablauf();
 		try {

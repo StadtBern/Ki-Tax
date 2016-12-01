@@ -62,16 +62,22 @@ md-checkbox {
     .md-icon {
         border: 0.1rem solid @contrast-darkest;
         border-radius: 0.2rem;
-        width: 2rem;
-        height: 2rem;
+        width: auto;
+        height: auto;
         line-height: 2rem;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
     }
     &.md-checked {
         .md-icon {
             background-color: @contrast-darkest;
             &:after {
+                line-height: 175%;
+                position: absolute;
                 font-size: 1rem;
-                line-height: 1.5rem;
                 font-family: 'FontAwesome';
                 left: 0;
                 right: 0;
@@ -84,6 +90,7 @@ md-checkbox {
                 border-radius: 0.2rem;
                 content: "\f00c";
                 text-align: center;
+                vertical-align: middle;
                 color: @contrast-lightest;
                 display: block !important;
             }
