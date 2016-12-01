@@ -1,3 +1,4 @@
+import {IPromise, IQService} from 'angular';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSWizardStepName, getTSWizardStepNameValues} from '../../models/enums/TSWizardStepName';
@@ -8,8 +9,6 @@ import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
-import IPromise = angular.IPromise;
-import IQService = angular.IQService;
 
 export default class WizardStepManager {
 
@@ -85,7 +84,7 @@ export default class WizardStepManager {
 
     private setAllowedStepsForSchulamt(): void {
         this.allowedSteps = getTSWizardStepNameValues().filter(element =>
-            (element !== TSWizardStepName.ERWERBSPENSUM &&
+            (element !== TSWizardStepName.ERWERBSPENSUM && //schulamt sieht erwerbspensum und abwesenheit nicht
             element !== TSWizardStepName.ABWESENHEIT)
         );
     }
@@ -310,7 +309,7 @@ export default class WizardStepManager {
      */
     public isStepStatusOk(wizardStepName: TSWizardStepName) {
         return this.hasStepGivenStatus(wizardStepName, TSWizardStepStatus.OK)
-        || this.hasStepGivenStatus(wizardStepName, TSWizardStepStatus.MUTIERT);
+            || this.hasStepGivenStatus(wizardStepName, TSWizardStepStatus.MUTIERT);
     }
 
     /**
@@ -360,6 +359,6 @@ export default class WizardStepManager {
     }
 
     private isStepHidden(stepName: TSWizardStepName): boolean {
-       return this.hiddenSteps.indexOf(stepName) >= 0;
+        return this.hiddenSteps.indexOf(stepName) >= 0;
     }
 }
