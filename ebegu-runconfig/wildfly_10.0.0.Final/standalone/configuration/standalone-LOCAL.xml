@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<server xmlns="urn:jboss:domain:4.0">
+<server xmlns="urn:jboss:domain:4.2">
 
     <extensions>
         <extension module="org.jboss.as.clustering.infinispan"/>
@@ -29,7 +29,12 @@
         <extension module="org.wildfly.extension.request-controller"/>
         <extension module="org.wildfly.extension.security.manager"/>
         <extension module="org.wildfly.extension.undertow"/>
+        <extension module="org.modeshape"/>
     </extensions>
+
+    <system-properties>
+        <property name="ebegu.client.using.https" value="false"/>
+    </system-properties>
 
 
     <management>
@@ -44,6 +49,13 @@
                 </authorization>
             </security-realm>
             <security-realm name="ApplicationRealm">
+                <server-identities>
+                    <ssl>
+						<!--wildfly 10.1 hat eigentlich schon seinen eigenen keystore-->
+                        <!--<keystore path="application.keystore" relative-to="jboss.server.config.dir" keystore-password="password" alias="server" key-password="password" generate-self-signed-certificate-host="localhost"/>-->
+						<keystore path="server.jks" relative-to="jboss.server.config.dir" keystore-password="ebegupassword" alias="serverkey"/>
+                    </ssl>
+                </server-identities>
                 <authentication>
                     <local default-user="$local" allowed-users="*" skip-group-loading="true"/>
                     <properties path="application-users.properties" relative-to="jboss.server.config.dir"/>
@@ -107,15 +119,15 @@
             <logger category="sun.rmi">
                 <level name="WARN"/>
             </logger>
-			<logger category="SAML2.access" use-parent-handlers="true">
+            <logger category="SAML2.access" use-parent-handlers="true">
 				<level name="INFO"/>
-			</logger>
-			<logger category="IDFF.access" use-parent-handlers="true">
+            </logger>
+            <logger category="IDFF.access" use-parent-handlers="true">
 				<level name="INFO"/>
-			</logger>
-			<logger category="COT.access" use-parent-handlers="true">
+            </logger>
+            <logger category="COT.access" use-parent-handlers="true">
 				<level name="INFO"/>
-			</logger>
+            </logger>
             <root-logger>
                 <level name="INFO"/>
                 <handlers>
@@ -152,21 +164,49 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-                <datasource jndi-name="java:/jdbc/ebegu" pool-name="ebeguPool" enabled="true">
-                    <connection-url>jdbc:mysql://localhost/ebegu</connection-url>
+                <xa-datasource jndi-name="java:/jdbc/ebegu" pool-name="ebegu" use-ccm="true">
+                    <xa-datasource-property name="url">
+                        jdbc:mysql://localhost/ebegu
+                    </xa-datasource-property>
+                    <xa-datasource-class>org.mariadb.jdbc.MariaDbDataSource</xa-datasource-class>
                     <driver>mariadbsql</driver>
+                    <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+                    <xa-pool>
+                        <min-pool-size>5</min-pool-size>
+                        <initial-pool-size>1</initial-pool-size>
+                        <max-pool-size>50</max-pool-size>
+                        <prefill>true</prefill>
+                        <use-strict-min>true</use-strict-min>
+                    </xa-pool>
                     <security>
                         <user-name>ebegu</user-name>
                         <password>ebegu</password>
                     </security>
-                </datasource>
+                    <validation>
+                        <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker"/>
+                        <validate-on-match>false</validate-on-match>
+                        <background-validation>true</background-validation>
+                        <background-validation-millis>10000</background-validation-millis>
+                        <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter"/>
+                    </validation>
+                    <timeout>
+                        <set-tx-query-timeout>true</set-tx-query-timeout>
+                        <idle-timeout-minutes>5</idle-timeout-minutes>
+                        <xa-resource-timeout>60</xa-resource-timeout>
+                    </timeout>
+                    <statement>
+                        <track-statements>true</track-statements>
+                        <prepared-statement-cache-size>500</prepared-statement-cache-size>
+                        <share-prepared-statements>true</share-prepared-statements>
+                    </statement>
+                </xa-datasource>
                 <drivers>
                     <driver name="h2" module="com.h2database.h2">
                         <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
                     </driver>
                     <driver name="mariadbsql" module="org.mariadb">
                         <driver-class>org.mariadb.jdbc.Driver</driver-class>
-						<xa-datasource-class>org.mariadb.jdbc.MariaDbDataSource</xa-datasource-class>
+                        <xa-datasource-class>org.mariadb.jdbc.MariaDbDataSource</xa-datasource-class>
                     </driver>
                 </drivers>
             </datasources>
@@ -251,6 +291,9 @@
                     <transaction mode="BATCH"/>
                     <file-store passivation="false" purge="false"/>
                 </local-cache>
+                <local-cache name="concurrent">
+                    <file-store passivation="true" purge="false"/>
+                </local-cache>
             </cache-container>
             <cache-container name="ejb" aliases="sfsb" default-cache="passivation" module="org.wildfly.clustering.ejb.infinispan">
                 <local-cache name="passivation">
@@ -276,13 +319,13 @@
                 </local-cache>
                 <local-cache name="timestamps"/>
             </cache-container>
-			<cache-container name="ebeguCache" default-cache="ebeguAuthorizationCache">
-				<local-cache name="ebeguAuthorizationCache">
-					<transaction mode="FULL_XA"/>
-					<eviction strategy="LRU" max-entries="10000"/>
-					<expiration lifespan="1800000"/>
-				</local-cache>
-			</cache-container>
+            <cache-container name="ebeguCache" default-cache="ebeguAuthorizationCache">
+                <local-cache name="ebeguAuthorizationCache">
+                    <transaction mode="FULL_XA"/>
+                    <eviction strategy="LRU" max-entries="10000"/>
+                    <expiration lifespan="1800000"/>
+                </local-cache>
+            </cache-container>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:jaxrs:1.0"/>
         <subsystem xmlns="urn:jboss:domain:jca:4.0">
@@ -347,17 +390,8 @@
                         <login-module code="RealmDirect" flag="required">
                             <module-option name="password-stacking" value="useFirstPass"/>
                         </login-module>
-					</authentication>
+                    </authentication>
                 </security-domain>
-				<security-domain name="ebegu">
-					<!--Im Moment verwenden wir hier nur ein dummy loginmodul-->
-					<authentication>
-						<login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="required">
-							<module-option name="usersProperties" value="dummylogin-users.properties"/>
-							<module-option name="rolesProperties" value="dummylogin-roles.properties"/>
-						</login-module>
-					</authentication>
-				</security-domain>
                 <security-domain name="jboss-web-policy" cache-type="default">
                     <authorization>
                         <policy-module code="Delegating" flag="required"/>
@@ -376,6 +410,14 @@
                         <auth-module code="Dummy"/>
                     </authentication-jaspi>
                 </security-domain>
+                <security-domain name="ebegu" cache-type="default">
+                    <authentication>
+                        <login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="required">
+                            <module-option name="usersProperties" value="dummylogin-users.properties"/>
+                            <module-option name="rolesProperties" value="dummylogin-roles.properties"/>
+                        </login-module>
+                    </authentication>
+                </security-domain>
             </security-domains>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:transactions:3.0">
@@ -386,10 +428,13 @@
             </core-environment>
             <recovery-environment socket-binding="txn-recovery-environment" status-socket-binding="txn-status-manager"/>
         </subsystem>
-        <subsystem xmlns="urn:jboss:domain:undertow:3.0">
+        <subsystem xmlns="urn:jboss:domain:undertow:3.1">
             <buffer-cache name="default"/>
             <server name="default-server">
-                <http-listener name="default" socket-binding="http" redirect-socket="https"/>
+                <http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="true"/>
+				<!--wildfly 10.1 hat eigentlich schon einen https konfiguriert-->
+                <!--<https-listener name="https" socket-binding="https" security-realm="ApplicationRealm" enable-http2="true"/>-->
+				<https-listener name="default-https" security-realm="ApplicationRealm" socket-binding="https"/>
                 <host name="default-host" alias="localhost">
                     <location name="/" handler="welcome-content"/>
                     <filter-ref name="server-header"/>
@@ -442,5 +487,4 @@
             <remote-destination host="localhost" port="25"/>
         </outbound-socket-binding>
     </socket-binding-group>
-
 </server>
