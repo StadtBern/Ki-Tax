@@ -42,8 +42,10 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Inject
 	private EbeguParameterService ebeguParameterService;
+
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
+
 	@Inject
 	private WizardStepService wizardStepService;
 
@@ -55,9 +57,6 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Inject
 	private GesuchService gesuchService;
-
-	@Inject
-	private BetreuungService betreuungService;
 
 	@Inject
 	private RulesService rulesService;
