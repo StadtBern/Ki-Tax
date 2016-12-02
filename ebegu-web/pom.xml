@@ -14,6 +14,7 @@
         <nexus.repo.id>dvb.snapshots</nexus.repo.id>
         <nexus.url>${maven.nexus.snapshot.url}</nexus.url>
         <npm.arguments>run --no-color build:dev</npm.arguments>
+        <skipTests>false</skipTests>
     </properties>
 
     <profiles>
@@ -82,16 +83,18 @@
                         </configuration>
                     </execution>
 
-                    <!--<execution>-->
-                        <!--<id>grunt jenkins-build</id>-->
-                        <!--<goals>-->
-                            <!--<goal>grunt</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<arguments>&#45;&#45;no-color build-jenkins</arguments>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-
+                    <!--run karma tests-->
+                    <execution>
+                        <id>javascript karma tests</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>test</phase>
+                        <configuration>
+                           <arguments>run tests</arguments>
+                            <skip>${skipTests}</skip>
+                       </configuration>
+                    </execution>
 
                 </executions>
             </plugin>
