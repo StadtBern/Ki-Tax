@@ -60,7 +60,7 @@ describe('institutionRS', function () {
     describe('API Usage', function () {
         describe('findInstitution', () => {
             it('should return the Institution by id', () => {
-                $httpBackend.expectGET(institutionRS.serviceURL + '/' + mockInstitution.id).respond(mockInstitutionRest);
+                $httpBackend.expectGET(institutionRS.serviceURL + '/id/' + mockInstitution.id).respond(mockInstitutionRest);
 
                 let foundInstitution: TSInstitution;
                 institutionRS.findInstitution(mockInstitution.id).then((result) => {
