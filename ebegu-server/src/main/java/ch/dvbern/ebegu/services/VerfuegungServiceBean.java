@@ -173,23 +173,23 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Override
 	@Nonnull
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, SCHULAMT})
 	public Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull  Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
 		if(betreuung.getVorgaengerId()==null) {return Optional.empty();}
 
-		Optional<Betreuung> optVorgaengerbetreuung = betreuungService.findBetreuung(betreuung.getVorgaengerId());
-		if (optVorgaengerbetreuung.isPresent()) {
-			Betreuung vorgaengerbetreuung = optVorgaengerbetreuung.get();
+		// Achtung, hier wird persistence.find() verwendet, da ich fuer das Vorgaengergesuch evt. nicht
+		// Leseberechtigt bin, fuer die Mutation aber schon!
+		Betreuung vorgaengerbetreuung = persistence.find(Betreuung.class, betreuung.getVorgaengerId());
+		if (vorgaengerbetreuung != null) {
 			if (!vorgaengerbetreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
-				authorizer.checkReadAuthorization(vorgaengerbetreuung.getVerfuegung());
+				// Hier kann aus demselben Grund die Berechtigung fuer die Vorgaengerverfuegung nicht geprueft werden
 				return Optional.ofNullable(vorgaengerbetreuung.getVerfuegung());
 			} else {
 				return findVorgaengerVerfuegung(vorgaengerbetreuung);
 			}
 		}
 		return Optional.empty();
-
 	}
 
 	@Override
