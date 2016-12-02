@@ -91,7 +91,7 @@
                         </goals>
                         <phase>test</phase>
                         <configuration>
-                           <arguments>run tests</arguments>
+                           <arguments>run test</arguments>
                             <skip>${skipTests}</skip>
                        </configuration>
                     </execution>

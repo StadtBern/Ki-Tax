@@ -65,11 +65,11 @@ import MahnungRS from '../gesuch/service/mahnungRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
-    let dynDep: string [] = ['unsavedChanges'];
-    //deaktiviere unsavedChanges plugin fuer development
-    // if (ENV === 'development') {
-    //     return [];
-    // }
+    let dynDep: string [] = [];
+    //hier kommen plugins die wir fuer dev disablen wollen
+    if (ENV === 'development') {
+        return [];
+    }
     return dynDep;
 };
 
@@ -93,7 +93,8 @@ const dependencies: string[] = [
     'angularMoment',
     'cfp.hotkeys',
     'ui.utils.masks',
-    'ngFileUpload'
+    'ngFileUpload',
+    'unsavedChanges'
 ];
 
 
