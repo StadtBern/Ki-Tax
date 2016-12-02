@@ -35,6 +35,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
             let isAdmin: boolean = authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorRoles());
             if (toState && forbiddenPlaces.indexOf(toState.name) !== -1 && authServiceRS.getPrincipal() && !isAdmin) {
                 errorService.addMesageAsError('ERROR_UNAUTHORIZED');
+                $log.debug("prevented navigation to page because user is not admin");
                 event.preventDefault();
 
             }
