@@ -89,7 +89,7 @@ public class InstitutionResource {
 	@ApiOperation(value = "Find and return an Institution by his institution id as parameter")
 	@Nullable
 	@GET
-	@Path("/{institutionId}")
+	@Path("/id/{institutionId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxInstitution findInstitution(
