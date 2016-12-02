@@ -267,6 +267,7 @@ export default class WizardStepManager {
                     }
                 }
             }
+            return this.areAllStepsOK();
         }
         return step.verfuegbar === true;  //wenn keine Sonderbedingung gehen wir davon aus dass der step nicht disabled ist
     }
