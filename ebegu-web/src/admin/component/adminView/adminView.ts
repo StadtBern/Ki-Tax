@@ -109,9 +109,9 @@ export class AdminViewController {
     }
 
     public createTestFall(testFall: string, bestaetigt: boolean, verfuegen: boolean): IPromise<any> {
-        return this.testFaelleRS.createTestFall(testFall, bestaetigt, verfuegen).then((respone) => {
+        return this.testFaelleRS.createTestFall(testFall, bestaetigt, verfuegen).then((response) => {
             return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                title: respone.data
+                title: response.data
             }).then(() => {
                 //do nothing
             });
@@ -120,9 +120,9 @@ export class AdminViewController {
 
     public mutiereFallHeirat(): IPromise<any> {
         return this.testFaelleRS.mutiereFallHeirat(this.fallId, '0621fb5d-a187-5a91-abaf-8a813c4d263a',
-            this.mutationsdatum, this.aenderungperHeirat).then((respone) => {
+            this.mutationsdatum, this.aenderungperHeirat).then((response) => {
             return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                title: respone.data
+                title: response.data
             }).then(() => {
                 //do nothing
             });
