@@ -58,7 +58,7 @@ describe('gesuchsperiodeRS', function () {
     describe('API Usage', function () {
         describe('findGesuchsperiode', () => {
             it('should return the Gesuchsperiode by id', () => {
-                $httpBackend.expectGET(gesuchsperiodeRS.serviceURL + '/' + encodeURIComponent(mockGesuchsperiode.id)).respond(mockGesuchsperiodeRest);
+                $httpBackend.expectGET(gesuchsperiodeRS.serviceURL + '/gesuchsperiode/' + encodeURIComponent(mockGesuchsperiode.id)).respond(mockGesuchsperiodeRest);
 
                 let foundGesuchsperiode: TSGesuchsperiode;
                 gesuchsperiodeRS.findGesuchsperiode(mockGesuchsperiode.id).then((result) => {

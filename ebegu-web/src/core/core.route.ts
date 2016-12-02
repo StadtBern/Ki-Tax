@@ -4,18 +4,21 @@ import ListResourceRS from './service/listResourceRS.rest';
 import {MandantRS} from './service/mandantRS.rest';
 import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
+import TSUser from '../models/TSUser';
+import {TSRoleUtil} from '../utils/TSRoleUtil';
+import ErrorService from './errors/service/ErrorService';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
 import ILocationService = angular.ILocationService;
 import ILogService = angular.ILogService;
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$rootScope', 'hotkeys',
-    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log'];
+    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log' , 'ErrorService'];
 
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
-                       authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService,  $log: ILogService) {
+                       authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService,  $log: ILogService, errorService: ErrorService) {
     // navigationLogger.toggle();
 
     // Fehler beim Navigieren ueber ui-route ins Log schreiben
@@ -24,6 +27,19 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         $log.error('$stateChangeError --- event, toState, toParams, fromState, fromParams, error');
         $log.error(event, toState, toParams, fromState, fromParams, error);
     });
+    //Normale Benutzer duefen nicht auf admin Seite
+    $rootScope.$on('$stateChangeStart',
+        (event, toState, toParams, fromState, fromParams, options) => {
+            let principal: TSUser = authServiceRS.getPrincipal();
+            let forbiddenPlaces = ['admin', 'institution', 'parameter', 'traegerschaft'];
+            let isAdmin: boolean = authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorRoles());
+            if (toState && forbiddenPlaces.indexOf(toState.name) !== -1 && authServiceRS.getPrincipal() && !isAdmin) {
+                errorService.addMesageAsError('ERROR_UNAUTHORIZED');
+                event.preventDefault();
+
+            }
+        });
+
     routerHelper.configureStates(getStates(), '/start');
     angularMomentConfig.format = 'DD.MM.YYYY';
     // dieser call macht mit tests probleme, daher wird er fuer test auskommentiert

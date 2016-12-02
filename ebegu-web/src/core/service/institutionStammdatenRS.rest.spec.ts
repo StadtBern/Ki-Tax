@@ -65,7 +65,7 @@ describe('institutionStammdatenRS', function () {
     describe('API Usage', function () {
         describe('findInstitutionStammdaten', () => {
             it('should return the InstitutionStammdaten by id', () => {
-                $httpBackend.expectGET(institutionStammdatenRS.serviceURL + '/' + encodeURIComponent(mockInstitutionStammdaten.id))
+                $httpBackend.expectGET(institutionStammdatenRS.serviceURL + '/id/' + encodeURIComponent(mockInstitutionStammdaten.id))
                     .respond(mockInstitutionStammdatenRest);
 
                 let foundInstitutionStammdaten: TSInstitutionStammdaten;
