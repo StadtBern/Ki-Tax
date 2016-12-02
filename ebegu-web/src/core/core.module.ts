@@ -67,9 +67,9 @@ let dynamicDependencies = function (): string[] {
 
     let dynDep: string [] = ['unsavedChanges'];
     //deaktiviere unsavedChanges plugin fuer development
-    if (ENV === 'development') {
-        return [];
-    }
+    // if (ENV === 'development') {
+    //     return [];
+    // }
     return dynDep;
 };
 
