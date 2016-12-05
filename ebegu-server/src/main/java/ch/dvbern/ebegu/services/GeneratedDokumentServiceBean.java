@@ -13,7 +13,6 @@ import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -303,9 +302,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			if (mahnung.hasVorgaenger()) {
 				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
 			}else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU) {
-				vorgaengerMahnung = mahnungService.findMahnungenForGesuch(gesuch).stream()
-					.filter(Mahnung::isActive)
-					.findFirst();
+				vorgaengerMahnung = mahnungService.
+					findAktiveErstMahnung(gesuch);
+
 			}
 
 			byte[] data = pdfService.printMahnung(mahnung, vorgaengerMahnung);
