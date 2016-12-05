@@ -77,6 +77,12 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     public confirmAndSave(form: angular.IFormController): IPromise<TSFamiliensituation> {
         this.savedClicked = true;
         if (form.$valid && !this.hasEmptyAenderungPer() && !this.hasError()) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getFamiliensituation());
+            }
+
             if (this.isConfirmationRequired()) {
                 let descriptionText: any = this.$translate.instant('FAMILIENSITUATION_WARNING_BESCHREIBUNG', {
                     gsfullname: this.gesuchModelManager.getGesuch().gesuchsteller2 ? this.gesuchModelManager.getGesuch().gesuchsteller2.getFullName() : ''
@@ -85,28 +91,19 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
                     title: 'FAMILIENSITUATION_WARNING',
                     deleteText: descriptionText
                 }).then(() => {   //User confirmed changes
-                    return this.save(form);
+                    return this.save();
                 });
             } else {
-                return this.save(form);
+                return this.save();
             }
         }
         return undefined;
     }
 
-    private save(form: angular.IFormController): IPromise<TSFamiliensituation> {
-        if (form.$valid && !this.hasEmptyAenderungPer() && !this.hasError()) {
-            if (!form.$dirty) {
-                // If there are no changes in form we don't need anything to update on Server and we could return the
-                // promise immediately
-                return this.$q.when(this.model);
-            }
-            this.errorService.clearAll();
-
-            this.gesuchModelManager.getGesuch().familiensituation = this.model;
-            return this.gesuchModelManager.updateFamiliensituation();
-        }
-        return undefined;
+    private save(): IPromise<TSFamiliensituation> {
+        this.errorService.clearAll();
+        this.gesuchModelManager.getGesuch().familiensituation = this.model;
+        return this.gesuchModelManager.updateFamiliensituation();
     }
 
     showGesuchstellerKardinalitaet(): boolean {

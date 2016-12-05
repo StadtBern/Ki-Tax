@@ -117,24 +117,32 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     public confirmAndSave(form: angular.IFormController): IPromise<TSEinkommensverschlechterungInfo> {
-        if (this.isConfirmationRequired()) {
-            return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-                title: 'EINKVERS_WARNING',
-                deleteText: 'EINKVERS_WARNING_BESCHREIBUNG'
-            }).then(() => {   //User confirmed changes
-                return this.save(form);
-            });
-        } else {
-            return this.save(form);
+            if (form.$valid) {
+                if (!form.$dirty) {
+                    // If there are no changes in form we don't need anything to update on Server and we could return the
+                    // promise immediately
+                    return this.$q.when(this.getGesuch().einkommensverschlechterungInfo);
+                }
+                if (this.isConfirmationRequired()) {
+                    return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                        title: 'EINKVERS_WARNING',
+                        deleteText: 'EINKVERS_WARNING_BESCHREIBUNG'
+                    }).then(() => {   //User confirmed changes
+                        return this.save();
+                    });
+                } else {
+                    return this.save();
+                }
+            }
+            return undefined;
         }
-    }
 
     private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungInfo> {
         if (form.$valid) {
             if (!form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
-                return this.$q.when(this.model);
+                return this.$q.when(this.getGesuch().einkommensverschlechterungInfo);
             }
             this.errorService.clearAll();
             if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {

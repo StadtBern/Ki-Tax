@@ -63,7 +63,7 @@ public class TraegerschaftResource {
 
 	@Nullable
 	@GET
-	@Path("/{traegerschaftId}")
+	@Path("/id/{traegerschaftId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxTraegerschaft findTraegerschaft(

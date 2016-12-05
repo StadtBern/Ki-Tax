@@ -29,7 +29,7 @@ export class EbeguVorlageRS {
 
         let restEbeguVorlage = {};
         restEbeguVorlage = this.ebeguRestUtil.ebeguVorlageToRestObject(restEbeguVorlage, ebeguVorlage);
-        let restEbeguVorlageString = this.upload.json(restEbeguVorlage);
+        this.upload.json(restEbeguVorlage);
 
         return this.upload.upload({
             url: this.serviceURL,

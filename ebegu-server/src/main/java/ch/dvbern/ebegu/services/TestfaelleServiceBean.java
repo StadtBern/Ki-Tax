@@ -62,7 +62,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	@Override
 	@Nonnull
-	@SuppressWarnings("PMD.NcssMethodCount")
+	@SuppressWarnings(value = {"PMD.NcssMethodCount",  "PMD.AvoidDuplicateLiterals"})
 	public StringBuilder createAndSaveTestfaelle(String fallid,
 												 Integer iterationCount,
 												 boolean betreuungenBestaetigt,
@@ -78,31 +78,31 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 			if (WaeltiDagmar.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Dagmar Waelti erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Dagmar Waelti erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (FeutzIvonne.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Yvonne Feutz erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Yvonne Feutz erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (PerreiraMarcia.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Marcia Perreira erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Marcia Perreira erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (WaltherLaura.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Laura Walther erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Laura Walther erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (LuethiMeret.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Meret Luethi erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Meret Luethi erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (BeckerNora.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Nora Becker erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Nora Becker erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (MeierMeret.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Meier Meret erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Meier Meret erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (UmzugAusInAusBern.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Umzug Aus-In-Aus Bern Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Umzug Aus-In-Aus Bern Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (Abwesenheit.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Abwesenheit Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Abwesenheit Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if ("all".equals(fallid)) {
 				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
