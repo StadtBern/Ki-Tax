@@ -42,9 +42,6 @@ public enum EbeguVorlageKey {
 	// finanzielle Situation gerechnet wurde
 	VORLAGE_FINANZIELLE_SITUATION("/vorlagen/Berechnungsgrundlagen.docx"),
 
-	// Zurückweisung Der Brief, der dem Gesuchsteller bei einer Zurückweisung versendet wird
-	VORLAGE_ZURUECKWEISUNG,
-
 	// Ein angebotsübergreifenden neutralen Begleitbrief zu den Verfügungen
 	VORLAGE_BEGLEITSCHREIBEN("/vorlagen/Begleitschreiben.docx");
 
