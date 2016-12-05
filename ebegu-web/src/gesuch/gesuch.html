@@ -143,11 +143,12 @@
                 <span class="col-xs-2 fa ng-class:vm.getIcon('DOKUMENTE')" aria-hidden="true"></span>
             </li>
 
-            <li ng-if="vm.isStepVisible('FREIGABEQUITTUNG')"
+            <li ng-if="vm.isStepVisible('FREIGABE')"
                 class="row">
                 <button type="button" class="col-xs-10  btn-link"
-                        ng-disabled="true">
-                    <span data-translate="MENU_FREIGABEQUITTUNG"></span>
+                        ui-sref="gesuch.freigabe({gesuchId: vm.getGesuchId()})"
+                        ng-disabled="vm.isWizardStepDisabled('DOKUMENTE')">
+                    <span data-translate="MENU_FREIGABE"></span>
                 </button>
             </li>
 

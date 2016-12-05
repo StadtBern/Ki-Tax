@@ -75,9 +75,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 		query.where(predWizardStepFromGesuch);
 		final List<WizardStep> criteriaResults = persistence.getCriteriaResults(query);
-		criteriaResults.forEach(result -> {
-			authorizer.checkReadAuthorization(result);
-		});
+		criteriaResults.forEach(result -> authorizer.checkReadAuthorization(result));
 		return criteriaResults;
 	}
 
@@ -105,6 +103,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.OK, true)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.OK, true)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.OK, true)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FREIGABE, WizardStepStatus.OK, true)));
 			// Verfuegen muss WARTEN sein, da die Betreuungen nochmal verfuegt werden muessen
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.WARTEN, true)));
 		} else { // GESUCH
@@ -119,6 +118,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FREIGABE, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT, false)));
 		}
 		return wizardStepList;

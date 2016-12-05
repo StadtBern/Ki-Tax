@@ -43,7 +43,8 @@ function getStates(): IState[] {
         new EbeguEinkommensverschlechterungSteuernState(),
         new EbeguEinkommensverschlechterungState(),
         new EbeguEinkommensverschlechterungResultateState(),
-        new EbeguDokumenteState()
+        new EbeguDokumenteState(),
+        new EbeguFreigabeState()
     ];
 }
 
@@ -445,6 +446,24 @@ export class EbeguDokumenteState implements IState {
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<dokumente-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
+}
+
+export class EbeguFreigabeState implements IState {
+    name = 'gesuch.freigabe';
+    url = '/freigabe/:gesuchId';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<freigabe-view>'
         },
         'kommentarViewPort': {
             template: '<kommentar-view>'

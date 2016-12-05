@@ -355,6 +355,11 @@ export class NavigatorController {
                 gesuchId: gesuchId
             });
 
+        } else if (stepName === TSWizardStepName.FREIGABE) {
+            this.state.go('gesuch.freigabe', {
+                gesuchId: gesuchId
+            });
+
         } else if (stepName === TSWizardStepName.VERFUEGEN) {
             this.state.go('gesuch.verfuegen', {
                 gesuchId: gesuchId

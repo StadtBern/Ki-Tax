@@ -47,3 +47,8 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
 export function getTSAntragStatusPendenzValues(): Array<TSAntragStatus> {
     return getTSAntragStatusValues().filter(element => element !== TSAntragStatus.VERFUEGT);
 }
+
+export function isFreigegeben(status: TSAntragStatus): boolean {
+    return status !== TSAntragStatus.IN_BEARBEITUNG_GS && status !== TSAntragStatus.FREIGABEQUITTUNG
+        && status !== TSAntragStatus.NUR_SCHULAMT;
+}

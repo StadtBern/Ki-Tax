@@ -451,7 +451,7 @@
     "MENU_FINANZIELLE_SITUATION": "Finanzielle Situation",
     "MENU_EINKOMMENSVERSCHLECHTERUNG": "Einkommensverschlechterung",
     "MENU_DOKUMENTE": "Dokumente",
-    "MENU_FREIGABEQUITTUNG": "Freigabequittung",
+    "MENU_FREIGABE": "Freigabe",
     "MENU_FALL_EROEFFNEN": "FALL ERÖFFNEN",
     "MENU_PENDENZEN": "PENDENZEN",
     "MENU_PENDENZEN_INSTITUTION": "PENDENZEN",
@@ -778,5 +778,10 @@
     "UMZUG_HINT": "Umzüge, die in der Zukunft liegen, können bereits zum jetzigen Punkt angegeben werden",
     "ABWESENHEIT": "Abwesenheit",
     "ABWESENHEIT_ENTFERNEN": "Abwesenheit löschen",
-    "ABWESENHEIT_ERFASSEN": "Abwesenheit erfassen"
+    "ABWESENHEIT_ERFASSEN": "Abwesenheit erfassen",
+    "FREIGABEQUITTUNG_DRUCKEN_TITLE": "Freigabequittung drucken",
+    "FREIGABEQUITTUNG_TAGESSCHULEN_TITLE": "Für Eltern mit Kindern in Tagestätten und Tagesschulen",
+    "FREIGABEQUITTUNG_DRUCKEN_TEXT": "Ich bestätige, dass alle Angaben vollständig und wahr sind und nehme zur Kenntnis, dass sie bei der Steuerverwaltung überprüft werden können",
+    "FREIGABEQUITTUNG_TAGESSCHULEN_TEXT": "Ich bin einverstanden, dass die oben aufgeführten Angaben zur Bemessung/Erhebung der Elterngebühr in der Tagesschule der Stadt Bern verwendet werden. Ich ermächtige das Schulamt, die Angaben zu Kontrollzwecken mit der Steuerverwaltung abzugleichen. Die Ermächtigung beinhaltet die Befugnis von Jugendamt, Schulamt und Steuerverwaltung, einander wechselseitig schriftlich und mündlich die zur Berechnung des massgebenden Einkommens notwendigen Daten zukommen zu lassen",
+    "PDF_FREIGABEQUITTUNG_ANZEIGEN": "Freigabequittung als PDF anzeigen"
 }
