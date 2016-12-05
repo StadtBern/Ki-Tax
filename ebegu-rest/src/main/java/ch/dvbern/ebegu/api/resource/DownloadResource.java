@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxMahnung;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -53,6 +54,9 @@ public class DownloadResource {
 
 	@Inject
 	private GesuchService gesuchService;
+
+	@Inject
+	private BetreuungService betreuungService;
 
 	@Inject
 	private GeneratedDokumentService generatedDokumentService;
@@ -174,7 +178,7 @@ public class DownloadResource {
 
 	@Nonnull
 	@POST
-	@Path("/{gesuchid}/{betreuungId}/{forceCreation}/generatedVerfuegung")
+	@Path("/{gesuchid}/{betreuungId}/VERFUEGUNG/{forceCreation}/generated")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
 	public Response getVerfuegungDokumentAccessTokenGeneratedDokument(
@@ -205,6 +209,51 @@ public class DownloadResource {
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId not found: " + jaxGesuchId.getId());
 	}
 
+	@Nonnull
+	@PUT
+	@Path("/MAHNUNG/{forceCreation}/generated")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.WILDCARD)
+	public Response getMahnungDokumentAccessTokenGeneratedDokument(
+		@Nonnull @NotNull @Valid JaxMahnung jaxMahnung,
+		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException,
+		IOException, MimeTypeParseException, MergeDocException {
+
+		Validate.notNull(jaxMahnung);
+		String ip = getIP(request);
+
+		Mahnung mahnung = converter.mahnungToEntity(jaxMahnung, new Mahnung());
+
+		GeneratedDokument persistedDokument = generatedDokumentService
+			.getMahnungDokumentAccessTokenGeneratedDokument(mahnung, forceCreation);
+
+		return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+
+	}
+
+	@Nonnull
+	@GET
+	@Path("/{betreuungId}/NICHTEINTRETEN/{forceCreation}/generated")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getNichteintretenDokumentAccessTokenGeneratedDokument(
+		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
+		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException,
+		IOException, MimeTypeParseException, MergeDocException {
+
+		Validate.notNull(jaxBetreuungId);
+		String ip = getIP(request);
+
+		Optional<Betreuung> betreuung = betreuungService.findBetreuung(jaxBetreuungId.getId());
+
+		GeneratedDokument persistedDokument = generatedDokumentService
+			.getNichteintretenDokumentAccessTokenGeneratedDokument(betreuung.get(), forceCreation);
+
+		return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+
+	}
 
 	private Response getFileDownloadResponse(UriInfo uriInfo, String ip, File file) {
 		final DownloadFile downloadFile = downloadFileService.create(file, ip);
@@ -235,6 +284,7 @@ public class DownloadResource {
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 				betreuung.getBetreuungspensumContainers().size();
+				betreuung.getAbwesenheitContainers().size();
 			}
 		}
 		if (gesuch.getGesuchsteller1() != null) {

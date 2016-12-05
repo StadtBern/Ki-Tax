@@ -44,22 +44,30 @@
                 outline: none !important;
                 text-decoration: none !important;
             }
-            &[disabled] {
+            &[disabled] span {
                 color: @contrast-dark;
+            }
+            span {
+                .normal();
+                margin-left: 2.5rem;
+                letter-spacing: 0.1rem;
+                line-height: @sidebar-height;
+                height: @sidebar-height;
+                font-size: 1.6rem;
+                text-align: left;
+                color: @contrast-darkest;
+                display: block;
             }
         }
 
         span {
-            margin-left: 2.5rem;
+            .normal();
             letter-spacing: 0.1rem;
             line-height: @sidebar-height;
             height: @sidebar-height;
             font-size: 1.6rem;
-            text-align: left;
             color: @contrast-darkest;
             display: block;
-        }
-        .fa {
             margin: 0;
             text-align: center;
             padding: 0 3rem 0 0;
@@ -81,14 +89,17 @@
             left: 2.5rem;
 
         }
-        span {
-            margin-left: 2.5rem;
-            .bold();
-            color: @primary;
+        button {
+            span {
+                margin-left: 2.5rem;
+                .bold();
+                color: @primary;
 
+            }
         }
-        .fa {
+        span {
             margin: 0;
+            .normal();
         }
 
     }
@@ -104,6 +115,9 @@
     }
     .fa-pencil.black {
         color: @contrast-darkest;
+    }
+    .fa-pencil.green {
+        color: @success;
     }
 
 }

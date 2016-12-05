@@ -1,7 +1,7 @@
 <div class="betreuungListView gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle">
+            <h1>
                 <span data-translate="KINDER_MIT_BETREUUNG"></span>
             </h1>
             <hr class="header"/>
@@ -11,7 +11,7 @@
     <!--Fuer jedes Kind Tabelle anzeigen-->
     <div class="row">
         <div class="col-md-12">
-            <div ng-repeat="kind in vm.getKinderWithBetreuungList()" style="margin:2rem;">
+            <div ng-repeat="kind in vm.getKinderWithBetreuungList()" class="marginBottom20">
                 <div class="row">
                     <div class="col-md-12">
                         <h1 class="mainTitle">
@@ -37,8 +37,10 @@
                             st-select-mode="single"
                             ng-click="vm.editBetreuung(kind, betreuung)">
                             <td ng-bind="vm.getBetreuungsangebotTyp(betreuung) | translate"></td>
-                            <td class="betreuung-status ng-class:betreuung.betreuungsstatus;"
-                                ng-bind="betreuung.betreuungsstatus | translate"></td>
+                            <td class="betreuung-status ng-class:betreuung.betreuungsstatus;">
+                                <div ng-bind="betreuung.betreuungsstatus | translate"></div>
+                                <span class="betreuung-bar"></span>
+                            </td>
                             <td dv-show-element
                                 dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                 dv-show-expression="vm.canRemoveBetreuung(betreuung)"
@@ -55,7 +57,7 @@
                                 <!-- Fuer Alle ausser Institutionen, wenn der Status ist verfuegt oder Verfuegen oder bei Mutation-->
                             </td>
                             <td dv-show-element
-                                dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                                dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()">
                                 <!--Fuer Institutionen und Traegerschaft wird der Button Loeschen nicht angezeigt -->
                             </td>
                         </tr>
@@ -67,7 +69,7 @@
                 </div>
                 <div class="col-md-12" dv-show-element
                      dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                     dv-show-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                     dv-show-expression="!vm.isGesuchReadonly()">
                     <dv-loading-button type="button" button-click="vm.createBetreuung(kind)"
                                        button-class="dv-btn-sm color-success">
                         <i class="glyphicon glyphicon-plus"></i>

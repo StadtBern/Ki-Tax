@@ -1,10 +1,11 @@
 <div class="stammdatenView gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle">
-                <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.gesuchstellerNumber}}
+            <h1>
+                <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.getGesuchstellerNumber()}}
             </h1>
             <hr class="header"/>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
         </div>
     </div>
     <div class="row">
@@ -13,8 +14,7 @@
                   unsaved-warning-form>
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                          dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                    <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
+                          dv-enable-expression="!vm.isGesuchReadonly()">
                     <!--Geschlecht-->
                     <div class="row">
                         <div class="col-sm-12">
@@ -24,7 +24,7 @@
                                                     ng-required="true" items="vm.geschlechter"
                                                     ng-model="vm.getModel().geschlecht" dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly()">
                                 </dv-radio-container>
                                 <dv-error-messages for="form.geschlecht.$error"
                                                    class="error"></dv-error-messages>
@@ -69,11 +69,12 @@
                         </div>
                     </div>
 
-                <!-- Adresse. Bei Mutationen nicht editierbar-->
-                <fieldset ng-disabled="vm.disableWohnadresseFor2GS()"> <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
-                    <dv-adresse adresse="vm.getModel().getWohnAdresse()" show-nicht-in-gemeinde="true"
-                                prefix="wohn"></dv-adresse>
-                </fieldset>
+                    <!-- Adresse. Bei Mutationen nicht editierbar-->
+                    <fieldset ng-disabled="vm.disableWohnadresseFor2GS()">
+                        <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
+                        <dv-adresse adresse="vm.getModel().getWohnAdresse()" show-nicht-in-gemeinde="true"
+                                    prefix="wohn"></dv-adresse>
+                    </fieldset>
 
                     <!--Korrenspondenzadr Checkbox-->
                     <div class="row">
@@ -83,7 +84,7 @@
                                              aria-label="korrespondenzAdr" ng-change="vm.korrespondenzAdrClicked()"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                             dv-enable-expression="!vm.isGesuchReadonly()">
                                     <span data-translate="KORRESPONDENZADR"></span>
                                     <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
                                 </md-checkbox>
@@ -105,7 +106,7 @@
                                              aria-label="diplomatenstatus"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                             dv-enable-expression="!vm.isGesuchReadonly()">
                                     <span data-translate="GESUCHSTELLER_DIPLOMATENSTATUS"></span>
                                 </md-checkbox>
                                 <dv-error-messages for="form.diplomatenstatus.$error" class="error"></dv-error-messages>
@@ -113,20 +114,36 @@
                         </div>
                     </div>
 
-                <!--Email-->
-                <div class="row">
-                    <div class="col-sm-12 dv-input-container-small">
-                        <dv-input-container class="form-group">
-                            <label class="md-no-float" data-translate="EMAIL" for="email_ID">
-                            </label>
-                            <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
-                                   dv-max-length class="form-control" required placeholder="hans.muster@example.com"
-                                   ng-pattern="vm.CONSTANTS.PATTERN_EMAIL">
-                            <dv-error-messages for="form.email.$error"
-                                               class="error"></dv-error-messages>
-                        </dv-input-container>
+                    <!--Umzug checkbox. Bei Mutationen nicht angezeigt-->
+                    <div class="row" ng-if="!vm.isMutation()">
+                        <div class="col-md-12">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.getModel().showUmzug" name="umzug" aria-label="umzug"
+                                             dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchReadonly() && !vm.isThereAnyUmzug()">
+                                    <span data-translate="UMZUG"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.umzug.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
                     </div>
-                </div>
+
+                    <!--Email-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="EMAIL" for="email_ID">
+                                </label>
+                                <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
+                                       dv-max-length class="form-control" required placeholder="hans.muster@example.com"
+                                       ng-pattern="vm.CONSTANTS.PATTERN_EMAIL">
+                                <dv-error-messages for="form.email.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
 
                     <!--Mobile /Telefon-->
@@ -171,13 +188,19 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-show-element
-                               dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                               dv-previous="true" dv-next="true" dv-save="vm.save(form)">
-                </dv-navigation>
-                <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                               dv-previous="true" dv-next="true">
-                </dv-navigation>
+                <div class="row">
+                    <div class="col-md-12">
+                        <dv-navigation dv-show-element
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                       dv-previous="true" dv-next="true" dv-save="vm.save(form)">
+                        </dv-navigation>
+                        <dv-navigation dv-show-element
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"
+                                       dv-previous="true" dv-next="true">
+                        </dv-navigation>
+                    </div>
+                </div>
+
             </form>
         </div>
     </div>

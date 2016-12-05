@@ -1,7 +1,9 @@
 <div class="adminView adminModul">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-            <h1 data-translate="ADMIN"></h1>
+            <div class="viewTitle">
+                <h1 data-translate="ADMIN"></h1>
+            </div>
 
             <div class="row">
                 <div class="col-md-12 table-responsive">
@@ -33,8 +35,8 @@
                             <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
                             <td>
                                 <dv-loading-button type="button" button-click="vm.removeRow(row)"
-                                                   button-class="btn-sm btn-danger">
-                                    <i class="fa fa-trash-o">
+                                                   button-class="dv-btn-sm">
+                                    <i class="fa fa-minus">
                                     </i>
                                 </dv-loading-button>
                             </td>
@@ -49,26 +51,35 @@
                   ng-if="vm.applicationProperty"
                   unsaved-warning-form>
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="md-no-float" data-translate="PROPERTY_NAME" for="propName" class="col-md-2">
-                            </label>
-                            <input id="propName" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
-                                   dv-max-length class="col-md-10 input-element smallfont" required
-                                   ng-disabled="vm.applicationProperty.timestampErstellt">
-                            <dv-error-messages for="form.propertyName.$error"
-                                               class="error col-md-offset-2 col-md-10"></dv-error-messages>
+                    <div class="col-md-12 form-group">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label class="md-no-float" data-translate="PROPERTY_NAME" for="propName">
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="propName" type="text" name="propertyName"
+                                       ng-model="vm.applicationProperty.name"
+                                       dv-max-length class="input-element smallfont" required
+                                       ng-disabled="vm.applicationProperty.timestampErstellt">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="md-no-float" data-translate="PROPERTY_TEXT" for="propVal">
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="propVal" type="text" name="propertyValue"
+                                       ng-model="vm.applicationProperty.value"
+                                       dv-max-length class="smallfont">
+                            </div>
                         </div>
-
-
-                        <div class="form-group">
-                            <label class="md-no-float" data-translate="PROPERTY_TEXT" for="propVal" class="col-md-2">
-                            </label>
-                            <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
-                                   dv-max-length class="col-md-10 smallfont">
-
-                            <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
-
+                        <div class="row form-group">
+                            <div class="col-md-3 col-md-offset-3">
+                                <dv-error-messages for="form.propertyName.$error"></dv-error-messages>
+                            </div>
+                            <div class="col-md-3 col-md-offset-3">
+                                <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
+                            </div>
                         </div>
                     </div>
 
@@ -89,7 +100,7 @@
             </form>
         </div>
 
-        <div class="col-md-10 col-md-offset-2">
+        <div class="col-md-8 col-md-offset-2">
             <h3>
                 <span data-translate="TESTFAELLE_EINFUEGEN"></span>
             </h3>
@@ -254,66 +265,83 @@
                     </button>
                 </li>
             </ul>
-            <h4>
+            <h2>
                 <span data-translate="Mutiere"></span>
-            </h4>
-            <dv-input-container class="form-group">
-                <label class="md-no-float" data-translate="FALL_UPPER" for="fallid">
-                </label>
-                <input id="fallid" type="text" name="fallid" ng-model="vm.fallId"
-                       dv-max-length class="form-control" style="background: #F0F0F0;">
-            </dv-input-container>
-            <label class="md-no-float" data-translate="EINGANGSDATUM" for="mutationsdatum">
-            </label>
-            <dv-datepicker input-id="mutationsdatum" name="mutationsdatum" placeholder=""
-                           ng-model="vm.mutationsdatum" ng-required="true"
-                           class="input-element"
-                           ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
-            </dv-datepicker>
-
-
+            </h2>
             <div class="row">
-                <div class="col-md-4">
-                    <label class="" data-translate="AENDERUNG_PER" for="aenderungper">
-                    </label>
+                <div class="col-md-12 dv-input-container-small">
+                    <dv-input-container class="form-group">
+                        <label class="md-no-float" data-translate="FALL_UPPER" for="fallid">
+                        </label>
+                        <input id="fallid" type="text" name="fallid" ng-model="vm.fallId"
+                               dv-max-length class="form-control" style="background: #F0F0F0;">
+                    </dv-input-container>
                 </div>
-                <div class="col-md-4">
-                    <dv-datepicker input-id="aenderungper" name="aenderungper" placeholder=""
-                                   ng-model="vm.aenderungperHeirat" ng-required="true"
-                                   class="input-element"
-                                   ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
-                    </dv-datepicker>
-                </div>
-                <div class="col-md-4">
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.mutiereFallHeirat()">
-                        <span data-translate="FALL_MUTIEREN_HEIRAT"></span>
-                    </button>
-
+            </div>
+            <div class="row marginTop10">
+                <div class="col-md-12 dv-input-container-small">
+                    <dv-input-container class="form-group">
+                        <label class="md-no-float" data-translate="EINGANGSDATUM" for="mutationsdatum">
+                        </label>
+                        <dv-datepicker input-id="mutationsdatum" name="mutationsdatum" placeholder=""
+                                       ng-model="vm.mutationsdatum" ng-required="true"
+                                       class="input-element"
+                                       ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                        </dv-datepicker>
+                    </dv-input-container>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-4">
-                    <label class="" data-translate="AENDERUNG_PER" for="aenderungper">
-                    </label>
-                </div>
-                <div class="col-md-4">
-                    <dv-datepicker input-id="aenderungper" name="aenderungper" placeholder=""
-                                   ng-model="vm.aenderungperScheidung" ng-required="true"
-                                   class="input-element"
-                                   ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
-                    </dv-datepicker>
-                </div>
-                <div class="col-md-4">
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.mutiereFallScheidung()">
-                        <span data-translate="FALL_MUTIEREN_SCHEIDUNG"></span>
-                    </button>
 
+            <div class="row marginTop10">
+                <div class="col-md-12 form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="" data-translate="AENDERUNG_PER" for="aenderungper">
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <dv-datepicker input-id="aenderungper" name="aenderungper" placeholder=""
+                                           ng-model="vm.aenderungperHeirat" ng-required="true"
+                                           class="input-element"
+                                           ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                            </dv-datepicker>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class=" btn-testfall"
+                                    ng-click="vm.mutiereFallHeirat()">
+                                <span data-translate="FALL_MUTIEREN_HEIRAT"></span>
+                            </button>
+
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <div class="row marginTop10">
+                <div class="col-md-12 form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="" data-translate="AENDERUNG_PER" for="aenderungper">
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <dv-datepicker input-id="aenderungper" name="aenderungper" placeholder=""
+                                           ng-model="vm.aenderungperScheidung" ng-required="true"
+                                           class="input-element"
+                                           ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                            </dv-datepicker>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class=" btn-testfall"
+                                    ng-click="vm.mutiereFallScheidung()">
+                                <span data-translate="FALL_MUTIEREN_SCHEIDUNG"></span>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

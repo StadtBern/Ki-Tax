@@ -33,7 +33,7 @@ import java.util.Locale;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTest {
+public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguLoginTest {
 
 	protected BetreuungsgutscheinEvaluator evaluator;
 
@@ -71,7 +71,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, evaluateFamiliensituation);
 		Assert.assertNotNull(bytes);
-		writeToTempDir(bytes, "finanzielleSituation1G.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "finanzielleSituation1G.pdf");
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, null);
 		Assert.assertNotNull(bytes);
-		writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, null);
 
-		writeToTempDir(bytes, "TN_FamilienStituation1.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "TN_FamilienStituation1.pdf");
 	}
 
 }

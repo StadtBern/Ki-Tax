@@ -1,13 +1,12 @@
 <div class="finanzielleSituation gesuchModul">
     <div class="row">
         <div class="col-md-12">
-
             <form role="form" name="form" class="" unsaved-warning-form="" novalidate>
-                <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Einkommensverschlechterung-->
                     <div class="row">
-                        <div class="col-sm-12 dv-input-container-small">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <h4 class="mainQuestion" data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"></h4>
                                 <dv-radio-container name="einkommensverschlechterung"
@@ -15,7 +14,7 @@
                                                     ng-required="true" class="radio input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly()">
                                 </dv-radio-container>
                                 <dv-error-messages for="form.einkommensverschlechterung.$error"
                                                    class="error"></dv-error-messages>
@@ -25,22 +24,23 @@
 
                     <!-- Auswahl Basisjahr Plus 1 -->
                     <div class="row">
-                        <div class="form-group col-sm-12 dv-input-container-small" ng-if="vm.showEkvi()">
-                            <hr/>
-                            <dv-input-container class="form-group dv-radio-container">
+                        <div class="form-group col-xs-12 dv-input-container-small" ng-if="vm.showEkvi()">
+                            <div class="checkbox">
                                 <md-checkbox name="ekvFuerBasisJahrPlus1"
                                              ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1"
                                              aria-label="{vm.getBasisJahrPlusAsString(0)}"
                                              ng-required="vm.isRequired(1)" class="input-element"
-                                             ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
-                            <span data-translate="EKVI_FUER_JAHR"
-                                  translate-values="{basisjahr: vm.getBasisJahrPlusAsString(0)}"></span>
+                                             ng-disabled="vm.isGesuchReadonly()">
+                                   <span data-translate="EKVI_FUER_JAHR"
+                                         translate-values="{basisjahr: vm.getBasisJahrPlusAsString(0)}"></span>
                                 </md-checkbox>
-                                <div ng-messages="form.ekvFuerBasisJahrPlus1.$error" role="alert" class="error">
-                                    <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                         for="form.ekvFuerBasisJahrPlus1.$error"></div>
+                                <div class="dv-error-messages">
+                                    <div ng-messages="form.ekvFuerBasisJahrPlus1.$error" role="alert" class="error">
+                                        <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
+                                             for="form.ekvFuerBasisJahrPlus1.$error"></div>
+                                    </div>
                                 </div>
-                            </dv-input-container>
+                            </div>
                         </div>
                     </div>
 
@@ -81,21 +81,22 @@
                     <!-- Auswahl Basisjahr Plus 2 -->
                     <div class="row">
                         <div class="form-group col-sm-12 dv-input-container-small" ng-if="vm.showEkvi()">
-                            <hr/>
-                            <dv-input-container class="form-group dv-radio-container">
+                            <div class="checkbox">
                                 <md-checkbox name="ekvFuerBasisJahrPlus2"
                                              ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2"
                                              aria-label="{vm.getBasisJahrPlusAsString(1)}"
                                              ng-required="vm.isRequired(2)" class="input-element"
-                                             ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
-                            <span data-translate="EKVI_FUER_JAHR"
-                                  translate-values="{basisjahr: vm.getBasisJahrPlusAsString(1)}"></span>
+                                             ng-disabled="vm.isGesuchReadonly()">
+                                <span data-translate="EKVI_FUER_JAHR"
+                                      translate-values="{basisjahr: vm.getBasisJahrPlusAsString(1)}"></span>
                                 </md-checkbox>
-                                <div ng-messages="form.ekvFuerBasisJahrPlus2.$error" role="alert" class="error">
-                                    <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                         for="form.ekvFuerBasisJahrPlus2.$error"></div>
+                                <div class="dv-error-messages">
+                                    <div ng-messages="form.ekvFuerBasisJahrPlus2.$error" role="alert" class="error">
+                                        <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
+                                             for="form.ekvFuerBasisJahrPlus2.$error"></div>
+                                    </div>
                                 </div>
-                            </dv-input-container>
+                            </div>
                         </div>
                     </div>
 

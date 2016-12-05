@@ -12,11 +12,13 @@ import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {UploadRS} from '../../../core/service/uploadRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSWizardStep from '../../../models/TSWizardStep';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import ICacheFactoryService = angular.ICacheFactoryService;
+import GlobalCacheService from '../../service/globalCacheService';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 
@@ -34,11 +36,13 @@ export class KommentarViewController {
 
     dokumentePapiergesuch: TSDokumentGrund;
 
-    static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS', 'WizardStepManager'];
+    static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
+        'WizardStepManager', 'GlobalCacheService'];
     /* @ngInject */
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
                 private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
-                private uploadRS: UploadRS, private wizardStepManager: WizardStepManager) {
+                private uploadRS: UploadRS, private wizardStepManager: WizardStepManager, private globalCacheService: GlobalCacheService) {
+
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
         }
@@ -46,8 +50,8 @@ export class KommentarViewController {
 
     private getPapiergesuchFromServer(): IPromise<TSDokumenteDTO> {
 
-        return this.dokumenteRS.getDokumenteByType(
-            this.getGesuch(), TSDokumentGrundTyp.PAPIERGESUCH)
+        return this.dokumenteRS.getDokumenteByTypeCached(
+            this.getGesuch(), TSDokumentGrundTyp.PAPIERGESUCH, this.globalCacheService.getCache())
             .then((promiseValue: TSDokumenteDTO) => {
 
                 if (promiseValue.dokumentGruende.length === 1) {
@@ -125,6 +129,7 @@ export class KommentarViewController {
 
                 this.uploadRS.uploadFile(files, this.dokumentePapiergesuch, gesuchID).then((response) => {
                     this.dokumentePapiergesuch = angular.copy(response);
+                    this.globalCacheService.getCache().removeAll();
                 });
             }
         });
@@ -138,8 +143,8 @@ export class KommentarViewController {
         return this.wizardStepManager.getCurrentStep();
     }
 
-    public isGesuchStatusVerfuegenVerfuegt(): boolean {
-        return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
+    public isGesuchReadonly(): boolean {
+        return this.gesuchModelManager.isGesuchReadonly();
     }
 
     /**
@@ -149,9 +154,9 @@ export class KommentarViewController {
      */
     public isStepCommentDisabled(): boolean {
         return (this.wizardStepManager.getCurrentStepName() !== TSWizardStepName.VERFUEGEN
-                && this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt())
+            && this.gesuchModelManager.isGesuchReadonly())
             || (this.wizardStepManager.getCurrentStepName() === TSWizardStepName.VERFUEGEN
-                && this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT));
+            && this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT));
     }
 
 }

@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
@@ -95,11 +96,6 @@ public class Gesuch extends AbstractEntity {
 	private String bemerkungen;
 
 	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_mutationsdaten_id"))
-	private Mutationsdaten mutationsdaten;
-
-	@Nullable
 	@Valid
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "gesuch")
 	private Set<DokumentGrund> dokumentGrunds;
@@ -121,9 +117,6 @@ public class Gesuch extends AbstractEntity {
 		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA); //TODO (team) abhaengig vom eingeloggten Benutzer!
 		this.setTyp(AntragTyp.MUTATION);
 
-		if (toCopy.getMutationsdaten() != null) {
-			this.setMutationsdaten(new Mutationsdaten(toCopy.getMutationsdaten()));
-		}
 		if (toCopy.getGesuchsteller1() != null) {
 			this.setGesuchsteller1(new Gesuchsteller(toCopy.getGesuchsteller1()));
 		}
@@ -299,18 +292,6 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
-	public final Mutationsdaten getMutationsdaten() {
-		return mutationsdaten;
-	}
-
-	public final void setMutationsdaten(@Nullable Mutationsdaten mutationsdaten) {
-		this.mutationsdaten = mutationsdaten;
-//		if (this.mutationsdaten != null) {
-//			this.mutationsdaten.setGesuch(this);
-//		}
-	}
-
-	@Nullable
 	public int getLaufnummer() {
 		return laufnummer;
 	}
@@ -376,4 +357,21 @@ public class Gesuch extends AbstractEntity {
 		return this.typ == AntragTyp.MUTATION;
 	}
 
+	@Transient
+	public boolean hasBetreuungOfInstitution(@Nullable final Institution institution) {
+		if (institution == null) {
+			return false;
+		}
+		return kindContainers.stream()
+			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.anyMatch(betreuung -> betreuung.getInstitutionStammdaten().getInstitution().equals(institution));
+
+	}
+
+	@Transient
+	public boolean hasBetreuungOfSchulamt() {
+		return kindContainers.stream()
+			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
+	}
 }

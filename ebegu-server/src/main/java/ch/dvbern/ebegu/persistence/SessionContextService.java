@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.persistence;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 
 import javax.annotation.Resource;
+import javax.annotation.security.PermitAll;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import java.security.Principal;
@@ -11,6 +12,7 @@ import java.security.Principal;
  * Implementation des SessionContext als Stateless Session Bean.
  */
 @Stateless
+@PermitAll
 public class SessionContextService implements ISessionContextService {
 
 	@Resource

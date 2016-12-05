@@ -31,7 +31,7 @@ import static ch.dvbern.ebegu.rechner.AbstractBGRechnerTest.checkTestfall01Waelt
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
+public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private VerfuegungService verfuegungService;
@@ -63,7 +63,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Verfuegung verfuegung = new Verfuegung();
 		verfuegung.setBetreuung(betreuung);
 		betreuung.setVerfuegung(verfuegung);
-		Verfuegung persistedVerfuegung = verfuegungService.saveVerfuegung(verfuegung, betreuung.getId());
+		Verfuegung persistedVerfuegung = verfuegungService.verfuegen(verfuegung, betreuung.getId());
 		Betreuung persistedBetreuung = persistence.find(Betreuung.class, betreuung.getId());
 		Assert.assertEquals(persistedVerfuegung.getBetreuung(), persistedBetreuung);
 		Assert.assertEquals(persistedBetreuung.getVerfuegung(), persistedVerfuegung);
@@ -118,8 +118,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		persistence.persist(antragStatusHistory);
 		persistence.merge(gesuch);
 
-		Mutationsdaten mutationsdaten = new Mutationsdaten();
-		Optional<Gesuch> gesuchOptional = this.gesuchService.antragMutieren(gesuch.getId(), mutationsdaten, LocalDate.now());
+		Optional<Gesuch> gesuchOptional = this.gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
 		Assert.assertTrue(gesuchOptional.isPresent());
 		Gesuch mutation = persistence.merge(gesuchOptional.get());
 

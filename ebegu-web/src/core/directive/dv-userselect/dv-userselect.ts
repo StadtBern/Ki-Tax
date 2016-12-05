@@ -14,7 +14,9 @@ export class DVUserselect implements IDirective {
         ngModel: '=',
         inputId: '@',
         dvUsersearch: '@',
-        ngDisabled: '<'
+        ngDisabled: '<',
+        initialAll: '='
+        //initialAll -> tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
     };
     controller = UserselectController;
     controllerAs = 'vm';
@@ -35,25 +37,30 @@ export class UserselectController {
     smartTable: any;
     userList: Array<TSUser>;
     dvUsersearch: string;
+    initialAll: boolean;
 
     static $inject: string[] = ['UserRS', 'AuthServiceRS'];
     /* @ngInject */
     constructor(private userRS: UserRS, private authService: AuthServiceRS) {
         this.updateUserList();
-        this.selectedUser = authService.getPrincipal();
+        if (!this.initialAll) { //tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
+            this.selectedUser = authService.getPrincipal();
+        } else {
+            this.selectedUser = undefined;
+        }
     }
 
 
     //wird von angular aufgerufen
     $onInit() {
         //initial nach aktuell eingeloggtem filtern
-        if (this.smartTable) {
+        if (this.smartTable && !this.initialAll) {
             this.smartTable.search(this.selectedUser.getFullName(), this.dvUsersearch);
         }
     }
 
     private updateUserList() {
-        this.userRS.getAllUsers().then((response: any) => {
+        this.userRS.getBenutzerJAorAdmin().then((response: any) => {
             this.userList = angular.copy(response);
         });
     }

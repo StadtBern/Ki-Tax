@@ -11,8 +11,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Je nach {@link ch.dvbern.ebegu.enums.BetreuungsangebotTyp} der verknuepften Institutionstammdaten darf im Betreuungspensum nur eingeschraenkte
- * Werte eingegeben werden.
+ * Die Betreuungspensen einer Betreuung duerfen sich nicht ueberlappen
  */
 @Target({ TYPE, ANNOTATION_TYPE })
 @Retention(RUNTIME)

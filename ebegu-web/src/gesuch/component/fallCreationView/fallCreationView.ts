@@ -7,10 +7,10 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import {INewFallStateParams} from '../../gesuch.route';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import TSMutationsdaten from '../../../models/TSMutationsdaten';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
+import IQService = angular.IQService;
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -31,11 +31,11 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     showError: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
-        'WizardStepManager', '$translate'];
+        'WizardStepManager', '$translate', '$q'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
-                private $translate: ITranslateService) {
+                private $translate: ITranslateService, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.readCreateNewParam();
         this.readCreateMutation();
@@ -69,9 +69,14 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         }
     }
 
-    save(form: angular.IFormController): IPromise<any> {
+    save(form: angular.IFormController): IPromise<TSGesuch> {
         this.showError = true;
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getGesuch());
+            }
             this.errorService.clearAll();
             if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.MUTATION && this.gesuchModelManager.getGesuch().isNew()) {
                 this.berechnungsManager.clear();
@@ -112,25 +117,6 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         } else {
             return this.$translate.instant('ART_DER_MUTATION');
         }
-    }
-
-    public getMutationsdaten(): TSMutationsdaten {
-        if (this.gesuchModelManager.getGesuch()) {
-            return this.gesuchModelManager.getGesuch().mutationsdaten;
-        }
-        return undefined;
-    }
-
-    public isMutationFeldRequired(): boolean {
-        return !(this.getMutationsdaten().mutationFamiliensituation
-        || this.getMutationsdaten().mutationGesuchsteller
-        || this.getMutationsdaten().mutationUmzug
-        || this.getMutationsdaten().mutationKind
-        || this.getMutationsdaten().mutationBetreuung
-        || this.getMutationsdaten().mutationAbwesenheit
-        || this.getMutationsdaten().mutationErwerbspensum
-        || this.getMutationsdaten().mutationFinanzielleSituation
-        || this.getMutationsdaten().mutationEinkommensverschlechterung);
     }
 
 }

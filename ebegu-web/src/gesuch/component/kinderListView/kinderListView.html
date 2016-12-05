@@ -1,7 +1,11 @@
 <div class="kinderListView gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <p class="inlineHint" data-translate="KINDER_HINT1"></p>
+            <h1>
+                <span data-translate="KINDER"></span>
+            </h1>
+            <hr class="header"/>
+            <p class="inlineHint noMarginY" data-translate="KINDER_HINT1"></p>
             <p class="inlineHint" data-translate="KINDER_HINT2"></p>
         </div>
     </div>
@@ -16,7 +20,6 @@
                         <th st-sort="kindJA.nachname" class="sortable" data-translate="NAME"></th>
                         <th st-sort="kindJA.geburtsdatum" class="sortable" data-translate="GEBURTSDATUM"></th>
                         <th></th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -25,7 +28,7 @@
                         <td ng-bind="row.kindJA.vorname"></td>
                         <td ng-bind="row.kindJA.nachname"></td>
                         <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td ng-if="vm.isGesuchStatusVerfuegenVerfuegt()"></td>
+                        <td ng-if="vm.isGesuchReadonly()"></td>
                         <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
                             <dv-loading-button type="button" button-click="vm.removeKind(row)" button-class="dv-btn-sm">
                                 <i class="fa fa-minus">
@@ -41,7 +44,7 @@
                 </table>
 
         </div>
-        <div class="col-md-12" style="margin-bottom: 2rem" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()">
+        <div class="col-md-12" style="margin-bottom: 2rem" ng-if="!vm.isGesuchReadonly()">
             <dv-loading-button type="button" button-click="vm.createKind()"
                                button-class="dv-btn-sm color-success">
                 <i class="glyphicon glyphicon-plus"></i>

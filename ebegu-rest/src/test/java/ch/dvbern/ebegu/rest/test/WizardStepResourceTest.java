@@ -29,7 +29,7 @@ import java.util.List;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class WizardStepResourceTest extends AbstractEbeguRestTest {
+public class WizardStepResourceTest extends AbstractEbeguRestLoginTest {
 
 	@Inject
 	private WizardStepResource wizardStepResource;
@@ -46,18 +46,19 @@ public class WizardStepResourceTest extends AbstractEbeguRestTest {
 
 		final List<JaxWizardStep> wizardStepList = wizardStepResource.createWizardStepList(new JaxId(gesuch.getId()));
 
-		Assert.assertEquals(11, wizardStepList.size());
+		Assert.assertEquals(12, wizardStepList.size());
 		assertWizardStep(wizardStepList.get(0), WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK);
 		assertWizardStep(wizardStepList.get(1), WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT);
 		assertWizardStep(wizardStepList.get(2), WizardStepName.GESUCHSTELLER, WizardStepStatus.UNBESUCHT);
 		assertWizardStep(wizardStepList.get(3), WizardStepName.UMZUG, WizardStepStatus.UNBESUCHT);
 		assertWizardStep(wizardStepList.get(4), WizardStepName.KINDER, WizardStepStatus.UNBESUCHT);
 		assertWizardStep(wizardStepList.get(5), WizardStepName.BETREUUNG, WizardStepStatus.UNBESUCHT);
-		assertWizardStep(wizardStepList.get(6), WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT);
-		assertWizardStep(wizardStepList.get(7), WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT);
-		assertWizardStep(wizardStepList.get(8), WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT);
-		assertWizardStep(wizardStepList.get(9), WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT);
-		assertWizardStep(wizardStepList.get(10), WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(6), WizardStepName.ABWESENHEIT, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(7), WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(8), WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(9), WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(10), WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(11), WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT);
 	}
 
 	private void assertWizardStep(JaxWizardStep wizardStep, WizardStepName wizardStepName, WizardStepStatus status) {

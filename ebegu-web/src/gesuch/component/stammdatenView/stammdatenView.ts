@@ -13,6 +13,8 @@ import {TSRole} from '../../../models/enums/TSRole';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import IQService = angular.IQService;
+import IPromise = angular.IPromise;
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -33,11 +35,11 @@ export class StammdatenViewController extends AbstractGesuchViewController {
 
 
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'CONSTANTS'];
+        'CONSTANTS', '$q'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private CONSTANTS: any) {
+                wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.ebeguRestUtil = ebeguRestUtil;
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
@@ -52,32 +54,46 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.showKorrespondadr = (this.gesuchModelManager.getStammdatenToWorkWith().korrespondenzAdresse) ? true : false;
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
+        this.getModel().showUmzug = this.getModel().showUmzug || this.getModel().isThereAnyUmzug();
     }
 
     korrespondenzAdrClicked() {
         this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    private save(form: angular.IFormController) {
+    private save(form: angular.IFormController): IPromise<TSGesuchsteller> {
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                if (this.gesuchModelManager.getGesuchstellerNumber() === 1 &&
+                    !this.gesuchModelManager.isGesuchsteller2Required()) {
+                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                }
+                if (this.gesuchModelManager.getGesuchstellerNumber() === 2 ) {
+                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                }
+
+                return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith());
+            }
             if (!this.showKorrespondadr) {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
             }
+            if ((this.gesuchModelManager.getGesuch().gesuchsteller1 && this.gesuchModelManager.getGesuch().gesuchsteller1.showUmzug)
+                || (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.showUmzug)
+                || this.isMutation()) {
+                this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
+            } else {
+                this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
+            }
             this.errorService.clearAll();
-            return this.gesuchModelManager.updateGesuchsteller();
+            return this.gesuchModelManager.updateGesuchsteller(false);
         }
         return undefined;
     }
 
     public getModel(): TSGesuchsteller {
         return this.gesuchModelManager.getStammdatenToWorkWith();
-    }
-
-    public isMutation(): boolean {
-        if (this.gesuchModelManager.getGesuch()) {
-            return this.gesuchModelManager.getGesuch().isMutation();
-        }
-        return false;
     }
 
     /**
@@ -88,7 +104,11 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     public disableWohnadresseFor2GS(): boolean {
         return this.isMutation() && (this.gesuchModelManager.getGesuchstellerNumber() === 1
             || (this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== null
-                && this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== undefined));
+            && this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== undefined));
+    }
+
+    public isThereAnyUmzug(): boolean {
+        return this.gesuchModelManager.getGesuch().isThereAnyUmzug();
     }
 
 }

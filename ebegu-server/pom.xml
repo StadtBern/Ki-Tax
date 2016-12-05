@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>0.12.1</version>
+        <version>0.13.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -88,6 +88,13 @@
             <groupId>fr.opensagres.xdocreport</groupId>
             <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
         </dependency>
+        <!--infinispan aus jboss fuer cacheing-->
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
 
         <!--tests der validators-->
         <dependency>
@@ -113,8 +120,55 @@
             <artifactId>easymock</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ws.rs</groupId>
+            <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+        </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>wildfly10-embedded</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                    </plugin>
+                    <!--entpacke jboss-->
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                    </plugin>
+                </plugins>
+
+            </build>
+        </profile>
+
+        <profile>
+            <activation>
+                <property>
+                    <!-- hiermit wird getestet ob ein property disable-managed-wildfly existiert, wenn nicht lauft
+                    arquillian mit embedded container-->
+                    <name>!disable-managed-wildfly</name>
+                </property>
+            </activation>
+            <id>test-wildfly-managed</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                    </plugin>
+                    <!--entpacke jboss-->
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                    </plugin>
+                </plugins>
+
+            </build>
+        </profile>
+    </profiles>
 
 
 </project>

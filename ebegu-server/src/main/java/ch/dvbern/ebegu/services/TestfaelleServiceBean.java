@@ -9,6 +9,7 @@ import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -24,6 +25,7 @@ import java.util.Optional;
  */
 @Stateless
 @Local(TestfaelleService.class)
+@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 public class TestfaelleServiceBean extends AbstractBaseService implements TestfaelleService {
 
 
@@ -60,7 +62,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	@Override
 	@Nonnull
-	@SuppressWarnings("PMD.NcssMethodCount")
+	@SuppressWarnings(value = {"PMD.NcssMethodCount",  "PMD.AvoidDuplicateLiterals"})
 	public StringBuilder createAndSaveTestfaelle(String fallid,
 												 Integer iterationCount,
 												 boolean betreuungenBestaetigt,
@@ -76,28 +78,31 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 			if (WaeltiDagmar.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Dagmar Waelti erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Dagmar Waelti erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (FeutzIvonne.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Yvonne Feutz erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Yvonne Feutz erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (PerreiraMarcia.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Marcia Perreira erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Marcia Perreira erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (WaltherLaura.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Laura Walther erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Laura Walther erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (LuethiMeret.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Meret Luethi erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Meret Luethi erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (BeckerNora.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Nora Becker erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Nora Becker erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (MeierMeret.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Meier Meret erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Meier Meret erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if (UmzugAusInAusBern.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Umzug Aus-In-Aus Bern Fallnummer ").append(gesuch.getFall().getFallNummer());
+				responseString.append("Fall Umzug Aus-In-Aus Bern Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
+			} else if (Abwesenheit.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				responseString.append("Fall Abwesenheit Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());;
 			} else if ("all".equals(fallid)) {
 				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
@@ -106,9 +111,11 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 				createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Testfaelle 1-7 erstellt");
+				createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				responseString.append("Testfaelle 1-9 erstellt");
 			} else {
-				responseString.append("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-6. '/all' erstellt alle Testfaelle");
+				responseString.append("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-9. '/all' erstellt alle Testfaelle");
 			}
 
 		}
@@ -149,6 +156,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		if (UmzugAusInAusBern.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 		}
+		if (Abwesenheit.equals(fallid)) {
+			return createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+		}
 
 		return null;
 	}
@@ -160,20 +170,17 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Validate.notNull(fallNummer);
 		Validate.notNull(aenderungPer);
 
-
-		Mutationsdaten md = getMutationsdaten();
-
 		Familiensituation newFamsit = new Familiensituation();
 		newFamsit.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		newFamsit.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		newFamsit.setGemeinsameSteuererklaerung(true);
 		newFamsit.setAenderungPer(aenderungPer);
 
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, md, eingangsdatum);
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituation(), newFamsit);
-			final Gesuchsteller gesuchsteller2 = gesuchstellerService.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2);
+			final Gesuchsteller gesuchsteller2 = gesuchstellerService.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2, false);
 
 			mutation.setGesuchsteller2(gesuchsteller2);
 			gesuchService.createGesuch(mutation);
@@ -192,15 +199,12 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Validate.notNull(fallNummer);
 		Validate.notNull(aenderungPer);
 
-
-		Mutationsdaten md = getMutationsdaten();
-
 		Familiensituation newFamsit = new Familiensituation();
 		newFamsit.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		newFamsit.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		newFamsit.setAenderungPer(aenderungPer);
 
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, md, eingangsdatum);
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituation(), newFamsit);
@@ -211,19 +215,6 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		return gesuchOptional.orElse(null);
 	}
-
-	private Mutationsdaten getMutationsdaten() {
-		Mutationsdaten md = new Mutationsdaten();
-		md.setMutationFamiliensituation(true);
-		md.setMutationErwerbspensum(true);
-		md.setMutationBetreuung(true);
-		md.setMutationEinkommensverschlechterung(true);
-		md.setMutationFinanzielleSituation(true);
-		md.setMutationGesuchsteller(true);
-		md.setMutationKind(true);
-		return md;
-	}
-
 
 	private Gesuchsperiode getGesuchsperiode() {
 		Collection<Gesuchsperiode> allActiveGesuchsperioden = gesuchsperiodeService.getAllActiveGesuchsperioden();
@@ -236,15 +227,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Optional<InstitutionStammdaten> optionalBruennen = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
 		Optional<InstitutionStammdaten> optionalTagiAaregg = institutionStammdatenService.findInstitutionStammdaten("11111111-1111-1111-1111-111111111174");
 
-		if (optionalAaregg.isPresent()) {
-			institutionStammdatenList.add(optionalAaregg.get());
-		}
-		if (optionalBruennen.isPresent()) {
-			institutionStammdatenList.add(optionalBruennen.get());
-		}
-		if (optionalTagiAaregg.isPresent()) {
-			institutionStammdatenList.add(optionalTagiAaregg.get());
-		}
+		optionalAaregg.ifPresent(institutionStammdatenList::add);
+		optionalBruennen.ifPresent(institutionStammdatenList::add);
+		optionalTagiAaregg.ifPresent(institutionStammdatenList::add);
 		return institutionStammdatenList;
 	}
 
@@ -310,7 +295,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			verfuegungService.calculateVerfuegung(gesuch);
 			gesuch.getKindContainers().stream().forEach(kindContainer -> {
 				kindContainer.getBetreuungen().stream().forEach(betreuung -> {
-					verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId());
+					verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT);
 				});
 			});
 		}
@@ -350,10 +335,10 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	private void saveFinanzielleSituation(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
 		if (gesuch.getGesuchsteller1() != null && gesuch.getGesuchsteller1().getFinanzielleSituationContainer() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.IN_BEARBEITUNG);
-			finanzielleSituationService.saveFinanzielleSituation(gesuch.getGesuchsteller1().getFinanzielleSituationContainer());
+			finanzielleSituationService.saveFinanzielleSituation(gesuch.getGesuchsteller1().getFinanzielleSituationContainer(), gesuch.getId());
 		}
 		if (gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2().getFinanzielleSituationContainer() != null) {
-			finanzielleSituationService.saveFinanzielleSituation(gesuch.getGesuchsteller2().getFinanzielleSituationContainer());
+			finanzielleSituationService.saveFinanzielleSituation(gesuch.getGesuchsteller2().getFinanzielleSituationContainer(), gesuch.getId());
 		}
 		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.OK);
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.FINANZIELLE_SITUATION);
@@ -375,7 +360,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	private void saveBetreuungen(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
 		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.BETREUUNG, WizardStepStatus.IN_BEARBEITUNG);
 		gesuch.getKindContainers().forEach(kindContainer
-			-> kindContainer.getBetreuungen().forEach(betreuung -> betreuungService.saveBetreuung(betreuung)));
+			-> kindContainer.getBetreuungen().forEach(betreuung -> betreuungService.saveBetreuung(betreuung, false)));
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.BETREUUNG);
 	}
 
@@ -388,10 +373,10 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	private void saveGesuchsteller(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
 		if (gesuch.getGesuchsteller1() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.IN_BEARBEITUNG);
-			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller1(), gesuch, 1);
+			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller1(), gesuch, 1, false);
 		}
 		if (gesuch.getGesuchsteller2() != null) {
-			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller2(), gesuch, 2);
+			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller2(), gesuch, 2, false);
 		}
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.GESUCHSTELLER);
 		// Umzug wird by default OK und verfuegbar, da es nicht notwendig ist, einen Umzug einzutragen

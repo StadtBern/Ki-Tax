@@ -1,4 +1,4 @@
-import {IDirective, IDirectiveFactory} from 'angular';
+import {IDirective, IDirectiveFactory, IQService} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
@@ -7,9 +7,9 @@ import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import ITranslateService = angular.translate.ITranslateService;
-import IPromise = angular.IPromise;
-import IQService = angular.IQService;
 let template = require('./dv-navigation.html');
+let style = require('./dv-navigation.less');
+
 
 /**
  * Diese Direktive wird benutzt, um die Navigation Buttons darzustellen. Folgende Parameter koennen benutzt werden,
@@ -31,7 +31,8 @@ export class DVNavigation implements IDirective {
         dvCancel: '&?',
         dvNextDisabled: '&?',
         dvSubStep: '<',
-        dvSave: '&?'
+        dvSave: '&?',
+        dvTranslateNext: '@'
     };
     controller = NavigatorController;
     controllerAs = 'vm';
@@ -55,6 +56,7 @@ export class NavigatorController {
     dvCancel: () => any;
     dvNextDisabled: () => any;
     dvSubStep: number;
+    dvTranslateNext: string;
 
     static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', '$translate', 'ErrorService', '$q'];
     /* @ngInject */
@@ -71,7 +73,7 @@ export class NavigatorController {
      * @returns {string}
      */
     public getPreviousButtonName(): string {
-        if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
+        if (this.gesuchModelManager.isGesuchReadonly()) {
             return this.$translate.instant('ZURUECK_ONLY_UPPER');
         } else if (this.dvSave) {
             return this.$translate.instant('ZURUECK_UPPER');
@@ -85,12 +87,16 @@ export class NavigatorController {
      * @returns {string}
      */
     public getNextButtonName(): string {
-        if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
-            return this.$translate.instant('WEITER_ONLY_UPPER');
-        } else if (this.dvSave) {
-            return this.$translate.instant('WEITER_UPPER');
+        if (this.dvTranslateNext) {
+            return this.$translate.instant(this.dvTranslateNext);
         } else {
-            return this.$translate.instant('WEITER_ONLY_UPPER');
+            if (this.gesuchModelManager.isGesuchReadonly()) {
+                return this.$translate.instant('WEITER_ONLY_UPPER');
+            } else if (this.dvSave) {
+                return this.$translate.instant('WEITER_UPPER');
+            } else {
+                return this.$translate.instant('WEITER_ONLY_UPPER');
+            }
         }
     }
 
@@ -100,7 +106,7 @@ export class NavigatorController {
      * wird dann direkt zum naechsten Step geleitet.
      */
     public nextStep(): void {
-        if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
+        if (!this.gesuchModelManager.isGesuchReadonly() && this.dvSave) {
             let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
             if (returnValue !== undefined) {
                 this.$q.when(returnValue).then(() => {
@@ -118,10 +124,13 @@ export class NavigatorController {
      * wird dann direkt zum vorherigen Step geleitet.
      */
     public previousStep(): void {
-        if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
-            this.dvSave().then(() => {
-                this.navigateToPreviousStep();
-            });
+        if (!this.gesuchModelManager.isGesuchReadonly() && this.dvSave) {
+            let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
+            if (returnValue !== undefined) {
+                this.$q.when(returnValue).then(() => {
+                    this.navigateToPreviousStep();
+                });
+            }
         } else {
             this.navigateToPreviousStep();
         }
@@ -314,6 +323,11 @@ export class NavigatorController {
                 gesuchId: gesuchId
             });
 
+        } else if (stepName === TSWizardStepName.ABWESENHEIT) {
+            this.state.go('gesuch.abwesenheit', {
+                gesuchId: gesuchId
+            });
+
         } else if (stepName === TSWizardStepName.ERWERBSPENSUM) {
             this.state.go('gesuch.erwerbsPensen', {
                 gesuchId: gesuchId
@@ -337,9 +351,9 @@ export class NavigatorController {
             });
 
         } else if (stepName === TSWizardStepName.DOKUMENTE) {
-                this.state.go('gesuch.dokumente', {
-                    gesuchId: gesuchId
-                });
+            this.state.go('gesuch.dokumente', {
+                gesuchId: gesuchId
+            });
 
         } else if (stepName === TSWizardStepName.VERFUEGEN) {
             this.state.go('gesuch.verfuegen', {

@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.resource.authentication;
 
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.crypto.PBKDF2PasswordHash;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -14,6 +15,8 @@ import javax.ejb.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Properties;
 
 /**
@@ -121,16 +124,30 @@ public class UsernameRoleChecker {
 	@Lock(value = LockType.READ)
 	public boolean checkLogin(String inputUsername, String inputPassword) {
 		// match against property file, null is not an acceptable password
-		String passwordToMatch = getUsersPassword(inputUsername);
-		if (passwordToMatch == null) {
+		String hashToMatchAgainst = getUsersPassword(inputUsername);
+		if (hashToMatchAgainst == null) {
 			LOG.trace("No password passed to validate");
 			return false;
 		}
-		if (passwordToMatch.equals(inputPassword)) {
+
+		if (this.passwordMatchesHash(inputPassword, hashToMatchAgainst)) {
 			return true;
 		}
 		LOG.trace("Username / Pwassword were invalid " + inputUsername + " / " + inputPassword);
 		return false;
+	}
+
+	/**
+	 * check against stored PBKDF2 hash with integraded salt and interationcount
+	 */
+	private boolean passwordMatchesHash(String inputPassword, String hashedPassword) {
+		try {
+			return PBKDF2PasswordHash.validatePassword(inputPassword, hashedPassword);
+		} catch (NoSuchAlgorithmException e) {
+			throw new EbeguRuntimeException("hashPassword", "Hash algorithm could not be created", e, "NoSuchAlgorithmException");
+		} catch (InvalidKeySpecException e) {
+			throw new EbeguRuntimeException("hashPassword", "Hash algorithm could not be created", e, "InvalidKeySpecException");
+		}
 	}
 
 	/**

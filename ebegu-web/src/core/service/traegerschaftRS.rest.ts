@@ -19,7 +19,7 @@ export class TraegerschaftRS {
     }
 
     public findTraegerschaft(traegerschaftID: string): IPromise<TSTraegerschaft> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(traegerschaftID))
+        return this.http.get(this.serviceURL + '/id/' + encodeURIComponent(traegerschaftID))
             .then((response: any) => {
                 this.log.debug('PARSING traegerschaft REST object ', response.data);
                 return this.ebeguRestUtil.parseTraegerschaft(new TSTraegerschaft(), response.data);

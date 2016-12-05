@@ -6,5 +6,8 @@ package ch.dvbern.ebegu.enums;
 public enum GeneratedDokumentTyp {
 	VERFUEGUNG,
 	FINANZIELLE_SITUATION,
-	BEGLEITSCHREIBEN
+	BEGLEITSCHREIBEN,
+	MAHNUNG,
+	MAHNUNG_VORSCHAU,
+	NICHTEINTRETEN
 }

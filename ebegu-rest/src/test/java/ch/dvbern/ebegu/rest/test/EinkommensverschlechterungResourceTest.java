@@ -27,8 +27,7 @@ import javax.ws.rs.core.UriInfo;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestTest {
-
+public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject
@@ -48,9 +47,8 @@ public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestTes
 	public void createAndFindEinkommensverschlechterungsContainerTest() throws EbeguException {
 		Gesuch testGesuch = TestDataUtil.createDefaultGesuch();
 		TestDataUtil.persistEntities(testGesuch, persistence);
-		TestDataUtil.createDummyAdminAnonymous(persistence);
 		JaxGesuchsteller testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(new JaxId(testGesuch.getId()), 1, testJaxGesuchsteller, uri, null);
+		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(new JaxId(testGesuch.getId()), 1, false, testJaxGesuchsteller, uri, null);
 		Assert.assertNotNull(jaxGesuchsteller);
 
 		JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = TestJaxDataUtil.createTestJaxEinkommensverschlechterungContianer();

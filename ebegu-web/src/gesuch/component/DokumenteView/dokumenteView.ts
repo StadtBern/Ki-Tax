@@ -13,6 +13,9 @@ import DokumenteRS from '../../service/dokumenteRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import GlobalCacheService from '../../service/globalCacheService';
+import ICacheFactoryService = angular.ICacheFactoryService;
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
 
@@ -37,12 +40,12 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     dokumentePapiergesuch: TSDokumentGrund[] = [];
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil'];
+        'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil', 'GlobalCacheService'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
                 private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager,
-                private ebeguUtil: EbeguUtil) {
+                private ebeguUtil: EbeguUtil, private globalCacheService: GlobalCacheService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.DOKUMENTE);
@@ -86,10 +89,16 @@ export class DokumenteViewController extends AbstractGesuchViewController {
         if (index > -1) {
             this.$log.debug('add dokument to dokumentList');
             dokumente[index] = dokumentGrund;
+
+            // Clear cached Papiergesuch on add...
+            if (dokumentGrund.dokumentGrundTyp === TSDokumentGrundTyp.PAPIERGESUCH) {
+                this.globalCacheService.getCache().removeAll();
+            }
         }
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
+        // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
+        this.resetAntragStatusIfNecessary();
     }
-
 
     removeDokument(dokumentGrund: TSDokumentGrund, dokument: TSDokument, dokumente: TSDokumentGrund[]) {
 
@@ -110,6 +119,11 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                 if (index > -1) {
                     this.$log.debug('update dokumentGrund in dokumentList');
                     dokumente[index] = dokumentGrund;
+
+                    // Clear cached Papiergesuch on remove...
+                    if (dokumentGrund.dokumentGrundTyp === TSDokumentGrundTyp.PAPIERGESUCH) {
+                        this.globalCacheService.getCache().removeAll();
+                    }
                 }
             } else {
                 // delete object in table with sended if returned is null
@@ -125,5 +139,13 @@ export class DokumenteViewController extends AbstractGesuchViewController {
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
     }
 
-
+    private resetAntragStatusIfNecessary() : void {
+        // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
+        let status = this.gesuchModelManager.getGesuch().status;
+        if (TSAntragStatus.ERSTE_MAHNUNG === status) {
+            this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        } else if (TSAntragStatus.ZWEITE_MAHNUNG === status) {
+            this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        }
+    }
 }

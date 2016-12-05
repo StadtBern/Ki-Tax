@@ -50,7 +50,9 @@ import TSEbeguVorlage from '../models/TSEbeguVorlage';
 import TSVorlage from '../models/TSVorlage';
 import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
 import TSFile from '../models/TSFile';
-import TSMutationsdaten from '../models/TSMutationsdaten';
+import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
+import TSAbwesenheit from '../models/TSAbwesenheit';
+import TSMahnung from '../models/TSMahnung';
 
 
 export default class EbeguRestUtil {
@@ -535,8 +537,8 @@ export default class EbeguRestUtil {
         restGesuch.einkommensverschlechterungInfo = this.einkommensverschlechterungInfoToRestObject({}, gesuch.einkommensverschlechterungInfo);
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
-        restGesuch.mutationsdaten = this.mutationsdatenToRestObject({}, gesuch.mutationsdaten);
         restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
+        restGesuch.familiensituationErstgesuch = this.familiensituationToRestObject({}, gesuch.familiensituationErstgesuch);
         restGesuch.bemerkungen = gesuch.bemerkungen;
         restGesuch.laufnummer = gesuch.laufnummer;
         return restGesuch;
@@ -548,8 +550,8 @@ export default class EbeguRestUtil {
             gesuchTS.einkommensverschlechterungInfo = this.parseEinkommensverschlechterungInfo(new TSEinkommensverschlechterungInfo(), gesuchFromServer.einkommensverschlechterungInfo);
             gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
-            gesuchTS.mutationsdaten = this.parseMutationsdaten(new TSMutationsdaten(), gesuchFromServer.mutationsdaten);
             gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
+            gesuchTS.familiensituationErstgesuch = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituationErstgesuch);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;
@@ -1005,6 +1007,12 @@ export default class EbeguRestUtil {
                 restBetreuung.betreuungspensumContainers.push(this.betreuungspensumContainerToRestObject({}, betPensCont));
             });
         }
+        if (betreuung.abwesenheitContainers) {
+            restBetreuung.abwesenheitContainers = [];
+            betreuung.abwesenheitContainers.forEach((abwesenheitCont: TSAbwesenheitContainer) => {
+                restBetreuung.abwesenheitContainers.push(this.abwesenheitContainerToRestObject({}, abwesenheitCont));
+            });
+        }
         restBetreuung.betreuungNummer = betreuung.betreuungNummer;
         return restBetreuung;
     }
@@ -1020,10 +1028,26 @@ export default class EbeguRestUtil {
         return restBetPensCont;
     }
 
+    public abwesenheitContainerToRestObject(restAbwesenheitCont: any, abwesenheitCont: TSAbwesenheitContainer): any {
+        this.abstractEntityToRestObject(restAbwesenheitCont, abwesenheitCont);
+        if (abwesenheitCont.abwesenheitGS) {
+            restAbwesenheitCont.abwesenheitGS = this.abwesenheitToRestObject({}, abwesenheitCont.abwesenheitGS);
+        }
+        if (abwesenheitCont.abwesenheitJA) {
+            restAbwesenheitCont.abwesenheitJA = this.abwesenheitToRestObject({}, abwesenheitCont.abwesenheitJA);
+        }
+        return restAbwesenheitCont;
+    }
+
     public betreuungspensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungspensum): any {
         this.abstractPensumEntityToRestObject(restBetreuungspensum, betreuungspensum);
         restBetreuungspensum.nichtEingetreten = betreuungspensum.nichtEingetreten;
         return restBetreuungspensum;
+    }
+
+    public abwesenheitToRestObject(restAbwesenheit: any, abwesenheit: TSAbwesenheit): any {
+        this.abstractDateRangeEntityToRestObject(restAbwesenheit, abwesenheit);
+        return restAbwesenheit;
     }
 
     private parseBetreuungList(betreuungen: Array<any>): TSBetreuung[] {
@@ -1049,6 +1073,7 @@ export default class EbeguRestUtil {
             betreuungTS.betreuungsstatus = betreuungFromServer.betreuungsstatus;
             betreuungTS.institutionStammdaten = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), betreuungFromServer.institutionStammdaten);
             betreuungTS.betreuungspensumContainers = this.parseBetreuungspensumContainers(betreuungFromServer.betreuungspensumContainers);
+            betreuungTS.abwesenheitContainers = this.parseAbwesenheitContainers(betreuungFromServer.abwesenheitContainers);
             betreuungTS.betreuungNummer = betreuungFromServer.betreuungNummer;
             betreuungTS.verfuegung = this.parseVerfuegung(new TSVerfuegung(), betreuungFromServer.verfuegung);
             return betreuungTS;
@@ -1068,6 +1093,18 @@ export default class EbeguRestUtil {
         return betPensContainers;
     }
 
+    public parseAbwesenheitContainers(data: Array<any>): TSAbwesenheitContainer[] {
+        let abwesenheitContainers: TSAbwesenheitContainer[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                abwesenheitContainers[i] = this.parseAbwesenheitContainer(new TSAbwesenheitContainer(), data[i]);
+            }
+        } else if (data) {
+            abwesenheitContainers[0] = this.parseAbwesenheitContainer(new TSAbwesenheitContainer(), data);
+        }
+        return abwesenheitContainers;
+    }
+
     public parseBetreuungspensumContainer(betPensContainerTS: TSBetreuungspensumContainer, betPensContFromServer: any): TSBetreuungspensumContainer {
         if (betPensContFromServer) {
             this.parseAbstractEntity(betPensContainerTS, betPensContFromServer);
@@ -1082,11 +1119,33 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+    public parseAbwesenheitContainer(abwesenheitContainerTS: TSAbwesenheitContainer, abwesenheitContFromServer: any): TSAbwesenheitContainer {
+        if (abwesenheitContFromServer) {
+            this.parseAbstractEntity(abwesenheitContainerTS, abwesenheitContFromServer);
+            if (abwesenheitContFromServer.abwesenheitGS) {
+                abwesenheitContainerTS.abwesenheitGS = this.parseAbwesenheit(new TSAbwesenheit(), abwesenheitContFromServer.abwesenheitGS);
+            }
+            if (abwesenheitContFromServer.abwesenheitJA) {
+                abwesenheitContainerTS.abwesenheitJA = this.parseAbwesenheit(new TSAbwesenheit(), abwesenheitContFromServer.abwesenheitJA);
+            }
+            return abwesenheitContainerTS;
+        }
+        return undefined;
+    }
+
     public parseBetreuungspensum(betreuungspensumTS: TSBetreuungspensum, betreuungspensumFromServer: any): TSBetreuungspensum {
         if (betreuungspensumFromServer) {
             this.parseAbstractPensumEntity(betreuungspensumTS, betreuungspensumFromServer);
             betreuungspensumTS.nichtEingetreten = betreuungspensumFromServer.nichtEingetreten;
             return betreuungspensumTS;
+        }
+        return undefined;
+    }
+
+    public parseAbwesenheit(abwesenheitTS: TSAbwesenheit, abwesenheitFromServer: any): TSAbwesenheit {
+        if (abwesenheitFromServer) {
+            this.parseDateRangeEntity(abwesenheitTS, abwesenheitFromServer);
+            return abwesenheitTS;
         }
         return undefined;
     }
@@ -1516,36 +1575,41 @@ export default class EbeguRestUtil {
         return restAntragStatusHistory;
     }
 
-    public parseMutationsdaten(mutationsdatenTS: TSMutationsdaten, mutationsdatenFromServer: any): TSMutationsdaten {
-        if (mutationsdatenFromServer) {
-            this.parseAbstractEntity(mutationsdatenTS, mutationsdatenFromServer);
-            mutationsdatenTS.mutationFamiliensituation = mutationsdatenFromServer.mutationFamiliensituation;
-            mutationsdatenTS.mutationGesuchsteller = mutationsdatenFromServer.mutationGesuchsteller;
-            mutationsdatenTS.mutationUmzug = mutationsdatenFromServer.mutationUmzug;
-            mutationsdatenTS.mutationKind = mutationsdatenFromServer.mutationKind;
-            mutationsdatenTS.mutationBetreuung = mutationsdatenFromServer.mutationBetreuung;
-            mutationsdatenTS.mutationAbwesenheit = mutationsdatenFromServer.mutationAbwesenheit;
-            mutationsdatenTS.mutationErwerbspensum = mutationsdatenFromServer.mutationErwerbspensum;
-            mutationsdatenTS.mutationFinanzielleSituation = mutationsdatenFromServer.mutationFinanzielleSituation;
-            mutationsdatenTS.mutationEinkommensverschlechterung = mutationsdatenFromServer.mutationEinkommensverschlechterung;
-            return mutationsdatenTS;
+    public mahnungToRestObject(restMahnung: any, tsMahnung: TSMahnung): any {
+        if (tsMahnung) {
+            this.abstractEntityToRestObject(restMahnung, tsMahnung);
+            restMahnung.gesuch = this.gesuchToRestObject({}, tsMahnung.gesuch);
+            restMahnung.mahnungTyp = tsMahnung.mahnungTyp;
+            restMahnung.datumFristablauf = DateUtil.momentToLocalDate(tsMahnung.datumFristablauf);
+            restMahnung.bemerkungen = tsMahnung.bemerkungen;
+            restMahnung.active = tsMahnung.active;
+            return restMahnung;
         }
         return undefined;
     }
 
-    public mutationsdatenToRestObject(restMutationsdaten: any, mutationsdaten: TSMutationsdaten): any {
-        if (mutationsdaten) {
-            this.abstractEntityToRestObject(restMutationsdaten, mutationsdaten);
-            restMutationsdaten.mutationFamiliensituation = mutationsdaten.mutationFamiliensituation;
-            restMutationsdaten.mutationGesuchsteller = mutationsdaten.mutationGesuchsteller;
-            restMutationsdaten.mutationUmzug = mutationsdaten.mutationUmzug;
-            restMutationsdaten.mutationKind = mutationsdaten.mutationKind;
-            restMutationsdaten.mutationBetreuung = mutationsdaten.mutationBetreuung;
-            restMutationsdaten.mutationAbwesenheit = mutationsdaten.mutationAbwesenheit;
-            restMutationsdaten.mutationErwerbspensum = mutationsdaten.mutationErwerbspensum;
-            restMutationsdaten.mutationFinanzielleSituation = mutationsdaten.mutationFinanzielleSituation;
-            restMutationsdaten.mutationEinkommensverschlechterung = mutationsdaten.mutationEinkommensverschlechterung;
-            return restMutationsdaten;
+    public parseMahnungen(data: Array<any>): TSMahnung[] {
+        var mahnungen: TSMahnung[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                mahnungen[i] = this.parseMahnung(new TSMahnung(), data[i]);
+            }
+        } else {
+            mahnungen[0] = this.parseMahnung(new TSMahnung(), data);
+        }
+        return mahnungen;
+    }
+
+    public parseMahnung(tsMahnung: TSMahnung, mahnungFromServer: any): TSMahnung {
+        if (mahnungFromServer) {
+            this.parseAbstractEntity(tsMahnung, mahnungFromServer);
+
+            tsMahnung.gesuch = this.parseGesuch(new TSGesuch(), mahnungFromServer.gesuch);
+            tsMahnung.mahnungTyp = mahnungFromServer.mahnungTyp;
+            tsMahnung.datumFristablauf = DateUtil.localDateToMoment(mahnungFromServer.datumFristablauf);
+            tsMahnung.bemerkungen = mahnungFromServer.bemerkungen;
+            tsMahnung.active = mahnungFromServer.active;
+            return tsMahnung;
         }
         return undefined;
     }

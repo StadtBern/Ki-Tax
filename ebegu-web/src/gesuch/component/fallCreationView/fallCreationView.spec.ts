@@ -25,8 +25,9 @@ describe('fallCreationView', function () {
         $rootScope = $injector.get('$rootScope');
         form = {};
         form.$valid = true;
+        form.$dirty = true;
         fallCreationview = new FallCreationViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'), $injector.get('$translate'));
+            $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'), $injector.get('$translate'), $q);
     }));
 
     describe('nextStep', () => {
@@ -55,7 +56,7 @@ describe('fallCreationView', function () {
     describe('getTitle', () => {
         it('should return Art der Mutation', () => {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
-            expect(fallCreationview.getTitle()).toBe('Art der Mutation');
+            expect(fallCreationview.getTitle()).toBe('Erstellen einer Mutation');
         });
         it('should return Erstgesuch der Periode', () => {
             let gesuchsperiode: TSGesuchsperiode = TestDataUtil.createGesuchsperiode20162017();

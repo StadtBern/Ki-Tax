@@ -8,12 +8,10 @@ import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.BetreuungService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.VerfuegungService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -58,6 +56,9 @@ public class VerfuegungResource {
 	@Inject
 	private InstitutionService institutionService;
 
+	@Inject
+	private BenutzerService benutzerService;
+
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
 	private JaxBConverter converter;
@@ -96,11 +97,16 @@ public class VerfuegungResource {
 
 			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
 
-			Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
-
 			Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
-			if (!instForCurrBenutzer.isEmpty()) {
-				RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
+			Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
+			if (currentBenutzer.isPresent()) {
+				UserRole currentUserRole = currentBenutzer.get().getRole();
+				// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
+				// damit nur die relevanten Kinder geschickt werden
+				if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(currentUserRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(currentUserRole)) {
+					Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+					RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
+				}
 			}
 			return Response.ok(kindContainers).build();
 
@@ -136,7 +142,7 @@ public class VerfuegungResource {
 				}
 				Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
 
-				Verfuegung persistedVerfuegung = this.verfuegungService.saveVerfuegung(convertedVerfuegung, betreuung.get().getId());
+				Verfuegung persistedVerfuegung = this.verfuegungService.verfuegen(convertedVerfuegung, betreuung.get().getId());
 
 				return converter.verfuegungToJax(persistedVerfuegung);
 			}
@@ -147,7 +153,7 @@ public class VerfuegungResource {
 
 	@Nullable
 	@POST
-	@Path("/{betreuungId}")
+	@Path("/schliessenOhneVerfuegen/{betreuungId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verfuegungSchliessenOhneVerfuegen(
@@ -161,7 +167,28 @@ public class VerfuegungResource {
 		throw new EbeguEntityNotFoundException("verfuegungSchliessenOhneVerfuegen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 	}
 
+	@Nullable
+	@PUT
+	@Path("/nichtEintreten/{betreuungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxVerfuegung schliessenNichtEintreten(
+		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId,
+		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) throws EbeguException {
 
+		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
+		if (betreuung.isPresent()) {
+			Verfuegung verfuegungToMerge = new Verfuegung();
+			if (verfuegungJAXP.getId() != null) {
+				Optional<Verfuegung> optional = verfuegungService.findVerfuegung(verfuegungJAXP.getId());
+				verfuegungToMerge = optional.orElse(new Verfuegung());
+			}
+			Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
+			Verfuegung persistedVerfuegung = this.verfuegungService.nichtEintreten(convertedVerfuegung, betreuung.get().getId());
+			return converter.verfuegungToJax(persistedVerfuegung);
+		}
+		throw new EbeguEntityNotFoundException("nichtEintreten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
+	}
 
 	/**
 	 * Hack, welcher das Gesuch detached, damit es auf keinen Fall gespeichert wird. Vorher muessen die Lazy geloadeten
@@ -170,12 +197,15 @@ public class VerfuegungResource {
 	private void loadRelationsAndDetach(Gesuch gesuch) {
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			betreuung.getBetreuungspensumContainers().size();
+			betreuung.getAbwesenheitContainers().size();
 		}
 		if (gesuch.getGesuchsteller1() != null) {
 			gesuch.getGesuchsteller1().getAdressen().forEach(GesuchstellerAdresse::getAdresseTyp);
+			gesuch.getGesuchsteller1().getErwerbspensenContainers().size();
 		}
 		if (gesuch.getGesuchsteller2() != null) {
 			gesuch.getGesuchsteller2().getAdressen().forEach(GesuchstellerAdresse::getAdresseTyp);
+			gesuch.getGesuchsteller2().getErwerbspensenContainers().size();
 		}
 		persistence.getEntityManager().detach(gesuch);
 	}

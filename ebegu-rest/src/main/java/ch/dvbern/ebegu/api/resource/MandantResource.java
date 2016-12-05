@@ -34,7 +34,7 @@ public class MandantResource {
 
 	@Nullable
 	@GET
-	@Path("/{mandantId}")
+	@Path("/id/{mandantId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxMandant findMandant(@Nonnull @NotNull @PathParam("mandantId") JaxId mandantJAXPId) throws EbeguException {

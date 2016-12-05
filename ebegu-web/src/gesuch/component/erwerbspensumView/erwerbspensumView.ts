@@ -14,8 +14,8 @@ import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRole} from '../../../models/enums/TSRole';
 import WizardStepManager from '../../service/wizardStepManager';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -80,7 +80,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     }
 
     getZuschlagsgrundList(): Array<TSZuschlagsgrund> {
-        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
             return getTSZuschlagsgruendeForGS();
         } else {
             return getTSZuschlagsgrunde();
@@ -100,6 +100,12 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
 
     save(form: IFormController): IPromise<any> {
         if (form.$valid) {
+
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getGesuch().gesuchsteller1.erwerbspensenContainer);
+            }
             this.maybeResetZuschlagsgrund(this.erwerbspensum);
             this.errorService.clearAll();
             return this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum);
@@ -140,6 +146,6 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
 
     erwerbspensumDisabled(): boolean {
         // Disabled wenn Mutation, ausser bei Bearbeiter Jugendamt
-        return this.erwerbspensum.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isRole(TSRole.SACHBEARBEITER_JA);
+        return this.erwerbspensum.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
     }
 }

@@ -1,20 +1,24 @@
 <div class="umzugView gesuchModul">
 
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle">
+            <h1>
                 <span data-translate="UMZUG_TITLE"></span>
             </h1>
             <hr class="header"/>
         </div>
     </div>
-    <div class="row" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()">
+    <div class="row" ng-if="!vm.isGesuchReadonly()">
         <div class="col-md-12">
             <p class="inlineHint" data-translate="UMZUG_HINT"></p>
         </div>
     </div>
 
-    <div ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="alert alert-warning" data-translate="UMZUG_LIST_HINT"></div>
+    <div dv-show-element
+         dv-show-allowed-roles = "vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+         dv-show-expression = "vm.gesuchModelManager.getGesuch().isMutation()"
+         class="alert alert-warning" data-translate="UMZUG_LIST_HINT">
+    </div>
 
     <div class="row">
         <div class="col-md-12">
@@ -22,7 +26,7 @@
             <form role="form" name="form" class="" novalidate unsaved-warning-form>
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                          dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                          dv-enable-expression="!vm.isGesuchReadonly()">
 
                     <div ng-repeat="umzugAdresse in vm.getUmzugAdressenList()">
 
@@ -49,7 +53,10 @@
                         </div>
 
                         <!-- Umzug loeschen-->
-                        <div class="col-md-12" style="margin-bottom: 2rem" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                        <div class="col-md-12" style="margin-bottom: 2rem"
+                             dv-show-element
+                             dv-show-allowed-roles = "vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                             dv-show-expression = "!vm.isGesuchReadonly()">
                             <dv-loading-button type="button" button-click="vm.removeUmzugAdresse(umzugAdresse)"
                                                button-class="dv-btn-sm color-success">
                                 <i class="glyphicon glyphicon-trash"></i>
@@ -60,7 +67,9 @@
                     </div>
 
                     <!-- Umzug hinzufuegen -->
-                    <div class="col-md-12" style="margin-bottom: 2rem" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                    <div class="col-md-12" style="margin-bottom: 2rem" dv-show-element
+                         dv-show-allowed-roles = "vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                         dv-show-expression = "!vm.isGesuchReadonly()">
                         <dv-loading-button type="button" button-click="vm.createUmzugAdresse()"
                                            button-class="dv-btn-sm color-success">
                             <i class="glyphicon glyphicon-plus"></i>
@@ -74,7 +83,7 @@
                                dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                dv-previous="true" dv-next="true" dv-save="vm.save(form)">
                 </dv-navigation>
-                <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"
                                dv-previous="true" dv-next="true">
                 </dv-navigation>
 

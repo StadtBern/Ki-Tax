@@ -32,6 +32,9 @@ import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
+import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
+import TSAbwesenheit from '../models/TSAbwesenheit';
+import Moment = moment.Moment;
 
 describe('EbeguRestUtil', function () {
 
@@ -254,7 +257,14 @@ describe('EbeguRestUtil', function () {
                 let tsBetreuungspensumContainer: TSBetreuungspensumContainer = new TSBetreuungspensumContainer(tsBetreuungspensumGS, tsBetreuungspensumJA);
                 TestDataUtil.setAbstractFieldsUndefined(tsBetreuungspensumContainer);
                 let betContainers: Array<TSBetreuungspensumContainer> = [tsBetreuungspensumContainer];
-                let betreuung: TSBetreuung = new TSBetreuung(instStam, TSBetreuungsstatus.AUSSTEHEND, betContainers, 2);
+
+                let today: Moment = DateUtil.today();
+                let tsAbwesenheitGS: TSAbwesenheit = new TSAbwesenheit(new TSDateRange(today, today));
+                let tsAbwesenheitJA: TSAbwesenheit = new TSAbwesenheit(new TSDateRange(today, today));
+                let tsAbwesenheitContainer: TSAbwesenheitContainer = new TSAbwesenheitContainer(tsAbwesenheitGS, tsAbwesenheitJA);
+                let abwesenheitContainers: Array<TSAbwesenheitContainer> = [tsAbwesenheitContainer];
+
+                let betreuung: TSBetreuung = new TSBetreuung(instStam, TSBetreuungsstatus.AUSSTEHEND, betContainers, abwesenheitContainers, 2);
                 TestDataUtil.setAbstractFieldsUndefined(betreuung);
 
                 let restBetreuung = ebeguRestUtil.betreuungToRestObject({}, betreuung);

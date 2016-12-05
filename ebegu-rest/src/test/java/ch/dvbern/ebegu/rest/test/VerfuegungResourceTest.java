@@ -29,7 +29,7 @@ import java.time.Month;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class VerfuegungResourceTest extends AbstractEbeguRestTest {
+public class VerfuegungResourceTest extends AbstractEbeguRestLoginTest {
 
 	@Inject
 	private VerfuegungResource verfuegungResource;
@@ -53,6 +53,29 @@ public class VerfuegungResourceTest extends AbstractEbeguRestTest {
 
 		Assert.assertEquals(verfuegungJax.getGeneratedBemerkungen(), persistedVerfuegung.getGeneratedBemerkungen());
 		Assert.assertEquals(verfuegungJax.getManuelleBemerkungen(), persistedVerfuegung.getManuelleBemerkungen());
+
+	}
+
+	@Test
+	public void nichtEintretenTest() throws EbeguException {
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+		Betreuung storedBetr = persistence.merge(betreuung);
+
+		final JaxVerfuegung verfuegungJax = new JaxVerfuegung();
+		verfuegungJax.setGeneratedBemerkungen("genBemerkung");
+		verfuegungJax.setManuelleBemerkungen("manBemerkung");
+
+		final JaxVerfuegung persistedVerfuegung = verfuegungResource.schliessenNichtEintreten(new JaxId(storedBetr.getId()),  verfuegungJax);
+
+		Assert.assertNotNull(persistedVerfuegung);
+		persistedVerfuegung.getZeitabschnitte().forEach(jaxVerfZeitabsch -> Assert.assertEquals(0, jaxVerfZeitabsch.getAnspruchberechtigtesPensum()));
+		Betreuung storedBetreuung = persistence.find(Betreuung.class, betreuung.getId());
+		Assert.assertEquals(Betreuungsstatus.NICHT_EINGETRETEN, storedBetreuung.getBetreuungsstatus());
+		Assert.assertEquals(verfuegungJax.getGeneratedBemerkungen(), persistedVerfuegung.getGeneratedBemerkungen());
+		Assert.assertEquals(verfuegungJax.getManuelleBemerkungen(), persistedVerfuegung.getManuelleBemerkungen());
+
 
 	}
 

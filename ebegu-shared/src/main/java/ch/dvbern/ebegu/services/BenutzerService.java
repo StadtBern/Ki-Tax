@@ -35,6 +35,14 @@ public interface BenutzerService {
 	Collection<Benutzer> getAllBenutzer();
 
 	/**
+	 * Gibt alle existierenden Benutzer mit Rolle Sachbearbeiter_JA oder Admin zurueck.
+	 * @return Liste aller Benutzern mit entsprechender Rolle aus der DB
+	 */
+	@Nonnull
+	Collection<Benutzer> getBenutzerJAorAdmin();
+
+
+	/**
 	 * entfernt die Benutzer aus der Database
 	 * @param username die Benutzer als DTO
 	 */

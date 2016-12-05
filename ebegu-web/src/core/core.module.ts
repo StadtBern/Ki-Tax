@@ -60,11 +60,13 @@ import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
 import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 import {DvUserNameComponentConfig} from './component/dv-user-name/dv-user-name';
 import {NavigationLogger} from './service/NavigationLogger';
+import GlobalCacheService from '../gesuch/service/globalCacheService';
+import MahnungRS from '../gesuch/service/mahnungRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
-    let dynDep: string [] = ['unsavedChanges'];
-    //deaktiviere unsavedChanges plugin fuer development
+    let dynDep: string [] = [];
+    //hier kommen plugins die wir fuer dev disablen wollen
     if (ENV === 'development') {
         return [];
     }
@@ -91,7 +93,8 @@ const dependencies: string[] = [
     'angularMoment',
     'cfp.hotkeys',
     'ui.utils.masks',
-    'ngFileUpload'
+    'ngFileUpload',
+    'unsavedChanges'
 ];
 
 
@@ -140,6 +143,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('DownloadRS', DownloadRS)
     .service('WizardStepRS', WizardStepRS)
     .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
+    .service('GlobalCacheService', GlobalCacheService)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())
@@ -165,5 +169,6 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvUserName', new DvUserNameComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
-    .component('dvAntragList', new DVAntragListConfig());
+    .component('dvAntragList', new DVAntragListConfig())
+    .service('MahnungRS', MahnungRS);
 

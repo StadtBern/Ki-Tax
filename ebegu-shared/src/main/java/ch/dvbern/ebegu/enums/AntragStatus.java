@@ -14,9 +14,11 @@ public enum AntragStatus {
     IN_BEARBEITUNG_JA,
     ZURUECKGEWIESEN,
     ERSTE_MAHNUNG,
+	ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
     ERSTE_MAHNUNG_ABGELAUFEN,
     ZWEITE_MAHNUNG,
     ZWEITE_MAHNUNG_ABGELAUFEN,
+	ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
     GEPRUEFT,
     VERFUEGEN,
     VERFUEGT;
@@ -27,7 +29,7 @@ public enum AntragStatus {
 	private static final Set<AntragStatus> forSachbearbeiterInstitutionRole = EnumSet.range(IN_BEARBEITUNG_GS, VERFUEGT);
 	private static final Set<AntragStatus> forSachbearbeiterTraegerschaftRole = forSachbearbeiterInstitutionRole;
     private static final Set<AntragStatus> forSachbearbeiterJugendamtRole = forAdminRole;
-    private static final Set<AntragStatus> forSchulamtRole = forAdminRole;
+    private static final Set<AntragStatus> forSchulamtRole = EnumSet.range(NUR_SCHULAMT, VERFUEGT);
     private static final Set<AntragStatus> forJuristRole = forSachbearbeiterJugendamtRole;
     private static final Set<AntragStatus> forRevisorRole = forAdminRole;
 
@@ -39,7 +41,8 @@ public enum AntragStatus {
      */
     public static Set<AntragStatus> allowedforRole(UserRole userRole) {
         switch (userRole) {
-            case ADMIN: return forAdminRole;
+			case SUPER_ADMIN: return  all;
+			case ADMIN: return forAdminRole;
             case GESUCHSTELLER: return none;
             case JURIST: return forJuristRole;
             case REVISOR: return forRevisorRole;

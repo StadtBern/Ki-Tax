@@ -13,6 +13,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
 import IPromise = angular.IPromise;
+import IQService = angular.IQService;
 
 
 let template = require('./kindView.html');
@@ -33,11 +34,11 @@ export class KindViewController extends AbstractGesuchViewController {
     allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
-        'ErrorService', 'WizardStepManager'];
+        'ErrorService', 'WizardStepManager', '$q'];
     /* @ngInject */
     constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager) {
+                wizardStepManager: WizardStepManager, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
@@ -69,6 +70,12 @@ export class KindViewController extends AbstractGesuchViewController {
 
     save(form: IFormController): IPromise<TSKindContainer> {
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getKindToWorkWith());
+            }
+
             this.errorService.clearAll();
             return this.gesuchModelManager.updateKind();
         }

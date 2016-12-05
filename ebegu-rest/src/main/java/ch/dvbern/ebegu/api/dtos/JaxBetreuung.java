@@ -35,6 +35,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@NotNull
 	private List<JaxBetreuungspensumContainer> betreuungspensumContainers = new ArrayList<>();
 
+	@NotNull
+	private List<JaxAbwesenheitContainer> abwesenheitContainers = new ArrayList<>();
+
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	private String grundAblehnung;
@@ -60,7 +63,6 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	private LocalDate datumBestaetigung = null;
 
 
-
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
 		return institutionStammdaten;
 	}
@@ -83,6 +85,14 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setBetreuungspensumContainers(List<JaxBetreuungspensumContainer> betreuungspensumContainers) {
 		this.betreuungspensumContainers = betreuungspensumContainers;
+	}
+
+	public List<JaxAbwesenheitContainer> getAbwesenheitContainers() {
+		return abwesenheitContainers;
+	}
+
+	public void setAbwesenheitContainers(List<JaxAbwesenheitContainer> abwesenheiten) {
+		this.abwesenheitContainers = abwesenheiten;
 	}
 
 	@Nullable

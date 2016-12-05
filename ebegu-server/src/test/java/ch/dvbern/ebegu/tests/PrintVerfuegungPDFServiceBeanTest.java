@@ -31,7 +31,7 @@ import java.util.Locale;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
+public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguLoginTest {
 
 	protected BetreuungsgutscheinEvaluator evaluator;
 
@@ -68,7 +68,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		int i = 0;
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
-			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			unitTestTempfolder.writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
 			i++;
 		}
 	}
@@ -94,7 +94,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		int i = 0;
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
-			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			unitTestTempfolder.writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
 			i++;
 		}
 	}
@@ -119,7 +119,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		int i = 0;
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
-			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			unitTestTempfolder.writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
 			i++;
 		}
 	}
@@ -145,7 +145,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		int i = 0;
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
-			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			unitTestTempfolder.writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
 			i++;
 		}
 	}

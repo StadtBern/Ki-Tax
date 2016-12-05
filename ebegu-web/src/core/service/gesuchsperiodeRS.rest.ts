@@ -22,7 +22,7 @@ export default class GesuchsperiodeRS {
     }
 
     public findGesuchsperiode(gesuchsperiodeID: string): IPromise<TSGesuchsperiode> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchsperiodeID))
+        return this.http.get(this.serviceURL + '/gesuchsperiode/' + encodeURIComponent(gesuchsperiodeID))
             .then((response: any) => {
                 this.log.debug('PARSING Gesuchsperiode REST object ', response.data);
                 return this.ebeguRestUtil.parseGesuchsperiode(new TSGesuchsperiode(), response.data);

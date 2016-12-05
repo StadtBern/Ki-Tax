@@ -1,8 +1,47 @@
 @import 'variables.less';
 
 @media @mq-md {
+    .mainQuestion {
+        width: 200%;
+    }
+
     .dv-input-container-small {
         width: 30rem;
+    }
+
+    .dv-input-container-medium {
+        width: 60rem;
+    }
+
+    .gesuchModul {
+        padding-bottom: 10rem;
+    }
+
+    #gesuchContainer {
+        .nav-row {
+            flex-direction: row-reverse;
+            -ms-flex-direction: row-reverse;
+            bottom: 4rem;
+            left: 0;
+            right: 0;
+            transform: unset;
+            & > div {
+                margin-bottom: 0;
+                display: flex;
+
+                &:nth-of-type(2) {
+                    margin-bottom: 0;
+                    justify-content: flex-end;
+                }
+                &:nth-of-type(1) {
+                    justify-content: flex-start;
+                }
+                &:nth-of-type(1).cancel {
+                    margin-right: auto;
+                    justify-content: flex-end;
+                }
+            }
+        }
     }
 }
 

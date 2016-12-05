@@ -10,10 +10,12 @@ import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
+import org.infinispan.manager.CacheContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.*;
@@ -35,6 +37,9 @@ public class AuthServiceBean implements AuthService {
 	private EntityManager entityManager;
 	@Inject
 	private BenutzerService benutzerService;
+
+	@Resource(lookup = "java:jboss/infinispan/container/ebeguCache")
+	private CacheContainer cacheContainer;
 
 
 	@Nonnull
@@ -108,7 +113,7 @@ public class AuthServiceBean implements AuthService {
 		Root<AuthorisierterBenutzer> root = delete.from(AuthorisierterBenutzer.class);
 		Predicate authTokenPredicate = criteriaBuilder.equal(root.get(AuthorisierterBenutzer_.authToken), authToken);
 		delete.where(criteriaBuilder.and(authTokenPredicate));
-
+		cacheContainer.getCache().remove(authToken);
 		try {
 			entityManager.createQuery(delete).executeUpdate();
 			return true;
@@ -121,8 +126,12 @@ public class AuthServiceBean implements AuthService {
 
 	@Override
 	public AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer) {
-
-		entityManager.persist(authorisierterBenutzer);
+		try {
+			entityManager.persist(authorisierterBenutzer);
+		} catch (RuntimeException ex) {
+			LOG.error("Could not create Login from IAM for user " + authorisierterBenutzer);
+			throw ex;
+		}
 		Benutzer existingUser = authorisierterBenutzer.getBenutzer();
 		return new AuthAccessElement(
 			authorisierterBenutzer.getUsername(),

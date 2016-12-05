@@ -89,7 +89,7 @@ public class InstitutionResource {
 	@ApiOperation(value = "Find and return an Institution by his institution id as parameter")
 	@Nullable
 	@GET
-	@Path("/{institutionId}")
+	@Path("/id/{institutionId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxInstitution findInstitution(
@@ -135,15 +135,6 @@ public class InstitutionResource {
 			.collect(Collectors.toList());
 	}
 
-	@Nonnull
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxInstitution> getAllFachstellen() {
-		return institutionService.getAllInstitutionen().stream()
-			.map(institution -> converter.institutionToJAX(institution))
-			.collect(Collectors.toList());
-	}
 
 
 	@ApiOperation(value = "Find and return a list of all Institutionen")
@@ -169,14 +160,14 @@ public class InstitutionResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Find and return a list of all Institutionen of the currently logged in Benutzer.")
+	@ApiOperation(value = "Find and return a list of all Institutionen of the currently logged in Benutzer. Retruns all for admins")
 	@Nonnull
 	@GET
 	@Path("/currentuser")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxInstitution> getInstitutionenForCurrentBenutzer() {
-		return institutionService.getInstitutionenForCurrentBenutzer().stream()
+	public List<JaxInstitution> getAllowedInstitutionenForCurrentBenutzer() {
+		return institutionService.getAllowedInstitutionenForCurrentBenutzer().stream()
 			.map(inst -> converter.institutionToJAX(inst))
 			.collect(Collectors.toList());
 	}

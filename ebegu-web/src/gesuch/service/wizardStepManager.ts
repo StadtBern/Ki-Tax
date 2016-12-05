@@ -1,3 +1,4 @@
+import {IPromise, IQService} from 'angular';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSWizardStepName, getTSWizardStepNameValues} from '../../models/enums/TSWizardStepName';
@@ -7,20 +8,21 @@ import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
-import IPromise = angular.IPromise;
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
 
 export default class WizardStepManager {
 
     private allowedSteps: Array<TSWizardStepName> = [];
+    private hiddenSteps: Array<TSWizardStepName> = []; // alle Steps die obwohl allowed, ausgeblendet werden muessen
     private wizardSteps: Array<TSWizardStep> = [];
     private currentStepName: TSWizardStepName; // keeps track of the name of the current step
 
     private wizardStepsSnapshot: Array<TSWizardStep> = [];
 
 
-    static $inject = ['AuthServiceRS', 'WizardStepRS'];
+    static $inject = ['AuthServiceRS', 'WizardStepRS', '$q'];
     /* @ngInject */
-    constructor(private authServiceRS: AuthServiceRS, private wizardStepRS: WizardStepRS) {
+    constructor(private authServiceRS: AuthServiceRS, private wizardStepRS: WizardStepRS, private $q: IQService) {
         this.setAllowedStepsForRole(authServiceRS.getPrincipalRole());
     }
 
@@ -54,9 +56,17 @@ export default class WizardStepManager {
         return this.wizardSteps;
     }
 
+    public getVisibleSteps(): Array<TSWizardStepName> {
+        return this.allowedSteps.filter(element =>
+            !this.isStepHidden(element)
+        );
+    }
+
     public setAllowedStepsForRole(role: TSRole): void {
-        if (TSRole.SACHBEARBEITER_INSTITUTION === role || TSRole.SACHBEARBEITER_TRAEGERSCHAFT === role) {
+        if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(role) > -1) {
             this.setAllowedStepsForInstitutionTraegerschaft();
+        } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(role) > -1) {
+            this.setAllowedStepsForSchulamt();
         } else {
             this.setAllAllowedSteps();
         }
@@ -68,7 +78,15 @@ export default class WizardStepManager {
         this.allowedSteps.push(TSWizardStepName.GESUCHSTELLER);
         this.allowedSteps.push(TSWizardStepName.UMZUG);
         this.allowedSteps.push(TSWizardStepName.BETREUUNG);
+        this.allowedSteps.push(TSWizardStepName.ABWESENHEIT);
         this.allowedSteps.push(TSWizardStepName.VERFUEGEN);
+    }
+
+    private setAllowedStepsForSchulamt(): void {
+        this.allowedSteps = getTSWizardStepNameValues().filter(element =>
+            (element !== TSWizardStepName.ERWERBSPENSUM && //schulamt sieht erwerbspensum und abwesenheit nicht
+            element !== TSWizardStepName.ABWESENHEIT)
+        );
     }
 
     private setAllAllowedSteps(): void {
@@ -94,6 +112,7 @@ export default class WizardStepManager {
     }
 
     public getStepByName(stepName: TSWizardStepName): TSWizardStep {
+
         return this.wizardSteps.filter((step: TSWizardStep) => {
             return step.wizardStepName === stepName;
         })[0];
@@ -103,19 +122,36 @@ export default class WizardStepManager {
      * Der Step wird aktualisiert und die Liste von Steps wird nochmal aus dem Server geholt. Sollte der Status gleich sein,
      * wird nichts gemacht und undefined wird zurueckgegeben. Der Status wird auch auf verfuegbar gesetzt
      * @param stepName
-     * @param stepStatus
+     * @param newStepStatus
      * @returns {any}
      */
-    private updateWizardStepStatus(stepName: TSWizardStepName, stepStatus: TSWizardStepStatus): IPromise<void> {
+    private updateWizardStepStatus(stepName: TSWizardStepName, newStepStatus: TSWizardStepStatus): IPromise<void> {
         let step: TSWizardStep = this.getStepByName(stepName);
         step.verfuegbar = true;
-        step.wizardStepStatus = this.maybeChangeStatus(step.wizardStepStatus, stepStatus);
-        if (step.wizardStepStatus === stepStatus) { // nur wenn der Status sich geaendert hat updaten und steps laden
+        if (this.needNewStatusSave(step.wizardStepStatus, newStepStatus)) { // nur wenn der Status sich geaendert hat updaten und steps laden
+            step.wizardStepStatus = newStepStatus;
             return this.wizardStepRS.updateWizardStep(step).then((response: TSWizardStep) => {
                 return this.findStepsFromGesuch(response.gesuchId);
             });
         }
-        return undefined;
+        return this.$q.when();
+    }
+
+    private needNewStatusSave(oldStepStatus: TSWizardStepStatus, newStepStatus: TSWizardStepStatus) {
+        if (oldStepStatus === newStepStatus) {
+            return false;
+        }
+
+        if ((newStepStatus === TSWizardStepStatus.IN_BEARBEITUNG || newStepStatus === TSWizardStepStatus.WARTEN)
+            && oldStepStatus !== TSWizardStepStatus.UNBESUCHT) {
+            return false;
+        }
+
+        if (newStepStatus === TSWizardStepStatus.OK && oldStepStatus === TSWizardStepStatus.MUTIERT) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -138,22 +174,6 @@ export default class WizardStepManager {
         });
     }
 
-    /**
-     * Den Status einer Seite setzen auf newStepStatus wenn dies erlaubt ist. Wenn nicht kommt der alte zurueck.
-     * Im normalen Fall wird diese Methode gebraucht um von UNBESUCHT auf IN_BEARBEITUNG zu wechseln.
-     *
-     * @param oldStepStatus
-     * @param newStepStatus
-     * @returns {TSWizardStepStatus}
-     */
-    private maybeChangeStatus(oldStepStatus: TSWizardStepStatus, newStepStatus: TSWizardStepStatus): TSWizardStepStatus {
-        //wenn wir vorher auf was anderem sind als unbesucht dann bleiben wir da statt auf IN_BEARBEITUNG zu gehen.
-        if ((newStepStatus === TSWizardStepStatus.IN_BEARBEITUNG || newStepStatus === TSWizardStepStatus.WARTEN)
-            && oldStepStatus !== TSWizardStepStatus.UNBESUCHT) {
-            return oldStepStatus;
-        }
-        return newStepStatus;
-    }
 
     /**
      * Diese Methode ist eine Ausnahme. Im ersten Step haben wir das Problem, dass das Gesuch noch nicht existiert. Deswegen koennen
@@ -188,11 +208,11 @@ export default class WizardStepManager {
     }
 
     public getNextStep(gesuch: TSGesuch): TSWizardStepName {
-        let allStepNames = this.getAllowedSteps();
-        let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) + 1;
-        for (let i = currentPosition; i < allStepNames.length; i++) {
-            if (this.isStepAvailableViaBtn(allStepNames[i], gesuch)) {
-                return allStepNames[i];
+        let allVisibleStepNames = this.getVisibleSteps();
+        let currentPosition: number = allVisibleStepNames.indexOf(this.getCurrentStepName()) + 1;
+        for (let i = currentPosition; i < allVisibleStepNames.length; i++) {
+            if (this.isStepAvailableViaBtn(allVisibleStepNames[i], gesuch)) {
+                return allVisibleStepNames[i];
             }
         }
         return undefined;
@@ -202,11 +222,11 @@ export default class WizardStepManager {
      * iterate through the existing steps and get the previous one based on the current position
      */
     public getPreviousStep(gesuch: TSGesuch): TSWizardStepName {
-        var allStepNames = this.getAllowedSteps();
-        let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) - 1;
+        var allVisibleStepNames = this.getVisibleSteps();
+        let currentPosition: number = allVisibleStepNames.indexOf(this.getCurrentStepName()) - 1;
         for (let i = currentPosition; i >= 0; i--) {
-            if (this.isStepAvailableViaBtn(allStepNames[i], gesuch)) {
-                return allStepNames[i];
+            if (this.isStepAvailableViaBtn(allVisibleStepNames[i], gesuch)) {
+                return allVisibleStepNames[i];
             }
         }
         return undefined;
@@ -232,11 +252,22 @@ export default class WizardStepManager {
      */
     public isStepClickableForCurrentRole(step: TSWizardStep, gesuch: TSGesuch) {
         if (step.wizardStepName === TSWizardStepName.VERFUEGEN) {
-            //verfuegen step fuer alle ausser admin und sachbearbeiter nur verfuegbar wenn status verfuegt
-            if (!this.authServiceRS.isOneOfRoles(TSRole.ADMIN, TSRole.SACHBEARBEITER_JA)
-                && gesuch.status !== TSAntragStatus.VERFUEGT) {
-                return false;    //disabled
+            //verfuegen fuer admin und jugendamt  immer sichtbar
+            if (!this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
+                // schulamt darf ab geprueft den screen sehen, oder wenn der Status schon NUR_SCHULAMT ist
+                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
+                    if (gesuch.status !== TSAntragStatus.GEPRUEFT && gesuch.status !== TSAntragStatus.VERFUEGEN
+                        && gesuch.status !== TSAntragStatus.VERFUEGT && gesuch.status !== TSAntragStatus.NUR_SCHULAMT) {
+                        return false;
+                    }
+                } else {
+                    // ... alle anderen ab VERFUEGT
+                    if (gesuch.status !== TSAntragStatus.VERFUEGT) {
+                        return false;
+                    }
+                }
             }
+            return this.areAllStepsOK();
         }
         return step.verfuegbar === true;  //wenn keine Sonderbedingung gehen wir davon aus dass der step nicht disabled ist
     }
@@ -250,7 +281,7 @@ export default class WizardStepManager {
     public areAllStepsOK(): boolean {
         for (let i = 0; i < this.wizardSteps.length; i++) {
             if (this.wizardSteps[i].wizardStepName === TSWizardStepName.BETREUUNG) {
-                if (this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.OK
+                if (!this.isStatusOk(this.wizardSteps[i].wizardStepStatus)
                     && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.PLATZBESTAETIGUNG) {
                     return false;
                 }
@@ -261,11 +292,25 @@ export default class WizardStepManager {
                 }
 
             } else if (this.wizardSteps[i].wizardStepName !== TSWizardStepName.VERFUEGEN
-                && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.OK) {
+                && this.wizardSteps[i].wizardStepName !== TSWizardStepName.ABWESENHEIT
+                && this.wizardSteps[i].wizardStepName !== TSWizardStepName.UMZUG
+                && !this.isStatusOk(this.wizardSteps[i].wizardStepStatus)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private isStatusOk(wizardStepStatus: TSWizardStepStatus) {
+        return wizardStepStatus === TSWizardStepStatus.OK || wizardStepStatus === TSWizardStepStatus.MUTIERT;
+    }
+
+    /**
+     * Prueft fuer den gegebenen Step ob sein Status OK oder MUTIERT ist
+     */
+    public isStepStatusOk(wizardStepName: TSWizardStepName) {
+        return this.hasStepGivenStatus(wizardStepName, TSWizardStepStatus.OK)
+            || this.hasStepGivenStatus(wizardStepName, TSWizardStepStatus.MUTIERT);
     }
 
     /**
@@ -287,5 +332,34 @@ export default class WizardStepManager {
 
     public restorePreviousSteps(): void {
         this.wizardSteps = this.wizardStepsSnapshot;
+    }
+
+    /**
+     * Guckt zuerst dass der Step in der Liste von allowedSteps ist. wenn ja wird es geguckt
+     * ob der Step in derl Liste hiddenSteps ist.
+     * allowed und nicht hidden Steps -> true
+     * alle anderen -> false
+     */
+    public isStepVisible(stepName: TSWizardStepName): boolean {
+        return (this.allowedSteps.indexOf(stepName) >= 0 && !this.isStepHidden(stepName));
+    }
+
+    public hideStep(stepName: TSWizardStepName): void {
+        if (!this.isStepHidden(stepName)) {
+            this.hiddenSteps.push(stepName);
+        }
+    }
+
+    /**
+     * Obwohl das Wort unhide nicht existiert, finde ich den Begriff ausfuehrlicher fuer diesen Fall als show
+     */
+    public unhideStep(stepName: TSWizardStepName): void {
+        if (this.isStepHidden(stepName)) {
+            this.hiddenSteps.splice(this.hiddenSteps.indexOf(stepName), 1);
+        }
+    }
+
+    private isStepHidden(stepName: TSWizardStepName): boolean {
+        return this.hiddenSteps.indexOf(stepName) >= 0;
     }
 }

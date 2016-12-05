@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxFamiliensituation;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -56,10 +57,17 @@ public class FamiliensituationResource {
 		if (gesuch.isPresent()) {
 			Familiensituation oldData = new Familiensituation();
 			Familiensituation familiensituationToMerge = new Familiensituation();
+			//wenn es sich um ein update handelt
 			if (familiensituationJAXP.getId() != null) {
 				Optional<Familiensituation> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationJAXP.getId());
 				familiensituationToMerge = loadedFamiliensituation.orElse(new Familiensituation());
-				oldData = new Familiensituation(familiensituationToMerge);
+				//wenn mutation dann alte daten = bisherige daten
+				if (AntragTyp.MUTATION.equals(gesuch.get().getTyp())) {
+					oldData = gesuch.get().getFamiliensituationErstgesuch();
+				}
+				else {
+					oldData = new Familiensituation(familiensituationToMerge);
+				}
 			}
 			Familiensituation convertedFamiliensituation = converter.familiensituationToEntity(familiensituationJAXP, familiensituationToMerge);
 			Familiensituation persistedFamiliensituation = this.familiensituationService.saveFamiliensituation(gesuch.get(), oldData, convertedFamiliensituation);

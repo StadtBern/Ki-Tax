@@ -1,7 +1,7 @@
 <div class="finanzielleSituation gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle">
+            <h1>
             <span data-translate="FINANZIELLE_SITUATION_RESULTATE"
                   translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></span>
             </h1>
@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-12">
             <form role="form" name="form" class="" unsaved-warning-form="" novalidate>
-                <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!-- Total Einkuenfte -->
                     <div class="row">

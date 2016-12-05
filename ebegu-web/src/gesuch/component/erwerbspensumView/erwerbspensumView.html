@@ -1,19 +1,17 @@
 <div class="erwerbspensumView gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle" ng-bind="vm.gesuchsteller.getFullName()"></h1>
+            <h1 ng-bind="vm.gesuchsteller.getFullName()"></h1>
             <hr class="header"/>
-            <p data-translate="INFOTEXT_ERWERBSPENSUM"></p>
+            <p class="inlineHint" data-translate="INFOTEXT_ERWERBSPENSUM"></p>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
                   unsaved-warning-form ng-if="vm.erwerbspensum">
-                <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
-
-                    <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
-                    <br/>
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Bezeichnung-->
                     <div class="row">
@@ -24,6 +22,7 @@
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.bezeichnung"
                                        dv-max-length class="form-control" ng-required="false"
                                        ng-disabled="vm.erwerbspensumDisabled()">
+                                <dv-error-messages for="form.bezeichnung.$error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -32,9 +31,11 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small">
                             <div class="form-group">
-                                <label class="md-no-float" data-translate="TAETIGKEIT_WAEHLEN" for="taetigkeit">
+                                <label class="md-no-float" for="taetigkeit">
+                                    <span data-translate="TAETIGKEIT_WAEHLEN"></span>
+                                    <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
-                                <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
+
                                 <select name="taetigkeit" id="taetigkeit"
                                         ng-model="vm.erwerbspensum.erwerbspensumJA.taetigkeit"
                                         class="form-control"
@@ -60,7 +61,7 @@
                                        ng-disabled="vm.erwerbspensumDisabled()"
                                        ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                 <dv-error-messages for="form.taetigkeitPensum.$error"
-                                                   class="error hint"></dv-error-messages>
+                                                   class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.pensum"></dv-bisher>
                             </dv-input-container>
                         </div>
@@ -79,7 +80,7 @@
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
                                 <dv-error-messages for="form.taetigkeitAb.$error"
-                                                   class="error hint"></dv-error-messages>
+                                                   class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                         <div class="col-sm-12 dv-input-container-small">
@@ -92,7 +93,7 @@
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
                                 <dv-error-messages for="form.taetigkeitBis.$error"
-                                                   class="error hint"></dv-error-messages>
+                                                   class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -103,7 +104,7 @@
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum"
                                              name="zuschlag"
-                                             ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt() || vm.erwerbspensumDisabled()"
+                                             ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled()"
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
                                     <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
@@ -146,7 +147,7 @@
                                    ng-disabled="vm.erwerbspensumDisabled()"
                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                             <dv-error-messages for="form.zuschlagsprozent.$error"
-                                               class="error hint"></dv-error-messages>
+                                               class="error"></dv-error-messages>
                             <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.zuschlagsprozent"></dv-bisher>
                         </dv-input-container>
                     </div>
@@ -156,7 +157,7 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-cancel="vm.cancel(form)" dv-next="true" dv-save="vm.save(form)" dv-sub-step="2">
+                <dv-navigation dv-cancel="vm.cancel(form)" dv-next="true" dv-save="vm.save(form)" dv-sub-step="2" dv-translate-next="{{'SPEICHERN_UPPER'}}">
                 </dv-navigation>
 
             </form>

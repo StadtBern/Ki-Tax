@@ -29,7 +29,7 @@ import java.util.List;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
+public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguLoginTest {
 
 	protected BetreuungsgutscheinEvaluator evaluator;
 
@@ -38,7 +38,6 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
 
 	@Inject
 	private GesuchService gesuchService;
-
 
 	@Before
 	public void setUpCalcuator() {
@@ -65,7 +64,7 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
 
 		byte[] bytes = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 
-		writeToTempDir(bytes, "BegleitschreibenWaelti.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "BegleitschreibenWaelti.pdf");
 	}
 
 	@Test
@@ -74,7 +73,7 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen()); // sollte tagi aareg sein
-																								// ist aber hier egal
+		// ist aber hier egal
 
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		testfall.createFall(null);
@@ -87,6 +86,6 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
 
 		byte[] bytes = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 
-		writeToTempDir(bytes, "BegleitschreibenFeutz.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "BegleitschreibenFeutz.pdf");
 	}
 }

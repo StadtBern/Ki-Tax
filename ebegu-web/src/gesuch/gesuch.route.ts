@@ -5,7 +5,10 @@ import GesuchModelManager from './service/gesuchModelManager';
 import TSGesuch from '../models/TSGesuch';
 import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
+import MahnungRS from './service/mahnungRS.rest';
 import IPromise = angular.IPromise;
+import IQService = angular.IQService;
+import ILogService = angular.ILogService;
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -31,6 +34,7 @@ function getStates(): IState[] {
         new EbeguErwerbspensumState(),
         new EbeguBetreuungListState(),
         new EbeguBetreuungState(),
+        new EbeguAbwesenheitState(),
         new EbeguNewFallState(),
         new EbeguMutationState(),
         new EbeguVerfuegenListState(),
@@ -69,7 +73,7 @@ export class EbeguNewFallState implements IState {
     };
 
     resolve = {
-        gesuch: getGesuchModelManager
+        gesuch: reloadGesuchModelManager
     };
 }
 
@@ -217,6 +221,24 @@ export class EbeguBetreuungState implements IState {
     };
 }
 
+export class EbeguAbwesenheitState implements IState {
+    name = 'gesuch.abwesenheit';
+    url = '/abwesenheit/:gesuchId';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<abwesenheit-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
+}
+
 export class EbeguErwerbspensenListState implements IState {
     name = 'gesuch.erwerbsPensen';
     url = '/erwerbspensen/:gesuchId';
@@ -313,7 +335,7 @@ export class EbeguVerfuegenListState implements IState {
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
-            template: '<verfuegen-list-view>'
+            template: '<verfuegen-list-view mahnung-list="$resolve.mahnungList">'
         },
         'kommentarViewPort': {
             template: '<kommentar-view>'
@@ -321,7 +343,8 @@ export class EbeguVerfuegenListState implements IState {
     };
 
     resolve = {
-        gesuch: getGesuchModelManager
+        gesuch: getGesuchModelManager,
+        mahnungList: getMahnungen
     };
 }
 
@@ -450,6 +473,7 @@ export class IKindStateParams implements IStateParamsService {
 export class INewFallStateParams implements IStateParamsService {
     createNew: string;
     createMutation: string;
+    gesuchId: string;
 }
 
 export class IErwerbspensumStateParams implements IStateParamsService {
@@ -467,17 +491,54 @@ export class IEinkommensverschlechterungResultateStateParams implements IStatePa
 }
 
 
-getGesuchModelManager.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', '$stateParams', '$q'];
+
+// FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
+getMahnungen.$inject = ['MahnungRS', '$stateParams', '$q', '$log'];
+/* @ngInject */
+export function getMahnungen(MahnungRS: MahnungRS, $stateParams: IGesuchStateParams, $q: IQService, $log: ILogService) {
+    // return [];
+    if ($stateParams) {
+        let gesuchIdParam = $stateParams.gesuchId;
+        if (gesuchIdParam) {
+            return MahnungRS.findMahnungen(gesuchIdParam);
+        }
+    }
+    $log.warn('keine stateParams oder keine gesuchId, gebe undefined zurueck');
+    let deferred = $q.defer();
+    deferred.resolve(undefined);
+    return deferred.promise;
+}
+
+
+getGesuchModelManager.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', '$stateParams', '$q',  '$log'];
 /* @ngInject */
 export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                                      wizardStepManager: WizardStepManager, $stateParams: IGesuchStateParams, $q: any): IPromise<TSGesuch> {
+                                      wizardStepManager: WizardStepManager, $stateParams: IGesuchStateParams, $q: IQService, $log: ILogService): IPromise<TSGesuch> {
+    if ($stateParams) {
+        let gesuchIdParam = $stateParams.gesuchId;
+        if (gesuchIdParam) {
+            if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParam) {
+                // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId ueberreinstimmt wird das gesuch neu geladen
+                berechnungsManager.clear();
+                return gesuchModelManager.openGesuch(gesuchIdParam);
+            }
+        }
+    }
+    $log.warn('keine stateParams oder keine gesuchId, gebe undefined zurueck');
+    let deferred = $q.defer();
+    deferred.resolve(undefined);
+    return deferred.promise;
+}
+
+reloadGesuchModelManager.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', '$stateParams', '$q'];
+/* @ngInject */
+export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                                      wizardStepManager: WizardStepManager, $stateParams: INewFallStateParams, $q: any): IPromise<TSGesuch> {
     if ($stateParams) {
         let gesuchIdParams = $stateParams.gesuchId;
         if (gesuchIdParams) {
-            if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParams) {
-                // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId ueberreinstimmt wird das gesuch neu geladen
+            if ($stateParams.createNew !== 'true') {
                 berechnungsManager.clear();
-                wizardStepManager.findStepsFromGesuch(gesuchIdParams);
                 return gesuchModelManager.openGesuch(gesuchIdParams);
             }
         }

@@ -25,9 +25,8 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		// Betreuungspensum darf nie mehr als 100% sein
 		int betreuungspensum = verfuegungZeitabschnitt.getBetreuungspensum();
-		if (betreuungspensum > 100) {
+		if (betreuungspensum > 100) { // sollte nie passieren
 			betreuungspensum = 100;
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSPENSUM, MsgKey.BETREUUNGSPENSUM_MSG);
 		}
 		// Fachstelle: Wird in einer separaten Rule behandelt
 		int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();

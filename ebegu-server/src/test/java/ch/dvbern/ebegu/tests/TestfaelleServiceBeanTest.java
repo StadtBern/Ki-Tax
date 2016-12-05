@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.data.VerfuegungZeitabschnittData;
 import ch.dvbern.ebegu.tets.data.VerfuegungszeitabschnitteData;
+import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -16,12 +17,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.security.auth.login.LoginException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Iterator;
@@ -37,7 +42,9 @@ import java.util.List;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
+public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(TestfaelleServiceBeanTest.class);
 
 	@Inject
 	private TestfaelleService testfaelleService;
@@ -122,6 +129,12 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	@Test
 	public void testVerfuegung_UmzugAusInAusBern() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.UmzugAusInAusBern, true, true);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
+	}
+
+	@Test
+	public void testVerfuegung_Abwesenheit() {
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.Abwesenheit, true, true);
 		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
 	}
 
@@ -220,7 +233,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	public VerfuegungszeitabschnitteData getExpectedVerfuegungszeitabschnitt(String fullName, String betreuung, Integer betreuungNummer, String addText) {
 
 		final String fileNamePath = getFileNamePath(fullName, betreuung, betreuungNummer, addText);
-		final java.io.File resultFile = new java.io.File(fileNamePath);
+		final File resultFile = new File(fileNamePath);
 		VerfuegungszeitabschnitteData expectedVerfuegungszeitabschnitteData = null;
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(VerfuegungszeitabschnitteData.class);
@@ -242,7 +255,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 			String pathname = getFileNamePath(fullName, betreuung, betreuungNummer, addText);
 
 			try {
-				java.io.File file = new java.io.File(pathname);
+				File file = new File(pathname);
 				JAXBContext jaxbContext = JAXBContext.newInstance(VerfuegungszeitabschnitteData.class);
 				Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
@@ -338,7 +351,13 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	 * Helper für init. Speichert Benutzer in DB
 	 */
 	private void createBenutzer(Mandant mandant) {
-		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, null, null, mandant);
+		try{
+			JBossLoginContextFactory.createLoginContext("admin", "admin").login();
+		} catch (LoginException ex){
+			LOG.error("could not login as admin user for test");
+		}
+
+		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
 		persistence.persist(i);
 	}
 

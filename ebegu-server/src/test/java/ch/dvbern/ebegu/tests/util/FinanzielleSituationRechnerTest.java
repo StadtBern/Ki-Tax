@@ -4,7 +4,7 @@ import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.EbeguParameterService;
-import ch.dvbern.ebegu.tests.AbstractEbeguTest;
+import ch.dvbern.ebegu.tests.AbstractEbeguLoginTest;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
 import org.jboss.arquillian.junit.Arquillian;
@@ -25,7 +25,7 @@ import java.time.LocalDate;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
+public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 
 	private static final BigDecimal EINKOMMEN_FINANZIELLE_SITUATION = new BigDecimal("100000");
 	private static final BigDecimal EINKOMMEN_EKV_ABGELEHNT = new BigDecimal("80001");
@@ -40,7 +40,6 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 
 	@Inject
 	private FinanzielleSituationRechner finSitRechner;
-
 
 
 

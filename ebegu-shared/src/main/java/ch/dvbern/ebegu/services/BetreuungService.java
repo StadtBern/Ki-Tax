@@ -20,7 +20,7 @@ public interface BetreuungService {
 	 * @param betreuung Die Betreuung als DTO
 	 */
 	@Nonnull
-	Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung);
+	Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit);
 
 	/**
 	 * @param key PK (id) der Betreuung
@@ -30,7 +30,7 @@ public interface BetreuungService {
 	Optional<Betreuung> findBetreuung(@Nonnull String key);
 
 	@Nonnull
-	Betreuung findBetreuungWithBetreuungsPensen(@Nonnull String key);
+	Optional<Betreuung> findBetreuungWithBetreuungsPensen(@Nonnull String key);
 
 	/**
 	 * entfernt eine Betreuung aus der Databse
@@ -57,5 +57,11 @@ public interface BetreuungService {
 	@Nonnull
 	List<Betreuung> findAllBetreuungenFromGesuch(String gesuchId);
 
-	Betreuung schliessenOhneVerfuegen(Betreuung betreuung);
+	/**
+	 * Schliesst die Betreuung (Status GESCHLOSSEN_OHNE_VERFUEGUNG) ohne eine neue Verfuegung zu erstellen
+	 * (bei gleichbleibenden Daten)
+     */
+	@Nonnull
+	Betreuung schliessenOhneVerfuegen(@Nonnull Betreuung betreuung);
+
 }

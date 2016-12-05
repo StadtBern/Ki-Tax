@@ -21,6 +21,10 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
+import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
+import IPromise = angular.IPromise;
+import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 
 describe('gesuchModelManager', function () {
 
@@ -101,10 +105,10 @@ describe('gesuchModelManager', function () {
                 spyOn(betreuungRS, 'saveBetreuung').and.returnValue($q.when(gesuchModelManager.getBetreuungToWorkWith()));
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
 
-                gesuchModelManager.updateBetreuung();
+                gesuchModelManager.updateBetreuung(false);
                 scope.$apply();
 
-                expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined);
+                expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined, false);
                 expect(kindRS.findKind).toHaveBeenCalledWith('2afc9d9a-957e-4550-9a22-97624a000feb');
                 expect(gesuchModelManager.getKindToWorkWith().nextNumberBetreuung).toEqual(5);
             });
@@ -318,6 +322,176 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZURUECKGEWIESEN)).toEqual(TSAntragStatus.ZURUECKGEWIESEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
+            });
+        });
+        describe('hideSteps', function () {
+            it('should hide the steps ABWESENHEIT and UMZUG for Erstgesuch without umzug', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
+                gesuchModelManager.initGesuch(true);
+
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
+                expect(wizardStepManager.unhideStep).not.toHaveBeenCalled();
+            });
+            it('should unhide the steps ABWESENHEIT and UMZUG for Mutation', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
+                let gesuch: TSGesuch = new TSGesuch();
+                gesuch.typ = TSAntragTyp.MUTATION;
+                gesuchModelManager.setGesuch(gesuch);
+
+                expect(wizardStepManager.hideStep).not.toHaveBeenCalled();
+                expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
+            });
+            it('should unhide the step UMZUG for Erstgesuch with umzug and hide ABWESENHEIT', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
+                let gesuch: TSGesuch = new TSGesuch();
+                gesuch.typ = TSAntragTyp.GESUCH;
+                gesuch.gesuchsteller1 = TestDataUtil.createGesuchsteller('Julio', 'Iglesias');
+                gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('wohnstrasse', '1'));
+                gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('umzug', '2'));
+                gesuchModelManager.setGesuch(gesuch);
+
+                expect(wizardStepManager.hideStep).not.toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
+                expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.unhideStep).not.toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
+            });
+        });
+        describe('updateBetreuungen', function () {
+            it('should return empty Promise for undefined betreuung list', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(undefined, true);
+                expect(promise).toBeDefined();
+                let promiseExecuted: boolean = false;
+                promise.then(() => {
+                    promiseExecuted = true;
+                });
+                $httpBackend.flush();
+                expect(promiseExecuted).toBe(true);
+            });
+            it('should return empty Promise for empty betreuung list', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen([], true);
+                expect(promise).toBeDefined();
+                let promiseExecuted: boolean = false;
+                promise.then(() => {
+                    promiseExecuted = true;
+                });
+                $httpBackend.flush();
+                expect(promiseExecuted).toBe(true);
+            });
+            it('should return a Promise with the Betreuung that was updated', function() {
+                let myGesuch = new TSGesuch();
+                myGesuch.id = 'gesuchID';
+                TestDataUtil.setAbstractFieldsUndefined(myGesuch);
+                let betreuung: TSBetreuung = new TSBetreuung();
+                betreuung.id = 'betreuungId';
+                let betreuungen: Array<TSBetreuung> = [betreuung];
+                let kindContainer: TSKindContainer = new TSKindContainer(undefined, undefined, betreuungen);
+                kindContainer.id = 'kindID';
+                myGesuch.kindContainers = [kindContainer];
+
+                spyOn(betreuungRS, 'saveBetreuungen').and.returnValue($q.when([betreuung]));
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when(undefined));
+                spyOn(gesuchModelManager, 'setHiddenSteps').and.returnValue(undefined);
+                gesuchModelManager.setGesuch(myGesuch);
+
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
+                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(betreuungen, true);
+
+                expect(promise).toBeDefined();
+                let promiseExecuted: Array<TSBetreuung> = undefined;
+                promise.then((response) => {
+                    promiseExecuted = response;
+                });
+
+                $httpBackend.flush();
+
+                expect(betreuungRS.saveBetreuungen).toHaveBeenCalledWith(betreuungen, myGesuch.id, true);
+                expect(promiseExecuted.length).toBe(1);
+                expect(promiseExecuted[0]).toEqual(betreuung);
+            });
+        });
+        describe('openGesuch', function () {
+            it('should call findGesuchForInstitution for role Institution or Traegerschaft', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
+                let gesuch: TSGesuch = new TSGesuch();
+                gesuch.id = '123';
+                spyOn(gesuchRS, 'findGesuchForInstitution').and.returnValue($q.when(gesuch));
+                spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue($q.when({}));
+
+                gesuchModelManager.openGesuch(gesuch.id);
+                scope.$apply();
+
+                expect(gesuchRS.findGesuchForInstitution).toHaveBeenCalledWith(gesuch.id);
+                expect(gesuchModelManager.getGesuch()).toEqual(gesuch);
+            });
+            it('should call findGesuch for other role but Institution/Traegerschaft', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
+                let gesuch: TSGesuch = new TSGesuch();
+                gesuch.id = '123';
+                spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(false);
+                spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(gesuch));
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue($q.when({}));
+
+                gesuchModelManager.openGesuch(gesuch.id);
+                scope.$apply();
+
+                expect(gesuchRS.findGesuch).toHaveBeenCalledWith(gesuch.id);
+                expect(gesuchModelManager.getGesuch()).toEqual(gesuch);
+            });
+        });
+        describe('areThereOnlySchulamtAngebote', function () {
+            it('should be true if only Schulamtangebote', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false);
+                createKindContainer();
+                gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
+                gesuchModelManager.createBetreuung();
+                gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+                let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
+                institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.TAGESSCHULE;
+                gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+
+                expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(true);
+            });
+            it('should be false if not only Schulamtangebote', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false);
+                createKindContainer();
+                gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
+                gesuchModelManager.createBetreuung();
+                gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+                let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
+                institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.KITA;
+                gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+
+                expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
+            });
+            it('should be false if there are no Betreuungen or Kinds', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false);
+                // createKindContainer();
+                // gesuchModelManager.createBetreuung();
+                // gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+                // let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
+                // institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.KITA;
+                // gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+
+                expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
             });
         });
     });

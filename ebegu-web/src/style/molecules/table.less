@@ -1,15 +1,72 @@
 @import '../variables.less';
 @import '../mixins.less';
 
+.row-fallnr {
+    width: 5%;
+}
+
+.row-name {
+    width: 10%;
+
+}
+
+.row-antrag {
+    width: 7.5%;
+
+}
+
+.row-periode {
+    width: 7.5%;
+
+}
+
+.row-geandert {
+    width: 7.5%;
+
+}
+
+eingangsdatum.row-status {
+    width: 12.5%;
+
+}
+
+.row-angebot {
+    width: 15%;
+
+}
+
+.row-inst {
+    width: 15%;
+
+}
+
+.row-ver {
+    width: 10%;
+
+}
+
+.row-action {
+    width: 10%;
+}
+
 .table > tbody {
     & > tr, & > tr:first-child {
         &:hover {
             background: #fafafa;
+            color: @contrast-darkest;
+        }
+        &.disabled-row, &.disabled-row:hover {
+            background: @contrast;
+            cursor: text;
+            & > td {
+                border-color: @contrast-dark;
+            }
         }
     }
 }
 
 table, .table > tbody, .table > thead, .table > thead:first-child {
+    margin-bottom: 2rem;
     & > tr {
         & > td {
             .h3();
@@ -22,6 +79,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             display: table-cell;
             vertical-align: middle;
             padding: 0 0.8rem 0;
+            color: @contrast-darkest;
             .dvb-loading-button {
                 text-align: end;
             }
@@ -34,36 +92,13 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             border: 0.1rem solid @contrast;
             border-left: none;
             border-right: none;
+            border-radius: 0;
             display: table-cell !important;
             padding: 0 0.25rem 0;
             color: @contrast-darkest;
             span {
                 .p();
                 line-height: 0;
-            }
-        }
-        .betreuung-status {
-            &:after {
-                content: "";
-                position: absolute;
-                left: 0.8rem;
-                bottom: 0;
-                width: 3rem;
-                height: 0.5rem;
-                border-bottom: 0.5rem solid;
-
-            }
-            &.BESTAETIGT:after {
-                border-color: @success;
-            }
-            &.WARTEN:after {
-                border-color: @warning;
-            }
-            &.ABGEWIESEN:after {
-                border-color: @danger;
-            }
-            &.VERFUEGT:after {
-                border-color: @purple;
             }
         }
     }
@@ -75,6 +110,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             border: 0.1rem solid @contrast-darkest;
             border-left: none;
             border-right: none;
+            border-radius: 0;
             display: table-cell !important;
             padding: 0 0.8rem 0;
             color: @contrast-darkest;
@@ -82,6 +118,9 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
                 .p();
                 line-height: 0;
             }
+        }
+        .text-right {
+            text-align: right;
         }
     }
 }

@@ -1,18 +1,16 @@
 <div class="erwerbspensumListView gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 class="mainTitle">
+            <h1>
                 <span data-translate="ERWERBSPENSEN_LIST_TITLE"></span>
             </h1>
             <hr class="header"/>
+            <p ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="alert inlineHint alert-warning"
+               data-translate="ERWERBSPENSEN_LIST_HINT"></p>
+            <p class="inlineHint" ng-if="!vm.isErwerbspensumRequired()" data-translate="ERWERBSPENSEN_NOT_REQUIRED"></p>
         </div>
     </div>
 
-    <div ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="alert alert-warning" data-translate="ERWERBSPENSEN_LIST_HINT"></div>
-
-    <div ng-if="!vm.isErwerbspensumRequired()">
-        <span data-translate="ERWERBSPENSEN_NOT_REQUIRED"></span>
-    </div>
 
     <!--Erwerbspensen von Gesuchsteller 1-->
     <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller1">
@@ -20,7 +18,7 @@
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS1()" table-id="erwerbspensenGS1"
                                table-title="Erwerbspensen Gesuchsteller 1"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
-                               add-button-Visible="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                               add-button-Visible="!vm.isGesuchReadonly()"
                                on-add="vm.createErwerbspensum(1)"
                                on-edit="vm.editPensum(pensum, 1)"
                                on-remove="vm.removePensum(pensum, 1)"></dv-erwerbspensum-list>
@@ -32,7 +30,7 @@
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS2()" table-id="erwerbspensenGS2"
                                table-title="Erwerbspensen Gesuchsteller 2"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
-                               add-button-Visible="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                               add-button-Visible="!vm.isGesuchReadonly()"
                                on-add="vm.createErwerbspensum(2)"
                                on-edit="vm.editPensum(pensum, 2)"
                                on-remove="vm.removePensum(pensum, 2)"></dv-erwerbspensum-list>

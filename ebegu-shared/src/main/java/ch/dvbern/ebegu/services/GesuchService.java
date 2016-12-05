@@ -2,10 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
-import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Mutationsdaten;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -66,10 +63,17 @@ public interface GesuchService {
 	 *
 	 * @param gesuch der Gesuch zu entfernen
 	 */
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	void removeGesuch(@Nonnull Gesuch gesuch);
 
 	@Nonnull
 	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
+
+	/**
+	 * Gibt alle Antraege des Benutzers mit demn uebergebenen Benutzernamen zurueck.
+     */
+	@Nonnull
+	List<Gesuch> getAntraegeForUsername(String username);
 
 	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
@@ -87,27 +91,35 @@ public interface GesuchService {
 
 	/**
 	 * Erstellt eine neue Mutation fuer die Gesuchsperiode und Fall des uebergebenen Antrags. Es wird immer der letzt
-	 * verfuegte Antrag kopiert fuer die Mutation. Die Uebergebenen Mutationsdaten werden angehaengt
-     */
+	 * verfuegte Antrag kopiert fuer die Mutation.
+	 */
 	@Nonnull
-	Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nonnull Mutationsdaten mutationsdaten, LocalDate eingangsdatum);
+	Optional<Gesuch> antragMutieren(@Nonnull String antragId, LocalDate eingangsdatum);
 
+	/**
+	 * hilfsmethode zur mutation von faellen ueber das gui. Wird fuer testzwecke benoetigt
+	 */
 	@Nonnull
-	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull Mutationsdaten mutationsdaten,
+	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
 									@Nonnull LocalDate eingangsdatum);
 
 	/**
-	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück
+	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück,
+	 * ACHTUNG: Dies kann ein neueres oder aelteres als das uebergebene Gesuch sein, oder sogar das uebergebene
+	 * Gesuch selber!
 	 */
 	@Nonnull
 	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch);
 
+	/**
+	 * Gibt das letzte verfuegte Gesuch zurueck, also rekursiv ueber die Vorgaenger, nie das uebergebene Gesuch.
+     */
 	@Nonnull
-	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall);
-
+	Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch);
 
 	/**
 	 * fuellt die laufnummern der Gesuche/Mutationen eines Falls auf (nach timestamperstellt)
+	 *
 	 * @param fallId
 	 */
 	void updateLaufnummerOfAllGesucheOfFall(String fallId);

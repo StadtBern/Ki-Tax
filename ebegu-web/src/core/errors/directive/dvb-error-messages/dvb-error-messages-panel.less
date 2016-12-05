@@ -1,38 +1,44 @@
 @import "../../../../style/variables.less";
 @import "../../../../style/mixins.less";
-@zindex-navbar-fixed: 1030;
 .dvb-error-messages-panel {
     .container {
         margin-top: @small-abstand;
         margin-bottom: @small-abstand;
         display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
         .alarm-icon {
             margin-right: @small-abstand;
         }
         div {
-            margin-right: auto;
+            line-height: 2rem;
+            flex: 1;
         }
         .close-icon {
             margin-left: @small-abstand;
             margin-right: @small-abstand;
         }
-        .fa {
-            line-height: @floating-text-line-height;
+        .fa:before {
+            line-height: 2rem;
+            vertical-align: middle;
         }
         a {
             :hover {
                 cursor: pointer;
             }
+            line-height: 2rem;
             color: @color-contrast-bright-on-hover;
+
         }
     }
     position: fixed;
     top: @page-start;
     right: 0;
     left: 0;
-    z-index: @zindex-navbar-fixed - 1;
-    background-color: @color-contrast-normal;
-    color: @color-contrast-bright-on-hover;
+    z-index: @z-index-error;
+    background-color: @primary-dark;
+    border-bottom: 1rem @primary solid;
+    color: @contrast-lightest;
     font-weight: bold;
     display: none;
 }

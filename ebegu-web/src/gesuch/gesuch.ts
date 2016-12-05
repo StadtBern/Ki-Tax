@@ -40,8 +40,14 @@ export class GesuchRouteController extends AbstractGesuchViewController {
         var step = this.wizardStepManager.getStepByName(stepName);
         if (step) {
             let status = step.wizardStepStatus;
-            if (status === TSWizardStepStatus.OK) {
-                return 'fa-check green';
+            if (status === TSWizardStepStatus.MUTIERT) {
+                return 'fa-pencil green';
+            } else if (status === TSWizardStepStatus.OK) {
+                if (this.getGesuch().isMutation()) {
+                    return '';
+                } else {
+                    return 'fa-check green';
+                }
             } else if (status === TSWizardStepStatus.NOK) {
                 return 'fa-close red';
             } else if (status === TSWizardStepStatus.IN_BEARBEITUNG) {
@@ -67,6 +73,13 @@ export class GesuchRouteController extends AbstractGesuchViewController {
         var step = this.wizardStepManager.getStepByName(stepName);
         if (step) {
             return !this.wizardStepManager.isStepClickableForCurrentRole(step, this.gesuchModelManager.getGesuch());
+        }
+        return true;
+    }
+
+    public isStepVisible(stepName: TSWizardStepName): boolean {
+        if (stepName) {
+            return this.wizardStepManager.isStepVisible(stepName);
         }
         return true;
     }
