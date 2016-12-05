@@ -9,6 +9,15 @@
                     </h1>
                 </div>
             </div>
+
+            <hr class="header"/>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <span data-translate="FREIGABEQUITTUNG_ERFOLG_TEXT"
+                          data-translate-value-freigabedatum="vm.getFreigabeDatum()"></span>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12">
                     <i class="fa fa-file-text-o"></i>
@@ -32,7 +41,9 @@
                         </h1>
                     </div>
                 </div>
+
                 <hr class="header"/>
+
                 <div class="row">
                     <div class="col-md-12">
                         <div class=" checkbox">
@@ -46,35 +57,41 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <h1>
-                            <span data-translate="FREIGABEQUITTUNG_TAGESSCHULEN_TITLE"></span>
-                        </h1>
+                <div ng-if="vm.isThereAnySchulamtAngebot()">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1>
+                                <span data-translate="FREIGABEQUITTUNG_TAGESSCHULEN_TITLE"></span>
+                            </h1>
+                        </div>
                     </div>
-                </div>
-                <hr class="header"/>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class=" checkbox">
-                            <md-checkbox ng-model="vm.bestaetigungFreigabeTagesschule" name="bestaetigungFreigabeTagesschule"
-                                         aria-label="bestaetigungFreigabeTagesschule">
+                    <hr class="header"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class=" checkbox">
                                 <span data-translate="FREIGABEQUITTUNG_TAGESSCHULEN_TEXT"></span>
-                            </md-checkbox>
-                            <dv-error-messages for="form.bestaetigungFreigabeTagesschule.$error"
-                                               class="error"></dv-error-messages>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save(form)">
-                        </dv-navigation>
-                    </div>
-                </div>
+                <span class="col-md-4">
+                    <dv-loading-button type="submit" button-click="vm.gesuchFreigeben()"
+                                       button-class="dv-btn-sm"
+                                       aria-label="{{FREIGEBEN | translate}}">
+                        <span data-translate="FREIGEBEN"></span>
+                    </dv-loading-button>
+                </span>
 
             </form>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <dv-navigation dv-previous="true" dv-next="true">
+            </dv-navigation>
+        </div>
+    </div>
+
 </div>

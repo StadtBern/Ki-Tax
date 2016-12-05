@@ -997,6 +997,25 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Returns true when all Betreuungen are of kind SCHULAMT.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public isThereAnySchulamtAngebot(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.institutionStammdaten.betreuungsangebotTyp === TSBetreuungsangebotTyp.TAGESSCHULE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Setzt den Status des Gesuchs und speichert es in der Datenbank. Anstatt das ganze Gesuch zu schicken, rufen wir den Service auf
      * der den Status aktualisiert und erst wenn das geklappt hat, aktualisieren wir den Status auf dem Client.
      * Wird nur durchgefuehrt, wenn der gegebene Status nicht der aktuelle Status ist

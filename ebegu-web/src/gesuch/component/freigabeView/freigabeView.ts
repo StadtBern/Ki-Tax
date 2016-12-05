@@ -7,12 +7,15 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentTyp';
+import TSDownloadFile from '../../../models/TSDownloadFile';
 import ITranslateService = angular.translate.ITranslateService;
-import {isFreigegeben} from '../../../models/enums/TSAntragStatus';
 import IFormController = angular.IFormController;
-import TSGesuch from '../../../models/TSGesuch';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
+let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
 
 
 export class FreigabeViewComponentConfig implements IComponentOptions {
@@ -27,14 +30,13 @@ export class FreigabeViewComponentConfig implements IComponentOptions {
 export class FreigabeViewController extends AbstractGesuchViewController {
 
     bestaetigungFreigabequittung: boolean = false;
-    bestaetigungFreigabeTagesschule: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'DvDialog', '$translate', '$q', '$scope'];
+        'DvDialog', '$translate', '$q', '$scope', 'DownloadRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private $translate: ITranslateService, private $q: IQService, private $scope: IScope) {
+                private $translate: ITranslateService, private $q: IQService, private $scope: IScope, private downloadRS: DownloadRS) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
@@ -45,22 +47,38 @@ export class FreigabeViewController extends AbstractGesuchViewController {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
     }
 
-    public save(form: IFormController): IPromise<TSGesuch> {
-        if (form.$valid) {
-
+    public gesuchFreigeben(form: IFormController): IPromise<void> {
+        if (form.$valid && this.bestaetigungFreigabequittung === true) {
+            return this.DvDialog.showDialog(dialogTemplate, RemoveDialogController, {
+                title: 'CONFIRM_GESUCH_FREIGEBEN',
+                deleteText: 'CONFIRM_GESUCH_FREIGEBEN_DESCRIPTION'
+            }).then(() => {
+                return this.openFreigabequittungPDF();
+            });
         }
         return undefined;
     }
 
     public isGesuchFreigegeben(): boolean {
-        if (this.gesuchModelManager.getGesuch()) {
-            return isFreigegeben(this.gesuchModelManager.getGesuch().status);
-        }
+        // if (this.gesuchModelManager.getGesuch()) {
+        //     return isFreigegeben(this.gesuchModelManager.getGesuch().status);
+        // }
         return false;
     }
 
-    public openFreigabequittungPDF(): void {
+    public openFreigabequittungPDF(): IPromise<void> {
+        return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FREIGABEQUITTUNG, false)
+            .then((downloadFile: TSDownloadFile) => {
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+            });
+    }
 
+    public isThereAnySchulamtAngebot(): boolean {
+        return this.gesuchModelManager.isThereAnySchulamtAngebot();
+    }
+
+    public getFreigabeDatum(): string {
+        return '';
     }
 
 }
