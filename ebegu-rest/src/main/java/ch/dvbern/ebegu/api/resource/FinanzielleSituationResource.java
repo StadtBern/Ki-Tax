@@ -112,6 +112,9 @@ public class FinanzielleSituationResource {
 		return Response.ok(finanzielleSituationResultateDTO).build();
 	}
 
+	/**
+	 * Finanzielle Situation wird hier im gegensatz zur /calculate mehtode nur als DTO mitgegeben statt als ganzes gesuch
+	 */
 	@Nullable
 	@POST
 	@Path("/calculateTemp")
@@ -121,7 +124,6 @@ public class FinanzielleSituationResource {
 		@Nonnull @NotNull @Valid JaxFinanzModel jaxFinSitModel,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
-
 
 		Gesuch gesuch = new Gesuch();
 		gesuch.setFamiliensituation(new Familiensituation());

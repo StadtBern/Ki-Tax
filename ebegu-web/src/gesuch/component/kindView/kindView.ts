@@ -32,6 +32,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
     showFachstelle: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
     allowedRoles: Array<TSRole>;
+    // private initialModel: TSKindContainer; brauchts hier nicht da das kind glaub ich erst im then eingefuegt wird
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
         'ErrorService', 'WizardStepManager', '$q'];
@@ -42,6 +43,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith());
+        // this.initialModel = angular.copy(this.model);
         this.initViewModel();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }

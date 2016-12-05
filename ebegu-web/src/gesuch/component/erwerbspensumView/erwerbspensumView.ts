@@ -1,4 +1,4 @@
-import {IComponentOptions, IFormController, IQService, IPromise} from 'angular';
+import {IComponentOptions, IFormController, IQService, IPromise, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IErwerbspensumStateParams} from '../../gesuch.route';
@@ -46,10 +46,9 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
         'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q'];
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: IScope, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        var vm = this;
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
         this.gesuchsteller = this.gesuchModelManager.getStammdatenToWorkWith();
@@ -62,8 +61,11 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
                 this.model = this.initEmptyEwpContainer();
             }
         } else {
+            errorService.addMesageAsError("Unerwarteter Zustand: Gesuchsteller unbekannt");
             console.log('kein gesuchsteller gefunden');
         }
+
+        //hier muessen wir den event beim verlassen nicht abfangen da wir die daten erst beim erfolgreichen speichern ins model einfuegen
     }
 
     getTaetigkeitenList(): Array<TSTaetigkeit> {

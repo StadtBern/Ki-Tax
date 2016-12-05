@@ -10,8 +10,8 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSGesuch from '../../../models/TSGesuch';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import IQService = angular.IQService;
 import TSFinanzModel from '../../../models/TSFinanzModel';
+import IQService = angular.IQService;
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
 
@@ -26,6 +26,7 @@ export class FinanzielleSituationStartViewComponentConfig implements IComponentO
 export class FinanzielleSituationStartViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
     allowedRoles: Array<TSRoleUtil>;
+    private initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
         'WizardStepManager', '$q'];
@@ -58,19 +59,21 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     private save(form: angular.IFormController): IPromise<TSGesuch> {
         if (form.$valid) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
+            this.initialModel = angular.copy(this.model);
             if (!form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch());
             }
             this.errorService.clearAll();
-            return this.gesuchModelManager.updateGesuch().then((gesuch: TSGesuch) => {
-                // Nötig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht bemerkt werden
-                if (this.gesuchModelManager.getGesuch().isMutation()) {
-                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
-                }
-                return gesuch;
-            });
+            return this.gesuchModelManager.updateGesuch()
+                .then((gesuch: TSGesuch) => {
+                    // Nötig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht bemerkt werden
+                    if (this.gesuchModelManager.getGesuch().isMutation()) {
+                        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
+                    }
+                    return gesuch;
+                });
         }
         return undefined;
     }

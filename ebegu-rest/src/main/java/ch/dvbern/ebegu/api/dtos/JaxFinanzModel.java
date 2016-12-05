@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * DTO fuer Faelle
+ * DTO fuer die FinanzielleSituation, so verhindern wir, dass das ganze gesuch mitgegeben werden muss wenn wir berechnen wollen
  */
 @XmlRootElement(name = "jaxFinSitModel")
 @XmlAccessorType(XmlAccessType.FIELD)

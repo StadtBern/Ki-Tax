@@ -126,10 +126,15 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     calculate() {
-        this.berechnungsManager.calculateEinkommensverschlechterungTemp(this.model, this.model.getBasisJahrPlus())
-            .then(() => {
-                this.resultatProzent = this.calculateVeraenderung();
-            });
+        if (this.model && this.model.getBasisJahrPlus()) {
+            this.berechnungsManager
+                .calculateEinkommensverschlechterungTemp(this.model, this.model.getBasisJahrPlus())
+                .then(() => {
+                    this.resultatProzent = this.calculateVeraenderung();
+                });
+        } else{
+            console.log('No gesuch and Basisjahr to calculate');
+        }
     }
 
     public getEinkommensverschlechterungContainerGS1(): TSEinkommensverschlechterungContainer {

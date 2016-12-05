@@ -10,10 +10,8 @@ import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
 import {IPromise, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSFinanzielleSituation from '../../models/TSFinanzielleSituation';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
 import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensverschlechterungContainer';
-import TSEinkommensverschlechterung from '../../models/TSEinkommensverschlechterung';
 import FinanzielleSituationRS from './finanzielleSituationRS.rest';
 import EinkommensverschlechterungContainerRS from './einkommensverschlechterungContainerRS.rest';
 import TSKindContainer from '../../models/TSKindContainer';
@@ -52,8 +50,8 @@ import AdresseRS from '../../core/service/adresseRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import IQService = angular.IQService;
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
+import IQService = angular.IQService;
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -593,7 +591,8 @@ export default class GesuchModelManager {
         return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
             .then((betreuungResponse: any) => {
                 this.getKindFromServer();
-                return this.setBetreuungToWorkWith(betreuungResponse);
+                this.setBetreuungToWorkWith(betreuungResponse);
+                return this.getBetreuungToWorkWith();
             });
     }
 
@@ -805,7 +804,7 @@ export default class GesuchModelManager {
             return this.erwerbspensumRS.saveErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((response: TSErwerbspensumContainer) => {
 
-                    var i = EbeguUtil.getIndexOfElementwithID(erwerbspensum, gesuchsteller.erwerbspensenContainer);
+                    let i :number = EbeguUtil.getIndexOfElementwithID(erwerbspensum, gesuchsteller.erwerbspensenContainer);
                     if (i >= 0) {
                         gesuchsteller.erwerbspensenContainer[i] = erwerbspensum;
                     }

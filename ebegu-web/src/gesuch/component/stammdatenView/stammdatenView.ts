@@ -15,6 +15,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import IQService = angular.IQService;
 import IPromise = angular.IPromise;
+import IScope = angular.IScope;
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -33,14 +34,15 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     ebeguRestUtil: EbeguRestUtil;
     allowedRoles: Array<TSRole>;
     gesuchstellerNumber: number;
+    private initialModel: TSGesuchsteller;
 
 
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'CONSTANTS', '$q'];
+        'CONSTANTS', '$q', '$scope'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService) {
+                wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, private $scope: IScope) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.ebeguRestUtil = ebeguRestUtil;
         this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
@@ -51,6 +53,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     private initViewmodel() {
         this.gesuchModelManager.initStammdaten();
         this.model = angular.copy(this.gesuchModelManager.getStammdatenToWorkWith());
+        this.initialModel = angular.copy(this.model);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCHSTELLER);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.geschlechter = EnumEx.getNames(TSGeschlecht);

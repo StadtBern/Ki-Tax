@@ -1,4 +1,4 @@
-import {IComponentOptions, ILogService, IPromise} from 'angular';
+import {IComponentOptions, ILogService, IPromise, IQService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IEinkommensverschlechterungStateParams} from '../../gesuch.route';
@@ -11,7 +11,6 @@ import WizardStepManager from '../../service/wizardStepManager';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import {TSRole} from '../../../models/enums/TSRole';
 import TSFinanzModel from '../../../models/TSFinanzModel';
-import IQService = angular.IQService;
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -29,6 +28,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     public geschaeftsgewinnBasisjahrMinus1: number;
     public geschaeftsgewinnBasisjahrMinus2: number;
     allowedRoles: Array<TSRole>;
+    public initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
         'WizardStepManager', '$q'];
@@ -46,7 +46,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
         this.model.initEinkommensverschlechterungContainer(parsedBasisJahrPlusNum, parsedGesuchstelllerNum);
-
+        this.initialModel = angular.copy(this.model);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();
         this.calculate();
@@ -55,6 +55,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
 
     private initViewModel() {
 
+        //brauchen wir hier das init wirklich nicht mehr? was ist bei mutation etc
         this.getGeschaeftsgewinnFromFS();
 
         this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig()

@@ -42,9 +42,9 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
                 private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.model = angular.copy(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo);
+        this.initialEinkVersInfo = angular.copy(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo);
+        this.model = angular.copy(this.initialEinkVersInfo);
         this.initViewModel();
-        this.initialEinkVersInfo = angular.copy(this.model);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
@@ -121,7 +121,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
                 if (!form.$dirty) {
                     // If there are no changes in form we don't need anything to update on Server and we could return the
                     // promise immediately
-                    return this.$q.when(this.getGesuch().einkommensverschlechterungInfo);
+                    return this.$q.when(this.model);
                 }
                 if (this.isConfirmationRequired()) {
                     return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
@@ -137,13 +137,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             return undefined;
         }
 
-    private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungInfo> {
-        if (form.$valid) {
-            if (!form.$dirty) {
-                // If there are no changes in form we don't need anything to update on Server and we could return the
-                // promise immediately
-                return this.$q.when(this.getGesuch().einkommensverschlechterungInfo);
-            }
+    private save(): IPromise<TSEinkommensverschlechterungInfo> {
             this.errorService.clearAll();
             if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {
                 if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
@@ -168,8 +162,6 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             }
             this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo = this.getEinkommensverschlechterungsInfo();
             return this.gesuchModelManager.updateEinkommensverschlechterungsInfo();
-        }
-        return undefined;
     }
 
     public isRequired(basisJahrPlus: number): boolean {

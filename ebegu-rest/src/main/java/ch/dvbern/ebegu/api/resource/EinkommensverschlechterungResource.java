@@ -134,6 +134,10 @@ public class EinkommensverschlechterungResource {
 		return Response.ok(abstFinSitResultateDTO).build();
 	}
 
+	/**
+	 * Diese Methode ist aehnlich wie {@link this.calculateEinkommensverschlechterung}
+	 * Hier wird die  Finanzielle Situation als eigenes Model uebergeben statt das ganzes Gesuch
+	 */
 	@Nullable
 	@POST
 	@Path("/calculateTemp/{basisJahrPlusID}")
@@ -147,7 +151,6 @@ public class EinkommensverschlechterungResource {
 
 		Validate.notNull(basisJahrPlusID.getId());
 		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
-
 		Gesuch gesuch = new Gesuch();
 		gesuch.setFamiliensituation(new Familiensituation());
 		gesuch.getFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());

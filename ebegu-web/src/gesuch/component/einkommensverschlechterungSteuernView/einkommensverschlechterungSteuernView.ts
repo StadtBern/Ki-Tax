@@ -9,8 +9,8 @@ import TSGesuch from '../../../models/TSGesuch';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import IQService = angular.IQService;
 import TSFinanzModel from '../../../models/TSFinanzModel';
+import IQService = angular.IQService;
 let template = require('./einkommensverschlechterungSteuernView.html');
 require('./einkommensverschlechterungSteuernView.less');
 
@@ -25,6 +25,7 @@ export class EinkommensverschlechterungSteuernViewComponentConfig implements ICo
 export class EinkommensverschlechterungSteuernViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
     allowedRoles: Array<TSRole>;
+    initialModel: TSFinanzModel;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager', '$q'];
     /* @ngInject */
@@ -33,6 +34,7 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.initialModel = angular.copy(this.model);
 
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();

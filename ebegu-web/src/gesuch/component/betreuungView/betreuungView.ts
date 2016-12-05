@@ -113,11 +113,11 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     private save(newStatus: TSBetreuungsstatus, nextStep: string, form: IFormController): void {
         this.isSavingData = true;
-        this.gesuchModelManager.setBetreuungToWorkWith(this.model);
+        this.gesuchModelManager.setBetreuungToWorkWith(this.model); //setze model
         let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
-        if (this.gesuchModelManager.getBetreuungToWorkWith()) {
+        if (this.getBetreuungModel()) {
             if (this.isTagesschule()) {
-                this.gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
+                this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
             }
         }
         this.errorService.clearAll();
@@ -150,7 +150,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     reset() {
-        this.removeBetreuungFromKind();
+        this.removeBetreuungFromKind(); //wenn model existiert und nicht neu ist wegnehmen, sonst resetten
     }
 
     private removeBetreuungFromKind(): void {

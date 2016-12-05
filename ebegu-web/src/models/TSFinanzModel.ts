@@ -67,6 +67,7 @@ export default class TSFinanzModel {
         } else {
             this.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo;
         }
+        //geesuchstelelr1 nullsave?
         this.einkommensverschlechterungContainerGS1 = angular.copy(gesuch.gesuchsteller1.einkommensverschlechterungContainer);
         if (gesuch.gesuchsteller2) {
             this.einkommensverschlechterungContainerGS2 = angular.copy(gesuch.gesuchsteller2.einkommensverschlechterungContainer);
@@ -91,14 +92,28 @@ export default class TSFinanzModel {
     copyFinSitDataToGesuch(gesuch: TSGesuch): TSGesuch {
         gesuch.familiensituation.gemeinsameSteuererklaerung = this.gemeinsameSteuererklaerung;
         gesuch.gesuchsteller1.finanzielleSituationContainer = this.finanzielleSituationContainerGS1;
-        gesuch.gesuchsteller2.finanzielleSituationContainer = this.finanzielleSituationContainerGS2;
+        if(gesuch.gesuchsteller2){
+            gesuch.gesuchsteller2.finanzielleSituationContainer = this.finanzielleSituationContainerGS2;
+        } else{
+            if(this.finanzielleSituationContainerGS2){
+                //wenn wir keinen gs2 haben sollten wir auch gar keinen solchen container haben
+                console.log('illegal state: finanzielleSituationContainerGS2 exists but no gs2 is available');
+            }
+        }
         return gesuch;
     }
 
     copyEkvSitDataToGesuch(gesuch: TSGesuch): TSGesuch {
         gesuch.einkommensverschlechterungInfo = this.einkommensverschlechterungInfo;
         gesuch.gesuchsteller1.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerGS1;
-        gesuch.gesuchsteller2.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerGS2;
+        if (gesuch.gesuchsteller2) {
+            gesuch.gesuchsteller2.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerGS2;
+        } else {
+            if (this.einkommensverschlechterungContainerGS2) {
+                //wenn wir keinen gs2 haben sollten wir auch gar keinen solchen container haben
+                console.log('illegal state: einkommensverschlechterungContainerGS2 exists but no gs2 is available');
+            }
+        }
         return gesuch;
     }
 

@@ -25,6 +25,8 @@ export class FinanzielleSituationResultateViewComponentConfig implements ICompon
  */
 export class FinanzielleSituationResultateViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
+    private initialModel: TSFinanzModel;
+
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
         'WizardStepManager', '$q'];
     /* @ngInject */
@@ -35,6 +37,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.initialModel = angular.copy(this.model);
 
         this.calculate();
     }
@@ -85,7 +88,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     calculate() {
         this.berechnungsManager.calculateFinanzielleSituationTemp(this.model);
     }
-
+    //init weg
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituationContainer {
         return this.model.finanzielleSituationContainerGS1;

@@ -11,11 +11,8 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSRole} from '../../../models/enums/TSRole';
 import TSFinanzModel from '../../../models/TSFinanzModel';
-import TSGesuch from '../../../models/TSGesuch';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
-import TSFamiliensituation from '../../../models/TSFamiliensituation';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
 
@@ -32,6 +29,8 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     public showSelbstaendig: boolean;
     allowedRoles: Array<TSRole>;
 
+    private initialModel: TSFinanzModel;
+
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
         'WizardStepManager', '$q'];
     /* @ngInject */
@@ -40,10 +39,11 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
                 wizardStepManager: WizardStepManager, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), parsedNum);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.initialModel = angular.copy(this.model);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
-        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();
         this.calculate();
     }
@@ -78,6 +78,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         return this.model.getFiSiConToWorkWith().finanzielleSituationJA.steuerveranlagungErhalten === false;
     }
 
+    //hier neu init
     public steuerveranlagungClicked(): void {
         // Wenn Steuerveranlagung JA -> auch StekErhalten -> JA
         // Wenn zusätzlich noch GemeinsameStek -> Dasselbe auch für GS2
