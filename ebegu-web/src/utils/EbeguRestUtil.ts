@@ -255,6 +255,7 @@ export default class EbeguRestUtil {
         restObj.eingangsdatum = DateUtil.momentToLocalDate(antragEntity.eingangsdatum);
         restObj.status = antragEntity.status;
         restObj.typ = antragEntity.typ;
+        restObj.eingangsart = antragEntity.eingangsart;
     }
 
     private parseAbstractAntragEntity(antragTS: TSAbstractAntragEntity, antragFromServer: any) {
@@ -264,6 +265,7 @@ export default class EbeguRestUtil {
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
         antragTS.status = antragFromServer.status;
         antragTS.typ = antragFromServer.typ;
+        antragTS.eingangsart = antragFromServer.eingangsart;
     }
 
     private adressenListToRestObject(adressen: Array<TSAdresse>): Array<any> {
