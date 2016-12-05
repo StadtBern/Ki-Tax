@@ -10,20 +10,20 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.junit.After;
-import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.testng.Assert;
+
 
 import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 import java.util.Optional;
 
 /**
  * Testet die Verbindung zum OpenIdm Server.
  * Tests sind default ignored, da wir zum Testen unserer Applikation nicht auf den OpenIdm Server angewiesen sind
+ *
+ * To run these test set getOpenIdmEnabled true in {@link ch.dvbern.ebegu.config.ch.dvbern.ebegu.config.EbeguConfigurationDummy}
  */
 
 @RunWith(Arquillian.class)
@@ -38,7 +38,6 @@ public class OpenIdmRestClentTest extends AbstractEbeguRestTest {
 
 	@Inject
 	private OpenIdmRestClient openIdmRestClient;
-
 
 	@Test
 	@Ignore
@@ -111,6 +110,5 @@ public class OpenIdmRestClentTest extends AbstractEbeguRestTest {
 		}
 
 	}
-
 
 }

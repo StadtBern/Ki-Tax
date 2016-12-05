@@ -30,6 +30,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_OPENIDM_URL = "ebegu.openidm.url";
 	private static final String EBEGU_OPENIDM_USER = "ebegu.openidm.user";
 	private static final String EBEGU_OPENIDM_PASSWD = "ebegu.openidm.passwd";
+	private static final String EBEGU_OPENIDM_ENABLED = "ebegu.openidm.enabled";
 
 	public EbeguConfigurationImpl() {
 
@@ -70,4 +71,10 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	public String getOpenIdmPassword() {
 		return getString(EBEGU_OPENIDM_PASSWD, "EBEGUADMINTZZ0");
 	}
+
+	@Override
+	public boolean getOpenIdmEnabled() {
+		return getBoolean(EBEGU_OPENIDM_ENABLED, false);
+	}
+
 }

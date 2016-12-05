@@ -40,4 +40,6 @@ public interface EbeguConfiguration {
 	String getOpenIdmUser();
 
 	String getOpenIdmPassword();
+
+	boolean getOpenIdmEnabled();
 }
