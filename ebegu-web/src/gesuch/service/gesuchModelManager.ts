@@ -53,6 +53,7 @@ import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import IQService = angular.IQService;
+import {TSEingangsart} from '../../models/enums/TSEingangsart';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -570,6 +571,7 @@ export default class GesuchModelManager {
         this.gesuch = new TSGesuch();
         this.gesuch.fall = new TSFall();
         this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
+        this.gesuch.eingangsart = TSEingangsart.PAPIER; //TODO (team) je nach dem anpassen
         this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
         this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();

@@ -548,6 +548,7 @@ public class JaxBConverter {
 		if (antragJAXP.getTyp() != null) {
 			antrag.setTyp(antragJAXP.getTyp());
 		}
+		antrag.setEingangsart(antragJAXP.getEingangsart());
 
 		if (antragJAXP.getGesuchsteller1() != null && antragJAXP.getGesuchsteller1().getId() != null) {
 			final Optional<Gesuchsteller> gesuchsteller1 = gesuchstellerService.findGesuchsteller(antragJAXP.getGesuchsteller1().getId());
@@ -611,6 +612,7 @@ public class JaxBConverter {
 		jaxGesuch.setEingangsdatum(persistedGesuch.getEingangsdatum());
 		jaxGesuch.setStatus(AntragStatusConverterUtil.convertStatusToDTO(persistedGesuch, persistedGesuch.getStatus()));
 		jaxGesuch.setTyp(persistedGesuch.getTyp());
+		jaxGesuch.setEingangsart(persistedGesuch.getEingangsart());
 
 		if (persistedGesuch.getGesuchsteller1() != null) {
 			jaxGesuch.setGesuchsteller1(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller1()));
@@ -1910,7 +1912,7 @@ public class JaxBConverter {
 
 		Optional<Gesuch> gesuchFromDB = gesuchService.findGesuch(jaxMahnung.getGesuch().getId());
 		if (gesuchFromDB.isPresent()) {
-			mahnung.setGesuch(this.gesuchToEntity(jaxMahnung.getGesuch(), gesuchFromDB.get()));
+			mahnung.setGesuch(gesuchFromDB.get());// hier laden wir das geushc aus der db aber convertiren die Gesuchsdaten vom Client NICHT
 		} else {
 			throw new EbeguEntityNotFoundException("mahnungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxMahnung.getGesuch());
 		}

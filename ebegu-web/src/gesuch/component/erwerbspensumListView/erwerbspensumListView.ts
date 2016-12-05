@@ -47,7 +47,6 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        var vm = this;
         this.initErwerbspensumStepStatus();
     }
 

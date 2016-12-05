@@ -20,7 +20,7 @@ export class InstitutionStammdatenRS {
     }
 
     public findInstitutionStammdaten(institutionStammdatenID: string): IPromise<TSInstitutionStammdaten> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(institutionStammdatenID))
+        return this.http.get(this.serviceURL + '/id/' + encodeURIComponent(institutionStammdatenID))
             .then((response: any) => {
                 this.log.debug('PARSING InstitutionStammdaten REST object ', response.data);
                 return this.ebeguRestUtil.parseInstitutionStammdaten(new TSInstitutionStammdaten(), response.data);

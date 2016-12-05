@@ -8,7 +8,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.ebegu.vorlagen.mahnung.MahnungPrintMergeSource;
-import ch.dvbern.ebegu.vorlagen.mahnung.ManhungPrintImpl;
+import ch.dvbern.ebegu.vorlagen.mahnung.MahnungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintImpl;
 import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
@@ -102,7 +102,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
 			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				docxME.getDocument(is, new MahnungPrintMergeSource(new ManhungPrintImpl(mahnung, vorgaengerMahnung))));
+				docxME.getDocument(is, new MahnungPrintMergeSource(new MahnungPrintImpl(mahnung, vorgaengerMahnung))));
 			is.close();
 			return bytes;
 		} catch (IOException | DocTemplateException e) {

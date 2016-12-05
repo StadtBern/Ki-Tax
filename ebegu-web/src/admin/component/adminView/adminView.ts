@@ -5,9 +5,11 @@ import {IHttpPromiseCallbackArg, IComponentOptions, IPromise} from 'angular';
 import {TestFaelleRS} from '../../service/testFaelleRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
+import {LinkDialogController} from '../../../gesuch/dialog/LinkDialogController';
 require('./adminView.less');
 let template = require('./adminView.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
+let linkDialogTempl = require('../../../gesuch/dialog/linkDialogTemplate.html');
 
 export class AdminViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -109,9 +111,12 @@ export class AdminViewController {
     }
 
     public createTestFall(testFall: string, bestaetigt: boolean, verfuegen: boolean): IPromise<any> {
-        return this.testFaelleRS.createTestFall(testFall, bestaetigt, verfuegen).then((respone) => {
-            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                title: respone.data
+        return this.testFaelleRS.createTestFall(testFall, bestaetigt, verfuegen).then((response) => {
+            //einfach die letzten 36 zeichen der response als uuid betrachten, hacky ist aber nur fuer uns intern
+            let uuidPartOfString = response.data ? response.data.slice(-36) : '';
+            return this.dvDialog.showDialog(linkDialogTempl, LinkDialogController, {
+                title: response.data,
+                link: '#/gesuch/fall/false/' + uuidPartOfString,
             }).then(() => {
                 //do nothing
             });
@@ -120,9 +125,9 @@ export class AdminViewController {
 
     public mutiereFallHeirat(): IPromise<any> {
         return this.testFaelleRS.mutiereFallHeirat(this.fallId, '0621fb5d-a187-5a91-abaf-8a813c4d263a',
-            this.mutationsdatum, this.aenderungperHeirat).then((respone) => {
+            this.mutationsdatum, this.aenderungperHeirat).then((response) => {
             return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                title: respone.data
+                title: response.data
             }).then(() => {
                 //do nothing
             });

@@ -324,9 +324,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     public openMahnungPDF(mahnung: TSMahnung): void {
-        if (mahnung == null)
+        if (mahnung == null) {
             mahnung = this.mahnung;
-
+        }
         this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnung, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
