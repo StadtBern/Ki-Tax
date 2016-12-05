@@ -50,7 +50,7 @@ describe('institutionStammdatenRS', function () {
     describe('API Usage', function () {
         describe('findTraegerschaft', () => {
             it('should return the Traegerschaft by id', () => {
-                $httpBackend.expectGET(traegerschaftRS.serviceURL + '/' + encodeURIComponent(mockTraegerschaft.id)).respond(mockTraegerschaftRest);
+                $httpBackend.expectGET(traegerschaftRS.serviceURL + '/id/' + encodeURIComponent(mockTraegerschaft.id)).respond(mockTraegerschaftRest);
 
                 let foundTraegerschaft: TSTraegerschaft;
                 traegerschaftRS.findTraegerschaft(mockTraegerschaft.id).then((result) => {

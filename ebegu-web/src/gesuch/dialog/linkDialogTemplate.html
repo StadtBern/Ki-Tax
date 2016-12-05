@@ -1,0 +1,23 @@
+<md-dialog md-theme="default" ng-class="vm.css"
+           class="md-default-theme md-transition-in"
+           role="dialog" tabindex="-1" aria-describedby="dialogContent">
+
+    <md-dialog-content class="md-dialog-content" role="document" tabindex="-1" id="dialogContent">
+        <h2 class="md-title ng-binding" ng-bind="vm.title"></h2>
+
+        <a class=" md-default-theme "
+                ng-click="vm.hide()" href="{{vm.link}}">
+            <span class="ng-binding ng-scope" ng-bind="vm.link"></span>
+        </a>
+    </md-dialog-content>
+
+    <md-dialog-actions layout-align="center center">
+        <div>
+            <button class=" md-default-theme " type="button"
+                    ng-click="vm.hide()" md-autofocus="dialog.$type==='alert'" aria-label="{{'LABEL_Ok' | translate}}">
+                <span class="ng-binding ng-scope" data-translate="LABEL_Ok"></span>
+            </button>
+        </div>
+    </md-dialog-actions>
+
+</md-dialog>

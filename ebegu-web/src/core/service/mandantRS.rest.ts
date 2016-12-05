@@ -18,7 +18,7 @@ export class MandantRS {
     }
 
     public findMandant(mandantID: string): IPromise<TSMandant> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(mandantID))
+        return this.http.get(this.serviceURL + '/id/' + encodeURIComponent(mandantID))
             .then((response: any) => {
                 this.log.debug('PARSING mandant REST object ', response.data);
                 return this.ebeguRestUtil.parseMandant(new TSMandant(), response.data);

@@ -72,7 +72,7 @@ public class InstitutionStammdatenResource {
 
 	@Nullable
 	@GET
-	@Path("/{institutionStammdatenId}")
+	@Path("/id/{institutionStammdatenId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxInstitutionStammdaten findInstitutionStammdaten(

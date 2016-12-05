@@ -1910,7 +1910,7 @@ public class JaxBConverter {
 
 		Optional<Gesuch> gesuchFromDB = gesuchService.findGesuch(jaxMahnung.getGesuch().getId());
 		if (gesuchFromDB.isPresent()) {
-			mahnung.setGesuch(this.gesuchToEntity(jaxMahnung.getGesuch(), gesuchFromDB.get()));
+			mahnung.setGesuch(gesuchFromDB.get());// hier laden wir das geushc aus der db aber convertiren die Gesuchsdaten vom Client NICHT
 		} else {
 			throw new EbeguEntityNotFoundException("mahnungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxMahnung.getGesuch());
 		}

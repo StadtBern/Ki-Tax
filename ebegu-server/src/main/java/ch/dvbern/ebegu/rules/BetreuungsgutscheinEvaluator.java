@@ -177,10 +177,10 @@ public class BetreuungsgutscheinEvaluator {
 		List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte;
 		Verfuegung verfuegungForRestanspruch = betreuung.getVerfuegungOrVorgaengerVerfuegung();
 		if (verfuegungForRestanspruch == null) {
-			throw new EbeguRuntimeException("getRestanspruchForVerfuegteBetreung", "Ungueltiger Zustand, verfuegte Betreuung ohne Verfuegung", betreuung.getId());
+			throw new EbeguRuntimeException("getRestanspruchForVerfuegteBetreung", "Ungueltiger Zustand, geschlossene  Betreuung ohne Verfuegung oder vorgaengerverfuegung" + betreuung.getId(), betreuung.getId());
 		}
 		restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(
-						betreuung, betreuung.getVerfuegung().getZeitabschnitte());
+			verfuegungForRestanspruch.getBetreuung(), verfuegungForRestanspruch.getZeitabschnitte());
 
 		return restanspruchZeitabschnitte;
 	}

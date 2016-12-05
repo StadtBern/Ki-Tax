@@ -63,6 +63,7 @@ public enum EbeguVorlageKey {
 	}
 
 	EbeguVorlageKey(String defaultVorlagePath) {
+		this.proGesuchsperiode = true;
 		this.defaultVorlagePath = defaultVorlagePath;
 	}
 
