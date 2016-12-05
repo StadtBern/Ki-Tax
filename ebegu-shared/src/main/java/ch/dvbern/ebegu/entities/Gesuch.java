@@ -51,7 +51,7 @@ public class Gesuch extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private Eingangsart eingangsart;
+	private Eingangsart eingangsart = Eingangsart.PAPIER;
 
 	@Valid
 	@Nullable
