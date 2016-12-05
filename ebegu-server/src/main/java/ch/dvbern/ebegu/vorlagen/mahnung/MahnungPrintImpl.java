@@ -25,12 +25,12 @@ import java.util.stream.Collectors;
  * <p>
  * Created by medu on 16/11/2016.
  */
-public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
+public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 	private Mahnung mahnung;
 	private Mahnung vorgaengerMahnung;
 
-	public ManhungPrintImpl(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) {
+	public MahnungPrintImpl(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) {
 
 		super(mahnung.getGesuch());
 		this.mahnung = mahnung;
@@ -42,19 +42,19 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 		}
 	}
 
-	private String concatenateAngebot(List<String> listAngebot){
-		String angebot = "";
+	private String concatenateAngebot(List<String> listAngebot) {
+		StringBuilder angebot = new StringBuilder();
 
-		for (int i = 0; i < listAngebot.size(); i++){
-			angebot += listAngebot.get(i);
-			if (i + 2 == listAngebot.size() && listAngebot.size() > 1){
-				angebot += " und ";
-			} else if (i + 1 < listAngebot.size()){
-				angebot += ", ";
+		for (int i = 0; i < listAngebot.size(); i++) {
+			angebot.append(listAngebot.get(i));
+			if (i + 2 == listAngebot.size() && listAngebot.size() > 1) {
+				angebot.append(" und ");
+			} else if (i + 1 < listAngebot.size()) {
+				angebot.append(", ");
 			}
 		}
 
-		return angebot;
+		return angebot.toString();
 	}
 
 
