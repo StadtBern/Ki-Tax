@@ -133,16 +133,16 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	@Override
 	@Nonnull
 	@PermitAll
-	public Collection<Institution> getInstitutionenForCurrentBenutzer() {
+	public Collection<Institution> getAllowedInstitutionenForCurrentBenutzer() {
 		Optional<Benutzer> benutzerOptional = benutzerService.getCurrentBenutzer();
 		if (benutzerOptional.isPresent()) {
 			Benutzer benutzer = benutzerOptional.get();
 			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(benutzer.getRole()) && benutzer.getTraegerschaft() != null) {
-				return getAllActiveInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
+				return getAllInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
 			}
-			if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
+			else if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
 				List<Institution> institutionList = new ArrayList<>();
-				if (benutzer.getInstitution() != null && benutzer.getInstitution().getActive()) {
+				if (benutzer.getInstitution() != null) {
 					institutionList.add(benutzer.getInstitution());
 				}
 				return institutionList;

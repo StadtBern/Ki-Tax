@@ -68,6 +68,6 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	@Override
 	public String getOpenIdmPassword() {
-		return getString(EBEGU_OPENIDM_USER, "EBEGUADMINTZZ0");
+		return getString(EBEGU_OPENIDM_PASSWD, "EBEGUADMINTZZ0");
 	}
 }

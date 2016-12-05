@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 public class InstitutionResource {
 
 	@Inject
-	InstitutionService institutionService;
+	private InstitutionService institutionService;
 
 	@Inject
 	private JaxBConverter converter;
