@@ -6,6 +6,7 @@ import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSi
 import EinkommensverschlechterungContainerRS from './einkommensverschlechterungContainerRS.rest';
 import TSDokumenteDTO from '../../models/dto/TSDokumenteDTO';
 import DokumenteRS from './dokumenteRS.rest';
+import TSFinanzModel from '../../models/TSFinanzModel';
 
 
 export default class BerechnungsManager {
@@ -34,9 +35,31 @@ export default class BerechnungsManager {
             });
     }
 
+    public calculateFinanzielleSituationTemp(tsFinSitModel: TSFinanzModel): IPromise<TSFinanzielleSituationResultateDTO> {
+        return this.finanzielleSituationRS.calculateFinanzielleSituationTemp(
+            tsFinSitModel)
+            .then((finSitContRespo: TSFinanzielleSituationResultateDTO) => {
+                this.finanzielleSituationResultate = finSitContRespo;
+                return finSitContRespo;
+            });
+    }
+
     public calculateEinkommensverschlechterung(gesuch: TSGesuch, basisJahrPlus: number): IPromise<TSFinanzielleSituationResultateDTO> {
         return this.einkommensverschlechterungContainerRS.calculateEinkommensverschlechterung(
             gesuch, basisJahrPlus)
+            .then((finSitContRespo: TSFinanzielleSituationResultateDTO) => {
+                if (basisJahrPlus === 2) {
+                    this.einkommensverschlechterungResultateBjP2 = finSitContRespo;
+                } else {
+                    this.einkommensverschlechterungResultateBjP1 = finSitContRespo;
+                }
+                return finSitContRespo;
+            });
+    }
+
+    public calculateEinkommensverschlechterungTemp(finanzModel: TSFinanzModel, basisJahrPlus: number): IPromise<TSFinanzielleSituationResultateDTO> {
+        return this.einkommensverschlechterungContainerRS.calculateEinkommensverschlechterungTemp(
+            finanzModel, basisJahrPlus)
             .then((finSitContRespo: TSFinanzielleSituationResultateDTO) => {
                 if (basisJahrPlus === 2) {
                     this.einkommensverschlechterungResultateBjP2 = finSitContRespo;

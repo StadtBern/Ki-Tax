@@ -9,6 +9,8 @@ import WizardStepManager from '../../service/wizardStepManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IStateService = angular.ui.IStateService;
+import TSFinanzModel from '../../../models/TSFinanzModel';
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
 
 describe('einkommensverschlechterungResultateView', function () {
 
@@ -47,7 +49,9 @@ describe('einkommensverschlechterungResultateView', function () {
     beforeEach(function () {
         gesuchModelManager.initGesuch(false);
         gesuchModelManager.initFamiliensituation();
-        gesuchModelManager.initFinanzielleSituation();
+        gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchsteller;
+        gesuchModelManager.getGesuch().gesuchsteller2 = new TSGesuchsteller;
+
     });
 
     it('should be defined', function () {
@@ -61,6 +65,9 @@ describe('einkommensverschlechterungResultateView', function () {
         beforeEach(function () {
             ekvrvc = new EinkommensverschlechterungResultateViewController(stateParams, gesuchModelManager,
                 berechnungsManager, consta, errorservice, wizardStepManager, null);
+            ekvrvc.model = new TSFinanzModel(gesuchModelManager.getBasisjahr(), gesuchModelManager.isGesuchsteller2Required(), null, null);
+            ekvrvc.model.copyEkvDataFromGesuch(gesuchModelManager.getGesuch());
+            ekvrvc.model.copyFinSitDataFromGesuch(gesuchModelManager.getGesuch());
 
         });
         it('should return + 100.0%', () => {

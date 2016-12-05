@@ -5,6 +5,8 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
+import TSFamiliensituation from '../../../models/TSFamiliensituation';
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
 
 describe('finanzielleSituationView', function () {
 
@@ -29,6 +31,8 @@ describe('finanzielleSituationView', function () {
 
     beforeEach(function () {
         gesuchModelManager.initGesuch(false);
+        gesuchModelManager.getGesuch().familiensituation = new TSFamiliensituation();
+        gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchsteller();
     });
 
     it('should be defined', function () {

@@ -29,7 +29,7 @@
                                 <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                                     translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h4>
                                 <dv-radio-container name="steuerveranlagung"
-                                                    ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuerveranlagungErhalten"
+                                                    ng-model="vm.model.getEkvToWorkWith().steuerveranlagungErhalten"
                                                     ng-required="true" class="radio input-element"
                                                     ng-change="vm.steuerveranlagungClicked()"
                                                     dv-enable-element
@@ -49,7 +49,7 @@
                                 <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
                                     translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h4>
                                 <dv-radio-container name="steuererklaerung"
-                                                    ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuererklaerungAusgefuellt"
+                                                    ng-model="vm.model.getEkvToWorkWith().steuererklaerungAusgefuellt"
                                                     ng-required="true" class="radio input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
@@ -68,12 +68,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_JANUARY"
                                        for="nettolohn_Jan"></label>
                                 <input id="nettolohn_Jan" type="text" name="nettolohn_Jan" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJan"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnJan"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Jan.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnJan"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJan"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnJan"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnJan"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -85,12 +85,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_FEBRUARY"
                                        for="nettolohn_Feb"></label>
                                 <input id="nettolohn_Feb" type="text" name="nettolohn_Feb" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnFeb"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnFeb"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Feb.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnFeb"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnFeb"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnFeb"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnFeb"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -102,12 +102,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_MARCH"
                                        for="nettolohn_Mrz"></label>
                                 <input id="nettolohn_Mrz" type="text" name="nettolohn_Mrz" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnMrz"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnMrz"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Mrz.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnMrz"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnMrz"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnMrz"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnMrz"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -119,12 +119,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_APRIL"
                                        for="nettolohn_Apr"></label>
                                 <input id="nettolohn_Apr" type="text" name="nettolohn_Apr" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnApr"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnApr"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Apr.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnApr"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnApr"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnApr"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnApr"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -136,12 +136,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_MAY"
                                        for="nettolohn_Mai"></label>
                                 <input id="nettolohn_Mai" type="text" name="nettolohn_Mai" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnMai"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnMai"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Mai.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnMai"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnMai"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnMai"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnMai"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -153,12 +153,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_JUNE"
                                        for="nettolohn_Jun"></label>
                                 <input id="nettolohn_Jun" type="text" name="nettolohn_Jun" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJun"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnJun"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Jun.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnJun"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJun"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnJun"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnJun"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -170,12 +170,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_JULY"
                                        for="nettolohn_Jul"></label>
                                 <input id="nettolohn_Jul" type="text" name="nettolohn_Jul" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJul"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnJul"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Jul.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnJul"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJul"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnJul"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnJul"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -187,12 +187,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_AUGUST"
                                        for="nettolohn_Aug"></label>
                                 <input id="nettolohn_Aug" type="text" name="nettolohn_Aug" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnAug"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnAug"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Aug.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnAug"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnAug"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnAug"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnAug"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -204,12 +204,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_SEPTEMBER"
                                        for="nettolohn_Sep"></label>
                                 <input id="nettolohn_Sep" type="text" name="nettolohn_Sep" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnSep"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnSep"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Sep.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnSep"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnSep"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnSep"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnSep"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -221,12 +221,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_OCTOBER"
                                        for="nettolohn_Okt"></label>
                                 <input id="nettolohn_Okt" type="text" name="nettolohn_Okt" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnOkt"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnOkt"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Okt.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnOkt"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnOkt"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnOkt"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnOkt"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -238,12 +238,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_NOVEMBER"
                                        for="nettolohn_Nov"></label>
                                 <input id="nettolohn_Nov" type="text" name="nettolohn_Nov" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnNov"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnNov"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Nov.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnNov"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnNov"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnNov"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnNov"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -255,12 +255,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_DECEMBER"
                                        for="nettolohn_Dez"></label>
                                 <input id="nettolohn_Dez" type="text" name="nettolohn_Dez" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnDez"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnDez"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Dez.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnDez"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnDez"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnDez"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnDez"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -272,12 +272,12 @@
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_ZUS"
                                        for="nettolohn_Zus"></label>
                                 <input id="nettolohn_Zus" type="text" name="nettolohn_Zus" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnZus"
+                                       ng-model="vm.model.getEkvToWorkWith().nettolohnZus"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.nettolohn_Zus.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnZus"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnZus"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().nettolohnZus"
+                                    ja="vm.model.getEkvToWorkWith().nettolohnZus"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -289,12 +289,12 @@
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_FAMILIENZULAGE"
                                        for="familienzulage"></label>
                                 <input id="familienzulage" type="text" name="familienzulage" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().familienzulage"
+                                       ng-model="vm.model.getEkvToWorkWith().familienzulage"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.familienzulage.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().familienzulage"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().familienzulage"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().familienzulage"
+                                    ja="vm.model.getEkvToWorkWith().familienzulage"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -306,12 +306,12 @@
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_ERSATZEINKOMMEN"
                                        for="ersatzeinkommen"></label>
                                 <input id="ersatzeinkommen" type="text" name="ersatzeinkommen" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().ersatzeinkommen"
+                                       ng-model="vm.model.getEkvToWorkWith().ersatzeinkommen"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.ersatzeinkommen.$error" class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().ersatzeinkommen"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().ersatzeinkommen"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().ersatzeinkommen"
+                                    ja="vm.model.getEkvToWorkWith().ersatzeinkommen"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -323,13 +323,13 @@
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_ERHALTENEALIMENTE"
                                        for="erhalteneAlimente"></label>
                                 <input id="erhalteneAlimente" type="text" name="erhalteneAlimente" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().erhalteneAlimente"
+                                       ng-model="vm.model.getEkvToWorkWith().erhalteneAlimente"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.erhalteneAlimente.$error"
                                                    class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().erhalteneAlimente"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().erhalteneAlimente"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().erhalteneAlimente"
+                                    ja="vm.model.getEkvToWorkWith().erhalteneAlimente"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -361,14 +361,14 @@
                                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></label>
                                     <input id="geschaeftsgewinnBasisjahr" type="text" name="geschaeftsgewinnBasisjahr"
                                            ui-number-mask="0"
-                                           ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr"
+                                           ng-model="vm.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr"
                                            ng-blur="vm.calculate()"
                                            dv-max-length max="999999999999" class="form-control" ui-negative-number>
                                     <dv-error-messages for="form.geschaeftsgewinnBasisjahr.$error"
                                                        class="error"></dv-error-messages>
                                     <dv-bisher
-                                        gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().geschaeftsgewinnBasisjahr"
-                                        ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr"></dv-bisher>
+                                        gs="vm.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr"
+                                        ja="vm.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr"></dv-bisher>
                                 </dv-input-container>
                             </div>
                         </div>
@@ -447,13 +447,13 @@
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_GELEISTETEALIMENTE"
                                        for="geleisteteAlimente"></label>
                                 <input id="geleisteteAlimente" type="text" name="geleisteteAlimente" ui-number-mask="0"
-                                       ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geleisteteAlimente"
+                                       ng-model="vm.model.getEkvToWorkWith().geleisteteAlimente"
                                        dv-max-length max="999999999999" class="form-control">
                                 <dv-error-messages for="form.geleisteteAlimente.$error"
                                                    class="error"></dv-error-messages>
                                 <dv-bisher
-                                    gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().geleisteteAlimente"
-                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geleisteteAlimente"></dv-bisher>
+                                    gs="vm.model.getEkvToWorkWith_GS().geleisteteAlimente"
+                                    ja="vm.model.getEkvToWorkWith().geleisteteAlimente"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>

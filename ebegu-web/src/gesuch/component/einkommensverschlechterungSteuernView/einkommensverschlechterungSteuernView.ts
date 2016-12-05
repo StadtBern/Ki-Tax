@@ -9,6 +9,7 @@ import TSGesuch from '../../../models/TSGesuch';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
 let template = require('./einkommensverschlechterungSteuernView.html');
 require('./einkommensverschlechterungSteuernView.less');
@@ -21,15 +22,19 @@ export class EinkommensverschlechterungSteuernViewComponentConfig implements ICo
     controllerAs = 'vm';
 }
 
-export class EinkommensverschlechterungSteuernViewController extends AbstractGesuchViewController {
+export class EinkommensverschlechterungSteuernViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
     allowedRoles: Array<TSRole>;
+    initialModel: TSFinanzModel;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager', '$q'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
+        this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.initialModel = angular.copy(this.model);
 
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();
@@ -37,28 +42,18 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
 
     private initViewModel() {
         // Basis Jahr 1 braucht es immer
-        this.gesuchModelManager.initEinkommensverschlechterungContainer(1, 1);
-        this.gesuchModelManager.initEinkommensverschlechterungContainer(1, 2);
+        this.model.initEinkommensverschlechterungContainer(1, 1);
+        this.model.initEinkommensverschlechterungContainer(1, 2);
 
         // Basis Jahr 2 braucht nur wenn gewünscht
         if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2) {
-            this.gesuchModelManager.initEinkommensverschlechterungContainer(2, 1);
-            this.gesuchModelManager.initEinkommensverschlechterungContainer(2, 2);
+            this.model.initEinkommensverschlechterungContainer(2, 1);
+            this.model.initEinkommensverschlechterungContainer(2, 2);
         }
-    }
-
-    getGesuch(): TSGesuch {
-        if (!this.gesuchModelManager.getGesuch()) {
-            this.gesuchModelManager.initGesuch(false);
-        }
-        return this.gesuchModelManager.getGesuch();
     }
 
     getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
-        if (this.getGesuch().einkommensverschlechterungInfo == null) {
-            this.gesuchModelManager.initEinkommensverschlechterungInfo();
-        }
-        return this.getGesuch().einkommensverschlechterungInfo;
+        return this.model.einkommensverschlechterungInfo;
     }
 
     showSteuerveranlagung_BjP1(): boolean {
@@ -96,6 +91,7 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
             }
             this.removeNotNeededEKV();
             this.errorService.clearAll();
+            this.model.copyEkvSitDataToGesuch(this.gesuchModelManager.getGesuch());
             return this.gesuchModelManager.updateGesuch().then((gesuch: TSGesuch) => {
                 // Noetig, da nur das ganze Gesuch upgedated wird und die Aenderng bei der FinSit sonst nicht bemerkt werden
                 if (this.gesuchModelManager.getGesuch().isMutation() && this.wizardStepManager.getCurrentStep().wizardStepStatus !== TSWizardStepStatus.NOK) {
@@ -109,53 +105,53 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     public getEkv_GS1_Bjp1(): TSEinkommensverschlechterung {
-        return this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1;
+        return this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1;
     }
 
     public getEkv_GS1_Bjp2(): TSEinkommensverschlechterung {
-        return this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2;
+        return this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2;
     }
 
     public getEkv_GS2_Bjp1(): TSEinkommensverschlechterung {
-        return this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1;
+        return this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1;
     }
 
     public getEkv_GS2_Bjp2(): TSEinkommensverschlechterung {
-        return this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2;
+        return this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2;
     }
 
     private gemeinsameStekClicked_BjP1(): void {
         // Wenn neu NEIN -> Fragen loeschen
         if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
-            this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = undefined;
-            this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = undefined;
+            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 = undefined;
+            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1 = undefined;
         } else {
-            this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
-            this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
         }
     }
 
     private gemeinsameStekClicked_BjP2(): void {
         // Wenn neu NEIN -> Fragen loeschen
         if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false) {
-            this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = undefined;
-            this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = undefined;
+            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 = undefined;
+            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2 = undefined;
         } else {
-            this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
-            this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
         }
     }
 
     private removeNotNeededEKV(): void {
         // Wenn keine gemeinsame Steuererklärung, können hier die zusätzlichen Fragen noch gelöscht werden
         if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false) {
-            this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = undefined;
-            this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = undefined;
+            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 = undefined;
+            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2 = undefined;
         }
 
         if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
-            this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = undefined;
-            this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = undefined;
+            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 = undefined;
+            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1 = undefined;
         }
     }
 
