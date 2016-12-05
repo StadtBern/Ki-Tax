@@ -1,2 +1,0 @@
-ALTER TABLE gesuch ADD eingangsart VARCHAR(255) NOT NULL DEFAULT 'PAPIER';
-ALTER TABLE gesuch_aud ADD eingangsart VARCHAR(255);
