@@ -146,7 +146,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	}
 
 	@Nonnull
-	private Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch) {
+	public  Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);
 		Root<Mahnung> root = query.from(Mahnung.class);

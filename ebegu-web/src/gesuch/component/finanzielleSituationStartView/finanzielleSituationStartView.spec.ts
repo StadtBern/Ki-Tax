@@ -4,6 +4,8 @@ import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
+import TSFamiliensituation from '../../../models/TSFamiliensituation';
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
 
 describe('finanzielleSituationStartView', function () {
 
@@ -26,6 +28,8 @@ describe('finanzielleSituationStartView', function () {
 
     beforeEach(function () {
         gesuchModelManager.initGesuch(false);
+        gesuchModelManager.getGesuch().familiensituation = new TSFamiliensituation();
+        gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchsteller();
     });
 
     it('should be defined', function () {

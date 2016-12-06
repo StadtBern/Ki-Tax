@@ -1,10 +1,12 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxFinanzModel;
 import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituationContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
+import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
@@ -66,9 +68,9 @@ public class FinanzielleSituationResource {
 	@Path("/{gesuchstellerId}/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveFinanzielleSituation (
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
-		@Nonnull @NotNull @PathParam ("gesuchstellerId") JaxId gesuchstellerId,
+	public Response saveFinanzielleSituation(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId,
 		@Nonnull @NotNull @Valid JaxFinanzielleSituationContainer finanzielleSituationJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -98,7 +100,7 @@ public class FinanzielleSituationResource {
 	@Path("/calculate")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response calculateFinanzielleSituation (
+	public Response calculateFinanzielleSituation(
 		@Nonnull @NotNull @Valid JaxGesuch gesuchJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -110,12 +112,45 @@ public class FinanzielleSituationResource {
 		return Response.ok(finanzielleSituationResultateDTO).build();
 	}
 
+	/**
+	 * Finanzielle Situation wird hier im gegensatz zur /calculate mehtode nur als DTO mitgegeben statt als ganzes gesuch
+	 */
+	@Nullable
+	@POST
+	@Path("/calculateTemp")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response calculateFinanzielleSituation(
+		@Nonnull @NotNull @Valid JaxFinanzModel jaxFinSitModel,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Gesuch gesuch = new Gesuch();
+		gesuch.setFamiliensituation(new Familiensituation());
+		gesuch.getFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
+		if (jaxFinSitModel.getFinanzielleSituationContainerGS1() != null) {
+			gesuch.setGesuchsteller1(new Gesuchsteller());
+			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(
+				converter.finanzielleSituationContainerToStorableEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1()));
+		}
+		if (jaxFinSitModel.getFinanzielleSituationContainerGS2() != null) {
+			gesuch.setGesuchsteller2(new Gesuchsteller());
+			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(
+				converter.finanzielleSituationContainerToStorableEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2()));
+		}
+
+		FinanzielleSituationResultateDTO finanzielleSituationResultateDTO = finanzielleSituationService.calculateResultate(gesuch);
+		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
+		context.setRollbackOnly();
+		return Response.ok(finanzielleSituationResultateDTO).build();
+	}
+
 	@Nullable
 	@GET
 	@Path("/{finanzielleSituationId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxFinanzielleSituationContainer findFinanzielleSituation (
+	public JaxFinanzielleSituationContainer findFinanzielleSituation(
 		@Nonnull @NotNull @PathParam("finanzielleSituationId") JaxId finanzielleSituationId) throws EbeguException {
 
 		Validate.notNull(finanzielleSituationId.getId());

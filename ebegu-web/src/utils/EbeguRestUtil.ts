@@ -53,6 +53,7 @@ import TSFile from '../models/TSFile';
 import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
 import TSAbwesenheit from '../models/TSAbwesenheit';
 import TSMahnung from '../models/TSMahnung';
+import TSFinanzModel from '../models/TSFinanzModel';
 
 
 export default class EbeguRestUtil {
@@ -254,6 +255,7 @@ export default class EbeguRestUtil {
         restObj.eingangsdatum = DateUtil.momentToLocalDate(antragEntity.eingangsdatum);
         restObj.status = antragEntity.status;
         restObj.typ = antragEntity.typ;
+        restObj.eingangsart = antragEntity.eingangsart;
     }
 
     private parseAbstractAntragEntity(antragTS: TSAbstractAntragEntity, antragFromServer: any) {
@@ -263,6 +265,7 @@ export default class EbeguRestUtil {
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
         antragTS.status = antragFromServer.status;
         antragTS.typ = antragFromServer.typ;
+        antragTS.eingangsart = antragFromServer.eingangsart;
     }
 
     private adressenListToRestObject(adressen: Array<TSAdresse>): Array<any> {
@@ -1614,5 +1617,29 @@ export default class EbeguRestUtil {
             return tsMahnung;
         }
         return undefined;
+    }
+
+    finanzModelToRestObject(restFinSitModel: any, finSitModel: TSFinanzModel) {
+        if (finSitModel) {
+            if (finSitModel.finanzielleSituationContainerGS1) {
+                restFinSitModel.finanzielleSituationContainerGS1 = this.finanzielleSituationContainerToRestObject({}, finSitModel.finanzielleSituationContainerGS1);
+            }
+            if (finSitModel.finanzielleSituationContainerGS2) {
+                restFinSitModel.finanzielleSituationContainerGS2 = this.finanzielleSituationContainerToRestObject({}, finSitModel.finanzielleSituationContainerGS2);
+            }
+            if (finSitModel.einkommensverschlechterungContainerGS1) {
+                restFinSitModel.einkommensverschlechterungContainerGS1 = this.einkommensverschlechterungContainerToRestObject({}, finSitModel.einkommensverschlechterungContainerGS1);
+            }
+            if (finSitModel.einkommensverschlechterungContainerGS2) {
+                restFinSitModel.einkommensverschlechterungContainerGS2 = this.einkommensverschlechterungContainerToRestObject({}, finSitModel.einkommensverschlechterungContainerGS2);
+            }
+            if (finSitModel.einkommensverschlechterungInfo) {
+                restFinSitModel.einkommensverschlechterungInfo = this.einkommensverschlechterungInfoToRestObject({}, finSitModel.einkommensverschlechterungInfo);
+            }
+            restFinSitModel.gemeinsameSteuererklaerung = finSitModel.gemeinsameSteuererklaerung;
+            return restFinSitModel;
+        }
+        return undefined;
+
     }
 }

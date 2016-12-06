@@ -29,13 +29,14 @@ export class BetreuungViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class BetreuungViewController extends AbstractGesuchViewController {
+export class BetreuungViewController extends AbstractGesuchViewController<TSBetreuung> {
     betreuungsangebot: any;
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
     isSavingData: boolean; // Semaphore
     initialBetreuung: TSBetreuung;
     flagErrorVertrag: boolean;
+    kindModel: TSKindContainer;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager'];
@@ -44,22 +45,18 @@ export class BetreuungViewController extends AbstractGesuchViewController {
                 private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.initialBetreuung = angular.copy(this.getBetreuungModel());
+        this.model = angular.copy(this.gesuchModelManager.getBetreuungToWorkWith());
+        this.initialBetreuung = angular.copy(this.gesuchModelManager.getBetreuungToWorkWith());
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
         this.initViewModel();
 
-        //Wir verlassen uns hier darauf, dass zuerst das Popup vom unsavedChanges Plugin kommt welches den user fragt ob er die ungesp. changes verwerfen will
-        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
-            // wenn der user die changes verwerfen will koennen wir die view resetten, ansonsten machen wir nichts da wir hier bleiben
-            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
-                this.reset();  //Maske wird verlasse, changes resettten auf letzten Speicherpunkt (wenn gespeichert wurde wird auf gespeicherten punkt resetted)
-            }
-        });
+
+        // just to read!
+        this.kindModel = this.gesuchModelManager.getKindToWorkWith();
     }
 
     private initViewModel() {
-        this.gesuchModelManager.initGesuch(false); //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.isSavingData = false;
         this.flagErrorVertrag = false;
         if (this.getInstitutionSD()) {
@@ -97,11 +94,11 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public getKindModel(): TSKindContainer {
-        return this.gesuchModelManager.getKindToWorkWith();
+        return this.kindModel;
     }
 
     public getBetreuungModel(): TSBetreuung {
-        return this.gesuchModelManager.getBetreuungToWorkWith();
+        return this.model;
     }
 
     public changedAngebot() {
@@ -116,6 +113,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     private save(newStatus: TSBetreuungsstatus, nextStep: string, form: IFormController): void {
         this.isSavingData = true;
+        this.gesuchModelManager.setBetreuungToWorkWith(this.model); //setze model
         let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
         if (this.getBetreuungModel()) {
             if (this.isTagesschule()) {
@@ -152,12 +150,11 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     reset() {
-        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
-        this.removeBetreuungFromKind();
+        this.removeBetreuungFromKind(); //wenn model existiert und nicht neu ist wegnehmen, sonst resetten
     }
 
     private removeBetreuungFromKind(): void {
-        if (this.gesuchModelManager.getBetreuungToWorkWith() && !this.gesuchModelManager.getBetreuungToWorkWith().timestampErstellt) {
+        if (this.model && !this.model.timestampErstellt) {
             //wenn die Betreeung noch nicht erstellt wurde, loeschen wir die Betreuung vom Array
             this.gesuchModelManager.removeBetreuungFromKind();
         }
@@ -218,7 +215,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         let instStamList = this.gesuchModelManager.getActiveInstitutionenList();
         for (let i: number = 0; i < instStamList.length; i++) {
             if (instStamList[i].id === this.instStammId) {
-                this.gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = instStamList[i];
+                this.model.institutionStammdaten = instStamList[i];
             }
         }
     }
@@ -250,8 +247,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.initialBetreuung.erweiterteBeduerfnisse = this.getBetreuungModel().erweiterteBeduerfnisse;
         this.initialBetreuung.grundAblehnung = this.getBetreuungModel().grundAblehnung;
         //restore initialBetreuung
-        this.gesuchModelManager.setBetreuungToWorkWith(angular.copy(this.initialBetreuung));
-        this.getBetreuungModel().datumAblehnung = DateUtil.today();
+        this.model = angular.copy(this.initialBetreuung);
+        this.model.datumAblehnung = DateUtil.today();
         this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', form);
     }
 
