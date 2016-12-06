@@ -80,6 +80,20 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	}
 
 	@Override
+	public WizardStep findWizardStepFromGesuch(String gesuchId, WizardStepName stepName) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<WizardStep> query = cb.createQuery(WizardStep.class);
+		Root<WizardStep> root = query.from(WizardStep.class);
+		Predicate predWizardStepFromGesuch = cb.equal(root.get(WizardStep_.gesuch).get(Gesuch_.id), gesuchId);
+		Predicate predWizardStepName = cb.equal(root.get(WizardStep_.wizardStepName), stepName);
+
+		query.where(predWizardStepFromGesuch, predWizardStepName);
+		final WizardStep result = persistence.getCriteriaSingleResult(query);
+		authorizer.checkReadAuthorization(result);
+		return result;
+	}
+
+	@Override
 	public List<WizardStep> updateSteps(String gesuchId, AbstractEntity oldEntity, AbstractEntity newEntity, WizardStepName stepName) {
 		final List<WizardStep> wizardSteps = findWizardStepsFromGesuch(gesuchId);
 		updateAllStatus(wizardSteps, oldEntity, newEntity, stepName);

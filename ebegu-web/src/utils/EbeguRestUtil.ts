@@ -253,6 +253,7 @@ export default class EbeguRestUtil {
         restObj.fall = this.fallToRestObject({}, antragEntity.fall);
         restObj.gesuchsperiode = this.gesuchsperiodeToRestObject({}, antragEntity.gesuchsperiode);
         restObj.eingangsdatum = DateUtil.momentToLocalDate(antragEntity.eingangsdatum);
+        restObj.freigabeDatum = DateUtil.momentToLocalDate(antragEntity.freigabeDatum);
         restObj.status = antragEntity.status;
         restObj.typ = antragEntity.typ;
         restObj.eingangsart = antragEntity.eingangsart;
@@ -263,6 +264,7 @@ export default class EbeguRestUtil {
         antragTS.fall = this.parseFall(new TSFall(), antragFromServer.fall);
         antragTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), antragFromServer.gesuchsperiode);
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
+        antragTS.freigabeDatum = DateUtil.localDateToMoment(antragFromServer.freigabeDatum);
         antragTS.status = antragFromServer.status;
         antragTS.typ = antragFromServer.typ;
         antragTS.eingangsart = antragFromServer.eingangsart;

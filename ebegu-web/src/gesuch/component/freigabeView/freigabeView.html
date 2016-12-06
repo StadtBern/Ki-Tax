@@ -15,7 +15,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <span data-translate="FREIGABEQUITTUNG_ERFOLG_TEXT"
-                          data-translate-value-freigabedatum="vm.getFreigabeDatum()"></span>
+                          data-translate-value-freigabedatum="{{vm.getFreigabeDatum()}}"></span>
                 </div>
             </div>
             <div class="row">
@@ -48,11 +48,16 @@
                     <div class="col-md-12">
                         <div class=" checkbox">
                             <md-checkbox ng-model="vm.bestaetigungFreigabequittung" name="bestaetigungFreigabequittung"
-                                         aria-label="bestaetigungFreigabequittung">
+                                         aria-label="bestaetigungFreigabequittung"
+                                         ng-required="vm.isFreigebenClicked">
                                 <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TEXT"></span>
                             </md-checkbox>
-                            <dv-error-messages for="form.bestaetigungFreigabequittung.$error"
-                                               class="error"></dv-error-messages>
+                            <div class="dv-error-messages">
+                                <div ng-messages="form.bestaetigungFreigabequittung.$error" role="alert" class="error">
+                                    <div ng-message="required" data-translate="ERROR_BESTAETIGUNG_REQUIRED"
+                                         for="form.bestaetigungFreigabequittung.$error"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -76,7 +81,7 @@
                 </div>
 
                 <span class="col-md-4">
-                    <dv-loading-button type="submit" button-click="vm.gesuchFreigeben()"
+                    <dv-loading-button type="submit" button-click="vm.gesuchFreigeben(form)"
                                        button-class="dv-btn-sm"
                                        aria-label="{{FREIGEBEN | translate}}">
                         <span data-translate="FREIGEBEN"></span>

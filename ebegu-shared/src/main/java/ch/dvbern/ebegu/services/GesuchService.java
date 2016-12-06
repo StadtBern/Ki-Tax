@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -123,4 +124,10 @@ public interface GesuchService {
 	 * @param fallId
 	 */
 	void updateLaufnummerOfAllGesucheOfFall(String fallId);
+
+	/**
+	 * Das gegebene Gesuch wird mit heutigem Datum freigegeben und den Step FREIGABE auf OK gesetzt
+	 * @param gesuch
+	 */
+	Gesuch antragFreigeben(@NotNull Gesuch gesuch);
 }

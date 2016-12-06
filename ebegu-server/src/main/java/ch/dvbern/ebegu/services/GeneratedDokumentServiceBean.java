@@ -74,6 +74,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private MandantService mandantService;
 
 	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
 	private MahnungService mahnungService;
 
 	@Inject
@@ -184,9 +187,15 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
 				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
 				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, famGroessenVerfuegung);
-			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
+			}
+			else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
-			} else {
+			}
+			else if (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp)) {
+				gesuchService.antragFreigeben(gesuch);
+				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch); //TODO richtiges Dokument erstellen
+			}
+			else {
 				LOG.warn("Unerwarter Dokumenttyp " + dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
 				return null;
 			}

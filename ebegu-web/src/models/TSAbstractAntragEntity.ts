@@ -11,6 +11,7 @@ export default class TSAbstractAntragEntity extends TSAbstractEntity {
     private _fall: TSFall;
     private _gesuchsperiode: TSGesuchsperiode;
     private _eingangsdatum: moment.Moment;
+    private _freigabeDatum: moment.Moment;
     private _status: TSAntragStatus;
     private _typ: TSAntragTyp;
     private _eingangsart: TSEingangsart;
@@ -38,6 +39,14 @@ export default class TSAbstractAntragEntity extends TSAbstractEntity {
 
     set eingangsdatum(value: moment.Moment) {
         this._eingangsdatum = value;
+    }
+
+    get freigabeDatum(): moment.Moment {
+        return this._freigabeDatum;
+    }
+
+    set freigabeDatum(value: moment.Moment) {
+        this._freigabeDatum = value;
     }
 
     get status(): TSAntragStatus {

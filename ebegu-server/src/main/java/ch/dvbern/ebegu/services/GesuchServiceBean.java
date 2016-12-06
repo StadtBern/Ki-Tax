@@ -26,6 +26,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -503,6 +504,21 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				updateGesuch(gesuch, false);
 			}
 		}
+	}
+
+	@Override
+	public Gesuch antragFreigeben(@NotNull Gesuch gesuch) {
+		authorizer.checkWriteAuthorization(gesuch);
+
+		gesuch.setFreigabeDatum(LocalDate.now());
+		gesuch.setStatus(AntragStatus.FREIGEGEBEN);
+
+		final WizardStep freigabeStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
+		freigabeStep.setWizardStepStatus(WizardStepStatus.OK);
+
+		wizardStepService.saveWizardStep(freigabeStep);
+
+		return updateGesuch(gesuch, true);
 	}
 
 	@Override

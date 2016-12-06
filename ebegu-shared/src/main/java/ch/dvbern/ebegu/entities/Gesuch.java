@@ -38,6 +38,9 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = true)
 	private LocalDate eingangsdatum;
 
+	@Column(nullable = true)
+	private LocalDate freigabeDatum;
+
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -270,6 +273,14 @@ public class Gesuch extends AbstractEntity {
 
 	public final void setEingangsdatum(LocalDate eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
+	}
+
+	public LocalDate getFreigabeDatum() {
+		return freigabeDatum;
+	}
+
+	public void setFreigabeDatum(LocalDate freigabeDatum) {
+		this.freigabeDatum = freigabeDatum;
 	}
 
 	public AntragStatus getStatus() {

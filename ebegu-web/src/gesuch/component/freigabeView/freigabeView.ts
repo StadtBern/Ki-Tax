@@ -1,8 +1,7 @@
 import AbstractGesuchViewController from '../abstractGesuchView';
-import {IComponentOptions, IPromise, IQService, IScope} from 'angular';
+import {IComponentOptions, IPromise} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
-import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
@@ -13,6 +12,8 @@ import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentT
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
+import {isFreigegeben} from '../../../models/enums/TSAntragStatus';
+import DateUtil from '../../../utils/DateUtil';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -30,13 +31,14 @@ export class FreigabeViewComponentConfig implements IComponentOptions {
 export class FreigabeViewController extends AbstractGesuchViewController {
 
     bestaetigungFreigabequittung: boolean = false;
+    isFreigebenClicked: boolean = false;
 
-    static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'DvDialog', '$translate', '$q', '$scope', 'DownloadRS'];
+    static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
+        'DvDialog', 'DownloadRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private $translate: ITranslateService, private $q: IQService, private $scope: IScope, private downloadRS: DownloadRS) {
+                wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
+                private downloadRS: DownloadRS) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
@@ -48,6 +50,7 @@ export class FreigabeViewController extends AbstractGesuchViewController {
     }
 
     public gesuchFreigeben(form: IFormController): IPromise<void> {
+        this.isFreigebenClicked = true;
         if (form.$valid && this.bestaetigungFreigabequittung === true) {
             return this.DvDialog.showDialog(dialogTemplate, RemoveDialogController, {
                 title: 'CONFIRM_GESUCH_FREIGEBEN',
@@ -60,16 +63,19 @@ export class FreigabeViewController extends AbstractGesuchViewController {
     }
 
     public isGesuchFreigegeben(): boolean {
-        // if (this.gesuchModelManager.getGesuch()) {
-        //     return isFreigegeben(this.gesuchModelManager.getGesuch().status);
-        // }
+        if (this.gesuchModelManager.getGesuch()) {
+            return isFreigegeben(this.gesuchModelManager.getGesuch().status);
+        }
         return false;
     }
 
     public openFreigabequittungPDF(): IPromise<void> {
         return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FREIGABEQUITTUNG, false)
             .then((downloadFile: TSDownloadFile) => {
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
+                this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id).then(() => {
+                    this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                });
             });
     }
 
@@ -78,6 +84,9 @@ export class FreigabeViewController extends AbstractGesuchViewController {
     }
 
     public getFreigabeDatum(): string {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().freigabeDatum) {
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().freigabeDatum, 'DD.MM.YYYY');
+        }
         return '';
     }
 

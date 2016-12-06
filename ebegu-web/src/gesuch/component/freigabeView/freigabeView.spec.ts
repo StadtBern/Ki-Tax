@@ -41,8 +41,7 @@ describe('freigabeView', function () {
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus'). and.returnValue({});
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            $injector.get('ErrorService'), wizardStepManager, dialog,
-            $injector.get('$translate'), $q, $scope, downloadRS);
+            wizardStepManager, dialog, downloadRS);
     }));
 
     describe('gesuchFreigeben', function () {
