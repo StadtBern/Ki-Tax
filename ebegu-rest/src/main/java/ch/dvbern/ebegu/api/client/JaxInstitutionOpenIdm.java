@@ -6,8 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
- * Created by imanol on 17.03.16.
- * DTO fuer Adresse
+ * Jax Element for Response of OpenIdm
  */
 @XmlRootElement(name = "institutionOpenIdm")
 @XmlAccessorType(XmlAccessType.FIELD)

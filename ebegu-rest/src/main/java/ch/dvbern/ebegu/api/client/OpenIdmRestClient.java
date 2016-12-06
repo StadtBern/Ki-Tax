@@ -109,8 +109,12 @@ public class OpenIdmRestClient {
 		return "T-" + traegerschaftId;
 	}
 
-	public String getEbeguId(String openIdmUid) {
-		return openIdmUid.substring(2);
+	public final String getEbeguId(String openIdmUid) {
+		if(openIdmUid.length()>2) {
+			return openIdmUid.substring(2);
+		}else{
+			return "";
+		}
 	}
 
 	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft) {

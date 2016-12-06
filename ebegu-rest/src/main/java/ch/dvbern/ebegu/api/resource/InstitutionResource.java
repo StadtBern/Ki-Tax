@@ -250,7 +250,7 @@ public class InstitutionResource {
 		} else {
 			responseString.append("Error: Can't communicate with OpenIdm server");
 		}
-		if (responseString.toString().equals("")) {
+		if (responseString.length() == 0) {
 			responseString.append("No differences between OpenIdm and Ebegu found. Nothing to do!");
 		}
 		return responseString;

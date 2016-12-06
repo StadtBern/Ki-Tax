@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Testet BetreuungResource
+ * Testet InstitutionResource
  */
 
 public class InstitutionResourceTest {
@@ -114,13 +114,13 @@ public class InstitutionResourceTest {
 	public void synchronizeInstitution_TwoExist_TwoCreate_Test() {
 
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
-		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmInst("1");
+		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmInst("I-1");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResult);
-		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmInst("2");
+		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmInst("I-2");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul2);
-		final JaxOpenIdmResult jaxOpenIdmResul3 = creatOpenIdmTraegerschaft("3"); // Traegerschaft
+		final JaxOpenIdmResult jaxOpenIdmResul3 = creatOpenIdmTraegerschaft("T-3"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul3);
-		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmTraegerschaft("4"); // Traegerschaft
+		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmTraegerschaft("T-4"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul4);
 
 
@@ -154,9 +154,9 @@ public class InstitutionResourceTest {
 	public void synchronizeInstitution_AllExist_Test() {
 
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
-		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmInst("1");
+		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmInst("I-1");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResult);
-		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmInst("2");
+		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmInst("I-2");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul2);
 
 
@@ -184,13 +184,13 @@ public class InstitutionResourceTest {
 	public void synchronizeInstitution_TwoExist_TwoDelete_Test() {
 
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
-		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmInst("1");
+		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmInst("I-1");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResult);
-		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmInst("2");
+		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmInst("I-2");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul2);
-		final JaxOpenIdmResult jaxOpenIdmResul3 = creatOpenIdmInst("3"); // Traegerschaft
+		final JaxOpenIdmResult jaxOpenIdmResul3 = creatOpenIdmInst("T-3"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul3);
-		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmInst("4"); // Traegerschaft
+		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmInst("T-4"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul4);
 
 
@@ -203,8 +203,8 @@ public class InstitutionResourceTest {
 		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(institutionService.getAllActiveInstitutionen()).andReturn((institutions));
 
-		EasyMock.expect(openIdmRestClient.deleteInstitution(jaxOpenIdmResul3.get_id())).andReturn(true);
-		EasyMock.expect(openIdmRestClient.deleteInstitution(jaxOpenIdmResul4.get_id())).andReturn(true);
+		EasyMock.expect(openIdmRestClient.deleteInstitution("3")).andReturn(true);
+		EasyMock.expect(openIdmRestClient.deleteInstitution("4")).andReturn(true);
 
 		EasyMock.expect(openIdmRestClient.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 

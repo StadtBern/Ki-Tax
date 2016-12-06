@@ -73,7 +73,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	@Override
 	public boolean getOpenIdmEnabled() {
-		return getBoolean(EBEGU_OPENIDM_ENABLED, true);
+		return getBoolean(EBEGU_OPENIDM_ENABLED, false);
 	}
 
 }

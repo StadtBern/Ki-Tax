@@ -10,6 +10,7 @@
 
 package ch.dvbern.ebegu.api.resource.authentication;
 
+import ch.dvbern.ebegu.api.client.OpenIdmRestClient;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
 import ch.dvbern.ebegu.api.util.EBEGUSamlConstants;
@@ -82,6 +83,9 @@ public class FedletSamlServlet extends HttpServlet {
 
 	@Inject
 	private MandantService mandantService;
+
+	@Inject
+	private OpenIdmRestClient openIdmRestClient;
 
 	@Override
 	public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -263,14 +267,14 @@ public class FedletSamlServlet extends HttpServlet {
 
 		if (UserRole.SACHBEARBEITER_INSTITUTION == userRole && strings.length == 2) {
 			//read and store institution to user
-			String institutionID = strings[1];
+			String institutionID = openIdmRestClient.getEbeguId(strings[1]);
 			Institution institution = institutionService.findInstitution(institutionID).orElseThrow(() -> new EbeguEntityNotFoundException("convertAndSetRoleAndInstitution", "Institution not found", institutionID));
 			localUser.setInstitution(institution);
 
 		}
 		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == userRole && strings.length == 2) {
 			//read and store traegerschaft to user
-			String traegerschaftID = strings[1];
+			String traegerschaftID = openIdmRestClient.getEbeguId(strings[1]);
 			Traegerschaft foundTraegerschaft = traegerschaftService
 				.findTraegerschaft(traegerschaftID)
 				.orElseThrow((() -> new EbeguEntityNotFoundException("convertAndSetRoleAndInstitution", "Traegerschaft not found: {}", traegerschaftID)));

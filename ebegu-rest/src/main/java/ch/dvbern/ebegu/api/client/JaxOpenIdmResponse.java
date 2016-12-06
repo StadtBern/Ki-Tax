@@ -8,8 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by imanol on 17.03.16.
- * DTO fuer Adresse
+ * Jax Element for Response of OpenIdm
  */
 @XmlRootElement(name = "openIdmResponse")
 @XmlAccessorType(XmlAccessType.FIELD)

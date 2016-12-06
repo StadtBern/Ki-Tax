@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Testet BetreuungResource
+ * Testet TraegerschftResource
  */
 
 public class TraegerschaftResourceTest {
@@ -113,13 +113,13 @@ public class TraegerschaftResourceTest {
 	public void synchronizeTraegerschaft_TwoExist_TwoCreate_Test() {
 
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
-		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmTraegerschaft("1");
+		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmTraegerschaft("T-1");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResult);
-		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmTraegerschaft("2");
+		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmTraegerschaft("T-2");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul2);
-		final JaxOpenIdmResult jaxOpenIdmResul3 = creatOpenIdmInst("3"); // Institution
+		final JaxOpenIdmResult jaxOpenIdmResul3 = creatOpenIdmInst("I-3"); // Institution
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul3);
-		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmInst("4"); // Institution
+		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmInst("I-4"); // Institution
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul4);
 
 
@@ -154,9 +154,9 @@ public class TraegerschaftResourceTest {
 	public void synchronizeTraegerschaft_AllExist_Test() {
 
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
-		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmTraegerschaft("1");
+		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmTraegerschaft("T-1");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResult);
-		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmTraegerschaft("2");
+		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmTraegerschaft("T-2");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul2);
 
 
@@ -184,13 +184,13 @@ public class TraegerschaftResourceTest {
 	public void synchronizeTraegerschaft_TwoExist_TwoDelete_Test() {
 
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
-		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmTraegerschaft("1");
+		final JaxOpenIdmResult jaxOpenIdmResult = creatOpenIdmTraegerschaft("T-1");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResult);
-		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmTraegerschaft("2");
+		final JaxOpenIdmResult jaxOpenIdmResul2 = creatOpenIdmTraegerschaft("T-2");
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul2);
-		final JaxOpenIdmResult jaxOpenIdmResul3 = creatOpenIdmTraegerschaft("3"); // Traegerschaft
+		final JaxOpenIdmResult jaxOpenIdmResul3 = creatOpenIdmTraegerschaft("T-3"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul3);
-		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmTraegerschaft("4"); // Traegerschaft
+		final JaxOpenIdmResult jaxOpenIdmResul4 = creatOpenIdmTraegerschaft("T-4"); // Traegerschaft
 		jaxOpenIdmResponse.getResult().add(jaxOpenIdmResul4);
 
 
@@ -203,8 +203,8 @@ public class TraegerschaftResourceTest {
 		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(jaxOpenIdmResul3.get_id())).andReturn(true);
-		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(jaxOpenIdmResul4.get_id())).andReturn(true);
+		EasyMock.expect(openIdmRestClient.deleteTraegerschaft("3")).andReturn(true);
+		EasyMock.expect(openIdmRestClient.deleteTraegerschaft("4")).andReturn(true);
 
 		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 

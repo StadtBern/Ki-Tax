@@ -51,7 +51,9 @@ public class OpenIdmRestClientTest extends AbstractEbeguRestTest {
 		}
 	}
 
+	//Be careful, this test delete all Institutions and Traegerschaften on openIdm server
 	@Test
+	@Ignore
 	public void deleteAllOnOpenIdm() {
 		final Optional<JaxOpenIdmResponse> all = openIdmRestClient.getAll(true);
 		Assert.assertTrue(all.isPresent());
