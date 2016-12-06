@@ -167,7 +167,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 																	 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
 		GeneratedDokument persistedDokument = null;
-		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())
+			|| (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp) && gesuch.getStatus().isFreigegeben())) {
+
 			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
 				expectedFilepath);
@@ -182,7 +184,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			authorizer.checkReadAuthorizationFinSit(gesuch);
 			finanzielleSituationService.calculateFinanzDaten(gesuch);
 
-			byte[] data;
+			byte[] data = null;
 			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
 				final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
 				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
@@ -191,17 +193,21 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 			}
-			else if (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp)) {
+			else if (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp) && !gesuch.getStatus().isFreigegeben()) {
+				//nur wenn das Gesuch noch nicht freigegeben ist, wird
 				gesuchService.antragFreigeben(gesuch);
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch); //TODO richtiges Dokument erstellen
+//				data = pdfService.generateFreigabequittung(gesuch); // TODO einkommentieren
 			}
-			else {
+			else if (!GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp)) { // wir muessen explicit nach FREIGABEQUITTUNG fragen, da sein IF noch eine andere variable enthaelt
 				LOG.warn("Unerwarter Dokumenttyp " + dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
 				return null;
 			}
 
-			persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
-				fileNameForGeneratedDokumentTyp);
+			if (data != null) {
+				persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
+					fileNameForGeneratedDokumentTyp);
+			}
 		}
 		return persistedDokument;
 	}

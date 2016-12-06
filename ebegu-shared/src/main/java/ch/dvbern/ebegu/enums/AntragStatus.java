@@ -33,13 +33,16 @@ public enum AntragStatus {
     private static final Set<AntragStatus> forJuristRole = forSachbearbeiterJugendamtRole;
     private static final Set<AntragStatus> forRevisorRole = forAdminRole;
 
+	private static final Set<AntragStatus> isFreigegeben = EnumSet.range(NUR_SCHULAMT, VERFUEGT);
+
     /**
      * Implementierung eines Berechtigungskonzepts fuer die Antragssuche.
      *
      * @param userRole die Rolle
      * @return Liefert die einsehbaren Antragsstatus fuer die Rolle
      */
-    public static Set<AntragStatus> allowedforRole(UserRole userRole) {
+    @SuppressWarnings("Duplicates")
+	public static Set<AntragStatus> allowedforRole(UserRole userRole) {
         switch (userRole) {
 			case SUPER_ADMIN: return  all;
 			case ADMIN: return forAdminRole;
@@ -54,4 +57,8 @@ public enum AntragStatus {
             default: return none;
         }
     }
+
+	public boolean isFreigegeben() {
+		return isFreigegeben.contains(this);
+	}
 }
