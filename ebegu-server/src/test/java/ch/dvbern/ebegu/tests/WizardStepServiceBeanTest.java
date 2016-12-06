@@ -26,6 +26,7 @@ import java.util.List;
 /**
  * Test fuer WizardStep Service
  */
+@SuppressWarnings("InstanceMethodNamingConvention")
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
@@ -48,6 +49,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	private WizardStep finanSitStep;
 	private WizardStep einkVerStep;
 	private WizardStep dokStep;
+	private WizardStep freigabeStep;
 	private WizardStep verfStep;
 
 
@@ -64,6 +66,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		finanSitStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT));
 		einkVerStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT));
 		dokStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT));
+		freigabeStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.FREIGABE, WizardStepStatus.UNBESUCHT));
 		verfStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT));
 	}
 
@@ -511,6 +514,21 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.DOKUMENTE).getWizardStepStatus());
 	}
+
+	@Test
+	public void testFindWizardStepFromGesuch() {
+		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.GESUCH_ERSTELLEN);
+		Assert.assertEquals(WizardStepName.GESUCH_ERSTELLEN, wizardStepFromGesuch.getWizardStepName());
+	}
+
+	@Test
+	public void testFindWizardStepFromGesuchNonExisting() {
+		persistence.remove(WizardStep.class, freigabeStep.getId());
+		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
+		Assert.assertNull(wizardStepFromGesuch);
+	}
+
+
 	// HELP METHODS
 
 	private void createAndPersistDokumentGrundWithDokument(DokumentGrundTyp dokGrundTyp, DokumentTyp dokTyp) {

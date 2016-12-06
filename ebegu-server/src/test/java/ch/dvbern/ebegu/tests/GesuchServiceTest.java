@@ -2,9 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -335,6 +333,22 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		// Jetzt sollten keine Ids mehr drinn sein.
 		Assert.assertTrue(intersection.isEmpty());
 	}
+
+	@Test
+	public void testAntragFreigeben() {
+		LocalDate now = LocalDate.now();
+		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_GS);
+
+		final Gesuch freigegebenesGesuch = gesuchService.antragFreigeben(gesuch);
+
+		Assert.assertEquals(AntragStatus.FREIGEGEBEN, freigegebenesGesuch.getStatus());
+		Assert.assertFalse(now.isAfter(freigegebenesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
+
+		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
+
+		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
+	}
+
 
 	// HELP METHOD
 
