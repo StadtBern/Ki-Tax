@@ -6,14 +6,16 @@ import WizardStepManager from '../service/wizardStepManager';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import IPromise = angular.IPromise;
+import IRootScopeService = angular.IRootScopeService;
 
-export default class AbstractGesuchViewController {
+export default class AbstractGesuchViewController<T> {
 
     gesuchModelManager: GesuchModelManager;
     berechnungsManager: BerechnungsManager;
     wizardStepManager: WizardStepManager;
     TSRole: any;
     TSRoleUtil: any;
+    private _model: T;
 
     constructor($gesuchModelManager: GesuchModelManager, $berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager) {
@@ -43,7 +45,7 @@ export default class AbstractGesuchViewController {
         return undefined;
     }
 
-    public isGesuchInStatus(status : TSAntragStatus): boolean {
+    public isGesuchInStatus(status: TSAntragStatus): boolean {
         return status === this.gesuchModelManager.getGesuch().status;
     }
 
@@ -59,5 +61,14 @@ export default class AbstractGesuchViewController {
             return this.gesuchModelManager.getGesuch().isMutation();
         }
         return false;
+    }
+
+
+    get model(): T {
+        return this._model;
+    }
+
+    set model(value: T) {
+        this._model = value;
     }
 }

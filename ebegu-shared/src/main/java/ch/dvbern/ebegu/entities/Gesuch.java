@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
@@ -47,6 +47,11 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private AntragTyp typ = AntragTyp.GESUCH;
+
+	@NotNull
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Eingangsart eingangsart = Eingangsart.PAPIER;
 
 	@Valid
 	@Nullable
@@ -110,6 +115,7 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	public Gesuch(@Nonnull Gesuch toCopy) {
+		//TODO (hefr) Eingangsart???
 		this.setVorgaengerId(toCopy.getId());
 		this.setFall(toCopy.getFall());
 		this.setGesuchsperiode(toCopy.getGesuchsperiode());
@@ -280,6 +286,14 @@ public class Gesuch extends AbstractEntity {
 
 	public final void setTyp(AntragTyp typ) {
 		this.typ = typ;
+	}
+
+	public Eingangsart getEingangsart() {
+		return eingangsart;
+	}
+
+	public void setEingangsart(Eingangsart eingangsart) {
+		this.eingangsart = eingangsart;
 	}
 
 	@Nullable

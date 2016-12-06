@@ -6,6 +6,7 @@ import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSi
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import WizardStepManager from './wizardStepManager';
+import TSFinanzModel from '../../models/TSFinanzModel';
 
 
 export default class FinanzielleSituationRS {
@@ -43,6 +44,19 @@ export default class FinanzielleSituationRS {
         let gesuchToSend = {};
         gesuchToSend = this.ebeguRestUtil.gesuchToRestObject(gesuchToSend, gesuch);
         return this.http.post(this.serviceURL + '/calculate', gesuchToSend, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((httpresponse: any) => {
+            this.log.debug('PARSING finanzielle Situation  REST object ', httpresponse.data);
+            return this.ebeguRestUtil.parseFinanzielleSituationResultate(new TSFinanzielleSituationResultateDTO(), httpresponse.data);
+        });
+    }
+
+    public calculateFinanzielleSituationTemp(finSitModel: TSFinanzModel): IPromise<TSFinanzielleSituationResultateDTO> {
+        let finSitModelToSend = {};
+        finSitModelToSend = this.ebeguRestUtil.finanzModelToRestObject(finSitModelToSend, finSitModel);
+        return this.http.post(this.serviceURL + '/calculateTemp', finSitModelToSend, {
             headers: {
                 'Content-Type': 'application/json'
             }

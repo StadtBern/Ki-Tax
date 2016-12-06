@@ -21,7 +21,7 @@ export class FallCreationViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class FallCreationViewController extends AbstractGesuchViewController {
+export class FallCreationViewController extends AbstractGesuchViewController<any> {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
     private createMutation: boolean = false;

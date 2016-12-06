@@ -23,7 +23,7 @@ export class KinderListViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class KinderListViewController extends AbstractGesuchViewController {
+export class KinderListViewController extends AbstractGesuchViewController<any> {
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog', 'WizardStepManager'];
     /* @ngInject */

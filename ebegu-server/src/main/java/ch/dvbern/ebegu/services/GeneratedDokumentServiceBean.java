@@ -297,10 +297,14 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 		if (persistedDokument == null || dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU || forceCreation) {
 
-			Optional<Mahnung> vorgaengerMahnung = null;
+			Optional<Mahnung> vorgaengerMahnung = Optional.empty();
 
 			if (mahnung.hasVorgaenger()) {
 				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
+			}else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU) {
+				vorgaengerMahnung = mahnungService.
+					findAktiveErstMahnung(gesuch);
+
 			}
 
 			byte[] data = pdfService.printMahnung(mahnung, vorgaengerMahnung);

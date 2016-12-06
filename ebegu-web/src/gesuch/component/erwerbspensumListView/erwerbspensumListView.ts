@@ -37,7 +37,7 @@ export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
 }
 
 
-export class ErwerbspensumListViewController extends AbstractGesuchViewController {
+export class ErwerbspensumListViewController extends AbstractGesuchViewController<any> {
 
     erwerbspensenGS1: Array<TSErwerbspensumContainer> = undefined;
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;
@@ -47,7 +47,6 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        var vm = this;
         this.initErwerbspensumStepStatus();
     }
 

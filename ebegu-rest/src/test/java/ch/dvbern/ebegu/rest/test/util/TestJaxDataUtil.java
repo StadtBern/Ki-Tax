@@ -131,6 +131,7 @@ public class TestJaxDataUtil {
 
 	public static JaxGesuch createTestJaxGesuch() {
 		JaxGesuch jaxGesuch = new JaxGesuch();
+		jaxGesuch.setEingangsart(Eingangsart.PAPIER);
 		jaxGesuch.setFall(createTestJaxFall());
 		jaxGesuch.setGesuchsperiode(createTestJaxGesuchsperiode());
 		jaxGesuch.setGesuchsteller1(createTestJaxGesuchsteller());

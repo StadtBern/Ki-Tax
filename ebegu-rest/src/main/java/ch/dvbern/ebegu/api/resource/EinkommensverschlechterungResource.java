@@ -2,12 +2,11 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.api.dtos.JaxFinanzModel;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -129,6 +128,61 @@ public class EinkommensverschlechterungResource {
 		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
 
 		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
+		FinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, basisJahrPlus);
+		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
+		context.setRollbackOnly();
+		return Response.ok(abstFinSitResultateDTO).build();
+	}
+
+	/**
+	 * Diese Methode ist aehnlich wie {@link this.calculateEinkommensverschlechterung}
+	 * Hier wird die  Finanzielle Situation als eigenes Model uebergeben statt das ganzes Gesuch
+	 */
+	@Nullable
+	@POST
+	@Path("/calculateTemp/{basisJahrPlusID}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response calculateEinkommensverschlechterungTemp (
+		@Nonnull @NotNull @PathParam("basisJahrPlusID") JaxId basisJahrPlusID,
+		@Nonnull @NotNull @Valid JaxFinanzModel jaxFinSitModel,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(basisJahrPlusID.getId());
+		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
+		Gesuch gesuch = new Gesuch();
+		gesuch.setFamiliensituation(new Familiensituation());
+		gesuch.getFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
+		if (jaxFinSitModel.getFinanzielleSituationContainerGS1() != null) {
+			gesuch.setGesuchsteller1(new Gesuchsteller());
+			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(
+				converter.finanzielleSituationContainerToStorableEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1()));
+		}
+		if (jaxFinSitModel.getFinanzielleSituationContainerGS2() != null) {
+			gesuch.setGesuchsteller2(new Gesuchsteller());
+			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(
+				converter.finanzielleSituationContainerToStorableEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2()));
+		}
+		if (jaxFinSitModel.getEinkommensverschlechterungContainerGS1() != null) {
+			if(gesuch.getGesuchsteller1() ==null) {
+				gesuch.setGesuchsteller1(new Gesuchsteller());
+			}
+			gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(
+				converter.einkommensverschlechterungContainerToStorableEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS1()));
+		}
+		if (jaxFinSitModel.getEinkommensverschlechterungContainerGS2() != null) {
+			if(gesuch.getGesuchsteller2() ==null) {
+				gesuch.setGesuchsteller2(new Gesuchsteller());
+			}
+			gesuch.getGesuchsteller2().setEinkommensverschlechterungContainer(
+				converter.einkommensverschlechterungContainerToStorableEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS2()));
+		}
+		if (jaxFinSitModel.getEinkommensverschlechterungInfo() != null) {
+			gesuch.setEinkommensverschlechterungInfo(
+				converter.einkommensverschlechterungInfoToEntity(jaxFinSitModel.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
+		}
+
 		FinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, basisJahrPlus);
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
 		context.setRollbackOnly();

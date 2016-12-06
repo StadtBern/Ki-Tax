@@ -33,7 +33,7 @@ export class FamiliensituationViewComponentConfig implements IComponentOptions {
 }
 
 
-export class FamiliensituationViewController extends AbstractGesuchViewController {
+export class FamiliensituationViewController extends AbstractGesuchViewController<TSFamiliensituation> {
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
     allowedRoles: Array<TSRole>;
@@ -48,14 +48,17 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
                 private $translate: ITranslateService, private $q: IQService, private $scope: IScope) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        this.gesuchModelManager.initFamiliensituation();
+        this.model = angular.copy(this.gesuchModelManager.getFamiliensituation());
+        this.initialFamiliensituation = angular.copy(this.gesuchModelManager.getFamiliensituation());
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
-        this.initialFamiliensituation = angular.copy(this.gesuchModelManager.getFamiliensituation());
+
         this.initViewModel();
 
         if ($scope) {
             $scope.$watch(() => {
-                return this.gesuchModelManager.getFamiliensituation().aenderungPer;
+                return this.model.aenderungPer;
             }, (newValue, oldValue) => {
                 if ((newValue !== oldValue) && (!newValue)) {
                     this.resetFamsit();
@@ -65,15 +68,21 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     private initViewModel(): void {
-        this.gesuchModelManager.initFamiliensituation();
         this.wizardStepManager.setCurrentStep(TSWizardStepName.FAMILIENSITUATION);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
+
     public confirmAndSave(form: angular.IFormController): IPromise<TSFamiliensituation> {
         this.savedClicked = true;
         if (form.$valid && !this.hasEmptyAenderungPer() && !this.hasError()) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getFamiliensituation());
+            }
+
             if (this.isConfirmationRequired()) {
                 let descriptionText: any = this.$translate.instant('FAMILIENSITUATION_WARNING_BESCHREIBUNG', {
                     gsfullname: this.gesuchModelManager.getGesuch().gesuchsteller2 ? this.gesuchModelManager.getGesuch().gesuchsteller2.getFullName() : ''
@@ -82,27 +91,19 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
                     title: 'FAMILIENSITUATION_WARNING',
                     deleteText: descriptionText
                 }).then(() => {   //User confirmed changes
-                    return this.save(form);
+                    return this.save();
                 });
             } else {
-                return this.save(form);
+                return this.save();
             }
         }
         return undefined;
     }
 
-    private save(form: angular.IFormController): IPromise<TSFamiliensituation> {
-        if (form.$valid && !this.hasEmptyAenderungPer() && !this.hasError()) {
-            if (!form.$dirty) {
-                // If there are no changes in form we don't need anything to update on Server and we could return the
-                // promise immediately
-                return this.$q.when(this.gesuchModelManager.getFamiliensituation());
-            }
-            this.errorService.clearAll();
-
-            return this.gesuchModelManager.updateFamiliensituation();
-        }
-        return undefined;
+    private save(): IPromise<TSFamiliensituation> {
+        this.errorService.clearAll();
+        this.gesuchModelManager.getGesuch().familiensituation = this.model;
+        return this.gesuchModelManager.updateFamiliensituation();
     }
 
     showGesuchstellerKardinalitaet(): boolean {
@@ -114,7 +115,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     public getFamiliensituation(): TSFamiliensituation {
-        return this.gesuchModelManager.getFamiliensituation();
+        return this.model;
     }
 
     public getFamiliensituationErstgesuch(): TSFamiliensituation {
@@ -133,6 +134,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     private checkChanged2To1GS() {
         return this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
+            && this.initialFamiliensituation.hasSecondGesuchsteller()
             && this.isScheidung();
     }
 

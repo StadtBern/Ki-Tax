@@ -5,7 +5,6 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import {TSMonth, getTSMonthValues} from '../../../models/enums/TSMonth';
-import TSGesuch from '../../../models/TSGesuch';
 import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
@@ -28,7 +27,7 @@ export class EinkommensverschlechterungInfoViewComponentConfig implements ICompo
     controllerAs = 'vm';
 }
 
-export class EinkommensverschlechterungInfoViewController extends AbstractGesuchViewController {
+export class EinkommensverschlechterungInfoViewController extends AbstractGesuchViewController<TSEinkommensverschlechterungInfo> {
 
     monthsStichtage: Array<TSMonth>;
     selectedStichtagBjP1: TSMonth = undefined;
@@ -43,14 +42,14 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
                 private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
-
+        this.initialEinkVersInfo = angular.copy(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo);
+        this.model = angular.copy(this.initialEinkVersInfo);
         this.initViewModel();
-        this.initialEinkVersInfo = angular.copy(this.getGesuch().einkommensverschlechterungInfo);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
     private initViewModel() {
-        this.gesuchModelManager.initEinkommensverschlechterungInfo();
+
         this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.monthsStichtage = getTSMonthValues();
@@ -58,18 +57,20 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         this.selectedStichtagBjP2 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2);
     }
 
-    getGesuch(): TSGesuch {
-        if (!this.gesuchModelManager.getGesuch()) {
-            this.gesuchModelManager.initGesuch(false);
+    public initEinkommensverschlechterungInfo(): void {
+        if (!this.model) {
+            this.model = new TSEinkommensverschlechterungInfo();
+            this.model.ekvFuerBasisJahrPlus1 = false;
+            this.model.ekvFuerBasisJahrPlus2 = false;
+
         }
-        return this.gesuchModelManager.getGesuch();
     }
 
     getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
-        if (this.getGesuch().einkommensverschlechterungInfo == null) {
-            this.gesuchModelManager.initEinkommensverschlechterungInfo();
+        if (!this.model) {
+            this.initEinkommensverschlechterungInfo();
         }
-        return this.getGesuch().einkommensverschlechterungInfo;
+        return this.model;
     }
 
     showEkvi(): boolean {
@@ -116,25 +117,27 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     public confirmAndSave(form: angular.IFormController): IPromise<TSEinkommensverschlechterungInfo> {
-        if (this.isConfirmationRequired()) {
-            return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-                title: 'EINKVERS_WARNING',
-                deleteText: 'EINKVERS_WARNING_BESCHREIBUNG'
-            }).then(() => {   //User confirmed changes
-                return this.save(form);
-            });
-        } else {
-            return this.save(form);
-        }
-    }
-
-    private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungInfo> {
-        if (form.$valid) {
-            if (!form.$dirty) {
-                // If there are no changes in form we don't need anything to update on Server and we could return the
-                // promise immediately
-                return this.$q.when(this.getGesuch().einkommensverschlechterungInfo);
+            if (form.$valid) {
+                if (!form.$dirty) {
+                    // If there are no changes in form we don't need anything to update on Server and we could return the
+                    // promise immediately
+                    return this.$q.when(this.model);
+                }
+                if (this.isConfirmationRequired()) {
+                    return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                        title: 'EINKVERS_WARNING',
+                        deleteText: 'EINKVERS_WARNING_BESCHREIBUNG'
+                    }).then(() => {   //User confirmed changes
+                        return this.save();
+                    });
+                } else {
+                    return this.save();
+                }
             }
+            return undefined;
+        }
+
+    private save(): IPromise<TSEinkommensverschlechterungInfo> {
             this.errorService.clearAll();
             if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {
                 if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
@@ -157,17 +160,15 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
                 this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = undefined;
                 this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = undefined;
             }
+            this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo = this.getEinkommensverschlechterungsInfo();
             return this.gesuchModelManager.updateEinkommensverschlechterungsInfo();
-        }
-        return undefined;
     }
 
     public isRequired(basisJahrPlus: number): boolean {
-        let ekv: TSEinkommensverschlechterungInfo = this.gesuchModelManager.getEinkommensverschlechterungsInfo();
         if (basisJahrPlus === 2) {
-            return ekv.einkommensverschlechterung && !ekv.ekvFuerBasisJahrPlus1;
+            return this.model.einkommensverschlechterung && !this.model.ekvFuerBasisJahrPlus1;
         } else {
-            return ekv.einkommensverschlechterung && !ekv.ekvFuerBasisJahrPlus2;
+            return this.model.einkommensverschlechterung && !this.model.ekvFuerBasisJahrPlus2;
         }
     }
 
@@ -177,9 +178,9 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
      */
     private isConfirmationRequired(): boolean {
         return (this.initialEinkVersInfo.einkommensverschlechterung !== undefined && this.initialEinkVersInfo.einkommensverschlechterung !== null
-        && !this.getGesuch().einkommensverschlechterungInfo.einkommensverschlechterung
-        && this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== null
-        && this.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== undefined);
+        && !this.model.einkommensverschlechterung
+        && this.gesuchModelManager.getGesuch().gesuchsteller1 && this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== null
+        && this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== undefined);
     }
 
 }
