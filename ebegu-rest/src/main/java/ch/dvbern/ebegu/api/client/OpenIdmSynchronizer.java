@@ -28,9 +28,7 @@ public class OpenIdmSynchronizer {
 
 		LOG.info("Synchnoize with Open IDM");
 		LOG.info(traegerschaftResource.synchronizeTraegerschaft(true).toString());
-
 		LOG.info(institutionResource.synchronizeInstitutions(true).toString());
-
 	}
 
 }

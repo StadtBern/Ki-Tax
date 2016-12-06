@@ -42,27 +42,16 @@ public class OpenIdmRestClient {
 	private IOpenIdmRESTProxService idmRESTProxService;
 
 
-	public Response login() {
-		if(configuration.getOpenIdmEnabled()) {
-			String user = configuration.getOpenIdmUser();
-			String pass = configuration.getOpenIdmPassword();
-
-			Response response = getIdmRESTProxService().login(user, pass, false);
-			checkSucess(response, "login");
-
-			response.readEntity(String.class);
-
-			return response;
-		}
-		return Response.ok().build();
+	public Optional<JaxOpenIdmResponse> getAll() {
+		return getAll(false);
 	}
 
-	public Optional<JaxOpenIdmResponse> getAll() {
-		if(configuration.getOpenIdmEnabled()) {
+	public Optional<JaxOpenIdmResponse> getAll(boolean force) {
+		if (configuration.getOpenIdmEnabled() || force) {
 			String user = configuration.getOpenIdmUser();
 			String pass = configuration.getOpenIdmPassword();
 
-			Response response = getIdmRESTProxService().getAllInstitutions(user, pass, false, true);
+			Response response = getIdmRESTProxService().getAllInstitutions(user, pass, true, true);
 			if (checkSucess(response, "getAll")) {
 				JaxOpenIdmResponse jaxOpenIdmResponse = response.readEntity(JaxOpenIdmResponse.class);
 				return Optional.of(jaxOpenIdmResponse);
@@ -74,12 +63,28 @@ public class OpenIdmRestClient {
 	}
 
 	public Optional<JaxOpenIdmResult> getInstitutionByUid(String uid) {
-		if(configuration.getOpenIdmEnabled()) {
+		return getInstitutionByUid(uid, false);
+	}
+
+	public Optional<JaxOpenIdmResult> getInstitutionByUid(String uid, boolean force) {
+		return getById(force, getOpenIdmInstitutionsUID(uid));
+	}
+
+	public Optional<JaxOpenIdmResult> getTraegerschaftByUid(String uid) {
+		return getTraegerschaftByUid(uid, false);
+	}
+
+	public Optional<JaxOpenIdmResult> getTraegerschaftByUid(String uid, boolean force) {
+		return getById(force, getOpenIdmTraegerschaftUID(uid));
+	}
+
+	private Optional<JaxOpenIdmResult> getById(boolean force, String openIdmTraegerschaftUID) {
+		if (configuration.getOpenIdmEnabled() || force) {
 			String user = configuration.getOpenIdmUser();
 			String pass = configuration.getOpenIdmPassword();
 
-			Response response = getIdmRESTProxService().getInstitutionbyUid(user, pass, false, uid);
-			if (checkSucess(response, "getInstitutionByUid")) {
+			Response response = getIdmRESTProxService().getInstitutionbyUid(user, pass, false, openIdmTraegerschaftUID);
+			if (checkSucess(response, "getByUid")) {
 				JaxOpenIdmResult jaxOpenIdmResult = response.readEntity(JaxOpenIdmResult.class);
 				return Optional.of(jaxOpenIdmResult);
 			}
@@ -89,38 +94,46 @@ public class OpenIdmRestClient {
 	}
 
 	public Optional<JaxOpenIdmResult> createInstitution(Institution institution) {
-		if(configuration.getOpenIdmEnabled()) {
-			String user = configuration.getOpenIdmUser();
-			String pass = configuration.getOpenIdmPassword();
+		return createInstitution(institution, false);
+	}
 
-			JaxInstitutionOpenIdm jaxInstitutionOpenIdm = new JaxInstitutionOpenIdm();
-			jaxInstitutionOpenIdm.setName(institution.getName());
-			jaxInstitutionOpenIdm.setType(INSTITUTION);
-			jaxInstitutionOpenIdm.setMail("");
+	public Optional<JaxOpenIdmResult> createInstitution(Institution institution, boolean force) {
+		return create(force, institution.getName(), INSTITUTION, getOpenIdmInstitutionsUID(institution.getId()));
+	}
 
-			Response response = getIdmRESTProxService().create(user, pass, institution.getId(), jaxInstitutionOpenIdm);
-			if (checkSucess(response, "createInstitution")) {
-				JaxOpenIdmResult jaxOpenIdmResult = response.readEntity(JaxOpenIdmResult.class);
-				return Optional.of(jaxOpenIdmResult);
-			}
-			response.readEntity(String.class);
-		}
-		return Optional.empty();
+	private String getOpenIdmInstitutionsUID(String institutionId) {
+		return "I-" + institutionId;
+	}
+
+	private String getOpenIdmTraegerschaftUID(String traegerschaftId) {
+		return "T-" + traegerschaftId;
+	}
+
+	public String getEbeguId(String openIdmUid) {
+		return openIdmUid.substring(2);
 	}
 
 	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft) {
-		if(configuration.getOpenIdmEnabled()) {
+		return createTraegerschaft(traegerschaft, false);
+	}
+
+	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft, boolean force) {
+		return create(force, traegerschaft.getName(), TRAEGERSCHAFT, getOpenIdmTraegerschaftUID(traegerschaft.getId()));
+	}
+
+	private Optional<JaxOpenIdmResult> create(boolean force, String name, String type, String openIdmUID) {
+		if (configuration.getOpenIdmEnabled() || force) {
 			String user = configuration.getOpenIdmUser();
 			String pass = configuration.getOpenIdmPassword();
 
 			JaxInstitutionOpenIdm jaxInstitutionOpenIdm = new JaxInstitutionOpenIdm();
-			jaxInstitutionOpenIdm.setName(traegerschaft.getName());
-			jaxInstitutionOpenIdm.setType(TRAEGERSCHAFT);
+			jaxInstitutionOpenIdm.setName(name);
+			jaxInstitutionOpenIdm.setType(type);
 			jaxInstitutionOpenIdm.setMail("");
 
-			Response response = getIdmRESTProxService().create(user, pass, traegerschaft.getId(), jaxInstitutionOpenIdm);
+			Response response = getIdmRESTProxService().create(user, pass, openIdmUID, jaxInstitutionOpenIdm);
 
-			if (checkSucess(response, "createTraegerschaft")) {
+			if (checkSucess(response, "Create")) {
 				JaxOpenIdmResult jaxOpenIdmResult = response.readEntity(JaxOpenIdmResult.class);
 				return Optional.of(jaxOpenIdmResult);
 			}
@@ -129,61 +142,61 @@ public class OpenIdmRestClient {
 		return Optional.empty();
 	}
 
-
 	public Optional<JaxOpenIdmResult> updateInstitution(Institution institution) {
-		if(configuration.getOpenIdmEnabled()) {
-			String user = configuration.getOpenIdmUser();
-			String pass = configuration.getOpenIdmPassword();
+		return updateInstitution(institution, false);
+	}
 
-			JaxUpdateOpenIdm jaxUpdateOpenIdm = new JaxUpdateOpenIdm();
-			jaxUpdateOpenIdm.setOperation("replace");
-			jaxUpdateOpenIdm.setField("name");
-			jaxUpdateOpenIdm.setValue(institution.getName());
-
-			Response response = getIdmRESTProxService().update(user, pass, institution.getId(), jaxUpdateOpenIdm);
-
-			if (checkSucess(response, "updateInstitution")) {
-				JaxOpenIdmResult jaxOpenIdmResult = response.readEntity(JaxOpenIdmResult.class);
-				return Optional.of(jaxOpenIdmResult);
+	public Optional<JaxOpenIdmResult> updateInstitution(Institution institution, boolean force) {
+		if (configuration.getOpenIdmEnabled() || force) {
+			final boolean deleted = deleteInstitution(institution.getId(), force);
+			if (deleted) {
+				return createInstitution(institution, force);
 			}
-			response.readEntity(String.class);
 		}
 		return Optional.empty();
-
 	}
 
 	public Optional<JaxOpenIdmResult> updateTraegerschaft(Traegerschaft traegerschaft) {
-		if(configuration.getOpenIdmEnabled()) {
-			String user = configuration.getOpenIdmUser();
-			String pass = configuration.getOpenIdmPassword();
+		return updateTraegerschaft(traegerschaft, false);
+	}
 
-			JaxUpdateOpenIdm jaxUpdateOpenIdm = new JaxUpdateOpenIdm();
-			jaxUpdateOpenIdm.setOperation("replace");
-			jaxUpdateOpenIdm.setField("name");
-			jaxUpdateOpenIdm.setValue(traegerschaft.getName());
-
-			Response response = getIdmRESTProxService().update(user, pass, traegerschaft.getId(), jaxUpdateOpenIdm);
-
-			if (checkSucess(response, "updateTraegerschaft")) {
-				JaxOpenIdmResult jaxOpenIdmResult = response.readEntity(JaxOpenIdmResult.class);
-				return Optional.of(jaxOpenIdmResult);
+	public Optional<JaxOpenIdmResult> updateTraegerschaft(Traegerschaft traegerschaft, boolean force) {
+		if (configuration.getOpenIdmEnabled() || force) {
+			final boolean deleted = deleteTraegerschaft(traegerschaft.getId(), force);
+			if (deleted) {
+				return createTraegerschaft(traegerschaft, force);
 			}
-			response.readEntity(String.class);
 		}
 		return Optional.empty();
 	}
 
-	public boolean delete(String id) {
-		if(configuration.getOpenIdmEnabled()) {
+	public boolean deleteInstitution(String id) {
+		return deleteByOpenIdmUid(id, false);
+	}
+
+	public boolean deleteInstitution(String institutionId, boolean force) {
+		return deleteByOpenIdmUid(getOpenIdmInstitutionsUID(institutionId), force);
+	}
+
+	public boolean deleteTraegerschaft(String traegerschaftId) {
+		return deleteByOpenIdmUid(getOpenIdmTraegerschaftUID(traegerschaftId), false);
+	}
+
+	public boolean deleteTraegerschaft(String traegerschaftId, boolean force) {
+		return deleteByOpenIdmUid(getOpenIdmTraegerschaftUID(traegerschaftId), force);
+	}
+
+	public boolean deleteByOpenIdmUid(String uid, boolean force) {
+		if (configuration.getOpenIdmEnabled() || force) {
 			String user = configuration.getOpenIdmUser();
 			String pass = configuration.getOpenIdmPassword();
 
-			Response response = getIdmRESTProxService().delete(user, pass, id);
+			Response response = getIdmRESTProxService().delete(user, pass, uid);
 			response.readEntity(String.class);
 
 			return checkSucess(response, "delete");
 		}
-		return  false;
+		return false;
 	}
 
 	private boolean checkSucess(Response response, String functionName) {

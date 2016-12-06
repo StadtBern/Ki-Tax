@@ -142,7 +142,7 @@ public class InstitutionResource {
 		Validate.notNull(institutionJAXPId.getId());
 		institutionService.setInstitutionInactive(converter.toEntityId(institutionJAXPId));
 
-		openIdmRestClient.delete(institutionJAXPId.getId());
+		openIdmRestClient.deleteInstitution(institutionJAXPId.getId());
 
 		return Response.ok().build();
 	}
@@ -244,7 +244,7 @@ public class InstitutionResource {
 					if (openIdmInstitution.getType().equals(OpenIdmRestClient.INSTITUTION) && allActiveInstitutionen.stream().noneMatch(
 						ebeguInstitution -> ebeguInstitution.getId().equals(openIdmInstitution.get_id()))) {
 						// if none match -> delete
-						final boolean sucess = openIdmRestClient.delete(openIdmInstitution.get_id());
+						final boolean sucess = openIdmRestClient.deleteInstitution(openIdmInstitution.get_id());
 						openIdmRestClient.generateResponseString(responseString, openIdmInstitution.get_id(), openIdmInstitution.getName(), sucess, "Delete");
 					}
 				});

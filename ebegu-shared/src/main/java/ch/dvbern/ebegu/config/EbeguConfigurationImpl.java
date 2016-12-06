@@ -34,7 +34,6 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	public EbeguConfigurationImpl() {
 
-
 	}
 
 	@Override
@@ -64,7 +63,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	@Override
 	public String getOpenIdmUser() {
-		return getString(EBEGU_OPENIDM_USER, "TZZ001");
+		return getString(EBEGU_OPENIDM_USER, "SRVC_eBEGU");
 	}
 
 	@Override
@@ -74,7 +73,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	@Override
 	public boolean getOpenIdmEnabled() {
-		return getBoolean(EBEGU_OPENIDM_ENABLED, false);
+		return getBoolean(EBEGU_OPENIDM_ENABLED, true);
 	}
 
 }

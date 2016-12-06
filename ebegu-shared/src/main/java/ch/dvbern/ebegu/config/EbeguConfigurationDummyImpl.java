@@ -47,7 +47,7 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 
 	@Override
 	public String getOpenIdmUser() {
-		return "TZZ001";
+		return "SRVC_eBEGU";
 	}
 
 	@Override

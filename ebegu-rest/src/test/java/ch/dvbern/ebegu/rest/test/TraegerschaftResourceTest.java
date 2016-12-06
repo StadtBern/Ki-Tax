@@ -60,7 +60,7 @@ public class TraegerschaftResourceTest {
 		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.delete(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
 		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 
@@ -80,7 +80,7 @@ public class TraegerschaftResourceTest {
 		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.empty());
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.delete(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
 		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
@@ -99,7 +99,7 @@ public class TraegerschaftResourceTest {
 		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.empty());
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.delete(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
 		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
@@ -139,7 +139,7 @@ public class TraegerschaftResourceTest {
 		EasyMock.expect(openIdmRestClient.createTraegerschaft(traegerschaft3)).andReturn(Optional.of(creatOpenIdmTraegerschaft("3")));
 		EasyMock.expect(openIdmRestClient.createTraegerschaft(traegerschaft4)).andReturn(Optional.of(creatOpenIdmTraegerschaft("4")));
 
-		EasyMock.expect(openIdmRestClient.delete(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -169,7 +169,7 @@ public class TraegerschaftResourceTest {
 		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.delete(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
 		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
@@ -203,8 +203,8 @@ public class TraegerschaftResourceTest {
 		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.delete(jaxOpenIdmResul3.get_id())).andReturn(true);
-		EasyMock.expect(openIdmRestClient.delete(jaxOpenIdmResul4.get_id())).andReturn(true);
+		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(jaxOpenIdmResul3.get_id())).andReturn(true);
+		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(jaxOpenIdmResul4.get_id())).andReturn(true);
 
 		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 

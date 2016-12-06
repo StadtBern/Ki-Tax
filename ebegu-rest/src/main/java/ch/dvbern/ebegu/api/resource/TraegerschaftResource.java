@@ -117,7 +117,7 @@ public class TraegerschaftResource {
 		final String traegerschaftId = converter.toEntityId(traegerschaftJAXPId);
 		traegerschaftService.setInactive(traegerschaftId);
 
-		openIdmRestClient.delete(traegerschaftId);
+		openIdmRestClient.deleteTraegerschaft(traegerschaftId);
 
 		return Response.ok().build();
 	}
@@ -188,7 +188,7 @@ public class TraegerschaftResource {
 					if (openIdmInstitution.getType().equals(OpenIdmRestClient.TRAEGERSCHAFT) && allActiveTraegerschaften.stream().noneMatch(
 						ebeguTraegerschaft -> ebeguTraegerschaft.getId().equals(openIdmInstitution.get_id()))) {
 						// if none match -> delete
-						final boolean sucess = openIdmRestClient.delete(openIdmInstitution.get_id());
+						final boolean sucess = openIdmRestClient.deleteTraegerschaft(openIdmInstitution.get_id());
 						openIdmRestClient.generateResponseString(responseString, openIdmInstitution.get_id(), openIdmInstitution.getName(), sucess, "Delete");
 					}
 				});
