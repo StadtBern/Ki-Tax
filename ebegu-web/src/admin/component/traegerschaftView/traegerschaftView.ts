@@ -6,11 +6,13 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import {TraegerschaftRS} from '../../../core/service/traegerschaftRS.rest';
 import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
 let template = require('./traegerschaftView.html');
 let style = require('./traegerschaftView.less');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
+let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 
 export class TraegerschaftViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -64,7 +66,7 @@ export class TraegerschaftViewController {
             this.traegerschaftRS.createTraegerschaft(this.newTraegerschaft).then((traegerschaft: TSTraegerschaft) => {
                 this.traegerschaften.push(traegerschaft);
                 this.newTraegerschaft = null;
-                if(!traegerschaft.synchronizedWithOpenIdm){
+                if (!traegerschaft.synchronizedWithOpenIdm) {
                     this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                         title: 'TRAEGERSCHAFT_CREATE_SYNCHRONIZE'
                     }).then(() => {
@@ -77,8 +79,9 @@ export class TraegerschaftViewController {
 
     private syncWithOpenIdm(): void {
         this.traegerschaftRS.synchronizeTraegerschaften().then((respone) => {
-            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                title: respone.data
+            let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
+            return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
+                title: returnString
             }).then(() => {
                 //do nothing
             });

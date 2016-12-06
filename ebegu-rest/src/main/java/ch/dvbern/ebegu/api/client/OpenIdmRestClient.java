@@ -171,7 +171,7 @@ public class OpenIdmRestClient {
 	}
 
 	public boolean deleteInstitution(String id) {
-		return deleteByOpenIdmUid(id, false);
+		return deleteInstitution(id, false);
 	}
 
 	public boolean deleteInstitution(String institutionId, boolean force) {
@@ -179,7 +179,7 @@ public class OpenIdmRestClient {
 	}
 
 	public boolean deleteTraegerschaft(String traegerschaftId) {
-		return deleteByOpenIdmUid(getOpenIdmTraegerschaftUID(traegerschaftId), false);
+		return deleteTraegerschaft(getOpenIdmTraegerschaftUID(traegerschaftId), false);
 	}
 
 	public boolean deleteTraegerschaft(String traegerschaftId, boolean force) {

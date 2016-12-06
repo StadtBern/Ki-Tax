@@ -52,7 +52,6 @@ public class OpenIdmRestClientTest extends AbstractEbeguRestTest {
 	}
 
 	@Test
-	@Ignore
 	public void deleteAllOnOpenIdm() {
 		final Optional<JaxOpenIdmResponse> all = openIdmRestClient.getAll(true);
 		Assert.assertTrue(all.isPresent());

@@ -175,7 +175,7 @@ public class TraegerschaftResource {
 			// Create in OpenIDM those Traegerschaften where exist in EBEGU but not in OpenIDM
 			allActiveTraegerschaften.forEach(ebeguTraegerschaft -> {
 				if (allInstitutions.getResult().stream().noneMatch(jaxOpenIdmResult ->
-					jaxOpenIdmResult.get_id().equals(ebeguTraegerschaft.getId()) && jaxOpenIdmResult.getType().equals(OpenIdmRestClient.TRAEGERSCHAFT))) {
+					openIdmRestClient.getEbeguId(jaxOpenIdmResult.get_id()).equals(ebeguTraegerschaft.getId()) && jaxOpenIdmResult.getType().equals(OpenIdmRestClient.TRAEGERSCHAFT))) {
 					// if none match -> create
 					final Optional<JaxOpenIdmResult> traegerschaftCreated = openIdmRestClient.createTraegerschaft(ebeguTraegerschaft);
 					openIdmRestClient.generateResponseString(responseString, ebeguTraegerschaft.getId(), ebeguTraegerschaft.getName(), traegerschaftCreated.isPresent(), "Create");
@@ -186,15 +186,18 @@ public class TraegerschaftResource {
 				// Delete in OpenIDM those Traegerschaten where exist in OpenIdm but not in EBEGU
 				allInstitutions.getResult().forEach(openIdmInstitution -> {
 					if (openIdmInstitution.getType().equals(OpenIdmRestClient.TRAEGERSCHAFT) && allActiveTraegerschaften.stream().noneMatch(
-						ebeguTraegerschaft -> ebeguTraegerschaft.getId().equals(openIdmInstitution.get_id()))) {
+						ebeguTraegerschaft -> ebeguTraegerschaft.getId().equals(openIdmRestClient.getEbeguId(openIdmInstitution.get_id())))) {
 						// if none match -> delete
-						final boolean sucess = openIdmRestClient.deleteTraegerschaft(openIdmInstitution.get_id());
+						final boolean sucess = openIdmRestClient.deleteTraegerschaft(openIdmRestClient.getEbeguId(openIdmInstitution.get_id()));
 						openIdmRestClient.generateResponseString(responseString, openIdmInstitution.get_id(), openIdmInstitution.getName(), sucess, "Delete");
 					}
 				});
 			}
 		} else {
 			responseString.append("Error: Can't communicate with OpenIdm server");
+		}
+		if (responseString.toString().equals("")) {
+			responseString.append("No differences between OpenIdm and Ebegu found. Nothing to do!");
 		}
 		return responseString;
 	}

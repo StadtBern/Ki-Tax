@@ -16,10 +16,12 @@ import IFormController = angular.IFormController;
 import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
+let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 
 export class InstitutionViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -259,8 +261,9 @@ export class InstitutionViewController {
 
     private syncWithOpenIdm(): void{
         this.institutionRS.synchronizeInstitutions().then((respone) => {
-            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                title: respone.data
+            let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
+            return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
+                title: returnString
             }).then(() => {
                 //do nothing
             });

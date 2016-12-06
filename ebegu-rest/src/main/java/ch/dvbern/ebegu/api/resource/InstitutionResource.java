@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.entities.Institution;
-
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -164,7 +163,6 @@ public class InstitutionResource {
 	}
 
 
-
 	@ApiOperation(value = "Find and return a list of all Institutionen")
 	@Nonnull
 	@GET
@@ -231,7 +229,7 @@ public class InstitutionResource {
 			// Create in OpenIDM those Institutions where exist in EBEGU but not in OpenIDM
 			allActiveInstitutionen.forEach(ebeguInstitution -> {
 				if (allInstitutions.getResult().stream().noneMatch(jaxOpenIdmResult ->
-					jaxOpenIdmResult.get_id().equals(ebeguInstitution.getId()) && jaxOpenIdmResult.getType().equals(OpenIdmRestClient.INSTITUTION))) {
+					openIdmRestClient.getEbeguId(jaxOpenIdmResult.get_id()).equals(ebeguInstitution.getId()) && jaxOpenIdmResult.getType().equals(OpenIdmRestClient.INSTITUTION))) {
 					// if none match -> create
 					final Optional<JaxOpenIdmResult> institutionCreated = openIdmRestClient.createInstitution(ebeguInstitution);
 					openIdmRestClient.generateResponseString(responseString, ebeguInstitution.getId(), ebeguInstitution.getName(), institutionCreated.isPresent(), "Create");
@@ -242,19 +240,21 @@ public class InstitutionResource {
 				// Delete in OpenIDM those Institutions where exist in OpenIdm but not in EBEGU
 				allInstitutions.getResult().forEach(openIdmInstitution -> {
 					if (openIdmInstitution.getType().equals(OpenIdmRestClient.INSTITUTION) && allActiveInstitutionen.stream().noneMatch(
-						ebeguInstitution -> ebeguInstitution.getId().equals(openIdmInstitution.get_id()))) {
+						ebeguInstitution -> ebeguInstitution.getId().equals(openIdmRestClient.getEbeguId(openIdmInstitution.get_id())))) {
 						// if none match -> delete
-						final boolean sucess = openIdmRestClient.deleteInstitution(openIdmInstitution.get_id());
+						final boolean sucess = openIdmRestClient.deleteInstitution(openIdmRestClient.getEbeguId(openIdmInstitution.get_id()));
 						openIdmRestClient.generateResponseString(responseString, openIdmInstitution.get_id(), openIdmInstitution.getName(), sucess, "Delete");
 					}
 				});
 			}
-		}else{
+		} else {
 			responseString.append("Error: Can't communicate with OpenIdm server");
+		}
+		if (responseString.toString().equals("")) {
+			responseString.append("No differences between OpenIdm and Ebegu found. Nothing to do!");
 		}
 		return responseString;
 	}
-
 
 
 }
