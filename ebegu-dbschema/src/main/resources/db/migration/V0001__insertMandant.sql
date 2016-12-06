@@ -1,0 +1,1 @@
+INSERT INTO mandant values ('e3736eb8-6eef-40ef-9e52-96ab48d8f220', '2016-04-25 16:22:22', '2016-04-25 16:22:26', 'flyway', 'flyway', 0, NULL, 'Stadt Bern');
