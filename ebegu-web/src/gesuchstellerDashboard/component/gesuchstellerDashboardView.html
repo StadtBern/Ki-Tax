@@ -15,6 +15,9 @@
                     <span>{{periode.gesuchsperiodeString}}</span>
                 </h2>
             </div>
+            <div flex="auto" class="labelZeitraum">
+                 {{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} - {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}
+            </div>
             <div flex="auto" class="labelSmall">
                 <h2><span>{{vm.getButtonText(periode)}}</span></h2>
             </div>
