@@ -5,6 +5,7 @@ import {IQService, IScope} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import TSGesuch from '../../../models/TSGesuch';
 
 describe('fallCreationView', function () {
 
@@ -34,6 +35,7 @@ describe('fallCreationView', function () {
         it('submitted but rejected -> it does not go to the next step', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.reject({}));
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
             fallCreationview.save(form);
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
@@ -41,6 +43,7 @@ describe('fallCreationView', function () {
         it('should submit the form and go to the next page', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.when({}));
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
             fallCreationview.save(form);
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();

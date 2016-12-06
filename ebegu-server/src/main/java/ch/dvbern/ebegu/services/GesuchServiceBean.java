@@ -59,6 +59,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Inject
 	private Authorizer authorizer;
 
+
 	@Nonnull
 	@Override
 	@RolesAllowed(value ={UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
@@ -153,18 +154,22 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@Nonnull
 	@RolesAllowed(value ={UserRoleName.GESUCHSTELLER, UserRoleName.SUPER_ADMIN})
-	public List<Gesuch> getAntraegeForUsername(String username) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+	public List<Gesuch> getAntraegeByCurrentBenutzer() {
+		Optional<Fall> fallOptional = fallService.findFallByCurrentBenutzerAsBesitzer();
+		if (fallOptional.isPresent()) {
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
-		Root<Gesuch> root = query.from(Gesuch.class);
+			Root<Gesuch> root = query.from(Gesuch.class);
+			Predicate predicate = cb.equal(root.get(Gesuch_.fall), fallOptional.get());
+			query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
+			query.where(predicate);
 
-		Predicate predicate = cb.equal(root.get(Gesuch_.userErstellt), username);
-		query.where(predicate);
-
-		List<Gesuch> gesuche = persistence.getCriteriaResults(query);
-		authorizer.checkReadAuthorizationGesuche(gesuche);
-		return gesuche;
+			List<Gesuch> gesuche = persistence.getCriteriaResults(query);
+			authorizer.checkReadAuthorizationGesuche(gesuche);
+			return gesuche;
+		}
+		return Collections.emptyList();
 	}
 
 	@Override

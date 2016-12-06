@@ -429,25 +429,59 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Erstellt ein Gesuch mit der angegebenen Eingangsart und Gesuchsperiode
+     * @param forced
+     * @param eingangsart
+     * @param gesuchsperiodeId
+     * @param fallId
+     */
+    public initGesuchWithEingangsart(forced: boolean, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
+        this.initGesuch(forced);
+        this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
+            this.gesuch.gesuchsperiode = periode;
+        });
+        this.fallRS.findFall(fallId).then(foundFall => {
+            this.gesuch.fall = foundFall;
+        });
+        if (TSEingangsart.ONLINE === eingangsart) {
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+        } else {
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+        }
+        this.gesuch.eingangsart = eingangsart;
+    }
+
+    /**
      * Diese Methode erstellt eine Fake-Mutation als gesuch fuer das GesuchModelManager. Die Mutation ist noch leer und hat
      * das ID des Gesuchs aus dem sie erstellt wurde. Wenn der Benutzer auf speichern klickt, wird der Service "antragMutieren"
      * mit dem ID des alten Gesuchs aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
      * Daten ueberschreiben
      * @param gesuchID
+     * @param eingangsart
+     * @param gesuchsperiodeId
+     * @param fallId
      */
-    public initMutation(gesuchID: string): void {
-        let gesuchsperiode: TSGesuchsperiode = this.gesuch.gesuchsperiode;
+    public initMutation(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string): void {
+        this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
+            this.gesuch.gesuchsperiode = periode;
+        });
         this.initAntrag(TSAntragTyp.MUTATION);
+        this.fallRS.findFall(fallId).then(foundFall => {
+            this.gesuch.fall = foundFall;
+        });
         this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
-        this.gesuch.gesuchsperiode = gesuchsperiode;
+        if (TSEingangsart.ONLINE === eingangsart) {
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+        } else {
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+        }
+        this.gesuch.eingangsart = eingangsart;
     }
 
     private initAntrag(antragTyp: TSAntragTyp): void {
         this.gesuch = new TSGesuch();
         this.gesuch.fall = new TSFall();
         this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
-        this.gesuch.eingangsart = TSEingangsart.PAPIER; //TODO (team) je nach dem anpassen
-        this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
         this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();
         this.setCurrentUserAsFallVerantwortlicher();
@@ -804,7 +838,7 @@ export default class GesuchModelManager {
             return this.erwerbspensumRS.saveErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((response: TSErwerbspensumContainer) => {
 
-                    let i :number = EbeguUtil.getIndexOfElementwithID(erwerbspensum, gesuchsteller.erwerbspensenContainer);
+                    let i : number = EbeguUtil.getIndexOfElementwithID(erwerbspensum, gesuchsteller.erwerbspensenContainer);
                     if (i >= 0) {
                         gesuchsteller.erwerbspensenContainer[i] = erwerbspensum;
                     }

@@ -85,10 +85,9 @@ public class AuthorizerImpl implements Authorizer {
 			return;
 		}
 		if (principalBean.isCallerInRole(GESUCHSTELLER)) {
-			//gesuchsteller darf nur welche machen wenn nicht mutation, ausserdem muss ihm das zugehoerige geusch gehoeren
-			boolean isMutation = finanzielleSituation.getVorgaengerId() != null;
+			//gesuchsteller darf nur welche machen wenn ihm das zugehoerige gesuch gehoert
 			String parentOwner = finanzielleSituation.getGesuchsteller().getUserErstellt() != null ? finanzielleSituation.getGesuchsteller().getUserErstellt() : "";
-			if (isMutation || !parentOwner.equals(principalBean.getPrincipal().getName())) {
+			if (!parentOwner.equals(principalBean.getPrincipal().getName())) {
 				throwCreateViolation();
 			}
 		}

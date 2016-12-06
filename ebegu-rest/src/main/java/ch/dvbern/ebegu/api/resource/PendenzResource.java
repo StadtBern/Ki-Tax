@@ -95,9 +95,9 @@ public class PendenzResource {
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/gesuchsteller/{username}")
-	public List<JaxAntragDTO> getAllAntraegeGesuchsteller(@Nonnull @NotNull @PathParam("username") String username) {
-		List<Gesuch> antraege = gesuchService.getAntraegeForUsername(username);
+	@Path("/gesuchsteller")
+	public List<JaxAntragDTO> getAllAntraegeGesuchsteller() {
+		List<Gesuch> antraege = gesuchService.getAntraegeByCurrentBenutzer();
 		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
 		antraege.stream().forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch)));
 		return pendenzenList;

@@ -778,5 +778,9 @@
     "UMZUG_HINT": "Umzüge, die in der Zukunft liegen, können bereits zum jetzigen Punkt angegeben werden",
     "ABWESENHEIT": "Abwesenheit",
     "ABWESENHEIT_ENTFERNEN": "Abwesenheit löschen",
-    "ABWESENHEIT_ERFASSEN": "Abwesenheit erfassen"
+    "ABWESENHEIT_ERFASSEN": "Abwesenheit erfassen",
+    "GS_BEARBEITEN": "Antrag bearbeiten",
+    "GS_DOKUMENTE_HOCHLADEN": "Dokumente hochladen",
+    "GS_MUTIEREN": "Antrag mutieren",
+    "GS_BEANTRAGEN": "Antrag stellen"
 }

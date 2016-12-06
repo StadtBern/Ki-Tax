@@ -70,10 +70,10 @@ public interface GesuchService {
 	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
 
 	/**
-	 * Gibt alle Antraege des Benutzers mit demn uebergebenen Benutzernamen zurueck.
+	 * Gibt alle Antraege des aktuell eingeloggten Benutzers
      */
 	@Nonnull
-	List<Gesuch> getAntraegeForUsername(String username);
+	List<Gesuch> getAntraegeByCurrentBenutzer();
 
 	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,

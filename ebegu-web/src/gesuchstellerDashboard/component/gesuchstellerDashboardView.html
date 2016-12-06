@@ -6,16 +6,23 @@
          layout-xs="column"
          layout-align-xs="space-between center">
 
-        <dv-loading-button layout="column" flex="nogrow" type="button"
-                           ui-sref="gesuch.fallcreation({createNew: true, gesuchId: null})"
+        <div ng-repeat="periode in vm.getActiveGesuchsperiodenList() | orderBy: 'gueltigkeit.gueltigAb'">
+        <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.openAntrag(periode)"
                            button-class="dashboardButton">
-            <div flex="auto" class="labelBig"><h2 data-translate="GESUCH"></h2></div>
-            <div flex="auto" class="labelSmall"><h2 data-translate="GSDASHBOARD_BEANTRAGEN"></h2></div>
+            <div flex="auto" class="labelBig">
+                <h2>
+                    <span data-translate="GESUCH"></span>
+                    <span>{{periode.gesuchsperiodeString}}</span>
+                </h2>
+            </div>
+            <div flex="auto" class="labelSmall">
+                <h2><span>{{vm.getButtonText(periode)}}</span></h2>
+            </div>
         </dv-loading-button>
-
+        </div>
 
         <!--<dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.goToMitteilungenOeffen()"
-                           button-class="dashboardButton">
+                           button-class="dashboardButton">t
             <div flex="auto" class="labelBig"><h2 data-translate="GSDASHBOARD_MITTEILUNGEN"></h2></div>
             <div flex="auto" class="labelNotification" ng-bind="vm.getNumberMitteilungen()"></div>
             <div class="labelSmall"><h2 data-translate="GSDASHBOARD_OEFFNEN"></h2></div>
