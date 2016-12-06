@@ -13,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by imanol on 01.03.16.
@@ -34,9 +36,10 @@ public class EbeguConstraintValidationExceptionMapper extends AbstractEbeguExcep
 			LOG.warn("Constraint Violation occured ", exception);
 			ConstraintViolationException constViolationEx = (ConstraintViolationException) rootCause;
 			ResteasyViolationException resteasyViolationException = new ResteasyViolationException(constViolationEx.getConstraintViolations());
-			resteasyViolationException.getAccept().add(MediaType.APPLICATION_JSON_TYPE);
+			List<MediaType> acceptedTypes = new ArrayList<>(resteasyViolationException.getAccept());
+			acceptedTypes.add(MediaType.APPLICATION_JSON_TYPE);
 			return ViolationReportCreator.
-				buildViolationReportResponse(resteasyViolationException, Status.INTERNAL_SERVER_ERROR, getAcceptMediaType(resteasyViolationException.getAccept()));
+				buildViolationReportResponse(resteasyViolationException, Status.INTERNAL_SERVER_ERROR, getAcceptMediaType(acceptedTypes));
 		}
 		if (rootCause instanceof EJBAccessException) {
 			return RestUtil.sendErrorNotAuthorized();    // nackte 403 status antwort
