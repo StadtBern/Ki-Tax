@@ -8,6 +8,7 @@ import {INewFallStateParams} from '../../gesuch.route';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
@@ -26,6 +27,8 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     private createNewParam: boolean = false;
     private createMutation: boolean = false;
 
+    TSRoleUtil: any;
+
     // showError ist ein Hack damit, die Fehlermeldung fuer die Checkboxes nicht direkt beim Laden der Seite angezeigt wird
     // sondern erst nachdem man auf ein checkbox oder auf speichern geklickt hat
     showError: boolean = false;
@@ -40,6 +43,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         this.readCreateNewParam();
         this.readCreateMutation();
         this.initViewModel();
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private readCreateNewParam() {

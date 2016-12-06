@@ -47,3 +47,25 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
 export function getTSAntragStatusPendenzValues(): Array<TSAntragStatus> {
     return getTSAntragStatusValues().filter(element => element !== TSAntragStatus.VERFUEGT);
 }
+
+export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
+    let validStates: Array<TSAntragStatus> = [TSAntragStatus.NUR_SCHULAMT,
+        TSAntragStatus.FREIGEGEBEN,
+        TSAntragStatus.NUR_SCHULAMT,
+        TSAntragStatus.ZURUECKGEWIESEN,
+        TSAntragStatus.ERSTE_MAHNUNG,
+        TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+        TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN,
+        TSAntragStatus.ZWEITE_MAHNUNG,
+        TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+        TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN,
+        TSAntragStatus.IN_BEARBEITUNG_JA,
+        TSAntragStatus.GEPRUEFT,
+        TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN,
+        TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
+        TSAntragStatus.VERFUEGEN,
+        TSAntragStatus.VERFUEGT];
+    return validStates.indexOf(status) !== -1;
+
+
+}

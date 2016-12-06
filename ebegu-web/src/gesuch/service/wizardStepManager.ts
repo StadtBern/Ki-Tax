@@ -6,7 +6,7 @@ import TSWizardStep from '../../models/TSWizardStep';
 import WizardStepRS from './WizardStepRS.rest';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAtLeastFreigegeben} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 
@@ -260,7 +260,13 @@ export default class WizardStepManager {
                         && gesuch.status !== TSAntragStatus.VERFUEGT && gesuch.status !== TSAntragStatus.NUR_SCHULAMT) {
                         return false;
                     }
-                } else {
+                    //gesuchsteller darf "verfuegen" seite sehen sobald er das gesuch freigegeben hat
+                } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
+                    if (isAtLeastFreigegeben(gesuch.status)) {
+                        return true;
+                    }
+                }
+                else {
                     // ... alle anderen ab VERFUEGT
                     if (gesuch.status !== TSAntragStatus.VERFUEGT) {
                         return false;
