@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.services.GesuchstellerService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -39,34 +36,34 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void createGesuchsteller() {
 		Assert.assertNotNull(gesuchstellerService);
-		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
 
 		gesuchstellerService.saveGesuchsteller(gesuchsteller, TestDataUtil.createDefaultGesuch(), 1, false);
-		Collection<Gesuchsteller> allGesuchsteller = gesuchstellerService.getAllGesuchsteller();
+		Collection<GesuchstellerContainer> allGesuchsteller = gesuchstellerService.getAllGesuchsteller();
 		Assert.assertEquals(1, allGesuchsteller.size());
-		Gesuchsteller nextGesuchsteller = allGesuchsteller.iterator().next();
-		Assert.assertEquals("Tester", nextGesuchsteller.getNachname());
-		Assert.assertEquals("tim.tester@example.com", nextGesuchsteller.getMail());
+		GesuchstellerContainer nextGesuchsteller = allGesuchsteller.iterator().next();
+		Assert.assertEquals("Tester", nextGesuchsteller.extractNachname());
+		Assert.assertEquals("tim.tester@example.com", nextGesuchsteller.getGesuchstellerJA().getMail());
 	}
 
 	@Test
 	public void updateGesuchstellerTest() {
 		Assert.assertNotNull(gesuchstellerService);
-		Gesuchsteller insertedGesuchsteller = insertNewEntity();
-		Optional<Gesuchsteller> gesuchstellerOptional = gesuchstellerService.findGesuchsteller(insertedGesuchsteller.getId());
+		GesuchstellerContainer insertedGesuchsteller = insertNewEntity();
+		Optional<GesuchstellerContainer> gesuchstellerOptional = gesuchstellerService.findGesuchsteller(insertedGesuchsteller.getId());
 		Assert.assertTrue(gesuchstellerOptional.isPresent());
-		Gesuchsteller gesuchsteller = gesuchstellerOptional.get();
-		Assert.assertEquals("tim.tester@example.com", gesuchsteller.getMail());
+		GesuchstellerContainer gesuchsteller = gesuchstellerOptional.get();
+		Assert.assertEquals("tim.tester@example.com", gesuchsteller.getGesuchstellerJA().getMail());
 
-		gesuchsteller.setMail("fritz.mueller@example.com");
-		Gesuchsteller updatedGesuchsteller = gesuchstellerService.saveGesuchsteller(gesuchsteller, TestDataUtil.createDefaultGesuch(), 1, false);
-		Assert.assertEquals("fritz.mueller@example.com", updatedGesuchsteller.getMail());
+		gesuchsteller.getGesuchstellerJA().setMail("fritz.mueller@example.com");
+		GesuchstellerContainer updatedGesuchsteller = gesuchstellerService.saveGesuchsteller(gesuchsteller, TestDataUtil.createDefaultGesuch(), 1, false);
+		Assert.assertEquals("fritz.mueller@example.com", updatedGesuchsteller.getGesuchstellerJA().getMail());
 	}
 
 	@Test
 	public void removeGesuchstellerTest() {
 		Assert.assertNotNull(gesuchstellerService);
-		Gesuchsteller insertedGesuchsteller = insertNewEntity();
+		GesuchstellerContainer insertedGesuchsteller = insertNewEntity();
 		Assert.assertEquals(1, gesuchstellerService.getAllGesuchsteller().size());
 
 		gesuchstellerService.removeGesuchsteller(insertedGesuchsteller);
@@ -76,13 +73,13 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void createGesuchstellerWithEinkommensverschlechterung() {
 		Assert.assertNotNull(gesuchstellerService);
-		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchstellerWithEinkommensverschlechterung();
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerWithEinkommensverschlechterung();
 
 		gesuchstellerService.saveGesuchsteller(gesuchsteller, TestDataUtil.createDefaultGesuch(), 1, false);
-		Collection<Gesuchsteller> allGesuchsteller = gesuchstellerService.getAllGesuchsteller();
+		Collection<GesuchstellerContainer> allGesuchsteller = gesuchstellerService.getAllGesuchsteller();
 		Assert.assertEquals(1, allGesuchsteller.size());
 
-		Gesuchsteller nextGesuchsteller = allGesuchsteller.iterator().next();
+		GesuchstellerContainer nextGesuchsteller = allGesuchsteller.iterator().next();
 		final EinkommensverschlechterungContainer einkommensverschlechterungContainer = nextGesuchsteller.getEinkommensverschlechterungContainer();
 		Assert.assertNotNull(einkommensverschlechterungContainer);
 
@@ -106,15 +103,15 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testSaveGesuchsteller2Mutation() {
-		Gesuchsteller gesuchsteller = insertNewEntity();
+		GesuchstellerContainer gesuchsteller = insertNewEntity();
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
 		gesuch.setTyp(AntragTyp.MUTATION);
 
-		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer());
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(TestDataUtil.createFinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(TestDataUtil.createDefaultEinkommensverschlechterungsContainer());
 
-		final Gesuchsteller savedGesuchsteller = gesuchstellerService.saveGesuchsteller(gesuchsteller, gesuch, 2, false);
+		final GesuchstellerContainer savedGesuchsteller = gesuchstellerService.saveGesuchsteller(gesuchsteller, gesuch, 2, false);
 
 		Assert.assertNotNull(savedGesuchsteller.getFinanzielleSituationContainer());
 		Assert.assertNotNull(savedGesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationJA());
@@ -132,8 +129,8 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguLoginTest {
 
 	// Helper Methods
 
-	private Gesuchsteller insertNewEntity() {
-		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+	private GesuchstellerContainer insertNewEntity() {
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
 		persistence.persist(gesuchsteller);
 		return gesuchsteller;
 	}

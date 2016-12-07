@@ -180,7 +180,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituation(), newFamsit);
-			final Gesuchsteller gesuchsteller2 = gesuchstellerService.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2, false);
+			final GesuchstellerContainer gesuchsteller2 = gesuchstellerService
+				.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2, false);
 
 			mutation.setGesuchsteller2(gesuchsteller2);
 			gesuchService.createGesuch(mutation);
@@ -417,26 +418,31 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		return null;
 	}
 
-	private Gesuchsteller createGesuchstellerHeirat(Gesuchsteller gesuchsteller1) {
+	private GesuchstellerContainer createGesuchstellerHeirat(GesuchstellerContainer gesuchsteller1) {
 
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1984, 12, 12));
 		gesuchsteller.setVorname("Tim");
-		gesuchsteller.setNachname(gesuchsteller1.getNachname());
+		gesuchsteller.setNachname(gesuchsteller1.extractNachname());
 		gesuchsteller.setGeschlecht(Geschlecht.MAENNLICH);
 		gesuchsteller.setMail("tim.tester@example.com");
 		gesuchsteller.setMobile("076 309 30 58");
 		gesuchsteller.setTelefon("031 378 24 24");
 		gesuchsteller.setZpvNumber("0761234567897");
-		gesuchsteller.addAdresse(createGesuchstellerAdresseHeirat());
-		final ErwerbspensumContainer erwerbspensumContainer = createErwerbspensumContainer();
-		erwerbspensumContainer.setGesuchsteller(gesuchsteller);
-		gesuchsteller.getErwerbspensenContainers().add(erwerbspensumContainer);
 
-		return gesuchsteller;
+		gesuchsteller1.setGesuchstellerJA(gesuchsteller);
+		gesuchsteller1.addAdresse(createGesuchstellerAdresseHeirat(gesuchsteller1));
+
+		final ErwerbspensumContainer erwerbspensumContainer = createErwerbspensumContainer();
+		erwerbspensumContainer.setGesuchsteller(gesuchsteller1);
+		gesuchsteller1.getErwerbspensenContainers().add(erwerbspensumContainer);
+
+		return gesuchsteller1;
 	}
 
-	private GesuchstellerAdresse createGesuchstellerAdresseHeirat() {
+	private GesuchstellerAdresseContainer createGesuchstellerAdresseHeirat(GesuchstellerContainer gsCont) {
+		GesuchstellerAdresseContainer gsAdresseContainer = new GesuchstellerAdresseContainer();
+
 		GesuchstellerAdresse gesuchstellerAdresse = new GesuchstellerAdresse();
 		gesuchstellerAdresse.setStrasse("Nussbaumstrasse");
 		gesuchstellerAdresse.setHausnummer("21");
@@ -446,7 +452,10 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		gesuchstellerAdresse.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		gesuchstellerAdresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
 
-		return gesuchstellerAdresse;
+		gsAdresseContainer.setGesuchstellerContainer(gsCont);
+		gsAdresseContainer.setGesuchstellerAdresseJA(gesuchstellerAdresse);
+
+		return gsAdresseContainer;
 	}
 
 	private ErwerbspensumContainer createErwerbspensumContainer() {

@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.Erwerbspensum;
-import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.services.ErwerbspensumService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -47,7 +44,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertNotNull(erwerbspensumService);
 
 		Erwerbspensum erwerbspensumData = TestDataUtil.createErwerbspensumData();
-		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
 		gesuchsteller = persistence.persist(gesuchsteller);
 
 		ErwerbspensumContainer ewpCont = TestDataUtil.createErwerbspensumContainer();
@@ -84,7 +81,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 
 		//Creates another Erwerbspensum that won't be loaded since it doesn't belong to the gesuch
 		Erwerbspensum erwerbspensumData = TestDataUtil.createErwerbspensumData();
-		Gesuchsteller gesuchsteller1 = TestDataUtil.createDefaultGesuchsteller();
+		GesuchstellerContainer gesuchsteller1 = TestDataUtil.createDefaultGesuchstellerContainer();
 		gesuchsteller1 = persistence.persist(gesuchsteller1);
 		ErwerbspensumContainer ewpCont = TestDataUtil.createErwerbspensumContainer();
 		ewpCont.setErwerbspensumGS(erwerbspensumData);
@@ -111,7 +108,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	private ErwerbspensumContainer insertNewEntity() {
-		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
 		ErwerbspensumContainer container = TestDataUtil.createErwerbspensumContainer();
 		gesuchsteller.addErwerbspensumContainer(container);
 		gesuchsteller = persistence.persist(gesuchsteller);

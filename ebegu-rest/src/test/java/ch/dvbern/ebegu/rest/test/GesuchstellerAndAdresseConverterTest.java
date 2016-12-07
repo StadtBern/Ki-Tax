@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxAdresse;
-import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
+import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.Constants;
@@ -43,19 +44,20 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestLogin
 	 */
 	@Test
 	public void convertPersistedTestEntityToJax(){
-		Gesuchsteller gesuchsteller = insertNewEntity();
-		JaxGesuchsteller jaxGesuchsteller = this.converter.gesuchstellerToJAX(gesuchsteller);
-		Gesuchsteller transformedEntity = this.converter.gesuchstellerToEntity(jaxGesuchsteller, new Gesuchsteller());
-		Assert.assertEquals(gesuchsteller.getNachname(), transformedEntity.getNachname());
-		Assert.assertEquals(gesuchsteller.getVorname(), transformedEntity.getVorname());
-		Assert.assertEquals(gesuchsteller.getGeburtsdatum(), transformedEntity.getGeburtsdatum());
-		Assert.assertEquals(gesuchsteller.getGeschlecht(), transformedEntity.getGeschlecht());
-		Assert.assertEquals(gesuchsteller.getMail(), transformedEntity.getMail());
-		Assert.assertEquals(gesuchsteller.getTelefon(), transformedEntity.getTelefon());
-		Assert.assertEquals(gesuchsteller.getTelefonAusland(), transformedEntity.getTelefonAusland());
+		GesuchstellerContainer gesuchsteller = insertNewEntity();
+		JaxGesuchstellerContainer jaxGesuchsteller = this.converter.gesuchstellerContainerToJAX(gesuchsteller);
+		GesuchstellerContainer transformedEntity = this.converter.gesuchstellerContainerToEntity(jaxGesuchsteller, new GesuchstellerContainer());
+		Assert.assertEquals(gesuchsteller.getGesuchstellerJA().getNachname(), transformedEntity.getGesuchstellerJA().getNachname());
+		Assert.assertEquals(gesuchsteller.getGesuchstellerJA().getVorname(), transformedEntity.getGesuchstellerJA().getVorname());
+		Assert.assertEquals(gesuchsteller.getGesuchstellerJA().getGeburtsdatum(), transformedEntity.getGesuchstellerJA().getGeburtsdatum());
+		Assert.assertEquals(gesuchsteller.getGesuchstellerJA().getGeschlecht(), transformedEntity.getGesuchstellerJA().getGeschlecht());
+		Assert.assertEquals(gesuchsteller.getGesuchstellerJA().getMail(), transformedEntity.getGesuchstellerJA().getMail());
+		Assert.assertEquals(gesuchsteller.getGesuchstellerJA().getTelefon(), transformedEntity.getGesuchstellerJA().getTelefon());
+		Assert.assertEquals(gesuchsteller.getGesuchstellerJA().getTelefonAusland(), transformedEntity.getGesuchstellerJA().getTelefonAusland());
 		Assert.assertEquals(gesuchsteller.getAdressen().size(), transformedEntity.getAdressen().size());
 		boolean allAdrAreSame  = gesuchsteller.getAdressen().stream().allMatch(
-			adresse -> transformedEntity.getAdressen().stream().anyMatch(adresse::isSame));
+			adresse -> transformedEntity.getAdressen().stream().anyMatch(
+				gsAdresseCont -> gsAdresseCont.getGesuchstellerAdresseJA().isSame(adresse.getGesuchstellerAdresseJA())));
 		Assert.assertTrue(allAdrAreSame);
 
 	}
@@ -65,41 +67,43 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestLogin
 	 */
 	@Test
 	public void convertJaxGesuchstellerWithUmzgTest(){
-		JaxGesuchsteller gesuchstellerWith3Adr = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
-		Gesuchsteller gesuchsteller = converter.gesuchstellerToEntity(gesuchstellerWith3Adr, new Gesuchsteller());
-		Assert.assertEquals(gesuchstellerWith3Adr.getGeburtsdatum(), gesuchsteller.getGeburtsdatum());
-		Assert.assertEquals(gesuchstellerWith3Adr.getVorname(), gesuchsteller.getVorname());
-		Assert.assertEquals(gesuchstellerWith3Adr.getNachname(), gesuchsteller.getNachname());
+		JaxGesuchstellerContainer gesuchstellerWith3Adr = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
+		GesuchstellerContainer gesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerWith3Adr, new GesuchstellerContainer());
+		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getGeburtsdatum(), gesuchsteller.getGesuchstellerJA().getGeburtsdatum());
+		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getVorname(), gesuchsteller.getGesuchstellerJA().getVorname());
+		Assert.assertEquals(gesuchstellerWith3Adr.getGesuchstellerJA().getNachname(), gesuchsteller.getGesuchstellerJA().getNachname());
 		//id wird serverseitig gesetzt
 		Assert.assertNull(gesuchstellerWith3Adr.getId());
 		Assert.assertNotNull(gesuchsteller.getId());
 		Assert.assertEquals(3, gesuchsteller.getAdressen().size());
-		ImmutableListMultimap<AdresseTyp, GesuchstellerAdresse> adrByTyp = Multimaps.index(gesuchsteller.getAdressen(), GesuchstellerAdresse::getAdresseTyp);
+		ImmutableListMultimap<AdresseTyp, GesuchstellerAdresseContainer> adrByTyp =
+			Multimaps.index(gesuchsteller.getAdressen(), GesuchstellerAdresseContainer::extractAdresseTyp);
 
-		GesuchstellerAdresse altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
+		GesuchstellerAdresseContainer altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
 		Assert.assertNotNull("Korrespondenzadresse muss vorhanden sein", altAdr);
-		Assert.assertTrue(altAdr.isSame(converter.gesuchstellerAdresseToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(), new GesuchstellerAdresse())));
+		Assert.assertTrue(altAdr.getGesuchstellerAdresseJA().isSame(converter.gesuchstellerAdresseContainerToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(),
+			new GesuchstellerAdresseContainer()).getGesuchstellerAdresseJA()));
 
-		ImmutableList<GesuchstellerAdresse> wohnAdressen = adrByTyp.get(AdresseTyp.WOHNADRESSE);
-		Assert.assertEquals(LocalDate.of(1000, 1, 1), wohnAdressen.get(0).getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(gesuchstellerWith3Adr.getAdressen().get(1).getGueltigAb().minusDays(1), wohnAdressen.get(0).getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(gesuchstellerWith3Adr.getAdressen().get(1).getGueltigAb(), wohnAdressen.get(1).getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(LocalDate.of(9999, 12, 31), wohnAdressen.get(1).getGueltigkeit().getGueltigBis());
+		ImmutableList<GesuchstellerAdresseContainer> wohnAdressen = adrByTyp.get(AdresseTyp.WOHNADRESSE);
+		Assert.assertEquals(LocalDate.of(1000, 1, 1), wohnAdressen.get(0).getGesuchstellerAdresseJA().getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(gesuchstellerWith3Adr.getAdressen().get(1).getAdresseJA().getGueltigAb().minusDays(1), wohnAdressen.get(0).getGesuchstellerAdresseJA().getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(gesuchstellerWith3Adr.getAdressen().get(1).getAdresseJA().getGueltigAb(), wohnAdressen.get(1).getGesuchstellerAdresseJA().getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(LocalDate.of(9999, 12, 31), wohnAdressen.get(1).getGesuchstellerAdresseJA().getGueltigkeit().getGueltigBis());
 	}
 
 	@Test
 	public void datesRangeAddedOnEntityTest() {
-		JaxAdresse adr = TestJaxDataUtil.createTestJaxAdr(null);
-		adr.setGueltigAb(null);
-		adr.setGueltigBis(null);
-		GesuchstellerAdresse adrEntity = converter.gesuchstellerAdresseToEntity(adr, new GesuchstellerAdresse());
-		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(Constants.END_OF_TIME,adrEntity.getGueltigkeit().getGueltigBis());
+		JaxAdresseContainer adr = TestJaxDataUtil.createTestJaxAdr(null);
+		adr.getAdresseJA().setGueltigAb(null);
+		adr.getAdresseJA().setGueltigBis(null);
+		GesuchstellerAdresseContainer adrEntity = converter.gesuchstellerAdresseContainerToEntity(adr, new GesuchstellerAdresseContainer());
+		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.extractGueltigkeit().getGueltigAb());
+		Assert.assertEquals(Constants.END_OF_TIME,adrEntity.extractGueltigkeit().getGueltigBis());
 	}
 
 
-	private Gesuchsteller insertNewEntity() {
-		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+	private GesuchstellerContainer insertNewEntity() {
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
 		persistence.persist(gesuchsteller);
 		return gesuchsteller;
 	}
