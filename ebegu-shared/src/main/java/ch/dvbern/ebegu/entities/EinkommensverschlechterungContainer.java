@@ -51,21 +51,10 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_einkommensverschlechterungcontainer_ekvJABasisJahrPlus2_id"), nullable = true)
 	private Einkommensverschlechterung ekvJABasisJahrPlus2;
 
+
 	public EinkommensverschlechterungContainer() {
 	}
 
-	public EinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
-		this.setVorgaengerId(toCopy.getId());
-		this.gesuchsteller = gesuchsteller;
-		this.ekvGSBasisJahrPlus1 = null;
-		this.ekvGSBasisJahrPlus2 = null;
-		if (toCopy.ekvJABasisJahrPlus1 != null) {
-			this.ekvJABasisJahrPlus1 = new Einkommensverschlechterung(toCopy.ekvJABasisJahrPlus1);
-		}
-		if (toCopy.ekvJABasisJahrPlus2 != null) {
-			this.ekvJABasisJahrPlus2 = new Einkommensverschlechterung(toCopy.ekvJABasisJahrPlus2);
-		}
-	}
 
 	public Einkommensverschlechterung getEkvJABasisJahrPlus2() {
 		return ekvJABasisJahrPlus2;
@@ -106,5 +95,19 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 
 	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
 		this.gesuchsteller = gesuchsteller;
+	}
+
+	public EinkommensverschlechterungContainer copyForMutation(EinkommensverschlechterungContainer mutation, @Nonnull Gesuchsteller gesuchstellerMutation) {
+		super.copyForMutation(mutation);
+		mutation.setGesuchsteller(gesuchstellerMutation);
+		mutation.setEkvGSBasisJahrPlus1(null);
+		mutation.setEkvGSBasisJahrPlus2(null);
+		if (this.getEkvJABasisJahrPlus1() != null) {
+			mutation.setEkvJABasisJahrPlus1(this.getEkvJABasisJahrPlus1().copyForMutation(new Einkommensverschlechterung()));
+		}
+		if (this.getEkvJABasisJahrPlus2() != null) {
+			mutation.setEkvJABasisJahrPlus2(this.getEkvJABasisJahrPlus2().copyForMutation(new Einkommensverschlechterung()));
+		}
+		return mutation;
 	}
 }

@@ -65,20 +65,6 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	public KindContainer() {
 	}
 
-	public KindContainer(@Nonnull KindContainer toCopy, @Nonnull Gesuch gesuch) {
-		this.setVorgaengerId(toCopy.getId());
-		this.gesuch = gesuch;
-		this.kindGS = null;
-		this.kindJA = new Kind(toCopy.kindJA);
-		this.kindNummer = toCopy.kindNummer;
-		this.nextNumberBetreuung = toCopy.nextNumberBetreuung;
-		if (toCopy.betreuungen != null) {
-			this.betreuungen = new TreeSet<>();
-			for (Betreuung betreuung : toCopy.betreuungen) {
-				this.betreuungen.add(new Betreuung(betreuung, this));
-			}
-		}
-	}
 
 	public Gesuch getGesuch() {
 		return gesuch;
@@ -134,5 +120,21 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 		compareToBuilder.append(this.getKindNummer(), other.getKindNummer());
 		compareToBuilder.append(this.getId(), other.getId());
 		return compareToBuilder.toComparison();
+	}
+
+	public KindContainer copyForMutation(KindContainer mutation, @Nonnull Gesuch gesuchMutation) {
+		super.copyForMutation(mutation);
+		mutation.setGesuch(gesuchMutation);
+		mutation.setKindGS(null);
+		mutation.setKindJA(this.getKindJA().copyForMutation(new Kind()));
+		mutation.setKindNummer(this.getKindNummer());
+		mutation.setNextNumberBetreuung(this.getNextNumberBetreuung());
+		if (this.getBetreuungen() != null) {
+			mutation.setBetreuungen(new TreeSet<>());
+			for (Betreuung betreuung : this.getBetreuungen()) {
+				mutation.getBetreuungen().add(betreuung.copyForMutation(new Betreuung(), mutation));
+			}
+		}
+		return mutation;
 	}
 }

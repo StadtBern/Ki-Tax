@@ -22,15 +22,10 @@ public class Dokument extends File {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_dokument_dokumentgrund_id"), nullable = false)
 	private DokumentGrund dokumentGrund;
 
+
 	public Dokument() {
 	}
 
-	//copy
-	public Dokument(Dokument toCopy, final DokumentGrund dokumentGrund) {
-		super(toCopy);
-		this.setVorgaengerId(toCopy.getId());
-		this.dokumentGrund = dokumentGrund;
-	}
 
 	public Dokument(DokumentGrund dokumentGrund) {
 		this.dokumentGrund = dokumentGrund;
@@ -51,5 +46,11 @@ public class Dokument extends File {
 			", dokumentPfad='" + getFilepfad() + '\'' +
 			", dokumentSize='" + getFilesize() + '\'' +
 			'}';
+	}
+
+	public Dokument copyForMutation(Dokument mutation, DokumentGrund dokumentGrundMutation) {
+		super.copyForMutation(mutation);
+		mutation.setDokumentGrund(dokumentGrundMutation);
+		return mutation;
 	}
 }

@@ -28,11 +28,6 @@ public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigk
 	public AbstractDateRangedEntity() {
 	}
 
-	public AbstractDateRangedEntity(@Nonnull AbstractDateRangedEntity toCopy) {
-		this.setVorgaengerId(toCopy.getId());
-		this.gueltigkeit = new DateRange(toCopy.getGueltigkeit());
-	}
-
 	@Override
 	@Nonnull
 	public DateRange getGueltigkeit() {
@@ -59,5 +54,12 @@ public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigk
 		return new ToStringBuilder(this)
 			.append("gueltigkeit", gueltigkeit)
 			.toString();
+	}
+
+	public AbstractDateRangedEntity copyForMutation(AbstractDateRangedEntity mutation) {
+		super.copyForMutation(mutation);
+		mutation.setVorgaengerId(this.getId());
+		mutation.setGueltigkeit(new DateRange(this.getGueltigkeit()));
+		return mutation;
 	}
 }

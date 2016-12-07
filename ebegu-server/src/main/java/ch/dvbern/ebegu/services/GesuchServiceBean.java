@@ -540,7 +540,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	private Optional<Gesuch> getGesuchMutation(@Nonnull LocalDate eingangsdatum, Optional<Gesuch> gesuchForMutation) {
 		if (gesuchForMutation.isPresent()) {
-			Gesuch mutation = new Gesuch(gesuchForMutation.get());
+			Gesuch mutation = gesuchForMutation.get().copyForMutation(new Gesuch());
 			mutation.setEingangsdatum(eingangsdatum);
 			mutation.setStatus(AntragStatus.IN_BEARBEITUNG_JA); // todo im gesuch online darf dies auch IN_BEARBEITUNG_GS sein
 			return Optional.of(mutation);

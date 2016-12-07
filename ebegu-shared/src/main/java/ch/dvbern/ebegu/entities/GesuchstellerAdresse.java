@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.types.DateRange;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -33,12 +34,6 @@ public class GesuchstellerAdresse extends Adresse {
 	public GesuchstellerAdresse() {
 	}
 
-	public GesuchstellerAdresse(@Nonnull GesuchstellerAdresse toCopy, @Nonnull Gesuchsteller gesuchsteller) {
-		super(toCopy);
-		this.adresseTyp = toCopy.adresseTyp;
-		this.gesuchsteller = gesuchsteller;
-		this.nichtInGemeinde = toCopy.nichtInGemeinde;
-	}
 
 	public AdresseTyp getAdresseTyp() {
 		return adresseTyp;
@@ -86,5 +81,11 @@ public class GesuchstellerAdresse extends Adresse {
 		return AdresseTyp.KORRESPONDENZADRESSE.equals(this.getAdresseTyp());
 	}
 
-
+	public GesuchstellerAdresse copyForMutation(GesuchstellerAdresse mutation, Gesuchsteller gesuchstellerMutation) {
+		super.copyForMutation(mutation);
+		mutation.setAdresseTyp(this.getAdresseTyp());
+		mutation.setGesuchsteller(gesuchstellerMutation);
+		mutation.setNichtInGemeinde(this.nichtInGemeinde);
+		return mutation;
+	}
 }
