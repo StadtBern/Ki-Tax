@@ -18,6 +18,8 @@ export enum TSAntragStatus {
     VERFUEGT = <any> 'VERFUEGT'
 }
 
+export const IN_BEARBEITUNG_BASE_NAME = 'IN_BEARBEITUNG';
+
 export function getTSAntragStatusValues(): Array<TSAntragStatus> {
     return [
         TSAntragStatus.IN_BEARBEITUNG_GS,

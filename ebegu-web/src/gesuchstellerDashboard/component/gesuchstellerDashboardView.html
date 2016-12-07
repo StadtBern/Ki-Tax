@@ -52,8 +52,8 @@
                 <td class="ellipsis"
                     ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                     ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                <td class="ellipsis" ellipsis-tooltip="{{row.status | translate}}"
-                    ng-bind="row.status | translate"></td>
+                <td class="ellipsis" ellipsis-tooltip="{{vm.translate(row.status)}}"
+                    ng-bind="vm.translate(row.status)"></td>
                 <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
                     ng-bind="row.verantwortlicher"></td>
             </tr>

@@ -3,6 +3,9 @@ import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import PendenzRS from '../../pendenzen/service/PendenzRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import {TSAntragStatus, IN_BEARBEITUNG_BASE_NAME} from '../../models/enums/TSAntragStatus';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
+import EbeguUtil from '../../utils/EbeguUtil';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
@@ -22,10 +25,10 @@ export class GesuchstellerDashboardListViewController {
     totalResultCount: string = '-';
 
 
-    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS'];
+    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS', 'EbeguUtil'];
 
     constructor(private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
-                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS) {
+                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil) {
         this.initViewModel();
     }
 
@@ -57,5 +60,14 @@ export class GesuchstellerDashboardListViewController {
         }
     }
 
-
+    /**
+     * Status muss speziell uebersetzt werden damit Gesuchsteller nur "In Bearbeitung" sieht und nicht in "Bearbeitung Gesuchsteller"
+     */
+    public translate(status: TSAntragStatus) {
+        let isUserGesuchsteller: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles());
+        if (status === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller) {
+            return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
+        }
+        return this.ebeguUtil.translateString(TSAntragStatus[status]);
+    }
 }

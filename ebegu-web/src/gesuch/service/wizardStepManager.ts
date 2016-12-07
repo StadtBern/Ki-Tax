@@ -265,8 +265,7 @@ export default class WizardStepManager {
                     if (isAtLeastFreigegeben(gesuch.status)) {
                         return true;
                     }
-                }
-                else {
+                } else {
                     // ... alle anderen ab VERFUEGT
                     if (gesuch.status !== TSAntragStatus.VERFUEGT) {
                         return false;

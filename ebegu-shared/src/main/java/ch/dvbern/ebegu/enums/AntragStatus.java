@@ -8,7 +8,7 @@ import java.util.Set;
  */
 public enum AntragStatus {
     IN_BEARBEITUNG_GS,
-    FREIGABEQUITTUNG,
+    FREIGABEQUITTUNG,  //wird gesetzt solange freigabequittung im ja noch nicht eingescannt ist
     NUR_SCHULAMT,
     FREIGEGEBEN,
     IN_BEARBEITUNG_JA,

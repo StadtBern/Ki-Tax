@@ -4,10 +4,10 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {StammdatenViewController} from './stammdatenView';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {IStammdatenStateParams} from '../../gesuch.route';
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IScope = angular.IScope;
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import IQService = angular.IQService;
 
 describe('stammdatenView', function () {
@@ -16,6 +16,8 @@ describe('stammdatenView', function () {
     let stammdatenViewController: StammdatenViewController;
     let $stateParams: IStammdatenStateParams;
     let $q: IQService;
+    let $rootScope:  any;
+    let $scope: IScope;
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
@@ -28,8 +30,10 @@ describe('stammdatenView', function () {
         $stateParams.gesuchstellerNumber = 1;
         gesuchModelManager.initGesuch(false);
         $q = $injector.get('$q');
+        $rootScope = $injector.get('$rootScope');
+        $scope = $rootScope.$new();
         stammdatenViewController = new StammdatenViewController($stateParams, undefined, gesuchModelManager,
-            undefined, undefined, wizardStepManager, $injector.get('CONSTANTS'), $q);
+            undefined, undefined, wizardStepManager, $injector.get('CONSTANTS'), $q, $scope);
     }));
 
     describe('disableWohnadresseFor2GS', function () {

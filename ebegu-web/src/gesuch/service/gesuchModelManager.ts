@@ -398,9 +398,9 @@ export default class GesuchModelManager {
             let gesuchsteller: TSGesuchsteller;
             // die daten die wir aus iam importiert haben werden bei gs1 abgefuellt
             if (this.gesuchstellerNumber === 1) {
-                let name: string = this.authServiceRS.getPrincipal().nachname;
-                let vorname: string = this.authServiceRS.getPrincipal().vorname;
-                let email: string = this.authServiceRS.getPrincipal().email;
+                let name: string = this.authServiceRS.getPrincipal() ? this.authServiceRS.getPrincipal().nachname : undefined;
+                let vorname: string = this.authServiceRS.getPrincipal() ? this.authServiceRS.getPrincipal().vorname : undefined;
+                let email: string = this.authServiceRS.getPrincipal() ? this.authServiceRS.getPrincipal().email : undefined;
                 gesuchsteller = new TSGesuchsteller(vorname, name, undefined, undefined, email);
             } else{
                 gesuchsteller = new TSGesuchsteller();

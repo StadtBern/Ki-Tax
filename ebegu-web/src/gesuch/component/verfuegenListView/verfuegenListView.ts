@@ -126,17 +126,17 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public kannVerfuegungOeffnen(betreuung: TSBetreuung): boolean {
-        return this.isDetailAvailableForGesuchstatus() && this.isDetailAvailableForBetreuungstatus(betreuung.betreuungsstatus)
+        return this.isDetailAvailableForGesuchstatus() && this.isDetailAvailableForBetreuungstatus(betreuung.betreuungsstatus);
 
     }
 
-    private isDetailAvailableForGesuchstatus(): boolean{
+    private isDetailAvailableForGesuchstatus(): boolean {
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         //gesuchsteller hat sicher mal nur Zugriff auf verfuegungsdetail wenn das gesuch mindestens freiggeben ist
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
             return isAtLeastFreigegeben(status);
-        } else{
+        } else {
             return true;
         }
     }
@@ -146,7 +146,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let allowedBetstatus: Array<TSBetreuungsstatus> = [TSBetreuungsstatus.VERFUEGT, TSBetreuungsstatus.NICHT_EINGETRETEN];
         //Annahme: alle ausser Gesuchsteller duerfen bestaetigte betreuungen sehen wenn sie uberhaupt auf die Seite kommen
         if (!isGesuchsteller) {
-            allowedBetstatus.push(TSBetreuungsstatus.BESTAETIGT)
+            allowedBetstatus.push(TSBetreuungsstatus.BESTAETIGT);
         }
         return allowedBetstatus.indexOf(betreuungsstatus) !== -1;
     }
@@ -154,9 +154,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     /**
      * das FinanzielleSituation PDF ist fuer den Gesuchsteller erst sichtbar sobald der Antrag den Status VERFUEGT erreicht hat
      */
-    public isFinanziellesituationPDFVisible() : boolean {
+    public isFinanziellesituationPDFVisible(): boolean {
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
-        if(isGesuchsteller){
+        if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
             return status === TSAntragStatus.VERFUEGT;
         }
@@ -164,7 +164,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     }
 
-    public isBegleitschreibenVisible () : boolean {
+    public isBegleitschreibenVisible(): boolean {
         //aktuell verhelt sich das imho gleich wie finanzielle Situation PDF Sichtbarkeit
         return this.isFinanziellesituationPDFVisible();
     }
@@ -230,7 +230,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return false;
     }
 
-    public isFristAbgelaufen(mahnung : TSMahnung): boolean {
+    public isFristAbgelaufen(mahnung: TSMahnung): boolean {
         return mahnung.datumFristablauf.isBefore(DateUtil.today());
     }
 
