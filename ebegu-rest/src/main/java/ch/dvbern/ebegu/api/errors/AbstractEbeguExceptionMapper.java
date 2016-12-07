@@ -80,6 +80,7 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 				return MediaType.APPLICATION_XML_TYPE;
 			}
 		}
+		LOG.debug("Minor Warning: AcceptedMediaType list for resourcecall does not contain xml or json types");
 		return null;
 	}
 

@@ -38,7 +38,7 @@ export class VerfuegenListViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class VerfuegenListViewController extends AbstractGesuchViewController {
+export class VerfuegenListViewController extends AbstractGesuchViewController<any> {
 
     private kinderWithBetreuungList: Array<TSKindContainer>;
     mahnungList: TSMahnung[];

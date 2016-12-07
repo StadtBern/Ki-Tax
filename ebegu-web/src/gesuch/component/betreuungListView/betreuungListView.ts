@@ -30,7 +30,7 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
 /**
  * View fuer die Liste der Betreeungen der eingegebenen Kinder
  */
-export class BetreuungListViewController extends AbstractGesuchViewController {
+export class BetreuungListViewController extends AbstractGesuchViewController<any> {
 
     static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
         'ErrorService', 'WizardStepManager'];

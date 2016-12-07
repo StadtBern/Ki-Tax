@@ -1,2 +1,0 @@
-ALTER TABLE verfuegung_zeitabschnitt CHANGE massgebendes_einkommen massgebendes_einkommen_vor_abzug_famgr DECIMAL(19, 2);
-ALTER TABLE verfuegung_zeitabschnitt_aud CHANGE massgebendes_einkommen massgebendes_einkommen_vor_abzug_famgr DECIMAL(19, 2);

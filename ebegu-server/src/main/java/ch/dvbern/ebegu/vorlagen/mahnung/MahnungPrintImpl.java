@@ -25,12 +25,12 @@ import java.util.stream.Collectors;
  * <p>
  * Created by medu on 16/11/2016.
  */
-public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
+public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 	private Mahnung mahnung;
 	private Mahnung vorgaengerMahnung;
 
-	public ManhungPrintImpl(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) {
+	public MahnungPrintImpl(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) {
 
 		super(mahnung.getGesuch());
 		this.mahnung = mahnung;
@@ -42,32 +42,47 @@ public class ManhungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 		}
 	}
 
+	private String concatenateAngebot(List<String> listAngebot) {
+		StringBuilder angebot = new StringBuilder();
+
+		for (int i = 0; i < listAngebot.size(); i++) {
+			angebot.append(listAngebot.get(i));
+			if (i + 2 == listAngebot.size() && listAngebot.size() > 1) {
+				angebot.append(" und ");
+			} else if (i + 1 < listAngebot.size()) {
+				angebot.append(", ");
+			}
+		}
+
+		return angebot.toString();
+	}
+
+
 	@Override
 	public String getAngebotFull() {
 
-		List<String> angebotFull = new ArrayList<>();
+		List<String> listAngebot = new ArrayList<>();
 
 		for (KindContainer kindContainer : getGesuch().getKindContainers()) {
-			angebotFull.addAll(
+			listAngebot.addAll(
 				kindContainer.getBetreuungen().stream()
-					.map(betreuung -> betreuung.getKind().getKindGS().getFullName() + " (" + betreuung.getInstitutionStammdaten().getInstitution().getName() + ")")
-					.collect(Collectors.toList())
-			);
+					.map(betreuung -> betreuung.getKind().getKindJA().getFullName() + " (" + betreuung.getInstitutionStammdaten().getInstitution().getName() + ")")
+					.collect(Collectors.toList()));
 		}
 
-		return angebotFull.stream()
-			.collect(Collectors.joining(", "));
+		return concatenateAngebot(listAngebot);
 
 	}
 
 	@Override
 	public String getAngebotShort() {
 
-		String angebotShort = getGesuch().getKindContainers().stream()
-			.map(kindContainer -> kindContainer.getKindGS().getFullName())
-			.collect(Collectors.joining(", "));
+		List<String> listAngebot = getGesuch().getKindContainers().stream()
+			.filter(kindContainer -> !kindContainer.getBetreuungen().isEmpty())
+			.map(kindContainer -> kindContainer.getKindJA().getFullName())
+			.collect(Collectors.toList());
 
-		return angebotShort;
+		return concatenateAngebot(listAngebot);
 
 	}
 

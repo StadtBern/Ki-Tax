@@ -548,6 +548,7 @@ public class JaxBConverter {
 		if (antragJAXP.getTyp() != null) {
 			antrag.setTyp(antragJAXP.getTyp());
 		}
+		antrag.setEingangsart(antragJAXP.getEingangsart());
 
 		if (antragJAXP.getGesuchsteller1() != null && antragJAXP.getGesuchsteller1().getId() != null) {
 			final Optional<Gesuchsteller> gesuchsteller1 = gesuchstellerService.findGesuchsteller(antragJAXP.getGesuchsteller1().getId());
@@ -611,6 +612,7 @@ public class JaxBConverter {
 		jaxGesuch.setEingangsdatum(persistedGesuch.getEingangsdatum());
 		jaxGesuch.setStatus(AntragStatusConverterUtil.convertStatusToDTO(persistedGesuch, persistedGesuch.getStatus()));
 		jaxGesuch.setTyp(persistedGesuch.getTyp());
+		jaxGesuch.setEingangsart(persistedGesuch.getEingangsart());
 
 		if (persistedGesuch.getGesuchsteller1() != null) {
 			jaxGesuch.setGesuchsteller1(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller1()));
