@@ -115,8 +115,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 * copy Konstruktor
 	 */
 	public VerfuegungZeitabschnitt(VerfuegungZeitabschnitt toCopy) {
-		//TODO (team) stimmt das so?
-//		this.setVorgaengerId(toCopy.getVorgaengerId());
 		this.setVorgaengerId(toCopy.getId());
 		this.setGueltigkeit(new DateRange(toCopy.getGueltigkeit()));
 		this.erwerbspensumGS1 = toCopy.erwerbspensumGS1;

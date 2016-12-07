@@ -40,9 +40,7 @@ public class Familiensituation extends AbstractEntity {
 	}
 
 	public Familiensituation(Familiensituation that) {
-		//TODO (team) stimmt das????
 		this.setVorgaengerId(that.getId());
-//		this.setVorgaengerId(that.getVorgaengerId());
 		this.familienstatus = that.familienstatus;
 		this.gemeinsameSteuererklaerung = that.gemeinsameSteuererklaerung;
 		this.gesuchstellerKardinalitaet = that.gesuchstellerKardinalitaet;
