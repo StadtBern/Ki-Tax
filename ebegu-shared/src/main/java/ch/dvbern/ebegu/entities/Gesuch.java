@@ -8,7 +8,6 @@ import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -347,13 +346,13 @@ public class Gesuch extends AbstractEntity {
 			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
 	}
 
-	public Gesuch copyForMutation(Gesuch mutation) {
+	public Gesuch copyForMutation(Gesuch mutation, Eingangsart eingangsart) {
 		super.copyForMutation(mutation);
-		//TODO (hefr) Eingangsart???
+		mutation.setEingangsart(eingangsart);
 		mutation.setFall(this.getFall());
 		mutation.setGesuchsperiode(this.getGesuchsperiode());
 		mutation.setEingangsdatum(null);
-		mutation.setStatus(AntragStatus.IN_BEARBEITUNG_JA); //TODO (team) abhaengig vom eingeloggten Benutzer!
+		mutation.setStatus(eingangsart == Eingangsart.PAPIER ?  AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
 		mutation.setTyp(AntragTyp.MUTATION);
 
 		if (this.getGesuchsteller1() != null) {

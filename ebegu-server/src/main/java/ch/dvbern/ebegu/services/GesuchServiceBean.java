@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.PredicateObjectDTO;
@@ -58,6 +59,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private GesuchsperiodeService gesuchsperiodeService;
 	@Inject
 	private Authorizer authorizer;
+	@Inject
+	private PrincipalBean principalBean;
 
 	@Nonnull
 	@Override
@@ -540,9 +543,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	private Optional<Gesuch> getGesuchMutation(@Nonnull LocalDate eingangsdatum, Optional<Gesuch> gesuchForMutation) {
 		if (gesuchForMutation.isPresent()) {
-			Gesuch mutation = gesuchForMutation.get().copyForMutation(new Gesuch());
+			Eingangsart eingangsart;
+			if(this.principalBean.isCallerInRole(UserRole.GESUCHSTELLER)){
+				eingangsart = Eingangsart.ONLINE;
+			} else{
+				eingangsart = Eingangsart.PAPIER;
+			}
+			Gesuch mutation = gesuchForMutation.get().copyForMutation(new Gesuch(), eingangsart);
 			mutation.setEingangsdatum(eingangsdatum);
-			mutation.setStatus(AntragStatus.IN_BEARBEITUNG_JA); // todo im gesuch online darf dies auch IN_BEARBEITUNG_GS sein
 			return Optional.of(mutation);
 		}
 		return Optional.empty();
