@@ -39,16 +39,10 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_finanzielleSituationJA_id"), nullable = true)
 	private FinanzielleSituation finanzielleSituationJA;
 
+
 	public FinanzielleSituationContainer() {
 	}
 
-	public FinanzielleSituationContainer(@Nonnull FinanzielleSituationContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
-		this.setVorgaengerId(toCopy.getId());
-		this.gesuchsteller = gesuchsteller;
-		this.jahr = toCopy.jahr;
-		this.finanzielleSituationGS = null;
-		this.finanzielleSituationJA = new FinanzielleSituation(toCopy.finanzielleSituationJA);
-	}
 
 	public Gesuchsteller getGesuchsteller() {
 		return gesuchsteller;
@@ -80,5 +74,14 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 
 	public void setFinanzielleSituationJA(FinanzielleSituation finanzielleSituationJA) {
 		this.finanzielleSituationJA = finanzielleSituationJA;
+	}
+
+	public FinanzielleSituationContainer copyForMutation(FinanzielleSituationContainer mutation, @Nonnull Gesuchsteller gesuchstellerMutation) {
+		super.copyForMutation(mutation);
+		mutation.setGesuchsteller(gesuchstellerMutation);
+		mutation.setJahr(this.getJahr());
+		mutation.setFinanzielleSituationGS(null);
+		mutation.setFinanzielleSituationJA(this.getFinanzielleSituationJA().copyForMutation(new FinanzielleSituation()));
+		return mutation;
 	}
 }

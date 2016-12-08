@@ -183,4 +183,18 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	public void setGemeinsameSteuererklaerung_BjP2(@Nullable Boolean gemeinsameSteuererklaerung_BjP2) {
 		this.gemeinsameSteuererklaerung_BjP2 = gemeinsameSteuererklaerung_BjP2;
 	}
+
+	public EinkommensverschlechterungInfo copyForMutation(EinkommensverschlechterungInfo mutation) {
+		super.copyForMutation(mutation);
+		mutation.setEinkommensverschlechterung(this.getEinkommensverschlechterung());
+		mutation.setEkvFuerBasisJahrPlus1(this.getEkvFuerBasisJahrPlus1());
+		mutation.setEkvFuerBasisJahrPlus2(this.getEkvFuerBasisJahrPlus2());
+		mutation.setGemeinsameSteuererklaerung_BjP1(this.getGemeinsameSteuererklaerung_BjP1());
+		mutation.setGemeinsameSteuererklaerung_BjP2(this.getGemeinsameSteuererklaerung_BjP2());
+		mutation.setGrundFuerBasisJahrPlus1(this.getGrundFuerBasisJahrPlus1());
+		mutation.setGrundFuerBasisJahrPlus2(this.getGrundFuerBasisJahrPlus2());
+		mutation.setStichtagFuerBasisJahrPlus1(this.getStichtagFuerBasisJahrPlus1());
+		mutation.setStichtagFuerBasisJahrPlus2(this.getStichtagFuerBasisJahrPlus2());
+		return mutation;
+	}
 }

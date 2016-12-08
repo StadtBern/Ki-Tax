@@ -1,5 +1,3 @@
--- TODO (hefr) evt. Testträgerschaft löschen
-
 -- Traegerschaften
 INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, active)
 VALUES ('11111111-1111-1111-1111-111111111111', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0,
