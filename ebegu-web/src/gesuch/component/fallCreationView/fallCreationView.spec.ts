@@ -66,7 +66,7 @@ describe('fallCreationView', function () {
             spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuchsperiode);
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(true);
-            expect(fallCreationview.getTitle()).toBe('Erstgesuch der Periode 2016/2017');
+            expect(fallCreationview.getTitle()).toBe('Erstgesuch der Periode 2016/17');
         });
         it('should return Erstgesuch', () => {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);

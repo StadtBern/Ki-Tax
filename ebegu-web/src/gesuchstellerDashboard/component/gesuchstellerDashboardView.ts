@@ -27,7 +27,6 @@ export class GesuchstellerDashboardListViewController {
 
     private antragList : Array<TSAntragDTO> = [];
     private _activeGesuchsperiodenList: Array<TSGesuchsperiode>;
-    private fall: TSFall;
     private fallId: string;
     totalResultCount: string = '-';
 
@@ -47,7 +46,6 @@ export class GesuchstellerDashboardListViewController {
 
     private updateAntragList() {
         this.fallRS.findFallByCurrentBenutzerAsBesitzer().then((existingFall: TSFall) => {
-            this.fall = existingFall;
             this.fallId = existingFall.id;
             this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
                 this.antragList = angular.copy(response);
