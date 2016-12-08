@@ -365,7 +365,9 @@ public class Gesuch extends AbstractEntity {
 			mutation.addKindContainer(kindContainer.copyForMutation(new KindContainer(), mutation));
 		}
 		mutation.setAntragStatusHistories(new LinkedHashSet<>());
-		mutation.setFamiliensituation(this.getFamiliensituation().copyForMutation(new Familiensituation()));
+		if (this.getFamiliensituation() != null) {
+			mutation.setFamiliensituation(this.getFamiliensituation().copyForMutation(new Familiensituation()));
+		}
 
 		if (this.isMutation()) {
 			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationErstgesuch());
