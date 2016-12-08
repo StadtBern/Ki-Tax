@@ -1042,6 +1042,15 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Wenn das Gesuch Online durch den GS erstellt wurde, nun aber in Bearbeitung beim JA ist, handelt es sich um
+     * den Korrekturmodus des Jugendamtes.
+     * @returns {boolean}
+     */
+    public isKorrekturModusJugendamt(): boolean {
+        return this.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) && (TSEingangsart.ONLINE === this.getGesuch().eingangsart);
+    }
+
+    /**
      * Einige Status wie GEPRUEFT haben "substatus" auf dem Client die berechnet werden muessen. Aus diesem Grund rufen wir
      * diese Methode auf, bevor wir den Wert setzen.
      * @param status

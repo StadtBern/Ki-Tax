@@ -102,7 +102,7 @@
                                       style="color: black"></span>
                             </td>
                             <td>
-                                <span ng-if="!vm.isGesuchReadonly()"
+                                <span ng-if="!vm.isGesuchReadonly() && !vm.gesuchModelManager.isKorrekturModusJugendamt()"
                                       ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
                                       style="color: black"></span>
                             </td>
