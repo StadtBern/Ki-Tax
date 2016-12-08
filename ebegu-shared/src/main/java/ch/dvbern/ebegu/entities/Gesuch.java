@@ -89,8 +89,8 @@ public class Gesuch extends AbstractEntity {
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfo_id"))
-	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfoContainer_id"))
+	private EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer;
 
 	@Transient
 	private FinanzDatenDTO finanzDatenDTO;
@@ -141,8 +141,8 @@ public class Gesuch extends AbstractEntity {
 			this.familiensituationErstgesuch = toCopy.getFamiliensituation();
 		}
 
-		if (toCopy.getEinkommensverschlechterungInfo() != null) {
-			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
+		if (toCopy.getEinkommensverschlechterungInfoContainer() != null) {
+			this.setEinkommensverschlechterungInfoContainer(new EinkommensverschlechterungInfoContainer(toCopy.getEinkommensverschlechterungInfoContainer()));
 		}
 
 		if (toCopy.dokumentGrunds != null) {
@@ -210,16 +210,13 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
-	public EinkommensverschlechterungInfo getEinkommensverschlechterungInfo() {
-		return einkommensverschlechterungInfo;
+	public EinkommensverschlechterungInfo extractEinkommensverschlechterungInfo() {
+		if (einkommensverschlechterungInfoContainer != null) {
+			return einkommensverschlechterungInfoContainer.getEinkommensverschlechterungInfoJA();
+		}
+		return null;
 	}
 
-	public void setEinkommensverschlechterungInfo(@Nullable final EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
-		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
-		if (this.einkommensverschlechterungInfo != null) {
-			this.einkommensverschlechterungInfo.setGesuch(this);
-		}
-	}
 
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
@@ -312,6 +309,15 @@ public class Gesuch extends AbstractEntity {
 
 	public void setLaufnummer(@Nullable int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	@Nullable
+	public EinkommensverschlechterungInfoContainer getEinkommensverschlechterungInfoContainer() {
+		return einkommensverschlechterungInfoContainer;
+	}
+
+	public void setEinkommensverschlechterungInfoContainer(@Nullable EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer) {
+		this.einkommensverschlechterungInfoContainer = einkommensverschlechterungInfoContainer;
 	}
 
 	@SuppressWarnings("ObjectEquality")

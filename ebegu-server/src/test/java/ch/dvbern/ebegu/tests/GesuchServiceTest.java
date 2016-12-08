@@ -111,7 +111,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final Collection<Gesuch> allGesuche = readGesucheAsAdmin();
 		Assert.assertEquals(1, allGesuche.size());
 		Gesuch gesuch = allGesuche.iterator().next();
-		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.getEinkommensverschlechterungInfo();
+		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.extractEinkommensverschlechterungInfo();
 		Assert.assertNotNull(einkommensverschlechterungInfo);
 		Assert.assertTrue(einkommensverschlechterungInfo.getEinkommensverschlechterung());
 		Assert.assertTrue(einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus1());

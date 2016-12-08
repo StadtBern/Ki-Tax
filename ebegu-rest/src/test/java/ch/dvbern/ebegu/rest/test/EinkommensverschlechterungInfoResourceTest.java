@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.api.dtos.JaxFall;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.resource.EinkommensverschlechterungInfoResource;
@@ -34,7 +34,6 @@ import javax.ws.rs.core.UriInfo;
 public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRestLoginTest {
 
 
-
 	@Inject
 	private EinkommensverschlechterungInfoResource einkommensverschlechterungInfoResource;
 
@@ -54,7 +53,6 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 	private Persistence<Benutzer> persistence;
 
 
-
 	@Test
 	public void createEinkommensverschlechterungInfoTest() throws EbeguException {
 
@@ -63,15 +61,15 @@ public class EinkommensverschlechterungInfoResourceTest extends AbstractEbeguRes
 
 		JaxGesuch gesuch = gesuchResource.findGesuch(converter.toJaxId(returnedGesuch));
 		Assert.assertNotNull(gesuch);
-		Assert.assertNull(gesuch.getEinkommensverschlechterungInfo());
+		Assert.assertNull(gesuch.getEinkommensverschlechterungInfoContainer());
 
-		final JaxEinkommensverschlechterungInfo testJaxEinkommensverschlechterungInfo = TestJaxDataUtil.createTestJaxEinkommensverschlechterungInfo();
+		final JaxEinkommensverschlechterungInfoContainer testJaxEinkommensverschlechterungInfo = TestJaxDataUtil.createTestJaxEinkommensverschlechterungInfoContainer();
 
 		einkommensverschlechterungInfoResource.saveEinkommensverschlechterungInfo(converter.toJaxId(returnedGesuch), testJaxEinkommensverschlechterungInfo, uri, null);
 
 		gesuch = gesuchResource.findGesuch(converter.toJaxId(returnedGesuch));
 		Assert.assertNotNull(gesuch);
-		Assert.assertNotNull(gesuch.getEinkommensverschlechterungInfo());
+		Assert.assertNotNull(gesuch.getEinkommensverschlechterungInfoContainer());
 	}
 
 	private JaxGesuch crateJaxGesuch(UriInfo uri) throws EbeguException {

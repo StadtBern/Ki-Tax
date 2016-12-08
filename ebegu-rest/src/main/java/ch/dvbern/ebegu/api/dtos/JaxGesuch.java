@@ -1,7 +1,5 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.entities.Familiensituation;
-
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -35,7 +33,7 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private JaxFamiliensituation familiensituationErstgesuch;
 
 	@Nullable
-	private JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo;
+	private JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer;
 
 	@Nullable
 	private String bemerkungen;
@@ -84,12 +82,12 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	}
 
 	@Nullable
-	public JaxEinkommensverschlechterungInfo getEinkommensverschlechterungInfo() {
-		return einkommensverschlechterungInfo;
+	public JaxEinkommensverschlechterungInfoContainer getEinkommensverschlechterungInfoContainer() {
+		return einkommensverschlechterungInfoContainer;
 	}
 
-	public void setEinkommensverschlechterungInfo(@Nullable final JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo) {
-		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
+	public void setEinkommensverschlechterungInfoContainer(@Nullable final JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer) {
+		this.einkommensverschlechterungInfoContainer = einkommensverschlechterungInfoContainer;
 	}
 
 	@Nullable

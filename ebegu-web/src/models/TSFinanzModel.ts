@@ -4,6 +4,7 @@ import TSFinanzielleSituation from './TSFinanzielleSituation';
 import TSEinkommensverschlechterungContainer from './TSEinkommensverschlechterungContainer';
 import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
 import TSEinkommensverschlechterung from './TSEinkommensverschlechterung';
+import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlechterungInfoContainer';
 
 export default class TSFinanzModel {
 
@@ -12,7 +13,7 @@ export default class TSFinanzModel {
     private _finanzielleSituationContainerGS2: TSFinanzielleSituationContainer;
     private _einkommensverschlechterungContainerGS1: TSEinkommensverschlechterungContainer;
     private _einkommensverschlechterungContainerGS2: TSEinkommensverschlechterungContainer;
-    private _einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo;
+    private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
 
     private basisjahr: number;
     private basisjahrPlus: number;
@@ -62,10 +63,10 @@ export default class TSFinanzModel {
     }
 
     copyEkvDataFromGesuch(gesuch: TSGesuch) {
-        if (gesuch.einkommensverschlechterungInfo) {
-            this.einkommensverschlechterungInfo = angular.copy(gesuch.einkommensverschlechterungInfo);
+        if (gesuch.einkommensverschlechterungInfoContainer) {
+            this.einkommensverschlechterungInfoContainer = angular.copy(gesuch.einkommensverschlechterungInfoContainer);
         } else {
-            this.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo;
+            this.einkommensverschlechterungInfoContainer = new TSEinkommensverschlechterungInfoContainer;
         }
         //geesuchstelelr1 nullsave?
         this.einkommensverschlechterungContainerGS1 = angular.copy(gesuch.gesuchsteller1.einkommensverschlechterungContainer);
@@ -104,7 +105,7 @@ export default class TSFinanzModel {
     }
 
     copyEkvSitDataToGesuch(gesuch: TSGesuch): TSGesuch {
-        gesuch.einkommensverschlechterungInfo = this.einkommensverschlechterungInfo;
+        gesuch.einkommensverschlechterungInfoContainer = this.einkommensverschlechterungInfoContainer;
         gesuch.gesuchsteller1.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerGS1;
         if (gesuch.gesuchsteller2) {
             gesuch.gesuchsteller2.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerGS2;
@@ -193,12 +194,12 @@ export default class TSFinanzModel {
     }
 
 
-    get einkommensverschlechterungInfo(): TSEinkommensverschlechterungInfo {
-        return this._einkommensverschlechterungInfo;
+    get einkommensverschlechterungInfoContainer(): TSEinkommensverschlechterungInfoContainer {
+        return this._einkommensverschlechterungInfoContainer;
     }
 
-    set einkommensverschlechterungInfo(value: TSEinkommensverschlechterungInfo) {
-        this._einkommensverschlechterungInfo = value;
+    set einkommensverschlechterungInfoContainer(value: TSEinkommensverschlechterungInfoContainer) {
+        this._einkommensverschlechterungInfoContainer = value;
     }
 
     public initEinkommensverschlechterungContainer(basisjahrPlus: number, gesuchstellerNumber: number): void {
@@ -242,9 +243,9 @@ export default class TSFinanzModel {
 
     public getGemeinsameSteuererklaerungToWorkWith(): boolean {
         if (this.basisjahrPlus === 2) {
-            return this.einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP2;
+            return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.gemeinsameSteuererklaerung_BjP2;
         } else {
-            return this.einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP1;
+            return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.gemeinsameSteuererklaerung_BjP1;
         }
     }
 

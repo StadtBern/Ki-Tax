@@ -178,9 +178,9 @@ public class EinkommensverschlechterungResource {
 			gesuch.getGesuchsteller2().setEinkommensverschlechterungContainer(
 				converter.einkommensverschlechterungContainerToStorableEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS2()));
 		}
-		if (jaxFinSitModel.getEinkommensverschlechterungInfo() != null) {
-			gesuch.setEinkommensverschlechterungInfo(
-				converter.einkommensverschlechterungInfoToEntity(jaxFinSitModel.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
+		if (jaxFinSitModel.getEinkommensverschlechterungInfoContainer() != null) {
+			gesuch.setEinkommensverschlechterungInfoContainer(
+				converter.einkommensverschlechterungInfoContainerToEntity(jaxFinSitModel.getEinkommensverschlechterungInfoContainer(), new EinkommensverschlechterungInfoContainer()));
 		}
 
 		FinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, basisJahrPlus);

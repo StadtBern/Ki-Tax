@@ -46,7 +46,7 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 			gesuch.getFamiliensituation().getGemeinsameSteuererklaerung() != null &&
 			gesuch.getFamiliensituation().getGemeinsameSteuererklaerung();
 
-		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.getEinkommensverschlechterungInfo();
+		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.extractEinkommensverschlechterungInfo();
 
 		final String basisJahrPlus1 = String.valueOf(gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear() + 1);
 		final String basisJahrPlus2 = String.valueOf(gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear() + 2);

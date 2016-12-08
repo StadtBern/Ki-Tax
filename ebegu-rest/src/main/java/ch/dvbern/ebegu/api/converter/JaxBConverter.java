@@ -316,7 +316,7 @@ public class JaxBConverter {
 			final GesuchstellerAdresse altAddrToMerge = gesuchstellerAdresseToEntity(gesuchstellerJAXP.getAlternativeAdresse(), currentAltAdr);
 			gesuchsteller.addAdresse(altAddrToMerge);
 		} //else case: Wenn das haeklein "Zustell / Postadrsse" auf client weggenommen wird muss die Korrespondezadr auf dem Server geloescht werden.
-		else{
+		else {
 			for (Iterator<GesuchstellerAdresse> iterator = gesuchsteller.getAdressen().iterator(); iterator.hasNext(); ) {
 				GesuchstellerAdresse next = iterator.next();
 				if (next.isKorrespondenzAdresse()) {
@@ -369,8 +369,7 @@ public class JaxBConverter {
 		for (int i = 0; i < wohnadressen.size(); i++) {
 			if ((i < wohnadressen.size() - 1)) {
 				wohnadressen.get(i).getGueltigkeit().setGueltigBis(wohnadressen.get(i + 1).getGueltigkeit().getGueltigAb().minusDays(1));
-			}
-			else {
+			} else {
 				wohnadressen.get(i).getGueltigkeit().setGueltigBis(Constants.END_OF_TIME); // by default das letzte Datum hat BIS=END_OF_TIME
 			}
 		}
@@ -455,6 +454,36 @@ public class JaxBConverter {
 		jaxFamiliensituation.setGemeinsameSteuererklaerung(persistedFamiliensituation.getGemeinsameSteuererklaerung());
 		jaxFamiliensituation.setAenderungPer(persistedFamiliensituation.getAenderungPer());
 		return jaxFamiliensituation;
+	}
+
+	public EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainerToEntity(@Nonnull final JaxEinkommensverschlechterungInfoContainer containerJAX,
+																								   @Nonnull final EinkommensverschlechterungInfoContainer container) {
+		Validate.notNull(container);
+		Validate.notNull(containerJAX);
+		convertAbstractFieldsToEntity(containerJAX, container);
+		EinkommensverschlechterungInfo evkInfoToMergeWith;
+		//Im moment kann eine einmal gespeicherte Finanzielle Situation nicht mehr entfernt werden.
+		if (containerJAX.getEinkommensverschlechterungInfoGS() != null) {
+			evkInfoToMergeWith = Optional.ofNullable(container.getEinkommensverschlechterungInfoGS()).orElse(new EinkommensverschlechterungInfo());
+			container.setEinkommensverschlechterungInfoGS(einkommensverschlechterungInfoToEntity(containerJAX.getEinkommensverschlechterungInfoGS(), evkInfoToMergeWith));
+		}
+		if (containerJAX.getEinkommensverschlechterungInfoJA() != null) {
+			evkInfoToMergeWith = Optional.ofNullable(container.getEinkommensverschlechterungInfoJA()).orElse(new EinkommensverschlechterungInfo());
+			container.setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoToEntity(containerJAX.getEinkommensverschlechterungInfoJA(), evkInfoToMergeWith));
+		}
+		return container;
+	}
+
+	public JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainerToJAX(final EinkommensverschlechterungInfoContainer persistedEinkommensverschlechterungInfo) {
+		final JaxEinkommensverschlechterungInfoContainer jaxEkvic = new JaxEinkommensverschlechterungInfoContainer();
+		convertAbstractFieldsToJAX(persistedEinkommensverschlechterungInfo, jaxEkvic);
+		if (persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoGS() != null) {
+			jaxEkvic.setEinkommensverschlechterungInfoGS(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoGS()));
+		}
+		if (persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA() != null) {
+			jaxEkvic.setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA()));
+		}
+		return jaxEkvic;
 	}
 
 	public EinkommensverschlechterungInfo einkommensverschlechterungInfoToEntity(@Nonnull final JaxEinkommensverschlechterungInfo einkommensverschlechterungInfoJAXP, @Nonnull final EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
@@ -582,16 +611,16 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituationErstgesuch().getId());
 			}
 		}
-		if (antragJAXP.getEinkommensverschlechterungInfo() != null) {
-			if (antragJAXP.getEinkommensverschlechterungInfo().getId() != null) {
-				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfo().getId());
+		if (antragJAXP.getEinkommensverschlechterungInfoContainer() != null) {
+			if (antragJAXP.getEinkommensverschlechterungInfoContainer().getId() != null) {
+				final Optional<EinkommensverschlechterungInfoContainer> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfoContainer().getId());
 				if (evkiSituation.isPresent()) {
-					antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
+					antrag.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfoContainerToEntity(antragJAXP.getEinkommensverschlechterungInfoContainer(), evkiSituation.get()));
 				} else {
-					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getEinkommensverschlechterungInfo().getId());
+					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getEinkommensverschlechterungInfoContainer().getId());
 				}
 			} else {
-				antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
+				antrag.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfoContainerToEntity(antragJAXP.getEinkommensverschlechterungInfoContainer(), new EinkommensverschlechterungInfoContainer()));
 			}
 		}
 
@@ -629,8 +658,8 @@ public class JaxBConverter {
 		for (final KindContainer kind : persistedGesuch.getKindContainers()) {
 			jaxGesuch.getKindContainers().add(kindContainerToJAX(kind));
 		}
-		if (persistedGesuch.getEinkommensverschlechterungInfo() != null) {
-			jaxGesuch.setEinkommensverschlechterungInfo(this.einkommensverschlechterungInfoToJAX(persistedGesuch.getEinkommensverschlechterungInfo()));
+		if (persistedGesuch.extractEinkommensverschlechterungInfo() != null) {
+			jaxGesuch.setEinkommensverschlechterungInfoContainer(this.einkommensverschlechterungInfoContainerToJAX(persistedGesuch.getEinkommensverschlechterungInfoContainer()));
 		}
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
@@ -1171,8 +1200,8 @@ public class JaxBConverter {
 		Validate.notNull(storedErwerbspensumCont);
 		final JaxErwerbspensumContainer jaxEwpCont = new JaxErwerbspensumContainer();
 		convertAbstractFieldsToJAX(storedErwerbspensumCont, jaxEwpCont);
-			jaxEwpCont.setErwerbspensumGS(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumGS()));
-			jaxEwpCont.setErwerbspensumJA(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumJA()));
+		jaxEwpCont.setErwerbspensumGS(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumGS()));
+		jaxEwpCont.setErwerbspensumJA(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumJA()));
 		return jaxEwpCont;
 	}
 

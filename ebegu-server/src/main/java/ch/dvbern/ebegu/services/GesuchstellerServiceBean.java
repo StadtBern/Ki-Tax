@@ -52,7 +52,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainer);
 		}
 
-		if (gesuch.isMutation() && gesuch.getEinkommensverschlechterungInfo() == null
+		if (gesuch.isMutation() && gesuch.extractEinkommensverschlechterungInfo() == null
 			&& gsNumber == 2 && gesuchsteller.getEinkommensverschlechterungContainer() == null) {
 
 			EinkommensverschlechterungContainer evContainer = new EinkommensverschlechterungContainer();

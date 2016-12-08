@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -66,11 +67,6 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	@Nullable
 	@Column(nullable = true)
 	private LocalDate stichtagFuerBasisJahrPlus2;
-
-	@NotNull
-	@Valid
-	@OneToOne(optional = false, mappedBy = "einkommensverschlechterungInfo")
-	private Gesuch gesuch;
 
 	public EinkommensverschlechterungInfo(){
 	}
@@ -151,19 +147,6 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 
 	public void setStichtagFuerBasisJahrPlus2(@Nullable final LocalDate stichtagFuerBasisJahrPlus2) {
 		this.stichtagFuerBasisJahrPlus2 = stichtagFuerBasisJahrPlus2;
-	}
-
-	public Gesuch getGesuch() {
-		return gesuch;
-	}
-
-	public void setGesuch(Gesuch gesuch) {
-		this.gesuch = gesuch;
-
-		if (gesuch != null &&
-			(gesuch.getEinkommensverschlechterungInfo() == null || !gesuch.getEinkommensverschlechterungInfo().equals(this))) {
-			gesuch.setEinkommensverschlechterungInfo(this);
-		}
 	}
 
 	@Nullable

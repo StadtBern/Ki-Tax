@@ -53,7 +53,7 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
-        return this.model.einkommensverschlechterungInfo;
+        return this.model.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA;
     }
 
     showSteuerveranlagung_BjP1(): boolean {

@@ -547,7 +547,7 @@ CREATE TABLE einkommensverschlechterung_container_aud (
 
 CREATE TABLE einkommensverschlechterung_info_aud (
   id                               VARCHAR(36) NOT NULL,
-  rev                              INTEGER     NOT NULL,
+  rev                              INTEGER NOT NULL,
   revtype                          TINYINT,
   timestamp_erstellt               DATETIME,
   timestamp_mutiert                DATETIME,
@@ -599,6 +599,33 @@ CREATE TABLE einkommensverschlechterung_info (
   grund_fuer_basis_jahr_plus2      VARCHAR(255),
   stichtag_fuer_basis_jahr_plus1   DATE,
   stichtag_fuer_basis_jahr_plus2   DATE,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE einkommensverschlechterung_info_container_aud (
+  id                                   VARCHAR(36) NOT NULL,
+  rev                                  INTEGER NOT NULL,
+  revtype                              TINYINT,
+  timestamp_erstellt                   DATETIME,
+  timestamp_mutiert                    DATETIME,
+  user_erstellt                        VARCHAR(36),
+  user_mutiert                         VARCHAR(36),
+  vorgaenger_id                        VARCHAR(36),
+  einkommensverschlechterung_infogs_id VARCHAR(36),
+  einkommensverschlechterung_infoja_id VARCHAR(36),
+  PRIMARY KEY (id, rev)
+);
+
+CREATE TABLE einkommensverschlechterung_info_container (
+  id                                   VARCHAR(36) NOT NULL,
+  timestamp_erstellt                   DATETIME NOT NULL,
+  timestamp_mutiert                    DATETIME NOT NULL,
+  user_erstellt                        VARCHAR(36) NOT NULL,
+  user_mutiert                         VARCHAR(36) NOT NULL,
+  version                              BIGINT NOT NULL,
+  vorgaenger_id                        VARCHAR(36),
+  einkommensverschlechterung_infogs_id VARCHAR(36),
+  einkommensverschlechterung_infoja_id VARCHAR(36),
   PRIMARY KEY (id)
 );
 
@@ -886,7 +913,7 @@ CREATE TABLE gesuch (
   laufnummer                         INTEGER      NOT NULL,
   status                             VARCHAR(255) NOT NULL,
   typ                                VARCHAR(255) NOT NULL,
-  einkommensverschlechterung_info_id VARCHAR(36),
+  einkommensverschlechterung_info_container_id varchar(36),
   fall_id                            VARCHAR(36)  NOT NULL,
   familiensituation_id               VARCHAR(36),
   familiensituation_erstgesuch_id    VARCHAR(36),
@@ -911,7 +938,7 @@ CREATE TABLE gesuch_aud (
   laufnummer                         INTEGER,
   status                             VARCHAR(255),
   typ                                VARCHAR(255),
-  einkommensverschlechterung_info_id VARCHAR(36),
+  einkommensverschlechterung_info_container_id varchar(36),
   fall_id                            VARCHAR(36),
   familiensituation_id               VARCHAR(36),
   familiensituation_erstgesuch_id    VARCHAR(36),
@@ -1616,6 +1643,11 @@ ALTER TABLE einkommensverschlechterung_info_aud
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
+ALTER TABLE einkommensverschlechterung_info_container_aud
+  ADD CONSTRAINT FK_einkommensverschlechterung_info_container_aud_revinfo
+FOREIGN KEY (rev)
+REFERENCES revinfo (rev);
+
 ALTER TABLE einkommensverschlechterung_container
   ADD CONSTRAINT UK_einkommensverschlechterungcontainer_gesuchsteller UNIQUE (gesuchsteller_id);
 
@@ -1643,6 +1675,16 @@ ALTER TABLE einkommensverschlechterung_container
   ADD CONSTRAINT FK_einkommensverschlechterungcontainer_gesuchsteller_id
 FOREIGN KEY (gesuchsteller_id)
 REFERENCES gesuchsteller (id);
+
+ALTER TABLE einkommensverschlechterung_info_container
+  ADD CONSTRAINT FK_ekvinfocontainer_einkommensverschlechterunginfogs_id
+FOREIGN KEY (einkommensverschlechterung_infogs_id)
+REFERENCES einkommensverschlechterung_info (id);
+
+ALTER TABLE einkommensverschlechterung_info_container
+  ADD CONSTRAINT FK_ekvinfocontainer_einkommensverschlechterunginfoja_id
+FOREIGN KEY (einkommensverschlechterung_infoja_id)
+REFERENCES einkommensverschlechterung_info (id);
 
 ALTER TABLE erwerbspensum_aud
   ADD CONSTRAINT FK_erwerbspensum_aud_revinfo
@@ -1742,9 +1784,9 @@ FOREIGN KEY (gesuch_id)
 REFERENCES gesuch (id);
 
 ALTER TABLE gesuch
-  ADD CONSTRAINT FK_gesuch_einkommensverschlechterungInfo_id
-FOREIGN KEY (einkommensverschlechterung_info_id)
-REFERENCES einkommensverschlechterung_info (id);
+  ADD CONSTRAINT FK_gesuch_einkommensverschlechterungInfoContainer_id
+FOREIGN KEY (einkommensverschlechterung_info_container_id)
+REFERENCES einkommensverschlechterung_info_container (id);
 
 ALTER TABLE gesuch
   ADD CONSTRAINT FK_gesuch_fall_id

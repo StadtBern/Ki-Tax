@@ -576,9 +576,9 @@ public class DokumentenverzeichnisEvaluatorTest {
 	}
 
 	private void createEinkommensverschlechterungInfo() {
-		final EinkommensverschlechterungInfo einkommensverschlechterungsInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfo(testgesuch);
-		einkommensverschlechterungsInfo.setEkvFuerBasisJahrPlus1(true);
-		einkommensverschlechterungsInfo.setEkvFuerBasisJahrPlus2(true);
+		final EinkommensverschlechterungInfoContainer einkommensverschlechterungsInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfoContainer(testgesuch);
+		einkommensverschlechterungsInfo.getEinkommensverschlechterungInfoJA().setEkvFuerBasisJahrPlus1(true);
+		einkommensverschlechterungsInfo.getEinkommensverschlechterungInfoJA().setEkvFuerBasisJahrPlus2(true);
 	}
 
 

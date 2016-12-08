@@ -4,6 +4,7 @@ import TSAbstractAntragEntity from './TSAbstractAntragEntity';
 import TSFamiliensituation from './TSFamiliensituation';
 import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
 import {TSAntragTyp} from './enums/TSAntragTyp';
+import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlechterungInfoContainer';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -12,7 +13,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _kindContainers: Array<TSKindContainer>;
     private _familiensituation: TSFamiliensituation;
     private _familiensituationErstgesuch: TSFamiliensituation;
-    private _einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo;
+    private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
     private _bemerkungen: string;
     private _laufnummer: number;
 
@@ -49,12 +50,12 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._familiensituation = value;
     }
 
-    get einkommensverschlechterungInfo(): TSEinkommensverschlechterungInfo {
-        return this._einkommensverschlechterungInfo;
+    get einkommensverschlechterungInfoContainer(): TSEinkommensverschlechterungInfoContainer {
+        return this._einkommensverschlechterungInfoContainer;
     }
 
-    set einkommensverschlechterungInfo(value: TSEinkommensverschlechterungInfo) {
-        this._einkommensverschlechterungInfo = value;
+    set einkommensverschlechterungInfoContainer(value: TSEinkommensverschlechterungInfoContainer) {
+        this._einkommensverschlechterungInfoContainer = value;
     }
 
     get bemerkungen(): string {
@@ -97,5 +98,13 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set familiensituationErstgesuch(value: TSFamiliensituation) {
         this._familiensituationErstgesuch = value;
+    }
+
+    public extractEinkommensverschlechterungInfo(): TSEinkommensverschlechterungInfo {
+        if (this.einkommensverschlechterungInfoContainer) {
+            return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA;
+        }
+        return undefined;
+
     }
 }

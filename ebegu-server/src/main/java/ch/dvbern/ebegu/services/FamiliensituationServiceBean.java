@@ -50,14 +50,14 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 			if (newFamiliensituation.getGemeinsameSteuererklaerung() == null) {
 				newFamiliensituation.setGemeinsameSteuererklaerung(false);
 			}
-			if (gesuch.getEinkommensverschlechterungInfo() != null) { //eigentlich darf es bei einer Mutation nie null sein. Trotzdem zur Sicherheit...
-				if (gesuch.getEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1() == null) {
-					gesuch.getEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP1(false);
+			if (gesuch.extractEinkommensverschlechterungInfo() != null) { //eigentlich darf es bei einer Mutation nie null sein. Trotzdem zur Sicherheit...
+				if (gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1() == null) {
+					gesuch.extractEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP1(false);
 				}
-				if (gesuch.getEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2() == null) {
-					gesuch.getEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP2(false);
+				if (gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2() == null) {
+					gesuch.extractEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP2(false);
 				}
-				einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfo());
+				einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
 			}
 		}
 

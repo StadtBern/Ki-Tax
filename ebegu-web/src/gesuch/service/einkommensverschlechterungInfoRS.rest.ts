@@ -4,6 +4,7 @@ import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlec
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import WizardStepManager from './wizardStepManager';
+import TSEinkommensverschlechterungInfoContainer from '../../models/TSEinkommensverschlechterungInfoContainer';
 
 
 export default class EinkommensverschlechterungInfoRS {
@@ -22,11 +23,11 @@ export default class EinkommensverschlechterungInfoRS {
         this.log = $log;
     }
 
-    public saveEinkommensverschlechterungInfo(einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo,
-                                              gesuchId: string): IPromise<TSEinkommensverschlechterungInfo> {
+    public saveEinkommensverschlechterungInfo(einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer,
+                                              gesuchId: string): IPromise<TSEinkommensverschlechterungInfoContainer> {
         let returnedEinkommensverschlechterungInfo = {};
         returnedEinkommensverschlechterungInfo =
-            this.ebeguRestUtil.einkommensverschlechterungInfoToRestObject(returnedEinkommensverschlechterungInfo, einkommensverschlechterungInfo);
+            this.ebeguRestUtil.einkommensverschlechterungInfoContainerToRestObject(returnedEinkommensverschlechterungInfo, einkommensverschlechterungInfoContainer);
         return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchId), returnedEinkommensverschlechterungInfo, {
             headers: {
                 'Content-Type': 'application/json'
@@ -34,7 +35,7 @@ export default class EinkommensverschlechterungInfoRS {
         }).then((httpresponse: any) => {
             return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
                 this.log.debug('PARSING EinkommensverschlechterungInfo REST object ', httpresponse.data);
-                return this.ebeguRestUtil.parseEinkommensverschlechterungInfo(new TSEinkommensverschlechterungInfo(), httpresponse.data);
+                return this.ebeguRestUtil.parseEinkommensverschlechterungInfoContainer(new TSEinkommensverschlechterungInfoContainer(), httpresponse.data);
             });
         });
     }

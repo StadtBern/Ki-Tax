@@ -52,6 +52,7 @@ import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import IQService = angular.IQService;
+import TSEinkommensverschlechterungInfoContainer from '../../models/TSEinkommensverschlechterungInfoContainer';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -296,15 +297,6 @@ export default class GesuchModelManager {
             });
     }
 
-    public updateEinkommensverschlechterungsInfo(): IPromise<TSEinkommensverschlechterungInfo> {
-        return this.einkommensverschlechterungInfoRS.saveEinkommensverschlechterungInfo(
-            this.getGesuch().einkommensverschlechterungInfo, this.gesuch.id)
-            .then((ekvInfoRespo: TSEinkommensverschlechterungInfo) => {
-                this.getGesuch().einkommensverschlechterungInfo = ekvInfoRespo;
-                return this.getGesuch().einkommensverschlechterungInfo;
-            });
-    }
-
     /**
      * Gesuchsteller nummer darf nur 1 oder 2 sein. Wenn die uebergebene Nummer nicht 1 oder 2 ist, wird dann 1 gesetzt
      * @param gsNumber
@@ -374,14 +366,14 @@ export default class GesuchModelManager {
     }
 
     private getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
-        if (!this.gesuch.einkommensverschlechterungInfo) {
+        if (!this.gesuch.extractEinkommensverschlechterungInfo()) {
             this.initEinkommensverschlechterungInfo();
         }
 
         if (basisJahrPlus === 2) {
-            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2;
+            return this.gesuch.extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2;
         } else {
-            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1;
+            return this.gesuch.extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1;
         }
     }
 
@@ -400,19 +392,10 @@ export default class GesuchModelManager {
         }
     }
 
-    public getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
-        if (this.getGesuch().einkommensverschlechterungInfo == null) {
-            this.initEinkommensverschlechterungInfo();
-        }
-        return this.getGesuch().einkommensverschlechterungInfo;
-    }
-
     private initEinkommensverschlechterungInfo(): void {
-        if (this.gesuch && !this.gesuch.einkommensverschlechterungInfo) {
-            this.gesuch.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo();
-            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 = false;
-            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 = false;
-
+        if (this.gesuch && !this.gesuch.extractEinkommensverschlechterungInfo()) {
+            this.gesuch.einkommensverschlechterungInfoContainer = new TSEinkommensverschlechterungInfoContainer();
+            this.gesuch.einkommensverschlechterungInfoContainer.init();
         }
     }
 

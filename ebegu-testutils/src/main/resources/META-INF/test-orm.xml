@@ -31,6 +31,7 @@
 	<entity class="ch.dvbern.ebegu.entities.Benutzer"/>
 	<entity class="ch.dvbern.ebegu.entities.AuthorisierterBenutzer"/>
 	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo"/>
+	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Einkommensverschlechterung"/>
 	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Dokument"/>

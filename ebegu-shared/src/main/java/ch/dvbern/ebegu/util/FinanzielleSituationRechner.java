@@ -45,7 +45,7 @@ public class FinanzielleSituationRechner {
 
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultateEinkommensverschlechterung(@Nonnull Gesuch gesuch, int basisJahrPlus) {
-		Validate.notNull(gesuch.getEinkommensverschlechterungInfo());
+		Validate.notNull(gesuch.extractEinkommensverschlechterungInfo());
 
 		final FinanzielleSituationResultateDTO einkVerResultDTO = new FinanzielleSituationResultateDTO();
 		setEinkommensverschlechterungParameters(gesuch, basisJahrPlus, einkVerResultDTO);
@@ -128,10 +128,10 @@ public class FinanzielleSituationRechner {
 		finanzDatenDTO.setMassgebendesEinkBjVorAbzFamGr(finanzielleSituationResultateDTO.getMassgebendesEinkVorAbzFamGr());
 		finanzDatenDTO.setDatumVonBasisjahr(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
 		//Berechnung wird nur ausgefuehrt wenn Daten vorhanden, wenn es keine gibt machen wir nichts
-		if (gesuch.getEinkommensverschlechterungInfo() != null && gesuch.getEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
-			EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.getEinkommensverschlechterungInfo();
+		if (gesuch.extractEinkommensverschlechterungInfo() != null && gesuch.extractEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
+			EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.extractEinkommensverschlechterungInfo();
 			FinanzielleSituationResultateDTO resultateEKV1 = calculateResultateEinkommensverschlechterung(gesuch, 1);
-			if (gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() != null && gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
+			if (gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() != null && gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
 				// In der EKV 1 vergleichen wir immer mit dem Basisjahr
 				BigDecimal massgebendesEinkommenVorjahr = finanzielleSituationResultateDTO.getMassgebendesEinkVorAbzFamGr();
 				BigDecimal massgebendesEinkommenJahr = resultateEKV1.getMassgebendesEinkVorAbzFamGr();
@@ -140,7 +140,7 @@ public class FinanzielleSituationRechner {
 					finanzDatenDTO.setDatumVonBasisjahrPlus1(einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus1());
 				}
 			}
-			if (gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null && gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
+			if (gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null && gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
 				FinanzielleSituationResultateDTO resultateEKV2 = calculateResultateEinkommensverschlechterung(gesuch, 2);
 				// In der EKV 2 vergleichen wir immer mit dem EKV 1, egal ob diese akzeptiert war
 				BigDecimal massgebendesEinkommenVorjahr = resultateEKV1.getMassgebendesEinkVorAbzFamGr();

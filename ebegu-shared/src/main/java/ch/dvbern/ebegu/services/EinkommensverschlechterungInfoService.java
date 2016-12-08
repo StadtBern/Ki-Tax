@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;
@@ -8,38 +9,38 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
- * Service zum Verwalten von EinkommensverschlechterungInfo
+ * Service zum Verwalten von EinkommensverschlechterungInfoContainer
  */
 public interface EinkommensverschlechterungInfoService {
 
 	/**
-	 * Erstellt eine neue EinkommensverschlechterungInfo in der DB, falls der key noch nicht existiert
+	 * Erstellt eine neue EinkommensverschlechterungInfoContainer in der DB, falls der key noch nicht existiert
 	 *
-	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfo als DTO
-	 * @return die gespeicherte EinkommensverschlechterungInfo
+	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfoContainer als DTO
+	 * @return die gespeicherte EinkommensverschlechterungInfoContainer
 	 */
 	@Nonnull
-	Optional<EinkommensverschlechterungInfo> createEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfo einkommensverschlechterungInfo);
+	Optional<EinkommensverschlechterungInfoContainer> createEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);
 
 	/**
-	 * Aktualisiert idn EinkommensverschlechterungInfo in der DB
+	 * Aktualisiert idn EinkommensverschlechterungInfoContainer in der DB
 	 *
-	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfo als DTO
-	 * @return Die aktualisierte EinkommensverschlechterungInfo
+	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfoContainer als DTO
+	 * @return Die aktualisierte EinkommensverschlechterungInfoContainer
 	 */
 	@Nonnull
-	EinkommensverschlechterungInfo updateEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfo einkommensverschlechterungInfo);
+	EinkommensverschlechterungInfoContainer updateEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);
 
 	@Nonnull
-	EinkommensverschlechterungInfo updateEinkommensVerschlechterungInfoAndGesuch(Gesuch gesuch, EinkommensverschlechterungInfo oldEVData,
-																				 EinkommensverschlechterungInfo convertedEkvi);
+	EinkommensverschlechterungInfoContainer updateEinkommensVerschlechterungInfoAndGesuch(Gesuch gesuch, EinkommensverschlechterungInfoContainer oldEVData,
+																				 EinkommensverschlechterungInfoContainer convertedEkvi);
 
 	/**
-	 * @param key PK (id) der EinkommensverschlechterungInfo
-	 * @return EinkommensverschlechterungInfo mit dem gegebenen key oder null falls nicht vorhanden
+	 * @param key PK (id) der EinkommensverschlechterungInfoContainer
+	 * @return EinkommensverschlechterungInfoContainer mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<EinkommensverschlechterungInfo> findEinkommensverschlechterungInfo(@Nonnull String key);
+	Optional<EinkommensverschlechterungInfoContainer> findEinkommensverschlechterungInfo(@Nonnull String key);
 
 	/**
 	 * Gibt alle existierenden EinkommensverschlechterungInfoen zurueck.
@@ -47,13 +48,13 @@ public interface EinkommensverschlechterungInfoService {
 	 * @return Liste aller EinkommensverschlechterungInfoen aus der DB
 	 */
 	@Nonnull
-	Collection<EinkommensverschlechterungInfo> getAllEinkommensverschlechterungInfo();
+	Collection<EinkommensverschlechterungInfoContainer> getAllEinkommensverschlechterungInfo();
 
 	/**
-	 * entfernt eine EinkommensverschlechterungInfo aus der Database
+	 * entfernt eine EinkommensverschlechterungInfoContainer aus der Database
 	 *
-	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfo als DTO
+	 * @param einkommensverschlechterungInfo die EinkommensverschlechterungInfoContainer als DTO
 	 */
-	void removeEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfo einkommensverschlechterungInfo);
+	void removeEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo);
 
 }

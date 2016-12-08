@@ -2,8 +2,9 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -46,7 +47,7 @@ public class EinkommensverschlechterungInfoResource {
 	private JaxBConverter converter;
 
 
-	@ApiOperation(value = "Create a new EinkommensverschlechterungInfo in the database.")
+	@ApiOperation(value = "Create a new EinkommensverschlechterungInfoContainer in the database.")
 	@Nullable
 	@PUT
 	@Path("/{gesuchId}")
@@ -54,26 +55,26 @@ public class EinkommensverschlechterungInfoResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEinkommensverschlechterungInfo(
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
-		@Nonnull @NotNull @Valid JaxEinkommensverschlechterungInfo jaxEinkommensverschlechterungInfo,
+		@Nonnull @NotNull @Valid JaxEinkommensverschlechterungInfoContainer jaxEinkommensverschlechterungInfoContainer,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
 
-			EinkommensverschlechterungInfo oldEVData = null;
-			EinkommensverschlechterungInfo ekviToMerge = new EinkommensverschlechterungInfo();
+			EinkommensverschlechterungInfoContainer oldEVData = null;
+			EinkommensverschlechterungInfoContainer ekviToMerge = new EinkommensverschlechterungInfoContainer();
 
-			if (jaxEinkommensverschlechterungInfo.getId() != null) {
-				Optional<EinkommensverschlechterungInfo> optional = einkommensverschlechterungInfoService.
-					findEinkommensverschlechterungInfo(jaxEinkommensverschlechterungInfo.getId());
-				ekviToMerge = optional.orElse(new EinkommensverschlechterungInfo());
-				oldEVData = new EinkommensverschlechterungInfo(ekviToMerge); //wir muessen uns merken wie die Daten vorher waren damit wir nachher vergleichen koennen
+			if (jaxEinkommensverschlechterungInfoContainer.getId() != null) {
+				Optional<EinkommensverschlechterungInfoContainer> optional = einkommensverschlechterungInfoService.
+					findEinkommensverschlechterungInfo(jaxEinkommensverschlechterungInfoContainer.getId());
+				ekviToMerge = optional.orElse(new EinkommensverschlechterungInfoContainer());
+				oldEVData = new EinkommensverschlechterungInfoContainer(ekviToMerge); //wir muessen uns merken wie die Daten vorher waren damit wir nachher vergleichen koennen
 			}
-			EinkommensverschlechterungInfo convertedEkvi = converter
-				.einkommensverschlechterungInfoToEntity(jaxEinkommensverschlechterungInfo, ekviToMerge);
+			EinkommensverschlechterungInfoContainer convertedEkvi = converter
+				.einkommensverschlechterungInfoContainerToEntity(jaxEinkommensverschlechterungInfoContainer, ekviToMerge);
 
-			EinkommensverschlechterungInfo persistedEkvi = einkommensverschlechterungInfoService
+			EinkommensverschlechterungInfoContainer persistedEkvi = einkommensverschlechterungInfoService
 				.updateEinkommensVerschlechterungInfoAndGesuch(gesuch.get(), oldEVData, convertedEkvi);
 
 			URI uri = uriInfo.getBaseUriBuilder()
@@ -81,8 +82,8 @@ public class EinkommensverschlechterungInfoResource {
 				.path("/" + convertedEkvi.getId())
 				.build();
 
-			JaxEinkommensverschlechterungInfo jaxEinkommensverschlechterungInfoReturn = converter.einkommensverschlechterungInfoToJAX(persistedEkvi);
-			return Response.created(uri).entity(jaxEinkommensverschlechterungInfoReturn).build();
+			JaxEinkommensverschlechterungInfoContainer jaxEinkommensverschlechterungInfoContainerReturn = converter.einkommensverschlechterungInfoContainerToJAX(persistedEkvi);
+			return Response.created(uri).entity(jaxEinkommensverschlechterungInfoContainerReturn).build();
 		}
 		throw new EbeguEntityNotFoundException("saveEinkommensverschlechterungInfo", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}

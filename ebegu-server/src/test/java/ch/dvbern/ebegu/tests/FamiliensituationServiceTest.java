@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragTyp;
@@ -82,9 +83,9 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		gesuch.setTyp(AntragTyp.MUTATION);
 
 
-		final EinkommensverschlechterungInfo evInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfo(gesuch);
-		final Optional<EinkommensverschlechterungInfo> einkommensverschlechterungInfo = evInfoService.createEinkommensverschlechterungInfo(evInfo);
-		gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfo.get());
+		final EinkommensverschlechterungInfoContainer evInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfoContainer(gesuch);
+		final Optional<EinkommensverschlechterungInfoContainer> einkommensverschlechterungInfo = evInfoService.createEinkommensverschlechterungInfo(evInfo);
+		gesuch.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfo.get());
 
 		Optional<Familiensituation> familiensituation = createFamiliensituation();
 		final Familiensituation newFamiliensituation = new Familiensituation(familiensituation.get());
@@ -95,8 +96,8 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 			familiensituation.get(), newFamiliensituation);
 
 		Assert.assertFalse(persistedFamiliensituation.getGemeinsameSteuererklaerung());
-		Assert.assertFalse(gesuch.getEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1());
-		Assert.assertFalse(gesuch.getEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2());
+		Assert.assertFalse(gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1());
+		Assert.assertFalse(gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2());
 	}
 
 

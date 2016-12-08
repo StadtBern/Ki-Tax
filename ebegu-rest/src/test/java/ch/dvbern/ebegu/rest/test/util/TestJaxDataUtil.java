@@ -227,6 +227,12 @@ public class TestJaxDataUtil {
 		return jaxGesuchsperiode;
 	}
 
+	public static JaxEinkommensverschlechterungInfoContainer createTestJaxEinkommensverschlechterungInfoContainer() {
+		JaxEinkommensverschlechterungInfoContainer jaxEinkommensverschlechterungInfoContainer = new JaxEinkommensverschlechterungInfoContainer();
+		jaxEinkommensverschlechterungInfoContainer.setEinkommensverschlechterungInfoJA(createTestJaxEinkommensverschlechterungInfo());
+		return jaxEinkommensverschlechterungInfoContainer;
+	}
+
 	public static JaxEinkommensverschlechterungInfo createTestJaxEinkommensverschlechterungInfo() {
 		JaxEinkommensverschlechterungInfo jaxEinkommensverschlechterungInfo = new JaxEinkommensverschlechterungInfo();
 		jaxEinkommensverschlechterungInfo.setEinkommensverschlechterung(true);

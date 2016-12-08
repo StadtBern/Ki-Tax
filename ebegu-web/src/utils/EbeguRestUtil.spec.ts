@@ -161,7 +161,7 @@ describe('EbeguRestUtil', function () {
             it('should transform TSGesuch to REST object and back', () => {
                 let myGesuch = new TSGesuch();
                 TestDataUtil.setAbstractFieldsUndefined(myGesuch);
-                myGesuch.einkommensverschlechterungInfo = undefined;
+                myGesuch.einkommensverschlechterungInfoContainer = undefined;
                 let fall: TSFall = new TSFall();
                 TestDataUtil.setAbstractFieldsUndefined(fall);
                 fall.nextNumberKind = 2;
@@ -178,7 +178,7 @@ describe('EbeguRestUtil', function () {
                 TestDataUtil.setAbstractFieldsUndefined(familiensituation);
                 myGesuch.familiensituation = familiensituation;
                 myGesuch.kindContainers = [undefined];
-                myGesuch.einkommensverschlechterungInfo = undefined;  //todo createEinkommensverschlechterungInfo
+                myGesuch.einkommensverschlechterungInfoContainer = undefined;  //todo createEinkommensverschlechterungInfo
                 myGesuch.bemerkungen = undefined;
                 myGesuch.typ = undefined;
 
@@ -188,14 +188,14 @@ describe('EbeguRestUtil', function () {
                 let transformedGesuch = ebeguRestUtil.parseGesuch(new TSGesuch(), restGesuch);
                 expect(transformedGesuch).toBeDefined();
 
-                expect(transformedGesuch.einkommensverschlechterungInfo).toEqual(myGesuch.einkommensverschlechterungInfo);
+                expect(transformedGesuch.einkommensverschlechterungInfoContainer).toEqual(myGesuch.einkommensverschlechterungInfoContainer);
                 expect(transformedGesuch.fall).toEqual(myGesuch.fall);
                 expect(transformedGesuch.gesuchsteller1).toEqual(myGesuch.gesuchsteller1);
                 expect(transformedGesuch.gesuchsteller2).toEqual(myGesuch.gesuchsteller2);
                 expect(transformedGesuch.gesuchsperiode).toEqual(myGesuch.gesuchsperiode);
                 expect(transformedGesuch.familiensituation).toEqual(myGesuch.familiensituation);
                 expect(transformedGesuch.kindContainers).toEqual(myGesuch.kindContainers);
-                expect(transformedGesuch.einkommensverschlechterungInfo).toEqual(myGesuch.einkommensverschlechterungInfo);
+                expect(transformedGesuch.einkommensverschlechterungInfoContainer).toEqual(myGesuch.einkommensverschlechterungInfoContainer);
                 expect(transformedGesuch.bemerkungen).toEqual(myGesuch.bemerkungen);
                 expect(transformedGesuch.laufnummer).toEqual(myGesuch.laufnummer);
                 expect(transformedGesuch.typ).toEqual(myGesuch.typ);
