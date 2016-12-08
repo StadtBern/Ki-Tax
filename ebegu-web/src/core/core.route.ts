@@ -37,7 +37,6 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
                 errorService.addMesageAsError('ERROR_UNAUTHORIZED');
                 $log.debug('prevented navigation to page because user is not admin');
                 event.preventDefault();
-
             }
         });
 

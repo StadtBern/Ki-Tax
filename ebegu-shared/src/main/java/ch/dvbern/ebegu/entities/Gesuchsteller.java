@@ -77,27 +77,6 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	public Gesuchsteller() {
 	}
 
-	public Gesuchsteller(@Nonnull Gesuchsteller toCopy) {
-		super(toCopy);
-		this.mail = toCopy.mail;
-		this.mobile = toCopy.mobile;
-		this.telefon = toCopy.telefon;
-		this.telefonAusland = toCopy.telefonAusland;
-		this.zpvNumber = toCopy.zpvNumber;
-		if (toCopy.finanzielleSituationContainer != null) {
-			this.finanzielleSituationContainer = new FinanzielleSituationContainer(toCopy.finanzielleSituationContainer, this);
-		}
-		if (toCopy.einkommensverschlechterungContainer != null) {
-			this.einkommensverschlechterungContainer = new EinkommensverschlechterungContainer(toCopy.einkommensverschlechterungContainer, this);
-		}
-		for (ErwerbspensumContainer erwerbspensumContainer : toCopy.erwerbspensenContainers) {
-			this.addErwerbspensumContainer(new ErwerbspensumContainer(erwerbspensumContainer, this));
-		}
-		for (GesuchstellerAdresse gesuchstellerAdresse : toCopy.adressen) {
-			this.addAdresse(new GesuchstellerAdresse(gesuchstellerAdresse, this));
-		}
-		this.diplomatenstatus = toCopy.diplomatenstatus;
-	}
 
 	public boolean addAdresse(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 		gesuchstellerAdresse.setGesuchsteller(this);
@@ -216,5 +195,28 @@ public class Gesuchsteller extends AbstractPersonEntity {
 			(einkommensverschlechterungContainer.getGesuchsteller() == null || !einkommensverschlechterungContainer.getGesuchsteller().equals(this))) {
 			einkommensverschlechterungContainer.setGesuchsteller(this);
 		}
+	}
+
+	public Gesuchsteller copyForMutation(Gesuchsteller mutation) {
+		super.copyForMutation(mutation);
+		mutation.setMail(this.getMail());
+		mutation.setMobile(this.getMobile());
+		mutation.setTelefon(this.getTelefon());
+		mutation.setTelefonAusland(this.getTelefonAusland());
+		mutation.setZpvNumber(this.getZpvNumber());
+		if (this.getFinanzielleSituationContainer() != null) {
+			mutation.setFinanzielleSituationContainer(this.getFinanzielleSituationContainer().copyForMutation(new FinanzielleSituationContainer(), mutation));
+		}
+		if (this.getEinkommensverschlechterungContainer() != null) {
+			mutation.setEinkommensverschlechterungContainer(this.getEinkommensverschlechterungContainer().copyForMutation(new EinkommensverschlechterungContainer(), mutation));
+		}
+		for (ErwerbspensumContainer erwerbspensumContainer : this.getErwerbspensenContainers()) {
+			mutation.addErwerbspensumContainer(erwerbspensumContainer.copyForMutation(new ErwerbspensumContainer(), mutation));
+		}
+		for (GesuchstellerAdresse gesuchstellerAdresse : this.getAdressen()) {
+			mutation.addAdresse(gesuchstellerAdresse.copyForMutation(new GesuchstellerAdresse(), mutation));
+		}
+		mutation.setDiplomatenstatus(this.isDiplomatenstatus());
+		return mutation;
 	}
 }
