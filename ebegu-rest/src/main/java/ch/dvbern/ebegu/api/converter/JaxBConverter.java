@@ -496,7 +496,6 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(fallJAXP, fall);
 		//Fall nummer wird auf server bzw DB verwaltet und daher hier nicht gesetzt
 		if (fallJAXP.getVerantwortlicher() != null) {
-			//TODO (nur JA-Benutzer duerfen als verant. gesetzt werden)
 			Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(fallJAXP.getVerantwortlicher().getUsername());
 			if (verantwortlicher.isPresent()) {
 				fall.setVerantwortlicher(verantwortlicher.get()); // because the user doesn't come from the client but from the server

@@ -437,12 +437,16 @@ export default class GesuchModelManager {
      */
     public initGesuchWithEingangsart(forced: boolean, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
         this.initGesuch(forced);
-        this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
-            this.gesuch.gesuchsperiode = periode;
-        });
-        this.fallRS.findFall(fallId).then(foundFall => {
-            this.gesuch.fall = foundFall;
-        });
+        if (gesuchsperiodeId) {
+            this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
+                this.gesuch.gesuchsperiode = periode;
+            });
+        }
+        if (fallId) {
+            this.fallRS.findFall(fallId).then(foundFall => {
+                this.gesuch.fall = foundFall;
+            });
+        }
         if (TSEingangsart.ONLINE === eingangsart) {
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
         } else {
@@ -858,7 +862,7 @@ export default class GesuchModelManager {
      * Takes current user and sets it as the verantwortlicher of Fall
      */
     private setCurrentUserAsFallVerantwortlicher() {
-        if (this.authServiceRS) {
+        if (this.authServiceRS && this.authServiceRS.isRole(TSRole.SACHBEARBEITER_JA)) {
             this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
         }
     }

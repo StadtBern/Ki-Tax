@@ -54,8 +54,12 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         if (this.$stateParams.eingangsart) {
             this.eingangsart = this.$stateParams.eingangsart;
         }
-        this.gesuchsperiodeId = this.$stateParams.gesuchsperiodeId;
-        this.fallId = this.$stateParams.fallId;
+        if (this.$stateParams.gesuchsperiodeId && this.$stateParams.gesuchsperiodeId !== '') {
+            this.gesuchsperiodeId = this.$stateParams.gesuchsperiodeId;
+        }
+        if (this.$stateParams.fallId && this.$stateParams.fallId !== '') {
+            this.fallId = this.$stateParams.fallId;
+        }
     }
 
     public setShowError(showError: boolean): void {
@@ -68,9 +72,8 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             if (this.gesuchModelManager.getGesuchsperiode()) {
                 this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
             }
-        } else {
-            this.gesuchModelManager.initGesuchWithEingangsart(this.createNewParam, this.eingangsart, this.gesuchsperiodeId, this.fallId);
         }
+        this.gesuchModelManager.initGesuchWithEingangsart(this.createNewParam, this.eingangsart, this.gesuchsperiodeId, this.fallId);
         if (this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
             this.gesuchModelManager.updateActiveGesuchsperiodenList();
         }

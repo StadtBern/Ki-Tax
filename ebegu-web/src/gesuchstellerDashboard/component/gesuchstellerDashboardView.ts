@@ -46,10 +46,12 @@ export class GesuchstellerDashboardListViewController {
 
     private updateAntragList() {
         this.fallRS.findFallByCurrentBenutzerAsBesitzer().then((existingFall: TSFall) => {
-            this.fallId = existingFall.id;
-            this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
-                this.antragList = angular.copy(response);
-            });
+            if (existingFall) {
+                this.fallId = existingFall.id;
+                this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
+                    this.antragList = angular.copy(response);
+                });
+            }
         });
     }
 

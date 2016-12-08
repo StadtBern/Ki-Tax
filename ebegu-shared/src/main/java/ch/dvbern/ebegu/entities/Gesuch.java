@@ -354,6 +354,7 @@ public class Gesuch extends AbstractEntity {
 		mutation.setEingangsdatum(null);
 		mutation.setStatus(eingangsart == Eingangsart.PAPIER ?  AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
 		mutation.setTyp(AntragTyp.MUTATION);
+		mutation.setLaufnummer(this.getLaufnummer()+1);
 
 		if (this.getGesuchsteller1() != null) {
 			mutation.setGesuchsteller1(this.getGesuchsteller1().copyForMutation(new Gesuchsteller()));
