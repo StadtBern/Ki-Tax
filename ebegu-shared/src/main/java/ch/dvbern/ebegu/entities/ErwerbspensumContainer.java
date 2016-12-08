@@ -35,12 +35,6 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	public ErwerbspensumContainer() {
 	}
 
-	public ErwerbspensumContainer(@Nonnull ErwerbspensumContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
-		this.setVorgaengerId(toCopy.getId());
-		this.gesuchsteller = gesuchsteller;
-		this.erwerbspensumGS = null;
-		this.erwerbspensumJA = new Erwerbspensum(toCopy.erwerbspensumJA);
-	}
 
 	public Gesuchsteller getGesuchsteller() {
 		return gesuchsteller;
@@ -77,6 +71,13 @@ public class ErwerbspensumContainer extends AbstractEntity {
 		}
 		return getErwerbspensumGS().isSame(otherErwerbspensum.getErwerbspensumGS()) &&
 			getErwerbspensumJA().isSame(otherErwerbspensum.getErwerbspensumJA());
+	}
 
+	public ErwerbspensumContainer copyForMutation(@Nonnull ErwerbspensumContainer mutation, @Nonnull Gesuchsteller gesuchstellerMutation) {
+		super.copyForMutation(mutation);
+		mutation.setGesuchsteller(gesuchstellerMutation);
+		mutation.setErwerbspensumGS(null);
+		mutation.setErwerbspensumJA(this.getErwerbspensumJA().copyForMutation(new Erwerbspensum()));
+		return mutation;
 	}
 }

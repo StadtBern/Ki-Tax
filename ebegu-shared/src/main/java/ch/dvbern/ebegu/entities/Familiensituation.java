@@ -96,4 +96,13 @@ public class Familiensituation extends AbstractEntity {
 		}
 		return false;
 	}
+
+	public Familiensituation copyForMutation(Familiensituation mutation) {
+		super.copyForMutation(mutation);
+		mutation.setFamilienstatus(this.getFamilienstatus());
+		mutation.setGemeinsameSteuererklaerung(this.getGemeinsameSteuererklaerung());
+		mutation.setGesuchstellerKardinalitaet(this.gesuchstellerKardinalitaet);
+		mutation.setAenderungPer(this.aenderungPer);
+		return mutation;
+	}
 }
