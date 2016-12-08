@@ -1,11 +1,8 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.Mahnung;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.MahnungTyp;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.EbeguVorlageService;
 import ch.dvbern.ebegu.services.PDFServiceBean;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
@@ -50,6 +47,9 @@ public class PDFServiceBeanTest {
 	@InjectIntoMany
 	EbeguVorlageService vorlageService = new EbeguVorlageServiceMock();
 
+	@InjectIntoMany
+	DokumentGrundService dokumentGrundService = new DokumentGrundServiceMock();
+
 	private Gesuch gesuch;
 
 	@Before
@@ -66,6 +66,28 @@ public class PDFServiceBeanTest {
 		gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+
+		gesuch.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.STEUERERKLAERUNG));
+		gesuch.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.NACHWEIS_AUSBILDUNG));
+		gesuch.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.NACHWEIS_FAMILIENZULAGEN));
+	}
+
+	@Test
+	public void	testGenerateFreigabequittungJugendamt() throws Exception {
+
+		byte[] bytes = pdfService.generateFreigabequittung(gesuch, Zustelladresse.JUGENDAMT);
+		Assert.assertNotNull(bytes);
+		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Jugendamt(" + gesuch.getAntragNummer() + ").pdf");
+
+	}
+
+	@Test
+	public void	testGenerateFreigabequittungSchulamt() throws Exception {
+
+		byte[] bytes = pdfService.generateFreigabequittung(gesuch, Zustelladresse.SCHULAMT);
+		Assert.assertNotNull(bytes);
+		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Schulamt(" + gesuch.getAntragNummer() + ").pdf");
+
 	}
 
 	@Test
@@ -107,7 +129,7 @@ public class PDFServiceBeanTest {
 
 		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch);
 
-		byte[] bytes = pdfService.printMahnung(mahnung, null);
+		byte[] bytes = pdfService.generateMahnung(mahnung, null);
 
 		Assert.assertNotNull(bytes);
 
@@ -121,7 +143,7 @@ public class PDFServiceBeanTest {
 		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch);
 		zweiteMahnung.setVorgaengerId(ersteMahnung.getId());
 
-		byte[] bytes = pdfService.printMahnung(zweiteMahnung, Optional.of(ersteMahnung));
+		byte[] bytes = pdfService.generateMahnung(zweiteMahnung, Optional.of(ersteMahnung));
 		Assert.assertNotNull(bytes);
 
 		unitTestTempfolder.writeToTempDir(bytes, "2_Mahnung.pdf");
