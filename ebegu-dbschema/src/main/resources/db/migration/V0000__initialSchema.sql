@@ -891,6 +891,8 @@ CREATE TABLE gesuch (
   familiensituation_id               VARCHAR(36),
   familiensituation_erstgesuch_id    VARCHAR(36),
   gesuchsperiode_id                  VARCHAR(36)  NOT NULL,
+  gesuchsteller1_id                  VARCHAR(36),
+  gesuchsteller2_id                  VARCHAR(36),
   PRIMARY KEY (id)
 );
 
@@ -914,6 +916,8 @@ CREATE TABLE gesuch_aud (
   familiensituation_id               VARCHAR(36),
   familiensituation_erstgesuch_id    VARCHAR(36),
   gesuchsperiode_id                  VARCHAR(36),
+  gesuchsteller1_id                  VARCHAR(36),
+  gesuchsteller2_id                  VARCHAR(36),
   PRIMARY KEY (id, rev)
 );
 
@@ -968,11 +972,10 @@ CREATE TABLE gesuchsteller (
 );
 
 CREATE TABLE gesuchsteller_adresse_aud (
-  id                                 VARCHAR(36) NOT NULL,
-  rev                                INTEGER     NOT NULL,
-  adresse_typ                        VARCHAR(255),
-  nicht_in_gemeinde                  BIT,
-  gesuchsteller_adresse_container_id VARCHAR(36),
+  id                VARCHAR(36) NOT NULL,
+  rev               INTEGER     NOT NULL,
+  adresse_typ       VARCHAR(255),
+  nicht_in_gemeinde BIT,
   PRIMARY KEY (id, rev)
 );
 
@@ -1022,17 +1025,15 @@ CREATE TABLE gesuchsteller_container_aud (
   user_erstellt      VARCHAR(36),
   user_mutiert       VARCHAR(36),
   vorgaenger_id      VARCHAR(36),
-  gesuch_id          VARCHAR(36),
   gesuchstellergs_id VARCHAR(36),
   gesuchstellerja_id VARCHAR(36),
   PRIMARY KEY (id, rev)
 );
 
 CREATE TABLE gesuchsteller_adresse (
-  adresse_typ                        VARCHAR(255),
-  nicht_in_gemeinde                  BIT         NOT NULL,
-  id                                 VARCHAR(36) NOT NULL,
-  gesuchsteller_adresse_container_id VARCHAR(36) NOT NULL,
+  adresse_typ       VARCHAR(255),
+  nicht_in_gemeinde BIT         NOT NULL,
+  id                VARCHAR(36) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -1058,7 +1059,6 @@ CREATE TABLE gesuchsteller_container (
   user_mutiert       VARCHAR(36) NOT NULL,
   version            BIGINT      NOT NULL,
   vorgaenger_id      VARCHAR(36),
-  gesuch_id          VARCHAR(36) NOT NULL,
   gesuchstellergs_id VARCHAR(36),
   gesuchstellerja_id VARCHAR(36),
   PRIMARY KEY (id)
@@ -1820,6 +1820,16 @@ ALTER TABLE gesuch
 FOREIGN KEY (gesuchsperiode_id)
 REFERENCES gesuchsperiode (id);
 
+ALTER TABLE gesuch
+  ADD CONSTRAINT FK_gesuch_gesuchsteller_container1_id
+FOREIGN KEY (gesuchsteller1_id)
+REFERENCES gesuchsteller_container (id);
+
+ALTER TABLE gesuch
+  ADD CONSTRAINT FK_gesuch_gesuchsteller_container2_id
+FOREIGN KEY (gesuchsteller2_id)
+REFERENCES gesuchsteller_container (id);
+
 ALTER TABLE gesuch_aud
   ADD CONSTRAINT FK_gesuch_aud_revinfo
 FOREIGN KEY (rev)
@@ -1872,14 +1882,6 @@ ALTER TABLE gesuchsteller_adresse_container
   ADD CONSTRAINT FK_gesuchstelleradresse_container_gesuchstellerContainer_id
 FOREIGN KEY (gesuchsteller_container_id)
 REFERENCES gesuchsteller_container (id);
-
-ALTER TABLE gesuchsteller_container
-  ADD CONSTRAINT UK_gesuchsteller_container_gesuch UNIQUE (gesuch_id);
-
-ALTER TABLE gesuchsteller_container
-  ADD CONSTRAINT FK_gesuchsteller_container_gesuch_id
-FOREIGN KEY (gesuch_id)
-REFERENCES gesuch (id);
 
 ALTER TABLE gesuchsteller_container
   ADD CONSTRAINT FK_gesuchsteller_container_gesuchstellergs_id

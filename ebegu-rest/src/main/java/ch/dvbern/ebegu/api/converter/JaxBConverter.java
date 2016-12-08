@@ -433,10 +433,6 @@ public class JaxBConverter {
 		return jaxGesuchsteller;
 	}
 
-	private List<JaxAdresse> gesuchstellerAdressenListToJAX(@Nonnull Collection<GesuchstellerAdresse> wohnAdressen) {
-		return wohnAdressen.stream().map(this::gesuchstellerAdresseToJAX).collect(Collectors.toList());
-	}
-
 	public Familiensituation familiensituationToEntity(@Nonnull final JaxFamiliensituation familiensituationJAXP, @Nonnull final Familiensituation familiensituation) {
 		Validate.notNull(familiensituation);
 		Validate.notNull(familiensituationJAXP);

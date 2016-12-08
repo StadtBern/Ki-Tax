@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Audited
 @Entity
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = "gesuchstellerContainer_id", name = "UK_finanzielle_situation_container_gesuchsteller")
+	uniqueConstraints = @UniqueConstraint(columnNames = "gesuchsteller_container_id", name = "UK_finanzielle_situation_container_gesuchsteller")
 )
 public class FinanzielleSituationContainer extends AbstractEntity {
 

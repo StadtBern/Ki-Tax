@@ -419,7 +419,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	private GesuchstellerContainer createGesuchstellerHeirat(GesuchstellerContainer gesuchsteller1) {
-
+		GesuchstellerContainer gesuchsteller2 = new GesuchstellerContainer();
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1984, 12, 12));
 		gesuchsteller.setVorname("Tim");
@@ -430,14 +430,14 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		gesuchsteller.setTelefon("031 378 24 24");
 		gesuchsteller.setZpvNumber("0761234567897");
 
-		gesuchsteller1.setGesuchstellerJA(gesuchsteller);
-		gesuchsteller1.addAdresse(createGesuchstellerAdresseHeirat(gesuchsteller1));
+		gesuchsteller2.setGesuchstellerJA(gesuchsteller);
+		gesuchsteller2.addAdresse(createGesuchstellerAdresseHeirat(gesuchsteller2));
 
 		final ErwerbspensumContainer erwerbspensumContainer = createErwerbspensumContainer();
-		erwerbspensumContainer.setGesuchsteller(gesuchsteller1);
-		gesuchsteller1.getErwerbspensenContainers().add(erwerbspensumContainer);
+		erwerbspensumContainer.setGesuchsteller(gesuchsteller2);
+		gesuchsteller2.getErwerbspensenContainers().add(erwerbspensumContainer);
 
-		return gesuchsteller1;
+		return gesuchsteller2;
 	}
 
 	private GesuchstellerAdresseContainer createGesuchstellerAdresseHeirat(GesuchstellerContainer gsCont) {

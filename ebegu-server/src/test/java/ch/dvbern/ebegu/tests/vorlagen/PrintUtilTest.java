@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.tests.vorlagen;
 
 import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -23,7 +24,8 @@ public class PrintUtilTest {
 
 	@Test
 	public void testGetGesuchstellerAdresseWithNoAdressen() {
-		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		gesuchsteller.setAdressen(new ArrayList<>());
 
 		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
@@ -33,7 +35,8 @@ public class PrintUtilTest {
 
 	@Test
 	public void testGetGesuchstellerAdresseWithJustWohnadresse() {
-		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 
 		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
 
@@ -43,7 +46,8 @@ public class PrintUtilTest {
 
 	@Test
 	public void testGetGesuchstellerAdresseWithUmzugsadresse() {
-		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		final GesuchstellerAdresseContainer umzugsadresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);
 		umzugsadresse.getGesuchstellerAdresseJA().setStrasse("newStrasse");
 		gesuchsteller.addAdresse(umzugsadresse);
@@ -62,7 +66,8 @@ public class PrintUtilTest {
 
 	@Test
 	public void testGetGesuchstellerAdresseWithKorrespondezadresse() {
-		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		final GesuchstellerAdresseContainer korrespondenzadresse = createKorrespondenzadresse(gesuchsteller);
 
 		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
@@ -74,7 +79,8 @@ public class PrintUtilTest {
 
 	@Test
 	public void testGetGesuchstellerAdresseWithKorrespondezadresseAndUmzugsadresse() {
-		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		final GesuchstellerAdresseContainer korrespondenzadresse = createKorrespondenzadresse(gesuchsteller);
 		final GesuchstellerAdresseContainer umzugsadresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);
 		umzugsadresse.getGesuchstellerAdresseJA().setStrasse("newStrasse");

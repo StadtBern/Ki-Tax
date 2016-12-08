@@ -55,9 +55,8 @@ public class TestJaxDataUtil {
 
 		jaxGesuchsteller.addAdresse(jaxAdresseContainer);
 
-		JaxAdresseContainer jaxAltAdresseContainer = new JaxAdresseContainer();
-		JaxAdresseContainer altAdr = createTestJaxAdr("alternativ");
-		altAdr.getAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
+		JaxAdresseContainer jaxAltAdresseContainer = createTestJaxAdr("alternativ");
+		jaxAltAdresseContainer.getAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
 		jaxGesuchsteller.setAlternativeAdresse(jaxAltAdresseContainer);
 
 		return jaxGesuchsteller;

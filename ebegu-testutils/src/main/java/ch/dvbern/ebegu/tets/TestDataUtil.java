@@ -69,7 +69,7 @@ public final class TestDataUtil {
 		return adresse;
 	}
 
-	public static GesuchstellerContainer createDefaultGesuchstellerContainer() {
+	public static GesuchstellerContainer createDefaultGesuchstellerContainer(Gesuch gesuch) {
 		final GesuchstellerContainer gesuchstellerContainer = new GesuchstellerContainer();
 		gesuchstellerContainer.addAdresse(createDefaultGesuchstellerAdresseContainer(gesuchstellerContainer));
 		gesuchstellerContainer.setGesuchstellerJA(createDefaultGesuchsteller());
@@ -416,7 +416,8 @@ public final class TestDataUtil {
 	}
 
 	public static GesuchstellerContainer createDefaultGesuchstellerWithEinkommensverschlechterung() {
-		final GesuchstellerContainer gesuchsteller = createDefaultGesuchstellerContainer();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = createDefaultGesuchstellerContainer(gesuch);
 		gesuchsteller.setEinkommensverschlechterungContainer(createDefaultEinkommensverschlechterungsContainer());
 		return gesuchsteller;
 	}
@@ -607,7 +608,7 @@ public final class TestDataUtil {
 
 		gesuch.getFall().setVerantwortlicher(verantwortlicher);
 		persistence.persist(gesuch.getFall());
-		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer());
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
 		persistence.persist(gesuch.getGesuchsperiode());
 
 		Set<KindContainer> kindContainers = new TreeSet<>();

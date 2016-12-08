@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Erwerbspensum;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.services.ErwerbspensumService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -16,7 +19,6 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -43,8 +45,9 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 	public void createFinanzielleSituation() {
 		Assert.assertNotNull(erwerbspensumService);
 
+		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		Erwerbspensum erwerbspensumData = TestDataUtil.createErwerbspensumData();
-		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		gesuchsteller = persistence.persist(gesuchsteller);
 
 		ErwerbspensumContainer ewpCont = TestDataUtil.createErwerbspensumContainer();
@@ -77,16 +80,20 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void findErwerbspensenFromGesuch() {
-		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 
 		//Creates another Erwerbspensum that won't be loaded since it doesn't belong to the gesuch
 		Erwerbspensum erwerbspensumData = TestDataUtil.createErwerbspensumData();
-		GesuchstellerContainer gesuchsteller1 = TestDataUtil.createDefaultGesuchstellerContainer();
+		GesuchstellerContainer gesuchsteller1 = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
+		gesuch.setGesuchsteller1(gesuchsteller1);
 		gesuchsteller1 = persistence.persist(gesuchsteller1);
+		persistence.merge(gesuch);
+
 		ErwerbspensumContainer ewpCont = TestDataUtil.createErwerbspensumContainer();
 		ewpCont.setErwerbspensumGS(erwerbspensumData);
 		ewpCont.setGesuchsteller(gesuchsteller1);
-		erwerbspensumService.saveErwerbspensum(ewpCont, TestDataUtil.createDefaultGesuch());
+		gesuchsteller1.addErwerbspensumContainer(ewpCont);
+		erwerbspensumService.saveErwerbspensum(ewpCont, gesuch);
 
 		Collection<ErwerbspensumContainer> erwerbspensenFromGesuch = erwerbspensumService.findErwerbspensenFromGesuch(gesuch.getId());
 
@@ -108,7 +115,8 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	private ErwerbspensumContainer insertNewEntity() {
-		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
+		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		ErwerbspensumContainer container = TestDataUtil.createErwerbspensumContainer();
 		gesuchsteller.addErwerbspensumContainer(container);
 		gesuchsteller = persistence.persist(gesuchsteller);

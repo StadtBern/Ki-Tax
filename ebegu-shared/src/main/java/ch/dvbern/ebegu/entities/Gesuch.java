@@ -54,12 +54,14 @@ public class Gesuch extends AbstractEntity {
 
 	@Valid
 	@Nullable
-	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller_container1_id"), nullable = true)
 	private GesuchstellerContainer gesuchsteller1;
 
 	@Valid
 	@Nullable
-	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller_container2_id"), nullable = true)
 	private GesuchstellerContainer gesuchsteller2;
 
 	@Valid

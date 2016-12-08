@@ -3,10 +3,7 @@ package ch.dvbern.ebegu.rest.test;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
-import ch.dvbern.ebegu.entities.AdresseTyp;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.Constants;
@@ -103,7 +100,8 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestLogin
 
 
 	private GesuchstellerContainer insertNewEntity() {
-		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		persistence.persist(gesuchsteller);
 		return gesuchsteller;
 	}

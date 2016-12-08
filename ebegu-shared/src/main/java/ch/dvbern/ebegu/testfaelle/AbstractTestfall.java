@@ -96,6 +96,7 @@ public abstract class AbstractTestfall {
 	protected GesuchstellerContainer createGesuchstellerContainer(String name, String vorname) {
 		GesuchstellerContainer gesuchstellerCont = new GesuchstellerContainer();
 		gesuchstellerCont.setAdressen(new ArrayList<>());
+		gesuchstellerCont.setGesuchstellerJA(createGesuchsteller(name, vorname));
 		gesuchstellerCont.getAdressen().add(createWohnadresseContainer(gesuchstellerCont));
 		return gesuchstellerCont;
 	}

@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,12 +24,8 @@ public class GesuchstellerContainer extends AbstractEntity {
 	private static final long serialVersionUID = -8403117439764700618L;
 
 
-	@NotNull
-	@OneToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchsteller_container_gesuch_id"), nullable = false)
-	private Gesuch gesuch;
-
 	@Valid
+	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchsteller_container_gesuchstellergs_id"), nullable = true)
 	private Gesuchsteller gesuchstellerGS;
@@ -69,14 +64,6 @@ public class GesuchstellerContainer extends AbstractEntity {
 	public boolean addAdresse(@Nonnull final GesuchstellerAdresseContainer gesuchstellerAdresseContainer) {
 		gesuchstellerAdresseContainer.setGesuchstellerContainer(this);
 		return !adressen.contains(gesuchstellerAdresseContainer) && adressen.add(gesuchstellerAdresseContainer);
-	}
-
-	public Gesuch getGesuch() {
-		return gesuch;
-	}
-
-	public void setGesuch(Gesuch gesuch) {
-		this.gesuch = gesuch;
 	}
 
 	public Gesuchsteller getGesuchstellerGS() {
@@ -184,7 +171,6 @@ public class GesuchstellerContainer extends AbstractEntity {
 	public GesuchstellerContainer copyForMutation(GesuchstellerContainer mutation) {
 		super.copyForMutation(mutation);
 		mutation.setVorgaengerId(this.getId());
-		mutation.setGesuch(this.gesuch);
 		if (this.getGesuchstellerGS() != null) {
 			mutation.setGesuchstellerGS(this.getGesuchstellerGS().copyForMutation(new Gesuchsteller()));
 		}

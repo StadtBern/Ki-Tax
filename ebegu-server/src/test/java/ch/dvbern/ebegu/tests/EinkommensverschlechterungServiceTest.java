@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.services.EinkommensverschlechterungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -32,7 +29,7 @@ public class EinkommensverschlechterungServiceTest extends AbstractEbeguLoginTes
 	private EinkommensverschlechterungService einkommensverschlechterungService;
 
 	@Inject
-	private Persistence<Gesuchsteller> persistence;
+	private Persistence<Gesuch> persistence;
 
 
 
@@ -51,7 +48,8 @@ public class EinkommensverschlechterungServiceTest extends AbstractEbeguLoginTes
 	}
 
 	private EinkommensverschlechterungContainer getEinkommensverschlechterungContainer() {
-		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer();
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		gesuchsteller = persistence.persist(gesuchsteller);
 
 		final Einkommensverschlechterung einkommensverschlechterung = TestDataUtil.createDefaultEinkommensverschlechterung();

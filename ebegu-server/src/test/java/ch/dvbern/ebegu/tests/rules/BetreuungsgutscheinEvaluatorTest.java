@@ -108,7 +108,6 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		// GS 1
 		GesuchstellerContainer gsContainer1 = new GesuchstellerContainer();
-		gsContainer1.setGesuch(gesuch);
 		gsContainer1.setGesuchstellerJA(new Gesuchsteller());
 		gesuch.setGesuchsteller1(gsContainer1);
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
@@ -118,7 +117,6 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(erwerbspensumGS1_2.getGueltigAb(), erwerbspensumGS1_2.getGueltigBis(), 30, 0));
 		// GS 2
 		GesuchstellerContainer gsContainer2 = new GesuchstellerContainer();
-		gsContainer2.setGesuch(gesuch);
 		gsContainer2.setGesuchstellerJA(new Gesuchsteller());
 		gesuch.setGesuchsteller2(gsContainer2);
 		gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());

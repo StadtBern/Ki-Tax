@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.services.GesuchstellerAdresseService;
@@ -29,14 +30,15 @@ public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguLoginTest 
 	private GesuchstellerAdresseService adresseService;
 
 	@Inject
-	private Persistence<GesuchstellerAdresseContainer> persistence;
+	private Persistence<Gesuch> persistence;
 
 
 
 
 	@Test
 	public void createAdresseTogetherWithGesuchstellerTest() {
-		GesuchstellerContainer gesuchsteller  = TestDataUtil.createDefaultGesuchstellerContainer();
+		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		GesuchstellerContainer gesuchsteller  = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		GesuchstellerContainer storedGesuchsteller = persistence.persist(gesuchsteller);
 		Assert.assertNotNull(storedGesuchsteller.getAdressen());
 		Assert.assertTrue(storedGesuchsteller.getAdressen().stream().findAny().isPresent());
@@ -68,7 +70,8 @@ public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguLoginTest 
 
 	// Help Methods
 	private GesuchstellerAdresseContainer insertNewEntity() {
-		GesuchstellerContainer pers = TestDataUtil.createDefaultGesuchstellerContainer();
+		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		GesuchstellerContainer pers = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		GesuchstellerContainer storedPers =  persistence.persist(pers);
 		return storedPers.getAdressen().stream().findAny().orElseThrow(() -> new IllegalStateException("Testdaten nicht korrekt aufgesetzt"));
 	}
