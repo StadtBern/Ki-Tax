@@ -8,6 +8,7 @@ import {INewFallStateParams} from '../../gesuch.route';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
@@ -29,6 +30,8 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     private eingangsart: TSEingangsart = TSEingangsart.PAPIER;
     private fallId: string;
 
+    TSRoleUtil: any;
+
     // showError ist ein Hack damit, die Fehlermeldung fuer die Checkboxes nicht direkt beim Laden der Seite angezeigt wird
     // sondern erst nachdem man auf ein checkbox oder auf speichern geklickt hat
     showError: boolean = false;
@@ -42,6 +45,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.readStateParams();
         this.initViewModel();
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private readStateParams() {
@@ -82,7 +86,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     save(form: angular.IFormController): IPromise<TSGesuch> {
         this.showError = true;
         if (form.$valid) {
-            if (!form.$dirty) {
+            if (!form.$dirty && !this.gesuchModelManager.getGesuch().isNew()) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch());

@@ -36,7 +36,7 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAtLeastFreigegeben} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
@@ -395,7 +395,18 @@ export default class GesuchModelManager {
 
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
-            this.setStammdatenToWorkWith(new TSGesuchsteller());
+            let gesuchsteller: TSGesuchsteller;
+            // die daten die wir aus iam importiert haben werden bei gs1 abgefuellt
+            if (this.gesuchstellerNumber === 1) {
+                let principal :TSUser = this.authServiceRS.getPrincipal();
+                let name: string = principal ? principal.nachname : undefined;
+                let vorname: string = principal ? principal.vorname : undefined;
+                let email: string = principal ? principal.email : undefined;
+                gesuchsteller = new TSGesuchsteller(vorname, name, undefined, undefined, email);
+            } else{
+                gesuchsteller = new TSGesuchsteller();
+            }
+            this.setStammdatenToWorkWith(gesuchsteller);
             this.getStammdatenToWorkWith().adressen = this.initWohnAdresse();
         }
     }
@@ -447,10 +458,12 @@ export default class GesuchModelManager {
                 this.gesuch.fall = foundFall;
             });
         }
-        if (TSEingangsart.ONLINE === eingangsart) {
-            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
-        } else {
-            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+        if (forced) {
+            if (TSEingangsart.ONLINE === eingangsart) {
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+            } else {
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+            }
         }
         this.gesuch.eingangsart = eingangsart;
     }
@@ -662,7 +675,6 @@ export default class GesuchModelManager {
         });
     }
 
-
     public getKindToWorkWith(): TSKindContainer {
         if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindNumber) {
             return this.gesuch.kindContainers[this.kindNumber - 1]; //kindNumber faengt mit 1 an
@@ -803,13 +815,13 @@ export default class GesuchModelManager {
         return -1;
     }
 
+
     public removeBetreuung(): IPromise<void> {
         return this.betreuungRS.removeBetreuung(this.getBetreuungToWorkWith().id, this.gesuch.id).then((responseBetreuung: any) => {
             this.removeBetreuungFromKind();
             this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id);
         });
     }
-
 
     public removeErwerbspensum(pensum: TSErwerbspensumContainer): void {
         let erwerbspensenOfCurrentGS: Array<TSErwerbspensumContainer>;
@@ -1076,7 +1088,19 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return this.isGesuchStatusVerfuegenVerfuegt() || this.authServiceRS.isRole(TSRole.SCHULAMT);
+        return  this.isGesuchStatusVerfuegenVerfuegt() || this.isGesuchReadonlyForRole();
+    }
+
+    /**
+     * checks if the gesuch is readonly for a given role based on its state
+     */
+    private isGesuchReadonlyForRole(): boolean {
+        if (this.authServiceRS.isRole(TSRole.SCHULAMT)) {
+            return true;  // schulamt hat immer nur readonly zugriff
+        } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+            return isAtLeastFreigegeben(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
+        }
+        return false;
     }
 
     /**

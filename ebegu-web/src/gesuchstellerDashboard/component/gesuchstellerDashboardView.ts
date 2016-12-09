@@ -5,10 +5,12 @@ import PendenzRS from '../../pendenzen/service/PendenzRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSFall from '../../models/TSFall';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import FallRS from '../../gesuch/service/fallRS.rest';
+import {TSAntragStatus, IN_BEARBEITUNG_BASE_NAME} from '../../models/enums/TSAntragStatus';
+import {TSRoleUtil} from '../../utils/TSRoleUtil';
+import EbeguUtil from '../../utils/EbeguUtil';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
@@ -31,10 +33,10 @@ export class GesuchstellerDashboardListViewController {
     totalResultCount: string = '-';
 
 
-    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS', 'GesuchsperiodeRS', 'FallRS', '$translate'];
+    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS', 'EbeguUtil', 'GesuchsperiodeRS', 'FallRS', '$translate'];
 
     constructor(private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
-                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS, private gesuchsperiodeRS: GesuchsperiodeRS,
+                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private fallRS: FallRS, private $translate: ITranslateService) {
         this.initViewModel();
     }
@@ -138,5 +140,16 @@ export class GesuchstellerDashboardListViewController {
             }
         }
         return undefined;
+    }
+
+    /**
+     * Status muss speziell uebersetzt werden damit Gesuchsteller nur "In Bearbeitung" sieht und nicht in "Bearbeitung Gesuchsteller"
+     */
+    public translate(status: TSAntragStatus) {
+        let isUserGesuchsteller: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles());
+        if (status === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller) {
+            return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
+        }
+        return this.ebeguUtil.translateString(TSAntragStatus[status]);
     }
 }
