@@ -27,6 +27,8 @@ public class InstitutionenInsertCreator {
 	private Map<String, String> institutionenMap = new HashMap<>();
 
 	private PrintWriter printWriter;
+	private String inputFile = "/institutionen/Institutionen_2016.12.08.xlsx";
+	private String outoutFile = "/media/M/hefr/output.txt";
 
 
 	public static void main(String[] args) {
@@ -39,7 +41,7 @@ public class InstitutionenInsertCreator {
 	}
 
 	private void readExcel() throws IOException {
-		InputStream resourceAsStream = InstitutionenInsertCreator.class.getResourceAsStream("/institutionen/Institutionen_2016.12.08.xlsx");
+		InputStream resourceAsStream = InstitutionenInsertCreator.class.getResourceAsStream(inputFile);
 		XSSFWorkbook myWorkBook = new XSSFWorkbook(resourceAsStream);
 		XSSFSheet mySheet = myWorkBook.getSheetAt(0);
 		Iterator<Row> rowIterator = mySheet.iterator();
@@ -283,7 +285,7 @@ public class InstitutionenInsertCreator {
 	private PrintWriter getPrintWriter() {
 		if (printWriter == null) {
 			try {
-				FileOutputStream fos = new FileOutputStream("/media/M/hefr/output.txt");
+				FileOutputStream fos = new FileOutputStream(outoutFile);
 				printWriter = new PrintWriter(fos);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
