@@ -51,6 +51,8 @@ import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
+import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
+import TSAdresseContainer from '../../models/TSAdresseContainer';
 import IQService = angular.IQService;
 
 export default class GesuchModelManager {
@@ -264,7 +266,7 @@ export default class GesuchModelManager {
     /**
      * Speichert den StammdatenToWorkWith.
      */
-    public updateGesuchsteller(umzug: boolean): IPromise<TSGesuchsteller> {
+    public updateGesuchsteller(umzug: boolean): IPromise<TSGesuchstellerContainer> {
         // Da showUmzug nicht im Server gespeichert wird, muessen wir den alten Wert kopieren und nach der Aktualisierung wiedersetzen
         let tempShowUmzug: boolean = this.getStammdatenToWorkWith().showUmzug;
         return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber, umzug)
@@ -365,7 +367,7 @@ export default class GesuchModelManager {
         return this.activeGesuchsperiodenList;
     }
 
-    public getStammdatenToWorkWith(): TSGesuchsteller {
+    public getStammdatenToWorkWith(): TSGesuchstellerContainer {
         if (this.gesuchstellerNumber === 2) {
             return this.gesuch.gesuchsteller2;
         } else {
@@ -385,7 +387,7 @@ export default class GesuchModelManager {
         }
     }
 
-    public setStammdatenToWorkWith(gesuchsteller: TSGesuchsteller): TSGesuchsteller {
+    public setStammdatenToWorkWith(gesuchsteller: TSGesuchstellerContainer): TSGesuchstellerContainer {
         if (this.gesuchstellerNumber === 1) {
             return this.gesuch.gesuchsteller1 = gesuchsteller;
         } else {
@@ -406,7 +408,7 @@ export default class GesuchModelManager {
             } else{
                 gesuchsteller = new TSGesuchsteller();
             }
-            this.setStammdatenToWorkWith(gesuchsteller);
+            this.setStammdatenToWorkWith(new TSGesuchstellerContainer(gesuchsteller));
             this.getStammdatenToWorkWith().adressen = this.initWohnAdresse();
         }
     }
@@ -579,18 +581,22 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-    private initWohnAdresse(): Array<TSAdresse> {
+    private initWohnAdresse(): Array<TSAdresseContainer> {
+        let wohnAdresseContanier: TSAdresseContainer = new TSAdresseContainer();
         let wohnAdresse = new TSAdresse();
-        wohnAdresse.showDatumVon = false;
         wohnAdresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        return [wohnAdresse];
+        wohnAdresseContanier.showDatumVon = false;
+        wohnAdresseContanier.adresseJA = wohnAdresse;
+        return [wohnAdresseContanier];
     }
 
-    private initKorrespondenzAdresse(): TSAdresse {
+    private initKorrespondenzAdresse(): TSAdresseContainer {
+        let korrespAdresseContanier: TSAdresseContainer = new TSAdresseContainer();
         let korrAdr = new TSAdresse();
-        korrAdr.showDatumVon = false;
         korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
-        return korrAdr;
+        korrespAdresseContanier.showDatumVon = false;
+        korrespAdresseContanier.adresseJA = korrAdr;
+        return korrespAdresseContanier;
     }
 
     public getKinderList(): Array<TSKindContainer> {
@@ -844,12 +850,12 @@ export default class GesuchModelManager {
     }
 
     findIndexOfErwerbspensum(gesuchstellerNumber: number, pensum: any): number {
-        let gesuchsteller: TSGesuchsteller;
+        let gesuchsteller: TSGesuchstellerContainer;
         gesuchsteller = gesuchstellerNumber === 2 ? this.gesuch.gesuchsteller2 : this.gesuch.gesuchsteller1;
         return gesuchsteller.erwerbspensenContainer.indexOf(pensum);
     }
 
-    saveErwerbspensum(gesuchsteller: TSGesuchsteller, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
+    saveErwerbspensum(gesuchsteller: TSGesuchstellerContainer, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
         if (erwerbspensum.id) {
             return this.erwerbspensumRS.saveErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((response: TSErwerbspensumContainer) => {

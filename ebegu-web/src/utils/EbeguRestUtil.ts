@@ -1623,7 +1623,7 @@ export default class EbeguRestUtil {
 
     }
 
-    private gesuchstellerContainerToRestObject(restGSCont: any, gesuchstellerCont: TSGesuchstellerContainer): any {
+    public gesuchstellerContainerToRestObject(restGSCont: any, gesuchstellerCont: TSGesuchstellerContainer): any {
         this.abstractEntityToRestObject(restGSCont, gesuchstellerCont);
         restGSCont.adressen = this.adressenContainerListToRestObject(gesuchstellerCont.adressen);
         restGSCont.alternativeAdresse = this.adresseContainerToRestObject({}, gesuchstellerCont.korrespondenzAdresse);
@@ -1649,14 +1649,16 @@ export default class EbeguRestUtil {
         return restGSCont;
     }
 
-    private parseGesuchstellerContainer(gesuchstellerContTS: TSGesuchstellerContainer, gesuchstellerContFromServer: any) {
+    public parseGesuchstellerContainer(gesuchstellerContTS: TSGesuchstellerContainer, gesuchstellerContFromServer: any) {
         if (gesuchstellerContFromServer) {
             this.parseAbstractEntity(gesuchstellerContTS, gesuchstellerContFromServer);
             gesuchstellerContTS.gesuchstellerJA = this.parseGesuchsteller(new TSGesuchsteller(), gesuchstellerContFromServer.gesuchstellerJA);
             gesuchstellerContTS.gesuchstellerGS = this.parseGesuchsteller(new TSGesuchsteller(), gesuchstellerContFromServer.gesuchstellerGS);
             gesuchstellerContTS.adressen = this.parseAdressenContainerList(gesuchstellerContFromServer.adressen);
-            gesuchstellerContTS.korrespondenzAdresse = this.parseAdresseContainer(new TSAdresseContainer(), gesuchstellerContFromServer.alternativeAdresse);
-            gesuchstellerContTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), gesuchstellerContFromServer.finanzielleSituationContainer);
+            gesuchstellerContTS.korrespondenzAdresse = this.parseAdresseContainer(
+                new TSAdresseContainer(), gesuchstellerContFromServer.alternativeAdresse);
+            gesuchstellerContTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(
+                new TSFinanzielleSituationContainer(), gesuchstellerContFromServer.finanzielleSituationContainer);
             gesuchstellerContTS.einkommensverschlechterungContainer = this.parseEinkommensverschlechterungContainer(
                 new TSEinkommensverschlechterungContainer(), gesuchstellerContFromServer.einkommensverschlechterungContainer);
             gesuchstellerContTS.erwerbspensenContainer = this.parseErwerbspensenContainers(gesuchstellerContFromServer.erwerbspensenContainers);
@@ -1676,10 +1678,13 @@ export default class EbeguRestUtil {
     }
 
     private adresseContainerToRestObject(restAddresseCont: any, adresseContTS: TSAdresseContainer): any {
-        this.abstractEntityToRestObject(restAddresseCont, adresseContTS);
-        restAddresseCont.adresseGS = this.adresseToRestObject({}, adresseContTS.adresseGS);
-        restAddresseCont.adresseJA = this.adresseToRestObject({}, adresseContTS.adresseJA);
-        return restAddresseCont;
+        if (adresseContTS) {
+            this.abstractEntityToRestObject(restAddresseCont, adresseContTS);
+            restAddresseCont.adresseGS = this.adresseToRestObject({}, adresseContTS.adresseGS);
+            restAddresseCont.adresseJA = this.adresseToRestObject({}, adresseContTS.adresseJA);
+            return restAddresseCont;
+        }
+        return undefined;
     }
 
     private parseAdressenContainerList(adressen: any): Array<TSAdresseContainer> {

@@ -6,13 +6,13 @@ import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import './stammdatenView.less';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSRole} from '../../../models/enums/TSRole';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import IQService = angular.IQService;
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
@@ -28,13 +28,13 @@ export class StammdatenViewComponentConfig implements IComponentOptions {
 }
 
 
-export class StammdatenViewController extends AbstractGesuchViewController<TSGesuchsteller> {
+export class StammdatenViewController extends AbstractGesuchViewController<TSGesuchstellerContainer> {
     geschlechter: Array<string>;
     showKorrespondadr: boolean;
     ebeguRestUtil: EbeguRestUtil;
     allowedRoles: Array<TSRole>;
     gesuchstellerNumber: number;
-    private initialModel: TSGesuchsteller;
+    private initialModel: TSGesuchstellerContainer;
 
 
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
@@ -66,7 +66,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    private save(form: angular.IFormController): IPromise<TSGesuchsteller> {
+    private save(form: angular.IFormController): IPromise<TSGesuchstellerContainer> {
         if (form.$valid) {
             this.gesuchModelManager.setStammdatenToWorkWith(this.model);
             if (!form.$dirty) {
@@ -97,8 +97,12 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         return undefined;
     }
 
-    public getModel(): TSGesuchsteller {
+    public getModel(): TSGesuchstellerContainer {
         return this.model;
+    }
+
+    public getModelJA() {
+        return this.model.gesuchstellerJA;
     }
 
     /**

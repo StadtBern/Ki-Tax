@@ -5,6 +5,7 @@ export default class TSAdresseContainer extends TSAbstractEntity {
 
     private _adresseJA: TSAdresse;
     private _adresseGS: TSAdresse;
+    private _showDatumVon: boolean;
 
     constructor(adresseJA?: TSAdresse, adresseGS?: TSAdresse) {
         super();
@@ -26,5 +27,20 @@ export default class TSAdresseContainer extends TSAbstractEntity {
 
     set adresseGS(value: TSAdresse) {
         this._adresseGS = value;
+    }
+
+    public get showDatumVon(): boolean {
+        return this._showDatumVon;
+    }
+
+    public set showDatumVon(value: boolean) {
+        this._showDatumVon = value;
+    }
+
+    public isSameWohnAdresse(umzugAdresse: TSAdresseContainer): boolean {
+        if (this.adresseJA && umzugAdresse.adresseJA) {
+            return this.adresseJA.isSameWohnAdresse(umzugAdresse.adresseJA);
+        }
+        return undefined;
     }
 }

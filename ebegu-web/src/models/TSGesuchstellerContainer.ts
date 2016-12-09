@@ -14,10 +14,13 @@ export default class TSGesuchstellerContainer extends TSAbstractEntity {
     private _finanzielleSituationContainer: TSFinanzielleSituationContainer;
     private _erwerbspensenContainer: Array<TSErwerbspensumContainer>;
     private _einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer;
+    private _showUmzug: boolean = false;
 
-    constructor(finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>,
+    constructor(gesuchstellerJA?: TSGesuchsteller, finanzielleSituation?: TSFinanzielleSituationContainer,
+                erwerbspensen?: Array<TSErwerbspensumContainer>,
                 einkommensverschlechterungContainer?: TSEinkommensverschlechterungContainer) {
         super();
+        this._gesuchstellerJA = gesuchstellerJA;
         this._finanzielleSituationContainer = finanzielleSituation;
         this._erwerbspensenContainer = erwerbspensen ? erwerbspensen : [];
         this._einkommensverschlechterungContainer = einkommensverschlechterungContainer;
@@ -85,6 +88,14 @@ export default class TSGesuchstellerContainer extends TSAbstractEntity {
         this._einkommensverschlechterungContainer = value;
     }
 
+    get showUmzug(): boolean {
+        return this._showUmzug;
+    }
+
+    set showUmzug(value: boolean) {
+        this._showUmzug = value;
+    }
+
     /**
      * Wir gehen davon aus dass die Liste von Adressen aus dem Server sortiert kommt.
      * Deshalb duerfen wir die erste Adresse der Liste als Wohnadresse nehmen
@@ -116,5 +127,18 @@ export default class TSGesuchstellerContainer extends TSAbstractEntity {
         return this.getUmzugAdressen().length > 0;
     }
 
+    public extractFullname(): string {
+        if (this.gesuchstellerJA) {
+            return this.gesuchstellerJA.getFullName();
+        }
+        return undefined;
+    }
+
+    public extractNachname(): string {
+        if (this.gesuchstellerJA) {
+            return this.gesuchstellerJA.nachname;
+        }
+        return undefined;
+    }
 }
 

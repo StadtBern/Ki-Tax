@@ -8,7 +8,6 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _telefon: string;
     private _telefonAusland: string;
     private _diplomatenstatus: boolean;
-    private _showUmzug: boolean = false;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 email?: string, mobile?: string, telefon?: string, telefonAusland?: string,
@@ -59,14 +58,6 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
     set diplomatenstatus(value: boolean) {
         this._diplomatenstatus = value;
-    }
-
-    get showUmzug(): boolean {
-        return this._showUmzug;
-    }
-
-    set showUmzug(value: boolean) {
-        this._showUmzug = value;
     }
 
     public getPhone(): string {

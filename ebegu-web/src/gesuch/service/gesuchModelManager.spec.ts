@@ -22,10 +22,9 @@ import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import IPromise = angular.IPromise;
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import {TSRole} from '../../models/enums/TSRole';
+import IPromise = angular.IPromise;
 
 describe('gesuchModelManager', function () {
 

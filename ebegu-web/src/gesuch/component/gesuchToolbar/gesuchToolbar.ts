@@ -217,8 +217,8 @@ export class GesuchToolbarController {
             if (this.getGesuch().fall) {
                 text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
             }
-            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.nachname) {
-                text = text + ' ' + this.getGesuch().gesuchsteller1.nachname;
+            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.extractNachname()) {
+                text = text + ' ' + this.getGesuch().gesuchsteller1.extractNachname();
             }
             return text;
         } else {
@@ -309,13 +309,15 @@ export class GesuchToolbarController {
 
     public antragMutieren(): void {
         this.mutierenPossibleForCurrentAntrag = false;
-        let eingangsart :TSEingangsart;
+        let eingangsart: TSEingangsart;
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
             eingangsart = TSEingangsart.ONLINE;
         } else {
             eingangsart = TSEingangsart.PAPIER;
         }
-        this.$state.go('gesuch.mutation', {createMutation: true, gesuchId: this.gesuchid, fallId: this.getGesuch().fall.id, eingangsart: eingangsart, gesuchsperiodeId: this.getGesuch().gesuchsperiode.id});
+        this.$state.go('gesuch.mutation', {createMutation: true, gesuchId: this.gesuchid,
+            fallId: this.getGesuch().fall.id, eingangsart: eingangsart,
+            gesuchsperiodeId: this.getGesuch().gesuchsperiode.id});
     }
 
     private addAntragToList(antrag: TSGesuch): void {
