@@ -156,7 +156,7 @@ export default class TSAntragDTO {
     get gesuchsperiodeString() {
         if (this._gesuchsperiodeGueltigAb && this._gesuchsperiodeGueltigBis) {
             return this._gesuchsperiodeGueltigAb.year() + '/'
-                + this._gesuchsperiodeGueltigBis.year();
+                + (this._gesuchsperiodeGueltigBis.year() - 2000);
         }
         return undefined;
     }

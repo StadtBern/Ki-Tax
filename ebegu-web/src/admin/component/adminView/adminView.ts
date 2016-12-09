@@ -116,7 +116,7 @@ export class AdminViewController {
             let uuidPartOfString = response.data ? response.data.slice(-36) : '';
             return this.dvDialog.showDialog(linkDialogTempl, LinkDialogController, {
                 title: response.data,
-                link: '#/gesuch/fall/false/' + uuidPartOfString,
+                link: '#/gesuch/fall/false///' + uuidPartOfString + '/', //nicht alle Parameter werden benoetigt, deswegen sind sie leer
             }).then(() => {
                 //do nothing
             });

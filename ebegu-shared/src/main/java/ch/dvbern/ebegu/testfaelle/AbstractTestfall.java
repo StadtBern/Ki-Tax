@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.testfaelle;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -115,7 +116,7 @@ public abstract class AbstractTestfall {
 		wohnadresse.setLand(Land.CH);
 		wohnadresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
 		wohnadresse.setGesuchsteller(gesuchsteller);
-		wohnadresse.setGueltigkeit(gesuchsperiode.getGueltigkeit());
+		wohnadresse.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return wohnadresse;
 	}
 
