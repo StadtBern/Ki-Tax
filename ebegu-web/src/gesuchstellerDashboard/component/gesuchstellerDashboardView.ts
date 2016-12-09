@@ -95,7 +95,7 @@ export class GesuchstellerDashboardListViewController {
             }
         } else {
             // Noch kein Antrag vorhanden
-            this.$state.go('gesuch.fallcreation', {createNew: false, eingangsart: TSEingangsart.ONLINE, gesuchId: null, gesuchsperiodeId: periode.id, fallId: this.fallId});
+            this.$state.go('gesuch.fallcreation', {createNew: true, eingangsart: TSEingangsart.ONLINE, gesuchId: null, gesuchsperiodeId: periode.id, fallId: this.fallId});
         }
     }
 
