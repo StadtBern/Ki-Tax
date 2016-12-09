@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Jax Element for Response of OpenIdm
+ * Jax Element for Response of OpenIdm, gives result and page counts
  */
 @XmlRootElement(name = "openIdmResponse")
 @XmlAccessorType(XmlAccessType.FIELD)

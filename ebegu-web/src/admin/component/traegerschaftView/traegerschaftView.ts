@@ -69,8 +69,6 @@ export class TraegerschaftViewController {
                 if (!traegerschaft.synchronizedWithOpenIdm) {
                     this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                         title: 'TRAEGERSCHAFT_CREATE_SYNCHRONIZE'
-                    }).then(() => {
-                        //do nothing
                     });
                 }
             });
@@ -82,8 +80,6 @@ export class TraegerschaftViewController {
             let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
             return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
                 title: returnString
-            }).then(() => {
-                //do nothing
             });
         });
     }

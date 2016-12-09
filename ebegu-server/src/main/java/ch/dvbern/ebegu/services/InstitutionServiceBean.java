@@ -69,14 +69,13 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Override
 	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
-	public Optional<Institution> setInstitutionInactive(@Nonnull String institutionId) {
+	public Institution setInstitutionInactive(@Nonnull String institutionId) {
 		Validate.notNull(institutionId);
 		Optional<Institution> institutionToRemove = findInstitution(institutionId);
 
 		Institution institution = institutionToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionId));
 		institution.setActive(false);
-		final Institution merge = persistence.merge(institution);
-		return Optional.ofNullable(merge);
+		return persistence.merge(institution);
 	}
 
 	@Override

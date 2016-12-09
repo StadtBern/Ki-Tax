@@ -10,14 +10,18 @@ import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
 import java.io.IOException;
 
+/**
+ * logger fuer REST responses
+ */
 public class ClientResponseLogger implements ClientResponseFilter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClientResponseLogger.class.getSimpleName());
+	private static final char SEPARATOR = ',';
 
 	@Override
 	public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
 		LOG.info("ClientResponse Header: ");
-		Joiner.MapJoiner mapJoiner = Joiner.on(',').withKeyValueSeparator("=");
+		Joiner.MapJoiner mapJoiner = Joiner.on(SEPARATOR).withKeyValueSeparator("=");
 		LOG.info(mapJoiner.join(responseContext.getHeaders()));
 
 		LOG.info("ClientResponse Body: ");

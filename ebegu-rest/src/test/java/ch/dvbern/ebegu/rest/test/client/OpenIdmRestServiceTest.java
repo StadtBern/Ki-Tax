@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.rest.test.client;
 
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
-import ch.dvbern.ebegu.api.client.OpenIdmRestClient;
+import ch.dvbern.ebegu.api.client.OpenIdmRestService;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.rest.test.AbstractEbeguRestTest;
@@ -21,13 +21,13 @@ import java.util.Optional;
 
 /**
  * Testet die Verbindung zum OpenIdm Server.
- * Tests sind default ignored, da wir zum Testen unserer Applikation nicht auf den OpenIdm Server angewiesen sind
+ * Tests sind default ignored, damit wir zum Testen unserer Applikation nicht auf den OpenIdm Server angewiesen sind
  */
 
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class OpenIdmRestClientTest extends AbstractEbeguRestTest {
+public class OpenIdmRestServiceTest extends AbstractEbeguRestTest {
 
 
 	private static final String INSTID1 = "b4dc7d30-b63e-4176-a166-00deadbeef01";
@@ -35,7 +35,7 @@ public class OpenIdmRestClientTest extends AbstractEbeguRestTest {
 	private static final String TRAEGERSCHAFTID1 = "b4dc7d30-b63e-4176-a166-00deadbeef01";
 
 	@Inject
-	private OpenIdmRestClient openIdmRestClient;
+	private OpenIdmRestService openIdmRestService;
 
 	//Be careful, this test create and delete Institutions on openIdm server
 	@Test
@@ -55,7 +55,7 @@ public class OpenIdmRestClientTest extends AbstractEbeguRestTest {
 	@Test
 	@Ignore
 	public void deleteAllOnOpenIdm() {
-		final Optional<JaxOpenIdmResponse> all = openIdmRestClient.getAll(true);
+		final Optional<JaxOpenIdmResponse> all = openIdmRestService.getAll(true);
 		Assert.assertTrue(all.isPresent());
 
 		StringBuilder sb = new StringBuilder();
@@ -66,7 +66,7 @@ public class OpenIdmRestClientTest extends AbstractEbeguRestTest {
 			sb.append(jaxOpenIdmResult.get_id()).append(" ");
 			sb.append(jaxOpenIdmResult.getName()).append(" ");
 			sb.append(jaxOpenIdmResult.getType()).append(" ");
-			final boolean success = openIdmRestClient.deleteByOpenIdmUid(jaxOpenIdmResult.get_id(), true);
+			final boolean success = openIdmRestService.deleteByOpenIdmUid(jaxOpenIdmResult.get_id(), true);
 			if (success) {
 				sb.append(" -> success");
 			} else {
@@ -83,60 +83,60 @@ public class OpenIdmRestClientTest extends AbstractEbeguRestTest {
 		Institution institution1 = new Institution();
 		institution1.setName("testInstitution1");
 		institution1.setId(INSTID1);
-		final Optional<JaxOpenIdmResult> optInstitution1 = openIdmRestClient.createInstitution(institution1, true);
+		final Optional<JaxOpenIdmResult> optInstitution1 = openIdmRestService.createInstitution(institution1, true);
 		Assert.assertTrue(optInstitution1.isPresent());
 
 		Institution institution2 = new Institution();
 		institution2.setName("testInstitution2");
 		institution2.setId(INSTID2);
-		final Optional<JaxOpenIdmResult> optInstitution2 = openIdmRestClient.createInstitution(institution2, true);
+		final Optional<JaxOpenIdmResult> optInstitution2 = openIdmRestService.createInstitution(institution2, true);
 		Assert.assertTrue(optInstitution2.isPresent());
 
 		Traegerschaft traegerschaft = new Traegerschaft();
 		traegerschaft.setName("testTraegerschaft1");
 		traegerschaft.setId(TRAEGERSCHAFTID1);
-		final Optional<JaxOpenIdmResult> optTaegerschaft = openIdmRestClient.createTraegerschaft(traegerschaft, true);
+		final Optional<JaxOpenIdmResult> optTaegerschaft = openIdmRestService.createTraegerschaft(traegerschaft, true);
 		Assert.assertTrue(optTaegerschaft.isPresent());
 
 		//get and check
-		final Optional<JaxOpenIdmResult> institutionByUid1 = openIdmRestClient.getInstitutionByUid(institution1.getId(), true);
+		final Optional<JaxOpenIdmResult> institutionByUid1 = openIdmRestService.getInstitutionByUid(institution1.getId(), true);
 		Assert.assertTrue(institutionByUid1.isPresent());
-		Assert.assertEquals(institution1.getId(), openIdmRestClient.getEbeguId(institutionByUid1.get().get_id()));
+		Assert.assertEquals(institution1.getId(), openIdmRestService.convertToEBEGUID(institutionByUid1.get().get_id()));
 		Assert.assertEquals(institution1.getName(), institutionByUid1.get().getName());
 
-		final Optional<JaxOpenIdmResult> institutionByUid2 = openIdmRestClient.getInstitutionByUid(institution2.getId(), true);
+		final Optional<JaxOpenIdmResult> institutionByUid2 = openIdmRestService.getInstitutionByUid(institution2.getId(), true);
 		Assert.assertTrue(institutionByUid2.isPresent());
-		Assert.assertEquals(institution2.getId(), openIdmRestClient.getEbeguId(institutionByUid2.get().get_id()));
+		Assert.assertEquals(institution2.getId(), openIdmRestService.convertToEBEGUID(institutionByUid2.get().get_id()));
 		Assert.assertEquals(institution2.getName(), institutionByUid2.get().getName());
 
-		final Optional<JaxOpenIdmResult> traegerschaftByUid = openIdmRestClient.getTraegerschaftByUid(traegerschaft.getId(), true);
+		final Optional<JaxOpenIdmResult> traegerschaftByUid = openIdmRestService.getTraegerschaftByUid(traegerschaft.getId(), true);
 		Assert.assertTrue(traegerschaftByUid.isPresent());
-		Assert.assertEquals(traegerschaft.getId(), openIdmRestClient.getEbeguId(traegerschaftByUid.get().get_id()));
+		Assert.assertEquals(traegerschaft.getId(), openIdmRestService.convertToEBEGUID(traegerschaftByUid.get().get_id()));
 		Assert.assertEquals(traegerschaft.getName(), traegerschaftByUid.get().getName());
 
 		//Update
 		institution1.setName("testUpdateInstitution1");
-		Optional<JaxOpenIdmResult> optUpdateInstitution1 = openIdmRestClient.updateInstitution(institution1, true);
+		Optional<JaxOpenIdmResult> optUpdateInstitution1 = openIdmRestService.updateInstitution(institution1, true);
 		Assert.assertTrue(optUpdateInstitution1.isPresent());
 
 		traegerschaft.setName("testUpdateTraegerschaft");
-		Optional<JaxOpenIdmResult> optUpdateTraegerschaft1 = openIdmRestClient.updateTraegerschaft(traegerschaft, true);
+		Optional<JaxOpenIdmResult> optUpdateTraegerschaft1 = openIdmRestService.updateTraegerschaft(traegerschaft, true);
 		Assert.assertTrue(optUpdateTraegerschaft1.isPresent());
 
 		//get and check Updated
-		optUpdateInstitution1 = openIdmRestClient.getInstitutionByUid(institution1.getId(), true);
+		optUpdateInstitution1 = openIdmRestService.getInstitutionByUid(institution1.getId(), true);
 		Assert.assertTrue(optUpdateInstitution1.isPresent());
-		Assert.assertEquals(institution1.getId(), openIdmRestClient.getEbeguId(optUpdateInstitution1.get().get_id()));
+		Assert.assertEquals(institution1.getId(), openIdmRestService.convertToEBEGUID(optUpdateInstitution1.get().get_id()));
 		Assert.assertEquals(institution1.getName(), optUpdateInstitution1.get().getName());
 
-		optUpdateTraegerschaft1 = openIdmRestClient.getTraegerschaftByUid(traegerschaft.getId(), true);
+		optUpdateTraegerschaft1 = openIdmRestService.getTraegerschaftByUid(traegerschaft.getId(), true);
 		Assert.assertTrue(optUpdateTraegerschaft1.isPresent());
-		Assert.assertEquals(traegerschaft.getId(), openIdmRestClient.getEbeguId(optUpdateTraegerschaft1.get().get_id()));
+		Assert.assertEquals(traegerschaft.getId(), openIdmRestService.convertToEBEGUID(optUpdateTraegerschaft1.get().get_id()));
 		Assert.assertEquals(traegerschaft.getName(), optUpdateTraegerschaft1.get().getName());
 	}
 
 	public void printOpenIdmGetAll() {
-		final Optional<JaxOpenIdmResponse> all = openIdmRestClient.getAll(true);
+		final Optional<JaxOpenIdmResponse> all = openIdmRestService.getAll(true);
 		Assert.assertTrue(all.isPresent());
 
 		StringBuilder sb = new StringBuilder();
@@ -151,13 +151,13 @@ public class OpenIdmRestClientTest extends AbstractEbeguRestTest {
 	}
 
 	public void testOpenIdmDelete() {
-		boolean sucess = openIdmRestClient.deleteInstitution(INSTID1, true);
+		boolean sucess = openIdmRestService.deleteInstitution(INSTID1, true);
 		Assert.assertTrue(sucess);
 
-		sucess = openIdmRestClient.deleteInstitution(INSTID2, true);
+		sucess = openIdmRestService.deleteInstitution(INSTID2, true);
 		Assert.assertTrue(sucess);
 
-		sucess = openIdmRestClient.deleteTraegerschaft(TRAEGERSCHAFTID1, true);
+		sucess = openIdmRestService.deleteTraegerschaft(TRAEGERSCHAFTID1, true);
 		Assert.assertTrue(sucess);
 	}
 

@@ -2,10 +2,9 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
-import ch.dvbern.ebegu.api.client.OpenIdmRestClient;
+import ch.dvbern.ebegu.api.client.OpenIdmRestService;
 import ch.dvbern.ebegu.api.resource.InstitutionResource;
 import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.InstitutionServiceBean;
 import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
@@ -24,8 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmInst;
+import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmTraegerschaft;
+
 /**
- * Testet InstitutionResource
+ * Testet InstitutionResource mit Needle
  */
 
 public class InstitutionResourceTest {
@@ -42,7 +44,7 @@ public class InstitutionResourceTest {
 	private InstitutionService institutionService = new InstitutionServiceBean();
 
 	@Inject
-	private OpenIdmRestClient openIdmRestClient;
+	private OpenIdmRestService openIdmRestService;
 
 	@Inject
 	private EasyMockProvider mockProvider;
@@ -58,11 +60,11 @@ public class InstitutionResourceTest {
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
 		List<Institution> institutions = new ArrayList<>();
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(institutionService.getAllActiveInstitutionen()).andReturn((institutions));
 
-		EasyMock.expect(openIdmRestClient.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
-		EasyMock.expect(openIdmRestClient.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
+		EasyMock.expect(openIdmRestService.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestService.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 
 		mockProvider.replayAll();
@@ -75,14 +77,13 @@ public class InstitutionResourceTest {
 	@Test
 	public void synchronizeInstitutionNullTest1() {
 
-		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
 		List<Institution> institutions = new ArrayList<>();
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.empty());
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.empty());
 		EasyMock.expect(institutionService.getAllActiveInstitutionen()).andReturn((institutions));
 
-		EasyMock.expect(openIdmRestClient.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
-		EasyMock.expect(openIdmRestClient.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
+		EasyMock.expect(openIdmRestService.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestService.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -97,11 +98,11 @@ public class InstitutionResourceTest {
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
 		List<Institution> institutions = null;
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.empty());
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.empty());
 		EasyMock.expect(institutionService.getAllActiveInstitutionen()).andReturn((institutions));
 
-		EasyMock.expect(openIdmRestClient.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
-		EasyMock.expect(openIdmRestClient.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
+		EasyMock.expect(openIdmRestService.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestService.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -134,13 +135,13 @@ public class InstitutionResourceTest {
 		final Institution institution4 = creatInst("4");
 		institutions.add(institution4);
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(institutionService.getAllActiveInstitutionen()).andReturn((institutions));
 
-		EasyMock.expect(openIdmRestClient.createInstitution(institution3)).andReturn(Optional.of(creatOpenIdmInst("3")));
-		EasyMock.expect(openIdmRestClient.createInstitution(institution4)).andReturn(Optional.of(creatOpenIdmInst("4")));
+		EasyMock.expect(openIdmRestService.createInstitution(institution3)).andReturn(Optional.of(creatOpenIdmInst("3")));
+		EasyMock.expect(openIdmRestService.createInstitution(institution4)).andReturn(Optional.of(creatOpenIdmInst("4")));
 
-		EasyMock.expect(openIdmRestClient.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestService.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -166,11 +167,11 @@ public class InstitutionResourceTest {
 		final Institution institution2 = creatInst("2");
 		institutions.add(institution2);
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(institutionService.getAllActiveInstitutionen()).andReturn((institutions));
 
-		EasyMock.expect(openIdmRestClient.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
-		EasyMock.expect(openIdmRestClient.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
+		EasyMock.expect(openIdmRestService.deleteInstitution(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestService.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -200,13 +201,13 @@ public class InstitutionResourceTest {
 		final Institution institution2 = creatInst("2");
 		institutions.add(institution2);
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(institutionService.getAllActiveInstitutionen()).andReturn((institutions));
 
-		EasyMock.expect(openIdmRestClient.deleteInstitution("3")).andReturn(true);
-		EasyMock.expect(openIdmRestClient.deleteInstitution("4")).andReturn(true);
+		EasyMock.expect(openIdmRestService.deleteInstitution("3")).andReturn(true);
+		EasyMock.expect(openIdmRestService.deleteInstitution("4")).andReturn(true);
 
-		EasyMock.expect(openIdmRestClient.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
+		EasyMock.expect(openIdmRestService.createInstitution(EasyMock.anyObject(Institution.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -216,37 +217,11 @@ public class InstitutionResourceTest {
 		mockProvider.verifyAll();
 	}
 
-	private JaxOpenIdmResult creatOpenIdmInst(String name) {
-		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
-		jaxOpenIdmResult.set_id(name);
-		jaxOpenIdmResult.setName(name);
-		jaxOpenIdmResult.setMail(name + "@" + name + ".ch");
-		jaxOpenIdmResult.setType("institution");
-		return jaxOpenIdmResult;
-	}
-
-	private JaxOpenIdmResult creatOpenIdmTraegerschaft(String name) {
-		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
-		jaxOpenIdmResult.set_id(name);
-		jaxOpenIdmResult.setName(name);
-		jaxOpenIdmResult.setMail(name + "@" + name + ".ch");
-		jaxOpenIdmResult.setType("sponsor");
-		return jaxOpenIdmResult;
-	}
-
 	private Institution creatInst(String name) {
 		Institution institution = new Institution();
 		institution.setId(name);
 		institution.setName(name);
 		return institution;
 	}
-
-	private Traegerschaft creatTrae(String name) {
-		Traegerschaft traegerschaft = new Traegerschaft();
-		traegerschaft.setId(name);
-		traegerschaft.setName(name);
-		return traegerschaft;
-	}
-
 
 }

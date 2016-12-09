@@ -11,7 +11,7 @@ import javax.ws.rs.core.Form;
 import java.io.IOException;
 
 /**
- * Klasse um Resteasy client requests zu loggen, bisschen hacky mit dem form aber wir haben atm nur einen service mit form format
+ * Klasse um Resteasy client requests zu loggen
  */
 public class ClientRequestLogger implements ClientRequestFilter {
 
@@ -26,6 +26,7 @@ public class ClientRequestLogger implements ClientRequestFilter {
 		LOG.info(mapJoiner.join(requestContext.getStringHeaders()));
 
 		LOG.info("ClientReqeust Body: ");
+		//bisschen hacky mit dem form aber wir haben atm nur einen service mit form format
 		if (requestContext.getEntity() instanceof Form) {
 			LOG.info(mapJoiner.join(((Form) requestContext.getEntity()).asMap()));
 		} else if (requestContext.getEntity() != null){

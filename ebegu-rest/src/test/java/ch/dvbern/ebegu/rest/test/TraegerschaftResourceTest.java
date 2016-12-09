@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
-import ch.dvbern.ebegu.api.client.OpenIdmRestClient;
+import ch.dvbern.ebegu.api.client.OpenIdmRestService;
 import ch.dvbern.ebegu.api.resource.TraegerschaftResource;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.services.TraegerschaftService;
@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmInst;
+import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmTraegerschaft;
+
 /**
  * Testet TraegerschftResource
  */
@@ -41,7 +44,7 @@ public class TraegerschaftResourceTest {
 	private TraegerschaftService traegerschaftService = new TraegerschaftServiceBean();
 
 	@Inject
-	private OpenIdmRestClient openIdmRestClient;
+	private OpenIdmRestService openIdmRestService;
 
 	@Inject
 	private EasyMockProvider mockProvider;
@@ -57,11 +60,11 @@ public class TraegerschaftResourceTest {
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
 		List<Traegerschaft> traegerschafts = new ArrayList<>();
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
-		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
+		EasyMock.expect(openIdmRestService.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestService.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 
 		mockProvider.replayAll();
@@ -77,11 +80,11 @@ public class TraegerschaftResourceTest {
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
 		List<Traegerschaft> traegerschafts = new ArrayList<>();
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.empty());
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.empty());
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
-		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
+		EasyMock.expect(openIdmRestService.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestService.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -96,11 +99,11 @@ public class TraegerschaftResourceTest {
 		JaxOpenIdmResponse jaxOpenIdmResponse = new JaxOpenIdmResponse();
 		List<Traegerschaft> traegerschafts = null;
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.empty());
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.empty());
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
-		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
+		EasyMock.expect(openIdmRestService.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestService.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -133,13 +136,13 @@ public class TraegerschaftResourceTest {
 		final Traegerschaft traegerschaft4 = creatInst("4");
 		traegerschafts.add(traegerschaft4);
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.createTraegerschaft(traegerschaft3)).andReturn(Optional.of(creatOpenIdmTraegerschaft("3")));
-		EasyMock.expect(openIdmRestClient.createTraegerschaft(traegerschaft4)).andReturn(Optional.of(creatOpenIdmTraegerschaft("4")));
+		EasyMock.expect(openIdmRestService.createTraegerschaft(traegerschaft3)).andReturn(Optional.of(creatOpenIdmTraegerschaft("3")));
+		EasyMock.expect(openIdmRestService.createTraegerschaft(traegerschaft4)).andReturn(Optional.of(creatOpenIdmTraegerschaft("4")));
 
-		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestService.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -166,11 +169,11 @@ public class TraegerschaftResourceTest {
 		final Traegerschaft traegerschaft2 = creatInst("2");
 		traegerschafts.add(traegerschaft2);
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
-		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
+		EasyMock.expect(openIdmRestService.deleteTraegerschaft(EasyMock.anyObject(String.class))).andThrow(new AssertionFailedError("Nothing to delete!")).anyTimes();
+		EasyMock.expect(openIdmRestService.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -200,13 +203,13 @@ public class TraegerschaftResourceTest {
 		final Traegerschaft traegerschaft2 = creatInst("2");
 		traegerschafts.add(traegerschaft2);
 
-		EasyMock.expect(openIdmRestClient.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
+		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestClient.deleteTraegerschaft("3")).andReturn(true);
-		EasyMock.expect(openIdmRestClient.deleteTraegerschaft("4")).andReturn(true);
+		EasyMock.expect(openIdmRestService.deleteTraegerschaft("3")).andReturn(true);
+		EasyMock.expect(openIdmRestService.deleteTraegerschaft("4")).andReturn(true);
 
-		EasyMock.expect(openIdmRestClient.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
+		EasyMock.expect(openIdmRestService.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
 		mockProvider.replayAll();
 
@@ -216,23 +219,9 @@ public class TraegerschaftResourceTest {
 		mockProvider.verifyAll();
 	}
 
-	private JaxOpenIdmResult creatOpenIdmInst(String name) {
-		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
-		jaxOpenIdmResult.set_id(name);
-		jaxOpenIdmResult.setName(name);
-		jaxOpenIdmResult.setMail(name + "@" + name + ".ch");
-		jaxOpenIdmResult.setType("traegerschaft");
-		return jaxOpenIdmResult;
-	}
 
-	private JaxOpenIdmResult creatOpenIdmTraegerschaft(String name) {
-		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
-		jaxOpenIdmResult.set_id(name);
-		jaxOpenIdmResult.setName(name);
-		jaxOpenIdmResult.setMail(name + "@" + name + ".ch");
-		jaxOpenIdmResult.setType("sponsor");
-		return jaxOpenIdmResult;
-	}
+
+
 
 	private Traegerschaft creatInst(String name) {
 		Traegerschaft traegerschaft = new Traegerschaft();
@@ -240,13 +229,5 @@ public class TraegerschaftResourceTest {
 		traegerschaft.setName(name);
 		return traegerschaft;
 	}
-
-	private Traegerschaft creatTrae(String name) {
-		Traegerschaft traegerschaft = new Traegerschaft();
-		traegerschaft.setId(name);
-		traegerschaft.setName(name);
-		return traegerschaft;
-	}
-
 
 }

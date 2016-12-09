@@ -1,8 +1,6 @@
 
 package ch.dvbern.ebegu.api.client;
 
-import io.swagger.jaxrs.PATCH;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -10,7 +8,7 @@ import javax.ws.rs.core.Response;
 /**
  * Dies das proxy interface fuer den HTTP Endpunkt des openidm
  */
-public interface IOpenIdmRESTProxService {
+public interface IOpenIdmRESTProxClient {
 
 
 	@GET

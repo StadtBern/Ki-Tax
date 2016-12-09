@@ -7,8 +7,9 @@ import java.io.Serializable;
 
 
 /**
- * Jax Element for OpenIdm response element
+ * Jax Element for OpenIdm Result element
  */
+@SuppressWarnings({"InstanceVariableNamingConvention", "InstanceMethodNamingConvention"})
 @XmlRootElement(name = "institutionOpenIdm")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxOpenIdmResult implements Serializable {
@@ -25,16 +26,16 @@ public class JaxOpenIdmResult implements Serializable {
 		return _id;
 	}
 
-	public void set_id(String _id) {
-		this._id = _id;
+	public void set_id(String id) {
+		this._id = id;
 	}
 
 	public String get_rev() {
 		return _rev;
 	}
 
-	public void set_rev(String _rev) {
-		this._rev = _rev;
+	public void set_rev(String rev) {
+		this._rev = rev;
 	}
 
 	public String getMail() {

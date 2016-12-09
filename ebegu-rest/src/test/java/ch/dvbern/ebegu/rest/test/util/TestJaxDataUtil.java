@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.rest.test.util;
 
+import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.enums.*;
@@ -291,4 +292,23 @@ public class TestJaxDataUtil {
 		jaxTraegerschaft.setActive(true);
 		return null;
 	}
+
+	public static JaxOpenIdmResult creatOpenIdmTraegerschaft(String name) {
+		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
+		jaxOpenIdmResult.set_id(name);
+		jaxOpenIdmResult.setName(name);
+		jaxOpenIdmResult.setMail(name + "@" + name + ".ch");
+		jaxOpenIdmResult.setType("sponsor");
+		return jaxOpenIdmResult;
+	}
+
+	public static JaxOpenIdmResult creatOpenIdmInst(String name) {
+		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
+		jaxOpenIdmResult.set_id(name);
+		jaxOpenIdmResult.setName(name);
+		jaxOpenIdmResult.setMail(name + "@" + name + ".ch");
+		jaxOpenIdmResult.setType("institution");
+		return jaxOpenIdmResult;
+	}
+
 }

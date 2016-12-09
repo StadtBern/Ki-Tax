@@ -19,19 +19,26 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
 /**
  * Implementierung des REST Services zum synchronisieren mit OpenIdm, erzeugt einen Proxy fuer <link>IOpenIdmRESTProxService</link>
  */
 @Stateless
-public class OpenIdmRestClient {
+@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
+public class OpenIdmRestService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(OpenIdmRestClient.class.getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(OpenIdmRestService.class.getSimpleName());
 
 	public static final String INSTITUTION = "institution";
 	public static final String TRAEGERSCHAFT = "sponsor";
@@ -39,7 +46,7 @@ public class OpenIdmRestClient {
 	@Inject
 	private EbeguConfiguration configuration;
 
-	private IOpenIdmRESTProxService idmRESTProxService;
+	private IOpenIdmRESTProxClient openIdmRESTProxClient;
 
 
 	public Optional<JaxOpenIdmResponse> getAll() {
@@ -51,13 +58,15 @@ public class OpenIdmRestClient {
 			String user = configuration.getOpenIdmUser();
 			String pass = configuration.getOpenIdmPassword();
 
-			Response response = getIdmRESTProxService().getAllInstitutions(user, pass, true, true);
+			Response response = getOpenIdmRESTProxClient().getAllInstitutions(user, pass, true, true);
 			if (checkSucess(response, "getAll")) {
 				JaxOpenIdmResponse jaxOpenIdmResponse = response.readEntity(JaxOpenIdmResponse.class);
 				return Optional.of(jaxOpenIdmResponse);
+			} else {
+				//im error fall muss trotzdem die response ausgelesen werden sonst gibt es spaeter exceptions
+				String errorContent = response.readEntity(String.class);
+				LOG.error("ErrorContent: " +errorContent);
 			}
-
-			response.readEntity(String.class);
 		}
 		return Optional.empty();
 	}
@@ -67,7 +76,7 @@ public class OpenIdmRestClient {
 	}
 
 	public Optional<JaxOpenIdmResult> getInstitutionByUid(String uid, boolean force) {
-		return getById(force, getOpenIdmInstitutionsUID(uid));
+		return getById(force, convertToOpenIdmInstitutionsUID(uid));
 	}
 
 	public Optional<JaxOpenIdmResult> getTraegerschaftByUid(String uid) {
@@ -75,7 +84,7 @@ public class OpenIdmRestClient {
 	}
 
 	public Optional<JaxOpenIdmResult> getTraegerschaftByUid(String uid, boolean force) {
-		return getById(force, getOpenIdmTraegerschaftUID(uid));
+		return getById(force, convertToOpenIdmTraegerschaftUID(uid));
 	}
 
 	private Optional<JaxOpenIdmResult> getById(boolean force, String openIdmTraegerschaftUID) {
@@ -83,12 +92,15 @@ public class OpenIdmRestClient {
 			String user = configuration.getOpenIdmUser();
 			String pass = configuration.getOpenIdmPassword();
 
-			Response response = getIdmRESTProxService().getInstitutionbyUid(user, pass, false, openIdmTraegerschaftUID);
+			Response response = getOpenIdmRESTProxClient().getInstitutionbyUid(user, pass, false, openIdmTraegerschaftUID);
 			if (checkSucess(response, "getByUid")) {
 				JaxOpenIdmResult jaxOpenIdmResult = response.readEntity(JaxOpenIdmResult.class);
 				return Optional.of(jaxOpenIdmResult);
+			} else {
+				//im error fall muss trotzdem die response ausgelesen werden sonst gibt es spaeter exceptions
+				String errorContent = response.readEntity(String.class);
+				LOG.error("ErrorContent: " +errorContent);
 			}
-			response.readEntity(String.class);
 		}
 		return Optional.empty();
 	}
@@ -98,21 +110,24 @@ public class OpenIdmRestClient {
 	}
 
 	public Optional<JaxOpenIdmResult> createInstitution(Institution institution, boolean force) {
-		return create(force, institution.getName(), INSTITUTION, getOpenIdmInstitutionsUID(institution.getId()));
+		return create(force, institution.getName(), INSTITUTION, convertToOpenIdmInstitutionsUID(institution.getId()));
 	}
 
-	private String getOpenIdmInstitutionsUID(String institutionId) {
+	@Nonnull
+	public String convertToOpenIdmInstitutionsUID(@Nonnull String institutionId) {
 		return "I-" + institutionId;
 	}
 
-	private String getOpenIdmTraegerschaftUID(String traegerschaftId) {
+	@Nonnull
+	public String convertToOpenIdmTraegerschaftUID(@Nonnull String traegerschaftId) {
 		return "T-" + traegerschaftId;
 	}
 
-	public final String getEbeguId(String openIdmUid) {
-		if(openIdmUid.length()>2) {
+	@Nonnull
+	public final String convertToEBEGUID(@Nullable String openIdmUid) {
+		if (openIdmUid != null && openIdmUid.length() > 2) {
 			return openIdmUid.substring(2);
-		}else{
+		} else {
 			return "";
 		}
 	}
@@ -122,9 +137,12 @@ public class OpenIdmRestClient {
 	}
 
 	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft, boolean force) {
-		return create(force, traegerschaft.getName(), TRAEGERSCHAFT, getOpenIdmTraegerschaftUID(traegerschaft.getId()));
+		return create(force, traegerschaft.getName(), TRAEGERSCHAFT, convertToOpenIdmTraegerschaftUID(traegerschaft.getId()));
 	}
 
+	/**
+	 * creates the passed element in openIDM and returns the result entity or nothing if there is no openidm configured
+	 */
 	private Optional<JaxOpenIdmResult> create(boolean force, String name, String type, String openIdmUID) {
 		if (configuration.getOpenIdmEnabled() || force) {
 			String user = configuration.getOpenIdmUser();
@@ -133,15 +151,18 @@ public class OpenIdmRestClient {
 			JaxInstitutionOpenIdm jaxInstitutionOpenIdm = new JaxInstitutionOpenIdm();
 			jaxInstitutionOpenIdm.setName(name);
 			jaxInstitutionOpenIdm.setType(type);
-			jaxInstitutionOpenIdm.setMail("");
+			jaxInstitutionOpenIdm.setMail("");   //todo fehlt noch, wird spaeter in db vorhanden sein
 
-			Response response = getIdmRESTProxService().create(user, pass, openIdmUID, jaxInstitutionOpenIdm);
+			Response response = getOpenIdmRESTProxClient().create(user, pass, openIdmUID, jaxInstitutionOpenIdm);
 
 			if (checkSucess(response, "Create")) {
 				JaxOpenIdmResult jaxOpenIdmResult = response.readEntity(JaxOpenIdmResult.class);
 				return Optional.of(jaxOpenIdmResult);
+			} else{
+				//im error fall muss trotzdem die response ausgelesen werden sonst gibt es spaeter exceptions
+				String errorContent = response.readEntity(String.class);
+				LOG.error("ErrorContent: " +errorContent);
 			}
-			response.readEntity(String.class);
 		}
 		return Optional.empty();
 	}
@@ -179,15 +200,15 @@ public class OpenIdmRestClient {
 	}
 
 	public boolean deleteInstitution(String institutionId, boolean force) {
-		return deleteByOpenIdmUid(getOpenIdmInstitutionsUID(institutionId), force);
+		return deleteByOpenIdmUid(convertToOpenIdmInstitutionsUID(institutionId), force);
 	}
 
-	public boolean deleteTraegerschaft(String traegerschaftId) {
-		return deleteTraegerschaft(getOpenIdmTraegerschaftUID(traegerschaftId), false);
+	public boolean deleteTraegerschaft(String openIDMTraegerschaftUID) {
+		return deleteTraegerschaft(openIDMTraegerschaftUID, false);
 	}
 
-	public boolean deleteTraegerschaft(String traegerschaftId, boolean force) {
-		return deleteByOpenIdmUid(getOpenIdmTraegerschaftUID(traegerschaftId), force);
+	public boolean deleteTraegerschaft(String openIDMTraegerschaftUID, boolean force) {
+		return deleteByOpenIdmUid(openIDMTraegerschaftUID, force);
 	}
 
 	public boolean deleteByOpenIdmUid(String uid, boolean force) {
@@ -195,7 +216,7 @@ public class OpenIdmRestClient {
 			String user = configuration.getOpenIdmUser();
 			String pass = configuration.getOpenIdmPassword();
 
-			Response response = getIdmRESTProxService().delete(user, pass, uid);
+			Response response = getOpenIdmRESTProxClient().delete(user, pass, uid);
 			response.readEntity(String.class);
 
 			return checkSucess(response, "delete");
@@ -213,16 +234,16 @@ public class OpenIdmRestClient {
 	}
 
 	/**
-	 * lazy init den gateway proxy fuer das versenden vons sms
+	 * lazy init den REST proxy fuer die Kommunikation mit OpenIDM
 	 */
-	private IOpenIdmRESTProxService getIdmRESTProxService() {
-		if (idmRESTProxService == null) {
+	private IOpenIdmRESTProxClient getOpenIdmRESTProxClient() {
+		if (openIdmRESTProxClient == null) {
 			String baseURL = configuration.getOpenIdmURL();
 			ResteasyClient client = buildClient();
 			ResteasyWebTarget target = client.target(baseURL);
-			this.idmRESTProxService = target.proxy(IOpenIdmRESTProxService.class);
+			this.openIdmRESTProxClient = target.proxy(IOpenIdmRESTProxClient.class);
 		}
-		return idmRESTProxService;
+		return openIdmRESTProxClient;
 	}
 
 	/**
@@ -231,7 +252,7 @@ public class OpenIdmRestClient {
 	private ResteasyClient buildClient() {
 		ResteasyClientBuilder builder = new ResteasyClientBuilder().establishConnectionTimeout(10, TimeUnit.SECONDS);
 
-		if (configuration.getIsDevmode()) { //wenn debug oder dev mode dann loggen wir den request
+		if (configuration.getIsDevmode() || LOG.isDebugEnabled() ) { //wenn debug oder dev mode dann loggen wir den request
 			builder.register(new ClientRequestLogger());
 			builder.register(new ClientResponseLogger());
 		}
@@ -239,7 +260,7 @@ public class OpenIdmRestClient {
 	}
 
 	public void generateResponseString(StringBuilder responseString, String id, String name, boolean present, final String msg) {
-		responseString.append(msg).append(" on OpenIdm Id = ").append(id).append(", Name = ").append(name);
+		responseString.append(msg).append(" in OpenIdm Id = ").append(id).append(", Name = ").append(name);
 		if (present) {
 			responseString.append(" -> OK");
 		} else {
@@ -247,6 +268,5 @@ public class OpenIdmRestClient {
 		}
 		responseString.append(System.lineSeparator());
 	}
-
 
 }

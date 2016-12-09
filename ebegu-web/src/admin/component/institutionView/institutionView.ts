@@ -11,12 +11,12 @@ import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSDateRange} from '../../../models/types/TSDateRange';
-import IPromise = angular.IPromise;
-import IFormController = angular.IFormController;
 import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
+import IPromise = angular.IPromise;
+import IFormController = angular.IFormController;
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -135,9 +135,7 @@ export class InstitutionViewController {
                     if(!institution.synchronizedWithOpenIdm){
                         this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                             title: 'INSTITUTION_CREATE_SYNCHRONIZE'
-                        }).then(() => {
-                            //do nothing
-                        });
+                        })
                     }
                 });
             } else {
@@ -149,9 +147,7 @@ export class InstitutionViewController {
                         if(!institution.synchronizedWithOpenIdm){
                             this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                                 title: 'INSTITUTION_UPDATE_SYNCHRONIZE'
-                            }).then(() => {
-                                //do nothing
-                            });
+                            })
                         }
                     }
                 });

@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResponse;
 import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
-import ch.dvbern.ebegu.api.client.OpenIdmRestClient;
+import ch.dvbern.ebegu.api.client.OpenIdmRestService;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
@@ -47,7 +47,9 @@ public class TraegerschaftResource {
 	private JaxBConverter converter;
 
 	@Inject
-	OpenIdmRestClient openIdmRestClient;
+	private OpenIdmRestService openIdmRestService;
+
+//	private static final Logger LOG = LoggerFactory.getLogger(TraegerschaftResource.class.getSimpleName());
 
 	@Nullable
 	@PUT
@@ -72,19 +74,20 @@ public class TraegerschaftResource {
 
 		JaxTraegerschaft jaxTraegerschaft = converter.traegerschaftToJAX(persistedTraegerschaft);
 
-		if (createMode) {
-			final Optional<JaxOpenIdmResult> openIdmRestClientInstitution = openIdmRestClient.createTraegerschaft(persistedTraegerschaft);
-			if (openIdmRestClientInstitution.isPresent()) {
-				jaxTraegerschaft.setSynchronizedWithOpenIdm(true);
-			}
-		} else {
-			final Optional<JaxOpenIdmResult> openIdmRestClientInstitution = openIdmRestClient.updateTraegerschaft(persistedTraegerschaft);
-			if (openIdmRestClientInstitution.isPresent()) {
-				jaxTraegerschaft.setSynchronizedWithOpenIdm(true);
-			}
-		}
+		boolean success = createOrUpdateInIDM(createMode, persistedTraegerschaft);
+		jaxTraegerschaft.setSynchronizedWithOpenIdm(success);
 
 		return jaxTraegerschaft;
+	}
+
+	private boolean createOrUpdateInIDM(boolean createMode, Traegerschaft persistedTraegerschaft) {
+		final Optional<JaxOpenIdmResult> openIdmRestClientInstitution;
+		if (createMode) {
+			openIdmRestClientInstitution = openIdmRestService.createTraegerschaft(persistedTraegerschaft);
+		} else {
+			openIdmRestClientInstitution = openIdmRestService.updateTraegerschaft(persistedTraegerschaft);
+		}
+		return openIdmRestClientInstitution.isPresent();
 	}
 
 	@Nullable
@@ -99,10 +102,7 @@ public class TraegerschaftResource {
 		String traegerschaftID = converter.toEntityId(traegerschaftJAXPId);
 		Optional<Traegerschaft> optional = traegerschaftService.findTraegerschaft(traegerschaftID);
 
-		if (!optional.isPresent()) {
-			return null;
-		}
-		return converter.traegerschaftToJAX(optional.get());
+		return optional.map(traegerschaft -> converter.traegerschaftToJAX(traegerschaft)).orElse(null);
 	}
 
 	@Nullable
@@ -117,7 +117,7 @@ public class TraegerschaftResource {
 		final String traegerschaftId = converter.toEntityId(traegerschaftJAXPId);
 		traegerschaftService.setInactive(traegerschaftId);
 
-		openIdmRestClient.deleteTraegerschaft(traegerschaftId);
+		openIdmRestService.deleteTraegerschaft(openIdmRestService.convertToOpenIdmTraegerschaftUID(traegerschaftId));
 
 		return Response.ok().build();
 	}
@@ -163,7 +163,7 @@ public class TraegerschaftResource {
 	}
 
 	public StringBuilder synchronizeTraegerschaft(boolean deleteOrphan) {
-		final Optional<JaxOpenIdmResponse> optAllInstitutions = openIdmRestClient.getAll();
+		final Optional<JaxOpenIdmResponse> optAllInstitutions = openIdmRestService.getAll();
 		final Collection<Traegerschaft> allActiveTraegerschaften = traegerschaftService.getAllActiveTraegerschaften();
 		StringBuilder responseString = new StringBuilder("");
 
@@ -175,21 +175,21 @@ public class TraegerschaftResource {
 			// Create in OpenIDM those Traegerschaften where exist in EBEGU but not in OpenIDM
 			allActiveTraegerschaften.forEach(ebeguTraegerschaft -> {
 				if (allInstitutions.getResult().stream().noneMatch(jaxOpenIdmResult ->
-					openIdmRestClient.getEbeguId(jaxOpenIdmResult.get_id()).equals(ebeguTraegerschaft.getId()) && jaxOpenIdmResult.getType().equals(OpenIdmRestClient.TRAEGERSCHAFT))) {
+					openIdmRestService.convertToEBEGUID(jaxOpenIdmResult.get_id()).equals(ebeguTraegerschaft.getId()) && jaxOpenIdmResult.getType().equals(OpenIdmRestService.TRAEGERSCHAFT))) {
 					// if none match -> create
-					final Optional<JaxOpenIdmResult> traegerschaftCreated = openIdmRestClient.createTraegerschaft(ebeguTraegerschaft);
-					openIdmRestClient.generateResponseString(responseString, ebeguTraegerschaft.getId(), ebeguTraegerschaft.getName(), traegerschaftCreated.isPresent(), "Create");
+					final Optional<JaxOpenIdmResult> traegerschaftCreated = openIdmRestService.createTraegerschaft(ebeguTraegerschaft);
+					openIdmRestService.generateResponseString(responseString, ebeguTraegerschaft.getId(), ebeguTraegerschaft.getName(), traegerschaftCreated.isPresent(), "Created");
 				}
 			});
 
 			if (deleteOrphan) {
-				// Delete in OpenIDM those Traegerschaten where exist in OpenIdm but not in EBEGU
+				// Delete in OpenIDM those Traegerschaten that exist in OpenIdm but not in EBEGU
 				allInstitutions.getResult().forEach(openIdmInstitution -> {
-					if (openIdmInstitution.getType().equals(OpenIdmRestClient.TRAEGERSCHAFT) && allActiveTraegerschaften.stream().noneMatch(
-						ebeguTraegerschaft -> ebeguTraegerschaft.getId().equals(openIdmRestClient.getEbeguId(openIdmInstitution.get_id())))) {
+					if (openIdmInstitution.getType().equals(OpenIdmRestService.TRAEGERSCHAFT) && allActiveTraegerschaften.stream().noneMatch(
+						ebeguTraegerschaft -> ebeguTraegerschaft.getId().equals(openIdmRestService.convertToEBEGUID(openIdmInstitution.get_id())))) {
 						// if none match -> delete
-						final boolean sucess = openIdmRestClient.deleteTraegerschaft(openIdmRestClient.getEbeguId(openIdmInstitution.get_id()));
-						openIdmRestClient.generateResponseString(responseString, openIdmInstitution.get_id(), openIdmInstitution.getName(), sucess, "Delete");
+						final boolean sucess = openIdmRestService.deleteTraegerschaft(openIdmInstitution.get_id());
+						openIdmRestService.generateResponseString(responseString, openIdmInstitution.get_id(), openIdmInstitution.getName(), sucess, "Deleted");
 					}
 				});
 			}
