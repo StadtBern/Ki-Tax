@@ -14,7 +14,7 @@ import TSFall from '../../../models/TSFall';
 import IScope = angular.IScope;
 import {TSRole} from '../../../models/enums/TSRole';
 
-describe('betreuungView', function () {
+describe('gesuchToolbar', function () {
 
     let gesuchModelManager: GesuchModelManager;
     let gesuchToolbarController: GesuchToolbarController;
@@ -60,7 +60,7 @@ describe('betreuungView', function () {
         it('returns the fullname of the verantwortlicher', () => {
             let verantwortlicher: TSUser = new TSUser('Emiliano', 'Camacho');
             spyOn(authServiceRS, 'getPrincipal').and.returnValue(verantwortlicher);
-            spyOn(authServiceRS, 'isRole').and.returnValue(TSRole.SACHBEARBEITER_JA);
+            spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
             gesuchModelManager.initGesuch(true);
             expect(gesuchToolbarController.getVerantwortlicherFullName()).toEqual('Emiliano Camacho');
         });

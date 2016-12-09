@@ -22,7 +22,7 @@ export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
     get gesuchsperiodeString() {
         if (this.gueltigkeit && this.gueltigkeit.gueltigAb && this.gueltigkeit.gueltigBis) {
             return this.gueltigkeit.gueltigAb.year() + '/'
-                + (this.gueltigkeit.gueltigBis.year()-2000);
+                + (this.gueltigkeit.gueltigBis.year() - 2000);
         }
         return undefined;
     }

@@ -862,7 +862,7 @@ export default class GesuchModelManager {
      * Takes current user and sets it as the verantwortlicher of Fall
      */
     private setCurrentUserAsFallVerantwortlicher() {
-        if (this.authServiceRS && this.authServiceRS.isRole(TSRole.SACHBEARBEITER_JA)) {
+        if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
             this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
         }
     }
