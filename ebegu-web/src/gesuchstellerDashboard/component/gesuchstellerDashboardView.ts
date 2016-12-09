@@ -5,7 +5,6 @@ import PendenzRS from '../../pendenzen/service/PendenzRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSFall from '../../models/TSFall';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import FallRS from '../../gesuch/service/fallRS.rest';
