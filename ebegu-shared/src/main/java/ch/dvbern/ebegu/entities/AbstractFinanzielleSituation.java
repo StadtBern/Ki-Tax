@@ -55,18 +55,6 @@ public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 	public AbstractFinanzielleSituation() {
 	}
 
-	public AbstractFinanzielleSituation(@Nonnull AbstractFinanzielleSituation toCopy) {
-		this.setVorgaengerId(toCopy.getId());
-		this.steuerveranlagungErhalten = toCopy.steuerveranlagungErhalten;
-		this.steuererklaerungAusgefuellt = toCopy.steuererklaerungAusgefuellt;
-		this.familienzulage = toCopy.familienzulage;
-		this.ersatzeinkommen = toCopy.ersatzeinkommen;
-		this.erhalteneAlimente = toCopy.erhalteneAlimente;
-		this.bruttovermoegen = toCopy.bruttovermoegen;
-		this.schulden = toCopy.schulden;
-		this.geschaeftsgewinnBasisjahr = toCopy.geschaeftsgewinnBasisjahr;
-		this.geleisteteAlimente = toCopy.geleisteteAlimente;
-	}
 
 	public abstract BigDecimal getNettolohn();
 
@@ -142,4 +130,17 @@ public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 		this.geleisteteAlimente = geleisteteAlimente;
 	}
 
+	public AbstractFinanzielleSituation copyForMutation(AbstractFinanzielleSituation mutation) {
+		super.copyForMutation(mutation);
+		mutation.setSteuerveranlagungErhalten(this.getSteuerveranlagungErhalten());
+		mutation.setSteuererklaerungAusgefuellt(this.getSteuererklaerungAusgefuellt());
+		mutation.setFamilienzulage(this.getFamilienzulage());
+		mutation.setErsatzeinkommen(this.getErsatzeinkommen());
+		mutation.setErhalteneAlimente(this.getErhalteneAlimente());
+		mutation.setBruttovermoegen(this.getBruttovermoegen());
+		mutation.setSchulden(this.getSchulden());
+		mutation.setGeschaeftsgewinnBasisjahr(this.getGeschaeftsgewinnBasisjahr());
+		mutation.setGeleisteteAlimente(this.getGeleisteteAlimente());
+		return mutation;
+	}
 }

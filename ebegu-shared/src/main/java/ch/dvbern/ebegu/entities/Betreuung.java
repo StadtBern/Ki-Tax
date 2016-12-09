@@ -103,31 +103,6 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 	}
 
 
-	public Betreuung(@Nonnull Betreuung toCopy, @Nonnull KindContainer kindContainer) {
-		this.setVorgaengerId(toCopy.getId());
-		this.kind = kindContainer;
-		this.institutionStammdaten = toCopy.institutionStammdaten;
-		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
-		if (toCopy.betreuungsstatus.isGeschlossen()) {
-			this.betreuungsstatus = Betreuungsstatus.BESTAETIGT;
-		} else {
-			this.betreuungsstatus = toCopy.betreuungsstatus;
-		}
-		for (BetreuungspensumContainer betreuungspensumContainer : toCopy.getBetreuungspensumContainers()) {
-			this.betreuungspensumContainers.add(new BetreuungspensumContainer(betreuungspensumContainer, this));
-		}
-		for (AbwesenheitContainer abwesenheitContainer : toCopy.getAbwesenheitContainers()) {
-			this.abwesenheitContainers.add(new AbwesenheitContainer(abwesenheitContainer, this));
-		}
-		this.grundAblehnung = toCopy.grundAblehnung;
-		this.betreuungNummer = toCopy.betreuungNummer;
-		this.verfuegung = null;
-		this.vertrag = toCopy.vertrag;
-		this.erweiterteBeduerfnisse = toCopy.erweiterteBeduerfnisse;
-		this.datumAblehnung = toCopy.datumAblehnung;
-		this.datumBestaetigung = toCopy.datumBestaetigung;
-	}
-
 	public KindContainer getKind() {
 		return kind;
 	}
@@ -320,4 +295,29 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		this.vorgaengerVerfuegung = vorgaengerVerfuegung;
 	}
 
+	public Betreuung copyForMutation(@Nonnull Betreuung mutation, @Nonnull KindContainer kindContainerMutation) {
+		super.copyForMutation(mutation);
+		mutation.setKind(kindContainerMutation);
+		mutation.setInstitutionStammdaten(this.getInstitutionStammdaten());
+		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
+		if (this.getBetreuungsstatus().isGeschlossen()) {
+			mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+		} else {
+			mutation.setBetreuungsstatus(this.getBetreuungsstatus());
+		}
+		for (BetreuungspensumContainer betreuungspensumContainer : this.getBetreuungspensumContainers()) {
+			mutation.getBetreuungspensumContainers().add(betreuungspensumContainer.copyForMutation(new BetreuungspensumContainer(), mutation));
+		}
+		for (AbwesenheitContainer abwesenheitContainer : this.getAbwesenheitContainers()) {
+			mutation.getAbwesenheitContainers().add(abwesenheitContainer.copyForMutation(new AbwesenheitContainer(), mutation));
+		}
+		mutation.setGrundAblehnung(this.getGrundAblehnung());
+		mutation.setBetreuungNummer(this.getBetreuungNummer());
+		mutation.setVerfuegung(null);
+		mutation.setVertrag(this.getVertrag());
+		mutation.setErweiterteBeduerfnisse(this.getErweiterteBeduerfnisse());
+		mutation.setDatumAblehnung(this.getDatumAblehnung());
+		mutation.setDatumBestaetigung(this.getDatumBestaetigung());
+		return mutation;
+	}
 }

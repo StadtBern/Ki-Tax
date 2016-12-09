@@ -27,21 +27,15 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 	@Column(nullable = true)
 	private BigDecimal geschaeftsgewinnBasisjahrMinus1;
 
+
 	public FinanzielleSituation() {
 	}
 
-	public FinanzielleSituation(@Nonnull FinanzielleSituation toCopy) {
-		super(toCopy);
-		this.nettolohn = toCopy.nettolohn;
-		this.geschaeftsgewinnBasisjahrMinus2 = toCopy.geschaeftsgewinnBasisjahrMinus2;
-		this.geschaeftsgewinnBasisjahrMinus1 = toCopy.geschaeftsgewinnBasisjahrMinus1;
-	}
 
 	@Transient
 	public BigDecimal calcGeschaeftsgewinnDurchschnitt(){
 		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(this);
 	}
-
 
 	@Override
 	public BigDecimal getNettolohn() {
@@ -68,4 +62,11 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 		this.geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
 	}
 
+	public FinanzielleSituation copyForMutation(FinanzielleSituation mutation) {
+		super.copyForMutation(mutation);
+		mutation.setNettolohn(this.getNettolohn());
+		mutation.setGeschaeftsgewinnBasisjahrMinus1(this.getGeschaeftsgewinnBasisjahrMinus1());
+		mutation.setGeschaeftsgewinnBasisjahrMinus2(this.getGeschaeftsgewinnBasisjahrMinus2());
+		return mutation;
+	}
 }

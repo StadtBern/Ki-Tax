@@ -12,6 +12,7 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -26,6 +27,8 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
     private createMutation: boolean = false;
+    private eingangsart: TSEingangsart = TSEingangsart.PAPIER;
+    private fallId: string;
 
     TSRoleUtil: any;
 
@@ -40,21 +43,26 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
                 private $translate: ITranslateService, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.readCreateNewParam();
-        this.readCreateMutation();
+        this.readStateParams();
         this.initViewModel();
         this.TSRoleUtil = TSRoleUtil;
     }
 
-    private readCreateNewParam() {
+    private readStateParams() {
         if (this.$stateParams.createNew === 'true') {
             this.createNewParam = true;
         }
-    }
-
-    private readCreateMutation() {
         if (this.$stateParams.createMutation === 'true') {
             this.createMutation = true;
+        }
+        if (this.$stateParams.eingangsart) {
+            this.eingangsart = this.$stateParams.eingangsart;
+        }
+        if (this.$stateParams.gesuchsperiodeId && this.$stateParams.gesuchsperiodeId !== '') {
+            this.gesuchsperiodeId = this.$stateParams.gesuchsperiodeId;
+        }
+        if (this.$stateParams.fallId && this.$stateParams.fallId !== '') {
+            this.fallId = this.$stateParams.fallId;
         }
     }
 
@@ -63,11 +71,13 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     private initViewModel(): void {
-        this.gesuchModelManager.initGesuch(this.createNewParam);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
-        if (this.gesuchModelManager.getGesuchsperiode()) {
-            this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
+        if (this.gesuchsperiodeId === null || this.gesuchsperiodeId === undefined || this.gesuchsperiodeId === '') {
+            if (this.gesuchModelManager.getGesuchsperiode()) {
+                this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
+            }
         }
+        this.gesuchModelManager.initGesuchWithEingangsart(this.createNewParam, this.eingangsart, this.gesuchsperiodeId, this.fallId);
         if (this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
             this.gesuchModelManager.updateActiveGesuchsperiodenList();
         }
@@ -122,5 +132,4 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             return this.$translate.instant('ART_DER_MUTATION');
         }
     }
-
 }

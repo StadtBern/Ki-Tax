@@ -8,9 +8,9 @@ import java.util.Set;
  */
 public enum AntragStatus {
     IN_BEARBEITUNG_GS,
-    FREIGABEQUITTUNG,  //wird gesetzt solange freigabequittung im ja noch nicht eingescannt ist
+    FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
     NUR_SCHULAMT,
-    FREIGEGEBEN,
+    FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen
     IN_BEARBEITUNG_JA,
     ZURUECKGEWIESEN,
     ERSTE_MAHNUNG,

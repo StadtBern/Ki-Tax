@@ -27,8 +27,17 @@ public interface FallService {
 	@Nonnull
  	Optional<Fall> findFall(@Nonnull String key);
 
+	/**
+	 * Gibt den Fall mit der angegebenen Fall-Nummer zurueck
+	 */
 	@Nonnull
 	Optional<Fall> findFallByNumber(@Nonnull Long fallnummer);
+
+	/**
+	 * Gibt den Fall des eingeloggten Benutzers zurueck
+	 */
+	@Nonnull
+	Optional<Fall> findFallByCurrentBenutzerAsBesitzer();
 
 	/**
 	 * Gibt alle existierenden Faelle zurueck.
