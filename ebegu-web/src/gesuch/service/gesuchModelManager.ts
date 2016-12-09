@@ -398,9 +398,10 @@ export default class GesuchModelManager {
             let gesuchsteller: TSGesuchsteller;
             // die daten die wir aus iam importiert haben werden bei gs1 abgefuellt
             if (this.gesuchstellerNumber === 1) {
-                let name: string = this.authServiceRS.getPrincipal() ? this.authServiceRS.getPrincipal().nachname : undefined;
-                let vorname: string = this.authServiceRS.getPrincipal() ? this.authServiceRS.getPrincipal().vorname : undefined;
-                let email: string = this.authServiceRS.getPrincipal() ? this.authServiceRS.getPrincipal().email : undefined;
+                let principal :TSUser = this.authServiceRS.getPrincipal();
+                let name: string = principal ? principal.nachname : undefined;
+                let vorname: string = principal ? principal.vorname : undefined;
+                let email: string = principal ? principal.email : undefined;
                 gesuchsteller = new TSGesuchsteller(vorname, name, undefined, undefined, email);
             } else{
                 gesuchsteller = new TSGesuchsteller();
@@ -457,10 +458,12 @@ export default class GesuchModelManager {
                 this.gesuch.fall = foundFall;
             });
         }
-        if (TSEingangsart.ONLINE === eingangsart) {
-            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
-        } else {
-            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+        if (forced) {
+            if (TSEingangsart.ONLINE === eingangsart) {
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+            } else {
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+            }
         }
         this.gesuch.eingangsart = eingangsart;
     }

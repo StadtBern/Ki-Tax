@@ -59,8 +59,7 @@ export class DVDokumenteListController {
     }
 
     uploadAnhaenge(files: any[], selectDokument: TSDokumentGrund) {
-
-        if (!this.isUploadVisible() && this.gesuchModelManager.getGesuch()) {
+        if (this.isUploadVisible() && this.gesuchModelManager.getGesuch()) {
             let gesuchID = this.gesuchModelManager.getGesuch().id;
             this.$log.debug('Uploading files on gesuch ' + gesuchID);
             for (let file of files) {
@@ -138,8 +137,6 @@ export class DVDokumenteListController {
             return !this.isGesuchReadonly(); //fuer alle andern nicht verfuegbar wenn gesuch im readonly modus
         }
     }
-
-
 }
 
 

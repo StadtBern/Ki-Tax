@@ -10,7 +10,7 @@ public enum AntragStatus {
     IN_BEARBEITUNG_GS,
     FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
     NUR_SCHULAMT,
-    FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen
+    FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
     IN_BEARBEITUNG_JA,
     ZURUECKGEWIESEN,
     ERSTE_MAHNUNG,
@@ -32,6 +32,8 @@ public enum AntragStatus {
     private static final Set<AntragStatus> forSchulamtRole = EnumSet.range(NUR_SCHULAMT, VERFUEGT);
     private static final Set<AntragStatus> forJuristRole = forSachbearbeiterJugendamtRole;
     private static final Set<AntragStatus> forRevisorRole = forAdminRole;
+
+	public static final Set<AntragStatus> FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN = EnumSet.range(FREIGEGEBEN, VERFUEGEN);
 
     /**
      * Implementierung eines Berechtigungskonzepts fuer die Antragssuche.

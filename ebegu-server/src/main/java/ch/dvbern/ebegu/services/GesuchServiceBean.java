@@ -115,9 +115,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Root<Gesuch> root = query.from(Gesuch.class);
 
-		Predicate predicateVerfuegt = cb.notEqual(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
-		Predicate predicateSchulamt = cb.notEqual(root.get(Gesuch_.status), AntragStatus.NUR_SCHULAMT);
-		query.where(predicateVerfuegt, predicateSchulamt);
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
+		query.where(predicateStatus);
 		return persistence.getCriteriaResults(query);
 	}
 

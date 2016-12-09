@@ -33,7 +33,7 @@ export class GesuchRouteController {
     }
 
     showFinanzsituationStart(): boolean {
-        return !!this.gesuchModelManager.isGesuchsteller2Required();
+        return this.gesuchModelManager.isGesuchsteller2Required();
     }
 
 
@@ -113,7 +113,6 @@ export class GesuchRouteController {
             || toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
         }
-
         return this.ebeguUtil.translateString(TSAntragStatus[toTranslate]);
     }
 

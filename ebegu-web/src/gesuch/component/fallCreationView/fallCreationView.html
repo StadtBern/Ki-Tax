@@ -38,8 +38,8 @@
                                         <md-radio-group name="gesuchsperioden" class="input-element radio"
                                                         ng-model="vm.gesuchsperiodeId"
                                                         ng-change="vm.setSelectedGesuchsperiode()"
-                                                        dv-enable-element
-                                                        dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
+                                                        dv-show-element
+                                                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
                                                         ng-required="true">
                                             <md-radio-button
                                                 ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"

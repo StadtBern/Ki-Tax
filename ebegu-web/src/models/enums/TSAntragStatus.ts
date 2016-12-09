@@ -51,7 +51,8 @@ export function getTSAntragStatusPendenzValues(): Array<TSAntragStatus> {
 }
 
 export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
-    let validStates: Array<TSAntragStatus> = [TSAntragStatus.NUR_SCHULAMT,
+    let validStates: Array<TSAntragStatus> = [
+        TSAntragStatus.NUR_SCHULAMT,
         TSAntragStatus.FREIGEGEBEN,
         TSAntragStatus.NUR_SCHULAMT,
         TSAntragStatus.ZURUECKGEWIESEN,
@@ -68,6 +69,4 @@ export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
         TSAntragStatus.VERFUEGEN,
         TSAntragStatus.VERFUEGT];
     return validStates.indexOf(status) !== -1;
-
-
 }

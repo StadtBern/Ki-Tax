@@ -127,7 +127,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public kannVerfuegungOeffnen(betreuung: TSBetreuung): boolean {
         return this.isDetailAvailableForGesuchstatus() && this.isDetailAvailableForBetreuungstatus(betreuung.betreuungsstatus);
-
     }
 
     private isDetailAvailableForGesuchstatus(): boolean {
