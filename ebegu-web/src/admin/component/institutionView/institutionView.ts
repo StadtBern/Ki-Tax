@@ -11,13 +11,17 @@ import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSDateRange} from '../../../models/types/TSDateRange';
-import IPromise = angular.IPromise;
-import IFormController = angular.IFormController;
+import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
+import IPromise = angular.IPromise;
+import IFormController = angular.IFormController;
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
+let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
+let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 
 export class InstitutionViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -109,6 +113,7 @@ export class InstitutionViewController {
                 }
             });
         });
+
     }
 
     createInstitution(): void {
@@ -127,6 +132,11 @@ export class InstitutionViewController {
                 this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
                     this.institutionen.push(institution);
                     this.resetInstitutionSelection();
+                    if(!institution.synchronizedWithOpenIdm){
+                        this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                            title: 'INSTITUTION_CREATE_SYNCHRONIZE'
+                        })
+                    }
                 });
             } else {
                 this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
@@ -134,6 +144,11 @@ export class InstitutionViewController {
                     if (index > -1) {
                         this.institutionen[index] = institution;
                         this.resetInstitutionSelection();
+                        if(!institution.synchronizedWithOpenIdm){
+                            this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                                title: 'INSTITUTION_UPDATE_SYNCHRONIZE'
+                            })
+                        }
                     }
                 });
             }
@@ -211,6 +226,7 @@ export class InstitutionViewController {
                 this.isSelectedStammdaten = false;
             });
         });
+
     }
 
     private setBetreuungsangebotTypValues(): void {
@@ -237,6 +253,17 @@ export class InstitutionViewController {
         } else {
             return dateRange.gueltigAb.format(format) + ' - ' + dateRange.gueltigBis.format(format);
         }
+    }
+
+    private syncWithOpenIdm(): void{
+        this.institutionRS.synchronizeInstitutions().then((respone) => {
+            let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
+            return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
+                title: returnString
+            }).then(() => {
+                //do nothing
+            });
+        });
     }
 
 }
