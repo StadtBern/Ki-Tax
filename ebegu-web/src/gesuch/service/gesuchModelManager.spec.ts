@@ -25,6 +25,7 @@ import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import IPromise = angular.IPromise;
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import {TSRole} from '../../models/enums/TSRole';
 
 describe('gesuchModelManager', function () {
 
@@ -157,11 +158,12 @@ describe('gesuchModelManager', function () {
             it('links the fall with the current user', () => {
                 let currentUser: TSUser = new TSUser('Test', 'User', 'username');
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(currentUser);
-
+                spyOn(authServiceRS, 'isRole').and.returnValue(TSRole.SACHBEARBEITER_JA);
                 gesuchModelManager.initGesuch(false);
 
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
                 expect(gesuchModelManager.getGesuch().fall).toBeDefined();
+
                 expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(currentUser);
             });
             it('does not force to create a new fall and gesuch', () => {

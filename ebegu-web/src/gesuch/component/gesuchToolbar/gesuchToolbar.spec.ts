@@ -12,6 +12,7 @@ import TSUser from '../../../models/TSUser';
 import TSGesuch from '../../../models/TSGesuch';
 import TSFall from '../../../models/TSFall';
 import IScope = angular.IScope;
+import {TSRole} from '../../../models/enums/TSRole';
 
 describe('betreuungView', function () {
 
@@ -48,7 +49,7 @@ describe('betreuungView', function () {
         $stateParams.gesuchId = '123456789';
         gesuchToolbarController = new GesuchToolbarController(userRS, ebeguUtil,
             CONSTANTS, gesuchRS,
-            $state, $stateParams, $scope, gesuchModelManager);
+            $state, $stateParams, $scope, gesuchModelManager, authServiceRS);
     }));
 
     describe('getVerantwortlicherFullName', () => {
@@ -59,6 +60,7 @@ describe('betreuungView', function () {
         it('returns the fullname of the verantwortlicher', () => {
             let verantwortlicher: TSUser = new TSUser('Emiliano', 'Camacho');
             spyOn(authServiceRS, 'getPrincipal').and.returnValue(verantwortlicher);
+            spyOn(authServiceRS, 'isRole').and.returnValue(TSRole.SACHBEARBEITER_JA);
             gesuchModelManager.initGesuch(true);
             expect(gesuchToolbarController.getVerantwortlicherFullName()).toEqual('Emiliano Camacho');
         });
