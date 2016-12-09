@@ -27,7 +27,7 @@ import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmInst;
 import static ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil.creatOpenIdmTraegerschaft;
 
 /**
- * Testet TraegerschftResource
+ * Testet TraegerschftResource NeedleTest
  */
 
 public class TraegerschaftResourceTest {
@@ -206,8 +206,8 @@ public class TraegerschaftResourceTest {
 		EasyMock.expect(openIdmRestService.getAll()).andReturn(Optional.of(jaxOpenIdmResponse));
 		EasyMock.expect(traegerschaftService.getAllActiveTraegerschaften()).andReturn((traegerschafts));
 
-		EasyMock.expect(openIdmRestService.deleteTraegerschaft("3")).andReturn(true);
-		EasyMock.expect(openIdmRestService.deleteTraegerschaft("4")).andReturn(true);
+		EasyMock.expect(openIdmRestService.deleteTraegerschaft("T-3")).andReturn(true);
+		EasyMock.expect(openIdmRestService.deleteTraegerschaft("T-4")).andReturn(true);
 
 		EasyMock.expect(openIdmRestService.createTraegerschaft(EasyMock.anyObject(Traegerschaft.class))).andThrow(new AssertionFailedError("Nothing to Create!")).anyTimes();
 
@@ -218,9 +218,6 @@ public class TraegerschaftResourceTest {
 
 		mockProvider.verifyAll();
 	}
-
-
-
 
 
 	private Traegerschaft creatInst(String name) {

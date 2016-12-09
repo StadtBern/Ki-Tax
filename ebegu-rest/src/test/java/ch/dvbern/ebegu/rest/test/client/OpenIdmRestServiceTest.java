@@ -6,7 +6,7 @@ import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
 import ch.dvbern.ebegu.api.client.OpenIdmRestService;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
-import ch.dvbern.ebegu.rest.test.AbstractEbeguRestTest;
+import ch.dvbern.ebegu.rest.test.AbstractEbeguRestLoginTest;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -27,7 +27,7 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
-public class OpenIdmRestServiceTest extends AbstractEbeguRestTest {
+public class OpenIdmRestServiceTest extends AbstractEbeguRestLoginTest {
 
 
 	private static final String INSTID1 = "b4dc7d30-b63e-4176-a166-00deadbeef01";
