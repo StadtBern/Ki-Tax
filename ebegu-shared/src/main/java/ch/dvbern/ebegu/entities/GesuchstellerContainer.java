@@ -186,7 +186,7 @@ public class GesuchstellerContainer extends AbstractEntity {
 		for (ErwerbspensumContainer erwerbspensumContainer : this.getErwerbspensenContainers()) {
 			mutation.addErwerbspensumContainer(erwerbspensumContainer.copyForMutation(new ErwerbspensumContainer(), this));
 		}
-		for (GesuchstellerAdresseContainer gesuchstellerAdresse : mutation.getAdressen()) {
+		for (GesuchstellerAdresseContainer gesuchstellerAdresse : this.getAdressen()) {
 			mutation.addAdresse(gesuchstellerAdresse.copyForMutation(new GesuchstellerAdresseContainer(), this));
 		}
 		return mutation;

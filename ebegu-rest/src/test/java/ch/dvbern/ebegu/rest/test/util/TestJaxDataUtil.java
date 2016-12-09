@@ -73,7 +73,7 @@ public class TestJaxDataUtil {
 		Collection<JaxErwerbspensumContainer> list = new ArrayList<>();
 		list.add(container);
 		list.add(container2);
-//		testJaxGesuchsteller.setErwerbspensenContainers(list);
+		testJaxGesuchsteller.setErwerbspensenContainers(list);
 		return testJaxGesuchsteller;
 
 	}
