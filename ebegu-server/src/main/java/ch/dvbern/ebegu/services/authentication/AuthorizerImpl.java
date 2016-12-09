@@ -85,10 +85,9 @@ public class AuthorizerImpl implements Authorizer {
 			return;
 		}
 		if (principalBean.isCallerInRole(GESUCHSTELLER)) {
-			//gesuchsteller darf nur welche machen wenn nicht mutation, ausserdem muss ihm das zugehoerige geusch gehoeren
-			boolean isMutation = finanzielleSituation.getVorgaengerId() != null;
+			//gesuchsteller darf nur welche machen wenn ihm das zugehoerige gesuch gehoert
 			String parentOwner = finanzielleSituation.getGesuchsteller().getUserErstellt() != null ? finanzielleSituation.getGesuchsteller().getUserErstellt() : "";
-			if (isMutation || !parentOwner.equals(principalBean.getPrincipal().getName())) {
+			if (!parentOwner.equals(principalBean.getPrincipal().getName())) {
 				throwCreateViolation();
 			}
 		}
@@ -125,7 +124,7 @@ public class AuthorizerImpl implements Authorizer {
 
 		validateMandantMatches(fall);
 		if (principalBean.isCallerInAnyOfRole(SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
-				SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT)) {
+			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT)) {
 			return true;
 		}
 
@@ -213,10 +212,10 @@ public class AuthorizerImpl implements Authorizer {
 	@Override
 	public void checkReadAuthorizationForAllBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
 		if (betreuungen != null) {
-            betreuungen.stream()
-                .filter(betreuung -> !isReadAuthorized(betreuung))
-                .findAny()
-                .ifPresent(this::throwViolation);
+			betreuungen.stream()
+				.filter(betreuung -> !isReadAuthorized(betreuung))
+				.findAny()
+				.ifPresent(this::throwViolation);
 		}
 	}
 

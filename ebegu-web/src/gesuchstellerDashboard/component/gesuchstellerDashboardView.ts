@@ -3,9 +3,16 @@ import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import PendenzRS from '../../pendenzen/service/PendenzRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import TSGesuchsperiode from '../../models/TSGesuchsperiode';
+import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import TSFall from '../../models/TSFall';
+import {TSEingangsart} from '../../models/enums/TSEingangsart';
+import FallRS from '../../gesuch/service/fallRS.rest';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./gesuchstellerDashboardView.html');
 require('./gesuchstellerDashboardView.less');
 
@@ -18,25 +25,44 @@ export class GesuchstellerDashboardListViewConfig implements IComponentOptions {
 
 export class GesuchstellerDashboardListViewController {
 
-    private antragList: Array<TSAntragDTO>;
+    private antragList : Array<TSAntragDTO> = [];
+    private _activeGesuchsperiodenList: Array<TSGesuchsperiode>;
+    private fallId: string;
     totalResultCount: string = '-';
 
 
-    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS'];
+    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS', 'GesuchsperiodeRS', 'FallRS', '$translate'];
 
     constructor(private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
-                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS) {
+                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS, private gesuchsperiodeRS: GesuchsperiodeRS,
+                private fallRS: FallRS, private $translate: ITranslateService) {
         this.initViewModel();
     }
 
     private initViewModel() {
         this.updateAntragList();
+        this.updateActiveGesuchsperiodenList();
     }
 
     private updateAntragList() {
-        this.pendenzRS.getAntraegeGesuchstellerList(this.authServiceRS.getPrincipal().username).then((response: any) => {
-            this.antragList = angular.copy(response);
+        this.fallRS.findFallByCurrentBenutzerAsBesitzer().then((existingFall: TSFall) => {
+            if (existingFall) {
+                this.fallId = existingFall.id;
+                this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
+                    this.antragList = angular.copy(response);
+                });
+            }
         });
+    }
+
+    private updateActiveGesuchsperiodenList(): void {
+        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
+            this._activeGesuchsperiodenList = angular.copy(response);
+        });
+    }
+
+    public getActiveGesuchsperiodenList(): Array<TSGesuchsperiode> {
+        return this._activeGesuchsperiodenList;
     }
 
     public goToMitteilungenOeffen() {
@@ -51,11 +77,66 @@ export class GesuchstellerDashboardListViewController {
         return 12;
     }
 
-    public editAntrag(antrag: TSAntragDTO): void {
+    public openAntrag(periode : TSGesuchsperiode) : void  {
+        let antrag = this.getAntragForGesuchsperiode(periode);
         if (antrag) {
-            this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});
+            if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
+                // Noch nicht freigegeben
+                this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});
+            } else if (TSAntragStatus.VERFUEGT !== antrag.status) {
+                // Alles ausser verfuegt und InBearbeitung
+                this.$state.go('gesuch.dokumente', {createNew: false, gesuchId: antrag.antragId});
+            } else {
+                // Im Else-Fall ist das Gesuch nicht mehr ueber den Button verfuegbar
+                // Es kann nur noch eine Mutation gemacht werden
+                this.$state.go('gesuch.mutation', {createMutation: true, eingangsart: TSEingangsart.ONLINE, gesuchId: antrag.antragId, gesuchsperiodeId: periode.id, fallId: this.fallId});
+            }
+        } else {
+            // Noch kein Antrag vorhanden
+            this.$state.go('gesuch.fallcreation', {createNew: false, eingangsart: TSEingangsart.ONLINE, gesuchId: null, gesuchsperiodeId: periode.id, fallId: this.fallId});
         }
     }
 
+    public getButtonText(periode : TSGesuchsperiode) : string {
+        let antrag = this.getAntragForGesuchsperiode(periode);
+        if (antrag) {
+            if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
+                // Noch nicht freigegeben -> Text BEARBEITEN
+                return this.$translate.instant('GS_BEARBEITEN');
+            } else if (TSAntragStatus.VERFUEGT !== antrag.status) {
+                // Alles ausser verfuegt und InBearbeitung -> Text DOKUMENTE HOCHLADEN
+                return this.$translate.instant('GS_DOKUMENTE_HOCHLADEN');
+            } else {
+                // Im Else-Fall ist das Gesuch nicht mehr ueber den Button verfuegbar
+                // Es kann nur noch eine Mutation gemacht werden -> Text MUTIEREN
+                return this.$translate.instant('GS_MUTIEREN');
+            }
+        } else {
+            // Noch kein Antrag vorhanden -> Text GESUCH BEANTRAGEN
+            // this.$state.go('gesuch.fallcreation', {createNew: true, gesuchId: null});
+            return this.$translate.instant('GS_BEANTRAGEN');
+        }
+    }
 
+    public editAntrag(antrag: TSAntragDTO): void {
+        if (antrag) {
+            if (TSAntragStatus.VERFUEGT === antrag.status) {
+                this.$state.go('gesuch.verfuegen', {createNew: false, gesuchId: antrag.antragId});
+            } else {
+                this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});
+            }
+        }
+    }
+
+    private getAntragForGesuchsperiode(periode: TSGesuchsperiode) : TSAntragDTO {
+        // Die Antraege sind nach Laufnummer sortiert, d.h. der erste einer Periode ist immer der aktuellste
+        if (this.antragList) {
+            for (let antrag of this.antragList) {
+                if (antrag.gesuchsperiodeGueltigAb.year() === periode.gueltigkeit.gueltigAb.year()) {
+                    return antrag;
+                }
+            }
+        }
+        return undefined;
+    }
 }

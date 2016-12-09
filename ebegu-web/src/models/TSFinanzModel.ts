@@ -92,10 +92,10 @@ export default class TSFinanzModel {
     copyFinSitDataToGesuch(gesuch: TSGesuch): TSGesuch {
         gesuch.familiensituation.gemeinsameSteuererklaerung = this.gemeinsameSteuererklaerung;
         gesuch.gesuchsteller1.finanzielleSituationContainer = this.finanzielleSituationContainerGS1;
-        if(gesuch.gesuchsteller2){
+        if (gesuch.gesuchsteller2) {
             gesuch.gesuchsteller2.finanzielleSituationContainer = this.finanzielleSituationContainerGS2;
-        } else{
-            if(this.finanzielleSituationContainerGS2){
+        } else {
+            if (this.finanzielleSituationContainerGS2) {
                 //wenn wir keinen gs2 haben sollten wir auch gar keinen solchen container haben
                 console.log('illegal state: finanzielleSituationContainerGS2 exists but no gs2 is available');
             }

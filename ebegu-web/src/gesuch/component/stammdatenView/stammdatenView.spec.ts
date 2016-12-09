@@ -29,7 +29,7 @@ describe('stammdatenView', function () {
         gesuchModelManager.initGesuch(false);
         $q = $injector.get('$q');
         stammdatenViewController = new StammdatenViewController($stateParams, undefined, gesuchModelManager,
-            undefined, undefined, wizardStepManager, $injector.get('CONSTANTS'), $q);
+            undefined, undefined, wizardStepManager, $injector.get('CONSTANTS'), $q, undefined);
     }));
 
     describe('disableWohnadresseFor2GS', function () {
