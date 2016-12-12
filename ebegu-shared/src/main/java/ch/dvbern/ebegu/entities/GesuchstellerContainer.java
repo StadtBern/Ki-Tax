@@ -171,9 +171,7 @@ public class GesuchstellerContainer extends AbstractEntity {
 	public GesuchstellerContainer copyForMutation(GesuchstellerContainer mutation) {
 		super.copyForMutation(mutation);
 		mutation.setVorgaengerId(this.getId());
-		if (this.getGesuchstellerGS() != null) {
-			mutation.setGesuchstellerGS(this.getGesuchstellerGS().copyForMutation(new Gesuchsteller()));
-		}
+		mutation.setGesuchstellerGS(null);
 		if (this.getGesuchstellerJA() != null) {
 			mutation.setGesuchstellerJA(this.getGesuchstellerJA().copyForMutation(new Gesuchsteller()));
 		}

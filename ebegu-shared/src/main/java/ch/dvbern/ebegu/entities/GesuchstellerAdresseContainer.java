@@ -135,9 +135,7 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	public GesuchstellerAdresseContainer copyForMutation(GesuchstellerAdresseContainer mutation, GesuchstellerContainer gesuchstellerContainer) {
 		super.copyForMutation(mutation);
 		mutation.setGesuchstellerContainer(gesuchstellerContainer);
-		if (this.getGesuchstellerAdresseGS() != null) {
-			mutation.setGesuchstellerAdresseGS(this.getGesuchstellerAdresseGS().copyForMutation(new GesuchstellerAdresse()));
-		}
+		mutation.setGesuchstellerAdresseGS(null);
 		if (this.getGesuchstellerAdresseJA() != null) {
 			mutation.setGesuchstellerAdresseJA(this.getGesuchstellerAdresseJA().copyForMutation(new GesuchstellerAdresse()));
 		}

@@ -707,8 +707,9 @@ CREATE TABLE fall (
   user_mutiert        VARCHAR(36) NOT NULL,
   version             BIGINT      NOT NULL,
   vorgaenger_id       VARCHAR(36),
-  fall_nummer         BIGINT,
+  fall_nummer         BIGINT      NOT NULL,
   next_number_kind    INTEGER     NOT NULL,
+  besitzer_id         VARCHAR(36),
   mandant_id          VARCHAR(36) NOT NULL,
   verantwortlicher_id VARCHAR(36),
   PRIMARY KEY (id)
@@ -725,6 +726,7 @@ CREATE TABLE fall_aud (
   vorgaenger_id       VARCHAR(36),
   fall_nummer         BIGINT,
   next_number_kind    INTEGER,
+  besitzer_id         VARCHAR(36),
   mandant_id          VARCHAR(36),
   verantwortlicher_id VARCHAR(36),
   PRIMARY KEY (id, rev)
@@ -1738,6 +1740,14 @@ ALTER TABLE fall
   ADD CONSTRAINT UK_fall_nummer UNIQUE (fall_nummer);
 
 ALTER TABLE fall
+  ADD CONSTRAINT UK_fall_besitzer UNIQUE (besitzer_id);
+
+ALTER TABLE fall
+  ADD CONSTRAINT FK_fall_besitzer_id
+FOREIGN KEY (besitzer_id)
+REFERENCES benutzer (id);
+
+ALTER TABLE fall
   ADD CONSTRAINT FK_fall_mandant_id
 FOREIGN KEY (mandant_id)
 REFERENCES mandant (id);
@@ -1846,7 +1856,7 @@ FOREIGN KEY (id, rev)
 REFERENCES adresse_aud (id, rev);
 
 ALTER TABLE gesuchsteller_adresse_container_aud
-  ADD CONSTRAINT FKhqbwibfg9v4uu8kh8dxn03cad
+  ADD CONSTRAINT FK_gesuchsteller_adresse_container_aud_revinfo
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
@@ -1856,7 +1866,7 @@ FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
 ALTER TABLE gesuchsteller_container_aud
-  ADD CONSTRAINT FKtnsm6qs3duwtsk406umn8vl11
+  ADD CONSTRAINT FK_gesuchsteller_container_aud_revinfo
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 

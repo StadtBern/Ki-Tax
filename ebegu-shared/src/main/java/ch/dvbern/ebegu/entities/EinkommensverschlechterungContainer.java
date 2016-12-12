@@ -88,7 +88,6 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 		this.ekvGSBasisJahrPlus1 = ekvGSBasisJahrPlus1;
 	}
 
-
 	public GesuchstellerContainer getGesuchsteller() {
 		return gesuchstellerContainer;
 	}

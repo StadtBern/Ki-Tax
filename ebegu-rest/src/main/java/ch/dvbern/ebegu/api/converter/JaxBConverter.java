@@ -306,7 +306,6 @@ public class JaxBConverter {
 		gesuchsteller.setTelefonAusland(gesuchstellerJAXP.getTelefonAusland());
 		gesuchsteller.setZpvNumber(gesuchstellerJAXP.getZpvNumber());
 		gesuchsteller.setDiplomatenstatus(gesuchstellerJAXP.isDiplomatenstatus());
-
 		return gesuchsteller;
 	}
 
@@ -356,7 +355,6 @@ public class JaxBConverter {
 		}
 		return gesuchstellerAdresseContainerToEntity(adresseToPrepareForSaving, adrToMergeWith);
 	}
-
 
 	public JaxGesuchstellerContainer gesuchstellerContainerToJAX(GesuchstellerContainer persistedGesuchstellerCont) {
 		JaxGesuchstellerContainer jaxGesuchstellerCont = new JaxGesuchstellerContainer();

@@ -42,7 +42,6 @@ public class ErwerbspensumContainer extends AbstractEntity {
 
 	public void setGesuchsteller(GesuchstellerContainer gesuchstellerContainer) {
 		this.gesuchstellerContainer = gesuchstellerContainer;
-
 	}
 
 	public Erwerbspensum getErwerbspensumGS() {
