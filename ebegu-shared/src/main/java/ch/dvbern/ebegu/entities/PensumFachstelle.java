@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.types.DateRange;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -21,13 +22,10 @@ public class PensumFachstelle extends AbstractPensumEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_pensum_fachstelle_fachstelle_id"))
 	private Fachstelle fachstelle;
 
+
 	public PensumFachstelle() {
 	}
 
-	public PensumFachstelle(@Nonnull PensumFachstelle toCopy) {
-		super(toCopy);
-		this.fachstelle = toCopy.fachstelle;
-	}
 
 	public Fachstelle getFachstelle() {
 		return fachstelle;
@@ -35,5 +33,10 @@ public class PensumFachstelle extends AbstractPensumEntity {
 
 	public void setFachstelle(Fachstelle fachstelle) {
 		this.fachstelle = fachstelle;
+	}
+
+	public PensumFachstelle copyForMutation(PensumFachstelle mutation) {
+		mutation.setFachstelle(this.getFachstelle());
+		return mutation;
 	}
 }

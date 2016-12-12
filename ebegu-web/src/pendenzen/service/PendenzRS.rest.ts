@@ -29,8 +29,8 @@ export default class PendenzRS {
             });
     }
 
-    public getAntraegeGesuchstellerList(username : string): IPromise<Array<TSAntragDTO>> {
-        return this.http.get(this.serviceURL + '/gesuchsteller/' + encodeURIComponent(username))
+    public getAntraegeGesuchstellerList(): IPromise<Array<TSAntragDTO>> {
+        return this.http.get(this.serviceURL + '/gesuchsteller')
             .then((response: any) => {
                 this.log.debug('PARSING pendenz REST object ', response.data);
                 return this.ebeguRestUtil.parseAntragDTOs(response.data);

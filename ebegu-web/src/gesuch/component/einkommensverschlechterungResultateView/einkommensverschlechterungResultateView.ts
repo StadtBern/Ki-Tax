@@ -132,7 +132,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
                 .then(() => {
                     this.resultatProzent = this.calculateVeraenderung();
                 });
-        } else{
+        } else {
             console.log('No gesuch and Basisjahr to calculate');
         }
     }

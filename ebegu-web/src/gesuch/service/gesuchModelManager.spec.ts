@@ -25,6 +25,7 @@ import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import IPromise = angular.IPromise;
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import {TSRole} from '../../models/enums/TSRole';
 
 describe('gesuchModelManager', function () {
 
@@ -157,12 +158,22 @@ describe('gesuchModelManager', function () {
             it('links the fall with the current user', () => {
                 let currentUser: TSUser = new TSUser('Test', 'User', 'username');
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(currentUser);
-
+                spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
                 gesuchModelManager.initGesuch(false);
 
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
                 expect(gesuchModelManager.getGesuch().fall).toBeDefined();
                 expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(currentUser);
+            });
+            it('does not link the fall with the current user because is not the required role', () => {
+                let currentUser: TSUser = new TSUser('Test', 'User', 'username');
+                spyOn(authServiceRS, 'getPrincipal').and.returnValue(currentUser);
+                spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(false);
+                gesuchModelManager.initGesuch(false);
+
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
+                expect(gesuchModelManager.getGesuch().fall).toBeDefined();
+                expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBeUndefined();
             });
             it('does not force to create a new fall and gesuch', () => {
                 gesuchModelManager.initGesuch(false);

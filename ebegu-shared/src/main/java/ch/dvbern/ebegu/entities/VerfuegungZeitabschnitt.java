@@ -114,27 +114,28 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	/**
 	 * copy Konstruktor
 	 */
-	public VerfuegungZeitabschnitt(VerfuegungZeitabschnitt other) {
-		super(other);
-		this.erwerbspensumGS1 = other.erwerbspensumGS1;
-		this.erwerbspensumGS2 = other.erwerbspensumGS2;
-		this.fachstellenpensum = other.fachstellenpensum;
-		this.zuSpaetEingereicht = other.zuSpaetEingereicht;
-		this.wohnsitzNichtInGemeindeGS1 = other.wohnsitzNichtInGemeindeGS1;
-		this.wohnsitzNichtInGemeindeGS2 = other.wohnsitzNichtInGemeindeGS2;
-		this.kindMinestalterUnterschritten = other.kindMinestalterUnterschritten;
-		this.bezahltVollkosten = other.bezahltVollkosten;
-		this.longAbwesenheit = other.isLongAbwesenheit();
-		this.anspruchspensumRest = other.anspruchspensumRest;
-		this.betreuungspensum = other.betreuungspensum;
-		this.anspruchberechtigtesPensum = other.anspruchberechtigtesPensum;
-		this.betreuungsstunden = other.betreuungsstunden;
-		this.vollkosten = other.vollkosten;
-		this.elternbeitrag = other.elternbeitrag;
-		this.abzugFamGroesse = other.abzugFamGroesse;
-		this.famGroesse = other.famGroesse;
-		this.massgebendesEinkommenVorAbzugFamgr = other.massgebendesEinkommenVorAbzugFamgr;
-		this.bemerkungen = other.bemerkungen;
+	public VerfuegungZeitabschnitt(VerfuegungZeitabschnitt toCopy) {
+		this.setVorgaengerId(toCopy.getId());
+		this.setGueltigkeit(new DateRange(toCopy.getGueltigkeit()));
+		this.erwerbspensumGS1 = toCopy.erwerbspensumGS1;
+		this.erwerbspensumGS2 = toCopy.erwerbspensumGS2;
+		this.fachstellenpensum = toCopy.fachstellenpensum;
+		this.zuSpaetEingereicht = toCopy.zuSpaetEingereicht;
+		this.wohnsitzNichtInGemeindeGS1 = toCopy.wohnsitzNichtInGemeindeGS1;
+		this.wohnsitzNichtInGemeindeGS2 = toCopy.wohnsitzNichtInGemeindeGS2;
+		this.kindMinestalterUnterschritten = toCopy.kindMinestalterUnterschritten;
+		this.bezahltVollkosten = toCopy.bezahltVollkosten;
+		this.longAbwesenheit = toCopy.isLongAbwesenheit();
+		this.anspruchspensumRest = toCopy.anspruchspensumRest;
+		this.betreuungspensum = toCopy.betreuungspensum;
+		this.anspruchberechtigtesPensum = toCopy.anspruchberechtigtesPensum;
+		this.betreuungsstunden = toCopy.betreuungsstunden;
+		this.vollkosten = toCopy.vollkosten;
+		this.elternbeitrag = toCopy.elternbeitrag;
+		this.abzugFamGroesse = toCopy.abzugFamGroesse;
+		this.famGroesse = toCopy.famGroesse;
+		this.massgebendesEinkommenVorAbzugFamgr = toCopy.massgebendesEinkommenVorAbzugFamgr;
+		this.bemerkungen = toCopy.bemerkungen;
 		this.verfuegung = null;
 	}
 

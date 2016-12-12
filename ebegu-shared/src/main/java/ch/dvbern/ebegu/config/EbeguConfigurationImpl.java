@@ -27,9 +27,12 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_DOCUMENT_FILE_PATH = "ebegu.document.file.path";
 	private static final String EBEGU_FEDLET_CONFIG_PATH = "ebegu.fedlet.config.path";
 	private static final String EBEGU_CLIENT_USING_HTTPS = "ebegu.client.using.https";
+	private static final String EBEGU_OPENIDM_URL = "ebegu.openidm.url";
+	private static final String EBEGU_OPENIDM_USER = "ebegu.openidm.user";
+	private static final String EBEGU_OPENIDM_PASSWD = "ebegu.openidm.passwd";
+	private static final String EBEGU_OPENIDM_ENABLED = "ebegu.openidm.enabled";
 
 	public EbeguConfigurationImpl() {
-
 
 	}
 
@@ -52,4 +55,25 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	public boolean isClientUsingHTTPS() {
 		return getBoolean(EBEGU_CLIENT_USING_HTTPS, false);
 	}
+
+	@Override
+	public String getOpenIdmURL() {
+		return getString(EBEGU_OPENIDM_URL, "https://eaccount-test.bern.ch");
+	}
+
+	@Override
+	public String getOpenIdmUser() {
+		return getString(EBEGU_OPENIDM_USER, "SRVC_eBEGU");
+	}
+
+	@Override
+	public String getOpenIdmPassword() {
+		return getString(EBEGU_OPENIDM_PASSWD, "EBEGUADMINTZZ0");
+	}
+
+	@Override
+	public boolean getOpenIdmEnabled() {
+		return getBoolean(EBEGU_OPENIDM_ENABLED, false);
+	}
+
 }

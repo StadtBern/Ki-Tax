@@ -61,7 +61,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
                 this.model = this.initEmptyEwpContainer();
             }
         } else {
-            errorService.addMesageAsError("Unerwarteter Zustand: Gesuchsteller unbekannt");
+            errorService.addMesageAsError('Unerwarteter Zustand: Gesuchsteller unbekannt');
             console.log('kein gesuchsteller gefunden');
         }
 
