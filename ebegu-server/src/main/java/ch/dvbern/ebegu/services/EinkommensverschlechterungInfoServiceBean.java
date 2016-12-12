@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -98,7 +98,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		persistence.remove(EinkommensverschlechterungInfo.class, propertyToRemove.get().getId());
 	}
 
-	private void removeEinkommensverschlechterungFromGesuchsteller(Gesuchsteller gesuchsteller, EinkommensverschlechterungInfo oldData, EinkommensverschlechterungInfo convertedEkvi) {
+	private void removeEinkommensverschlechterungFromGesuchsteller(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfo oldData, EinkommensverschlechterungInfo convertedEkvi) {
 		if (isNeededToRemoveEinkommensverschlechterung(gesuchsteller, oldData, convertedEkvi)) {
 			einkommensverschlechterungService.removeEinkommensverschlechterungContainer(gesuchsteller.getEinkommensverschlechterungContainer());
 			gesuchsteller.setEinkommensverschlechterungContainer(null);
@@ -112,7 +112,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 	 * @param newData
 	 * @return
 	 */
-	private boolean isNeededToRemoveEinkommensverschlechterung(Gesuchsteller gesuchsteller, EinkommensverschlechterungInfo oldData, EinkommensverschlechterungInfo newData) {
+	private boolean isNeededToRemoveEinkommensverschlechterung(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfo oldData, EinkommensverschlechterungInfo newData) {
 		return oldData != null && newData != null && gesuchsteller != null
 			&& oldData.getEinkommensverschlechterung() && !newData.getEinkommensverschlechterung()
 			&& gesuchsteller.getEinkommensverschlechterungContainer() != null;

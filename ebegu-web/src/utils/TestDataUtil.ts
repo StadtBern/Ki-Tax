@@ -18,6 +18,8 @@ import TSAntragDTO from '../models/TSAntragDTO';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import TSGesuchsteller from '../models/TSGesuchsteller';
 import TSAdresse from '../models/TSAdresse';
+import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
+import TSAdresseContainer from '../models/TSAdresseContainer';
 
 export default class TestDataUtil {
 
@@ -107,20 +109,24 @@ export default class TestDataUtil {
         return antrag;
     }
 
-    public static createGesuchsteller(vorname: string, nachname: string): TSGesuchsteller {
+    public static createGesuchsteller(vorname: string, nachname: string): TSGesuchstellerContainer {
+        let gesuchstellerCont: TSGesuchstellerContainer = new TSGesuchstellerContainer();
         let gesuchsteller: TSGesuchsteller = new TSGesuchsteller();
         gesuchsteller.vorname = vorname;
         gesuchsteller.nachname = nachname;
-        gesuchsteller.adressen = [];
-        return gesuchsteller;
+        gesuchstellerCont.gesuchstellerJA = gesuchsteller;
+        gesuchstellerCont.adressen = [];
+        return gesuchstellerCont;
     }
 
-    public static createAdresse(strasse: string, nummer: string): TSAdresse {
+    public static createAdresse(strasse: string, nummer: string): TSAdresseContainer {
+        let adresseCont: TSAdresseContainer = new TSAdresseContainer();
         let adresse: TSAdresse = new TSAdresse();
         adresse.strasse = strasse;
         adresse.hausnummer = nummer;
-        adresse.showDatumVon = true;
         adresse.gueltigkeit = TestDataUtil.createGesuchsperiode20162017().gueltigkeit;
-        return adresse;
+        adresseCont.showDatumVon = true;
+        adresseCont.adresseJA = adresse;
+        return adresseCont;
     }
 }

@@ -11,7 +11,6 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
     private _ort: string;
     private _land: string;
     private _gemeinde: string;
-    private _showDatumVon: boolean;
     private _adresseTyp: TSAdressetyp = TSAdressetyp.WOHNADRESSE;
     private _nichtInGemeinde: boolean;
     private _organisation: string;
@@ -105,14 +104,6 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
 
     public set gemeinde(value: string) {
         this._gemeinde = value;
-    }
-
-    public get showDatumVon(): boolean {
-        return this._showDatumVon;
-    }
-
-    public set showDatumVon(value: boolean) {
-        this._showDatumVon = value;
     }
 
     get adresseTyp(): TSAdressetyp {

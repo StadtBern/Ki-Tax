@@ -1,12 +1,13 @@
 import TSAdresse from './TSAdresse';
 import {TSBetroffene} from './enums/TSBetroffene';
+import TSAdresseContainer from './TSAdresseContainer';
 
 export default class TSUmzugAdresse {
 
     private _betroffene: TSBetroffene;
-    private _adresse: TSAdresse;
+    private _adresse: TSAdresseContainer;
 
-    constructor(betroffene?: TSBetroffene, adresse?: TSAdresse) {
+    constructor(betroffene?: TSBetroffene, adresse?: TSAdresseContainer) {
         this._betroffene = betroffene;
         this._adresse = adresse;
     }
@@ -19,11 +20,11 @@ export default class TSUmzugAdresse {
         this._betroffene = value;
     }
 
-    get adresse(): TSAdresse {
+    get adresse(): TSAdresseContainer {
         return this._adresse;
     }
 
-    set adresse(value: TSAdresse) {
+    set adresse(value: TSAdresseContainer) {
         this._adresse = value;
     }
 }

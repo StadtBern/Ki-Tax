@@ -51,8 +51,8 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 		final String basisJahrPlus1 = String.valueOf(gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear() + 1);
 		final String basisJahrPlus2 = String.valueOf(gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear() + 2);
 
-		final Gesuchsteller gesuchsteller1 = gesuch.getGesuchsteller1();
-		final Gesuchsteller gesuchsteller2 = gesuch.getGesuchsteller2();
+		final GesuchstellerContainer gesuchsteller1 = gesuch.getGesuchsteller1();
+		final GesuchstellerContainer gesuchsteller2 = gesuch.getGesuchsteller2();
 
 		if (einkommensverschlechterungInfo != null) {
 			if (einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus1() || einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus2()) {
@@ -67,7 +67,7 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 
 	}
 
-	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, Gesuchsteller gesuchsteller,
+	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, GesuchstellerContainer gesuchsteller,
 											  boolean gemeinsam, int gesuchstellerNumber, int basisJahrPlusNumber, String basisJahr) {
 
 		if (gesuchsteller == null || gesuchsteller.getEinkommensverschlechterungContainer() == null) {
@@ -82,10 +82,10 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 			einkommensverschlechterung = einkommensverschlechterungContainer.getEkvJABasisJahrPlus1();
 		}
 
-		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.getFullName(), basisJahr, gemeinsam,
+		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.extractFullName(), basisJahr, gemeinsam,
 			gesuchstellerNumber, einkommensverschlechterung, DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
 
-		add(getDokument(DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, einkommensverschlechterung, gesuchsteller.getFullName(),
+		add(getDokument(DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, einkommensverschlechterung, gesuchsteller.extractFullName(),
 			basisJahr, DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG), anlageVerzeichnis);
 
 	}

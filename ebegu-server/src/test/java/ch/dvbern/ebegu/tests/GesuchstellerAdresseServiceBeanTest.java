@@ -1,7 +1,8 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.services.GesuchstellerAdresseService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -19,6 +20,7 @@ import java.util.Optional;
 /**
  * Tests fuer die Klasse AdresseService
  */
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
@@ -28,15 +30,16 @@ public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguLoginTest 
 	private GesuchstellerAdresseService adresseService;
 
 	@Inject
-	private Persistence<GesuchstellerAdresse> persistence;
+	private Persistence<Gesuch> persistence;
 
 
 
 
 	@Test
 	public void createAdresseTogetherWithGesuchstellerTest() {
-		Gesuchsteller gesuchsteller  = TestDataUtil.createDefaultGesuchsteller();
-		Gesuchsteller storedGesuchsteller = persistence.persist(gesuchsteller);
+		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		GesuchstellerContainer gesuchsteller  = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
+		GesuchstellerContainer storedGesuchsteller = persistence.persist(gesuchsteller);
 		Assert.assertNotNull(storedGesuchsteller.getAdressen());
 		Assert.assertTrue(storedGesuchsteller.getAdressen().stream().findAny().isPresent());
 
@@ -45,29 +48,31 @@ public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguLoginTest 
 	@Test
 	public void updateAdresseTest() {
 		Assert.assertNotNull(adresseService);
-		GesuchstellerAdresse insertedAdresses = insertNewEntity();
-		Optional<GesuchstellerAdresse> adresse = adresseService.findAdresse(insertedAdresses.getId());
-		Assert.assertEquals("21", adresse.get().getHausnummer());
+		GesuchstellerAdresseContainer insertedAdresses = insertNewEntity();
+		Optional<GesuchstellerAdresseContainer> adresse = adresseService.findAdresse(insertedAdresses.getId());
+		Assert.assertEquals("21", adresse.get().extractHausnummer());
 
-		adresse.get().setHausnummer("99");
-		GesuchstellerAdresse updatedAdr = adresseService.updateAdresse(adresse.get());
-		Assert.assertEquals("99", updatedAdr.getHausnummer());
-		Assert.assertEquals("99", adresseService.findAdresse(updatedAdr.getId()).get().getHausnummer());
+		adresse.get().getGesuchstellerAdresseJA().setHausnummer("99");
+		GesuchstellerAdresseContainer updatedAdr = adresseService.updateAdresse(adresse.get());
+		Assert.assertEquals("99", updatedAdr.extractHausnummer());
+		Assert.assertEquals("99", adresseService.findAdresse(updatedAdr.getId()).get().extractHausnummer());
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Test
 	public void removeAdresseTest() {
 		Assert.assertNotNull(adresseService);
-		GesuchstellerAdresse insertedAdresses = insertNewEntity();
+		GesuchstellerAdresseContainer insertedAdresses = insertNewEntity();
 		Assert.assertEquals(1, adresseService.getAllAdressen().size());
 		adresseService.removeAdresse(insertedAdresses);
 		Assert.assertEquals(0, adresseService.getAllAdressen().size());
 	}
 
 	// Help Methods
-	private GesuchstellerAdresse insertNewEntity() {
-		Gesuchsteller pers = TestDataUtil.createDefaultGesuchsteller();
-		Gesuchsteller storedPers =  persistence.persist(pers);
+	private GesuchstellerAdresseContainer insertNewEntity() {
+		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		GesuchstellerContainer pers = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
+		GesuchstellerContainer storedPers =  persistence.persist(pers);
 		return storedPers.getAdressen().stream().findAny().orElseThrow(() -> new IllegalStateException("Testdaten nicht korrekt aufgesetzt"));
 	}
 

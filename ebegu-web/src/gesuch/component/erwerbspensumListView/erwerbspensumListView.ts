@@ -2,7 +2,6 @@ import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import BerechnungsManager from '../../service/berechnungsManager';
@@ -13,6 +12,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSBetreuungsangebotTypUtil} from '../../../utils/TSBetreuungsangebotTypUtil';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import ILogService = angular.ILogService;
 let template = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -64,7 +64,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
             //todo team, hier die daten vielleicht reingeben statt sie zu lesen
             if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1 &&
                 this.gesuchModelManager.getGesuch().gesuchsteller1.erwerbspensenContainer) {
-                let gesuchsteller1: TSGesuchsteller = this.gesuchModelManager.getGesuch().gesuchsteller1;
+                let gesuchsteller1: TSGesuchstellerContainer = this.gesuchModelManager.getGesuch().gesuchsteller1;
                 this.erwerbspensenGS1 = gesuchsteller1.erwerbspensenContainer;
 
             } else {
@@ -79,7 +79,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
             //todo team, hier die daten vielleicht reingeben statt sie zu lesen
             if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2 &&
                 this.gesuchModelManager.getGesuch().gesuchsteller2.erwerbspensenContainer) {
-                let gesuchsteller2: TSGesuchsteller = this.gesuchModelManager.getGesuch().gesuchsteller2;
+                let gesuchsteller2: TSGesuchstellerContainer = this.gesuchModelManager.getGesuch().gesuchsteller2;
                 this.erwerbspensenGS2 = gesuchsteller2.erwerbspensenContainer;
 
             } else {

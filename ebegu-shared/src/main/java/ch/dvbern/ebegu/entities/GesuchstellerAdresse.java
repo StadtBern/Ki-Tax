@@ -1,9 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.types.DateRange;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -17,15 +15,9 @@ public class GesuchstellerAdresse extends Adresse {
 
 	private static final long serialVersionUID = -7687645920281069260L;
 
-
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private AdresseTyp adresseTyp = AdresseTyp.WOHNADRESSE;
-
-	@NotNull
-	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchsteller_adresse_gesuchsteller_id"))
-	private Gesuchsteller gesuchsteller;
 
 	@Column(nullable = false)
 	private boolean nichtInGemeinde = false;
@@ -41,14 +33,6 @@ public class GesuchstellerAdresse extends Adresse {
 
 	public void setAdresseTyp(AdresseTyp adresseTyp) {
 		this.adresseTyp = adresseTyp;
-	}
-
-	public Gesuchsteller getGesuchsteller() {
-		return gesuchsteller;
-	}
-
-	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
-		this.gesuchsteller = gesuchsteller;
 	}
 
 	public boolean isNichtInGemeinde() {
@@ -77,14 +61,13 @@ public class GesuchstellerAdresse extends Adresse {
 	}
 
 	@Transient
-	public boolean isKorrespondenzAdresse(){
+	public boolean isKorrespondenzAdresse() {
 		return AdresseTyp.KORRESPONDENZADRESSE.equals(this.getAdresseTyp());
 	}
 
-	public GesuchstellerAdresse copyForMutation(GesuchstellerAdresse mutation, Gesuchsteller gesuchstellerMutation) {
+	public GesuchstellerAdresse copyForMutation(GesuchstellerAdresse mutation) {
 		super.copyForMutation(mutation);
 		mutation.setAdresseTyp(this.getAdresseTyp());
-		mutation.setGesuchsteller(gesuchstellerMutation);
 		mutation.setNichtInGemeinde(this.nichtInGemeinde);
 		return mutation;
 	}
