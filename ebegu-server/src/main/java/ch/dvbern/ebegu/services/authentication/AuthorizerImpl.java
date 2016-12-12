@@ -127,17 +127,11 @@ public class AuthorizerImpl implements Authorizer {
 		}
 
 		validateMandantMatches(fall);
-		if (principalBean.isCallerInAnyOfRole(SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
-			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT)) {
-			return true;
-		}
 
-		//noinspection RedundantIfStatement
-		if (principalBean.isCallerInRole(GESUCHSTELLER.name())
-			&& (fall.getUserErstellt() != null && fall.getUserErstellt().equals(principalBean.getPrincipal().getName()))) {
-			return true;
-		}
-		return false;
+
+		UserRole[] allowedRoles = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
+					SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT};
+		return this.isInRoleOrGSOwner(allowedRoles, fall, principalBean.getPrincipal().getName());
 	}
 
 	@SuppressWarnings("PMD.CollapsibleIfStatements")

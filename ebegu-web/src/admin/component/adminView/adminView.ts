@@ -6,6 +6,8 @@ import {TestFaelleRS} from '../../service/testFaelleRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {LinkDialogController} from '../../../gesuch/dialog/LinkDialogController';
+import TSUser from '../../../models/TSUser';
+import UserRS from '../../../core/service/userRS.rest';
 require('./adminView.less');
 let template = require('./adminView.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
@@ -22,7 +24,7 @@ export class AdminViewComponentConfig implements IComponentOptions {
 }
 
 export class AdminViewController {
-    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH', 'EbeguRestUtil', 'TestFaelleRS', 'DvDialog'];
+    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH', 'EbeguRestUtil', 'TestFaelleRS', 'DvDialog', 'UserRS'];
 
     length: number;
     applicationProperty: TSApplicationProperty;
@@ -35,20 +37,28 @@ export class AdminViewController {
     aenderungperHeirat: moment.Moment;
     aenderungperScheidung: moment.Moment;
 
+
+    creationType: string = 'verfuegt';
+    createAsBesitzer: TSUser;
+    gesuchstellerList: Array<TSUser>;
+
+
     /* @ngInject */
     constructor(applicationPropertyRS: ApplicationPropertyRS, MAX_LENGTH: number, ebeguRestUtil: EbeguRestUtil,
-                testFaelleRS: TestFaelleRS, private dvDialog: DvDialog) {
+                testFaelleRS: TestFaelleRS, private dvDialog: DvDialog, private userRS: UserRS) {
         this.length = MAX_LENGTH;
         this.applicationProperty = undefined;
         this.applicationPropertyRS = applicationPropertyRS;
         this.ebeguRestUtil = ebeguRestUtil;
         this.testFaelleRS = testFaelleRS;
-        //this.fetchList();
+        this.fetchList();
     }
 
-    //fetchList() {
-    //    return this.applicationPropertyRS.getAllApplicationProperties();
-    //}
+    fetchList() {
+        this.userRS.getAllGesuchsteller().then((result: Array<TSUser>) => {
+            this.gesuchstellerList = result
+        })
+    }
 
     submit(): void {
         //testen ob aktuelles property schon gespeichert ist
@@ -110,7 +120,29 @@ export class AdminViewController {
 
     }
 
-    public createTestFall(testFall: string, bestaetigt: boolean, verfuegen: boolean): IPromise<any> {
+    public createTestFallType(testFall: string): IPromise<any> {
+        let bestaetigt: boolean = false;
+        let verfuegen: boolean = false;
+        if (this.creationType === 'warten') {
+            bestaetigt = false;
+            verfuegen = false;
+
+        } else if (this.creationType === 'bestaetigt') {
+            bestaetigt = true;
+            verfuegen = true;
+
+        } else if (this.creationType === 'verfuegt') {
+            bestaetigt = true;
+            verfuegen = true;
+        }
+        if(this.createAsBesitzer){
+            return this.createTestFallGS(testFall, bestaetigt, verfuegen, this.createAsBesitzer.username)
+        } else{
+            return this.createTestFall(testFall, bestaetigt, verfuegen);
+        }
+    }
+
+    private createTestFall(testFall: string, bestaetigt: boolean, verfuegen: boolean): IPromise<any> {
         return this.testFaelleRS.createTestFall(testFall, bestaetigt, verfuegen).then((response) => {
             //einfach die letzten 36 zeichen der response als uuid betrachten, hacky ist aber nur fuer uns intern
             let uuidPartOfString = response.data ? response.data.slice(-36) : '';
@@ -122,6 +154,20 @@ export class AdminViewController {
             });
         });
     }
+
+    private createTestFallGS(testFall: string, bestaetigt: boolean, verfuegen: boolean, username:string): IPromise<any> {
+        return this.testFaelleRS.createTestFallGS(testFall, bestaetigt, verfuegen, username).then((response) => {
+            //einfach die letzten 36 zeichen der response als uuid betrachten, hacky ist aber nur fuer uns intern
+            let uuidPartOfString = response.data ? response.data.slice(-36) : '';
+            return this.dvDialog.showDialog(linkDialogTempl, LinkDialogController, {
+                title: response.data,
+                link: '#/gesuch/fall/false///' + uuidPartOfString + '/', //nicht alle Parameter werden benoetigt, deswegen sind sie leer
+            }).then(() => {
+                //do nothing
+            });
+        });
+    }
+
 
     public mutiereFallHeirat(): IPromise<any> {
         return this.testFaelleRS.mutiereFallHeirat(this.fallId, '0621fb5d-a187-5a91-abaf-8a813c4d263a',

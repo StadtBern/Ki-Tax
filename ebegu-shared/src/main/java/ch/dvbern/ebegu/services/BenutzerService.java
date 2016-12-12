@@ -43,6 +43,13 @@ public interface BenutzerService {
 
 
 	/**
+	 *
+	 * @return Liste saemtlicher Gesuchsteller aus der DB
+	 */
+	@Nonnull
+	Collection<Benutzer> getGesuchsteller();
+
+	/**
 	 * entfernt die Benutzer aus der Database
 	 * @param username die Benutzer als DTO
 	 */

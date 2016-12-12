@@ -3,11 +3,7 @@
 # Stattdessen wird nun auf dem image von debian aufgesetzt und ein ngnix installiert
 # Ein gutes post dazu ist hier http://stackoverflow.com/questions/27912917/how-to-configure-docker-port-mapping-to-use-nginx-as-an-upstream-proxy/29201705#29201705
 
-FROM debian
-RUN apt-get update && apt-get install -y nginx
-RUN ln -sf /dev/stdout /var/log/nginx/access.log
-RUN ln -sf /dev/stderr /var/log/nginx/error.log
-RUN rm -rf /etc/nginx/sites-enabled/default
+FROM nginx:stable-alpine
 
 # Define mountable directories.
 VOLUME ["/etc/nginx/sites-enabled", "/etc/nginx/certs", "/etc/nginx/conf.d", "/var/log/nginx"]
@@ -20,10 +16,13 @@ RUN tar -xzvf /usr/share/nginx/stage/ebegu-web.tgz  --directory /usr/share/nginx
 rm -r /usr/share/nginx/stage/
 COPY /conf/missingapp.html  /usr/share/nginx/html/web/missingapp.html
 
+#Healthcheck
+HEALTHCHECK CMD wget -sq -U DockerHealthCheck http://$(hostname -i || echo '127.0.0.1')/web/index.html || exit 1
+
 # Define working directory.
 WORKDIR /etc/nginx
 EXPOSE 80 443
-COPY conf/ngnix.conf /etc/nginx/sites-enabled/ebeguapp.ch
+COPY conf/ngnix.conf /etc/nginx/conf.d/default.conf
 CMD ["nginx", "-g", "daemon off;"]
 
 
