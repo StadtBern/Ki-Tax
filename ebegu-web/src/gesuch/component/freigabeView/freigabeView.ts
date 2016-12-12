@@ -12,7 +12,7 @@ import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentT
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
-import {isFreigegeben} from '../../../models/enums/TSAntragStatus';
+import {isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
 import DateUtil from '../../../utils/DateUtil';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
@@ -28,7 +28,7 @@ export class FreigabeViewComponentConfig implements IComponentOptions {
 }
 
 
-export class FreigabeViewController extends AbstractGesuchViewController {
+export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     bestaetigungFreigabequittung: boolean = false;
     isFreigebenClicked: boolean = false;
@@ -64,7 +64,7 @@ export class FreigabeViewController extends AbstractGesuchViewController {
 
     public isGesuchFreigegeben(): boolean {
         if (this.gesuchModelManager.getGesuch()) {
-            return isFreigegeben(this.gesuchModelManager.getGesuch().status);
+            return isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status);
         }
         return false;
     }

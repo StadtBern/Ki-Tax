@@ -54,7 +54,6 @@ export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
     let validStates: Array<TSAntragStatus> = [
         TSAntragStatus.NUR_SCHULAMT,
         TSAntragStatus.FREIGEGEBEN,
-        TSAntragStatus.NUR_SCHULAMT,
         TSAntragStatus.ZURUECKGEWIESEN,
         TSAntragStatus.ERSTE_MAHNUNG,
         TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
@@ -71,7 +70,3 @@ export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
     return validStates.indexOf(status) !== -1;
 }
 
-export function isFreigegeben(status: TSAntragStatus): boolean {
-    return status !== TSAntragStatus.IN_BEARBEITUNG_GS && status !== TSAntragStatus.FREIGABEQUITTUNG
-        && status !== TSAntragStatus.NUR_SCHULAMT;
-}

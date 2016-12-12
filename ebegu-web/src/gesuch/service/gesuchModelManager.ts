@@ -400,12 +400,12 @@ export default class GesuchModelManager {
             let gesuchsteller: TSGesuchsteller;
             // die daten die wir aus iam importiert haben werden bei gs1 abgefuellt
             if (this.gesuchstellerNumber === 1 && this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
-                let principal :TSUser = this.authServiceRS.getPrincipal();
+                let principal: TSUser = this.authServiceRS.getPrincipal();
                 let name: string = principal ? principal.nachname : undefined;
                 let vorname: string = principal ? principal.vorname : undefined;
                 let email: string = principal ? principal.email : undefined;
                 gesuchsteller = new TSGesuchsteller(vorname, name, undefined, undefined, email);
-            } else{
+            } else {
                 gesuchsteller = new TSGesuchsteller();
             }
             this.setStammdatenToWorkWith(new TSGesuchstellerContainer(gesuchsteller));

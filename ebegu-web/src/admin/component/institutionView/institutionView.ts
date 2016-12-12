@@ -132,10 +132,10 @@ export class InstitutionViewController {
                 this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
                     this.institutionen.push(institution);
                     this.resetInstitutionSelection();
-                    if(!institution.synchronizedWithOpenIdm){
+                    if (!institution.synchronizedWithOpenIdm) {
                         this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                             title: 'INSTITUTION_CREATE_SYNCHRONIZE'
-                        })
+                        });
                     }
                 });
             } else {
@@ -144,10 +144,10 @@ export class InstitutionViewController {
                     if (index > -1) {
                         this.institutionen[index] = institution;
                         this.resetInstitutionSelection();
-                        if(!institution.synchronizedWithOpenIdm){
+                        if (!institution.synchronizedWithOpenIdm) {
                             this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                                 title: 'INSTITUTION_UPDATE_SYNCHRONIZE'
-                            })
+                            });
                         }
                     }
                 });
@@ -255,7 +255,7 @@ export class InstitutionViewController {
         }
     }
 
-    private syncWithOpenIdm(): void{
+    private syncWithOpenIdm(): void {
         this.institutionRS.synchronizeInstitutions().then((respone) => {
             let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
             return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {

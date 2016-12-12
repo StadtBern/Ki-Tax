@@ -74,6 +74,7 @@ describe('freigabeView', function () {
             downloadFile.filename = 'name';
             spyOn(downloadRS, 'getAccessTokenGeneratedDokument').and.returnValue($q.when(downloadFile));
             spyOn(downloadRS, 'startDownload').and.returnValue($q.when({}));
+            spyOn(gesuchModelManager, 'openGesuch').and.returnValue($q.when({}));
             let gesuch: TSGesuch = new TSGesuch();
             gesuch.id = '123';
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
