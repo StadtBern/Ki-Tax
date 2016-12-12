@@ -143,6 +143,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		Optional<Fall> existingFall = fallService.findFallByBesitzer(benutzer);
 		if (existingFall.isPresent()) {
+			//unschoen: eigentlich nur das gesuch fuer das jahr loeschen fuer welches der testfall erzeugt wird
 			List<JaxAntragDTO> allGesucheForBenutzer = gesuchService.getAllAntragDTOForFall(existingFall.get().getId());
 			allGesucheForBenutzer
 				.forEach(jaxAntragDTO -> gesuchService.findGesuch(jaxAntragDTO.getAntragId())
