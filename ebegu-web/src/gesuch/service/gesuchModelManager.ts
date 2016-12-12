@@ -524,14 +524,6 @@ export default class GesuchModelManager {
         }
     }
 
-    public setKorrespondenzAdresse(showKorrespondadr: boolean): void {
-        if (showKorrespondadr) {
-            this.getStammdatenToWorkWith().korrespondenzAdresse = this.initKorrespondenzAdresse();
-        } else {
-            this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
-        }
-    }
-
     /**
      * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde
      * @returns {number}
@@ -588,15 +580,6 @@ export default class GesuchModelManager {
         wohnAdresseContanier.showDatumVon = false;
         wohnAdresseContanier.adresseJA = wohnAdresse;
         return [wohnAdresseContanier];
-    }
-
-    private initKorrespondenzAdresse(): TSAdresseContainer {
-        let korrespAdresseContanier: TSAdresseContainer = new TSAdresseContainer();
-        let korrAdr = new TSAdresse();
-        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
-        korrespAdresseContanier.showDatumVon = false;
-        korrespAdresseContanier.adresseJA = korrAdr;
-        return korrespAdresseContanier;
     }
 
     public getKinderList(): Array<TSKindContainer> {

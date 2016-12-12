@@ -16,6 +16,9 @@ import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import IQService = angular.IQService;
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
+import TSAdresseContainer from '../../../models/TSAdresseContainer';
+import TSAdresse from '../../../models/TSAdresse';
+import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -63,7 +66,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     }
 
     korrespondenzAdrClicked() {
-        this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
+        this.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
     private save(form: angular.IFormController): IPromise<TSGesuchstellerContainer> {
@@ -82,7 +85,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
                 return this.$q.when(this.model);
             }
             if (!this.showKorrespondadr) {
-                this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
+                this.setKorrespondenzAdresse(this.showKorrespondadr);
             }
             if ((this.gesuchModelManager.getGesuch().gesuchsteller1 && this.gesuchModelManager.getGesuch().gesuchsteller1.showUmzug)
                 || (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.showUmzug)
@@ -118,6 +121,23 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
     public isThereAnyUmzug(): boolean {
         return this.gesuchModelManager.getGesuch().isThereAnyUmzug();
+    }
+
+    private setKorrespondenzAdresse(showKorrespondadr: boolean): void {
+        if (showKorrespondadr) {
+            this.getModel().korrespondenzAdresse = this.initKorrespondenzAdresse();
+        } else {
+            this.getModel().korrespondenzAdresse = undefined;
+        }
+    }
+
+    private initKorrespondenzAdresse(): TSAdresseContainer {
+        let korrespAdresseContanier: TSAdresseContainer = new TSAdresseContainer();
+        let korrAdr = new TSAdresse();
+        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
+        korrespAdresseContanier.showDatumVon = false;
+        korrespAdresseContanier.adresseJA = korrAdr;
+        return korrespAdresseContanier;
     }
 
 }

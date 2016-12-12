@@ -1624,29 +1624,32 @@ export default class EbeguRestUtil {
     }
 
     public gesuchstellerContainerToRestObject(restGSCont: any, gesuchstellerCont: TSGesuchstellerContainer): any {
-        this.abstractEntityToRestObject(restGSCont, gesuchstellerCont);
-        restGSCont.adressen = this.adressenContainerListToRestObject(gesuchstellerCont.adressen);
-        restGSCont.alternativeAdresse = this.adresseContainerToRestObject({}, gesuchstellerCont.korrespondenzAdresse);
-        if (gesuchstellerCont.gesuchstellerGS) {
-            restGSCont.gesuchstellerGS = this.gesuchstellerToRestObject({}, gesuchstellerCont.gesuchstellerGS);
-        }
-        if (gesuchstellerCont.gesuchstellerJA) {
-            restGSCont.gesuchstellerJA = this.gesuchstellerToRestObject({}, gesuchstellerCont.gesuchstellerJA);
-        }
-        if (gesuchstellerCont.finanzielleSituationContainer) {
-            restGSCont.finanzielleSituationContainer = this.finanzielleSituationContainerToRestObject({}, gesuchstellerCont.finanzielleSituationContainer);
-        }
-        if (gesuchstellerCont.einkommensverschlechterungContainer) {
-            restGSCont.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerToRestObject({}, gesuchstellerCont.einkommensverschlechterungContainer);
-        }
-        if (gesuchstellerCont.erwerbspensenContainer) {
-            let erwPensenCont: Array<any> = [];
-            for (var i = 0; i < gesuchstellerCont.erwerbspensenContainer.length; i++) {
-                erwPensenCont.push(this.erwerbspensumContainerToRestObject({}, gesuchstellerCont.erwerbspensenContainer[i]));
+        if (gesuchstellerCont) {
+            this.abstractEntityToRestObject(restGSCont, gesuchstellerCont);
+            restGSCont.adressen = this.adressenContainerListToRestObject(gesuchstellerCont.adressen);
+            restGSCont.alternativeAdresse = this.adresseContainerToRestObject({}, gesuchstellerCont.korrespondenzAdresse);
+            if (gesuchstellerCont.gesuchstellerGS) {
+                restGSCont.gesuchstellerGS = this.gesuchstellerToRestObject({}, gesuchstellerCont.gesuchstellerGS);
             }
-            restGSCont.erwerbspensenContainers = erwPensenCont;
+            if (gesuchstellerCont.gesuchstellerJA) {
+                restGSCont.gesuchstellerJA = this.gesuchstellerToRestObject({}, gesuchstellerCont.gesuchstellerJA);
+            }
+            if (gesuchstellerCont.finanzielleSituationContainer) {
+                restGSCont.finanzielleSituationContainer = this.finanzielleSituationContainerToRestObject({}, gesuchstellerCont.finanzielleSituationContainer);
+            }
+            if (gesuchstellerCont.einkommensverschlechterungContainer) {
+                restGSCont.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerToRestObject({}, gesuchstellerCont.einkommensverschlechterungContainer);
+            }
+            if (gesuchstellerCont.erwerbspensenContainer) {
+                let erwPensenCont: Array<any> = [];
+                for (var i = 0; i < gesuchstellerCont.erwerbspensenContainer.length; i++) {
+                    erwPensenCont.push(this.erwerbspensumContainerToRestObject({}, gesuchstellerCont.erwerbspensenContainer[i]));
+                }
+                restGSCont.erwerbspensenContainers = erwPensenCont;
+            }
+            return restGSCont;
         }
-        return restGSCont;
+        return undefined;
     }
 
     public parseGesuchstellerContainer(gesuchstellerContTS: TSGesuchstellerContainer, gesuchstellerContFromServer: any) {
