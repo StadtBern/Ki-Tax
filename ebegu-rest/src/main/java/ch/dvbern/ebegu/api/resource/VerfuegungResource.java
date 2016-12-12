@@ -178,14 +178,18 @@ public class VerfuegungResource {
 
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
 		if (betreuung.isPresent()) {
-			Verfuegung verfuegungToMerge = new Verfuegung();
-			if (verfuegungJAXP.getId() != null) {
-				Optional<Verfuegung> optional = verfuegungService.findVerfuegung(verfuegungJAXP.getId());
-				verfuegungToMerge = optional.orElse(new Verfuegung());
-			}
-			Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
-			Verfuegung persistedVerfuegung = this.verfuegungService.nichtEintreten(convertedVerfuegung, betreuung.get().getId());
-			return converter.verfuegungToJax(persistedVerfuegung);
+			Gesuch gesuch = betreuung.get().extractGesuch();
+			gesuchService.gesuchFreigeben(gesuch);
+			return new JaxVerfuegung();
+
+//			Verfuegung verfuegungToMerge = new Verfuegung();
+//			if (verfuegungJAXP.getId() != null) {
+//				Optional<Verfuegung> optional = verfuegungService.findVerfuegung(verfuegungJAXP.getId());
+//				verfuegungToMerge = optional.orElse(new Verfuegung());
+//			}
+//			Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
+//			Verfuegung persistedVerfuegung = this.verfuegungService.nichtEintreten(convertedVerfuegung, betreuung.get().getId());
+//			return converter.verfuegungToJax(persistedVerfuegung);
 		}
 		throw new EbeguEntityNotFoundException("nichtEintreten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 	}

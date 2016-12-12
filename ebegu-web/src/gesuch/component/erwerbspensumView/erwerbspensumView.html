@@ -23,6 +23,8 @@
                                        dv-max-length class="form-control" ng-required="false"
                                        ng-disabled="vm.erwerbspensumDisabled()">
                                 <dv-error-messages for="form.bezeichnung.$error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.bezeichnung"
+                                           ja="vm.model.erwerbspensumJA.bezeichnung"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -45,6 +47,8 @@
                                 </select>
                                 <dv-error-messages for="form.taetigkeit.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.taetigkeit"
+                                           ja="vm.model.erwerbspensumJA.taetigkeit"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -62,7 +66,8 @@
                                        ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                 <dv-error-messages for="form.taetigkeitPensum.$error"
                                                    class="error"></dv-error-messages>
-                                <dv-bisher gs="vm.model.erwerbspensumGS.pensum"></dv-bisher>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.pensum"
+                                           ja="vm.model.erwerbspensumJA.pensum"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -81,6 +86,8 @@
                                 </dv-datepicker>
                                 <dv-error-messages for="form.taetigkeitAb.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.gueltigkeit.gueltigAb"
+                                           ja="vm.model.erwerbspensumJA.gueltigkeit.gueltigAb"></dv-bisher>
                             </dv-input-container>
                         </div>
                         <div class="col-sm-12 dv-input-container-small">
@@ -94,6 +101,8 @@
                                 </dv-datepicker>
                                 <dv-error-messages for="form.taetigkeitBis.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.gueltigkeit.gueltigBis"
+                                           ja="vm.model.erwerbspensumJA.gueltigkeit.gueltigBis"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -154,7 +163,6 @@
                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                             <dv-error-messages for="form.zuschlagsprozent.$error"
                                                class="error"></dv-error-messages>
-                            <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsprozent"></dv-bisher>
                         </dv-input-container>
                     </div>
                 </div>
