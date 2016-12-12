@@ -428,14 +428,14 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	@Nullable
-	private Fall extractFall(Gesuchsteller gesuchsteller) {
+	private Fall extractFall(GesuchstellerContainer gesuchstellerContainer) {
 		//db abfrage des falls fuer den gesuchsteller
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
 		Root<Gesuch> root = query.from(Gesuch.class);
-		Predicate predicateGs1 = cb.equal(root.get(Gesuch_.gesuchsteller1), gesuchsteller);
-		Predicate predicateGs2 = cb.equal(root.get(Gesuch_.gesuchsteller2), gesuchsteller);
+		Predicate predicateGs1 = cb.equal(root.get(Gesuch_.gesuchsteller1), gesuchstellerContainer);
+		Predicate predicateGs2 = cb.equal(root.get(Gesuch_.gesuchsteller2), gesuchstellerContainer);
 		Predicate predicateGs1OrGs2 = cb.or(predicateGs1, predicateGs2);
 		query.where(predicateGs1OrGs2);
 		Gesuch gesuch = persistence.getCriteriaSingleResult(query);
