@@ -105,12 +105,14 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     private save(): IPromise<TSFamiliensituationContainer> {
         this.errorService.clearAll();
-        this.familiensituationRS.saveFamiliensituation(this.model, this.gesuchModelManager.getGesuch().id).then((familienContainerResponse: any) => {
+        return this.familiensituationRS.saveFamiliensituation(this.model, this.gesuchModelManager.getGesuch().id).then((familienContainerResponse: any) => {
             this.model = familienContainerResponse;
             this.gesuchModelManager.getGesuch().familiensituationContainer = familienContainerResponse;
-            return this.model
+            // Gesuchsteller may changed...
+            return this.gesuchModelManager.reloadGesuch().then((response: any) => {
+                return this.model;
+            });
         });
-        return undefined;
     }
 
     showGesuchstellerKardinalitaet(): boolean {
@@ -126,7 +128,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     public getFamiliensituationErstgesuch(): TSFamiliensituation {
-        return this.gesuchModelManager.getFamiliensituationErstgesuch();
+        return this.model.familiensituationErstgesuch;
     }
 
     /**
@@ -148,13 +150,13 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     private checkChanged2To1GSMutation() {
         return this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
             && this.isScheidung()
-            && this.gesuchModelManager.getGesuch().extractFamiliensituationErstgesuch()
-            && !this.gesuchModelManager.getGesuch().extractFamiliensituationErstgesuch().hasSecondGesuchsteller();
+            && this.model.familiensituationErstgesuch
+            && !this.model.familiensituationErstgesuch.hasSecondGesuchsteller();
     }
 
     private isScheidung() {
         return this.initialFamiliensituation.hasSecondGesuchsteller()
-            && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller();
+            && !this.getFamiliensituation().hasSecondGesuchsteller();
     }
 
 
