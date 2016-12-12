@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
@@ -27,7 +28,7 @@ import java.util.Optional;
 public class FamiliensituationServiceBean extends AbstractBaseService implements FamiliensituationService {
 
 	@Inject
-	private Persistence<Familiensituation> persistence;
+	private Persistence<FamiliensituationContainer> persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 	@Inject
@@ -40,12 +41,13 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 
 	@Nonnull
 	@Override
-	public Familiensituation saveFamiliensituation(Gesuch gesuch, Familiensituation oldFamiliensituation, @Nonnull Familiensituation newFamiliensituation) {
-		Objects.requireNonNull(newFamiliensituation);
+	public FamiliensituationContainer saveFamiliensituation(Gesuch gesuch, FamiliensituationContainer familiensituationContainer) {
+		Objects.requireNonNull(familiensituationContainer);
 		Objects.requireNonNull(gesuch);
 
 		// Falls noch nicht vorhanden, werden die GemeinsameSteuererklaerung fuer FS und EV auf false gesetzt
-		if (gesuch.isMutation() && EbeguUtil.fromOneGSToTwoGS(oldFamiliensituation, newFamiliensituation)) {
+		Familiensituation newFamiliensituation = familiensituationContainer.extractFamiliensituation();
+		if (gesuch.isMutation() && EbeguUtil.fromOneGSToTwoGS(familiensituationContainer)) {
 
 			if (newFamiliensituation.getGemeinsameSteuererklaerung() == null) {
 				newFamiliensituation.setGemeinsameSteuererklaerung(false);
@@ -61,41 +63,42 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 			}
 		}
 
-		final Familiensituation mergedFamiliensituation = persistence.merge(newFamiliensituation);
+		final FamiliensituationContainer mergedFamiliensituationContainer = persistence.merge(familiensituationContainer);
 
-		gesuch.setFamiliensituation(mergedFamiliensituation);
+		gesuch.setFamiliensituationContainer(mergedFamiliensituationContainer);
 
 
 		//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
-		if (gesuch.getGesuchsteller2() != null && isNeededToRemoveGesuchsteller2(gesuch, mergedFamiliensituation, gesuch.getFamiliensituationErstgesuch())) {
+		if (gesuch.getGesuchsteller2() != null && isNeededToRemoveGesuchsteller2(gesuch,
+			mergedFamiliensituationContainer.extractFamiliensituation(), mergedFamiliensituationContainer.getFamiliensituationErstgesuch())) {
 			gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
 			gesuch.setGesuchsteller2(null);
 		}
 
-		wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation,
-			mergedFamiliensituation, WizardStepName.FAMILIENSITUATION);
+		wizardStepService.updateSteps(gesuch.getId(), mergedFamiliensituationContainer.getFamiliensituationErstgesuch(),
+			newFamiliensituation, WizardStepName.FAMILIENSITUATION);
 
-		return mergedFamiliensituation;
+		return mergedFamiliensituationContainer;
 	}
 
 	@Nonnull
 	@Override
-	public Optional<Familiensituation> findFamiliensituation(@Nonnull String key) {
+	public Optional<FamiliensituationContainer> findFamiliensituation(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Familiensituation a = persistence.find(Familiensituation.class, key);
+		FamiliensituationContainer a = persistence.find(FamiliensituationContainer.class, key);
 		return Optional.ofNullable(a);
 	}
 
 	@Nonnull
 	@Override
-	public Collection<Familiensituation> getAllFamiliensituatione() {
-		return new ArrayList<>(criteriaQueryHelper.getAll(Familiensituation.class));
+	public Collection<FamiliensituationContainer> getAllFamiliensituatione() {
+		return new ArrayList<>(criteriaQueryHelper.getAll(FamiliensituationContainer.class));
 	}
 
 	@Override
-	public void removeFamiliensituation(@Nonnull Familiensituation familiensituation) {
+	public void removeFamiliensituation(@Nonnull FamiliensituationContainer familiensituation) {
 		Validate.notNull(familiensituation);
-		Optional<Familiensituation> familiensituationToRemove = findFamiliensituation(familiensituation.getId());
+		Optional<FamiliensituationContainer> familiensituationToRemove = findFamiliensituation(familiensituation.getId());
 		familiensituationToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, familiensituation));
 		persistence.remove(familiensituationToRemove.get());
 	}

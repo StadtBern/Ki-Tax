@@ -35,6 +35,7 @@ import IHttpBackendService = angular.IHttpBackendService;
 import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
 import TSAbwesenheit from '../models/TSAbwesenheit';
 import Moment = moment.Moment;
+import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
 
 describe('EbeguRestUtil', function () {
 
@@ -176,7 +177,8 @@ describe('EbeguRestUtil', function () {
                 myGesuch.gesuchsperiode = gesuchsperiode;
                 let familiensituation: TSFamiliensituation = new TSFamiliensituation();
                 TestDataUtil.setAbstractFieldsUndefined(familiensituation);
-                myGesuch.familiensituation = familiensituation;
+                myGesuch.familiensituationContainer = new TSFamiliensituationContainer;
+                myGesuch.familiensituationContainer.familiensituationJA = familiensituation;
                 myGesuch.kindContainers = [undefined];
                 myGesuch.einkommensverschlechterungInfoContainer = undefined;  //todo createEinkommensverschlechterungInfo
                 myGesuch.bemerkungen = undefined;

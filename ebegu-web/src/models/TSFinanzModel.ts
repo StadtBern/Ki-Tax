@@ -2,7 +2,6 @@ import TSFinanzielleSituationContainer from './TSFinanzielleSituationContainer';
 import TSGesuch from './TSGesuch';
 import TSFinanzielleSituation from './TSFinanzielleSituation';
 import TSEinkommensverschlechterungContainer from './TSEinkommensverschlechterungContainer';
-import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
 import TSEinkommensverschlechterung from './TSEinkommensverschlechterung';
 import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlechterungInfoContainer';
 
@@ -54,7 +53,7 @@ export default class TSFinanzModel {
 
     public copyFinSitDataFromGesuch(gesuch: TSGesuch) {
 
-        this.gemeinsameSteuererklaerung = angular.copy(gesuch.familiensituation.gemeinsameSteuererklaerung);
+        this.gemeinsameSteuererklaerung = angular.copy(gesuch.extractFamiliensituation().gemeinsameSteuererklaerung);
         this.finanzielleSituationContainerGS1 = angular.copy(gesuch.gesuchsteller1.finanzielleSituationContainer);
         if (gesuch.gesuchsteller2) {
             this.finanzielleSituationContainerGS2 = angular.copy(gesuch.gesuchsteller2.finanzielleSituationContainer);
@@ -91,12 +90,12 @@ export default class TSFinanzModel {
     }
 
     copyFinSitDataToGesuch(gesuch: TSGesuch): TSGesuch {
-        gesuch.familiensituation.gemeinsameSteuererklaerung = this.gemeinsameSteuererklaerung;
+        gesuch.extractFamiliensituationErstgesuch().gemeinsameSteuererklaerung = this.gemeinsameSteuererklaerung;
         gesuch.gesuchsteller1.finanzielleSituationContainer = this.finanzielleSituationContainerGS1;
-        if(gesuch.gesuchsteller2){
+        if (gesuch.gesuchsteller2) {
             gesuch.gesuchsteller2.finanzielleSituationContainer = this.finanzielleSituationContainerGS2;
-        } else{
-            if(this.finanzielleSituationContainerGS2){
+        } else {
+            if (this.finanzielleSituationContainerGS2) {
                 //wenn wir keinen gs2 haben sollten wir auch gar keinen solchen container haben
                 console.log('illegal state: finanzielleSituationContainerGS2 exists but no gs2 is available');
             }

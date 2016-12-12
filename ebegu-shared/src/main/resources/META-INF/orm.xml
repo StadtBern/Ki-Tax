@@ -12,6 +12,7 @@
 	<entity class="ch.dvbern.ebegu.entities.Erwerbspensum"/>
 	<entity class="ch.dvbern.ebegu.entities.KindContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Familiensituation"/>
+	<entity class="ch.dvbern.ebegu.entities.FamiliensituationContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Fachstelle"/>
 	<entity class="ch.dvbern.ebegu.entities.PensumFachstelle"/>
 	<entity class="ch.dvbern.ebegu.entities.Gesuchsperiode"/>

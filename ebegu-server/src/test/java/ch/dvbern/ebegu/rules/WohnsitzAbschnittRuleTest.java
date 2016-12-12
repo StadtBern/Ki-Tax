@@ -106,10 +106,10 @@ public class WohnsitzAbschnittRuleTest {
 
 		createAdressenForGS2(gesuch);
 
-		gesuch.setFamiliensituationErstgesuch(new Familiensituation());
-		gesuch.getFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
-		gesuch.getFamiliensituationErstgesuch().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
-		gesuch.getFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
+		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(new Familiensituation());
+		gesuch.extractFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.extractFamiliensituationErstgesuch().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		gesuch.extractFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
 
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitte = wohnsitzRule.createVerfuegungsZeitabschnitte(betreuung, null);
 
@@ -162,11 +162,11 @@ public class WohnsitzAbschnittRuleTest {
 
 		createAdressenForGS2(gesuch);
 
-		gesuch.setFamiliensituationErstgesuch(new Familiensituation());
-		gesuch.getFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
-		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
-		gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
-		gesuch.getFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
+		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(new Familiensituation());
+		gesuch.extractFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		gesuch.extractFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		gesuch.extractFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
 
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitte = wohnsitzRule.createVerfuegungsZeitabschnitte(betreuung, null);
 

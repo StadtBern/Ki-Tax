@@ -131,9 +131,9 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 	private void createFamilienSituation(Gesuch gesuch, boolean gemeinsam) {
 
-		final Familiensituation familiensituation = TestDataUtil.createDefaultFamiliensituation();
-		familiensituation.setGemeinsameSteuererklaerung(gemeinsam);
-		gesuch.setFamiliensituation(familiensituation);
+		final FamiliensituationContainer familiensituation = TestDataUtil.createDefaultFamiliensituationContainer();
+		familiensituation.extractFamiliensituation().setGemeinsameSteuererklaerung(gemeinsam);
+		gesuch.setFamiliensituationContainer(familiensituation);
 	}
 
 	@Test

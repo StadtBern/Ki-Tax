@@ -55,6 +55,7 @@ import TSAbwesenheit from '../models/TSAbwesenheit';
 import TSMahnung from '../models/TSMahnung';
 import TSFinanzModel from '../models/TSFinanzModel';
 import TSEinkommensverschlechterungInfoContainer from '../models/TSEinkommensverschlechterungInfoContainer';
+import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
 
 
 export default class EbeguRestUtil {
@@ -508,6 +509,38 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+    public parseFamiliensituationContainer(containerTS: TSFamiliensituationContainer, containerFromServer: any): TSFamiliensituationContainer {
+        if (containerFromServer) {
+            this.parseAbstractEntity(containerTS, containerFromServer);
+
+            containerTS.familiensituationGS = this.parseFamiliensituation(containerTS.familiensituationGS || new TSFamiliensituation(), containerFromServer.familiensituationGS);
+            containerTS.familiensituationJA = this.parseFamiliensituation(containerTS.familiensituationJA || new TSFamiliensituation(), containerFromServer.familiensituationJA);
+            containerTS.familiensituationErstgesuch = this.parseFamiliensituation(containerTS.familiensituationErstgesuch || new TSFamiliensituation(), containerFromServer.familiensituationErstgesuch);
+            return containerTS;
+        }
+        return undefined;
+    }
+
+    public familiensituationContainerToRestObject(restFamiliensituationContainer: any,
+                                                           familiensituationContainer: TSFamiliensituationContainer): TSFamiliensituationContainer {
+        this.abstractEntityToRestObject(restFamiliensituationContainer, familiensituationContainer);
+
+        if (familiensituationContainer.familiensituationJA) {
+            restFamiliensituationContainer.familiensituationJA =
+                this.familiensituationToRestObject({}, familiensituationContainer.familiensituationJA);
+        }
+        if (familiensituationContainer.familiensituationErstgesuch) {
+            restFamiliensituationContainer.familiensituationErstgesuch =
+                this.familiensituationToRestObject({}, familiensituationContainer.familiensituationErstgesuch);
+        }
+        if (familiensituationContainer.familiensituationGS) {
+            restFamiliensituationContainer.familiensituationGS =
+                this.familiensituationToRestObject({}, familiensituationContainer.familiensituationGS);
+        }
+
+        return restFamiliensituationContainer;
+    }
+
     public parseEinkommensverschlechterungInfo(einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo, einkommensverschlechterungInfoFromServer: any): TSEinkommensverschlechterungInfo {
         if (einkommensverschlechterungInfoFromServer) {
             this.parseAbstractEntity(einkommensverschlechterungInfo, einkommensverschlechterungInfoFromServer);
@@ -566,8 +599,7 @@ export default class EbeguRestUtil {
         restGesuch.einkommensverschlechterungInfoContainer = this.einkommensverschlechterungInfoContainerToRestObject({}, gesuch.einkommensverschlechterungInfoContainer);
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
-        restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
-        restGesuch.familiensituationErstgesuch = this.familiensituationToRestObject({}, gesuch.familiensituationErstgesuch);
+        restGesuch.familiensituationContainer = this.familiensituationContainerToRestObject({}, gesuch.familiensituationContainer);
         restGesuch.bemerkungen = gesuch.bemerkungen;
         restGesuch.laufnummer = gesuch.laufnummer;
         return restGesuch;
@@ -579,8 +611,7 @@ export default class EbeguRestUtil {
             gesuchTS.einkommensverschlechterungInfoContainer = this.parseEinkommensverschlechterungInfoContainer(new TSEinkommensverschlechterungInfoContainer(), gesuchFromServer.einkommensverschlechterungInfoContainer);
             gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
-            gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
-            gesuchTS.familiensituationErstgesuch = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituationErstgesuch);
+            gesuchTS.familiensituationContainer = this.parseFamiliensituationContainer(new TSFamiliensituationContainer(), gesuchFromServer.familiensituationContainer);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;

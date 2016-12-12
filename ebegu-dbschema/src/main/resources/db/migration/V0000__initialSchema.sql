@@ -547,7 +547,7 @@ CREATE TABLE einkommensverschlechterung_container_aud (
 
 CREATE TABLE einkommensverschlechterung_info_aud (
   id                               VARCHAR(36) NOT NULL,
-  rev                              INTEGER NOT NULL,
+  rev                              INTEGER     NOT NULL,
   revtype                          TINYINT,
   timestamp_erstellt               DATETIME,
   timestamp_mutiert                DATETIME,
@@ -788,6 +788,36 @@ CREATE TABLE familiensituation_aud (
   PRIMARY KEY (id, rev)
 );
 
+CREATE TABLE familiensituation_container_aud (
+     id                              VARCHAR(36) NOT NULL,
+     rev                             INTEGER NOT NULL,
+     revtype                         TINYINT,
+     timestamp_erstellt              DATETIME,
+     timestamp_mutiert               DATETIME,
+     user_erstellt                   VARCHAR(36),
+     user_mutiert                    VARCHAR(36),
+     vorgaenger_id                   VARCHAR(36),
+     familiensituation_erstgesuch_id VARCHAR(36),
+     familiensituationgs_id          VARCHAR(36),
+     familiensituationja_id          VARCHAR(36),
+     PRIMARY KEY (id, rev)
+);
+
+CREATE TABLE familiensituation_container (
+     id                              VARCHAR(36) NOT NULL,
+     timestamp_erstellt              DATETIME NOT NULL,
+     timestamp_mutiert               DATETIME NOT NULL,
+     user_erstellt                   VARCHAR(36) NOT NULL,
+     user_mutiert                    VARCHAR(36) NOT NULL,
+     version                         BIGINT NOT NULL,
+     vorgaenger_id                   VARCHAR(36),
+     familiensituation_erstgesuch_id VARCHAR(36),
+     familiensituationgs_id          VARCHAR(36),
+     familiensituationja_id          VARCHAR(36),
+     PRIMARY KEY (id)
+);
+
+
 CREATE TABLE finanzielle_situation_aud (
   id                                VARCHAR(36) NOT NULL,
   rev                               INTEGER     NOT NULL,
@@ -913,10 +943,9 @@ CREATE TABLE gesuch (
   laufnummer                         INTEGER      NOT NULL,
   status                             VARCHAR(255) NOT NULL,
   typ                                VARCHAR(255) NOT NULL,
-  einkommensverschlechterung_info_container_id varchar(36),
+  einkommensverschlechterung_info_container_id VARCHAR(36),
   fall_id                            VARCHAR(36)  NOT NULL,
-  familiensituation_id               VARCHAR(36),
-  familiensituation_erstgesuch_id    VARCHAR(36),
+  familiensituation_container_id     VARCHAR(36),
   gesuchsperiode_id                  VARCHAR(36)  NOT NULL,
   gesuchsteller1_id                  VARCHAR(36),
   gesuchsteller2_id                  VARCHAR(36),
@@ -938,10 +967,9 @@ CREATE TABLE gesuch_aud (
   laufnummer                         INTEGER,
   status                             VARCHAR(255),
   typ                                VARCHAR(255),
-  einkommensverschlechterung_info_container_id varchar(36),
+  einkommensverschlechterung_info_container_id VARCHAR(36),
   fall_id                            VARCHAR(36),
-  familiensituation_id               VARCHAR(36),
-  familiensituation_erstgesuch_id    VARCHAR(36),
+  familiensituation_container_id     VARCHAR(36),
   gesuchsperiode_id                  VARCHAR(36),
   gesuchsteller1_id                  VARCHAR(36),
   gesuchsteller2_id                  VARCHAR(36),
@@ -1745,6 +1773,26 @@ ALTER TABLE familiensituation_aud
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
+ALTER TABLE familiensituation_container_aud
+  ADD CONSTRAINT FK_familiensituation_container_aud_revinfo
+FOREIGN KEY (rev)
+REFERENCES revinfo (rev);
+
+ALTER TABLE familiensituation_container
+  ADD CONSTRAINT FK_familiensituation_container_familiensituation_erstgesuch_id
+FOREIGN KEY (familiensituation_erstgesuch_id)
+REFERENCES familiensituation (id);
+
+ALTER TABLE familiensituation_container
+  ADD CONSTRAINT FK_familiensituation_container_familiensituation_GS_id
+FOREIGN KEY (familiensituationgs_id)
+REFERENCES familiensituation (id);
+
+ALTER TABLE familiensituation_container
+  ADD CONSTRAINT FK_familiensituation_container_familiensituation_JA_id
+FOREIGN KEY (familiensituationja_id)
+REFERENCES familiensituation (id);
+
 ALTER TABLE finanzielle_situation_aud
   ADD CONSTRAINT FK_finanzielle_situation_aud_revinfo
 FOREIGN KEY (rev)
@@ -1794,14 +1842,9 @@ FOREIGN KEY (fall_id)
 REFERENCES fall (id);
 
 ALTER TABLE gesuch
-  ADD CONSTRAINT FK_gesuch_familiensituation_id
-FOREIGN KEY (familiensituation_id)
-REFERENCES familiensituation (id);
-
-ALTER TABLE gesuch
-  ADD CONSTRAINT FK_gesuch_familiensituation_erstgesuch_id
-FOREIGN KEY (familiensituation_erstgesuch_id)
-REFERENCES familiensituation (id);
+  ADD CONSTRAINT FK_gesuch_familiensituation_container_id
+FOREIGN KEY (familiensituation_container_id)
+REFERENCES familiensituation_container (id);
 
 ALTER TABLE gesuch
   ADD CONSTRAINT FK_antrag_gesuchsperiode_id

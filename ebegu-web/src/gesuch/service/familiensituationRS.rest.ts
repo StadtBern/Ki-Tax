@@ -2,6 +2,7 @@ import {IPromise, IHttpService, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFamiliensituation from '../../models/TSFamiliensituation';
 import WizardStepManager from './wizardStepManager';
+import TSFamiliensituationContainer from '../../models/TSFamiliensituationContainer';
 
 
 export default class FamiliensituationRS {
@@ -18,9 +19,9 @@ export default class FamiliensituationRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
-    public saveFamiliensituation(familiensituation: TSFamiliensituation, gesuchId: string): IPromise<TSFamiliensituation> {
+    public saveFamiliensituation(familiensituation: TSFamiliensituationContainer, gesuchId: string): IPromise<TSFamiliensituationContainer> {
         let returnedFamiliensituation = {};
-        returnedFamiliensituation = this.ebeguRestUtil.familiensituationToRestObject(returnedFamiliensituation, familiensituation);
+        returnedFamiliensituation = this.ebeguRestUtil.familiensituationContainerToRestObject(returnedFamiliensituation, familiensituation);
         return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchId), returnedFamiliensituation, {
             headers: {
                 'Content-Type': 'application/json'
@@ -28,7 +29,7 @@ export default class FamiliensituationRS {
         }).then((response: any) => {
             return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
                 this.$log.debug('PARSING Familiensituation REST object ', response.data);
-                return this.ebeguRestUtil.parseFamiliensituation(new TSFamiliensituation(), response.data);
+                return this.ebeguRestUtil.parseFamiliensituationContainer(new TSFamiliensituationContainer(), response.data);
             });
         });
     }

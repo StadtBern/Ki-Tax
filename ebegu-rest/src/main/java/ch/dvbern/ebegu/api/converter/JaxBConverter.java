@@ -456,6 +456,40 @@ public class JaxBConverter {
 		return jaxFamiliensituation;
 	}
 
+	public FamiliensituationContainer familiensituationContainerToEntity(@Nonnull final JaxFamiliensituationContainer containerJAX,
+																								   @Nonnull final FamiliensituationContainer container) {
+		Validate.notNull(container);
+		Validate.notNull(containerJAX);
+		convertAbstractFieldsToEntity(containerJAX, container);
+		Familiensituation famsitToMergeWith;
+
+		if (containerJAX.getFamiliensituationGS() != null) {
+			famsitToMergeWith = Optional.ofNullable(container.getFamiliensituationGS()).orElse(new Familiensituation());
+			container.setFamiliensituationGS(familiensituationToEntity(containerJAX.getFamiliensituationGS(), famsitToMergeWith));
+		}
+		if (containerJAX.getFamiliensituationJA() != null) {
+			famsitToMergeWith = Optional.ofNullable(container.getFamiliensituationJA()).orElse(new Familiensituation());
+			container.setFamiliensituationJA(familiensituationToEntity(containerJAX.getFamiliensituationJA(), famsitToMergeWith));
+		}
+		if (containerJAX.getFamiliensituationErstgesuch() != null) {
+			famsitToMergeWith = Optional.ofNullable(container.getFamiliensituationErstgesuch()).orElse(new Familiensituation());
+			container.setFamiliensituationErstgesuch(familiensituationToEntity(containerJAX.getFamiliensituationErstgesuch(), famsitToMergeWith));
+		}
+		return container;
+	}
+
+	public JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainerToJAX(final EinkommensverschlechterungInfoContainer persistedEinkommensverschlechterungInfo) {
+		final JaxEinkommensverschlechterungInfoContainer jaxEkvic = new JaxEinkommensverschlechterungInfoContainer();
+		convertAbstractFieldsToJAX(persistedEinkommensverschlechterungInfo, jaxEkvic);
+		if (persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoGS() != null) {
+			jaxEkvic.setEinkommensverschlechterungInfoGS(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoGS()));
+		}
+		if (persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA() != null) {
+			jaxEkvic.setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA()));
+		}
+		return jaxEkvic;
+	}
+
 	public EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainerToEntity(@Nonnull final JaxEinkommensverschlechterungInfoContainer containerJAX,
 																								   @Nonnull final EinkommensverschlechterungInfoContainer container) {
 		Validate.notNull(container);
@@ -474,16 +508,19 @@ public class JaxBConverter {
 		return container;
 	}
 
-	public JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainerToJAX(final EinkommensverschlechterungInfoContainer persistedEinkommensverschlechterungInfo) {
-		final JaxEinkommensverschlechterungInfoContainer jaxEkvic = new JaxEinkommensverschlechterungInfoContainer();
-		convertAbstractFieldsToJAX(persistedEinkommensverschlechterungInfo, jaxEkvic);
-		if (persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoGS() != null) {
-			jaxEkvic.setEinkommensverschlechterungInfoGS(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoGS()));
+	public JaxFamiliensituationContainer familiensituationContainerToJAX(final FamiliensituationContainer persistedFamiliensituation) {
+		final JaxFamiliensituationContainer jaxfc = new JaxFamiliensituationContainer();
+		convertAbstractFieldsToJAX(persistedFamiliensituation, jaxfc);
+		if (persistedFamiliensituation.getFamiliensituationGS() != null) {
+			jaxfc.setFamiliensituationGS(familiensituationToJAX(persistedFamiliensituation.getFamiliensituationGS()));
 		}
-		if (persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA() != null) {
-			jaxEkvic.setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA()));
+		if (persistedFamiliensituation.getFamiliensituationJA() != null) {
+			jaxfc.setFamiliensituationJA(familiensituationToJAX(persistedFamiliensituation.getFamiliensituationJA()));
 		}
-		return jaxEkvic;
+		if (persistedFamiliensituation.getFamiliensituationErstgesuch() != null) {
+			jaxfc.setFamiliensituationErstgesuch(familiensituationToJAX(persistedFamiliensituation.getFamiliensituationErstgesuch()));
+		}
+		return jaxfc;
 	}
 
 	public EinkommensverschlechterungInfo einkommensverschlechterungInfoToEntity(@Nonnull final JaxEinkommensverschlechterungInfo einkommensverschlechterungInfoJAXP, @Nonnull final EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
@@ -595,22 +632,19 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller2().getId());
 			}
 		}
-		if (antragJAXP.getFamiliensituation() != null && antragJAXP.getFamiliensituation().getId() != null) {
-			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituation().getId());
-			if (famSituation.isPresent()) {
-				antrag.setFamiliensituation(familiensituationToEntity(antragJAXP.getFamiliensituation(), famSituation.get()));
+		if (antragJAXP.getFamiliensituationContainer() != null) {
+			if (antragJAXP.getFamiliensituationContainer().getId() != null) {
+				final Optional<FamiliensituationContainer> familiensituationContainer = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituationContainer().getId());
+				if (familiensituationContainer.isPresent()) {
+					antrag.setFamiliensituationContainer(familiensituationContainerToEntity(antragJAXP.getFamiliensituationContainer(), familiensituationContainer.get()));
+				} else {
+					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituationContainer().getId());
+				}
 			} else {
-				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituation().getId());
+				antrag.setFamiliensituationContainer(familiensituationContainerToEntity(antragJAXP.getFamiliensituationContainer(), new FamiliensituationContainer()));
 			}
 		}
-		if (antragJAXP.getFamiliensituationErstgesuch() != null && antragJAXP.getFamiliensituationErstgesuch().getId() != null) {
-			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituationErstgesuch().getId());
-			if (famSituation.isPresent()) {
-				antrag.setFamiliensituationErstgesuch(familiensituationToEntity(antragJAXP.getFamiliensituationErstgesuch(), famSituation.get()));
-			} else {
-				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituationErstgesuch().getId());
-			}
-		}
+
 		if (antragJAXP.getEinkommensverschlechterungInfoContainer() != null) {
 			if (antragJAXP.getEinkommensverschlechterungInfoContainer().getId() != null) {
 				final Optional<EinkommensverschlechterungInfoContainer> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfoContainer().getId());
@@ -649,16 +683,13 @@ public class JaxBConverter {
 		if (persistedGesuch.getGesuchsteller2() != null) {
 			jaxGesuch.setGesuchsteller2(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller2()));
 		}
-		if (persistedGesuch.getFamiliensituation() != null) {
-			jaxGesuch.setFamiliensituation(this.familiensituationToJAX(persistedGesuch.getFamiliensituation()));
-		}
-		if (persistedGesuch.getFamiliensituationErstgesuch() != null) {
-			jaxGesuch.setFamiliensituationErstgesuch(this.familiensituationToJAX(persistedGesuch.getFamiliensituationErstgesuch()));
+		if (persistedGesuch.getFamiliensituationContainer() != null) {
+			jaxGesuch.setFamiliensituationContainer(this.familiensituationContainerToJAX(persistedGesuch.getFamiliensituationContainer()));
 		}
 		for (final KindContainer kind : persistedGesuch.getKindContainers()) {
 			jaxGesuch.getKindContainers().add(kindContainerToJAX(kind));
 		}
-		if (persistedGesuch.extractEinkommensverschlechterungInfo() != null) {
+		if (persistedGesuch.getEinkommensverschlechterungInfoContainer() != null) {
 			jaxGesuch.setEinkommensverschlechterungInfoContainer(this.einkommensverschlechterungInfoContainerToJAX(persistedGesuch.getEinkommensverschlechterungInfoContainer()));
 		}
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());

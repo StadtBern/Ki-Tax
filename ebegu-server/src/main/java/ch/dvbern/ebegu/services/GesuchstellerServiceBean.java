@@ -76,8 +76,8 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 		final Gesuchsteller mergedGesuchsteller = persistence.merge(gesuchsteller);
 
-		if ((gesuch.getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
-			|| (!gesuch.getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
+		if ((gesuch.extractFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
+			|| (!gesuch.extractFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
 			if (umzug) {
 				wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.UMZUG);
 			} else {

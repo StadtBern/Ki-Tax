@@ -304,10 +304,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		// Anzahl erstellte Objekte zaehlen, es muessen im Gesuch und in der Mutation
 		// gleich viele sein
 		Gesuch mutation = gesuchOptional.get();
-		Familiensituation oldFamSit = new Familiensituation(mutation.getFamiliensituationErstgesuch());
-		mutation.setFamiliensituationErstgesuch(null);
+		FamiliensituationContainer oldFamSit = new FamiliensituationContainer(mutation.getFamiliensituationContainer(), false);
+		mutation.getFamiliensituationContainer().setFamiliensituationErstgesuch(null);
 		mutation = gesuchService.createGesuch(mutation);
-		mutation.setFamiliensituationErstgesuch(oldFamSit);
+		mutation.getFamiliensituationContainer().setFamiliensituationErstgesuch(oldFamSit.getFamiliensituationErstgesuch());
 		mutation = gesuchService.updateGesuch(mutation, false);
 
 		anzahlObjekte = 0;
@@ -320,10 +320,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		findAllIdsOfAbstractEntities(mutation, idsMutation);
 		int anzahlObjekteMutation = anzahlObjekte;
 
-		// Die Mutation hat immer 1 Objekte mehr als Erstgesuch, und die "FamiliensituationErstgesuch.
-		// Deswegen muessen wir 1 subtrahieren
-        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
-
+        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation );
 		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
 		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
 		Set<String> intersection = new HashSet<>(idsErstgesuch);

@@ -186,7 +186,7 @@ public class FamilienabzugAbschnittRuleTest {
 		erstFamiliensituation.setAenderungPer(null); //im erstgesuch immer null
 		erstFamiliensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		erstFamiliensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
-		gesuch.setFamiliensituationErstgesuch(erstFamiliensituation);
+		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(erstFamiliensituation);
 		double newFamGr = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
 		Assert.assertEquals(2, newFamGr, DELTA);
 	}
@@ -259,11 +259,11 @@ public class FamilienabzugAbschnittRuleTest {
 	public void testCalculateFamiliengroesseWithMutation1GSTo2GS() {
 		Gesuch gesuch = createGesuchWithTwoGesuchsteller();
 		final LocalDate date = LocalDate.of(1980, Month.MARCH, 25);
-		gesuch.getFamiliensituation().setAenderungPer(date);
+		gesuch.extractFamiliensituation().setAenderungPer(date);
 
 		Familiensituation famSitErstgesuch = new Familiensituation();
 		famSitErstgesuch.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
-		gesuch.setFamiliensituationErstgesuch(famSitErstgesuch);
+		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(famSitErstgesuch);
 
 		Assert.assertEquals(1, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.minusMonths(1)), DELTA);
 		Assert.assertEquals(1, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.withDayOfMonth(31)), DELTA);
@@ -274,11 +274,11 @@ public class FamilienabzugAbschnittRuleTest {
 	public void testCalculateFamiliengroesseWithMutation2GSTo1GS() {
 		Gesuch gesuch = createGesuchWithOneGS();
 		final LocalDate date = LocalDate.of(1980, Month.MARCH, 25);
-		gesuch.getFamiliensituation().setAenderungPer(date);
+		gesuch.extractFamiliensituation().setAenderungPer(date);
 
 		Familiensituation famSitErstgesuch = new Familiensituation();
 		famSitErstgesuch.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
-		gesuch.setFamiliensituationErstgesuch(famSitErstgesuch);
+		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(famSitErstgesuch);
 
 		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.minusMonths(1)), DELTA);
 		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.withDayOfMonth(31)), DELTA);
@@ -289,11 +289,11 @@ public class FamilienabzugAbschnittRuleTest {
 	public void testCalculateFamiliengroesseWithMutation2GSTo2GS() {
 		Gesuch gesuch = createGesuchWithTwoGesuchsteller();
 		final LocalDate date = LocalDate.of(1980, Month.MARCH, 25);
-		gesuch.getFamiliensituation().setAenderungPer(date);
+		gesuch.extractFamiliensituation().setAenderungPer(date);
 
 		Familiensituation famSitErstgesuch = new Familiensituation();
 		famSitErstgesuch.setFamilienstatus(EnumFamilienstatus.KONKUBINAT);
-		gesuch.setFamiliensituationErstgesuch(famSitErstgesuch);
+		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(famSitErstgesuch);
 
 
 		Assert.assertEquals(2, famabAbschnittRule.calculateFamiliengroesse(gesuch, date.minusMonths(1)), DELTA);
@@ -306,12 +306,12 @@ public class FamilienabzugAbschnittRuleTest {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
 		Gesuch gesuch = betreuung.extractGesuch();
 		final LocalDate date = LocalDate.of(2017, Month.MARCH, 25); // gesuchsperiode ist 2016/2017
-		gesuch.getFamiliensituation().setAenderungPer(date);
+		gesuch.extractFamiliensituation().setAenderungPer(date);
 
 		Familiensituation famSitErstgesuch = new Familiensituation();
 		famSitErstgesuch.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		famSitErstgesuch.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
-		gesuch.setFamiliensituationErstgesuch(famSitErstgesuch);
+		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(famSitErstgesuch);
 
 		gesuch.setKindContainers(new HashSet<>());
 		final KindContainer defaultKindContainer = TestDataUtil.createDefaultKindContainer();
@@ -342,7 +342,8 @@ public class FamilienabzugAbschnittRuleTest {
 		gesuch.setGesuchsteller1(new Gesuchsteller());
 		Familiensituation famSit = new Familiensituation();
 		famSit.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
-		gesuch.setFamiliensituation(famSit);
+		gesuch.setFamiliensituationContainer(new FamiliensituationContainer());
+		gesuch.getFamiliensituationContainer().setFamiliensituationJA(famSit);
 		return gesuch;
 	}
 
@@ -354,7 +355,8 @@ public class FamilienabzugAbschnittRuleTest {
 		gesuch.setGesuchsteller2(gesuchsteller);
 		Familiensituation famSit = new Familiensituation();
 		famSit.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
-		gesuch.setFamiliensituation(famSit);
+		gesuch.setFamiliensituationContainer(new FamiliensituationContainer());
+		gesuch.getFamiliensituationContainer().setFamiliensituationJA(famSit);
 		return gesuch;
 	}
 

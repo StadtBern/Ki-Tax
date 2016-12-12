@@ -152,8 +152,8 @@ public class EinkommensverschlechterungResource {
 		Validate.notNull(basisJahrPlusID.getId());
 		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
 		Gesuch gesuch = new Gesuch();
-		gesuch.setFamiliensituation(new Familiensituation());
-		gesuch.getFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
+		gesuch.initFamiliensituationContainer();
+		gesuch.extractFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS1() != null) {
 			gesuch.setGesuchsteller1(new Gesuchsteller());
 			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(

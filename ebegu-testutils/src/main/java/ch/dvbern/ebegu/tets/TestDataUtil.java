@@ -104,6 +104,12 @@ public final class TestDataUtil {
 		return einkommensverschlechterung;
 	}
 
+	public static FamiliensituationContainer createDefaultFamiliensituationContainer() {
+		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
+		familiensituationContainer.setFamiliensituationJA(createDefaultFamiliensituation());
+		return familiensituationContainer;
+	}
+
 	public static Familiensituation createDefaultFamiliensituation() {
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
@@ -117,7 +123,7 @@ public final class TestDataUtil {
 		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
 		gesuch.setEingangsdatum(LocalDate.now());
-		gesuch.setFamiliensituation(createDefaultFamiliensituation());
+		gesuch.setFamiliensituationContainer(createDefaultFamiliensituationContainer());
 		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
 		return gesuch;
 	}
@@ -428,12 +434,12 @@ public final class TestDataUtil {
 	public static Betreuung createGesuchWithBetreuungspensum(boolean zweiGesuchsteller) {
 		Gesuch gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
-		gesuch.setFamiliensituation(new Familiensituation());
-		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.setFamiliensituationContainer(createDefaultFamiliensituationContainer());
+		gesuch.extractFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		if (zweiGesuchsteller) {
-			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+			gesuch.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		} else {
-			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+			gesuch.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		}
 		gesuch.setGesuchsteller1(new Gesuchsteller());
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());

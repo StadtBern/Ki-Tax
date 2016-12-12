@@ -77,14 +77,8 @@ public class Gesuch extends AbstractEntity {
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_id"))
-	private Familiensituation familiensituation;
-
-	@Valid
-	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_erstgesuch_id"))
-	private Familiensituation familiensituationErstgesuch;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_container_id"))
+	private FamiliensituationContainer familiensituationContainer;
 
 	@Valid
 	@Nullable
@@ -133,13 +127,7 @@ public class Gesuch extends AbstractEntity {
 			this.addKindContainer(new KindContainer(kindContainer, this));
 		}
 		this.setAntragStatusHistories(new LinkedHashSet<>());
-		this.setFamiliensituation(new Familiensituation(toCopy.getFamiliensituation()));
-
-		if (toCopy.isMutation()) {
-			this.familiensituationErstgesuch = toCopy.getFamiliensituationErstgesuch();
-		} else { // beim ErstGesuch holen wir direkt die normale Familiensituation
-			this.familiensituationErstgesuch = toCopy.getFamiliensituation();
-		}
+		this.setFamiliensituationContainer(new FamiliensituationContainer(toCopy.getFamiliensituationContainer(), toCopy.isMutation()));
 
 		if (toCopy.getEinkommensverschlechterungInfoContainer() != null) {
 			this.setEinkommensverschlechterungInfoContainer(new EinkommensverschlechterungInfoContainer(toCopy.getEinkommensverschlechterungInfoContainer()));
@@ -184,21 +172,12 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
-	public Familiensituation getFamiliensituation() {
-		return familiensituation;
+	public FamiliensituationContainer getFamiliensituationContainer() {
+		return familiensituationContainer;
 	}
 
-	public void setFamiliensituation(@Nullable final Familiensituation familiensituation) {
-		this.familiensituation = familiensituation;
-	}
-
-	@Nullable
-	public Familiensituation getFamiliensituationErstgesuch() {
-		return familiensituationErstgesuch;
-	}
-
-	public void setFamiliensituationErstgesuch(@Nullable final Familiensituation familiensituationErstgesuch) {
-		this.familiensituationErstgesuch = familiensituationErstgesuch;
+	public void setFamiliensituationContainer(@Nullable FamiliensituationContainer familiensituationContainer) {
+		this.familiensituationContainer = familiensituationContainer;
 	}
 
 	public Set<AntragStatusHistory> getAntragStatusHistories() {
@@ -216,7 +195,6 @@ public class Gesuch extends AbstractEntity {
 		}
 		return null;
 	}
-
 
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
@@ -393,5 +371,24 @@ public class Gesuch extends AbstractEntity {
 		return kindContainers.stream()
 			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
 			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
+	}
+
+	public Familiensituation extractFamiliensituation() {
+		if(familiensituationContainer != null){
+			return familiensituationContainer.extractFamiliensituation();
+		}
+		return null;
+	}
+
+	public Familiensituation extractFamiliensituationErstgesuch() {
+		if(familiensituationContainer != null){
+			return familiensituationContainer.getFamiliensituationErstgesuch();
+		}
+		return null;
+	}
+
+	public void initFamiliensituationContainer() {
+		familiensituationContainer = new FamiliensituationContainer();
+		familiensituationContainer.setFamiliensituationJA(new Familiensituation());
 	}
 }

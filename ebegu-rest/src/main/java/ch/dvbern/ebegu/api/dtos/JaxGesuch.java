@@ -27,10 +27,7 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private Set<JaxKindContainer> kindContainers = new LinkedHashSet<>();
 
 	@Nullable
-	private JaxFamiliensituation familiensituation;
-
-	@Nullable
-	private JaxFamiliensituation familiensituationErstgesuch;
+	private JaxFamiliensituationContainer familiensituationContainer;
 
 	@Nullable
 	private JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer;
@@ -73,12 +70,12 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	}
 
 	@Nullable
-	public JaxFamiliensituation getFamiliensituation() {
-		return familiensituation;
+	public JaxFamiliensituationContainer getFamiliensituationContainer() {
+		return familiensituationContainer;
 	}
 
-	public void setFamiliensituation(@Nullable final JaxFamiliensituation familiensituation) {
-		this.familiensituation = familiensituation;
+	public void setFamiliensituationContainer(@Nullable JaxFamiliensituationContainer familiensituationContainer) {
+		this.familiensituationContainer = familiensituationContainer;
 	}
 
 	@Nullable
@@ -108,13 +105,5 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		this.laufnummer = laufnummer;
 	}
 
-	@Nullable
-	public JaxFamiliensituation getFamiliensituationErstgesuch() {
-		return familiensituationErstgesuch;
-	}
-
-	public void setFamiliensituationErstgesuch(@Nullable JaxFamiliensituation familiensituationErstgesuch) {
-		this.familiensituationErstgesuch = familiensituationErstgesuch;
-	}
 }
 

@@ -53,6 +53,7 @@ import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp'
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import IQService = angular.IQService;
 import TSEinkommensverschlechterungInfoContainer from '../../models/TSEinkommensverschlechterungInfoContainer';
+import TSFamiliensituationContainer from '../../models/TSFamiliensituationContainer';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -170,14 +171,14 @@ export default class GesuchModelManager {
 
     public getFamiliensituation(): TSFamiliensituation {
         if (this.gesuch) {
-            return this.gesuch.familiensituation;
+            return this.gesuch.extractFamiliensituation();
         }
         return undefined;
     }
 
     public getFamiliensituationErstgesuch(): TSFamiliensituation {
         if (this.gesuch) {
-            return this.gesuch.familiensituationErstgesuch;
+            return this.gesuch.extractFamiliensituationErstgesuch();
         }
         return undefined;
     }
@@ -228,16 +229,6 @@ export default class GesuchModelManager {
                 });
             }
         }
-    }
-
-    public updateFamiliensituation(): IPromise<TSFamiliensituation> {
-        return this.familiensituationRS.saveFamiliensituation(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
-            return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
-                this.gesuch = gesuchResponse;
-                this.gesuch.familiensituation = familienResponse;
-                return this.gesuch.familiensituation;
-            });
-        });
     }
 
     /**
@@ -438,7 +429,8 @@ export default class GesuchModelManager {
 
     public initFamiliensituation() {
         if (!this.getFamiliensituation()) {
-            this.gesuch.familiensituation = new TSFamiliensituation();
+            this.gesuch.familiensituationContainer = new TSFamiliensituationContainer();
+            this.gesuch.familiensituationContainer.familiensituationJA = new TSFamiliensituation();
         }
     }
 

@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.util;
 
 import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import org.junit.Assert;
@@ -13,13 +14,17 @@ public class EbeguUtilTest {
 
 	@Test
 	public void testFromOneGSToTwoGS_From2To1() {
+
 		Familiensituation oldData = new Familiensituation();
 		oldData.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		Familiensituation newData = new Familiensituation();
 		newData.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		newData.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		FamiliensituationContainer fsc = new FamiliensituationContainer();
+		fsc.setFamiliensituationErstgesuch(oldData);
+		fsc.setFamiliensituationJA(newData);
 
-		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(oldData, newData));
+		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(fsc));
 	}
 
 	@Test
@@ -29,7 +34,11 @@ public class EbeguUtilTest {
 		Familiensituation newData = new Familiensituation();
 		newData.setFamilienstatus(EnumFamilienstatus.KONKUBINAT);
 
-		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(oldData, newData));
+		FamiliensituationContainer fsc = new FamiliensituationContainer();
+		fsc.setFamiliensituationErstgesuch(oldData);
+		fsc.setFamiliensituationJA(newData);
+
+		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(fsc));;
 	}
 
 	@Test
@@ -41,7 +50,11 @@ public class EbeguUtilTest {
 		newData.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		newData.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 
-		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(oldData, newData));
+		FamiliensituationContainer fsc = new FamiliensituationContainer();
+		fsc.setFamiliensituationErstgesuch(oldData);
+		fsc.setFamiliensituationJA(newData);
+
+		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(fsc));;
 	}
 
 	@Test
@@ -52,7 +65,11 @@ public class EbeguUtilTest {
 		Familiensituation newData = new Familiensituation();
 		newData.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 
-		Assert.assertTrue(EbeguUtil.fromOneGSToTwoGS(oldData, newData));
+		FamiliensituationContainer fsc = new FamiliensituationContainer();
+		fsc.setFamiliensituationErstgesuch(oldData);
+		fsc.setFamiliensituationJA(newData);
+
+		Assert.assertTrue(EbeguUtil.fromOneGSToTwoGS(fsc));;
 	}
 
 	@Test
@@ -60,6 +77,10 @@ public class EbeguUtilTest {
 		Familiensituation oldData = new Familiensituation();
 		Familiensituation newData = new Familiensituation();
 
-		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(oldData, newData));
+		FamiliensituationContainer fsc = new FamiliensituationContainer();
+		fsc.setFamiliensituationErstgesuch(oldData);
+		fsc.setFamiliensituationJA(newData);
+
+		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(fsc));
 	}
 }

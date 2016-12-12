@@ -42,9 +42,9 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 	@Override
 	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
 
-		final boolean gemeinsam = gesuch.getFamiliensituation() != null &&
-			gesuch.getFamiliensituation().getGemeinsameSteuererklaerung() != null &&
-			gesuch.getFamiliensituation().getGemeinsameSteuererklaerung();
+		final boolean gemeinsam = gesuch.extractFamiliensituation() != null &&
+			gesuch.extractFamiliensituation().getGemeinsameSteuererklaerung() != null &&
+			gesuch.extractFamiliensituation().getGemeinsameSteuererklaerung();
 
 		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.extractEinkommensverschlechterungInfo();
 

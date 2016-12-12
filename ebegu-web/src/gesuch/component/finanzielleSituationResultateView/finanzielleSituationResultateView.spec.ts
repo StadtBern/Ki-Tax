@@ -7,6 +7,7 @@ import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import TSFamiliensituationContainer from '../../../models/TSFamiliensituationContainer';
 
 describe('finanzielleSituationResultateView', function () {
 
@@ -31,7 +32,8 @@ describe('finanzielleSituationResultateView', function () {
 
     beforeEach(function () {
         gesuchModelManager.initGesuch(false);
-        gesuchModelManager.getGesuch().familiensituation = new TSFamiliensituation();
+        gesuchModelManager.getGesuch().familiensituationContainer = new TSFamiliensituationContainer();
+        gesuchModelManager.getGesuch().familiensituationContainer.familiensituationJA = new TSFamiliensituation();
         gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchsteller();
     });
 

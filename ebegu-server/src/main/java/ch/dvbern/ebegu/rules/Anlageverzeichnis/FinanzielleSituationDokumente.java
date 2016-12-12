@@ -48,9 +48,9 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 	@Override
 	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
 
-		final boolean gemeinsam = gesuch.getFamiliensituation() != null &&
-			gesuch.getFamiliensituation().getGemeinsameSteuererklaerung() != null &&
-			gesuch.getFamiliensituation().getGemeinsameSteuererklaerung();
+		final boolean gemeinsam = gesuch.extractFamiliensituation() != null &&
+			gesuch.extractFamiliensituation().getGemeinsameSteuererklaerung() != null &&
+			gesuch.extractFamiliensituation().getGemeinsameSteuererklaerung();
 
 		final Gesuchsteller gesuchsteller1 = gesuch.getGesuchsteller1();
 		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller1, gemeinsam, 1);

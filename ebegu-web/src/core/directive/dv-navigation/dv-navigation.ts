@@ -193,7 +193,8 @@ export class NavigatorController {
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName()) {
             if (this.dvSubStep === 1) {
-                if (this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().einkommensverschlechterung) { // was muss hier sein?
+                if (this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo() &&
+                    this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().einkommensverschlechterung) { // was muss hier sein?
                     if (this.gesuchModelManager.isGesuchsteller2Required()) {
                         this.navigateToStepEinkommensverschlechterungSteuern();
                     } else {

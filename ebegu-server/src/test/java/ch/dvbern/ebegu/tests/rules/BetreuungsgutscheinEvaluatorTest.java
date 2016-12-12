@@ -104,8 +104,8 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		gesuch.setFall(fall);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		TestDataUtil.calculateFinanzDaten(gesuch);
-		gesuch.setFamiliensituation(new Familiensituation());
-		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		gesuch.initFamiliensituationContainer();
+		gesuch.extractFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		// GS 1
 		gesuch.setGesuchsteller1(new Gesuchsteller());
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
