@@ -184,20 +184,20 @@ public class PrintUtil {
 		return null;
 	}
 
-	public static String getNameAdresseFormatiert(Gesuch gesuch, Gesuchsteller gesuchsteller){
+	public static String getNameAdresseFormatiert(Gesuch gesuch, GesuchstellerContainer gesuchsteller){
 
 		if (gesuch != null && gesuchsteller != null){
 			String newlineMSWord = "\n";
 			String adresse = StringUtils.EMPTY;
 
-			adresse += gesuchsteller.getFullName();
+			adresse += gesuchsteller.extractFullName();
 
-			Optional<GesuchstellerAdresse> gsa = getGesuchstellerAdresse(gesuchsteller);
+			Optional<GesuchstellerAdresseContainer> gsa = getGesuchstellerAdresse(gesuchsteller);
 			if (gsa.isPresent()) {
-				if (StringUtils.isNotEmpty(gsa.get().getHausnummer())) {
-					adresse += newlineMSWord + gsa.get().getStrasse() + " " + gsa.get().getHausnummer();
+				if (StringUtils.isNotEmpty(gsa.get().extractHausnummer())) {
+					adresse += newlineMSWord + gsa.get().extractStrasse() + " " + gsa.get().extractHausnummer();
 				} else {
-					adresse += newlineMSWord + gsa.get().getStrasse();
+					adresse += newlineMSWord + gsa.get().extractStrasse();
 				}
 			}
 
