@@ -9,9 +9,8 @@ import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
+import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -104,16 +103,9 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 
 		StringBuilder bemerkungenBuilder = new StringBuilder();
 		for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
-			if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
-				bemerkungenBuilder.append(ServerMessageUtil.translateEnumValue(dokumentGrund.getDokumentTyp()));
-				if (StringUtils.isNotEmpty(dokumentGrund.getFullName())) {
-					bemerkungenBuilder.append(" (");
-					bemerkungenBuilder.append(dokumentGrund.getFullName());
-					if (dokumentGrund.getTag() != null) {
-						bemerkungenBuilder.append(" / ").append(dokumentGrund.getTag());
-					}
-					bemerkungenBuilder.append(")");
-				}
+			StringBuilder dokumentData = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
+			if (dokumentData.length() > 0) {
+				bemerkungenBuilder.append(dokumentData);
 				bemerkungenBuilder.append("\n");
 			}
 		}
