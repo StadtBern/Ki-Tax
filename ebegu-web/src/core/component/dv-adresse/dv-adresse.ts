@@ -1,10 +1,11 @@
-import TSAdresse from '../../../models/TSAdresse';
 import AdresseRS from '../../service/adresseRS.rest';
 import TSLand from '../../../models/types/TSLand';
 import ListResourceRS from '../../service/listResourceRS.rest';
 import {IComponentOptions, IFormController} from 'angular';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
+import TSAdresseContainer from '../../../models/TSAdresseContainer';
+import TSAdresse from '../../../models/TSAdresse';
 require('./dv-adresse.less');
 
 export class AdresseComponentConfig implements IComponentOptions {
@@ -25,7 +26,7 @@ export class AdresseComponentConfig implements IComponentOptions {
 export class DvAdresseController {
     static $inject = ['AdresseRS', 'ListResourceRS', 'GesuchModelManager'];
 
-    adresse: TSAdresse;
+    adresse: TSAdresseContainer;
     prefix: string;
     adresseRS: AdresseRS;
     parentForm: IFormController;
@@ -81,6 +82,10 @@ export class DvAdresseController {
 
     public showDatumVon(): boolean {
         return this.adresse.showDatumVon;
+    }
+
+    public getModel(): TSAdresse {
+        return this.adresse.adresseJA;
     }
 
 }

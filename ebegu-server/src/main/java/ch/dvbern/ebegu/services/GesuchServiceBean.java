@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.PredicateObjectDTO;
@@ -59,6 +60,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private GesuchsperiodeService gesuchsperiodeService;
 	@Inject
 	private Authorizer authorizer;
+	@Inject
+	private PrincipalBean principalBean;
+
 
 	@Nonnull
 	@Override
@@ -112,9 +116,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Root<Gesuch> root = query.from(Gesuch.class);
 
-		Predicate predicateVerfuegt = cb.notEqual(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
-		Predicate predicateSchulamt = cb.notEqual(root.get(Gesuch_.status), AntragStatus.NUR_SCHULAMT);
-		query.where(predicateVerfuegt, predicateSchulamt);
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
+		query.where(predicateStatus);
 		return persistence.getCriteriaResults(query);
 	}
 
@@ -138,10 +141,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 
 		ParameterExpression<String> nameParam = cb.parameter(String.class, "nachname");
-		Predicate namePredicate = cb.equal(root.get(Gesuch_.gesuchsteller1).get(Gesuchsteller_.nachname), nameParam);
+		Predicate namePredicate = cb.equal(root.get(Gesuch_.gesuchsteller1).get(GesuchstellerContainer_.gesuchstellerJA).get(Gesuchsteller_.nachname), nameParam);
 
 		ParameterExpression<String> vornameParam = cb.parameter(String.class, "vorname");
-		Predicate vornamePredicate = cb.equal(root.get(Gesuch_.gesuchsteller1).get(Gesuchsteller_.vorname), vornameParam);
+		Predicate vornamePredicate = cb.equal(root.get(Gesuch_.gesuchsteller1).get(GesuchstellerContainer_.gesuchstellerJA).get(Gesuchsteller_.vorname), vornameParam);
 
 		query.where(namePredicate, vornamePredicate);
 		TypedQuery<Gesuch> q = persistence.getEntityManager().createQuery(query);
@@ -154,18 +157,22 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@Nonnull
 	@RolesAllowed(value ={UserRoleName.GESUCHSTELLER, UserRoleName.SUPER_ADMIN})
-	public List<Gesuch> getAntraegeForUsername(String username) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+	public List<Gesuch> getAntraegeByCurrentBenutzer() {
+		Optional<Fall> fallOptional = fallService.findFallByCurrentBenutzerAsBesitzer();
+		if (fallOptional.isPresent()) {
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
-		Root<Gesuch> root = query.from(Gesuch.class);
+			Root<Gesuch> root = query.from(Gesuch.class);
+			Predicate predicate = cb.equal(root.get(Gesuch_.fall), fallOptional.get());
+			query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
+			query.where(predicate);
 
-		Predicate predicate = cb.equal(root.get(Gesuch_.userErstellt), username);
-		query.where(predicate);
-
-		List<Gesuch> gesuche = persistence.getCriteriaResults(query);
-		authorizer.checkReadAuthorizationGesuche(gesuche);
-		return gesuche;
+			List<Gesuch> gesuche = persistence.getCriteriaResults(query);
+			authorizer.checkReadAuthorizationGesuche(gesuche);
+			return gesuche;
+		}
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -209,8 +216,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Join<Gesuch, Fall> fall = root.join(Gesuch_.fall, JoinType.INNER);
 		Join<Fall, Benutzer> verantwortlicher = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
 		Join<Gesuch, Gesuchsperiode> gesuchsperiode = root.join(Gesuch_.gesuchsperiode, JoinType.INNER);
-		Join<Gesuch, Gesuchsteller> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
-		Join<Gesuch, Gesuchsteller> gesuchsteller2 = root.join(Gesuch_.gesuchsteller2, JoinType.LEFT);
+		Join<Gesuch, GesuchstellerContainer> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
+		Join<Gesuch, GesuchstellerContainer> gesuchsteller2 = root.join(Gesuch_.gesuchsteller2, JoinType.LEFT);
 		SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
 		SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.LEFT);
 		Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
@@ -267,8 +274,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (predicateObjectDto.getFamilienName() != null) {
 				predicates.add(
 					cb.or(
-						cb.like(gesuchsteller1.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike()),
-						cb.like(gesuchsteller2.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike())
+						cb.like(gesuchsteller1.get(GesuchstellerContainer_.gesuchstellerJA).get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike()),
+						cb.like(gesuchsteller2.get(GesuchstellerContainer_.gesuchstellerJA).get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike())
 					));
 			}
 			if (predicateObjectDto.getAntragTyp() != null) {
@@ -353,7 +360,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					expression = root.get(Gesuch_.fall).get(Fall_.fallNummer);
 					break;
 				case "familienName":
-					expression = root.get(Gesuch_.gesuchsteller1).get(Gesuchsteller_.nachname);
+					expression = root.get(Gesuch_.gesuchsteller1).get(GesuchstellerContainer_.gesuchstellerJA).get(Gesuchsteller_.nachname);
 					break;
 				case "antragTyp":
 					expression = root.get(Gesuch_.typ);
@@ -556,9 +563,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	private Optional<Gesuch> getGesuchMutation(@Nonnull LocalDate eingangsdatum, Optional<Gesuch> gesuchForMutation) {
 		if (gesuchForMutation.isPresent()) {
-			Gesuch mutation = new Gesuch(gesuchForMutation.get());
+			Eingangsart eingangsart;
+			if(this.principalBean.isCallerInRole(UserRole.GESUCHSTELLER)){
+				eingangsart = Eingangsart.ONLINE;
+			} else{
+				eingangsart = Eingangsart.PAPIER;
+			}
+			Gesuch mutation = gesuchForMutation.get().copyForMutation(new Gesuch(), eingangsart);
 			mutation.setEingangsdatum(eingangsdatum);
-			mutation.setStatus(AntragStatus.IN_BEARBEITUNG_JA); // todo im gesuch online darf dies auch IN_BEARBEITUNG_GS sein
 			return Optional.of(mutation);
 		}
 		return Optional.empty();

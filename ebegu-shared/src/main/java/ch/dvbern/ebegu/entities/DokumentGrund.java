@@ -60,20 +60,6 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 		this.dokumentTyp = dokumentTyp;
 	}
 
-	//Copy
-	public DokumentGrund(DokumentGrund toCopy) {
-		this.setVorgaengerId(toCopy.getId());
-		this.dokumentGrundTyp = toCopy.dokumentGrundTyp;
-		this.fullName = toCopy.fullName;
-		this.tag = toCopy.tag;
-		this.dokumentTyp = toCopy.dokumentTyp;
-		if(toCopy.dokumente != null) {
-			for (Dokument dokument : toCopy.dokumente) {
-				this.dokumente.add(new Dokument(dokument, this));
-			}
-		}
-		this.needed = toCopy.needed;
-	}
 
 	@NotNull
 	@ManyToOne(optional = false)
@@ -191,5 +177,20 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 
 	public boolean isEmpty() {
 		return getDokumente() == null || getDokumente().size() <= 0;
+	}
+
+	public DokumentGrund copyForMutation(DokumentGrund mutation) {
+		super.copyForMutation(mutation);
+		mutation.setDokumentGrundTyp(this.getDokumentGrundTyp());
+		mutation.setFullName(this.getFullName());
+		mutation.setTag(this.getTag());
+		mutation.setDokumentTyp(this.getDokumentTyp());
+		if (this.getDokumente() != null) {
+			for (Dokument dokument : this.getDokumente()) {
+				mutation.getDokumente().add(dokument.copyForMutation(new Dokument(), mutation));
+			}
+		}
+		mutation.setNeeded(this.isNeeded());
+		return mutation;
 	}
 }

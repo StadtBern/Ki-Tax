@@ -9,6 +9,8 @@ import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./dv-dokumente-list.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 require('./dv-dokumente-list.less');
@@ -44,11 +46,11 @@ export class DVDokumenteListController {
     sonstige: boolean;
 
     static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS', 'DvDialog', 'WizardStepManager',
-        '$log'];
+        '$log', 'AuthServiceRS'];
     /* @ngInject */
     constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
                 private downloadRS: DownloadRS, private dvDialog: DvDialog, private wizardStepManager: WizardStepManager,
-                private $log: ILogService) {
+                private $log: ILogService, private authServiceRS: AuthServiceRS) {
 
     }
 
@@ -57,11 +59,10 @@ export class DVDokumenteListController {
     }
 
     uploadAnhaenge(files: any[], selectDokument: TSDokumentGrund) {
-
-        if (!this.isGesuchReadonly() && this.gesuchModelManager.getGesuch()) {
+        if (this.isUploadVisible() && this.gesuchModelManager.getGesuch()) {
             let gesuchID = this.gesuchModelManager.getGesuch().id;
             this.$log.debug('Uploading files on gesuch ' + gesuchID);
-            for (var file of files) {
+            for (let file of files) {
                 this.$log.debug('File: ' + file.name);
             }
 
@@ -72,7 +73,7 @@ export class DVDokumenteListController {
                 });
             });
         } else {
-            this.$log.debug('No gesuch found to store file or gesuch is status verfuegt');
+            this.$log.warn('No gesuch found to store file or gesuch is status verfuegt');
         }
     }
 
@@ -129,7 +130,13 @@ export class DVDokumenteListController {
         return this.gesuchModelManager.isGesuchReadonly();
     }
 
-
+    public isUploadVisible(): boolean {
+        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+            return true; //gesuchsteller kann immer dokumente hochladen
+        } else {
+            return !this.isGesuchReadonly(); //fuer alle andern nicht verfuegbar wenn gesuch im readonly modus
+        }
+    }
 }
 
 

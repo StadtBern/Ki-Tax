@@ -294,7 +294,11 @@ export class NavigatorController {
         if (stepName === TSWizardStepName.GESUCH_ERSTELLEN) {
             this.state.go('gesuch.fallcreation', {
                 createNew: 'false',
-                gesuchId: gesuchId
+                createMutation: 'false',
+                eingangsart: this.gesuchModelManager.getGesuch().eingangsart,
+                gesuchId: gesuchId,
+                gesuchsperiodeId: this.gesuchModelManager.getGesuch().gesuchsperiode,
+                fallId: this.gesuchModelManager.getGesuch().fall.id
             });
 
         } else if (stepName === TSWizardStepName.FAMILIENSITUATION) {

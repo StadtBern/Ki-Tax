@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer_;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -63,8 +63,8 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST,  GESUCHSTELLER})
-	public Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
-		return criteriaQueryHelper.getEntitiesByAttribute(ErwerbspensumContainer.class, gesuchsteller, ErwerbspensumContainer_.gesuchsteller);
+	public Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller) {
+		return criteriaQueryHelper.getEntitiesByAttribute(ErwerbspensumContainer.class, gesuchsteller, ErwerbspensumContainer_.gesuchstellerContainer);
 	}
 
 

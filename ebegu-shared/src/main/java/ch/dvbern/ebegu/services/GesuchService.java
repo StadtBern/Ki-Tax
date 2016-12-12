@@ -71,10 +71,10 @@ public interface GesuchService {
 	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
 
 	/**
-	 * Gibt alle Antraege des Benutzers mit demn uebergebenen Benutzernamen zurueck.
+	 * Gibt alle Antraege des aktuell eingeloggten Benutzers
      */
 	@Nonnull
-	List<Gesuch> getAntraegeForUsername(String username);
+	List<Gesuch> getAntraegeByCurrentBenutzer();
 
 	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
@@ -82,7 +82,7 @@ public interface GesuchService {
 	 * @param antragSearch
 	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
 	 */
-	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch);
+	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragTableFilterDto);
 
 	/**
 	 * Gibt ein DTO mit saemtlichen Antragen eins bestimmten Falls zurueck

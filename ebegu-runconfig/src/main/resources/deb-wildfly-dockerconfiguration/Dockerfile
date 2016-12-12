@@ -20,6 +20,9 @@ RUN $JBOSS_HOME/bin/add-user.sh ebegu-admin jbtwLs --silent
 #Applikation hinzufuegen
 ADD ebegu-rest.war /opt/jboss/wildfly/standalone/deployments/
 
+#Healthcheck
+HEALTHCHECK CMD curl -f http://$(hostname -i || echo '127.0.0.1'):8080/ebegu/api/v1/swagger.json || exit 1
+
 ###########
 # cleanup #
 ###########

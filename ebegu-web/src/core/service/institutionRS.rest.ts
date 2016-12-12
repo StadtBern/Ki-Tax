@@ -80,4 +80,15 @@ export class InstitutionRS {
     public getServiceName(): string {
         return 'InstitutionRS';
     }
+
+    synchronizeInstitutions(): IPromise<any> {
+        return this.http.post(this.serviceURL + '/' + 'synchronizeWithOpenIdm', null, {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        }).then((response: any) => {
+            this.log.debug('synchronizeWithOpenIdm returns: ', response.data);
+            return response;
+        });
+    }
 }

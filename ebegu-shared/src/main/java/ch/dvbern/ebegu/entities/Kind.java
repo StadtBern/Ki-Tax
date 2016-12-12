@@ -50,20 +50,8 @@ public class Kind extends AbstractPersonEntity {
 
 
 	public Kind() {
-
 	}
 
-	public Kind(@Nonnull Kind toCopy) {
-		super(toCopy);
-		this.wohnhaftImGleichenHaushalt = toCopy.wohnhaftImGleichenHaushalt;
-		this.kinderabzug = toCopy.kinderabzug;
-		this.familienErgaenzendeBetreuung = toCopy.familienErgaenzendeBetreuung;
-		this.mutterspracheDeutsch = toCopy.mutterspracheDeutsch;
-		this.einschulung = toCopy.einschulung;
-		if (toCopy.pensumFachstelle != null) {
-			this.pensumFachstelle = new PensumFachstelle(toCopy.pensumFachstelle);
-		}
-	}
 
 	@Nullable
 	public Integer getWohnhaftImGleichenHaushalt() {
@@ -114,5 +102,17 @@ public class Kind extends AbstractPersonEntity {
 
 	public void setEinschulung(@Nullable Boolean einschulung) {
 		this.einschulung = einschulung;
+	}
+
+	public Kind copyForMutation(Kind mutation) {
+		super.copyForMutation(mutation);
+		mutation.setKinderabzug(this.getKinderabzug());
+		mutation.setFamilienErgaenzendeBetreuung(this.getFamilienErgaenzendeBetreuung());
+		mutation.setMutterspracheDeutsch(this.getMutterspracheDeutsch());
+		mutation.setEinschulung(this.getEinschulung());
+		if (this.getPensumFachstelle() != null) {
+			mutation.setPensumFachstelle(this.getPensumFachstelle().copyForMutation(new PensumFachstelle()));
+		}
+		return mutation;
 	}
 }

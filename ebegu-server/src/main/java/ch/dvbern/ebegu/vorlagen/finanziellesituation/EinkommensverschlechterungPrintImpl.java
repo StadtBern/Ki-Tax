@@ -54,10 +54,10 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 		} else {
 			this.ekvGS1 = fsGesuchsteller1.getEinkommensverschlechterung2();
 		}
-		if (fsGesuchsteller2 != null && fsGesuchsteller2.getEinkommensverschlechterung2() != null) {
-			if (basisJahrPlus == 1) {
+		if (fsGesuchsteller2 != null) {
+			if (basisJahrPlus == 1 && fsGesuchsteller2.getEinkommensverschlechterung1() != null) {
 				this.ekvGS2 = fsGesuchsteller2.getEinkommensverschlechterung1();
-			} else {
+			} else if (fsGesuchsteller2.getEinkommensverschlechterung2() != null) {
 				this.ekvGS2 = fsGesuchsteller2.getEinkommensverschlechterung2();
 			}
 		}

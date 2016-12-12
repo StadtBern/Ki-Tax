@@ -2,7 +2,6 @@ import {IComponentOptions, IFormController, IQService, IPromise, IScope} from 'a
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IErwerbspensumStateParams} from '../../gesuch.route';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
 import {TSTaetigkeit, getTSTaetigkeit} from '../../../models/enums/TSTaetigkeit';
 import {
@@ -16,6 +15,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -39,7 +39,7 @@ export class ErwerbspensumViewComponentConfig implements IComponentOptions {
 
 export class ErwerbspensumViewController extends AbstractGesuchViewController<TSErwerbspensumContainer> {
 
-    gesuchsteller: TSGesuchsteller;
+    gesuchsteller: TSGesuchstellerContainer;
     patternPercentage: string;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager',
@@ -61,7 +61,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
                 this.model = this.initEmptyEwpContainer();
             }
         } else {
-            errorService.addMesageAsError("Unerwarteter Zustand: Gesuchsteller unbekannt");
+            errorService.addMesageAsError('Unerwarteter Zustand: Gesuchsteller unbekannt');
             console.log('kein gesuchsteller gefunden');
         }
 

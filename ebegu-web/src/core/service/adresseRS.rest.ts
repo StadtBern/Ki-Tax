@@ -1,5 +1,5 @@
-import TSAdresse from '../../models/TSAdresse';
 import {IHttpService, IHttpPromise} from 'angular';
+import TSAdresseContainer from '../../models/TSAdresseContainer';
 
 export default class AdresseRS {
     static $inject = ['$http', 'REST_API'];
@@ -13,7 +13,7 @@ export default class AdresseRS {
         this.http = $http;
     }
 
-    public create(adresse: TSAdresse): IHttpPromise<any> {
+    public create(adresse: TSAdresseContainer): IHttpPromise<any> {
         return this.http.post(this.serviceURL, adresse, {
             headers: {
                 'Content-Type': 'application/json'

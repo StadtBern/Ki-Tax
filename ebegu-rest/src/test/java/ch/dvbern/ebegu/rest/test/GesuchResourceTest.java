@@ -123,6 +123,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 		persistUser(UserRole.GESUCHSTELLER, "gesuchst", null, null, null);
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 
+
 		final JaxGesuch gesuchForInstitution = gesuchResource.findGesuchForInstitution(converter.toJaxId(gesuch));
 
 		Assert.assertNull(gesuchForInstitution.getEinkommensverschlechterungInfo());
@@ -154,7 +155,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 
 	// HELP METHODS
 
-	private void persistUser(final UserRole role, final String username,  final Institution institution, final Traegerschaft traegerschaft, final Mandant mandant) {
+	private Benutzer persistUser(final UserRole role, final String username,  final Institution institution, final Traegerschaft traegerschaft, final Mandant mandant) {
 		Mandant mandantToStore = mandant;
 		if (mandantToStore == null) {
 			mandantToStore = TestDataUtil.createDefaultMandant();
@@ -168,6 +169,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 			LOG.error("could not log in as user "+username, e);
 			throw new RuntimeException("could not log in");
 		}
+		return benutzer;
 	}
 
 	private void changeStatusToWarten(KindContainer kindContainer) {

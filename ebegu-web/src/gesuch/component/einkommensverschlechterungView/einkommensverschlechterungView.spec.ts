@@ -2,13 +2,14 @@ import '../../../bootstrap.ts';
 import 'angular-mocks';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {EbeguWebGesuch} from '../../gesuch.module';
+import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
+import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
-import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
-import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
 
 describe('einkommensverschlechterungView', function () {
 
@@ -32,8 +33,8 @@ describe('einkommensverschlechterungView', function () {
     beforeEach(function () {
         gesuchModelManager.initGesuch(false);
         gesuchModelManager.initFamiliensituation();
-        gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchsteller();
-        gesuchModelManager.getGesuch().gesuchsteller2 = new TSGesuchsteller();
+        gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchstellerContainer(new TSGesuchsteller());
+        gesuchModelManager.getGesuch().gesuchsteller2 = new TSGesuchstellerContainer(new TSGesuchsteller());
         gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
         gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
 

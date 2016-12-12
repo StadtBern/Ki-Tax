@@ -39,12 +39,6 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 	public BetreuungspensumContainer() {
 	}
 
-	public BetreuungspensumContainer(@Nonnull BetreuungspensumContainer toCopy, @Nonnull Betreuung betreuung) {
-		this.setVorgaengerId(toCopy.getId());
-		this.betreuung = betreuung;
-		this.betreuungspensumGS = null;
-		this.betreuungspensumJA = new Betreuungspensum(toCopy.betreuungspensumJA);
-	}
 
 	public Betreuung getBetreuung() {
 		return this.betreuung;
@@ -108,5 +102,13 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 		builder.append(this.getBetreuungspensumJA(), o.getBetreuungspensumJA());
 		builder.append(this.getBetreuungspensumJA().getId(), o.getBetreuungspensumJA().getId());
 		return builder.toComparison();
+	}
+
+	public BetreuungspensumContainer copyForMutation(@Nonnull BetreuungspensumContainer mutation, @Nonnull Betreuung betreuungMutation) {
+		super.copyForMutation(mutation);
+		mutation.setBetreuung(betreuungMutation);
+		mutation.setBetreuungspensumGS(null);
+		mutation.setBetreuungspensumJA(this.getBetreuungspensumJA().copyForMutation(new Betreuungspensum()));
+		return mutation;
 	}
 }

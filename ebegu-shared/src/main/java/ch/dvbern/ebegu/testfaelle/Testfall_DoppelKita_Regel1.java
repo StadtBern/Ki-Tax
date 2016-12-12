@@ -32,7 +32,7 @@ public class Testfall_DoppelKita_Regel1 extends AbstractTestfall {
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createAlleinerziehend();
-		Gesuchsteller gesuchsteller1 = createGesuchsteller();
+		GesuchstellerContainer gesuchsteller1 = createGesuchstellerContainer();
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensum = createErwerbspensum(60, 0);

@@ -1,14 +1,14 @@
-import TSGesuchsteller from './TSGesuchsteller';
 import TSKindContainer from './TSKindContainer';
 import TSAbstractAntragEntity from './TSAbstractAntragEntity';
 import TSFamiliensituation from './TSFamiliensituation';
 import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
 import {TSAntragTyp} from './enums/TSAntragTyp';
+import TSGesuchstellerContainer from './TSGesuchstellerContainer';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
-    private _gesuchsteller1: TSGesuchsteller;
-    private _gesuchsteller2: TSGesuchsteller;
+    private _gesuchsteller1: TSGesuchstellerContainer;
+    private _gesuchsteller2: TSGesuchstellerContainer;
     private _kindContainers: Array<TSKindContainer>;
     private _familiensituation: TSFamiliensituation;
     private _familiensituationErstgesuch: TSFamiliensituation;
@@ -17,19 +17,19 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _laufnummer: number;
 
 
-    public get gesuchsteller1(): TSGesuchsteller {
+    public get gesuchsteller1(): TSGesuchstellerContainer {
         return this._gesuchsteller1;
     }
 
-    public set gesuchsteller1(value: TSGesuchsteller) {
+    public set gesuchsteller1(value: TSGesuchstellerContainer) {
         this._gesuchsteller1 = value;
     }
 
-    public get gesuchsteller2(): TSGesuchsteller {
+    public get gesuchsteller2(): TSGesuchstellerContainer {
         return this._gesuchsteller2;
     }
 
-    public set gesuchsteller2(value: TSGesuchsteller) {
+    public set gesuchsteller2(value: TSGesuchstellerContainer) {
         this._gesuchsteller2 = value;
     }
 

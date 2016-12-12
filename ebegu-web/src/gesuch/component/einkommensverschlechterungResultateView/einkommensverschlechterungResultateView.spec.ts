@@ -6,10 +6,11 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import {EinkommensverschlechterungResultateViewController} from './einkommensverschlechterungResultateView';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import WizardStepManager from '../../service/wizardStepManager';
+import TSFinanzModel from '../../../models/TSFinanzModel';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IStateService = angular.ui.IStateService;
-import TSFinanzModel from '../../../models/TSFinanzModel';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 
 describe('einkommensverschlechterungResultateView', function () {
@@ -49,8 +50,8 @@ describe('einkommensverschlechterungResultateView', function () {
     beforeEach(function () {
         gesuchModelManager.initGesuch(false);
         gesuchModelManager.initFamiliensituation();
-        gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchsteller;
-        gesuchModelManager.getGesuch().gesuchsteller2 = new TSGesuchsteller;
+        gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchstellerContainer(new TSGesuchsteller());
+        gesuchModelManager.getGesuch().gesuchsteller2 = new TSGesuchstellerContainer(new TSGesuchsteller());
 
     });
 

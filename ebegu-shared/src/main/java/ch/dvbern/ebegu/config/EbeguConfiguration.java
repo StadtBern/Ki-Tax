@@ -35,4 +35,24 @@ public interface EbeguConfiguration {
 	 */
 	boolean isClientUsingHTTPS();
 
+	/**
+	 * Gibt die URL der IDM Rest Schnittstelle zureuck
+	 */
+	String getOpenIdmURL();
+
+	/**
+	 * Gibt den Benutzer fuer die IDM Rest Schnittstelle zurueck
+	 */
+	String getOpenIdmUser();
+
+	/**
+	 * Gibt das Passwort fuer die IDM Rest Schnittstelle zurueck
+	 */
+	String getOpenIdmPassword();
+
+
+	/**
+	 * Gibt zurueck ob die synchronisierung mit der IDM Rest Schnittstelle fuer Inst und Traegerschaft aktiviert ist
+	 */
+	boolean getOpenIdmEnabled();
 }
