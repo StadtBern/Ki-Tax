@@ -529,19 +529,19 @@ CREATE TABLE einkommensverschlechterung_aud (
 );
 
 CREATE TABLE einkommensverschlechterung_container_aud (
-  id                       VARCHAR(36) NOT NULL,
-  rev                      INTEGER     NOT NULL,
-  revtype                  TINYINT,
-  timestamp_erstellt       DATETIME,
-  timestamp_mutiert        DATETIME,
-  user_erstellt            VARCHAR(36),
-  user_mutiert             VARCHAR(36),
-  vorgaenger_id            VARCHAR(36),
-  ekvgsbasis_jahr_plus1_id VARCHAR(36),
-  ekvgsbasis_jahr_plus2_id VARCHAR(36),
-  ekvjabasis_jahr_plus1_id VARCHAR(36),
-  ekvjabasis_jahr_plus2_id VARCHAR(36),
-  gesuchsteller_id         VARCHAR(36),
+  id                         VARCHAR(36) NOT NULL,
+  rev                        INTEGER     NOT NULL,
+  revtype                    TINYINT,
+  timestamp_erstellt         DATETIME,
+  timestamp_mutiert          DATETIME,
+  user_erstellt              VARCHAR(36),
+  user_mutiert               VARCHAR(36),
+  vorgaenger_id              VARCHAR(36),
+  ekvgsbasis_jahr_plus1_id   VARCHAR(36),
+  ekvgsbasis_jahr_plus2_id   VARCHAR(36),
+  ekvjabasis_jahr_plus1_id   VARCHAR(36),
+  ekvjabasis_jahr_plus2_id   VARCHAR(36),
+  gesuchsteller_container_id VARCHAR(36),
   PRIMARY KEY (id, rev)
 );
 
@@ -567,18 +567,18 @@ CREATE TABLE einkommensverschlechterung_info_aud (
 );
 
 CREATE TABLE einkommensverschlechterung_container (
-  id                       VARCHAR(36) NOT NULL,
-  timestamp_erstellt       DATETIME    NOT NULL,
-  timestamp_mutiert        DATETIME    NOT NULL,
-  user_erstellt            VARCHAR(36) NOT NULL,
-  user_mutiert             VARCHAR(36) NOT NULL,
-  version                  BIGINT      NOT NULL,
-  vorgaenger_id            VARCHAR(36),
-  ekvgsbasis_jahr_plus1_id VARCHAR(36),
-  ekvgsbasis_jahr_plus2_id VARCHAR(36),
-  ekvjabasis_jahr_plus1_id VARCHAR(36),
-  ekvjabasis_jahr_plus2_id VARCHAR(36),
-  gesuchsteller_id         VARCHAR(36) NOT NULL,
+  id                         VARCHAR(36) NOT NULL,
+  timestamp_erstellt         DATETIME    NOT NULL,
+  timestamp_mutiert          DATETIME    NOT NULL,
+  user_erstellt              VARCHAR(36) NOT NULL,
+  user_mutiert               VARCHAR(36) NOT NULL,
+  version                    BIGINT      NOT NULL,
+  vorgaenger_id              VARCHAR(36),
+  ekvgsbasis_jahr_plus1_id   VARCHAR(36),
+  ekvgsbasis_jahr_plus2_id   VARCHAR(36),
+  ekvjabasis_jahr_plus1_id   VARCHAR(36),
+  ekvjabasis_jahr_plus2_id   VARCHAR(36),
+  gesuchsteller_container_id VARCHAR(36) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -642,31 +642,31 @@ CREATE TABLE erwerbspensum_aud (
 );
 
 CREATE TABLE erwerbspensum_container_aud (
-  id                 VARCHAR(36) NOT NULL,
-  rev                INTEGER     NOT NULL,
-  revtype            TINYINT,
-  timestamp_erstellt DATETIME,
-  timestamp_mutiert  DATETIME,
-  user_erstellt      VARCHAR(36),
-  user_mutiert       VARCHAR(36),
-  vorgaenger_id      VARCHAR(36),
-  erwerbspensumgs_id VARCHAR(36),
-  erwerbspensumja_id VARCHAR(36),
-  gesuchsteller_id   VARCHAR(36),
+  id                         VARCHAR(36) NOT NULL,
+  rev                        INTEGER     NOT NULL,
+  revtype                    TINYINT,
+  timestamp_erstellt         DATETIME,
+  timestamp_mutiert          DATETIME,
+  user_erstellt              VARCHAR(36),
+  user_mutiert               VARCHAR(36),
+  vorgaenger_id              VARCHAR(36),
+  erwerbspensumgs_id         VARCHAR(36),
+  erwerbspensumja_id         VARCHAR(36),
+  gesuchsteller_container_id VARCHAR(36),
   PRIMARY KEY (id, rev)
 );
 
 CREATE TABLE erwerbspensum_container (
-  id                 VARCHAR(36) NOT NULL,
-  timestamp_erstellt DATETIME    NOT NULL,
-  timestamp_mutiert  DATETIME    NOT NULL,
-  user_erstellt      VARCHAR(36) NOT NULL,
-  user_mutiert       VARCHAR(36) NOT NULL,
-  version            BIGINT      NOT NULL,
-  vorgaenger_id      VARCHAR(36),
-  erwerbspensumgs_id VARCHAR(36),
-  erwerbspensumja_id VARCHAR(36),
-  gesuchsteller_id   VARCHAR(36) NOT NULL,
+  id                         VARCHAR(36) NOT NULL,
+  timestamp_erstellt         DATETIME    NOT NULL,
+  timestamp_mutiert          DATETIME    NOT NULL,
+  user_erstellt              VARCHAR(36) NOT NULL,
+  user_mutiert               VARCHAR(36) NOT NULL,
+  version                    BIGINT      NOT NULL,
+  vorgaenger_id              VARCHAR(36),
+  erwerbspensumgs_id         VARCHAR(36),
+  erwerbspensumja_id         VARCHAR(36),
+  gesuchsteller_container_id VARCHAR(36) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -707,8 +707,9 @@ CREATE TABLE fall (
   user_mutiert        VARCHAR(36) NOT NULL,
   version             BIGINT      NOT NULL,
   vorgaenger_id       VARCHAR(36),
-  fall_nummer         BIGINT,
+  fall_nummer         BIGINT      NOT NULL,
   next_number_kind    INTEGER     NOT NULL,
+  besitzer_id         VARCHAR(36),
   mandant_id          VARCHAR(36) NOT NULL,
   verantwortlicher_id VARCHAR(36),
   PRIMARY KEY (id)
@@ -725,6 +726,7 @@ CREATE TABLE fall_aud (
   vorgaenger_id       VARCHAR(36),
   fall_nummer         BIGINT,
   next_number_kind    INTEGER,
+  besitzer_id         VARCHAR(36),
   mandant_id          VARCHAR(36),
   verantwortlicher_id VARCHAR(36),
   PRIMARY KEY (id, rev)
@@ -797,7 +799,7 @@ CREATE TABLE finanzielle_situation_container_aud (
   jahr                       INTEGER,
   finanzielle_situationgs_id VARCHAR(36),
   finanzielle_situationja_id VARCHAR(36),
-  gesuchsteller_id           VARCHAR(36),
+  gesuchsteller_container_id VARCHAR(36),
   PRIMARY KEY (id, rev)
 );
 
@@ -835,7 +837,7 @@ CREATE TABLE finanzielle_situation_container (
   jahr                       INTEGER     NOT NULL,
   finanzielle_situationgs_id VARCHAR(36),
   finanzielle_situationja_id VARCHAR(36),
-  gesuchsteller_id           VARCHAR(36) NOT NULL,
+  gesuchsteller_container_id VARCHAR(36) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -976,7 +978,21 @@ CREATE TABLE gesuchsteller_adresse_aud (
   rev               INTEGER     NOT NULL,
   adresse_typ       VARCHAR(255),
   nicht_in_gemeinde BIT,
-  gesuchsteller_id  VARCHAR(36),
+  PRIMARY KEY (id, rev)
+);
+
+CREATE TABLE gesuchsteller_adresse_container_aud (
+  id                         VARCHAR(36) NOT NULL,
+  rev                        INTEGER     NOT NULL,
+  revtype                    TINYINT,
+  timestamp_erstellt         DATETIME,
+  timestamp_mutiert          DATETIME,
+  user_erstellt              VARCHAR(36),
+  user_mutiert               VARCHAR(36),
+  vorgaenger_id              VARCHAR(36),
+  gesuchsteller_adressegs_id VARCHAR(36),
+  gesuchsteller_adresseja_id VARCHAR(36),
+  gesuchsteller_container_id VARCHAR(36),
   PRIMARY KEY (id, rev)
 );
 
@@ -1002,11 +1018,51 @@ CREATE TABLE gesuchsteller_aud (
   PRIMARY KEY (id, rev)
 );
 
+CREATE TABLE gesuchsteller_container_aud (
+  id                 VARCHAR(36) NOT NULL,
+  rev                INTEGER     NOT NULL,
+  revtype            TINYINT,
+  timestamp_erstellt DATETIME,
+  timestamp_mutiert  DATETIME,
+  user_erstellt      VARCHAR(36),
+  user_mutiert       VARCHAR(36),
+  vorgaenger_id      VARCHAR(36),
+  gesuchstellergs_id VARCHAR(36),
+  gesuchstellerja_id VARCHAR(36),
+  PRIMARY KEY (id, rev)
+);
+
 CREATE TABLE gesuchsteller_adresse (
   adresse_typ       VARCHAR(255),
   nicht_in_gemeinde BIT         NOT NULL,
   id                VARCHAR(36) NOT NULL,
-  gesuchsteller_id  VARCHAR(36) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE gesuchsteller_adresse_container (
+  id                         VARCHAR(36) NOT NULL,
+  timestamp_erstellt         DATETIME    NOT NULL,
+  timestamp_mutiert          DATETIME    NOT NULL,
+  user_erstellt              VARCHAR(36) NOT NULL,
+  user_mutiert               VARCHAR(36) NOT NULL,
+  version                    BIGINT      NOT NULL,
+  vorgaenger_id              VARCHAR(36),
+  gesuchsteller_adressegs_id VARCHAR(36),
+  gesuchsteller_adresseja_id VARCHAR(36) NOT NULL,
+  gesuchsteller_container_id VARCHAR(36) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE gesuchsteller_container (
+  id                 VARCHAR(36) NOT NULL,
+  timestamp_erstellt DATETIME    NOT NULL,
+  timestamp_mutiert  DATETIME    NOT NULL,
+  user_erstellt      VARCHAR(36) NOT NULL,
+  user_mutiert       VARCHAR(36) NOT NULL,
+  version            BIGINT      NOT NULL,
+  vorgaenger_id      VARCHAR(36),
+  gesuchstellergs_id VARCHAR(36),
+  gesuchstellerja_id VARCHAR(36),
   PRIMARY KEY (id)
 );
 
@@ -1617,7 +1673,7 @@ FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
 ALTER TABLE einkommensverschlechterung_container
-  ADD CONSTRAINT UK_einkommensverschlechterungcontainer_gesuchsteller UNIQUE (gesuchsteller_id);
+  ADD CONSTRAINT UK_einkommensverschlechterungcontainer_gesuchsteller UNIQUE (gesuchsteller_container_id);
 
 ALTER TABLE einkommensverschlechterung_container
   ADD CONSTRAINT FK_einkommensverschlechterungcontainer_ekvGSBasisJahrPlus1_id
@@ -1640,9 +1696,9 @@ FOREIGN KEY (ekvjabasis_jahr_plus2_id)
 REFERENCES einkommensverschlechterung (id);
 
 ALTER TABLE einkommensverschlechterung_container
-  ADD CONSTRAINT FK_einkommensverschlechterungcontainer_gesuchsteller_id
-FOREIGN KEY (gesuchsteller_id)
-REFERENCES gesuchsteller (id);
+  ADD CONSTRAINT FK_einkommensverschlechterungcontainer_gesuchstellerContainer_id
+FOREIGN KEY (gesuchsteller_container_id)
+REFERENCES gesuchsteller_container (id);
 
 ALTER TABLE erwerbspensum_aud
   ADD CONSTRAINT FK_erwerbspensum_aud_revinfo
@@ -1665,9 +1721,9 @@ FOREIGN KEY (erwerbspensumja_id)
 REFERENCES erwerbspensum (id);
 
 ALTER TABLE erwerbspensum_container
-  ADD CONSTRAINT FK_erwerbspensum_container_gesuchsteller_id
-FOREIGN KEY (gesuchsteller_id)
-REFERENCES gesuchsteller (id);
+  ADD CONSTRAINT FK_erwerbspensum_container_gesuchstellerContainer_id
+FOREIGN KEY (gesuchsteller_container_id)
+REFERENCES gesuchsteller_container (id);
 
 ALTER TABLE fachstelle_aud
   ADD CONSTRAINT FK_fachstelle_aud_revinfo
@@ -1682,6 +1738,14 @@ CREATE INDEX IX_fall_mandant
 
 ALTER TABLE fall
   ADD CONSTRAINT UK_fall_nummer UNIQUE (fall_nummer);
+
+ALTER TABLE fall
+  ADD CONSTRAINT UK_fall_besitzer UNIQUE (besitzer_id);
+
+ALTER TABLE fall
+  ADD CONSTRAINT FK_fall_besitzer_id
+FOREIGN KEY (besitzer_id)
+REFERENCES benutzer (id);
 
 ALTER TABLE fall
   ADD CONSTRAINT FK_fall_mandant_id
@@ -1714,7 +1778,7 @@ FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
 ALTER TABLE finanzielle_situation_container
-  ADD CONSTRAINT UK_finanzielle_situation_container_gesuchsteller UNIQUE (gesuchsteller_id);
+  ADD CONSTRAINT UK_finanzielle_situation_container_gesuchsteller UNIQUE (gesuchsteller_container_id);
 
 ALTER TABLE finanzielle_situation_container
   ADD CONSTRAINT FK_finanzielleSituationContainer_finanzielleSituationGS_id
@@ -1727,9 +1791,9 @@ FOREIGN KEY (finanzielle_situationja_id)
 REFERENCES finanzielle_situation (id);
 
 ALTER TABLE finanzielle_situation_container
-  ADD CONSTRAINT FK_finanzielleSituationContainer_gesuchsteller_id
-FOREIGN KEY (gesuchsteller_id)
-REFERENCES gesuchsteller (id);
+  ADD CONSTRAINT FK_finanzielleSituationContainer_gesuchstellerContainer_id
+FOREIGN KEY (gesuchsteller_container_id)
+REFERENCES gesuchsteller_container (id);
 
 ALTER TABLE generated_dokument_aud
   ADD CONSTRAINT FK_generated_dokument_aud_revinfo
@@ -1767,14 +1831,14 @@ FOREIGN KEY (gesuchsperiode_id)
 REFERENCES gesuchsperiode (id);
 
 ALTER TABLE gesuch
-  ADD CONSTRAINT FK_gesuch_gesuchsteller1_id
+  ADD CONSTRAINT FK_gesuch_gesuchsteller_container1_id
 FOREIGN KEY (gesuchsteller1_id)
-REFERENCES gesuchsteller (id);
+REFERENCES gesuchsteller_container (id);
 
 ALTER TABLE gesuch
-  ADD CONSTRAINT FK_gesuch_gesuchsteller2_id
+  ADD CONSTRAINT FK_gesuch_gesuchsteller_container2_id
 FOREIGN KEY (gesuchsteller2_id)
-REFERENCES gesuchsteller (id);
+REFERENCES gesuchsteller_container (id);
 
 ALTER TABLE gesuch_aud
   ADD CONSTRAINT FK_gesuch_aud_revinfo
@@ -1791,20 +1855,53 @@ ALTER TABLE gesuchsteller_adresse_aud
 FOREIGN KEY (id, rev)
 REFERENCES adresse_aud (id, rev);
 
+ALTER TABLE gesuchsteller_adresse_container_aud
+  ADD CONSTRAINT FK_gesuchsteller_adresse_container_aud_revinfo
+FOREIGN KEY (rev)
+REFERENCES revinfo (rev);
+
 ALTER TABLE gesuchsteller_aud
   ADD CONSTRAINT FK_gesuchsteller_aud_revinfo
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
-ALTER TABLE gesuchsteller_adresse
-  ADD CONSTRAINT FK_gesuchsteller_adresse_gesuchsteller_id
-FOREIGN KEY (gesuchsteller_id)
-REFERENCES gesuchsteller (id);
+ALTER TABLE gesuchsteller_container_aud
+  ADD CONSTRAINT FK_gesuchsteller_container_aud_revinfo
+FOREIGN KEY (rev)
+REFERENCES revinfo (rev);
 
 ALTER TABLE gesuchsteller_adresse
   ADD CONSTRAINT FK_gesuchsteller_adresse_adresse
 FOREIGN KEY (id)
 REFERENCES adresse (id);
+
+ALTER TABLE gesuchsteller_adresse_container
+  ADD CONSTRAINT UK_gesuchsteller_adresse_container_gesuchsteller_adresse UNIQUE (gesuchsteller_adresseja_id);
+
+ALTER TABLE gesuchsteller_adresse_container
+  ADD CONSTRAINT FK_gesuchstelleradresse_container_gesuchstellergs_id
+FOREIGN KEY (gesuchsteller_adressegs_id)
+REFERENCES gesuchsteller_adresse (id);
+
+ALTER TABLE gesuchsteller_adresse_container
+  ADD CONSTRAINT FK_gesuchstelleradresse_container_gesuchstellerja_id
+FOREIGN KEY (gesuchsteller_adresseja_id)
+REFERENCES gesuchsteller_adresse (id);
+
+ALTER TABLE gesuchsteller_adresse_container
+  ADD CONSTRAINT FK_gesuchstelleradresse_container_gesuchstellerContainer_id
+FOREIGN KEY (gesuchsteller_container_id)
+REFERENCES gesuchsteller_container (id);
+
+ALTER TABLE gesuchsteller_container
+  ADD CONSTRAINT FK_gesuchsteller_container_gesuchstellergs_id
+FOREIGN KEY (gesuchstellergs_id)
+REFERENCES gesuchsteller (id);
+
+ALTER TABLE gesuchsteller_container
+  ADD CONSTRAINT FK_gesuchsteller_container_gesuchstellerja_id
+FOREIGN KEY (gesuchstellerja_id)
+REFERENCES gesuchsteller (id);
 
 ALTER TABLE institution
   ADD CONSTRAINT FK_institution_mandant_id

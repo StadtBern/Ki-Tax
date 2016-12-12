@@ -107,14 +107,18 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		gesuch.setFamiliensituation(new Familiensituation());
 		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		// GS 1
-		gesuch.setGesuchsteller1(new Gesuchsteller());
+		GesuchstellerContainer gsContainer1 = new GesuchstellerContainer();
+		gsContainer1.setGesuchstellerJA(new Gesuchsteller());
+		gesuch.setGesuchsteller1(gsContainer1);
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(20000));
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(erwerbspensumGS1_1.getGueltigAb(), erwerbspensumGS1_1.getGueltigBis(), 50, 0));
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(erwerbspensumGS1_2.getGueltigAb(), erwerbspensumGS1_2.getGueltigBis(), 30, 0));
 		// GS 2
-		gesuch.setGesuchsteller2(new Gesuchsteller());
+		GesuchstellerContainer gsContainer2 = new GesuchstellerContainer();
+		gsContainer2.setGesuchstellerJA(new Gesuchsteller());
+		gesuch.setGesuchsteller2(gsContainer2);
 		gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 		gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(gesuchsperiode.getGueltigAb(), gesuchsperiode.getGueltigBis(), 90, 10));

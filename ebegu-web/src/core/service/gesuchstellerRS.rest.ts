@@ -1,7 +1,7 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
-import TSGesuchsteller from '../../models/TSGesuchsteller';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 
 export default class GesuchstellerRS {
     serviceURL: string;
@@ -20,8 +20,8 @@ export default class GesuchstellerRS {
 
     }
 
-    public saveGesuchsteller(gesuchsteller: TSGesuchsteller, gesuchId: string, gsNumber: number, umzug: boolean): IPromise<TSGesuchsteller> {
-        let gessteller = this.ebeguRestUtil.gesuchstellerToRestObject({}, gesuchsteller);
+    public saveGesuchsteller(gesuchsteller: TSGesuchstellerContainer, gesuchId: string, gsNumber: number, umzug: boolean): IPromise<TSGesuchstellerContainer> {
+        let gessteller = this.ebeguRestUtil.gesuchstellerContainerToRestObject({}, gesuchsteller);
         return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/gsNumber/' + gsNumber + '/' + umzug, gessteller, {
             headers: {
                 'Content-Type': 'application/json'
@@ -29,16 +29,16 @@ export default class GesuchstellerRS {
         }).then((response: any) => {
             return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
                 this.log.debug('PARSING gesuchsteller REST object ', response.data);
-                return this.ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), response.data);
+                return this.ebeguRestUtil.parseGesuchstellerContainer(new TSGesuchstellerContainer(), response.data);
             });
         });
     }
 
-    public findGesuchsteller(gesuchstellerID: string): IPromise<TSGesuchsteller> {
+    public findGesuchsteller(gesuchstellerID: string): IPromise<TSGesuchstellerContainer> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchstellerID))
             .then((response: any) => {
                 this.log.debug('PARSING gesuchsteller REST object ', response.data);
-                return this.ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), response.data);
+                return this.ebeguRestUtil.parseGesuchstellerContainer(new TSGesuchstellerContainer(), response.data);
             });
 
     }

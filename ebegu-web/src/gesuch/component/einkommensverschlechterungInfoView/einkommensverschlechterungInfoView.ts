@@ -49,7 +49,6 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     private initViewModel() {
-
         this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.monthsStichtage = getTSMonthValues();

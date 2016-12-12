@@ -54,15 +54,15 @@ public class Gesuch extends AbstractEntity {
 
 	@Valid
 	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller1_id"))
-	private Gesuchsteller gesuchsteller1;
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller_container1_id"), nullable = true)
+	private GesuchstellerContainer gesuchsteller1;
 
 	@Valid
 	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller2_id"))
-	private Gesuchsteller gesuchsteller2;
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller_container2_id"), nullable = true)
+	private GesuchstellerContainer gesuchsteller2;
 
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
@@ -115,20 +115,20 @@ public class Gesuch extends AbstractEntity {
 
 
 	@Nullable
-	public Gesuchsteller getGesuchsteller1() {
+	public GesuchstellerContainer getGesuchsteller1() {
 		return gesuchsteller1;
 	}
 
-	public void setGesuchsteller1(@Nullable final Gesuchsteller gesuchsteller1) {
+	public void setGesuchsteller1(@Nullable GesuchstellerContainer gesuchsteller1) {
 		this.gesuchsteller1 = gesuchsteller1;
 	}
 
 	@Nullable
-	public Gesuchsteller getGesuchsteller2() {
+	public GesuchstellerContainer getGesuchsteller2() {
 		return gesuchsteller2;
 	}
 
-	public void setGesuchsteller2(@Nullable final Gesuchsteller gesuchsteller2) {
+	public void setGesuchsteller2(@Nullable GesuchstellerContainer gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
@@ -318,8 +318,8 @@ public class Gesuch extends AbstractEntity {
 	 */
 	@Transient
 	public String extractFamiliennamenString() {
-		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().getNachname() : "");
-		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().getNachname() : "";
+		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().extractNachname() : "");
+		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().extractNachname() : "";
 		return bothFamiliennamen;
 	}
 
@@ -357,10 +357,10 @@ public class Gesuch extends AbstractEntity {
 		mutation.setLaufnummer(this.getLaufnummer() + 1);
 
 		if (this.getGesuchsteller1() != null) {
-			mutation.setGesuchsteller1(this.getGesuchsteller1().copyForMutation(new Gesuchsteller()));
+			mutation.setGesuchsteller1(this.getGesuchsteller1().copyForMutation(new GesuchstellerContainer()));
 		}
 		if (this.getGesuchsteller2() != null) {
-			mutation.setGesuchsteller2(this.getGesuchsteller2().copyForMutation(new Gesuchsteller()));
+			mutation.setGesuchsteller2(this.getGesuchsteller2().copyForMutation(new GesuchstellerContainer()));
 		}
 		for (KindContainer kindContainer : this.getKindContainers()) {
 			mutation.addKindContainer(kindContainer.copyForMutation(new KindContainer(), mutation));

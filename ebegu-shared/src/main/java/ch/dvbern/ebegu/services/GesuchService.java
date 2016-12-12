@@ -81,7 +81,7 @@ public interface GesuchService {
 	 * @param antragSearch
 	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
 	 */
-	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch);
+	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragTableFilterDto);
 
 	/**
 	 * Gibt ein DTO mit saemtlichen Antragen eins bestimmten Falls zurueck

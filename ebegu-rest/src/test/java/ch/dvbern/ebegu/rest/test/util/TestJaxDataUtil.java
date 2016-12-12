@@ -18,12 +18,11 @@ import java.util.List;
  */
 public class TestJaxDataUtil {
 
-	public static JaxGesuchsteller createTestJaxGesuchsteller() {
-
+	public static JaxGesuchstellerContainer createTestJaxGesuchsteller() {
+		JaxGesuchstellerContainer jaxGesuchstellerContainer = new JaxGesuchstellerContainer();
 		JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
 		jaxGesuchsteller.setNachname("Jaxter");
 		jaxGesuchsteller.setVorname("Jack");
-		jaxGesuchsteller.setAdressen(createTestJaxAdressenList(null));
 		jaxGesuchsteller.setGeburtsdatum(LocalDate.now().minusYears(18));
 		jaxGesuchsteller.setMail("jax.jaxter@example.com");
 		jaxGesuchsteller.setGeschlecht(Geschlecht.MAENNLICH);
@@ -31,12 +30,17 @@ public class TestJaxDataUtil {
 		jaxGesuchsteller.setTelefonAusland("+49 12 123 42 12");
 		jaxGesuchsteller.setZpvNumber("1234");
 
-		return jaxGesuchsteller;
+		jaxGesuchstellerContainer.setAdressen(createTestJaxAdressenList(null));
+		jaxGesuchstellerContainer.setGesuchstellerJA(jaxGesuchsteller);
+
+		return jaxGesuchstellerContainer;
 
 	}
 
-	public static JaxGesuchsteller createTestJaxGesuchstellerWithUmzug() {
-		JaxGesuchsteller jaxGesuchsteller = createTestJaxGesuchsteller();
+	public static JaxGesuchstellerContainer createTestJaxGesuchstellerWithUmzug() {
+		JaxGesuchstellerContainer jaxGesuchsteller = createTestJaxGesuchsteller();
+
+		JaxAdresseContainer jaxAdresseContainer = new JaxAdresseContainer();
 		JaxAdresse umzugAdr = new JaxAdresse();
 		umzugAdr.setAdresseTyp(AdresseTyp.WOHNADRESSE);
 		umzugAdr.setGemeinde("neue gemeinde");
@@ -47,17 +51,20 @@ public class TestJaxDataUtil {
 		umzugAdr.setZusatzzeile("Testzusatz");
 		umzugAdr.setStrasse("neue Strasse");
 		umzugAdr.setGueltigAb(LocalDate.now().plusMonths(1));  //gueltig 1 monat in zukunft
+		jaxAdresseContainer.setAdresseJA(umzugAdr);
 
-		jaxGesuchsteller.addAdresse(umzugAdr);
-		JaxAdresse altAdr = createTestJaxAdr("alternativ");
-		altAdr.setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
-		jaxGesuchsteller.setAlternativeAdresse(altAdr);
+		jaxGesuchsteller.addAdresse(jaxAdresseContainer);
+
+		JaxAdresseContainer jaxAltAdresseContainer = createTestJaxAdr("alternativ");
+		jaxAltAdresseContainer.getAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
+		jaxGesuchsteller.setAlternativeAdresse(jaxAltAdresseContainer);
+
 		return jaxGesuchsteller;
 
 	}
 
-	public static JaxGesuchsteller createTestJaxGesuchstellerWithErwerbsbensum() {
-		JaxGesuchsteller testJaxGesuchsteller = createTestJaxGesuchsteller();
+	public static JaxGesuchstellerContainer createTestJaxGesuchstellerWithErwerbsbensum() {
+		JaxGesuchstellerContainer testJaxGesuchsteller = createTestJaxGesuchsteller();
 		JaxErwerbspensumContainer container = createTestJaxErwerbspensumContainer();
 		JaxErwerbspensumContainer container2 = createTestJaxErwerbspensumContainer();
 		container2.getErwerbspensumGS().setGueltigAb(LocalDate.now().plusYears(1));
@@ -91,13 +98,15 @@ public class TestJaxDataUtil {
 
 	}
 
-	public static List<JaxAdresse> createTestJaxAdressenList(@Nullable String postfix) {
-		final List<JaxAdresse> adressen = new ArrayList<>();
+	public static List<JaxAdresseContainer> createTestJaxAdressenList(@Nullable String postfix) {
+		final List<JaxAdresseContainer> adressen = new ArrayList<>();
 		adressen.add(createTestJaxAdr(postfix));
 		return adressen;
 	}
 
-	public static JaxAdresse createTestJaxAdr(@Nullable String postfix) {
+	public static JaxAdresseContainer createTestJaxAdr(@Nullable String postfix) {
+		JaxAdresseContainer jaxAdresseContainer = new JaxAdresseContainer();
+
 		postfix = StringUtils.isEmpty(postfix) ? "" : postfix;
 		JaxAdresse jaxAdresse = new JaxAdresse();
 		jaxAdresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
@@ -109,7 +118,10 @@ public class TestJaxDataUtil {
 		jaxAdresse.setZusatzzeile("Test" + postfix);
 		jaxAdresse.setStrasse("Nussbaumstrasse" + postfix);
 		jaxAdresse.setNichtInGemeinde(false);
-		return jaxAdresse;
+
+		jaxAdresseContainer.setAdresseJA(jaxAdresse);
+
+		return jaxAdresseContainer;
 	}
 
 	public static JaxFall createTestJaxFall() {
@@ -138,8 +150,8 @@ public class TestJaxDataUtil {
 		jaxGesuch.setGesuchsteller1(createTestJaxGesuchsteller());
 		jaxGesuch.setEingangsdatum(LocalDate.now());
 		jaxGesuch.setStatus(AntragStatusDTO.IN_BEARBEITUNG_JA);
-		JaxGesuchsteller testJaxGesuchsteller = createTestJaxGesuchsteller();
-		testJaxGesuchsteller.setNachname("Gesuchsteller2");
+		JaxGesuchstellerContainer testJaxGesuchsteller = createTestJaxGesuchsteller();
+		testJaxGesuchsteller.getGesuchstellerJA().setNachname("Gesuchsteller2");
 		jaxGesuch.setGesuchsteller2(testJaxGesuchsteller);
 		return jaxGesuch;
 	}

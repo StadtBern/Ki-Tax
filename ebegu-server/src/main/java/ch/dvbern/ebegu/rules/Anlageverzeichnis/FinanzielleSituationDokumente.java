@@ -52,14 +52,14 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 			gesuch.getFamiliensituation().getGemeinsameSteuererklaerung() != null &&
 			gesuch.getFamiliensituation().getGemeinsameSteuererklaerung();
 
-		final Gesuchsteller gesuchsteller1 = gesuch.getGesuchsteller1();
+		final GesuchstellerContainer gesuchsteller1 = gesuch.getGesuchsteller1();
 		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller1, gemeinsam, 1);
 
-		final Gesuchsteller gesuchsteller2 = gesuch.getGesuchsteller2();
+		final GesuchstellerContainer gesuchsteller2 = gesuch.getGesuchsteller2();
 		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller2, gemeinsam, 2);
 	}
 
-	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, Gesuchsteller gesuchsteller,
+	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, GesuchstellerContainer gesuchsteller,
 												boolean gemeinsam, int gesuchstellerNumber) {
 
 		if (gesuchsteller == null || gesuchsteller.getFinanzielleSituationContainer() == null) {
@@ -70,9 +70,9 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 
 		final FinanzielleSituation finanzielleSituationJA = finanzielleSituationContainer.getFinanzielleSituationJA();
 
-		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.getFullName(), null, gemeinsam, gesuchstellerNumber, finanzielleSituationJA, DokumentGrundTyp.FINANZIELLESITUATION);
+		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.extractFullName(), null, gemeinsam, gesuchstellerNumber, finanzielleSituationJA, DokumentGrundTyp.FINANZIELLESITUATION);
 
-		add(getDokument(DokumentTyp.JAHRESLOHNAUSWEISE, finanzielleSituationJA, gesuchsteller.getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.JAHRESLOHNAUSWEISE, finanzielleSituationJA, gesuchsteller.extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
 
 	}
 

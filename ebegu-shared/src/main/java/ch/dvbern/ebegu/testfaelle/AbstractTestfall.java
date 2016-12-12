@@ -89,14 +89,24 @@ public abstract class AbstractTestfall {
 		return gesuch;
 	}
 
+	protected GesuchstellerContainer createGesuchstellerContainer() {
+		return createGesuchstellerContainer(getNachname(), getVorname());
+	}
+
+	protected GesuchstellerContainer createGesuchstellerContainer(String name, String vorname) {
+		GesuchstellerContainer gesuchstellerCont = new GesuchstellerContainer();
+		gesuchstellerCont.setAdressen(new ArrayList<>());
+		gesuchstellerCont.setGesuchstellerJA(createGesuchsteller(name, vorname));
+		gesuchstellerCont.getAdressen().add(createWohnadresseContainer(gesuchstellerCont));
+		return gesuchstellerCont;
+	}
+
 	protected Gesuchsteller createGesuchsteller(String name, String vorname) {
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
 		gesuchsteller.setGeschlecht(Geschlecht.WEIBLICH);
 		gesuchsteller.setNachname(name);
 		gesuchsteller.setVorname(vorname);
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1980, Month.MARCH, 25));
-		gesuchsteller.setAdressen(new ArrayList<>());
-		gesuchsteller.getAdressen().add(createWohnadresse(gesuchsteller));
 		gesuchsteller.setDiplomatenstatus(false);
 		gesuchsteller.setMail("test@email.com");
 		gesuchsteller.setMobile("079 000 00 00");
@@ -107,7 +117,14 @@ public abstract class AbstractTestfall {
 		return createGesuchsteller(getNachname(), getVorname());
 	}
 
-	protected GesuchstellerAdresse createWohnadresse(Gesuchsteller gesuchsteller) {
+	protected GesuchstellerAdresseContainer createWohnadresseContainer(GesuchstellerContainer gesuchstellerCont) {
+		GesuchstellerAdresseContainer wohnadresseCont = new GesuchstellerAdresseContainer();
+		wohnadresseCont.setGesuchstellerContainer(gesuchstellerCont);
+		wohnadresseCont.setGesuchstellerAdresseJA(createWohnadresse());
+		return wohnadresseCont;
+	}
+
+	protected GesuchstellerAdresse createWohnadresse() {
 		GesuchstellerAdresse wohnadresse = new GesuchstellerAdresse();
 		wohnadresse.setStrasse("Testweg");
 		wohnadresse.setHausnummer("10");
@@ -115,7 +132,6 @@ public abstract class AbstractTestfall {
 		wohnadresse.setOrt("Bern");
 		wohnadresse.setLand(Land.CH);
 		wohnadresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
-		wohnadresse.setGesuchsteller(gesuchsteller);
 		wohnadresse.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return wohnadresse;
 	}
