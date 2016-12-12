@@ -33,6 +33,7 @@ import java.util.Optional;
  * <p>
  * Created by medu on 16/11/2016.
  */
+@SuppressWarnings("unused")
 public class PDFServiceBeanTest {
 
 	@Rule

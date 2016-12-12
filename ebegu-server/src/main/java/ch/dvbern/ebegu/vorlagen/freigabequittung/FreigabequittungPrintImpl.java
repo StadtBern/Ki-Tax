@@ -1,22 +1,26 @@
 package ch.dvbern.ebegu.vorlagen.freigabequittung;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import ch.dvbern.lib.doctemplate.docx.DocxImage;
-import org.apache.commons.lang.StringUtils;
 import org.krysalis.barcode4j.impl.datamatrix.DataMatrixBean;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -93,14 +97,14 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 	@Override
 	public String getAdresseGS1() {
 
-		return getNameAdresseFormatiert(gesuch.getGesuchsteller1());
+		return PrintUtil.getNameAdresseFormatiert(gesuch, gesuch.getGesuchsteller1());
 
 	}
 
 	@Override
 	public String getAdresseGS2() {
 
-		return getNameAdresseFormatiert(gesuch.getGesuchsteller2());
+		return PrintUtil.getNameAdresseFormatiert(gesuch, gesuch.getGesuchsteller2());
 
 	}
 
@@ -119,63 +123,16 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 
 	}
 
-	private String getNameAdresseFormatiert(Gesuchsteller gesuchsteller){
-
-		if (gesuchsteller != null){
-			String newlineMSWord = "\n";
-			String adresse = StringUtils.EMPTY;
-
-			adresse += gesuchsteller.getFullName();
-
-			Optional<GesuchstellerAdresse> gsa = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
-			if (gsa.isPresent()) {
-				if (StringUtils.isNotEmpty(gsa.get().getHausnummer())) {
-					adresse += newlineMSWord + gsa.get().getStrasse() + " " + gsa.get().getHausnummer();
-				} else {
-					adresse += newlineMSWord + gsa.get().getStrasse();
-				}
-			}
-
-			String adrZusatz = PrintUtil.getAdresszusatz(gesuch);
-			if (StringUtils.isNotEmpty(adrZusatz)) {
-				adresse += newlineMSWord + adrZusatz;
-			}
-
-			adresse += newlineMSWord + PrintUtil.getGesuchstellerPLZStadt(gesuch);
-
-			return adresse;
-		} else{
-			return StringUtils.EMPTY;
-		}
-
-	}
-
 	@Override
 	public List<AufzaehlungPrint> getUnterlagen() {
 		List<AufzaehlungPrint> aufzaehlungPrint = new ArrayList<>();
 
 		Set<DokumentGrund> dokumentGrunden = gesuch.getDokumentGrunds();
 
-		StringBuilder bemerkungenBuilder;
 		if (dokumentGrunden != null) {
 			for (DokumentGrund dokumentGrund : dokumentGrunden) {
-                bemerkungenBuilder = new StringBuilder();
-
-                if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
-                    bemerkungenBuilder.append((ServerMessageUtil.translateEnumValue(dokumentGrund.getDokumentTyp())));
-
-                    if (StringUtils.isNotEmpty(dokumentGrund.getFullName())) {
-                        bemerkungenBuilder.append(" (");
-                        bemerkungenBuilder.append(dokumentGrund.getFullName());
-
-                        if (dokumentGrund.getTag() != null) {
-                            bemerkungenBuilder.append(" / ").append(dokumentGrund.getTag());
-                        }
-                        bemerkungenBuilder.append(")");
-                    }
-
-                }
-                aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));
+				StringBuilder bemerkungenBuilder = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
+				aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));
             }
 		}
 		return aufzaehlungPrint;
