@@ -1,7 +1,9 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.MergeDocException;
 
 import javax.annotation.Nonnull;
@@ -24,6 +26,9 @@ public interface PDFService {
 	byte[] generateNichteintreten(Betreuung betreuung) throws MergeDocException;
 
 	@Nonnull
-	byte[] printMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) throws MergeDocException;
+	byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) throws MergeDocException;
+
+	@Nonnull
+	byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustelladresse) throws MergeDocException;
 
 }
