@@ -188,4 +188,9 @@ public abstract class AbstractEntity implements Serializable {
 	public boolean hasVorgaenger() {
 		return vorgaengerId != null;
 	}
+
+	public AbstractEntity copyForMutation(AbstractEntity mutation) {
+		mutation.setVorgaengerId(this.getId());
+		return mutation;
+	}
 }

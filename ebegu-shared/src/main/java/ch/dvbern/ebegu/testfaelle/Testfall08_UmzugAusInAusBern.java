@@ -36,24 +36,26 @@ public class Testfall08_UmzugAusInAusBern extends AbstractTestfall {
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createAlleinerziehend();
-		Gesuchsteller gesuchsteller1 = createGesuchsteller();
+		GesuchstellerContainer gesuchsteller1 = createGesuchstellerContainer();
 		gesuch.setGesuchsteller1(gesuchsteller1);
 
 		//Wohnadresse NICHT in Bern
-		gesuchsteller1.getAdressen().get(0).setNichtInGemeinde(true);
+		gesuchsteller1.getAdressen().get(0).getGesuchstellerAdresseJA().setNichtInGemeinde(true);
 		final int gesuchsperiodeFirstYear = gesuchsperiode.getGueltigkeit().getGueltigAb().getYear();
-		gesuchsteller1.getAdressen().get(0).setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(gesuchsperiodeFirstYear, 12, 14)));
+		gesuchsteller1.getAdressen().get(0).getGesuchstellerAdresseJA()
+			.setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(gesuchsperiodeFirstYear, 12, 14)));
 
 		// Umzugsadresse am 15.12.2016 in Bern
-		GesuchstellerAdresse umzugInBern = createWohnadresse(gesuchsteller1);
-		umzugInBern.setNichtInGemeinde(false);
-		umzugInBern.setGueltigkeit(new DateRange(LocalDate.of(gesuchsperiodeFirstYear, 12, 15), LocalDate.of(gesuchsperiodeFirstYear, 12, 31)));
+		GesuchstellerAdresseContainer umzugInBern = createWohnadresseContainer(gesuchsteller1);
+		umzugInBern.getGesuchstellerAdresseJA().setNichtInGemeinde(false);
+		umzugInBern.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(LocalDate.of(gesuchsperiodeFirstYear, 12, 15),
+			LocalDate.of(gesuchsperiodeFirstYear, 12, 31)));
 		gesuchsteller1.getAdressen().add(umzugInBern);
 
 		// Umzugsadresse am 01.01.2017 NICHT in Bern
-		GesuchstellerAdresse umzugAusBern = createWohnadresse(gesuchsteller1);
-		umzugAusBern.setNichtInGemeinde(true);
-		umzugAusBern.setGueltigkeit(new DateRange(LocalDate.of(gesuchsperiodeFirstYear + 1, 1, 1), Constants.END_OF_TIME));
+		GesuchstellerAdresseContainer umzugAusBern = createWohnadresseContainer(gesuchsteller1);
+		umzugAusBern.getGesuchstellerAdresseJA().setNichtInGemeinde(true);
+		umzugAusBern.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(LocalDate.of(gesuchsperiodeFirstYear + 1, 1, 1), Constants.END_OF_TIME));
 		gesuchsteller1.getAdressen().add(umzugAusBern);
 
 		// Erwerbspensum

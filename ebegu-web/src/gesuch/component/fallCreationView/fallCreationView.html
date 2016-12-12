@@ -11,9 +11,9 @@
         <div class="col-md-12">
             <form role="form" name="form" class="" novalidate unsaved-warning-form>
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
-
                     <!--Eingangsdatum-->
-                    <div class="row">
+                    <div class="row" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
@@ -30,30 +30,42 @@
 
                     <!--Gesuchsperioden. Nur fuer Erstgesuch-->
 
-            <div ng-if="vm.gesuchModelManager.isErstgesuch()">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <div class="dv-radio-container">
-                                <md-radio-group name="gesuchsperioden" class="input-element radio"
-                                                ng-model="vm.gesuchsperiodeId"
-                                                ng-change="vm.setSelectedGesuchsperiode()"
-                                                ng-required="true">
-                                    <md-radio-button
-                                        ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
-                                        ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
-                                        ng-disabled="vm.isGesuchReadonly() || vm.isKorrekturModusJugendamt()">
-                                        <span>{{current.gesuchsperiodeString}}</span>
-                                    </md-radio-button>
-                                </md-radio-group>
-                                <dv-error-messages for="form.gesuchsperioden.$error"></dv-error-messages>
+                    <div ng-if="vm.gesuchModelManager.isErstgesuch()">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="dv-radio-container">
+                                        <md-radio-group name="gesuchsperioden" class="input-element radio"
+                                                        ng-model="vm.gesuchsperiodeId"
+                                                        ng-change="vm.setSelectedGesuchsperiode()"
+                                                        dv-show-element
+                                                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
+                                                        ng-required="true">
+                                            <md-radio-button
+                                                ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
+                                                ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
+                                                ng-disabled="vm.isGesuchReadonly()  || vm.isKorrekturModusJugendamt()">
+                                                <span>{{current.gesuchsperiodeString}}</span>
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                        <dv-error-messages for="form.gesuchsperioden.$error"></dv-error-messages>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <!--Mutationelemente auswaehlen. Nur fuer Mutationen-->
-            <div ng-if="!vm.gesuchModelManager.isErstgesuch()">
+
+                    <!--Willkommnstext bei Erstgesuch-->
+                    <div ng-if="vm.gesuchModelManager.isErstgesuch()">
+
+                        <p class="subTitleBold" data-translate="ERSTGESUCH_WILLKOMMEN_TEXT"></p>
+                        <p class="subTitle" data-translate="ERSTGESUCH_WILLKOMMEN_TEXT_2"></p>
+                        <p class="subTitle" data-translate="ERSTGESUCH_WILLKOMMEN_TEXT_3"></p>
+
+                    </div>
+
+                    <!--Mutationelemente auswaehlen. Nur fuer Mutationen-->
+                    <div ng-if="!vm.gesuchModelManager.isErstgesuch()">
 
                         <p class="subTitleBold" data-translate="MUTATION_AUSWAHL_TEXT_1"></p>
                         <p class="subTitle" data-translate="MUTATION_AUSWAHL_TEXT_2"></p>

@@ -1,8 +1,11 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Fall_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -33,12 +36,22 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Inject
 	private Authorizer authorizer;
 
+	@Inject
+	private BenutzerService benutzerService;
+
+	@Inject
+	private PrincipalBean principalBean;
 
 	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  GESUCHSTELLER })
 	public Fall saveFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall);
+		// Den "Besitzer" auf dem Fall ablegen
+		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER)) {
+			Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
+			currentBenutzer.ifPresent(fall::setBesitzer);
+		}
 		authorizer.checkWriteAuthorization(fall);
 		return persistence.merge(fall);
 	}
@@ -61,6 +74,18 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		Optional<Fall> fallOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, fallnummer, Fall_.fallNummer);
 		fallOptional.ifPresent(fall -> authorizer.checkReadAuthorizationFall(fall));
 		return fallOptional;
+	}
+
+	@Override
+	@Nonnull
+	public Optional<Fall> findFallByCurrentBenutzerAsBesitzer() {
+		Optional<Benutzer> currentBenutzerOptional = benutzerService.getCurrentBenutzer();
+		if (currentBenutzerOptional.isPresent()) {
+			Optional<Fall> fallOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, currentBenutzerOptional.get(), Fall_.besitzer);
+			fallOptional.ifPresent(fall -> authorizer.checkReadAuthorizationFall(fall));
+			return fallOptional;
+		}
+		return Optional.empty();
 	}
 
 	@Nonnull

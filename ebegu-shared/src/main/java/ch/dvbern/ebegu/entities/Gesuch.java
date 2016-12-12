@@ -8,7 +8,6 @@ import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -55,15 +54,15 @@ public class Gesuch extends AbstractEntity {
 
 	@Valid
 	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller1_id"))
-	private Gesuchsteller gesuchsteller1;
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller_container1_id"), nullable = true)
+	private GesuchstellerContainer gesuchsteller1;
 
 	@Valid
 	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller2_id"))
-	private Gesuchsteller gesuchsteller2;
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller_container2_id"), nullable = true)
+	private GesuchstellerContainer gesuchsteller2;
 
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
@@ -114,64 +113,22 @@ public class Gesuch extends AbstractEntity {
 	public Gesuch() {
 	}
 
-	public Gesuch(@Nonnull Gesuch toCopy) {
-		//TODO (hefr) Eingangsart???
-		this.setVorgaengerId(toCopy.getId());
-		this.setFall(toCopy.getFall());
-		this.setGesuchsperiode(toCopy.getGesuchsperiode());
-		this.setEingangsdatum(null);
-		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA); //TODO (team) abhaengig vom eingeloggten Benutzer!
-		this.setTyp(AntragTyp.MUTATION);
-
-		if (toCopy.getGesuchsteller1() != null) {
-			this.setGesuchsteller1(new Gesuchsteller(toCopy.getGesuchsteller1()));
-		}
-		if (toCopy.getGesuchsteller2() != null) {
-			this.setGesuchsteller2(new Gesuchsteller(toCopy.getGesuchsteller2()));
-		}
-		for (KindContainer kindContainer : toCopy.getKindContainers()) {
-			this.addKindContainer(new KindContainer(kindContainer, this));
-		}
-		this.setAntragStatusHistories(new LinkedHashSet<>());
-		this.setFamiliensituation(new Familiensituation(toCopy.getFamiliensituation()));
-
-		if (toCopy.isMutation()) {
-			this.familiensituationErstgesuch = toCopy.getFamiliensituationErstgesuch();
-		} else { // beim ErstGesuch holen wir direkt die normale Familiensituation
-			this.familiensituationErstgesuch = toCopy.getFamiliensituation();
-		}
-
-		if (toCopy.getEinkommensverschlechterungInfo() != null) {
-			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
-		}
-
-		if (toCopy.dokumentGrunds != null) {
-			this.dokumentGrunds = new HashSet<>();
-
-			for (DokumentGrund dokumentGrund : toCopy.dokumentGrunds) {
-				this.addDokumentGrund(new DokumentGrund(dokumentGrund));
-			}
-		}
-
-		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
-		this.setLaufnummer(toCopy.getLaufnummer() + 1);
-	}
 
 	@Nullable
-	public Gesuchsteller getGesuchsteller1() {
+	public GesuchstellerContainer getGesuchsteller1() {
 		return gesuchsteller1;
 	}
 
-	public void setGesuchsteller1(@Nullable final Gesuchsteller gesuchsteller1) {
+	public void setGesuchsteller1(@Nullable GesuchstellerContainer gesuchsteller1) {
 		this.gesuchsteller1 = gesuchsteller1;
 	}
 
 	@Nullable
-	public Gesuchsteller getGesuchsteller2() {
+	public GesuchstellerContainer getGesuchsteller2() {
 		return gesuchsteller2;
 	}
 
-	public void setGesuchsteller2(@Nullable final Gesuchsteller gesuchsteller2) {
+	public void setGesuchsteller2(@Nullable GesuchstellerContainer gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
@@ -228,6 +185,11 @@ public class Gesuch extends AbstractEntity {
 
 	public boolean addDokumentGrund(@NotNull final DokumentGrund dokumentGrund) {
 		dokumentGrund.setGesuch(this);
+
+		if (this.dokumentGrunds == null) {
+			this.dokumentGrunds = new HashSet<>();
+		}
+
 		return this.dokumentGrunds.add(dokumentGrund);
 	}
 
@@ -361,8 +323,8 @@ public class Gesuch extends AbstractEntity {
 	 */
 	@Transient
 	public String extractFamiliennamenString() {
-		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().getNachname() : "");
-		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().getNachname() : "";
+		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().extractNachname() : "");
+		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().extractNachname() : "";
 		return bothFamiliennamen;
 	}
 
@@ -387,5 +349,47 @@ public class Gesuch extends AbstractEntity {
 		return kindContainers.stream()
 			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
 			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
+	}
+
+	public Gesuch copyForMutation(Gesuch mutation, Eingangsart eingangsart) {
+		super.copyForMutation(mutation);
+		mutation.setEingangsart(eingangsart);
+		mutation.setFall(this.getFall());
+		mutation.setGesuchsperiode(this.getGesuchsperiode());
+		mutation.setEingangsdatum(null);
+		mutation.setStatus(eingangsart == Eingangsart.PAPIER ?  AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
+		mutation.setTyp(AntragTyp.MUTATION);
+		mutation.setLaufnummer(this.getLaufnummer() + 1);
+
+		if (this.getGesuchsteller1() != null) {
+			mutation.setGesuchsteller1(this.getGesuchsteller1().copyForMutation(new GesuchstellerContainer()));
+		}
+		if (this.getGesuchsteller2() != null) {
+			mutation.setGesuchsteller2(this.getGesuchsteller2().copyForMutation(new GesuchstellerContainer()));
+		}
+		for (KindContainer kindContainer : this.getKindContainers()) {
+			mutation.addKindContainer(kindContainer.copyForMutation(new KindContainer(), mutation));
+		}
+		mutation.setAntragStatusHistories(new LinkedHashSet<>());
+		if (this.getFamiliensituation() != null) {
+			mutation.setFamiliensituation(this.getFamiliensituation().copyForMutation(new Familiensituation()));
+		}
+
+		if (this.isMutation()) {
+			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationErstgesuch());
+		} else { // beim ErstGesuch holen wir direkt die normale Familiensituation
+			mutation.setFamiliensituationErstgesuch(this.getFamiliensituation());
+		}
+
+		if (this.getEinkommensverschlechterungInfo() != null) {
+			mutation.setEinkommensverschlechterungInfo(this.getEinkommensverschlechterungInfo().copyForMutation(new EinkommensverschlechterungInfo()));
+		}
+		if (this.getDokumentGrunds() != null) {
+			mutation.setDokumentGrunds(new HashSet<>());
+			for (DokumentGrund dokumentGrund : this.getDokumentGrunds()) {
+				mutation.addDokumentGrund(dokumentGrund.copyForMutation(new DokumentGrund()));
+			}
+		}
+		return mutation;
 	}
 }

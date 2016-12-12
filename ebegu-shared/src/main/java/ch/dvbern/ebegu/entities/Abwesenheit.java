@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.types.DateRange;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -15,14 +16,9 @@ public class Abwesenheit extends AbstractDateRangedEntity implements Comparable<
 
 	private static final long serialVersionUID = -6776981643150835840L;
 
-
 	public Abwesenheit() {
-
 	}
 
-	public Abwesenheit(Abwesenheit toCopy) {
-		super(toCopy);
-	}
 
 	@Override
 	public int compareTo(Abwesenheit o) {
@@ -32,4 +28,7 @@ public class Abwesenheit extends AbstractDateRangedEntity implements Comparable<
 		return builder.toComparison();
 	}
 
+	public Abwesenheit copyForMutation(Abwesenheit mutation) {
+		return (Abwesenheit) super.copyForMutation(mutation);
+	}
 }

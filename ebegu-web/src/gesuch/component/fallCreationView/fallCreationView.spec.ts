@@ -5,6 +5,7 @@ import {IQService, IScope} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import TSGesuch from '../../../models/TSGesuch';
 
 describe('fallCreationView', function () {
 
@@ -34,6 +35,7 @@ describe('fallCreationView', function () {
         it('submitted but rejected -> it does not go to the next step', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.reject({}));
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
             fallCreationview.save(form);
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
@@ -41,6 +43,7 @@ describe('fallCreationView', function () {
         it('should submit the form and go to the next page', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.when({}));
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
             fallCreationview.save(form);
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
@@ -63,7 +66,7 @@ describe('fallCreationView', function () {
             spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuchsperiode);
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(true);
-            expect(fallCreationview.getTitle()).toBe('Erstgesuch der Periode 2016/2017');
+            expect(fallCreationview.getTitle()).toBe('Erstgesuch der Periode 2016/17');
         });
         it('should return Erstgesuch', () => {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);

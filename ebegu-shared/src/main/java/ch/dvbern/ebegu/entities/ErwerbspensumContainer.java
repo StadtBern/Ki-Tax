@@ -18,8 +18,8 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	private static final long serialVersionUID = -3084333639027795652L;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_gesuchsteller_id"))
-	private Gesuchsteller gesuchsteller;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_gesuchstellerContainer_id"))
+	private GesuchstellerContainer gesuchstellerContainer;
 
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -35,20 +35,13 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	public ErwerbspensumContainer() {
 	}
 
-	public ErwerbspensumContainer(@Nonnull ErwerbspensumContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
-		this.setVorgaengerId(toCopy.getId());
-		this.gesuchsteller = gesuchsteller;
-		this.erwerbspensumGS = null;
-		this.erwerbspensumJA = new Erwerbspensum(toCopy.erwerbspensumJA);
+
+	public GesuchstellerContainer getGesuchsteller() {
+		return gesuchstellerContainer;
 	}
 
-	public Gesuchsteller getGesuchsteller() {
-		return gesuchsteller;
-	}
-
-	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
-		this.gesuchsteller = gesuchsteller;
-
+	public void setGesuchsteller(GesuchstellerContainer gesuchstellerContainer) {
+		this.gesuchstellerContainer = gesuchstellerContainer;
 	}
 
 	public Erwerbspensum getErwerbspensumGS() {
@@ -77,6 +70,13 @@ public class ErwerbspensumContainer extends AbstractEntity {
 		}
 		return getErwerbspensumGS().isSame(otherErwerbspensum.getErwerbspensumGS()) &&
 			getErwerbspensumJA().isSame(otherErwerbspensum.getErwerbspensumJA());
+	}
 
+	public ErwerbspensumContainer copyForMutation(@Nonnull ErwerbspensumContainer mutation, @Nonnull GesuchstellerContainer gesuchstellerMutation) {
+		super.copyForMutation(mutation);
+		mutation.setGesuchsteller(gesuchstellerMutation);
+		mutation.setErwerbspensumGS(null);
+		mutation.setErwerbspensumJA(this.getErwerbspensumJA().copyForMutation(new Erwerbspensum()));
+		return mutation;
 	}
 }
