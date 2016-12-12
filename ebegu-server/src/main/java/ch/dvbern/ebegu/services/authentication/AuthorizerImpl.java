@@ -200,7 +200,7 @@ public class AuthorizerImpl implements Authorizer {
 			return;
 		}
 		String name = principalBean.getPrincipal().getName();
-		Fall fall = getFall(finanzielleSituation);
+		Fall fall = extractFall(finanzielleSituation);
 		boolean writeAllowed = isWriteAuthorized(fall, name);
 		boolean isMutation = finanzielleSituation.getVorgaengerId() != null;
 
@@ -267,7 +267,7 @@ public class AuthorizerImpl implements Authorizer {
 		if (betreuungToRemove == null) {
 			return;
 		}
-		Fall fall = getFall(betreuungToRemove);
+		Fall fall = extractFall(betreuungToRemove);
 		boolean allowed = isWriteAuthorized(fall, principalBean.getPrincipal().getName());
 		if (!allowed) {
 			throwViolation(betreuungToRemove);
@@ -278,7 +278,7 @@ public class AuthorizerImpl implements Authorizer {
 	public void checkReadAuthorization(@Nullable ErwerbspensumContainer ewpCnt) {
 		if (ewpCnt != null) {
 			UserRole[] allowedRoles = {SACHBEARBEITER_JA, SUPER_ADMIN, ADMIN, REVISOR, JURIST, SCHULAMT};
-			Fall fall = getFall(ewpCnt);
+			Fall fall = extractFall(ewpCnt);
 			boolean allowed = isInRoleOrGSOwner(allowedRoles, fall, principalBean.getPrincipal().getName());
 			if (!allowed) {
 				throwViolation(ewpCnt);
@@ -291,7 +291,7 @@ public class AuthorizerImpl implements Authorizer {
 		if (finanzielleSituation != null) {
 			// hier fuer alle lesbar ausser fuer institution/traegerschaft
 			String name = principalBean.getPrincipal().getName();
-			Fall fall = getFall(finanzielleSituation);
+			Fall fall = extractFall(finanzielleSituation);
 			if (fall != null) {
 			boolean allowed = isInRoleOrGSOwner(ALL_EXCEPT_INST_TRAEG, fall, name);
 			if (!allowed) {
@@ -321,7 +321,7 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	private boolean isReadAuthorized(Betreuung betreuung) {
-		Fall fall = getFall(betreuung);
+		Fall fall = extractFall(betreuung);
 		boolean isOwnerOrAdmin = isInRoleOrGSOwner(JA_OR_ADM, fall, principalBean.getPrincipal().getName());
 		if (isOwnerOrAdmin) {
 			return true;
@@ -380,10 +380,7 @@ public class AuthorizerImpl implements Authorizer {
 
 
 	private boolean isWriteAuthorized(Fall entity, String principalName) {
-		if (entity != null) {
 		return isInRoleOrGSOwner(JA_OR_ADM, entity, principalName);
-	}
-		return true;
 	}
 
 
@@ -416,22 +413,23 @@ public class AuthorizerImpl implements Authorizer {
 		return persistence.find(Gesuch.class, gesuchID);
 	}
 
-	private Fall getFall(Betreuung betreuung) {
+	private Fall extractFall(Betreuung betreuung) {
 		return betreuung.extractGesuch().getFall();
 	}
 
 	@Nullable
-	private Fall getFall(FinanzielleSituationContainer finanzielleSituationContainer) {
-		return getFall(finanzielleSituationContainer.getGesuchsteller());
+	private Fall extractFall(FinanzielleSituationContainer finanzielleSituationContainer) {
+		return extractFall(finanzielleSituationContainer.getGesuchsteller());
 	}
 
 	@Nullable
-	private Fall getFall(ErwerbspensumContainer erwerbspensumContainer) {
-		return getFall(erwerbspensumContainer.getGesuchsteller());
+	private Fall extractFall(ErwerbspensumContainer erwerbspensumContainer) {
+		return extractFall(erwerbspensumContainer.getGesuchsteller());
 	}
 
 	@Nullable
-	private Fall getFall(Gesuchsteller gesuchsteller) {
+	private Fall extractFall(Gesuchsteller gesuchsteller) {
+		//db abfrage des falls fuer den gesuchsteller
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
