@@ -342,8 +342,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showVerfuegenStarten(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
-            && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
-            && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
+            && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG);
+            // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
 
     public openFinanzielleSituationPDF(): void {

@@ -122,6 +122,13 @@ export default class GesuchModelManager {
      * Oder ggf. aus der Liste entfernt
      */
     private setHiddenSteps(): void {
+        //Freigabe
+        if (this.gesuch.isOnlineGesuch()) {
+            this.wizardStepManager.unhideStep(TSWizardStepName.FREIGABE);
+        } else {
+            this.wizardStepManager.hideStep(TSWizardStepName.FREIGABE);
+        }
+
         //Abwesenheit
         if (!this.gesuch.isMutation()) {
             this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
@@ -431,12 +438,11 @@ export default class GesuchModelManager {
 
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
-     * Wenn force werden Gesuch und Fall immer erstellt.
-     * @param forced
+     * Wenn force werden Gesuch und Fall immer erstellt. Das erstellte Gesuch ist ein PAPIER Gesuch
      */
-    public initGesuch(forced: boolean) {
+    public initGesuch(forced: boolean, eingangsart: TSEingangsart) {
         if (forced || (!forced && !this.gesuch)) {
-            this.initAntrag(TSAntragTyp.GESUCH);
+            this.initAntrag(TSAntragTyp.GESUCH, eingangsart);
         }
         this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch());
     }
@@ -449,7 +455,7 @@ export default class GesuchModelManager {
      * @param fallId
      */
     public initGesuchWithEingangsart(forced: boolean, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
-        this.initGesuch(forced);
+        this.initGesuch(forced, eingangsart);
         if (gesuchsperiodeId) {
             this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
                 this.gesuch.gesuchsperiode = periode;
@@ -467,7 +473,6 @@ export default class GesuchModelManager {
                 this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
             }
         }
-        this.gesuch.eingangsart = eingangsart;
     }
 
     /**
@@ -484,7 +489,7 @@ export default class GesuchModelManager {
         this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
             this.gesuch.gesuchsperiode = periode;
         });
-        this.initAntrag(TSAntragTyp.MUTATION);
+        this.initAntrag(TSAntragTyp.MUTATION, eingangsart);
         this.fallRS.findFall(fallId).then(foundFall => {
             this.gesuch.fall = foundFall;
         });
@@ -494,13 +499,13 @@ export default class GesuchModelManager {
         } else {
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
         }
-        this.gesuch.eingangsart = eingangsart;
     }
 
-    private initAntrag(antragTyp: TSAntragTyp): void {
+    private initAntrag(antragTyp: TSAntragTyp, eingangsart: TSEingangsart): void {
         this.gesuch = new TSGesuch();
         this.gesuch.fall = new TSFall();
         this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
+        this.gesuch.eingangsart = eingangsart;
         this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();
         this.setCurrentUserAsFallVerantwortlicher();

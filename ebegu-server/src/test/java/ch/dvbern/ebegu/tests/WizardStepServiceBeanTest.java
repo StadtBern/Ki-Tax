@@ -75,7 +75,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		final Gesuch myGesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(myGesuch);
 		Assert.assertNotNull(wizardStepList);
-		Assert.assertEquals(12, wizardStepList.size());
+		Assert.assertEquals(13, wizardStepList.size());
 
 		wizardStepList.forEach(wizardStep -> {
 			if (WizardStepName.GESUCH_ERSTELLEN.equals(wizardStep.getWizardStepName())) {
@@ -91,7 +91,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void updateWizardStepGesuchErstellen() {
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCH_ERSTELLEN);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.GESUCH_ERSTELLEN).getWizardStepStatus());
 	}
@@ -101,7 +101,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatus(familienStep, WizardStepStatus.IN_BEARBEITUNG);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.FAMILIENSITUATION);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
 	}
@@ -114,7 +114,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		//oldData ist eine leere Familiensituation
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(),
 			new Familiensituation(), TestDataUtil.createDefaultFamiliensituation(), WizardStepName.FAMILIENSITUATION);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
 	}
@@ -131,7 +131,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation,
 			gesuch.getFamiliensituation(), WizardStepName.FAMILIENSITUATION);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.GESUCHSTELLER).getWizardStepStatus());
@@ -146,7 +146,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatusVerfuegbar(einkVerStep, WizardStepStatus.UNBESUCHT, false);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.GESUCH_ERSTELLEN).getWizardStepStatus());
 		Assert.assertFalse(findStepByName(wizardSteps, WizardStepName.FINANZIELLE_SITUATION).getVerfuegbar());
@@ -160,7 +160,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatusVerfuegbar(einkVerStep, WizardStepStatus.IN_BEARBEITUNG, false);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.GESUCH_ERSTELLEN).getWizardStepStatus());
 		Assert.assertTrue(findStepByName(wizardSteps, WizardStepName.FINANZIELLE_SITUATION).getVerfuegbar());
@@ -173,7 +173,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatus(kinderStep, WizardStepStatus.IN_BEARBEITUNG);
 		updateStatus(betreuungStep, WizardStepStatus.IN_BEARBEITUNG);
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.KINDER);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.KINDER).getWizardStepStatus());
 		Assert.assertEquals(WizardStepStatus.PLATZBESTAETIGUNG, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
@@ -189,7 +189,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.remove(KindContainer.class, kind.getId());
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.KINDER);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.KINDER).getWizardStepStatus());
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
@@ -206,7 +206,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.merge(kind);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.KINDER);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.KINDER).getWizardStepStatus());
 	}
@@ -214,7 +214,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void updateWizardStepBetreuungUnbesucht() {
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.BETREUUNG);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 		// shouldn't update it because the current status is unbesucht
 		Assert.assertEquals(WizardStepStatus.UNBESUCHT, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
 	}
@@ -231,7 +231,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.merge(betreuung);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.BETREUUNG);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
 	}
@@ -247,7 +247,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.merge(betreuung);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.BETREUUNG);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.PLATZBESTAETIGUNG, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
 	}
@@ -263,7 +263,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.remove(Betreuung.class, betreuung2.getId());
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.BETREUUNG);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
 	}
@@ -272,7 +272,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	public void updateWizardStepBetreuungOK() {
 		updateStatus(betreuungStep, WizardStepStatus.IN_BEARBEITUNG);
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.BETREUUNG);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.PLATZBESTAETIGUNG, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
 	}
@@ -296,7 +296,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.remove(ErwerbspensumContainer.class, erwerbspensumContainer.getId());
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.ERWERBSPENSUM);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.ERWERBSPENSUM).getWizardStepStatus());
 	}
@@ -309,7 +309,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.remove(ErwerbspensumContainer.class, erwerbspensumContainer.getId());
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.ERWERBSPENSUM);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.ERWERBSPENSUM).getWizardStepStatus());
 	}
@@ -318,7 +318,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	public void updateWizardStepErwerbspensum() {
 		updateStatus(erwerbStep, WizardStepStatus.IN_BEARBEITUNG);
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.ERWERBSPENSUM);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.ERWERBSPENSUM).getWizardStepStatus());
 	}
@@ -331,7 +331,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	@Ignore
 	public void updateWizardStepFinanzielleSituation() {
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.FINANZIELLE_SITUATION);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FINANZIELLE_SITUATION).getWizardStepStatus());
 	}
@@ -355,7 +355,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldData,
 			newData, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getWizardStepStatus());
 	}
@@ -370,7 +370,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldData,
 			newData, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		//status is NOK weil die Daten noch nicht eingetragen sind
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getWizardStepStatus());
@@ -385,7 +385,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldData,
 			newData, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		//status is NOK weil die Daten noch nicht eingetragen sind
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getWizardStepStatus());
@@ -400,7 +400,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_ERWERBSPENSUM);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.DOKUMENTE);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.DOKUMENTE).getWizardStepStatus());
 	}
@@ -413,7 +413,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.DOKUMENTE);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.IN_BEARBEITUNG, findStepByName(wizardSteps, WizardStepName.DOKUMENTE).getWizardStepStatus());
 	}
@@ -431,7 +431,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		persistence.merge(betreuung2);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.VERFUEGEN).getWizardStepStatus());
 		final Gesuch persistedGesuch = persistence.find(Gesuch.class, gesuch.getId());
@@ -443,7 +443,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatusMutiert(familienStep, WizardStepStatus.OK);
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), gesuch.getFamiliensituation(),
 			gesuch.getFamiliensituation(), WizardStepName.FAMILIENSITUATION);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
 	}
@@ -453,7 +453,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatusMutiert(gesuchstellerStep, WizardStepStatus.OK);
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null,
 			null, WizardStepName.GESUCHSTELLER);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.GESUCHSTELLER).getWizardStepStatus());
 	}
@@ -463,7 +463,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatusMutiert(kinderStep, WizardStepStatus.OK);
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null,
 			null, WizardStepName.KINDER);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.KINDER).getWizardStepStatus());
 	}
@@ -473,7 +473,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatusMutiert(erwerbStep, WizardStepStatus.OK);
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null,
 			null, WizardStepName.ERWERBSPENSUM);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.ERWERBSPENSUM).getWizardStepStatus());
 	}
@@ -483,7 +483,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatusMutiert(finanSitStep, WizardStepStatus.OK);
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null,
 			null, WizardStepName.FINANZIELLE_SITUATION);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.FINANZIELLE_SITUATION).getWizardStepStatus());
 	}
@@ -500,7 +500,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(),
 			oldData, newData, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getWizardStepStatus());
 	}
@@ -510,7 +510,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatusMutiert(dokStep, WizardStepStatus.OK);
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null,
 			null, WizardStepName.DOKUMENTE);
-		Assert.assertEquals(10, wizardSteps.size());
+		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.DOKUMENTE).getWizardStepStatus());
 	}

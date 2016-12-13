@@ -239,7 +239,8 @@ export default class WizardStepManager {
         let step: TSWizardStep = this.getStepByName(stepName);
         if (step !== undefined) {
             return (this.isStepClickableForCurrentRole(step, gesuch)
-            || (gesuch.typ === TSAntragTyp.GESUCH && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT)
+            || (gesuch.typ === TSAntragTyp.GESUCH && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT
+            && !(this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles()) && stepName === TSWizardStepName.VERFUEGEN))
             || (gesuch.typ === TSAntragTyp.MUTATION && step.wizardStepName === TSWizardStepName.FAMILIENSITUATION));
         }
         return false;  // wenn der step undefined ist geben wir mal verfuegbar zurueck
@@ -262,9 +263,7 @@ export default class WizardStepManager {
                     }
                     //gesuchsteller darf "verfuegen" seite sehen sobald er das gesuch freigegeben hat
                 } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
-                    if (isAtLeastFreigegeben(gesuch.status)) {
-                        return true;
-                    }
+                    return isAtLeastFreigegeben(gesuch.status);
                 } else {
                     // ... alle anderen ab VERFUEGT
                     if (gesuch.status !== TSAntragStatus.VERFUEGT) {
@@ -299,6 +298,7 @@ export default class WizardStepManager {
             } else if (this.wizardSteps[i].wizardStepName !== TSWizardStepName.VERFUEGEN
                 && this.wizardSteps[i].wizardStepName !== TSWizardStepName.ABWESENHEIT
                 && this.wizardSteps[i].wizardStepName !== TSWizardStepName.UMZUG
+                && this.wizardSteps[i].wizardStepName !== TSWizardStepName.FREIGABE
                 && !this.isStatusOk(this.wizardSteps[i].wizardStepStatus)) {
                 return false;
             }

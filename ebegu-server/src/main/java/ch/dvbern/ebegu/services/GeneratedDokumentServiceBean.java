@@ -195,9 +195,8 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			}
 			else if (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp) && !gesuch.getStatus().isFreigegeben()) {
 				//nur wenn das Gesuch noch nicht freigegeben ist, wird
-				gesuchService.antragFreigeben(gesuch);
-				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch); //TODO richtiges Dokument erstellen
-//				data = pdfService.generateFreigabequittung(gesuch); // TODO einkommentieren
+				gesuchService.antragFreigabequittungErstellen(gesuch);
+				data = pdfService.generateFreigabequittung(gesuch, Zustelladresse.JUGENDAMT);
 			}
 			else if (!GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp)) { // wir muessen explicit nach FREIGABEQUITTUNG fragen, da sein IF noch eine andere variable enthaelt
 				LOG.warn("Unerwarter Dokumenttyp " + dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");

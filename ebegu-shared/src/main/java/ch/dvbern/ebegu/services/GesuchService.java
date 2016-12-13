@@ -129,5 +129,5 @@ public interface GesuchService {
 	 * Das gegebene Gesuch wird mit heutigem Datum freigegeben und den Step FREIGABE auf OK gesetzt
 	 * @param gesuch
 	 */
-	Gesuch antragFreigeben(@NotNull Gesuch gesuch);
+	Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch);
 }

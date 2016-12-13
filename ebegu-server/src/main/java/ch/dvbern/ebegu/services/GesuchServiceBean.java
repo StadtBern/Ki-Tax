@@ -514,11 +514,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	public Gesuch antragFreigeben(@NotNull Gesuch gesuch) {
+	public Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch) {
 		authorizer.checkWriteAuthorization(gesuch);
 
 		gesuch.setFreigabeDatum(LocalDate.now());
-		gesuch.setStatus(AntragStatus.FREIGEGEBEN);
+		gesuch.setStatus(AntragStatus.FREIGABEQUITTUNG);
 
 		final WizardStep freigabeStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
 		freigabeStep.setWizardStepStatus(WizardStepStatus.OK);

@@ -4,6 +4,7 @@ import TSFamiliensituation from './TSFamiliensituation';
 import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 import TSGesuchstellerContainer from './TSGesuchstellerContainer';
+import {TSEingangsart} from './enums/TSEingangsart';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -75,6 +76,10 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     public isMutation(): boolean {
         return this.typ === TSAntragTyp.MUTATION;
+    }
+
+    public isOnlineGesuch(): boolean {
+        return TSEingangsart.ONLINE === this.eingangsart;
     }
 
     /**
