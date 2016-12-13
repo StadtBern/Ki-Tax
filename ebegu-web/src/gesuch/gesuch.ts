@@ -147,7 +147,7 @@ export class GesuchRouteController {
 
     public getGesuchErstellenStepTitle(): string {
         if (this.gesuchModelManager.isErstgesuch()) {
-            if (this.gesuchModelManager.isGesuchSaved()) {
+            if (this.getDateFromGesuch()) {
                 return this.$translate.instant('MENU_ERSTGESUCH_VOM', {
                     date: this.getDateFromGesuch()
                 });
@@ -155,7 +155,7 @@ export class GesuchRouteController {
                 return this.$translate.instant('MENU_ERSTGESUCH');
             }
         } else {
-            if (this.gesuchModelManager.isGesuchSaved()) {
+            if (this.getDateFromGesuch()) {
                 return this.$translate.instant('MENU_MUTATION_VOM', {
                     date: this.getDateFromGesuch()
                 });
