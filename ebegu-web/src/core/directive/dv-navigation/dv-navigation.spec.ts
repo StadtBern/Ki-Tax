@@ -227,38 +227,39 @@ describe('dvNavigation', function () {
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterungInfo', { gesuchId: '123' });
         });
-        xit('moves to gesuch.einkommensverschlechterungSteuern when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 with EV and 2GS required', () => {
+        it('moves to gesuch.einkommensverschlechterungSteuern when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 with EV and 2GS required', () => {
+            let gesuch = mockGesuch();
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-            spyOn(gesuchModelManager, 'extractEinkommensverschlechterungInfo').and.returnValue({einkommensverschlechterung: true});
+            spyOn(gesuch, 'extractEinkommensverschlechterungInfo').and.returnValue({einkommensverschlechterung: true});
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(true);
             navController.dvSubStep = 1;
             callNextStep();
-            expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterungSteuern', { gesuchId: '' });
+            expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterungSteuern', { gesuchId: '123' });
         });
-        xit('moves to gesuch.einkommensverschlechterung when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 with EV and 2GS NOT required', () => {
+        it('moves to gesuch.einkommensverschlechterung when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 with EV and 2GS NOT required', () => {
+            let gesuch = mockGesuch();
+            spyOn(gesuch, 'extractEinkommensverschlechterungInfo').and.returnValue({einkommensverschlechterung: true});
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-            spyOn(gesuchModelManager, 'extractEinkommensverschlechterungsInfo').and.returnValue({einkommensverschlechterung: true});
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(false);
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue('1');
             navController.dvSubStep = 1;
             callNextStep();
-            expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1',  basisjahrPlus: '1', gesuchId: '' });
+            expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1',  basisjahrPlus: '1', gesuchId: '123' });
         });
-        xit('moves to gesuch.dokumente when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 without EV', () => {
+        it('moves to gesuch.dokumente when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 without EV', () => {
+            let gesuch = mockGesuch();
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
             spyOn(wizardStepManager, 'getNextStep').and.returnValue(TSWizardStepName.DOKUMENTE);
             spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue($q.when({}));
-            mockGesuch();
-            spyOn(gesuchModelManager, 'extractEinkommensverschlechterungsInfo').and.returnValue({einkommensverschlechterung: false});
             navController.dvSubStep = 1;
             callNextStep();
             $rootScope.$apply();
             expect($state.go).toHaveBeenCalledWith('gesuch.dokumente', { gesuchId: '123' });
         });
-        xit('moves to gesuch.dokumente when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 without EV', () => {
+        it('moves to gesuch.dokumente when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 without EV', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
             spyOn(wizardStepManager, 'getNextStep').and.returnValue(TSWizardStepName.DOKUMENTE);
-            mockGesuch();
+            let gesuch = mockGesuch();
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue('1');
             navController.dvSubStep = 3;
             callNextStep();
@@ -479,6 +480,7 @@ describe('dvNavigation', function () {
         gesuch.fall = new TSFall();
         gesuch.fall.id = '123';
         spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
+        return gesuch;
     }
 
     function callPreviousStep() {

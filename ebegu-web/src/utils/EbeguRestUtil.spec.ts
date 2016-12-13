@@ -183,6 +183,7 @@ describe('EbeguRestUtil', function () {
                 TestDataUtil.setAbstractFieldsUndefined(familiensituation);
                 myGesuch.familiensituationContainer = new TSFamiliensituationContainer;
                 myGesuch.familiensituationContainer.familiensituationJA = familiensituation;
+                TestDataUtil.setAbstractFieldsUndefined(myGesuch.familiensituationContainer);
                 myGesuch.kindContainers = [undefined];
                 myGesuch.einkommensverschlechterungInfoContainer = undefined;  //todo createEinkommensverschlechterungInfo
                 myGesuch.bemerkungen = undefined;
@@ -199,7 +200,7 @@ describe('EbeguRestUtil', function () {
                 expect(transformedGesuch.gesuchsteller1).toEqual(myGesuch.gesuchsteller1);
                 expect(transformedGesuch.gesuchsteller2).toEqual(myGesuch.gesuchsteller2);
                 expect(transformedGesuch.gesuchsperiode).toEqual(myGesuch.gesuchsperiode);
-                expect(transformedGesuch.familiensituation).toEqual(myGesuch.familiensituation);
+                expect(transformedGesuch.familiensituationContainer).toEqual(myGesuch.familiensituationContainer);
                 expect(transformedGesuch.kindContainers).toEqual(myGesuch.kindContainers);
                 expect(transformedGesuch.einkommensverschlechterungInfoContainer).toEqual(myGesuch.einkommensverschlechterungInfoContainer);
                 expect(transformedGesuch.bemerkungen).toEqual(myGesuch.bemerkungen);
