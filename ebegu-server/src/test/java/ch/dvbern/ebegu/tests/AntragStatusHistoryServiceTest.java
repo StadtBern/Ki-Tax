@@ -58,8 +58,11 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertTrue(time.isBefore(createdStatusHistory.getDatum()) || time.isEqual(createdStatusHistory.getDatum()));
 	}
 
+	/**
+	 * Dieser Test gibt manchmal einen Fehler zurück, das der lastStatusChange FREIGABEQUITTUNG und nicht VERFUEGT ist.
+	 * Das Problem könnte ein Timing Problem sein, da er zweimal den Status fast zur selben Zeit speichert.
+	 */
 	@Test
-	@Ignore
 	public void findLastStatusChangeTest() {
 		gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG);
 		statusHistoryService.saveStatusChange(gesuch);
