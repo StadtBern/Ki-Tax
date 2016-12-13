@@ -3,7 +3,9 @@ package ch.dvbern.ebegu.vorlagen;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import com.google.common.base.Strings;
+import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -180,5 +182,54 @@ public class PrintUtil {
 			}
 		}
 		return null;
+	}
+
+	public static String getNameAdresseFormatiert(Gesuch gesuch, GesuchstellerContainer gesuchsteller){
+
+		if (gesuch != null && gesuchsteller != null){
+			String newlineMSWord = "\n";
+			String adresse = StringUtils.EMPTY;
+
+			adresse += gesuchsteller.extractFullName();
+
+			Optional<GesuchstellerAdresseContainer> gsa = getGesuchstellerAdresse(gesuchsteller);
+			if (gsa.isPresent()) {
+				if (StringUtils.isNotEmpty(gsa.get().extractHausnummer())) {
+					adresse += newlineMSWord + gsa.get().extractStrasse() + " " + gsa.get().extractHausnummer();
+				} else {
+					adresse += newlineMSWord + gsa.get().extractStrasse();
+				}
+			}
+
+			String adrZusatz = getAdresszusatz(gesuch);
+			if (StringUtils.isNotEmpty(adrZusatz)) {
+				adresse += newlineMSWord + adrZusatz;
+			}
+
+			adresse += newlineMSWord + getGesuchstellerPLZStadt(gesuch);
+
+			return adresse;
+		} else{
+			return StringUtils.EMPTY;
+		}
+
+	}
+
+	@Nonnull
+	public static StringBuilder parseDokumentGrundDataToString(DokumentGrund dokumentGrund) {
+		StringBuilder bemerkungenBuilder = new StringBuilder();
+		if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
+			bemerkungenBuilder.append(ServerMessageUtil.translateEnumValue(dokumentGrund.getDokumentTyp()));
+			if (StringUtils.isNotEmpty(dokumentGrund.getFullName())) {
+				bemerkungenBuilder.append(" (");
+				bemerkungenBuilder.append(dokumentGrund.getFullName());
+
+				if (dokumentGrund.getTag() != null) {
+					bemerkungenBuilder.append(" / ").append(dokumentGrund.getTag());
+				}
+				bemerkungenBuilder.append(")");
+			}
+		}
+		return bemerkungenBuilder;
 	}
 }
