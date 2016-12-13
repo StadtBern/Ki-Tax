@@ -1,6 +1,6 @@
 <div ng-form="bisherForm">
     <div class="dv-bisher row">
-        <span class="bisher" ng-if="vm.gs !== undefined && !vm.equals(vm.gs, vm.ja)">
+        <span class="bisher" ng-if="vm.showBisher() && !vm.equals(vm.gs, vm.ja)">
             <span data-translate="BISHER_GS"></span>
             {{vm.getBisher()}}
         </span>

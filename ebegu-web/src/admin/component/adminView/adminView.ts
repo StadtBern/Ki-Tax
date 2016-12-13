@@ -129,7 +129,7 @@ export class AdminViewController {
 
         } else if (this.creationType === 'bestaetigt') {
             bestaetigt = true;
-            verfuegen = true;
+            verfuegen = false;
 
         } else if (this.creationType === 'verfuegt') {
             bestaetigt = true;

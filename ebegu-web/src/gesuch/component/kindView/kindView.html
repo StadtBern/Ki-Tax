@@ -229,6 +229,8 @@
                                     </select>
                                     <dv-error-messages for="form.fachstelle.$error"
                                                        class="error"></dv-error-messages>
+                                    <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.fachstelle.name"
+                                               ja="vm.getContainer().kindJA.pensumFachstelle.fachstelle.name"></dv-bisher>
                                 </div>
                             </div>
                         </div>
@@ -247,8 +249,8 @@
                                            ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                     <dv-error-messages for="form.betreuungspensumFachstelle.$error"
                                                        class="error"></dv-error-messages>
-                                    <dv-bisher gs="vm.getContainer().kindGS.pensum"
-                                               ja="vm.getContainer().kindJA.pensum"></dv-bisher>
+                                    <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.pensum"
+                                               ja="vm.getContainer().kindJA.pensumFachstelle.pensum"></dv-bisher>
                                 </dv-input-container>
                             </div>
                         </div>

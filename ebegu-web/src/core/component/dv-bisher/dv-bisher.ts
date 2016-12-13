@@ -12,6 +12,7 @@ export class DvBisherComponentConfig implements IComponentOptions {
     bindings: any = {
         gs: '<',
         ja: '<',
+        showBisherIfNone: '<',
     };
     template = template;
     controller = DvBisher;
@@ -24,10 +25,14 @@ export class DvBisher {
 
     gs: any;
     ja: any;
+    showBisherIfNone: boolean;
 
 
     /* @ngInject */
     constructor(private $translate: ITranslateService, private $log: ILogService) {
+        if (this.showBisherIfNone === undefined) {
+            this.showBisherIfNone = true;
+        }
     }
 
     public getBisher() : string {
@@ -42,6 +47,14 @@ export class DvBisher {
         } else {
             return this.$translate.instant(this.gs);
         }
+    }
+
+    public hasBisher() : boolean {
+        return this.gs !== null || this.gs !== undefined || this.gs !== '';
+    }
+
+    public showBisher() : boolean {
+        return this.showBisherIfNone && this.hasBisher();
     }
 
     public equals(gs: any, ja: any) : boolean {

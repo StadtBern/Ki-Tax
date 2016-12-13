@@ -58,7 +58,7 @@
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="PENSUM" for="taetigkeitPensum"></label>
-                                <input id="taetigkeitPensum" type="text" name="taetigkeitPensum"
+                                <input id="taetigkeitPensum" type="number" name="taetigkeitPensum"
                                        ng-model="vm.model.erwerbspensumJA.pensum"
                                        dv-max-length class="form-control" max="100"
                                        ng-required="true" ng-pattern="vm.patternPercentage"
@@ -146,6 +146,9 @@
                             </div>
                             <dv-error-messages for="form.zuschlagsgrund.$error"
                                                class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
+                                           ja="vm.model.erwerbspensumJA.zuschlagsgrund"
+                                           show-bisher-if-none="false"></dv-bisher>
                         </div>
                     </div>
                 </div>
@@ -163,6 +166,9 @@
                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                             <dv-error-messages for="form.zuschlagsprozent.$error"
                                                class="error"></dv-error-messages>
+                            <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsprozent"
+                                       ja="vm.model.erwerbspensumJA.zuschlagsprozent"
+                                       show-bisher-if-none="false"></dv-bisher>
                         </dv-input-container>
                     </div>
                 </div>

@@ -84,8 +84,8 @@ export class DvAdresseController {
         return this.adresse.showDatumVon;
     }
 
-    public getModel(): TSAdresse {
-        return this.adresse.adresseJA;
+    public getModel(): TSAdresseContainer {
+        return this.adresse;
     }
 
 }

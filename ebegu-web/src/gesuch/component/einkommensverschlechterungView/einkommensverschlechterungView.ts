@@ -27,6 +27,8 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     public showSelbstaendig: boolean;
     public geschaeftsgewinnBasisjahrMinus1: number;
     public geschaeftsgewinnBasisjahrMinus2: number;
+    public geschaeftsgewinnBasisjahrMinus1GS: number;
+    public geschaeftsgewinnBasisjahrMinus2GS: number;
     allowedRoles: Array<TSRole>;
     public initialModel: TSFinanzModel;
 
@@ -146,6 +148,15 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         } else {
             this.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
             this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
+        }
+        let fsGS: TSFinanzielleSituation = this.model.getFiSiConToWorkWith().finanzielleSituationGS;
+        if (this.model.getBasisJahrPlus() === 2) {
+            //basisjahr Plus 2
+            this.geschaeftsgewinnBasisjahrMinus1GS = this.model.getEkvContToWorkWith().ekvGSBasisJahrPlus1.geschaeftsgewinnBasisjahr;
+            this.geschaeftsgewinnBasisjahrMinus2GS = fs.geschaeftsgewinnBasisjahr;
+        } else {
+            this.geschaeftsgewinnBasisjahrMinus1GS = fs.geschaeftsgewinnBasisjahr;
+            this.geschaeftsgewinnBasisjahrMinus2GS = fs.geschaeftsgewinnBasisjahrMinus1;
         }
     }
 
