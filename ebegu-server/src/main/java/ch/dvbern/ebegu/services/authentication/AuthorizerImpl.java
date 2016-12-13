@@ -35,9 +35,6 @@ import static ch.dvbern.ebegu.enums.UserRole.*;
 @SuppressFBWarnings("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
 public class AuthorizerImpl implements Authorizer {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AuthorizerImpl.class);
-
-
 	private static final UserRole[] JA_OR_ADM = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA};
 	private static final UserRole[] ALL_EXCEPT_INST_TRAEG = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, SCHULAMT, STEUERAMT};
 
