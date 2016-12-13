@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -534,7 +535,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN,
 		UserRoleName.SACHBEARBEITER_JA,	UserRoleName.GESUCHSTELLER})
 	public Optional<Gesuch> antragMutieren(@Nonnull String antragId,
-										   @Nonnull LocalDate eingangsdatum) {
+										   @Nullable LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
@@ -562,7 +563,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.empty();
 	}
 
-	private Optional<Gesuch> getGesuchMutation(@Nonnull LocalDate eingangsdatum, Optional<Gesuch> gesuchForMutation) {
+	private Optional<Gesuch> getGesuchMutation(@Nullable LocalDate eingangsdatum, Optional<Gesuch> gesuchForMutation) {
 		if (gesuchForMutation.isPresent()) {
 			Eingangsart eingangsart;
 			if(this.principalBean.isCallerInRole(UserRole.GESUCHSTELLER)){
@@ -571,7 +572,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				eingangsart = Eingangsart.PAPIER;
 			}
 			Gesuch mutation = gesuchForMutation.get().copyForMutation(new Gesuch(), eingangsart);
-			mutation.setEingangsdatum(eingangsdatum);
+			if (eingangsdatum != null) {
+				mutation.setEingangsdatum(eingangsdatum);
+			}
 			return Optional.of(mutation);
 		}
 		return Optional.empty();

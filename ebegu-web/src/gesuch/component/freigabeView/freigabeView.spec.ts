@@ -13,6 +13,8 @@ import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentT
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import IHttpBackendService = angular.IHttpBackendService;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 
 describe('freigabeView', function () {
 
@@ -43,7 +45,26 @@ describe('freigabeView', function () {
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
             wizardStepManager, dialog, downloadRS);
     }));
+    describe('canBeFreigegeben', function () {
+        it('should return false when not all steps are true', function () {
+            spyOn(wizardStepManager, 'areAllStepsOK').and.returnValue(false);
+            spyOn(wizardStepManager, 'hasStepGivenStatus').and.returnValue(true);
+            expect(controller.canBeFreigegeben()).toBe(false);
+        });
+        it('should return false when all steps are true but not all Betreuungen are accepted', function () {
+            spyOn(wizardStepManager, 'areAllStepsOK').and.returnValue(true);
+            spyOn(wizardStepManager, 'hasStepGivenStatus').and.returnValue(false);
 
+            expect(controller.canBeFreigegeben()).toBe(false);
+
+            expect(wizardStepManager.hasStepGivenStatus).toHaveBeenCalledWith(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK);
+        });
+        it('should return true when all steps are true and all Betreuungen are accepted', function () {
+            spyOn(wizardStepManager, 'areAllStepsOK').and.returnValue(true);
+            spyOn(wizardStepManager, 'hasStepGivenStatus').and.returnValue(true);
+            expect(controller.canBeFreigegeben()).toBe(true);
+        });
+    });
     describe('gesuchFreigeben', function () {
         it('should return undefined when the form is not valid', function () {
             let form: any = {};

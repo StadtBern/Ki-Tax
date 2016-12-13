@@ -30,7 +30,26 @@
     </div>
 
     <div class="row" ng-if="!vm.isGesuchFreigegeben()">
-        <div class="col-md-12">
+        <div class="col-md-12" ng-if="!vm.canBeFreigegeben()">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>
+                        <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TITLE"></span>
+                    </h1>
+                </div>
+            </div>
+
+            <hr class="header"/>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <span data-translate="FREIGABEQUITTUNG_NOT_ALLOWED_TEXT"></span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-12" ng-if="vm.canBeFreigegeben()">
 
             <form role="form" name="form" class="" novalidate unsaved-warning-form>
 

@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -95,7 +96,7 @@ public interface GesuchService {
 	 * verfuegte Antrag kopiert fuer die Mutation.
 	 */
 	@Nonnull
-	Optional<Gesuch> antragMutieren(@Nonnull String antragId, LocalDate eingangsdatum);
+	Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nullable LocalDate eingangsdatum);
 
 	/**
 	 * hilfsmethode zur mutation von faellen ueber das gui. Wird fuer testzwecke benoetigt

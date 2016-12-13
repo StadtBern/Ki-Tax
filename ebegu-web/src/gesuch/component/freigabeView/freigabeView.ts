@@ -12,7 +12,7 @@ import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentT
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
-import {isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
+import {isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import DateUtil from '../../../utils/DateUtil';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
@@ -63,8 +63,8 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public isGesuchFreigegeben(): boolean {
-        if (this.gesuchModelManager.getGesuch()) {
-            return isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status);
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
+            return isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status) || (this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG);
         }
         return false;
     }
@@ -88,6 +88,15 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
             return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().freigabeDatum, 'DD.MM.YYYY');
         }
         return '';
+    }
+
+    /**
+     * Die Methodes wizardStepManager.areAllStepsOK() erlaubt dass die Betreuungen in Status PLATZBESTAETIGUNG sind
+     * aber in diesem Fall duerfen diese nur OK sein, deswegen die Frage extra.
+     */
+    public canBeFreigegeben(): boolean {
+        return this.wizardStepManager.areAllStepsOK() &&
+            this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG);
     }
 
 }

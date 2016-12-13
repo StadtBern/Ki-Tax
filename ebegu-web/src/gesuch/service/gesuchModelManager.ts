@@ -36,7 +36,7 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
-import {TSAntragStatus, isAtLeastFreigegeben} from '../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAtLeastFreigegebenOrFreigabequittung} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
@@ -1101,7 +1101,7 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return  this.isGesuchStatusVerfuegenVerfuegt() || this.isGesuchReadonlyForRole();
+        return this.isGesuchStatusVerfuegenVerfuegt() || this.isGesuchReadonlyForRole();
     }
 
     /**
@@ -1111,7 +1111,7 @@ export default class GesuchModelManager {
         if (this.authServiceRS.isRole(TSRole.SCHULAMT)) {
             return true;  // schulamt hat immer nur readonly zugriff
         } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
-            return isAtLeastFreigegeben(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
+            return isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
         }
         return false;
     }

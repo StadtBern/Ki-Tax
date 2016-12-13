@@ -168,7 +168,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
 		GeneratedDokument persistedDokument = null;
 		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())
-			|| (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp) && gesuch.getStatus().isFreigegeben())) {
+			|| (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp) && gesuch.getStatus().isFreigegebenOrFreigabequittung())) {
 
 			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
@@ -193,7 +193,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 			}
-			else if (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp) && !gesuch.getStatus().isFreigegeben()) {
+			else if (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp) && !gesuch.getStatus().isFreigegebenOrFreigabequittung()) {
 				//nur wenn das Gesuch noch nicht freigegeben ist, wird
 				gesuchService.antragFreigabequittungErstellen(gesuch);
 				data = pdfService.generateFreigabequittung(gesuch, Zustelladresse.JUGENDAMT);

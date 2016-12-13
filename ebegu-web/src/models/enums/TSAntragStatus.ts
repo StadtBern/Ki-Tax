@@ -70,3 +70,7 @@ export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
     return validStates.indexOf(status) !== -1;
 }
 
+export function isAtLeastFreigegebenOrFreigabequittung(status: TSAntragStatus): boolean {
+    return isAtLeastFreigegeben(status) || status === TSAntragStatus.FREIGABEQUITTUNG;
+}
+

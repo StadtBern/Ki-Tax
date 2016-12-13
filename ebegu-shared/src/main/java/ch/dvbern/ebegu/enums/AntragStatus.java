@@ -63,4 +63,8 @@ public enum AntragStatus {
 	public boolean isFreigegeben() {
 		return isFreigegeben.contains(this);
 	}
+
+	public boolean isFreigegebenOrFreigabequittung() {
+		return isFreigegeben.contains(this) || this.equals(FREIGABEQUITTUNG);
+	}
 }

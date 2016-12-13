@@ -799,5 +799,6 @@
     "PDF_FREIGABEQUITTUNG_ANZEIGEN": "Freigabequittung als PDF anzeigen",
     "FREIGABEQUITTUNG_ERFOLG_TEXT": "Das Gesuch wurde am {{freigabedatum}} erfolgreich freigegeben",
     "FREIGEBEN": "Freigeben",
-    "ERROR_BESTAETIGUNG_REQUIRED": "Bestätigen Sie bitte die Vollständigkeit der Angaben um das Gesuch freizugeben"
+    "ERROR_BESTAETIGUNG_REQUIRED": "Bestätigen Sie bitte die Vollständigkeit der Angaben um das Gesuch freizugeben",
+    "FREIGABEQUITTUNG_NOT_ALLOWED_TEXT": "Um das Gesuch freigeben zu können müssen alle Schritte grün markiert sein. Geben Sie dafür bitte alle benötigten Daten ein"
 }
