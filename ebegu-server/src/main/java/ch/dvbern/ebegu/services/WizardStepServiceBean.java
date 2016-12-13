@@ -456,4 +456,11 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		return wizardStep;
 	}
 
+	@Override
+	public void removeSteps(Gesuch gesToRemove) {
+		List<WizardStep> wizardStepsFromGesuch = findWizardStepsFromGesuch(gesToRemove.getId());
+		for (WizardStep wizardStep : wizardStepsFromGesuch) {
+			persistence.remove(WizardStep.class, wizardStep.getId());
+		}
+	}
 }

@@ -81,7 +81,17 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	public Optional<Fall> findFallByCurrentBenutzerAsBesitzer() {
 		Optional<Benutzer> currentBenutzerOptional = benutzerService.getCurrentBenutzer();
 		if (currentBenutzerOptional.isPresent()) {
-			Optional<Fall> fallOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, currentBenutzerOptional.get(), Fall_.besitzer);
+			return findFallByBesitzer(currentBenutzerOptional.get());
+		}
+		return Optional.empty();
+	}
+
+	@Override
+	@Nonnull
+	public Optional<Fall> findFallByBesitzer(Benutzer benutzer) {
+		Optional<Benutzer> currentBenutzerOptional = benutzerService.getCurrentBenutzer();
+		if (currentBenutzerOptional.isPresent()) {
+			Optional<Fall> fallOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, benutzer, Fall_.besitzer);
 			fallOptional.ifPresent(fall -> authorizer.checkReadAuthorizationFall(fall));
 			return fallOptional;
 		}

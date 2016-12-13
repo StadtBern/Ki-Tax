@@ -59,4 +59,9 @@ public interface WizardStepService {
 	@Nonnull
 	List<WizardStep> createWizardStepList(Gesuch gesuch);
 
+	/**
+	 * Damit ein Gesuch removed werden kann meussen allse sseine WizardSteps entfernt werden
+	 * @param gesToRemove
+	 */
+	void removeSteps(Gesuch gesToRemove);
 }

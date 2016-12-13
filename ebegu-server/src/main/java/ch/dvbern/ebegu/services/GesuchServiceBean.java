@@ -122,13 +122,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed(value ={UserRoleName.SUPER_ADMIN})
+	@RolesAllowed(value ={UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN})
 	public void removeGesuch(@Nonnull Gesuch gesuch) {
 		Validate.notNull(gesuch);
-		Optional<Gesuch> gesuchToRemove = findGesuch(gesuch.getId());
+		Optional<Gesuch> gesuchOptional = findGesuch(gesuch.getId());
 		authorizer.checkWriteAuthorization(gesuch);
-		gesuchToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuch));
-		persistence.remove(gesuchToRemove.get());
+		Gesuch gesToRemove = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuch));
+		wizardStepService.removeSteps(gesToRemove);  //wizard steps removen
+		persistence.remove(gesToRemove);
 	}
 
 	@Nonnull

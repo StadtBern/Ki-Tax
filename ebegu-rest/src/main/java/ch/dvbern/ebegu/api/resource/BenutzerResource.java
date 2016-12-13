@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * REST Resource fuer Benutzer
+ * REST Resource fuer Benutzer  (Auf client userRS.rest.ts also eingetlich die UserResources)
  */
 @Path("benutzer")
 @Stateless
@@ -50,6 +50,19 @@ public class BenutzerResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxAuthLoginElement> getBenutzerJAorAdmin() {
 		return benutzerService.getBenutzerJAorAdmin().stream()
+			.map(benutzer -> converter.benutzerToAuthLoginElement(benutzer))
+			.collect(Collectors.toList());
+	}
+	/**
+	 * nur Gesuchsteller
+	 */
+	@Nonnull
+	@GET
+	@Path("/gesuchsteller")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxAuthLoginElement> getGesuchsteller() {
+		return benutzerService.getGesuchsteller().stream()
 			.map(benutzer -> converter.benutzerToAuthLoginElement(benutzer))
 			.collect(Collectors.toList());
 	}
