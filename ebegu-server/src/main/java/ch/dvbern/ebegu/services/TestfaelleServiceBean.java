@@ -134,9 +134,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 
-	public StringBuilder createAndSaveAsPapiergesuch(@Nonnull String fallid,
+	public StringBuilder createAndSaveAsOnlineGesuch(@Nonnull String fallid,
 													 boolean betreuungenBestaetigt,
-													boolean verfuegen, @Nonnull String username) {
+													 boolean verfuegen, @Nonnull String username) {
 
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(benutzerService.getCurrentBenutzer().orElse(null));
 
@@ -296,7 +296,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			} else {
 				fall = fromTestfall.createFall();
 			}
-		} else{
+		} else {
 			fall = fallByBesitzer.get();
 			fall.setNextNumberKind(1); //reset
 		}
@@ -309,6 +309,13 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		fromTestfall.createGesuch(LocalDate.of(2016, Month.FEBRUARY, 15));
 		gesuchService.createGesuch(fromTestfall.getGesuch());
 		Gesuch gesuch = fromTestfall.fillInGesuch();
+
+		if (besitzer != null) {
+			gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+			gesuch.setEingangsart(Eingangsart.ONLINE);
+		} else {
+			gesuch.setEingangsart(Eingangsart.PAPIER);
+		}
 
 		gesuchVerfuegenUndSpeichern(verfuegen, gesuch, false);
 

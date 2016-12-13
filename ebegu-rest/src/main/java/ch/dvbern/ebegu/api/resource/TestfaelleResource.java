@@ -52,7 +52,7 @@ public class TestfaelleResource {
 		@PathParam("verfuegen") boolean verfuegen,
 		@PathParam("username") String username) {
 
-		StringBuilder responseString = testfaelleService.createAndSaveAsPapiergesuch(fallid, betreuungenBestaetigt, verfuegen, username);
+		StringBuilder responseString = testfaelleService.createAndSaveAsOnlineGesuch(fallid, betreuungenBestaetigt, verfuegen, username);
 		return Response.ok(responseString.toString()).build();
 	}
 

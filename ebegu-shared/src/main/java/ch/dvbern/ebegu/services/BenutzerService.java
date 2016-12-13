@@ -41,9 +41,7 @@ public interface BenutzerService {
 	@Nonnull
 	Collection<Benutzer> getBenutzerJAorAdmin();
 
-
 	/**
-	 *
 	 * @return Liste saemtlicher Gesuchsteller aus der DB
 	 */
 	@Nonnull

@@ -135,7 +135,7 @@ export class AdminViewController {
             bestaetigt = true;
             verfuegen = true;
         }
-        if(this.createAsBesitzer){
+        if (this.createAsBesitzer) {
             return this.createTestFallGS(testFall, bestaetigt, verfuegen, this.createAsBesitzer.username)
         } else{
             return this.createTestFall(testFall, bestaetigt, verfuegen);

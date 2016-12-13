@@ -448,6 +448,5 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		for (WizardStep wizardStep : wizardStepsFromGesuch) {
 			persistence.remove(WizardStep.class, wizardStep.getId());
 		}
-
 	}
 }
