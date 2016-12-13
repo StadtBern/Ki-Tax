@@ -467,7 +467,9 @@ export default class GesuchModelManager {
                 this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
             }
         }
-        this.gesuch.eingangsart = eingangsart;
+        if (eingangsart) {
+            this.gesuch.eingangsart = eingangsart;
+        }
     }
 
     /**
