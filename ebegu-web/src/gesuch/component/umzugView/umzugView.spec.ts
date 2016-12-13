@@ -7,17 +7,16 @@ import TSGesuch from '../../../models/TSGesuch';
 import {EbeguWebCore} from '../../../core/core.module';
 import WizardStepManager from '../../service/wizardStepManager';
 import TestDataUtil from '../../../utils/TestDataUtil';
-import TSAdresse from '../../../models/TSAdresse';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import TSAdresseContainer from '../../../models/TSAdresseContainer';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import ITranslateService = angular.translate.ITranslateService;
-import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
-import TSAdresseContainer from '../../../models/TSAdresseContainer';
 
 describe('umzugView', function () {
 
@@ -58,8 +57,8 @@ describe('umzugView', function () {
             gesuch.gesuchsteller2 = TestDataUtil.createGesuchsteller('Ana', 'Karenina');
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
-            expect(umzugController.getNameFromBetroffene(TSBetroffene.GESUCHSTELLER_1)).toEqual(gesuch.gesuchsteller1.extractFullname());
-            expect(umzugController.getNameFromBetroffene(TSBetroffene.GESUCHSTELLER_2)).toEqual(gesuch.gesuchsteller2.extractFullname());
+            expect(umzugController.getNameFromBetroffene(TSBetroffene.GESUCHSTELLER_1)).toEqual(gesuch.gesuchsteller1.extractFullName());
+            expect(umzugController.getNameFromBetroffene(TSBetroffene.GESUCHSTELLER_2)).toEqual(gesuch.gesuchsteller2.extractFullName());
             expect(umzugController.getNameFromBetroffene(TSBetroffene.BEIDE_GESUCHSTELLER)).toEqual('beide Gesuchsteller');
         });
         it('should return empty string for empty data', function () {

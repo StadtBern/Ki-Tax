@@ -86,7 +86,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
             if (this.isConfirmationRequired()) {
                 let descriptionText: any = this.$translate.instant('FAMILIENSITUATION_WARNING_BESCHREIBUNG', {
                     gsfullname: this.gesuchModelManager.getGesuch().gesuchsteller2
-                        ? this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullname() : ''
+                        ? this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName() : ''
                 });
                 return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                     title: 'FAMILIENSITUATION_WARNING',
