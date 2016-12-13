@@ -445,7 +445,7 @@ export default class EbeguRestUtil {
     }
 
     public einkommensverschlechterungInfoContainerToRestObject(restEinkommensverschlechterungInfoContainer: any, einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer): TSEinkommensverschlechterungInfoContainer {
-        if(einkommensverschlechterungInfoContainer) {
+        if (einkommensverschlechterungInfoContainer) {
             this.abstractEntityToRestObject(restEinkommensverschlechterungInfoContainer, einkommensverschlechterungInfoContainer);
             if (einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoGS) {
                 restEinkommensverschlechterungInfoContainer.einkommensverschlechterungInfoGS = this.einkommensverschlechterungInfoToRestObject({}, einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoGS);
@@ -502,23 +502,26 @@ export default class EbeguRestUtil {
     }
 
     public familiensituationContainerToRestObject(restFamiliensituationContainer: any,
-                                                           familiensituationContainer: TSFamiliensituationContainer): TSFamiliensituationContainer {
-        this.abstractEntityToRestObject(restFamiliensituationContainer, familiensituationContainer);
+                                                  familiensituationContainer: TSFamiliensituationContainer): TSFamiliensituationContainer {
+        if (familiensituationContainer) {
+            this.abstractEntityToRestObject(restFamiliensituationContainer, familiensituationContainer);
 
-        if (familiensituationContainer.familiensituationJA) {
-            restFamiliensituationContainer.familiensituationJA =
-                this.familiensituationToRestObject({}, familiensituationContainer.familiensituationJA);
-        }
-        if (familiensituationContainer.familiensituationErstgesuch) {
-            restFamiliensituationContainer.familiensituationErstgesuch =
-                this.familiensituationToRestObject({}, familiensituationContainer.familiensituationErstgesuch);
-        }
-        if (familiensituationContainer.familiensituationGS) {
-            restFamiliensituationContainer.familiensituationGS =
-                this.familiensituationToRestObject({}, familiensituationContainer.familiensituationGS);
-        }
+            if (familiensituationContainer.familiensituationJA) {
+                restFamiliensituationContainer.familiensituationJA =
+                    this.familiensituationToRestObject({}, familiensituationContainer.familiensituationJA);
+            }
+            if (familiensituationContainer.familiensituationErstgesuch) {
+                restFamiliensituationContainer.familiensituationErstgesuch =
+                    this.familiensituationToRestObject({}, familiensituationContainer.familiensituationErstgesuch);
+            }
+            if (familiensituationContainer.familiensituationGS) {
+                restFamiliensituationContainer.familiensituationGS =
+                    this.familiensituationToRestObject({}, familiensituationContainer.familiensituationGS);
+            }
 
-        return restFamiliensituationContainer;
+            return restFamiliensituationContainer;
+        }
+        return undefined;
     }
 
     public parseEinkommensverschlechterungInfo(einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo, einkommensverschlechterungInfoFromServer: any): TSEinkommensverschlechterungInfo {

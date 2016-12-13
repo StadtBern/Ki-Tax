@@ -53,7 +53,11 @@ export default class TSFinanzModel {
 
     public copyFinSitDataFromGesuch(gesuch: TSGesuch) {
 
-        this.gemeinsameSteuererklaerung = angular.copy(gesuch.extractFamiliensituation().gemeinsameSteuererklaerung);
+        if (gesuch.extractFamiliensituation().gemeinsameSteuererklaerung) {
+            this.gemeinsameSteuererklaerung = angular.copy(gesuch.extractFamiliensituation().gemeinsameSteuererklaerung);
+        }else{
+            this.gemeinsameSteuererklaerung = false;
+        }
         this.finanzielleSituationContainerGS1 = angular.copy(gesuch.gesuchsteller1.finanzielleSituationContainer);
         if (gesuch.gesuchsteller2) {
             this.finanzielleSituationContainerGS2 = angular.copy(gesuch.gesuchsteller2.finanzielleSituationContainer);
@@ -90,7 +94,7 @@ export default class TSFinanzModel {
     }
 
     copyFinSitDataToGesuch(gesuch: TSGesuch): TSGesuch {
-        gesuch.extractFamiliensituationErstgesuch().gemeinsameSteuererklaerung = this.gemeinsameSteuererklaerung;
+        gesuch.extractFamiliensituation().gemeinsameSteuererklaerung = this.gemeinsameSteuererklaerung;
         gesuch.gesuchsteller1.finanzielleSituationContainer = this.finanzielleSituationContainerGS1;
         if (gesuch.gesuchsteller2) {
             gesuch.gesuchsteller2.finanzielleSituationContainer = this.finanzielleSituationContainerGS2;

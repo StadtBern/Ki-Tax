@@ -56,22 +56,15 @@ public class FamiliensituationResource {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
 		if (gesuch.isPresent()) {
-			Familiensituation oldData = new Familiensituation();
+			Familiensituation oldData = null;
 			FamiliensituationContainer familiensituationContainerToMerge = new FamiliensituationContainer();
 			//wenn es sich um ein update handelt
 			if (familiensituationContainerJAXP.getId() != null) {
 				Optional<FamiliensituationContainer> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationContainerJAXP.getId());
 				familiensituationContainerToMerge = loadedFamiliensituation.orElse(new FamiliensituationContainer());
-				//wenn mutation dann alte daten = bisherige daten
-				if (AntragTyp.MUTATION.equals(gesuch.get().getTyp())) {
-					oldData = gesuch.get().extractFamiliensituationErstgesuch();
-				}
-				else {
-					oldData = new Familiensituation(familiensituationContainerToMerge.extractFamiliensituation());
-				}
+
 			}
 			FamiliensituationContainer convertedFamiliensituation = converter.familiensituationContainerToEntity(familiensituationContainerJAXP, familiensituationContainerToMerge);
-			convertedFamiliensituation.setFamiliensituationErstgesuch(oldData);
 			FamiliensituationContainer persistedFamiliensituation = this.familiensituationService.saveFamiliensituation(gesuch.get(), convertedFamiliensituation);
 
 			return converter.familiensituationContainerToJAX(persistedFamiliensituation);
