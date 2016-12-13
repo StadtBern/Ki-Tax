@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
-import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.EinkommensverschlechterungResource;
 import ch.dvbern.ebegu.api.resource.GesuchstellerResource;
@@ -47,8 +47,8 @@ public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestLog
 	public void createAndFindEinkommensverschlechterungsContainerTest() throws EbeguException {
 		Gesuch testGesuch = TestDataUtil.createDefaultGesuch();
 		TestDataUtil.persistEntities(testGesuch, persistence);
-		JaxGesuchsteller testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(new JaxId(testGesuch.getId()), 1, false, testJaxGesuchsteller, uri, null);
+		JaxGesuchstellerContainer testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
+		JaxGesuchstellerContainer jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(new JaxId(testGesuch.getId()), 1, false, testJaxGesuchsteller, uri, null);
 		Assert.assertNotNull(jaxGesuchsteller);
 
 		JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = TestJaxDataUtil.createTestJaxEinkommensverschlechterungContianer();

@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
@@ -32,7 +32,7 @@ public interface ErwerbspensumService {
 	/**
 	 * Sucht die Erwerbspensen des übergebenen Gesuchstellers.
      */
-	Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
+	Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller);
 
 	/**
 	 * Sucht alle Erwerbspensen fuer das eingegebene Gesuch

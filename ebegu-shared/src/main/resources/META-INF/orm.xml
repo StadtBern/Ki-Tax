@@ -48,5 +48,7 @@
 	<entity class="ch.dvbern.ebegu.entities.Abwesenheit"/>
 	<entity class="ch.dvbern.ebegu.entities.AbwesenheitContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Mahnung"/>
+	<entity class="ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer"/>
+	<entity class="ch.dvbern.ebegu.entities.GesuchstellerContainer"/>
 
 </entity-mappings>

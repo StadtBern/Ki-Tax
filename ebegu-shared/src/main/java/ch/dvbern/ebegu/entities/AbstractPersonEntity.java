@@ -46,13 +46,6 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 	public AbstractPersonEntity() {
 	}
 
-	public AbstractPersonEntity(@Nonnull AbstractPersonEntity toCopy) {
-		this.setVorgaengerId(toCopy.getId());
-		this.geschlecht = toCopy.geschlecht;
-		this.vorname = toCopy.vorname;
-		this.nachname = toCopy.nachname;
-		this.geburtsdatum = toCopy.geburtsdatum;
-	}
 
 	public String getVorname() {
 		return vorname;
@@ -90,4 +83,12 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		return vorname + " " + nachname;
 	}
 
+	public AbstractPersonEntity copyForMutation(AbstractPersonEntity mutation) {
+		super.copyForMutation(mutation);
+		mutation.setGeschlecht(this.getGeschlecht());
+		mutation.setVorname(this.getVorname());
+		mutation.setNachname(this.getNachname());
+		mutation.setGeburtsdatum(this.getGeburtsdatum());
+		return mutation;
+	}
 }

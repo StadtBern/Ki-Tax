@@ -39,7 +39,15 @@ export default class FallRS {
     }
 
     public findFall(fallID: string): IPromise<any> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(fallID))
+        return this.http.get(this.serviceURL + '/id/' + encodeURIComponent(fallID))
+            .then((response: any) => {
+                this.$log.debug('PARSING fall REST object ', response.data);
+                return this.ebeguRestUtil.parseFall(new TSFall(), response.data);
+            });
+    }
+
+    public findFallByCurrentBenutzerAsBesitzer(): IPromise<any> {
+        return this.http.get(this.serviceURL + '/currentbenutzer/')
             .then((response: any) => {
                 this.$log.debug('PARSING fall REST object ', response.data);
                 return this.ebeguRestUtil.parseFall(new TSFall(), response.data);

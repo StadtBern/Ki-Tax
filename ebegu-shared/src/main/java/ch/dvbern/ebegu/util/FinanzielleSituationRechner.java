@@ -369,7 +369,7 @@ public class FinanzielleSituationRechner {
 		return BigDecimal.ZERO;
 	}
 
-	private Einkommensverschlechterung getEinkommensverschlechterungGS(Gesuchsteller gesuchsteller, int basisJahrPlus) {
+	private Einkommensverschlechterung getEinkommensverschlechterungGS(GesuchstellerContainer gesuchsteller, int basisJahrPlus) {
 		if (gesuchsteller != null) {
 			Validate.notNull(gesuchsteller.getEinkommensverschlechterungContainer());
 			if (basisJahrPlus == 2) {
@@ -381,7 +381,7 @@ public class FinanzielleSituationRechner {
 		return null;
 	}
 
-	private FinanzielleSituation getFinanzielleSituationGS(Gesuchsteller gesuchsteller) {
+	private FinanzielleSituation getFinanzielleSituationGS(GesuchstellerContainer gesuchsteller) {
 		if (gesuchsteller != null && gesuchsteller.getFinanzielleSituationContainer() != null) {
 			return gesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationJA();
 		}

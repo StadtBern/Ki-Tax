@@ -20,12 +20,17 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 
 	private static final long serialVersionUID = -9032857320571372370L;
 
-	public Betreuungspensum() {
-	}
-
 	@NotNull
 	@Column(nullable = false)
 	private Boolean nichtEingetreten = false;
+
+
+	public Betreuungspensum() {
+	}
+
+	public Betreuungspensum(DateRange gueltigkeit) {
+		this.setGueltigkeit(gueltigkeit);
+	}
 
 	public Boolean getNichtEingetreten() {
 		return nichtEingetreten;
@@ -35,20 +40,17 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 		this.nichtEingetreten = nichtEingetreten;
 	}
 
-	public Betreuungspensum(DateRange gueltigkeit) {
-		this.setGueltigkeit(gueltigkeit);
-	}
-
-	public Betreuungspensum(@Nonnull Betreuungspensum toCopy) {
-		super(toCopy);
-		this.nichtEingetreten = toCopy.nichtEingetreten;
-	}
-
 	@Override
 	public int compareTo(Betreuungspensum o) {
 		CompareToBuilder builder = new CompareToBuilder();
 		builder.append(this.getGueltigkeit(), o.getGueltigkeit());
 		builder.append(this.getId(), o.getId());
 		return builder.toComparison();
+	}
+
+	public Betreuungspensum copyForMutation(Betreuungspensum mutation) {
+		super.copyForMutation(mutation);
+		mutation.setNichtEingetreten(this.getNichtEingetreten());
+		return mutation;
 	}
 }

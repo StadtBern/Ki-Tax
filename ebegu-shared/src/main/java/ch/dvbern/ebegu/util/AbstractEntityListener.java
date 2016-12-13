@@ -2,7 +2,11 @@ package ch.dvbern.ebegu.util;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.SequenceType;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.services.SequenceService;
@@ -26,6 +30,8 @@ public class AbstractEntityListener {
 	private FallService fallService;
 	private KindService kindService;
 	private SequenceService sequenceService;
+
+	private BenutzerService benutzerService;
 
 	@SuppressFBWarnings(value = "LI_LAZY_INIT_STATIC", justification = "Auch wenn das vlt. mehrfach initialisiert wird... das macht nix, solange am Ende was Richtiges drinsteht")
 	private static PrincipalBean getPrincipalBean() {
@@ -70,6 +76,11 @@ public class AbstractEntityListener {
 			Long nextFallNr = getSequenceService().createNumberTransactional(SequenceType.FALL_NUMMER, mandant);
 			fall.setFallNummer(nextFallNr);
 			fall.setMandant(mandant);
+			if (getPrincipalBean().isCallerInRole(UserRole.GESUCHSTELLER)) {
+				Optional<Benutzer> benutzer = getBenutzerService().findBenutzer(getPrincipalName());
+				fall.setBesitzer(benutzer.orElseThrow(() -> new EbeguRuntimeException("findBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, getPrincipalName())));
+
+			}
 		}
 		else if (entity instanceof Verfuegung) {
 			// Verfuegung darf erst erstellt werden, wenn die Betreuung verfuegt ist
@@ -105,6 +116,15 @@ public class AbstractEntityListener {
 			kindService = CDI.current().select(KindService.class).get();
 		}
 		return kindService;
+	}
+
+	private BenutzerService getBenutzerService() {
+		if (benutzerService == null) {
+			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection in Wildfly 10 nicht funktioniert.
+			//noinspection NonThreadSafeLazyInitialization
+			benutzerService = CDI.current().select(BenutzerService.class).get();
+		}
+		return benutzerService;
 	}
 
 	private SequenceService getSequenceService() {

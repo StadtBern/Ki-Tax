@@ -35,6 +35,8 @@ import IHttpBackendService = angular.IHttpBackendService;
 import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
 import TSAbwesenheit from '../models/TSAbwesenheit';
 import Moment = moment.Moment;
+import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
+import TestDataUtil from './TestDataUtil';
 import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
 
 describe('EbeguRestUtil', function () {
@@ -126,17 +128,19 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseGesuchsteller()', () => {
             it('should transfrom TSGesuchsteller to REST Obj and back', () => {
-                var myGesuchsteller = createGesuchsteller();
+                let myGesuchsteller: TSGesuchstellerContainer = createGesuchsteller();
                 TestDataUtil.setAbstractFieldsUndefined(myGesuchsteller);
-                myGesuchsteller.telefon = ''; // Ein leerer String im Telefon muss auch behandelt werden
-                let restGesuchsteller = ebeguRestUtil.gesuchstellerToRestObject({}, myGesuchsteller);
+                myGesuchsteller.gesuchstellerGS = undefined;
+                myGesuchsteller.gesuchstellerJA.telefon = ''; // Ein leerer String im Telefon muss auch behandelt werden
+                let restGesuchsteller = ebeguRestUtil.gesuchstellerContainerToRestObject({}, myGesuchsteller);
                 expect(restGesuchsteller).toBeDefined();
-                let transformedPers: TSGesuchsteller = ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), restGesuchsteller);
+                let transformedPers: TSGesuchstellerContainer = ebeguRestUtil.parseGesuchstellerContainer(
+                    new TSGesuchstellerContainer(), restGesuchsteller);
                 expect(transformedPers).toBeDefined();
-                expect(myGesuchsteller.nachname).toEqual(transformedPers.nachname);
+                expect(myGesuchsteller.gesuchstellerJA.nachname).toEqual(transformedPers.gesuchstellerJA.nachname);
 
-                expect(transformedPers.telefon).toBeUndefined(); // der leere String wurde in undefined umgewandelt deswegen muessen wir hier undefined zurueckbekommen
-                transformedPers.telefon = ''; // um das Objekt zu validieren, muessen wird das Telefon wieder auf '' setzen
+                expect(transformedPers.gesuchstellerJA.telefon).toBeUndefined(); // der leere String wurde in undefined umgewandelt deswegen muessen wir hier undefined zurueckbekommen
+                transformedPers.gesuchstellerJA.telefon = ''; // um das Objekt zu validieren, muessen wird das Telefon wieder auf '' setzen
 
                 expect(myGesuchsteller).toEqual(transformedPers);
 
@@ -167,7 +171,8 @@ describe('EbeguRestUtil', function () {
                 TestDataUtil.setAbstractFieldsUndefined(fall);
                 fall.nextNumberKind = 2;
                 myGesuch.fall = fall;
-                let gesuchsteller: TSGesuchsteller = createGesuchsteller();
+                let gesuchsteller: TSGesuchstellerContainer = createGesuchsteller();
+                gesuchsteller.gesuchstellerGS = undefined;
                 TestDataUtil.setAbstractFieldsUndefined(gesuchsteller);
                 myGesuch.gesuchsteller1 = gesuchsteller;
                 myGesuch.gesuchsteller2 = gesuchsteller;
@@ -228,6 +233,7 @@ describe('EbeguRestUtil', function () {
 
                 let transformedTraegerschaft = ebeguRestUtil.parseTraegerschaft(new TSTraegerschaft(), restTraegerschaft);
                 expect(transformedTraegerschaft).toBeDefined();
+                transformedTraegerschaft.synchronizedWithOpenIdm = false;
                 expect(transformedTraegerschaft).toEqual(myTraegerschaft);
             });
         });
@@ -243,6 +249,8 @@ describe('EbeguRestUtil', function () {
 
                 let transformedInstitution = ebeguRestUtil.parseInstitution(new TSInstitution(), restInstitution);
                 expect(transformedInstitution).toBeDefined();
+                transformedInstitution.synchronizedWithOpenIdm = false;
+                transformedInstitution.traegerschaft.synchronizedWithOpenIdm = false;
                 expect(transformedInstitution).toEqual(myInstitution);
             });
         });
@@ -326,6 +334,8 @@ describe('EbeguRestUtil', function () {
                 let transformedInstitutionStammdaten = ebeguRestUtil.parseInstitutionStammdaten(new TSInstitutionStammdaten(), restInstitutionStammdaten);
 
                 TestDataUtil.checkGueltigkeitAndSetIfSame(transformedInstitutionStammdaten, myInstitutionStammdaten);
+                transformedInstitutionStammdaten.institution.synchronizedWithOpenIdm = false;
+                transformedInstitutionStammdaten.institution.traegerschaft.synchronizedWithOpenIdm = false;
                 expect(transformedInstitutionStammdaten).toEqual(myInstitutionStammdaten);
             });
         });
@@ -445,8 +455,12 @@ describe('EbeguRestUtil', function () {
         return myInstitution;
     }
 
-    function createGesuchsteller(): TSGesuchsteller {
+    function createGesuchsteller(): TSGesuchstellerContainer {
+        let myGesuchstellerCont: TSGesuchstellerContainer = new TSGesuchstellerContainer();
+        TestDataUtil.setAbstractFieldsUndefined(myGesuchstellerCont);
+        myGesuchstellerCont.id = 'containerID';
         let myGesuchsteller = new TSGesuchsteller();
+        TestDataUtil.setAbstractFieldsUndefined(myGesuchsteller);
         myGesuchsteller.vorname = 'Til';
         myGesuchsteller.nachname = 'TestGesuchsteller';
         myGesuchsteller.id = 'mytestid';
@@ -456,10 +470,11 @@ describe('EbeguRestUtil', function () {
         myGesuchsteller.telefon = '+41 76 300 12 34';
         myGesuchsteller.mobile = '+41 76 300 12 34';
         myGesuchsteller.mail = 'Til.Testgesuchsteller@example.com';
-        myGesuchsteller.korrespondenzAdresse = undefined;
-        myGesuchsteller.adressen = [];
-        myGesuchsteller.finanzielleSituationContainer = undefined;
-        myGesuchsteller.einkommensverschlechterungContainer = undefined;
-        return myGesuchsteller;
+        myGesuchstellerCont.korrespondenzAdresse = undefined;
+        myGesuchstellerCont.adressen = [];
+        myGesuchstellerCont.finanzielleSituationContainer = undefined;
+        myGesuchstellerCont.einkommensverschlechterungContainer = undefined;
+        myGesuchstellerCont.gesuchstellerJA = myGesuchsteller;
+        return myGesuchstellerCont;
     }
 });

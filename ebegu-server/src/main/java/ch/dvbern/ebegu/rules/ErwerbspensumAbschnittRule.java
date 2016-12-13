@@ -41,7 +41,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 	 * @param gs2 handelt es sich um gesuchsteller1 -> false oder gesuchsteller2 -> true
 	 */
 	@Nonnull
-	private List<VerfuegungZeitabschnitt> getErwerbspensumAbschnittForGesuchsteller(@Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, boolean gs2) {
+	private List<VerfuegungZeitabschnitt> getErwerbspensumAbschnittForGesuchsteller(@Nonnull Gesuch gesuch, @Nonnull GesuchstellerContainer gesuchsteller, boolean gs2) {
 		List<VerfuegungZeitabschnitt> ewpAbschnitte = new ArrayList<>();
 		Set<ErwerbspensumContainer> ewpContainers = gesuchsteller.getErwerbspensenContainersNotEmpty();
 		for (ErwerbspensumContainer erwerbspensumContainer : ewpContainers) {

@@ -1,38 +1,45 @@
 version: '2'
 services:
-  database:
-    image: mariadb
+  EBEGU-MARIADB:
+    image: healthcheck/mariadb
     environment:
       - MYSQL_DATABASE=ebegu
       - MYSQL_USER=ebegu
       - MYSQL_PASSWORD=ebegu
       - MYSQL_ROOT_PASSWORD=ebegu
+    networks:
+      - ebegu-net
     command: ['--character-set-server=utf8', '--collation-server=utf8_unicode_ci' ,'--verbose']
-    volumes:
+    #volumes:
       # Just specify a path and let the Engine create a volume
-      - "/var/lib/mysql"
+      #- "/var/lib/mysql"
 
   database-wait:
     image: digit/wait-for-mysql
-    links:
-      - database:mysql
+    depends_on:
+         - EBEGU-MARIADB
+    networks:
+      - ebegu-net
 
-  api:
+  EBEGU-WILDFLY:
     image: docker.dvbern.ch:5000/stadt-bern/ebegu-wildfly
     depends_on:
          - database-wait
-    links:
-      - database:EBEGU-MARIADB
+    networks:
+      - ebegu-net
     ports:
       - 8080:8080
       - 8443:8443
       - 9990:9990
 
-  web:
+  EBEGU-WEB:
     image: docker.dvbern.ch:5000/stadt-bern/ebegu-ngnix
     depends_on:
-         - api
-    links:
-    - api:BEGU-WILDFLY
+         - EBEGU-WILDFLY
+    networks:
+    - ebegu-net
     ports:
      - 80:80
+
+networks:
+  ebegu-net:

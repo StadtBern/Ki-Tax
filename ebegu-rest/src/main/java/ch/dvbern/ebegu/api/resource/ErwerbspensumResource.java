@@ -5,7 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -69,7 +69,7 @@ public class ErwerbspensumResource {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
 		if (gesuch.isPresent()) {
-			Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
+			Optional<GesuchstellerContainer> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
 			if (gesuchsteller.isPresent()) {
 				ErwerbspensumContainer convertedEwpContainer = converter.erwerbspensumContainerToStoreableEntity(jaxErwerbspensumContainer);
 				convertedEwpContainer.setGesuchsteller(gesuchsteller.get());
@@ -121,8 +121,8 @@ public class ErwerbspensumResource {
 
 		Validate.notNull(gesuchstellerID.getId());
 		String gesEntityID = converter.toEntityId(gesuchstellerID);
-		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesEntityID);
-		Gesuchsteller gs = gesuchsteller.orElseThrow(
+		Optional<GesuchstellerContainer> gesuchsteller = gesuchstellerService.findGesuchsteller(gesEntityID);
+		GesuchstellerContainer gs = gesuchsteller.orElseThrow(
 			() -> new EbeguEntityNotFoundException("findErwerbspensumForGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
 				"GesuchstellerId invalid: " + gesEntityID));
 		Collection<ErwerbspensumContainer> pensen = erwerbspensumService.findErwerbspensenForGesuchsteller(gs);

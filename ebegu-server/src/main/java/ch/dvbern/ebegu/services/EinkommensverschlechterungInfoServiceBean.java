@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -98,7 +98,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		persistence.remove(EinkommensverschlechterungInfoContainer.class, propertyToRemove.get().getId());
 	}
 
-	private void removeEinkommensverschlechterungFromGesuchsteller(Gesuchsteller gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer convertedEkvi) {
+	private void removeEinkommensverschlechterungFromGesuchsteller(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer convertedEkvi) {
 		if (isNeededToRemoveEinkommensverschlechterung(gesuchsteller, oldData, convertedEkvi)) {
 			einkommensverschlechterungService.removeEinkommensverschlechterungContainer(gesuchsteller.getEinkommensverschlechterungContainer());
 			gesuchsteller.setEinkommensverschlechterungContainer(null);
@@ -113,7 +113,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 	 * @param newData
 	 * @return
 	 */
-	private boolean isNeededToRemoveEinkommensverschlechterung(Gesuchsteller gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer newData) {
+	private boolean isNeededToRemoveEinkommensverschlechterung(GesuchstellerContainer gesuchsteller, EinkommensverschlechterungInfoContainer oldData, EinkommensverschlechterungInfoContainer newData) {
 		return oldData != null && newData != null && gesuchsteller != null
 			&& oldData.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung() && !newData.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()
 			&& gesuchsteller.getEinkommensverschlechterungContainer() != null;

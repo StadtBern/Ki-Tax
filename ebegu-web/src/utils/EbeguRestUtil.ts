@@ -54,6 +54,8 @@ import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
 import TSAbwesenheit from '../models/TSAbwesenheit';
 import TSMahnung from '../models/TSMahnung';
 import TSFinanzModel from '../models/TSFinanzModel';
+import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
+import TSAdresseContainer from '../models/TSAdresseContainer';
 import TSEinkommensverschlechterungInfoContainer from '../models/TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
 
@@ -363,22 +365,6 @@ export default class EbeguRestUtil {
             restGesuchsteller.mobile = gesuchsteller.mobile || undefined;
             restGesuchsteller.telefon = gesuchsteller.telefon || undefined;
             restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland || undefined;
-            restGesuchsteller.adressen = this.adressenListToRestObject(gesuchsteller.adressen);
-            restGesuchsteller.alternativeAdresse = this.adresseToRestObject({}, gesuchsteller.korrespondenzAdresse);
-            if (gesuchsteller.finanzielleSituationContainer) {
-                restGesuchsteller.finanzielleSituationContainer = this.finanzielleSituationContainerToRestObject({}, gesuchsteller.finanzielleSituationContainer);
-            }
-            if (gesuchsteller.einkommensverschlechterungContainer) {
-                restGesuchsteller.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerToRestObject({}, gesuchsteller.einkommensverschlechterungContainer);
-            }
-            if (gesuchsteller.erwerbspensenContainer) {
-                let erwPensenCont: Array<any> = [];
-                for (let i = 0; i < gesuchsteller.erwerbspensenContainer.length; i++) {
-                    erwPensenCont.push(this.erwerbspensumContainerToRestObject({}, gesuchsteller.erwerbspensenContainer[i]));
-                }
-                restGesuchsteller.erwerbspensenContainers = erwPensenCont;
-
-            }
             restGesuchsteller.diplomatenstatus = gesuchsteller.diplomatenstatus;
             return restGesuchsteller;
         }
@@ -392,12 +378,6 @@ export default class EbeguRestUtil {
             gesuchstellerTS.mobile = gesuchstellerFromServer.mobile;
             gesuchstellerTS.telefon = gesuchstellerFromServer.telefon;
             gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
-            gesuchstellerTS.adressen = this.parseAdressenList(gesuchstellerFromServer.adressen);
-            gesuchstellerTS.korrespondenzAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.alternativeAdresse);
-            gesuchstellerTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), gesuchstellerFromServer.finanzielleSituationContainer);
-            gesuchstellerTS.einkommensverschlechterungContainer = this.parseEinkommensverschlechterungContainer(
-                new TSEinkommensverschlechterungContainer(), gesuchstellerFromServer.einkommensverschlechterungContainer);
-            gesuchstellerTS.erwerbspensenContainer = this.parseErwerbspensenContainers(gesuchstellerFromServer.erwerbspensenContainers);
             gesuchstellerTS.diplomatenstatus = gesuchstellerFromServer.diplomatenstatus;
             return gesuchstellerTS;
         }
@@ -597,8 +577,8 @@ export default class EbeguRestUtil {
     public gesuchToRestObject(restGesuch: any, gesuch: TSGesuch): TSGesuch {
         this.abstractAntragEntityToRestObject(restGesuch, gesuch);
         restGesuch.einkommensverschlechterungInfoContainer = this.einkommensverschlechterungInfoContainerToRestObject({}, gesuch.einkommensverschlechterungInfoContainer);
-        restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
-        restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
+        restGesuch.gesuchsteller1 = this.gesuchstellerContainerToRestObject({}, gesuch.gesuchsteller1);
+        restGesuch.gesuchsteller2 = this.gesuchstellerContainerToRestObject({}, gesuch.gesuchsteller2);
         restGesuch.familiensituationContainer = this.familiensituationContainerToRestObject({}, gesuch.familiensituationContainer);
         restGesuch.bemerkungen = gesuch.bemerkungen;
         restGesuch.laufnummer = gesuch.laufnummer;
@@ -609,8 +589,8 @@ export default class EbeguRestUtil {
         if (gesuchFromServer) {
             this.parseAbstractAntragEntity(gesuchTS, gesuchFromServer);
             gesuchTS.einkommensverschlechterungInfoContainer = this.parseEinkommensverschlechterungInfoContainer(new TSEinkommensverschlechterungInfoContainer(), gesuchFromServer.einkommensverschlechterungInfoContainer);
-            gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
-            gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
+            gesuchTS.gesuchsteller1 = this.parseGesuchstellerContainer(new TSGesuchstellerContainer(), gesuchFromServer.gesuchsteller1);
+            gesuchTS.gesuchsteller2 = this.parseGesuchstellerContainer(new TSGesuchstellerContainer(), gesuchFromServer.gesuchsteller2);
             gesuchTS.familiensituationContainer = this.parseFamiliensituationContainer(new TSFamiliensituationContainer(), gesuchFromServer.familiensituationContainer);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
@@ -694,6 +674,7 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(traegerschaftTS, traegerschaftFromServer);
             traegerschaftTS.name = traegerschaftFromServer.name;
             traegerschaftTS.active = traegerschaftFromServer.active;
+            traegerschaftTS.synchronizedWithOpenIdm = traegerschaftFromServer.synchronizedWithOpenIdm;
             return traegerschaftTS;
         }
         return undefined;
@@ -716,6 +697,7 @@ export default class EbeguRestUtil {
             institutionTS.name = institutionFromServer.name;
             institutionTS.mandant = this.parseMandant(new TSMandant(), institutionFromServer.mandant);
             institutionTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), institutionFromServer.traegerschaft);
+            institutionTS.synchronizedWithOpenIdm = institutionFromServer.synchronizedWithOpenIdm;
             return institutionTS;
         }
         return undefined;
@@ -1696,5 +1678,92 @@ export default class EbeguRestUtil {
         }
         return undefined;
 
+    }
+
+    public gesuchstellerContainerToRestObject(restGSCont: any, gesuchstellerCont: TSGesuchstellerContainer): any {
+        if (gesuchstellerCont) {
+            this.abstractEntityToRestObject(restGSCont, gesuchstellerCont);
+            restGSCont.adressen = this.adressenContainerListToRestObject(gesuchstellerCont.adressen);
+            restGSCont.alternativeAdresse = this.adresseContainerToRestObject({}, gesuchstellerCont.korrespondenzAdresse);
+            if (gesuchstellerCont.gesuchstellerGS) {
+                restGSCont.gesuchstellerGS = this.gesuchstellerToRestObject({}, gesuchstellerCont.gesuchstellerGS);
+            }
+            if (gesuchstellerCont.gesuchstellerJA) {
+                restGSCont.gesuchstellerJA = this.gesuchstellerToRestObject({}, gesuchstellerCont.gesuchstellerJA);
+            }
+            if (gesuchstellerCont.finanzielleSituationContainer) {
+                restGSCont.finanzielleSituationContainer = this.finanzielleSituationContainerToRestObject({}, gesuchstellerCont.finanzielleSituationContainer);
+            }
+            if (gesuchstellerCont.einkommensverschlechterungContainer) {
+                restGSCont.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerToRestObject({}, gesuchstellerCont.einkommensverschlechterungContainer);
+            }
+            if (gesuchstellerCont.erwerbspensenContainer) {
+                let erwPensenCont: Array<any> = [];
+                for (var i = 0; i < gesuchstellerCont.erwerbspensenContainer.length; i++) {
+                    erwPensenCont.push(this.erwerbspensumContainerToRestObject({}, gesuchstellerCont.erwerbspensenContainer[i]));
+                }
+                restGSCont.erwerbspensenContainers = erwPensenCont;
+            }
+            return restGSCont;
+        }
+        return undefined;
+    }
+
+    public parseGesuchstellerContainer(gesuchstellerContTS: TSGesuchstellerContainer, gesuchstellerContFromServer: any) {
+        if (gesuchstellerContFromServer) {
+            this.parseAbstractEntity(gesuchstellerContTS, gesuchstellerContFromServer);
+            gesuchstellerContTS.gesuchstellerJA = this.parseGesuchsteller(new TSGesuchsteller(), gesuchstellerContFromServer.gesuchstellerJA);
+            gesuchstellerContTS.gesuchstellerGS = this.parseGesuchsteller(new TSGesuchsteller(), gesuchstellerContFromServer.gesuchstellerGS);
+            gesuchstellerContTS.adressen = this.parseAdressenContainerList(gesuchstellerContFromServer.adressen);
+            gesuchstellerContTS.korrespondenzAdresse = this.parseAdresseContainer(
+                new TSAdresseContainer(), gesuchstellerContFromServer.alternativeAdresse);
+            gesuchstellerContTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(
+                new TSFinanzielleSituationContainer(), gesuchstellerContFromServer.finanzielleSituationContainer);
+            gesuchstellerContTS.einkommensverschlechterungContainer = this.parseEinkommensverschlechterungContainer(
+                new TSEinkommensverschlechterungContainer(), gesuchstellerContFromServer.einkommensverschlechterungContainer);
+            gesuchstellerContTS.erwerbspensenContainer = this.parseErwerbspensenContainers(gesuchstellerContFromServer.erwerbspensenContainers);
+            return gesuchstellerContTS;
+        }
+        return undefined;
+    }
+
+    private adressenContainerListToRestObject(adressen: Array<TSAdresseContainer>) {
+        let list: any[] = [];
+        if (adressen) {
+            for (var i = 0; i < adressen.length; i++) {
+                list[i] = this.adresseContainerToRestObject({}, adressen[i]);
+            }
+        }
+        return list;
+    }
+
+    private adresseContainerToRestObject(restAddresseCont: any, adresseContTS: TSAdresseContainer): any {
+        if (adresseContTS) {
+            this.abstractEntityToRestObject(restAddresseCont, adresseContTS);
+            restAddresseCont.adresseGS = this.adresseToRestObject({}, adresseContTS.adresseGS);
+            restAddresseCont.adresseJA = this.adresseToRestObject({}, adresseContTS.adresseJA);
+            return restAddresseCont;
+        }
+        return undefined;
+    }
+
+    private parseAdressenContainerList(adressen: any): Array<TSAdresseContainer> {
+        let adressenList: Array<TSAdresseContainer> = [];
+        if (adressen) {
+            for (let i = 0; i < adressen.length; i++) {
+                adressenList.push(this.parseAdresseContainer(new TSAdresseContainer(), adressen[i]));
+            }
+        }
+        return adressenList;
+    }
+
+    private parseAdresseContainer(adresseContainerTS: TSAdresseContainer, adresseFromServer: any): TSAdresseContainer {
+        if (adresseFromServer) {
+            this.parseAbstractEntity(adresseContainerTS, adresseFromServer);
+            adresseContainerTS.adresseGS = this.parseAdresse(new TSAdresse(), adresseFromServer.adresseGS);
+            adresseContainerTS.adresseJA = this.parseAdresse(new TSAdresse(), adresseFromServer.adresseJA);
+            return adresseContainerTS;
+        }
+        return undefined;
     }
 }

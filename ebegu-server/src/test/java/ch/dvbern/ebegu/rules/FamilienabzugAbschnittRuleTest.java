@@ -339,7 +339,9 @@ public class FamilienabzugAbschnittRuleTest {
 	@Nonnull
 	private Gesuch createGesuchWithOneGS() {
 		Gesuch gesuch = new Gesuch();
-		gesuch.setGesuchsteller1(new Gesuchsteller());
+		GesuchstellerContainer gesuchsteller = new GesuchstellerContainer();
+		gesuchsteller.setGesuchstellerJA(new Gesuchsteller());
+		gesuch.setGesuchsteller1(gesuchsteller);
 		Familiensituation famSit = new Familiensituation();
 		famSit.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		gesuch.setFamiliensituationContainer(new FamiliensituationContainer());
@@ -350,7 +352,8 @@ public class FamilienabzugAbschnittRuleTest {
 	@Nonnull
 	private Gesuch createGesuchWithTwoGesuchsteller() {
 		Gesuch gesuch = new Gesuch();
-		Gesuchsteller gesuchsteller = new Gesuchsteller();
+		GesuchstellerContainer gesuchsteller = new GesuchstellerContainer();
+		gesuchsteller.setGesuchstellerJA(new Gesuchsteller());
 		gesuch.setGesuchsteller1(gesuchsteller);
 		gesuch.setGesuchsteller2(gesuchsteller);
 		Familiensituation famSit = new Familiensituation();

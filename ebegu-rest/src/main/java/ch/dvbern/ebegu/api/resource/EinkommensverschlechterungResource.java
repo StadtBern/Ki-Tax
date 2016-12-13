@@ -74,7 +74,7 @@ public class EinkommensverschlechterungResource {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
 		if (gesuch.isPresent()) {
-			Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
+			Optional<GesuchstellerContainer> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
 			if (gesuchsteller.isPresent()) {
 				EinkommensverschlechterungContainer convertedFinSitCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
 				convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
@@ -155,25 +155,29 @@ public class EinkommensverschlechterungResource {
 		gesuch.initFamiliensituationContainer();
 		gesuch.extractFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS1() != null) {
-			gesuch.setGesuchsteller1(new Gesuchsteller());
+			gesuch.setGesuchsteller1(new GesuchstellerContainer());
+			gesuch.getGesuchsteller1().setGesuchstellerJA(new Gesuchsteller());
 			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(
 				converter.finanzielleSituationContainerToStorableEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1()));
 		}
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS2() != null) {
-			gesuch.setGesuchsteller2(new Gesuchsteller());
+			gesuch.setGesuchsteller2(new GesuchstellerContainer());
+			gesuch.getGesuchsteller2().setGesuchstellerJA(new Gesuchsteller());
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(
 				converter.finanzielleSituationContainerToStorableEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2()));
 		}
 		if (jaxFinSitModel.getEinkommensverschlechterungContainerGS1() != null) {
 			if(gesuch.getGesuchsteller1() ==null) {
-				gesuch.setGesuchsteller1(new Gesuchsteller());
+				gesuch.setGesuchsteller1(new GesuchstellerContainer());
+				gesuch.getGesuchsteller1().setGesuchstellerJA(new Gesuchsteller());
 			}
 			gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(
 				converter.einkommensverschlechterungContainerToStorableEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS1()));
 		}
 		if (jaxFinSitModel.getEinkommensverschlechterungContainerGS2() != null) {
 			if(gesuch.getGesuchsteller2() ==null) {
-				gesuch.setGesuchsteller2(new Gesuchsteller());
+				gesuch.setGesuchsteller2(new GesuchstellerContainer());
+				gesuch.getGesuchsteller2().setGesuchstellerJA(new Gesuchsteller());
 			}
 			gesuch.getGesuchsteller2().setEinkommensverschlechterungContainer(
 				converter.einkommensverschlechterungContainerToStorableEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS2()));

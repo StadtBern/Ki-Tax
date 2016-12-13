@@ -39,6 +39,13 @@ public final class TestDataUtil {
 	private TestDataUtil() {
 	}
 
+	public static GesuchstellerAdresseContainer createDefaultGesuchstellerAdresseContainer(GesuchstellerContainer gsContainer) {
+		final GesuchstellerAdresseContainer gsAdressCont = new GesuchstellerAdresseContainer();
+		gsAdressCont.setGesuchstellerContainer(gsContainer);
+		gsAdressCont.setGesuchstellerAdresseJA(createDefaultGesuchstellerAdresse());
+		return gsAdressCont;
+	}
+
 	public static GesuchstellerAdresse createDefaultGesuchstellerAdresse() {
 		GesuchstellerAdresse gesuchstellerAdresse = new GesuchstellerAdresse();
 		gesuchstellerAdresse.setStrasse("Nussbaumstrasse");
@@ -62,6 +69,13 @@ public final class TestDataUtil {
 		return adresse;
 	}
 
+	public static GesuchstellerContainer createDefaultGesuchstellerContainer(Gesuch gesuch) {
+		final GesuchstellerContainer gesuchstellerContainer = new GesuchstellerContainer();
+		gesuchstellerContainer.addAdresse(createDefaultGesuchstellerAdresseContainer(gesuchstellerContainer));
+		gesuchstellerContainer.setGesuchstellerJA(createDefaultGesuchsteller());
+		return gesuchstellerContainer;
+	}
+
 	public static Gesuchsteller createDefaultGesuchsteller() {
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1984, 12, 12));
@@ -72,7 +86,6 @@ public final class TestDataUtil {
 		gesuchsteller.setMobile("076 309 30 58");
 		gesuchsteller.setTelefon("031 378 24 24");
 		gesuchsteller.setZpvNumber("0761234567897");
-		gesuchsteller.addAdresse(createDefaultGesuchstellerAdresse());
 		return gesuchsteller;
 	}
 
@@ -414,8 +427,9 @@ public final class TestDataUtil {
 		return gesuch;
 	}
 
-	public static Gesuchsteller createDefaultGesuchstellerWithEinkommensverschlechterung() {
-		final Gesuchsteller gesuchsteller = createDefaultGesuchsteller();
+	public static GesuchstellerContainer createDefaultGesuchstellerWithEinkommensverschlechterung() {
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = createDefaultGesuchstellerContainer(gesuch);
 		gesuchsteller.setEinkommensverschlechterungContainer(createDefaultEinkommensverschlechterungsContainer());
 		return gesuchsteller;
 	}
@@ -431,6 +445,7 @@ public final class TestDataUtil {
 		return user;
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	public static Betreuung createGesuchWithBetreuungspensum(boolean zweiGesuchsteller) {
 		Gesuch gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
@@ -441,11 +456,11 @@ public final class TestDataUtil {
 		} else {
 			gesuch.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		}
-		gesuch.setGesuchsteller1(new Gesuchsteller());
+		gesuch.setGesuchsteller1(new GesuchstellerContainer());
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		if (zweiGesuchsteller) {
-			gesuch.setGesuchsteller2(new Gesuchsteller());
+			gesuch.setGesuchsteller2(new GesuchstellerContainer());
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 			gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		}
@@ -483,7 +498,7 @@ public final class TestDataUtil {
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(einkommen);
 	}
 
-	public static void setEinkommensverschlechterung(Gesuch gesuch, Gesuchsteller gesuchsteller, BigDecimal einkommen, boolean basisJahrPlus1) {
+	public static void setEinkommensverschlechterung(Gesuch gesuch, GesuchstellerContainer gesuchsteller, BigDecimal einkommen, boolean basisJahrPlus1) {
 		if (gesuchsteller.getEinkommensverschlechterungContainer() == null) {
 			gesuchsteller.setEinkommensverschlechterungContainer(new EinkommensverschlechterungContainer());
 		}
@@ -605,7 +620,7 @@ public final class TestDataUtil {
 
 		gesuch.getFall().setVerantwortlicher(verantwortlicher);
 		persistence.persist(gesuch.getFall());
-		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
 		persistence.persist(gesuch.getGesuchsperiode());
 
 		Set<KindContainer> kindContainers = new TreeSet<>();
@@ -734,18 +749,18 @@ public final class TestDataUtil {
 
 
 	public static void createDefaultAdressenForGS(final Gesuch gesuch, final boolean gs2) {
-		List<GesuchstellerAdresse> adressen1 = new ArrayList<>();
-		final GesuchstellerAdresse adresseGS1 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresseGS1.setNichtInGemeinde(false);
-		adresseGS1.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		List<GesuchstellerAdresseContainer> adressen1 = new ArrayList<>();
+		final GesuchstellerAdresseContainer adresseGS1 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller1());
+		adresseGS1.getGesuchstellerAdresseJA().setNichtInGemeinde(false);
+		adresseGS1.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		adressen1.add(adresseGS1);
 		gesuch.getGesuchsteller1().setAdressen(adressen1);
 
 		if (gs2) {
-			List<GesuchstellerAdresse> adressen2 = new ArrayList<>();
-			final GesuchstellerAdresse adresseGS2 = TestDataUtil.createDefaultGesuchstellerAdresse();
-			adresseGS2.setNichtInGemeinde(false);
-			adresseGS2.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+			List<GesuchstellerAdresseContainer> adressen2 = new ArrayList<>();
+			final GesuchstellerAdresseContainer adresseGS2 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller2());
+			adresseGS2.getGesuchstellerAdresseJA().setNichtInGemeinde(false);
+			adresseGS2.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 			adressen2.add(adresseGS2);
 			gesuch.getGesuchsteller2().setAdressen(adressen2);
 		}

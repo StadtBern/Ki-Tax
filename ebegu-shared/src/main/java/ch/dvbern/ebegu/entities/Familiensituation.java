@@ -40,7 +40,6 @@ public class Familiensituation extends AbstractEntity {
 	}
 
 	public Familiensituation(Familiensituation that) {
-		this.setVorgaengerId(that.getId());
 		this.familienstatus = that.familienstatus;
 		this.gemeinsameSteuererklaerung = that.gemeinsameSteuererklaerung;
 		this.gesuchstellerKardinalitaet = that.gesuchstellerKardinalitaet;
@@ -95,5 +94,14 @@ public class Familiensituation extends AbstractEntity {
 			}
 		}
 		return false;
+	}
+
+	public Familiensituation copyForMutation(Familiensituation mutation) {
+		super.copyForMutation(mutation);
+		mutation.setFamilienstatus(this.getFamilienstatus());
+		mutation.setGemeinsameSteuererklaerung(this.getGemeinsameSteuererklaerung());
+		mutation.setGesuchstellerKardinalitaet(this.gesuchstellerKardinalitaet);
+		mutation.setAenderungPer(this.aenderungPer);
+		return mutation;
 	}
 }

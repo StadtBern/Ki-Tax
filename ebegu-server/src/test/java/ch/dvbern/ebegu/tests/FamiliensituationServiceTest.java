@@ -85,7 +85,7 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		gesuch.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfo.get());
 
 		Optional<FamiliensituationContainer> familiensituation = createFamiliensituationContainer();
-		final FamiliensituationContainer newFamiliensituation = new FamiliensituationContainer(familiensituation.get(),false);
+		final FamiliensituationContainer newFamiliensituation = familiensituation.get().copyForMutation(new FamiliensituationContainer(),false);
 		newFamiliensituation.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		newFamiliensituation.extractFamiliensituation().setGemeinsameSteuererklaerung(null);
 

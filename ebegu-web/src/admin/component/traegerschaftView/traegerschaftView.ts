@@ -4,10 +4,15 @@ import {TSTraegerschaft} from '../../../models/TSTraegerschaft';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TraegerschaftRS} from '../../../core/service/traegerschaftRS.rest';
+import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
 let template = require('./traegerschaftView.html');
 let style = require('./traegerschaftView.less');
+let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
+let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 
 export class TraegerschaftViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -25,9 +30,9 @@ export class TraegerschaftViewController {
     traegerschaften: TSTraegerschaft[];
     newTraegerschaft: TSTraegerschaft = null;
 
-    static $inject = ['TraegerschaftRS', 'ErrorService'];
+    static $inject = ['TraegerschaftRS', 'ErrorService', 'DvDialog'];
     /* @ngInject */
-    constructor(TraegerschaftRS: TraegerschaftRS, private errorService: ErrorService) {
+    constructor(TraegerschaftRS: TraegerschaftRS, private errorService: ErrorService, private dvDialog: DvDialog) {
         this.traegerschaftRS = TraegerschaftRS;
     }
 
@@ -58,12 +63,25 @@ export class TraegerschaftViewController {
     saveTraegerschaft(form: IFormController): void {
         if (form.$valid) {
             this.errorService.clearAll();
-
-            this.traegerschaftRS.createTraegerschaft(this.newTraegerschaft).then((Traegerschaft: TSTraegerschaft) => {
-                this.traegerschaften.push(Traegerschaft);
+            this.traegerschaftRS.createTraegerschaft(this.newTraegerschaft).then((traegerschaft: TSTraegerschaft) => {
+                this.traegerschaften.push(traegerschaft);
                 this.newTraegerschaft = null;
+                if (!traegerschaft.synchronizedWithOpenIdm) {
+                    this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                        title: 'TRAEGERSCHAFT_CREATE_SYNCHRONIZE'
+                    });
+                }
             });
         }
+    }
+
+    private syncWithOpenIdm(): void {
+        this.traegerschaftRS.synchronizeTraegerschaften().then((respone) => {
+            let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
+            return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
+                title: returnString
+            });
+        });
     }
 
 }

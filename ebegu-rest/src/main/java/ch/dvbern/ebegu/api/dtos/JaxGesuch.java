@@ -18,10 +18,10 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private static final long serialVersionUID = -1217019901364130097L;
 
 	@Nullable
-	private JaxGesuchsteller gesuchsteller1;
+	private JaxGesuchstellerContainer gesuchsteller1;
 
 	@Nullable
-	private JaxGesuchsteller gesuchsteller2;
+	private JaxGesuchstellerContainer gesuchsteller2;
 
 	@NotNull
 	private Set<JaxKindContainer> kindContainers = new LinkedHashSet<>();
@@ -44,20 +44,20 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	}
 
 	@Nullable
-	public JaxGesuchsteller getGesuchsteller1() {
+	public JaxGesuchstellerContainer getGesuchsteller1() {
 		return gesuchsteller1;
 	}
 
-	public void setGesuchsteller1(@Nullable final JaxGesuchsteller gesuchsteller1) {
+	public void setGesuchsteller1(@Nullable final JaxGesuchstellerContainer gesuchsteller1) {
 		this.gesuchsteller1 = gesuchsteller1;
 	}
 
 	@Nullable
-	public JaxGesuchsteller getGesuchsteller2() {
+	public JaxGesuchstellerContainer getGesuchsteller2() {
 		return gesuchsteller2;
 	}
 
-	public void setGesuchsteller2(@Nullable final JaxGesuchsteller gesuchsteller2) {
+	public void setGesuchsteller2(@Nullable final JaxGesuchstellerContainer gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 

@@ -89,14 +89,14 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	@Override
 	public String getGesuchsteller1Name() {
 
-		return gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getFullName() : null;
+		return gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().extractFullName() : null;
 	}
 
 	@Override
 	public String getGesuchsteller2Name() {
 
 		//noinspection ConstantConditions
-		return isExistGesuchsteller2() ? gesuch.getGesuchsteller2().getFullName() : null;
+		return isExistGesuchsteller2() ? gesuch.getGesuchsteller2().extractFullName() : null;
 	}
 
 	@Override

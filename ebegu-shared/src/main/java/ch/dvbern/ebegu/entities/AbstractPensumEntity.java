@@ -28,10 +28,6 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 	public AbstractPensumEntity() {
 	}
 
-	public AbstractPensumEntity(@Nonnull AbstractPensumEntity toCopy) {
-		super(toCopy);
-		this.pensum = toCopy.pensum;
-	}
 
 	@Nonnull
 	public Integer getPensum() {
@@ -51,5 +47,11 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 			return false;
 		}
 		return super.isSame(otherAbstDateRangedEntity) && Objects.equals(this.getPensum(), otherAbstDateRangedEntity.getPensum());
+	}
+
+	public AbstractPensumEntity copyForMutation(AbstractPensumEntity mutation) {
+		super.copyForMutation(mutation);
+		mutation.setPensum(this.getPensum());
+		return mutation;
 	}
 }

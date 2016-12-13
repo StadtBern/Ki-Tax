@@ -35,7 +35,7 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAtLeastFreigegeben} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
@@ -52,6 +52,8 @@ import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp'
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import TSEinkommensverschlechterungInfoContainer from '../../models/TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from '../../models/TSFamiliensituationContainer';
+import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
+import TSAdresseContainer from '../../models/TSAdresseContainer';
 import IQService = angular.IQService;
 
 export default class GesuchModelManager {
@@ -261,7 +263,7 @@ export default class GesuchModelManager {
     /**
      * Speichert den StammdatenToWorkWith.
      */
-    public updateGesuchsteller(umzug: boolean): IPromise<TSGesuchsteller> {
+    public updateGesuchsteller(umzug: boolean): IPromise<TSGesuchstellerContainer> {
         // Da showUmzug nicht im Server gespeichert wird, muessen wir den alten Wert kopieren und nach der Aktualisierung wiedersetzen
         let tempShowUmzug: boolean = this.getStammdatenToWorkWith().showUmzug;
         return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber, umzug)
@@ -353,7 +355,7 @@ export default class GesuchModelManager {
         return this.activeGesuchsperiodenList;
     }
 
-    public getStammdatenToWorkWith(): TSGesuchsteller {
+    public getStammdatenToWorkWith(): TSGesuchstellerContainer {
         if (this.gesuchstellerNumber === 2) {
             return this.gesuch.gesuchsteller2;
         } else {
@@ -373,7 +375,7 @@ export default class GesuchModelManager {
         }
     }
 
-    public setStammdatenToWorkWith(gesuchsteller: TSGesuchsteller): TSGesuchsteller {
+    public setStammdatenToWorkWith(gesuchsteller: TSGesuchstellerContainer): TSGesuchstellerContainer {
         if (this.gesuchstellerNumber === 1) {
             return this.gesuch.gesuchsteller1 = gesuchsteller;
         } else {
@@ -383,7 +385,18 @@ export default class GesuchModelManager {
 
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
-            this.setStammdatenToWorkWith(new TSGesuchsteller());
+            let gesuchsteller: TSGesuchsteller;
+            // die daten die wir aus iam importiert haben werden bei gs1 abgefuellt
+            if (this.gesuchstellerNumber === 1 && this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
+                let principal :TSUser = this.authServiceRS.getPrincipal();
+                let name: string = principal ? principal.nachname : undefined;
+                let vorname: string = principal ? principal.vorname : undefined;
+                let email: string = principal ? principal.email : undefined;
+                gesuchsteller = new TSGesuchsteller(vorname, name, undefined, undefined, email);
+            } else{
+                gesuchsteller = new TSGesuchsteller();
+            }
+            this.setStammdatenToWorkWith(new TSGesuchstellerContainer(gesuchsteller));
             this.getStammdatenToWorkWith().adressen = this.initWohnAdresse();
         }
     }
@@ -408,25 +421,65 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Erstellt ein Gesuch mit der angegebenen Eingangsart und Gesuchsperiode
+     * @param forced
+     * @param eingangsart
+     * @param gesuchsperiodeId
+     * @param fallId
+     */
+    public initGesuchWithEingangsart(forced: boolean, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
+        this.initGesuch(forced);
+        if (gesuchsperiodeId) {
+            this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
+                this.gesuch.gesuchsperiode = periode;
+            });
+        }
+        if (fallId) {
+            this.fallRS.findFall(fallId).then(foundFall => {
+                this.gesuch.fall = foundFall;
+            });
+        }
+        if (forced) {
+            if (TSEingangsart.ONLINE === eingangsart) {
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+            } else {
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+            }
+        }
+        this.gesuch.eingangsart = eingangsart;
+    }
+
+    /**
      * Diese Methode erstellt eine Fake-Mutation als gesuch fuer das GesuchModelManager. Die Mutation ist noch leer und hat
      * das ID des Gesuchs aus dem sie erstellt wurde. Wenn der Benutzer auf speichern klickt, wird der Service "antragMutieren"
      * mit dem ID des alten Gesuchs aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
      * Daten ueberschreiben
      * @param gesuchID
+     * @param eingangsart
+     * @param gesuchsperiodeId
+     * @param fallId
      */
-    public initMutation(gesuchID: string): void {
-        let gesuchsperiode: TSGesuchsperiode = this.gesuch.gesuchsperiode;
+    public initMutation(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string): void {
+        this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
+            this.gesuch.gesuchsperiode = periode;
+        });
         this.initAntrag(TSAntragTyp.MUTATION);
+        this.fallRS.findFall(fallId).then(foundFall => {
+            this.gesuch.fall = foundFall;
+        });
         this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
-        this.gesuch.gesuchsperiode = gesuchsperiode;
+        if (TSEingangsart.ONLINE === eingangsart) {
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+        } else {
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+        }
+        this.gesuch.eingangsart = eingangsart;
     }
 
     private initAntrag(antragTyp: TSAntragTyp): void {
         this.gesuch = new TSGesuch();
         this.gesuch.fall = new TSFall();
         this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
-        this.gesuch.eingangsart = TSEingangsart.PAPIER; //TODO (team) je nach dem anpassen
-        this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
         this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();
         this.setCurrentUserAsFallVerantwortlicher();
@@ -448,14 +501,6 @@ export default class GesuchModelManager {
     public initBetreuung(): void {
         if (!this.getKindToWorkWith().betreuungen) {
             this.getKindToWorkWith().betreuungen = [];
-        }
-    }
-
-    public setKorrespondenzAdresse(showKorrespondadr: boolean): void {
-        if (showKorrespondadr) {
-            this.getStammdatenToWorkWith().korrespondenzAdresse = this.initKorrespondenzAdresse();
-        } else {
-            this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
         }
     }
 
@@ -508,18 +553,13 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-    private initWohnAdresse(): Array<TSAdresse> {
+    private initWohnAdresse(): Array<TSAdresseContainer> {
+        let wohnAdresseContanier: TSAdresseContainer = new TSAdresseContainer();
         let wohnAdresse = new TSAdresse();
-        wohnAdresse.showDatumVon = false;
         wohnAdresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        return [wohnAdresse];
-    }
-
-    private initKorrespondenzAdresse(): TSAdresse {
-        let korrAdr = new TSAdresse();
-        korrAdr.showDatumVon = false;
-        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
-        return korrAdr;
+        wohnAdresseContanier.showDatumVon = false;
+        wohnAdresseContanier.adresseJA = wohnAdresse;
+        return [wohnAdresseContanier];
     }
 
     public getKinderList(): Array<TSKindContainer> {
@@ -603,7 +643,6 @@ export default class GesuchModelManager {
             return this.gesuch.fall = fallResponse;
         });
     }
-
 
     public getKindToWorkWith(): TSKindContainer {
         if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindNumber) {
@@ -745,13 +784,13 @@ export default class GesuchModelManager {
         return -1;
     }
 
+
     public removeBetreuung(): IPromise<void> {
         return this.betreuungRS.removeBetreuung(this.getBetreuungToWorkWith().id, this.gesuch.id).then((responseBetreuung: any) => {
             this.removeBetreuungFromKind();
             this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id);
         });
     }
-
 
     public removeErwerbspensum(pensum: TSErwerbspensumContainer): void {
         let erwerbspensenOfCurrentGS: Array<TSErwerbspensumContainer>;
@@ -774,12 +813,12 @@ export default class GesuchModelManager {
     }
 
     findIndexOfErwerbspensum(gesuchstellerNumber: number, pensum: any): number {
-        let gesuchsteller: TSGesuchsteller;
+        let gesuchsteller: TSGesuchstellerContainer;
         gesuchsteller = gesuchstellerNumber === 2 ? this.gesuch.gesuchsteller2 : this.gesuch.gesuchsteller1;
         return gesuchsteller.erwerbspensenContainer.indexOf(pensum);
     }
 
-    saveErwerbspensum(gesuchsteller: TSGesuchsteller, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
+    saveErwerbspensum(gesuchsteller: TSGesuchstellerContainer, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
         if (erwerbspensum.id) {
             return this.erwerbspensumRS.saveErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((response: TSErwerbspensumContainer) => {
@@ -804,7 +843,7 @@ export default class GesuchModelManager {
      * Takes current user and sets it as the verantwortlicher of Fall
      */
     private setCurrentUserAsFallVerantwortlicher() {
-        if (this.authServiceRS) {
+        if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
             this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
         }
     }
@@ -1018,7 +1057,19 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return this.isGesuchStatusVerfuegenVerfuegt() || this.authServiceRS.isRole(TSRole.SCHULAMT);
+        return  this.isGesuchStatusVerfuegenVerfuegt() || this.isGesuchReadonlyForRole();
+    }
+
+    /**
+     * checks if the gesuch is readonly for a given role based on its state
+     */
+    private isGesuchReadonlyForRole(): boolean {
+        if (this.authServiceRS.isRole(TSRole.SCHULAMT)) {
+            return true;  // schulamt hat immer nur readonly zugriff
+        } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+            return isAtLeastFreigegeben(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
+        }
+        return false;
     }
 
     /**

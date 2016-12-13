@@ -41,15 +41,18 @@ public class EinkommensverschlechterungInfoContainer extends AbstractEntity {
 	public EinkommensverschlechterungInfoContainer() {
 	}
 
-	/**
-	 * Copy Constructor. ACHTUNG kopiert nur daten die in dieser Klasse definiert sind
-	 */
-	public EinkommensverschlechterungInfoContainer(@Nonnull EinkommensverschlechterungInfoContainer that) {
-		this.setVorgaengerId(that.getId());
-		this.einkommensverschlechterungInfoGS = null;
-		this.einkommensverschlechterungInfoJA = new EinkommensverschlechterungInfo(that.einkommensverschlechterungInfoJA);
+	public EinkommensverschlechterungInfoContainer(EinkommensverschlechterungInfoContainer other) {
+		this.einkommensverschlechterungInfoGS = other.einkommensverschlechterungInfoGS;
+		this.einkommensverschlechterungInfoJA = other.einkommensverschlechterungInfoJA;
+		this.gesuch = other.gesuch;
 	}
 
+	public EinkommensverschlechterungInfoContainer copyForMutation(EinkommensverschlechterungInfoContainer mutation) {
+		super.copyForMutation(mutation);
+		mutation.setEinkommensverschlechterungInfoGS(null);
+		mutation.setEinkommensverschlechterungInfoJA(getEinkommensverschlechterungInfoJA().copyForMutation(new EinkommensverschlechterungInfo()));
+		return mutation;
+	}
 
 	public EinkommensverschlechterungInfo getEinkommensverschlechterungInfoGS() {
 		return einkommensverschlechterungInfoGS;
@@ -59,11 +62,12 @@ public class EinkommensverschlechterungInfoContainer extends AbstractEntity {
 		this.einkommensverschlechterungInfoGS = einkommensverschlechterungInfoGS;
 	}
 
+	@Nonnull
 	public EinkommensverschlechterungInfo getEinkommensverschlechterungInfoJA() {
 		return einkommensverschlechterungInfoJA;
 	}
 
-	public void setEinkommensverschlechterungInfoJA(EinkommensverschlechterungInfo einkommensverschlechterungInfoJA) {
+	public void setEinkommensverschlechterungInfoJA(@Nonnull  EinkommensverschlechterungInfo einkommensverschlechterungInfoJA) {
 		this.einkommensverschlechterungInfoJA = einkommensverschlechterungInfoJA;
 	}
 

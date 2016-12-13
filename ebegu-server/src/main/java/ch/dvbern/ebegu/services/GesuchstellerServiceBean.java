@@ -25,7 +25,7 @@ import java.util.Optional;
 public class GesuchstellerServiceBean extends AbstractBaseService implements GesuchstellerService {
 
 	@Inject
-	private Persistence<Gesuchsteller> persistence;
+	private Persistence<GesuchstellerContainer> persistence;
 	@Inject
 	private WizardStepService wizardStepService;
 	@Inject
@@ -34,7 +34,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 	@Nonnull
 	@Override
-	public Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, final Gesuch gesuch, Integer gsNumber,
+	public GesuchstellerContainer saveGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller, final Gesuch gesuch, Integer gsNumber,
 										   boolean umzug) {
 		Objects.requireNonNull(gesuchsteller);
 		Objects.requireNonNull(gesuch);
@@ -74,7 +74,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 			}
 		}
 
-		final Gesuchsteller mergedGesuchsteller = persistence.merge(gesuchsteller);
+		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
 
 		if ((gesuch.extractFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
 			|| (!gesuch.extractFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
@@ -90,22 +90,22 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 	@Nonnull
 	@Override
-	public Optional<Gesuchsteller> findGesuchsteller(@Nonnull final String id) {
+	public Optional<GesuchstellerContainer> findGesuchsteller(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
-		Gesuchsteller a = persistence.find(Gesuchsteller.class, id);
+		GesuchstellerContainer a = persistence.find(GesuchstellerContainer.class, id);
 		return Optional.ofNullable(a);
 	}
 
 	@Override
 	@Nonnull
-	public Collection<Gesuchsteller> getAllGesuchsteller() {
-		return new ArrayList<>(criteriaQueryHelper.getAll(Gesuchsteller.class));
+	public Collection<GesuchstellerContainer> getAllGesuchsteller() {
+		return new ArrayList<>(criteriaQueryHelper.getAll(GesuchstellerContainer.class));
 	}
 
 	@Override
-	public void removeGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
+	public void removeGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller) {
 		Validate.notNull(gesuchsteller);
-		Optional<Gesuchsteller> gesuchstellerToRemove = findGesuchsteller(gesuchsteller.getId());
+		Optional<GesuchstellerContainer> gesuchstellerToRemove = findGesuchsteller(gesuchsteller.getId());
 		gesuchstellerToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsteller));
 		persistence.remove(gesuchstellerToRemove.get());
 	}

@@ -264,7 +264,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuch.getFall().setVerantwortlicher(null);
 		persistence.merge(gesuch);
 		//traegerschaftbenutzer setzten
-		Traegerschaft traegerschaft =institutionToSet.getTraegerschaft();
+		Traegerschaft traegerschaft = institutionToSet.getTraegerschaft();
 		Assert.assertNotNull("Unser testaufbau sieht vor, dass die institution zu einer traegerschaft gehoert", traegerschaft);
 		Benutzer verantwortlicherUser = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "anonymous", traegerschaft, null, TestDataUtil.createDefaultMandant());
 		gesDagmar.getFall().setVerantwortlicher(verantwortlicherUser);
@@ -276,7 +276,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		//aendere user zu einer anderen institution  -> darf nichts mehr finden
 		Institution otherInst = TestDataUtil.createAndPersistDefaultInstitution(persistence);
-		loginAsSachbearbeiterInst("sainst2",otherInst);
+		loginAsSachbearbeiterInst("sainst2", otherInst);
 
 		Pair<Long, List<Gesuch>> fourthResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(0), fourthResult.getLeft());
@@ -304,7 +304,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		// Anzahl erstellte Objekte zaehlen, es muessen im Gesuch und in der Mutation
 		// gleich viele sein
 		Gesuch mutation = gesuchOptional.get();
-		FamiliensituationContainer oldFamSit = new FamiliensituationContainer(mutation.getFamiliensituationContainer(), false);
+		FamiliensituationContainer oldFamSit = new FamiliensituationContainer(mutation.getFamiliensituationContainer());
 		mutation.getFamiliensituationContainer().setFamiliensituationErstgesuch(null);
 		mutation = gesuchService.createGesuch(mutation);
 		mutation.getFamiliensituationContainer().setFamiliensituationErstgesuch(oldFamSit.getFamiliensituationErstgesuch());
@@ -320,7 +320,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		findAllIdsOfAbstractEntities(mutation, idsMutation);
 		int anzahlObjekteMutation = anzahlObjekte;
 
-        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation );
+		// Die Mutation hat immer 1 Objekte mehr als Erstgesuch, und die "FamiliensituationErstgesuch.
+		// Deswegen muessen wir 1 subtrahieren
+        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
+
 		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
 		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
 		Set<String> intersection = new HashSet<>(idsErstgesuch);
@@ -364,7 +367,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		}
 		String id = BeanUtils.getProperty(entity, "id");
 		if (ids.contains(id)) {
-			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode) {
+			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode|| entity instanceof Familiensituation) {
 				// Diese Entitaeten wurden korrekterweise nur umgehaengt und nicht kopiert.
 				// Aus der Liste entfernen
 				ids.remove(id);
@@ -421,7 +424,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		persistence.persist(saja);
 	}
 
-	private void loginAsSachbearbeiterInst(String username , Institution institutionToSet) {
+	private void loginAsSachbearbeiterInst(String username, Institution institutionToSet) {
 		Benutzer user = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, username, null, institutionToSet, institutionToSet.getMandant());
 		user = persistence.merge(user);
 		try {
