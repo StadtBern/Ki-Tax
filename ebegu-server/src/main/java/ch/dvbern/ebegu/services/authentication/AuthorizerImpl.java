@@ -56,7 +56,6 @@ public class AuthorizerImpl implements Authorizer {
 	@Override
 	public void checkReadAuthorizationGesuchId(@Nullable String gesuchId) {
 		if (gesuchId != null) {
-			LOG.warn("homa: Ineffiziente Authorisierungspruefung. Gesuchid sollte moeglichst nicht verwendet werden");
 			checkReadAuthorization(getGesuchById(gesuchId));
 		}
 	}
