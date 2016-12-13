@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 
 import javax.annotation.Nonnull;
@@ -38,6 +39,14 @@ public interface FallService {
 	 */
 	@Nonnull
 	Optional<Fall> findFallByCurrentBenutzerAsBesitzer();
+
+	/**
+	 * Gibt den Fall zurueck der zum eingeloggten Benutzer gehoert oder ein leeres optional wenn keiner vorhanden
+	 * @param benutzer
+	 * @return
+	 */
+	@Nonnull
+	Optional<Fall> findFallByBesitzer(Benutzer benutzer);
 
 	/**
 	 * Gibt alle existierenden Faelle zurueck.
