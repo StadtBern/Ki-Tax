@@ -13,6 +13,7 @@ import TSGesuch from '../../../models/TSGesuch';
 import TSFall from '../../../models/TSFall';
 import IScope = angular.IScope;
 import {TSRole} from '../../../models/enums/TSRole';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
 describe('gesuchToolbar', function () {
 
@@ -61,7 +62,7 @@ describe('gesuchToolbar', function () {
             let verantwortlicher: TSUser = new TSUser('Emiliano', 'Camacho');
             spyOn(authServiceRS, 'getPrincipal').and.returnValue(verantwortlicher);
             spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
-            gesuchModelManager.initGesuch(true);
+            gesuchModelManager.initGesuch(true, TSEingangsart.PAPIER);
             expect(gesuchToolbarController.getVerantwortlicherFullName()).toEqual('Emiliano Camacho');
         });
     });

@@ -10,6 +10,7 @@ import IHttpBackendService = angular.IHttpBackendService;
 import IScope = angular.IScope;
 import IQService = angular.IQService;
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
 describe('stammdatenView', function () {
 
@@ -29,7 +30,7 @@ describe('stammdatenView', function () {
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         let $stateParams = $injector.get('$stateParams');
         $stateParams.gesuchstellerNumber = 1;
-        gesuchModelManager.initGesuch(false);
+        gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
         $q = $injector.get('$q');
         $rootScope = $injector.get('$rootScope');
         $scope = $rootScope.$new();
