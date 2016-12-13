@@ -31,7 +31,7 @@
     "ERROR_MINDESTENS_EIN_WERT": "Es muss mindestens ein Mutationsbereich gewählt werden",
     "ERROR_DATUM_GESETZT_BEI_MUTATION": "Bei einer Mutation muss die Familiensituation geändert werden wenn ein Datum gesetzt ist",
     "ERSTGESUCH_WILLKOMMEN_TEXT": "System für Elektronische Betreuungsgutscheine",
-    "ERSTGESUCH_WILLKOMMEN_TEXT_2": "Das E-BEGU System unterstützt Sie beim ausfüllen der notwendigen Angaben für das Gesuch um einen Betreuungsgutschein",
+    "ERSTGESUCH_WILLKOMMEN_TEXT_2": "Das System führt Sie Schritt für Schritt durch das Gesuch zur Beantragung eines vergünstigten Betreuungsplatzes.",
     "ERSTGESUCH_WILLKOMMEN_TEXT_3": "Sollten Sie zu einer Angabe weitere Informationen benötigen klicken Sie auf das Infofeld",
     "TAETIGKEIT": "Tätigkeit",
     "ERROR_MAX": "Maximaler Wert überschritten",
