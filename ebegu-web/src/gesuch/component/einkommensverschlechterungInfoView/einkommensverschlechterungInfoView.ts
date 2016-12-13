@@ -44,6 +44,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
                 private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private $q: IQService, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        //TODO (team) Achtung, im Moment wird Einkommensverschlechterung nicht mehr initialisiert
+        // this.initialEinkVersInfo = angular.copy(this.gesuchModelManager.getEinkommensverschlechterungsInfo());
         this.initialEinkVersInfo = angular.copy(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer);
         this.model = angular.copy(this.initialEinkVersInfo);
         this.initViewModel();

@@ -167,6 +167,11 @@ public class Gesuch extends AbstractEntity {
 
 	public boolean addDokumentGrund(@NotNull final DokumentGrund dokumentGrund) {
 		dokumentGrund.setGesuch(this);
+
+		if (this.dokumentGrunds == null) {
+			this.dokumentGrunds = new HashSet<>();
+		}
+
 		return this.dokumentGrunds.add(dokumentGrund);
 	}
 

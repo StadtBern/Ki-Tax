@@ -41,6 +41,11 @@ public interface BenutzerService {
 	@Nonnull
 	Collection<Benutzer> getBenutzerJAorAdmin();
 
+	/**
+	 * @return Liste saemtlicher Gesuchsteller aus der DB
+	 */
+	@Nonnull
+	Collection<Benutzer> getGesuchsteller();
 
 	/**
 	 * entfernt die Benutzer aus der Database

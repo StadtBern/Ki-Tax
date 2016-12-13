@@ -29,14 +29,8 @@ public enum EbeguVorlageKey {
 	// Verfügung (Brief) des Angebots Tageseltern Schulkinder
 	VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER("/vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx"),
 
-	// Die Freigabequittung die der Gesuchsteller ausdruckt und ans Jugendamt schickt. Die Freigabequittung geht ans
-	// Jugendamt, falls diese NICHT nur das Angebot Tagesschule beinhaltet. Beinhaltet auch das Anlageverzeichnis.
-	VORLAGE_FREIGABEQUITTUNG_JUGENDAMT,
-
-	// Die Freigabequittung die der Gesuchsteller ausdruckt und ans Schulamt schickt.
-	// Die Freigabequittung geht ans Schulamt, falls dieses NUR das Angebot Tagesschule beinhaltet.
-	// Beinhaltet auch das Anlageverzeichnis.
-	VORLAGE_FREIGABEQUITTUNG_SCHULAMT,
+	// Die Freigabequittung die der Gesuchsteller ausdruckt
+	VORLAGE_FREIGABEQUITTUNG("/vorlagen/Freigabequittung.docx"),
 
 	// Ein Anhang der mit den Verfügungen mitgeschickt wird und aufzeigt, wie die
 	// finanzielle Situation gerechnet wurde

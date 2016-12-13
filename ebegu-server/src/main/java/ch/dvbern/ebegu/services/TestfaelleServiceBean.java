@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.testfaelle.*;
@@ -60,13 +61,23 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Inject
 	private VerfuegungService verfuegungService;
 
+
+
 	@Override
+	@Nonnull
+	public StringBuilder createAndSaveTestfaelle(String fallid,
+												 Integer iterationCount,
+												 boolean betreuungenBestaetigt,
+												 boolean verfuegen) {
+		return this.createAndSaveTestfaelle(fallid, iterationCount, betreuungenBestaetigt, verfuegen, null);
+	}
+
 	@Nonnull
 	@SuppressWarnings(value = {"PMD.NcssMethodCount",  "PMD.AvoidDuplicateLiterals"})
 	public StringBuilder createAndSaveTestfaelle(String fallid,
 												 Integer iterationCount,
 												 boolean betreuungenBestaetigt,
-												 boolean verfuegen) {
+												 boolean verfuegen, Benutzer besitzer) {
 
 		iterationCount = (iterationCount == null || iterationCount == 0) ? 1 : iterationCount;
 
@@ -77,42 +88,42 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		for (int i = 0; i < iterationCount; i++) {
 
 			if (WaeltiDagmar.equals(fallid)) {
-				final Gesuch gesuch = createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Dagmar Waelti erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (FeutzIvonne.equals(fallid)) {
-				final Gesuch gesuch = createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Yvonne Feutz erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (PerreiraMarcia.equals(fallid)) {
-				final Gesuch gesuch = createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Marcia Perreira erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (WaltherLaura.equals(fallid)) {
-				final Gesuch gesuch = createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Laura Walther erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (LuethiMeret.equals(fallid)) {
-				final Gesuch gesuch = createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Meret Luethi erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (BeckerNora.equals(fallid)) {
-				final Gesuch gesuch = createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Nora Becker erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (MeierMeret.equals(fallid)) {
-				final Gesuch gesuch = createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Meier Meret erstellt, Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (UmzugAusInAusBern.equals(fallid)) {
-				final Gesuch gesuch = createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Umzug Aus-In-Aus Bern Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (Abwesenheit.equals(fallid)) {
-				final Gesuch gesuch = createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Abwesenheit Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if ("all".equals(fallid)) {
-				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Testfaelle 1-9 erstellt");
 			} else {
 				responseString.append("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-9. '/all' erstellt alle Testfaelle");
@@ -120,6 +131,26 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		}
 		return responseString;
+	}
+
+
+	public StringBuilder createAndSaveAsOnlineGesuch(@Nonnull String fallid,
+													 boolean betreuungenBestaetigt,
+													 boolean verfuegen, @Nonnull String username) {
+
+		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(benutzerService.getCurrentBenutzer().orElse(null));
+
+
+		Optional<Fall> existingFall = fallService.findFallByBesitzer(benutzer);
+		if (existingFall.isPresent()) {
+			//unschoen: eigentlich nur das gesuch fuer das jahr loeschen fuer welches der testfall erzeugt wird
+			List<JaxAntragDTO> allGesucheForBenutzer = gesuchService.getAllAntragDTOForFall(existingFall.get().getId());
+			allGesucheForBenutzer
+				.forEach(jaxAntragDTO -> gesuchService.findGesuch(jaxAntragDTO.getAntragId())
+					.ifPresent(gesuch -> gesuchService.removeGesuch(gesuch)));
+		}
+		return this.createAndSaveTestfaelle(fallid, 1, true, false, benutzer);
+
 	}
 
 
@@ -133,31 +164,31 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionStammdatens();
 
 		if (WaeltiDagmar.equals(fallid)) {
-			return createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+			return createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (FeutzIvonne.equals(fallid)) {
-			return createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+			return createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (PerreiraMarcia.equals(fallid)) {
-			return createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+			return createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (WaltherLaura.equals(fallid)) {
-			return createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+			return createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (LuethiMeret.equals(fallid)) {
-			return createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+			return createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (BeckerNora.equals(fallid)) {
-			return createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+			return createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (MeierMeret.equals(fallid)) {
-			return createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+			return createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (UmzugAusInAusBern.equals(fallid)) {
-			return createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+			return createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (Abwesenheit.equals(fallid)) {
-			return createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+			return createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 
 		return null;
@@ -252,8 +283,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	 * Aus diesem Grund, bleibt das Gesuch mit Status IN_BEARBEITUNG_JA
 	 *
 	 * @param fromTestfall testfall
+	 * @param besitzer wenn der besitzer gesetzt ist wird der fall diesem besitzer zugeordnet
 	 */
-	private Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen) {
+	private Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer) {
 		final Optional<List<Gesuch>> gesuchByGSName = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
 		if (gesuchByGSName.isPresent()) {
 			final List<Gesuch> gesuches = gesuchByGSName.get();
@@ -263,11 +295,20 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 
 		final Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
+		Optional<Fall> fallByBesitzer = fallService.findFallByBesitzer(besitzer); //fall kann schon existieren
 		Fall fall;
-		if (currentBenutzer.isPresent()) {
-			fall = fromTestfall.createFall(currentBenutzer.get());
+		if (!fallByBesitzer.isPresent()) {
+			if (currentBenutzer.isPresent()) {
+				fall = fromTestfall.createFall(currentBenutzer.get());
+			} else {
+				fall = fromTestfall.createFall();
+			}
 		} else {
-			fall = fromTestfall.createFall();
+			fall = fallByBesitzer.get();
+			fall.setNextNumberKind(1); //reset
+		}
+		if (besitzer != null) {
+			fall.setBesitzer(besitzer);
 		}
 		final Fall persistedFall = fallService.saveFall(fall);
 		fromTestfall.setFall(persistedFall); // dies wird gebraucht, weil fallService.saveFall ein merge macht.
@@ -275,6 +316,13 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		fromTestfall.createGesuch(LocalDate.of(2016, Month.FEBRUARY, 15));
 		gesuchService.createGesuch(fromTestfall.getGesuch());
 		Gesuch gesuch = fromTestfall.fillInGesuch();
+
+		if (besitzer != null) {
+			gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+			gesuch.setEingangsart(Eingangsart.ONLINE);
+		} else {
+			gesuch.setEingangsart(Eingangsart.PAPIER);
+		}
 
 		gesuchVerfuegenUndSpeichern(verfuegen, gesuch, false);
 
