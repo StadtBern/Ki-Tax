@@ -385,7 +385,7 @@ public class Gesuch extends AbstractEntity {
 		}
 
 		if (this.getEinkommensverschlechterungInfoContainer() != null) {
-			mutation.setEinkommensverschlechterungInfoContainer(this.getEinkommensverschlechterungInfoContainer().copyForMutation(new EinkommensverschlechterungInfoContainer()));
+			mutation.setEinkommensverschlechterungInfoContainer(this.getEinkommensverschlechterungInfoContainer().copyForMutation(new EinkommensverschlechterungInfoContainer(), mutation));
 		}
 
 		if (this.getDokumentGrunds() != null) {

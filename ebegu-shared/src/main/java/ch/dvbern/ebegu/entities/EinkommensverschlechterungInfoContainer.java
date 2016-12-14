@@ -47,8 +47,9 @@ public class EinkommensverschlechterungInfoContainer extends AbstractEntity {
 		this.gesuch = other.gesuch;
 	}
 
-	public EinkommensverschlechterungInfoContainer copyForMutation(EinkommensverschlechterungInfoContainer mutation) {
+	public EinkommensverschlechterungInfoContainer copyForMutation(EinkommensverschlechterungInfoContainer mutation, Gesuch mutationGesuch) {
 		super.copyForMutation(mutation);
+		mutation.setGesuch(mutationGesuch);
 		mutation.setEinkommensverschlechterungInfoGS(null);
 		mutation.setEinkommensverschlechterungInfoJA(getEinkommensverschlechterungInfoJA().copyForMutation(new EinkommensverschlechterungInfo()));
 		return mutation;
