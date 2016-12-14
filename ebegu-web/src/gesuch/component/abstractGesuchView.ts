@@ -63,6 +63,9 @@ export default class AbstractGesuchViewController<T> {
         return false;
     }
 
+    public isKorrekturModusJugendamt(): boolean {
+        return this.gesuchModelManager.isKorrekturModusJugendamt();
+    }
 
     get model(): T {
         return this._model;

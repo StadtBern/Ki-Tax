@@ -27,7 +27,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
     private createMutation: boolean = false;
-    private eingangsart: TSEingangsart = TSEingangsart.PAPIER;
+    private eingangsart: TSEingangsart;
     private fallId: string;
 
     TSRoleUtil: any;

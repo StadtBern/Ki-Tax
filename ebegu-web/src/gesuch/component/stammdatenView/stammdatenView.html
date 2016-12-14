@@ -131,7 +131,7 @@
                                 <md-checkbox ng-model="vm.getModel().showUmzug" name="umzug" aria-label="umzug"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchReadonly() && !vm.isThereAnyUmzug()">
+                                             dv-enable-expression="!vm.isGesuchReadonly() && !vm.isThereAnyUmzug() && !vm.isKorrekturModusJugendamt()">
                                     <span data-translate="UMZUG"></span>
                                 </md-checkbox>
                                 <dv-error-messages for="form.umzug.$error"

@@ -164,11 +164,11 @@ public class WohnsitzRuleTest {
 		Betreuung betreuung = createTestdata(true);
 		final Gesuch gesuch = betreuung.extractGesuch();
 
-		gesuch.setFamiliensituationErstgesuch(new Familiensituation());
-		gesuch.getFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
-		gesuch.getFamiliensituationErstgesuch().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
-		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
-		gesuch.getFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
+		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(new Familiensituation());
+		gesuch.extractFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.extractFamiliensituationErstgesuch().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		gesuch.extractFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		gesuch.extractFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
 
 		gesuch.getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, true, gesuch.getGesuchsteller1()));
 		gesuch.getGesuchsteller2().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, false, gesuch.getGesuchsteller2()));

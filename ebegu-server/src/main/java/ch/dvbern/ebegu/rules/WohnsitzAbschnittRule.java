@@ -106,22 +106,22 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 					adressenZeitabschnitte.add(zeitabschnitt);
 				} else { // gs2
 					final DateRange gueltigkeit = new DateRange(gesuchstellerAdresse.extractGueltigkeit());
-					if (gesuch.getFamiliensituation().getAenderungPer() != null) {
+					if (gesuch.extractFamiliensituation().getAenderungPer() != null) {
 						// from 1GS to 2GS
-						if (!gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && gesuch.getFamiliensituation().hasSecondGesuchsteller()) {
-							if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
-								if (gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer())) {
-									gueltigkeit.setGueltigAb(gesuch.getFamiliensituation().getAenderungPer());
+						if (!gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller() && gesuch.extractFamiliensituation().hasSecondGesuchsteller()) {
+							if (gueltigkeit.getGueltigBis().isAfter(gesuch.extractFamiliensituation().getAenderungPer())) {
+								if (gueltigkeit.getGueltigAb().isBefore(gesuch.extractFamiliensituation().getAenderungPer())) {
+									gueltigkeit.setGueltigAb(gesuch.extractFamiliensituation().getAenderungPer());
 								}
 								createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.extractIsNichtInGemeinde(), gueltigkeit);
 							}
 						}
 						// from 2GS to 1GS
-						else if (gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.getFamiliensituation().hasSecondGesuchsteller()
-							&& (gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer()))) {
+						else if (gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.extractFamiliensituation().hasSecondGesuchsteller()
+							&& (gueltigkeit.getGueltigAb().isBefore(gesuch.extractFamiliensituation().getAenderungPer()))) {
 
-							if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
-								gueltigkeit.setGueltigBis(gesuch.getFamiliensituation().getAenderungPer());
+							if (gueltigkeit.getGueltigBis().isAfter(gesuch.extractFamiliensituation().getAenderungPer())) {
+								gueltigkeit.setGueltigBis(gesuch.extractFamiliensituation().getAenderungPer());
 							}
 							createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.extractIsNichtInGemeinde(), gueltigkeit);
 						}

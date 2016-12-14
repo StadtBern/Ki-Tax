@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.rules.Anlageverzeichnis;
+package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;

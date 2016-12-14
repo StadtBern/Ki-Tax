@@ -69,7 +69,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 			null, gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getMandant());
 		final JaxGesuch gesuchForInstitution = gesuchResource.findGesuchForInstitution(converter.toJaxId(gesuch));
 
-		Assert.assertNull(gesuchForInstitution.getEinkommensverschlechterungInfo());
+		Assert.assertNull(gesuchForInstitution.getEinkommensverschlechterungInfoContainer());
 
 		Assert.assertNotNull(gesuchForInstitution.getGesuchsteller1());
 		Assert.assertNull(gesuchForInstitution.getGesuchsteller1().getEinkommensverschlechterungContainer());
@@ -99,7 +99,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 
 		final JaxGesuch gesuchForInstitution = gesuchResource.findGesuchForInstitution(converter.toJaxId(gesuch));
 
-		Assert.assertNull(gesuchForInstitution.getEinkommensverschlechterungInfo());
+		Assert.assertNull(gesuchForInstitution.getEinkommensverschlechterungInfoContainer());
 
 		Assert.assertNotNull(gesuchForInstitution.getGesuchsteller1());
 		Assert.assertNull(gesuchForInstitution.getGesuchsteller1().getEinkommensverschlechterungContainer());
@@ -126,7 +126,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 
 		final JaxGesuch gesuchForInstitution = gesuchResource.findGesuchForInstitution(converter.toJaxId(gesuch));
 
-		Assert.assertNull(gesuchForInstitution.getEinkommensverschlechterungInfo());
+		Assert.assertNull(gesuchForInstitution.getEinkommensverschlechterungInfoContainer());
 
 		Assert.assertNotNull(gesuchForInstitution.getGesuchsteller1());
 		Assert.assertNull(gesuchForInstitution.getGesuchsteller1().getEinkommensverschlechterungContainer());

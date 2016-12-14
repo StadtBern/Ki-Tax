@@ -12,6 +12,7 @@
 	<entity class="ch.dvbern.ebegu.entities.Erwerbspensum"/>
 	<entity class="ch.dvbern.ebegu.entities.KindContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Familiensituation"/>
+	<entity class="ch.dvbern.ebegu.entities.FamiliensituationContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Fachstelle"/>
 	<entity class="ch.dvbern.ebegu.entities.PensumFachstelle"/>
 	<entity class="ch.dvbern.ebegu.entities.Gesuchsperiode"/>
@@ -31,6 +32,7 @@
 	<entity class="ch.dvbern.ebegu.entities.Benutzer"/>
 	<entity class="ch.dvbern.ebegu.entities.AuthorisierterBenutzer"/>
 	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo"/>
+	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Einkommensverschlechterung"/>
 	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Dokument"/>

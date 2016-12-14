@@ -112,7 +112,7 @@
                                 <dv-radio-container name="familienErgaenzendeBetreuung" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchReadonly()"
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
                                                     ng-required="true"
                                                     ng-model="vm.getModel().familienErgaenzendeBetreuung"
                                                     ng-change="vm.familienErgaenzendeBetreuungClicked()">

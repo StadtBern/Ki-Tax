@@ -14,7 +14,7 @@
                                                     ng-required="true" class="radio input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchReadonly()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
                                 </dv-radio-container>
                                 <dv-error-messages for="form.einkommensverschlechterung.$error"
                                                    class="error"></dv-error-messages>
@@ -30,7 +30,7 @@
                                              ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1"
                                              aria-label="{vm.getBasisJahrPlusAsString(0)}"
                                              ng-required="vm.isRequired(1)" class="input-element"
-                                             ng-disabled="vm.isGesuchReadonly()">
+                                             ng-disabled="vm.isGesuchReadonly() || vm.isKorrekturModusJugendamt()">
                                    <span data-translate="EKVI_FUER_JAHR"
                                          translate-values="{basisjahr: vm.getBasisJahrPlusAsString(0)}"></span>
                                 </md-checkbox>
@@ -86,7 +86,7 @@
                                              ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2"
                                              aria-label="{vm.getBasisJahrPlusAsString(1)}"
                                              ng-required="vm.isRequired(2)" class="input-element"
-                                             ng-disabled="vm.isGesuchReadonly()">
+                                             ng-disabled="vm.isGesuchReadonly() || vm.isKorrekturModusJugendamt()">
                                 <span data-translate="EKVI_FUER_JAHR"
                                       translate-values="{basisjahr: vm.getBasisJahrPlusAsString(1)}"></span>
                                 </md-checkbox>
