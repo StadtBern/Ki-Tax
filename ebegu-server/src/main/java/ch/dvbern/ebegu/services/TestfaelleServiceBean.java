@@ -210,7 +210,11 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
-			familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituation(), newFamsit);
+			final FamiliensituationContainer familiensituationContainer = mutation.getFamiliensituationContainer();
+			familiensituationContainer.setFamiliensituationErstgesuch(familiensituationContainer.getFamiliensituationJA());
+			familiensituationContainer.setFamiliensituationJA(newFamsit);
+
+			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer);
 			final GesuchstellerContainer gesuchsteller2 = gesuchstellerService
 				.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2, false);
 
@@ -239,7 +243,10 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(fallNummer, gesuchsperiodeId, eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
-			familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituation(), newFamsit);
+			final FamiliensituationContainer familiensituationContainer = mutation.getFamiliensituationContainer();
+			familiensituationContainer.setFamiliensituationErstgesuch(familiensituationContainer.getFamiliensituationJA());
+			familiensituationContainer.setFamiliensituationJA(newFamsit);
+			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer);
 			gesuchService.createGesuch(mutation);
 			gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
 			return mutation;
@@ -367,9 +374,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	private void saveEinkommensverschlechterung(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
-		if (gesuch.getEinkommensverschlechterungInfo() != null) {
+		if (gesuch.getEinkommensverschlechterungInfoContainer() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.IN_BEARBEITUNG);
-			einkommensverschlechterungInfoService.createEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfo());
+			einkommensverschlechterungInfoService.createEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
 		}
 		if (gesuch.getGesuchsteller1() != null && gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer() != null) {
 			einkommensverschlechterungService.saveEinkommensverschlechterungContainer(gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer());
@@ -434,9 +441,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	private void saveFamiliensituation(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
-		if (gesuch.getFamiliensituation() != null) {
+		if (gesuch.extractFamiliensituation() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.IN_BEARBEITUNG);
-			familiensituationService.saveFamiliensituation(gesuch, null, gesuch.getFamiliensituation());
+			familiensituationService.saveFamiliensituation(gesuch, gesuch.getFamiliensituationContainer());
 			setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.FAMILIENSITUATION);
 		}
 	}

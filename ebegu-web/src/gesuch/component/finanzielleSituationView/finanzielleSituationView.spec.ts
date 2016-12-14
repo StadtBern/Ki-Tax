@@ -3,10 +3,11 @@ import 'angular-mocks';
 import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import IInjectorService = angular.auto.IInjectorService;
+import IHttpBackendService = angular.IHttpBackendService;
+import TSFamiliensituationContainer from '../../../models/TSFamiliensituationContainer';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
@@ -17,9 +18,9 @@ describe('finanzielleSituationView', function () {
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
-    var component : any;
-    var scope : angular.IScope;
-    var $componentController : any;
+    var component: any;
+    var scope: angular.IScope;
+    var $componentController: any;
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
@@ -33,7 +34,8 @@ describe('finanzielleSituationView', function () {
 
     beforeEach(function () {
         gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
-        gesuchModelManager.getGesuch().familiensituation = new TSFamiliensituation();
+        gesuchModelManager.getGesuch().familiensituationContainer = new TSFamiliensituationContainer();
+        gesuchModelManager.getGesuch().familiensituationContainer.familiensituationJA = new TSFamiliensituation();
         gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchstellerContainer(new TSGesuchsteller());
     });
 

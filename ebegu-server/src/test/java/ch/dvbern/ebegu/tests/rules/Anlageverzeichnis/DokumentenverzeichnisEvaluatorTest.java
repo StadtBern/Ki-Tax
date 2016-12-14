@@ -2,10 +2,10 @@ package ch.dvbern.ebegu.tests.rules.Anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.ErwerbspensumDokumente;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.FinanzielleSituationDokumente;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.KindDokumente;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.ErwerbspensumDokumente;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.FinanzielleSituationDokumente;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.KindDokumente;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;
@@ -131,9 +131,9 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 	private void createFamilienSituation(Gesuch gesuch, boolean gemeinsam) {
 
-		final Familiensituation familiensituation = TestDataUtil.createDefaultFamiliensituation();
-		familiensituation.setGemeinsameSteuererklaerung(gemeinsam);
-		gesuch.setFamiliensituation(familiensituation);
+		final FamiliensituationContainer familiensituation = TestDataUtil.createDefaultFamiliensituationContainer();
+		familiensituation.extractFamiliensituation().setGemeinsameSteuererklaerung(gemeinsam);
+		gesuch.setFamiliensituationContainer(familiensituation);
 	}
 
 	@Test
@@ -576,9 +576,9 @@ public class DokumentenverzeichnisEvaluatorTest {
 	}
 
 	private void createEinkommensverschlechterungInfo() {
-		final EinkommensverschlechterungInfo einkommensverschlechterungsInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfo(testgesuch);
-		einkommensverschlechterungsInfo.setEkvFuerBasisJahrPlus1(true);
-		einkommensverschlechterungsInfo.setEkvFuerBasisJahrPlus2(true);
+		final EinkommensverschlechterungInfoContainer einkommensverschlechterungsInfo = TestDataUtil.createDefaultEinkommensverschlechterungsInfoContainer(testgesuch);
+		einkommensverschlechterungsInfo.getEinkommensverschlechterungInfoJA().setEkvFuerBasisJahrPlus1(true);
+		einkommensverschlechterungsInfo.getEinkommensverschlechterungInfoJA().setEkvFuerBasisJahrPlus2(true);
 	}
 
 

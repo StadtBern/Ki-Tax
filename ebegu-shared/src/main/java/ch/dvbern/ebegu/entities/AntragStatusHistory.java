@@ -28,7 +28,7 @@ public class AntragStatusHistory extends AbstractEntity implements Comparable<An
 	private Benutzer benutzer = null;
 
 	@NotNull
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "DATETIME(6)")
 	private LocalDateTime datum;
 
 	@NotNull

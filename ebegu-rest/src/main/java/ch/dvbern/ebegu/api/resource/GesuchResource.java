@@ -167,7 +167,7 @@ public class GesuchResource {
 	 */
 	private JaxGesuch cleanGesuchForInstitutionTraegerschaft(final JaxGesuch completeGesuch, final Collection<Institution> userInstitutionen) {
 		//clean EKV
-		completeGesuch.setEinkommensverschlechterungInfo(null);
+		completeGesuch.setEinkommensverschlechterungInfoContainer(null);
 
 		//clean GS -> FinSit
 		if (completeGesuch.getGesuchsteller1() != null) {

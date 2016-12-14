@@ -126,11 +126,12 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatus(finanSitStep, WizardStepStatus.OK);
 		updateStatus(einkVerStep, WizardStepStatus.OK);
 
-		Familiensituation oldFamiliensituation = new Familiensituation(gesuch.getFamiliensituation());
-		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		Familiensituation oldFamiliensituation = new Familiensituation(gesuch.getFamiliensituationContainer().getFamiliensituationJA());
+		final Familiensituation newFamiliensituation = gesuch.extractFamiliensituation();
+		newFamiliensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation,
-			gesuch.getFamiliensituation(), WizardStepName.FAMILIENSITUATION);
+			newFamiliensituation, WizardStepName.FAMILIENSITUATION);
 		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
@@ -441,8 +442,8 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void updateWizardStepFamiliensitMutiert() {
 		updateStatusMutiert(familienStep, WizardStepStatus.OK);
-		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), gesuch.getFamiliensituation(),
-			gesuch.getFamiliensituation(), WizardStepName.FAMILIENSITUATION);
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), gesuch.extractFamiliensituation(),
+			gesuch.extractFamiliensituation(), WizardStepName.FAMILIENSITUATION);
 		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());

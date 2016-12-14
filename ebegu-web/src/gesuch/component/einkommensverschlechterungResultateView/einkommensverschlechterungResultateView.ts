@@ -69,8 +69,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     showResult(): boolean {
         if (this.model.getBasisJahrPlus() === 1) {
-            let ekvFuerBasisJahrPlus1 = this.model.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-                && this.model.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
+            let ekvFuerBasisJahrPlus1 = this.model.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1
+                && this.model.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1 === true;
             return ekvFuerBasisJahrPlus1 === true;
 
         } else {
@@ -241,7 +241,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
      */
     private isLastEinkVersStep(): boolean {
         // Letztes Jahr haengt von den eingegebenen Daten ab
-        return (this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 2)
-            || (!this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 1);
+        return (this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 2)
+            || (!this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 1);
     }
 }

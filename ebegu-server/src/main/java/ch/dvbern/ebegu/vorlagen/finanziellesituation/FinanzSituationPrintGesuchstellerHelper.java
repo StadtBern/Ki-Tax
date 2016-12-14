@@ -35,7 +35,7 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 		FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller = new FinanzSituationPrintGesuchsteller(gesuchsteller1.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
 				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
 				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
-				gesuch.getEinkommensverschlechterungInfo());
+				gesuch.extractEinkommensverschlechterungInfo());
 
 		return finanzSituationPrintGesuchsteller;
 	}
@@ -55,7 +55,7 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 					gesuchsteller2.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
 					gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
 					gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
-					gesuch.getEinkommensverschlechterungInfo());
+					gesuch.extractEinkommensverschlechterungInfo());
 			return finanzSituationPrintGesuchsteller2;
 		}
 		return null;

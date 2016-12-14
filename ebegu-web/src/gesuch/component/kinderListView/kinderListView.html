@@ -30,7 +30,8 @@
                         <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td ng-if="vm.isGesuchReadonly()"></td>
                         <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
-                            <dv-loading-button type="button" button-click="vm.removeKind(row)" button-class="dv-btn-sm">
+                            <dv-loading-button type="button" button-click="vm.removeKind(row)" button-class="dv-btn-sm"
+                                               button-disabled="vm.isKorrekturModusJugendamt()">
                                 <i class="fa fa-minus">
                                 </i>
                             </dv-loading-button>
@@ -46,7 +47,7 @@
         </div>
         <div class="col-md-12" style="margin-bottom: 2rem" ng-if="!vm.isGesuchReadonly()">
             <dv-loading-button type="button" button-click="vm.createKind()"
-                               button-class="dv-btn-sm color-success">
+                               button-class="dv-btn-sm color-success" button-disabled="vm.isKorrekturModusJugendamt()">
                 <i class="glyphicon glyphicon-plus"></i>
                 <span data-translate="KIND_HINZUFUEGEN"></span>
             </dv-loading-button>

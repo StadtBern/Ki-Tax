@@ -30,7 +30,7 @@ public interface ManhungPrint {
 
 	String getFallNummer();
 
-	String getFallDatum();
+	String getEingangsDatum();
 
 	List<AufzaehlungPrint> getFehlendeUnterlagen();
 
