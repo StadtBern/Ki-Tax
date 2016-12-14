@@ -44,7 +44,7 @@ public class FamiliensituationContainer extends AbstractEntity {
 
 	public FamiliensituationContainer copyForMutation(FamiliensituationContainer mutation, boolean toCopyisMutation) {
 		super.copyForMutation(mutation);
-
+		mutation.setFamiliensituationGS(null);
 		mutation.setFamiliensituationJA(getFamiliensituationJA().copyForMutation(new Familiensituation()));
 		if (toCopyisMutation) {
 			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationErstgesuch());

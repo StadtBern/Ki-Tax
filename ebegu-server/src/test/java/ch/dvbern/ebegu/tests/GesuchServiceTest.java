@@ -304,11 +304,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		// Anzahl erstellte Objekte zaehlen, es muessen im Gesuch und in der Mutation
 		// gleich viele sein
 		Gesuch mutation = gesuchOptional.get();
-		FamiliensituationContainer oldFamSit = new FamiliensituationContainer(mutation.getFamiliensituationContainer());
-		mutation.getFamiliensituationContainer().setFamiliensituationErstgesuch(null);
-		mutation = gesuchService.createGesuch(mutation);
-		mutation.getFamiliensituationContainer().setFamiliensituationErstgesuch(oldFamSit.getFamiliensituationErstgesuch());
-		mutation = gesuchService.updateGesuch(mutation, false);
 
 		anzahlObjekte = 0;
 		Set<String> idsErstgesuch = new HashSet<>();
@@ -370,6 +365,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode|| entity instanceof Familiensituation) {
 				// Diese Entitaeten wurden korrekterweise nur umgehaengt und nicht kopiert.
 				// Aus der Liste entfernen
+				// Familiensituation wird hier ebenfalls aufgefuehrt, da sie bei FamiliensituationErstgescuh nur umgehaengt wird
+				// (die "normale" Familiensituation wird aber kopiert, dies wird jetzt nicht mehr getestet)
 				ids.remove(id);
 			}
 		}
