@@ -4,6 +4,7 @@ import Moment = moment.Moment;
 import DateUtil from '../../../utils/DateUtil';
 import ITranslateService = angular.translate.ITranslateService;
 import ILogService = angular.ILogService;
+import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 let template =  require('./dv-bisher.html');
 require('./dv-bisher.less');
 
@@ -21,7 +22,7 @@ export class DvBisherComponentConfig implements IComponentOptions {
 
 export class DvBisher {
 
-    static $inject = ['$translate', '$log'];
+    static $inject = ['GesuchModelManager', '$translate', '$log'];
 
     gs: any;
     ja: any;
@@ -29,7 +30,7 @@ export class DvBisher {
 
 
     /* @ngInject */
-    constructor(private $translate: ITranslateService, private $log: ILogService) {
+    constructor(private gesuchModelManager: GesuchModelManager, private $translate: ITranslateService, private $log: ILogService) {
         if (this.showBisherIfNone === undefined) {
             this.showBisherIfNone = true;
         }
@@ -42,7 +43,7 @@ export class DvBisher {
             return this.$translate.instant('LABEL_JA');
         } else if (this.gs === false) {
             return this.$translate.instant('LABEL_NEIN');
-        } else if (this.gs === null || this.gs === undefined || this.gs === '') {
+        } else if (!this.hasBisher()) {
             return this.$translate.instant('LABEL_KEINE_ANGABE');
         } else {
             return this.$translate.instant(this.gs);
@@ -50,11 +51,11 @@ export class DvBisher {
     }
 
     public hasBisher() : boolean {
-        return this.gs !== null || this.gs !== undefined || this.gs !== '';
+        return this.gs !== null && this.gs !== undefined && this.gs !== '';
     }
 
     public showBisher() : boolean {
-        return this.showBisherIfNone && this.hasBisher();
+        return (this.showBisherIfNone || this.hasBisher()) && this.gesuchModelManager.isKorrekturModusJugendamt();
     }
 
     public equals(gs: any, ja: any) : boolean {

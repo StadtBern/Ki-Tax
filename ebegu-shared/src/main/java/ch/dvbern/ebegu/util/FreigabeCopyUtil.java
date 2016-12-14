@@ -18,9 +18,8 @@ public class FreigabeCopyUtil {
 	 * @return
 	 */
 	public static void copyForFreigabe(@Nonnull Gesuch gesuch) {
-		//TODO gesuch.getFamiliensituation();
-		//TODO gesuch.getEinkommensverschlechterungInfo();
-
+		// Familiensituation
+		copyFamiliensituationContainer(gesuch.getFamiliensituationContainer());
 		// Kinder
 		if (gesuch.getKindContainers() != null) {
 			for (KindContainer kindContainer : gesuch.getKindContainers()) {
@@ -28,16 +27,24 @@ public class FreigabeCopyUtil {
 				copyKindContainer(kindContainer);
 			}
 		}
+		// EinkommensverschlechterungsInfo
+		copyEinkommensverschlechterungInfoContainer(gesuch.getEinkommensverschlechterungInfoContainer());
 		// Gesuchsteller 1
-		if (gesuch.getGesuchsteller1() != null) {
-			copyGesuchstellerContainer(gesuch.getGesuchsteller1());
-		}
+		copyGesuchstellerContainer(gesuch.getGesuchsteller1());
 		// Gesuchsteller 2
-		if (gesuch.getGesuchsteller2() != null) {
-			copyGesuchstellerContainer(gesuch.getGesuchsteller2());
-		}
+		copyGesuchstellerContainer(gesuch.getGesuchsteller2());
 	}
 
+	private static void copyFamiliensituationContainer(@Nullable FamiliensituationContainer container) {
+		if (container != null) {
+			if (container.getFamiliensituationJA() != null) {
+				if (container.getFamiliensituationGS() == null) {
+					container.setFamiliensituationGS(new Familiensituation());
+				}
+				copyFamiliensituation(container.getFamiliensituationGS(), container.getFamiliensituationJA());
+			}
+		}
+	}
 
 	private static void copyFamiliensituation(@Nonnull Familiensituation familiensituationGS, @Nonnull Familiensituation familiensituationJA) {
 		familiensituationGS.setFamilienstatus(familiensituationJA.getFamilienstatus());
@@ -196,6 +203,15 @@ public class FreigabeCopyUtil {
 		gs.setSchulden(ja.getSchulden());
 		gs.setGeschaeftsgewinnBasisjahr(ja.getGeschaeftsgewinnBasisjahr());
 		gs.setGeleisteteAlimente(ja.getGeleisteteAlimente());
+	}
+
+	private static void copyEinkommensverschlechterungInfoContainer(@Nullable EinkommensverschlechterungInfoContainer container) {
+		if (container != null) {
+			if (container.getEinkommensverschlechterungInfoGS() == null) {
+				container.setEinkommensverschlechterungInfoGS(new EinkommensverschlechterungInfo());
+			}
+			copyEinkommensverschlechterungInfo(container.getEinkommensverschlechterungInfoGS(), container.getEinkommensverschlechterungInfoJA());
+		}
 	}
 
 	private static void copyEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfo gs, @Nonnull EinkommensverschlechterungInfo ja) {
