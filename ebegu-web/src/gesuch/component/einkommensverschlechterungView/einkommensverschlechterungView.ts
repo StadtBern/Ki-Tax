@@ -58,7 +58,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     private initViewModel() {
 
         //brauchen wir hier das init wirklich nicht mehr? was ist bei mutation etc
-        this.getGeschaeftsgewinnFromFS();
+        this.initGeschaeftsgewinnFromFS();
 
         this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig()
             || (this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== null
@@ -132,7 +132,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         return this.berechnungsManager.getEinkommensverschlechterungResultate(this.model.getBasisJahrPlus());
     }
 
-    public getGeschaeftsgewinnFromFS(): void {
+    public initGeschaeftsgewinnFromFS(): void {
         if (!this.model.getFiSiConToWorkWith()
             || !this.model.getFiSiConToWorkWith().finanzielleSituationJA) {
             // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
@@ -141,22 +141,22 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         }
 
         let fs: TSFinanzielleSituation = this.model.getFiSiConToWorkWith().finanzielleSituationJA;
-        if (this.model.getBasisJahrPlus() === 2) {
-            //basisjahr Plus 2
-            this.geschaeftsgewinnBasisjahrMinus1 = this.model.getEkvContToWorkWith().ekvJABasisJahrPlus1.geschaeftsgewinnBasisjahr;
-            this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
-        } else {
-            this.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
-            this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
-        }
         let fsGS: TSFinanzielleSituation = this.model.getFiSiConToWorkWith().finanzielleSituationGS;
         if (this.model.getBasisJahrPlus() === 2) {
             //basisjahr Plus 2
+            //JA Daten
+            this.geschaeftsgewinnBasisjahrMinus1 = this.model.getEkvContToWorkWith().ekvJABasisJahrPlus1.geschaeftsgewinnBasisjahr;
+            this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
+            //GS Daten
             this.geschaeftsgewinnBasisjahrMinus1GS = this.model.getEkvContToWorkWith().ekvGSBasisJahrPlus1.geschaeftsgewinnBasisjahr;
-            this.geschaeftsgewinnBasisjahrMinus2GS = fs.geschaeftsgewinnBasisjahr;
+            this.geschaeftsgewinnBasisjahrMinus2GS = fsGS.geschaeftsgewinnBasisjahr;
         } else {
-            this.geschaeftsgewinnBasisjahrMinus1GS = fs.geschaeftsgewinnBasisjahr;
-            this.geschaeftsgewinnBasisjahrMinus2GS = fs.geschaeftsgewinnBasisjahrMinus1;
+            //JA Daten
+            this.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
+            this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
+            //GS Daten
+            this.geschaeftsgewinnBasisjahrMinus1GS = fsGS.geschaeftsgewinnBasisjahr;
+            this.geschaeftsgewinnBasisjahrMinus2GS = fsGS.geschaeftsgewinnBasisjahrMinus1;
         }
     }
 

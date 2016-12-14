@@ -5,7 +5,6 @@ import {IComponentOptions, IFormController} from 'angular';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
-import TSAdresse from '../../../models/TSAdresse';
 require('./dv-adresse.less');
 
 export class AdresseComponentConfig implements IComponentOptions {

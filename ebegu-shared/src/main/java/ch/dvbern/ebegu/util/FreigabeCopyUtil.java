@@ -9,13 +9,11 @@ import javax.annotation.Nullable;
 /**
  * Utils fuer das Kopieren der Daten von den JA-Containern in die GS-Container bei der Freigabe des Gesuchs.
  */
+@SuppressWarnings("PMD.CollapsibleIfStatements")
 public class FreigabeCopyUtil {
 
 	/**
-	 * Parset den gegebenen String als LocalDate mit dem Format "yyyy-MM-dd"
-	 * Sollte der gegebene String null oder leer sein, wird now() zurueckgegeben
-	 * @param stringDate
-	 * @return
+	 * kopiert das Gesuch fuer die Freigabe
 	 */
 	public static void copyForFreigabe(@Nonnull Gesuch gesuch) {
 		// Familiensituation
@@ -39,8 +37,9 @@ public class FreigabeCopyUtil {
 		if (container != null) {
 			if (container.getFamiliensituationJA() != null) {
 				if (container.getFamiliensituationGS() == null) {
-					container.setFamiliensituationGS(new Familiensituation());
+					container.setFamiliensituationGS(new Familiensituation());  //init
 				}
+				//noinspection ConstantConditions
 				copyFamiliensituation(container.getFamiliensituationGS(), container.getFamiliensituationJA());
 			}
 		}

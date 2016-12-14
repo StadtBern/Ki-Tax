@@ -1,10 +1,10 @@
 import {IComponentOptions} from 'angular';
 import * as moment from 'moment';
-import Moment = moment.Moment;
 import DateUtil from '../../../utils/DateUtil';
+import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
+import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import ILogService = angular.ILogService;
-import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 let template =  require('./dv-bisher.html');
 require('./dv-bisher.less');
 
@@ -26,12 +26,12 @@ export class DvBisher {
 
     gs: any;
     ja: any;
-    showBisherIfNone: boolean;
+    showBisherIfNone: boolean;  // sollen die korrekturen des jugendamts angezeigt werden wenn im GS container kein wert ist
 
 
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, private $translate: ITranslateService, private $log: ILogService) {
-        if (this.showBisherIfNone === undefined) {
+        if (this.showBisherIfNone === undefined) {//wenn nicht von aussen gesetzt auf true
             this.showBisherIfNone = true;
         }
     }
