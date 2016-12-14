@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -99,7 +100,8 @@ public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 	@Override
 	public String getEingangsDatum() {
-		return Constants.DATE_FORMATTER.format(mahnung.getGesuch().getEingangsdatum());
+		LocalDate eingangsdatum = mahnung.getGesuch().getEingangsdatum() != null ? mahnung.getGesuch().getEingangsdatum() : LocalDate.now();
+		return Constants.DATE_FORMATTER.format(eingangsdatum);
 	}
 
 	@Override
