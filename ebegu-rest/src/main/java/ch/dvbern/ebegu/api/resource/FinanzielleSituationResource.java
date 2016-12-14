@@ -126,8 +126,8 @@ public class FinanzielleSituationResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Gesuch gesuch = new Gesuch();
-		gesuch.setFamiliensituation(new Familiensituation());
-		gesuch.getFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
+		gesuch.initFamiliensituationContainer();
+		gesuch.extractFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS1() != null) {
 			gesuch.setGesuchsteller1(new GesuchstellerContainer());
 			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(

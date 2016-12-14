@@ -68,9 +68,9 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 			lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG1_ACCEPT_MSG);
 		} else {
 			//ekv wurde nicht akzeptiert
-			if (betreuung.extractGesuch().getEinkommensverschlechterungInfo() != null
-				&& betreuung.extractGesuch().getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() != null
-				&& betreuung.extractGesuch().getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
+			if (betreuung.extractGesuch().extractEinkommensverschlechterungInfo() != null
+				&& betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() != null
+				&& betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
 				lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG1_NOT_ACCEPT_MSG);
 			}
 		}
@@ -81,9 +81,9 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 			lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_ACCEPT_MSG);
 		} else {
 			//ekv2 wurde nicht akzeptiert
-			if (betreuung.extractGesuch().getEinkommensverschlechterungInfo() != null
-				&&betreuung.extractGesuch().getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null
-				&&  betreuung.extractGesuch().getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
+			if (betreuung.extractGesuch().extractEinkommensverschlechterungInfo() != null
+				&&betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null
+				&&  betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
 				lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_NOT_ACCEPT_MSG);
 			}
 		}

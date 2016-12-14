@@ -40,7 +40,6 @@ public class Familiensituation extends AbstractEntity {
 	}
 
 	public Familiensituation(Familiensituation that) {
-		this.setVorgaengerId(that.getId());
 		this.familienstatus = that.familienstatus;
 		this.gemeinsameSteuererklaerung = that.gemeinsameSteuererklaerung;
 		this.gesuchstellerKardinalitaet = that.gesuchstellerKardinalitaet;

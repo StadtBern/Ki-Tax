@@ -7,7 +7,7 @@ import ch.dvbern.ebegu.entities.Mahnung_;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
