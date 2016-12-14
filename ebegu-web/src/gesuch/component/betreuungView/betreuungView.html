@@ -136,7 +136,10 @@
                                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                             <dv-error-messages
                                                 for="form['betreuungspensum-' + $index].$error"></dv-error-messages>
-                                            <dv-bisher gs="vm.getModel().pensum"></dv-bisher>
+                                            <dv-bisher gs="vm.getBetreuungspensum($index).betreuungspensumGS.pensum"
+                                                       ja="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"></dv-bisher>
+
+
                                         </dv-input-container>
                                     </div>
                                 </div>
@@ -155,6 +158,8 @@
                                             </dv-datepicker>
                                             <dv-error-messages
                                                 for="form['datumAb-' + $index].$error"></dv-error-messages>
+                                            <dv-bisher gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigAb"
+                                                       ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"></dv-bisher>
                                         </dv-input-container>
                                     </div>
 
@@ -170,6 +175,8 @@
                                             </dv-datepicker>
                                             <dv-error-messages
                                                 for="form['datumBis-' + $index].$error"></dv-error-messages>
+                                            <dv-bisher gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigBis"
+                                                       ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"></dv-bisher>
                                         </dv-input-container>
                                     </div>
                                 </div>
