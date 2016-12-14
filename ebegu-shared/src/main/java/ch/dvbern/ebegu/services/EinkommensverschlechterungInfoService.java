@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;

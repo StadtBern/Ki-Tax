@@ -1,7 +1,5 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;

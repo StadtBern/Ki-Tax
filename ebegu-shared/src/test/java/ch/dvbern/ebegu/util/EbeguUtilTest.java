@@ -38,7 +38,7 @@ public class EbeguUtilTest {
 		fsc.setFamiliensituationErstgesuch(oldData);
 		fsc.setFamiliensituationJA(newData);
 
-		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(fsc));;
+		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(fsc));
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class EbeguUtilTest {
 		fsc.setFamiliensituationErstgesuch(oldData);
 		fsc.setFamiliensituationJA(newData);
 
-		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(fsc));;
+		Assert.assertFalse(EbeguUtil.fromOneGSToTwoGS(fsc));
 	}
 
 	@Test
@@ -69,7 +69,7 @@ public class EbeguUtilTest {
 		fsc.setFamiliensituationErstgesuch(oldData);
 		fsc.setFamiliensituationJA(newData);
 
-		Assert.assertTrue(EbeguUtil.fromOneGSToTwoGS(fsc));;
+		Assert.assertTrue(EbeguUtil.fromOneGSToTwoGS(fsc));
 	}
 
 	@Test

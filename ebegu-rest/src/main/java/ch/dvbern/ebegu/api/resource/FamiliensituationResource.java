@@ -3,10 +3,8 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxFamiliensituationContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -56,7 +54,6 @@ public class FamiliensituationResource {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
 		if (gesuch.isPresent()) {
-			Familiensituation oldData = null;
 			FamiliensituationContainer familiensituationContainerToMerge = new FamiliensituationContainer();
 			//wenn es sich um ein update handelt
 			if (familiensituationContainerJAXP.getId() != null) {

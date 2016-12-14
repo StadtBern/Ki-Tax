@@ -479,9 +479,7 @@ public class JaxBConverter {
 		if (persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoGS() != null) {
 			jaxEkvic.setEinkommensverschlechterungInfoGS(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoGS()));
 		}
-
 		jaxEkvic.setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA()));
-
 		return jaxEkvic;
 	}
 

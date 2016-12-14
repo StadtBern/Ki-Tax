@@ -20,7 +20,6 @@ public class EbeguUtil {
 		return fromOneGSToTwoGS(familiensituationContainer.getFamiliensituationErstgesuch(), familiensituationContainer.getFamiliensituationJA());
 	}
 
-
 	public static boolean fromOneGSToTwoGS(Familiensituation oldFamiliensituation, Familiensituation newFamiliensituation) {
 		Validate.notNull(oldFamiliensituation);
 		Validate.notNull(newFamiliensituation);

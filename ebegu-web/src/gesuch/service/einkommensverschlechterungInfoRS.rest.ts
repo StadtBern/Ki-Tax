@@ -1,6 +1,5 @@
 import {IHttpService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlechterungInfo';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import WizardStepManager from './wizardStepManager';

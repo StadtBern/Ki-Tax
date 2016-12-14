@@ -8,7 +8,6 @@ import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -249,12 +248,11 @@ public class Gesuch extends AbstractEntity {
 		this.dokumentGrunds = dokumentGrunds;
 	}
 
-	@Nullable
 	public int getLaufnummer() {
 		return laufnummer;
 	}
 
-	public void setLaufnummer(@Nullable int laufnummer) {
+	public void setLaufnummer(int laufnummer) {
 		this.laufnummer = laufnummer;
 	}
 
@@ -343,14 +341,14 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	public Familiensituation extractFamiliensituation() {
-		if(familiensituationContainer != null){
+		if (familiensituationContainer != null) {
 			return familiensituationContainer.extractFamiliensituation();
 		}
 		return null;
 	}
 
 	public Familiensituation extractFamiliensituationErstgesuch() {
-		if(familiensituationContainer != null){
+		if (familiensituationContainer != null) {
 			return familiensituationContainer.getFamiliensituationErstgesuch();
 		}
 		return null;
@@ -382,7 +380,7 @@ public class Gesuch extends AbstractEntity {
 		}
 		mutation.setAntragStatusHistories(new LinkedHashSet<>());
 
-		if(this.getFamiliensituationContainer() != null) {
+		if (this.getFamiliensituationContainer() != null) {
 			mutation.setFamiliensituationContainer(this.getFamiliensituationContainer().copyForMutation(new FamiliensituationContainer(), this.isMutation()));
 		}
 

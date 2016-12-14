@@ -100,30 +100,12 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 
 	// HELP METHODS
 
-/*	@Nonnull
-	private Familiensituation insertNewEntity() {
-		Familiensituation familiensituation = TestDataUtil.createDefaultFamiliensituation();
-		familiensituationService.saveFamiliensituation(TestDataUtil.createDefaultGesuch(), familiensituation, familiensituation);
-		return familiensituation;
-	}*/
-
 	@Nonnull
 	private FamiliensituationContainer insertNewFamiliensituationContainer() {
 		FamiliensituationContainer familiensituationContainer = TestDataUtil.createDefaultFamiliensituationContainer();
 		familiensituationService.saveFamiliensituation(TestDataUtil.createDefaultGesuch(), familiensituationContainer);
 		return familiensituationContainer;
 	}
-
-/*
-	@Nonnull
-	private Optional<Familiensituation> createFamiliensituation() {
-		Assert.assertNotNull(familiensituationService);
-		Familiensituation insertedFamiliensituation = insertNewEntity();
-		Optional<Familiensituation> familiensituation = familiensituationService.findFamiliensituation(insertedFamiliensituation.getId());
-		Assert.assertEquals(EnumFamilienstatus.ALLEINERZIEHEND, familiensituation.get().getFamilienstatus());
-		return familiensituation;
-	}
-*/
 
 	@Nonnull
 	private Optional<FamiliensituationContainer> createFamiliensituationContainer() {

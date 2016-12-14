@@ -55,7 +55,7 @@ export default class TSFinanzModel {
 
         if (gesuch.extractFamiliensituation().gemeinsameSteuererklaerung) {
             this.gemeinsameSteuererklaerung = angular.copy(gesuch.extractFamiliensituation().gemeinsameSteuererklaerung);
-        }else{
+        } else {
             this.gemeinsameSteuererklaerung = false;
         }
         this.finanzielleSituationContainerGS1 = angular.copy(gesuch.gesuchsteller1.finanzielleSituationContainer);

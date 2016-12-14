@@ -1,6 +1,5 @@
 import {IPromise, IHttpService, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSFamiliensituation from '../../models/TSFamiliensituation';
 import WizardStepManager from './wizardStepManager';
 import TSFamiliensituationContainer from '../../models/TSFamiliensituationContainer';
 

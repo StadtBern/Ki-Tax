@@ -83,5 +83,4 @@ public class EinkommensverschlechterungInfoContainer extends AbstractEntity {
 			gesuch.setEinkommensverschlechterungInfoContainer(this);
 		}
 	}
-
 }
