@@ -57,7 +57,6 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
 
     private initViewModel() {
 
-        //brauchen wir hier das init wirklich nicht mehr? was ist bei mutation etc
         this.initGeschaeftsgewinnFromFS();
 
         this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig()
@@ -144,19 +143,16 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         let fsGS: TSFinanzielleSituation = this.model.getFiSiConToWorkWith().finanzielleSituationGS;
         if (this.model.getBasisJahrPlus() === 2) {
             //basisjahr Plus 2
-            //JA Daten
             this.geschaeftsgewinnBasisjahrMinus1 = this.model.getEkvContToWorkWith().ekvJABasisJahrPlus1.geschaeftsgewinnBasisjahr;
             this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
-            //GS Daten
-            this.geschaeftsgewinnBasisjahrMinus1GS = this.model.getEkvContToWorkWith().ekvGSBasisJahrPlus1.geschaeftsgewinnBasisjahr;
-            this.geschaeftsgewinnBasisjahrMinus2GS = fsGS.geschaeftsgewinnBasisjahr;
+            let einkommensverschlGSBasisjahrPlus1 = this.model.getEkvContToWorkWith().ekvGSBasisJahrPlus1;
+            this.geschaeftsgewinnBasisjahrMinus1GS = einkommensverschlGSBasisjahrPlus1 ? einkommensverschlGSBasisjahrPlus1.geschaeftsgewinnBasisjahr : undefined;
+            this.geschaeftsgewinnBasisjahrMinus2GS = fsGS ? fsGS.geschaeftsgewinnBasisjahr : undefined;
         } else {
-            //JA Daten
             this.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
             this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
-            //GS Daten
-            this.geschaeftsgewinnBasisjahrMinus1GS = fsGS.geschaeftsgewinnBasisjahr;
-            this.geschaeftsgewinnBasisjahrMinus2GS = fsGS.geschaeftsgewinnBasisjahrMinus1;
+            this.geschaeftsgewinnBasisjahrMinus1GS = fsGS ? fsGS.geschaeftsgewinnBasisjahr : undefined;
+            this.geschaeftsgewinnBasisjahrMinus2GS = fsGS ? fsGS.geschaeftsgewinnBasisjahrMinus1 : undefined;
         }
     }
 

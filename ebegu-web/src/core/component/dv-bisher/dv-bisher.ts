@@ -51,7 +51,7 @@ export class DvBisher {
     }
 
     public hasBisher() : boolean {
-        return this.gs !== null && this.gs !== undefined && this.gs !== '';
+        return !this.isEmpty(this.gs);
     }
 
     public showBisher() : boolean {
@@ -62,6 +62,10 @@ export class DvBisher {
         if (gs instanceof moment) {
             return this.equals(DateUtil.momentToLocalDateFormat(gs, 'DD.MM.YYYY'), DateUtil.momentToLocalDateFormat(ja, 'DD.MM.YYYY'));
         }
-        return gs === ja;
+        return gs === ja || (this.isEmpty(gs) && this.isEmpty(ja));//either they are equal or both are a form of empty
+    }
+
+    private isEmpty(val: any): boolean {
+        return val === undefined || val === null || val === '';
     }
 }

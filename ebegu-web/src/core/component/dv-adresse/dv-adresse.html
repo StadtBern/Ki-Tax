@@ -39,7 +39,7 @@
                     </label>
                     <input id="{{vm.prefix}}-hausnummer" type="text" name="adresseHausnummer"
                            ng-model="vm.getModel().adresseJA.hausnummer"
-                           dv-max-length class="form-control">
+                           dv-max-length dv-trim-empty class="form-control">
                     <dv-error-messages for="adresseForm.adresseHausnummer.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.hausnummer"
@@ -55,7 +55,7 @@
                     </label>
                     <input id="{{vm.prefix}}-zusatzzeile" type="text" name="adresseZusatzzeile"
                            ng-model="vm.getModel().adresseJA.zusatzzeile"
-                           dv-max-length class="form-control">
+                           dv-max-length class="form-control" dv-trim-empty>
                     <dv-error-messages for="adresseForm.adresseZusatzzeile.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.zusatzzeile"
