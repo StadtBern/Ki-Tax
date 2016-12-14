@@ -915,6 +915,7 @@ public class JaxBConverter {
 
 	}
 
+
 	public FinanzielleSituationContainer finanzielleSituationContainerToStorableEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX) {
 		Validate.notNull(containerJAX);
 		FinanzielleSituationContainer containerToMergeWith = new FinanzielleSituationContainer();
@@ -1095,7 +1096,7 @@ public class JaxBConverter {
 		return gesuchToEntity(gesuchToFind, gesuchToMergeWith);
 	}
 
-	private FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX,
+	public FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX,
 																				@Nonnull final FinanzielleSituationContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);

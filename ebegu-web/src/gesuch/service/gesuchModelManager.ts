@@ -446,7 +446,9 @@ export default class GesuchModelManager {
                 this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
             }
         }
-        this.gesuch.eingangsart = eingangsart;
+        if (eingangsart) {
+            this.gesuch.eingangsart = eingangsart;
+        }
     }
 
     /**
@@ -1070,6 +1072,15 @@ export default class GesuchModelManager {
             return isAtLeastFreigegeben(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
         }
         return false;
+    }
+
+    /**
+     * Wenn das Gesuch Online durch den GS erstellt wurde, nun aber in Bearbeitung beim JA ist, handelt es sich um
+     * den Korrekturmodus des Jugendamtes.
+     * @returns {boolean}
+     */
+    public isKorrekturModusJugendamt(): boolean {
+        return this.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) && (TSEingangsart.ONLINE === this.getGesuch().eingangsart);
     }
 
     /**

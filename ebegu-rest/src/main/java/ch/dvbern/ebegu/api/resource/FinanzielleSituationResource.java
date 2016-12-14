@@ -6,7 +6,10 @@ import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituationContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -127,15 +130,13 @@ public class FinanzielleSituationResource {
 		gesuch.extractFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS1() != null) {
 			gesuch.setGesuchsteller1(new GesuchstellerContainer());
-			gesuch.getGesuchsteller1().setGesuchstellerJA(new Gesuchsteller());
 			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(
-				converter.finanzielleSituationContainerToStorableEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1()));
+				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1(), new FinanzielleSituationContainer()));
 		}
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS2() != null) {
 			gesuch.setGesuchsteller2(new GesuchstellerContainer());
-			gesuch.getGesuchsteller2().setGesuchstellerJA(new Gesuchsteller());
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(
-				converter.finanzielleSituationContainerToStorableEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2()));
+				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2(), new FinanzielleSituationContainer()));
 		}
 
 		FinanzielleSituationResultateDTO finanzielleSituationResultateDTO = finanzielleSituationService.calculateResultate(gesuch);
