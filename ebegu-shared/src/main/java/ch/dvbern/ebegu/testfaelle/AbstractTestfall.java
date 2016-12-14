@@ -75,7 +75,9 @@ public abstract class AbstractTestfall {
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
-		gesuch.setFamiliensituation(familiensituation);
+		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
+		familiensituationContainer.setFamiliensituationJA(familiensituation);
+		gesuch.setFamiliensituationContainer(familiensituationContainer);
 		return gesuch;
 	}
 
@@ -85,7 +87,9 @@ public abstract class AbstractTestfall {
 		familiensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
-		gesuch.setFamiliensituation(familiensituation);
+		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
+		familiensituationContainer.setFamiliensituationJA(familiensituation);
+		gesuch.setFamiliensituationContainer(familiensituationContainer);
 		return gesuch;
 	}
 

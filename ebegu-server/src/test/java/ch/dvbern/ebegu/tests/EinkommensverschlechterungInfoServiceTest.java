@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.EinkommensverschlechterungInfoService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -43,25 +43,25 @@ public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLogi
 		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
 		gesuch = persistence.persist(gesuch);
 
-		TestDataUtil.createDefaultEinkommensverschlechterungsInfo(gesuch);
+		TestDataUtil.createDefaultEinkommensverschlechterungsInfoContainer(gesuch);
 
-		einkommensverschlechterungInfoService.createEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfo());
+		einkommensverschlechterungInfoService.createEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
 
 		Assert.assertNotNull(gesuch);
-		Assert.assertNotNull(gesuch.getEinkommensverschlechterungInfo());
+		Assert.assertNotNull(gesuch.extractEinkommensverschlechterungInfo());
 
-		Collection<EinkommensverschlechterungInfo> allEinkommensverschlechterungInfo = einkommensverschlechterungInfoService.getAllEinkommensverschlechterungInfo();
-		EinkommensverschlechterungInfo einkommensverschlechterungInfo = allEinkommensverschlechterungInfo.iterator().next();
+		Collection<EinkommensverschlechterungInfoContainer> allEinkommensverschlechterungInfo = einkommensverschlechterungInfoService.getAllEinkommensverschlechterungInfo();
+		EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo = allEinkommensverschlechterungInfo.iterator().next();
 		Assert.assertNotNull(einkommensverschlechterungInfo);
 	}
 
-	private EinkommensverschlechterungInfo persistAndGetEinkommensverschlechterungInfoOnGesuch() {
+	private EinkommensverschlechterungInfoContainer persistAndGetEinkommensverschlechterungInfoOnGesuch() {
 		Gesuch gesuch = TestDataUtil.createDefaultEinkommensverschlechterungsGesuch();
 		gesuch.setFall(persistence.persist(TestDataUtil.createDefaultFall()));
 		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
 		gesuch = persistence.persist(gesuch);
 
-		return gesuch.getEinkommensverschlechterungInfo();
+		return gesuch.getEinkommensverschlechterungInfoContainer();
 	}
 
 	/**
@@ -80,18 +80,18 @@ public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLogi
 
 		persistAndGetEinkommensverschlechterungInfoOnGesuch();
 
-		Collection<EinkommensverschlechterungInfo> allEinkommensverschlechterungInfo = einkommensverschlechterungInfoService.getAllEinkommensverschlechterungInfo();
-		EinkommensverschlechterungInfo einkommensverschlechterungInfo = allEinkommensverschlechterungInfo.iterator().next();
+		Collection<EinkommensverschlechterungInfoContainer> allEinkommensverschlechterungInfo = einkommensverschlechterungInfoService.getAllEinkommensverschlechterungInfo();
+		EinkommensverschlechterungInfoContainer einkommensverschlechterungInfo = allEinkommensverschlechterungInfo.iterator().next();
 
-		einkommensverschlechterungInfo.setGrundFuerBasisJahrPlus2(TEST_123);
+		einkommensverschlechterungInfo.getEinkommensverschlechterungInfoJA().setGrundFuerBasisJahrPlus2(TEST_123);
 
 		einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(einkommensverschlechterungInfo);
 
-		final Optional<EinkommensverschlechterungInfo> einkommensverschlechterungInfoUpdated = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(einkommensverschlechterungInfo.getId());
+		final Optional<EinkommensverschlechterungInfoContainer> einkommensverschlechterungInfoUpdated = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(einkommensverschlechterungInfo.getId());
 
-		final EinkommensverschlechterungInfo info1 = einkommensverschlechterungInfoUpdated.get();
+		final EinkommensverschlechterungInfoContainer info1 = einkommensverschlechterungInfoUpdated.get();
 		Assert.assertNotNull(info1);
-		Assert.assertEquals(info1.getGrundFuerBasisJahrPlus2(), TEST_123);
+		Assert.assertEquals(info1.getEinkommensverschlechterungInfoJA().getGrundFuerBasisJahrPlus2(), TEST_123);
 	}
 
 	@Test
@@ -99,7 +99,7 @@ public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguLogi
 		Assert.assertNotNull(einkommensverschlechterungInfoService);
 		Assert.assertEquals(0, einkommensverschlechterungInfoService.getAllEinkommensverschlechterungInfo().size());
 
-		EinkommensverschlechterungInfo info = persistAndGetEinkommensverschlechterungInfoOnGesuch();
+		EinkommensverschlechterungInfoContainer info = persistAndGetEinkommensverschlechterungInfoOnGesuch();
 		Assert.assertEquals(1, einkommensverschlechterungInfoService.getAllEinkommensverschlechterungInfo().size());
 
 		einkommensverschlechterungInfoService.removeEinkommensverschlechterungInfo(info);

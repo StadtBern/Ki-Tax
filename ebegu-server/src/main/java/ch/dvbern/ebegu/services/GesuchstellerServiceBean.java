@@ -52,7 +52,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainer);
 		}
 
-		if (gesuch.isMutation() && gesuch.getEinkommensverschlechterungInfo() == null
+		if (gesuch.isMutation() && gesuch.extractEinkommensverschlechterungInfo() == null
 			&& gsNumber == 2 && gesuchsteller.getEinkommensverschlechterungContainer() == null) {
 
 			EinkommensverschlechterungContainer evContainer = new EinkommensverschlechterungContainer();
@@ -76,8 +76,8 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
 
-		if ((gesuch.getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
-			|| (!gesuch.getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
+		if ((gesuch.extractFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
+			|| (!gesuch.extractFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
 			if (umzug) {
 				wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.UMZUG);
 			} else {

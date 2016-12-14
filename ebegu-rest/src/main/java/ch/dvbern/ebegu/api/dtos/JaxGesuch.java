@@ -27,13 +27,10 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private Set<JaxKindContainer> kindContainers = new LinkedHashSet<>();
 
 	@Nullable
-	private JaxFamiliensituation familiensituation;
+	private JaxFamiliensituationContainer familiensituationContainer;
 
 	@Nullable
-	private JaxFamiliensituation familiensituationErstgesuch;
-
-	@Nullable
-	private JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo;
+	private JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer;
 
 	@Nullable
 	private String bemerkungen;
@@ -73,21 +70,21 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	}
 
 	@Nullable
-	public JaxFamiliensituation getFamiliensituation() {
-		return familiensituation;
+	public JaxFamiliensituationContainer getFamiliensituationContainer() {
+		return familiensituationContainer;
 	}
 
-	public void setFamiliensituation(@Nullable final JaxFamiliensituation familiensituation) {
-		this.familiensituation = familiensituation;
+	public void setFamiliensituationContainer(@Nullable JaxFamiliensituationContainer familiensituationContainer) {
+		this.familiensituationContainer = familiensituationContainer;
 	}
 
 	@Nullable
-	public JaxEinkommensverschlechterungInfo getEinkommensverschlechterungInfo() {
-		return einkommensverschlechterungInfo;
+	public JaxEinkommensverschlechterungInfoContainer getEinkommensverschlechterungInfoContainer() {
+		return einkommensverschlechterungInfoContainer;
 	}
 
-	public void setEinkommensverschlechterungInfo(@Nullable final JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo) {
-		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
+	public void setEinkommensverschlechterungInfoContainer(@Nullable final JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer) {
+		this.einkommensverschlechterungInfoContainer = einkommensverschlechterungInfoContainer;
 	}
 
 	@Nullable
@@ -108,13 +105,5 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		this.laufnummer = laufnummer;
 	}
 
-	@Nullable
-	public JaxFamiliensituation getFamiliensituationErstgesuch() {
-		return familiensituationErstgesuch;
-	}
-
-	public void setFamiliensituationErstgesuch(@Nullable JaxFamiliensituation familiensituationErstgesuch) {
-		this.familiensituationErstgesuch = familiensituationErstgesuch;
-	}
 }
 

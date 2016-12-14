@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.rules.Anlageverzeichnis;
+package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
@@ -42,11 +42,11 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 	@Override
 	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
 
-		final boolean gemeinsam = gesuch.getFamiliensituation() != null &&
-			gesuch.getFamiliensituation().getGemeinsameSteuererklaerung() != null &&
-			gesuch.getFamiliensituation().getGemeinsameSteuererklaerung();
+		final boolean gemeinsam = gesuch.extractFamiliensituation() != null &&
+			gesuch.extractFamiliensituation().getGemeinsameSteuererklaerung() != null &&
+			gesuch.extractFamiliensituation().getGemeinsameSteuererklaerung();
 
-		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.getEinkommensverschlechterungInfo();
+		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.extractEinkommensverschlechterungInfo();
 
 		final String basisJahrPlus1 = String.valueOf(gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear() + 1);
 		final String basisJahrPlus2 = String.valueOf(gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear() + 2);

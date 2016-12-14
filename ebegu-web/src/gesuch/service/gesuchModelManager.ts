@@ -30,7 +30,6 @@ import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlechterungInfo';
 import TSUser from '../../models/TSUser';
 import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
@@ -51,6 +50,8 @@ import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
+import TSEinkommensverschlechterungInfoContainer from '../../models/TSEinkommensverschlechterungInfoContainer';
+import TSFamiliensituationContainer from '../../models/TSFamiliensituationContainer';
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../models/TSAdresseContainer';
 import IQService = angular.IQService;
@@ -96,7 +97,7 @@ export default class GesuchModelManager {
     public openGesuch(gesuchId: string): IPromise<TSGesuch> {
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
             return this.gesuchRS.findGesuchForInstitution(gesuchId)
-                .then((response : TSGesuch) => {
+                .then((response: TSGesuch) => {
                     return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(bla => {
                         if (response) {
                             this.setGesuch(response);
@@ -171,14 +172,14 @@ export default class GesuchModelManager {
 
     public getFamiliensituation(): TSFamiliensituation {
         if (this.gesuch) {
-            return this.gesuch.familiensituation;
+            return this.gesuch.extractFamiliensituation();
         }
         return undefined;
     }
 
     public getFamiliensituationErstgesuch(): TSFamiliensituation {
         if (this.gesuch) {
-            return this.gesuch.familiensituationErstgesuch;
+            return this.gesuch.extractFamiliensituationErstgesuch();
         }
         return undefined;
     }
@@ -231,13 +232,9 @@ export default class GesuchModelManager {
         }
     }
 
-    public updateFamiliensituation(): IPromise<TSFamiliensituation> {
-        return this.familiensituationRS.saveFamiliensituation(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
-            return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
-                this.gesuch = gesuchResponse;
-                this.gesuch.familiensituation = familienResponse;
-                return this.gesuch.familiensituation;
-            });
+    public reloadGesuch(): IPromise<TSGesuch> {
+        return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
+            return this.gesuch = gesuchResponse;
         });
     }
 
@@ -295,15 +292,6 @@ export default class GesuchModelManager {
             .then((ekvContRespo: TSEinkommensverschlechterungContainer) => {
                 this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
                 return this.getStammdatenToWorkWith().einkommensverschlechterungContainer;
-            });
-    }
-
-    public updateEinkommensverschlechterungsInfo(): IPromise<TSEinkommensverschlechterungInfo> {
-        return this.einkommensverschlechterungInfoRS.saveEinkommensverschlechterungInfo(
-            this.getGesuch().einkommensverschlechterungInfo, this.gesuch.id)
-            .then((ekvInfoRespo: TSEinkommensverschlechterungInfo) => {
-                this.getGesuch().einkommensverschlechterungInfo = ekvInfoRespo;
-                return this.getGesuch().einkommensverschlechterungInfo;
             });
     }
 
@@ -376,14 +364,14 @@ export default class GesuchModelManager {
     }
 
     private getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
-        if (!this.gesuch.einkommensverschlechterungInfo) {
+        if (!this.gesuch.extractEinkommensverschlechterungInfo()) {
             this.initEinkommensverschlechterungInfo();
         }
 
         if (basisJahrPlus === 2) {
-            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2;
+            return this.gesuch.extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2;
         } else {
-            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1;
+            return this.gesuch.extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1;
         }
     }
 
@@ -413,19 +401,10 @@ export default class GesuchModelManager {
         }
     }
 
-    public getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
-        if (this.getGesuch().einkommensverschlechterungInfo == null) {
-            this.initEinkommensverschlechterungInfo();
-        }
-        return this.getGesuch().einkommensverschlechterungInfo;
-    }
-
     private initEinkommensverschlechterungInfo(): void {
-        if (this.gesuch && !this.gesuch.einkommensverschlechterungInfo) {
-            this.gesuch.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo();
-            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 = false;
-            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 = false;
-
+        if (this.gesuch && !this.gesuch.extractEinkommensverschlechterungInfo()) {
+            this.gesuch.einkommensverschlechterungInfoContainer = new TSEinkommensverschlechterungInfoContainer();
+            this.gesuch.einkommensverschlechterungInfoContainer.init();
         }
     }
 
@@ -510,7 +489,8 @@ export default class GesuchModelManager {
 
     public initFamiliensituation() {
         if (!this.getFamiliensituation()) {
-            this.gesuch.familiensituation = new TSFamiliensituation();
+            this.gesuch.familiensituationContainer = new TSFamiliensituationContainer();
+            this.gesuch.familiensituationContainer.familiensituationJA = new TSFamiliensituation();
         }
     }
 
@@ -845,7 +825,7 @@ export default class GesuchModelManager {
             return this.erwerbspensumRS.saveErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((response: TSErwerbspensumContainer) => {
 
-                    let i : number = EbeguUtil.getIndexOfElementwithID(erwerbspensum, gesuchsteller.erwerbspensenContainer);
+                    let i: number = EbeguUtil.getIndexOfElementwithID(erwerbspensum, gesuchsteller.erwerbspensenContainer);
                     if (i >= 0) {
                         gesuchsteller.erwerbspensenContainer[i] = erwerbspensum;
                     }
@@ -952,7 +932,7 @@ export default class GesuchModelManager {
         });
     }
 
-    public verfuegungSchliessenNichtEintreten():  IPromise<TSVerfuegung> {
+    public verfuegungSchliessenNichtEintreten(): IPromise<TSVerfuegung> {
         return this.verfuegungRS.nichtEintreten(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response: TSVerfuegung) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.NICHT_EINGETRETEN;

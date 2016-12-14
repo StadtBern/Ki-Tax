@@ -69,9 +69,9 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 			}
 		}
 
-		if (gesuch.getFamiliensituation() != null && gesuch.getFamiliensituation().getAenderungPer() != null) {
+		if (gesuch.extractFamiliensituation() != null && gesuch.extractFamiliensituation().getAenderungPer() != null) {
 			// die familiensituation aendert sich jetzt erst ab dem naechsten Monat, deswegen .plusMonths(1).withDayOfMonth(1)
-			final LocalDate aenderungPerBeginningNextMonth = gesuch.getFamiliensituation().getAenderungPer().plusMonths(1).withDayOfMonth(1);
+			final LocalDate aenderungPerBeginningNextMonth = gesuch.extractFamiliensituation().getAenderungPer().plusMonths(1).withDayOfMonth(1);
 			famGrMap.put(aenderungPerBeginningNextMonth, calculateFamiliengroesse(gesuch, aenderungPerBeginningNextMonth));
 		}
 
@@ -137,14 +137,14 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 		double familiengroesse = 0;
 		if (gesuch != null) {
 
-			if (gesuch.getFamiliensituation() != null) { // wenn die Familiensituation nicht vorhanden ist, kann man nichts machen (die Daten wurden falsch eingegeben)
-				if (gesuch.getFamiliensituationErstgesuch() != null && date != null && (
-					gesuch.getFamiliensituation().getAenderungPer() == null //wenn aenderung per nicht gesetzt ist nehmen wir wert aus erstgesuch
-					|| date.isBefore(gesuch.getFamiliensituation().getAenderungPer().plusMonths(1).withDayOfMonth(1)))) {
+			if (gesuch.extractFamiliensituation() != null) { // wenn die Familiensituation nicht vorhanden ist, kann man nichts machen (die Daten wurden falsch eingegeben)
+				if (gesuch.extractFamiliensituationErstgesuch() != null && date != null && (
+					gesuch.extractFamiliensituation().getAenderungPer() == null //wenn aenderung per nicht gesetzt ist nehmen wir wert aus erstgesuch
+					|| date.isBefore(gesuch.extractFamiliensituation().getAenderungPer().plusMonths(1).withDayOfMonth(1)))) {
 
-					familiengroesse = familiengroesse + (gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() ? 2 : 1);
+					familiengroesse = familiengroesse + (gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller() ? 2 : 1);
 				} else {
-					familiengroesse = familiengroesse + (gesuch.getFamiliensituation().hasSecondGesuchsteller() ? 2 : 1);
+					familiengroesse = familiengroesse + (gesuch.extractFamiliensituation().hasSecondGesuchsteller() ? 2 : 1);
 				}
 			} else{
 				LOG.warn("Die Familiengroesse kann noch nicht richtig berechnet werden weil die Familiensituation nicht richtig ausgefuellt ist. Antragnummer: {}" , gesuch.getAntragNummer() );

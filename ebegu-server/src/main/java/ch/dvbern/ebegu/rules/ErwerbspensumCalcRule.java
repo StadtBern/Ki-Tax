@@ -25,7 +25,7 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Objects.requireNonNull(betreuung.extractGesuch(), "Gesuch muss gesetzt sein");
-		Objects.requireNonNull(betreuung.extractGesuch().getFamiliensituation(), "Familiensituation muss gesetzt sein");
+		Objects.requireNonNull(betreuung.extractGesuch().extractFamiliensituation(), "Familiensituation muss gesetzt sein");
 		boolean hasSecondGesuchsteller = hasSecondGSForZeit(betreuung, verfuegungZeitabschnitt.getGueltigkeit());
 		int erwerbspensumOffset = hasSecondGesuchsteller ? 100 : 0;
 		// Erwerbspensum ist immer die erste Rule, d.h. es wird das Erwerbspensum mal als Anspruch angenommen
@@ -55,12 +55,12 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 
 	private boolean hasSecondGSForZeit(@Nonnull Betreuung betreuung, @Nonnull DateRange gueltigkeit) {
 		final Gesuch gesuch = betreuung.extractGesuch();
-		if (gesuch.getFamiliensituation().getAenderungPer() != null && gesuch.getFamiliensituationErstgesuch() != null
-		    && gueltigkeit.getGueltigBis().isBefore(gesuch.getFamiliensituation().getAenderungPer())) {
-			return gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller();
+		if (gesuch.extractFamiliensituation().getAenderungPer() != null && gesuch.extractFamiliensituationErstgesuch() != null
+		    && gueltigkeit.getGueltigBis().isBefore(gesuch.extractFamiliensituation().getAenderungPer())) {
+			return gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller();
 		}
 		else {
-			return gesuch.getFamiliensituation().hasSecondGesuchsteller();
+			return gesuch.extractFamiliensituation().hasSecondGesuchsteller();
 		}
 	}
 }

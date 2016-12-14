@@ -117,6 +117,12 @@ public final class TestDataUtil {
 		return einkommensverschlechterung;
 	}
 
+	public static FamiliensituationContainer createDefaultFamiliensituationContainer() {
+		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
+		familiensituationContainer.setFamiliensituationJA(createDefaultFamiliensituation());
+		return familiensituationContainer;
+	}
+
 	public static Familiensituation createDefaultFamiliensituation() {
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
@@ -130,7 +136,7 @@ public final class TestDataUtil {
 		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
 		gesuch.setEingangsdatum(LocalDate.now());
-		gesuch.setFamiliensituation(createDefaultFamiliensituation());
+		gesuch.setFamiliensituationContainer(createDefaultFamiliensituationContainer());
 		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
 		return gesuch;
 	}
@@ -396,22 +402,28 @@ public final class TestDataUtil {
 		return allEbeguParameters;
 	}
 
-	public static EinkommensverschlechterungInfo createDefaultEinkommensverschlechterungsInfo(Gesuch gesuch) {
+	public static EinkommensverschlechterungInfoContainer createDefaultEinkommensverschlechterungsInfoContainer(Gesuch gesuch) {
+		final EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer = new EinkommensverschlechterungInfoContainer();
+		einkommensverschlechterungInfoContainer.setEinkommensverschlechterungInfoJA(createDefaultEinkommensverschlechterungsInfo());
+		einkommensverschlechterungInfoContainer.setGesuch(gesuch);
+		gesuch.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfoContainer);
+
+		return einkommensverschlechterungInfoContainer;
+	}
+
+	public static EinkommensverschlechterungInfo createDefaultEinkommensverschlechterungsInfo() {
 		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = new EinkommensverschlechterungInfo();
 		einkommensverschlechterungInfo.setEinkommensverschlechterung(true);
 		einkommensverschlechterungInfo.setEkvFuerBasisJahrPlus1(true);
 		einkommensverschlechterungInfo.setStichtagFuerBasisJahrPlus1(LocalDate.now());
 		einkommensverschlechterungInfo.setGrundFuerBasisJahrPlus1("Grund fuer basis Jahr Plus 1");
 		einkommensverschlechterungInfo.setEkvFuerBasisJahrPlus2(false);
-		einkommensverschlechterungInfo.setGesuch(gesuch);
-		gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfo);
 		return einkommensverschlechterungInfo;
-
 	}
 
 	public static Gesuch createDefaultEinkommensverschlechterungsGesuch() {
 		Gesuch gesuch = createDefaultGesuch();
-		gesuch.setEinkommensverschlechterungInfo(createDefaultEinkommensverschlechterungsInfo(gesuch));
+		gesuch.setEinkommensverschlechterungInfoContainer(createDefaultEinkommensverschlechterungsInfoContainer(gesuch));
 		return gesuch;
 	}
 
@@ -437,12 +449,12 @@ public final class TestDataUtil {
 	public static Betreuung createGesuchWithBetreuungspensum(boolean zweiGesuchsteller) {
 		Gesuch gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
-		gesuch.setFamiliensituation(new Familiensituation());
-		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.setFamiliensituationContainer(createDefaultFamiliensituationContainer());
+		gesuch.extractFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		if (zweiGesuchsteller) {
-			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+			gesuch.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		} else {
-			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+			gesuch.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		}
 		gesuch.setGesuchsteller1(new GesuchstellerContainer());
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
@@ -490,22 +502,22 @@ public final class TestDataUtil {
 		if (gesuchsteller.getEinkommensverschlechterungContainer() == null) {
 			gesuchsteller.setEinkommensverschlechterungContainer(new EinkommensverschlechterungContainer());
 		}
-		if (gesuch.getEinkommensverschlechterungInfo() == null) {
-			gesuch.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo());
-			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
+		if (gesuch.extractEinkommensverschlechterungInfo() == null) {
+			gesuch.setEinkommensverschlechterungInfoContainer(new EinkommensverschlechterungInfoContainer());
+			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 		if (basisJahrPlus1) {
 			gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
 			gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
-			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
-			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
-			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
+			gesuch.extractEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
+			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		} else {
 			gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(new Einkommensverschlechterung());
 			gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2().setNettolohnAug(einkommen);
-			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
-			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
-			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
+			gesuch.extractEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
+			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 	}
 
