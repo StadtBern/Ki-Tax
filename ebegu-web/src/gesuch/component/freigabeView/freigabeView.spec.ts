@@ -15,6 +15,7 @@ import TestDataUtil from '../../../utils/TestDataUtil';
 import IHttpBackendService = angular.IHttpBackendService;
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 
 describe('freigabeView', function () {
 
@@ -26,6 +27,8 @@ describe('freigabeView', function () {
     let $q: IQService;
     let gesuchModelManager: GesuchModelManager;
     let $httpBackend: IHttpBackendService;
+
+    let gesuch: TSGesuch;
 
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
@@ -93,7 +96,7 @@ describe('freigabeView', function () {
             let downloadFile: TSDownloadFile = new TSDownloadFile();
             downloadFile.accessToken = 'token';
             downloadFile.filename = 'name';
-            spyOn(downloadRS, 'getAccessTokenGeneratedDokument').and.returnValue($q.when(downloadFile));
+            spyOn(downloadRS, 'getFreigabequittungAccessTokenGeneratedDokument').and.returnValue($q.when(downloadFile));
             spyOn(downloadRS, 'startDownload').and.returnValue($q.when({}));
             spyOn(gesuchModelManager, 'openGesuch').and.returnValue($q.when({}));
             let gesuch: TSGesuch = new TSGesuch();
@@ -103,9 +106,56 @@ describe('freigabeView', function () {
             let returned: IPromise<void> = controller.gesuchFreigeben(form);
             $scope.$apply();
 
-            expect(downloadRS.getAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, TSGeneratedDokumentTyp.FREIGABEQUITTUNG, false);
+            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);
             expect(downloadRS.startDownload).toHaveBeenCalledWith(downloadFile.accessToken, downloadFile.filename, false);
             expect(returned).toBeDefined();
+        });
+    });
+    describe('openFreigabequittungPDF', function () {
+        beforeEach(() => {
+            TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+            spyOn(gesuchModelManager, 'openGesuch').and.returnValue($q.when({}));
+            spyOn(downloadRS, 'startDownload').and.returnValue($q.when({}));
+            spyOn(downloadRS, 'getFreigabequittungAccessTokenGeneratedDokument').and.returnValue($q.when({}));
+            gesuch = new TSGesuch();
+            gesuch.id = '123';
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
+        });
+        it('should call the service with TSZustelladresse.JUGENDAMT for Erstgesuch', function () {
+            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(false);
+
+            controller.openFreigabequittungPDF();
+            $scope.$apply();
+
+            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);
+        });
+        it('should call the service with TSZustelladresse.SCHULAMT for Erstgesuch', function () {
+            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(true);
+
+            controller.openFreigabequittungPDF();
+            $scope.$apply();
+
+            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.SCHULAMT);
+        });
+        it('should call the service with TSZustelladresse.JUGENDAMT for Mutation of Erstgesuch with SA-Freigabequittung', function () {
+            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
+            spyOn(gesuchModelManager, 'areAllJAAngeboteNew').and.returnValue(true);
+
+            controller.openFreigabequittungPDF();
+            $scope.$apply();
+
+            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);
+        });
+        it('should call the service with undefined for Mutation of Erstgesuch with JS-Freigabequittung', function () {
+            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
+            spyOn(gesuchModelManager, 'areAllJAAngeboteNew').and.returnValue(false);
+
+            controller.openFreigabequittungPDF();
+            $scope.$apply();
+
+            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, undefined);
         });
     });
 });

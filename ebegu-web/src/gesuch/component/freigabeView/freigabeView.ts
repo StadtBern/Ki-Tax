@@ -8,12 +8,12 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
-import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentTyp';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
 import {isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import DateUtil from '../../../utils/DateUtil';
+import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -70,7 +70,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public openFreigabequittungPDF(): IPromise<void> {
-        return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FREIGABEQUITTUNG, false)
+        return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false, this.getZustelladresse())
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
                 this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id).then(() => {
@@ -99,4 +99,19 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
             this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG);
     }
 
+    private getZustelladresse(): TSZustelladresse {
+        if (this.gesuchModelManager.isErstgesuch()) {
+            if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
+                return TSZustelladresse.SCHULAMT;
+            } else {
+                return TSZustelladresse.JUGENDAMT;
+            }
+
+        } else {
+            if (this.gesuchModelManager.areAllJAAngeboteNew()) {
+                return TSZustelladresse.JUGENDAMT;
+            }
+        }
+        return undefined;
+    }
 }

@@ -167,16 +167,8 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 																	 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
 		GeneratedDokument persistedDokument = null;
-		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())
-			|| (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp) && gesuch.getStatus().isFreigegebenOrFreigabequittung())) {
-
-			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
-			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
-				expectedFilepath);
-			if (persistedDokument == null) {
-				LOG.warn("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-					"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getAntragNummer(), expectedFilepath);
-			}
+		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+			persistedDokument = getGeneratedDokument(gesuch, dokumentTyp, fileNameForGeneratedDokumentTyp);
 		}
 		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
 			|| persistedDokument == null) {
@@ -184,7 +176,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			authorizer.checkReadAuthorizationFinSit(gesuch);
 			finanzielleSituationService.calculateFinanzDaten(gesuch);
 
-			byte[] data = null;
+			byte[] data;
 			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
 				final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
 				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
@@ -193,21 +185,56 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 			}
-			else if (GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp) && !gesuch.getStatus().isFreigegebenOrFreigabequittung()) {
-				//nur wenn das Gesuch noch nicht freigegeben ist, wird
-				gesuchService.antragFreigabequittungErstellen(gesuch);
-				data = pdfService.generateFreigabequittung(gesuch, Zustelladresse.JUGENDAMT);
-			}
-			else if (!GeneratedDokumentTyp.FREIGABEQUITTUNG.equals(dokumentTyp)) { // wir muessen explicit nach FREIGABEQUITTUNG fragen, da sein IF noch eine andere variable enthaelt
+			else {
 				LOG.warn("Unerwarter Dokumenttyp " + dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
 				return null;
 			}
 
-			if (data != null) {
-				persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
-					fileNameForGeneratedDokumentTyp);
-			}
+			persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
+				fileNameForGeneratedDokumentTyp);
 		}
+		return persistedDokument;
+	}
+
+	@Override
+	public GeneratedDokument getFreigabequittungAccessTokenGeneratedDokument(final Gesuch gesuch,
+																			 Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getAntragNummer());
+		GeneratedDokument persistedDokument = null;
+		if (!forceCreation || (gesuch.getStatus().isFreigegebenOrFreigabequittung())) {
+
+			persistedDokument = getGeneratedDokument(gesuch, GeneratedDokumentTyp.FREIGABEQUITTUNG, fileNameForGeneratedDokumentTyp);
+		}
+		if (!gesuch.getStatus().isFreigegebenOrFreigabequittung() || persistedDokument == null) {
+			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+			authorizer.checkReadAuthorizationFinSit(gesuch);
+
+			byte[] data;
+			if (!gesuch.getStatus().isFreigegebenOrFreigabequittung()) {
+				//nur wenn das Gesuch noch nicht freigegeben ist, wird
+				gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
+				data = pdfService.generateFreigabequittung(gesuch, zustelladresse);
+			}
+			else { // wir muessen explicit nach FREIGABEQUITTUNG fragen, da sein IF noch eine andere variable enthaelt
+				LOG.warn("Unerwarter Dokumenttyp " + GeneratedDokumentTyp.FREIGABEQUITTUNG.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
+				return null;
+			}
+
+			persistedDokument = updateGeneratedDokument(data, GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch,
+				fileNameForGeneratedDokumentTyp);
+		}
+		return persistedDokument;
+	}
+
+	@Nullable
+	private GeneratedDokument getGeneratedDokument(Gesuch gesuch, GeneratedDokumentTyp dokumentTyp, String fileNameForGeneratedDokumentTyp) {
+		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
+		final GeneratedDokument persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
+            expectedFilepath);
+		if (persistedDokument == null) {
+            LOG.warn("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
+                "nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getAntragNummer(), expectedFilepath);
+        }
 		return persistedDokument;
 	}
 

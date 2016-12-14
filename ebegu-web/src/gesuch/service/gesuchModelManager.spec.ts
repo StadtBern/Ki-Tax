@@ -64,7 +64,6 @@ describe('gesuchModelManager', function () {
             expect(gesuchModelManager.createBetreuung).toBeDefined();
         });
     });
-
     describe('API Usage', function () {
         describe('createBetreuung', () => {
             it('should create a new empty Betreuung for the current KindContainer', () => {
@@ -477,37 +476,50 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('areThereOnlySchulamtAngebote', function () {
-            it('should be true if only Schulamtangebote', function() {
+            beforeEach(() => {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
-                createKindContainer();
-                gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
-                gesuchModelManager.createBetreuung();
-                gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
-                let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
-                institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.TAGESSCHULE;
-                gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+            });
+            it('should be true if only Schulamtangebote', function() {
+                createKindWithBetreuung();
+                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.TAGESSCHULE);
 
                 expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(true);
             });
             it('should be false if not only Schulamtangebote', function() {
-                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
-                createKindContainer();
-                gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
-                gesuchModelManager.createBetreuung();
-                gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
-                let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
-                institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.KITA;
-                gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+                createKindWithBetreuung();
+                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.KITA);
 
                 expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
             });
             it('should be false if there are no Betreuungen or Kinds', function() {
+                expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
+            });
+        });
+        describe('areAllJAAngeboteNew', function () {
+            beforeEach(() => {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
-
-                expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
+            });
+            it('should be false if there are no Betreuungen or Kinds', function() {
+                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(false);
+            });
+            it('should be true if all JA-angebote are new', function() {
+                createKindWithBetreuung();
+                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.KITA);
+                gesuchModelManager.getBetreuungToWorkWith().vorgaengerId = undefined; // the betreuung is new
+                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(true);
+            });
+            it('should be false if not all JA-angebote are new', function() {
+                createKindWithBetreuung();
+                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.KITA);
+                gesuchModelManager.getBetreuungToWorkWith().vorgaengerId = 'vorgaenger_betreuungID'; // the betreuung existed already
+                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(false);
+            });
+            it('should be false if all are SA-Angebote', function() {
+                createKindWithBetreuung();
+                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.TAGESSCHULE);
+                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(false);
             });
         });
     });
@@ -519,6 +531,19 @@ describe('gesuchModelManager', function () {
         gesuchModelManager.initKinder();
         gesuchModelManager.createKind();
         gesuchModelManager.initBetreuung();
+    }
+
+    function createKindWithBetreuung() {
+        createKindContainer();
+        gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
+        gesuchModelManager.createBetreuung();
+        gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+    }
+
+    function setInstitutionToExistingBetreuung(typ: TSBetreuungsangebotTyp) {
+        let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
+        institution.betreuungsangebotTyp = typ;
+        gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
     }
 
 });

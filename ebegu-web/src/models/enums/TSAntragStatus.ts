@@ -74,3 +74,6 @@ export function isAtLeastFreigegebenOrFreigabequittung(status: TSAntragStatus): 
     return isAtLeastFreigegeben(status) || status === TSAntragStatus.FREIGABEQUITTUNG;
 }
 
+export function isAnyStatusOfVerfuegt(status: TSAntragStatus): boolean {
+    return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.VERFUEGT;
+}

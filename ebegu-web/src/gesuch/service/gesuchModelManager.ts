@@ -49,7 +49,7 @@ import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import {isJugendamt, isSchulamt} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../models/TSAdresseContainer';
@@ -1032,7 +1032,7 @@ export default class GesuchModelManager {
         }
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (betreuung.institutionStammdaten.betreuungsangebotTyp !== TSBetreuungsangebotTyp.TAGESSCHULE) {
+                if (!isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
                     return false;
                 }
             }
@@ -1051,7 +1051,7 @@ export default class GesuchModelManager {
         }
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (betreuung.institutionStammdaten.betreuungsangebotTyp === TSBetreuungsangebotTyp.TAGESSCHULE) {
+                if (isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
                     return true;
                 }
             }
@@ -1197,5 +1197,28 @@ export default class GesuchModelManager {
 
     public clearGesuch(): void {
         this.gesuch = undefined;
+    }
+
+    /**
+     * Schaut alle Betreuungen durch. Wenn es keine "JAAngebote" gibt, gibt es false zurueck.
+     * Nur wenn alle JA-Angebote neu sind, gibt es true zurueck.
+     */
+    public areAllJAAngeboteNew(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        let jaAngeboteFound: boolean = false; // Wenn kein JA-Angebot gefunden wurde geben wir false zurueck
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (isJugendamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    if (betreuung.vorgaengerId) { // eine mutierte JA-Betreuung existiert
+                        return false;
+                    }
+                    jaAngeboteFound = true;
+                }
+            }
+        }
+        return jaAngeboteFound;
     }
 }

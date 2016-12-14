@@ -516,11 +516,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	public Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch) {
+	public Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch, AntragStatus statusToChangeTo) {
 		authorizer.checkWriteAuthorization(gesuch);
 
 		gesuch.setFreigabeDatum(LocalDate.now());
-		gesuch.setStatus(AntragStatus.FREIGABEQUITTUNG);
+
+		if (AntragStatus.FREIGEGEBEN.equals(statusToChangeTo)) {
+			gesuch.setEingangsdatum(LocalDate.now()); // Nur wenn das Gesuch direkt freigegeben wird, muessen wir das Eingangsdatum auch setzen
+		}
+
+		gesuch.setStatus(statusToChangeTo);
 
 		final WizardStep freigabeStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
 		freigabeStep.setWizardStepStatus(WizardStepStatus.OK);
@@ -616,9 +621,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
 
-		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
 		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
-		Predicate predicateAntragStatus = cb.equal(join.get(AntragStatusHistory_.status), AntragStatus.VERFUEGT);
+		Predicate predicateAntragStatus = join.get(AntragStatusHistory_.status).in(AntragStatus.getAllVerfuegtStates());
 		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
 
 		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);

@@ -8,7 +8,7 @@ import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import TSFall from '../../models/TSFall';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import FallRS from '../../gesuch/service/fallRS.rest';
-import {TSAntragStatus, IN_BEARBEITUNG_BASE_NAME} from '../../models/enums/TSAntragStatus';
+import {TSAntragStatus, IN_BEARBEITUNG_BASE_NAME, isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import EbeguUtil from '../../utils/EbeguUtil';
 import ITimeoutService = angular.ITimeoutService;
@@ -85,7 +85,7 @@ export class GesuchstellerDashboardListViewController {
             if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
                 // Noch nicht freigegeben
                 this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});
-            } else if (TSAntragStatus.VERFUEGT !== antrag.status) {
+            } else if (!isAnyStatusOfVerfuegt(antrag.status)) {
                 // Alles ausser verfuegt und InBearbeitung
                 this.$state.go('gesuch.dokumente', {createNew: false, gesuchId: antrag.antragId});
             } else {
@@ -105,7 +105,7 @@ export class GesuchstellerDashboardListViewController {
             if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
                 // Noch nicht freigegeben -> Text BEARBEITEN
                 return this.$translate.instant('GS_BEARBEITEN');
-            } else if (TSAntragStatus.VERFUEGT !== antrag.status) {
+            } else if (!isAnyStatusOfVerfuegt(antrag.status)) {
                 // Alles ausser verfuegt und InBearbeitung -> Text DOKUMENTE HOCHLADEN
                 return this.$translate.instant('GS_DOKUMENTE_HOCHLADEN');
             } else {
@@ -122,7 +122,7 @@ export class GesuchstellerDashboardListViewController {
 
     public editAntrag(antrag: TSAntragDTO): void {
         if (antrag) {
-            if (TSAntragStatus.VERFUEGT === antrag.status) {
+            if (isAnyStatusOfVerfuegt(antrag.status)) {
                 this.$state.go('gesuch.verfuegen', {createNew: false, gesuchId: antrag.antragId});
             } else {
                 this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});

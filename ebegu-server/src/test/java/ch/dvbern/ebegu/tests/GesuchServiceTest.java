@@ -339,7 +339,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		LocalDate now = LocalDate.now();
 		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_GS);
 
-		final Gesuch freigegebenesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch);
+		final Gesuch freigegebenesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
 
 		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, freigegebenesGesuch.getStatus());
 		Assert.assertFalse(now.isAfter(freigegebenesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden

@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.enums;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -59,6 +61,10 @@ public enum AntragStatus {
             default: return none;
         }
     }
+
+	public static Collection<AntragStatus> getAllVerfuegtStates() {
+		return Arrays.asList(VERFUEGT, NUR_SCHULAMT);
+	}
 
 	public boolean isFreigegeben() {
 		return isFreigegeben.contains(this);

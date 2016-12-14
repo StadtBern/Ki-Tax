@@ -145,7 +145,7 @@ public class InstitutionStammdatenResource {
 	@Path("/date/active")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxInstitutionStammdaten> getAllActiveInstitutionStammdatenByDate(
+	public List<JaxInstitutionStammdaten> getAllActiveInstitutionStammdatenByDate (
 		@Nullable @QueryParam("date") String stringDate){
 
 		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stringDate);

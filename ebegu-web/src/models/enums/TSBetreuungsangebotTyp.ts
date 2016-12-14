@@ -15,3 +15,11 @@ export function getTSBetreuungsangebotTypValues(): Array<TSBetreuungsangebotTyp>
         TSBetreuungsangebotTyp.TAGESSCHULE
     ];
 }
+
+export function isSchulamt(status: TSBetreuungsangebotTyp): boolean {
+    return status === TSBetreuungsangebotTyp.TAGESSCHULE;
+}
+
+export function isJugendamt(status: TSBetreuungsangebotTyp): boolean {
+    return !isSchulamt(status);
+}
