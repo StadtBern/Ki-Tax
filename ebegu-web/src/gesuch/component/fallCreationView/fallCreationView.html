@@ -44,7 +44,7 @@
                                             <md-radio-button
                                                 ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
                                                 ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
-                                                ng-disabled="vm.isGesuchReadonly()">
+                                                ng-disabled="vm.isGesuchReadonly()  || vm.isKorrekturModusJugendamt()">
                                                 <span>{{current.gesuchsperiodeString}}</span>
                                             </md-radio-button>
                                         </md-radio-group>
