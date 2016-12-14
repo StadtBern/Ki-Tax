@@ -127,7 +127,7 @@ export default class TSGesuchstellerContainer extends TSAbstractEntity {
         return this.getUmzugAdressen().length > 0;
     }
 
-    public extractFullname(): string {
+    public extractFullName(): string {
         if (this.gesuchstellerJA) {
             return this.gesuchstellerJA.getFullName();
         }

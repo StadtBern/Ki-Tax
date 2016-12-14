@@ -103,10 +103,10 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
 
     public getNameFromBetroffene(betroffene: TSBetroffene): string {
         if (TSBetroffene.GESUCHSTELLER_1 === betroffene && this.gesuchModelManager.getGesuch().gesuchsteller1) {
-            return this.gesuchModelManager.getGesuch().gesuchsteller1.extractFullname();
+            return this.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName();
 
         } else if (TSBetroffene.GESUCHSTELLER_2 === betroffene && this.gesuchModelManager.getGesuch().gesuchsteller2) {
-            return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullname();
+            return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName();
 
         } else if (TSBetroffene.BEIDE_GESUCHSTELLER === betroffene) {
             return this.$translate.instant(TSBetroffene[betroffene]);

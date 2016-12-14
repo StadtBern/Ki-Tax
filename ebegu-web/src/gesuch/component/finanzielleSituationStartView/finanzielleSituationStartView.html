@@ -22,7 +22,7 @@
                                                 ng-required="true" class="radio" ng-change="vm.gemeinsameStekClicked()"
                                                 dv-enable-element
                                                 dv-enable-allowed-roles="vm.allowedRoles"
-                                                dv-enable-expression="!vm.isGesuchReadonly()">
+                                                dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
                             </dv-radio-container>
                             <dv-error-messages for="form.gemeinsameSteuererklaerung.$error"
                                                class="error"></dv-error-messages>
@@ -41,7 +41,7 @@
                                                 ng-change="vm.steuerveranlagungClicked()"
                                                 dv-enable-element
                                                 dv-enable-allowed-roles="vm.allowedRoles"
-                                                dv-enable-expression="!vm.isGesuchReadonly()">
+                                                dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
                             </dv-radio-container>
                             <dv-error-messages for="form.steuerveranlagung.$error" class="error"></dv-error-messages>
                         </div>
@@ -59,7 +59,7 @@
                                                 ng-change="vm.steuererklaerungClicked()"
                                                 dv-enable-element
                                                 dv-enable-allowed-roles="vm.allowedRoles"
-                                                dv-enable-expression="!vm.isGesuchReadonly()">
+                                                dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
                             </dv-radio-container>
                             <dv-error-messages for="form.steuererklaerung.$error" class="error"></dv-error-messages>
                         </div>
