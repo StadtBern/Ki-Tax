@@ -210,7 +210,10 @@ public class DownloadResource {
 			else {
 				// Wenn die Zustelladresse null ist, handelt es sich definitiv um eine Mutation, die keine Freigabequittung erfordert.
 				// Aus diesem Grund aendert der Status automatisch auf FREIGEGEBEN und wird kein Dokument erstellt
-				gesuchService.antragFreigabequittungErstellen(gesuch.get(), AntragStatus.FREIGEGEBEN);
+				if (!gesuch.get().getStatus().isFreigegeben()) {
+					// TODO (team) wenn der Service .antragFreigeben existiert, waere es besser wenn wir hier direkt die Methode aufrufen
+					gesuchService.antragFreigabequittungErstellen(gesuch.get(), AntragStatus.FREIGEGEBEN);
+				}
 				return Response.ok().build();
 			}
 		}

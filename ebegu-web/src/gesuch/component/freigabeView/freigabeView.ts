@@ -114,4 +114,12 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         }
         return undefined;
     }
+
+    /**
+     * Wir koennen auf jeden Fall sicher sein, dass alle Erstgesuche eine Freigabequittung haben.
+     * Ausserdem nur die Mutationen bei denen alle JA-Angebote neu sind, werden eine Freigabequittung haben
+     */
+    public isThereFreigabequittung(): boolean {
+        return this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew();
+    }
 }
