@@ -98,8 +98,8 @@ public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 	}
 
 	@Override
-	public String getFallDatum() {
-		return Constants.DATE_FORMATTER.format(mahnung.getGesuch().getFall().getTimestampErstellt());
+	public String getEingangsDatum() {
+		return Constants.DATE_FORMATTER.format(mahnung.getGesuch().getEingangsdatum());
 	}
 
 	@Override
