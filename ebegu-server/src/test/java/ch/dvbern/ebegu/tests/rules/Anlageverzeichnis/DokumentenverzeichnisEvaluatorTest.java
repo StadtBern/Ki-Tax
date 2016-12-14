@@ -2,10 +2,10 @@ package ch.dvbern.ebegu.tests.rules.Anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.ErwerbspensumDokumente;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.FinanzielleSituationDokumente;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.KindDokumente;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.ErwerbspensumDokumente;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.FinanzielleSituationDokumente;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.KindDokumente;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;

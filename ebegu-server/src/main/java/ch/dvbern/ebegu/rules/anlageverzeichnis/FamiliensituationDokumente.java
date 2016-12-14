@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.rules.Anlageverzeichnis;
+package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Familiensituation;
@@ -21,9 +21,7 @@ public class FamiliensituationDokumente extends AbstractDokumente<Familiensituat
 
 	@Override
 	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
-
 		add(getDokument(DokumentTyp.NACHWEIS_TRENNUNG, gesuch.extractFamiliensituationErstgesuch(), gesuch.extractFamiliensituation(), null, null, DokumentGrundTyp.FAMILIENSITUATION), anlageVerzeichnis);
-
 	}
 
 	@Override
@@ -44,5 +42,4 @@ public class FamiliensituationDokumente extends AbstractDokumente<Familiensituat
 				return false;
 		}
 	}
-
 }
