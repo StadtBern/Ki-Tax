@@ -18,7 +18,7 @@
                     <div class="row">
                         <div class="col-md-6" ng-if="vm.showSteuerveranlagung()">
                             <div class="form-group">
-                                <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                <h4 class="mainQuestion required" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                                     translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h4>
                                 <dv-radio-container name="steuerveranlagung" class="input-element"
                                                     ng-model="vm.getModel().finanzielleSituationJA.steuerveranlagungErhalten"
@@ -38,7 +38,7 @@
                     <div class="row">
                         <div class="col-md-6" ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
                             <div class="form-group">
-                                <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                <h4 class="mainQuestion required" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
                                     translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h4>
                                 <dv-radio-container name="steuererklaerung" class="input-element"
                                                     ng-model="vm.getModel().finanzielleSituationJA.steuererklaerungAusgefuellt"

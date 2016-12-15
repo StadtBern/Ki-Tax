@@ -52,7 +52,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <h4 class="mainQuestion"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span>
+                            <h4 class="mainQuestion required"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span>
                                 <dv-tooltip text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip>
                             </h4>
                             <dv-radio-container name="familienstatus"
@@ -73,7 +73,7 @@
                 <div class="row">
                     <div class="col-md-6" ng-if="vm.showGesuchstellerKardinalitaet()">
                         <div class="form-group">
-                            <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
+                            <h4 class="mainQuestion required" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
                             <dv-radio-container name="gesuchstellerKardinalitaet"
                                                 ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet"
                                                 ng-required="true"
