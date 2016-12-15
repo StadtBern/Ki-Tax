@@ -10,7 +10,7 @@ import TSAntragDTO from '../../../models/TSAntragDTO';
 import {IGesuchStateParams} from '../../gesuch.route';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
@@ -92,7 +92,7 @@ export class GesuchToolbarController {
             $scope.$watch(() => {
                 return this.gesuchModelManager.getGesuch().status;
             }, (newValue, oldValue) => {
-                if ((newValue !== oldValue) && (newValue === TSAntragStatus.VERFUEGT)) {
+                if ((newValue !== oldValue) && (isAnyStatusOfVerfuegt(newValue))) {
                     this.updateAntragDTOList();
                 }
             });

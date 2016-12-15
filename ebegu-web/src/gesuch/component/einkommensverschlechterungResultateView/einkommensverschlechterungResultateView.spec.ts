@@ -12,6 +12,7 @@ import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IStateService = angular.ui.IStateService;
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
 describe('einkommensverschlechterungResultateView', function () {
 
@@ -48,7 +49,7 @@ describe('einkommensverschlechterungResultateView', function () {
     }));
 
     beforeEach(function () {
-        gesuchModelManager.initGesuch(false);
+        gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
         gesuchModelManager.initFamiliensituation();
         gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchstellerContainer(new TSGesuchsteller());
         gesuchModelManager.getGesuch().gesuchsteller2 = new TSGesuchstellerContainer(new TSGesuchsteller());

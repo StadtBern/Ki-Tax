@@ -46,7 +46,7 @@ public class WizardStepResourceTest extends AbstractEbeguRestLoginTest {
 
 		final List<JaxWizardStep> wizardStepList = wizardStepResource.createWizardStepList(new JaxId(gesuch.getId()));
 
-		Assert.assertEquals(12, wizardStepList.size());
+		Assert.assertEquals(13, wizardStepList.size());
 		assertWizardStep(wizardStepList.get(0), WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK);
 		assertWizardStep(wizardStepList.get(1), WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT);
 		assertWizardStep(wizardStepList.get(2), WizardStepName.GESUCHSTELLER, WizardStepStatus.UNBESUCHT);
@@ -58,7 +58,8 @@ public class WizardStepResourceTest extends AbstractEbeguRestLoginTest {
 		assertWizardStep(wizardStepList.get(8), WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT);
 		assertWizardStep(wizardStepList.get(9), WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT);
 		assertWizardStep(wizardStepList.get(10), WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT);
-		assertWizardStep(wizardStepList.get(11), WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(11), WizardStepName.FREIGABE, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(12), WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT);
 	}
 
 	private void assertWizardStep(JaxWizardStep wizardStep, WizardStepName wizardStepName, WizardStepStatus status) {

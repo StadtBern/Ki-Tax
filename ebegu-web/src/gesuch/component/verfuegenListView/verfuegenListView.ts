@@ -9,7 +9,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragStatus, isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
@@ -157,7 +157,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return status === TSAntragStatus.VERFUEGT;
+            return isAnyStatusOfVerfuegt(status);
         }
         return true;
 
@@ -235,7 +235,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public showErsteMahnungErstellen(): boolean {
         // Nur wenn keine offenen Mahnungen vorhanden!
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) && this.mahnung === undefined && !this.hasOffeneMahnungen();
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
+            && this.mahnung === undefined && !this.hasOffeneMahnungen();
     }
 
     public showErsteMahnungAusloesen(): boolean {
@@ -332,7 +333,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      * @returns {boolean}
      */
     public showGeprueft(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA)
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
             && this.wizardStepManager.areAllStepsOK() && this.mahnung === undefined;
     }
 
@@ -342,8 +343,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showVerfuegenStarten(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
-            && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
-            && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
+            && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG);
+            // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
 
     public openFinanzielleSituationPDF(): void {

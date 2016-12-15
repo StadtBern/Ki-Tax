@@ -1,0 +1,124 @@
+<div class="freigabeView gesuchModul">
+
+    <div class="row" ng-if="vm.isGesuchFreigegeben()">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>
+                        <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TITLE"></span>
+                    </h1>
+                </div>
+            </div>
+
+            <hr class="header"/>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <span data-translate="FREIGABEQUITTUNG_ERFOLG_TEXT"
+                          data-translate-value-freigabedatum="{{vm.getFreigabeDatum()}}"></span>
+                </div>
+                <div class="col-md-12" ng-if="vm.isFreigabequittungAusstehend()">
+                    <span data-translate="FREIGABEQUITTUNG_AUSSTEHEND_TEXT"></span>
+                </div>
+            </div>
+            <div class="row" ng-if="vm.isThereFreigabequittung()">
+                <div class="col-md-12">
+                    <i class="fa fa-file-text-o"></i>
+                    <button type="button" class=" btn-link" ng-click="vm.openFreigabequittungPDF()">
+                        <span data-translate="PDF_FREIGABEQUITTUNG_ANZEIGEN"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-if="!vm.isGesuchFreigegeben()">
+        <div class="col-md-12" ng-if="!vm.canBeFreigegeben()">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>
+                        <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TITLE"></span>
+                    </h1>
+                </div>
+            </div>
+
+            <hr class="header"/>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <span data-translate="FREIGABEQUITTUNG_NOT_ALLOWED_TEXT"></span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-12" ng-if="vm.canBeFreigegeben()">
+
+            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>
+                            <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TITLE"></span>
+                        </h1>
+                    </div>
+                </div>
+
+                <hr class="header"/>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class=" checkbox">
+                            <md-checkbox ng-model="vm.bestaetigungFreigabequittung" name="bestaetigungFreigabequittung"
+                                         aria-label="bestaetigungFreigabequittung"
+                                         ng-required="vm.isFreigebenClicked">
+                                <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TEXT"></span>
+                            </md-checkbox>
+                            <div class="dv-error-messages">
+                                <div ng-messages="form.bestaetigungFreigabequittung.$error" role="alert" class="error">
+                                    <div ng-message="required" data-translate="ERROR_BESTAETIGUNG_REQUIRED"
+                                         for="form.bestaetigungFreigabequittung.$error"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-if="vm.isThereAnySchulamtAngebot()">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1>
+                                <span data-translate="FREIGABEQUITTUNG_TAGESSCHULEN_TITLE"></span>
+                            </h1>
+                        </div>
+                    </div>
+                    <hr class="header"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class=" checkbox">
+                                <span data-translate="FREIGABEQUITTUNG_TAGESSCHULEN_TEXT"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="col-md-4">
+                    <dv-loading-button type="submit" button-click="vm.gesuchFreigeben(form)"
+                                       button-class="dv-btn-sm"
+                                       aria-label="{{ANTRAG_EINREICHEN | translate}}">
+                        <span data-translate="ANTRAG_EINREICHEN"></span>
+                    </dv-loading-button>
+                </span>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <dv-navigation dv-previous="true" dv-next="true">
+            </dv-navigation>
+        </div>
+    </div>
+
+</div>

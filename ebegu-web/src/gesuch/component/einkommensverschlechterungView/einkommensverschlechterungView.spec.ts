@@ -10,6 +10,7 @@ import IHttpBackendService = angular.IHttpBackendService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
 describe('einkommensverschlechterungView', function () {
 
@@ -31,7 +32,7 @@ describe('einkommensverschlechterungView', function () {
 
 
     beforeEach(function () {
-        gesuchModelManager.initGesuch(false);
+        gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
         gesuchModelManager.initFamiliensituation();
         gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchstellerContainer(new TSGesuchsteller());
         gesuchModelManager.getGesuch().gesuchsteller2 = new TSGesuchstellerContainer(new TSGesuchsteller());

@@ -35,7 +35,10 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
-import {TSAntragStatus, isAtLeastFreigegeben} from '../../models/enums/TSAntragStatus';
+import {
+    TSAntragStatus, isAtLeastFreigegebenOrFreigabequittung,
+    isStatusVerfuegenVerfuegt, isAtLeastFreigegeben
+} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
@@ -48,7 +51,7 @@ import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import {isJugendamt, isSchulamt} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
 import TSEinkommensverschlechterungInfoContainer from '../../models/TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from '../../models/TSFamiliensituationContainer';
@@ -123,6 +126,13 @@ export default class GesuchModelManager {
      * Oder ggf. aus der Liste entfernt
      */
     private setHiddenSteps(): void {
+        //Freigabe
+        if (this.gesuch.isOnlineGesuch()) {
+            this.wizardStepManager.unhideStep(TSWizardStepName.FREIGABE);
+        } else {
+            this.wizardStepManager.hideStep(TSWizardStepName.FREIGABE);
+        }
+
         //Abwesenheit
         if (!this.gesuch.isMutation()) {
             this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
@@ -388,12 +398,12 @@ export default class GesuchModelManager {
             let gesuchsteller: TSGesuchsteller;
             // die daten die wir aus iam importiert haben werden bei gs1 abgefuellt
             if (this.gesuchstellerNumber === 1 && this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
-                let principal :TSUser = this.authServiceRS.getPrincipal();
+                let principal: TSUser = this.authServiceRS.getPrincipal();
                 let name: string = principal ? principal.nachname : undefined;
                 let vorname: string = principal ? principal.vorname : undefined;
                 let email: string = principal ? principal.email : undefined;
                 gesuchsteller = new TSGesuchsteller(vorname, name, undefined, undefined, email);
-            } else{
+            } else {
                 gesuchsteller = new TSGesuchsteller();
             }
             this.setStammdatenToWorkWith(new TSGesuchstellerContainer(gesuchsteller));
@@ -410,12 +420,11 @@ export default class GesuchModelManager {
 
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
-     * Wenn force werden Gesuch und Fall immer erstellt.
-     * @param forced
+     * Wenn force werden Gesuch und Fall immer erstellt. Das erstellte Gesuch ist ein PAPIER Gesuch
      */
-    public initGesuch(forced: boolean) {
+    public initGesuch(forced: boolean, eingangsart: TSEingangsart) {
         if (forced || (!forced && !this.gesuch)) {
-            this.initAntrag(TSAntragTyp.GESUCH);
+            this.initAntrag(TSAntragTyp.GESUCH, eingangsart);
         }
         this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch());
     }
@@ -428,7 +437,7 @@ export default class GesuchModelManager {
      * @param fallId
      */
     public initGesuchWithEingangsart(forced: boolean, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
-        this.initGesuch(forced);
+        this.initGesuch(forced, eingangsart);
         if (gesuchsperiodeId) {
             this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
                 this.gesuch.gesuchsperiode = periode;
@@ -446,9 +455,6 @@ export default class GesuchModelManager {
                 this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
             }
         }
-        if (eingangsart) {
-            this.gesuch.eingangsart = eingangsart;
-        }
     }
 
     /**
@@ -465,7 +471,7 @@ export default class GesuchModelManager {
         this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
             this.gesuch.gesuchsperiode = periode;
         });
-        this.initAntrag(TSAntragTyp.MUTATION);
+        this.initAntrag(TSAntragTyp.MUTATION, eingangsart);
         this.fallRS.findFall(fallId).then(foundFall => {
             this.gesuch.fall = foundFall;
         });
@@ -475,13 +481,13 @@ export default class GesuchModelManager {
         } else {
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
         }
-        this.gesuch.eingangsart = eingangsart;
     }
 
-    private initAntrag(antragTyp: TSAntragTyp): void {
+    private initAntrag(antragTyp: TSAntragTyp, eingangsart: TSEingangsart): void {
         this.gesuch = new TSGesuch();
         this.gesuch.fall = new TSFall();
         this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
+        this.gesuch.eingangsart = eingangsart;
         this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();
         this.setCurrentUserAsFallVerantwortlicher();
@@ -1009,12 +1015,31 @@ export default class GesuchModelManager {
         }
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (betreuung.institutionStammdaten.betreuungsangebotTyp !== TSBetreuungsangebotTyp.TAGESSCHULE) {
+                if (!isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind SCHULAMT.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public isThereAnySchulamtAngebot(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -1046,20 +1071,11 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT or NUR_SCHULAMT
-     * @returns {boolean}
-     */
-    public isGesuchStatusVerfuegenVerfuegt(): boolean {
-        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT)
-            || this.isGesuchStatus(TSAntragStatus.NUR_SCHULAMT);
-    }
-
-    /**
      * Returns true when the Gesuch must be readonly
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return  this.isGesuchStatusVerfuegenVerfuegt() || this.isGesuchReadonlyForRole();
+        return isStatusVerfuegenVerfuegt(this.gesuch.status) || this.isGesuchReadonlyForRole();
     }
 
     /**
@@ -1069,7 +1085,7 @@ export default class GesuchModelManager {
         if (this.authServiceRS.isRole(TSRole.SCHULAMT)) {
             return true;  // schulamt hat immer nur readonly zugriff
         } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
-            return isAtLeastFreigegeben(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
+            return isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
         }
         return false;
     }
@@ -1164,5 +1180,28 @@ export default class GesuchModelManager {
 
     public clearGesuch(): void {
         this.gesuch = undefined;
+    }
+
+    /**
+     * Schaut alle Betreuungen durch. Wenn es keine "JAAngebote" gibt, gibt es false zurueck.
+     * Nur wenn alle JA-Angebote neu sind, gibt es true zurueck.
+     */
+    public areAllJAAngeboteNew(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        let jaAngeboteFound: boolean = false; // Wenn kein JA-Angebot gefunden wurde geben wir false zurueck
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (isJugendamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    if (betreuung.vorgaengerId) { // eine mutierte JA-Betreuung existiert
+                        return false;
+                    }
+                    jaAngeboteFound = true;
+                }
+            }
+        }
+        return jaAngeboteFound;
     }
 }

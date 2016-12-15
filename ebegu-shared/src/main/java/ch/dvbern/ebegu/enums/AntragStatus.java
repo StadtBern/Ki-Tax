@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.enums;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -35,13 +37,16 @@ public enum AntragStatus {
 
 	public static final Set<AntragStatus> FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN = EnumSet.range(FREIGEGEBEN, VERFUEGEN);
 
+	private static final Set<AntragStatus> isFreigegeben = EnumSet.range(NUR_SCHULAMT, VERFUEGT);
+
     /**
      * Implementierung eines Berechtigungskonzepts fuer die Antragssuche.
      *
      * @param userRole die Rolle
      * @return Liefert die einsehbaren Antragsstatus fuer die Rolle
      */
-    public static Set<AntragStatus> allowedforRole(UserRole userRole) {
+    @SuppressWarnings("Duplicates")
+	public static Set<AntragStatus> allowedforRole(UserRole userRole) {
         switch (userRole) {
 			case SUPER_ADMIN: return  all;
 			case ADMIN: return forAdminRole;
@@ -56,4 +61,24 @@ public enum AntragStatus {
             default: return none;
         }
     }
+
+	public static Collection<AntragStatus> getAllVerfuegtStates() {
+		return Arrays.asList(VERFUEGT, NUR_SCHULAMT);
+	}
+
+	/**
+	 * Ein verfuegtes Gesuch kann mehrere Status haben. Diese Methode immer anwenden um herauszufinden
+	 * ob ein Gesuch verfuegt ist.
+	 */
+	public boolean isAnyStatusOfVerfuegt() {
+		return getAllVerfuegtStates().contains(this);
+	}
+
+	public boolean isFreigegeben() {
+		return isFreigegeben.contains(this);
+	}
+
+	public boolean isFreigegebenOrFreigabequittung() {
+		return isFreigegeben.contains(this) || this.equals(FREIGABEQUITTUNG);
+	}
 }

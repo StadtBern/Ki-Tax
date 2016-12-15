@@ -56,8 +56,8 @@ export class AdminViewController {
 
     fetchList() {
         this.userRS.getAllGesuchsteller().then((result: Array<TSUser>) => {
-            this.gesuchstellerList = result
-        })
+            this.gesuchstellerList = result;
+        });
     }
 
     submit(): void {
@@ -136,8 +136,8 @@ export class AdminViewController {
             verfuegen = true;
         }
         if (this.createAsBesitzer) {
-            return this.createTestFallGS(testFall, bestaetigt, verfuegen, this.createAsBesitzer.username)
-        } else{
+            return this.createTestFallGS(testFall, bestaetigt, verfuegen, this.createAsBesitzer.username);
+        } else {
             return this.createTestFall(testFall, bestaetigt, verfuegen);
         }
     }
@@ -155,7 +155,7 @@ export class AdminViewController {
         });
     }
 
-    private createTestFallGS(testFall: string, bestaetigt: boolean, verfuegen: boolean, username:string): IPromise<any> {
+    private createTestFallGS(testFall: string, bestaetigt: boolean, verfuegen: boolean, username: string): IPromise<any> {
         return this.testFaelleRS.createTestFallGS(testFall, bestaetigt, verfuegen, username).then((response) => {
             //einfach die letzten 36 zeichen der response als uuid betrachten, hacky ist aber nur fuer uns intern
             let uuidPartOfString = response.data ? response.data.slice(-36) : '';

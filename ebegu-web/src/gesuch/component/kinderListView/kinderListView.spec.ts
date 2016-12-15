@@ -5,6 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {KinderListViewController} from './kinderListView';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
 describe('kinderListView', function () {
 
@@ -25,6 +26,6 @@ describe('kinderListView', function () {
     }));
 
     beforeEach(function () {
-        gesuchModelManager.initGesuch(false);
+        gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
     });
 });

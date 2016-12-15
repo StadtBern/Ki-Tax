@@ -309,16 +309,18 @@ public class GesuchResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response antragMutieren(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
-		@Nonnull @QueryParam("date") String stringDate,
+		@Nullable @QueryParam("date") String stringDate,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(antragJaxId.getId());
-		Validate.notNull(stringDate);
 
-		final LocalDate eingangsdatum = DateUtil.parseStringToDateOrReturnNow(stringDate);
+		// Wenn der GS eine Mutation macht, ist das Eingangsdatum erst null. Wir muessen das Gesuch so erstellen
+		LocalDate eingangsdatum = null;
+		if (stringDate != null && !stringDate.isEmpty()) {
+			eingangsdatum = DateUtil.parseStringToDateOrReturnNow(stringDate);
+		}
 		final String antragId = converter.toEntityId(antragJaxId);
-
 
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(antragId, eingangsdatum);
 

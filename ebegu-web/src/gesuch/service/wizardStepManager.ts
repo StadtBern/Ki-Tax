@@ -6,7 +6,7 @@ import TSWizardStep from '../../models/TSWizardStep';
 import WizardStepRS from './WizardStepRS.rest';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import {TSAntragStatus, isAtLeastFreigegeben} from '../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 
@@ -239,7 +239,8 @@ export default class WizardStepManager {
         let step: TSWizardStep = this.getStepByName(stepName);
         if (step !== undefined) {
             return (this.isStepClickableForCurrentRole(step, gesuch)
-            || (gesuch.typ === TSAntragTyp.GESUCH && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT)
+            || (gesuch.typ === TSAntragTyp.GESUCH && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT
+            && !(this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles()) && stepName === TSWizardStepName.VERFUEGEN))
             || (gesuch.typ === TSAntragTyp.MUTATION && step.wizardStepName === TSWizardStepName.FAMILIENSITUATION));
         }
         return false;  // wenn der step undefined ist geben wir mal verfuegbar zurueck
@@ -257,17 +258,15 @@ export default class WizardStepManager {
                 // schulamt darf ab geprueft den screen sehen, oder wenn der Status schon NUR_SCHULAMT ist
                 if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
                     if (gesuch.status !== TSAntragStatus.GEPRUEFT && gesuch.status !== TSAntragStatus.VERFUEGEN
-                        && gesuch.status !== TSAntragStatus.VERFUEGT && gesuch.status !== TSAntragStatus.NUR_SCHULAMT) {
+                        && !isAnyStatusOfVerfuegt(gesuch.status)) {
                         return false;
                     }
                     //gesuchsteller darf "verfuegen" seite sehen sobald er das gesuch freigegeben hat
                 } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
-                    if (isAtLeastFreigegeben(gesuch.status)) {
-                        return true;
-                    }
+                    return isAtLeastFreigegeben(gesuch.status);
                 } else {
                     // ... alle anderen ab VERFUEGT
-                    if (gesuch.status !== TSAntragStatus.VERFUEGT) {
+                    if (!isAnyStatusOfVerfuegt(gesuch.status)) {
                         return false;
                     }
                 }
@@ -299,6 +298,7 @@ export default class WizardStepManager {
             } else if (this.wizardSteps[i].wizardStepName !== TSWizardStepName.VERFUEGEN
                 && this.wizardSteps[i].wizardStepName !== TSWizardStepName.ABWESENHEIT
                 && this.wizardSteps[i].wizardStepName !== TSWizardStepName.UMZUG
+                && this.wizardSteps[i].wizardStepName !== TSWizardStepName.FREIGABE
                 && !this.isStatusOk(this.wizardSteps[i].wizardStepStatus)) {
                 return false;
             }

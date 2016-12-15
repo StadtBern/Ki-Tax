@@ -47,6 +47,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 
 		// Falls noch nicht vorhanden, werden die GemeinsameSteuererklaerung fuer FS und EV auf false gesetzt
 		Familiensituation newFamiliensituation = familiensituationContainer.extractFamiliensituation();
+		Objects.requireNonNull(newFamiliensituation);
 		if (gesuch.isMutation() && EbeguUtil.fromOneGSToTwoGS(familiensituationContainer)) {
 
 			if (newFamiliensituation.getGemeinsameSteuererklaerung() == null) {
@@ -73,6 +74,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 			mergedFamiliensituationContainer.extractFamiliensituation(), mergedFamiliensituationContainer.getFamiliensituationErstgesuch())) {
 			gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
 			gesuch.setGesuchsteller2(null);
+			newFamiliensituation.setGemeinsameSteuererklaerung(false);
 		}
 
 		wizardStepService.updateSteps(gesuch.getId(), mergedFamiliensituationContainer.getFamiliensituationErstgesuch(),

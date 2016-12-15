@@ -25,6 +25,7 @@ import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import IPromise = angular.IPromise;
+import {TSEingangsart} from '../../models/enums/TSEingangsart';
 
 describe('gesuchModelManager', function () {
 
@@ -63,11 +64,10 @@ describe('gesuchModelManager', function () {
             expect(gesuchModelManager.createBetreuung).toBeDefined();
         });
     });
-
     describe('API Usage', function () {
         describe('createBetreuung', () => {
             it('should create a new empty Betreuung for the current KindContainer', () => {
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 createKindContainer();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(0);
@@ -81,7 +81,7 @@ describe('gesuchModelManager', function () {
         });
         describe('removeBetreuungFromKind', () => {
             it('should remove the current Betreuung from the list of the current Kind', () => {
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
@@ -93,7 +93,7 @@ describe('gesuchModelManager', function () {
         });
         describe('updateBetreuung', () => {
             it('creates a new betreuung', () => {
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
                 gesuchModelManager.getKindToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
@@ -122,7 +122,7 @@ describe('gesuchModelManager', function () {
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 gesuchModelManager.saveGesuchAndFall();
 
                 scope.$apply();
@@ -133,7 +133,7 @@ describe('gesuchModelManager', function () {
                 spyOn(gesuchRS, 'updateGesuch').and.returnValue($q.when({}));
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 gesuchModelManager.getGesuch().timestampErstellt = DateUtil.today();
                 gesuchModelManager.saveGesuchAndFall();
 
@@ -148,7 +148,7 @@ describe('gesuchModelManager', function () {
             it('links the fall with the undefined user', () => {
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(undefined);
 
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
 
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
                 expect(gesuchModelManager.getGesuch().fall).toBeDefined();
@@ -158,7 +158,7 @@ describe('gesuchModelManager', function () {
                 let currentUser: TSUser = new TSUser('Test', 'User', 'username');
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(currentUser);
                 spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
 
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
                 expect(gesuchModelManager.getGesuch().fall).toBeDefined();
@@ -168,42 +168,42 @@ describe('gesuchModelManager', function () {
                 let currentUser: TSUser = new TSUser('Test', 'User', 'username');
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(currentUser);
                 spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(false);
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
 
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
                 expect(gesuchModelManager.getGesuch().fall).toBeDefined();
                 expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBeUndefined();
             });
             it('does not force to create a new fall and gesuch', () => {
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
             });
             it('does force to create a new fall and gesuch', () => {
-                gesuchModelManager.initGesuch(true);
+                gesuchModelManager.initGesuch(true, TSEingangsart.PAPIER);
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
             });
             it('forces to create a new gesuch and fall even though one already exists', () => {
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 let oldGesuch: TSGesuch = gesuchModelManager.getGesuch();
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
 
-                gesuchModelManager.initGesuch(true);
+                gesuchModelManager.initGesuch(true, TSEingangsart.PAPIER);
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
                 expect(oldGesuch).not.toBe(gesuchModelManager.getGesuch());
             });
             it('does not force to create a new gesuch and fall and the old ones will remain', () => {
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 let oldGesuch: TSGesuch = gesuchModelManager.getGesuch();
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
 
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
                 expect(oldGesuch).toBe(gesuchModelManager.getGesuch());
             });
         });
         describe('setUserAsFallVerantwortlicher', () => {
             it('puts the given user as the verantwortlicher for the fall', () => {
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(undefined);
                 let user: TSUser = new TSUser('Emiliano', 'Camacho');
                 gesuchModelManager.setUserAsFallVerantwortlicher(user);
@@ -257,7 +257,7 @@ describe('gesuchModelManager', function () {
         describe('saveGesuchStatus', function () {
             it('should update the status of the Gesuch im Server und Client', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 spyOn(gesuchRS, 'updateGesuchStatus').and.returnValue($q.when({}));
                 spyOn(antragStatusHistoryRS, 'loadLastStatusChange').and.returnValue($q.when({}));
 
@@ -270,7 +270,7 @@ describe('gesuchModelManager', function () {
         describe('saveVerfuegung', function () {
             it('should save the current Verfuegung und set the status of the Betreuung to VERFUEGT', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
                 gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
@@ -335,17 +335,27 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('hideSteps', function () {
-            it('should hide the steps ABWESENHEIT and UMZUG for Erstgesuch without umzug', function() {
+            it('should hide the steps ABWESENHEIT and UMZUG for ONLINE Erstgesuch without umzug', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
-                gesuchModelManager.initGesuch(true);
+                gesuchModelManager.initGesuch(true, TSEingangsart.ONLINE);
 
                 expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
                 expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
-                expect(wizardStepManager.unhideStep).not.toHaveBeenCalled();
+                expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.FREIGABE);
             });
-            it('should unhide the steps ABWESENHEIT and UMZUG for Mutation', function() {
+            it('should hide the steps ABWESENHEIT and UMZUG and unhide FREIGABE for PAPIER Erstgesuch without umzug', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
+                gesuchModelManager.initGesuch(true, TSEingangsart.PAPIER);
+
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.FREIGABE);
+            });
+            it('should unhide the steps ABWESENHEIT and UMZUG for Mutation and hide FREIGABE for ONLINE Gesuch', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
@@ -353,7 +363,7 @@ describe('gesuchModelManager', function () {
                 gesuch.typ = TSAntragTyp.MUTATION;
                 gesuchModelManager.setGesuch(gesuch);
 
-                expect(wizardStepManager.hideStep).not.toHaveBeenCalled();
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.FREIGABE);
                 expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
                 expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
             });
@@ -372,6 +382,7 @@ describe('gesuchModelManager', function () {
                 expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
                 expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
                 expect(wizardStepManager.unhideStep).not.toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.FREIGABE);
             });
         });
         describe('updateBetreuungen', function () {
@@ -465,43 +476,50 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('areThereOnlySchulamtAngebote', function () {
-            it('should be true if only Schulamtangebote', function() {
+            beforeEach(() => {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                gesuchModelManager.initGesuch(false);
-                createKindContainer();
-                gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
-                gesuchModelManager.createBetreuung();
-                gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
-                let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
-                institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.TAGESSCHULE;
-                gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
+            });
+            it('should be true if only Schulamtangebote', function() {
+                createKindWithBetreuung();
+                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.TAGESSCHULE);
 
                 expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(true);
             });
             it('should be false if not only Schulamtangebote', function() {
-                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                gesuchModelManager.initGesuch(false);
-                createKindContainer();
-                gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
-                gesuchModelManager.createBetreuung();
-                gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
-                let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
-                institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.KITA;
-                gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+                createKindWithBetreuung();
+                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.KITA);
 
                 expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
             });
             it('should be false if there are no Betreuungen or Kinds', function() {
-                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                gesuchModelManager.initGesuch(false);
-                // createKindContainer();
-                // gesuchModelManager.createBetreuung();
-                // gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
-                // let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
-                // institution.betreuungsangebotTyp = TSBetreuungsangebotTyp.KITA;
-                // gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
-
                 expect(gesuchModelManager.areThereOnlySchulamtAngebote()).toBe(false);
+            });
+        });
+        describe('areAllJAAngeboteNew', function () {
+            beforeEach(() => {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
+            });
+            it('should be false if there are no Betreuungen or Kinds', function() {
+                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(false);
+            });
+            it('should be true if all JA-angebote are new', function() {
+                createKindWithBetreuung();
+                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.KITA);
+                gesuchModelManager.getBetreuungToWorkWith().vorgaengerId = undefined; // the betreuung is new
+                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(true);
+            });
+            it('should be false if not all JA-angebote are new', function() {
+                createKindWithBetreuung();
+                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.KITA);
+                gesuchModelManager.getBetreuungToWorkWith().vorgaengerId = 'vorgaenger_betreuungID'; // the betreuung existed already
+                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(false);
+            });
+            it('should be false if all are SA-Angebote', function() {
+                createKindWithBetreuung();
+                setInstitutionToExistingBetreuung(TSBetreuungsangebotTyp.TAGESSCHULE);
+                expect(gesuchModelManager.areAllJAAngeboteNew()).toBe(false);
             });
         });
     });
@@ -513,6 +531,19 @@ describe('gesuchModelManager', function () {
         gesuchModelManager.initKinder();
         gesuchModelManager.createKind();
         gesuchModelManager.initBetreuung();
+    }
+
+    function createKindWithBetreuung() {
+        createKindContainer();
+        gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
+        gesuchModelManager.createBetreuung();
+        gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+    }
+
+    function setInstitutionToExistingBetreuung(typ: TSBetreuungsangebotTyp) {
+        let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
+        institution.betreuungsangebotTyp = typ;
+        gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
     }
 
 });
