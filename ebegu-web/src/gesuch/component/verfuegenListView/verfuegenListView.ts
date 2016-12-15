@@ -9,7 +9,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragStatus, isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
@@ -157,7 +157,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return status === TSAntragStatus.VERFUEGT;
+            return isAnyStatusOfVerfuegt(status);
         }
         return true;
 

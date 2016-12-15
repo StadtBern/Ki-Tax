@@ -167,10 +167,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 																	 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
 		GeneratedDokument persistedDokument = null;
-		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt() || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
 			persistedDokument = getGeneratedDokument(gesuch, dokumentTyp, fileNameForGeneratedDokumentTyp);
 		}
-		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
+		if ((!gesuch.getStatus().isAnyStatusOfVerfuegt() && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
 			|| persistedDokument == null) {
 			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 			authorizer.checkReadAuthorizationFinSit(gesuch);
@@ -371,12 +371,12 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		GeneratedDokument persistedDokument = null;
 
-		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt() || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
 				ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
 		}
 
-		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
+		if ((!gesuch.getStatus().isAnyStatusOfVerfuegt() && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
 			|| persistedDokument == null) {
 			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 

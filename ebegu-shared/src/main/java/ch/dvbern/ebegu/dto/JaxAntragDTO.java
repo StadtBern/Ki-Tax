@@ -26,7 +26,8 @@ public class JaxAntragDTO {
 
 	private static final long serialVersionUID = -1277026654764135397L;
 
-	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis, LocalDate eingangsdatum, AntragTyp antragTyp, int laufnummer) {
+	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
+						@Nullable LocalDate eingangsdatum, AntragTyp antragTyp, int laufnummer) {
 		this.antragId = antragId;
 		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
@@ -35,13 +36,14 @@ public class JaxAntragDTO {
 		this.laufnummer = laufnummer;
 	}
 
-	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis, LocalDate eingangsdatum, AntragTyp antragTyp, AntragStatus antragStatus, int laufnummer) {
+	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
+						@Nullable LocalDate eingangsdatum, AntragTyp antragTyp, AntragStatus antragStatus, int laufnummer) {
 		this.antragId = antragId;
 		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
 		this.eingangsdatum = eingangsdatum;
 		this.antragTyp = antragTyp;
-		this.verfuegt = (AntragStatus.VERFUEGT.equals(antragStatus) || AntragStatus.NUR_SCHULAMT.equals(antragStatus));
+		this.verfuegt = antragStatus.isAnyStatusOfVerfuegt();
 		this.laufnummer = laufnummer;
 	}
 

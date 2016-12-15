@@ -360,7 +360,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	private void saveVerfuegungen(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
-		if (!AntragStatus.VERFUEGT.equals(gesuch.getStatus())) {
+		if (!gesuch.getStatus().isAnyStatusOfVerfuegt()) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.VERFUEGEN, WizardStepStatus.WARTEN);
 		} else {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.VERFUEGEN, WizardStepStatus.OK);

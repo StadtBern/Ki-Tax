@@ -594,7 +594,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// Leseberechtigt bin, fuer die Mutation aber schon!
 			Gesuch vorgaengerGesuch = persistence.find(Gesuch.class, gesuch.getVorgaengerId());
 			if (vorgaengerGesuch != null) {
-				if (AntragStatus.VERFUEGT.equals(vorgaengerGesuch.getStatus())) {
+				if (vorgaengerGesuch.getStatus().isAnyStatusOfVerfuegt()) {
 					return Optional.of(vorgaengerGesuch);
 				} else {
 					return getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(vorgaengerGesuch);

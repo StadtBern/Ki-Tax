@@ -35,7 +35,10 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
-import {TSAntragStatus, isAtLeastFreigegebenOrFreigabequittung} from '../../models/enums/TSAntragStatus';
+import {
+    TSAntragStatus, isAtLeastFreigegebenOrFreigabequittung,
+    isStatusVerfuegenVerfuegt
+} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
@@ -1068,20 +1071,11 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT or NUR_SCHULAMT
-     * @returns {boolean}
-     */
-    public isGesuchStatusVerfuegenVerfuegt(): boolean {
-        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT)
-            || this.isGesuchStatus(TSAntragStatus.NUR_SCHULAMT);
-    }
-
-    /**
      * Returns true when the Gesuch must be readonly
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return this.isGesuchStatusVerfuegenVerfuegt() || this.isGesuchReadonlyForRole();
+        return isStatusVerfuegenVerfuegt(this.gesuch.status) || this.isGesuchReadonlyForRole();
     }
 
     /**
