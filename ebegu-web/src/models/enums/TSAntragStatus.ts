@@ -77,3 +77,11 @@ export function isAtLeastFreigegebenOrFreigabequittung(status: TSAntragStatus): 
 export function isAnyStatusOfVerfuegt(status: TSAntragStatus): boolean {
     return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.VERFUEGT;
 }
+
+/**
+ * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT or NUR_SCHULAMT
+ * @returns {boolean}
+ */
+export function isStatusVerfuegenVerfuegt(status: TSAntragStatus): boolean {
+    return isAnyStatusOfVerfuegt(status) || status === TSAntragStatus.VERFUEGEN;
+}

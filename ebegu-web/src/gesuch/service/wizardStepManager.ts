@@ -6,7 +6,7 @@ import TSWizardStep from '../../models/TSWizardStep';
 import WizardStepRS from './WizardStepRS.rest';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import {TSAntragStatus, isAtLeastFreigegeben} from '../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 
@@ -258,7 +258,7 @@ export default class WizardStepManager {
                 // schulamt darf ab geprueft den screen sehen, oder wenn der Status schon NUR_SCHULAMT ist
                 if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
                     if (gesuch.status !== TSAntragStatus.GEPRUEFT && gesuch.status !== TSAntragStatus.VERFUEGEN
-                        && gesuch.status !== TSAntragStatus.VERFUEGT && gesuch.status !== TSAntragStatus.NUR_SCHULAMT) {
+                        && !isAnyStatusOfVerfuegt(gesuch.status)) {
                         return false;
                     }
                     //gesuchsteller darf "verfuegen" seite sehen sobald er das gesuch freigegeben hat
@@ -266,7 +266,7 @@ export default class WizardStepManager {
                     return isAtLeastFreigegeben(gesuch.status);
                 } else {
                     // ... alle anderen ab VERFUEGT
-                    if (gesuch.status !== TSAntragStatus.VERFUEGT) {
+                    if (!isAnyStatusOfVerfuegt(gesuch.status)) {
                         return false;
                     }
                 }
