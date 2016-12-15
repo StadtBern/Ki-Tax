@@ -19,6 +19,7 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import Moment = moment.Moment;
+import IScope = angular.IScope;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 
@@ -42,9 +43,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         'AuthServiceRS', 'WizardStepManager'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
-                private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
+                $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.model = angular.copy(this.gesuchModelManager.getBetreuungToWorkWith());
         this.initialBetreuung = angular.copy(this.gesuchModelManager.getBetreuungToWorkWith());
         this.setBetreuungsangebotTypValues();
@@ -133,8 +134,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.isSavingData = false;
             this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
             this.startEmptyListOfBetreuungspensen();
-            this.$scope.form.$setUntouched();
-            this.$scope.form.$setPristine();
+            this.form.$setUntouched();
+            this.form.$setPristine();
             return undefined;
         });
     }

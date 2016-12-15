@@ -10,7 +10,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form role="form" name="form" class="" unsaved-warning-form="" novalidate>
+            <form role="form" name="vm.form" class="" unsaved-warning-form="" novalidate>
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!-- Total Einkuenfte -->
@@ -173,7 +173,7 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save(form)" dv-sub-step="3">
+                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save()" dv-sub-step="3">
                 </dv-navigation>
             </form>
         </div>

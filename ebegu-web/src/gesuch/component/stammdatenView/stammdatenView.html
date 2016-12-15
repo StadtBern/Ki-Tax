@@ -10,7 +10,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form role="form" name="form" class="" novalidate
+            <form role="form" name="vm.form" class="" novalidate
                   unsaved-warning-form>
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
@@ -210,7 +210,7 @@
                     <div class="col-md-12">
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                       dv-previous="true" dv-next="true" dv-save="vm.save(form)">
+                                       dv-previous="true" dv-next="true" dv-save="vm.save()">
                         </dv-navigation>
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"

@@ -209,8 +209,9 @@ describe('betreuungView', function () {
         spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue(promiseResponse);
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         let form = createDummyForm();
-        betreuungView.platzAnfordern(form);
         $rootScope.form = form;
+        betreuungView.form = form;
+        betreuungView.platzAnfordern(form);
         $rootScope.$apply();
         expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
         if (moveToNextStep) {

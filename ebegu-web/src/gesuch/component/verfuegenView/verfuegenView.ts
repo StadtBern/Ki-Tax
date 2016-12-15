@@ -40,9 +40,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager,
+                private ebeguUtil: EbeguUtil, $scope: any, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.setBemerkungen();
     }
 
@@ -51,8 +51,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
 
-    save(form: IFormController): void {
-        if (form.$valid) {
+    save(): void {
+        if (this.form.$valid) {
             this.saveVerfuegung().then(() => {
                 this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
                     this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {

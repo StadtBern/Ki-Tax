@@ -1,7 +1,7 @@
 <div class="verfuegenView gesuchModul">
     <div class="row">
         <div class="col-md-12">
-            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
 
                 <!-- Abzuege -->
                 <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
@@ -175,7 +175,7 @@
 
                 <div class="row marginTop20" ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen()">
                     <div class="col-md-4 text-center">
-                        <dv-loading-button type="submit"  button-click="vm.save(form)"
+                        <dv-loading-button type="submit"  button-click="vm.save()"
                                            button-class="dv-btn-sm color-success">
                             <span data-translate="VERFUEGEN_UPPER"></span>
                         </dv-loading-button>
@@ -208,7 +208,7 @@
                         </dv-loading-button>
                     </div>
                     <div class="col-md-4" ng-show="vm.showVerfuegen()">
-                        <dv-loading-button type="submit" button-click="vm.save(form)"
+                        <dv-loading-button type="submit" button-click="vm.save()"
                                            button-class="">
                             <span data-translate="TROTZDEM_VERFUEGEN_UPPER"></span>
                         </dv-loading-button>

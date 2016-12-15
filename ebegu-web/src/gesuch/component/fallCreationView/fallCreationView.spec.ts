@@ -28,7 +28,9 @@ describe('fallCreationView', function () {
         form.$valid = true;
         form.$dirty = true;
         fallCreationview = new FallCreationViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'), $injector.get('$translate'), $q);
+            $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'),
+            $injector.get('$translate'), $q, $rootScope);
+        fallCreationview.form = form;
     }));
 
     describe('nextStep', () => {
@@ -36,7 +38,7 @@ describe('fallCreationView', function () {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.reject({}));
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
-            fallCreationview.save(form);
+            fallCreationview.save();
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
         });
@@ -44,7 +46,7 @@ describe('fallCreationView', function () {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.when({}));
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
-            fallCreationview.save(form);
+            fallCreationview.save();
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
         });
@@ -52,7 +54,7 @@ describe('fallCreationView', function () {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall');
             form.$valid = false;
-            fallCreationview.save(form);
+            fallCreationview.save();
             expect(gesuchModelManager.saveGesuchAndFall).not.toHaveBeenCalled();
         });
     });

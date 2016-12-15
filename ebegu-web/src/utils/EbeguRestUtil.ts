@@ -446,21 +446,25 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public einkommensverschlechterungInfoContainerToRestObject(restEinkommensverschlechterungInfoContainer: any, einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer): TSEinkommensverschlechterungInfoContainer {
+    public einkommensverschlechterungInfoContainerToRestObject(restEinkommensverschlechterungInfoContainer: any,
+                                                               einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer): TSEinkommensverschlechterungInfoContainer {
         if (einkommensverschlechterungInfoContainer) {
             this.abstractEntityToRestObject(restEinkommensverschlechterungInfoContainer, einkommensverschlechterungInfoContainer);
             if (einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoGS) {
-                restEinkommensverschlechterungInfoContainer.einkommensverschlechterungInfoGS = this.einkommensverschlechterungInfoToRestObject({}, einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoGS);
+                restEinkommensverschlechterungInfoContainer.einkommensverschlechterungInfoGS =
+                    this.einkommensverschlechterungInfoToRestObject({}, einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoGS);
             }
             if (einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA) {
-                restEinkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA = this.einkommensverschlechterungInfoToRestObject({}, einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA);
+                restEinkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA =
+                    this.einkommensverschlechterungInfoToRestObject({}, einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA);
             }
             return restEinkommensverschlechterungInfoContainer;
         }
         return undefined;
     }
 
-    public einkommensverschlechterungInfoToRestObject(restEinkommensverschlechterungInfo: any, einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo): TSEinkommensverschlechterungInfo {
+    public einkommensverschlechterungInfoToRestObject(restEinkommensverschlechterungInfo: any,
+                                                      einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo): TSEinkommensverschlechterungInfo {
         if (einkommensverschlechterungInfo) {
             this.abstractEntityToRestObject(restEinkommensverschlechterungInfo, einkommensverschlechterungInfo);
             restEinkommensverschlechterungInfo.einkommensverschlechterung = einkommensverschlechterungInfo.einkommensverschlechterung;

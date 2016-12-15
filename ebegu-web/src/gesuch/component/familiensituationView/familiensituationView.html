@@ -17,7 +17,7 @@
     <div class="row">
         <div class="col-md-12">
 
-            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
 
                 <!--Aenderung per-->
                 <div class="row" ng-if="vm.isMutation()">
@@ -94,7 +94,7 @@
                     <div class="col-md-12">
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                       dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave(form)">
+                                       dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave()">
                         </dv-navigation>
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"

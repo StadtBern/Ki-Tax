@@ -13,6 +13,7 @@ import {TSRole} from '../../../models/enums/TSRole';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
 
@@ -32,12 +33,12 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     private initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q'];
+        'WizardStepManager', '$q', '$scope'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), parsedNum);
@@ -99,10 +100,10 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         }
     }
 
-    private save(form: angular.IFormController): IPromise<TSFinanzielleSituationContainer> {
-        if (form.$valid) {
+    private save(): IPromise<TSFinanzielleSituationContainer> {
+        if (this.form.$valid) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
-            if (!form.$dirty) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer);

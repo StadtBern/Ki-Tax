@@ -9,7 +9,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Willkommnstext bei Erstgesuch-->
@@ -78,7 +78,7 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-next="true" dv-save="vm.save(form)">
+                <dv-navigation dv-next="true" dv-save="vm.save()">
                 </dv-navigation>
 
             </form>
