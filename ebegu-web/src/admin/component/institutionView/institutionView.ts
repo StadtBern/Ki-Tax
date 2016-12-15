@@ -17,6 +17,8 @@ import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogControl
 import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
+import ListResourceRS from '../../../core/service/listResourceRS.rest';
+import TSLand from '../../../models/types/TSLand';
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -50,16 +52,20 @@ export class InstitutionViewController {
     isSelectedStammdaten: boolean = false;
     betreuungsangebotValues: Array<any>;
     selectedInstitutionStammdatenBetreuungsangebot: any = null;
+    laenderList: TSLand[];
 
 
-    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog'];
+    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog', 'ListResourceRS'];
     /* @ngInject */
     constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS,
-                private errorService: ErrorService, private dvDialog: DvDialog) {
+                private errorService: ErrorService, private dvDialog: DvDialog, listResourceRS: ListResourceRS) {
         this.institutionRS = institutionRS;
         this.ebeguUtil = ebeguUtil;
         this.institutionStammdatenRS = institutionStammdatenRS;
         this.setBetreuungsangebotTypValues();
+        listResourceRS.getLaenderList().then((laenderList: TSLand[]) => {
+            this.laenderList = laenderList;
+        });
 
     }
 

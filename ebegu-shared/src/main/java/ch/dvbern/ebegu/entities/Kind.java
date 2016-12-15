@@ -106,6 +106,7 @@ public class Kind extends AbstractPersonEntity {
 
 	public Kind copyForMutation(Kind mutation) {
 		super.copyForMutation(mutation);
+		mutation.setWohnhaftImGleichenHaushalt(this.getWohnhaftImGleichenHaushalt());
 		mutation.setKinderabzug(this.getKinderabzug());
 		mutation.setFamilienErgaenzendeBetreuung(this.getFamilienErgaenzendeBetreuung());
 		mutation.setMutterspracheDeutsch(this.getMutterspracheDeutsch());

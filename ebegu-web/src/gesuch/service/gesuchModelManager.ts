@@ -1102,7 +1102,7 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isKorrekturModusJugendamt(): boolean {
-        return this.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) && (TSEingangsart.ONLINE === this.getGesuch().eingangsart);
+        return isAtLeastFreigegeben(this.gesuch.status) && (TSEingangsart.ONLINE === this.getGesuch().eingangsart);
     }
 
     /**

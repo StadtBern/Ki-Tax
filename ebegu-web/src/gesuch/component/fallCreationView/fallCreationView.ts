@@ -121,7 +121,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
 
     public getTitle(): string {
         if (this.gesuchModelManager.isErstgesuch()) {
-            if (this.gesuchModelManager.isGesuchSaved()) {
+            if (this.gesuchModelManager.isGesuchSaved() && this.gesuchModelManager.getGesuchsperiode()) {
                 return this.$translate.instant('MENU_ERSTGESUCH_PERIODE', {
                     periode: this.gesuchModelManager.getGesuchsperiode().gesuchsperiodeString
                 });

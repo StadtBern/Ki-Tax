@@ -9,10 +9,12 @@
                     <label class="md-no-float" data-translate="ADRESSE_ORGANISATION" for="{{vm.prefix}}-organisation">
                     </label>
                     <input id="{{vm.prefix}}-organisation" type="text" name="organisation"
-                           ng-model="vm.getModel().organisation"
+                           ng-model="vm.getModel().adresseJA.organisation"
                            dv-max-length class="form-control">
                     <dv-error-messages for="adresseForm.organisation.$error"
                                        class="error"></dv-error-messages>
+                    <dv-bisher gs="vm.getModel().adresseGS.organisation"
+                               ja="vm.getModel().adresseJA.organisation"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -23,10 +25,12 @@
                 <dv-input-container class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_STRASSE" for="{{vm.prefix}}-strasse">
                     </label>
-                    <input id="{{vm.prefix}}-strasse" type="text" name="adresseStrasse" ng-model="vm.getModel().strasse"
+                    <input id="{{vm.prefix}}-strasse" type="text" name="adresseStrasse" ng-model="vm.getModel().adresseJA.strasse"
                            dv-max-length class="form-control" required>
                     <dv-error-messages for="adresseForm.adresseStrasse.$error"
                                        class="error"></dv-error-messages>
+                    <dv-bisher gs="vm.getModel().adresseGS.strasse"
+                               ja="vm.getModel().adresseJA.strasse"></dv-bisher>
                 </dv-input-container>
             </div>
             <div class="col-sm-12 dv-input-container-small">
@@ -34,10 +38,12 @@
                     <label class="md-no-float" data-translate="ADRESSE_HAUSNUMMER" for="{{vm.prefix}}-hausnummer">
                     </label>
                     <input id="{{vm.prefix}}-hausnummer" type="text" name="adresseHausnummer"
-                           ng-model="vm.getModel().hausnummer"
-                           dv-max-length class="form-control">
+                           ng-model="vm.getModel().adresseJA.hausnummer"
+                           dv-max-length dv-trim-empty class="form-control">
                     <dv-error-messages for="adresseForm.adresseHausnummer.$error"
                                        class="error"></dv-error-messages>
+                    <dv-bisher gs="vm.getModel().adresseGS.hausnummer"
+                               ja="vm.getModel().adresseJA.hausnummer"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -48,10 +54,12 @@
                     <label class="md-no-float" data-translate="ADRESSE_ZUSATZZEILE" for="{{vm.prefix}}-zusatzzeile">
                     </label>
                     <input id="{{vm.prefix}}-zusatzzeile" type="text" name="adresseZusatzzeile"
-                           ng-model="vm.getModel().zusatzzeile"
-                           dv-max-length class="form-control">
+                           ng-model="vm.getModel().adresseJA.zusatzzeile"
+                           dv-max-length class="form-control" dv-trim-empty>
                     <dv-error-messages for="adresseForm.adresseZusatzzeile.$error"
                                        class="error"></dv-error-messages>
+                    <dv-bisher gs="vm.getModel().adresseGS.zusatzzeile"
+                               ja="vm.getModel().adresseJA.zusatzzeile"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -61,20 +69,24 @@
                 <dv-input-container class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_PLZ" for="{{vm.prefix}}-plz">
                     </label>
-                    <input id="{{vm.prefix}}-plz" type="text" name="adressePlz" ng-model="vm.getModel().plz"
+                    <input id="{{vm.prefix}}-plz" type="text" name="adressePlz" ng-model="vm.getModel().adresseJA.plz"
                            dv-max-length class="form-control" required>
                     <dv-error-messages for="adresseForm.adressePlz.$error"
                                        class="error"></dv-error-messages>
+                    <dv-bisher gs="vm.getModel().adresseGS.plz"
+                               ja="vm.getModel().adresseJA.plz"></dv-bisher>
                 </dv-input-container>
             </div>
             <div class="col-sm-12 dv-input-container-small">
                 <dv-input-container class="form-group secondColumn">
                     <label class="md-no-float" data-translate="ADRESSE_ORT" for="{{vm.prefix}}-ort">
                     </label>
-                    <input id="{{vm.prefix}}-ort" type="text" name="adresseOrt" ng-model="vm.getModel().ort"
+                    <input id="{{vm.prefix}}-ort" type="text" name="adresseOrt" ng-model="vm.getModel().adresseJA.ort"
                            dv-max-length class="form-control" required>
                     <dv-error-messages for="adresseForm.adresseOrt.$error"
                                        class="error"></dv-error-messages>
+                    <dv-bisher gs="vm.getModel().adresseGS.ort"
+                               ja="vm.getModel().adresseJA.ort"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -84,10 +96,12 @@
                 <dv-input-container class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_GEMEINDE" for="{{vm.prefix}}-gemeinde">
                     </label>
-                    <input id="{{vm.prefix}}-gemeinde" type="text" name="adresseGemeinde" ng-model="vm.getModel().gemeinde"
+                    <input id="{{vm.prefix}}-gemeinde" type="text" name="adresseGemeinde" ng-model="vm.getModel().adresseJA.gemeinde"
                            dv-max-length class="form-control">
                     <dv-error-messages for="adresseForm.adresseGemeinde.$error"
                                        class="error"></dv-error-messages>
+                    <dv-bisher gs="vm.getModel().adresseGS.gemeinde"
+                               ja="vm.getModel().adresseJA.gemeinde"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -97,13 +111,15 @@
                 <div class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_LAND" for="{{vm.prefix}}-land">
                     </label>
-                    <select name="adresseLand" id="{{vm.prefix}}-land" ng-model="vm.getModel().land"
+                    <select name="adresseLand" id="{{vm.prefix}}-land" ng-model="vm.getModel().adresseJA.land"
                             ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
                             class="form-control"
                             required>
                     </select>
                     <dv-error-messages for="adresseForm.adresseLand.$error"
                                        class="error"></dv-error-messages>
+                    <dv-bisher gs="vm.getModel().adresseGS.land"
+                               ja="vm.getModel().adresseJA.land"></dv-bisher>
                 </div>
             </div>
         </div>
@@ -113,7 +129,7 @@
              dv-show-expression="vm.showNichtInGemeinde===true">
             <div class="col-md-12">
                 <div class="checkbox">
-                    <md-checkbox ng-model="vm.getModel().nichtInGemeinde" name="nichtInGemeinde"
+                    <md-checkbox ng-model="vm.getModel().adresseJA.nichtInGemeinde" name="nichtInGemeinde"
                                  aria-label="nichtInGemeinde"
                                  dv-enable-element
                                  dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
@@ -134,7 +150,7 @@
                     <label class="md-no-float" data-translate="ADRESSE_GUELTIGAB" for="{{vm.prefix}}-gueltigAb">
                     </label>
                     <dv-datepicker input-id="{{vm.prefix}}-gueltigAb" input-name="gueltigAb" name="gueltigAb"
-                                   ng-model="vm.getModel().gueltigkeit.gueltigAb"
+                                   ng-model="vm.getModel().adresseJA.gueltigkeit.gueltigAb"
                                    class="input-element" ng-required="true"
                                    ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                     </dv-datepicker>
@@ -144,6 +160,8 @@
                     <!--</span>-->
                     <dv-error-messages for="adresseForm.gueltigAb.$error"
                                        class="error"></dv-error-messages>
+                    <dv-bisher gs="vm.getModel().adresseGS.gueltigkeit.gueltigAb"
+                               ja="vm.getModel().adresseJA.gueltigkeit.gueltigAb"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -154,10 +172,12 @@
                     <label class="md-no-float" data-translate="ADRESSE_GUELTIGBIS" for="{{vm.prefix}}-gueltigBis">
                     </label>
                     <dv-datepicker input-id="{{vm.prefix}}-gueltigBis" input-name="gueltigBis" name="gueltigBis"
-                                   ng-model="vm.getModel().gueltigkeit.gueltigBis" ng-required="true">
+                                   ng-model="vm.getModel().adresseJA.gueltigkeit.gueltigBis" ng-required="true">
                     </dv-datepicker>
                     <dv-error-messages for="adresseForm.gueltigBis.$error"
                                        class="error"></dv-error-messages>
+                    <dv-bisher gs="vm.getModel().adresseGS.gueltigkeit.gueltigBis"
+                               ja="vm.getModel().adresseJA.gueltigkeit.gueltigBis"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
