@@ -9,7 +9,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
@@ -22,6 +22,8 @@ import MahnungRS from '../../service/mahnungRS.rest';
 import TSGesuch from '../../../models/TSGesuch';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import DateUtil from '../../../utils/DateUtil';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -47,12 +49,12 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', 'MahnungRS', '$log'];
-
+        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS'];
     /* @ngInject */
+
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService) {
+                private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService, private authServiceRs: AuthServiceRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
     }
@@ -76,14 +78,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         if (!this.berechnungsManager.finanzielleSituationResultate) {
             this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch()); //.then(() => {});
         }
-        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo
-            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
+            && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1
             && !this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 1); //.then(() => {});
         }
-        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo
-            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
+            && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2
             && !this.berechnungsManager.einkommensverschlechterungResultateBjP2) {
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
@@ -124,9 +126,46 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public kannVerfuegungOeffnen(betreuung: TSBetreuung): boolean {
-        return TSBetreuungsstatus.BESTAETIGT === betreuung.betreuungsstatus ||
-            TSBetreuungsstatus.VERFUEGT === betreuung.betreuungsstatus ||
-            TSBetreuungsstatus.NICHT_EINGETRETEN === betreuung.betreuungsstatus;
+        return this.isDetailAvailableForGesuchstatus() && this.isDetailAvailableForBetreuungstatus(betreuung.betreuungsstatus);
+    }
+
+    private isDetailAvailableForGesuchstatus(): boolean {
+        let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
+        //gesuchsteller hat sicher mal nur Zugriff auf verfuegungsdetail wenn das gesuch mindestens freiggeben ist
+        if (isGesuchsteller) {
+            let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+            return isAtLeastFreigegeben(status);
+        } else {
+            return true;
+        }
+    }
+
+    private isDetailAvailableForBetreuungstatus(betreuungsstatus: TSBetreuungsstatus): boolean {
+        let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
+        let allowedBetstatus: Array<TSBetreuungsstatus> = [TSBetreuungsstatus.VERFUEGT, TSBetreuungsstatus.NICHT_EINGETRETEN];
+        //Annahme: alle ausser Gesuchsteller duerfen bestaetigte betreuungen sehen wenn sie uberhaupt auf die Seite kommen
+        if (!isGesuchsteller) {
+            allowedBetstatus.push(TSBetreuungsstatus.BESTAETIGT);
+        }
+        return allowedBetstatus.indexOf(betreuungsstatus) !== -1;
+    }
+
+    /**
+     * das FinanzielleSituation PDF ist fuer den Gesuchsteller erst sichtbar sobald der Antrag den Status VERFUEGT erreicht hat
+     */
+    public isFinanziellesituationPDFVisible(): boolean {
+        let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
+        if (isGesuchsteller) {
+            let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+            return status === TSAntragStatus.VERFUEGT;
+        }
+        return true;
+
+    }
+
+    public isBegleitschreibenVisible(): boolean {
+        //aktuell verhelt sich das imho gleich wie finanzielle Situation PDF Sichtbarkeit
+        return this.isFinanziellesituationPDFVisible();
     }
 
     public getFall() {
@@ -190,7 +229,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return false;
     }
 
-    public isFristAbgelaufen(mahnung : TSMahnung): boolean {
+    public isFristAbgelaufen(mahnung: TSMahnung): boolean {
         return mahnung.datumFristablauf.isBefore(DateUtil.today());
     }
 
@@ -340,5 +379,4 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.BEGLEITSCHREIBEN, true);
             });
     }
-
 }

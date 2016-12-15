@@ -46,6 +46,7 @@
                                 dv-show-expression="vm.canRemoveBetreuung(betreuung)"
                                 ng-click="$event.stopPropagation()">
                                 <dv-loading-button type="button" button-click="vm.removeBetreuung(kind, betreuung)"
+                                                   button-disabled="vm.isKorrekturModusJugendamt()"
                                                    button-class="dv-btn-sm">
                                     <i class="fa fa-minus">
                                     </i>
@@ -71,7 +72,7 @@
                      dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                      dv-show-expression="!vm.isGesuchReadonly()">
                     <dv-loading-button type="button" button-click="vm.createBetreuung(kind)"
-                                       button-class="dv-btn-sm color-success">
+                                       button-class="dv-btn-sm color-success" button-disabled="vm.isKorrekturModusJugendamt()">
                         <i class="glyphicon glyphicon-plus"></i>
                         <span data-translate="BETREUUNG_HINZUFUEGEN"></span>
                     </dv-loading-button>

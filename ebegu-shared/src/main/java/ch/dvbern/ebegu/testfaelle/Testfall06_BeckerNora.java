@@ -29,7 +29,7 @@ public class Testfall06_BeckerNora extends AbstractTestfall {
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createAlleinerziehend();
-		Gesuchsteller gesuchsteller1 = createGesuchsteller(FAMILIENNAME, "Nora");
+		GesuchstellerContainer gesuchsteller1 = createGesuchstellerContainer(FAMILIENNAME, "Nora");
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensumGS1 = createErwerbspensum(60, 0);

@@ -10,9 +10,10 @@ import {TSBetroffene} from '../../../models/enums/TSBetroffene';
 import TSAdresse from '../../../models/TSAdresse';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import TSUmzugAdresse from '../../../models/TSUmzugAdresse';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import TSAdresseContainer from '../../../models/TSAdresseContainer';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
 let template = require('./umzugView.html');
@@ -55,7 +56,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
         return this.model;
     }
 
-    public save(form: angular.IFormController): IPromise<TSGesuchsteller> {
+    public save(form: angular.IFormController): IPromise<TSGesuchstellerContainer> {
         if (form.$valid) {
             if (!form.$dirty && !this.dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
@@ -102,10 +103,10 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
 
     public getNameFromBetroffene(betroffene: TSBetroffene): string {
         if (TSBetroffene.GESUCHSTELLER_1 === betroffene && this.gesuchModelManager.getGesuch().gesuchsteller1) {
-            return this.gesuchModelManager.getGesuch().gesuchsteller1.getFullName();
+            return this.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName();
 
         } else if (TSBetroffene.GESUCHSTELLER_2 === betroffene && this.gesuchModelManager.getGesuch().gesuchsteller2) {
-            return this.gesuchModelManager.getGesuch().gesuchsteller2.getFullName();
+            return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName();
 
         } else if (TSBetroffene.BEIDE_GESUCHSTELLER === betroffene) {
             return this.$translate.instant(TSBetroffene[betroffene]);
@@ -168,10 +169,13 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
      * Erstellt eine neue leere Adresse vom Typ WOHNADRESSE
      */
     public createUmzugAdresse(): void {
+        let adresseContainer: TSAdresseContainer = new TSAdresseContainer();
         let adresse: TSAdresse = new TSAdresse();
-        adresse.showDatumVon = true;
         adresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        let umzugAdresse: TSUmzugAdresse = new TSUmzugAdresse(undefined, adresse);
+        adresseContainer.showDatumVon = true;
+        adresseContainer.adresseJA = adresse;
+        let umzugAdresse: TSUmzugAdresse = new TSUmzugAdresse(undefined, adresseContainer);
+
         this.model.push(umzugAdresse);
         this.dirty = true;
     }
@@ -205,7 +209,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
         });
     }
 
-    private addAdresseToGS(gesuchsteller: TSGesuchsteller, adresse: TSAdresse) {
+    private addAdresseToGS(gesuchsteller: TSGesuchstellerContainer, adresse: TSAdresseContainer) {
         if (gesuchsteller) {
             if (gesuchsteller.adressen.indexOf(adresse) < 0) {
                 gesuchsteller.addAdresse(adresse);

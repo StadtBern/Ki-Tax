@@ -291,13 +291,119 @@
 
 
                                     <!--Adresse-->
-                                    <dv-adresse
-                                        adresse="vm.getSelectedInstitutionStammdaten().adresse"></dv-adresse>
+                                    <fieldset>
+
+
+                                        <div class="dv-adresse row">
+                                            <!--Strasse-->
+                                            <div class="col-sm-12 dv-input-container-small">
+                                                <dv-input-container class="form-group">
+                                                    <label class="md-no-float" data-translate="ADRESSE_STRASSE"
+                                                           for="inst-adr-strasse">
+                                                    </label>
+                                                    <input id="inst-adr-strasse" type="text" name="adresseStrasse"
+                                                           ng-model="vm.getSelectedInstitutionStammdaten().adresse.strasse"
+                                                           dv-max-length class="form-control" required>
+                                                    <dv-error-messages for="adresseForm.adresseStrasse.$error"
+                                                                       class="error"></dv-error-messages>
+                                                </dv-input-container>
+                                            </div>
+                                            <div class="col-sm-12 dv-input-container-small">
+                                                <dv-input-container class="form-group secondColumn">
+                                                    <label class="md-no-float" data-translate="ADRESSE_HAUSNUMMER"
+                                                           for="inst-adr-hausnummer">
+                                                    </label>
+                                                    <input id="inst-adr-hausnummer" type="text"
+                                                           name="adresseHausnummer"
+                                                           ng-model="vm.getSelectedInstitutionStammdaten().adresse.hausnummer"
+                                                           dv-max-length class="form-control">
+                                                    <dv-error-messages for="adresseForm.adresseHausnummer.$error"
+                                                                       class="error"></dv-error-messages>
+                                                </dv-input-container>
+                                            </div>
+                                        </div>
+                                        <!-- Adresse Zusatz-->
+                                        <div class="row">
+                                            <div class="col-sm-12 dv-input-container-small">
+                                                <dv-input-container class="form-group">
+                                                    <label class="md-no-float" data-translate="ADRESSE_ZUSATZZEILE"
+                                                           for="inst-adr-zusatzzeile">
+                                                    </label>
+                                                    <input id="inst-adr-zusatzzeile" type="text"
+                                                           name="adresseZusatzzeile"
+                                                           ng-model="vm.getSelectedInstitutionStammdaten().adresse.zusatzzeile"
+                                                           dv-max-length class="form-control">
+                                                    <dv-error-messages for="adresseForm.adresseZusatzzeile.$error"
+                                                                       class="error"></dv-error-messages>
+                                                </dv-input-container>
+                                            </div>
+                                        </div>
+                                        <!-- PLZ ORT-->
+                                        <div class="row">
+                                            <div class="col-sm-12 dv-input-container-small">
+                                                <dv-input-container class="form-group">
+                                                    <label class="md-no-float" data-translate="ADRESSE_PLZ"
+                                                           for="inst-adr-plz">
+                                                    </label>
+                                                    <input id="inst-adr-plz" type="text" name="adressePlz"
+                                                           ng-model="vm.getSelectedInstitutionStammdaten().adresse.plz"
+                                                           dv-max-length class="form-control" required>
+                                                    <dv-error-messages for="adresseForm.adressePlz.$error"
+                                                                       class="error"></dv-error-messages>
+                                                </dv-input-container>
+                                            </div>
+                                            <div class="col-sm-12 dv-input-container-small">
+                                                <dv-input-container class="form-group secondColumn">
+                                                    <label class="md-no-float" data-translate="ADRESSE_ORT"
+                                                           for="inst-adr-ort">
+                                                    </label>
+                                                    <input id="inst-adr-ort" type="text" name="adresseOrt"
+                                                           ng-model="vm.getSelectedInstitutionStammdaten().adresse.ort"
+                                                           dv-max-length class="form-control" required>
+                                                    <dv-error-messages for="adresseForm.adresseOrt.$error"
+                                                                       class="error"></dv-error-messages>
+                                                </dv-input-container>
+                                            </div>
+                                        </div>
+
+                                        <!-- Land-->
+                                        <div class="row">
+                                            <div class="col-sm-12 dv-input-container-small">
+                                                <div class="form-group">
+                                                    <label class="md-no-float" data-translate="ADRESSE_LAND"
+                                                           for="inst-adr-land">
+                                                    </label>
+                                                    <select name="adresseLand" id="inst-adr-land"
+                                                            ng-model="vm.getSelectedInstitutionStammdaten().adresse.land"
+                                                            ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
+                                                            class="form-control"
+                                                            required>
+                                                    </select>
+                                                    <dv-error-messages for="adresseForm.adresseLand.$error"
+                                                                       class="error"></dv-error-messages>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </fieldset>
+
 
                                 </div>
                             </div>
                         </div>
 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <br/>
+                        <!--Knopf zum synchronisieren der  Institutionen-->
+                        <dv-loading-button type="submit"
+                                           button-click="vm.syncWithOpenIdm()"
+                                           button-class="">
+                            <span data-translate="INSTITUTION_SYNCHRONIZE"></span>
+                        </dv-loading-button>
                     </div>
                 </div>
 

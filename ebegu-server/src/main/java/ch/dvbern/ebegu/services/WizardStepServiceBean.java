@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -442,4 +442,11 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		return wizardStep;
 	}
 
+	@Override
+	public void removeSteps(Gesuch gesToRemove) {
+		List<WizardStep> wizardStepsFromGesuch = findWizardStepsFromGesuch(gesToRemove.getId());
+		for (WizardStep wizardStep : wizardStepsFromGesuch) {
+			persistence.remove(WizardStep.class, wizardStep.getId());
+		}
+	}
 }

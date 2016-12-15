@@ -153,15 +153,15 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     public getAnfangsVerschlechterung1(): string {
-        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo) {
-            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1, 'DD.MM.YYYY');
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()) {
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().stichtagFuerBasisJahrPlus1, 'DD.MM.YYYY');
         }
         return undefined;
     }
 
     public getAnfangsVerschlechterung2(): string {
-        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo) {
-            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2, 'DD.MM.YYYY');
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()) {
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().stichtagFuerBasisJahrPlus2, 'DD.MM.YYYY');
         }
         return undefined;
     }

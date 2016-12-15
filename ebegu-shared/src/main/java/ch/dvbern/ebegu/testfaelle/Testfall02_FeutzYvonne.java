@@ -30,9 +30,9 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createVerheiratet();
-		Gesuchsteller gesuchsteller1 = createGesuchsteller();
+		GesuchstellerContainer gesuchsteller1 = createGesuchstellerContainer();
 		gesuch.setGesuchsteller1(gesuchsteller1);
-		Gesuchsteller gesuchsteller2 = createGesuchsteller(FAMILIENNAME, "Tizian");
+		GesuchstellerContainer gesuchsteller2 = createGesuchstellerContainer(FAMILIENNAME, "Tizian");
 		gesuch.setGesuchsteller2(gesuchsteller2);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensumGS1 = createErwerbspensum(40, 0);
@@ -42,10 +42,12 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 		// Kinder
 		KindContainer kind1 = createKind(Geschlecht.WEIBLICH, FAMILIENNAME, "Tamara", LocalDate.of(2009, Month.JULY, 11), Kinderabzug.GANZER_ABZUG, true);
 		kind1.setGesuch(gesuch);
+		kind1.setKindNummer(1);
 		kind1.setKindGS(kind1.getKindJA());
 		gesuch.getKindContainers().add(kind1);
 		KindContainer kind2 = createKind(Geschlecht.MAENNLICH, FAMILIENNAME, "Leonard", LocalDate.of(2012, Month.NOVEMBER, 19), Kinderabzug.GANZER_ABZUG, true);
 		kind2.setGesuch(gesuch);
+		kind2.setKindNummer(2);
 		kind2.setKindGS(kind2.getKindJA());
 		gesuch.getKindContainers().add(kind2);
 

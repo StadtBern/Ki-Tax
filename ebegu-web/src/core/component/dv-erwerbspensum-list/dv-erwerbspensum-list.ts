@@ -18,6 +18,7 @@ export class DVErwerbspensumListConfig implements IComponentOptions {
         tableId: '@',
         tableTitle: '@',
         addButtonVisible: '<',
+        addButtonEnabled: '<',
         addButtonText: '@'
     };
     template = template;
@@ -33,6 +34,7 @@ export class DVErwerbspensumListController {
     removeButtonTitle: string;
     addButtonText: string;
     addButtonVisible: boolean;
+    addButtonEnabled: boolean;
     onRemove: (pensumToRemove: any) => void;
     onEdit: (pensumToEdit: any) => void;
     onAdd: () => void;
@@ -49,6 +51,9 @@ export class DVErwerbspensumListController {
         }
         if (this.addButtonVisible === undefined) {
             this.addButtonVisible = true;
+        }
+        if (this.addButtonEnabled === undefined) {
+            this.addButtonEnabled = true;
         }
         //clear selected
         for (var i = 0; i < this.erwerbspensen.length; i++) {

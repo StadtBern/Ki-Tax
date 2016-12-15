@@ -28,6 +28,11 @@ public interface TestfaelleService {
 										  boolean betreuungenBestaetigt,
 										  boolean verfuegen);
 
+	StringBuilder createAndSaveAsOnlineGesuch(@Nonnull String fallid,
+											  boolean betreuungenBestaetigt,
+											  boolean verfuegen,
+											  @Nonnull String username);
+
 	Gesuch createAndSaveTestfaelle(String fallid,
 								   boolean betreuungenBestaetigt,
 								   boolean verfuegen);

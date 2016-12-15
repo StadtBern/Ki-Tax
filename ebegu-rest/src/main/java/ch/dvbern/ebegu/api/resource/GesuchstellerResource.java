@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -53,28 +53,28 @@ public class GesuchstellerResource {
 	@Path("/{gesuchId}/gsNumber/{gsNumber}/{umzug}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxGesuchsteller saveGesuchsteller(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
+	public JaxGesuchstellerContainer saveGesuchsteller(
+		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchContJAXPId,
 		@Nonnull @NotNull @PathParam ("gsNumber") Integer gsNumber,
 		@Nonnull @NotNull @PathParam ("umzug") Boolean umzug,
-		@Nonnull @NotNull @Valid JaxGesuchsteller gesuchstellerJAXP,
+		@Nonnull @NotNull @Valid JaxGesuchstellerContainer gesuchstellerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchContJAXPId.getId());
 		if (gesuch.isPresent()) {
-			Gesuchsteller gesuchstellerToMerge = new Gesuchsteller();
+			GesuchstellerContainer gesuchstellerToMerge = new GesuchstellerContainer();
 			if (gesuchstellerJAXP.getId() != null) {
-				Optional<Gesuchsteller> optional = gesuchstellerService.findGesuchsteller(gesuchstellerJAXP.getId());
-				gesuchstellerToMerge = optional.orElse(new Gesuchsteller());
+				Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerJAXP.getId());
+				gesuchstellerToMerge = optional.orElse(new GesuchstellerContainer());
 			}
 
-			Gesuchsteller convertedGesuchsteller = converter.gesuchstellerToEntity(gesuchstellerJAXP, gesuchstellerToMerge);
-			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch.get(), gsNumber, umzug);
+			GesuchstellerContainer convertedGesuchsteller = converter.gesuchstellerContainerToEntity(gesuchstellerJAXP, gesuchstellerToMerge);
+			GesuchstellerContainer persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch.get(), gsNumber, umzug);
 
-			return converter.gesuchstellerToJAX(persistedGesuchsteller);
+			return converter.gesuchstellerContainerToJAX(persistedGesuchsteller);
 		}
-		throw new EbeguEntityNotFoundException("createGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
+		throw new EbeguEntityNotFoundException("createGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchContJAXPId.getId());
 
 	}
 
@@ -84,19 +84,19 @@ public class GesuchstellerResource {
 	@Path("/{gesuchstellerId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxGesuchsteller findGesuchsteller(
+	public JaxGesuchstellerContainer findGesuchsteller(
 		@Nonnull @NotNull JaxId gesuchstellerJAXPId) throws EbeguException {
 
 		Validate.notNull(gesuchstellerJAXPId.getId());
 		String gesuchstellerID = converter.toEntityId(gesuchstellerJAXPId);
-		Optional<Gesuchsteller> optional = gesuchstellerService.findGesuchsteller(gesuchstellerID);
+		Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerID);
 
 		if (!optional.isPresent()) {
 			return null;
 		}
-		Gesuchsteller gesuchstellerToReturn = optional.get();
+		GesuchstellerContainer gesuchstellerToReturn = optional.get();
 
-		return converter.gesuchstellerToJAX(gesuchstellerToReturn);
+		return converter.gesuchstellerContainerToJAX(gesuchstellerToReturn);
 	}
 
 }

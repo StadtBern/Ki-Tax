@@ -193,7 +193,8 @@ export class NavigatorController {
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName()) {
             if (this.dvSubStep === 1) {
-                if (this.gesuchModelManager.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
+                if (this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo() &&
+                    this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().einkommensverschlechterung) { // was muss hier sein?
                     if (this.gesuchModelManager.isGesuchsteller2Required()) {
                         this.navigateToStepEinkommensverschlechterungSteuern();
                     } else {
@@ -294,7 +295,11 @@ export class NavigatorController {
         if (stepName === TSWizardStepName.GESUCH_ERSTELLEN) {
             this.state.go('gesuch.fallcreation', {
                 createNew: 'false',
-                gesuchId: gesuchId
+                createMutation: 'false',
+                eingangsart: this.gesuchModelManager.getGesuch().eingangsart,
+                gesuchId: gesuchId,
+                gesuchsperiodeId: this.gesuchModelManager.getGesuch().gesuchsperiode,
+                fallId: this.gesuchModelManager.getGesuch().fall.id
             });
 
         } else if (stepName === TSWizardStepName.FAMILIENSITUATION) {
@@ -512,7 +517,7 @@ export class NavigatorController {
 
     private navigateNextEVSubStep4(): void {
         if (this.gesuchModelManager.getBasisJahrPlusNumber() === 1
-            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true) {
+            && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2 === true) {
             this.navigateToStepEinkommensverschlechterungResultate('2');
         } else {
             this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {

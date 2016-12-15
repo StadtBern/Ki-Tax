@@ -21,6 +21,9 @@ public class JaxTraegerschaft extends JaxAbstractDTO {
 	@NotNull
 	private Boolean active = true;
 
+	// just to communicate with client
+	private boolean synchronizedWithOpenIdm = false;
+
 	public String getName() {
 		return name;
 	}
@@ -35,5 +38,13 @@ public class JaxTraegerschaft extends JaxAbstractDTO {
 
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	public boolean isSynchronizedWithOpenIdm() {
+		return synchronizedWithOpenIdm;
+	}
+
+	public void setSynchronizedWithOpenIdm(boolean synchronizedWithOpenIdm) {
+		this.synchronizedWithOpenIdm = synchronizedWithOpenIdm;
 	}
 }

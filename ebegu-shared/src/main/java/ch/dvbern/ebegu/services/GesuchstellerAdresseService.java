@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -17,7 +17,7 @@ public interface GesuchstellerAdresseService {
 	 * @param gesuchstellerAdresse Die Adresse als DTO
 	 */
 	@Nonnull
-	GesuchstellerAdresse createAdresse(@Nonnull GesuchstellerAdresse gesuchstellerAdresse);
+	GesuchstellerAdresseContainer createAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse);
 
 	/**
 	 * Aktualisiert die Adresse in der DB.
@@ -25,43 +25,43 @@ public interface GesuchstellerAdresseService {
 	 * @param gesuchstellerAdresse Die Adresse als DTO
 	 */
 	@Nonnull
-	GesuchstellerAdresse updateAdresse(@Nonnull GesuchstellerAdresse gesuchstellerAdresse);
+	GesuchstellerAdresseContainer updateAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse);
 
 	/**
 	 * @param key PK (id) der Adresse
 	 * @return Adresse mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<GesuchstellerAdresse> findAdresse(@Nonnull String key);
+	Optional<GesuchstellerAdresseContainer> findAdresse(@Nonnull String key);
 
 	/**
 	 * @return Liste aller Adressen aus der DB
 	 */
 	@Nonnull
-	Collection<GesuchstellerAdresse> getAllAdressen();
+	Collection<GesuchstellerAdresseContainer> getAllAdressen();
 
 	/**
 	 * entfernt eine Adresse aus der Databse
 	 *
 	 * @param gesuchstellerAdresse Adresse zu entfernen
 	 */
-	void removeAdresse(@Nonnull GesuchstellerAdresse gesuchstellerAdresse);
+	void removeAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse);
 
 	/**
 	 * Laedt die aktuellste Adresse mit gueltigBis EndOfTime fuer die Gesuchsteller mit gesuchstellerID
 	 */
 	@Nonnull
-	Optional<GesuchstellerAdresse> getNewestWohnadresse(String gesuchstellerID);
+	Optional<GesuchstellerAdresseContainer> getNewestWohnadresse(String gesuchstellerID);
 
 	/**
 	 * Laedt die Korrespondenzadresse (aktuell gibt es immer nur 1) fuer die Gesuchsteller mit gesuchstellerID
 	 */
 	@Nonnull
-	Optional<GesuchstellerAdresse> getKorrespondenzAdr(String gesuchstellerID);
+	Optional<GesuchstellerAdresseContainer> getKorrespondenzAdr(String gesuchstellerID);
 
 	/**
 	 * Laedt die Wohnadresse die Stichtag heute gueltig ist
 	 */
 	@Nonnull
-	GesuchstellerAdresse getCurrentWohnadresse(String gesuchstellerID);
+	GesuchstellerAdresseContainer getCurrentWohnadresse(String gesuchstellerID);
 }

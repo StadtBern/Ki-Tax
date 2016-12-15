@@ -307,7 +307,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			}
 
-			byte[] data = pdfService.printMahnung(mahnung, vorgaengerMahnung);
+			byte[] data = pdfService.generateMahnung(mahnung, vorgaengerMahnung);
 
 			persistedDokument = vorschauDokument == null ?
 				updateGeneratedDokument(data, dokumentTyp, gesuch,

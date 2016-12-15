@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.rules.Anlageverzeichnis;
+package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
@@ -54,14 +54,14 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 
 		final LocalDate gueltigAb = gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb();
 
-		final Gesuchsteller gesuchsteller1 = gesuch.getGesuchsteller1();
+		final GesuchstellerContainer gesuchsteller1 = gesuch.getGesuchsteller1();
 		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller1, gueltigAb);
 
-		final Gesuchsteller gesuchsteller2 = gesuch.getGesuchsteller2();
+		final GesuchstellerContainer gesuchsteller2 = gesuch.getGesuchsteller2();
 		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller2, gueltigAb);
 	}
 
-	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, Gesuchsteller gesuchsteller, LocalDate gueltigAb) {
+	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, GesuchstellerContainer gesuchsteller, LocalDate gueltigAb) {
 		if (gesuchsteller == null || gesuchsteller.getErwerbspensenContainers().isEmpty()) {
 			return;
 		}
@@ -70,17 +70,17 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 
 		for (ErwerbspensumContainer erwerbspensenContainer : erwerbspensenContainers) {
 			final Erwerbspensum erwerbspensumJA = erwerbspensenContainer.getErwerbspensumJA();
-			add(getDokument(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensumJA, gueltigAb, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_AUSBILDUNG, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_RAV, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.BESTAETIGUNG_ARZT, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensumJA, gueltigAb, gesuchsteller.extractFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, erwerbspensumJA, gesuchsteller.extractFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_AUSBILDUNG, erwerbspensumJA, gesuchsteller.extractFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_RAV, erwerbspensumJA, gesuchsteller.extractFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.BESTAETIGUNG_ARZT, erwerbspensumJA, gesuchsteller.extractFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
 
-			add(getDokument(DokumentTyp.NACHWEIS_UNREG_ARBEITSZ, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_SONSTIGEN_ZUSCHLAG, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_FIXE_ARBEITSZEITEN, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_UNREG_ARBEITSZ, erwerbspensumJA, gesuchsteller.extractFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, erwerbspensumJA, gesuchsteller.extractFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_SONSTIGEN_ZUSCHLAG, erwerbspensumJA, gesuchsteller.extractFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT, erwerbspensumJA, gesuchsteller.extractFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_FIXE_ARBEITSZEITEN, erwerbspensumJA, gesuchsteller.extractFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
 		}
 	}
 

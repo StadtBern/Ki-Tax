@@ -29,9 +29,9 @@ public class Testfall03_PerreiraMarcia extends AbstractTestfall {
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createVerheiratet();
-		Gesuchsteller gesuchsteller1 = createGesuchsteller();
+		GesuchstellerContainer gesuchsteller1 = createGesuchstellerContainer();
 		gesuch.setGesuchsteller1(gesuchsteller1);
-		Gesuchsteller gesuchsteller2 = createGesuchsteller("Cortes", "Ignazi");
+		GesuchstellerContainer gesuchsteller2 = createGesuchstellerContainer("Cortes", "Ignazi");
 		gesuch.setGesuchsteller2(gesuchsteller2);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensumGS1 = createErwerbspensum(50, 0);

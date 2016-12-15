@@ -6,6 +6,9 @@ export class TSTraegerschaft extends TSAbstractEntity {
 
     private _active: boolean;
 
+    // just to communicate with client
+    private _synchronizedWithOpenIdm: boolean = false;
+
     constructor(name?: string, active?: boolean) {
         super();
         this._name = name;
@@ -27,5 +30,13 @@ export class TSTraegerschaft extends TSAbstractEntity {
 
     set active(value: boolean) {
         this._active = value;
+    }
+
+    get synchronizedWithOpenIdm(): boolean {
+        return this._synchronizedWithOpenIdm;
+    }
+
+    set synchronizedWithOpenIdm(value: boolean) {
+        this._synchronizedWithOpenIdm = value;
     }
 }

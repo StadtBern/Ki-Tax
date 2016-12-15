@@ -75,7 +75,9 @@ public abstract class AbstractTestfall {
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
-		gesuch.setFamiliensituation(familiensituation);
+		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
+		familiensituationContainer.setFamiliensituationJA(familiensituation);
+		gesuch.setFamiliensituationContainer(familiensituationContainer);
 		return gesuch;
 	}
 
@@ -85,8 +87,22 @@ public abstract class AbstractTestfall {
 		familiensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
-		gesuch.setFamiliensituation(familiensituation);
+		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
+		familiensituationContainer.setFamiliensituationJA(familiensituation);
+		gesuch.setFamiliensituationContainer(familiensituationContainer);
 		return gesuch;
+	}
+
+	protected GesuchstellerContainer createGesuchstellerContainer() {
+		return createGesuchstellerContainer(getNachname(), getVorname());
+	}
+
+	protected GesuchstellerContainer createGesuchstellerContainer(String name, String vorname) {
+		GesuchstellerContainer gesuchstellerCont = new GesuchstellerContainer();
+		gesuchstellerCont.setAdressen(new ArrayList<>());
+		gesuchstellerCont.setGesuchstellerJA(createGesuchsteller(name, vorname));
+		gesuchstellerCont.getAdressen().add(createWohnadresseContainer(gesuchstellerCont));
+		return gesuchstellerCont;
 	}
 
 	protected Gesuchsteller createGesuchsteller(String name, String vorname) {
@@ -95,8 +111,6 @@ public abstract class AbstractTestfall {
 		gesuchsteller.setNachname(name);
 		gesuchsteller.setVorname(vorname);
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1980, Month.MARCH, 25));
-		gesuchsteller.setAdressen(new ArrayList<>());
-		gesuchsteller.getAdressen().add(createWohnadresse(gesuchsteller));
 		gesuchsteller.setDiplomatenstatus(false);
 		gesuchsteller.setMail("test@email.com");
 		gesuchsteller.setMobile("079 000 00 00");
@@ -107,7 +121,14 @@ public abstract class AbstractTestfall {
 		return createGesuchsteller(getNachname(), getVorname());
 	}
 
-	protected GesuchstellerAdresse createWohnadresse(Gesuchsteller gesuchsteller) {
+	protected GesuchstellerAdresseContainer createWohnadresseContainer(GesuchstellerContainer gesuchstellerCont) {
+		GesuchstellerAdresseContainer wohnadresseCont = new GesuchstellerAdresseContainer();
+		wohnadresseCont.setGesuchstellerContainer(gesuchstellerCont);
+		wohnadresseCont.setGesuchstellerAdresseJA(createWohnadresse());
+		return wohnadresseCont;
+	}
+
+	protected GesuchstellerAdresse createWohnadresse() {
 		GesuchstellerAdresse wohnadresse = new GesuchstellerAdresse();
 		wohnadresse.setStrasse("Testweg");
 		wohnadresse.setHausnummer("10");
@@ -115,7 +136,6 @@ public abstract class AbstractTestfall {
 		wohnadresse.setOrt("Bern");
 		wohnadresse.setLand(Land.CH);
 		wohnadresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
-		wohnadresse.setGesuchsteller(gesuchsteller);
 		wohnadresse.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return wohnadresse;
 	}

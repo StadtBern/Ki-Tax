@@ -1,4 +1,3 @@
-import AbstractGesuchViewController from './component/abstractGesuchView';
 import GesuchModelManager from './service/gesuchModelManager';
 import BerechnungsManager from './service/berechnungsManager';
 import DateUtil from '../utils/DateUtil';
@@ -6,13 +5,14 @@ import WizardStepManager from './service/wizardStepManager';
 import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
 import EbeguUtil from '../utils/EbeguUtil';
-import {TSAntragStatus} from '../models/enums/TSAntragStatus';
+import {TSAntragStatus, IN_BEARBEITUNG_BASE_NAME} from '../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
 import TSGesuch from '../models/TSGesuch';
 import TSUser from '../models/TSUser';
-import ITranslateService = angular.translate.ITranslateService;
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import {TSRole} from '../models/enums/TSRole';
+import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
+import ITranslateService = angular.translate.ITranslateService;
 
 export class GesuchRouteController {
 
@@ -20,11 +20,12 @@ export class GesuchRouteController {
     TSRoleUtil: any;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-        'AntragStatusHistoryRS', '$translate'];
+        'AntragStatusHistoryRS', '$translate', 'AuthServiceRS'];
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
-                private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService) {
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService,
+                private authServiceRS: AuthServiceRS) {
         //super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.loadLastStatusChange(this.gesuchModelManager.getGesuch());
         this.TSRole = TSRole;
@@ -32,7 +33,7 @@ export class GesuchRouteController {
     }
 
     showFinanzsituationStart(): boolean {
-        return !!this.gesuchModelManager.isGesuchsteller2Required();
+        return this.gesuchModelManager.isGesuchsteller2Required();
     }
 
 
@@ -105,6 +106,13 @@ export class GesuchRouteController {
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
             toTranslate = this.gesuchModelManager.calculateNewStatus(this.gesuchModelManager.getGesuch().status);
         }
+        let isUserGesuchsteller: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles());
+        let isUserJA: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getJugendamtRole());
+
+        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller
+            || toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
+            return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
+        }
         return this.ebeguUtil.translateString(TSAntragStatus[toTranslate]);
     }
 
@@ -139,7 +147,7 @@ export class GesuchRouteController {
 
     public getGesuchErstellenStepTitle(): string {
         if (this.gesuchModelManager.isErstgesuch()) {
-            if (this.gesuchModelManager.isGesuchSaved()) {
+            if (this.getDateFromGesuch()) {
                 return this.$translate.instant('MENU_ERSTGESUCH_VOM', {
                     date: this.getDateFromGesuch()
                 });
@@ -147,7 +155,7 @@ export class GesuchRouteController {
                 return this.$translate.instant('MENU_ERSTGESUCH');
             }
         } else {
-            if (this.gesuchModelManager.isGesuchSaved()) {
+            if (this.getDateFromGesuch()) {
                 return this.$translate.instant('MENU_MUTATION_VOM', {
                     date: this.getDateFromGesuch()
                 });

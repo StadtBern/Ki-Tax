@@ -54,15 +54,15 @@ public class Gesuch extends AbstractEntity {
 
 	@Valid
 	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller1_id"))
-	private Gesuchsteller gesuchsteller1;
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller_container1_id"), nullable = true)
+	private GesuchstellerContainer gesuchsteller1;
 
 	@Valid
 	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller2_id"))
-	private Gesuchsteller gesuchsteller2;
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller_container2_id"), nullable = true)
+	private GesuchstellerContainer gesuchsteller2;
 
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
@@ -76,20 +76,14 @@ public class Gesuch extends AbstractEntity {
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_id"))
-	private Familiensituation familiensituation;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_container_id"))
+	private FamiliensituationContainer familiensituationContainer;
 
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_erstgesuch_id"))
-	private Familiensituation familiensituationErstgesuch;
-
-	@Valid
-	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfo_id"))
-	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfoContainer_id"))
+	private EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer;
 
 	@Transient
 	private FinanzDatenDTO finanzDatenDTO;
@@ -115,20 +109,20 @@ public class Gesuch extends AbstractEntity {
 
 
 	@Nullable
-	public Gesuchsteller getGesuchsteller1() {
+	public GesuchstellerContainer getGesuchsteller1() {
 		return gesuchsteller1;
 	}
 
-	public void setGesuchsteller1(@Nullable final Gesuchsteller gesuchsteller1) {
+	public void setGesuchsteller1(@Nullable GesuchstellerContainer gesuchsteller1) {
 		this.gesuchsteller1 = gesuchsteller1;
 	}
 
 	@Nullable
-	public Gesuchsteller getGesuchsteller2() {
+	public GesuchstellerContainer getGesuchsteller2() {
 		return gesuchsteller2;
 	}
 
-	public void setGesuchsteller2(@Nullable final Gesuchsteller gesuchsteller2) {
+	public void setGesuchsteller2(@Nullable GesuchstellerContainer gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
@@ -141,21 +135,12 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
-	public Familiensituation getFamiliensituation() {
-		return familiensituation;
+	public FamiliensituationContainer getFamiliensituationContainer() {
+		return familiensituationContainer;
 	}
 
-	public void setFamiliensituation(@Nullable final Familiensituation familiensituation) {
-		this.familiensituation = familiensituation;
-	}
-
-	@Nullable
-	public Familiensituation getFamiliensituationErstgesuch() {
-		return familiensituationErstgesuch;
-	}
-
-	public void setFamiliensituationErstgesuch(@Nullable final Familiensituation familiensituationErstgesuch) {
-		this.familiensituationErstgesuch = familiensituationErstgesuch;
+	public void setFamiliensituationContainer(@Nullable FamiliensituationContainer familiensituationContainer) {
+		this.familiensituationContainer = familiensituationContainer;
 	}
 
 	public Set<AntragStatusHistory> getAntragStatusHistories() {
@@ -167,15 +152,11 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
-	public EinkommensverschlechterungInfo getEinkommensverschlechterungInfo() {
-		return einkommensverschlechterungInfo;
-	}
-
-	public void setEinkommensverschlechterungInfo(@Nullable final EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
-		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
-		if (this.einkommensverschlechterungInfo != null) {
-			this.einkommensverschlechterungInfo.setGesuch(this);
+	public EinkommensverschlechterungInfo extractEinkommensverschlechterungInfo() {
+		if (einkommensverschlechterungInfoContainer != null) {
+			return einkommensverschlechterungInfoContainer.getEinkommensverschlechterungInfoJA();
 		}
+		return null;
 	}
 
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
@@ -185,6 +166,11 @@ public class Gesuch extends AbstractEntity {
 
 	public boolean addDokumentGrund(@NotNull final DokumentGrund dokumentGrund) {
 		dokumentGrund.setGesuch(this);
+
+		if (this.dokumentGrunds == null) {
+			this.dokumentGrunds = new HashSet<>();
+		}
+
 		return this.dokumentGrunds.add(dokumentGrund);
 	}
 
@@ -262,13 +248,21 @@ public class Gesuch extends AbstractEntity {
 		this.dokumentGrunds = dokumentGrunds;
 	}
 
-	@Nullable
 	public int getLaufnummer() {
 		return laufnummer;
 	}
 
-	public void setLaufnummer(@Nullable int laufnummer) {
+	public void setLaufnummer(int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	@Nullable
+	public EinkommensverschlechterungInfoContainer getEinkommensverschlechterungInfoContainer() {
+		return einkommensverschlechterungInfoContainer;
+	}
+
+	public void setEinkommensverschlechterungInfoContainer(@Nullable EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer) {
+		this.einkommensverschlechterungInfoContainer = einkommensverschlechterungInfoContainer;
 	}
 
 	@SuppressWarnings("ObjectEquality")
@@ -318,8 +312,8 @@ public class Gesuch extends AbstractEntity {
 	 */
 	@Transient
 	public String extractFamiliennamenString() {
-		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().getNachname() : "");
-		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().getNachname() : "";
+		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().extractNachname() : "");
+		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().extractNachname() : "";
 		return bothFamiliennamen;
 	}
 
@@ -346,6 +340,25 @@ public class Gesuch extends AbstractEntity {
 			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
 	}
 
+	public Familiensituation extractFamiliensituation() {
+		if (familiensituationContainer != null) {
+			return familiensituationContainer.extractFamiliensituation();
+		}
+		return null;
+	}
+
+	public Familiensituation extractFamiliensituationErstgesuch() {
+		if (familiensituationContainer != null) {
+			return familiensituationContainer.getFamiliensituationErstgesuch();
+		}
+		return null;
+	}
+
+	public void initFamiliensituationContainer() {
+		familiensituationContainer = new FamiliensituationContainer();
+		familiensituationContainer.setFamiliensituationJA(new Familiensituation());
+	}
+
 	public Gesuch copyForMutation(Gesuch mutation, Eingangsart eingangsart) {
 		super.copyForMutation(mutation);
 		mutation.setEingangsart(eingangsart);
@@ -354,30 +367,27 @@ public class Gesuch extends AbstractEntity {
 		mutation.setEingangsdatum(null);
 		mutation.setStatus(eingangsart == Eingangsart.PAPIER ?  AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
 		mutation.setTyp(AntragTyp.MUTATION);
+		mutation.setLaufnummer(this.getLaufnummer() + 1);
 
 		if (this.getGesuchsteller1() != null) {
-			mutation.setGesuchsteller1(this.getGesuchsteller1().copyForMutation(new Gesuchsteller()));
+			mutation.setGesuchsteller1(this.getGesuchsteller1().copyForMutation(new GesuchstellerContainer()));
 		}
 		if (this.getGesuchsteller2() != null) {
-			mutation.setGesuchsteller2(this.getGesuchsteller2().copyForMutation(new Gesuchsteller()));
+			mutation.setGesuchsteller2(this.getGesuchsteller2().copyForMutation(new GesuchstellerContainer()));
 		}
 		for (KindContainer kindContainer : this.getKindContainers()) {
 			mutation.addKindContainer(kindContainer.copyForMutation(new KindContainer(), mutation));
 		}
 		mutation.setAntragStatusHistories(new LinkedHashSet<>());
-		if (this.getFamiliensituation() != null) {
-			mutation.setFamiliensituation(this.getFamiliensituation().copyForMutation(new Familiensituation()));
+
+		if (this.getFamiliensituationContainer() != null) {
+			mutation.setFamiliensituationContainer(this.getFamiliensituationContainer().copyForMutation(new FamiliensituationContainer(), this.isMutation()));
 		}
 
-		if (this.isMutation()) {
-			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationErstgesuch());
-		} else { // beim ErstGesuch holen wir direkt die normale Familiensituation
-			mutation.setFamiliensituationErstgesuch(this.getFamiliensituation());
+		if (this.getEinkommensverschlechterungInfoContainer() != null) {
+			mutation.setEinkommensverschlechterungInfoContainer(this.getEinkommensverschlechterungInfoContainer().copyForMutation(new EinkommensverschlechterungInfoContainer(), mutation));
 		}
 
-		if (this.getEinkommensverschlechterungInfo() != null) {
-			mutation.setEinkommensverschlechterungInfo(this.getEinkommensverschlechterungInfo().copyForMutation(new EinkommensverschlechterungInfo()));
-		}
 		if (this.getDokumentGrunds() != null) {
 			mutation.setDokumentGrunds(new HashSet<>());
 			for (DokumentGrund dokumentGrund : this.getDokumentGrunds()) {
