@@ -1,21 +1,20 @@
 import {EbeguWebGesuch} from '../../gesuch.module';
 import {FreigabeViewController} from './freigabeView';
 import TSGesuch from '../../../models/TSGesuch';
-import IScope = angular.IScope;
-import IFormController = angular.IFormController;
-import IPromise = angular.IPromise;
 import WizardStepManager from '../../service/wizardStepManager';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
-import IQService = angular.IQService;
 import TSDownloadFile from '../../../models/TSDownloadFile';
-import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentTyp';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TestDataUtil from '../../../utils/TestDataUtil';
-import IHttpBackendService = angular.IHttpBackendService;
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
+import IScope = angular.IScope;
+import IFormController = angular.IFormController;
+import IPromise = angular.IPromise;
+import IQService = angular.IQService;
+import IHttpBackendService = angular.IHttpBackendService;
 
 describe('freigabeView', function () {
 
@@ -43,7 +42,7 @@ describe('freigabeView', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $httpBackend = $injector.get('$httpBackend');
 
-        spyOn(wizardStepManager, 'updateCurrentWizardStepStatus'). and.returnValue({});
+        spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
             wizardStepManager, dialog, downloadRS);

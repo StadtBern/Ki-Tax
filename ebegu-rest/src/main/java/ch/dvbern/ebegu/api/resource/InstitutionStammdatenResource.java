@@ -118,7 +118,7 @@ public class InstitutionStammdatenResource {
 	 *
 	 * @param stringDate Date als String mit Format "yyyy-MM-dd". Wenn null, heutiges Datum gesetzt
 	 * @return Liste mit allen InstitutionStammdaten die den Bedingungen folgen
-     */
+	 */
 	@Nonnull
 	@GET
 	@Path("/date")
@@ -139,14 +139,14 @@ public class InstitutionStammdatenResource {
 	 *
 	 * @param stringDate Date als String mit Format "yyyy-MM-dd". Wenn null, heutiges Datum gesetzt
 	 * @return Liste mit allen InstitutionStammdaten die den Bedingungen folgen
-     */
+	 */
 	@Nonnull
 	@GET
 	@Path("/date/active")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxInstitutionStammdaten> getAllActiveInstitutionStammdatenByDate (
-		@Nullable @QueryParam("date") String stringDate){
+	public List<JaxInstitutionStammdaten> getAllActiveInstitutionStammdatenByDate(
+		@Nullable @QueryParam("date") String stringDate) {
 
 		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stringDate);
 		return institutionStammdatenService.getAllActiveInstitutionStammdatenByDate(date).stream()

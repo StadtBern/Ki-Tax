@@ -146,7 +146,7 @@ export class InstitutionViewController {
                 });
             } else {
                 this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
-                    var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
+                    let index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
                     if (index > -1) {
                         this.institutionen[index] = institution;
                         this.resetInstitutionSelection();
@@ -225,7 +225,7 @@ export class InstitutionViewController {
         })
         .then(() => {   //User confirmed removal
             this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {
-                var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
+                let index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
                 if (index > -1) {
                     this.instStammdatenList.splice(index, 1);
                 }
