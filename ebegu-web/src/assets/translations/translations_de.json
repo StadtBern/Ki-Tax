@@ -790,5 +790,6 @@
     "GS_BEARBEITEN": "Antrag bearbeiten",
     "GS_DOKUMENTE_HOCHLADEN": "Dokumente hochladen",
     "GS_MUTIEREN": "Antrag mutieren",
-    "GS_BEANTRAGEN": "Antrag stellen"
+    "GS_BEANTRAGEN": "Antrag stellen",
+    "JA_KORREKTUR_FACHSTELLE": "Fachstelle {{name}} mit Pensum {{pensum}}, {{von}} - {{bis}}"
 }

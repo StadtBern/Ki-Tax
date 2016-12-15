@@ -14,6 +14,8 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
+import ITranslateService = angular.translate.ITranslateService;
+import DateUtil from '../../../utils/DateUtil';
 
 
 let template = require('./kindView.html');
@@ -30,16 +32,17 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
     geschlechter: Array<string>;
     kinderabzugValues: Array<TSKinderabzug>;
     showFachstelle: boolean;
+    showFachstelleGS: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
     allowedRoles: Array<TSRole>;
     // private initialModel: TSKindContainer; brauchts hier nicht da das kind glaub ich erst im then eingefuegt wird
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
-        'ErrorService', 'WizardStepManager', '$q'];
+        'ErrorService', 'WizardStepManager', '$q', '$translate'];
     /* @ngInject */
     constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService) {
+                wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith());
@@ -52,6 +55,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.kinderabzugValues = getTSKinderabzugValues();
         this.showFachstelle = (this.model.kindJA.pensumFachstelle) ? true : false;
+        this.showFachstelleGS = (this.model.kindGS && this.model.kindGS.pensumFachstelle) ? true : false;
         if (this.getPensumFachstelle() && this.getPensumFachstelle().fachstelle) {
             this.fachstelleId = this.getPensumFachstelle().fachstelle.id;
         }
@@ -152,6 +156,21 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
 
     public getDatumEinschulung(): moment.Moment {
         return this.gesuchModelManager.getGesuchsperiodeBegin();
+    }
+
+    public getTextFachstelleKorrekturJA() : string {
+        if (this.getContainer().kindGS && this.getContainer().kindGS.pensumFachstelle) {
+            let fachstelle : TSPensumFachstelle = this.getContainer().kindGS.pensumFachstelle;
+            let vonText = DateUtil.momentToLocalDateFormat(fachstelle.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
+            let bisText = fachstelle.gueltigkeit.gueltigBis ? DateUtil.momentToLocalDateFormat(fachstelle.gueltigkeit.gueltigBis, 'DD.MM.YYYY') : '31.12.9999'
+            return this.$translate.instant('JA_KORREKTUR_FACHSTELLE', {
+                name: fachstelle.fachstelle.name,
+                pensum: fachstelle.pensum,
+                von: vonText,
+                bis: bisText});
+        } else {
+            return this.$translate.instant('LABEL_KEINE_ANGABE');
+        }
     }
 }
 

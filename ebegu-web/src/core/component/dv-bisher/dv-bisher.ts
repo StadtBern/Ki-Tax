@@ -8,11 +8,27 @@ import ILogService = angular.ILogService;
 let template =  require('./dv-bisher.html');
 require('./dv-bisher.less');
 
+/**
+ * Verwendung:
+ * - gs: Wert, den der Gesuchsteller eingegeben hat
+ * - ja: Wert, den das Jugendamt korrigiert
+ *
+ * Attribute fuer Eingaben-Blocks (zusammengehoerende Felder):
+ * - specificBisherText: Falls einfach der GS-Wert als Bisher angezeigt werden soll. Z.B. Checkbox "Fachstelle": Wir
+ *      wollen als Bisher-Text nicht "Ja", sondern "Fachstelle X, mit 50%, vom 01.01.2015 bis 31.12.2015"
+ * - blockExisted: Gibt an, ob der Block ueberhaupt vom GS ausgefuellt wurde. Falls nein, muss *jede* Eingabe des JA
+ *      als Korrektur angezeigt werden
+ * - showBisherIfNone: Zeigt, ob der Bisherwert (bzw. "Keine Eingabe") auch angezeigt werden soll, wenn es keinen Bisher-Wert
+ *      gibt. Normalerweise wollen wir das. Ausnahme sind Blocks, wo wir das "Keine Eingabe" *pro Block* anzeigen wollen
+ *      und nicht unter jedem Feld.
+ */
 export class DvBisherComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
         gs: '<',
         ja: '<',
+        specificBisherText: '<',
+        blockExisted: '<',
         showBisherIfNone: '<',
     };
     template = template;
@@ -27,6 +43,8 @@ export class DvBisher {
     gs: any;
     ja: any;
     showBisherIfNone: boolean;  // sollen die korrekturen des jugendamts angezeigt werden wenn im GS container kein wert ist
+    specificBisherText: string;
+    blockExisted: boolean;
 
 
     /* @ngInject */
@@ -37,7 +55,14 @@ export class DvBisher {
     }
 
     public getBisher() : string {
-        if (this.gs instanceof moment) {
+        if (this.specificBisherText) {
+            // War es eine Loeschung, oder ein Hinzufuegen?
+            if (this.hasBisher()) {
+                return this.specificBisherText;
+            } else {
+                return this.$translate.instant('LABEL_KEINE_ANGABE');
+            }
+        } else if (this.gs instanceof moment) {
             return  DateUtil.momentToLocalDateFormat(this.gs, 'DD.MM.YYYY');
         } else if (this.gs === true) {
             return this.$translate.instant('LABEL_JA');
@@ -55,7 +80,7 @@ export class DvBisher {
     }
 
     public showBisher() : boolean {
-        return (this.showBisherIfNone || this.hasBisher()) && this.gesuchModelManager.isKorrekturModusJugendamt();
+        return ((this.showBisherIfNone || this.blockExisted === true) || this.hasBisher()) && this.gesuchModelManager.isKorrekturModusJugendamt();
     }
 
     public equals(gs: any, ja: any) : boolean {
