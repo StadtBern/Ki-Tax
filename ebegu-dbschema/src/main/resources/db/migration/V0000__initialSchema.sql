@@ -1130,6 +1130,7 @@ CREATE TABLE institution (
   version            BIGINT       NOT NULL,
   vorgaenger_id      VARCHAR(36),
   active             BIT          NOT NULL,
+  mail               VARCHAR(255) NOT NULL,
   name               VARCHAR(255) NOT NULL,
   mandant_id         VARCHAR(36)  NOT NULL,
   traegerschaft_id   VARCHAR(36),
@@ -1146,9 +1147,11 @@ CREATE TABLE institution_aud (
   user_mutiert       VARCHAR(36),
   vorgaenger_id      VARCHAR(36),
   active             BIT,
+  mail               VARCHAR(255),
   name               VARCHAR(255),
   mandant_id         VARCHAR(36),
   traegerschaft_id   VARCHAR(36),
+
   PRIMARY KEY (id, rev)
 );
 
@@ -1385,6 +1388,7 @@ CREATE TABLE traegerschaft (
   version            BIGINT       NOT NULL,
   vorgaenger_id      VARCHAR(36),
   active             BIT          NOT NULL,
+  mail               VARCHAR(255) NOT NULL,
   name               VARCHAR(255) NOT NULL,
   PRIMARY KEY (id)
 );
@@ -1399,6 +1403,7 @@ CREATE TABLE traegerschaft_aud (
   user_mutiert       VARCHAR(36),
   vorgaenger_id      VARCHAR(36),
   active             BIT,
+  mail               VARCHAR(255),
   name               VARCHAR(255),
   PRIMARY KEY (id, rev)
 );
