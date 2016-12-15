@@ -17,6 +17,9 @@
                     <span data-translate="FREIGABEQUITTUNG_ERFOLG_TEXT"
                           data-translate-value-freigabedatum="{{vm.getFreigabeDatum()}}"></span>
                 </div>
+                <div class="col-md-12" ng-if="vm.isFreigabequittungAusstehend()">
+                    <span data-translate="FREIGABEQUITTUNG_AUSSTEHEND_TEXT"></span>
+                </div>
             </div>
             <div class="row" ng-if="vm.isThereFreigabequittung()">
                 <div class="col-md-12">
@@ -102,8 +105,8 @@
                 <span class="col-md-4">
                     <dv-loading-button type="submit" button-click="vm.gesuchFreigeben(form)"
                                        button-class="dv-btn-sm"
-                                       aria-label="{{FREIGEBEN | translate}}">
-                        <span data-translate="FREIGEBEN"></span>
+                                       aria-label="{{ANTRAG_EINREICHEN | translate}}">
+                        <span data-translate="ANTRAG_EINREICHEN"></span>
                     </dv-loading-button>
                 </span>
 

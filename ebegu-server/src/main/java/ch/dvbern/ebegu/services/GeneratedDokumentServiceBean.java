@@ -181,11 +181,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
 				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
 				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, famGroessenVerfuegung);
-			}
-			else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
+			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
-			}
-			else {
+			} else {
 				LOG.warn("Unerwarter Dokumenttyp " + dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
 				return null;
 			}
@@ -214,8 +212,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				//nur wenn das Gesuch noch nicht freigegeben ist, wird
 				gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
 				data = pdfService.generateFreigabequittung(gesuch, zustelladresse);
-			}
-			else { // wir muessen explicit nach FREIGABEQUITTUNG fragen, da sein IF noch eine andere variable enthaelt
+			} else { // wir muessen explicit nach FREIGABEQUITTUNG fragen, da sein IF noch eine andere variable enthaelt
 				LOG.warn("Unerwarter Dokumenttyp " + GeneratedDokumentTyp.FREIGABEQUITTUNG.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
 				return null;
 			}
@@ -230,11 +227,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private GeneratedDokument getGeneratedDokument(Gesuch gesuch, GeneratedDokumentTyp dokumentTyp, String fileNameForGeneratedDokumentTyp) {
 		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
 		final GeneratedDokument persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
-            expectedFilepath);
+			expectedFilepath);
 		if (persistedDokument == null) {
-            LOG.warn("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-                "nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getAntragNummer(), expectedFilepath);
-        }
+			LOG.warn("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
+				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getAntragNummer(), expectedFilepath);
+		}
 		return persistedDokument;
 	}
 
@@ -342,7 +339,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			if (mahnung.hasVorgaenger()) {
 				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
-			}else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU) {
+			} else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU) {
 				vorgaengerMahnung = mahnungService.
 					findAktiveErstMahnung(gesuch);
 

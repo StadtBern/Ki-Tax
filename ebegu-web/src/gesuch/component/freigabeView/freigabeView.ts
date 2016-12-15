@@ -9,11 +9,11 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
-import ITranslateService = angular.translate.ITranslateService;
-import IFormController = angular.IFormController;
 import {isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import DateUtil from '../../../utils/DateUtil';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
+import ITranslateService = angular.translate.ITranslateService;
+import IFormController = angular.IFormController;
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -68,6 +68,14 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         }
         return false;
     }
+
+    public isFreigabequittungAusstehend(): boolean {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
+            return this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG;
+        }
+        return false;
+    }
+
 
     public openFreigabequittungPDF(): IPromise<void> {
         return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false, this.getZustelladresse())

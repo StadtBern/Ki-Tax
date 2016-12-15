@@ -27,7 +27,7 @@ export class GesuchstellerDashboardListViewConfig implements IComponentOptions {
 
 export class GesuchstellerDashboardListViewController {
 
-    private antragList : Array<TSAntragDTO> = [];
+    private antragList: Array<TSAntragDTO> = [];
     private _activeGesuchsperiodenList: Array<TSGesuchsperiode>;
     private fallId: string;
     totalResultCount: string = '-';
@@ -79,7 +79,7 @@ export class GesuchstellerDashboardListViewController {
         return 12;
     }
 
-    public openAntrag(periode : TSGesuchsperiode) : void  {
+    public openAntrag(periode: TSGesuchsperiode): void {
         let antrag = this.getAntragForGesuchsperiode(periode);
         if (antrag) {
             if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
@@ -91,15 +91,27 @@ export class GesuchstellerDashboardListViewController {
             } else {
                 // Im Else-Fall ist das Gesuch nicht mehr ueber den Button verfuegbar
                 // Es kann nur noch eine Mutation gemacht werden
-                this.$state.go('gesuch.mutation', {createMutation: true, eingangsart: TSEingangsart.ONLINE, gesuchId: antrag.antragId, gesuchsperiodeId: periode.id, fallId: this.fallId});
+                this.$state.go('gesuch.mutation', {
+                    createMutation: true,
+                    eingangsart: TSEingangsart.ONLINE,
+                    gesuchId: antrag.antragId,
+                    gesuchsperiodeId: periode.id,
+                    fallId: this.fallId
+                });
             }
         } else {
             // Noch kein Antrag vorhanden
-            this.$state.go('gesuch.fallcreation', {createNew: true, eingangsart: TSEingangsart.ONLINE, gesuchId: null, gesuchsperiodeId: periode.id, fallId: this.fallId});
+            this.$state.go('gesuch.fallcreation', {
+                createNew: true,
+                eingangsart: TSEingangsart.ONLINE,
+                gesuchId: null,
+                gesuchsperiodeId: periode.id,
+                fallId: this.fallId
+            });
         }
     }
 
-    public getButtonText(periode : TSGesuchsperiode) : string {
+    public getButtonText(periode: TSGesuchsperiode): string {
         let antrag = this.getAntragForGesuchsperiode(periode);
         if (antrag) {
             if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
@@ -130,7 +142,7 @@ export class GesuchstellerDashboardListViewController {
         }
     }
 
-    private getAntragForGesuchsperiode(periode: TSGesuchsperiode) : TSAntragDTO {
+    private getAntragForGesuchsperiode(periode: TSGesuchsperiode): TSAntragDTO {
         // Die Antraege sind nach Laufnummer sortiert, d.h. der erste einer Periode ist immer der aktuellste
         if (this.antragList) {
             for (let antrag of this.antragList) {

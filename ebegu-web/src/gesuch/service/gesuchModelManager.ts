@@ -35,7 +35,11 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
-import {TSAntragStatus, isAtLeastFreigegebenOrFreigabequittung} from '../../models/enums/TSAntragStatus';
+import {
+    TSAntragStatus,
+    isAtLeastFreigegeben,
+    isAtLeastFreigegebenOrFreigabequittung
+} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
