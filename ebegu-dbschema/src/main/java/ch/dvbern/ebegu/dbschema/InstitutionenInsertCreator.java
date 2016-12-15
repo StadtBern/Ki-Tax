@@ -10,15 +10,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Liest die Liste der Institutionen (Excel) ein
  */
-@SuppressWarnings({"CallToPrintStackTrace", "IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr"})
+@SuppressWarnings({"CallToPrintStackTrace", "IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr", "TooBroadScope"})
 public class InstitutionenInsertCreator {
 
 	private static final String MANDANT_ID_BERN = "e3736eb8-6eef-40ef-9e52-96ab48d8f220";
@@ -26,9 +23,14 @@ public class InstitutionenInsertCreator {
 	private Map<String, String> traegerschaftenMap = new HashMap<>();
 	private Map<String, String> institutionenMap = new HashMap<>();
 
+	private List<String> insertTraegerschaften = new LinkedList<>();
+	private List<String> insertAdressen = new LinkedList<>();
+	private List<String> insertInstitutionen = new LinkedList<>();
+	private List<String> insertInstitutionsStammdaten = new LinkedList<>();
+
 	private PrintWriter printWriter;
-	private String inputFile = "/institutionen/Institutionen_2016.12.08.xlsx";
-	private String outoutFile = "/media/M/hefr/output.txt";
+	private String inputFile = "/institutionen/Institutionen_2016.12.15.xlsx";
+	private String outoutFile = "insertInstitutionen.sql";
 
 
 	public static void main(String[] args) {
@@ -50,6 +52,20 @@ public class InstitutionenInsertCreator {
 			Row row = rowIterator.next();
 			readRow(row);
 		}
+		for (String s : insertTraegerschaften) {
+			println(s);
+		}
+		for (String s : insertAdressen) {
+			println(s);
+		}
+		for (String s : insertInstitutionen) {
+			println(s);
+		}
+		for (String s : insertInstitutionsStammdaten) {
+			println(s);
+		}
+		printWriter.flush();
+		printWriter.close();
 	}
 
 	private void readRow(Row row) {
@@ -63,25 +79,40 @@ public class InstitutionenInsertCreator {
 				traegerschaftsId = writeTraegerschaft(row);
 				traegerschaftenMap.put(traegerschaftKey, traegerschaftsId);
 			}
+
+			if (traegerschaftsId == null) {
+				System.out.println("TraegerschaftsId ist null, breche ab. " + row.getRowNum());
+				return;
+			}
 		}
+
 		// Institutionen
 		String institutionsKey = readString(row, 3);
 		String institutionsId = null;
-		if (StringUtils.isNotEmpty(institutionsKey)) {
-			if (institutionenMap.containsKey(institutionsKey)) {
-				institutionsId = institutionenMap.get(institutionsKey);
-			} else {
-				institutionsId = writeInstitution(row, traegerschaftsId);
-				institutionenMap.put(institutionsKey, institutionsId);
-			}
+		if (StringUtils.isNotEmpty(institutionsKey) && institutionenMap.containsKey(institutionsKey)) {
+			institutionsId = institutionenMap.get(institutionsKey);
+		} else {
+			institutionsId = writeInstitution(row, traegerschaftsId);
+			institutionenMap.put(institutionsKey, institutionsId);
+		}
+		if (institutionsId == null) {
+			System.out.println("institutionsId ist null, breche ab. " + row.getRowNum());
+			return;
 		}
 		// Adressen
 		String adresseId = writeAdresse(row);
+		if (adresseId == null) {
+			System.out.println("adresseId ist null, breche ab. " + row.getRowNum());
+			return;
+		}
 		// Institutionsstammdaten
 		String angebot = readString(row, 11);
-		BetreuungsangebotTyp betreuungsangebotTyp = null;
+		if (angebot == null) {
+			System.out.println("angebot is null: " + row.getRowNum());
+			return;
+		}
 		try {
-			betreuungsangebotTyp = BetreuungsangebotTyp.valueOf(angebot);
+			BetreuungsangebotTyp betreuungsangebotTyp = BetreuungsangebotTyp.valueOf(angebot);
 			writeInstitutionStammdaten(row, institutionsId, adresseId, betreuungsangebotTyp);
 		} catch (IllegalArgumentException iae) {
 			if ("TAGESELTERN".equalsIgnoreCase(angebot)) {
@@ -102,6 +133,8 @@ public class InstitutionenInsertCreator {
 					return cell.getStringCellValue();
 				case Cell.CELL_TYPE_NUMERIC:
 					return Double.toString(cell.getNumericCellValue());
+				case Cell.CELL_TYPE_BLANK:
+					return null;
 				default:
 					System.out.println("Typ nicht definiert: " + cell.getCellType() + " " + row.getRowNum() + "/" + columnIndex);
 					return null;
@@ -109,26 +142,6 @@ public class InstitutionenInsertCreator {
 		} else {
 			return null;
 		}
-	}
-
-	private Integer readInt(Row row, int columnIndex) {
-		Cell cell = row.getCell(columnIndex);
-		if (cell != null) {
-			switch (cell.getCellType()) {
-				case Cell.CELL_TYPE_STRING:
-					return Integer.parseInt(cell.getStringCellValue());
-				case Cell.CELL_TYPE_NUMERIC:
-					return Double.valueOf(cell.getNumericCellValue()).intValue();
-				default:
-					throw new IllegalArgumentException("Typ nicht definiert");
-			}
-		} else {
-			return null;
-		}
-	}
-
-	private double readDouble(Row row, int columnIndex) {
-		return row.getCell(columnIndex).getNumericCellValue();
 	}
 
 	private String writeAdresse(Row row) {
@@ -141,12 +154,15 @@ public class InstitutionenInsertCreator {
 
 		if (strasse == null) {
 			System.out.println("strasse is null: " + row.getRowNum());
+			return null;
 		}
 		if (plz == null) {
 			System.out.println("plz is null: " + row.getRowNum());
+			return null;
 		}
 		if (ort == null) {
 			System.out.println("ort is null: " + row.getRowNum());
+			return null;
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -169,7 +185,7 @@ public class InstitutionenInsertCreator {
 		sb.append(toStringOrNull(strasse)).append(", "); // strasse
 		sb.append(toStringOrNull(zusatzzeile)); 	// zusatzzeile
 		sb.append(");");
-		println(sb.toString());
+		insertAdressen.add(sb.toString());
 
 		return id;
 	}
@@ -181,6 +197,7 @@ public class InstitutionenInsertCreator {
 
 		if (traegerschaftsname == null) {
 			System.out.println("institutionsname is null: " + row.getRowNum());
+			return null;
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -196,7 +213,7 @@ public class InstitutionenInsertCreator {
 		sb.append(toStringOrNull(traegerschaftsname)).append(", "); // name
 		sb.append("0");				 				// active
 		sb.append(");");
-		println(sb.toString());
+		insertTraegerschaften.add(sb.toString());
 
 		return id;
 	}
@@ -207,6 +224,7 @@ public class InstitutionenInsertCreator {
 
 		if (institutionsname == null) {
 			System.out.println("institutionsname is null: " + row.getRowNum());
+			return null;
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -224,12 +242,21 @@ public class InstitutionenInsertCreator {
 		sb.append(toStringOrNull(traegerschaftId)).append(", "); // name
 		sb.append("true"); // active
 		sb.append(");");
-		println(sb.toString());
+		insertInstitutionen.add(sb.toString());
 
 		return id;
 	}
 
 	private String writeInstitutionStammdaten(Row row, String institutionsId, String adresseId, BetreuungsangebotTyp typ) {
+		if (institutionsId == null) {
+			System.out.println("institutionsId is null: " + row.getRowNum());
+			return null;
+		}
+		if (adresseId == null) {
+			System.out.println("adresseId is null: " + row.getRowNum());
+			return null;
+		}
+
 		// INSERT INTO institution_stammdaten (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, gueltig_ab, gueltig_bis, betreuungsangebot_typ, iban, oeffnungsstunden, oeffnungstage, institution_id, adresse_id) VALUES ('11111111-1111-1111-1111-111111111101', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0, '1000-01-01', '9999-12-31', 'KITA', null, 11.50, 240.00, '11111111-1111-1111-1111-111111111101', '11111111-1111-1111-1111-111111111101');
 		String id = UUID.randomUUID().toString();
 		String iban = readString(row, 12);
@@ -256,7 +283,7 @@ public class InstitutionenInsertCreator {
 		sb.append(toStringOrNull(institutionsId)).append(", "); // institution_id
 		sb.append(toStringOrNull(adresseId)); // adresse_id
 		sb.append(");");
-		println(sb.toString());
+		insertInstitutionsStammdaten.add(sb.toString());
 
 		return id;
 	}
@@ -285,8 +312,10 @@ public class InstitutionenInsertCreator {
 	private PrintWriter getPrintWriter() {
 		if (printWriter == null) {
 			try {
-				FileOutputStream fos = new FileOutputStream(outoutFile);
+				File output = new File(outoutFile);
+				FileOutputStream fos = new FileOutputStream(output.getAbsolutePath());
 				printWriter = new PrintWriter(fos);
+				System.out.println("File generiert: " + output.getAbsolutePath());
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
