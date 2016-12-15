@@ -6,10 +6,10 @@ import TSGesuch from '../models/TSGesuch';
 import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
 import MahnungRS from './service/mahnungRS.rest';
+import {TSEingangsart} from '../models/enums/TSEingangsart';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ILogService = angular.ILogService;
-import {TSEingangsart} from '../models/enums/TSEingangsart';
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -525,7 +525,12 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
                 // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId ueberreinstimmt wird das gesuch neu geladen
                 berechnungsManager.clear();
                 return gesuchModelManager.openGesuch(gesuchIdParam);
+            } else {
+                let deferred = $q.defer();
+                deferred.resolve(gesuchModelManager.getGesuch());
+                return deferred.promise;
             }
+
         }
     }
     $log.warn('keine stateParams oder keine gesuchId, gebe undefined zurueck');
