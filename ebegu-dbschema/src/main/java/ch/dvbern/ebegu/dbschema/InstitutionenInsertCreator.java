@@ -16,6 +16,10 @@ import java.util.*;
 
 /**
  * Liest die Liste der Institutionen (Excel) ein
+ * Info:
+ * Es gibt Institutionen mit mehreren Angeboten. Teilweise sollen sich diese nicht sehen können; In diesen Faellen machen
+ * wir zwei Institutionen daraus. Im Excel muss dazu die Spalte Institutions-Id leer bleiben, bzw. dort wo für mehrere
+ * Angebote die gleiche InstitutionsId drinn steht, werden die Angebote als InstitutiosStammdaten importiert.
  */
 @SuppressWarnings({"CallToPrintStackTrace", "IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr", "TooBroadScope", "PMD.AvoidDuplicateLiterals", "StringBufferReplaceableByString"})
 public class InstitutionenInsertCreator {
