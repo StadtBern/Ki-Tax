@@ -34,6 +34,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     monthsStichtage: Array<TSMonth>;
     selectedStichtagBjP1: TSMonth = undefined;
     selectedStichtagBjP2: TSMonth = undefined;
+    selectedStichtagBjP1_GS: TSMonth = undefined;
+    selectedStichtagBjP2_GS: TSMonth = undefined;
     initialEinkVersInfo: TSEinkommensverschlechterungInfoContainer;
     allowedRoles: Array<TSRole>;
 
@@ -44,8 +46,6 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
                 private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private $q: IQService, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        //TODO (team) Achtung, im Moment wird Einkommensverschlechterung nicht mehr initialisiert
-        // this.initialEinkVersInfo = angular.copy(this.gesuchModelManager.getEinkommensverschlechterungsInfo());
         this.initialEinkVersInfo = angular.copy(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer);
         this.model = angular.copy(this.initialEinkVersInfo);
         this.initViewModel();
@@ -58,6 +58,10 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         this.monthsStichtage = getTSMonthValues();
         this.selectedStichtagBjP1 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1);
         this.selectedStichtagBjP2 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2);
+        if(this.getEinkommensverschlechterungsInfoGS()) {
+            this.selectedStichtagBjP1_GS = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfoGS().stichtagFuerBasisJahrPlus1);
+            this.selectedStichtagBjP2_GS = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfoGS().stichtagFuerBasisJahrPlus2);
+        }
     }
 
     public initEinkommensverschlechterungInfo(): void {
@@ -76,6 +80,10 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
     getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
         return this.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoJA;
+    }
+
+    getEinkommensverschlechterungsInfoGS(): TSEinkommensverschlechterungInfo {
+        return this.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoGS;
     }
 
     showEkvi(): boolean {

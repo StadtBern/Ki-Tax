@@ -138,7 +138,7 @@ CREATE TABLE application_property_aud (
   user_mutiert       VARCHAR(36),
   vorgaenger_id      VARCHAR(36),
   name               VARCHAR(255),
-  value              VARCHAR(1000),
+  value              VARCHAR(4000),
   PRIMARY KEY (id, rev)
 );
 
@@ -151,7 +151,7 @@ CREATE TABLE application_property (
   version            BIGINT        NOT NULL,
   vorgaenger_id      VARCHAR(36),
   name               VARCHAR(255)  NOT NULL,
-  value              VARCHAR(1000) NOT NULL,
+  value              VARCHAR(4000) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -229,7 +229,7 @@ CREATE TABLE betreuung (
   datum_ablehnung           DATE,
   datum_bestaetigung        DATE,
   erweiterte_beduerfnisse   BIT          NOT NULL,
-  grund_ablehnung           VARCHAR(1000),
+  grund_ablehnung           VARCHAR(4000),
   vertrag                   BIT          NOT NULL,
   institution_stammdaten_id VARCHAR(36)  NOT NULL,
   kind_id                   VARCHAR(36)  NOT NULL,
@@ -251,7 +251,7 @@ CREATE TABLE betreuung_aud (
   datum_ablehnung           DATE,
   datum_bestaetigung        DATE,
   erweiterte_beduerfnisse   BIT,
-  grund_ablehnung           VARCHAR(1000),
+  grund_ablehnung           VARCHAR(4000),
   vertrag                   BIT,
   institution_stammdaten_id VARCHAR(36),
   kind_id                   VARCHAR(36),
@@ -939,7 +939,7 @@ CREATE TABLE gesuch (
   user_mutiert                       VARCHAR(36)  NOT NULL,
   version                            BIGINT       NOT NULL,
   vorgaenger_id                      VARCHAR(36),
-  bemerkungen                        VARCHAR(1000),
+  bemerkungen                        VARCHAR(4000),
   eingangsart                        VARCHAR(255) NOT NULL,
   eingangsdatum                      DATE,
   freigabe_datum                     DATE,
@@ -964,7 +964,7 @@ CREATE TABLE gesuch_aud (
   user_erstellt                      VARCHAR(36),
   user_mutiert                       VARCHAR(36),
   vorgaenger_id                      VARCHAR(36),
-  bemerkungen                        VARCHAR(1000),
+  bemerkungen                        VARCHAR(4000),
   eingangsart                        VARCHAR(255),
   eingangsdatum                      DATE,
   freigabe_datum                     DATE,
@@ -1278,7 +1278,7 @@ CREATE TABLE mahnung (
   version            BIGINT        NOT NULL,
   vorgaenger_id      VARCHAR(36),
   active             BIT           NOT NULL,
-  bemerkungen        VARCHAR(1000) NOT NULL,
+  bemerkungen        VARCHAR(4000) NOT NULL,
   datum_fristablauf  DATE          NOT NULL,
   mahnung_typ        VARCHAR(255)  NOT NULL,
   gesuch_id          VARCHAR(36)   NOT NULL,
@@ -1295,7 +1295,7 @@ CREATE TABLE mahnung_aud (
   user_mutiert       VARCHAR(36),
   vorgaenger_id      VARCHAR(36),
   active             BIT,
-  bemerkungen        VARCHAR(1000),
+  bemerkungen        VARCHAR(4000),
   datum_fristablauf  DATE,
   mahnung_typ        VARCHAR(255),
   gesuch_id          VARCHAR(36),
@@ -1413,8 +1413,8 @@ CREATE TABLE verfuegung (
   user_mutiert          VARCHAR(36) NOT NULL,
   version               BIGINT      NOT NULL,
   vorgaenger_id         VARCHAR(36),
-  generated_bemerkungen VARCHAR(1000),
-  manuelle_bemerkungen  VARCHAR(1000),
+  generated_bemerkungen VARCHAR(4000),
+  manuelle_bemerkungen  VARCHAR(4000),
   PRIMARY KEY (id)
 );
 
@@ -1427,8 +1427,8 @@ CREATE TABLE verfuegung_aud (
   user_erstellt         VARCHAR(36),
   user_mutiert          VARCHAR(36),
   vorgaenger_id         VARCHAR(36),
-  generated_bemerkungen VARCHAR(1000),
-  manuelle_bemerkungen  VARCHAR(1000),
+  generated_bemerkungen VARCHAR(4000),
+  manuelle_bemerkungen  VARCHAR(4000),
   PRIMARY KEY (id, rev)
 );
 
@@ -1445,7 +1445,7 @@ CREATE TABLE verfuegung_zeitabschnitt_aud (
   gueltig_bis                            DATE,
   abzug_fam_groesse                      DECIMAL(19, 2),
   anspruchberechtigtes_pensum            INTEGER,
-  bemerkungen                            VARCHAR(1000),
+  bemerkungen                            VARCHAR(4000),
   betreuungspensum                       INTEGER,
   betreuungsstunden                      DECIMAL(19, 2),
   elternbeitrag                          DECIMAL(19, 2),
@@ -1468,7 +1468,7 @@ CREATE TABLE verfuegung_zeitabschnitt (
   gueltig_bis                            DATE        NOT NULL,
   abzug_fam_groesse                      DECIMAL(19, 2),
   anspruchberechtigtes_pensum            INTEGER     NOT NULL,
-  bemerkungen                            VARCHAR(1000),
+  bemerkungen                            VARCHAR(4000),
   betreuungspensum                       INTEGER     NOT NULL,
   betreuungsstunden                      DECIMAL(19, 2),
   elternbeitrag                          DECIMAL(19, 2),
@@ -1517,7 +1517,7 @@ CREATE TABLE wizard_step_aud (
   user_erstellt      VARCHAR(36),
   user_mutiert       VARCHAR(36),
   vorgaenger_id      VARCHAR(36),
-  bemerkungen        VARCHAR(1000),
+  bemerkungen        VARCHAR(4000),
   verfuegbar         BIT,
   wizard_step_name   VARCHAR(255),
   wizard_step_status VARCHAR(255),
@@ -1533,7 +1533,7 @@ CREATE TABLE wizard_step (
   user_mutiert       VARCHAR(36)  NOT NULL,
   version            BIGINT       NOT NULL,
   vorgaenger_id      VARCHAR(36),
-  bemerkungen        VARCHAR(1000),
+  bemerkungen        VARCHAR(4000),
   verfuegbar         BIT          NOT NULL,
   wizard_step_name   VARCHAR(255) NOT NULL,
   wizard_step_status VARCHAR(255) NOT NULL,
