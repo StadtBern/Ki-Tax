@@ -1126,8 +1126,8 @@ public class JaxBConverter {
 		return jaxPerson;
 	}
 
-	private EinkommensverschlechterungContainer einkommensverschlechterungContainerToEntity(@Nonnull final JaxEinkommensverschlechterungContainer containerJAX,
-																							@Nonnull final EinkommensverschlechterungContainer container) {
+	public EinkommensverschlechterungContainer einkommensverschlechterungContainerToEntity(@Nonnull final JaxEinkommensverschlechterungContainer containerJAX,
+																						   @Nonnull final EinkommensverschlechterungContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
