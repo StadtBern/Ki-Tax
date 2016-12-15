@@ -66,6 +66,14 @@ public enum AntragStatus {
 		return Arrays.asList(VERFUEGT, NUR_SCHULAMT);
 	}
 
+	/**
+	 * Ein verfuegtes Gesuch kann mehrere Status haben. Diese Methode immer anwenden um herauszufinden
+	 * ob ein Gesuch verfuegt ist.
+	 */
+	public boolean isAnyStatusOfVerfuegt() {
+		return getAllVerfuegtStates().contains(this);
+	}
+
 	public boolean isFreigegeben() {
 		return isFreigegeben.contains(this);
 	}
