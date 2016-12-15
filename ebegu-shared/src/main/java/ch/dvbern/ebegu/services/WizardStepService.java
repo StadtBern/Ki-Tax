@@ -36,6 +36,11 @@ public interface WizardStepService {
 	List<WizardStep> findWizardStepsFromGesuch(String gesuchId);
 
 	/**
+	 * Gibt den gewuenschten Step des gegebenen Gesuchs zurueck
+	 */
+	WizardStep findWizardStepFromGesuch(String gesuchId, WizardStepName stepName);
+
+	/**
 	 * Fuer das uebergebene Gesuch und das alte und neue Objekt, werden alle Steps berechnet und ihren Status dementsprechend gesetzt
 	 * @param gesuchId Id des Gesuchs
 	 * @param oldEntity Objekt mit den Daten vor der Aktualisierung. kann auch null sein, wenn die Daten nicht relevant sind
@@ -48,7 +53,7 @@ public interface WizardStepService {
 	/**
 	 * Erstellt eine Liste mit allen notwendigen WizardSteps fuer das gegebene Gesuch. Fuer Mutationen bekommen alle Steps
 	 * den Status OK und werden verfuegbar.
-	 * @param gesuch
+	 * @param gesuch das Gesuch
 	 * @return
 	 */
 	@Nonnull
