@@ -18,7 +18,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="md-no-float" data-translate="GESCHLECHT"></label>
+                                <label class="md-no-float required" data-translate="GESCHLECHT"></label>
                                 <dv-radio-container name="geschlecht" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
@@ -82,7 +82,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float">
+                                <label class="md-no-float required">
                                     <span data-translate="KINDERABZUG"></span>
                                 </label>
                                 <dv-radio-container name="kinderabzug" ng-model="vm.getModel().kinderabzug"
@@ -104,7 +104,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="md-no-float">
+                                <label class="md-no-float required">
                                     <span data-translate="FAM_ERGAENZENDE_BETREUUNG"></span>
                                     <dv-tooltip text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate"></dv-tooltip>
                                 </label>
@@ -129,7 +129,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
-                                <label class="md-no-float"><span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
+                                <label class="md-no-float required"><span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
                                     <dv-tooltip
                                         text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
                                 </label>
@@ -153,7 +153,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
-                                <label class="md-no-float">
+                                <label class="md-no-float required">
                                 <span data-translate="EINSCHULUNG"
                                       data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}">
 
