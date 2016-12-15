@@ -1,9 +1,5 @@
-import TSAdresse from './TSAdresse';
 import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
-import TSFinanzielleSituationContainer from './TSFinanzielleSituationContainer';
-import TSErwerbspensumContainer from './TSErwerbspensumContainer';
-import TSEinkommensverschlechterungContainer from './TSEinkommensverschlechterungContainer';
 
 export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
@@ -11,27 +7,17 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _mobile: string;
     private _telefon: string;
     private _telefonAusland: string;
-    private _adresse: TSAdresse;
-    private _korrespondenzAdresse: TSAdresse;
-    private _umzugAdresse: TSAdresse;
-    private _finanzielleSituationContainer: TSFinanzielleSituationContainer;
-    private _erwerbspensenContainer: Array<TSErwerbspensumContainer>;
     private _diplomatenstatus: boolean;
-    private _einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
-                email?: string, mobile?: string, telefon?: string, telefonAusland?: string, umzug?: boolean,
-                finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>, diplomatenstatus?: boolean,
-                einkommensverschlechterungContainer?: TSEinkommensverschlechterungContainer) {
+                email?: string, mobile?: string, telefon?: string, telefonAusland?: string,
+                diplomatenstatus?: boolean) {
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._mail = email;
         this._mobile = mobile;
         this._telefon = telefon;
         this._telefonAusland = telefonAusland;
-        this._finanzielleSituationContainer = finanzielleSituation;
-        this._erwerbspensenContainer = erwerbspensen ? erwerbspensen : [];
         this._diplomatenstatus = diplomatenstatus;
-        this._einkommensverschlechterungContainer = einkommensverschlechterungContainer;
     }
 
     public get mail(): string {
@@ -58,52 +44,12 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._telefon = value;
     }
 
-    public get adresse(): TSAdresse {
-        return this._adresse;
-    }
-
-    public set adresse(adr: TSAdresse) {
-        this._adresse = adr;
-    }
-
-    public get umzugAdresse(): TSAdresse {
-        return this._umzugAdresse;
-    }
-
-    public set umzugAdresse(value: TSAdresse) {
-        this._umzugAdresse = value;
-    }
-
     public get telefonAusland(): string {
         return this._telefonAusland;
     }
 
     public set telefonAusland(value: string) {
         this._telefonAusland = value;
-    }
-
-    public get korrespondenzAdresse(): TSAdresse {
-        return this._korrespondenzAdresse;
-    }
-
-    public set korrespondenzAdresse(value: TSAdresse) {
-        this._korrespondenzAdresse = value;
-    }
-
-    public get finanzielleSituationContainer(): TSFinanzielleSituationContainer {
-        return this._finanzielleSituationContainer;
-    }
-
-    public set finanzielleSituationContainer(value: TSFinanzielleSituationContainer) {
-        this._finanzielleSituationContainer = value;
-    }
-
-    get erwerbspensenContainer(): Array<TSErwerbspensumContainer> {
-        return this._erwerbspensenContainer;
-    }
-
-    set erwerbspensenContainer(value: Array<TSErwerbspensumContainer>) {
-        this._erwerbspensenContainer = value;
     }
 
     get diplomatenstatus(): boolean {
@@ -114,12 +60,14 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._diplomatenstatus = value;
     }
 
-    get einkommensverschlechterungContainer(): TSEinkommensverschlechterungContainer {
-        return this._einkommensverschlechterungContainer;
-    }
-
-    set einkommensverschlechterungContainer(value: TSEinkommensverschlechterungContainer) {
-        this._einkommensverschlechterungContainer = value;
+    public getPhone(): string {
+        if (this.mobile) {
+            return this.mobile;
+        } else if (this.telefon) {
+            return this.telefon;
+        } else {
+            return '';
+        }
     }
 
 }

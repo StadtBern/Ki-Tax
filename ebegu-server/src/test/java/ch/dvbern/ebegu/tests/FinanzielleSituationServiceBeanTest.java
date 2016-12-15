@@ -2,16 +2,15 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,32 +26,30 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class FinanzielleSituationServiceBeanTest extends AbstractEbeguTest {
+public class FinanzielleSituationServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
 
 	@Inject
-	private Persistence<FinanzielleSituation> persistence;
+	private Persistence<Gesuch> persistence;
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
+
 
 	@Test
 	public void createFinanzielleSituation() {
 		Assert.assertNotNull(finanzielleSituationService);
 
 		FinanzielleSituation finanzielleSituation = TestDataUtil.createDefaultFinanzielleSituation();
-		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		gesuchsteller = persistence.persist(gesuchsteller);
 
 		FinanzielleSituationContainer container = TestDataUtil.createFinanzielleSituationContainer();
 		container.setFinanzielleSituationGS(finanzielleSituation);
 		container.setGesuchsteller(gesuchsteller);
 
-		finanzielleSituationService.saveFinanzielleSituation(container);
+		finanzielleSituationService.saveFinanzielleSituation(container, null);
 		Collection<FinanzielleSituationContainer> allFinanzielleSituationen = finanzielleSituationService.getAllFinanzielleSituationen();
 		Assert.assertEquals(1, allFinanzielleSituationen.size());
 		FinanzielleSituationContainer nextFinanzielleSituation = allFinanzielleSituationen.iterator().next();
@@ -67,11 +64,11 @@ public class FinanzielleSituationServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertTrue(finanzielleSituationOptional.isPresent());
 		FinanzielleSituationContainer finanzielleSituation = finanzielleSituationOptional.get();
 		finanzielleSituation.setFinanzielleSituationGS(TestDataUtil.createDefaultFinanzielleSituation());
-		FinanzielleSituationContainer updatedCont = finanzielleSituationService.saveFinanzielleSituation(finanzielleSituation);
+		FinanzielleSituationContainer updatedCont = finanzielleSituationService.saveFinanzielleSituation(finanzielleSituation, null);
 		Assert.assertEquals(100000L, updatedCont.getFinanzielleSituationGS().getNettolohn().longValue());
 
 		updatedCont.getFinanzielleSituationGS().setNettolohn(new BigDecimal(200000));
-		FinanzielleSituationContainer contUpdTwice = finanzielleSituationService.saveFinanzielleSituation(updatedCont);
+		FinanzielleSituationContainer contUpdTwice = finanzielleSituationService.saveFinanzielleSituation(updatedCont, null);
 		Assert.assertEquals(200000L, contUpdTwice.getFinanzielleSituationGS().getNettolohn().longValue());
 	}
 
@@ -88,7 +85,8 @@ public class FinanzielleSituationServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	private FinanzielleSituationContainer insertNewEntity() {
-		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		FinanzielleSituationContainer container = TestDataUtil.createFinanzielleSituationContainer();
 		gesuchsteller.setFinanzielleSituationContainer(container);
 		gesuchsteller = persistence.persist(gesuchsteller);

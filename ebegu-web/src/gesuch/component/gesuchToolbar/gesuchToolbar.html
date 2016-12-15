@@ -1,32 +1,119 @@
-<md-content class="gesuch-toolbar small-toolbar">
-    <md-toolbar class="small-toolbar">
-        <div class="md-toolbar-tools">
+<div class="gesuch-toolbar" flex="100">
+    <md-toolbar flex="100">
+        <md-menu-bar flex="100" layout="row" layout-align="start center">
+            <span class="bold-menu" ng-bind="vmx.getGesuchName()"></span>
+            <md-menu ng-if="vmx.showGesuchPeriodeNavigationMenu()">
+                <button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
+                    <span class="bold-menu" ng-bind="vmx.getCurrentGesuchsperiode()"></span>
+                    <i class="ellipsis-icon fa fa-chevron-down"></i>
+                </button>
+
+                <md-menu-content class="no-padding menu-item-container">
+                    <md-menu-item class="menu-item-link"
+                                  ng-repeat="gesuchsperiodeString in vmx.getKeys(vmx.gesuchsperiodeList)"
+                                  ng-value="gesuchsperiodeString">
+                        <md-button ng-click="vmx.setGesuchsperiode(gesuchsperiodeString)"
+                                   aria-label="{{gesuchsperiodeString}}">
+                                <span>
+                                    <a href="javascript:void(0)">{{gesuchsperiodeString}}</a>
+                                </span>
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+
+            <span class="bold-menu" ng-if="!vmx.showGesuchPeriodeNavigationMenu()"
+                  ng-bind="vmx.getCurrentGesuchsperiode()"></span>
+
+            <!--Gesuchstyp-->
+            <md-menu ng-if="vmx.showAntragTypListNavigationMenu()">
+                <button ng-click="$mdOpenMenu()" aria-label="{{vmx.getAntragTyp()}}">
+                    <span class="bold-menu" ng-bind="vmx.getAntragTyp()"></span>
+                    <i class="ellipsis-icon fa fa-chevron-down"></i>
+                </button>
+                <md-menu-content class="no-padding menu-item-container">
+                    <md-menu-item class="menu-item-link" ng-repeat="antragTypDatum in vmx.getKeys(vmx.antragTypList)"
+                                  ng-value="antragTypDatum">
+                        <md-button class="menu-item-link" ng-click="vmx.setAntragTypDatum(antragTypDatum)"
+                                   aria-label="{{antragTypDatum}}">
+                                <span>
+                                    <a href="javascript:void(0)">{{antragTypDatum}}</a>
+                                </span>
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+
+            <span class="bold-menu" ng-if="!vmx.showAntragTypListNavigationMenu()" ng-bind="vmx.getAntragTyp()"></span>
+
             <span flex=""></span>
 
-            <md-menu-bar>
-                <md-menu>
-                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getVerantwortlicherFullName()}}">
-                        <i class="fa fa-user" aria-hidden="true" style="margin-right: 2px"></i>
-                        <span ng-bind="vm.getVerantwortlicherFullName()"></span>
-                        <i class="ellipsis-icon fa fa-ellipsis-v"></i>
-                    </md-button>
-                    <md-menu-content class="toolbar-submenu">
-                        <md-menu-item class="toolbar-submenu-item">
-                            <span data-translate="VERANTWORTLICH_UPPER"></span>
-                        </md-menu-item>
-                        <md-menu-item  ng-repeat="user in vm.userList | orderBy: 'getFullName()'" ng-value="user.username">
-                            <md-button ng-click="vm.setVerantwortlicher(user)" aria-label="{{user.username}}">
+            <!-- Mutieren -->
+
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                 dv-show-expression="vmx.mutierenPossibleForCurrentAntrag">
+                <button ng-click="vmx.antragMutieren()"
+                        aria-label="{{TOOLBAR_MUTIEREN | translate}}">
+                    <span data-translate="TOOLBAR_MUTIEREN"></span>
+                </button>
+            </div>
+
+            <!--Kontakt-->
+            <md-menu ng-if="vmx.showKontaktMenu()">
+                <button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
+                    <i class="ellipsis-icon fa fa-envelope"></i>
+                    <span data-translate="TOOLBAR_KONTAKT"></span>
+                </button>
+                <md-menu-content class="no-padding menu-item-container kontakt">
+
+                    <span class="kontaktTop" ng-bind="vmx.getGesuch().gesuchsteller1.getFullName()"></span>
+                    <span ng-bind="vmx.getGesuch().gesuchsteller1.mail"></span>
+                    <span class="kontaktBottom" ng-bind="vmx.getGesuch().gesuchsteller1.getPhone()"></span>
+
+
+                    <span ng-if="vmx.getGesuch().gesuchsteller2"
+                          ng-bind="vmx.getGesuch().gesuchsteller2.getFullName()"></span>
+                    <span ng-if="vmx.getGesuch().gesuchsteller2"
+                              ng-bind="vmx.getGesuch().gesuchsteller2.mail"></span>
+                    <span class="kontaktBottom" ng-if="vmx.getGesuch().gesuchsteller2"
+                          ng-bind="vmx.getGesuch().gesuchsteller2.getPhone()"></span>
+
+
+                </md-menu-content>
+            </md-menu>
+
+            <!-- Verantwortlichen zuteilen -->
+            <span title="{{'VERANTWORTLICHER'|translate:{name: vmx.getVerantwortlicherFullName()} }}"
+                  dv-show-element dv-show-allowed-roles="vmx.TSRoleUtil.getAllButAdministratorJugendamtRole()">
+                {{vmx.getVerantwortlicherFullName()}}
+            </span>
+
+            <md-menu dv-show-element dv-show-allowed-roles="vmx.TSRoleUtil.getAdministratorJugendamtRole()">
+                <button ng-click="$mdOpenMenu()" aria-label="{{vmx.getVerantwortlicherFullName()}}">
+                    <i class="fa fa-user" aria-hidden="true" style="margin-right: 0.2rem"></i>
+                    <span ng-bind="vmx.getVerantwortlicherFullName()"></span>
+                    <i class="ellipsis-icon fa fa-ellipsis-v"></i>
+                </button>
+                <md-menu-content class="menu-item-container">
+                    <md-menu-item class="menu-item-text">
+                        <span data-translate="VERANTWORTLICH_UPPER"></span>
+                    </md-menu-item>
+                    <md-menu-item class="menu-item-link" ng-repeat="user in vmx.userList | orderBy: 'getFullName()'"
+                                  ng-value="user.username">
+                        <md-button ng-click="vmx.setVerantwortlicher(user)" aria-label="{{user.username}}"
+                                   style="position: relative;">
                                 <span>
-                                    <a class="toolbar-submenu-a" href="javascript:void(0)">{{user.getFullName()}}</a>
-                                    <i ng-if="vm.isCurrentVerantwortlicher(user)" class="fa fa-user" aria-hidden="true" style="float:right; margin-top:5px"></i>
+                                    <a href="javascript:void(0)">{{user.getFullName()}}</a>
+                                    <i ng-if="vmx.isCurrentVerantwortlicher(user)" class="fa fa-user" aria-hidden="true"
+                                       style="line-height: 4rem; position:absolute; right:2rem;"></i>
 
                                 </span>
-                            </md-button>
-                        </md-menu-item>
-                    </md-menu-content>
-                </md-menu>
-            </md-menu-bar>
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </md-menu-bar>
 
-        </div>
     </md-toolbar>
-</md-content>
+</div>

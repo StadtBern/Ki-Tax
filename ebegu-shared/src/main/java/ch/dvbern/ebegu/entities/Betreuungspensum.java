@@ -4,7 +4,10 @@ import ch.dvbern.ebegu.types.DateRange;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Entity fuer Betreuungspensen.
@@ -13,16 +16,28 @@ import javax.persistence.Entity;
 @SuppressWarnings("ComparableImplementedButEqualsNotOverridden")
 @Audited
 @Entity
-public class Betreuungspensum extends AbstractPensumEntity implements Comparable<Betreuungspensum>{
+public class Betreuungspensum extends AbstractPensumEntity implements Comparable<Betreuungspensum> {
 
 	private static final long serialVersionUID = -9032857320571372370L;
 
-	public Betreuungspensum() {
+	@NotNull
+	@Column(nullable = false)
+	private Boolean nichtEingetreten = false;
 
+
+	public Betreuungspensum() {
 	}
 
 	public Betreuungspensum(DateRange gueltigkeit) {
 		this.setGueltigkeit(gueltigkeit);
+	}
+
+	public Boolean getNichtEingetreten() {
+		return nichtEingetreten;
+	}
+
+	public void setNichtEingetreten(Boolean nichtEingetreten) {
+		this.nichtEingetreten = nichtEingetreten;
 	}
 
 	@Override
@@ -31,5 +46,11 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 		builder.append(this.getGueltigkeit(), o.getGueltigkeit());
 		builder.append(this.getId(), o.getId());
 		return builder.toComparison();
+	}
+
+	public Betreuungspensum copyForMutation(Betreuungspensum mutation) {
+		super.copyForMutation(mutation);
+		mutation.setNichtEingetreten(this.getNichtEingetreten());
+		return mutation;
 	}
 }

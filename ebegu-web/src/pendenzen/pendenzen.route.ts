@@ -5,7 +5,7 @@ import {IState} from 'angular-ui-router';
 pendenzRun.$inject = ['RouterHelper'];
 /* @ngInject */
 export function pendenzRun(routerHelper: RouterHelper) {
-    routerHelper.configureStates(getStates(), '/pendenzen');
+    routerHelper.configureStates(getStates(), '/start');
 }
 
 function getStates(): IState[] {
@@ -18,6 +18,6 @@ function getStates(): IState[] {
 
 export class EbeguPendenzenListState implements IState {
     name = 'pendenzen';
-    template = '<pendenzen-list-view>';
+    template = '<pendenzen-list-view flex="auto" class="overflow-scroll">';
     url = '/pendenzen';
 }

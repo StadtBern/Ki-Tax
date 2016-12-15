@@ -22,7 +22,7 @@ import java.util.Locale;
 public interface Constants {
 
 	int DB_DEFAULT_MAX_LENGTH = 255;
-	int DB_TEXTAREA_LENGTH = 1000;
+	int DB_TEXTAREA_LENGTH = 4000;
 	int DB_DEFAULT_SHORT_LENGTH = 100;
 
 	int UUID_LENGTH = 36;
@@ -31,14 +31,18 @@ public interface Constants {
 	int LOGIN_TIMEOUT_SECONDS = 60 * 60; //aktuell 1h
 	int COOKIE_TIMEOUT_SECONDS = 60 * 60 * 12; //aktuell 12h
 
+	int ABWESENHEIT_DAYS_LIMIT = 30;
+
 	Locale DEFAULT_LOCALE = new Locale("de", "CH");
 
 
-	String REGEX_EMAIL = "[\\S\\-.]+@([\\S-]+\\.)+[\\S-]+";
+	String REGEX_EMAIL = "[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}";
 	String REGEX_TELEFON = "(0|\\+41|0041)[ ]*[\\d]{2}[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
 	String REGEX_TELEFON_MOBILE = "(0|\\+41|0041)[ ]*(74|75|76|77|78|79)[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
 	String PATTERN_DATE = "dd.MM.yyyy";
+	String PATTERN_FILENAME_DATE_TIME = "dd.MM.yyyy_HH.mm.ss";
 	DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Constants.PATTERN_DATE);
+	DateTimeFormatter FILENAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(Constants.PATTERN_FILENAME_DATE_TIME);
 
 	String SERVER_MESSAGE_BUNDLE_NAME = "ch.dvbern.ebegu.i18n.server-messages";
 
@@ -46,6 +50,8 @@ public interface Constants {
 	LocalDate START_OF_TIME = LocalDate.of(1000, 1, 1);
 
 	DateRange DEFAULT_GUELTIGKEIT = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
+
+	long MAX_TEMP_DOWNLOAD_AGE_MINUTES = 3;
 
 	int FALLNUMMER_LENGTH = 6;
 }

@@ -17,16 +17,11 @@
  */
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.cdi.LoggerProducer;
-import org.jboss.arquillian.container.test.api.Deployment;
+import ch.dvbern.ebegu.services.BenutzerService;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
 
 import javax.inject.Inject;
 
@@ -34,22 +29,13 @@ import javax.inject.Inject;
  * @author <a href="http://community.jboss.org/people/dan.j.allen">Dan Allen</a>
  */
 @RunWith(Arquillian.class)
-public class ArquilllianWiringTest {
+public class ArquilllianWiringTest extends AbstractEbeguLoginTest {
 
-    @Deployment
-    public static JavaArchive createDeployment() {
-        JavaArchive jar = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(LoggerProducer.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-        return jar;
-    }
-
-    @Inject
-	Logger logger;
+	@Inject
+	BenutzerService benutzerService;
 
     @Test
     public void doesInjectionWorkTest() {
-		Assert.assertNotNull(logger);
-		logger.info("injection works in arquillian");
+		Assert.assertNotNull(benutzerService);
 	}
 }

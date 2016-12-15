@@ -18,14 +18,13 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +39,7 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class ApplicationPropertyServiceTest extends AbstractEbeguTest {
+public class ApplicationPropertyServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
@@ -48,43 +47,40 @@ public class ApplicationPropertyServiceTest extends AbstractEbeguTest {
 	@Inject
 	private Persistence<ApplicationProperty> persistence;
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
+
 
 
 	@Test
 	public void saveOrUpdateApplicationPropertyTest() {
 		Assert.assertNotNull(applicationPropertyService);
-		applicationPropertyService.saveOrUpdateApplicationProperty("testKey", "testValue");
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, "testValue");
 		Assert.assertEquals(1, applicationPropertyService.getAllApplicationProperties().size());
-		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").get().getValue());
+		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED).get().getValue());
 
 	}
 
 	@Test
 	public void removeApplicationPropertyTest() {
 		insertNewEntity();
-		applicationPropertyService.removeApplicationProperty("testKey");
+		applicationPropertyService.removeApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED);
 		Assert.assertEquals(0, applicationPropertyService.getAllApplicationProperties().size());
 
 	}
 	@Test
 	public void updateApplicationPropertyTest() {
 		insertNewEntity();
-		applicationPropertyService.saveOrUpdateApplicationProperty("testKey","changed");
-		Assert.assertEquals("changed", applicationPropertyService.readApplicationProperty("testKey").get().getValue());
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED,"changed");
+		Assert.assertEquals("changed", applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED).get().getValue());
 
 	}
 
 	// Help Methods
 
 	private void insertNewEntity() {
-		persistence.persist(new ApplicationProperty("testKey", "testValue"));
+		persistence.persist(new ApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, "testValue"));
 		Assert.assertEquals(1, applicationPropertyService.getAllApplicationProperties().size());
-		Assert.assertNotNull(applicationPropertyService.readApplicationProperty("testKey"));
-		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").get().getValue());
+		Assert.assertNotNull(applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED));
+		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED).get().getValue());
 	}
 
 }

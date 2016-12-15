@@ -12,6 +12,7 @@
 	<entity class="ch.dvbern.ebegu.entities.Erwerbspensum"/>
 	<entity class="ch.dvbern.ebegu.entities.KindContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Familiensituation"/>
+	<entity class="ch.dvbern.ebegu.entities.FamiliensituationContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Fachstelle"/>
 	<entity class="ch.dvbern.ebegu.entities.PensumFachstelle"/>
 	<entity class="ch.dvbern.ebegu.entities.Gesuchsperiode"/>
@@ -20,6 +21,7 @@
 	<entity class="ch.dvbern.ebegu.entities.FinanzielleSituationContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.FinanzielleSituation"/>
 	<entity class="ch.dvbern.ebegu.entities.Mandant"/>
+	<entity class="ch.dvbern.ebegu.entities.Sequence"/>
 	<entity class="ch.dvbern.ebegu.entities.Traegerschaft"/>
 	<entity class="ch.dvbern.ebegu.entities.Institution"/>
 	<entity class="ch.dvbern.ebegu.entities.InstitutionStammdaten"/>
@@ -30,11 +32,23 @@
 	<entity class="ch.dvbern.ebegu.entities.Benutzer"/>
 	<entity class="ch.dvbern.ebegu.entities.AuthorisierterBenutzer"/>
 	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo"/>
+	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Einkommensverschlechterung"/>
 	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Dokument"/>
 	<entity class="ch.dvbern.ebegu.entities.DokumentGrund"/>
 	<entity class="ch.dvbern.ebegu.entities.Verfuegung"/>
 	<entity class="ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt"/>
+	<entity class="ch.dvbern.ebegu.entities.DownloadFile"/>
+	<entity class="ch.dvbern.ebegu.entities.WizardStep"/>
+	<entity class="ch.dvbern.ebegu.entities.AntragStatusHistory"/>
+	<entity class="ch.dvbern.ebegu.entities.EbeguVorlage"/>
+	<entity class="ch.dvbern.ebegu.entities.Vorlage"/>
+	<entity class="ch.dvbern.ebegu.entities.GeneratedDokument"/>
+	<entity class="ch.dvbern.ebegu.entities.Abwesenheit"/>
+	<entity class="ch.dvbern.ebegu.entities.AbwesenheitContainer"/>
+	<entity class="ch.dvbern.ebegu.entities.Mahnung"/>
+	<entity class="ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer"/>
+	<entity class="ch.dvbern.ebegu.entities.GesuchstellerContainer"/>
 
 </entity-mappings>

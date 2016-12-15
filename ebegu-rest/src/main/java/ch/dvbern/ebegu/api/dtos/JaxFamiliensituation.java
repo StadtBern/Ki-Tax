@@ -1,15 +1,16 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
-import ch.dvbern.ebegu.util.Constants;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalDate;
 
 /**
  * DTO fuer Familiensituationen
@@ -26,15 +27,15 @@ public class JaxFamiliensituation extends JaxAbstractDTO{
 	@Nullable
 	private EnumGesuchstellerKardinalitaet gesuchstellerKardinalitaet;
 
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Nullable
-	private String bemerkungen;
-
 	@NotNull
 	private JaxGesuch gesuch;
 
 	@NotNull
 	private Boolean gemeinsameSteuererklaerung;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate aenderungPer = null;
 
 
 	public static long getSerialVersionUID() {
@@ -58,15 +59,6 @@ public class JaxFamiliensituation extends JaxAbstractDTO{
 		this.gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
 	}
 
-	@Nullable
-	public String getBemerkungen() {
-		return bemerkungen;
-	}
-
-	public void setBemerkungen(@Nullable String bemerkungen) {
-		this.bemerkungen = bemerkungen;
-	}
-
 	public JaxGesuch getGesuch() {
 		return gesuch;
 	}
@@ -81,5 +73,14 @@ public class JaxFamiliensituation extends JaxAbstractDTO{
 
 	public void setGemeinsameSteuererklaerung(Boolean gemeinsameSteuererklaerung) {
 		this.gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
+	}
+
+	@Nullable
+	public LocalDate getAenderungPer() {
+		return aenderungPer;
+	}
+
+	public void setAenderungPer(@Nullable LocalDate aenderungPer) {
+		this.aenderungPer = aenderungPer;
 	}
 }

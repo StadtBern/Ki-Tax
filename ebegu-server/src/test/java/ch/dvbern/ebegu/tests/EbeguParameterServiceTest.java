@@ -25,12 +25,10 @@ import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +39,7 @@ import java.time.Month;
 import java.util.Collection;
 import java.util.Optional;
 
-import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_ABGELTUNG_PRO_TAG_KANTON;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA;
 
 
 /**
@@ -50,7 +48,7 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_ABGELTUNG_PRO_TAG_KA
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class EbeguParameterServiceTest extends AbstractEbeguTest {
+public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private EbeguParameterService parameterService;
@@ -61,10 +59,6 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 	private EbeguParameterKey PARAM_KEY = EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA;
 
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 	@Test
 	public void createEbeguParameterTest() {
@@ -110,7 +104,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 		Assert.assertTrue(allParameter.isEmpty());
 		Assert.assertFalse(currentParameterOptional.isPresent());
 
-		EbeguParameter param1 = TestDataUtil.createDefaultEbeguParameter();
+		EbeguParameter param1 = TestDataUtil.createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
 		parameterService.saveEbeguParameter(param1);
 
 		allParameter = parameterService.getAllEbeguParameter();
@@ -133,7 +127,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createDefaultGesuchsperiode();
 		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2015, Month.AUGUST, 1), LocalDate.of(2016, Month.JULY, 31)));
 
-		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter();
+		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
 		parameter.setGueltigkeit(gesuchsperiode.getGueltigkeit());
 		parameterService.saveEbeguParameter(parameter);
 
@@ -151,8 +145,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 		Collection<EbeguParameter> allParameter = parameterService.getAllEbeguParameter();
 		Assert.assertTrue(allParameter.isEmpty());
 
-		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter();
-		parameter.setName(PARAM_ABGELTUNG_PRO_TAG_KANTON);
+		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA);
 		parameter.setGueltigkeit(new DateRange(2015));
 		parameterService.saveEbeguParameter(parameter);
 
@@ -165,7 +158,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void getEbeguParameterByKeyAndDate() throws Exception {
-		EbeguParameter param1 = TestDataUtil.createDefaultEbeguParameter();
+		EbeguParameter param1 = TestDataUtil.createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
 		parameterService.saveEbeguParameter(param1);
 
 		Optional<EbeguParameter> optional = parameterService.getEbeguParameterByKeyAndDate(PARAM_KEY, LocalDate.now());
@@ -173,7 +166,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 	}
 
 	private EbeguParameter insertEbeguParameter() {
-		EbeguParameter ebeguParameter = TestDataUtil.createDefaultEbeguParameter();
+		EbeguParameter ebeguParameter = TestDataUtil.createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
 		return parameterService.saveEbeguParameter(ebeguParameter);
 	}
 }

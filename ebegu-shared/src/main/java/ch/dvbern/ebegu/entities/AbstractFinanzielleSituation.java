@@ -2,7 +2,11 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
+import javax.annotation.Nonnull;
+import javax.persistence.Column;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -15,7 +19,7 @@ import java.math.BigDecimal;
 @Audited
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class AbstractFinanzielleSituation extends AbstractEntity {
+public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 
 	private static final long serialVersionUID = 2596930494846119259L;
 
@@ -48,6 +52,11 @@ public class AbstractFinanzielleSituation extends AbstractEntity {
 	@Column(nullable = true)
 	private BigDecimal geleisteteAlimente;
 
+	public AbstractFinanzielleSituation() {
+	}
+
+
+	public abstract BigDecimal getNettolohn();
 
 	public Boolean getSteuerveranlagungErhalten() {
 		return steuerveranlagungErhalten;
@@ -121,4 +130,17 @@ public class AbstractFinanzielleSituation extends AbstractEntity {
 		this.geleisteteAlimente = geleisteteAlimente;
 	}
 
+	public AbstractFinanzielleSituation copyForMutation(AbstractFinanzielleSituation mutation) {
+		super.copyForMutation(mutation);
+		mutation.setSteuerveranlagungErhalten(this.getSteuerveranlagungErhalten());
+		mutation.setSteuererklaerungAusgefuellt(this.getSteuererklaerungAusgefuellt());
+		mutation.setFamilienzulage(this.getFamilienzulage());
+		mutation.setErsatzeinkommen(this.getErsatzeinkommen());
+		mutation.setErhalteneAlimente(this.getErhalteneAlimente());
+		mutation.setBruttovermoegen(this.getBruttovermoegen());
+		mutation.setSchulden(this.getSchulden());
+		mutation.setGeschaeftsgewinnBasisjahr(this.getGeschaeftsgewinnBasisjahr());
+		mutation.setGeleisteteAlimente(this.getGeleisteteAlimente());
+		return mutation;
+	}
 }

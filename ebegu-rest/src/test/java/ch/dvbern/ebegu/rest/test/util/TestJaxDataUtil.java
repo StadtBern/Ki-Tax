@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.rest.test.util;
 
+import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.enums.*;
@@ -10,18 +11,18 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Generiert Testdaten fuer JAX DTOs
  */
 public class TestJaxDataUtil {
 
-	public static JaxGesuchsteller createTestJaxGesuchsteller() {
-
+	public static JaxGesuchstellerContainer createTestJaxGesuchsteller() {
+		JaxGesuchstellerContainer jaxGesuchstellerContainer = new JaxGesuchstellerContainer();
 		JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
 		jaxGesuchsteller.setNachname("Jaxter");
 		jaxGesuchsteller.setVorname("Jack");
-		jaxGesuchsteller.setWohnAdresse(createTestJaxAdr(null));
 		jaxGesuchsteller.setGeburtsdatum(LocalDate.now().minusYears(18));
 		jaxGesuchsteller.setMail("jax.jaxter@example.com");
 		jaxGesuchsteller.setGeschlecht(Geschlecht.MAENNLICH);
@@ -29,12 +30,17 @@ public class TestJaxDataUtil {
 		jaxGesuchsteller.setTelefonAusland("+49 12 123 42 12");
 		jaxGesuchsteller.setZpvNumber("1234");
 
-		return jaxGesuchsteller;
+		jaxGesuchstellerContainer.setAdressen(createTestJaxAdressenList(null));
+		jaxGesuchstellerContainer.setGesuchstellerJA(jaxGesuchsteller);
+
+		return jaxGesuchstellerContainer;
 
 	}
 
-	public static JaxGesuchsteller createTestJaxGesuchstellerWithUmzug() {
-		JaxGesuchsteller jaxGesuchsteller = createTestJaxGesuchsteller();
+	public static JaxGesuchstellerContainer createTestJaxGesuchstellerWithUmzug() {
+		JaxGesuchstellerContainer jaxGesuchsteller = createTestJaxGesuchsteller();
+
+		JaxAdresseContainer jaxAdresseContainer = new JaxAdresseContainer();
 		JaxAdresse umzugAdr = new JaxAdresse();
 		umzugAdr.setAdresseTyp(AdresseTyp.WOHNADRESSE);
 		umzugAdr.setGemeinde("neue gemeinde");
@@ -45,17 +51,20 @@ public class TestJaxDataUtil {
 		umzugAdr.setZusatzzeile("Testzusatz");
 		umzugAdr.setStrasse("neue Strasse");
 		umzugAdr.setGueltigAb(LocalDate.now().plusMonths(1));  //gueltig 1 monat in zukunft
+		jaxAdresseContainer.setAdresseJA(umzugAdr);
 
-		jaxGesuchsteller.setUmzugAdresse(umzugAdr);
-		JaxAdresse altAdr = createTestJaxAdr("alternativ");
-		altAdr.setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
-		jaxGesuchsteller.setAlternativeAdresse(altAdr);
+		jaxGesuchsteller.addAdresse(jaxAdresseContainer);
+
+		JaxAdresseContainer jaxAltAdresseContainer = createTestJaxAdr("alternativ");
+		jaxAltAdresseContainer.getAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
+		jaxGesuchsteller.setAlternativeAdresse(jaxAltAdresseContainer);
+
 		return jaxGesuchsteller;
 
 	}
 
-	public static JaxGesuchsteller createTestJaxGesuchstellerWithErwerbsbensum() {
-		JaxGesuchsteller testJaxGesuchsteller = createTestJaxGesuchsteller();
+	public static JaxGesuchstellerContainer createTestJaxGesuchstellerWithErwerbsbensum() {
+		JaxGesuchstellerContainer testJaxGesuchsteller = createTestJaxGesuchsteller();
 		JaxErwerbspensumContainer container = createTestJaxErwerbspensumContainer();
 		JaxErwerbspensumContainer container2 = createTestJaxErwerbspensumContainer();
 		container2.getErwerbspensumGS().setGueltigAb(LocalDate.now().plusYears(1));
@@ -80,7 +89,6 @@ public class TestJaxDataUtil {
 	public static JaxErwerbspensum createTestJaxErwerbspensum() {
 		JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
 		jaxErwerbspensum.setTaetigkeit(Taetigkeit.ANGESTELLT);
-		jaxErwerbspensum.setGesundheitlicheEinschraenkungen(true);
 		jaxErwerbspensum.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
 		jaxErwerbspensum.setZuschlagZuErwerbspensum(true);
 		jaxErwerbspensum.setZuschlagsprozent(15);
@@ -90,7 +98,15 @@ public class TestJaxDataUtil {
 
 	}
 
-	public static JaxAdresse createTestJaxAdr(@Nullable String postfix) {
+	public static List<JaxAdresseContainer> createTestJaxAdressenList(@Nullable String postfix) {
+		final List<JaxAdresseContainer> adressen = new ArrayList<>();
+		adressen.add(createTestJaxAdr(postfix));
+		return adressen;
+	}
+
+	public static JaxAdresseContainer createTestJaxAdr(@Nullable String postfix) {
+		JaxAdresseContainer jaxAdresseContainer = new JaxAdresseContainer();
+
 		postfix = StringUtils.isEmpty(postfix) ? "" : postfix;
 		JaxAdresse jaxAdresse = new JaxAdresse();
 		jaxAdresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
@@ -101,7 +117,11 @@ public class TestJaxDataUtil {
 		jaxAdresse.setPlz("3014" + postfix);
 		jaxAdresse.setZusatzzeile("Test" + postfix);
 		jaxAdresse.setStrasse("Nussbaumstrasse" + postfix);
-		return jaxAdresse;
+		jaxAdresse.setNichtInGemeinde(false);
+
+		jaxAdresseContainer.setAdresseJA(jaxAdresse);
+
+		return jaxAdresseContainer;
 	}
 
 	public static JaxFall createTestJaxFall() {
@@ -111,7 +131,7 @@ public class TestJaxDataUtil {
 		return jaxFall;
 	}
 
-	private static JaxAuthLoginElement createTestJaxBenutzer() {
+	public static JaxAuthLoginElement createTestJaxBenutzer() {
 		JaxAuthLoginElement jaxBenutzer = new JaxAuthLoginElement();
 		jaxBenutzer.setRole(UserRole.ADMIN);
 		jaxBenutzer.setUsername("TestUser");
@@ -124,12 +144,14 @@ public class TestJaxDataUtil {
 
 	public static JaxGesuch createTestJaxGesuch() {
 		JaxGesuch jaxGesuch = new JaxGesuch();
+		jaxGesuch.setEingangsart(Eingangsart.PAPIER);
 		jaxGesuch.setFall(createTestJaxFall());
 		jaxGesuch.setGesuchsperiode(createTestJaxGesuchsperiode());
 		jaxGesuch.setGesuchsteller1(createTestJaxGesuchsteller());
 		jaxGesuch.setEingangsdatum(LocalDate.now());
-		JaxGesuchsteller testJaxGesuchsteller = createTestJaxGesuchsteller();
-		testJaxGesuchsteller.setNachname("Gesuchsteller2");
+		jaxGesuch.setStatus(AntragStatusDTO.IN_BEARBEITUNG_JA);
+		JaxGesuchstellerContainer testJaxGesuchsteller = createTestJaxGesuchsteller();
+		testJaxGesuchsteller.getGesuchstellerJA().setNachname("Gesuchsteller2");
 		jaxGesuch.setGesuchsteller2(testJaxGesuchsteller);
 		return jaxGesuch;
 	}
@@ -149,14 +171,14 @@ public class TestJaxDataUtil {
 		jaxKind.setGeburtsdatum(LocalDate.now().minusYears(18));
 		jaxKind.setGeschlecht(Geschlecht.WEIBLICH);
 		jaxKind.setPensumFachstelle(createTestJaxPensumFachstelle());
-		jaxKind.setBemerkungen("Notizen");
 		jaxKind.setMutterspracheDeutsch(false);
+		jaxKind.setEinschulung(false);
 		jaxKind.setFamilienErgaenzendeBetreuung(true);
 		jaxKind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
 		return jaxKind;
 	}
 
-	private static JaxPensumFachstelle createTestJaxPensumFachstelle() {
+	public static JaxPensumFachstelle createTestJaxPensumFachstelle() {
 		JaxPensumFachstelle jaxPensumFachstelle = new JaxPensumFachstelle();
 		jaxPensumFachstelle.setGueltigBis(LocalDate.now().plusMonths(1));
 		jaxPensumFachstelle.setGueltigAb(LocalDate.now());
@@ -198,11 +220,10 @@ public class TestJaxDataUtil {
 		betreuung.setInstitutionStammdaten(jaxInst);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
 		betreuung.setBetreuungspensumContainers(new ArrayList<>());
-		betreuung.setBemerkungen("Betreuung_Bemerkungen");
 		return betreuung;
 	}
 
-	private static JaxInstitutionStammdaten createTestJaxInstitutionsStammdaten() {
+	public static JaxInstitutionStammdaten createTestJaxInstitutionsStammdaten() {
 		JaxInstitutionStammdaten institutionStammdaten = new JaxInstitutionStammdaten();
 		institutionStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		institutionStammdaten.setOeffnungsstunden(new BigDecimal(1000));
@@ -217,6 +238,12 @@ public class TestJaxDataUtil {
 		jaxGesuchsperiode.setGueltigBis(LocalDate.now().plusMonths(1));
 		jaxGesuchsperiode.setActive(true);
 		return jaxGesuchsperiode;
+	}
+
+	public static JaxEinkommensverschlechterungInfoContainer createTestJaxEinkommensverschlechterungInfoContainer() {
+		JaxEinkommensverschlechterungInfoContainer jaxEinkommensverschlechterungInfoContainer = new JaxEinkommensverschlechterungInfoContainer();
+		jaxEinkommensverschlechterungInfoContainer.setEinkommensverschlechterungInfoJA(createTestJaxEinkommensverschlechterungInfo());
+		return jaxEinkommensverschlechterungInfoContainer;
 	}
 
 	public static JaxEinkommensverschlechterungInfo createTestJaxEinkommensverschlechterungInfo() {
@@ -268,4 +295,38 @@ public class TestJaxDataUtil {
 		mandant.setName("TestMandant");
 		return mandant;
 	}
+
+	public static JaxInstitution createTestJaxInstitution() {
+		JaxInstitution institution = new JaxInstitution();
+		institution.setMandant(createTestMandant());
+		institution.setName("Inst1");
+		institution.setTraegerschaft(createJaxTestTraegerschaft());
+		return  institution;
+	}
+
+	public static JaxTraegerschaft createJaxTestTraegerschaft() {
+		JaxTraegerschaft jaxTraegerschaft = new JaxTraegerschaft();
+		jaxTraegerschaft.setName("Test_Traegerschaft");
+		jaxTraegerschaft.setActive(true);
+		return null;
+	}
+
+	public static JaxOpenIdmResult creatOpenIdmTraegerschaft(String name) {
+		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
+		jaxOpenIdmResult.set_id(name);
+		jaxOpenIdmResult.setName(name);
+		jaxOpenIdmResult.setMail(name + "@" + name + ".ch");
+		jaxOpenIdmResult.setType("sponsor");
+		return jaxOpenIdmResult;
+	}
+
+	public static JaxOpenIdmResult creatOpenIdmInst(String name) {
+		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
+		jaxOpenIdmResult.set_id(name);
+		jaxOpenIdmResult.setName(name);
+		jaxOpenIdmResult.setMail(name + "@" + name + ".ch");
+		jaxOpenIdmResult.setType("institution");
+		return jaxOpenIdmResult;
+	}
+
 }

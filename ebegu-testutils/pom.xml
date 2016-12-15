@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.14.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,7 +18,12 @@
             <groupId>ch.dvbern.lib</groupId>
             <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
         </dependency>
+        <dependency>
+               <groupId>org.wildfly.arquillian</groupId>
+               <artifactId>wildfly-arquillian-common</artifactId>
+               <version>${version.wildfly-arquillian-containers}</version>
+                 <scope>compile</scope>
+             </dependency>
     </dependencies>
-
 
 </project>

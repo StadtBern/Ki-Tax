@@ -11,10 +11,19 @@ import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSDateRange} from '../../../models/types/TSDateRange';
+import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
+import ListResourceRS from '../../../core/service/listResourceRS.rest';
+import TSLand from '../../../models/types/TSLand';
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
+let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
+let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
+let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 
 export class InstitutionViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -43,15 +52,20 @@ export class InstitutionViewController {
     isSelectedStammdaten: boolean = false;
     betreuungsangebotValues: Array<any>;
     selectedInstitutionStammdatenBetreuungsangebot: any = null;
+    laenderList: TSLand[];
 
 
-    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService'];
+    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog', 'ListResourceRS'];
     /* @ngInject */
-    constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS, private errorService: ErrorService) {
+    constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS,
+                private errorService: ErrorService, private dvDialog: DvDialog, listResourceRS: ListResourceRS) {
         this.institutionRS = institutionRS;
         this.ebeguUtil = ebeguUtil;
         this.institutionStammdatenRS = institutionStammdatenRS;
         this.setBetreuungsangebotTypValues();
+        listResourceRS.getLaenderList().then((laenderList: TSLand[]) => {
+            this.laenderList = laenderList;
+        });
 
     }
 
@@ -91,13 +105,19 @@ export class InstitutionViewController {
     }
 
     removeInstitution(institution: any): void {
-        this.selectedInstitution = null;
-        this.isSelected = false;
-        this.institutionRS.removeInstitution(institution.id).then((response) => {
-            var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
-            if (index > -1) {
-                this.institutionen.splice(index, 1);
-            }
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            deleteText: '',
+            title: 'LOESCHEN_DIALOG_TITLE'
+        })
+        .then(() => {   //User confirmed removal
+            this.selectedInstitution = null;
+            this.isSelected = false;
+            this.institutionRS.removeInstitution(institution.id).then((response) => {
+                var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
+                if (index > -1) {
+                    this.institutionen.splice(index, 1);
+                }
+            });
         });
 
     }
@@ -118,6 +138,11 @@ export class InstitutionViewController {
                 this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
                     this.institutionen.push(institution);
                     this.resetInstitutionSelection();
+                    if(!institution.synchronizedWithOpenIdm){
+                        this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                            title: 'INSTITUTION_CREATE_SYNCHRONIZE'
+                        })
+                    }
                 });
             } else {
                 this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
@@ -125,6 +150,11 @@ export class InstitutionViewController {
                     if (index > -1) {
                         this.institutionen[index] = institution;
                         this.resetInstitutionSelection();
+                        if(!institution.synchronizedWithOpenIdm){
+                            this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                                title: 'INSTITUTION_UPDATE_SYNCHRONIZE'
+                            })
+                        }
                     }
                 });
             }
@@ -189,13 +219,18 @@ export class InstitutionViewController {
     }
 
     removeInstitutionStammdaten(institutionStammdaten: TSInstitutionStammdaten): void {
-        this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {
-
-            var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
-            if (index > -1) {
-                this.instStammdatenList.splice(index, 1);
-            }
-            this.isSelectedStammdaten = false;
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            deleteText: '',
+            title: 'LOESCHEN_DIALOG_TITLE'
+        })
+        .then(() => {   //User confirmed removal
+            this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {
+                var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
+                if (index > -1) {
+                    this.instStammdatenList.splice(index, 1);
+                }
+                this.isSelectedStammdaten = false;
+            });
         });
 
     }
@@ -224,6 +259,17 @@ export class InstitutionViewController {
         } else {
             return dateRange.gueltigAb.format(format) + ' - ' + dateRange.gueltigBis.format(format);
         }
+    }
+
+    private syncWithOpenIdm(): void{
+        this.institutionRS.synchronizeInstitutions().then((respone) => {
+            let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
+            return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
+                title: returnString
+            }).then(() => {
+                //do nothing
+            });
+        });
     }
 
 }

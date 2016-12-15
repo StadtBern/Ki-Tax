@@ -1,0 +1,42 @@
+<div class="kommentarView">
+    <form role="form" name="form" class="" novalidate layout="column">
+        <!--bemerkungen intern-->
+        <div class="kommentarTop">
+            <dv-input-container class="form-group kommentar-feld">
+                <label class="md-no-float" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
+                <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
+                          ng-blur="vm.saveStepBemerkung()" ng-disabled="vm.isStepCommentDisabled()"
+                          ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000">
+                        </textarea>
+            </dv-input-container>
+        </div>
+        <span flex=""></span>
+        <!--bemerkungen Verfügung-->
+        <div class="kommentarBottom">
+            <dv-input-container class="form-group kommentar-feld">
+                <label class="md-no-float" for="kommentarVerfuegung"
+                       data-translate="BEMERKUNGEN_VERFUEGUNG"></label>
+                <textarea md-no-autogrow class="form-control" rows="4" id="kommentarVerfuegung"
+                          ng-blur="vm.saveBemerkungZurVerfuegung()"
+                          ng-disabled="vm.isGesuchReadonly()"
+                          ng-model="vm.getGesuch().bemerkungen" maxlength="1000">
+                        </textarea>
+            </dv-input-container>
+        </div>
+
+        <div class="kommentarButton" ng-if="!vm.isGesuchUnsaved()">
+            <div ng-if="vm.hasPapiergesuch()" ng-click="vm.download()" class="dv-btn kommentar-button">
+                <span data-translate="PAPIERGESUCH_OEFFNEN"></span>
+            </div>
+
+            <div ng-if="!vm.hasPapiergesuch() && !vm.isGesuchReadonly()"
+                 ngf-select="vm.upload($files)" ngf-multiple="false"
+                 ngf-max-size="'10MB'" ngf-max-total-size="100MB"
+                 ngf-drop="vm.upload($files)"
+                 ngf-drag-over-class="'dragover'"
+                 class="dv-btn kommentar-button">
+                <span data-translate="PAPIERGESUCH_LADEN"></span>
+            </div>
+        </div>
+    </form>
+</div>

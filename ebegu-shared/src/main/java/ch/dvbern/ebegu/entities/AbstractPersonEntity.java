@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -42,6 +43,10 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 	private LocalDate geburtsdatum;
 
 
+	public AbstractPersonEntity() {
+	}
+
+
 	public String getVorname() {
 		return vorname;
 	}
@@ -78,4 +83,12 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		return vorname + " " + nachname;
 	}
 
+	public AbstractPersonEntity copyForMutation(AbstractPersonEntity mutation) {
+		super.copyForMutation(mutation);
+		mutation.setGeschlecht(this.getGeschlecht());
+		mutation.setVorname(this.getVorname());
+		mutation.setNachname(this.getNachname());
+		mutation.setGeburtsdatum(this.getGeburtsdatum());
+		return mutation;
+	}
 }

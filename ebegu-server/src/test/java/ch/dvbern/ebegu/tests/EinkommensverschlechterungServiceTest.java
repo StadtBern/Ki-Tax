@@ -1,17 +1,13 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.services.EinkommensverschlechterungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,18 +23,15 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class EinkommensverschlechterungServiceTest extends AbstractEbeguTest {
+public class EinkommensverschlechterungServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private EinkommensverschlechterungService einkommensverschlechterungService;
 
 	@Inject
-	private Persistence<Gesuchsteller> persistence;
+	private Persistence<Gesuch> persistence;
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
+
 
 	@Test
 	public void createEinkommensverschlechterungContainerTest() {
@@ -55,7 +48,8 @@ public class EinkommensverschlechterungServiceTest extends AbstractEbeguTest {
 	}
 
 	private EinkommensverschlechterungContainer getEinkommensverschlechterungContainer() {
-		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		gesuchsteller = persistence.persist(gesuchsteller);
 
 		final Einkommensverschlechterung einkommensverschlechterung = TestDataUtil.createDefaultEinkommensverschlechterung();

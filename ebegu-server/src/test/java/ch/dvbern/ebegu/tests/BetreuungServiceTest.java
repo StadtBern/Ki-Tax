@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
+import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -7,12 +8,10 @@ import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,37 +25,30 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class BetreuungServiceTest extends AbstractEbeguTest {
+public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private BetreuungService betreuungService;
 
 	@Inject
-	private Persistence<Betreuung> persistence;
+	private Persistence<Gesuch> persistence;
 	@Inject
 	private KindService kindService;
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
+
 
 	@Test
 	public void createAndUpdateBetreuungTest() {
 		Assert.assertNotNull(betreuungService);
 		Betreuung persitedBetreuung = persistBetreuung();
-		Betreuung betreuung = betreuungService.findBetreuungWithBetreuungsPensen(persitedBetreuung.getId());
-		Assert.assertNotNull(betreuung);
-		Betreuung savedBetreuung = betreuung;
-		Assert.assertEquals(persitedBetreuung.getBemerkungen(), savedBetreuung.getBemerkungen());
-		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), savedBetreuung.getBetreuungsstatus());
+		Optional<Betreuung> betreuungOpt = betreuungService.findBetreuungWithBetreuungsPensen(persitedBetreuung.getId());
+		Assert.assertTrue(betreuungOpt.isPresent());
+		Betreuung betreuung = betreuungOpt.get();
+		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), betreuung.getBetreuungsstatus());
 
-		Assert.assertNotEquals("Neue Bemerkung", savedBetreuung.getBemerkungen());
-		savedBetreuung.setBemerkungen("Neue Bemerkung");
-		betreuungService.saveBetreuung(savedBetreuung);
+		betreuungService.saveBetreuung(betreuung, false);
 		Optional<Betreuung> updatedBetreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertTrue(updatedBetreuung.isPresent());
-		Assert.assertEquals("Neue Bemerkung", updatedBetreuung.get().getBemerkungen());
 
 		Assert.assertEquals(new Integer(1), updatedBetreuung.get().getBetreuungNummer());
 		Assert.assertEquals(new Integer(2), kindService.findKind(betreuung.getKind().getId()).get().getNextNumberBetreuung());
@@ -80,6 +72,9 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 		for (BetreuungspensumContainer container : betreuung.getBetreuungspensumContainers()) {
 			persistence.persist(container);
 		}
+		for (AbwesenheitContainer abwesenheit : betreuung.getAbwesenheitContainers()) {
+			persistence.persist(abwesenheit);
+		}
 		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
 		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
 		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
@@ -87,14 +82,11 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 		persistence.persist(betreuung.getKind().getKindGS().getPensumFachstelle().getFachstelle());
 		persistence.persist(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
 
-		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch.getGesuchsperiode());
-		persistence.persist(gesuch);
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		betreuung.getKind().setGesuch(gesuch);
 		persistence.persist(betreuung.getKind());
 
-		betreuungService.saveBetreuung(betreuung);
+		betreuungService.saveBetreuung(betreuung, false);
 
 		return betreuung;
 

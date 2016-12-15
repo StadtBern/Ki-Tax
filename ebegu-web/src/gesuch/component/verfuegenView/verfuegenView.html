@@ -1,175 +1,229 @@
-<div class="verfuegenView row">
-    <div class="col-md-12">
+<div class="verfuegenView gesuchModul">
+    <div class="row">
+        <div class="col-md-12">
+            <form role="form" name="form" class="" novalidate unsaved-warning-form>
 
-        <form  role="form" name="form" class="" novalidate unsaved-warning-form>
+                <!-- Abzuege -->
+                <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                     dv-show-expression="vm.showVerfuegungsDetails()">
+                    <div class="row viewTitle">
+                        <div class="col-md-12">
+                            <h2 data-translate="AUFGRUND_FIN_SITUATION"
+                                data-translate-value-jahr="{{vm.gesuchModelManager.getBasisjahr()}}"></h2>
+                            <hr class="header"/>
+                        </div>
+                    </div>
+                    <div class="row marginBottom10">
+                        <div class=" col-xs-12 dv-input-container-small form-group">
+                            <label class="md-no-float"
+                                   data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                                   for="finSitEinkommen_ID"></label>
+                            <input id="finSitEinkommen_ID" type="text" name="finSitEinkommen"
+                                   ng-model="vm.berechnungsManager.finanzielleSituationResultate.massgebendesEinkVorAbzFamGr"
+                                   class="form-control" ng-disabled="true">
+                        </div>
+                    </div>
 
-            <!-- Abzuege -->
-            <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
+                    <div ng-if="vm.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1">
+                        <div class="row marginTop20">
+                            <div class="col-md-12">
+                        <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
+                              data-translate-value-jahr="{{vm.gesuchModelManager.getBasisjahrPlus(1)}}"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 form-group">
+                                <label class="md-no-float"
+                                       data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                                       for="einVersEinkommen1_ID"></label>
+                                <input id="einVersEinkommen1_ID" type="text" name="einVersEinkommen1"
+                                       ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.massgebendesEinkVorAbzFamGr"
+                                       class="form-control" ng-disabled="true">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="vm.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus2">
+                        <div class="row marginTop20">
+                            <div class="col-md-12">
+                        <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
+                              data-translate-value-jahr="{{vm.gesuchModelManager.getBasisjahrPlus(2)}}"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 form-group">
+                                <label class="md-no-float"
+                                       data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                                       for="einVersEinkommen2_ID"></label>
+                                <input id="einVersEinkommen2_ID" type="text" name="einVersEinkommen2"
+                                       ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.massgebendesEinkVorAbzFamGr"
+                                       class="form-control" ng-disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Titel -->
                 <div class="row marginTop20">
-                    <div class="col-md-12">
-                        <span data-translate="AUFGRUND_FIN_SITUATION" data-translate-value-anfangsperiode="{{vm.getAnfangsPeriode()}}"></span>
+                    <div class="col-md-8">
+                        <h1 class="mainTitle">
+                            {{vm.getKindName()}} / {{vm.getInstitutionName()}}
+                        </h1>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <h1 class="mainTitle">
+                            {{vm.getBetreuungNumber()}}
+                        </h1>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
-                        <label data-translate="ABZUG_AUFGRUND_FAM_GROESSE" data-translate-value-famgroesse="{{vm.getFamiliengroesseFS()}}"
-                               for="finSitAbzug_ID"></label>
-                        <input id="finSitAbzug_ID" type="text" name="finSitAbzug"
-                               ng-model="vm.berechnungsManager.finanzielleSituationResultate.abzugAufgrundFamiliengroesse"
-                               class="form-control" ng-disabled="true">
-                    </div>
-                    <div class="col-md-6">
-                        <label data-translate="MASSGEBENDES_EINKOMMEN" for="finSitEinkommen_ID"></label>
-                        <input id="finSitEinkommen_ID" type="text" name="finSitEinkommen"
-                               ng-model="vm.berechnungsManager.finanzielleSituationResultate.massgebendesEinkommen"
-                               class="form-control" ng-disabled="true">
+                    <div class="col-md-12">
+                        <hr class="header"/>
                     </div>
                 </div>
 
-                <div ng-if="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1">
-                    <div class="row marginTop20">
-                        <div class="col-md-12">
-                        <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
-                              data-translate-value-anfangsverschlechterung="{{vm.getAnfangsVerschlechterung1()}}"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label data-translate="ABZUG_AUFGRUND_FAM_GROESSE" data-translate-value-famgroesse="{{vm.getFamiliengroesseEV1()}}"
-                                   for="einVersAbzug1_ID"></label>
-                            <input id="einVersAbzug1_ID" type="text" name="einVersAbzug1"
-                                   ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.abzugAufgrundFamiliengroesse"
-                                   class="form-control" ng-disabled="true">
-                        </div>
-                        <div class="col-md-6">
-                            <label data-translate="MASSGEBENDES_EINKOMMEN" for="einVersEinkommen1_ID"></label>
-                            <input id="einVersEinkommen1_ID" type="text" name="einVersEinkommen1"
-                                   ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.massgebendesEinkommen"
-                                   class="form-control" ng-disabled="true">
-                        </div>
-                    </div>
-                </div>
-
-                <div ng-if="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2">
-                    <div class="row marginTop20">
-                        <div class="col-md-12">
-                        <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
-                              data-translate-value-anfangsverschlechterung="{{vm.getAnfangsVerschlechterung2()}}"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label data-translate="ABZUG_AUFGRUND_FAM_GROESSE" data-translate-value-famgroesse="{{vm.getFamiliengroesseEV2()}}"
-                                   for="einVersAbzug2_ID"></label>
-                            <input id="einVersAbzug2_ID" type="text" name="einVersAbzug2"
-                                   ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.abzugAufgrundFamiliengroesse"
-                                   class="form-control" ng-disabled="true">
-                        </div>
-                        <div class="col-md-6">
-                            <label data-translate="MASSGEBENDES_EINKOMMEN" for="einVersEinkommen2_ID"></label>
-                            <input id="einVersEinkommen2_ID" type="text" name="einVersEinkommen2"
-                                   ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.massgebendesEinkommen"
-                                   class="form-control" ng-disabled="true">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Titel -->
-            <div class="row marginTop20">
-                <div class="col-md-8">
-                    <h4 class="mainTitle">
-                        {{vm.getKindName()}} / {{vm.getInstitutionName()}}
-                    </h4>
-                </div>
-                <div class="col-md-4 text-right">
-                    <h4 class="mainTitle">
-                        {{vm.getBetreuungNumber()}}
-                    </h4>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <hr class="header"/>
-                </div>
-            </div>
-
-            <!-- Status -->
-            <div class="row">
-                <div class="col-md-12">
-                    <span class="betreuung-status ng-class:betreuung.betreuungsstatus;"
+                <!-- Status -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="betreuung-status verfuegenView ng-class:vm.getBetreuungsstatus();">
+                            <div
                           ng-bind="vm.getBetreuungsstatus() | translate">
-                    </span>
+                    </div>
+                            <span class="betreuung-bar"></span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <br>
 
-            <!-- Tabelle -->
-            <div class="row">
-                <div class="col-md-12 table-responsive">
-                    <table st-table="displayedCollection" st-safe-src="vm.getVerfuegungZeitabschnitte()"
-                           class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th class="text-right"  data-translate="VON" ></th>
-                            <th class="text-right"  data-translate="BIS" ></th>
-                            <th class="text-right"  data-translate="BETREUUNGSPENSUM"></th>
-                            <th class="text-right"  data-translate="ANSPRUCH"></th>
-                            <th class="text-right"  data-translate="VOLLKOSTEN"></th>
-                            <th class="text-right"  data-translate="ELTERNBEITRAG"></th>
-                            <th class="text-right"  data-translate="VERGUENSTIGUNG"></th>
-                        </tr>
-                        </thead>
-                        <tbody ng-if="vm.getVerfuegungZeitabschnitte().length > 0">
-                        <tr ng-repeat="verfuegungZeitabschnitt in displayedCollection">
-                            <td class="text-right" ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
-                            <td class="text-right"  ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
-                            <td class="text-right" ><span ng-bind="verfuegungZeitabschnitt.betreuungspensum"></span>%</td>
-                            <td class="text-right" ><span ng-bind="verfuegungZeitabschnitt.anspruchberechtigtesPensum"></span>%</td>
-                            <td class="text-right"  ng-bind="verfuegungZeitabschnitt.vollkosten | currency : '' : 2"></td>
-                            <td class="text-right"  ng-bind="verfuegungZeitabschnitt.elternbeitrag | currency : '' : 2"></td>
-                            <td class="text-right"  ng-bind="(verfuegungZeitabschnitt.vollkosten - verfuegungZeitabschnitt.elternbeitrag) | currency : '' : 2"></td>
-                        </tr>
-                        </tbody>
-                        <tbody ng-if="vm.getVerfuegungZeitabschnitte().length === 0">
-                        <tr>
-                            <td colspan="7" class="empty-table" >Zeitabschnitte noch nicht berechnet</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <!-- Tabelle -->
+                <div class="row" ng-if="vm.showVerfuegungsDetails()">
+                    <div class="col-md-12 table-responsive">
+                        <table st-table="displayedCollection" st-safe-src="vm.getVerfuegungZeitabschnitte()"
+                               class="table">
+                            <thead>
+                            <tr>
+                                <th class="text-right" data-translate="VON"></th>
+                                <th class="text-right" data-translate="BIS"></th>
+                                <th class="text-right" data-translate="EFFEKTIVE_BETREUUNG"></th>
+                                <th class="text-right" data-translate="ANSPRUCH"></th>
+                                <th class="text-right" data-translate="VERGUENSTIGT"></th>
+                                <th class="text-right" data-translate="VOLLKOSTEN"></th>
+                                <th class="text-right" data-translate="VERGUENSTIGUNG"></th>
+                                <th class="text-right" data-translate="ELTERNBEITRAG"></th>
+                            </tr>
+                            </thead>
+                            <tbody ng-if="vm.getVerfuegungZeitabschnitte().length > 0">
+                            <tr ng-repeat="verfuegungZeitabschnitt in displayedCollection">
+                                <td class="text-right"
+                                    ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
+                                <td class="text-right"
+                                    ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
+                                <td class="text-right"><span ng-bind="verfuegungZeitabschnitt.betreuungspensum"></span>%
+                                </td>
+                                <td class="text-right"><span
+                                    ng-bind="verfuegungZeitabschnitt.anspruchberechtigtesPensum"></span>%
+                                </td>
+                                <td class="text-right"><span
+                                    ng-bind="verfuegungZeitabschnitt.bgPensum"></span>%
+                                </td>
+                                <td class="text-right"
+                                    ng-bind="verfuegungZeitabschnitt.vollkosten | currency : '' : 2"></td>
+                                <td class="text-right"
+                                    ng-bind="(verfuegungZeitabschnitt.vollkosten - verfuegungZeitabschnitt.elternbeitrag) | currency : '' : 2"></td>
+                                <td class="text-right"
+                                    ng-bind="verfuegungZeitabschnitt.elternbeitrag | currency : '' : 2"></td>
+                            </tr>
+                            </tbody>
+                            <tbody ng-if="vm.getVerfuegungZeitabschnitte().length === 0">
+                            <tr>
+                                <td colspan="8" class="empty-table">Zeitabschnitte noch nicht berechnet</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
 
-            <!--bemerkungen-->
-            <div class="row" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
-                <div class="col-md-12">
-                    <label class="inlineHint" for="generated_notes" data-translate="GENERATED_BEMERKUNGEN"></label>
-                    <textarea md-no-autogrow class="form-control" rows="6" id="generated_notes" ng-disabled="true"
-                              ng-model="vm.getVerfuegenToWorkWith().generatedBemerkungen"></textarea>
+                <!--bemerkungen-->
+                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                     dv-show-expression="vm.showVerfuegungsDetails()">
+                    <div class="col-md-12 form-group">
+                        <label class="md-no-float" class="inlineHint" for="manuelle_notes"
+                               data-translate="BEMERKUNGEN"></label>
+                        <textarea md-no-autogrow class="form-control" rows="6" id="manuelle_notes"
+                                  ng-model="vm.bemerkungen" ng-disabled="vm.isBemerkungenDisabled()"
+                                  ng-attr-placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"
+                                  maxlength="1000"></textarea>
+                    </div>
                 </div>
-            </div>
-            <div class="row marginTop20" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
-                <div class="col-md-12">
-                    <label class="inlineHint" for="manuelle_notes" data-translate="MANUELLE_BEMERKUNGEN"></label>
-                    <textarea md-no-autogrow class="form-control" rows="6" id="manuelle_notes"
-                              ng-model="vm.getVerfuegenToWorkWith().manuelleBemerkungen"
-                              placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
-                </div>
-            </div>
 
-            <!-- Navigation Buttons -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-loading-button ng-click="vm.cancel()" button-class="btn btn-link cancel">
-                        <span data-translate="ABBRECHEN_UPPER"></span>
-                    </dv-loading-button>
+                <!--VerfuegungPDF anzeigen-->
+                <div class="row marginTop20 text-left" >
+                    <div class="col-md-4" ng-if="vm.showVerfuegungPdfLink()">
+                        <i class="fa fa-file-text-o"></i>
+                        <button type="button" class="btn-link"
+                                ng-click="vm.openVerfuegungPDF()">
+                            <span data-translate="PDF_VERFUEGUNG_ANZEIGEN"></span>
+                        </button>
+                    </div>
+                    <div class="col-md-4" ng-if="vm.showNichtEintretenPdfLink()">
+                        <i class="fa fa-file-text-o"></i>
+                        <button type="button" class="btn-link"
+                                ng-click="vm.openNichteintretenPDF()">
+                            <span data-translate="PDF_NICHT_EINTRETEN_ANZEIGEN"></span>
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-6 text-right" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
-                    <dv-loading-button ng-click="vm.save(form)" type="submit" button-class="btn btn-link save">
-                        <span data-translate="SPEICHERN_UPPER"></span>
-                    </dv-loading-button>
+
+                <div class="row marginTop20" ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen()">
+                    <div class="col-md-4 text-center">
+                        <dv-loading-button type="submit"  button-click="vm.save(form)"
+                                           button-class="dv-btn-sm color-success">
+                            <span data-translate="VERFUEGEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
+                    <div class="col-md-4"  ng-show="vm.gesuchModelManager.isErstgesuch()">
+                        <dv-loading-button type="submit"
+                                           button-click="vm.nichtEintreten(form)"
+                                           button-class="dv-btn-sm color-success">
+                            <span data-translate="VERFUEGEN_NICHT_EINTRETEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
+                    <div class="col-md-4"  ng-show="!vm.gesuchModelManager.isErstgesuch()">
+                        <dv-loading-button type="submit"
+                                           button-click="vm.schliessenOhneVerfuegen(form)"
+                                           button-class="dv-btn-sm color-success">
+                            <span data-translate="VERFUEGEN_ABLEHNEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
                 </div>
-            </div>
-        </form>
+
+                <div class="row marginTop20" ng-show="vm.isSameVerfuegungdaten()">
+                    <div class="col-md-4">
+                        <span data-translate="IDENTISCHE_BERECHNUNG"></span>
+                    </div>
+                    <div class="col-md-4" ng-show="vm.showVerfuegen()">
+                        <dv-loading-button type="submit"
+                                           button-click="vm.schliessenOhneVerfuegen(form)"
+                                           button-class="">
+                            <span data-translate="VERFUEGEN_VERZICHTEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
+                    <div class="col-md-4" ng-show="vm.showVerfuegen()">
+                        <dv-loading-button type="submit" button-click="vm.save(form)"
+                                           button-class="">
+                            <span data-translate="TROTZDEM_VERFUEGEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="row marginTop50">
+                    <div class="col-md-12">
+                        <dv-navigation dv-cancel="vm.cancel(form)" dv-next="false" dv-sub-step="2">
+                        </dv-navigation>
+                    </div>
+                </div>
+
+            </form>
+        </div>
     </div>
 </div>

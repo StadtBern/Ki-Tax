@@ -1,0 +1,80 @@
+<gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller" gesuchid="{{vm.getGesuchId()}}"
+                              dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerRoles()">
+    </gesuch-toolbar-gesuchsteller>
+<div class="gesuchstellerDashboardView" flex="auto">
+    <div class="dashboardHeader" flex="100" layout="row" layout-align="center center" layout-margin
+         layout-xs="column"
+         layout-align-xs="space-between center">
+
+        <div ng-repeat="periode in vm.getActiveGesuchsperiodenList() | orderBy: 'gueltigkeit.gueltigAb'">
+        <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.openAntrag(periode)"
+                           button-class="dashboardButton">
+            <div flex="auto" class="labelBig">
+                <h2>
+                    <span data-translate="GESUCH"></span>
+                    <span>{{periode.gesuchsperiodeString}}</span>
+                </h2>
+            </div>
+            <div flex="auto" class="labelZeitraum">
+                 {{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} - {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}
+            </div>
+            <div flex="auto" class="labelSmall">
+                <h2><span>{{vm.getButtonText(periode)}}</span></h2>
+            </div>
+        </dv-loading-button>
+        </div>
+
+        <!--<dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.goToMitteilungenOeffen()"
+                           button-class="dashboardButton">t
+            <div flex="auto" class="labelBig"><h2 data-translate="GSDASHBOARD_MITTEILUNGEN"></h2></div>
+            <div flex="auto" class="labelNotification" ng-bind="vm.getNumberMitteilungen()"></div>
+            <div class="labelSmall"><h2 data-translate="GSDASHBOARD_OEFFNEN"></h2></div>
+        </dv-loading-button>-->
+
+    </div>
+
+    <div class="col-md-8 col-md-offset-2">
+
+        <h3 data-translate="GSDASHBOARD_ANTRAEGE"></h3>
+
+        <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getAntragList()"
+               st-delay="20"
+               class="table fixedtable">
+            <thead>
+            <tr>
+
+                <th st-sort="antragTyp" class="sortable" data-translate="TYP_UPPER"></th>
+                <th st-sort="gesuchsperiodeString" class="sortable" data-translate="PERIODE_UPPER"></th>
+                <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable"
+                    data-translate="EINGANG_UPPER"></th>
+                <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
+                <th st-sort="verantwortlicher" class="sortable" data-translate="VERANTWORTLICH_UPPER"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                ng-click="vm.editAntrag(row)">
+                <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}"
+                    ng-bind="row.antragTyp | translate"></td>
+                <td class="ellipsis"
+                    ellipsis-tooltip="{{row.gesuchsperiodeString}}"
+                    ng-bind="row.gesuchsperiodeString"></td>
+                <td class="ellipsis"
+                    ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
+                    ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                <td class="ellipsis" ellipsis-tooltip="{{vm.translate(row.status)}}"
+                    ng-bind="vm.translate(row.status)"></td>
+                <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
+                    ng-bind="row.verantwortlicher"></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

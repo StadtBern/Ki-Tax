@@ -6,18 +6,16 @@ import ch.dvbern.ebegu.api.resource.*;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
-import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.BenutzerService;
+import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.PensumFachstelleService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,14 +31,10 @@ import java.util.Set;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class BetreuungResourceTest extends AbstractEbeguRestTest {
+//@ServerSetup(InstallPicketLinkFileBasedSetupTask.class)
+public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 
 	private static final UriInfo RESTEASY_URI_INFO = new ResteasyUriInfo("test", "test", "test");
-
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 	@Inject
 	private BetreuungService betreuungService;
@@ -73,7 +67,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 		persistStammdaten(testBetreuung.getInstitutionStammdaten());
 		JaxBetreuung testJaxBetreuung = converter.betreuungToJAX(testBetreuung);
 
-		JaxBetreuung jaxBetreuung = betreuungResource.saveBetreuung(converter.toJaxId(returnedKind), testJaxBetreuung, RESTEASY_URI_INFO, null);
+		JaxBetreuung jaxBetreuung = betreuungResource.saveBetreuung(converter.toJaxId(returnedKind), testJaxBetreuung, false, RESTEASY_URI_INFO, null);
 		Assert.assertEquals(new Integer(1), jaxBetreuung.getBetreuungNummer());
 		Assert.assertNotNull(jaxBetreuung);
 	}
@@ -98,7 +92,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 		JaxBetreuungspensumContainer containerToAdd = TestJaxDataUtil.createBetreuungspensumContainer(LocalDate.now().getYear());
 
 		betreuung.getBetreuungspensumContainers().add(containerToAdd);
-		JaxBetreuung updatedBetr = betreuungResource.saveBetreuung(converter.toJaxId(initialBetr.getKind()), betreuung, RESTEASY_URI_INFO, null);
+		JaxBetreuung updatedBetr = betreuungResource.saveBetreuung(converter.toJaxId(initialBetr.getKind()), betreuung, false, RESTEASY_URI_INFO, null);
 		Assert.assertEquals(1, updatedBetr.getBetreuungspensumContainers().size());
 		Assert.assertEquals(Integer.valueOf(1), updatedBetr.getBetreuungNummer());
 		checkNextNumberBetreuung(converter.toJaxId(initialBetr.getKind()), Integer.valueOf(2));
@@ -106,6 +100,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 
 	/**
 	 * Testet, dass das entfernen eines Betreuungspensums auf dem Client dieses aus der Liste auf dem Server loescht.
+	 *
 	 * @throws EbeguException
 	 */
 	@Test
@@ -119,7 +114,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 		betreuung.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer(LocalDate.now().minusYears(1).getYear()));
 		betreuung.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer(LocalDate.now().getYear()));
 		betreuung.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer(LocalDate.now().plusYears(1).getYear()));
-		JaxBetreuung updatedBetr = betreuungResource.saveBetreuung(converter.toJaxId(initialBetr.getKind()), betreuung, RESTEASY_URI_INFO, null);
+		JaxBetreuung updatedBetr = betreuungResource.saveBetreuung(converter.toJaxId(initialBetr.getKind()), betreuung, false, RESTEASY_URI_INFO, null);
 
 		Assert.assertNotNull(updatedBetr.getBetreuungspensumContainers());
 		Assert.assertEquals(3, updatedBetr.getBetreuungspensumContainers().size());
@@ -129,7 +124,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 		updatedBetr.getBetreuungspensumContainers().clear(); //alle bestehenden entfernen
 		updatedBetr.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer(LocalDate.now().plusYears(2).getYear())); //einen neuen einfuegen
 
-		updatedBetr = betreuungResource.saveBetreuung(converter.toJaxId(initialBetr.getKind()), updatedBetr, RESTEASY_URI_INFO, null);
+		updatedBetr = betreuungResource.saveBetreuung(converter.toJaxId(initialBetr.getKind()), updatedBetr, false, RESTEASY_URI_INFO, null);
 		Assert.assertEquals(1, updatedBetr.getBetreuungspensumContainers().size());
 		Assert.assertEquals(new Integer(1), updatedBetr.getBetreuungNummer());
 		checkNextNumberBetreuung(converter.toJaxId(initialBetr.getKind()), Integer.valueOf(2));
@@ -167,7 +162,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 		Betreuung testBetreuung = TestDataUtil.createDefaultBetreuung();
 		persistStammdaten(testBetreuung.getInstitutionStammdaten());
 		testBetreuung.setKind(returnedKind);
-		Betreuung betreuung = betreuungService.saveBetreuung(testBetreuung);
+		Betreuung betreuung = betreuungService.saveBetreuung(testBetreuung, false);
 		checkNextNumberBetreuung(converter.toJaxId(betreuung.getKind()), Integer.valueOf(2));
 		return betreuung;
 	}

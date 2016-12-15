@@ -23,13 +23,11 @@ public class AuthAccessElement implements Serializable {
 	private static final long serialVersionUID = 5211944101244853396L;
 
 	@Nonnull
-	private final String authId;
+	private final String authId; // = username
 	@Nonnull
 	private final String authToken;
 	@Nonnull
 	private final String xsrfToken;
-	@Nonnull
-	private final String username;
 	@Nonnull
 	private final String nachname;
 	@Nonnull
@@ -40,12 +38,12 @@ public class AuthAccessElement implements Serializable {
 	private final UserRole role;
 
 	public AuthAccessElement(@Nonnull String authId, @Nonnull String authToken, @Nonnull String xsrfToken,
-							 @Nonnull String username, @Nonnull String nachname, @Nonnull String vorname,
+							 @Nonnull String nachname, @Nonnull String vorname,
 							 @Nonnull String email, @Nonnull UserRole role) {
 		this.authId = Objects.requireNonNull(authId);
 		this.authToken = Objects.requireNonNull(authToken);
 		this.xsrfToken = Objects.requireNonNull(xsrfToken);
-		this.username = Objects.requireNonNull(username);
+//		this.username = Objects.requireNonNull(username);
 		this.nachname = Objects.requireNonNull(nachname);
 		this.vorname = Objects.requireNonNull(vorname);
 		this.email = Objects.requireNonNull(email);
@@ -67,10 +65,6 @@ public class AuthAccessElement implements Serializable {
 		return xsrfToken;
 	}
 
-	@Nonnull
-	public String getUsername() {
-		return username;
-	}
 
 	@Nonnull
 	public String getNachname() {

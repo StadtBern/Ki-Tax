@@ -1,7 +1,6 @@
 import {IComponentOptions, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {IStammdatenStateParams} from '../../gesuch.route';
@@ -11,7 +10,12 @@ import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSDokument from '../../../models/TSDokument';
 import DokumenteRS from '../../service/dokumenteRS.rest';
-import IFormController = angular.IFormController;
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import GlobalCacheService from '../../service/globalCacheService';
+import ICacheFactoryService = angular.ICacheFactoryService;
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
 
@@ -25,7 +29,7 @@ export class DokumenteViewComponentConfig implements IComponentOptions {
 /**
  * Controller fuer den Dokumenten Upload
  */
-export class DokumenteViewController extends AbstractGesuchViewController {
+export class DokumenteViewController extends AbstractGesuchViewController<any> {
     parsedNum: number;
     dokumenteEkv: TSDokumentGrund[] = [];
     dokumenteFinSit: TSDokumentGrund[] = [];
@@ -33,22 +37,26 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     dokumenteErwp: TSDokumentGrund[] = [];
     dokumenteKinder: TSDokumentGrund[] = [];
     dokumenteSonst: TSDokumentGrund[] = [];
+    dokumentePapiergesuch: TSDokumentGrund[] = [];
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-                                'DokumenteRS', '$log'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
+        'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil', 'GlobalCacheService'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                private dokumenteRS: DokumenteRS, private $log: ILogService) {
-        super($state, gesuchModelManager, berechnungsManager);
+                private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager,
+                private ebeguUtil: EbeguUtil, private globalCacheService: GlobalCacheService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.DOKUMENTE);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.calculate();
     }
 
     calculate() {
-        if (this.gesuchModelManager.gesuch) {
+        if (this.gesuchModelManager.getGesuch()) {
             this.berechnungsManager
-                .getDokumente(this.gesuchModelManager.gesuch)
+                .getDokumente(this.gesuchModelManager.getGesuch())
                 .then((promiseValue: TSDokumenteDTO) => {
                     this.searchDokumente(promiseValue, this.dokumenteEkv, TSDokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
                     this.searchDokumente(promiseValue, this.dokumenteFinSit, TSDokumentGrundTyp.FINANZIELLESITUATION);
@@ -56,6 +64,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                     this.searchDokumente(promiseValue, this.dokumenteErwp, TSDokumentGrundTyp.ERWERBSPENSUM);
                     this.searchDokumente(promiseValue, this.dokumenteKinder, TSDokumentGrundTyp.KINDER);
                     this.searchDokumente(promiseValue, this.dokumenteSonst, TSDokumentGrundTyp.SONSTIGE_NACHWEISE);
+                    this.searchDokumente(promiseValue, this.dokumentePapiergesuch, TSDokumentGrundTyp.PAPIERGESUCH);
                 });
         } else {
             this.$log.debug('No gesuch für dokumente');
@@ -73,30 +82,6 @@ export class DokumenteViewController extends AbstractGesuchViewController {
         }
     }
 
-    previousStep(form: IFormController): void {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
-            if (ekvFuerBasisJahrPlus2) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
-            } else if (ekvFuerBasisJahrPlus1) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-            } else {
-                this.state.go('gesuch.einkommensverschlechterungInfo');
-            }
-        }
-    }
-
-    nextStep(form: IFormController): void {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            this.state.go('gesuch.verfuegen');
-        }
-    }
-
     addUploadedDokuments(dokumentGrund: any, dokumente: TSDokumentGrund[]): void {
         this.$log.debug('addUploadedDokuments called');
         var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
@@ -104,10 +89,16 @@ export class DokumenteViewController extends AbstractGesuchViewController {
         if (index > -1) {
             this.$log.debug('add dokument to dokumentList');
             dokumente[index] = dokumentGrund;
-        }
-        this.handleUpdateBug(dokumente);
-    }
 
+            // Clear cached Papiergesuch on add...
+            if (dokumentGrund.dokumentGrundTyp === TSDokumentGrundTyp.PAPIERGESUCH) {
+                this.globalCacheService.getCache().removeAll();
+            }
+        }
+        this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
+        // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
+        this.resetAntragStatusIfNecessary();
+    }
 
     removeDokument(dokumentGrund: TSDokumentGrund, dokument: TSDokument, dokumente: TSDokumentGrund[]) {
 
@@ -128,6 +119,11 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                 if (index > -1) {
                     this.$log.debug('update dokumentGrund in dokumentList');
                     dokumente[index] = dokumentGrund;
+
+                    // Clear cached Papiergesuch on remove...
+                    if (dokumentGrund.dokumentGrundTyp === TSDokumentGrundTyp.PAPIERGESUCH) {
+                        this.globalCacheService.getCache().removeAll();
+                    }
                 }
             } else {
                 // delete object in table with sended if returned is null
@@ -137,16 +133,19 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                     dokumente.splice(index, 1);
                 }
             }
+            this.wizardStepManager.findStepsFromGesuch(this.gesuchModelManager.getGesuch().id);
         });
 
-        this.handleUpdateBug(dokumente);
+        this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
     }
 
-    private handleUpdateBug(dokumente: TSDokumentGrund[]) {
-        // Ugly Fix:
-        // Because of a bug in smarttables, the table will only be refreshed if the reverence or the first element
-        // changes in table. To resolve this bug, we overwrite the first element by a copy of itself.
-        dokumente[0] = angular.copy(dokumente[0]);
+    private resetAntragStatusIfNecessary() : void {
+        // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
+        let status = this.gesuchModelManager.getGesuch().status;
+        if (TSAntragStatus.ERSTE_MAHNUNG === status) {
+            this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        } else if (TSAntragStatus.ZWEITE_MAHNUNG === status) {
+            this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        }
     }
-
 }

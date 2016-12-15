@@ -62,7 +62,7 @@ public class GesuchsperiodeResource {
 
 	@Nullable
 	@GET
-	@Path("/{gesuchsperiodeId}")
+	@Path("/gesuchsperiode/{gesuchsperiodeId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuchsperiode findGesuchsperiode(

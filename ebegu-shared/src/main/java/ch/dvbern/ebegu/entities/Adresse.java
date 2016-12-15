@@ -65,8 +65,10 @@ public class Adresse extends AbstractDateRangedEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String organisation;
 
+
 	public Adresse() {
 	}
+
 
 	@Nonnull
 	public String getStrasse() {
@@ -156,7 +158,18 @@ public class Adresse extends AbstractDateRangedEntity {
 			Objects.equals(gemeinde, otherAdr.gemeinde) &&
 			Objects.equals(organisation, otherAdr.organisation) &&
 			Objects.equals(getGueltigkeit(), otherAdr.getGueltigkeit());
-
 	}
 
+	public Adresse copyForMutation(Adresse mutation) {
+		super.copyForMutation(mutation);
+		mutation.setStrasse(this.getStrasse());
+		mutation.setHausnummer(this.getHausnummer());
+		mutation.setZusatzzeile(this.getZusatzzeile());
+		mutation.setPlz(this.getPlz());
+		mutation.setOrt(this.getOrt());
+		mutation.setLand(this.getLand());
+		mutation.setGemeinde(this.getGemeinde());
+		mutation.setOrganisation(this.getOrganisation());
+		return mutation;
+	}
 }

@@ -120,10 +120,24 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	}
 
 	/**
+	 * gueltigAb < other.gueltigAb
+	 */
+	public boolean startsAfter(@Nonnull ChronoLocalDate date) {
+		return getGueltigAb().isAfter(date);
+	}
+
+	/**
 	 * gueltigAb == other.gueltigAb
      */
 	public boolean startsSameDay(@Nonnull DateRange other) {
 		return getGueltigAb().isEqual(other.getGueltigAb());
+	}
+
+	/**
+	 * gueltigAb == date
+	 */
+	public boolean startsSameDay(@Nonnull ChronoLocalDate date) {
+		return getGueltigAb().isEqual(date);
 	}
 
 	/**
@@ -155,10 +169,24 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	}
 
 	/**
+	 * gueltigBis < other.gueltigBis
+	 */
+	public boolean endsBefore(@Nonnull ChronoLocalDate date) {
+		return this.getGueltigBis().isBefore(date);
+	}
+
+	/**
 	 * gueltigBis == other.gueltigBis
 	 */
 	public boolean endsSameDay(@Nonnull DateRange other) {
 		return this.getGueltigBis().isEqual(other.getGueltigBis());
+	}
+
+	/**
+	 * gueltigBis == other.gueltigBis
+	 */
+	public boolean endsSameDay(@Nonnull ChronoLocalDate date) {
+		return this.getGueltigBis().isEqual(date);
 	}
 
 	/**
@@ -340,6 +368,13 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 			.add("gueltigAb", gueltigAb)
 			.add("gueltigBis", gueltigBis)
 			.toString();
+	}
+
+	public String toRangeString() {
+		String gueltigAbString = Constants.DATE_FORMATTER.format(gueltigAb);
+		String gueltigBisString = Constants.DATE_FORMATTER.format(gueltigBis);
+		return gueltigAbString + " - " + gueltigBisString;
+
 	}
 
 	/**

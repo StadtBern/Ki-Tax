@@ -4,6 +4,8 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {IQService, IScope} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import TSGesuch from '../../../models/TSGesuch';
 
 describe('fallCreationView', function () {
 
@@ -24,34 +26,52 @@ describe('fallCreationView', function () {
         $rootScope = $injector.get('$rootScope');
         form = {};
         form.$valid = true;
-        fallCreationview = new FallCreationViewController($injector.get('$state'), gesuchModelManager, $injector.get('BerechnungsManager'),
-            $injector.get('EbeguUtil'), $injector.get('ErrorService'), $injector.get('$stateParams'));
+        form.$dirty = true;
+        fallCreationview = new FallCreationViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
+            $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'), $injector.get('$translate'), $q);
     }));
 
     describe('nextStep', () => {
         it('submitted but rejected -> it does not go to the next step', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.reject({}));
-            fallCreationview.nextStep(form);
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
+            fallCreationview.save(form);
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
-            expect($state.go).not.toHaveBeenCalled();
         });
         it('should submit the form and go to the next page', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.when({}));
-            fallCreationview.nextStep(form);
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
+            fallCreationview.save(form);
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
-            expect($state.go).toHaveBeenCalledWith('gesuch.familiensituation');
         });
         it('should not submit the form and not go to the next page because form is invalid', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall');
             form.$valid = false;
-            fallCreationview.nextStep(form);
+            fallCreationview.save(form);
             expect(gesuchModelManager.saveGesuchAndFall).not.toHaveBeenCalled();
-            expect($state.go).not.toHaveBeenCalled();
+        });
+    });
+    describe('getTitle', () => {
+        it('should return Art der Mutation', () => {
+            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
+            expect(fallCreationview.getTitle()).toBe('Erstellen einer Mutation');
+        });
+        it('should return Erstgesuch der Periode', () => {
+            let gesuchsperiode: TSGesuchsperiode = TestDataUtil.createGesuchsperiode20162017();
+            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuchsperiode);
+            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(true);
+            expect(fallCreationview.getTitle()).toBe('Erstgesuch der Periode 2016/17');
+        });
+        it('should return Erstgesuch', () => {
+            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(false);
+            expect(fallCreationview.getTitle()).toBe('Erstgesuch');
         });
     });
 });

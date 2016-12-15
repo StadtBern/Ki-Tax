@@ -1,12 +1,18 @@
-import {IComponentOptions, IFormController} from 'angular';
+import {IComponentOptions} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituationContainer from '../../../models/TSFinanzielleSituationContainer';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSRole} from '../../../models/enums/TSRole';
+import TSFinanzModel from '../../../models/TSFinanzModel';
+import IPromise = angular.IPromise;
+import IQService = angular.IQService;
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
 
@@ -18,23 +24,35 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
     controllerAs = 'vm';
 }
 
-export class FinanzielleSituationViewController extends AbstractGesuchViewController {
+export class FinanzielleSituationViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
     public showSelbstaendig: boolean;
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
+    allowedRoles: Array<TSRole>;
+
+    private initialModel: TSFinanzModel;
+
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
+        'WizardStepManager', '$q'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
-        super($state, gesuchModelManager, berechnungsManager);
+    constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager, private $q: IQService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
+        this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), parsedNum);
+        this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.initialModel = angular.copy(this.model);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewModel();
         this.calculate();
     }
 
     private initViewModel() {
-        this.gesuchModelManager.initFinanzielleSituation();
-        this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig();
+
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.FINANZIELLE_SITUATION);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+        this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig();
     }
 
     public showSelbstaendigClicked() {
@@ -44,64 +62,59 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     private resetSelbstaendigFields() {
-        if (this.gesuchModelManager.getStammdatenToWorkWith() && this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer) {
-            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.geschaeftsgewinnBasisjahr = undefined;
-            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 = undefined;
-            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2 = undefined;
+        if (this.model.getFiSiConToWorkWith()) {
+            this.model.getFiSiConToWorkWith().finanzielleSituationJA.geschaeftsgewinnBasisjahr = undefined;
+            this.model.getFiSiConToWorkWith().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 = undefined;
+            this.model.getFiSiConToWorkWith().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2 = undefined;
             this.calculate();
         }
     }
 
     showSteuerveranlagung(): boolean {
-        return !this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung || this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === false;
+        return !this.model.gemeinsameSteuererklaerung || this.model.gemeinsameSteuererklaerung === false;
     }
 
     showSteuererklaerung(): boolean {
-        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.steuerveranlagungErhalten === false;
+        return this.model.getFiSiConToWorkWith().finanzielleSituationJA.steuerveranlagungErhalten === false;
     }
 
-    private steuerveranlagungClicked(): void {
+    //hier neu init
+    public steuerveranlagungClicked(): void {
         // Wenn Steuerveranlagung JA -> auch StekErhalten -> JA
-        if (this.getModel().finanzielleSituationJA.steuerveranlagungErhalten === true) {
-            this.getModel().finanzielleSituationJA.steuererklaerungAusgefuellt = true;
-        } else if (this.getModel().finanzielleSituationJA.steuerveranlagungErhalten === false) {
+        // Wenn zusätzlich noch GemeinsameStek -> Dasselbe auch für GS2
+        // Wenn Steuerveranlagung erhalten, muss auch STEK ausgefüllt worden sein
+        if (this.model.finanzielleSituationContainerGS1.finanzielleSituationJA.steuerveranlagungErhalten === true) {
+            this.model.finanzielleSituationContainerGS1.finanzielleSituationJA.steuererklaerungAusgefuellt = true;
+            if (this.model.gemeinsameSteuererklaerung === true) {
+                this.model.finanzielleSituationContainerGS2.finanzielleSituationJA.steuerveranlagungErhalten = true;
+                this.model.finanzielleSituationContainerGS2.finanzielleSituationJA.steuererklaerungAusgefuellt = true;
+            }
+        } else if (this.model.finanzielleSituationContainerGS1.finanzielleSituationJA.steuerveranlagungErhalten === false) {
             // Steuerveranlagung neu NEIN -> Fragen loeschen
-            this.getModel().finanzielleSituationJA.steuererklaerungAusgefuellt = undefined;
+            this.model.finanzielleSituationContainerGS1.finanzielleSituationJA.steuererklaerungAusgefuellt = undefined;
+            if (this.model.gemeinsameSteuererklaerung === true) {
+                this.model.finanzielleSituationContainerGS2.finanzielleSituationJA.steuerveranlagungErhalten = false;
+                this.model.finanzielleSituationContainerGS2.finanzielleSituationJA.steuererklaerungAusgefuellt = undefined;
+            }
         }
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, (finanzielleSituationResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
-            } else if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituationStart');
-            } else {
-                this.state.go('gesuch.kinder');
-            }
-        });
-
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, (finanzielleSituationResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '2'});
-            } else {
-                this.state.go('gesuch.finanzielleSituationResultate');
-            }
-        });
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSFinanzielleSituationContainer> {
         if (form.$valid) {
+            this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer);
+            }
             this.errorService.clearAll();
-            this.gesuchModelManager.saveFinanzielleSituation().then(navigationFunction);
+            return this.gesuchModelManager.saveFinanzielleSituation();
         }
+        return undefined;
     }
 
     calculate() {
-        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch);
+        this.berechnungsManager.calculateFinanzielleSituationTemp(this.model);
     }
 
     resetForm() {
@@ -109,7 +122,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     public getModel(): TSFinanzielleSituationContainer {
-        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer;
+        return this.model.getFiSiConToWorkWith();
     }
 
     public getResultate(): TSFinanzielleSituationResultateDTO {

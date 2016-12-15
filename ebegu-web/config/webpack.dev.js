@@ -76,8 +76,8 @@ module.exports = webpackMerge(commonConfig,  {
         new DefinePlugin({
             'ENV': JSON.stringify(METADATA.ENV),
             'HMR': METADATA.HMR,
-            'VERSION': METADATA.version,
-            'BUILDTSTAMP': METADATA.buildtstamp,
+            'VERSION': JSON.stringify(METADATA.version),
+            'BUILDTSTAMP': JSON.stringify(METADATA.buildtstamp),
             'process.env': {
                 'ENV': JSON.stringify(METADATA.ENV),
                 'NODE_ENV': JSON.stringify(METADATA.ENV),
@@ -111,7 +111,7 @@ module.exports = webpackMerge(commonConfig,  {
             poll: 1000
         },
         proxy: {
-            '/ebegu*': {
+            '/ebegu': {
                 target: 'http://localhost:8080',
                 secure: false
             }

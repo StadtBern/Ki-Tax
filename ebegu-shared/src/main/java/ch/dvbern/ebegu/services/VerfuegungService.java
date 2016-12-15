@@ -1,9 +1,12 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 
 import javax.annotation.Nonnull;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -14,10 +17,27 @@ public interface VerfuegungService {
 
 	/**
 	 * Speichert die Verfuegung neu in der DB falls der Key noch nicht existiert.
+	 * Die Betreuung erhaelt den Status VERFUEGT
 	 * @param verfuegung Die Verfuegung als DTO
+	 * @param betreuungId Id der Betreuung auf die die verfuegung gespeichet werden soll
 	 */
 	@Nonnull
-	Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung);
+	Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId);
+
+	/**
+	 * Speichert die Verfuegung neu in der DB falls der Key noch nicht existiert.
+	 * Die Betreuung erhaelt den Status NICHT_EINGETRETEN
+	 * @param verfuegung Die Verfuegung als DTO
+	 * @param betreuungId Id der Betreuung auf die die verfuegung gespeichet werden soll
+	 */
+	@Nonnull
+	Verfuegung nichtEintreten(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId);
+
+	/**
+	 * Speichert die Verfuegung und setzt die Betreuung in den uebergebenen Status
+     */
+	@Nonnull
+	Verfuegung persistVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, @Nonnull Betreuungsstatus betreuungsstatus);
 
 	/**
 	 * @param id PK (id) der Verfuegung
@@ -45,5 +65,19 @@ public interface VerfuegungService {
 	@Nonnull
 	Gesuch calculateVerfuegung(@Nonnull Gesuch gesuch);
 
+
+	/**
+	 * gibt die Verfuegung der vorherigen verfuegten Betreuung zurueck.
+	 * kann null sein
+	 * @param betreuung
+	 * @return Verfuegung oder null falls nicht vorhanden
+	 */
+	@Nonnull
+	Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull Betreuung betreuung);
+
+	/**
+	 * genau wie findVorgaengerVerfuegung gibt aber nur deren TimestampErstellt zurueck wenn vorhanden
+	 */
+	Optional<LocalDate> findVorgaengerVerfuegungDate(@Nonnull Betreuung betreuung);
 
 }

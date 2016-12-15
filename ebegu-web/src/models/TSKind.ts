@@ -9,22 +9,21 @@ export default class TSKind extends TSAbstractPersonEntity {
     private _kinderabzug: TSKinderabzug;
     private _familienErgaenzendeBetreuung: boolean;
     private _mutterspracheDeutsch: boolean;
+    private _einschulung: boolean;
     private _pensumFachstelle: TSPensumFachstelle;
-    private _bemerkungen: string;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 wohnhaftImGleichenHaushalt?: number, kinderabzug?: TSKinderabzug, familienErgaenzendeBetreuung?: boolean,
-                mutterspracheDeutsch?: boolean, pensumFachstelle?: TSPensumFachstelle, bemerkungen?: string) {
+                mutterspracheDeutsch?: boolean, pensumFachstelle?: TSPensumFachstelle, einschulung?: boolean) {
 
         super(vorname, nachname, geburtsdatum, geschlecht);
+        this._wohnhaftImGleichenHaushalt = wohnhaftImGleichenHaushalt;
         this._kinderabzug = kinderabzug;
         this._familienErgaenzendeBetreuung = familienErgaenzendeBetreuung;
         this._mutterspracheDeutsch = mutterspracheDeutsch;
+        this._einschulung = einschulung;
         this._pensumFachstelle = pensumFachstelle;
-        this._bemerkungen = bemerkungen;
-        this._wohnhaftImGleichenHaushalt = wohnhaftImGleichenHaushalt;
     }
-
 
     get wohnhaftImGleichenHaushalt(): number {
         return this._wohnhaftImGleichenHaushalt;
@@ -66,11 +65,11 @@ export default class TSKind extends TSAbstractPersonEntity {
         this._pensumFachstelle = value;
     }
 
-    get bemerkungen(): string {
-        return this._bemerkungen;
+    get einschulung(): boolean {
+        return this._einschulung;
     }
 
-    set bemerkungen(value: string) {
-        this._bemerkungen = value;
+    set einschulung(value: boolean) {
+        this._einschulung = value;
     }
 }

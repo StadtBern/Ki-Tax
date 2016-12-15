@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -34,9 +35,8 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@NotNull
 	private List<JaxBetreuungspensumContainer> betreuungspensumContainers = new ArrayList<>();
 
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Nullable
-	private String bemerkungen;
+	@NotNull
+	private List<JaxAbwesenheitContainer> abwesenheitContainers = new ArrayList<>();
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -63,7 +63,6 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	private LocalDate datumBestaetigung = null;
 
 
-
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
 		return institutionStammdaten;
 	}
@@ -88,13 +87,12 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.betreuungspensumContainers = betreuungspensumContainers;
 	}
 
-	@Nullable
-	public String getBemerkungen() {
-		return bemerkungen;
+	public List<JaxAbwesenheitContainer> getAbwesenheitContainers() {
+		return abwesenheitContainers;
 	}
 
-	public void setBemerkungen(@Nullable String bemerkungen) {
-		this.bemerkungen = bemerkungen;
+	public void setAbwesenheitContainers(List<JaxAbwesenheitContainer> abwesenheiten) {
+		this.abwesenheitContainers = abwesenheiten;
 	}
 
 	@Nullable
@@ -155,5 +153,14 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setDatumBestaetigung(@Nullable LocalDate datumBestaetigung) {
 		this.datumBestaetigung = datumBestaetigung;
+	}
+
+	@Override
+	public int compareTo(@Nonnull JaxAbstractDTO o) {
+		if (o instanceof JaxBetreuung) {
+			final JaxBetreuung other = (JaxBetreuung) o;
+			return getBetreuungNummer().compareTo(other.getBetreuungNummer());
+		}
+		return super.compareTo(o);
 	}
 }

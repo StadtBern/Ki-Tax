@@ -8,6 +8,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nonnull;
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
+import javax.validation.Valid;
 import java.util.Objects;
 
 /**
@@ -21,9 +22,13 @@ public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigk
 
 	@Nonnull
 	@Embedded
-	//@Valid todo team dies einkommentieren fuer die Produktion. Auskommentiert damit wir einfacher Daten automatisch eingeben koennen mit FormFiller
+	@Valid
 	private DateRange gueltigkeit = new DateRange();
 
+	public AbstractDateRangedEntity() {
+	}
+
+	@Override
 	@Nonnull
 	public DateRange getGueltigkeit() {
 		return gueltigkeit;
@@ -49,5 +54,11 @@ public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigk
 		return new ToStringBuilder(this)
 			.append("gueltigkeit", gueltigkeit)
 			.toString();
+	}
+
+	public AbstractDateRangedEntity copyForMutation(AbstractDateRangedEntity mutation) {
+		super.copyForMutation(mutation);
+		mutation.setGueltigkeit(new DateRange(this.getGueltigkeit()));
+		return mutation;
 	}
 }

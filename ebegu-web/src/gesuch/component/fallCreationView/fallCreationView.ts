@@ -1,13 +1,18 @@
-import {IComponentOptions, IFormController} from 'angular';
-import {IStateService} from 'angular-ui-router';
+import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSGesuch from '../../../models/TSGesuch';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import EbeguUtil from '../../../utils/EbeguUtil';
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import {INewFallStateParams} from '../../gesuch.route';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import Moment = moment.Moment;
+import ITranslateService = angular.translate.ITranslateService;
+import IQService = angular.IQService;
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -18,58 +23,87 @@ export class FallCreationViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class FallCreationViewController extends AbstractGesuchViewController {
+export class FallCreationViewController extends AbstractGesuchViewController<any> {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
+    private createMutation: boolean = false;
+    private eingangsart: TSEingangsart;
+    private fallId: string;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService', '$stateParams'];
+    TSRoleUtil: any;
+
+    // showError ist ein Hack damit, die Fehlermeldung fuer die Checkboxes nicht direkt beim Laden der Seite angezeigt wird
+    // sondern erst nachdem man auf ein checkbox oder auf speichern geklickt hat
+    showError: boolean = false;
+
+    static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
+        'WizardStepManager', '$translate', '$q'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
-                private errorService: ErrorService, $stateParams: INewFallStateParams) {
-        super(state, gesuchModelManager, berechnungsManager);
-        this.createNewParam = $stateParams.createNew;
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
+                private $translate: ITranslateService, private $q: IQService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        this.readStateParams();
         this.initViewModel();
+        this.TSRoleUtil = TSRoleUtil;
+    }
+
+    private readStateParams() {
+        if (this.$stateParams.createNew === 'true') {
+            this.createNewParam = true;
+        }
+        if (this.$stateParams.createMutation === 'true') {
+            this.createMutation = true;
+        }
+        if (this.$stateParams.eingangsart) {
+            this.eingangsart = this.$stateParams.eingangsart;
+        }
+        if (this.$stateParams.gesuchsperiodeId && this.$stateParams.gesuchsperiodeId !== '') {
+            this.gesuchsperiodeId = this.$stateParams.gesuchsperiodeId;
+        }
+        if (this.$stateParams.fallId && this.$stateParams.fallId !== '') {
+            this.fallId = this.$stateParams.fallId;
+        }
+    }
+
+    public setShowError(showError: boolean): void {
+        this.showError = showError;
     }
 
     private initViewModel(): void {
-        this.gesuchModelManager.initGesuch(this.createNewParam);
-        if (this.gesuchModelManager.getGesuchsperiode()) {
-            this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
+        if (this.gesuchsperiodeId === null || this.gesuchsperiodeId === undefined || this.gesuchsperiodeId === '') {
+            if (this.gesuchModelManager.getGesuchsperiode()) {
+                this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
+            }
         }
+        this.gesuchModelManager.initGesuchWithEingangsart(this.createNewParam, this.eingangsart, this.gesuchsperiodeId, this.fallId);
         if (this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
             this.gesuchModelManager.updateActiveGesuchsperiodenList();
         }
     }
 
-    public getGesuchModel(): TSGesuch {
-        return this.gesuchModelManager.gesuch;
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, () => {
-            this.state.go('gesuch.familiensituation');
-        });
-
-    }
-
-    save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    save(form: angular.IFormController): IPromise<TSGesuch> {
+        this.showError = true;
         if (form.$valid) {
+            if (!form.$dirty && !this.gesuchModelManager.getGesuch().isNew()) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getGesuch());
+            }
             this.errorService.clearAll();
-            this.gesuchModelManager.saveGesuchAndFall().then(navigationFunction);
+            if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.MUTATION && this.gesuchModelManager.getGesuch().isNew()) {
+                this.berechnungsManager.clear();
+                return this.gesuchModelManager.saveMutation();
+            } else {
+                return this.gesuchModelManager.saveGesuchAndFall();
+            }
         }
+        return undefined;
     }
 
-
-    public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);
-    }
-
-    /**
-     * Calls getGesuchsperiodeAsString with the Gesuchsperiode of the current Gesuch
-     * @returns {string}
-     */
-    public getCurrentGesuchsperiodeAsString(): string {
-        return this.ebeguUtil.getGesuchsperiodeAsString(this.gesuchModelManager.getGesuchsperiode());
+    public getGesuchModel(): TSGesuch {
+        return this.gesuchModelManager.getGesuch();
     }
 
     public getAllActiveGesuchsperioden() {
@@ -85,4 +119,17 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         }
     }
 
+    public getTitle(): string {
+        if (this.gesuchModelManager.isErstgesuch()) {
+            if (this.gesuchModelManager.isGesuchSaved() && this.gesuchModelManager.getGesuchsperiode()) {
+                return this.$translate.instant('MENU_ERSTGESUCH_PERIODE', {
+                    periode: this.gesuchModelManager.getGesuchsperiode().gesuchsperiodeString
+                });
+            } else {
+                return this.$translate.instant('MENU_ERSTGESUCH');
+            }
+        } else {
+            return this.$translate.instant('ART_DER_MUTATION');
+        }
+    }
 }

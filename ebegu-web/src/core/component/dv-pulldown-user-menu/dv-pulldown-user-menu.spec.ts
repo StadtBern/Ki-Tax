@@ -28,14 +28,12 @@ describe('DvPulldownUserMenuController', function () {
     describe('API Usage', function () {
         describe('logout()', () => {
             it('must call the logout function and redirect to the login page', () => {
-                spyOn(authServiceRS, 'logoutRequest').and.returnValue($q.when({}));
                 spyOn($state, 'go');
 
                 controller.logout();
                 scope.$apply();
-
-                expect(authServiceRS.logoutRequest).toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('login');
+                //actual logout happens on login page
+                expect($state.go).toHaveBeenCalledWith('login', {type: 'logout'});
             });
         });
     });

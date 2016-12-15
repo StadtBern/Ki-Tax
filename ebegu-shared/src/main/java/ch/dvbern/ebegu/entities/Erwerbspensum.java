@@ -2,16 +2,18 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.validators.CheckZuschlagPensum;
+import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumMaxZuschlag;
+import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -21,7 +23,8 @@ import java.util.Objects;
  */
 @Entity
 @Audited
-@CheckZuschlagPensum
+@CheckZuschlagErwerbspensumZuschlagUndGrund
+@CheckZuschlagErwerbspensumMaxZuschlag
 public class Erwerbspensum extends AbstractPensumEntity {
 
 	private static final long serialVersionUID = 4649639217797690323L;
@@ -40,13 +43,8 @@ public class Erwerbspensum extends AbstractPensumEntity {
 	private Zuschlagsgrund zuschlagsgrund;
 
 	@Min(0)
-	@Max(20) //Maximal 20%
 	@Column(nullable = true)
 	private Integer zuschlagsprozent;
-
-	@Column(nullable = false)
-	@NotNull
-	private boolean gesundheitlicheEinschraenkungen;
 
 	@Column(nullable = true)
 	@Nullable
@@ -54,6 +52,10 @@ public class Erwerbspensum extends AbstractPensumEntity {
 
 
 	//todo homa Prozent kann wohl aus Pensum geerbt werden
+
+
+	public Erwerbspensum() {
+	}
 
 
 	public Taetigkeit getTaetigkeit() {
@@ -70,14 +72,6 @@ public class Erwerbspensum extends AbstractPensumEntity {
 
 	public void setZuschlagZuErwerbspensum(boolean zuschlagZuErwerbspensum) {
 		this.zuschlagZuErwerbspensum = zuschlagZuErwerbspensum;
-	}
-
-	public boolean getGesundheitlicheEinschraenkungen() {
-		return gesundheitlicheEinschraenkungen;
-	}
-
-	public void setGesundheitlicheEinschraenkungen(boolean gesundheitlicheEinschraenkungen) {
-		this.gesundheitlicheEinschraenkungen = gesundheitlicheEinschraenkungen;
 	}
 
 	public Integer getZuschlagsprozent() {
@@ -101,8 +95,7 @@ public class Erwerbspensum extends AbstractPensumEntity {
 		boolean pensumIsSame = super.isSame(otherErwerbspensum);
 		boolean taetigkeitSame = Objects.equals(taetigkeit, otherErwerbspensum.getTaetigkeit());
 		boolean zuschlagSame = Objects.equals(zuschlagZuErwerbspensum, otherErwerbspensum.getZuschlagZuErwerbspensum());
-		boolean gesundhSame = Objects.equals(gesundheitlicheEinschraenkungen, otherErwerbspensum.getGesundheitlicheEinschraenkungen());
-		return pensumIsSame && taetigkeitSame && zuschlagSame && gesundhSame;
+		return pensumIsSame && taetigkeitSame && zuschlagSame;
 	}
 
 	public String getName() {
@@ -121,5 +114,15 @@ public class Erwerbspensum extends AbstractPensumEntity {
 
 	public void setBezeichnung(@Nullable String bezeichnung) {
 		this.bezeichnung = bezeichnung;
+	}
+
+	public Erwerbspensum copyForMutation(Erwerbspensum mutation) {
+		super.copyForMutation(mutation);
+		mutation.setTaetigkeit(this.getTaetigkeit());
+		mutation.setZuschlagZuErwerbspensum(this.getZuschlagZuErwerbspensum());
+		mutation.setZuschlagsgrund(this.getZuschlagsgrund());
+		mutation.setZuschlagsprozent(this.getZuschlagsprozent());
+		mutation.setBezeichnung(this.getBezeichnung());
+		return mutation;
 	}
 }

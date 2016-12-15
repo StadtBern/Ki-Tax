@@ -86,27 +86,30 @@ export class PendenzenInstitutionListViewController {
     }
 
     public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);
+        return gesuchsperiode.gesuchsperiodeString;
     }
 
     public editPendenzInstitution(pendenz: TSPendenzInstitution): void {
         if (pendenz) {
-            this.gesuchRS.findGesuchForInstitution(pendenz.gesuchId).then((response) => {
-                if (response) {
-                    this.gesuchModelManager.gesuch = response;
-                    this.openBetreuung(pendenz);
-                }
+            this.gesuchModelManager.openGesuch(pendenz.gesuchId).then(() => {
+                this.openBetreuung(pendenz);
             });
         }
     }
 
+    //TODO (team) Hier wird mit findBetreuungById die Kind-Id auf dem GMM gespeichert, spaeter soll diese als
+    // Parameter in die URL kommen. Dann kann in editPendenzInstitution() das openGesuch() entfernt werden
     private openBetreuung(pendenz: TSPendenzInstitution): void {
-        if (this.gesuchModelManager.gesuch && pendenz) {
+        if (this.gesuchModelManager.getGesuch() && pendenz) {
             this.gesuchModelManager.findKindById(pendenz.kindId);
             let betreuungNumber: number = this.gesuchModelManager.findBetreuungById(pendenz.betreuungsId);
             if (betreuungNumber > 0) {
                 this.berechnungsManager.clear(); // nur um sicher zu gehen, dass alle alte Werte geloescht sind
-                this.$state.go('gesuch.betreuung');
+
+                // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
+                this.gesuchModelManager.clearGesuch();
+
+                this.$state.go('gesuch.betreuung', {gesuchId: pendenz.gesuchId});
             }
         }
     }

@@ -1,14 +1,15 @@
-<div class="institutionView row">
+<div class="traegerschaftView adminModul">
     <div class="col-md-8 col-md-offset-2">
-        <h1 data-translate="TRAEGERSCHAFT"></h1>
-
+        <div class="viewTitle">
+            <h1 data-translate="TRAEGERSCHAFT"></h1>
+        </div>
         <form role="form" name="form" class="" unsaved-warning-form novalidate>
 
             <div class="row">
                 <!--Tabelle zum anzeigen aller Traegerschaften-->
                 <div class="col-md-12 table-responsive">
                     <table st-table="displayedCollection" st-safe-src="vm.getTraegerschaftenList()"
-                           class="table table-striped" st-delay="20">
+                           class="table" st-delay="20">
                         <thead>
                         <tr>
                             <th st-sort="name" class="sortable" data-translate="TRAEGERSCHAFT" width="95%"></th>
@@ -23,41 +24,54 @@
                             <td></td>
 
                             <!--<td>-->
-                                <!--<dv-loading-button type="button" ng-click="vm.removeTraegerschaft(row)"-->
-                                                   <!--button-class="btn btn-sm">-->
-                                    <!--<i class="fa fa-minus">-->
-                                    <!--</i>-->
-                                <!--</dv-loading-button>-->
+                            <!--<dv-loading-button type="button" button-click="vm.removeTraegerschaft(row)"-->
+                            <!--button-class=" btn-sm">-->
+                            <!--<i class="fa fa-minus">-->
+                            <!--</i>-->
+                            <!--</dv-loading-button>-->
                             <!--</td>-->
                         </tr>
 
                         <tr ng-if="vm.newTraegerschaft">
 
-                            <td>
+                            <td colspan="2">
                                 <!--Name der Traegerschaft-->
-                                <dv-input-container>
-                                    <label data-translate="NAME" for="name_ID"></label>
-                                    <input id="name_ID" type="text" name="name"
-                                           ng-model="vm.newTraegerschaft.name"
-                                           dv-max-length class="form-control" required>
-                                    <dv-error-messages for="form.name_ID.$error"
-                                                       class="error"></dv-error-messages>
-                                </dv-input-container>
+                                <div class="row marginTop10">
+                                    <div class="col-md-12 form-group">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input id="name_ID" type="text" name="name"
+                                                       ng-model="vm.newTraegerschaft.name"
+                                                       dv-max-length class="form-control" required>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <dv-loading-button type="submit"
+                                                                   button-click="vm.saveTraegerschaft(form)"
+                                                                   button-class="">
+                                                    <i class="fa fa-plus"></i>
+                                                </dv-loading-button>
+                                            </div>
+                                        </div>
 
-                            </td>
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-4">
+                                                <dv-error-messages for="form.name_ID.$error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <td>
-                                <dv-loading-button type="submit" button-click="vm.saveTraegerschaft(form)"
-                                                   button-class="btn btn-sm" style="margin-top: 20px">
-                                    <i class="fa fa-plus"></i>
-                                </dv-loading-button>
+
                             </td>
 
                             <!--<td>-->
-                                <!--<dv-loading-button type="button" ng-click="vm.clearNewTraegerschaft()"-->
-                                                   <!--button-class="btn btn-sm" style="margin-top: 20px">-->
-                                    <!--<i class="fa fa-minus"></i>-->
-                                <!--</dv-loading-button>-->
+                            <!--<dv-loading-button type="button" button-click="vm.clearNewTraegerschaft()"-->
+                            <!--button-class=" btn-sm" style="margin-top: 20px">-->
+                            <!--<i class="fa fa-minus"></i>-->
+                            <!--</dv-loading-button>-->
                             <!--</td>-->
 
                         </tr>
@@ -76,11 +90,23 @@
                     <dv-input-container class="form-group">
                         <dv-loading-button type="button"
                                            ng-click="vm.createTraegerschaft(); form.$setPristine(); form.$setUntouched()"
-                                           button-class="btn btn-sm btn-success" button-disabled="vm.newTraegerschaft">
+                                           button-class="dv-btn-sm color-success" button-disabled="vm.newTraegerschaft">
                             <i class="glyphicon glyphicon-plus"></i>
                             <span data-translate="TRAEGERSCHAFT_HINZUFUEGEN"></span>
                         </dv-loading-button>
                     </dv-input-container>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <br/>
+                    <!--Knopf zum synchen traegerschaften -->
+                    <dv-loading-button type="submit"
+                                       button-click="vm.syncWithOpenIdm()"
+                                       button-class="">
+                        <span data-translate="TRAEGERSCHAFTEN_SYNCHRONIZE"></span>
+                    </dv-loading-button>
                 </div>
             </div>
 

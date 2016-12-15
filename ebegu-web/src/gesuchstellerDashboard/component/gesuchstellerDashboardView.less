@@ -1,0 +1,90 @@
+@import "../../style/variables.less";
+
+@buttonWidth: 23rem;
+@buttonHeight: 14rem;
+
+.gesuchstellerDashboardView {
+    overflow-y: auto;
+    color: @contrast-lightest;
+    background: url('../../assets/images/ebegu_platzhalter.jpg') no-repeat center center fixed; /* fallback */
+    background: linear-gradient(rgba(40, 40, 40, 0.85), rgba(40, 40, 40, 0.85)),
+    url('../../assets/images/ebegu_platzhalter.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
+    .dashboardHeader {
+        margin-top: 20rem;
+        z-index: @z-index-dashboard;
+    }
+    .dashboardButton {
+        width: @buttonWidth;
+        height: @buttonHeight;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        position: relative;
+        &:focus {
+            border: none;
+            border-radius: 0;
+            outline: none;
+        }
+        h2 {
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            font-size: 2.2rem;
+            letter-spacing: 0.15rem;
+            color: @contrast-light;
+            margin: 0;
+        }
+        .labelZeitraum {
+            color: @contrast-light;
+            background-color: @contrast;
+            margin: 0;
+            height: 2rem;
+        }
+        .labelBig {
+            top: 0;
+            left: 0;
+            background-color: @contrast;
+            width: @buttonWidth;
+            height: 10rem;
+            min-width: 0;
+
+            & h2 {
+                line-height: 10rem;
+                font-weight: 600;
+            }
+        }
+        .labelSmall {
+            bottom: 0;
+            left: 0;
+            background-color: @primary;
+            width: @buttonWidth;
+            height: 4rem;
+            min-width: 0%;
+            & h2 {
+                line-height: 4rem;
+                font-size: 1.4rem;
+            }
+        }
+        .labelNotification {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            border-radius: 4rem;
+            background-color: @contrast-lightest;
+            width: 2.4rem;
+            height: 2.4rem;
+            vertical-align: center;
+            line-height: 2.4rem;
+            color: @primary;
+            font-weight: bold;
+        }
+    }
+    .dvb-loading-button {
+        width: @buttonWidth;
+        height: @buttonHeight;
+        text-align: center;
+    }
+}

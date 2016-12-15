@@ -4,6 +4,7 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
-public class BetreuungspensumContainer extends AbstractEntity implements Comparable<BetreuungspensumContainer>{
+public class BetreuungspensumContainer extends AbstractEntity implements Comparable<BetreuungspensumContainer> {
 
 	private static final long serialVersionUID = -6784987861150035840L;
 
@@ -33,6 +34,10 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuungspensum_container_betreuungspensum_ja"))
 	private Betreuungspensum betreuungspensumJA;
+
+
+	public BetreuungspensumContainer() {
+	}
 
 
 	public Betreuung getBetreuung() {
@@ -97,5 +102,13 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 		builder.append(this.getBetreuungspensumJA(), o.getBetreuungspensumJA());
 		builder.append(this.getBetreuungspensumJA().getId(), o.getBetreuungspensumJA().getId());
 		return builder.toComparison();
+	}
+
+	public BetreuungspensumContainer copyForMutation(@Nonnull BetreuungspensumContainer mutation, @Nonnull Betreuung betreuungMutation) {
+		super.copyForMutation(mutation);
+		mutation.setBetreuung(betreuungMutation);
+		mutation.setBetreuungspensumGS(null);
+		mutation.setBetreuungspensumJA(this.getBetreuungspensumJA().copyForMutation(new Betreuungspensum()));
+		return mutation;
 	}
 }

@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.rules;
 
 /**
- * User: homa
- * Date: 17.06.16
- * comments homa
+ * Dieses Enum definiert die moeglichen Regeln. Grundsaetzlich gibt es fuer jede Dokumentierte Regel
+ * einen solchen RuleeKey. Dieser wird dann verwendet um allfaellige Abschnitt und Calc rules dieser Regel
+ * zuzuordnen.
  */
 public enum RuleKey {
 
@@ -15,7 +15,7 @@ public enum RuleKey {
 	/**
 	 * Regel 4.2 definiert dass kein Anspruch besteht wenn das massgebende Einkommen zu hoch ist
 	 */
-	MAXIMALES_EINKOMMEN,
+	EINKOMMEN,
 
 
 	ABWESENHEIT,
@@ -24,5 +24,9 @@ public enum RuleKey {
 	WOHNSITZ,
 	EINREICHUNGSFRIST,
 	FAMILIENSITUATION,
-	WOHNHAFT_IM_GLEICHEN_HAUSHALT
+	WOHNHAFT_IM_GLEICHEN_HAUSHALT,
+	RESTANSPRUCH,
+	ANSPRUCHSBERECHNUNGSREGELN_MUTATIONEN,
+	GEKUENDIGT_VOR_EINTRITT
+
 }

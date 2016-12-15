@@ -5,11 +5,9 @@ import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +20,7 @@ import java.time.LocalDate;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class GesuchsperiodeConverterTest extends AbstractEbeguRestTest {
+public class GesuchsperiodeConverterTest extends AbstractEbeguRestLoginTest {
 
 
 	@Inject
@@ -31,10 +29,6 @@ public class GesuchsperiodeConverterTest extends AbstractEbeguRestTest {
 	@Inject
 	private JaxBConverter converter;
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 	/**
 	 * transformiert eine gespeicherte Gesuchsperiode nach jax und wieder zurueck. wir erwarten dass Daten gleich bleiben

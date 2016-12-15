@@ -1,0 +1,109 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+.color-success {
+    background: @success;
+    &:hover {
+        background: @success-dark;
+    }
+}
+
+.color-warning {
+    background: @warning;
+    &:hover {
+        background: @warning-dark;
+    }
+}
+
+.color-danger {
+    background: @danger;
+    &:hover {
+        background: @danger-dark;
+    }
+}
+
+md-dialog-actions {
+    button {
+        margin: 0.8rem;
+        width: 10rem;
+        span {
+            font-size: 1.6rem;
+        }
+    }
+}
+
+dv-navigation {
+    button {
+        // margin:2rem 0 -1rem;
+    }
+}
+
+.btn-link {
+    font-size: 1.4rem;
+    span {
+        line-height: normal;
+    }
+    &[disabled], &[disabled]:hover {
+        background: none;
+    }
+}
+
+.dv-btn-sm {
+    height: 3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    letter-spacing: normal;
+    span {
+        line-height: 3rem;
+    }
+}
+
+a.dv-btn {
+
+    display: block;
+    text-decoration: none;
+    span {
+        text-decoration: none;
+        line-height: 4rem;
+        text-align: center;
+    }
+}
+
+button, .dv-btn {
+    .normal();
+    white-space: nowrap;
+    font-size: 1.4rem;
+    text-align: center;
+    letter-spacing: 0.2rem;
+    border: none;
+    background: @primary;
+    color: @contrast-lightest;
+    padding: 0 1.5rem 0;
+    height: 4rem;
+    span {
+        height: 4rem;
+        line-height: 4rem;
+        text-align: center;
+    }
+    &.active, &:active {
+        background: @primary;
+        color: @contrast-lightest;
+
+    }
+    &:hover {
+        background: @primary-dark;
+        color: @contrast-lightest;
+    }
+
+    &:active, &:hover {
+        outline: none !important;
+        text-decoration: none !important;
+    }
+    &:focus {
+        //TODO: Insert outline or smth
+    }
+    &[disabled], &[disabled]:hover {
+        color: @contrast-lightest;
+        background: @contrast;
+    }
+}

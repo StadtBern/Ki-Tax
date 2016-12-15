@@ -1,18 +1,17 @@
-import TSPendenzJA from '../../models/TSPendenzJA';
+import TSAntragDTO from '../../models/TSAntragDTO';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpBackendService} from 'angular';
 import {EbeguWebPendenzen} from '../pendenzen.module';
 import PendenzRS from './PendenzRS.rest';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import TSUser from '../../models/TSUser';
 
 describe('pendenzRS', function () {
 
     var pendenzRS: PendenzRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
-    let mockPendenz: TSPendenzJA;
+    let mockPendenz: TSAntragDTO;
     let mockPendenzRest: any;
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
@@ -24,9 +23,9 @@ describe('pendenzRS', function () {
     }));
 
     beforeEach(() => {
-        mockPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, undefined,
-            undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
-        mockPendenzRest = ebeguRestUtil.pendenzToRestObject({}, mockPendenz);
+        mockPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.GESUCH, undefined, undefined,
+            [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
+        mockPendenzRest = ebeguRestUtil.antragDTOToRestObject({}, mockPendenz);
     });
 
     describe('Public API', function () {
@@ -44,7 +43,7 @@ describe('pendenzRS', function () {
                 let arrayResult: Array<any> = [mockPendenzRest];
                 $httpBackend.expectGET(pendenzRS.serviceURL).respond(arrayResult);
 
-                let foundPendenzen: Array<TSPendenzJA>;
+                let foundPendenzen: Array<TSAntragDTO>;
                 pendenzRS.getPendenzenList().then((result) => {
                     foundPendenzen = result;
                 });

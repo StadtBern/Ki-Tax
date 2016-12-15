@@ -16,23 +16,20 @@ describe('betreuungListViewTest', function () {
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
+        let wizardStepManager = $injector.get('WizardStepManager');
+        spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         $state = $injector.get('$state');
         let mddialog = $injector.get('$mdDialog');
         let dialog = $injector.get('DvDialog');
         let ebeguRestUtil = $injector.get('EbeguRestUtil');
         let errorService = $injector.get('ErrorService');
-        betreuungListView = new BetreuungListViewController($state, gesuchModelManager, mddialog, dialog, ebeguRestUtil, undefined, errorService);
+        betreuungListView = new BetreuungListViewController($state, gesuchModelManager, mddialog, dialog, ebeguRestUtil, undefined,
+            errorService, wizardStepManager);
     }));
 
     describe('Public API', function () {
         it('should include a createBetreuung() function', function () {
             expect(betreuungListView.createBetreuung).toBeDefined();
-        });
-        it('should include a nextStep() function', function () {
-            expect(betreuungListView.nextStep).toBeDefined();
-        });
-        it('should include a previousStep() function', function () {
-            expect(betreuungListView.previousStep).toBeDefined();
         });
     });
 
@@ -48,21 +45,7 @@ describe('betreuungListViewTest', function () {
                 expect(gesuchModelManager.findKind).toHaveBeenCalledWith(tsKindContainer);
                 expect(gesuchModelManager.getKindNumber()).toBe(1);
                 expect(gesuchModelManager.createBetreuung).toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('gesuch.betreuung');
-            });
-        });
-        describe('nextStep', () => {
-            it('should go to finanzielleSituation', () => {
-                spyOn($state, 'go');
-                betreuungListView.nextStep();
-                expect($state.go).toHaveBeenCalledWith('gesuch.erwerbsPensen');
-            });
-        });
-        describe('previousStep', () => {
-            it('should go to kinder', () => {
-                spyOn($state, 'go');
-                betreuungListView.previousStep();
-                expect($state.go).toHaveBeenCalledWith('gesuch.kinder');
+                expect($state.go).toHaveBeenCalledWith('gesuch.betreuung', { gesuchId: ''});
             });
         });
     });

@@ -1,16 +1,24 @@
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {EnumEx} from '../../../utils/EnumEx';
-import {IComponentOptions, IFormController} from 'angular';
-import {IStateService} from 'angular-ui-router';
+import {IComponentOptions} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import './stammdatenView.less';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSRole} from '../../../models/enums/TSRole';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import IQService = angular.IQService;
+import IPromise = angular.IPromise;
+import IScope = angular.IScope;
+import TSAdresseContainer from '../../../models/TSAdresseContainer';
+import TSAdresse from '../../../models/TSAdresse';
+import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -23,87 +31,113 @@ export class StammdatenViewComponentConfig implements IComponentOptions {
 }
 
 
-export class StammdatenViewController extends AbstractGesuchViewController {
+export class StammdatenViewController extends AbstractGesuchViewController<TSGesuchstellerContainer> {
     geschlechter: Array<string>;
-    showUmzug: boolean;
     showKorrespondadr: boolean;
     ebeguRestUtil: EbeguRestUtil;
-    phonePattern: string;
-    mobilePattern: string;
     allowedRoles: Array<TSRole>;
+    gesuchstellerNumber: number;
+    private initialModel: TSGesuchstellerContainer;
 
-    /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
-     this.onUpdate({key: data})*/
 
-    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService'];
+    static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
+        'CONSTANTS', '$q', '$scope'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, ebeguRestUtil: EbeguRestUtil,
-                gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
-        super($state, gesuchModelManager, berechnungsManager);
+    constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
+                berechnungsManager: BerechnungsManager, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, private $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.ebeguRestUtil = ebeguRestUtil;
-        let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
-        this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
+        this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
+        this.gesuchModelManager.setGesuchstellerNumber(this.gesuchstellerNumber);
         this.initViewmodel();
-        this.phonePattern = '(0|\\+41|0041)\\s?([\\d]{2})\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})';
-        this.mobilePattern = '(0|\\+41|0041)\\s?(74|75|76|77|78|79)\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})';
     }
 
     private initViewmodel() {
         this.gesuchModelManager.initStammdaten();
+        this.model = angular.copy(this.gesuchModelManager.getStammdatenToWorkWith());
+        this.initialModel = angular.copy(this.model);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCHSTELLER);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
-        this.gesuchModelManager.calculateShowDatumFlags(this.gesuchModelManager.getStammdatenToWorkWith());
-        this.showUmzug = (this.gesuchModelManager.getStammdatenToWorkWith().umzugAdresse) ? true : false;
-        this.showKorrespondadr = (this.gesuchModelManager.getStammdatenToWorkWith().korrespondenzAdresse) ? true : false;
+        this.showKorrespondadr = (this.model.korrespondenzAdresse) ? true : false;
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
-    }
-
-    umzugadreseClicked() {
-        this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
+        this.getModel().showUmzug = this.getModel().showUmzug || this.getModel().isThereAnyUmzug();
     }
 
     korrespondenzAdrClicked() {
-        this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
+        this.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, (gesuchstellerResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
-            } else {
-                this.state.go('gesuch.familiensituation');
-            }
-        });
-    }
-
-    nextStep(form: IFormController, isJugendamt: boolean): void {
-        this.save(form, (gesuchstellerResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
-            } else {
-                if (isJugendamt) {
-                    this.state.go('gesuch.kinder');
-                } else {
-                    this.state.go('gesuch.betreuungen');
-                }
-            }
-        });
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSGesuchstellerContainer> {
         if (form.$valid) {
-            if (!this.showUmzug) {
-                this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
+            this.gesuchModelManager.setStammdatenToWorkWith(this.model);
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && !this.gesuchModelManager.isGesuchsteller2Required()) {
+                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                }
+                if (this.gesuchModelManager.getGesuchstellerNumber() === 2) {
+                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                }
+
+                return this.$q.when(this.model);
             }
             if (!this.showKorrespondadr) {
-                this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
+                this.setKorrespondenzAdresse(this.showKorrespondadr);
+            }
+            if ((this.gesuchModelManager.getGesuch().gesuchsteller1 && this.gesuchModelManager.getGesuch().gesuchsteller1.showUmzug)
+                || (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.showUmzug)
+                || this.isMutation()) {
+                this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
+            } else {
+                this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
             }
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuchsteller().then(navigationFunction);
+            return this.gesuchModelManager.updateGesuchsteller(false);
+        }
+        return undefined;
+    }
+
+    public getModel(): TSGesuchstellerContainer {
+        return this.model;
+    }
+
+    public getModelJA() {
+        return this.model.gesuchstellerJA;
+    }
+
+    /**
+     * Die Wohnadresse des GS2 darf bei Mutationen in denen der GS2 bereits existiert, nicht geaendert werden.
+     * Die Wohnadresse des GS1 darf bei Mutationen nie geaendert werden
+     * @returns {boolean}
+     */
+    public disableWohnadresseFor2GS(): boolean {
+        return this.isMutation() && (this.gesuchstellerNumber === 1
+            || (this.model.vorgaengerId !== null
+            && this.model.vorgaengerId !== undefined));
+    }
+
+    public isThereAnyUmzug(): boolean {
+        return this.gesuchModelManager.getGesuch().isThereAnyUmzug();
+    }
+
+    private setKorrespondenzAdresse(showKorrespondadr: boolean): void {
+        if (showKorrespondadr) {
+            this.getModel().korrespondenzAdresse = this.initKorrespondenzAdresse();
+        } else {
+            this.getModel().korrespondenzAdresse = undefined;
         }
     }
 
-    public getModel(): TSGesuchsteller {
-        return this.gesuchModelManager.getStammdatenToWorkWith();
+    private initKorrespondenzAdresse(): TSAdresseContainer {
+        let korrespAdresseContanier: TSAdresseContainer = new TSAdresseContainer();
+        let korrAdr = new TSAdresse();
+        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
+        korrespAdresseContanier.showDatumVon = false;
+        korrespAdresseContanier.adresseJA = korrAdr;
+        return korrespAdresseContanier;
     }
 
 }

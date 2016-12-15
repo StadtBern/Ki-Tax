@@ -7,7 +7,19 @@ import {TSDateRange} from '../models/types/TSDateRange';
 import {TSZuschlagsgrund} from '../models/enums/TSZuschlagsgrund';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
+import TSWizardStep from '../models/TSWizardStep';
+import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
+import {TSWizardStepName} from '../models/enums/TSWizardStepName';
+import TSVerfuegung from '../models/TSVerfuegung';
+import * as moment from 'moment';
+import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import Moment = moment.Moment;
+import TSAntragDTO from '../models/TSAntragDTO';
+import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import TSGesuchsteller from '../models/TSGesuchsteller';
+import TSAdresse from '../models/TSAdresse';
+import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
+import TSAdresseContainer from '../models/TSAdresseContainer';
 
 export default class TestDataUtil {
 
@@ -16,6 +28,7 @@ export default class TestDataUtil {
         abstractEntity.id = undefined;
         abstractEntity.timestampErstellt = undefined;
         abstractEntity.timestampMutiert = undefined;
+        abstractEntity.vorgaengerId = undefined;
     }
 
     /**
@@ -33,7 +46,6 @@ export default class TestDataUtil {
 
     static createErwerbspensum(): TSErwerbspensum {
         let dummyErwerbspensum = new TSErwerbspensum();
-        dummyErwerbspensum.gesundheitlicheEinschraenkungen = false;
         dummyErwerbspensum.taetigkeit = TSTaetigkeit.ANGESTELLT;
         dummyErwerbspensum.pensum = 80;
         dummyErwerbspensum.gueltigkeit = new TSDateRange(DateUtil.today(), DateUtil.today().add(7, 'months'));
@@ -57,7 +69,64 @@ export default class TestDataUtil {
     static mockDefaultGesuchModelManagerHttpCalls($httpBackend: IHttpBackendService) {
         $httpBackend.when('GET', '/ebegu/api/v1/fachstellen').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/0621fb5d-a187-5a91-abaf-8a813c4d263a').respond({});
-        $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date/active?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/wizard-steps').respond({});
+        $httpBackend.when('POST', '/ebegu/api/v1/wizard-steps').respond({});
+    }
+
+    public static createWizardStep(gesuchId: string): TSWizardStep {
+        let wizardStep: TSWizardStep = new TSWizardStep();
+        TestDataUtil.setAbstractFieldsUndefined(wizardStep);
+        wizardStep.gesuchId = gesuchId;
+        wizardStep.bemerkungen = 'bemerkung';
+        wizardStep.wizardStepStatus = TSWizardStepStatus.IN_BEARBEITUNG;
+        wizardStep.wizardStepName = TSWizardStepName.BETREUUNG;
+        return wizardStep;
+    }
+
+    public static createVerfuegung(): TSVerfuegung {
+        let verfuegung: TSVerfuegung = new TSVerfuegung();
+        TestDataUtil.setAbstractFieldsUndefined(verfuegung);
+        verfuegung.id = '123321';
+        verfuegung.zeitabschnitte = [];
+        return verfuegung;
+    }
+
+    public static createGesuchsperiode20162017(): TSGesuchsperiode {
+        let gueltigkeit: TSDateRange = new TSDateRange(moment('01.07.2016', 'DD.MM.YYYY'), moment('31.08.2017', 'DD.MM.YYYY'));
+        return new TSGesuchsperiode(true, gueltigkeit);
+    }
+
+    public static createTSAntragDTO(antragTyp: TSAntragTyp, eingangsdatum: Moment): TSAntragDTO {
+        let antrag: TSAntragDTO = new TSAntragDTO();
+        antrag.verfuegt = true;
+        antrag.antragTyp = antragTyp;
+        antrag.eingangsdatum = eingangsdatum;
+        let gesuchsperiode: TSGesuchsperiode = TestDataUtil.createGesuchsperiode20162017();
+        antrag.gesuchsperiodeGueltigAb = gesuchsperiode.gueltigkeit.gueltigAb;
+        antrag.gesuchsperiodeGueltigBis = gesuchsperiode.gueltigkeit.gueltigBis;
+        return antrag;
+    }
+
+    public static createGesuchsteller(vorname: string, nachname: string): TSGesuchstellerContainer {
+        let gesuchstellerCont: TSGesuchstellerContainer = new TSGesuchstellerContainer();
+        let gesuchsteller: TSGesuchsteller = new TSGesuchsteller();
+        gesuchsteller.vorname = vorname;
+        gesuchsteller.nachname = nachname;
+        gesuchstellerCont.gesuchstellerJA = gesuchsteller;
+        gesuchstellerCont.adressen = [];
+        return gesuchstellerCont;
+    }
+
+    public static createAdresse(strasse: string, nummer: string): TSAdresseContainer {
+        let adresseCont: TSAdresseContainer = new TSAdresseContainer();
+        let adresse: TSAdresse = new TSAdresse();
+        adresse.strasse = strasse;
+        adresse.hausnummer = nummer;
+        adresse.gueltigkeit = TestDataUtil.createGesuchsperiode20162017().gueltigkeit;
+        adresseCont.showDatumVon = true;
+        adresseCont.adresseJA = adresse;
+        return adresseCont;
     }
 }

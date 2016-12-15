@@ -1,15 +1,21 @@
 package ch.dvbern.ebegu.util;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.SequenceType;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.KindService;
+import ch.dvbern.ebegu.services.SequenceService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.spi.CDI;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -18,9 +24,14 @@ import java.util.Optional;
 
 public class AbstractEntityListener {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEntityListener.class);
+
 	private static PrincipalBean principalBean = null;
 	private FallService fallService;
 	private KindService kindService;
+	private SequenceService sequenceService;
+
+	private BenutzerService benutzerService;
 
 	@SuppressFBWarnings(value = "LI_LAZY_INIT_STATIC", justification = "Auch wenn das vlt. mehrfach initialisiert wird... das macht nix, solange am Ende was Richtiges drinsteht")
 	private static PrincipalBean getPrincipalBean() {
@@ -37,9 +48,10 @@ public class AbstractEntityListener {
 		LocalDateTime now = LocalDateTime.now();
 		entity.setTimestampErstellt(now);
 		entity.setTimestampMutiert(now);
-		entity.setUserErstellt(getPrincipalBean().getPrincipal().getName());
-		entity.setUserMutiert(getPrincipalBean().getPrincipal().getName());
-		if (entity instanceof KindContainer) {
+		entity.setUserErstellt(getPrincipalName());
+		entity.setUserMutiert(getPrincipalName());
+		if (entity instanceof KindContainer && !entity.hasVorgaenger()) {
+			// Neue Kind-Nummer: nur setzen, wenn es nicht ein "kopiertes" Kind ist
 			KindContainer kind = (KindContainer) entity;
 			Optional<Fall> optFall = getFallService().findFall(kind.getGesuch().getFall().getId());
 			if (optFall.isPresent()) {
@@ -48,7 +60,8 @@ public class AbstractEntityListener {
 				fall.setNextNumberKind(fall.getNextNumberKind() + 1);
 			}
 		}
-		else if (entity instanceof Betreuung) {
+		else if (entity instanceof Betreuung && !entity.hasVorgaenger()) {
+			// Neue Betreuungs-Nummer: nur setzen, wenn es nicht eine "kopierte" Betreuung ist
 			Betreuung betreuung = (Betreuung) entity;
 			Optional<KindContainer> optKind = getKindService().findKind(betreuung.getKind().getId());
 			if (optKind.isPresent()) {
@@ -57,13 +70,34 @@ public class AbstractEntityListener {
 				kindContainer.setNextNumberBetreuung(kindContainer.getNextNumberBetreuung() + 1);
 			}
 		}
+		else if (entity instanceof Fall) {
+			Fall fall = (Fall) entity;
+			Mandant mandant = getPrincipalBean().getMandant();
+			Long nextFallNr = getSequenceService().createNumberTransactional(SequenceType.FALL_NUMMER, mandant);
+			fall.setFallNummer(nextFallNr);
+			fall.setMandant(mandant);
+			if (getPrincipalBean().isCallerInRole(UserRole.GESUCHSTELLER)) {
+				Optional<Benutzer> benutzer = getBenutzerService().findBenutzer(getPrincipalName());
+				fall.setBesitzer(benutzer.orElseThrow(() -> new EbeguRuntimeException("findBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, getPrincipalName())));
+
+			}
+		}
+		else if (entity instanceof Verfuegung) {
+			// Verfuegung darf erst erstellt werden, wenn die Betreuung verfuegt ist
+			Verfuegung verfuegung = (Verfuegung) entity;
+			if (!verfuegung.getBetreuung().getBetreuungsstatus().isGeschlossen()) {
+				throw new IllegalStateException("Verfuegung darf nicht gespeichert werden, wenn die Betreuung nicht verfuegt ist");
+			}
+		}
 	}
 
 	@PreUpdate
 	public void preUpdate(@Nonnull AbstractEntity entity) {
 		entity.setTimestampMutiert(LocalDateTime.now());
-		entity.setUserMutiert(getPrincipalBean().getPrincipal().getName());
-
+		entity.setUserMutiert(getPrincipalName());
+		if (entity instanceof Verfuegung) {
+			throw new IllegalStateException("Verfuegung darf eigentlich nur einmal erstellt werden, wenn die Betreuung verfuegt ist, und nie mehr veraendert");
+		}
 	}
 
 	private FallService getFallService() {
@@ -82,5 +116,32 @@ public class AbstractEntityListener {
 			kindService = CDI.current().select(KindService.class).get();
 		}
 		return kindService;
+	}
+
+	private BenutzerService getBenutzerService() {
+		if (benutzerService == null) {
+			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection in Wildfly 10 nicht funktioniert.
+			//noinspection NonThreadSafeLazyInitialization
+			benutzerService = CDI.current().select(BenutzerService.class).get();
+		}
+		return benutzerService;
+	}
+
+	private SequenceService getSequenceService() {
+		if (sequenceService == null) {
+			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection in Wildfly 10 nicht funktioniert.
+			//noinspection NonThreadSafeLazyInitialization
+			sequenceService = CDI.current().select(SequenceService.class).get();
+		}
+		return sequenceService;
+	}
+
+	private String getPrincipalName() {
+		try {
+			return getPrincipalBean().getPrincipal().getName();
+		} catch (ContextNotActiveException e) {
+			LOGGER.error("No context when persisting entity.");
+			throw e;
+		}
 	}
 }

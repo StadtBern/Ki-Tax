@@ -1,7 +1,8 @@
 package ch.dvbern.ebegu.dto;
 
+import ch.dvbern.ebegu.util.MathUtil;
+
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
  * DTO für die Resultate der Berechnungen der Finanziellen Situation
@@ -14,42 +15,22 @@ public class FinanzielleSituationResultateDTO {
 	private BigDecimal nettovermoegenFuenfProzent = BigDecimal.ZERO;
 	private BigDecimal anrechenbaresEinkommen = BigDecimal.ZERO;
 	private BigDecimal abzuegeBeiderGesuchsteller = BigDecimal.ZERO;
-	private BigDecimal abzugAufgrundFamiliengroesse = BigDecimal.ZERO;
-	private BigDecimal totalAbzuege = BigDecimal.ZERO;
-	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
-	private Double familiengroesse;
+	private BigDecimal massgebendesEinkVorAbzFamGr = BigDecimal.ZERO;
 
-
-	public FinanzielleSituationResultateDTO(double familiengroesse, BigDecimal famGroesseAbz) {
-		this.familiengroesse = familiengroesse;
-		this.abzugAufgrundFamiliengroesse = famGroesseAbz;
+	public FinanzielleSituationResultateDTO() {
 		initToZero();
 	}
 
 	private void initToZero() {
 		// Alle Werte auf 0 initialisieren, falls Null
 		// Wenn negativ -> 0
-		geschaeftsgewinnDurchschnittGesuchsteller1 = positiveNonNullAndRound(geschaeftsgewinnDurchschnittGesuchsteller1);
-		geschaeftsgewinnDurchschnittGesuchsteller2 = positiveNonNullAndRound(geschaeftsgewinnDurchschnittGesuchsteller2);
-		einkommenBeiderGesuchsteller = positiveNonNullAndRound(einkommenBeiderGesuchsteller);
-		nettovermoegenFuenfProzent = positiveNonNullAndRound(nettovermoegenFuenfProzent);
-		anrechenbaresEinkommen = positiveNonNullAndRound(anrechenbaresEinkommen);
-		abzuegeBeiderGesuchsteller = positiveNonNullAndRound(abzuegeBeiderGesuchsteller);
-		abzugAufgrundFamiliengroesse = positiveNonNullAndRound(abzugAufgrundFamiliengroesse);
-		totalAbzuege = positiveNonNullAndRound(totalAbzuege);
-		massgebendesEinkommen = positiveNonNullAndRound(massgebendesEinkommen);
-	}
-
-	/**
-	 * rundet auf die naechste Ganzzahl groesser gleich 0
-	 */
-	private BigDecimal positiveNonNullAndRound(BigDecimal value) {
-		if (value == null) {
-			return BigDecimal.ZERO;
-		}
-		// Returns the maximum of this BigDecimal and val.
-		value = value.setScale(0, RoundingMode.HALF_UP);
-		return value.max(BigDecimal.ZERO);
+		geschaeftsgewinnDurchschnittGesuchsteller1 = MathUtil.positiveNonNullAndRound(geschaeftsgewinnDurchschnittGesuchsteller1);
+		geschaeftsgewinnDurchschnittGesuchsteller2 = MathUtil.positiveNonNullAndRound(geschaeftsgewinnDurchschnittGesuchsteller2);
+		einkommenBeiderGesuchsteller = MathUtil.positiveNonNullAndRound(einkommenBeiderGesuchsteller);
+		nettovermoegenFuenfProzent = MathUtil.positiveNonNullAndRound(nettovermoegenFuenfProzent);
+		anrechenbaresEinkommen = MathUtil.positiveNonNullAndRound(anrechenbaresEinkommen);
+		abzuegeBeiderGesuchsteller = MathUtil.positiveNonNullAndRound(abzuegeBeiderGesuchsteller);
+		massgebendesEinkVorAbzFamGr = MathUtil.positiveNonNullAndRound(massgebendesEinkVorAbzFamGr);
 	}
 
 	public BigDecimal getGeschaeftsgewinnDurchschnittGesuchsteller1() {
@@ -100,35 +81,11 @@ public class FinanzielleSituationResultateDTO {
 		this.abzuegeBeiderGesuchsteller = abzuegeBeiderGesuchsteller;
 	}
 
-	public BigDecimal getAbzugAufgrundFamiliengroesse() {
-		return abzugAufgrundFamiliengroesse;
+	public BigDecimal getMassgebendesEinkVorAbzFamGr() {
+		return massgebendesEinkVorAbzFamGr;
 	}
 
-	public void setAbzugAufgrundFamiliengroesse(BigDecimal abzugAufgrundFamiliengroesse) {
-		this.abzugAufgrundFamiliengroesse = abzugAufgrundFamiliengroesse;
-	}
-
-	public BigDecimal getTotalAbzuege() {
-		return totalAbzuege;
-	}
-
-	public void setTotalAbzuege(BigDecimal totalAbzuege) {
-		this.totalAbzuege = totalAbzuege;
-	}
-
-	public BigDecimal getMassgebendesEinkommen() {
-		return massgebendesEinkommen;
-	}
-
-	public void setMassgebendesEinkommen(BigDecimal massgebendesEinkommen) {
-		this.massgebendesEinkommen = massgebendesEinkommen;
-	}
-
-	public Double getFamiliengroesse() {
-		return familiengroesse;
-	}
-
-	public void setFamiliengroesse(Double familiengroesse) {
-		this.familiengroesse = familiengroesse;
+	public void setMassgebendesEinkVorAbzFamGr(BigDecimal massgebendesEinkVorAbzFamGr) {
+		this.massgebendesEinkVorAbzFamGr = massgebendesEinkVorAbzFamGr;
 	}
 }

@@ -1,6 +1,6 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
-import TSPendenzJA from '../../models/TSPendenzJA';
+import TSAntragDTO from '../../models/TSAntragDTO';
 
 export default class PendenzRS {
     serviceURL: string;
@@ -21,12 +21,19 @@ export default class PendenzRS {
         return 'PendenzRS';
     }
 
-    public getPendenzenList(): IPromise<Array<TSPendenzJA>> {
+    public getPendenzenList(): IPromise<Array<TSAntragDTO>> {
         return this.http.get(this.serviceURL)
             .then((response: any) => {
                 this.log.debug('PARSING pendenz REST object ', response.data);
-                return this.ebeguRestUtil.parsePendenzen(response.data);
+                return this.ebeguRestUtil.parseAntragDTOs(response.data);
             });
     }
 
+    public getAntraegeGesuchstellerList(): IPromise<Array<TSAntragDTO>> {
+        return this.http.get(this.serviceURL + '/gesuchsteller')
+            .then((response: any) => {
+                this.log.debug('PARSING pendenz REST object ', response.data);
+                return this.ebeguRestUtil.parseAntragDTOs(response.data);
+            });
+    }
 }

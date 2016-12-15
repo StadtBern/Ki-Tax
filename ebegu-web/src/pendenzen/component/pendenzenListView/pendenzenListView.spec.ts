@@ -2,7 +2,7 @@ import {EbeguWebPendenzen} from '../../pendenzen.module';
 import PendenzRS from '../../service/PendenzRS.rest';
 import {PendenzenListViewController} from './pendenzenListView';
 import {IScope, IQService, IFilterService, IHttpBackendService} from 'angular';
-import TSPendenzJA from '../../../models/TSPendenzJA';
+import TSAntragDTO from '../../../models/TSAntragDTO';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
@@ -13,6 +13,7 @@ import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuch from '../../../models/TSGesuch';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
+import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 
 describe('pendenzenListView', function () {
 
@@ -29,6 +30,7 @@ describe('pendenzenListView', function () {
     let berechnungsManager: BerechnungsManager;
     let $state: IStateService;
     let CONSTANTS: any;
+    let wizardStepManager: WizardStepManager;
 
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
@@ -46,12 +48,13 @@ describe('pendenzenListView', function () {
         berechnungsManager = $injector.get('BerechnungsManager');
         $state = $injector.get('$state');
         CONSTANTS = $injector.get('CONSTANTS');
+        wizardStepManager = $injector.get('WizardStepManager');
     }));
 
     describe('API Usage', function () {
         describe('getPendenzenList', function () {
             it('should return the list with all pendenzen', function () {
-                let mockPendenz: TSPendenzJA = mockGetPendenzenList();
+                let mockPendenz: TSAntragDTO = mockGetPendenzenList();
                 mockRestCalls();
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
                     institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
@@ -59,7 +62,7 @@ describe('pendenzenListView', function () {
                 $scope.$apply();
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
 
-                let list: Array<TSPendenzJA> = pendenzListViewController.getPendenzenList();
+                let list: Array<TSAntragDTO> = pendenzListViewController.getPendenzenList();
                 expect(list).toBeDefined();
                 expect(list.length).toBe(1);
                 expect(list[0]).toEqual(mockPendenz);
@@ -79,30 +82,30 @@ describe('pendenzenListView', function () {
         });
         describe('editPendenzJA', function () {
             it('should call findGesuch and open the view gesuch.fallcreation with it', function () {
-                let mockPendenz: TSPendenzJA = mockGetPendenzenList();
+                let mockPendenz: TSAntragDTO = mockGetPendenzenList();
                 mockRestCalls();
                 spyOn($state, 'go');
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
                     institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
 
                 let tsGesuch = new TSGesuch();
                 spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));
 
-                pendenzListViewController.editPendenzJA(mockPendenz);
+                pendenzListViewController.editPendenzJA(mockPendenz); //pendenz wird eidtiert
                 $scope.$apply();
 
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
-                expect(gesuchRS.findGesuch).toHaveBeenCalledWith(mockPendenz.antragId);
-                expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation');
-                expect(gesuchModelManager.gesuch).toBe(tsGesuch);
+                expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', {createNew: false, gesuchId: '66345345'});
+
             });
         });
     });
 
-    function mockGetPendenzenList(): TSPendenzJA {
-        let mockPendenz: TSPendenzJA = new TSPendenzJA('66345345', 123, 'name', TSAntragTyp.GESUCH, undefined,
-            undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
-        let result: Array<TSPendenzJA> = [mockPendenz];
+    function mockGetPendenzenList(): TSAntragDTO {
+        let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.GESUCH,
+            undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
+        let result: Array<TSAntragDTO> = [mockPendenz];
         spyOn(pendenzRS, 'getPendenzenList').and.returnValue($q.when(result));
         return mockPendenz;
     }
@@ -112,5 +115,6 @@ describe('pendenzenListView', function () {
         $httpBackend.when('GET', '/ebegu/api/v1/institutionen').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/benutzer').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/').respond({});
     }
 });

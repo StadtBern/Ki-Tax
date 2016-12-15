@@ -1,0 +1,114 @@
+@base-font-size: 10px;
+//Breakpoints
+@bp-xs: 480px;
+@bp-sm: 769px; // 768px
+@bp-md: 1025px; //992px; // 1024px
+@bp-lg: 137px; // 1366px
+@bp-xlg: 1921px; // 1920px
+@bp-xxlg: 2561px; // 2560px
+
+//Media-Queries
+@mq-xs: ~"only screen and (min-width: @{bp-xs})";
+@mq-sm: ~"only screen and (min-width: @{bp-sm})";
+@mq-md: ~"(min-width: @{bp-md})";
+@mq-lg: ~"(min-width: @{bp-lg})";
+@mq-xlg: ~"(min-width: @{bp-xlg}) and (max-width:@{bp-xxlg})";
+@mq-xxlg: ~"(min-width: @{bp-xxlg})";
+@mq-d-md: ~"(min-device-width: @{bp-sm})";
+@mq-d-lg: ~"(min-device-width: @{bp-md})";
+@mq-d-xlg: ~"(min-device-width: @{bp-lg})";
+@mq-d-xxlg: ~"(min-device-width: @{bp-xlg})";
+@mq-d-xxxlg: ~"(min-device-width: @{bp-xxlg})";
+@mq-retina: ~"(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)";
+
+@background-color: @white;
+@state-danger-text: red;
+@floating-text-line-height: 2;
+@color-contrast-hover: red;
+@highlight-color: #216eff;
+@grid-gutter-width: 32px;
+@input-boder-focus: #337ab7;
+
+/*Colors*/
+@black: #000000;
+@white: #FFFFFF;
+@grey: #CCCCCC;
+@red: #D50025;
+@green: #16CC77;
+@orange: #F5A623;
+@purple: #9013FE;
+@blue: #68ACFC;
+/*Darker*/
+@dgrey: #858585;
+@dred: #BF0425;
+@dgreen: #109457;
+@dorange: #c4841c;
+@dblue: #4A90E2;
+/*Lighter*/
+@lgrey: #F0F0F0;
+@lred: #F0C3CB;
+@lgreen: #B5E9D1;
+@lorange: #F7E4C5;
+@lblue: #ECF2F4;
+//Theming
+//Primary
+@primary-light: @lred;
+@primary: @red;
+@primary-dark: @dred;
+//Secondary
+@secondary-light: @lblue;
+@secondary: @blue;
+@secondary-dark: @dblue;
+//Contrast
+@contrast-darkest: @black;
+@contrast-dark: @dgrey;
+@contrast: @grey;
+@contrast-light: @lgrey;
+@contrast-lightest: @white;
+//Success
+@success-light: @lgreen;
+@success: @green;
+@success-dark: @dgreen;
+//Warning
+@warning-light: @lorange;
+@warning: @orange;
+@warning-dark: @dorange;
+//Danger
+@danger-light: @lred;
+@danger: @red;
+@danger-dark: @dred;
+/* Contrast Color für Error Handling */
+@color-contrast-hue: 359;
+@color-contrast: hsl(@color-contrast-hue, 100%, 67%);
+@color-contrast-hover: hsl(@color-contrast-hue, 100%, 67%);
+@color-contrast-normal: hsl(@color-contrast-hue, 100%, 74%);
+@color-contrast-middle: hsl(@color-contrast-hue, 100%, 87%);
+@color-contrast-bright: hsl(@color-contrast-hue, 100%, 94%);
+@color-contrast-bright-on-hover: white;
+/* Abstände */
+@small-abstand: 1rem;
+@smaller-abstand: @small-abstand / 2;
+@normal-abstand: 2*@small-abstand;
+@big-abstand: 5*@small-abstand;
+@padding-base-horizontal: @small-abstand;
+@padding-base-vertical: @small-abstand;
+/*Navbar */
+@navbar-height: 5rem;
+
+@sidebar-height: 5rem;
+
+/*Position*/
+@page-start: (@navbar-height*2); //40px fuer intro
+
+/*z-index*/
+@z-index-navbar: 102;
+@z-index-dashboard: 105;
+@z-index-menu: 105;
+@z-index-progressbar: 103;
+@z-index-sidenav: 101;
+@z-index-kommentar: 101;
+@z-index-toolbar: 104;
+@z-index-dialog: 102;
+@z-index-error: 106;
+
+/**/

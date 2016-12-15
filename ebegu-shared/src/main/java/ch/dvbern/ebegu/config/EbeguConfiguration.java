@@ -23,5 +23,36 @@ public interface EbeguConfiguration {
 
 	String getDocumentFilePath();
 
+	/**
+	 * Gibt den (servlet-context relativen) path zur fedlet configuration zurueck die verwendet werden soll, die Idee
+	 * waere das entweder dieser Path gesetzt ist oder einzelne properties
+	 */
+	String getFedletConfigPath();
 
+
+	/**
+	 * Gibt an ob die Client Applikation https verwendet. Wenn true werden cookies nur bei https clients gesetzt
+	 */
+	boolean isClientUsingHTTPS();
+
+	/**
+	 * Gibt die URL der IDM Rest Schnittstelle zureuck
+	 */
+	String getOpenIdmURL();
+
+	/**
+	 * Gibt den Benutzer fuer die IDM Rest Schnittstelle zurueck
+	 */
+	String getOpenIdmUser();
+
+	/**
+	 * Gibt das Passwort fuer die IDM Rest Schnittstelle zurueck
+	 */
+	String getOpenIdmPassword();
+
+
+	/**
+	 * Gibt zurueck ob die synchronisierung mit der IDM Rest Schnittstelle fuer Inst und Traegerschaft aktiviert ist
+	 */
+	boolean getOpenIdmEnabled();
 }

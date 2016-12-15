@@ -1,22 +1,18 @@
 package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxPendenzJA;
 import ch.dvbern.ebegu.api.resource.PendenzResource;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,37 +28,30 @@ import java.util.Set;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class PendenzResourceTest extends AbstractEbeguRestTest {
+public class PendenzResourceTest extends AbstractEbeguRestLoginTest {
 
 	@Inject
 	private PendenzResource pendenzResource;
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence<Gesuch> persistence;
 	@Inject
 	private JaxBConverter converter;
-
-
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 
 	@Test
 	public void getAllPendenzenJATest() {
 		Gesuch gesuch1 = TestDataUtil.createDefaultGesuch();
-		persistEntities(gesuch1);
+		TestDataUtil.persistEntities(gesuch1, persistence);
 		Gesuch gesuch2 = TestDataUtil.createDefaultGesuch();
-		persistEntities(gesuch2);
+		TestDataUtil.persistEntities(gesuch2, persistence);
 
-		List<JaxPendenzJA> pendenzenList = pendenzResource.getAllPendenzenJA();
+		List<JaxAntragDTO> pendenzenList = pendenzResource.getAllPendenzenJA();
 
 		Assert.assertNotNull(pendenzenList);
 		Assert.assertEquals(2, pendenzenList.size());
 
-		Assert.assertEquals(gesuch1.getFall().getFallNummer(), pendenzenList.get(0).getFallNummer());
-		Assert.assertEquals(gesuch1.getGesuchsteller1().getNachname(), pendenzenList.get(0).getFamilienName());
-		Assert.assertEquals(gesuch1.getEingangsdatum(), pendenzenList.get(0).getEingangsdatum());
+		assertGesuchDaten(gesuch1, pendenzenList.get(0));
+		assertGesuchDaten(gesuch2, pendenzenList.get(1));
 
 		Set<BetreuungsangebotTyp> angeboteList = new LinkedHashSet<>();
 		angeboteList.add(BetreuungsangebotTyp.KITA);
@@ -73,43 +62,17 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 		Set<String> institutionen = new LinkedHashSet<>();
 		institutionen.add("Institution1");
 		Assert.assertEquals(institutionen, pendenzenList.get(0).getInstitutionen());
-		Assert.assertEquals(converter.gesuchsperiodeToJAX(gesuch1.getGesuchsperiode()), pendenzenList.get(0).getGesuchsperiode());
+		Assert.assertEquals(gesuch1.getGesuchsperiode().getGueltigkeit().getGueltigAb(), pendenzenList.get(0).getGesuchsperiodeGueltigAb());
+		Assert.assertEquals(gesuch1.getGesuchsperiode().getGueltigkeit().getGueltigBis(), pendenzenList.get(0).getGesuchsperiodeGueltigBis());
 	}
 
 
 	// HELP METHOD
 
-
-	private void persistEntities(Gesuch gesuch) {
-		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
-		persistence.persist(verantwortlicher.getMandant());
-		persistence.persist(verantwortlicher);
-
-		gesuch.getFall().setVerantwortlicher(verantwortlicher);
-		persistence.persist(gesuch.getFall());
-		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
-		persistence.persist(gesuch.getGesuchsperiode());
-
-		Set<KindContainer> kindContainers = new LinkedHashSet<>();
-		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
-		KindContainer kind = betreuung.getKind();
-
-		Set<Betreuung> betreuungen = new LinkedHashSet<>();
-		betreuungen.add(betreuung);
-		kind.setBetreuungen(betreuungen);
-
-		persistence.persist(kind.getKindGS().getPensumFachstelle().getFachstelle());
-		persistence.persist(kind.getKindJA().getPensumFachstelle().getFachstelle());
-		kind.setGesuch(gesuch);
-		kindContainers.add(kind);
-		gesuch.setKindContainers(kindContainers);
-
-
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
-		persistence.persist(betreuung.getInstitutionStammdaten());
-
-		persistence.persist(gesuch);
+	private void assertGesuchDaten(Gesuch gesuch1, JaxAntragDTO pendenzenList) {
+		Assert.assertEquals(gesuch1.getFall().getFallNummer(), pendenzenList.getFallNummer());
+		Assert.assertEquals(gesuch1.getGesuchsteller1().extractNachname(), pendenzenList.getFamilienName());
+		Assert.assertEquals(gesuch1.getEingangsdatum(), pendenzenList.getEingangsdatum());
+		Assert.assertEquals(gesuch1.getStatus(), AntragStatusConverterUtil.convertStatusToEntity(pendenzenList.getStatus()));
 	}
 }

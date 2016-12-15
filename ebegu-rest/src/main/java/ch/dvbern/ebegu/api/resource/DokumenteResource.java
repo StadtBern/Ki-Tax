@@ -8,14 +8,15 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.DokumentTyp;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.util.DokumenteUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -73,11 +74,37 @@ public class DokumenteResource {
 		if (gesuch.isPresent()) {
 
 			final Set<DokumentGrund> dokumentGrundsNeeded = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
-			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded, gesuch.get());
+			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded);
+			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
 
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.getAllDokumentGrundByGesuch(gesuch.get());
 
-			final Set<DokumentGrund> dokumentGrundsMerged = mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund);
+			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund);
+
+			return converter.dokumentGruendeToJAX(dokumentGrundsMerged);
+		}
+		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
+	}
+
+	@Nullable
+	@GET
+	@Path("/byTyp/{gesuchId}/{dokumentGrundTyp}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxDokumente getDokumente(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
+		@Nonnull @NotNull @PathParam("dokumentGrundTyp") DokumentGrundTyp dokumentGrundTyp) throws EbeguException {
+
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
+		if (gesuch.isPresent()) {
+
+			final Set<DokumentGrund> dokumentGrundsNeeded = new HashSet<>();
+
+			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
+
+			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.getAllDokumentGrundByGesuchAndDokumentType(gesuch.get(), dokumentGrundTyp);
+
+			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund);
 
 			return converter.dokumentGruendeToJAX(dokumentGrundsMerged);
 		}
@@ -99,10 +126,14 @@ public class DokumenteResource {
 		Optional<DokumentGrund> dokumentGrundOptional = dokumentGrundService.findDokumentGrund(dokumentGrundJAXP.getId());
 		DokumentGrund dokumentGrundFromDB = dokumentGrundOptional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, dokumentGrundJAXP.getId()));
 
-		// Files where no in the list anymore, should be deleted on Filesystem!
+		// Files where not in the list anymore, should be deleted on Filesystem!
 		Set<Dokument> dokumentsToRemove = findDokumentToRemove(dokumentGrundJAXP, dokumentGrundFromDB);
 		for (Dokument dokument : dokumentsToRemove) {
-			fileSaverService.remove(dokument.getDokumentPfad());
+			// Es duerfen nur dokumente ohne VorgaengerId geloescht werden. D.h. es koennen nur Files auf dem FS einer
+			// Mutation geloescht werden, welche neu hinzugefuegt worden sind. Kopierte Dokumente des EG duerfen nicht geloescht werden!
+			if (dokument.getVorgaengerId() == null) {
+				fileSaverService.remove(dokument.getFilepfad());
+			}
 		}
 
 		DokumentGrund dokumentGrundToMerge = converter.dokumentGrundToEntity(dokumentGrundJAXP, dokumentGrundFromDB);
@@ -113,13 +144,14 @@ public class DokumenteResource {
 		}
 
 		return converter.dokumentGrundToJax(modifiedDokumentGrund);
+
 	}
 
 	/**
 	 * Gibt Liste von Dokumenten zurück, welche auf der DB vorhanden sind auf dem jaxB Objekt jedoch nicht mehr.
 	 */
 	private Set<Dokument> findDokumentToRemove(JaxDokumentGrund dokumentGrundJAXP, DokumentGrund dokumentGrundFromDB) {
-		Set<Dokument> dokumentsToRemove = new HashSet<Dokument>();
+		Set<Dokument> dokumentsToRemove = new HashSet<>();
 		Validate.notNull(dokumentGrundFromDB.getDokumente());
 		Validate.notNull(dokumentGrundJAXP.getDokumente());
 
@@ -137,51 +169,5 @@ public class DokumenteResource {
 		}
 		return dokumentsToRemove;
 	}
-
-	/**
-	 * Zusammenfügen der benötigten Dokument Gründe und der Dokument Gründe auf der DB (vorhandene Dokumente)
-	 */
-	public Set<DokumentGrund> mergeNeededAndPersisted(Set<DokumentGrund> dokumentGrundsNeeded, Collection<DokumentGrund> persistedDokumentGrunds) {
-
-		Set<DokumentGrund> dokumentGrundsMerged = new HashSet<>();
-		Set<DokumentGrund> persistedDokumentAdded = new HashSet<>();
-
-		// Ersetzen des Placeholder mit dem vorhandenen Dokument, falls schon ein Dokument gespeichert wurde...
-		for (DokumentGrund dokumentGrundNeeded : dokumentGrundsNeeded) {
-			Set<DokumentGrund> persistedForNeeded = getPersistedForNeeded(persistedDokumentGrunds, dokumentGrundNeeded);
-
-			if (!persistedForNeeded.isEmpty()) {
-				persistedDokumentAdded.addAll(persistedForNeeded);
-				dokumentGrundsMerged.addAll(persistedForNeeded);
-			} else {
-				dokumentGrundsMerged.add(dokumentGrundNeeded);
-			}
-		}
-
-		//Hinzufügen der vorhandenen Dokumente welche jedoch eigentlich nicht mehr benötigt werden.
-		persistedDokumentGrunds.removeAll(persistedDokumentAdded);
-		for (DokumentGrund persistedDokumentGrund : persistedDokumentGrunds) {
-			persistedDokumentGrund.setNeeded(false);
-			dokumentGrundsMerged.add(persistedDokumentGrund);
-		}
-
-		return dokumentGrundsMerged;
-
-	}
-
-	private Set<DokumentGrund> getPersistedForNeeded(Collection<DokumentGrund> persistedDokumentGrunds, DokumentGrund dokumentGrundNeeded) {
-		Set<DokumentGrund> persisted = new HashSet<>();
-		for (DokumentGrund persistedDokumentGrund : persistedDokumentGrunds) {
-			if (persistedDokumentGrund.getDokumentGrundTyp().equals(dokumentGrundNeeded.getDokumentGrundTyp())) {
-				final DokumentTyp dokumentTypPersisted = persistedDokumentGrund.getDokumentTyp();
-				final DokumentTyp dokumentTypNeeded = dokumentGrundNeeded.getDokumentTyp();
-				if (dokumentTypNeeded.equals(dokumentTypPersisted)) {
-					persisted.add(persistedDokumentGrund);
-				}
-			}
-		}
-		return persisted;
-	}
-
 
 }

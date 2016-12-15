@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (c) 2015 DV Bern AG, Switzerland
+  ~
+  ~ Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
+  ~ geschützt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulässig. Dies gilt
+  ~ insbesondere fuer Vervielfältigungen, die Einspeicherung und Verarbeitung in
+  ~ elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
+  ~ Ansicht übergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt
+  -->
+
+<!--suppress ALL -->
+<project name="ebegu-config-wildfly-10" default="config-local">
+
+	<property file="build.properties"/>
+
+	<target name="config-local">
+		<echo message="Configuring mariadb Driver as JBoss module..."/>
+
+		<copy todir="${jboss.dir}/modules/org/mariadb/main/" file="modules/org/mariadb/main/module.xml"/>
+		<copy todir="${jboss.dir}/modules/org/mariadb/main/"
+			  file="modules/org/mariadb/main/mariadb-java-client-1.3.7.jar"/>
+		<echo message="Configuring JBoss for LOCAL use..."/>
+		<copy tofile="${jboss.dir}/standalone/configuration/standalone.xml"
+			  file="standalone/configuration/standalone-LOCAL.xml" overwrite="true"/>
+		<copy tofile="${jboss.dir}/bin/standalone.conf"
+			  file="bin/standalone-LOCAL.conf" overwrite="true"/>
+		<copy tofile="${jboss.dir}/bin/standalone.sh"
+			  file="bin/standalone-LOCAL.sh" overwrite="true"/>
+	</target>
+
+	<target name="config-prod">
+		<echo message="Configuring mariadb Driver as JBoss module..."/>
+
+
+		<copy todir="${jboss.dir}/modules/org/mariadb/main/" file="modules/org/mariadb/main/module.xml"/>
+		<copy todir="${jboss.dir}/modules/org/mariadb/main/"
+			  file="modules/org/mariadb/main/mariadb-java-client-1.3.7.jar"/>
+
+		<echo message="Configuring JBoss for PRODUCTION use..."/>
+		<copy tofile="${jboss.dir}/standalone/configuration/standalone.xml"
+			  file="standalone/configuration/standalone-PROD.xml" overwrite="true"/>
+		<copy tofile="${jboss.dir}/bin/standalone.conf"
+			  file="bin/standalone-PROD.conf" overwrite="true"/>
+		<copy tofile="${jboss.dir}/bin/standalone.sh"
+			  file="bin/standalone-PROD.sh" overwrite="true"/>
+	</target>
+
+</project>

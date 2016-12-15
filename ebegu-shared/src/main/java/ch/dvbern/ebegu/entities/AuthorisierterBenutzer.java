@@ -9,6 +9,9 @@
  */
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.UserRole;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
@@ -33,28 +36,67 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	@Column(nullable = false)
 	private LocalDateTime lastLogin = LocalDateTime.now();
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_authorisierter_benutzer_benutzer_id"))
 	private Benutzer benutzer = null;
 
 	// todo team Dieses Feld muss aus Sicherheitsgrunden entfernt werden wenn das dummylogin nicht mehr benoetigt wird
+	@Deprecated
+	/**
+	 * @deprecated
+	 */
 	@Nullable
 	@Size(max = DB_DEFAULT_MAX_LENGTH)
 	private String password = null;
 
+	/**
+	 * Dies entspricht dem token aus dem cookie
+	 */
 	@NotNull
 	@Column(updatable = false)
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	private String authToken = null;
 
+
+	/**
+	 * Wiederholung von Benutzer.username damit wir nicht joinen muessen
+	 */
+	@NotNull
+	@Column(nullable = false)
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	private String username = null;
+
+	/**
+	 * Wiederholung von benutzer.role damit wir nicht joinen muessen
+	 */
+	@NotNull
+	@Enumerated(value = EnumType.STRING)
+	@Column(updatable = false, nullable = false)
+	private UserRole role;
+
+	@Nullable
+	@Column(nullable = true)
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	private String sessionIndex;
+
+	@Nullable
+	@Column(nullable = true)
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	private String samlNameId;
+
+	@Nullable
+	@Column(nullable = true)
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	private String samlSPEntityID;
+
+	@Nullable
+	@Column(nullable = true)
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	private String samlIDPEntityID;
+
 	@PrePersist
 	protected void prePersist() {
 		lastLogin = LocalDateTime.now();
-	}
-
-	@Nonnull
-	public String getAuthId() {
-		return String.valueOf(this.benutzer.getUsername());
 	}
 
 	public Benutzer getBenutzer() {
@@ -66,10 +108,19 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	}
 
 	@Nullable
+	@Deprecated
+	/**
+	 * @deprecated
+	 */
 	public String getPassword() {
 		return password;
 	}
 
+	@Nullable
+	@Deprecated
+	/**
+	 * @deprecated
+	 */
 	public void setPassword(@Nullable String password) {
 		this.password = password;
 	}
@@ -95,5 +146,67 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 
 	public void setLastLogin(@Nonnull final LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public UserRole getRole() {
+		return role;
+	}
+
+	public void setRole(UserRole role) {
+		this.role = role;
+	}
+
+
+	@Nullable
+	public String getSessionIndex() {
+		return sessionIndex;
+	}
+
+	public void setSessionIndex(@Nullable String sessionIndex) {
+		this.sessionIndex = sessionIndex;
+	}
+
+	@Nullable
+	public String getSamlNameId() {
+		return samlNameId;
+	}
+
+	public void setSamlNameId(@Nullable String samlNameId) {
+		this.samlNameId = samlNameId;
+	}
+
+	@Nullable
+	public String getSamlSPEntityID() {
+		return samlSPEntityID;
+	}
+
+	public void setSamlSPEntityID(@Nullable String samlSPEntityID) {
+		this.samlSPEntityID = samlSPEntityID;
+	}
+
+	@Nullable
+	public String getSamlIDPEntityID() {
+		return samlIDPEntityID;
+	}
+
+	public void setSamlIDPEntityID(@Nullable String samlIDPEntityID) {
+		this.samlIDPEntityID = samlIDPEntityID;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("username", username)
+			.append("role", role)
+			.append("sessionIndex", sessionIndex)
+			.toString();
 	}
 }

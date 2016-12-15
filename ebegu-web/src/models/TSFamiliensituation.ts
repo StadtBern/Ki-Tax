@@ -6,17 +6,17 @@ export default class TSFamiliensituation extends TSAbstractEntity {
 
     private _familienstatus: TSFamilienstatus;
     private _gesuchstellerKardinalitaet: TSGesuchstellerKardinalitaet;
-    private _bemerkungen: string;
     private _gemeinsameSteuererklaerung: boolean;
+    private _aenderungPer: moment.Moment;
 
 
     constructor(familienstatus?: TSFamilienstatus, gesuchstellerKardinalitaet?: TSGesuchstellerKardinalitaet,
-                bemerkungen?: string, gemeinsameSteuererklaerung?: boolean) {
+                gemeinsameSteuererklaerung?: boolean, aenderungPer?: moment.Moment) {
         super();
         this._familienstatus = familienstatus;
         this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
-        this._bemerkungen = bemerkungen;
         this._gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
+        this._aenderungPer = aenderungPer;
     }
 
     public get familienstatus(): TSFamilienstatus {
@@ -35,14 +35,6 @@ export default class TSFamiliensituation extends TSAbstractEntity {
         this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
     }
 
-    public get bemerkungen(): string {
-        return this._bemerkungen;
-    }
-
-    public set bemerkungen(bemerkungen: string) {
-        this._bemerkungen = bemerkungen;
-    }
-
     get gemeinsameSteuererklaerung(): boolean {
         return this._gemeinsameSteuererklaerung;
     }
@@ -50,4 +42,37 @@ export default class TSFamiliensituation extends TSAbstractEntity {
     set gemeinsameSteuererklaerung(value: boolean) {
         this._gemeinsameSteuererklaerung = value;
     }
+
+    get aenderungPer(): moment.Moment {
+        return this._aenderungPer;
+    }
+
+    set aenderungPer(value: moment.Moment) {
+        this._aenderungPer = value;
+    }
+
+// todo team Dieser Code is gleich wie auf dem Server...
+    public hasSecondGesuchsteller(): boolean {
+        switch (this.familienstatus) {
+            case TSFamilienstatus.ALLEINERZIEHEND:
+            case TSFamilienstatus.WENIGER_FUENF_JAHRE:
+                return TSGesuchstellerKardinalitaet.ZU_ZWEIT === this.gesuchstellerKardinalitaet;
+            case TSFamilienstatus.VERHEIRATET:
+            case TSFamilienstatus.KONKUBINAT:
+            case TSFamilienstatus.LAENGER_FUENF_JAHRE:
+                return true;
+        }
+        //wir sollten hier nie hinkommen
+        return false;
+    }
+
+    public isSameFamiliensituation(other: TSFamiliensituation) {
+        return this.familienstatus === other.familienstatus && this.gesuchstellerKardinalitaet === other.gesuchstellerKardinalitaet;
+    }
+
+    public revertFamiliensituation(other: TSFamiliensituation) {
+        this.familienstatus = other.familienstatus;
+        this.gesuchstellerKardinalitaet = other.gesuchstellerKardinalitaet;
+    }
+
 }

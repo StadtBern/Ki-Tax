@@ -1,61 +1,87 @@
-<div class="fallCreationView row">
-    <div class="row">
+<div class="fallCreationView gesuchModul">
+    <div class="row viewTitle">
         <div class="col-md-12">
-            <h4 class="mainTitle">
-                <span ng-if="!vm.gesuchModelManager.isGesuchSaved()"
-                      span data-translate="MENU_ERSTGESUCH"></span>
-                <span ng-if="vm.gesuchModelManager.isGesuchSaved()"
-                      span data-translate="MENU_ERSTGESUCH_PERIODE" data-translate-value-periode="{{vm.getCurrentGesuchsperiodeAsString()}}"></span>
-            </h4>
+            <h1>
+                <span ng-bind="vm.getTitle()"></span>
+            </h1>
+            <hr class="header"/>
         </div>
     </div>
-    <hr class="header"/>
-    <form  role="form" name="form" class="" novalidate unsaved-warning-form>
+    <div class="row">
+        <div class="col-md-12">
+            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
 
-        <!--Eingangsdatum-->
-        <div class="row">
-            <div class="col-md-6">
-                <dv-input-container class="form-group">
-                    <label data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
-                    </label>
-                    <dv-datepicker input-id="eingangsdatum_ID"  name="eingangsdatum"
-                    ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true" class="input-element">
-                    </dv-datepicker>
-                    <dv-error-messages  for="form.eingangsdatum.$error"
-                                        class="error"></dv-error-messages>
-                </dv-input-container>
-            </div>
-        </div>
+                    <!--Willkommnstext bei Erstgesuch-->
+                    <div ng-if="vm.gesuchModelManager.isErstgesuch()">
 
-        <!--Gesuchsperioden-->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <div class="dv-radio-container" >
-                        <md-radio-group name="gesuchsperioden" class="input-element radio" ng-model="vm.gesuchsperiodeId" ng-change="vm.setSelectedGesuchsperiode()"
-                                        ng-required="true">
-                            <md-radio-button ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
-                                             ng-value="current.id"  aria-label="{{vm.getGesuchsperiodeAsString(current)}}">
-                                <span>{{vm.getGesuchsperiodeAsString(current)}}</span>
-                            </md-radio-button>
-                        </md-radio-group>
-                        <dv-error-messages for="form.gesuchsperioden.$error"
-                                           class="error"></dv-error-messages>
+                        <p class="subTitleBold" data-translate="ERSTGESUCH_WILLKOMMEN_TEXT"></p>
+                        <p class="subTitle" data-translate="ERSTGESUCH_WILLKOMMEN_TEXT_2"></p>
+                        <p class="subTitle" data-translate="ERSTGESUCH_WILLKOMMEN_TEXT_3"></p>
+
                     </div>
-                </div>
-            </div>
 
+                    <!--Mutationelemente auswaehlen. Nur fuer Mutationen-->
+                    <div ng-if="!vm.gesuchModelManager.isErstgesuch()">
+
+                        <p class="subTitleBold" data-translate="MUTATION_AUSWAHL_TEXT_1"></p>
+                        <p class="subTitle" data-translate="MUTATION_AUSWAHL_TEXT_2"></p>
+                        <p class="subTitle" data-translate="MUTATION_AUSWAHL_TEXT_3"></p>
+
+                    </div>
+
+                    <!--Eingangsdatum-->
+                    <div class="row marginTop30" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
+                                </label>
+                                <dv-datepicker input-id="eingangsdatum_ID" name="eingangsdatum"
+                                               ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true"
+                                               class="input-element">
+                                </dv-datepicker>
+                                <dv-error-messages for="form.eingangsdatum.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+                    <!--Gesuchsperioden. Nur fuer Erstgesuch-->
+
+                    <div ng-if="vm.gesuchModelManager.isErstgesuch()">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="dv-radio-container">
+                                        <md-radio-group name="gesuchsperioden" class="input-element radio"
+                                                        ng-model="vm.gesuchsperiodeId"
+                                                        ng-change="vm.setSelectedGesuchsperiode()"
+                                                        dv-show-element
+                                                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
+                                                        ng-required="true">
+                                            <md-radio-button
+                                                ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
+                                                ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
+                                                ng-disabled="vm.isGesuchReadonly()  || vm.isKorrekturModusJugendamt()">
+                                                <span>{{current.gesuchsperiodeString}}</span>
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                        <dv-error-messages for="form.gesuchsperioden.$error"></dv-error-messages>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </fieldset>
+
+                <!--Buttons-->
+                <dv-navigation dv-next="true" dv-save="vm.save(form)">
+                </dv-navigation>
+
+            </form>
         </div>
-
-        <!--Buttons-->
-        <div class="row">
-            <div class="col-md-6 text-right">
-                <dv-loading-button ng-click="vm.nextStep(form)" button-class="btn btn-link next">
-                    <span data-translate="WEITER_UPPER"></span>
-                    <span class="fa fa-chevron-right"></span>
-                </dv-loading-button>
-            </div>
-        </div>
-    </form>
-
+    </div>
 </div>

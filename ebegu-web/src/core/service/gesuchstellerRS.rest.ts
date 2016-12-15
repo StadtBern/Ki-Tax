@@ -1,6 +1,7 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
-import TSGesuchsteller from '../../models/TSGesuchsteller';
+import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 
 export default class GesuchstellerRS {
     serviceURL: string;
@@ -8,9 +9,10 @@ export default class GesuchstellerRS {
     ebeguRestUtil: EbeguRestUtil;
     log: ILogService;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'WizardStepManager'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService,
+                private wizardStepManager: WizardStepManager) {
         this.serviceURL = REST_API + 'gesuchsteller';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -18,40 +20,25 @@ export default class GesuchstellerRS {
 
     }
 
-    public updateGesuchsteller(gesuchsteller: TSGesuchsteller): IPromise<TSGesuchsteller> {
-        let restPers = {};
-        restPers = this.ebeguRestUtil.gesuchstellerToRestObject(restPers, gesuchsteller);
-
-        return this.http.put(this.serviceURL, restPers, {
+    public saveGesuchsteller(gesuchsteller: TSGesuchstellerContainer, gesuchId: string, gsNumber: number, umzug: boolean): IPromise<TSGesuchstellerContainer> {
+        let gessteller = this.ebeguRestUtil.gesuchstellerContainerToRestObject({}, gesuchsteller);
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/gsNumber/' + gsNumber + '/' + umzug, gessteller, {
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then((response: any) => {
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
                 this.log.debug('PARSING gesuchsteller REST object ', response.data);
-                return this.ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), response.data);
-            }
-        );
-    }
-
-    public create(gesuchsteller: TSGesuchsteller): IPromise<TSGesuchsteller> {
-        let gessteller = {};
-        gessteller = this.ebeguRestUtil.gesuchstellerToRestObject(gessteller, gesuchsteller);
-        return this.http.post(this.serviceURL, gessteller, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then((response: any) => {
-            this.log.debug('PARSING gesuchsteller REST object ', response.data);
-            return this.ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), response.data);
+                return this.ebeguRestUtil.parseGesuchstellerContainer(new TSGesuchstellerContainer(), response.data);
+            });
         });
-
     }
 
-    public findGesuchsteller(gesuchstellerID: string): IPromise<TSGesuchsteller> {
+    public findGesuchsteller(gesuchstellerID: string): IPromise<TSGesuchstellerContainer> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchstellerID))
             .then((response: any) => {
                 this.log.debug('PARSING gesuchsteller REST object ', response.data);
-                return this.ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), response.data);
+                return this.ebeguRestUtil.parseGesuchstellerContainer(new TSGesuchstellerContainer(), response.data);
             });
 
     }

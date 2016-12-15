@@ -1,66 +1,109 @@
-<div class="familiensituationView row">
+<div class="familiensituationView gesuchModul">
 
-    <div class="col-md-12">
-        <form role="form" name="form" class="" novalidate unsaved-warning-form>
+    <div class="row">
+        <div class="col-md-12">
+            <h1>
+                <span data-translate="MUTATION_FAMSITUATION_TITLE"></span>
+            </h1>
+        </div>
+    </div>
+    <hr class="header"/>
+    <div class="row viewTitle">
+        <div class="col-md-12">
+            <p class="inlineHint" data-translate="MUTATION_FAMSITUATION_HINT"></p>
+            <div ng-if="vm.showError()" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
 
-            <!--familienstatus-->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <h4 class="mainQuestion"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span> <dv-tooltip text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip></h4>
-                        <dv-radio-container name="familienstatus" ng-model="vm.getFamiliensituation().familienstatus" ng-required="true"
-                                            class="input-element" items="vm.familienstatusValues" dv-enable-element
-                                            dv-enable-allowed-roles="vm.allowedRoles">
-                        </dv-radio-container>
-                        <dv-error-messages for="form.familienstatus.$error"
-                                           class="error"></dv-error-messages>
+            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+
+                <!--Aenderung per-->
+                <div class="row" ng-if="vm.isMutation()">
+                    <div class="col-md-12">
+                        <dv-input-container class="form-group">
+
+                            <div class="row">
+                                <div class="col-xs-12 dv-input-container-small">
+                                    <label class="md-no-float" data-translate="AENDERUNG_PER" for="aenderungPer_ID">
+                                    </label>
+                                    <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
+                                                   ng-model="vm.getFamiliensituation().aenderungPer"
+                                                   class="input-element"
+                                                   ng-disabled="vm.isGesuchReadonly()">
+                                    </dv-datepicker>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 error">
+                                    <dv-error-messages for="form.aenderungPer.$error"
+                                                       class="error"></dv-error-messages>
+                                    <dv-bisher gs="vm.model.familiensituationGS.aenderungPer"
+                                               ja="vm.model.familiensituationJA.aenderungPer"></dv-bisher>
+
+                                </div>
+                            </div>
+
+                        </dv-input-container>
                     </div>
                 </div>
-            </div>
-            <br/>
-            <!--gesuchstellerKardinalitaet-->
-            <div class="row">
-                <div class="col-md-12" ng-if="vm.showGesuchstellerKardinalitaet()">
-                    <div class="form-group">
-                        <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
-                        <dv-radio-container name="gesuchstellerKardinalitaet" ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet" ng-required="true"
-                                            class="input-element" items="vm.gesuchstellerKardinalitaetValues" dv-enable-element
-                                            dv-enable-allowed-roles="vm.allowedRoles">
-                        </dv-radio-container>
-                        <dv-error-messages for="form.gesuchstellerKardinalitaet.$error"
-                                           class="error"></dv-error-messages>
+
+
+                <!--familienstatus-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h4 class="mainQuestion required"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span>
+                                <dv-tooltip text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip>
+                            </h4>
+                            <dv-radio-container name="familienstatus"
+                                                ng-model="vm.getFamiliensituation().familienstatus"
+                                                ng-required="true"
+                                                class="input-element sp" items="vm.familienstatusValues"
+                                                dv-enable-element
+                                                dv-enable-allowed-roles="vm.allowedRoles"
+                                                dv-enable-expression="vm.isEnabled()">
+                            </dv-radio-container>
+                            <dv-error-messages for="form.familienstatus.$error"
+                                               class="error"></dv-error-messages>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!--bemerkungen-->
-            <div class="row" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
-                <div class="col-md-12">
-                    <dv-input-container class="form-group">
-                        <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
-                        <textarea md-no-autogrow class="form-control" rows="6" id="notes" ng-model="vm.getFamiliensituation().bemerkungen"
-                                  placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
-                    </dv-input-container>
-                </div>
-            </div>
-
-            <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
-
-                <div class="col-md-6">
-                    <dv-loading-button ng-click="vm.previousStep(form)" button-class="btn btn-link previous">
-                        <span class="fa fa-chevron-left"></span>
-                        <span data-translate="ZURUECK_UPPER"></span>
-                    </dv-loading-button>
+                <!--gesuchstellerKardinalitaet-->
+                <div class="row">
+                    <div class="col-md-6" ng-if="vm.showGesuchstellerKardinalitaet()">
+                        <div class="form-group">
+                            <h4 class="mainQuestion required" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
+                            <dv-radio-container name="gesuchstellerKardinalitaet"
+                                                ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet"
+                                                ng-required="true"
+                                                class="input-element" items="vm.gesuchstellerKardinalitaetValues"
+                                                dv-enable-element
+                                                dv-enable-allowed-roles="vm.allowedRoles"
+                                                dv-enable-expression="vm.isEnabled()">
+                            </dv-radio-container>
+                            <dv-error-messages for="form.gesuchstellerKardinalitaet.$error"
+                                               class="error"></dv-error-messages>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col-md-6 text-right">
-                    <dv-loading-button ng-click="vm.nextStep(form)" button-class="btn btn-link next">
-                        <span data-translate="WEITER_UPPER"></span>
-                        <span class="fa fa-chevron-right"></span>
-                    </dv-loading-button>
+                <div class="row">
+                    <div class="col-md-12">
+                        <dv-navigation dv-show-element
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                       dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave(form)">
+                        </dv-navigation>
+                        <dv-navigation dv-show-element
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"
+                                       dv-next="true">
+                        </dv-navigation>
+                    </div>
                 </div>
 
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>

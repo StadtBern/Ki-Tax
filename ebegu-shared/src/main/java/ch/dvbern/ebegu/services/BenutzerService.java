@@ -35,6 +35,19 @@ public interface BenutzerService {
 	Collection<Benutzer> getAllBenutzer();
 
 	/**
+	 * Gibt alle existierenden Benutzer mit Rolle Sachbearbeiter_JA oder Admin zurueck.
+	 * @return Liste aller Benutzern mit entsprechender Rolle aus der DB
+	 */
+	@Nonnull
+	Collection<Benutzer> getBenutzerJAorAdmin();
+
+	/**
+	 * @return Liste saemtlicher Gesuchsteller aus der DB
+	 */
+	@Nonnull
+	Collection<Benutzer> getGesuchsteller();
+
+	/**
 	 * entfernt die Benutzer aus der Database
 	 * @param username die Benutzer als DTO
 	 */
@@ -45,4 +58,10 @@ public interface BenutzerService {
      */
 	@Nonnull
 	Optional<Benutzer> getCurrentBenutzer();
+
+	/**
+	 * inserts a user received from iam or updates it if it alreday exists
+	 * @param benutzer
+	 */
+	Benutzer updateOrStoreUserFromIAM(Benutzer benutzer);
 }

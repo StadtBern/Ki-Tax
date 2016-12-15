@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
 
@@ -22,37 +23,19 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		// Initialisierung: Wir geben mal das gewünschte Pensum. Falls dies gekürzt werden muss, so geschieht dies später
-		int betreuungberechnet = verfuegungZeitabschnitt.getBetreuungspensum();
-		int anspruchRest = verfuegungZeitabschnitt.getAnspruchspensumRest();
-		// Das Betreuungspensum darf pro Betreuung nie mehr als 100% betragen (gilt für alle Angebote)
-		if (betreuungberechnet > 100) {
-			betreuungberechnet = 100;
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSPENSUM.name() + ": Betreuungspensum wurde auf 100% limitiert");
+		// Betreuungspensum darf nie mehr als 100% sein
+		int betreuungspensum = verfuegungZeitabschnitt.getBetreuungspensum();
+		if (betreuungspensum > 100) { // sollte nie passieren
+			betreuungspensum = 100;
 		}
-		// Fachstelle: Überschreibt alles
+		// Fachstelle: Wird in einer separaten Rule behandelt
 		int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();
 		int roundedPensumFachstelle = MathUtil.roundIntToTens(pensumFachstelle);
-		if (roundedPensumFachstelle > 0) {
-			// Anspruch ist immer genau das Pensum der Fachstelle
-			betreuungberechnet = roundedPensumFachstelle;
-			// Den neuen "AnspruchRest" bestimmen:
-			if (roundedPensumFachstelle > verfuegungZeitabschnitt.getBetreuungspensum()) {
-				anspruchRest = roundedPensumFachstelle - verfuegungZeitabschnitt.getBetreuungspensum();
-			} else {
-				anspruchRest = 0;
-			}
-		} else if (betreuung.isAngebotKita() || betreuung.isAngebotTageselternKleinkinder()) {
-			// Kita und Tageseltern-Kleinkinder: Anspruch ist das kleinere von Betreuungspensum und Erwerbspensum
-			betreuungberechnet = Math.min(betreuungberechnet, verfuegungZeitabschnitt.getAnspruchberechtigtesPensum());
-
-			// Ausserdem: Nur soviel, wie noch nicht von einer anderen Kita oder Tageseltern Kleinkinder verwendet wurde:
-			betreuungberechnet = Math.min(betreuungberechnet, verfuegungZeitabschnitt.getAnspruchspensumRest());
-			// Den neuen "AnspruchRest" bestimmen:
-			anspruchRest = verfuegungZeitabschnitt.getAnspruchspensumRest() - betreuungberechnet;
+		// Wenn keine Fachstelle  -> Anspruch setzen fuer Schulkinder; bei Kleinkindern muss nichts gemacht werden
+		if (roundedPensumFachstelle <= 0 && betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
+			// Schulkind-Angebote: Sie erhalten IMMER soviel, wie sie wollen. Der Restanspruch wird nicht tangiert
+			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(betreuungspensum);
 		}
-		// Den berechneten Wert setzen, sowie den Restanspruch aktualisieren
-		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(betreuungberechnet);
-		verfuegungZeitabschnitt.setAnspruchspensumRest(anspruchRest);
 	}
+
 }

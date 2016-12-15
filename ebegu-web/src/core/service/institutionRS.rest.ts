@@ -18,7 +18,7 @@ export class InstitutionRS {
     }
 
     public findInstitution(institutionID: string): IPromise<TSInstitution> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(institutionID))
+        return this.http.get(this.serviceURL + '/id/' + encodeURIComponent(institutionID))
             .then((response: any) => {
                 this.log.debug('PARSING institution REST object ', response.data);
                 return this.ebeguRestUtil.parseInstitution(new TSInstitution(), response.data);
@@ -79,5 +79,16 @@ export class InstitutionRS {
 
     public getServiceName(): string {
         return 'InstitutionRS';
+    }
+
+    synchronizeInstitutions(): IPromise<any> {
+        return this.http.post(this.serviceURL + '/' + 'synchronizeWithOpenIdm', null, {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        }).then((response: any) => {
+            this.log.debug('synchronizeWithOpenIdm returns: ', response.data);
+            return response;
+        });
     }
 }

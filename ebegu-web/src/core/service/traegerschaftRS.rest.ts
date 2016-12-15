@@ -19,7 +19,7 @@ export class TraegerschaftRS {
     }
 
     public findTraegerschaft(traegerschaftID: string): IPromise<TSTraegerschaft> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(traegerschaftID))
+        return this.http.get(this.serviceURL + '/id/' + encodeURIComponent(traegerschaftID))
             .then((response: any) => {
                 this.log.debug('PARSING traegerschaft REST object ', response.data);
                 return this.ebeguRestUtil.parseTraegerschaft(new TSTraegerschaft(), response.data);
@@ -44,6 +44,17 @@ export class TraegerschaftRS {
         }).then((response: any) => {
             this.log.debug('PARSING traegerschaft REST object ', response.data);
             return this.ebeguRestUtil.parseTraegerschaft(new TSTraegerschaft(), response.data);
+        });
+    }
+
+    synchronizeTraegerschaften(): IPromise<any> {
+        return this.http.post(this.serviceURL + '/' + 'synchronizeWithOpenIdm', null, {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        }).then((response: any) => {
+            this.log.debug('synchronizeWithOpenIdm returns: ', response.data);
+            return response;
         });
     }
 

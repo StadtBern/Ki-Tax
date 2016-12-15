@@ -5,41 +5,21 @@ import java.time.LocalDate;
 
 /**
  * DTO für die Resultate der Berechnungen der Finanziellen Situation und eventueller Einkommensverschlechterungen.
+ *
+ * die Werte massgebendesEinkommenBasisjahrPlus1, massgebendesEinkommenBasisjahrPlus1 und datumVonBasisjahrPlus1 sowie
+ * datumVonBasisjahrPlus2 sind nur gesetzt wenn die jeweilige Einkommensverschlechterung akzeptiert wurde
  */
 public class FinanzDatenDTO {
 
-	private BigDecimal massgebendesEinkommenBasisjahr = BigDecimal.ZERO;
-	private BigDecimal massgebendesEinkommenBasisjahrPlus1 = BigDecimal.ZERO;
-	private BigDecimal massgebendesEinkommenBasisjahrPlus2 = BigDecimal.ZERO;
+
+	private BigDecimal massgebendesEinkBjVorAbzFamGr = BigDecimal.ZERO;
+	private BigDecimal massgebendesEinkBjP1VorAbzFamGr = BigDecimal.ZERO;
+	private BigDecimal massgebendesEinkBjP2VorAbzFamGr = BigDecimal.ZERO;
 
 	private LocalDate datumVonBasisjahr = null; // Start Gesuchsperiode
 	private LocalDate datumVonBasisjahrPlus1 = null; // 1. des ausgewählten Monats
 	private LocalDate datumVonBasisjahrPlus2 = null; // 1. des ausgewählten Monats
 
-
-	public BigDecimal getMassgebendesEinkommenBasisjahr() {
-		return massgebendesEinkommenBasisjahr;
-	}
-
-	public void setMassgebendesEinkommenBasisjahr(BigDecimal massgebendesEinkommenBasisjahr) {
-		this.massgebendesEinkommenBasisjahr = massgebendesEinkommenBasisjahr;
-	}
-
-	public BigDecimal getMassgebendesEinkommenBasisjahrPlus1() {
-		return massgebendesEinkommenBasisjahrPlus1;
-	}
-
-	public void setMassgebendesEinkommenBasisjahrPlus1(BigDecimal massgebendesEinkommenBasisjahrPlus1) {
-		this.massgebendesEinkommenBasisjahrPlus1 = massgebendesEinkommenBasisjahrPlus1;
-	}
-
-	public BigDecimal getMassgebendesEinkommenBasisjahrPlus2() {
-		return massgebendesEinkommenBasisjahrPlus2;
-	}
-
-	public void setMassgebendesEinkommenBasisjahrPlus2(BigDecimal massgebendesEinkommenBasisjahrPlus2) {
-		this.massgebendesEinkommenBasisjahrPlus2 = massgebendesEinkommenBasisjahrPlus2;
-	}
 
 	public LocalDate getDatumVonBasisjahr() {
 		return datumVonBasisjahr;
@@ -63,5 +43,39 @@ public class FinanzDatenDTO {
 
 	public void setDatumVonBasisjahrPlus2(LocalDate datumVonBasisjahrPlus2) {
 		this.datumVonBasisjahrPlus2 = datumVonBasisjahrPlus2;
+	}
+
+	public BigDecimal getMassgebendesEinkBjVorAbzFamGr() {
+		return massgebendesEinkBjVorAbzFamGr;
+	}
+
+	public void setMassgebendesEinkBjVorAbzFamGr(BigDecimal massgebendesEinkBjVorAbzFamGr) {
+		this.massgebendesEinkBjVorAbzFamGr = massgebendesEinkBjVorAbzFamGr;
+	}
+
+	public BigDecimal getMassgebendesEinkBjP1VorAbzFamGr() {
+		return massgebendesEinkBjP1VorAbzFamGr;
+	}
+
+	public void setMassgebendesEinkBjP1VorAbzFamGr(BigDecimal massgebendesEinkBjP1VorAbzFamGr) {
+		this.massgebendesEinkBjP1VorAbzFamGr = massgebendesEinkBjP1VorAbzFamGr;
+	}
+
+	public BigDecimal getMassgebendesEinkBjP2VorAbzFamGr() {
+		return massgebendesEinkBjP2VorAbzFamGr;
+	}
+
+	public void setMassgebendesEinkBjP2VorAbzFamGr(BigDecimal massgebendesEinkBjP2VorAbzFamGr) {
+		this.massgebendesEinkBjP2VorAbzFamGr = massgebendesEinkBjP2VorAbzFamGr;
+	}
+
+	public boolean isEKV2Accepted() {
+//		(Feld ist nur gesetzt wenn EKV akzeptiert wurde)
+		return this.getDatumVonBasisjahrPlus2() != null;
+	}
+
+	public boolean isEKV1Accepted( ) {
+//		 (Feld ist nur gesetzt wenn EKV akzeptiert wurde)
+		return this.getDatumVonBasisjahrPlus1() != null;
 	}
 }

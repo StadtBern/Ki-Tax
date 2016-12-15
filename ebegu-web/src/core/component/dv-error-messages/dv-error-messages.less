@@ -1,3 +1,33 @@
-.dv-error-messages{
-    color: rgb(221,44,0);;
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
+
+.dv-error-messages, dv-error-messages {
+    box-sizing: border-box;
+    color: rgb(221, 44, 0);
+    line-height: 2.75rem;
+    font-size: 1.4rem;
+
+}
+
+.dv-error-messages {
+    height: 2.75rem;
+    display: block;
+    max-height: 2.75rem;
+    overflow: hidden;
+    margin: 0;
+    min-width: 1px;
+}
+
+.dv-error-messages {
+    & > div > div {
+        padding: 0;
+        box-sizing: border-box;
+        vertical-align: middle;
+    }
+}
+
+md-input-container .md-errors-spacer, .md-errors-spacer {
+    display: none;
+    height: 2.5rem;
+    min-height: 2.5rem !important;
 }

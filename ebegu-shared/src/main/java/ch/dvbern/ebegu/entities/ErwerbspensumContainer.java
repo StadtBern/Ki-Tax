@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
 
@@ -17,8 +18,8 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	private static final long serialVersionUID = -3084333639027795652L;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_gesuchsteller_id"))
-	private Gesuchsteller gesuchsteller;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_gesuchstellerContainer_id"))
+	private GesuchstellerContainer gesuchstellerContainer;
 
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -30,13 +31,17 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_erwerbspensumja_id"))
 	private Erwerbspensum erwerbspensumJA;
 
-	public Gesuchsteller getGesuchsteller() {
-		return gesuchsteller;
+
+	public ErwerbspensumContainer() {
 	}
 
-	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
-		this.gesuchsteller = gesuchsteller;
 
+	public GesuchstellerContainer getGesuchsteller() {
+		return gesuchstellerContainer;
+	}
+
+	public void setGesuchsteller(GesuchstellerContainer gesuchstellerContainer) {
+		this.gesuchstellerContainer = gesuchstellerContainer;
 	}
 
 	public Erwerbspensum getErwerbspensumGS() {
@@ -65,6 +70,13 @@ public class ErwerbspensumContainer extends AbstractEntity {
 		}
 		return getErwerbspensumGS().isSame(otherErwerbspensum.getErwerbspensumGS()) &&
 			getErwerbspensumJA().isSame(otherErwerbspensum.getErwerbspensumJA());
+	}
 
+	public ErwerbspensumContainer copyForMutation(@Nonnull ErwerbspensumContainer mutation, @Nonnull GesuchstellerContainer gesuchstellerMutation) {
+		super.copyForMutation(mutation);
+		mutation.setGesuchsteller(gesuchstellerMutation);
+		mutation.setErwerbspensumGS(null);
+		mutation.setErwerbspensumJA(this.getErwerbspensumJA().copyForMutation(new Erwerbspensum()));
+		return mutation;
 	}
 }

@@ -8,15 +8,9 @@
                  ng-bind="user.vorname + ' ' + user.nachname + ', ' + user.email + ', ' + 'Rolle ' + (user.getRoleKey() | translate) + ' '
                           + user.institution.name + user.traegerschaft.name"></div>
         </div>
-    </div>
 
-    <div class="col-md-9 col-md-offset-3">
-        <h3>
-            Testfälle einfügen
-        </h3>
-        <ul>
-            <li><a href="ebegu/api/v1/testfaelle/testfall/1" target="_blank">Testfall Dagmar Wälti einfügen</a></li>
-        </ul>
+        <div class="mark-hover panel-body" ng-click="vm.logIn(vm.superadmin)" ng-hide="true"
+             ng-bind="vm.superadmin.vorname + ' ' + vm.superadmin.nachname + ', ' + vm.superadmin.email + ', ' + 'Rolle ' + (vm.superadmin.getRoleKey() | translate) + ' '
+                          + vm.superadmin.institution.name + vm.superadmin.traegerschaft.name"></div>
     </div>
-
 </div>

@@ -2,12 +2,17 @@ import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import TSKindContainer from '../../../models/TSKindContainer';
+import {TSBetreuungsangebotTypUtil} from '../../../utils/TSBetreuungsangebotTypUtil';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import ILogService = angular.ILogService;
 let template = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -32,26 +37,34 @@ export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
 }
 
 
-export class ErwerbspensumListViewController extends AbstractGesuchViewController {
+export class ErwerbspensumListViewController extends AbstractGesuchViewController<any> {
 
     erwerbspensenGS1: Array<TSErwerbspensumContainer> = undefined;
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog', 'ErrorService'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService) {
-        super(state, gesuchModelManager, berechnungsManager);
-        var vm = this;
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        this.initErwerbspensumStepStatus();
     }
 
+    private initErwerbspensumStepStatus() {
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.ERWERBSPENSUM);
+        if (this.isSaveDisabled()) {
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+        } else {
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+        }
+    }
 
     getErwerbspensenListGS1(): Array<TSErwerbspensumContainer> {
         if (this.erwerbspensenGS1 === undefined) {
             //todo team, hier die daten vielleicht reingeben statt sie zu lesen
-            if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.gesuchsteller1 &&
-                this.gesuchModelManager.gesuch.gesuchsteller1.erwerbspensenContainer) {
-                let gesuchsteller1: TSGesuchsteller = this.gesuchModelManager.gesuch.gesuchsteller1;
+            if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1 &&
+                this.gesuchModelManager.getGesuch().gesuchsteller1.erwerbspensenContainer) {
+                let gesuchsteller1: TSGesuchstellerContainer = this.gesuchModelManager.getGesuch().gesuchsteller1;
                 this.erwerbspensenGS1 = gesuchsteller1.erwerbspensenContainer;
 
             } else {
@@ -64,9 +77,9 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     getErwerbspensenListGS2(): Array<TSErwerbspensumContainer> {
         if (this.erwerbspensenGS2 === undefined) {
             //todo team, hier die daten vielleicht reingeben statt sie zu lesen
-            if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.gesuchsteller2 &&
-                this.gesuchModelManager.gesuch.gesuchsteller2.erwerbspensenContainer) {
-                let gesuchsteller2: TSGesuchsteller = this.gesuchModelManager.gesuch.gesuchsteller2;
+            if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2 &&
+                this.gesuchModelManager.getGesuch().gesuchsteller2.erwerbspensenContainer) {
+                let gesuchsteller2: TSGesuchstellerContainer = this.gesuchModelManager.getGesuch().gesuchsteller2;
                 this.erwerbspensenGS2 = gesuchsteller2.erwerbspensenContainer;
 
             } else {
@@ -89,6 +102,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
             title: 'ERWERBSPENSUM_LOESCHEN'
         })
             .then(() => {   //User confirmed removal
+                this.gesuchModelManager.setGesuchstellerNumber(gesuchstellerNumber);
                 this.gesuchModelManager.removeErwerbspensum(pensum);
 
             });
@@ -96,32 +110,49 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     editPensum(pensum: any, gesuchstellerNumber: any): void {
-
         let index: number = this.gesuchModelManager.findIndexOfErwerbspensum(parseInt(gesuchstellerNumber), pensum);
         this.openErwerbspensumView(gesuchstellerNumber, index);
-
     }
 
     private openErwerbspensumView(gesuchstellerNumber: number, erwerbspensumNum: number): void {
-        this.state.go('gesuch.erwerbsPensum', {
+        this.$state.go('gesuch.erwerbsPensum', {
             gesuchstellerNumber: gesuchstellerNumber,
-            erwerbspensumNum: erwerbspensumNum
+            erwerbspensumNum: erwerbspensumNum,
+            gesuchId: this.getGesuchId()
         });
     }
 
-    previousStep() {
-        this.state.go('gesuch.betreuungen');
+    /**
+     * Erwerbspensum muss nur erfasst werden, falls mind. 1 Kita oder 1 Tageseltern Kleinkind Angebot erfasst wurde
+     * und mind. eines dieser Kinder keine Fachstelle involviert hat
+     * @returns {boolean}
+     */
+    public isErwerbspensumRequired(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.gesuchModelManager.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.institutionStammdaten
+                    && TSBetreuungsangebotTypUtil.isRequireErwerbspensum(betreuung.institutionStammdaten.betreuungsangebotTyp)
+                    && !kind.kindJA.pensumFachstelle) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
-    nextStep() {
-        this.errorService.clearAll();
-        if (this.gesuchModelManager.isGesuchsteller2Required()) {
-            this.state.go('gesuch.finanzielleSituationStart');
-        } else {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+    /**
+     * Gibt true zurueck wenn Erwerbspensen nicht notwendig sind oder wenn sie notwendig sind aber mindestens eins bereits eingetragen wurde
+     * @returns {boolean}
+     */
+    public isSaveDisabled(): boolean {
+        let erwerbspensenNumber: number = 0;
+        if (this.getErwerbspensenListGS1() && this.getErwerbspensenListGS1().length > 0) {
+            erwerbspensenNumber += this.getErwerbspensenListGS1().length;
         }
+        if (this.getErwerbspensenListGS2() && this.getErwerbspensenListGS2().length > 0) {
+            erwerbspensenNumber += this.getErwerbspensenListGS2().length;
+        }
+        return this.isErwerbspensumRequired() && erwerbspensenNumber <= 0;
     }
 }
-
-
-

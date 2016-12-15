@@ -44,6 +44,8 @@ xa-data-source add \
 	cache-type=default \
 )
 
+#diese Security domain wird aktuell nicht mehr verwendet, evtl wird sie aber spaeter noch in den stack eingebunden,
+#neu wird die bereits in standalone.xml enthaltene jaspitest domain verwendet
 /subsystem=security/security-domain=ebegu/authentication=classic:add( \
 	login-modules=[ \
 		{ \
@@ -56,6 +58,11 @@ xa-data-source add \
 		} \
 	] \
 )
+
+#Add Properties
+/system-property=ebegu.fedlet.config.path:add(value=fedletConfig/https_test_ebegu_dvbern_ch)
+/system-property=ebegu.client.using.https:add(value=false)
+/system-property=ebegu.openidm.enabled:add(value=true)
 
 
 #Helperskripts
@@ -70,4 +77,19 @@ xa-data-source add \
 #
 #/subsystem=logging/logger=org.apache.catalina/:add(category=org.apache.catalina,level=TRACE,use-parent-handlers=true)
 #
+
+#Logoutput fuer Fedlet reduzieren
+/subsystem=logging/logger=SAML2.access/:add(category=SAML2.access,level=ERROR,use-parent-handlers=true)
+/subsystem=logging/logger=IDFF.access/:add(category=IDFF.access,level=ERROR,use-parent-handlers=true)
+/subsystem=logging/logger=COT.access/:add(category=COT.access,level=ERROR,use-parent-handlers=true)
+
+
+#Cache konfigurieren
+
+/subsystem=infinispan/cache-container=ebeguCache:add(default-cache="ebeguAuthorizationCache")
+/subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache:add()
+/subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache/transaction=TRANSACTION:add(mode=FULL_XA)
+/subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache/eviction=EVICTION:add(strategy=LRU, max-entries=10000)
+/subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache/expiration=EXPIRATION:add(lifespan=1800000)
+
 run-batch

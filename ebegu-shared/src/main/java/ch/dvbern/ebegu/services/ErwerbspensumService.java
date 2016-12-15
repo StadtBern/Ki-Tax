@@ -1,7 +1,8 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
@@ -16,9 +17,10 @@ public interface ErwerbspensumService {
 	/**
 	 * Speichert die Erwerbspensen neu in der DB falls der Key noch nicht existiert.
 	 * @param erwerbspensumContainer Das Erwerbspensum das gespeichert werden soll
+	 * @param gesuch
 	 */
 	@Nonnull
-	ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer);
+	ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer, Gesuch gesuch);
 
 	/**
 	 * @param key PK (id) des ErwerbspensumContainers
@@ -30,7 +32,14 @@ public interface ErwerbspensumService {
 	/**
 	 * Sucht die Erwerbspensen des übergebenen Gesuchstellers.
      */
-	Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
+	Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller);
+
+	/**
+	 * Sucht alle Erwerbspensen fuer das eingegebene Gesuch
+	 * @param gesuchId
+	 * @return
+	 */
+	Collection<ErwerbspensumContainer> findErwerbspensenFromGesuch(@Nonnull String gesuchId);
 
 	/**
 	 * @return Liste aller ErwerbspensumContainer aus der DB
@@ -41,7 +50,8 @@ public interface ErwerbspensumService {
 	/**
 	 * entfernt eine Erwerbspensum aus der Databse
 	 * @param erwerbspensumContainerID der Entfernt werden soll
+	 * @param gesuch
 	 */
-	void removeErwerbspensum(@Nonnull String erwerbspensumContainerID);
+	void removeErwerbspensum(@Nonnull String erwerbspensumContainerID, Gesuch gesuch);
 
 }

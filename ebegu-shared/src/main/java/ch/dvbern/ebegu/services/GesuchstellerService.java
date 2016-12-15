@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -12,18 +13,12 @@ import java.util.Optional;
 public interface GesuchstellerService {
 
 	/**
-	 * Speichert die Gesuchsteller neu in der DB falls der Key noch nicht existiert.
-	 * @param gesuchsteller Die Gesuchsteller als DTO
-	 */
-	@Nonnull
-	Gesuchsteller createGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
-
-	/**
 	 * Aktualisiert die Gesuchsteller in der DB.
 	 * @param gesuchsteller Die Gesuchsteller als DTO
+	 * @param gsNumber
 	 */
 	@Nonnull
-	Gesuchsteller updateGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
+	GesuchstellerContainer saveGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller, final Gesuch gesuch, Integer gsNumber, boolean umzug);
 
 	/**
 
@@ -31,19 +26,19 @@ public interface GesuchstellerService {
 	 * @return Gesuchsteller mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<Gesuchsteller> findGesuchsteller(@Nonnull String key);
+	Optional<GesuchstellerContainer> findGesuchsteller(@Nonnull String key);
 
 	/**
 	 *
 	 * @return Liste aller Gesuchsteller aus der DB
 	 */
 	@Nonnull
-	Collection<Gesuchsteller> getAllGesuchsteller();
+	Collection<GesuchstellerContainer> getAllGesuchsteller();
 
 	/**
 	 * entfernt eine Gesuchsteller aus der Databse
 	 * @param gesuchsteller Gesuchsteller zu entfernen
 	 */
-	void removeGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
+	void removeGesuchsteller(@Nonnull GesuchstellerContainer gesuchsteller);
 
 }

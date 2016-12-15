@@ -6,7 +6,7 @@ import router from '../dvbModules/router/router.module';
 import AdresseRS from './service/adresseRS.rest';
 import ListResourceRS from './service/listResourceRS.rest';
 import EbeguRestUtil from '../utils/EbeguRestUtil';
-import GesuchstellerRS from './service/gesuchstellerRS.rest.ts';
+import GesuchstellerRS from './service/gesuchstellerRS.rest';
 import {AdresseComponentConfig} from './component/dv-adresse/dv-adresse';
 import {DvErrorMessagesComponentConfig} from './component/dv-error-messages/dv-error-messages';
 import FallRS from '../gesuch/service/fallRS.rest';
@@ -27,7 +27,7 @@ import {InstitutionStammdatenRS} from './service/institutionStammdatenRS.rest';
 import {DvBisherComponentConfig} from './component/dv-bisher/dv-bisher';
 import KindRS from './service/kindRS.rest';
 import {DvDialog} from './directive/dv-dialog/dv-dialog';
-import BetreuungRS from './service/betreuungRS';
+import BetreuungRS from './service/betreuungRS.rest';
 import {DVErwerbspensumListConfig} from './component/dv-erwerbspensum-list/dv-erwerbspensum-list';
 import ErwerbspensumRS from './service/erwerbspensumRS.rest';
 import BerechnungsManager from '../gesuch/service/berechnungsManager';
@@ -47,16 +47,27 @@ import HttpResponseInterceptor from './service/HttpResponseInterceptor';
 import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
 import 'ng-file-upload';
 import {UploadRS} from './service/uploadRS.rest';
-
+import {DownloadRS} from './service/downloadRS.rest';
 import VerfuegungRS from './service/verfuegungRS.rest';
 import {DVShowElement} from './directive/dv-show-element/dv-show-element';
 import {DVEnableElement} from './directive/dv-enable-element/dv-enable-element';
 import {DVRoleElementController} from './controller/DVRoleElementController';
+import WizardStepManager from '../gesuch/service/wizardStepManager';
+import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
+import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensverschlechterungInfoRS.rest';
+import {DVNavigation} from './directive/dv-navigation/dv-navigation';
+import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
+import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
+import {NavigationLogger} from './service/NavigationLogger';
+import GlobalCacheService from '../gesuch/service/globalCacheService';
+import MahnungRS from '../gesuch/service/mahnungRS.rest';
+import {DvHomeIconComponentConfig} from './component/dv-home-icon/dv-home-icon';
+import DVTrimEmpty from './directive/dv-trim-empty/dv-trim-empty';
 
 let dynamicDependencies = function (): string[] {
 
-    let dynDep: string [] = ['unsavedChanges'];
-    //deaktiviere unsavedChanges plugin fuer development
+    let dynDep: string [] = [];
+    //hier kommen plugins die wir fuer dev disablen wollen
     if (ENV === 'development') {
         return [];
     }
@@ -83,7 +94,8 @@ const dependencies: string[] = [
     'angularMoment',
     'cfp.hotkeys',
     'ui.utils.masks',
-    'ngFileUpload'
+    'ngFileUpload',
+    'unsavedChanges'
 ];
 
 
@@ -99,7 +111,10 @@ export const EbeguWebCore: angular.IModule = angular
         MAX_LENGTH: 255,
         FALLNUMMER_LENGTH: 6,
         PATTERN_BETRAG: '([0-9]{0,12})',
-        PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$'     //todo team kann nach mergen des tasks ueber inputmaske gemact werden
+        PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$',    //todo team kann nach mergen des tasks ueber inputmaske gemact werden
+        PATTERN_PHONE: '(0|\\+41|0041)\\s?([\\d]{2})\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})',
+        PATTERN_MOBILE: '(0|\\+41|0041)\\s?(74|75|76|77|78|79)\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})',
+        PATTERN_EMAIL: '[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}'
     })
     .service('EbeguRestUtil', EbeguRestUtil)
     .service('EbeguUtil', EbeguUtil)
@@ -112,6 +127,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('GesuchRS', GesuchRS)
     .service('FinanzielleSituationRS', FinanzielleSituationRS)
     .service('EinkommensverschlechterungContainerRS', EinkommensverschlechterungContainerRS)
+    .service('EinkommensverschlechterungInfoRS', EinkommensverschlechterungInfoRS)
     .service('MandantRS', MandantRS)
     .service('TraegerschaftRS', TraegerschaftRS)
     .service('InstitutionRS', InstitutionRS)
@@ -125,17 +141,25 @@ export const EbeguWebCore: angular.IModule = angular
     .service('VerfuegungRS', VerfuegungRS)
     .service('DokumenteRS', DokumenteRS)
     .service('UploadRS', UploadRS)
+    .service('DownloadRS', DownloadRS)
+    .service('WizardStepRS', WizardStepRS)
+    .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
+    .service('GlobalCacheService', GlobalCacheService)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())
+    .directive('dvNavigation', DVNavigation.factory())
     .directive('dvLoading', DVLoading.factory())
     .directive('dvLoadingButton', DVLoadingButton.factory())
     .directive('dvSubmitevent', DVSubmitevent.factory())
     .directive('dvShowElement', DVShowElement.factory())
     .directive('dvEnableElement', DVEnableElement.factory())
+    .directive('dvTrimEmpty', DVTrimEmpty.factory())
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
     .service('HttpResponseInterceptor', HttpResponseInterceptor)
+    .service('WizardStepManager', WizardStepManager)
+    .service('NavigationLogger', NavigationLogger)
     .controller('DVElementController', DVRoleElementController)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
@@ -144,5 +168,9 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
     .component('dvTooltip', new DvTooltipComponentConfig())
     .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
+    .component('dvHomeIcon', new DvHomeIconComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
-    .component('dvDokumenteList', new DVDokumenteListConfig());
+    .component('dvDokumenteList', new DVDokumenteListConfig())
+    .component('dvAntragList', new DVAntragListConfig())
+    .service('MahnungRS', MahnungRS);
+

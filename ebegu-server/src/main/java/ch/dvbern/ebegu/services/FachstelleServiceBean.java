@@ -7,6 +7,8 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -15,11 +17,15 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
 /**
  * Service fuer fachstelle
  */
 @Stateless
 @Local(FachstelleService.class)
+@PermitAll
 public class FachstelleServiceBean extends AbstractBaseService implements FachstelleService {
 
 	@Inject
@@ -29,6 +35,7 @@ public class FachstelleServiceBean extends AbstractBaseService implements Fachst
 
 	@Nonnull
 	@Override
+	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
 	public Fachstelle saveFachstelle(@Nonnull Fachstelle fachstelle) {
 		Objects.requireNonNull(fachstelle);
 		return persistence.merge(fachstelle);
@@ -49,6 +56,7 @@ public class FachstelleServiceBean extends AbstractBaseService implements Fachst
 	}
 
 	@Override
+	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
 	public void removeFachstelle(@Nonnull String fachstelleId) {
 		Objects.requireNonNull(fachstelleId);
 		Optional<Fachstelle> fachstelleToRemove = findFachstelle(fachstelleId);

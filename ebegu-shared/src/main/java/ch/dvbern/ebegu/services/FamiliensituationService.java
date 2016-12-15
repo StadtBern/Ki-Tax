@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -12,41 +13,31 @@ import java.util.Optional;
 public interface FamiliensituationService {
 
 	/**
-	 * Erstellt eine neue Familiensituation in der DB, falls der key noch nicht existiert
-	 * @param familiensituation die Familiensituation als DTO
-	 * @return die gespeicherte Familiensituation
+	 * Aktualisiert idn Familiensituation in der DB oder erstellt sie wenn sie noch nicht existiert
 	 */
 	@Nonnull
-	Familiensituation createFamiliensituation(@Nonnull Familiensituation familiensituation);
+	FamiliensituationContainer saveFamiliensituation(Gesuch gesuch, FamiliensituationContainer familiensituationContainer);
 
 	/**
-	 * Aktualisiert idn Familiensituation in der DB
-	 * @param familiensituation die Familiensituation als DTO
-	 * @return Die aktualisierte Familiensituation
-	 */
-	@Nonnull
-	Familiensituation updateFamiliensituation(@Nonnull Familiensituation familiensituation);
-
-	/**
-	 *
 	 * @param key PK (id) der Familiensituation
 	 * @return Familiensituation mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<Familiensituation> findFamiliensituation(@Nonnull String key);
+	Optional<FamiliensituationContainer> findFamiliensituation(@Nonnull String key);
 
 	/**
 	 * Gibt alle existierenden Familiensituationen zurueck.
+	 *
 	 * @return Liste aller Familiensituationen aus der DB
 	 */
 	@Nonnull
-	Collection<Familiensituation> getAllFamiliensituatione();
+	Collection<FamiliensituationContainer> getAllFamiliensituatione();
 
 	/**
 	 * entfernt eine Familiensituation aus der Database
+	 *
 	 * @param familiensituation die Familiensituation als DTO
 	 */
-	@Nonnull
-	void removeFamiliensituation(@Nonnull Familiensituation familiensituation);
+	void removeFamiliensituation(@Nonnull FamiliensituationContainer familiensituation);
 
 }

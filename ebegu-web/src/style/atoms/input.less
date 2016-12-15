@@ -1,0 +1,64 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+//    error styling
+md-input-container {
+    padding: 0;
+    margin: 0;
+}
+
+.contrast {
+    .dvDatepicker {
+        background: @contrast-light;
+    }
+}
+
+[disabled] md-input-container .md-input {
+    background: @contrast;
+    color: @contrast-darkest;
+}
+
+input[type="text"], input[type="number"], input[type="email"], textarea, textarea.md-input, .form-control {
+    width: 100%;
+    .table &, &.contrast {
+        background: @contrast-light;
+    }
+    &[disabled] {
+        background: @contrast;
+        color: @contrast-darkest;
+    }
+    .placeholder();
+    .semi-bold();
+    .h1();
+    padding: 0 0 0 1rem;
+    margin: 0;
+    height: 4rem;
+    border: 0;
+    background: @contrast-lightest;
+    border: none;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0) /*@secondary-dark*/;
+    outline: 0;
+    border-radius: 0;
+
+    color: @contrast-darkest;
+    -moz-appearance: textfield; // spinner in firefox sieht doof aus -> disable
+
+    //TODO focus style
+    /* &:focus {
+         border-color:rgba(0,0,0,0) /*@secondary-dark*/;
+    //this simulates the outline that chrome places around focused fields using css
+    // outline: none; /*or outline-color:#FFFFFF; if the first doesn't work*/
+    //border: 1px solid @input-boder-focus;
+    // -webkit-box-shadow: 0px 0px 4px 0px rgba(0,0,0,0) /*@secondary-dark*/;
+    //   box-shadow: 0px 0px 4px 0px rgba(0,0,0,0)  /*@secondary-dark*/;
+    //  }*/
+}
+
+textarea.md-input, textarea.form-control {
+    padding: 1rem;
+    .normal();
+    .md-input-focused & {
+        padding: 1rem;
+    }
+}
+

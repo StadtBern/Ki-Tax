@@ -1,13 +1,16 @@
-import {IComponentOptions, IFormController, ILogService} from 'angular';
+import {IComponentOptions, ILogService, IPromise, IQService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import {IEinkommensverschlechterungStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
+import WizardStepManager from '../../service/wizardStepManager';
+import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
+import {TSRole} from '../../../models/enums/TSRole';
+import TSFinanzModel from '../../../models/TSFinanzModel';
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -19,38 +22,47 @@ export class EinkommensverschlechterungViewComponentConfig implements IComponent
     controllerAs = 'vm';
 }
 
-export class EinkommensverschlechterungViewController extends AbstractGesuchViewController {
+export class EinkommensverschlechterungViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
     public showSelbstaendig: boolean;
     public geschaeftsgewinnBasisjahrMinus1: number;
     public geschaeftsgewinnBasisjahrMinus2: number;
+    public geschaeftsgewinnBasisjahrMinus1GS: number;
+    public geschaeftsgewinnBasisjahrMinus2GS: number;
+    allowedRoles: Array<TSRole>;
+    public initialModel: TSFinanzModel;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
+        'WizardStepManager', '$q'];
 
     /* @ngInject */
-    constructor($stateParams: IEinkommensverschlechterungStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private $log: ILogService) {
-        super($state, gesuchModelManager, berechnungsManager);
+    constructor($stateParams: IEinkommensverschlechterungStateParams, gesuchModelManager: GesuchModelManager,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private $log: ILogService,
+                wizardStepManager: WizardStepManager, private $q: IQService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         let parsedGesuchstelllerNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedGesuchstelllerNum);
         this.gesuchModelManager.setBasisJahrPlusNumber(parsedBasisJahrPlusNum);
+        this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), parsedGesuchstelllerNum, parsedBasisJahrPlusNum);
+        this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.model.initEinkommensverschlechterungContainer(parsedBasisJahrPlusNum, parsedGesuchstelllerNum);
+        this.initialModel = angular.copy(this.model);
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();
         this.calculate();
 
     }
 
     private initViewModel() {
-        if (this.gesuchModelManager) {
-            this.gesuchModelManager.initEinkommensverschlechterungContainer(this.gesuchModelManager.getBasisJahrPlusNumber(),
-                this.gesuchModelManager.getGesuchstellerNumber());
 
-            this.getGeschaeftsgewinnFromFS();
+        this.initGeschaeftsgewinnFromFS();
 
-            this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig()
-                || (this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr !== null
-                && this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr !== undefined);
-        }
+        this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig()
+            || (this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== null
+            && this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== undefined);
+
     }
 
     public showSelbstaendigClicked() {
@@ -60,186 +72,87 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     }
 
     private resetSelbstaendigFields() {
-        if (this.gesuchModelManager.getEinkommensverschlechterungToWorkWith()) {
-            this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr = undefined;
+        if (this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr) {
+            this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr = undefined;
             this.calculate();
         }
     }
 
     showSteuerveranlagung(): boolean {
-        return !this.gesuchModelManager.getGemeinsameSteuererklaerungToWorkWith() || this.gesuchModelManager.getGemeinsameSteuererklaerungToWorkWith() === false;
+        return !this.model.getGemeinsameSteuererklaerungToWorkWith() || this.model.getGemeinsameSteuererklaerungToWorkWith() === false;
     }
 
     showSteuererklaerung(): boolean {
-        return this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuerveranlagungErhalten === false;
+        return this.model.getEkvToWorkWith().steuerveranlagungErhalten === false;
     }
 
     showHintSteuererklaerung(): boolean {
-        return this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuererklaerungAusgefuellt === true &&
-            this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuerveranlagungErhalten === false;
+        return this.model.getEkvToWorkWith().steuererklaerungAusgefuellt === true &&
+            this.model.getEkvToWorkWith().steuerveranlagungErhalten === false;
     }
 
     showHintSteuerveranlagung(): boolean {
-        return this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuerveranlagungErhalten === true;
+        return this.model.getEkvToWorkWith().steuerveranlagungErhalten === true;
     }
 
     steuerveranlagungClicked(): void {
         // Wenn Steuerveranlagung JA -> auch StekErhalten -> JA
-        if (this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuerveranlagungErhalten === true) {
-            this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuererklaerungAusgefuellt = true;
-        } else if (this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuerveranlagungErhalten === false) {
+        if (this.model.getEkvToWorkWith().steuerveranlagungErhalten === true) {
+            this.model.getEkvToWorkWith().steuererklaerungAusgefuellt = true;
+        } else if (this.model.getEkvToWorkWith().steuerveranlagungErhalten === false) {
             // Steuerveranlagung neu NEIN -> Fragen loeschen
-            this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuererklaerungAusgefuellt = undefined;
+            this.model.getEkvToWorkWith().steuererklaerungAusgefuellt = undefined;
         }
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, this.navigatePrevious);
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, this.navigateNext);
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungContainer> {
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.model.getEkvContToWorkWith());
+            }
             this.errorService.clearAll();
-            this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(navigationFunction);
-
+            this.model.copyEkvSitDataToGesuch(this.gesuchModelManager.getGesuch());
+            return this.gesuchModelManager.saveEinkommensverschlechterungContainer();
         }
-
+        return undefined;
     }
-
-    //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
-    private navigateNext = (einkommensverschlechterungResponse: any) => {
-        if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                // 1 , 1
-                if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '1',
-                        basisjahrPlus: '2'
-                    });
-                } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '2',
-                        basisjahrPlus: '1'
-                    });
-                } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-                }
-
-            } else { //gesuchsteller ===2
-
-                // 2 , 1
-                if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '2',
-                        basisjahrPlus: '2'
-                    });
-                } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-                }
-
-            }
-
-        } else if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 2)) {
-
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                // 1 , 2
-                if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '2',
-                        basisjahrPlus: '1'
-                    });
-                } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-                }
-
-            } else { //gesuchsteller ===2
-                // 2 , 2
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-            }
-        }
-    };
-
-    //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
-    private navigatePrevious = (einkommensverschlechterungResponse: any) => {
-        if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                // 1 , 1
-                if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterungSteuern');
-                } else {
-                    this.state.go('gesuch.einkommensverschlechterungInfo');
-                }
-            } else { //gesuchsteller ===2
-
-                // 2 , 1
-                if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '1',
-                        basisjahrPlus: '2'
-                    });
-                } else {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '1',
-                        basisjahrPlus: '1'
-                    });
-                }
-
-            }
-
-        } else if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 2)) {
-
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                // 1 , 2
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '1',
-                    basisjahrPlus: '1'
-                });
-            } else { //gesuchsteller ===2
-                // 2 , 2
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '2',
-                    basisjahrPlus: '1'
-                });
-            }
-        }
-    };
 
     calculate() {
-        this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, this.gesuchModelManager.getBasisJahrPlusNumber());
-    }
-
-    resetForm() {
-        this.initViewModel();
+        this.berechnungsManager.calculateEinkommensverschlechterungTemp(this.model, this.model.getBasisJahrPlus());
     }
 
     public getEinkommensverschlechterung(): TSEinkommensverschlechterung {
-        return this.gesuchModelManager.getEinkommensverschlechterungToWorkWith();
+        return this.model.getEkvToWorkWith();
     }
 
     public getResultate(): TSFinanzielleSituationResultateDTO {
-        return this.berechnungsManager.getEinkommensverschlechterungResultate(this.gesuchModelManager.getBasisJahrPlusNumber());
+        return this.berechnungsManager.getEinkommensverschlechterungResultate(this.model.getBasisJahrPlus());
     }
 
-    public getGeschaeftsgewinnFromFS(): void {
-        if (!this.gesuchModelManager.getStammdatenToWorkWith() || !this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer
-            || !this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA) {
+    public initGeschaeftsgewinnFromFS(): void {
+        if (!this.model.getFiSiConToWorkWith()
+            || !this.model.getFiSiConToWorkWith().finanzielleSituationJA) {
             // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
             this.$log.debug('Fehler: FinSit muss existieren');
             return;
         }
 
-        let fs: TSFinanzielleSituation = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA;
-        if (this.gesuchModelManager.basisJahrPlusNumber === 1) {
+        let fs: TSFinanzielleSituation = this.model.getFiSiConToWorkWith().finanzielleSituationJA;
+        let fsGS: TSFinanzielleSituation = this.model.getFiSiConToWorkWith().finanzielleSituationGS;
+        if (this.model.getBasisJahrPlus() === 2) {
+            //basisjahr Plus 2
+            this.geschaeftsgewinnBasisjahrMinus1 = this.model.getEkvContToWorkWith().ekvJABasisJahrPlus1.geschaeftsgewinnBasisjahr;
+            this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
+            let einkommensverschlGSBasisjahrPlus1 = this.model.getEkvContToWorkWith().ekvGSBasisJahrPlus1;
+            this.geschaeftsgewinnBasisjahrMinus1GS = einkommensverschlGSBasisjahrPlus1 ? einkommensverschlGSBasisjahrPlus1.geschaeftsgewinnBasisjahr : undefined;
+            this.geschaeftsgewinnBasisjahrMinus2GS = fsGS ? fsGS.geschaeftsgewinnBasisjahr : undefined;
+        } else {
             this.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
             this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
-        } else {
-            //basisjahr Plus 2
-            this.geschaeftsgewinnBasisjahrMinus1 = this.gesuchModelManager.getStammdatenToWorkWith().einkommensverschlechterungContainer.ekvJABasisJahrPlus1.geschaeftsgewinnBasisjahr;
-            this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
+            this.geschaeftsgewinnBasisjahrMinus1GS = fsGS ? fsGS.geschaeftsgewinnBasisjahr : undefined;
+            this.geschaeftsgewinnBasisjahrMinus2GS = fsGS ? fsGS.geschaeftsgewinnBasisjahrMinus1 : undefined;
         }
     }
 

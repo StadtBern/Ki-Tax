@@ -11,12 +11,12 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
     private _ort: string;
     private _land: string;
     private _gemeinde: string;
-    private _showDatumVon: boolean;
     private _adresseTyp: TSAdressetyp = TSAdressetyp.WOHNADRESSE;
+    private _nichtInGemeinde: boolean;
     private _organisation: string;
 
     constructor(strasse?: string, hausnummer?: string, zusatzzeile?: string, plz?: string, ort?: string,
-                land?: string, gemeinde?: string, gueltigkeit?: TSDateRange, adresseTyp?: TSAdressetyp, organisation?: string) {
+                land?: string, gemeinde?: string, gueltigkeit?: TSDateRange, adresseTyp?: TSAdressetyp, nichtInGemeinde?: boolean, organisation?: string) {
         super(gueltigkeit);
         this._strasse = strasse;
         this._hausnummer = hausnummer;
@@ -26,9 +26,29 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
         this._land = land || 'CH';
         this._gemeinde = gemeinde;
         this._adresseTyp = adresseTyp;
+        this._nichtInGemeinde = nichtInGemeinde;
         this._organisation = organisation;
     }
 
+    /**
+     * Diese Methode sollte nur benutzt werden, um Wohnadressen zu vergleichen
+     * @param other
+     */
+    public isSameWohnAdresse(other: TSAdresse): boolean {
+        return (
+            this._strasse === other.strasse &&
+            this._hausnummer === other.hausnummer &&
+            this._zusatzzeile === other.zusatzzeile &&
+            this._plz === other.plz &&
+            this._ort === other.ort &&
+            this._land === other.land &&
+            this._gemeinde === other.gemeinde &&
+            this._adresseTyp === other.adresseTyp &&
+            this._nichtInGemeinde === other.nichtInGemeinde &&
+            this.gueltigkeit.gueltigAb.isSame(other.gueltigkeit.gueltigAb)
+            // gueltigBis wird nicht gecheckt, da es nur relevant ist, wann sie eingezogen sind
+        );
+    }
 
     public get strasse(): string {
         return this._strasse;
@@ -86,20 +106,20 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
         this._gemeinde = value;
     }
 
-    public get showDatumVon(): boolean {
-        return this._showDatumVon;
-    }
-
-    public set showDatumVon(value: boolean) {
-        this._showDatumVon = value;
-    }
-
     get adresseTyp(): TSAdressetyp {
         return this._adresseTyp;
     }
 
     set adresseTyp(value: TSAdressetyp) {
         this._adresseTyp = value;
+    }
+
+    public get nichtInGemeinde(): boolean {
+        return this._nichtInGemeinde;
+    }
+
+    public set nichtInGemeinde(value: boolean) {
+        this._nichtInGemeinde = value;
     }
 
     get organisation(): string {

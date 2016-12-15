@@ -1,0 +1,28 @@
+<div class="autenticationView row">
+    <div class="col-md-8 col-md-offset-2">
+
+        <div class="row">
+
+            <h3>Login notwendig</h3>
+            <p ng-show="vm.redirecting">
+                Sie werden in {{vm.countdown}} Sekunden an das Login Portal der Stadt Berns weitergeleitet
+            </p>
+
+            <div class="col-md-5 col-md-offset-3">
+                <a href="{{vm.redirectionHref}}">Login mit IAM</a>
+            </div>
+
+
+
+            <div class="col-md-5 col-md-offset-3" ng-if="vm.isLoggedId()">
+                <a ng-click="vm.singlelogout()">Logout in IAM und in EBEGU</a>
+            </div>
+
+            <div class="col-md-5 col-md-offset-3">
+                <a href="https://elogin-test.bern.ch/am/UI/Logout">Logout in IAM aber nicht in EBEGU</a>
+            </div>
+
+        </div>
+
+    </div>
+</div>

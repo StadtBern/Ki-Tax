@@ -18,20 +18,25 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private static final long serialVersionUID = -1217019901364130097L;
 
 	@Nullable
-	private JaxGesuchsteller gesuchsteller1;
+	private JaxGesuchstellerContainer gesuchsteller1;
 
 	@Nullable
-	private JaxGesuchsteller gesuchsteller2;
+	private JaxGesuchstellerContainer gesuchsteller2;
 
 	@NotNull
 	private Set<JaxKindContainer> kindContainers = new LinkedHashSet<>();
 
 	@Nullable
-	private JaxFamiliensituation familiensituation;
+	private JaxFamiliensituationContainer familiensituationContainer;
 
 	@Nullable
-	private JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo;
+	private JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer;
 
+	@Nullable
+	private String bemerkungen;
+
+	@Nullable
+	private int laufnummer;
 
 
 	public static long getSerialVersionUID() {
@@ -39,20 +44,20 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	}
 
 	@Nullable
-	public JaxGesuchsteller getGesuchsteller1() {
+	public JaxGesuchstellerContainer getGesuchsteller1() {
 		return gesuchsteller1;
 	}
 
-	public void setGesuchsteller1(@Nullable final JaxGesuchsteller gesuchsteller1) {
+	public void setGesuchsteller1(@Nullable final JaxGesuchstellerContainer gesuchsteller1) {
 		this.gesuchsteller1 = gesuchsteller1;
 	}
 
 	@Nullable
-	public JaxGesuchsteller getGesuchsteller2() {
+	public JaxGesuchstellerContainer getGesuchsteller2() {
 		return gesuchsteller2;
 	}
 
-	public void setGesuchsteller2(@Nullable final JaxGesuchsteller gesuchsteller2) {
+	public void setGesuchsteller2(@Nullable final JaxGesuchstellerContainer gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
@@ -65,21 +70,39 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	}
 
 	@Nullable
-	public JaxFamiliensituation getFamiliensituation() {
-		return familiensituation;
+	public JaxFamiliensituationContainer getFamiliensituationContainer() {
+		return familiensituationContainer;
 	}
 
-	public void setFamiliensituation(@Nullable final JaxFamiliensituation familiensituation) {
-		this.familiensituation = familiensituation;
+	public void setFamiliensituationContainer(@Nullable JaxFamiliensituationContainer familiensituationContainer) {
+		this.familiensituationContainer = familiensituationContainer;
 	}
 
 	@Nullable
-	public JaxEinkommensverschlechterungInfo getEinkommensverschlechterungInfo() {
-		return einkommensverschlechterungInfo;
+	public JaxEinkommensverschlechterungInfoContainer getEinkommensverschlechterungInfoContainer() {
+		return einkommensverschlechterungInfoContainer;
 	}
 
-	public void setEinkommensverschlechterungInfo(@Nullable final JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo) {
-		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
+	public void setEinkommensverschlechterungInfoContainer(@Nullable final JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer) {
+		this.einkommensverschlechterungInfoContainer = einkommensverschlechterungInfoContainer;
+	}
+
+	@Nullable
+	public String getBemerkungen() {
+		return bemerkungen;
+	}
+
+	public void setBemerkungen(@Nullable String bemerkungen) {
+		this.bemerkungen = bemerkungen;
+	}
+
+	@Nullable
+	public int getLaufnummer() {
+		return laufnummer;
+	}
+
+	public void setLaufnummer(@Nullable int laufnummer) {
+		this.laufnummer = laufnummer;
 	}
 
 }

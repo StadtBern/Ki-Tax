@@ -4,11 +4,13 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.ErwerbspensumService;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +30,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -42,9 +43,10 @@ public class ErwerbspensumResource {
 
 	@Inject
 	private ErwerbspensumService erwerbspensumService;
-
 	@Inject
 	private GesuchstellerService gesuchstellerService;
+	@Inject
+	private GesuchService gesuchService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
@@ -55,30 +57,35 @@ public class ErwerbspensumResource {
 		", those will be created as well")
 	@Nonnull
 	@PUT
-	@Path("/{gesuchstellerId}")
+	@Path("/{gesuchstellerId}/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveErwerbspensum(
+		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId,
 		@Nonnull @NotNull @Valid JaxErwerbspensumContainer jaxErwerbspensumContainer,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguRuntimeException {
 
-		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
-		if (gesuchsteller.isPresent()) {
-			ErwerbspensumContainer convertedEwpContainer = converter.erwerbspensumContainerToStoreableEntity(jaxErwerbspensumContainer);
-			convertedEwpContainer.setGesuchsteller(gesuchsteller.get());
-			ErwerbspensumContainer storedEwpCont = this.erwerbspensumService.saveErwerbspensum(convertedEwpContainer);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
+		if (gesuch.isPresent()) {
+			Optional<GesuchstellerContainer> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
+			if (gesuchsteller.isPresent()) {
+				ErwerbspensumContainer convertedEwpContainer = converter.erwerbspensumContainerToStoreableEntity(jaxErwerbspensumContainer);
+				convertedEwpContainer.setGesuchsteller(gesuchsteller.get());
+				ErwerbspensumContainer storedEwpCont = this.erwerbspensumService.saveErwerbspensum(convertedEwpContainer, gesuch.get());
 
-			URI uri = null;
-			if (uriInfo != null) {
-				uri = uriInfo.getBaseUriBuilder()
-					.path(ErwerbspensumResource.class)
-					.path("/" + storedEwpCont.getId())
-					.build();
+				URI uri = null;
+				if (uriInfo != null) {
+					uri = uriInfo.getBaseUriBuilder()
+						.path(ErwerbspensumResource.class)
+						.path("/" + storedEwpCont.getId())
+						.build();
+				}
+				JaxErwerbspensumContainer jaxEwpCont = converter.erwerbspensumContainerToJAX(storedEwpCont);
+
+				return Response.created(uri).entity(jaxEwpCont).build();
 			}
-			JaxErwerbspensumContainer jaxEwpCont = converter.erwerbspensumContainerToJAX(storedEwpCont);
-			return Response.created(uri).entity(jaxEwpCont).build();
 		}
 		throw new EbeguEntityNotFoundException("saveErwerbspensum", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
 	}
@@ -114,28 +121,32 @@ public class ErwerbspensumResource {
 
 		Validate.notNull(gesuchstellerID.getId());
 		String gesEntityID = converter.toEntityId(gesuchstellerID);
-		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesEntityID);
-		Gesuchsteller gs = gesuchsteller.orElseThrow(
-			() -> new EbeguEntityNotFoundException("findErwerbspensumForGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesEntityID));
+		Optional<GesuchstellerContainer> gesuchsteller = gesuchstellerService.findGesuchsteller(gesEntityID);
+		GesuchstellerContainer gs = gesuchsteller.orElseThrow(
+			() -> new EbeguEntityNotFoundException("findErwerbspensumForGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
+				"GesuchstellerId invalid: " + gesEntityID));
 		Collection<ErwerbspensumContainer> pensen = erwerbspensumService.findErwerbspensenForGesuchsteller(gs);
-		List<JaxErwerbspensumContainer> erwerbspensenList = pensen.stream()
+		return pensen.stream()
 			.map(erwerbspensumContainer -> converter.erwerbspensumContainerToJAX(erwerbspensumContainer))
 			.collect(Collectors.toList());
-		return erwerbspensenList;
 	}
 
 	@Nullable
 	@DELETE
-	@Path("/{erwerbspensumContID}")
+	@Path("/gesuchId/{gesuchId}/erwPenId/{erwerbspensumContID}")
 	@Consumes(MediaType.WILDCARD)
 	public Response removeErwerbspensum(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("erwerbspensumContID") JaxId erwerbspensumContIDJAXPId,
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(erwerbspensumContIDJAXPId.getId());
-		erwerbspensumService.removeErwerbspensum(converter.toEntityId(erwerbspensumContIDJAXPId));
-		return Response.ok().build();
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
+		if (gesuch.isPresent()) {
+			erwerbspensumService.removeErwerbspensum(converter.toEntityId(erwerbspensumContIDJAXPId), gesuch.get());
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("removeErwerbspensum", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
 	}
-
 
 }

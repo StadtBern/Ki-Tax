@@ -1,264 +1,239 @@
-<div class="einkommensverschlechterung row">
-    <div class="col-md-12">
+<div class="einkommensverschlechterungResultate gesuchModul">
+    <div class="row viewTitle">
+        <div class="col-md-12">
 
-        <h4 class="mainTitle">
+            <h1>
             <span data-translate="EKV_RESULTATE"
                   translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()}"></span>
-        </h4>
-        <hr class="header"/>
-        <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form="" novalidate>
+            </h1>
+            <hr class="header"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form="" novalidate>
+                <fieldset ng-disabled="vm.isGesuchReadonly()">
 
-            <!-- Total Einkuenfte -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS"
-                               for="einkommenBeiderGesuchsteller"
-                               ng-if="vm.gesuchModelManager.isGesuchsteller2Required()"></label>
-                        <label data-translate="FINANZIELLE_SITUATION_EINKOMMEN_EIN_GS"
-                               for="einkommenBeiderGesuchsteller"
-                               ng-if="!vm.gesuchModelManager.isGesuchsteller2Required()"></label>
-                        <input id="einkommenBeiderGesuchsteller" type="text" name="einkommenBeiderGesuchsteller"
-                               ui-number-mask="0" aria-label="{{FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS|translate}}"
-                               ng-model="vm.getResultate().einkommenBeiderGesuchsteller"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
-                </div>
-            </div>
+                    <!-- Total Einkuenfte -->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS"
+                                       for="einkommenBeiderGesuchsteller"
+                                       ng-if="vm.model.isGesuchsteller2Required()"></label>
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_EINKOMMEN_EIN_GS"
+                                       for="einkommenBeiderGesuchsteller"
+                                       ng-if="!vm.model.isGesuchsteller2Required()"></label>
+                                <input id="einkommenBeiderGesuchsteller" type="text" name="einkommenBeiderGesuchsteller"
+                                       ui-number-mask="0"
+                                       aria-label="{{FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS|translate}}"
+                                       ng-model="vm.getResultate().einkommenBeiderGesuchsteller"
+                                       dv-max-length max="999999999999" class="form-control" disabled>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
-            <!-- Vermoegen GS 1 bzw. gemeinsam -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM" for="bruttovermoegen1"
-                               ng-if="vm.showGemeinsam()"></label>
-                        <label data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_1" for="bruttovermoegen1"
-                               ng-if="vm.showGS1()"></label>
-                        <input id="bruttovermoegen1" type="text" name="bruttovermoegen1" ui-number-mask="0"
-                               aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM|translate}}"
-                               ng-model="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"
-                               dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                        <dv-error-messages for="form.bruttovermoegen.$error" class="error"></dv-error-messages>
-                        <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().bruttovermoegen"
-                                   ja="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"></dv-bisher>
-                    </dv-input-container>
-                </div>
-            </div>
-            <!-- Vermoegen GS 2 -->
-            <div class="row">
-                <div class="col-md-6" ng-if="vm.showGS2()">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_2" for="bruttovermoegen2"></label>
-                        <input id="bruttovermoegen2" type="text" name="bruttovermoegen2" ui-number-mask="0"
-                               aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_2|translate}}"
-                               ng-model="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"
-                               dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                        <dv-error-messages for="form.bruttovermoegen.$error" class="error"></dv-error-messages>
-                        <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().bruttovermoegen"
-                                   ja="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen""></dv-bisher>
-                    </dv-input-container>
-                </div>
-            </div>
+                    <!-- Vermoegen GS 1 bzw. gemeinsam -->
+                    <div class="row input-row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM"
+                                       for="bruttovermoegen1"
+                                       ng-if="vm.showGemeinsam()"></label>
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_1"
+                                       for="bruttovermoegen1"
+                                       ng-if="vm.showGS1()"></label>
+                                <input id="bruttovermoegen1" type="text" name="bruttovermoegen1" ui-number-mask="0"
+                                       aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM|translate}}"
+                                       ng-model="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"
+                                       dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
+                                <dv-error-messages for="form.bruttovermoegen.$error" class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().bruttovermoegen"
+                                           ja="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"></dv-bisher>
+                            </dv-input-container>
+                        </div>
+                    </div>
+                    <!-- Vermoegen GS 2 -->
+                    <div class="row input-row">
+                        <div class="col-sm-12 dv-input-container-small" ng-if="vm.showGS2()">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_2"
+                                       for="bruttovermoegen2"></label>
+                                <input id="bruttovermoegen2" type="text" name="bruttovermoegen2" ui-number-mask="0"
+                                       aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_2|translate}}"
+                                       ng-model="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"
+                                       dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
+                                <dv-error-messages for="form.bruttovermoegen.$error" class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().bruttovermoegen"
+                                           ja="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"></dv-bisher>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
-            <!-- Schulden GS 1 bzw. gemeinsam -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM" for="schulden1"
-                               ng-if="vm.showGemeinsam()"></label>
-                        <label data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_1" for="schulden1"
-                               ng-if="vm.showGS1()"></label>
-                        <input id="schulden1" type="text" name="schulden1" ui-number-mask="0"
-                               aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM|translate}}"
-                               ng-model="vm.getEinkommensverschlechterungGS1_JA().schulden"
-                               dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                        <dv-error-messages for="form.schulden.$error" class="error"></dv-error-messages>
-                        <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().schulden"
-                                   ja="vm.getEinkommensverschlechterungGS1_JA().schulden"></dv-bisher>
-                    </dv-input-container>
-                </div>
-            </div>
-            <!-- Schulden GS 2 -->
-            <div class="row">
-                <div class="col-md-6" ng-if="vm.showGS2()">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_2" for="schulden2"></label>
-                        <input id="schulden2" type="text" name="schulden2" ui-number-mask="0"
-                               aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
-                               ng-model="vm.getEinkommensverschlechterungGS2_JA().schulden"
-                               dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                        <dv-error-messages for="form.schulden.$error" class="error"></dv-error-messages>
-                        <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().schulden"
-                                   ja="vm.getEinkommensverschlechterungGS2_JA().schulden"></dv-bisher>
-                    </dv-input-container>
-                </div>
-            </div>
+                    <!-- Schulden GS 1 bzw. gemeinsam -->
+                    <div class="row input-row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM"
+                                       for="schulden1"
+                                       ng-if="vm.showGemeinsam()"></label>
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_1"
+                                       for="schulden1"
+                                       ng-if="vm.showGS1()"></label>
+                                <input id="schulden1" type="text" name="schulden1" ui-number-mask="0"
+                                       aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM|translate}}"
+                                       ng-model="vm.getEinkommensverschlechterungGS1_JA().schulden"
+                                       dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
+                                <dv-error-messages for="form.schulden.$error" class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().schulden"
+                                           ja="vm.getEinkommensverschlechterungGS1_JA().schulden"></dv-bisher>
+                            </dv-input-container>
+                        </div>
+                    </div>
+                    <!-- Schulden GS 2 -->
+                    <div class="row input-row">
+                        <div class="col-sm-12 dv-input-container-small" ng-if="vm.showGS2()">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_2"
+                                       for="schulden2"></label>
+                                <input id="schulden2" type="text" name="schulden2" ui-number-mask="0"
+                                       aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
+                                       ng-model="vm.getEinkommensverschlechterungGS2_JA().schulden"
+                                       dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
+                                <dv-error-messages for="form.schulden.$error" class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().schulden"
+                                           ja="vm.getEinkommensverschlechterungGS2_JA().schulden"></dv-bisher>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
-            <!-- Nettovermoegen -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_NETTOVERMOEGEN"
-                               for="nettovermoegenFuenfProzent"></label>
-                        <input id="nettovermoegenFuenfProzent" type="text" name="nettovermoegenFuenfProzent"
-                               ui-number-mask="0"
-                               ng-model="vm.getResultate().nettovermoegenFuenfProzent"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
-                </div>
-            </div>
+                    <!-- Nettovermoegen -->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_NETTOVERMOEGEN"
+                                       for="nettovermoegenFuenfProzent"></label>
+                                <input id="nettovermoegenFuenfProzent" type="text" name="nettovermoegenFuenfProzent"
+                                       ui-number-mask="0"
+                                       ng-model="vm.getResultate().nettovermoegenFuenfProzent"
+                                       dv-max-length max="999999999999" class="form-control" disabled>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
-            <hr/>
+                    <hr/>
 
-            <!-- Anrechenbares Einkommen -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_ANRECHENBARES_EINKOMMEN"
-                               for="anrechenbaresEinkommen"></label>
-                        <input id="anrechenbaresEinkommen" type="text" name="anrechenbaresEinkommen" ui-number-mask="0"
-                               ng-model="vm.getResultate().anrechenbaresEinkommen"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
-                </div>
-            </div>
+                    <!-- Anrechenbares Einkommen -->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float"
+                                       data-translate="FINANZIELLE_SITUATION_ANRECHENBARES_EINKOMMEN"
+                                       for="anrechenbaresEinkommen"></label>
+                                <input id="anrechenbaresEinkommen" type="text" name="anrechenbaresEinkommen"
+                                       ui-number-mask="0"
+                                       ng-model="vm.getResultate().anrechenbaresEinkommen"
+                                       dv-max-length max="999999999999" class="form-control" disabled>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
+                    <!-- Abzuege beider Gesuchsteller aufgrund Alimente-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE"
+                                       for="abzuegeBeiderGesuchsteller"></label>
+                                <input id="abzuegeBeiderGesuchsteller" type="text" name="abzuegeBeiderGesuchsteller"
+                                       ui-number-mask="0"
+                                       aria-label="{{FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE|translate}}"
+                                       ng-model="vm.getResultate().abzuegeBeiderGesuchsteller"
+                                       dv-max-length max="999999999999" class="form-control" disabled>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
-            <!-- Abzuege beider Gesuchsteller -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_ABZUEGE_ZWEI_GS" for="abzuegeBeiderGesuchsteller"
-                               ng-if="vm.gesuchModelManager.isGesuchsteller2Required()"></label>
-                        <label data-translate="FINANZIELLE_SITUATION_ABZUEGE_EIN_GS" for="abzuegeBeiderGesuchsteller"
-                               ng-if="!vm.gesuchModelManager.isGesuchsteller2Required()"></label>
-                        <input id="abzuegeBeiderGesuchsteller" type="text" name="abzuegeBeiderGesuchsteller"
-                               ui-number-mask="0" aria-label="{{FINANZIELLE_SITUATION_ABZUEGE_ZWEI_GS|translate}}"
-                               ng-model="vm.getResultate().abzuegeBeiderGesuchsteller"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
-                </div>
-            </div>
+                    <hr/>
 
-            <!-- Abzug aufgrund Familiengroesse -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_ABZUG_FAMILIENGROESSE"
-                               for="abzugAufgrundFamiliengroesse"
-                               translate-values="{familiengroesse: vm.getResultate().familiengroesse }">
-                        </label>
-                        <input id="abzugAufgrundFamiliengroesse" type="text" name="abzugAufgrundFamiliengroesse"
-                               ui-number-mask="0"
-                               ng-model="vm.getResultate().abzugAufgrundFamiliengroesse"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
-                </div>
-            </div>
+                    <!-- Massgebendes Einkommen vor Abzug Fam Grösse-->
+                    <div class="row marginBottom20">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float"
+                                       data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                                       for="massgebendesEinkVorAbzFamGr"></label>
+                                <input id="massgebendesEinkVorAbzFamGr" type="text" name="massgebendesEinkVorAbzFamGr"
+                                       ui-number-mask="0"
+                                       ng-model="vm.getResultate().massgebendesEinkVorAbzFamGr"
+                                       dv-max-length max="999999999999" class="form-control" disabled>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
-            <!-- Total Abzuege -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_TOTAL_ABZUEGE" for="totalAbzuege"></label>
-                        <input id="totalAbzuege" type="text" name="totalAbzuege" ui-number-mask="0"
-                               ng-model="vm.getResultate().totalAbzuege"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
-                </div>
-            </div>
+                    <!-- -------------------------------------------Result Part--------------------------------------------  -->
 
-            <hr/>
+                    <div ng-if="vm.showResult()">
 
-
-            <!-- Massgebendes Einkommen -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN"
-                               for="massgebendesEinkommen"></label>
-                        <input id="massgebendesEinkommen" type="text" name="massgebendesEinkommen" ui-number-mask="0"
-                               ng-model="vm.getResultate().massgebendesEinkommen"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
-                </div>
-            </div>
-
-            <!-- -------------------------------------------Result Part--------------------------------------------  -->
-
-            <div ng-if="vm.showResult()">
-
-                <h4 class="mainTitle">
+                        <h1 class="mainTitle">
                     <span data-translate="EKV_RESULTATE_PRUEFUNG"
                           translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()}"></span>
-                </h4>
-                <hr class="header"/>
+                        </h1>
+                        <hr class="header"/>
 
-                <!-- Einkommen Vorjahr -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <dv-input-container class="form-group">
-                            <label data-translate="EVK_EINKOMMEN_JAHR"
-                                   translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()-1}"
-                                   for="massgebendesEinkommenVJ"></label>
-                            <input id="massgebendesEinkommenVJ" type="text" name="massgebendesEinkommenVJ"
-                                   ui-number-mask="0"
-                                   ng-model="vm.resultatVorjahr.massgebendesEinkommen"
-                                   dv-max-length max="999999999999" class="form-control" disabled>
-                        </dv-input-container>
+                        <!-- Einkommen Vorjahr -->
+                        <div class="row marginTop20">
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="EVK_EINKOMMEN_JAHR"
+                                           translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()-1}"
+                                           for="massgebendesEinkommenVJ"></label>
+                                    <input id="massgebendesEinkommenVJ" type="text" name="massgebendesEinkommenVJ"
+                                           ui-number-mask="0"
+                                           ng-model="vm.resultatVorjahr.massgebendesEinkVorAbzFamGr"
+                                           dv-max-length max="999999999999" class="form-control" disabled>
+                                </dv-input-container>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="EVK_EINKOMMEN_JAHR"
+                                           translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()}"
+                                           for="massgebendesEinkommenJetzt"></label>
+                                    <input id="massgebendesEinkommenJetzt" type="text" name="massgebendesEinkommenJetzt"
+                                           ui-number-mask="0"
+                                           ng-model="vm.getResultate().massgebendesEinkVorAbzFamGr"
+                                           dv-max-length max="999999999999" class="form-control" disabled>
+                                </dv-input-container>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="EVK_IN_PROZENT"
+                                           for="ekvInProzent"></label>
+                                    <input id="ekvInProzent" type="text" name="ekvInProzent"
+                                           ng-model="vm.resultatProzent"
+                                           dv-max-length class="form-control"
+                                           ng-required="true" disabled>
+                                </dv-input-container>
+                            </div>
+                        </div>
+
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <dv-input-container class="form-group">
-                            <label data-translate="EVK_EINKOMMEN_JAHR"
-                                   translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()}"
-                                   for="massgebendesEinkommenJetzt"></label>
-                            <input id="massgebendesEinkommenJetzt" type="text" name="massgebendesEinkommenJetzt"
-                                   ui-number-mask="0"
-                                   ng-model="vm.getResultate().massgebendesEinkommen"
-                                   dv-max-length max="999999999999" class="form-control" disabled>
-                        </dv-input-container>
-                    </div>
-                </div>
+                </fieldset>
 
+                <!-- -------------------------------------------Navigation--------------------------------------------  -->
+                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save(form)" dv-sub-step="4">
+                </dv-navigation>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <dv-input-container class="form-group">
-                            <label data-translate="EVK_IN_PROZENT"
-                                   for="ekvInProzent"></label>
-                            <input id="ekvInProzent" type="text" name="ekvInProzent"
-                                   ng-model="vm.resultatProzent"
-                                   dv-max-length class="form-control"
-                                   ng-required="true" disabled>
-                        </dv-input-container>
-                    </div>
-                </div>
+            </form>
 
-            </div>
-
-            <!-- -------------------------------------------Navigation--------------------------------------------  -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-loading-button ng-click="vm.previousStep(form)" button-class="btn btn-link previous">
-                        <span class="fa fa-chevron-left"></span>
-                        <span data-translate="ZURUECK_UPPER"></span>
-                    </dv-loading-button>
-                </div>
-                <div class="col-md-6 text-right">
-                    <dv-loading-button ng-click="vm.nextStep(form)" button-class="btn btn-link next">
-                        <span data-translate="WEITER_UPPER"></span>
-                        <span class="fa fa-chevron-right"></span>
-                    </dv-loading-button>
-                </div>
-            </div>
-
-        </form>
-
-        <!--<pre>{{ vm.getModel() |json}}</pre>-->
+        </div>
 
     </div>
-
 </div>

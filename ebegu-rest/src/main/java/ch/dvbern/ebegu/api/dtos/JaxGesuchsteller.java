@@ -10,15 +10,16 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 /**
- * DTO fuer Stammdaten der Gesuchsteller (kennt adresse)
+ * DTO fuer Stammdaten der Gesuchsteller
  */
-@XmlRootElement(name = "gesuchsteller")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
@@ -39,25 +40,6 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist
 
-	//Adressen
-	@NotNull
-	@Valid
-	private JaxAdresse wohnAdresse;
-
-	@Valid
-	private JaxAdresse alternativeAdresse;
-
-	@Valid
-	private JaxAdresse umzugAdresse;
-
-	@Valid
-	private JaxFinanzielleSituationContainer finanzielleSituationContainer;
-
-	@Valid
-	@Nullable
-	private JaxEinkommensverschlechterungContainer einkommensverschlechterungContainer;
-
-	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new LinkedHashSet<>();
 
 	private boolean diplomatenstatus;
 
@@ -102,46 +84,6 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		this.zpvNumber = zpvNumber;
 	}
 
-	public JaxAdresse getWohnAdresse() {
-		return wohnAdresse;
-	}
-
-	public void setWohnAdresse(final JaxAdresse wohnAdresse) {
-		this.wohnAdresse = wohnAdresse;
-	}
-
-	public JaxAdresse getAlternativeAdresse() {
-		return alternativeAdresse;
-	}
-
-	public void setAlternativeAdresse(final JaxAdresse alternativeAdresse) {
-		this.alternativeAdresse = alternativeAdresse;
-	}
-
-	public JaxAdresse getUmzugAdresse() {
-		return umzugAdresse;
-	}
-
-	public void setUmzugAdresse(final JaxAdresse umzugAdresse) {
-		this.umzugAdresse = umzugAdresse;
-	}
-
-	public JaxFinanzielleSituationContainer getFinanzielleSituationContainer() {
-		return finanzielleSituationContainer;
-	}
-
-	public void setFinanzielleSituationContainer(final JaxFinanzielleSituationContainer finanzielleSituationContainer) {
-		this.finanzielleSituationContainer = finanzielleSituationContainer;
-	}
-
-	public Collection<JaxErwerbspensumContainer> getErwerbspensenContainers() {
-		return erwerbspensenContainers;
-	}
-
-	public void setErwerbspensenContainers(final Collection<JaxErwerbspensumContainer> erwerbspensenContainers) {
-		this.erwerbspensenContainers = erwerbspensenContainers;
-	}
-
 	public boolean isDiplomatenstatus() {
 		return diplomatenstatus;
 	}
@@ -150,12 +92,4 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		this.diplomatenstatus = diplomatenstatus;
 	}
 
-	@Nullable
-	public JaxEinkommensverschlechterungContainer getEinkommensverschlechterungContainer() {
-		return einkommensverschlechterungContainer;
-	}
-
-	public void setEinkommensverschlechterungContainer(@Nullable JaxEinkommensverschlechterungContainer einkommensverschlechterungContainer) {
-		this.einkommensverschlechterungContainer = einkommensverschlechterungContainer;
-	}
 }

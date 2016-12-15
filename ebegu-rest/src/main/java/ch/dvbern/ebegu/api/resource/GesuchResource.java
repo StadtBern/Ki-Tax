@@ -1,20 +1,36 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.*;
+import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
+import ch.dvbern.ebegu.util.DateUtil;
+import ch.dvbern.ebegu.util.MonitoringUtil;
+import com.google.common.collect.ArrayListMultimap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,9 +44,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.security.Principal;
-import java.util.Collection;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Resource fuer Gesuch
@@ -49,8 +64,10 @@ public class GesuchResource {
 	@Inject
 	private BenutzerService benutzerService;
 
+	private final Logger LOG = LoggerFactory.getLogger(GesuchResource.class.getSimpleName());
+
 	@Inject
-	private Principal principal;
+	private PrincipalBean principalBean;
 
 	@Inject
 	private JaxBConverter converter;
@@ -75,7 +92,6 @@ public class GesuchResource {
 			.build();
 
 		JaxGesuch jaxGesuch = converter.gesuchToJAX(persistedGesuch);
-
 		return Response.created(uri).entity(jaxGesuch).build();
 	}
 
@@ -90,10 +106,13 @@ public class GesuchResource {
 
 		Validate.notNull(gesuchJAXP.getId());
 		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
+
 		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
 
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
-		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge);
+		//only if status has changed
+		final boolean saveInStatusHistory = gesuchToMerge.getStatus() != AntragStatusConverterUtil.convertStatusToEntity(gesuchJAXP.getStatus());
+		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory);
 
 		return converter.gesuchToJAX(modifiedGesuch);
 	}
@@ -134,9 +153,9 @@ public class GesuchResource {
 
 		final JaxGesuch completeGesuch = findGesuch(gesuchJAXPId);
 
-		final Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(this.principal.getName());
+		final Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(this.principalBean.getPrincipal().getName());
 		if (optBenutzer.isPresent()) {
-			Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+			Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 			return cleanGesuchForInstitutionTraegerschaft(completeGesuch, instForCurrBenutzer);
 		}
 		return null; // aus sicherheitsgruenden geben wir null zurueck wenn etwas nicht stimmmt
@@ -148,7 +167,7 @@ public class GesuchResource {
 	 */
 	private JaxGesuch cleanGesuchForInstitutionTraegerschaft(final JaxGesuch completeGesuch, final Collection<Institution> userInstitutionen) {
 		//clean EKV
-		completeGesuch.setEinkommensverschlechterungInfo(null);
+		completeGesuch.setEinkommensverschlechterungInfoContainer(null);
 
 		//clean GS -> FinSit
 		if (completeGesuch.getGesuchsteller1() != null) {
@@ -167,4 +186,147 @@ public class GesuchResource {
 		return completeGesuch;
 	}
 
+	@Nullable
+	@PUT
+	@Path("/bemerkung/{gesuchId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateBemerkung(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull String bemerkung,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(gesuchJAXPId.getId());
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
+
+		if (gesuchOptional.isPresent()) {
+			gesuchOptional.get().setBemerkungen(bemerkung);
+
+			gesuchService.updateGesuch(gesuchOptional.get(), false);
+
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("updateBemerkung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
+	}
+
+	@Nullable
+	@PUT
+	@Path("/status/{gesuchId}/{statusDTO}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateStatus(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull @PathParam("statusDTO") AntragStatusDTO statusDTO) throws EbeguException {
+
+		Validate.notNull(gesuchJAXPId.getId());
+		Validate.notNull(statusDTO);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
+
+		if (gesuchOptional.isPresent()) {
+			if (gesuchOptional.get().getStatus() != AntragStatusConverterUtil.convertStatusToEntity(statusDTO)) {
+				//only if status has changed
+				gesuchOptional.get().setStatus(AntragStatusConverterUtil.convertStatusToEntity(statusDTO));
+				gesuchService.updateGesuch(gesuchOptional.get(), true);
+			}
+			return Response.ok().build();
+		}
+		LOG.error("Could not update Status because the Geusch with ID " + gesuchJAXPId.getId() + " could not be read");
+		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
+	}
+
+	@Nonnull
+	@POST
+	@Path("/search")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response searchAntraege(
+		@Nonnull @NotNull AntragTableFilterDTO antragSearch,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) {
+
+		return MonitoringUtil.monitor(GesuchResource.class, "searchAntraege", () -> {
+			Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
+			List<Gesuch> foundAntraege = searchResultPair.getRight();
+
+			Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+
+			List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
+			foundAntraege.forEach(gesuch -> {
+				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole(), allowedInst);
+				antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
+				antragDTOList.add(antragDTO);
+			});
+			JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
+			resultDTO.setAntragDTOs(antragDTOList);
+			PaginationDTO pagination = antragSearch.getPagination();
+			pagination.setTotalItemCount(searchResultPair.getLeft());
+			resultDTO.setPaginationDTO(pagination);
+			return Response.ok(resultDTO).build();
+		});
+	}
+
+	/**
+	 * iteriert durch eine Liste von Antragen und gibt jeweils pro Fall nur den Antrag mit dem neusten Eingangsdatum zurueck
+	 *
+	 * @param foundAntraege Liste mit Antraegen, kann mehrere pro Fall enthalten
+	 * @return Set mit Antraegen, jeweils nur der neuste zu einem bestimmten Fall
+	 */
+	@Nonnull
+	@SuppressWarnings(value = {"unused"})
+	@SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD")
+	private Set<Gesuch> reduceToNewestAntrag(List<Gesuch> foundAntraege) {
+		ArrayListMultimap<Fall, Gesuch> fallToAntragMultimap = ArrayListMultimap.create();
+		for (Gesuch gesuch : foundAntraege) {
+			fallToAntragMultimap.put(gesuch.getFall(), gesuch);
+		}
+		Set<Gesuch> gesuchSet = new LinkedHashSet<>();
+		for (Gesuch gesuch : foundAntraege) {
+			List<Gesuch> antraege = fallToAntragMultimap.get(gesuch.getFall());
+			Collections.sort(antraege, (Comparator<Gesuch>) (o1, o2) -> o1.getEingangsdatum().compareTo(o2.getEingangsdatum()));
+			gesuchSet.add(antraege.get(0)); //nur neusten zurueckgeben
+		}
+		return gesuchSet;
+	}
+
+
+	@Nonnull
+	@GET
+	@Path("/fall/{fallId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxAntragDTO> getAllAntragDTOForFall(
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId) {
+		Validate.notNull(fallJAXPId.getId());
+		return gesuchService.getAllAntragDTOForFall(converter.toEntityId(fallJAXPId));
+	}
+
+	@ApiOperation(value = "Creates a new Antrag of type Mutation in the database")
+	@Nullable
+	@POST
+	@Path("/mutieren/{antragId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response antragMutieren(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Nonnull @QueryParam("date") String stringDate,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+		Validate.notNull(stringDate);
+
+		final LocalDate eingangsdatum = DateUtil.parseStringToDateOrReturnNow(stringDate);
+		final String antragId = converter.toEntityId(antragJaxId);
+
+
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(antragId, eingangsdatum);
+
+		if (!gesuchOptional.isPresent()) {
+			return Response.noContent().build();
+		}
+
+		Gesuch mutationToReturn = gesuchService.createGesuch(gesuchOptional.get());
+		return Response.ok(converter.gesuchToJAX(mutationToReturn)).build();
+	}
 }

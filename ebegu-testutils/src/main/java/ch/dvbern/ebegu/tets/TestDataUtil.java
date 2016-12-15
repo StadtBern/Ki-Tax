@@ -1,38 +1,49 @@
 package ch.dvbern.ebegu.tets;
 
+import ch.dvbern.ebegu.dto.suchfilter.AntragSearchDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragSortDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
+import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
+import ch.dvbern.ebegu.testfaelle.Testfall06_BeckerNora;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
 
 /**
  * comments homa
  */
 public final class TestDataUtil {
 
-	private static BigDecimal abzugFamiliengroesse3 = MathUtil.DEFAULT.from(3760);
-	private static BigDecimal abzugFamiliengroesse4 = MathUtil.DEFAULT.from(5900);
-	private static BigDecimal abzugFamiliengroesse5 = MathUtil.DEFAULT.from(6970);
-	private static BigDecimal abzugFamiliengroesse6 = MathUtil.DEFAULT.from(7500);
+	private static final String iban = "CH39 0900 0000 3066 3817 2";
 
 	public static final LocalDate STICHTAG_EKV_1 = LocalDate.of(2016, Month.SEPTEMBER, 1);
 	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(2017, Month.APRIL, 1);
 
 	private TestDataUtil() {
+	}
+
+	public static GesuchstellerAdresseContainer createDefaultGesuchstellerAdresseContainer(GesuchstellerContainer gsContainer) {
+		final GesuchstellerAdresseContainer gsAdressCont = new GesuchstellerAdresseContainer();
+		gsAdressCont.setGesuchstellerContainer(gsContainer);
+		gsAdressCont.setGesuchstellerAdresseJA(createDefaultGesuchstellerAdresse());
+		return gsAdressCont;
 	}
 
 	public static GesuchstellerAdresse createDefaultGesuchstellerAdresse() {
@@ -58,6 +69,13 @@ public final class TestDataUtil {
 		return adresse;
 	}
 
+	public static GesuchstellerContainer createDefaultGesuchstellerContainer(Gesuch gesuch) {
+		final GesuchstellerContainer gesuchstellerContainer = new GesuchstellerContainer();
+		gesuchstellerContainer.addAdresse(createDefaultGesuchstellerAdresseContainer(gesuchstellerContainer));
+		gesuchstellerContainer.setGesuchstellerJA(createDefaultGesuchsteller());
+		return gesuchstellerContainer;
+	}
+
 	public static Gesuchsteller createDefaultGesuchsteller() {
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1984, 12, 12));
@@ -68,7 +86,6 @@ public final class TestDataUtil {
 		gesuchsteller.setMobile("076 309 30 58");
 		gesuchsteller.setTelefon("031 378 24 24");
 		gesuchsteller.setZpvNumber("0761234567897");
-		gesuchsteller.addAdresse(createDefaultGesuchstellerAdresse());
 		return gesuchsteller;
 	}
 
@@ -100,12 +117,17 @@ public final class TestDataUtil {
 		return einkommensverschlechterung;
 	}
 
+	public static FamiliensituationContainer createDefaultFamiliensituationContainer() {
+		FamiliensituationContainer familiensituationContainer = new FamiliensituationContainer();
+		familiensituationContainer.setFamiliensituationJA(createDefaultFamiliensituation());
+		return familiensituationContainer;
+	}
+
 	public static Familiensituation createDefaultFamiliensituation() {
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
-		familiensituation.setBemerkungen("DVBern");
 		return familiensituation;
 	}
 
@@ -114,7 +136,8 @@ public final class TestDataUtil {
 		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
 		gesuch.setEingangsdatum(LocalDate.now());
-		gesuch.setFamiliensituation(createDefaultFamiliensituation());
+		gesuch.setFamiliensituationContainer(createDefaultFamiliensituationContainer());
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
 		return gesuch;
 	}
 
@@ -171,7 +194,7 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createDefaultInstitutionStammdaten() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
 		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2010, 12, 31)));
@@ -183,29 +206,44 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createInstitutionStammdatenKitaAaregg() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId(AbstractTestfall.idInstitutionAaregg);
-		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_AAREGG);
+		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
-		instStammdaten.getInstitution().setId(AbstractTestfall.idInstitutionAaregg);
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_AAREGG);
 		instStammdaten.getInstitution().setName("Kita Aaregg");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
+	public static InstitutionStammdaten createInstitutionStammdatenTagiAaregg() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_AAREGG_TAGI);
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(244));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_AAREGG);
+		instStammdaten.getInstitution().setName("Tagi & Kita Aaregg");
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}
 
 	public static InstitutionStammdaten createInstitutionStammdatenKitaBruennen() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId(AbstractTestfall.idInstitutionBruennen);
-		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
+		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
-		instStammdaten.getInstitution().setId(AbstractTestfall.idInstitutionBruennen);
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
 		instStammdaten.getInstitution().setName("Kita Brünnen");
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
@@ -218,10 +256,10 @@ public final class TestDataUtil {
 		kind.setGeburtsdatum(LocalDate.of(2010, 12, 12));
 		kind.setGeschlecht(Geschlecht.WEIBLICH);
 		kind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
-		kind.setBemerkungen("notizen");
 		kind.setPensumFachstelle(createDefaultPensumFachstelle());
 		kind.setFamilienErgaenzendeBetreuung(true);
 		kind.setMutterspracheDeutsch(true);
+		kind.setEinschulung(true);
 		return kind;
 	}
 
@@ -270,7 +308,6 @@ public final class TestDataUtil {
 		ep.setZuschlagZuErwerbspensum(true);
 		ep.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
 		ep.setZuschlagsprozent(10);
-		ep.setGesundheitlicheEinschraenkungen(false);
 		return ep;
 	}
 
@@ -279,8 +316,8 @@ public final class TestDataUtil {
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
 		betreuung.setBetreuungspensumContainers(new HashSet<>());
+		betreuung.setAbwesenheitContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
-		betreuung.setBemerkungen("Betreuung_Bemerkungen");
 		return betreuung;
 	}
 
@@ -307,13 +344,12 @@ public final class TestDataUtil {
 		gesuchsperiode.setActive(true);
 
 		boolean isSecondHalbjahr = LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), Month.JULY, 31));
-		int startyear = isSecondHalbjahr ? LocalDate.now().getYear()  : LocalDate.now().getYear() -1 ;
+		int startyear = isSecondHalbjahr ? LocalDate.now().getYear() : LocalDate.now().getYear() - 1;
 		LocalDate start = LocalDate.of(startyear, Month.AUGUST, 1);
-		LocalDate end = LocalDate.of(startyear + 1 , Month.JULY, 31);
+		LocalDate end = LocalDate.of(startyear + 1, Month.JULY, 31);
 		gesuchsperiode.setGueltigkeit(new DateRange(start, end));
 		return gesuchsperiode;
 	}
-
 
 
 	public static Gesuchsperiode createGesuchsperiode1617() {
@@ -324,35 +360,76 @@ public final class TestDataUtil {
 	}
 
 
-
-	public static EbeguParameter createDefaultEbeguParameter() {
+	public static EbeguParameter createDefaultEbeguParameter(EbeguParameterKey key) {
 		EbeguParameter instStammdaten = new EbeguParameter();
-		instStammdaten.setName(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
-		instStammdaten.setValue("Wert");
+		instStammdaten.setName(key);
+		instStammdaten.setValue("1");
 		instStammdaten.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return instStammdaten;
 	}
 
-	public static EinkommensverschlechterungInfo createDefaultEinkommensverschlechterungsInfo(Gesuch gesuch) {
+	public static List<EbeguParameter> createAllEbeguParameters() {
+		final List<EbeguParameter> list = new ArrayList<>();
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_ABGELTUNG_PRO_TAG_KANTON));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAHL_TAGE_KANTON));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_BABY_ALTER_IN_MONATEN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_BABY_FAKTOR));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_STUNDEN_PRO_TAG_TAGI));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_MAX_TAGE_ABWESENHEIT));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_STUNDEN_PRO_TAG_MAX_KITA));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PENSUM_TAGI_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PENSUM_TAGESSCHULE_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PENSUM_TAGESELTERN_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PENSUM_KITA_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MAX));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN));
+		return list;
+	}
+
+	public static List<EbeguParameter> createAndPersistAllEbeguParameters(EbeguParameterService parameterService) {
+		final List<EbeguParameter> allEbeguParameters = createAllEbeguParameters();
+		allEbeguParameters.forEach(parameterService::saveEbeguParameter);
+		return allEbeguParameters;
+	}
+
+	public static EinkommensverschlechterungInfoContainer createDefaultEinkommensverschlechterungsInfoContainer(Gesuch gesuch) {
+		final EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer = new EinkommensverschlechterungInfoContainer();
+		einkommensverschlechterungInfoContainer.setEinkommensverschlechterungInfoJA(createDefaultEinkommensverschlechterungsInfo());
+		einkommensverschlechterungInfoContainer.setGesuch(gesuch);
+		gesuch.setEinkommensverschlechterungInfoContainer(einkommensverschlechterungInfoContainer);
+
+		return einkommensverschlechterungInfoContainer;
+	}
+
+	public static EinkommensverschlechterungInfo createDefaultEinkommensverschlechterungsInfo() {
 		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = new EinkommensverschlechterungInfo();
 		einkommensverschlechterungInfo.setEinkommensverschlechterung(true);
 		einkommensverschlechterungInfo.setEkvFuerBasisJahrPlus1(true);
 		einkommensverschlechterungInfo.setStichtagFuerBasisJahrPlus1(LocalDate.now());
 		einkommensverschlechterungInfo.setGrundFuerBasisJahrPlus1("Grund fuer basis Jahr Plus 1");
 		einkommensverschlechterungInfo.setEkvFuerBasisJahrPlus2(false);
-		einkommensverschlechterungInfo.setGesuch(gesuch);
 		return einkommensverschlechterungInfo;
-
 	}
 
 	public static Gesuch createDefaultEinkommensverschlechterungsGesuch() {
 		Gesuch gesuch = createDefaultGesuch();
-		gesuch.setEinkommensverschlechterungInfo(createDefaultEinkommensverschlechterungsInfo(gesuch));
+		gesuch.setEinkommensverschlechterungInfoContainer(createDefaultEinkommensverschlechterungsInfoContainer(gesuch));
 		return gesuch;
 	}
 
-	public static Gesuchsteller createDefaultGesuchstellerWithEinkommensverschlechterung() {
-		final Gesuchsteller gesuchsteller = createDefaultGesuchsteller();
+	public static GesuchstellerContainer createDefaultGesuchstellerWithEinkommensverschlechterung() {
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = createDefaultGesuchstellerContainer(gesuch);
 		gesuchsteller.setEinkommensverschlechterungContainer(createDefaultEinkommensverschlechterungsContainer());
 		return gesuchsteller;
 	}
@@ -368,21 +445,22 @@ public final class TestDataUtil {
 		return user;
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	public static Betreuung createGesuchWithBetreuungspensum(boolean zweiGesuchsteller) {
 		Gesuch gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
-		gesuch.setFamiliensituation(new Familiensituation());
-		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.setFamiliensituationContainer(createDefaultFamiliensituationContainer());
+		gesuch.extractFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		if (zweiGesuchsteller) {
-			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+			gesuch.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		} else {
-			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+			gesuch.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		}
-		gesuch.setGesuchsteller1(new Gesuchsteller());
+		gesuch.setGesuchsteller1(new GesuchstellerContainer());
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		if (zweiGesuchsteller) {
-			gesuch.setGesuchsteller2(new Gesuchsteller());
+			gesuch.setGesuchsteller2(new GesuchstellerContainer());
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 			gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		}
@@ -398,15 +476,17 @@ public final class TestDataUtil {
 		if (gesuch.getGesuchsperiode() == null) {
 			gesuch.setGesuchsperiode(createGesuchsperiode1617());
 		}
-		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6);
+		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner();
 		finanzielleSituationRechner.calculateFinanzDaten(gesuch);
 	}
 
-	public static Gesuch createTestgesuchDagmar(){
+	public static Gesuch createTestgesuchDagmar() {
 		List<InstitutionStammdaten> insttStammdaten = new ArrayList<>();
 		insttStammdaten.add(TestDataUtil.createDefaultInstitutionStammdaten());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), insttStammdaten);
-		Gesuch gesuch = testfall.createGesuch();
+		testfall.createFall(null);
+		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		return gesuch;
@@ -418,23 +498,26 @@ public final class TestDataUtil {
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(einkommen);
 	}
 
-	public static void setEinkommensverschlechterung(Gesuch gesuch, BigDecimal einkommen, boolean basisJahrPlus1) {
-		if (gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer() == null) {
-			gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(new EinkommensverschlechterungContainer());
+	public static void setEinkommensverschlechterung(Gesuch gesuch, GesuchstellerContainer gesuchsteller, BigDecimal einkommen, boolean basisJahrPlus1) {
+		if (gesuchsteller.getEinkommensverschlechterungContainer() == null) {
+			gesuchsteller.setEinkommensverschlechterungContainer(new EinkommensverschlechterungContainer());
 		}
-		if (gesuch.getEinkommensverschlechterungInfo() == null) {
-			gesuch.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo());
+		if (gesuch.extractEinkommensverschlechterungInfo() == null) {
+			gesuch.setEinkommensverschlechterungInfoContainer(new EinkommensverschlechterungInfoContainer());
+			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 		if (basisJahrPlus1) {
-			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
-			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
-			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
-			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
+			gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
+			gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
+			gesuch.extractEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
+			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		} else {
-			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(new Einkommensverschlechterung());
-			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2().setNettolohnAug(einkommen);
-			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
-			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
+			gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(new Einkommensverschlechterung());
+			gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2().setNettolohnAug(einkommen);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
+			gesuch.extractEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
+			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 	}
 
@@ -445,12 +528,12 @@ public final class TestDataUtil {
 		dokumentGrund.setTag("tag");
 		dokumentGrund.setFullName("Hugo");
 		dokumentGrund.setDokumentTyp(DokumentTyp.JAHRESLOHNAUSWEISE);
-		dokumentGrund.setDokumente(new HashSet<Dokument>());
+		dokumentGrund.setDokumente(new HashSet<>());
 		final Dokument dokument = new Dokument();
 		dokument.setDokumentGrund(dokumentGrund);
-		dokument.setDokumentName("testdokument");
-		dokument.setDokumentPfad("testpfad/");
-		dokument.setDokumentSize("123456");
+		dokument.setFilename("testdokument");
+		dokument.setFilepfad("testpfad/");
+		dokument.setFilesize("123456");
 		dokumentGrund.getDokumente().add(dokument);
 		return dokumentGrund;
 	}
@@ -458,14 +541,17 @@ public final class TestDataUtil {
 	/**
 	 * Hilfsmethode die den Testfall Waelti Dagmar erstellt und speichert
 	 */
-	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
-		Gesuch gesuch = testfall.createGesuch();
+		return persistAllEntities(persistence, eingangsdatum, testfall);
+	}
+
+	private static void ensureFachstelleAndInstitutionsExist(Persistence<Gesuch> persistence, Gesuch gesuch) {
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
@@ -481,9 +567,244 @@ public final class TestDataUtil {
 				}
 			}
 		}
+	}
+
+
+	public static Gesuch createAndPersistFeutzYvonneGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
+		instService.getAllInstitutionen();
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+
+		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
+		return gesuch;
+	}
+
+	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
+		instService.getAllInstitutionen();
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+
+		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
+		return gesuch;
+	}
+
+
+	public static Institution createAndPersistDefaultInstitution(Persistence<Gesuch> persistence) {
+		Institution inst = createDefaultInstitution();
+		persistence.merge(inst.getMandant());
+		persistence.merge(inst.getTraegerschaft());
+		return persistence.merge(inst);
+
+	}
+
+	private static Gesuch persistAllEntities(Persistence<Gesuch> persistence, LocalDate eingangsdatum, AbstractTestfall testfall) {
+		testfall.createFall(null);
+		testfall.createGesuch(eingangsdatum);
+		persistence.persist(testfall.getGesuch().getFall());
+		persistence.persist(testfall.getGesuch().getGesuchsperiode());
+		persistence.persist(testfall.getGesuch());
+		Gesuch gesuch = testfall.fillInGesuch();
+		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
+		gesuch = persistence.merge(gesuch);
+		return gesuch;
+	}
+
+	public static void persistEntities(Gesuch gesuch, Persistence<Gesuch> persistence) {
+		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
+		persistence.persist(verantwortlicher.getMandant());
+		persistence.persist(verantwortlicher);
+
+		gesuch.getFall().setVerantwortlicher(verantwortlicher);
+		persistence.persist(gesuch.getFall());
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
+		persistence.persist(gesuch.getGesuchsperiode());
+
+		Set<KindContainer> kindContainers = new TreeSet<>();
+		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
+		KindContainer kind = betreuung.getKind();
+
+		Set<Betreuung> betreuungen = new TreeSet<>();
+		betreuungen.add(betreuung);
+		kind.setBetreuungen(betreuungen);
+
+		persistence.persist(kind.getKindGS().getPensumFachstelle().getFachstelle());
+		persistence.persist(kind.getKindJA().getPensumFachstelle().getFachstelle());
+		kind.setGesuch(gesuch);
+		kindContainers.add(kind);
+		gesuch.setKindContainers(kindContainers);
+
+
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
+		persistence.persist(betreuung.getInstitutionStammdaten());
+
+		persistence.persist(gesuch);
+	}
+
+	public static Gesuch createAndPersistGesuch(Persistence<Gesuch> persistence) {
+		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
 		persistence.persist(gesuch.getFall());
 		persistence.persist(gesuch.getGesuchsperiode());
-		gesuch = persistence.persist(gesuch);
+		persistence.persist(gesuch);
 		return gesuch;
+	}
+
+	public static WizardStep createWizardStepObject(Gesuch gesuch, WizardStepName wizardStepName, WizardStepStatus stepStatus) {
+		final WizardStep jaxWizardStep = new WizardStep();
+		jaxWizardStep.setGesuch(gesuch);
+		jaxWizardStep.setWizardStepName(wizardStepName);
+		jaxWizardStep.setWizardStepStatus(stepStatus);
+		jaxWizardStep.setBemerkungen("");
+		return jaxWizardStep;
+	}
+
+	public static void prepareParameters(DateRange gueltigkeit, Persistence<?> persistence) {
+
+		LocalDate year1Start = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.JANUARY, 1);
+		LocalDate year1End = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.DECEMBER, 31);
+		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19", gueltigkeit, persistence);
+		saveParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, "7", new DateRange(year1Start, year1End), persistence);
+		saveParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, "7", new DateRange(year1Start.plusYears(1), year1End.plusYears(1)), persistence);
+		saveParameter(PARAM_ANZAL_TAGE_MAX_KITA, "244", gueltigkeit, persistence);
+		saveParameter(PARAM_STUNDEN_PRO_TAG_MAX_KITA, "11.5", gueltigkeit, persistence);
+		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX, "11.91", gueltigkeit, persistence);
+		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MIN, "0.75", gueltigkeit, persistence);
+		saveParameter(PARAM_MASSGEBENDES_EINKOMMEN_MAX, "158690", gueltigkeit, persistence);
+		saveParameter(PARAM_MASSGEBENDES_EINKOMMEN_MIN, "42540", gueltigkeit, persistence);
+		saveParameter(PARAM_ANZAHL_TAGE_KANTON, "240", gueltigkeit, persistence);
+		saveParameter(PARAM_STUNDEN_PRO_TAG_TAGI, "7", gueltigkeit, persistence);
+		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN, "9.16", gueltigkeit, persistence);
+		saveParameter(PARAM_BABY_ALTER_IN_MONATEN, "12", gueltigkeit, persistence);  //waere eigentlich int
+		saveParameter(PARAM_BABY_FAKTOR, "1.5", gueltigkeit, persistence);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, "3760", gueltigkeit, persistence);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, "5900", gueltigkeit, persistence);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, "6970", gueltigkeit, persistence);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, "7500", gueltigkeit, persistence);
+
+	}
+
+	public static void saveParameter(EbeguParameterKey key, String value, DateRange gueltigkeit, Persistence<?> persistence) {
+		EbeguParameter ebeguParameter = new EbeguParameter(key, value, gueltigkeit);
+		persistence.persist(ebeguParameter);
+
+	}
+
+	public static Benutzer createBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, Institution institution, Mandant mandant) {
+		final Benutzer benutzer = new Benutzer();
+		benutzer.setUsername(userName);
+		benutzer.setNachname("anonymous");
+		benutzer.setVorname("anonymous");
+		benutzer.setEmail("e@e");
+		benutzer.setTraegerschaft(traegerschaft);
+		benutzer.setInstitution(institution);
+		benutzer.setRole(role);
+		benutzer.setMandant(mandant);
+		return benutzer;
+	}
+
+	public static Benutzer createAndPersistBenutzer(Persistence<?> persistence) {
+		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
+		persistence.persist(traegerschaft);
+		final Mandant mandant = TestDataUtil.createDefaultMandant();
+		persistence.persist(mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "satraeg", traegerschaft, null, mandant);
+		persistence.persist(benutzer);
+		return benutzer;
+	}
+
+	public static GeneratedDokument createGeneratedDokument(final Gesuch gesuch) {
+		final GeneratedDokument dokument = new GeneratedDokument();
+		dokument.setGesuch(gesuch);
+		dokument.setTyp(GeneratedDokumentTyp.VERFUEGUNG);
+		dokument.setFilepfad("pfad/to/document/doc.pdf");
+		dokument.setFilename("name.pdf");
+		dokument.setFilesize("32");
+		return dokument;
+	}
+
+	public static Benutzer createDummySuperAdmin(Persistence<?> persistence) {
+		//machmal brauchen wir einen dummy admin in der DB
+		final Mandant mandant = TestDataUtil.createDefaultMandant();
+		persistence.persist(mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SUPER_ADMIN, "superadmin", null, null, mandant);
+		persistence.merge(benutzer);
+		return benutzer;
+	}
+
+
+	public static AntragTableFilterDTO createAntragTableFilterDTO() {
+		AntragTableFilterDTO filterDTO = new AntragTableFilterDTO();
+		filterDTO.setSort(new AntragSortDTO());
+		filterDTO.setSearch(new AntragSearchDTO());
+		filterDTO.setPagination(new PaginationDTO());
+		filterDTO.getPagination().setStart(0);
+		filterDTO.getPagination().setNumber(10);
+		return filterDTO;
+	}
+
+
+	public static void createDefaultAdressenForGS(final Gesuch gesuch, final boolean gs2) {
+		List<GesuchstellerAdresseContainer> adressen1 = new ArrayList<>();
+		final GesuchstellerAdresseContainer adresseGS1 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller1());
+		adresseGS1.getGesuchstellerAdresseJA().setNichtInGemeinde(false);
+		adresseGS1.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		adressen1.add(adresseGS1);
+		gesuch.getGesuchsteller1().setAdressen(adressen1);
+
+		if (gs2) {
+			List<GesuchstellerAdresseContainer> adressen2 = new ArrayList<>();
+			final GesuchstellerAdresseContainer adresseGS2 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller2());
+			adresseGS2.getGesuchstellerAdresseJA().setNichtInGemeinde(false);
+			adresseGS2.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+			adressen2.add(adresseGS2);
+			gesuch.getGesuchsteller2().setAdressen(adressen2);
+		}
+	}
+
+	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch) {
+		return createMahnung(typ, gesuch, LocalDate.now().plusWeeks(2));
+	}
+
+	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch, LocalDate firstAblauf) {
+		Mahnung mahnung = new Mahnung();
+		mahnung.setMahnungTyp(typ);
+		mahnung.setActive(true);
+		mahnung.setBemerkungen("Test Dokument 1\nTest Dokument 2\nTest Dokument 3");
+		mahnung.setDatumFristablauf(firstAblauf);
+		mahnung.setTimestampErstellt(LocalDateTime.now());
+		mahnung.setUserMutiert("Hans Muster");
+		mahnung.setGesuch(gesuch);
+		return mahnung;
+	}
+
+	public static AbwesenheitContainer createShortAbwesenheitContainer(final Gesuchsperiode gesuchsperiode) {
+		final AbwesenheitContainer abwesenheitContainer = new AbwesenheitContainer();
+		abwesenheitContainer.setAbwesenheitJA(createShortAbwesenheit(gesuchsperiode));
+		return abwesenheitContainer;
+	}
+
+	private static Abwesenheit createShortAbwesenheit(final Gesuchsperiode gesuchsperiode) {
+		final Abwesenheit abwesenheit = new Abwesenheit();
+		abwesenheit.setGueltigkeit(new DateRange(gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1),
+			gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1).plusDays(Constants.ABWESENHEIT_DAYS_LIMIT - 1)));
+		return abwesenheit;
+	}
+
+	public static AbwesenheitContainer createLongAbwesenheitContainer(final Gesuchsperiode gesuchsperiode) {
+		final AbwesenheitContainer abwesenheitContainer = new AbwesenheitContainer();
+		abwesenheitContainer.setAbwesenheitJA(createLongAbwesenheit(gesuchsperiode));
+		return abwesenheitContainer;
+	}
+
+	private static Abwesenheit createLongAbwesenheit(final Gesuchsperiode gesuchsperiode) {
+		final Abwesenheit abwesenheit = new Abwesenheit();
+		abwesenheit.setGueltigkeit(new DateRange(gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1),
+			gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1).plusDays(Constants.ABWESENHEIT_DAYS_LIMIT)));
+		return abwesenheit;
 	}
 }

@@ -6,27 +6,19 @@ export default class TSFinanzielleSituationResultateDTO {
     private _nettovermoegenFuenfProzent: number;
     private _anrechenbaresEinkommen: number;
     private _abzuegeBeiderGesuchsteller: number;
-    private _abzugAufgrundFamiliengroesse: number;
-    private _totalAbzuege: number;
-    private _massgebendesEinkommen: number;
-    private _familiengroesse: number;
-
+    private _massgebendesEinkVorAbzFamGr: number;
 
     constructor(
             geschaeftsgewinnDurchschnittGesuchsteller1?: number, geschaeftsgewinnDurchschnittGesuchsteller2?: number,
             einkommenBeiderGesuchsteller?: number, nettovermoegenFuenfProzent?: number, anrechenbaresEinkommen?: number,
-            abzuegeBeiderGesuchsteller?: number, abzugAufgrundFamiliengroesse?: number, totalAbzuege?: number,
-            massgebendesEinkommen?: number, familiengroesse?: number) {
+            abzuegeBeiderGesuchsteller?: number, massgebendesEinkVorAbzFamGr?: number) {
         this._geschaeftsgewinnDurchschnittGesuchsteller1 = geschaeftsgewinnDurchschnittGesuchsteller1;
         this._geschaeftsgewinnDurchschnittGesuchsteller2 = geschaeftsgewinnDurchschnittGesuchsteller2;
         this._einkommenBeiderGesuchsteller = einkommenBeiderGesuchsteller;
         this._nettovermoegenFuenfProzent = nettovermoegenFuenfProzent;
         this._anrechenbaresEinkommen = anrechenbaresEinkommen;
         this._abzuegeBeiderGesuchsteller = abzuegeBeiderGesuchsteller;
-        this._abzugAufgrundFamiliengroesse = abzugAufgrundFamiliengroesse;
-        this._totalAbzuege = totalAbzuege;
-        this._massgebendesEinkommen = massgebendesEinkommen;
-        this._familiengroesse = familiengroesse;
+        this._massgebendesEinkVorAbzFamGr = massgebendesEinkVorAbzFamGr;
     }
 
 
@@ -78,35 +70,13 @@ export default class TSFinanzielleSituationResultateDTO {
         this._abzuegeBeiderGesuchsteller = value;
     }
 
-    get abzugAufgrundFamiliengroesse(): number {
-        return this._abzugAufgrundFamiliengroesse;
+    get massgebendesEinkVorAbzFamGr(): number {
+        return this._massgebendesEinkVorAbzFamGr;
     }
 
-    set abzugAufgrundFamiliengroesse(value: number) {
-        this._abzugAufgrundFamiliengroesse = value;
+    set massgebendesEinkVorAbzFamGr(value: number) {
+        this._massgebendesEinkVorAbzFamGr = value;
     }
 
-    get totalAbzuege(): number {
-        return this._totalAbzuege;
-    }
 
-    set totalAbzuege(value: number) {
-        this._totalAbzuege = value;
-    }
-
-    get massgebendesEinkommen(): number {
-        return this._massgebendesEinkommen;
-    }
-
-    set massgebendesEinkommen(value: number) {
-        this._massgebendesEinkommen = value;
-    }
-
-    get familiengroesse(): number {
-        return this._familiengroesse;
-    }
-
-    set familiengroesse(value: number) {
-        this._familiengroesse = value;
-    }
 }

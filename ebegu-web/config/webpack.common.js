@@ -1,10 +1,21 @@
 var webpack = require('webpack');
 var helpers = require('./helpers');
 var loaders = require('./loaders');
+var fs = require('fs');
+var xml2js = require('xml2js');
+
+var parsedversion = 0;
+var parser = new xml2js.Parser();
+
+var contents = fs.readFileSync(__dirname + '/../pom.xml').toString();
+
+var re = new RegExp("<artifactId>ebegu</artifactId>[\\s\\S]*?<version>(.*?)</version>[\\s\\S]*?<packaging>pom</packaging>","im");
+var myMatchArray = re.exec(contents);
+parsedversion = ( myMatchArray !== null) ?  myMatchArray[1] : 'unknown';
+console.log("Parsed Version from pom is " + parsedversion);
 
 
-var parsedversion = JSON.stringify(require("../package.json").version) || "unkown";
-var currentTime = new Date(); 
+var currentTime = new Date();
 /**
  * Webpack Plugins
  */
@@ -114,7 +125,7 @@ module.exports = {
     //
     // See: http://webpack.github.io/docs/configuration.html#plugins
     plugins: [
-        
+
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
@@ -157,7 +168,7 @@ module.exports = {
         new CopyWebpackPlugin([
             {from: 'src/assets', to: 'src/assets'},
         ]),
-        
+
         // Plugin: HtmlWebpackPlugin
         // Description: Simplifies creation of HTML files to serve your webpack bundles.
         // This is especially useful for webpack bundles that include a hash in the filename

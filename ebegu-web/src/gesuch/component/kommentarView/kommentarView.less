@@ -1,0 +1,60 @@
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
+
+.kommentarView {
+    overflow-y: auto;
+    height: 100%;
+    & > form {
+        height: inherit;
+        & > div {
+            padding: 1rem;
+        }
+    }
+    md-input-container {
+        label:not(.md-container-ignore) {
+            position: static;
+            .h3();
+        }
+        textarea {
+            margin-top: 0.5rem;
+        }
+        margin: 0;
+    }
+    #kommentarIntern, #kommentarVerfuegung {
+        .p();
+        border: 0.1rem @secondary solid;
+        background-color: @contrast-lightest;
+        padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+        &[disabled] {
+            background-color: @contrast;
+        }
+    }
+
+    .kommentar-feld md-input-container label:not(.md-no-float):not(._md-container-ignore) {
+        padding-left: 1rem;
+        color: @secondary;
+    }
+
+    .kommentar-button {
+        background-color: @secondary;
+        cursor: pointer;
+        &:hover {
+            background: @secondary-dark;
+            color: @contrast-lightest;
+        }
+    }
+
+    .bottom-align {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 0;
+    }
+
+    .kommentar-verfuegung-align {
+        position: absolute;
+        bottom: 2rem;
+        right: 0;
+    }
+
+}

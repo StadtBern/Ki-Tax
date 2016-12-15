@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -19,7 +20,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
  */
 @Audited
 @Entity
-public class DokumentGrund extends AbstractEntity {
+public class DokumentGrund extends AbstractEntity implements Comparable<DokumentGrund> {
 
 	private static final long serialVersionUID = 5417585258130227434L;
 
@@ -45,22 +46,20 @@ public class DokumentGrund extends AbstractEntity {
 		this(dokumentGrundTyp);
 		this.dokumente = new HashSet<>();
 		this.dokumentTyp = dokumentTyp;
-		this.dokumente.add(new Dokument(this));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, fullName);
 		this.dokumente = new HashSet<>();
 		this.dokumentTyp = dokumentTyp;
-		this.dokumente.add(new Dokument(this));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, String tag, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, fullName, tag);
 		this.dokumente = new HashSet<>();
 		this.dokumentTyp = dokumentTyp;
-		this.dokumente.add(new Dokument(this));
 	}
+
 
 	@NotNull
 	@ManyToOne(optional = false)
@@ -161,5 +160,37 @@ public class DokumentGrund extends AbstractEntity {
 			", year='" + tag + '\'' +
 			", dokumente=" + dokumente +
 			'}';
+	}
+
+	@Override
+	public int compareTo(DokumentGrund o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getDokumentGrundTyp(), o.getDokumentGrundTyp());
+		if(this.getFullName() != null && o.getFullName() != null){
+			builder.append(this.getFullName(), o.getFullName());
+		}
+		if(this.getTag() != null && o.getTag() != null){
+			builder.append(this.getTag(), o.getTag());
+		}
+		return builder.toComparison();
+	}
+
+	public boolean isEmpty() {
+		return getDokumente() == null || getDokumente().size() <= 0;
+	}
+
+	public DokumentGrund copyForMutation(DokumentGrund mutation) {
+		super.copyForMutation(mutation);
+		mutation.setDokumentGrundTyp(this.getDokumentGrundTyp());
+		mutation.setFullName(this.getFullName());
+		mutation.setTag(this.getTag());
+		mutation.setDokumentTyp(this.getDokumentTyp());
+		if (this.getDokumente() != null) {
+			for (Dokument dokument : this.getDokumente()) {
+				mutation.getDokumente().add(dokument.copyForMutation(new Dokument(), mutation));
+			}
+		}
+		mutation.setNeeded(this.isNeeded());
+		return mutation;
 	}
 }

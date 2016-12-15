@@ -1,19 +1,24 @@
-<div class="kinderListView row">
-    <div class="col-md-12">
-        <p class="inlineHint" data-translate="KINDER_HINT1"></p>
-        <p class="inlineHint" data-translate="KINDER_HINT2"></p>
-
-        <div class="row">
-            <div class="col-md-12 table-responsive">
+<div class="kinderListView gesuchModul">
+    <div class="row viewTitle">
+        <div class="col-md-12">
+            <h1>
+                <span data-translate="KINDER"></span>
+            </h1>
+            <hr class="header"/>
+            <p class="inlineHint noMarginY" data-translate="KINDER_HINT1"></p>
+            <p class="inlineHint" data-translate="KINDER_HINT2"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 table-responsive">
 
                 <table st-table="displayedCollection" st-safe-src="vm.getKinderList()"
-                       class="table table-striped table-hover" st-delay="20">
+                       class="table table-hover" st-delay="20">
                     <thead>
                     <tr>
-                        <th st-sort="kindJA.vorname" class="sortable"  data-translate="VORNAME" ></th>
-                        <th st-sort="kindJA.nachname" class="sortable" data-translate="NAME" ></th>
+                        <th st-sort="kindJA.vorname" class="sortable" data-translate="VORNAME"></th>
+                        <th st-sort="kindJA.nachname" class="sortable" data-translate="NAME"></th>
                         <th st-sort="kindJA.geburtsdatum" class="sortable" data-translate="GEBURTSDATUM"></th>
-                        <th data-translate="KIND_ANDERERFALL"></th>
                         <th></th>
                     </tr>
                     </thead>
@@ -23,13 +28,15 @@
                         <td ng-bind="row.kindJA.vorname"></td>
                         <td ng-bind="row.kindJA.nachname"></td>
                         <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td>TODO anderer Fall</td>
-                        <td ng-click="$event.stopPropagation()">
-                            <dv-loading-button type="button" ng-click="vm.removeKind(row)" button-class="btn btn-sm">
+                        <td ng-if="vm.isGesuchReadonly()"></td>
+                        <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
+                            <dv-loading-button type="button" button-click="vm.removeKind(row)" button-class="dv-btn-sm"
+                                               button-disabled="vm.isKorrekturModusJugendamt()">
                                 <i class="fa fa-minus">
                                 </i>
                             </dv-loading-button>
                         </td>
+                        <td ng-if="!vm.canRemoveKind(row)"></td>
                     </tr>
                     <tr ng-if="vm.getKinderList().length === 0">
                         <td colspan="4" class="empty-table" data-translate="KINDER_NOCH_KEINE"></td>
@@ -37,32 +44,21 @@
                     </tbody>
                 </table>
 
-            </div>
-            <div class="col-md-12" style="margin-bottom: 20px">
-                <dv-loading-button type="button" ng-click="vm.createKind()"  button-class="btn btn-sm btn-success">
-                    <i class="glyphicon glyphicon-plus"></i>
-                  <span data-translate="KIND_HINZUFUEGEN"></span>
-                </dv-loading-button>
-            </div>
-
+        </div>
+        <div class="col-md-12" style="margin-bottom: 2rem" ng-if="!vm.isGesuchReadonly()">
+            <dv-loading-button type="button" button-click="vm.createKind()"
+                               button-class="dv-btn-sm color-success" button-disabled="vm.isKorrekturModusJugendamt()">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span data-translate="KIND_HINZUFUEGEN"></span>
+            </dv-loading-button>
         </div>
 
-        <!--Buttons-->
-        <div class="row">
-            <div class="col-md-6">
-                <dv-loading-button ng-click="vm.previousStep()" button-class="btn btn-link previous">
-                    <span class="fa fa-chevron-left"></span>
-                    <span data-translate="ZURUECK_UPPER"></span>
-                </dv-loading-button>
-            </div>
-            <div class="col-md-6 text-right">
-                <dv-loading-button ng-click="vm.nextStep()" button-class="btn btn-link next">
-                    <span data-translate="WEITER_UPPER"></span>
-                    <span class="fa fa-chevron-right"></span>
-                </dv-loading-button>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <!--Buttons-->
+            <dv-navigation dv-previous="true" dv-next="true" dv-sub-step="1">
+            </dv-navigation>
         </div>
     </div>
-
-
 </div>

@@ -11,12 +11,10 @@ import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.PensumFachstelleService;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,12 +27,8 @@ import javax.ws.rs.core.UriInfo;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class KindResourceTest extends AbstractEbeguRestTest {
+public class KindResourceTest extends AbstractEbeguRestLoginTest {
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 	@Inject
 	private KindResource kindResource;

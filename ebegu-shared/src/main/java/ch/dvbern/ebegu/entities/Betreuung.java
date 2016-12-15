@@ -3,12 +3,14 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validators.CheckAbwesenheitDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -28,15 +30,19 @@ import java.util.TreeSet;
 @CheckGrundAblehnung
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
+@CheckAbwesenheitDatesOverlapping
 @Table(
 	uniqueConstraints = {
 		@UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer"),
 		@UniqueConstraint(columnNames = {"verfuegung_id"}, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
 	}
 )
-public class Betreuung extends AbstractEntity {
+public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	private static final long serialVersionUID = -6776987863150835840L;
+
+	@Transient
+	private Verfuegung vorgaengerVerfuegung;
 
 	@NotNull
 	@ManyToOne(optional = false)
@@ -57,10 +63,9 @@ public class Betreuung extends AbstractEntity {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
 	private Set<BetreuungspensumContainer> betreuungspensumContainers = new TreeSet<>();
 
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Nullable
-	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
-	private String bemerkungen;
+	@Valid
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
+	private Set<AbwesenheitContainer> abwesenheitContainers = new TreeSet<>();
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -73,7 +78,7 @@ public class Betreuung extends AbstractEntity {
 	private Integer betreuungNummer = 1;
 
 	@Valid
-	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.REMOVE, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true, unique = true)
 	private Verfuegung verfuegung;
 
@@ -93,6 +98,9 @@ public class Betreuung extends AbstractEntity {
 	@Column(nullable = true)
 	private LocalDate datumBestaetigung;
 
+
+	public Betreuung() {
+	}
 
 
 	public KindContainer getKind() {
@@ -127,13 +135,12 @@ public class Betreuung extends AbstractEntity {
 		this.betreuungspensumContainers = betreuungspensumContainers;
 	}
 
-	@Nullable
-	public String getBemerkungen() {
-		return bemerkungen;
+	public Set<AbwesenheitContainer> getAbwesenheitContainers() {
+		return abwesenheitContainers;
 	}
 
-	public void setBemerkungen(@Nullable String bemerkungen) {
-		this.bemerkungen = bemerkungen;
+	public void setAbwesenheitContainers(Set<AbwesenheitContainer> abwesenheiten) {
+		this.abwesenheitContainers = abwesenheiten;
 	}
 
 	@Nullable
@@ -196,7 +203,6 @@ public class Betreuung extends AbstractEntity {
 	}
 
 
-
 	public boolean isSame(Betreuung otherBetreuung) {
 		if (this == otherBetreuung) {
 			return true;
@@ -205,16 +211,19 @@ public class Betreuung extends AbstractEntity {
 			return false;
 		}
 
-		boolean bemSame = Objects.equals(this.getBemerkungen(), otherBetreuung.getBemerkungen());
-		boolean pensenSame =  this.getBetreuungspensumContainers().stream().allMatch(
+		boolean pensenSame = this.getBetreuungspensumContainers().stream().allMatch(
 			(pensCont) -> otherBetreuung.getBetreuungspensumContainers().stream().anyMatch(otherPensenCont -> otherPensenCont.isSame(pensCont)));
+
+		boolean abwesenheitenSame = this.getAbwesenheitContainers().stream().allMatch(
+			(abwesenheitCont) -> otherBetreuung.getAbwesenheitContainers().stream().anyMatch(otherAbwesenheitCont -> otherAbwesenheitCont.isSame(abwesenheitCont)));
+
 		boolean statusSame = Objects.equals(this.getBetreuungsstatus(), otherBetreuung.getBetreuungsstatus());
 		boolean stammdatenSame = this.getInstitutionStammdaten().isSame(otherBetreuung.getInstitutionStammdaten());
-		return bemSame && pensenSame && statusSame && stammdatenSame;
+		return pensenSame && abwesenheitenSame && statusSame && stammdatenSame;
 	}
 
 	@Transient
-	public Gesuchsperiode extractGesuchsperiode(){
+	public Gesuchsperiode extractGesuchsperiode() {
 		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
 		Objects.requireNonNull(this.getKind().getGesuch(), "Can not extract Gesuchsperiode because Gesuch is null");
 		return this.getKind().getGesuch().getGesuchsperiode();
@@ -228,29 +237,87 @@ public class Betreuung extends AbstractEntity {
 
 	@Transient
 	public boolean isAngebotKita() {
-		return BetreuungsangebotTyp.KITA.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+		return BetreuungsangebotTyp.KITA.equals(getBetreuungsangebotTyp());
 	}
 
 	@Transient
 	public boolean isAngebotTageselternKleinkinder() {
-		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getBetreuungsangebotTyp());
+	}
+
+	@Transient
+	public BetreuungsangebotTyp getBetreuungsangebotTyp() {
+		if (getInstitutionStammdaten() != null) {
+			return getInstitutionStammdaten().getBetreuungsangebotTyp();
+		}
+		return null;
 	}
 
 	/**
 	 * Erstellt die BG-Nummer als zusammengesetzten String aus Jahr, FallId, KindId und BetreuungsNummer
-     */
+	 */
 	@Transient
 	public String getBGNummer() {
-		String year = "";
-		if(getKind().getGesuch() != null && getKind().getGesuch().getGesuchsperiode() != null) {
-			year = ("" + getKind().getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2);
+		if (getKind().getGesuch() != null) {
+			String kind = "" + getKind().getKindNummer();
+			String betreuung = "" + getBetreuungNummer();
+			return getKind().getGesuch().getAntragNummer() + "." + kind + "." + betreuung;
 		}
-		String fall = "";
-		if (getKind().getGesuch() != null && getKind().getGesuch().getFall() != null) {
-			fall = StringUtils.leftPad("" + getKind().getGesuch().getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
+		return "";
+	}
+
+	@Override
+	public int compareTo(Betreuung other) {
+		CompareToBuilder compareToBuilder = new CompareToBuilder();
+		compareToBuilder.append(this.getBetreuungNummer(), other.getBetreuungNummer());
+		compareToBuilder.append(this.getId(), other.getId());
+		return compareToBuilder.toComparison();
+	}
+
+	/**
+	 * @return die Verfuegung oder Vorgaengerverfuegung dieser Betreuung
+	 */
+	@Nullable
+	public Verfuegung getVerfuegungOrVorgaengerVerfuegung() {
+		if (getVerfuegung() != null) {
+			return getVerfuegung();
+		} else {
+			return getVorgaengerVerfuegung();
 		}
-		String kind = "" + getKind().getKindNummer();
-		String betreuung = "" + getBetreuungNummer();
-		return year + "." + fall + "." + kind + "." + betreuung;
+	}
+
+
+	public Verfuegung getVorgaengerVerfuegung() {
+		return vorgaengerVerfuegung;
+	}
+
+	public void setVorgaengerVerfuegung(Verfuegung vorgaengerVerfuegung) {
+		this.vorgaengerVerfuegung = vorgaengerVerfuegung;
+	}
+
+	public Betreuung copyForMutation(@Nonnull Betreuung mutation, @Nonnull KindContainer kindContainerMutation) {
+		super.copyForMutation(mutation);
+		mutation.setKind(kindContainerMutation);
+		mutation.setInstitutionStammdaten(this.getInstitutionStammdaten());
+		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
+		if (this.getBetreuungsstatus().isGeschlossen()) {
+			mutation.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+		} else {
+			mutation.setBetreuungsstatus(this.getBetreuungsstatus());
+		}
+		for (BetreuungspensumContainer betreuungspensumContainer : this.getBetreuungspensumContainers()) {
+			mutation.getBetreuungspensumContainers().add(betreuungspensumContainer.copyForMutation(new BetreuungspensumContainer(), mutation));
+		}
+		for (AbwesenheitContainer abwesenheitContainer : this.getAbwesenheitContainers()) {
+			mutation.getAbwesenheitContainers().add(abwesenheitContainer.copyForMutation(new AbwesenheitContainer(), mutation));
+		}
+		mutation.setGrundAblehnung(this.getGrundAblehnung());
+		mutation.setBetreuungNummer(this.getBetreuungNummer());
+		mutation.setVerfuegung(null);
+		mutation.setVertrag(this.getVertrag());
+		mutation.setErweiterteBeduerfnisse(this.getErweiterteBeduerfnisse());
+		mutation.setDatumAblehnung(this.getDatumAblehnung());
+		mutation.setDatumBestaetigung(this.getDatumBestaetigung());
+		return mutation;
 	}
 }

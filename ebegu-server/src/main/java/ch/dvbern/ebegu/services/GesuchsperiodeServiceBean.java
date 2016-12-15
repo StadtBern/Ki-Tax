@@ -10,6 +10,8 @@ import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -20,11 +22,15 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
 /**
  * Service fuer Gesuchsperiode
  */
 @Stateless
 @Local(GesuchsperiodeService.class)
+@PermitAll
 public class GesuchsperiodeServiceBean extends AbstractBaseService implements GesuchsperiodeService {
 
 	@Inject
@@ -36,6 +42,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Nonnull
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
 	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Objects.requireNonNull(gesuchsperiode);
 		return persistence.merge(gesuchsperiode);
@@ -43,6 +50,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Optional<Gesuchsperiode> findGesuchsperiode(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Gesuchsperiode gesuchsperiode = persistence.find(Gesuchsperiode.class, key);
@@ -51,6 +59,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Nonnull
 	@Override
+	@PermitAll
 	public Collection<Gesuchsperiode> getAllGesuchsperioden() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);
@@ -62,6 +71,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
 	public void removeGesuchsperiode(@Nonnull String gesuchsperiodeId) {
 		Objects.requireNonNull(gesuchsperiodeId);
 		Optional<Gesuchsperiode> gesuchsperiodeToRemove = findGesuchsperiode(gesuchsperiodeId);
@@ -71,6 +81,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<Gesuchsperiode> getAllActiveGesuchsperioden() {
 		return criteriaQueryHelper.getEntitiesByAttribute(Gesuchsperiode.class, true, Gesuchsperiode_.active);
 	}
@@ -80,6 +91,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	 */
 	@Override
 	@Nonnull
+	@PermitAll
 	public Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() {
 		// Alle Gesuchsperioden, die aktuell am laufen sind oder in der Zukunft liegen, d.h. deren Ende-Datum nicht in der Vergangenheit liegt
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -96,4 +108,5 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		query.orderBy(cb.asc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
 		return q.getResultList();
 	}
+
 }

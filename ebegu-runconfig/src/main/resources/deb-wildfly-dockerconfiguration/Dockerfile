@@ -1,4 +1,4 @@
-FROM docker.dvbern.ch:5000/dvbern/appserv-wildfly-10.0.0:1.0
+FROM docker.dvbern.ch:5000/dvbern/appserv-wildfly-10.1.0:1.2
 
 MAINTAINER Markus Hofstetter <markus.hofstetter@dvbern.ch>
 
@@ -19,6 +19,9 @@ RUN $JBOSS_HOME/bin/add-user.sh ebegu-admin jbtwLs --silent
 
 #Applikation hinzufuegen
 ADD ebegu-rest.war /opt/jboss/wildfly/standalone/deployments/
+
+#Healthcheck
+HEALTHCHECK CMD curl -f http://$(hostname -i || echo '127.0.0.1'):8080/ebegu/api/v1/swagger.json || exit 1
 
 ###########
 # cleanup #

@@ -1,10 +1,10 @@
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import {TSDateRange} from '../models/types/TSDateRange';
-import DateUtil from '../utils/DateUtil';
 import {EbeguWebCore} from '../core/core.module';
 import EbeguUtil from './EbeguUtil';
 import * as moment from 'moment';
 import TSFall from '../models/TSFall';
+import TestDataUtil from './TestDataUtil';
 
 describe('EbeguUtil', function () {
 
@@ -31,19 +31,6 @@ describe('EbeguUtil', function () {
         ebeguUtil = $injector.get('EbeguUtil');
     }));
 
-    describe('getGesuchsperiodeAsString', function () {
-        it('should return the current Gesuchsperiode formatted', function () {
-            var momentAb = DateUtil.today().year(2016);
-            var momentBis = DateUtil.today().year(2017);
-            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(momentAb, momentBis));
-            let result: string = ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);
-            expect(result).toEqual('2016/2017');
-        });
-        it('should return undefined for an undefined Gesuchsperiode', function () {
-            let result: string = ebeguUtil.getGesuchsperiodeAsString(undefined);
-            expect(result).not.toBeDefined();
-        });
-    });
     describe('translateStringList', () => {
         it('should translate the given list of words', () => {
             let list: Array<string> = ['FIRST', 'SECOND'];
@@ -83,7 +70,7 @@ describe('EbeguUtil', function () {
         });
         it ('it returns the right ID: YY(gesuchsperiodeBegin).fallNummer.Kind.Betreuung', () => {
             let fall: TSFall = new TSFall(254);
-            let gesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(moment('01.07.2016', 'DD.MM.YYYY'), moment('31.08.2017', 'DD.MM.YYYY')));
+            let gesuchsperiode = TestDataUtil.createGesuchsperiode20162017();
             expect(ebeguUtil.calculateBetreuungsId(gesuchsperiode, fall, 1, 1)).toBe('16.000254.1.1');
         });
     });

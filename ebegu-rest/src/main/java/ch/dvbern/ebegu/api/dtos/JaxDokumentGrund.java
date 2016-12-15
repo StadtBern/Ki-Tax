@@ -88,4 +88,8 @@ public class JaxDokumentGrund extends JaxAbstractDTO {
 	public void setNeeded(boolean needed) {
 		this.needed = needed;
 	}
+
+	public boolean isEmpty() {
+		return getDokumente() == null || getDokumente().size() <= 0;
+	}
 }

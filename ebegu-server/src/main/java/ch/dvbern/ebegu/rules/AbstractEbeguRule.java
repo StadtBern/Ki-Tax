@@ -4,10 +4,10 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.VerfuegungZeitabschnittComparator;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -24,6 +24,7 @@ public abstract class AbstractEbeguRule implements Rule {
 
 	private RuleType ruleType;
 
+	@Valid
 	private DateRange validityPeriod;
 
 
@@ -81,18 +82,18 @@ public abstract class AbstractEbeguRule implements Rule {
 	@Override
 	public final List<VerfuegungZeitabschnitt> calculate(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 
-		Collections.sort(zeitabschnitte, new VerfuegungZeitabschnittComparator());
+		Collections.sort(zeitabschnitte);
 
 		// Zuerst muessen die neuen Zeitabschnitte aus den Daten meiner Rule zusammengestellt werden:
 
 		List<VerfuegungZeitabschnitt> abschnitteCreatedInRule = createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
-		Collections.sort(abschnitteCreatedInRule, new VerfuegungZeitabschnittComparator());
+		Collections.sort(abschnitteCreatedInRule);
 
 
 		// In dieser Funktion muss sichergestellt werden, dass in der neuen Liste keine Ueberschneidungen mehr bestehen
 		// Jetzt muessen diese mit den bestehenden Zeitabschnitten aus früheren Rules gemergt werden
 		List<VerfuegungZeitabschnitt> mergedZeitabschnitte = mergeZeitabschnitte(zeitabschnitte, abschnitteCreatedInRule);
-		Collections.sort(mergedZeitabschnitte, new VerfuegungZeitabschnittComparator());
+		Collections.sort(mergedZeitabschnitte);
 
 		// Die Zeitabschnitte (jetzt ohne Überschneidungen) normalisieren:
 		// - Muss innerhalb Gesuchsperiode sein
@@ -114,7 +115,7 @@ public abstract class AbstractEbeguRule implements Rule {
 	 * dies der Fall wäre, werden sie zu einem neuen Schnitz gemergt.
 	 */
 	@Nonnull
-	private List<VerfuegungZeitabschnitt> normalizeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> mergedZeitabschnitte, @Nonnull Gesuchsperiode gesuchsperiode) {
+	protected List<VerfuegungZeitabschnitt> normalizeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> mergedZeitabschnitte, @Nonnull Gesuchsperiode gesuchsperiode) {
 		List<VerfuegungZeitabschnitt> normalizedZeitabschnitte = new LinkedList<>();
 		for (VerfuegungZeitabschnitt zeitabschnitt : mergedZeitabschnitte) {
 			// Zuerst überprüfen, ob der Zeitabschnitt innerhalb der Gesuchsperiode liegt
@@ -185,13 +186,15 @@ public abstract class AbstractEbeguRule implements Rule {
 	/**
 	 * Erstellt aus der übergebenen Liste von VerfuegungsZeitabschnitten eine neue Liste, die keine Überschneidungen mehr
 	 * enthält. Überschneiden sich zwei Entitäten in der Ursprungsliste, so werden daraus drei Zeiträume erstellt:
+	 * <pre>
 	 * |------------------------|
 	 * 40
-	 * |-------------------------------------|
-	 * 60
+	 * 	           |-------------------------------------|
+	 * 			   60
 	 * ergibt:
 	 * |-----------|------------|------------------------|
 	 * 40          100                60
+	 * </pre>
 	 */
 	@Nonnull
 	protected List<VerfuegungZeitabschnitt> mergeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> entitiesToMerge) {
@@ -217,7 +220,7 @@ public abstract class AbstractEbeguRule implements Rule {
 			if (foundOverlapping) {
 				result.add(mergedZeitabschnitt);
 			}
-			datumVon = datumBis.plusDays(1); //nachestes vondaumt
+			datumVon = datumBis.plusDays(1); //naechstes vondatum
 		}
 		return result;
 	}
@@ -246,5 +249,10 @@ public abstract class AbstractEbeguRule implements Rule {
 			.append("ruleType", ruleType)
 			.append("validityPeriod", validityPeriod)
 			.toString();
+	}
+
+	@Override
+	public boolean isRelevantForFamiliensituation() {
+		return false;
 	}
 }

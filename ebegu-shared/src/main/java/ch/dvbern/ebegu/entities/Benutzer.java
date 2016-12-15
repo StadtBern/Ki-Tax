@@ -2,6 +2,9 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.validators.CheckBenutzerRoles;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -17,6 +20,8 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 })
 @Audited
 @CheckBenutzerRoles
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Benutzer extends AbstractEntity {
 
 	private static final long serialVersionUID = 6372688971894279665L;
@@ -131,5 +136,14 @@ public class Benutzer extends AbstractEntity {
 	public String getFullName() {
 		return (this.vorname != null ? this.vorname :  "")  + " "
 			+ (this.nachname != null ?  this.nachname : "");
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.appendSuper(super.toString())
+			.append("username", username)
+			.append("role", role)
+			.toString();
 	}
 }

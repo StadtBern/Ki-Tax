@@ -20,7 +20,7 @@ export class InstitutionStammdatenRS {
     }
 
     public findInstitutionStammdaten(institutionStammdatenID: string): IPromise<TSInstitutionStammdaten> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(institutionStammdatenID))
+        return this.http.get(this.serviceURL + '/id/' + encodeURIComponent(institutionStammdatenID))
             .then((response: any) => {
                 this.log.debug('PARSING InstitutionStammdaten REST object ', response.data);
                 return this.ebeguRestUtil.parseInstitutionStammdaten(new TSInstitutionStammdaten(), response.data);
@@ -63,6 +63,14 @@ export class InstitutionStammdatenRS {
 
     public getAllInstitutionStammdatenByDate(dateParam: moment.Moment): IPromise<TSInstitutionStammdaten[]> {
         return this.http.get(this.serviceURL + '/date', {params: {date: DateUtil.momentToLocalDate(dateParam)}})
+            .then((response: any) => {
+                this.log.debug('PARSING institutionStammdaten REST array object', response.data);
+                return this.ebeguRestUtil.parseInstitutionStammdatenArray(response.data);
+            });
+    }
+
+    public getAllActiveInstitutionStammdatenByDate(dateParam: moment.Moment): IPromise<TSInstitutionStammdaten[]> {
+        return this.http.get(this.serviceURL + '/date/active', {params: {date: DateUtil.momentToLocalDate(dateParam)}})
             .then((response: any) => {
                 this.log.debug('PARSING institutionStammdaten REST array object', response.data);
                 return this.ebeguRestUtil.parseInstitutionStammdatenArray(response.data);

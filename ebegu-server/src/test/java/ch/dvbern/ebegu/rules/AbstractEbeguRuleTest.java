@@ -21,7 +21,7 @@ public class AbstractEbeguRuleTest {
 
 
 	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
-	private final ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(defaultGueltigkeit);
+	private final ErwerbspensumAbschnittRule erwerbspensumRule = new ErwerbspensumAbschnittRule(defaultGueltigkeit);
 
 	private final LocalDate DATUM_1 = LocalDate.of(2016, Month.APRIL, 1);
 	private final LocalDate DATUM_2 = LocalDate.of(2016, Month.SEPTEMBER, 1);
@@ -73,11 +73,11 @@ public class AbstractEbeguRuleTest {
 		Assert.assertEquals(DATUM_4.plusDays(1), fifth.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(Constants.END_OF_TIME, fifth.getGueltigkeit().getGueltigBis());
 
-		Assert.assertEquals(0, first.getErwerbspensumGS1());
-		Assert.assertEquals(40, second.getErwerbspensumGS1());
-		Assert.assertEquals(100, third.getErwerbspensumGS1());
-		Assert.assertEquals(60, fourth.getErwerbspensumGS1());
-		Assert.assertEquals(0, fifth.getErwerbspensumGS1());
+		Assert.assertNull(first.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(40), second.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(100), third.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), fourth.getErwerbspensumGS1());
+		Assert.assertNull(fifth.getErwerbspensumGS1());
 
 		Assert.assertEquals(50, first.getBetreuungspensum());
 		Assert.assertEquals(50, second.getBetreuungspensum());
@@ -97,7 +97,7 @@ public class AbstractEbeguRuleTest {
 		VerfuegungZeitabschnitt next = result.iterator().next();
 		Assert.assertEquals(DATUM_1, next.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(DATUM_3, next.getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(40, next.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(40), next.getErwerbspensumGS1());
 	}
 
 	@Test
@@ -118,9 +118,9 @@ public class AbstractEbeguRuleTest {
 		Assert.assertEquals(DATUM_3, second.getGueltigkeit().getGueltigBis());
 		Assert.assertEquals(DATUM_3.plusDays(1), third.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(DATUM_4, third.getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(40, first.getErwerbspensumGS1());
-		Assert.assertEquals(100, second.getErwerbspensumGS1());
-		Assert.assertEquals(60, third.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(40), first.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(100), second.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), third.getErwerbspensumGS1());
 	}
 
 	@Test
@@ -163,8 +163,8 @@ public class AbstractEbeguRuleTest {
 		Assert.assertEquals(DATUM_2, first.getGueltigkeit().getGueltigBis());
 		Assert.assertEquals(DATUM_2.plusDays(1), second.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(DATUM_4, second.getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(120, first.getErwerbspensumGS1());
-		Assert.assertEquals(80, second.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(120), first.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(80), second.getErwerbspensumGS1());
 	}
 
 	@Test
@@ -184,8 +184,8 @@ public class AbstractEbeguRuleTest {
 		Assert.assertEquals(DATUM_2.minusDays(1), first.getGueltigkeit().getGueltigBis());
 		Assert.assertEquals(DATUM_2, second.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(DATUM_4, second.getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(80, first.getErwerbspensumGS1());
-		Assert.assertEquals(120, second.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(80), first.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(120), second.getErwerbspensumGS1());
 	}
 
 	@Test
@@ -202,7 +202,7 @@ public class AbstractEbeguRuleTest {
 
 		Assert.assertEquals(DATUM_1, first.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(DATUM_4, first.getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(120, first.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(120), first.getErwerbspensumGS1());
 	}
 
 	@Test
@@ -231,10 +231,24 @@ public class AbstractEbeguRuleTest {
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, zeitabschnitte);
 
 		Assert.assertNotNull(result);
-		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(DATUM_2, result.get(0).getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(DATUM_4, result.get(0).getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(40, result.get(0).getErwerbspensumGS1());
+		// Es sind 3 Abschnitte weil es fuer die ganze Periode Zeitabschintte macht, auch fuer die Zeit in der keine
+		// Erwerbspensen eingegeben wurden.
+		Assert.assertEquals(3, result.size());
+
+		Assert.assertEquals(betreuung.extractGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb(), result.get(0).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(DATUM_2.minusDays(1), result.get(0).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(Integer.valueOf(0), result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(0), result.get(0).getErwerbspensumGS2());
+
+		Assert.assertEquals(DATUM_2, result.get(1).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(DATUM_4, result.get(1).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(Integer.valueOf(40), result.get(1).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(0), result.get(1).getErwerbspensumGS2());
+
+		Assert.assertEquals(DATUM_4.plusDays(1), result.get(2).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(betreuung.extractGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis(), result.get(2).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(Integer.valueOf(0), result.get(2).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(0), result.get(2).getErwerbspensumGS2());
 	}
 
 	@Test
@@ -248,12 +262,40 @@ public class AbstractEbeguRuleTest {
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, zeitabschnitte);
 
 		Assert.assertNotNull(result);
-		Assert.assertEquals(2, result.size());
+		// Es sind 5 Abschnitte: 1. kein EP, 2. 20+20, 3. wieder kein EP (02.10.), 4. 40 und 5. kein EP
+		// Fuer Zeitabschnitte in denen es kein EP eingegeben wurde, wird auch ein Zeitabschnitte berechnet
+		Assert.assertEquals(5, result.size());
+
+		Assert.assertEquals(betreuung.extractGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb(), result.get(0).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(DATUM_2.minusDays(1), result.get(0).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(Integer.valueOf(0), result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(0), result.get(0).getErwerbspensumGS2());
+
+		Assert.assertEquals(DATUM_2, result.get(1).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(DATUM_3, result.get(1).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(Integer.valueOf(40), result.get(1).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(0), result.get(1).getErwerbspensumGS2());
+
+		Assert.assertEquals(DATUM_3.plusDays(1), result.get(2).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(DATUM_3.plusDays(1), result.get(2).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(Integer.valueOf(0), result.get(2).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(0), result.get(2).getErwerbspensumGS2());
+
+		Assert.assertEquals(DATUM_3.plusDays(2), result.get(3).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(DATUM_4, result.get(3).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(Integer.valueOf(40), result.get(3).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(0), result.get(3).getErwerbspensumGS2());
+
+		Assert.assertEquals(DATUM_4.plusDays(1), result.get(4).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(betreuung.extractGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis(), result.get(4).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(Integer.valueOf(0), result.get(4).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(0), result.get(4).getErwerbspensumGS2());
 	}
 
 	private VerfuegungZeitabschnitt createErwerbspensum(LocalDate von, LocalDate bis, int pensum) {
 		VerfuegungZeitabschnitt zeitabschnitt1 = new VerfuegungZeitabschnitt(new DateRange(von, bis));
 		zeitabschnitt1.setErwerbspensumGS1(pensum);
+		zeitabschnitt1.setErwerbspensumGS2(0);
 		return zeitabschnitt1;
 	}
 

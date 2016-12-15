@@ -1,18 +1,166 @@
+@import '../style/variables.less';
+@import '../style/mixins.less';
+@import '../style/organisms/sidenav.less';
+
+.mainTitle {
+    margin-top: 0;
+}
+
+#gesuchContainer {
+    background: @contrast-light;
+    overflow-y: scroll;
+    flex: 1 1 auto;
+    min-width: 3rem;
+    .nav-row {
+        -ms-box-orient: horizontal;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -moz-flex;
+        display: -webkit-flex;
+        display: flex;
+        flex-direction: column-reverse;
+        position: absolute !important;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        align-items: center;
+        & > div {
+            clear: both;
+            position: static;
+            padding: 0 2rem 0;
+            width: auto;
+            min-width: 50%;
+            &:nth-of-type(1) {
+            }
+            &:nth-of-type(2) {
+                margin-bottom: 2rem;
+            }
+
+        }
+    }
+    & > div {
+        height: 100%;
+        & > * {
+            height: 100%;
+            .gesuchModul {
+                min-height: 100%;
+                & div {
+
+                }
+            }
+        }
+    }
+}
+
+#kommentarContainer {
+    flex: 0 0 auto;
+    background: @contrast-lightest;
+    width: 32rem;
+    padding: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.fixedToolbar {
+    position: fixed;
+    width: 100%;
+    top: 10rem;
+    z-index: @z-index-toolbar;
+}
+
+.gesuchModul {
+    padding: 5rem 2.5rem 15rem 5rem;
+    position: relative;
+
+    & div {
+        position: static;
+    }
+}
+
 .betreuung-status {
-    font-style: italic;
+    position: relative !important;
+    div {
+        line-height: 5rem;
+        height: 100% !important;
+        display: block;
+        position: relative !important;
+        .italic();
+    }
+
+    .betreuung-bar {
+        position: absolute;
+        left: 0.8rem;
+        bottom: 0;
+        width: 3rem;
+        height: 0.5rem;
+        border-bottom: 0.5rem solid;
+
+    }
+    &.BESTAETIGT.verfuegenView .betreuung-bar {
+        left: 0;
+    }
+    &.BESTAETIGT .betreuung-bar {
+        border-color: @success;
+    }
+    &.WARTEN .betreuung-bar {
+        border-color: @warning;
+    }
+    &.ABGEWIESEN .betreuung-bar {
+        border-color: @danger;
+    }
+    &.VERFUEGT .betreuung-bar {
+        border-color: @purple;
+    }
 }
 
 .AUSSTEHEND {
 }
 
-.WARTEN{
+.WARTEN {
 }
 
-.SCHULAMT{
+.SCHULAMT {
 }
 
-.ABGEWIESEN{
+.ABGEWIESEN {
 }
 
-.BESTAETIGT{
+.BESTAETIGT {
 }
+
+.right-side {
+    background-color: #ECF1F4;
+}
+
+.gesuch-status {
+    margin: 5rem 2.5rem 2.5rem 2.5rem;
+    color: @contrast-darkest;
+
+    .status {
+        .bold();
+        font-size: 1.4rem;
+        letter-spacing: 0.1rem;
+    }
+    .zuletzt {
+        .italic();
+        font-size: 1.2rem;
+        letter-spacing: 0.1rem;
+    }
+}
+
+.gesuchbody.row {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.gesuchbody.row > [class*='col-'] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+

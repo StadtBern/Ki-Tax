@@ -1,96 +1,277 @@
-<div class="adminView row">
-    <div class="col-md-8 col-md-offset-2">
-        <h1 data-translate="ADMIN"></h1>
-
-        <div class="row">
-            <div class="col-md-12 table-responsive">
-
-                <table st-table="displayedCollection" st-safe-src="vm.applicationProperties"  st-delay="20"
-                       class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th st-sort="name" class="sortable" data-translate="PROPERTY_NAME"></th>
-                        <th st-sort="value" class="sortable" data-translate="PROPERTY_TEXT"></th>
-                        <th st-sort="timestampErstellt" class="sortable" data-translate="TIMEERSTELLT"></th>
-                        <th data-translate="AKTION"></th>
-                    </tr>
-                    <tr>
-                        <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
-                                   type="text"/></th>
-                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
-                                   type="text"/></th>
-                        <th></th>
-                        <th></th>
-
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-click="vm.editRow(row)">
-                        <td ng-bind="row.name"></td>
-                        <td ng-bind="row.value"></td>
-                        <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td>
-                            <dv-loading-button type="button" ng-click="vm.removeRow(row)" button-class="btn btn-sm btn-danger">
-                                <i class="fa fa-trash-o">
-                                </i>
-                            </dv-loading-button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-
-            </div>
-            <div class="col-md-12" style="margin-bottom: 20px">
-                <dv-loading-button type="button" ng-click="vm.createItem()" button-class="btn btn-sm btn-success">
-                    <i class="glyphicon glyphicon-plus">
-                    </i> add item
-                </dv-loading-button>
+<div class="adminView adminModul">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="viewTitle">
+                <h1 data-translate="ADMIN"></h1>
             </div>
 
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+
+                    <table st-table="displayedCollection" st-safe-src="vm.applicationProperties" st-delay="20"
+                           class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th st-sort="name" class="sortable" data-translate="PROPERTY_NAME"></th>
+                            <th st-sort="value" class="sortable" data-translate="PROPERTY_TEXT"></th>
+                            <th st-sort="timestampErstellt" class="sortable" data-translate="TIMEERSTELLT"></th>
+                            <th data-translate="AKTION"></th>
+                        </tr>
+                        <tr>
+                            <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
+                                       type="text"/></th>
+                            <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                       type="text"/></th>
+                            <th></th>
+                            <th></th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                            ng-click="vm.editRow(row)">
+                            <td ng-bind="row.name"></td>
+                            <td ng-bind="row.value"></td>
+                            <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
+                            <td>
+                                <dv-loading-button type="button" button-click="vm.removeRow(row)"
+                                                   button-class="dv-btn-sm">
+                                    <i class="fa fa-minus">
+                                    </i>
+                                </dv-loading-button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate
+                  ng-if="vm.applicationProperty"
+                  unsaved-warning-form>
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label class="md-no-float" data-translate="PROPERTY_NAME" for="propName">
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="propName" type="text" name="propertyName"
+                                       ng-model="vm.applicationProperty.name"
+                                       dv-max-length class="input-element smallfont" required
+                                       ng-disabled="vm.applicationProperty.timestampErstellt">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="md-no-float" data-translate="PROPERTY_TEXT" for="propVal">
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="propVal" type="text" name="propertyValue"
+                                       ng-model="vm.applicationProperty.value"
+                                       dv-max-length class="smallfont">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-3 col-md-offset-3">
+                                <dv-error-messages for="form.propertyName.$error"></dv-error-messages>
+                            </div>
+                            <div class="col-md-3 col-md-offset-3">
+                                <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <dv-loading-button button-class="" type="submit">
+                            <span data-translate="SAVE"></span>
+                        </dv-loading-button>
+                    </div>
+                    <div class="col-md-4 ">
+                        <a href="javascript:;" id="cancelLink" unsaved-warning-clear
+                           ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
+                            <span data-translate="CANCEL"></span>
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
 
-        <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate ng-if="vm.applicationProperty"
-        unsaved-warning-form>
-            <div class="row" style="margin-top: 20px">
-                <div class="col-md-6">
-                    <div class="form-group top5">
-                        <label data-translate="PROPERTY_NAME" for="propName" class="col-md-2">
-                        </label>
-                        <input id="propName" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
-                               dv-max-length class="col-md-10 input-element" required
-                               ng-disabled="vm.applicationProperty.timestampErstellt">
-                        <dv-error-messages for="form.propertyName.$error"
-                                           class="error col-md-offset-2 col-md-10"></dv-error-messages>
-                    </div>
 
+        <div class="row marginTop10">
+            <div class="col-md-8 col-md-offset-2">
 
-                    <div class="form-group  top5">
-                        <label data-translate="PROPERTY_TEXT" for="propVal" class="col-md-2">
-                        </label>
-                        <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
-                               dv-max-length class="col-md-10">
-
-                        <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
-
-                    </div>
-                </div>
+                <h3>
+                    <span data-translate="TESTFAELLE_EINFUEGEN"></span>
+                </h3>
 
             </div>
-            <div class="row" style="margin-top:25px">
-                <div class="col-md-1">
-                    <dv-loading-button class="btn btn-primary" type="submit" >
-                        <span data-translate="SAVE"></span>
-                    </dv-loading-button>
+        </div>
+<!--selecton fuer parameter die bestimmen wie die testfaelle erzeugt werden-->
+        <div class="row marginTop10">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="row">
+
+                    <div class="col-sm-6 ">
+                        <md-radio-group ng-model="vm.creationType">
+                            <md-radio-button value="warten">Betreuungen mit Zustand &#034;warten&#034;</md-radio-button>
+                            <md-radio-button value="bestaetigt">Betreuungen mit Zustand &#034;bestätigt&#034;</md-radio-button>
+                            <md-radio-button value="verfuegt">Verfügte Erstgesuche</md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="col-sm-4 ">
+                        <dv-input-container class="form-group">
+                            <label class="md-no-float" for="besitzer">
+                                Gesuchsteller wenn gewuenscht
+                            </label>
+
+                            <select name="besitzer" id="besitzer"
+                                    ng-model="vm.createAsBesitzer"
+                                    class="form-control"
+                                    ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
+                                    <option value=""></option>
+
+                            </select>
+                        </dv-input-container>
+                    </div>
                 </div>
-                <div class="col-md-4 ">
-                                  <a href="javascript:;"  id="cancelLink" unsaved-warning-clear
-                                     ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
-                                      <span data-translate="CANCEL"></span>
-                                  </a>
-                              </div>
             </div>
-        </form>
+        </div>
+
+        <div class="col-md-8 col-md-offset-2 marginTop30">
+
+
+            <ul>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('1')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Dagmar Wälti"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('2')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Yvonne Feutz"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('3')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Marcia Perreira"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('4')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Laura Walther"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('5')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Lueti"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('6')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Nora Becker"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('7')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Meier"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('8')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="AusInAusBern"></span>
+                    </button>
+                </li>
+            </ul>
+
+            <h2 class="marginTop20">
+                <span data-translate="Mutiere"></span>
+            </h2>
+            <div class="row">
+                <div class="col-md-12 dv-input-container-small">
+                    <dv-input-container class="form-group">
+                        <label class="md-no-float" data-translate="FALL_UPPER" for="fallid">
+                        </label>
+                        <input id="fallid" type="text" name="fallid" ng-model="vm.fallId"
+                               dv-max-length class="form-control" style="background: #F0F0F0;">
+                    </dv-input-container>
+                </div>
+            </div>
+            <div class="row marginTop10">
+                <div class="col-md-12 dv-input-container-small">
+                    <dv-input-container class="form-group">
+                        <label class="md-no-float" data-translate="EINGANGSDATUM" for="mutationsdatum">
+                        </label>
+                        <dv-datepicker input-id="mutationsdatum" name="mutationsdatum" placeholder=""
+                                       ng-model="vm.mutationsdatum" ng-required="true"
+                                       class="input-element"
+                                       ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                        </dv-datepicker>
+                    </dv-input-container>
+                </div>
+            </div>
+
+
+            <div class="row marginTop10">
+                <div class="col-md-12 form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="" data-translate="AENDERUNG_PER" for="aenderungper">
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <dv-datepicker input-id="aenderungper" name="aenderungper" placeholder=""
+                                           ng-model="vm.aenderungperHeirat" ng-required="true"
+                                           class="input-element"
+                                           ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                            </dv-datepicker>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class=" btn-testfall"
+                                    ng-click="vm.mutiereFallHeirat()">
+                                <span data-translate="FALL_MUTIEREN_HEIRAT"></span>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row marginTop10">
+                <div class="col-md-12 form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="" data-translate="AENDERUNG_PER" for="aenderungper">
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <dv-datepicker input-id="aenderungper" name="aenderungper" placeholder=""
+                                           ng-model="vm.aenderungperScheidung" ng-required="true"
+                                           class="input-element"
+                                           ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                            </dv-datepicker>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class=" btn-testfall"
+                                    ng-click="vm.mutiereFallScheidung()">
+                                <span data-translate="FALL_MUTIEREN_SCHEIDUNG"></span>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
 </div>

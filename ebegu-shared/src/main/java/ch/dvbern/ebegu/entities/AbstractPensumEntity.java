@@ -25,6 +25,10 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 	@Column(nullable = false)
 	private Integer pensum;
 
+	public AbstractPensumEntity() {
+	}
+
+
 	@Nonnull
 	public Integer getPensum() {
 		return pensum;
@@ -43,5 +47,11 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 			return false;
 		}
 		return super.isSame(otherAbstDateRangedEntity) && Objects.equals(this.getPensum(), otherAbstDateRangedEntity.getPensum());
+	}
+
+	public AbstractPensumEntity copyForMutation(AbstractPensumEntity mutation) {
+		super.copyForMutation(mutation);
+		mutation.setPensum(this.getPensum());
+		return mutation;
 	}
 }

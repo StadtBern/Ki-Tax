@@ -4,16 +4,19 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.FinanzielleSituationService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.VerfuegungService;
+import ch.dvbern.ebegu.services.*;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,6 +25,7 @@ import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -47,10 +51,13 @@ public class VerfuegungResource {
 	private GesuchService gesuchService;
 
 	@Inject
+	private BetreuungService betreuungService;
+
+	@Inject
 	private InstitutionService institutionService;
 
 	@Inject
-	private FinanzielleSituationService finanzielleSituationService;
+	private BenutzerService benutzerService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
@@ -59,36 +66,10 @@ public class VerfuegungResource {
 	@Resource
 	private EJBContext context;    //fuer rollback
 
-//
-//	@ApiOperation(value = "Create a new FinanzielleSituation in the database. The transfer object also has a relation to FinanzielleSituation, " +
-//		"it is stored in the database as well.")
-//	@Nullable
-//	@PUT
-//	@Path("/{gesuchstellerId}")
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response saveFinanzielleSituation (
-//		@Nonnull @NotNull @PathParam ("gesuchstellerId") JaxId gesuchstellerId,
-//		@Nonnull @NotNull @Valid JaxFinanzielleSituationContainer finanzielleSituationJAXP,
-//		@Context UriInfo uriInfo,
-//		@Context HttpServletResponse response) throws EbeguException {
-//
-//		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
-//		if (gesuchsteller.isPresent()) {
-//			FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToStorableEntity(finanzielleSituationJAXP);
-//			convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
-//			FinanzielleSituationContainer persistedFinanzielleSituation = this.verfuegungService.saveFinanzielleSituation(convertedFinSitCont);
-//
-//			URI uri = uriInfo.getBaseUriBuilder()
-//				.path(VerfuegungResource.class)
-//				.path("/" + persistedFinanzielleSituation.getId())
-//				.build();
-//
-//			JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
-//			return Response.created(uri).entity(jaxFinanzielleSituation).build();
-//		}
-//		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
-//	}
+	@Inject
+	private Persistence<AbstractEntity> persistence;
+
+	private static final Logger LOG = LoggerFactory.getLogger(VerfuegungResource.class.getSimpleName());
 
 
 	@ApiOperation(value = "Calculates the Verfuegung of the Gesuch with the given id, does nothing if the Gesuch does not exists. Note: Nothing is stored in the Databse")
@@ -104,26 +85,129 @@ public class VerfuegungResource {
 
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchstellerId.getId());
 
-		if (!gesuchOptional.isPresent()) {
-			return null;
+		try {
+			if (!gesuchOptional.isPresent()) {
+				return null;
+			}
+			Gesuch gesuch = gesuchOptional.get();
+			Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
+
+			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum das Gesuch detachen
+			loadRelationsAndDetach(gesuchWithCalcVerfuegung);
+
+			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
+
+			Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
+			Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
+			if (currentBenutzer.isPresent()) {
+				UserRole currentUserRole = currentBenutzer.get().getRole();
+				// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
+				// damit nur die relevanten Kinder geschickt werden
+				if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(currentUserRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(currentUserRole)) {
+					Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+					RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
+				}
+			}
+			return Response.ok(kindContainers).build();
+
+		} finally {
+			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum Transaktion rollbacken
+			// Dies muss insbesondere auch im Fehlerfall geschehen!
+			try {
+				context.setRollbackOnly();
+			} catch (IllegalStateException ise) {
+				LOG.error("Could not rollback Transaction!", ise);
+			}
 		}
-		Gesuch gesuch = gesuchOptional.get();
-		this.finanzielleSituationService.calculateFinanzDaten(gesuch);
-		Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
-		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden solange die Verfuegung nicht definitiv ist
-		JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
+	}
 
-		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+	@Nullable
+	@PUT
+	@Path("/{gesuchId}/{betreuungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxVerfuegung saveVerfuegung(
+		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchId,
+		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId,
+		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) throws EbeguException {
 
-		// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum Transaktion rollbacken
-		context.setRollbackOnly();
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
+		if (gesuch.isPresent()) {
+			Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
+			if (betreuung.isPresent()) {
+				Verfuegung verfuegungToMerge = new Verfuegung();
+				if (verfuegungJAXP.getId() != null) {
+					Optional<Verfuegung> optional = verfuegungService.findVerfuegung(verfuegungJAXP.getId());
+					verfuegungToMerge = optional.orElse(new Verfuegung());
+				}
+				Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
 
-		Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
-		if (instForCurrBenutzer.size() > 0) {
-			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
+				Verfuegung persistedVerfuegung = this.verfuegungService.verfuegen(convertedVerfuegung, betreuung.get().getId());
+
+				return converter.verfuegungToJax(persistedVerfuegung);
+			}
+			throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 		}
+		throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
+	}
 
-		return Response.ok(kindContainers).build();
+	@Nullable
+	@POST
+	@Path("/schliessenOhneVerfuegen/{betreuungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response verfuegungSchliessenOhneVerfuegen(
+		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId) throws EbeguException {
+
+		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
+		if (betreuung.isPresent()) {
+			betreuungService.schliessenOhneVerfuegen(betreuung.get());
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("verfuegungSchliessenOhneVerfuegen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
+	}
+
+	@Nullable
+	@PUT
+	@Path("/nichtEintreten/{betreuungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxVerfuegung schliessenNichtEintreten(
+		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId,
+		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) throws EbeguException {
+
+		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
+		if (betreuung.isPresent()) {
+			Verfuegung verfuegungToMerge = new Verfuegung();
+			if (verfuegungJAXP.getId() != null) {
+				Optional<Verfuegung> optional = verfuegungService.findVerfuegung(verfuegungJAXP.getId());
+				verfuegungToMerge = optional.orElse(new Verfuegung());
+			}
+			Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
+			Verfuegung persistedVerfuegung = this.verfuegungService.nichtEintreten(convertedVerfuegung, betreuung.get().getId());
+			return converter.verfuegungToJax(persistedVerfuegung);
+		}
+		throw new EbeguEntityNotFoundException("nichtEintreten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
+	}
+
+	/**
+	 * Hack, welcher das Gesuch detached, damit es auf keinen Fall gespeichert wird. Vorher muessen die Lazy geloadeten
+	 * BetreuungspensumContainers geladen werden, da danach keine Session mehr zur Verfuegung steht!
+     */
+	private void loadRelationsAndDetach(Gesuch gesuch) {
+		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
+			betreuung.getBetreuungspensumContainers().size();
+			betreuung.getAbwesenheitContainers().size();
+		}
+		if (gesuch.getGesuchsteller1() != null) {
+			gesuch.getGesuchsteller1().getAdressen().forEach(GesuchstellerAdresseContainer::extractAdresseTyp);
+			gesuch.getGesuchsteller1().getErwerbspensenContainers().size();
+		}
+		if (gesuch.getGesuchsteller2() != null) {
+			gesuch.getGesuchsteller2().getAdressen().forEach(GesuchstellerAdresseContainer::extractAdresseTyp);
+			gesuch.getGesuchsteller2().getErwerbspensenContainers().size();
+		}
+		persistence.getEntityManager().detach(gesuch);
 	}
 }
 

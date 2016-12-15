@@ -21,7 +21,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.Optional;
 
 /**
@@ -62,7 +61,7 @@ public class FallResource {
 
 	@Nullable
 	@GET
-	@Path("/{fallId}")
+	@Path("/id/{fallId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxFall findFall(
@@ -78,4 +77,17 @@ public class FallResource {
 		return converter.fallToJAX(fallToReturn);
 	}
 
+	@Nullable
+	@GET
+	@Path("/currentbenutzer")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxFall findFallByCurrentBenutzerAsBesitzer() throws EbeguException {
+		Optional<Fall> fallOptional = fallService.findFallByCurrentBenutzerAsBesitzer();
+		if (!fallOptional.isPresent()) {
+			return null;
+		}
+		Fall fallToReturn = fallOptional.get();
+		return converter.fallToJAX(fallToReturn);
+	}
 }

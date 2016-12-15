@@ -36,7 +36,7 @@ public interface InstitutionService {
 	 * marks an Institution as inactive on the Database.
 	 * @param InstitutionId
 	 */
-	void setInstitutionInactive(@Nonnull String InstitutionId);
+	Institution setInstitutionInactive(@Nonnull String InstitutionId);
 
 	/**
 	 * Delete Institution on the Database.
@@ -73,6 +73,6 @@ public interface InstitutionService {
 	/**
 	 * Gibt alle aktiven Institutionen zurueck, fuer welche der aktuell eingeloggte Benutzer berechtigt ist.
      */
-	Collection<Institution> getInstitutionenForCurrentBenutzer();
+	Collection<Institution> getAllowedInstitutionenForCurrentBenutzer();
 
 }

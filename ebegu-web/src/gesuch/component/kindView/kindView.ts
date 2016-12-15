@@ -1,6 +1,5 @@
 import {IComponentOptions, IFormController} from 'angular';
 import {IKindStateParams} from '../../gesuch.route';
-import {IStateService} from 'angular-ui-router';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKind from '../../../models/TSKind';
 import {EnumEx} from '../../../utils/EnumEx';
@@ -11,6 +10,12 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKinderabzug';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSRole} from '../../../models/enums/TSRole';
+import IPromise = angular.IPromise;
+import IQService = angular.IQService;
+
+
 let template = require('./kindView.html');
 require('./kindView.less');
 
@@ -21,31 +26,32 @@ export class KindViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class KindViewController extends AbstractGesuchViewController {
+export class KindViewController extends AbstractGesuchViewController<TSKindContainer> {
     geschlechter: Array<string>;
     kinderabzugValues: Array<TSKinderabzug>;
     showFachstelle: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
+    allowedRoles: Array<TSRole>;
+    // private initialModel: TSKindContainer; brauchts hier nicht da das kind glaub ich erst im then eingefuegt wird
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
+        'ErrorService', 'WizardStepManager', '$q'];
     /* @ngInject */
-    constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService) {
-        super(state, gesuchModelManager, berechnungsManager);
+    constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager, private $q: IQService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
+        this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith());
+        // this.initialModel = angular.copy(this.model);
         this.initViewModel();
-
-        //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
-        $scope.$on('$stateChangeStart', () => {
-            this.reset();
-        });
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
     private initViewModel(): void {
-        this.gesuchModelManager.initGesuch(false);  //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.kinderabzugValues = getTSKinderabzugValues();
-        this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindJA.pensumFachstelle) ? true : false;
+        this.showFachstelle = (this.model.kindJA.pensumFachstelle) ? true : false;
         if (this.getPensumFachstelle() && this.getPensumFachstelle().fachstelle) {
             this.fachstelleId = this.getPensumFachstelle().fachstelle.id;
         }
@@ -54,27 +60,32 @@ export class KindViewController extends AbstractGesuchViewController {
         }
     }
 
-    save(form: IFormController) {
+    save(form: IFormController): IPromise<TSKindContainer> {
         if (form.$valid) {
+            this.gesuchModelManager.setKindToWorkWith(this.model);
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.model);
+            }
+
             this.errorService.clearAll();
-            this.gesuchModelManager.updateKind().then((kindResponse: any) => {
-                this.state.go('gesuch.kinder');
-            });
+            return this.gesuchModelManager.updateKind();
         }
+        return undefined;
     }
 
-    cancel() {
+    cancel(form: IFormController) {
         this.reset();
-        this.state.go('gesuch.kinder');
+        form.$setPristine();
     }
 
     reset() {
-        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
         this.removeKindFromList();
     }
 
     private removeKindFromList() {
-        if (!this.gesuchModelManager.getKindToWorkWith().timestampErstellt) {
+        if (!this.model.timestampErstellt) {
             //wenn das Kind noch nicht erstellt wurde, löschen wir das Kind vom Array
             this.gesuchModelManager.removeKindFromList();
         }
@@ -115,15 +126,15 @@ export class KindViewController extends AbstractGesuchViewController {
     }
 
     public getModel(): TSKind {
-        if (this.gesuchModelManager.getKindToWorkWith()) {
-            return this.gesuchModelManager.getKindToWorkWith().kindJA;
+        if (this.model) {
+            return this.model.kindJA;
         }
         return undefined;
     }
 
     public getContainer(): TSKindContainer {
-        if (this.gesuchModelManager.getKindToWorkWith()) {
-            return this.gesuchModelManager.getKindToWorkWith();
+        if (this.model) {
+            return this.model;
         }
         return undefined;
     }
@@ -137,6 +148,10 @@ export class KindViewController extends AbstractGesuchViewController {
 
     public isFachstelleRequired(): boolean {
         return this.getModel() && this.getModel().familienErgaenzendeBetreuung && this.showFachstelle;
+    }
+
+    public getDatumEinschulung(): moment.Moment {
+        return this.gesuchModelManager.getGesuchsperiodeBegin();
     }
 }
 

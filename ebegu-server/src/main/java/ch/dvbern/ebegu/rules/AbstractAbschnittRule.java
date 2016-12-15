@@ -21,7 +21,7 @@ public abstract class AbstractAbschnittRule extends AbstractEbeguRule {
 
 	//Subklassen dieser Abstrakten Klasse benoetigen diese Methode nicht da sie nur Abschnitte erstellen. Daher hier NOP
 	@Override
-	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+	protected final void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		//NOP
 	}
 }

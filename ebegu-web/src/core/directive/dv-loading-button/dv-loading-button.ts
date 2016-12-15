@@ -1,6 +1,5 @@
 import {IDirective, IDirectiveFactory} from 'angular';
 import {TSHTTPEvent} from '../../events/TSHTTPEvent';
-import Moment = moment.Moment;
 import INgModelController = angular.INgModelController;
 import IHttpService = angular.IHttpService;
 import ITimeoutService = angular.ITimeoutService;
@@ -48,15 +47,15 @@ export class DVLoadingButton implements IDirective {
  * the form is valid first. If not it will not disable itself.
  * By default the button will be disabled till the next REST servicecall returns (not neceserally the one that was triggered
  * by this button) or till 400 ms have expired
-* @example:
+ * @example:
  *
-    <dv-loading-button type="submit"
-         button-click="vm.mySaveFunction(form)"
-         button-class="btn btn-sm btn-success"
-         button-disabled="!vm.isButtonDisabled()">
-             <i class="glyphicon glyphicon-plus"></i>
-             <span data-translate="SAVE"></span>
-      </dv-loading-button>
+ <dv-loading-button type="submit"
+ button-click="vm.mySaveFunction(form)"
+ button-class="btn btn-sm btn-success"
+ button-disabled="!vm.isButtonDisabled()">
+ <i class="glyphicon glyphicon-plus"></i>
+ <span data-translate="SAVE"></span>
+ </dv-loading-button>
 
  *
  */
@@ -67,12 +66,16 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
     isDisabled: boolean;
     formCtrl: IFormController;
     delay: string;
+    type: string;
     forceWaitService: string;
     buttonDisabled: boolean; //true wenn unser element programmatisch disabled wird
     buttonClick: () => void;
 
     /* @ngInject */
     constructor(private $http: IHttpService, private $scope: any, private $timeout: ITimeoutService) {
+        if (!this.type) {
+            this.type = 'button'; //wenn kein expliziter type angegeben wurde nehmen wir default button
+        }
 
         this.buttonClicked = () => {
             //wenn der button disabled ist machen wir mal gar nichts

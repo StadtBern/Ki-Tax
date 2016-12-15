@@ -1,8 +1,9 @@
 package ch.dvbern.ebegu.entities;
 
-
+import ch.dvbern.ebegu.util.MathUtil;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
@@ -57,6 +58,11 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 
 	@Column(nullable = true)
 	private BigDecimal nettolohnZus;
+
+
+	public Einkommensverschlechterung() {
+	}
+
 
 	public BigDecimal getNettolohnJan() {
 		return nettolohnJan;
@@ -154,7 +160,39 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 		this.nettolohnDez = nettolohnDez;
 	}
 
-	public BigDecimal getNettolohnZus() { return nettolohnZus; }
+	public BigDecimal getNettolohnZus() {
 
-	public void setNettolohnZus(BigDecimal nettolohnZus) { this.nettolohnZus = nettolohnZus; }
+		return nettolohnZus;
+	}
+
+	public void setNettolohnZus(BigDecimal nettolohnZus) {
+
+		this.nettolohnZus = nettolohnZus;
+	}
+
+	@Override
+	public BigDecimal getNettolohn() {
+
+		return MathUtil.DEFAULT.add(nettolohnJan, nettolohnFeb, nettolohnMrz, nettolohnApr,
+			nettolohnMai, nettolohnJun, nettolohnJul, nettolohnAug, nettolohnSep,
+			nettolohnOkt, nettolohnNov, nettolohnDez, nettolohnZus);
+	}
+
+	public Einkommensverschlechterung copyForMutation(Einkommensverschlechterung mutation) {
+		super.copyForMutation(mutation);
+		mutation.setNettolohnJan(this.getNettolohnJan());
+		mutation.setNettolohnFeb(this.getNettolohnFeb());
+		mutation.setNettolohnMrz(this.getNettolohnMrz());
+		mutation.setNettolohnApr(this.getNettolohnApr());
+		mutation.setNettolohnMai(this.getNettolohnMai());
+		mutation.setNettolohnJun(this.getNettolohnJun());
+		mutation.setNettolohnJul(this.getNettolohnJul());
+		mutation.setNettolohnAug(this.getNettolohnAug());
+		mutation.setNettolohnSep(this.getNettolohnSep());
+		mutation.setNettolohnOkt(this.getNettolohnOkt());
+		mutation.setNettolohnNov(this.getNettolohnNov());
+		mutation.setNettolohnDez(this.getNettolohnDez());
+		mutation.setNettolohnZus(this.getNettolohnZus());
+		return mutation;
+	}
 }

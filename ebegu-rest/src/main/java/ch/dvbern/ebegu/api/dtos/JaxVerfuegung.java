@@ -28,12 +28,11 @@ public class JaxVerfuegung extends JaxAbstractDTO {
 	@Nullable
 	private String manuelleBemerkungen;
 
-//	@NotNull
-//	private Betreuung betreuung;
-
-
 	@Nonnull
 	private List<JaxVerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
+
+	private boolean sameVerfuegungsdaten;
+
 
 	@Nullable
 	public String getGeneratedBemerkungen() {
@@ -60,5 +59,13 @@ public class JaxVerfuegung extends JaxAbstractDTO {
 
 	public void setZeitabschnitte(@Nonnull List<JaxVerfuegungZeitabschnitt> zeitabschnitte) {
 		this.zeitabschnitte = zeitabschnitte;
+	}
+
+	public boolean isSameVerfuegungsdaten() {
+		return sameVerfuegungsdaten;
+	}
+
+	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
+		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
 	}
 }

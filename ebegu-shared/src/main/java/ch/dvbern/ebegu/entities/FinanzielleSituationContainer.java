@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -13,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Audited
 @Entity
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = "gesuchsteller_id", name = "UK_finanzielle_situation_container_gesuchsteller")
+	uniqueConstraints = @UniqueConstraint(columnNames = "gesuchsteller_container_id", name = "UK_finanzielle_situation_container_gesuchsteller")
 )
 public class FinanzielleSituationContainer extends AbstractEntity {
 
@@ -21,8 +22,8 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 
 	@NotNull
 	@OneToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_gesuchsteller_id"), nullable = false)
-	private Gesuchsteller gesuchsteller;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_gesuchstellerContainer_id"), nullable = false)
+	private GesuchstellerContainer gesuchstellerContainer;
 
 	@NotNull
 	@Column(nullable = false)
@@ -39,12 +40,16 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 	private FinanzielleSituation finanzielleSituationJA;
 
 
-	public Gesuchsteller getGesuchsteller() {
-		return gesuchsteller;
+	public FinanzielleSituationContainer() {
 	}
 
-	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
-		this.gesuchsteller = gesuchsteller;
+
+	public GesuchstellerContainer getGesuchsteller() {
+		return gesuchstellerContainer;
+	}
+
+	public void setGesuchsteller(GesuchstellerContainer gesuchstellerContainer) {
+		this.gesuchstellerContainer = gesuchstellerContainer;
 	}
 
 	public Integer getJahr() {
@@ -69,5 +74,14 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 
 	public void setFinanzielleSituationJA(FinanzielleSituation finanzielleSituationJA) {
 		this.finanzielleSituationJA = finanzielleSituationJA;
+	}
+
+	public FinanzielleSituationContainer copyForMutation(FinanzielleSituationContainer mutation, @Nonnull GesuchstellerContainer gesuchstellerMutation) {
+		super.copyForMutation(mutation);
+		mutation.setGesuchsteller(gesuchstellerMutation);
+		mutation.setJahr(this.getJahr());
+		mutation.setFinanzielleSituationGS(null);
+		mutation.setFinanzielleSituationJA(this.getFinanzielleSituationJA().copyForMutation(new FinanzielleSituation()));
+		return mutation;
 	}
 }

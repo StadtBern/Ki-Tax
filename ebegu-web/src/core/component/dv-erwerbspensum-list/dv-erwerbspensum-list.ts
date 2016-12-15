@@ -1,6 +1,9 @@
 import {IComponentOptions} from 'angular';
 import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+
 let template = require('./dv-erwerbspensum-list.html');
 require('./dv-erwerbspensum-list.less');
 
@@ -14,7 +17,8 @@ export class DVErwerbspensumListConfig implements IComponentOptions {
         erwerbspensen: '<',
         tableId: '@',
         tableTitle: '@',
-        addButtonVisible: '@',
+        addButtonVisible: '<',
+        addButtonEnabled: '<',
         addButtonText: '@'
     };
     template = template;
@@ -30,13 +34,14 @@ export class DVErwerbspensumListController {
     removeButtonTitle: string;
     addButtonText: string;
     addButtonVisible: boolean;
+    addButtonEnabled: boolean;
     onRemove: (pensumToRemove: any) => void;
     onEdit: (pensumToEdit: any) => void;
     onAdd: () => void;
 
-    static $inject: any[] = [];
+    static $inject: any[] = ['AuthServiceRS'];
     /* @ngInject */
-    constructor() {
+    constructor(private authServiceRS: AuthServiceRS) {
         this.removeButtonTitle = 'Eintrag entfernen';
     }
 
@@ -46,6 +51,9 @@ export class DVErwerbspensumListController {
         }
         if (this.addButtonVisible === undefined) {
             this.addButtonVisible = true;
+        }
+        if (this.addButtonEnabled === undefined) {
+            this.addButtonEnabled = true;
         }
         //clear selected
         for (var i = 0; i < this.erwerbspensen.length; i++) {
@@ -67,7 +75,11 @@ export class DVErwerbspensumListController {
         this.onAdd();
     }
 
-
+    isRemoveAllowed(pensumToEdit: any) {
+        // Loeschen erlaubt, wenn Erstgesuch ODER Jugendamt
+        return this.addButtonVisible && (pensumToEdit.erwerbspensumJA.vorgaengerId === null ||
+            this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole()));
+    }
 }
 
 

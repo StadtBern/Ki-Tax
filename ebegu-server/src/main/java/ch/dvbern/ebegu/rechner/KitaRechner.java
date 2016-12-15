@@ -20,6 +20,7 @@ public class KitaRechner extends AbstractBGRechner {
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 
+	@Override
 	public VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO) {
 		// Benoetigte Daten
 		LocalDate von = verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb();
@@ -27,11 +28,11 @@ public class KitaRechner extends AbstractBGRechner {
 		LocalDate geburtsdatum = verfuegung.getBetreuung().getKind().getKindJA().getGeburtsdatum();
 		BigDecimal oeffnungsstunden = verfuegung.getBetreuung().getInstitutionStammdaten().getOeffnungsstunden();
 		BigDecimal oeffnungstage = verfuegung.getBetreuung().getInstitutionStammdaten().getOeffnungstage();
-		BigDecimal anspruch = MathUtil.EXACT.pctToFraction(new BigDecimal(verfuegungZeitabschnitt.getAnspruchberechtigtesPensum()));
+		BigDecimal bgPensum = MathUtil.EXACT.pctToFraction(new BigDecimal(verfuegungZeitabschnitt.getBgPensum()));
 		BigDecimal massgebendesEinkommen = verfuegungZeitabschnitt.getMassgebendesEinkommen();
 
 		// Inputdaten validieren
-		checkArguments(von, bis, anspruch, massgebendesEinkommen);
+		checkArguments(von, bis, bgPensum, massgebendesEinkommen);
 		Objects.requireNonNull(geburtsdatum, "geburtsdatum darf nicht null sein");
 		Objects.requireNonNull(oeffnungsstunden, "oeffnungsstunden darf nicht null sein");
 		Objects.requireNonNull(oeffnungstage, "oeffnungstage darf nicht null sein");
@@ -42,8 +43,8 @@ public class KitaRechner extends AbstractBGRechner {
 
 		// Abgeltung pro Tag: Abgeltung des Kantons plus Beitrag der Stadt
 		//todo homa hier muss allenfalls auch der parameter fuer das jahr2 beruecksichtigt werden
-		LOG.warn("Aktuell wird immer nur der parameter fuer jahr 1 genommen bei Abgeltung Kanton");
-		BigDecimal abgeltungProTag = MathUtil.EXACT.add(parameterDTO.getBeitragKantonProTagJahr1(), parameterDTO.getBeitragStadtProTag());
+		LOG.warn("Aktuell wird immer nur der parameter fuer jahr 1 genommen bei Fixbeitrag Stadt");
+		BigDecimal abgeltungProTag = MathUtil.EXACT.add(parameterDTO.getBeitragKantonProTag(), parameterDTO.getBeitragStadtProTagJahr1());
 		// Massgebendes Einkommen: Minimum und Maximum berücksichtigen
 		BigDecimal massgebendesEinkommenBerechnet = (massgebendesEinkommen.max(parameterDTO.getMassgebendesEinkommenMinimal())).min(parameterDTO.getMassgebendesEinkommenMaximal());
 		// Öffnungstage und Öffnungsstunden; Maximum berücksichtigen
@@ -51,7 +52,7 @@ public class KitaRechner extends AbstractBGRechner {
 		BigDecimal oeffnungsstundenBerechnet = oeffnungsstunden.min(parameterDTO.getAnzahlStundenProTagMaximal());
 
 		// Vollkosten
-		BigDecimal vollkostenZaehler = MathUtil.EXACT.multiply(abgeltungProTag, oeffnungsstundenBerechnet, oeffnungstageBerechnet, anspruch);
+		BigDecimal vollkostenZaehler = MathUtil.EXACT.multiply(abgeltungProTag, oeffnungsstundenBerechnet, oeffnungstageBerechnet, bgPensum);
 		BigDecimal vollkostenNenner = MathUtil.EXACT.multiply(parameterDTO.getAnzahlStundenProTagMaximal(), ZWOELF);
 		BigDecimal vollkosten = MathUtil.EXACT.divide(vollkostenZaehler, vollkostenNenner);
 
@@ -62,13 +63,19 @@ public class KitaRechner extends AbstractBGRechner {
 		BigDecimal param1 = MathUtil.EXACT.multiply(kostenProStundeMaxMinusMin, massgebendesEinkommenMinusMin);
 		BigDecimal param2 = MathUtil.EXACT.multiply(parameterDTO.getKostenProStundeMinimal(), massgebendesEinkommenMaxMinusMin);
 		BigDecimal param1Plus2 = MathUtil.EXACT.add(param1, param2);
-		BigDecimal elternbeitragZaehler = MathUtil.EXACT.multiply(param1Plus2, NEUN, ZWANZIG, anspruch, oeffnungstageBerechnet, oeffnungsstundenBerechnet);
+		BigDecimal elternbeitragZaehler = MathUtil.EXACT.multiply(param1Plus2, NEUN, ZWANZIG, bgPensum, oeffnungstageBerechnet, oeffnungsstundenBerechnet);
 		BigDecimal elternbeitragNenner = MathUtil.EXACT.multiply(massgebendesEinkommenMaxMinusMin, ZWEIHUNDERTVIERZIG, parameterDTO.getAnzahlStundenProTagMaximal());
 		BigDecimal elternbeitrag = MathUtil.EXACT.divide(elternbeitragZaehler, elternbeitragNenner);
 
 		// Runden und auf Zeitabschnitt zurückschreiben
 		BigDecimal vollkostenIntervall = MathUtil.EXACT.multiply(vollkosten, faktor, anteilMonat);
-		BigDecimal elternbeitragIntervall = MathUtil.EXACT.multiply(elternbeitrag, anteilMonat);
+		BigDecimal elternbeitragIntervall;
+		if (verfuegungZeitabschnitt.isBezahltVollkosten()) {
+			elternbeitragIntervall = vollkostenIntervall;
+		} else {
+			elternbeitragIntervall = MathUtil.EXACT.multiply(elternbeitrag, anteilMonat);
+		}
+
 
 		verfuegungZeitabschnitt.setVollkosten(MathUtil.roundToFrankenRappen(vollkostenIntervall));
 		verfuegungZeitabschnitt.setElternbeitrag(MathUtil.roundToFrankenRappen(elternbeitragIntervall));

@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.Eingangsart;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -29,6 +32,15 @@ public class JaxAbstractAntragDTO extends JaxAbstractDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate eingangsdatum = null;
 
+	@NotNull
+	private AntragStatusDTO status;
+
+	@NotNull
+	private AntragTyp typ;
+
+	@NotNull
+	private Eingangsart eingangsart;
+
 
 	public JaxFall getFall() {
 		return fall;
@@ -53,5 +65,29 @@ public class JaxAbstractAntragDTO extends JaxAbstractDTO {
 
 	public void setEingangsdatum(@Nullable LocalDate eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
+	}
+
+	public AntragStatusDTO getStatus() {
+		return status;
+	}
+
+	public void setStatus(AntragStatusDTO status) {
+		this.status = status;
+	}
+
+	public AntragTyp getTyp() {
+		return typ;
+	}
+
+	public void setTyp(AntragTyp typ) {
+		this.typ = typ;
+	}
+
+	public Eingangsart getEingangsart() {
+		return eingangsart;
+	}
+
+	public void setEingangsart(Eingangsart eingangsart) {
+		this.eingangsart = eingangsart;
 	}
 }

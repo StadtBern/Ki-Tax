@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AdresseTyp;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse_;
-import ch.dvbern.ebegu.entities.Gesuchsteller_;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -31,7 +28,7 @@ import java.util.*;
 public class GesuchstellerAdresseServiceBean extends AbstractBaseService implements GesuchstellerAdresseService {
 
 	@Inject
-	private Persistence<GesuchstellerAdresse> persistence;
+	private Persistence<GesuchstellerAdresseContainer> persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -39,46 +36,46 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	public GesuchstellerAdresse createAdresse(@Nonnull GesuchstellerAdresse gesuchstellerAdresse) {
+	public GesuchstellerAdresseContainer createAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse) {
 		Objects.requireNonNull(gesuchstellerAdresse);
 		return persistence.persist(gesuchstellerAdresse);
 	}
 
 	@Nonnull
 	@Override
-	public GesuchstellerAdresse updateAdresse(@Nonnull GesuchstellerAdresse gesuchstellerAdresse) {
+	public GesuchstellerAdresseContainer updateAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse) {
 		Objects.requireNonNull(gesuchstellerAdresse);
 		return persistence.merge(gesuchstellerAdresse);//foundAdresse.get());
 	}
 
 	@Nonnull
 	@Override
-	public Optional<GesuchstellerAdresse> findAdresse(@Nonnull final String id) {
+	public Optional<GesuchstellerAdresseContainer> findAdresse(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
-		GesuchstellerAdresse a = persistence.find(GesuchstellerAdresse.class, id);
+		GesuchstellerAdresseContainer a = persistence.find(GesuchstellerAdresseContainer.class, id);
 		return Optional.ofNullable(a);
 	}
 
 	@Override
 	@Nonnull
-	public Collection<GesuchstellerAdresse> getAllAdressen() {
-		return new ArrayList<>(criteriaQueryHelper.getAll(GesuchstellerAdresse.class));
+	public Collection<GesuchstellerAdresseContainer> getAllAdressen() {
+		return new ArrayList<>(criteriaQueryHelper.getAll(GesuchstellerAdresseContainer.class));
 	}
 
 	@Override
-	public void removeAdresse(@Nonnull GesuchstellerAdresse gesuchstellerAdresse) {
+	public void removeAdresse(@Nonnull GesuchstellerAdresseContainer gesuchstellerAdresse) {
 		Validate.notNull(gesuchstellerAdresse);
-		Optional<GesuchstellerAdresse> propertyToRemove = findAdresse(gesuchstellerAdresse.getId());
+		Optional<GesuchstellerAdresseContainer> propertyToRemove = findAdresse(gesuchstellerAdresse.getId());
 		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeAdresse", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchstellerAdresse));
 		persistence.remove(propertyToRemove.get());
 	}
 
 	@Nonnull
 	@Override
-	public Optional<GesuchstellerAdresse> getNewestWohnadresse(String gesuchstellerID) {
-		TypedQuery<GesuchstellerAdresse> query = getAdresseQuery(gesuchstellerID, AdresseTyp.WOHNADRESSE, null, Constants.END_OF_TIME);
-		List<GesuchstellerAdresse> results = query.getResultList();
-		//wir erwarten entweder keine oder genau eine Wohnadr, fuer eine Gesuchsteller mit guelitBis EndOfTime
+	public Optional<GesuchstellerAdresseContainer> getNewestWohnadresse(String gesuchstellerID) {
+		TypedQuery<GesuchstellerAdresseContainer> query = getAdresseQuery(gesuchstellerID, AdresseTyp.WOHNADRESSE, null, Constants.END_OF_TIME);
+		List<GesuchstellerAdresseContainer> results = query.getResultList();
+		//wir erwarten entweder keine oder genau eine Wohnadr, fuer eine Gesuchsteller mit gueltigBis EndOfTime
 		if (results.isEmpty()) {
 			return Optional.empty();
 		}
@@ -91,10 +88,10 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	public GesuchstellerAdresse getCurrentWohnadresse(String gesuchstellerID) {
+	public GesuchstellerAdresseContainer getCurrentWohnadresse(String gesuchstellerID) {
 		LocalDate today = LocalDate.now();
-		TypedQuery<GesuchstellerAdresse> query = getAdresseQuery(gesuchstellerID, AdresseTyp.WOHNADRESSE, today, today);
-		List<GesuchstellerAdresse> results = query.getResultList();
+		TypedQuery<GesuchstellerAdresseContainer> query = getAdresseQuery(gesuchstellerID, AdresseTyp.WOHNADRESSE, today, today);
+		List<GesuchstellerAdresseContainer> results = query.getResultList();
 		//wir erwarten entweder keine oder genau eine Wohnadr, fuer einen Gesuchsteller mit guelitBis EndOfTime
 		if (results.isEmpty()) {
 			throw new EbeguEntityNotFoundException("getCurrentWohnaddresse", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchstellerID);
@@ -114,30 +111,32 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 	 * @param minimalDatumBis datum bis zu dem gesucht wird (incl)
 	 * @return
 	 */
-	private TypedQuery<GesuchstellerAdresse> getAdresseQuery(@Nonnull String gesuchstellerID, @Nonnull AdresseTyp typ, @Nullable LocalDate maximalDatumVon, @Nullable LocalDate minimalDatumBis) {
+	private TypedQuery<GesuchstellerAdresseContainer> getAdresseQuery(@Nonnull String gesuchstellerID, @Nonnull AdresseTyp typ, @Nullable LocalDate maximalDatumVon, @Nullable LocalDate minimalDatumBis) {
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		ParameterExpression<String> gesuchstellerIdParam = cb.parameter(String.class, "gesuchstellerID");
 		ParameterExpression<AdresseTyp> typParam = cb.parameter(AdresseTyp.class, "adresseTyp");
 		ParameterExpression<LocalDate> gueltigVonParam = cb.parameter(LocalDate.class, "gueltigVon");
 		ParameterExpression<LocalDate> gueltigBisParam = cb.parameter(LocalDate.class, "gueltigBis");
 
-		CriteriaQuery<GesuchstellerAdresse> query = cb.createQuery(GesuchstellerAdresse.class);
-		Root<GesuchstellerAdresse> root = query.from(GesuchstellerAdresse.class);
-		Predicate gesuchstellerPred = cb.equal(root.get(GesuchstellerAdresse_.gesuchsteller).get(Gesuchsteller_.id), gesuchstellerIdParam);
-		Predicate typePredicate = cb.equal(root.get(GesuchstellerAdresse_.adresseTyp), typParam);
+		CriteriaQuery<GesuchstellerAdresseContainer> query = cb.createQuery(GesuchstellerAdresseContainer.class);
+		Root<GesuchstellerAdresseContainer> root = query.from(GesuchstellerAdresseContainer.class);
+		Predicate gesuchstellerPred = cb.equal(root.get(GesuchstellerAdresseContainer_.gesuchstellerContainer).get(Gesuchsteller_.id), gesuchstellerIdParam);
+		Predicate typePredicate = cb.equal(root.get(GesuchstellerAdresseContainer_.gesuchstellerAdresseJA).get(GesuchstellerAdresse_.adresseTyp), typParam);
 		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
 
 		predicatesToUse.add(gesuchstellerPred);
 		predicatesToUse.add(typePredicate);
 		//noinspection VariableNotUsedInsideIf
 		if (maximalDatumVon != null) {
-			Predicate datumVonLessThanPred = cb.lessThanOrEqualTo(root.get(GesuchstellerAdresse_.gueltigkeit).get(DateRange_.gueltigAb), gueltigVonParam);
+			Predicate datumVonLessThanPred = cb.lessThanOrEqualTo(root.get(GesuchstellerAdresseContainer_.gesuchstellerAdresseJA)
+				.get(GesuchstellerAdresse_.gueltigkeit).get(DateRange_.gueltigAb), gueltigVonParam);
 			predicatesToUse.add(datumVonLessThanPred);
 
 		}
 		//noinspection VariableNotUsedInsideIf
 		if (minimalDatumBis != null) {
-			Predicate datumBisGreaterThanPRed = cb.greaterThanOrEqualTo(root.get(GesuchstellerAdresse_.gueltigkeit).get(DateRange_.gueltigBis), gueltigBisParam);
+			Predicate datumBisGreaterThanPRed = cb.greaterThanOrEqualTo(root.get(GesuchstellerAdresseContainer_.gesuchstellerAdresseJA)
+				.get(GesuchstellerAdresse_.gueltigkeit).get(DateRange_.gueltigBis), gueltigBisParam);
 			predicatesToUse.add(datumBisGreaterThanPRed);
 
 		}
@@ -145,7 +144,7 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicatesToUse));
 
-		TypedQuery<GesuchstellerAdresse> typedQuery = persistence.getEntityManager().createQuery(query);
+		TypedQuery<GesuchstellerAdresseContainer> typedQuery = persistence.getEntityManager().createQuery(query);
 
 		typedQuery.setParameter("gesuchstellerID", gesuchstellerID);
 		typedQuery.setParameter("adresseTyp", typ);
@@ -160,9 +159,9 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	public Optional<GesuchstellerAdresse> getKorrespondenzAdr(String gesuchstellerID) {
+	public Optional<GesuchstellerAdresseContainer> getKorrespondenzAdr(String gesuchstellerID) {
 
-		List<GesuchstellerAdresse> results = getAdresseQuery(gesuchstellerID, AdresseTyp.KORRESPONDENZADRESSE, null, null).getResultList();
+		List<GesuchstellerAdresseContainer> results = getAdresseQuery(gesuchstellerID, AdresseTyp.KORRESPONDENZADRESSE, null, null).getResultList();
 		if (results.isEmpty()) {
 			return Optional.empty();
 		}
