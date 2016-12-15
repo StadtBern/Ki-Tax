@@ -4,6 +4,7 @@ import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
 describe('kommentarView', function () {
 
@@ -25,7 +26,7 @@ describe('kommentarView', function () {
     }));
 
     beforeEach(function () {
-        gesuchModelManager.initGesuch(false);
+        gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
     });
 
     it('should be defined', function () {

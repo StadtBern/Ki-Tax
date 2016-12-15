@@ -138,22 +138,22 @@ export class InstitutionViewController {
                 this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
                     this.institutionen.push(institution);
                     this.resetInstitutionSelection();
-                    if(!institution.synchronizedWithOpenIdm){
+                    if (!institution.synchronizedWithOpenIdm) {
                         this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                             title: 'INSTITUTION_CREATE_SYNCHRONIZE'
-                        })
+                        });
                     }
                 });
             } else {
                 this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
-                    var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
+                    let index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
                     if (index > -1) {
                         this.institutionen[index] = institution;
                         this.resetInstitutionSelection();
-                        if(!institution.synchronizedWithOpenIdm){
+                        if (!institution.synchronizedWithOpenIdm) {
                             this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                                 title: 'INSTITUTION_UPDATE_SYNCHRONIZE'
-                            })
+                            });
                         }
                     }
                 });
@@ -225,7 +225,7 @@ export class InstitutionViewController {
         })
         .then(() => {   //User confirmed removal
             this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {
-                var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
+                let index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
                 if (index > -1) {
                     this.instStammdatenList.splice(index, 1);
                 }
@@ -261,7 +261,7 @@ export class InstitutionViewController {
         }
     }
 
-    private syncWithOpenIdm(): void{
+    private syncWithOpenIdm(): void {
         this.institutionRS.synchronizeInstitutions().then((respone) => {
             let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
             return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {

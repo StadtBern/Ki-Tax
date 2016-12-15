@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -27,6 +28,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -514,11 +516,31 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	public Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch, AntragStatus statusToChangeTo) {
+		authorizer.checkWriteAuthorization(gesuch);
+
+		gesuch.setFreigabeDatum(LocalDate.now());
+
+		if (AntragStatus.FREIGEGEBEN.equals(statusToChangeTo)) {
+			gesuch.setEingangsdatum(LocalDate.now()); // Nur wenn das Gesuch direkt freigegeben wird, muessen wir das Eingangsdatum auch setzen
+		}
+
+		gesuch.setStatus(statusToChangeTo);
+
+		final WizardStep freigabeStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
+		freigabeStep.setWizardStepStatus(WizardStepStatus.OK);
+
+		wizardStepService.saveWizardStep(freigabeStep);
+
+		return updateGesuch(gesuch, true);
+	}
+
+	@Override
 	@Nonnull
 	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN,
 		UserRoleName.SACHBEARBEITER_JA,	UserRoleName.GESUCHSTELLER})
 	public Optional<Gesuch> antragMutieren(@Nonnull String antragId,
-										   @Nonnull LocalDate eingangsdatum) {
+										   @Nullable LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
@@ -546,7 +568,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.empty();
 	}
 
-	private Optional<Gesuch> getGesuchMutation(@Nonnull LocalDate eingangsdatum, Optional<Gesuch> gesuchForMutation) {
+	private Optional<Gesuch> getGesuchMutation(@Nullable LocalDate eingangsdatum, Optional<Gesuch> gesuchForMutation) {
 		if (gesuchForMutation.isPresent()) {
 			Eingangsart eingangsart;
 			if(this.principalBean.isCallerInRole(UserRole.GESUCHSTELLER)){
@@ -555,7 +577,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				eingangsart = Eingangsart.PAPIER;
 			}
 			Gesuch mutation = gesuchForMutation.get().copyForMutation(new Gesuch(), eingangsart);
-			mutation.setEingangsdatum(eingangsdatum);
+			if (eingangsdatum != null) {
+				mutation.setEingangsdatum(eingangsdatum);
+			}
 			return Optional.of(mutation);
 		}
 		return Optional.empty();
@@ -597,9 +621,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
 
-		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
 		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
-		Predicate predicateAntragStatus = cb.equal(join.get(AntragStatusHistory_.status), AntragStatus.VERFUEGT);
+		Predicate predicateAntragStatus = join.get(AntragStatusHistory_.status).in(AntragStatus.getAllVerfuegtStates());
 		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
 
 		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);

@@ -10,6 +10,7 @@ export enum TSWizardStepName {
     FINANZIELLE_SITUATION = <any> 'FINANZIELLE_SITUATION',
     EINKOMMENSVERSCHLECHTERUNG = <any> 'EINKOMMENSVERSCHLECHTERUNG',
     DOKUMENTE = <any> 'DOKUMENTE',
+    FREIGABE = <any> 'FREIGABE',
     VERFUEGEN = <any> 'VERFUEGEN'
 }
 
@@ -32,6 +33,7 @@ export function getTSWizardStepNameValues(): Array<TSWizardStepName> {
         TSWizardStepName.FINANZIELLE_SITUATION,
         TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG,
         TSWizardStepName.DOKUMENTE,
+        TSWizardStepName.FREIGABE,
         TSWizardStepName.VERFUEGEN
     ];
 }

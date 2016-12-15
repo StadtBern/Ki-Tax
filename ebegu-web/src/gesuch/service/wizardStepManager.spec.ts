@@ -54,7 +54,7 @@ describe('wizardStepManager', function () {
             spyOn(authServiceRS, 'getPrincipalRole').and.returnValue(TSRole.SACHBEARBEITER_JA);
             wizardStepManager.getAllowedSteps().splice(0);
             wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_JA);
-            expect(wizardStepManager.getAllowedSteps().length).toBe(12);
+            expect(wizardStepManager.getAllowedSteps().length).toBe(13);
             expect(wizardStepManager.getAllowedSteps()[0]).toBe(TSWizardStepName.GESUCH_ERSTELLEN);
             expect(wizardStepManager.getAllowedSteps()[1]).toBe(TSWizardStepName.FAMILIENSITUATION);
             expect(wizardStepManager.getAllowedSteps()[2]).toBe(TSWizardStepName.GESUCHSTELLER);
@@ -66,7 +66,8 @@ describe('wizardStepManager', function () {
             expect(wizardStepManager.getAllowedSteps()[8]).toBe(TSWizardStepName.FINANZIELLE_SITUATION);
             expect(wizardStepManager.getAllowedSteps()[9]).toBe(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
             expect(wizardStepManager.getAllowedSteps()[10]).toBe(TSWizardStepName.DOKUMENTE);
-            expect(wizardStepManager.getAllowedSteps()[11]).toBe(TSWizardStepName.VERFUEGEN);
+            expect(wizardStepManager.getAllowedSteps()[11]).toBe(TSWizardStepName.FREIGABE);
+            expect(wizardStepManager.getAllowedSteps()[12]).toBe(TSWizardStepName.VERFUEGEN);
         });
     });
     describe('findStepsFromGesuch', function() {
