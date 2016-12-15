@@ -23,6 +23,7 @@
                                 <div class="form-group">
                                     <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot-{{$index}}">
                                     </label>
+                                    <!-- TODO (team) kann durch JA nicht korrigiert werden -->
                                     <select name="betreuungsangebot-{{$index}}" id="betreuungsangebot-{{$index}}"
                                             ng-model="abwesenheitInstance.kindBetreuung"
                                             class="form-control"
@@ -50,6 +51,8 @@
                                     </dv-datepicker>
                                     <dv-error-messages for="form['datumAb-' + $index].$error"
                                                        class="error"></dv-error-messages>
+                                    <dv-bisher gs="abwesenheitInstance.abwesenheit.abwesenheitGS.gueltigkeit.gueltigAb"
+                                               ja="abwesenheitInstance.abwesenheit.abwesenheitJA.gueltigkeit.gueltigAb"></dv-bisher>
                                 </dv-input-container>
                             </div>
 
@@ -65,6 +68,8 @@
                                     </dv-datepicker>
                                     <dv-error-messages for="form['datumBis-' + $index].$error"
                                                        class="error"></dv-error-messages>
+                                    <dv-bisher gs="abwesenheitInstance.abwesenheit.abwesenheitGS.gueltigkeit.gueltigBis"
+                                               ja="abwesenheitInstance.abwesenheit.abwesenheitJA.gueltigkeit.gueltigBis"></dv-bisher>
                                 </dv-input-container>
                             </div>
                         </div>

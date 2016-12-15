@@ -192,6 +192,7 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 		mutation.setNettolohnOkt(this.getNettolohnOkt());
 		mutation.setNettolohnNov(this.getNettolohnNov());
 		mutation.setNettolohnDez(this.getNettolohnDez());
+		mutation.setNettolohnZus(this.getNettolohnZus());
 		return mutation;
 	}
 }

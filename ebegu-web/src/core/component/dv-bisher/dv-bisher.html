@@ -1,8 +1,8 @@
 <div ng-form="bisherForm">
     <div class="dv-bisher row">
-        <span class="bisher" ng-if="vm.gs && (vm.ja != vm.gs)">
+        <span class="bisher" ng-if="vm.showBisher() && !vm.equals(vm.gs, vm.ja)">
             <span data-translate="BISHER_GS"></span>
-            {{vm.gs}}
+            {{vm.getBisher()}}
         </span>
     </div>
 </div>

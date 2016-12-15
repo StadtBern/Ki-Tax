@@ -28,6 +28,8 @@
                                 </dv-radio-container>
                                 <dv-error-messages for="form.geschlecht.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getContainer().kindGS.geschlecht"
+                                           ja="vm.getContainer().kindJA.geschlecht"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -117,6 +119,8 @@
                                 </dv-radio-container>
                                 <dv-error-messages for="form.familienErgaenzendeBetreuung.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getContainer().kindGS.familienErgaenzendeBetreuung"
+                                           ja="vm.getContainer().kindJA.familienErgaenzendeBetreuung"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -139,6 +143,8 @@
                                 </dv-radio-container>
                                 <dv-error-messages for="form.mutterspracheDeutsch.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getContainer().kindGS.mutterspracheDeutsch"
+                                           ja="vm.getContainer().kindJA.mutterspracheDeutsch"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -164,6 +170,8 @@
                                 </dv-radio-container>
                                 <dv-error-messages for="form.einschulung.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getContainer().kindGS.einschulung"
+                                           ja="vm.getContainer().kindJA.einschulung"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -175,7 +183,7 @@
                                 <dv-input-container class="form-group">
                                     <label class="md-no-float" data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT"
                                            for="gleichemHaushalt"></label>
-                                    <input id="gleichemHaushalt" type="text" name="gleichemHaushalt"
+                                    <input id="gleichemHaushalt" type="number" name="gleichemHaushalt"
                                            ng-model="vm.getModel().wohnhaftImGleichenHaushalt" max="100"
                                            dv-max-length class="form-control"
                                            ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
@@ -221,6 +229,8 @@
                                     </select>
                                     <dv-error-messages for="form.fachstelle.$error"
                                                        class="error"></dv-error-messages>
+                                    <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.fachstelle.name"
+                                               ja="vm.getContainer().kindJA.pensumFachstelle.fachstelle.name"></dv-bisher>
                                 </div>
                             </div>
                         </div>
@@ -239,8 +249,8 @@
                                            ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                     <dv-error-messages for="form.betreuungspensumFachstelle.$error"
                                                        class="error"></dv-error-messages>
-                                    <dv-bisher gs="vm.getContainer().kindGS.pensum"
-                                               ja="vm.getContainer().kindJA.pensum"></dv-bisher>
+                                    <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.pensum"
+                                               ja="vm.getContainer().kindJA.pensumFachstelle.pensum"></dv-bisher>
                                 </dv-input-container>
                             </div>
                         </div>
