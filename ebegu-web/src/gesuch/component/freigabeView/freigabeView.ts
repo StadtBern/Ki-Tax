@@ -60,7 +60,11 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
                 title: 'CONFIRM_GESUCH_FREIGEBEN',
                 deleteText: 'CONFIRM_GESUCH_FREIGEBEN_DESCRIPTION'
             }).then(() => {
-                return this.openFreigabequittungPDF();
+                if (this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
+                    return this.openFreigabequittungPDF();
+                } else {
+                    return this.gesuchFreigeben();
+                }
             });
         }
         return undefined;

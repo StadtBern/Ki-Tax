@@ -555,6 +555,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (Eingangsart.ONLINE.equals(gesuch.getEingangsart())) {
 				gesuch.setEingangsdatum(LocalDate.now());
 			}
+			// Je nach Status
+			if (!gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG)) {
+				// Es handelt sich um eine Mutation ohne Freigabequittung: Wir setzen das Tagesdatum als FreigabeDatum
+				gesuch.setFreigabeDatum(LocalDate.now());
+			}
 			return updateGesuch(gesuch, true);
 		} else {
 			throw new EbeguEntityNotFoundException("antragFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
