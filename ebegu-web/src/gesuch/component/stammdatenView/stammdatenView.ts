@@ -13,12 +13,12 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import IQService = angular.IQService;
-import IPromise = angular.IPromise;
-import IScope = angular.IScope;
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
 import TSAdresse from '../../../models/TSAdresse';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
+import IQService = angular.IQService;
+import IPromise = angular.IPromise;
+import IScope = angular.IScope;
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -45,8 +45,8 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, private $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.ebeguRestUtil = ebeguRestUtil;
         this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(this.gesuchstellerNumber);
@@ -69,10 +69,10 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         this.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    private save(form: angular.IFormController): IPromise<TSGesuchstellerContainer> {
-        if (form.$valid) {
+    private save(): IPromise<TSGesuchstellerContainer> {
+        if (this.form.$valid) {
             this.gesuchModelManager.setStammdatenToWorkWith(this.model);
-            if (!form.$dirty) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && !this.gesuchModelManager.isGesuchsteller2Required()) {

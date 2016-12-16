@@ -30,7 +30,6 @@ public class JaxErwerbspensum extends JaxAbstractPensumDTO {
 	private Zuschlagsgrund zuschlagsgrund;
 
 	@Min(0)
-	@Max(20) //Maximal 20%
 	private Integer zuschlagsprozent;
 
 	private String bezeichnung;
