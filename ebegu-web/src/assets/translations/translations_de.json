@@ -794,6 +794,7 @@
     "GS_MUTIEREN": "Antrag mutieren",
     "GS_BEANTRAGEN": "Antrag stellen",
     "ANTRAG_EINREICHEN": "Antrag einreichen",
+    "ANTRAG_FREIGEBEN_SIMULIEREN": "Interner Test-Button: Freigabeqittung einlesen simulieren",
     "FREIGABEQUITTUNG_DRUCKEN_TITLE": "Freigabequittung",
     "FREIGABEQUITTUNG_TAGESSCHULEN_TITLE": "Für Eltern mit Kindern in Tagesschulen",
     "FREIGABEQUITTUNG_DRUCKEN_TEXT": "Ich bestätige, dass alle Angaben vollständig und wahr sind und nehme zur Kenntnis, dass sie bei der Steuerverwaltung überprüft werden können",

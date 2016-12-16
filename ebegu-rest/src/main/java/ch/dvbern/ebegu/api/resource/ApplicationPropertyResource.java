@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -41,13 +42,16 @@ public class ApplicationPropertyResource {
 	@Inject
 	private JaxBConverter converter;
 
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
+
 
 	@ApiOperation(value = "Find a property by its unique name (called key)", response = JaxApplicationProperties.class)
 	@Nullable
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{key}")
+	@Path("/key/{key}")
 	public JaxApplicationProperties getByKey(
 		@Nonnull @PathParam("key") String keyParam,
 		@Context HttpServletResponse response) {
@@ -55,6 +59,15 @@ public class ApplicationPropertyResource {
 		Optional<ApplicationProperty> propertyFromDB = this.applicationPropertyService.readApplicationProperty(keyParam);
 		propertyFromDB.orElseThrow(() -> new EbeguEntityNotFoundException("getByKey", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, keyParam));
 		return converter.applicationPropertyToJAX(propertyFromDB.get());
+	}
+
+	@ApiOperation(value = "Are we in development mode?", response = Boolean.class)
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	@Path("/devmode")
+	public boolean isDevMode(@Context HttpServletResponse response) {
+		return ebeguConfiguration.getIsDevmode();
 	}
 
 	@Nonnull

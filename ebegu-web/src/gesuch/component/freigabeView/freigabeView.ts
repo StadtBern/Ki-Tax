@@ -14,6 +14,8 @@ import DateUtil from '../../../utils/DateUtil';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
+import GesuchRS from '../../service/gesuchRS.rest';
+import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -32,13 +34,14 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     bestaetigungFreigabequittung: boolean = false;
     isFreigebenClicked: boolean = false;
+    private showGesuchFreigebenSimulationButton: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
-        'DvDialog', 'DownloadRS'];
+        'DvDialog', 'DownloadRS', 'GesuchRS', 'ApplicationPropertyRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS) {
+                private downloadRS: DownloadRS, private gesuchRS: GesuchRS, private applicationPropertyRS: ApplicationPropertyRS) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
@@ -47,9 +50,10 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     private initViewModel(): void {
         this.wizardStepManager.setCurrentStep(TSWizardStepName.FREIGABE);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+        this.initDevModeParameter();
     }
 
-    public gesuchFreigeben(form: IFormController): IPromise<void> {
+    public gesuchEinreichen(form: IFormController): IPromise<void> {
         this.isFreigebenClicked = true;
         if (form.$valid && this.bestaetigungFreigabequittung === true) {
             return this.DvDialog.showDialog(dialogTemplate, RemoveDialogController, {
@@ -60,6 +64,19 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
             });
         }
         return undefined;
+    }
+
+    public gesuchFreigeben(): void {
+        this.gesuchRS.antragFreigeben(this.gesuchModelManager.getGesuch().id).then(response => {
+            this.gesuchModelManager.setGesuch(response);
+        });
+    }
+
+    private initDevModeParameter() {
+        this.applicationPropertyRS.isDevMode().then((response :boolean) => {
+            // Die Simulation ist nur im Dev-Mode moeglich und nur, wenn das Gesuch im Status FREIGABEQUITTUNG ist
+            this.showGesuchFreigebenSimulationButton = (response && this.isGesuchInStatus(TSAntragStatus.FREIGABEQUITTUNG));
+        })
     }
 
     public isGesuchFreigegeben(): boolean {
