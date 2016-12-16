@@ -12,10 +12,9 @@ import TSDownloadFile from '../../../models/TSDownloadFile';
 import {isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import DateUtil from '../../../utils/DateUtil';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
+import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
-import GesuchRS from '../../service/gesuchRS.rest';
-import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -37,11 +36,11 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     private showGesuchFreigebenSimulationButton: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', 'GesuchRS', 'ApplicationPropertyRS'];
+        'DvDialog', 'DownloadRS', 'ApplicationPropertyRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS, private gesuchRS: GesuchRS, private applicationPropertyRS: ApplicationPropertyRS) {
+                private downloadRS: DownloadRS,  private applicationPropertyRS: ApplicationPropertyRS) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
@@ -67,9 +66,8 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public gesuchFreigeben(): void {
-        this.gesuchRS.antragFreigeben(this.gesuchModelManager.getGesuch().id).then(response => {
-            this.gesuchModelManager.setGesuch(response);
-        });
+        let gesuchID = this.gesuchModelManager.getGesuch().id;
+        this.gesuchModelManager.antragFreigeben(gesuchID);
     }
 
     private initDevModeParameter() {

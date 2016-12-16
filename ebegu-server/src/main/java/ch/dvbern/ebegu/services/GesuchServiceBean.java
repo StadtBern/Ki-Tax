@@ -543,6 +543,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
+			Validate.isTrue(gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG)
+				|| gesuch.getStatus().equals(AntragStatus.IN_BEARBEITUNG_GS),
+				"Gesuch war im falschen Status: " + gesuch.getStatus()+ " wir erwarten aber nur Freigabequittung oder In Bearbeitung GS");
+			this.authorizer.checkWriteAuthorization(gesuch);
 			// Die Daten des GS in die entsprechenden Containers kopieren
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			// Den Gesuchsstatus setzen

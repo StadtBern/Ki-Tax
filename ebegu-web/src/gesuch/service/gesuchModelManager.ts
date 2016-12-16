@@ -36,8 +36,10 @@ import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
 import {
-    TSAntragStatus, isAtLeastFreigegebenOrFreigabequittung,
-    isStatusVerfuegenVerfuegt, isAtLeastFreigegeben
+    TSAntragStatus,
+    isAtLeastFreigegebenOrFreigabequittung,
+    isStatusVerfuegenVerfuegt,
+    isAtLeastFreigegeben
 } from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
@@ -1059,6 +1061,17 @@ export default class GesuchModelManager {
             });
         }
         return undefined;
+    }
+
+    /**
+     * Antrag freigeben
+     */
+    public antragFreigeben(antragId: string): IPromise<TSGesuch> {
+        return this.gesuchRS.antragFreigeben(antragId).then((response) => {
+            this.setGesuch(response);
+            return response;
+        });
+
     }
 
     /**
