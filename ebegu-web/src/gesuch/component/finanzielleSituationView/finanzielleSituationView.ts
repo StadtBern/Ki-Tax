@@ -13,6 +13,7 @@ import {TSRole} from '../../../models/enums/TSRole';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
 
@@ -27,16 +28,17 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
 export class FinanzielleSituationViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
     public showSelbstaendig: boolean;
+    public showSelbstaendigGS: boolean;
     allowedRoles: Array<TSRole>;
 
     private initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q'];
+        'WizardStepManager', '$q', '$translate'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService) {
+                wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
@@ -53,6 +55,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         this.wizardStepManager.setCurrentStep(TSWizardStepName.FINANZIELLE_SITUATION);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig();
+        this.showSelbstaendigGS = this.model.getFiSiConToWorkWith().finanzielleSituationGS ? this.model.getFiSiConToWorkWith().finanzielleSituationGS.isSelbstaendig(): false;
     }
 
     public showSelbstaendigClicked() {
@@ -128,6 +131,30 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     public getResultate(): TSFinanzielleSituationResultateDTO {
         return this.berechnungsManager.finanzielleSituationResultate;
     }
+
+    public getTextSelbstaendigKorrektur(){
+        let finSitGS = this.getModel().finanzielleSituationGS;
+        if (finSitGS && finSitGS.isSelbstaendig()) {
+
+            let gew1 = finSitGS.geschaeftsgewinnBasisjahr;
+            let gew2 = finSitGS.geschaeftsgewinnBasisjahrMinus1;
+            let gew3 = finSitGS.geschaeftsgewinnBasisjahrMinus2;
+            let basisjahr = this.gesuchModelManager.getBasisjahr();
+            return this.$translate.instant('JA_KORREKTUR_SELBSTAENDIG',
+                {basisjahr: basisjahr, gewinn1:gew1,  gewinn2:gew2,  gewinn3:gew3});
+
+
+                   // return this.$translate.instant('JA_KORREKTUR_FACHSTELLE', {
+                   //     name: fachstelle.fachstelle.name,
+                   //     pensum: fachstelle.pensum,
+                   //     von: vonText,
+                   //     bis: bisText});
+               } else {
+                   return this.$translate.instant('LABEL_KEINE_ANGABE');
+               }
+
+    }
+
 
     /**
      * Mindestens einer aller Felder von Geschaftsgewinn muss ausgefuellt sein. Mit dieser Methode kann man es pruefen.

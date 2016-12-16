@@ -11,6 +11,7 @@ import WizardStepManager from '../../service/wizardStepManager';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import {TSRole} from '../../../models/enums/TSRole';
 import TSFinanzModel from '../../../models/TSFinanzModel';
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -25,6 +26,7 @@ export class EinkommensverschlechterungViewComponentConfig implements IComponent
 export class EinkommensverschlechterungViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
     public showSelbstaendig: boolean;
+    public showSelbstaendigGS: boolean;
     public geschaeftsgewinnBasisjahrMinus1: number;
     public geschaeftsgewinnBasisjahrMinus2: number;
     public geschaeftsgewinnBasisjahrMinus1GS: number;
@@ -33,12 +35,12 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     public initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
-        'WizardStepManager', '$q'];
+        'WizardStepManager', '$q', '$translate'];
 
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private $log: ILogService,
-                wizardStepManager: WizardStepManager, private $q: IQService) {
+                wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         let parsedGesuchstelllerNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
@@ -56,13 +58,15 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     }
 
     private initViewModel() {
-
         this.initGeschaeftsgewinnFromFS();
-
         this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig()
             || (this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== null
             && this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== undefined);
-
+        if (this.model.getFiSiConToWorkWith().finanzielleSituationGS && this.model.getEkvToWorkWith_GS()) {
+            this.showSelbstaendigGS = this.model.getFiSiConToWorkWith().finanzielleSituationGS.isSelbstaendig()
+                || (this.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr !== null
+                && this.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr !== undefined);
+        }
     }
 
     public showSelbstaendigClicked() {
@@ -156,4 +160,15 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         }
     }
 
+    public getTextSelbstaendigKorrektur(){
+        if (this.showSelbstaendigGS === true && this.model.getEkvToWorkWith_GS()) {
+            let gew1 = this.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr;
+            if (gew1) {
+                let basisjahr = this.gesuchModelManager.getBasisjahrPlus(this.model.getBasisJahrPlus());
+                return this.$translate.instant('JA_KORREKTUR_SELBSTAENDIG_EKV',
+                    {basisjahr: basisjahr, gewinn1: gew1});
+            }
+        }
+        return this.$translate.instant('LABEL_KEINE_ANGABE');
+    }
 }
