@@ -181,6 +181,7 @@ public final class TestDataUtil {
 	public static Traegerschaft createDefaultTraegerschaft() {
 		Traegerschaft traegerschaft = new Traegerschaft();
 		traegerschaft.setName("Traegerschaft1");
+		traegerschaft.setMail("hallo@dvbern.ch");
 		return traegerschaft;
 	}
 
@@ -189,6 +190,7 @@ public final class TestDataUtil {
 		institution.setName("Institution1");
 		institution.setMandant(createDefaultMandant());
 		institution.setTraegerschaft(createDefaultTraegerschaft());
+		institution.setMail("hallo@dvbern.ch");
 		return institution;
 	}
 

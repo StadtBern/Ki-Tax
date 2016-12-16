@@ -82,9 +82,8 @@
                 <div class="row">
                     <div class="col-md-12" ng-if="vm.isSelectedInstitution()">
                         <div class="form-group">
-
+                            <!-- Institutionsname -->
                             <div class="row marginTop20">
-                                <!--Name der Institution-->
                                 <dv-input-container class="form-group col-md-6">
                                     <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
                                     <input id="name_ID" type="text" name="name"
@@ -94,7 +93,17 @@
                                                        class="error"></dv-error-messages>
                                 </dv-input-container>
                             </div>
-
+                            <!-- Mail -->
+                            <div class="row">
+                                <dv-input-container class="form-group col-md-6">
+                                    <label class="md-no-float" data-translate="EMAIL" for="mail_ID"></label>
+                                    <input id="mail_ID" type="text" name="name"
+                                           ng-model="vm.getSelectedInstitution().mail"
+                                           dv-max-length class="form-control" required>
+                                    <dv-error-messages for="form.mail_ID.$error"
+                                                       class="error"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
                             <!--Auswahl der Trägerschaft-->
                             <div class="row">
                                 <div class="form-group col-md-6">
