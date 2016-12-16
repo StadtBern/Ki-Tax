@@ -38,11 +38,13 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 
 	private Gesuch gesuch;
 	private Zustelladresse zustellAmt;
+	private List<DokumentGrund> dokumentGrunds;
 
-	public FreigabequittungPrintImpl(Gesuch gesuch, Zustelladresse zustellAmt) {
+	public FreigabequittungPrintImpl(Gesuch gesuch, Zustelladresse zustellAmt, List<DokumentGrund> dokumentGrunds) {
 
 		super(gesuch);
 
+		this.dokumentGrunds = dokumentGrunds;
 		this.gesuch = gesuch;
 		this.zustellAmt = zustellAmt;
 
@@ -127,10 +129,8 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 	public List<AufzaehlungPrint> getUnterlagen() {
 		List<AufzaehlungPrint> aufzaehlungPrint = new ArrayList<>();
 
-		Set<DokumentGrund> dokumentGrunden = gesuch.getDokumentGrunds();
-
-		if (dokumentGrunden != null) {
-			for (DokumentGrund dokumentGrund : dokumentGrunden) {
+		if (dokumentGrunds != null) {
+			for (DokumentGrund dokumentGrund : dokumentGrunds) {
 				StringBuilder bemerkungenBuilder = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
 				aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));
             }

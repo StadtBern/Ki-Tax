@@ -1,13 +1,16 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.ebegu.vorlagen.freigabequittung.FreigabequittungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.freigabequittung.FreigabequittungPrintMergeSource;
@@ -21,10 +24,10 @@ import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -40,6 +43,13 @@ import java.util.Optional;
 @Stateless
 @Local(PDFService.class)
 public class PDFServiceBean extends AbstractPrintService implements PDFService {
+
+	@Inject
+	private DokumentGrundService dokumentGrundService;
+
+	@Inject
+	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
+
 
 	@Nonnull
 	@Override
@@ -129,13 +139,31 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
 			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
+
+			final List<DokumentGrund> dokumentGrundsMerged = calculateListOfDokumentGrunds(gesuch);
+
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				docxME.getDocument(is, new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, zustellAdresse))));
+				docxME.getDocument(is, new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, zustellAdresse, dokumentGrundsMerged))));
 			is.close();
 			return bytes;
 		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("generateFreigabequittung()",
 				"Bei der Generierung der Freigabequittung ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
+	}
+
+	/**
+	 * In dieser Methode werden alle DokumentGrunds vom Gesuch einer Liste hinzugefuegt. Die die bereits existieren und die
+	 * die noch nicht hochgeladen wurden
+	 * @param gesuch
+	 * @return
+	 */
+	private List<DokumentGrund> calculateListOfDokumentGrunds(Gesuch gesuch) {
+		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
+		dokumentGrundsMerged.addAll(DokumenteUtil
+            .mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
+                dokumentGrundService.getAllDokumentGrundByGesuch(gesuch)));
+		Collections.sort(dokumentGrundsMerged);
+		return dokumentGrundsMerged;
 	}
 }
