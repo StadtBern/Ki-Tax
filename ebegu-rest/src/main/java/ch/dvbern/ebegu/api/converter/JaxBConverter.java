@@ -788,6 +788,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToJAX(persistedTraegerschaft, jaxTraegerschaft);
 		jaxTraegerschaft.setName(persistedTraegerschaft.getName());
 		jaxTraegerschaft.setActive(persistedTraegerschaft.getActive());
+		jaxTraegerschaft.setMail(persistedTraegerschaft.getMail());
 		return jaxTraegerschaft;
 	}
 
@@ -805,6 +806,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(traegerschaftJAXP, traegerschaft);
 		traegerschaft.setName(traegerschaftJAXP.getName());
 		traegerschaft.setActive(traegerschaftJAXP.getActive());
+		traegerschaft.setMail(traegerschaftJAXP.getMail());
 		return traegerschaft;
 	}
 
@@ -836,6 +838,7 @@ public class JaxBConverter {
 		if (persistedInstitution.getTraegerschaft() != null) {
 			jaxInstitution.setTraegerschaft(traegerschaftToJAX(persistedInstitution.getTraegerschaft()));
 		}
+		jaxInstitution.setMail(persistedInstitution.getMail());
 		return jaxInstitution;
 	}
 
@@ -844,6 +847,7 @@ public class JaxBConverter {
 		Validate.notNull(institution);
 		convertAbstractFieldsToEntity(institutionJAXP, institution);
 		institution.setName(institutionJAXP.getName());
+		institution.setMail(institutionJAXP.getMail());
 
 		if (institutionJAXP.getMandant() != null && institutionJAXP.getMandant().getId() != null) {
 			final Optional<Mandant> mandantFromDB = mandantService.findMandant(institutionJAXP.getMandant().getId());
