@@ -16,6 +16,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -43,11 +44,11 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     patternPercentage: string;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager',
-        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q'];
+        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q', '$translate'];
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: IScope, private errorService: ErrorService,
-                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService) {
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
@@ -136,5 +137,17 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     erwerbspensumDisabled(): boolean {
         // Disabled wenn Mutation, ausser bei Bearbeiter Jugendamt
         return this.model.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
+
+    public getTextZuschlagErwerbspensumKorrekturJA() : string {
+        if (this.model.erwerbspensumGS && this.model.erwerbspensumGS.zuschlagZuErwerbspensum === true) {
+            let ewp: TSErwerbspensum = this.model.erwerbspensumGS;
+            let grundText = this.$translate.instant(ewp.zuschlagsgrund.toString());
+            return this.$translate.instant('JA_KORREKTUR_ZUSCHLAG_ERWERBSPENSUM', {
+                zuschlagsgrund: grundText,
+                zuschlagsprozent: ewp.zuschlagsprozent});
+        } else {
+            return this.$translate.instant('LABEL_KEINE_ANGABE');
+        }
     }
 }
