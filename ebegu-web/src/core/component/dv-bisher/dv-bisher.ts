@@ -54,14 +54,12 @@ export class DvBisher {
             this.showIfBisherNone = true;
         }
         this.bisherText = this.specificBisherText ?  this.specificBisherText.split('\n') : undefined
-
     }
 
     public getBisher() : Array<string> {
         if (this.specificBisherText) {
             // War es eine Loeschung, oder ein Hinzufuegen?
             if (this.hasBisher()) {
-
                 return this.bisherText; // neue eingabe als ein einzelner block
             } else {
                 return [this.$translate.instant('LABEL_KEINE_ANGABE')];  //vorher war keine angabe da
