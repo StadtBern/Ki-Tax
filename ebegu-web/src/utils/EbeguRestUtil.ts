@@ -661,6 +661,7 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restTragerschaft, traegerschaft);
             restTragerschaft.name = traegerschaft.name;
             restTragerschaft.active = traegerschaft.active;
+            restTragerschaft.mail = traegerschaft.mail;
             return restTragerschaft;
         }
         return undefined;
@@ -684,6 +685,7 @@ export default class EbeguRestUtil {
             traegerschaftTS.name = traegerschaftFromServer.name;
             traegerschaftTS.active = traegerschaftFromServer.active;
             traegerschaftTS.synchronizedWithOpenIdm = traegerschaftFromServer.synchronizedWithOpenIdm;
+            traegerschaftTS.mail = traegerschaftFromServer.mail;
             return traegerschaftTS;
         }
         return undefined;
@@ -695,6 +697,7 @@ export default class EbeguRestUtil {
             restInstitution.name = institution.name;
             restInstitution.mandant = this.mandantToRestObject({}, institution.mandant);
             restInstitution.traegerschaft = this.traegerschaftToRestObject({}, institution.traegerschaft);
+            restInstitution.mail = institution.mail;
             return restInstitution;
         }
         return undefined;
@@ -707,6 +710,7 @@ export default class EbeguRestUtil {
             institutionTS.mandant = this.parseMandant(new TSMandant(), institutionFromServer.mandant);
             institutionTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), institutionFromServer.traegerschaft);
             institutionTS.synchronizedWithOpenIdm = institutionFromServer.synchronizedWithOpenIdm;
+            institutionTS.mail = institutionFromServer.mail;
             return institutionTS;
         }
         return undefined;

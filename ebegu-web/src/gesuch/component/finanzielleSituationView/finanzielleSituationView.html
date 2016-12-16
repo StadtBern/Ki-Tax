@@ -134,6 +134,9 @@
                                              ng-disabled="vm.isGesuchReadonly()">
                                     <span data-translate="FINANZIELLE_SITUATION_SELBSTAENDIGKEIT"></span>
                                 </md-checkbox>
+                                <dv-bisher gs="vm.showSelbstaendigGS" class="dv-bisher-break"
+                                           ja="vm.showSelbstaendig"
+                                           specific-bisher-text="vm.getTextSelbstaendigKorrektur()"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -160,12 +163,14 @@
                                         </div>
                                     </div>
                                     <dv-bisher gs="vm.getModel().finanzielleSituationGS.geschaeftsgewinnBasisjahr"
-                                               ja="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr"></dv-bisher>
+                                               ja="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr"
+                                                show-if-bisher-none="false"
+                                                block-existed="vm.showSelbstaendigGS === true"></dv-bisher>
                                 </dv-input-container>
                             </div>
                         </div>
 
-                        <!-- Geschäftsgewinn Basisjahr-1 -->
+                        <!-- Geschäftsgewinn Basisjahr - 1 -->
                         <div class="row">
                             <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group">
@@ -187,12 +192,14 @@
                                         </div>
                                     </div>
                                     <dv-bisher gs="vm.getModel().finanzielleSituationGS.geschaeftsgewinnBasisjahrMinus1"
-                                               ja="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1"></dv-bisher>
+                                               ja="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1"
+                                               show-if-bisher-none="false"
+                                               block-existed="vm.showSelbstaendigGS === true"></dv-bisher>
                                 </dv-input-container>
                             </div>
                         </div>
 
-                        <!-- Geschäftsgewinn Basisjahr-2 -->
+                        <!-- Geschäftsgewinn Basisjahr - 2 -->
                         <div class="row">
                             <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group">
@@ -214,7 +221,9 @@
                                         </div>
                                     </div>
                                     <dv-bisher gs="vm.getModel().finanzielleSituationGS.geschaeftsgewinnBasisjahrMinus2"
-                                               ja="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2"></dv-bisher>
+                                               ja="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2"
+                                               show-if-bisher-none="false"
+                                             block-existed="vm.showSelbstaendigGS === true"></dv-bisher>
                                 </dv-input-container>
                             </div>
                         </div>

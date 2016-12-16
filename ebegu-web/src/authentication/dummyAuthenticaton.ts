@@ -8,6 +8,7 @@ import TSInstitution from '../models/TSInstitution';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 import AuthenticationUtil from '../utils/AuthenticationUtil';
+import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
 let template = require('./dummyAuthentication.html');
@@ -29,17 +30,23 @@ export class DummyAuthenticationListViewController {
     private traegerschaftStadtBern: TSTraegerschaft;
     private traegerschaftLeoLea: TSTraegerschaft;
     private traegerschaftSGF: TSTraegerschaft;
+    private devMode: boolean;
 
-    static $inject: string[] = ['$state', 'AuthServiceRS', '$rootScope', '$timeout'];
+    static $inject: string[] = ['$state', 'AuthServiceRS', '$rootScope', '$timeout' , 'ApplicationPropertyRS'];
 
     constructor(private $state: IStateService, private authServiceRS: AuthServiceRS,
-                private $rootScope: IRootScopeService, private $timeout: ITimeoutService) {
+                private $rootScope: IRootScopeService, private $timeout: ITimeoutService, private applicationPropertyRS: ApplicationPropertyRS) {
         this.usersList = [];
         this.mandant = this.getMandant();
         this.traegerschaftStadtBern = this.getTraegerschaftStadtBern();
         this.traegerschaftLeoLea = this.getTraegerschaftLeoLea();
         this.traegerschaftSGF = this.getTraegerschaftSGF();
         this.institution = this.getInsitution();
+        if (this.authServiceRS.getPrincipal()) {
+            applicationPropertyRS.isDevMode().then((response) => {
+                this.devMode = response
+            });
+        }
 
         this.usersList.push(new TSUser('Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@bern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));
         this.usersList.push(new TSUser('Jennifer', 'Müller', 'jemu', 'password2', 'jenniver.mueller@bern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));

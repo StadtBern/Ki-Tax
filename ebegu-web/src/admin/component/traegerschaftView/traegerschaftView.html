@@ -63,7 +63,17 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                <!-- Mail -->
+                                <div class="row">
+                                    <dv-input-container class="form-group col-md-6">
+                                        <label class="md-no-float" data-translate="EMAIL" for="mail_ID"></label>
+                                        <input id="mail_ID" type="text" name="name"
+                                               ng-model="vm.newTraegerschaft.mail"
+                                               dv-max-length class="form-control" required>
+                                        <dv-error-messages for="form.mail_ID.$error"
+                                                           class="error"></dv-error-messages>
+                                    </dv-input-container>
+                                </div>
 
                             </td>
 

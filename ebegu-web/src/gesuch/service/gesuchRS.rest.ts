@@ -104,4 +104,10 @@ export default class GesuchRS implements IEntityRS {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
     }
+
+    public antragFreigeben(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/freigeben/' + encodeURIComponent(antragId), null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
 }
