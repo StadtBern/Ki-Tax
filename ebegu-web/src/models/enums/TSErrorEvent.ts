@@ -1,4 +1,5 @@
-export enum TSErrorEvent {
-    UPDATE = <any> 'UPDATE',
+export enum TSMessageEvent {
+    ERROR_UPDATE = <any> 'ERROR_UPDATE',
+    INFO_UPDATE= <any> 'ERROR_UPDATE',
     CLEAR = <any> 'CLEAR',
 }

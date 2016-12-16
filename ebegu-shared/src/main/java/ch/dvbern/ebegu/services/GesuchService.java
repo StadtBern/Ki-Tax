@@ -128,6 +128,12 @@ public interface GesuchService {
 	void updateLaufnummerOfAllGesucheOfFall(String fallId);
 
 	/**
+	 * Alle GesucheIDs des Gesuchstellers zurueckgeben fuer admin
+	 */
+	@Nonnull
+	List<String> getAllGesuchIDsForFall(String fallId);
+
+	/**
 	 * Das gegebene Gesuch wird mit heutigem Datum freigegeben und den Step FREIGABE auf OK gesetzt
 	 * @param gesuch
 	 * @param statusToChangeTo

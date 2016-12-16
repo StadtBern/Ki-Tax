@@ -8,6 +8,7 @@ import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {LinkDialogController} from '../../../gesuch/dialog/LinkDialogController';
 import TSUser from '../../../models/TSUser';
 import UserRS from '../../../core/service/userRS.rest';
+import ErrorService from '../../../core/errors/service/ErrorService';
 require('./adminView.less');
 let template = require('./adminView.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
@@ -24,7 +25,7 @@ export class AdminViewComponentConfig implements IComponentOptions {
 }
 
 export class AdminViewController {
-    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH', 'EbeguRestUtil', 'TestFaelleRS', 'DvDialog', 'UserRS'];
+    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH', 'EbeguRestUtil', 'TestFaelleRS', 'DvDialog', 'UserRS', 'ErrorService'];
 
     length: number;
     applicationProperty: TSApplicationProperty;
@@ -45,7 +46,7 @@ export class AdminViewController {
 
     /* @ngInject */
     constructor(applicationPropertyRS: ApplicationPropertyRS, MAX_LENGTH: number, ebeguRestUtil: EbeguRestUtil,
-                testFaelleRS: TestFaelleRS, private dvDialog: DvDialog, private userRS: UserRS) {
+                testFaelleRS: TestFaelleRS, private dvDialog: DvDialog, private userRS: UserRS, private errorService: ErrorService) {
         this.length = MAX_LENGTH;
         this.applicationProperty = undefined;
         this.applicationPropertyRS = applicationPropertyRS;
@@ -166,6 +167,12 @@ export class AdminViewController {
                 //do nothing
             });
         });
+    }
+
+    public removeGesucheGS() {
+        this.testFaelleRS.removeFaelleOfGS(this.createAsBesitzer.username).then(()=>{
+            this.errorService.addMesageAsInfo("Gesuche entfernt fuer " + this.createAsBesitzer.username);
+        })
     }
 
 

@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.testfaelle.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +27,7 @@ import java.util.Optional;
  */
 @Stateless
 @Local(TestfaelleService.class)
-@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 public class TestfaelleServiceBean extends AbstractBaseService implements TestfaelleService {
 
 
@@ -61,7 +62,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Inject
 	private VerfuegungService verfuegungService;
 
-
+	private static final Logger LOG = LoggerFactory.getLogger(TestfaelleServiceBean.class);
 
 	@Override
 	@Nonnull
@@ -73,7 +74,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 	@Nonnull
-	@SuppressWarnings(value = {"PMD.NcssMethodCount",  "PMD.AvoidDuplicateLiterals"})
+	@SuppressWarnings(value = {"PMD.NcssMethodCount", "PMD.AvoidDuplicateLiterals"})
 	public StringBuilder createAndSaveTestfaelle(String fallid,
 												 Integer iterationCount,
 												 boolean betreuungenBestaetigt,
@@ -138,17 +139,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 													 boolean betreuungenBestaetigt,
 													 boolean verfuegen, @Nonnull String username) {
 
+		removeGesucheOfGS(username);
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(benutzerService.getCurrentBenutzer().orElse(null));
-
-
-		Optional<Fall> existingFall = fallService.findFallByBesitzer(benutzer);
-		if (existingFall.isPresent()) {
-			//unschoen: eigentlich nur das gesuch fuer das jahr loeschen fuer welches der testfall erzeugt wird
-			List<JaxAntragDTO> allGesucheForBenutzer = gesuchService.getAllAntragDTOForFall(existingFall.get().getId());
-			allGesucheForBenutzer
-				.forEach(jaxAntragDTO -> gesuchService.findGesuch(jaxAntragDTO.getAntragId())
-					.ifPresent(gesuch -> gesuchService.removeGesuch(gesuch)));
-		}
 		return this.createAndSaveTestfaelle(fallid, 1, true, false, benutzer);
 
 	}
@@ -192,6 +184,23 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 
 		return null;
+	}
+
+	@Override
+	public void removeGesucheOfGS(String username) {
+		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(benutzerService.getCurrentBenutzer().orElse(null));
+		Optional<Fall> existingFall = fallService.findFallByBesitzer(benutzer);
+		if (existingFall.isPresent()) {
+			//unschoen: eigentlich nur das gesuch fuer das jahr loeschen fuer welches der testfall erzeugt wird
+			List<String> allGesucheForBenutzer = gesuchService.getAllGesuchIDsForFall(existingFall.get().getId());
+			allGesucheForBenutzer
+				.forEach(gesuchId -> gesuchService.findGesuch(gesuchId)
+					.ifPresent((gesuch) -> {
+						LOG.info("Removing Gesuch for user " + (benutzer != null ? benutzer.getUsername() : "-") + " with id " + gesuch.getId());
+						gesuchService.removeGesuch(gesuch);
+					}));
+		}
+
 	}
 
 	@Override
@@ -283,7 +292,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	 * Aus diesem Grund, bleibt das Gesuch mit Status IN_BEARBEITUNG_JA
 	 *
 	 * @param fromTestfall testfall
-	 * @param besitzer wenn der besitzer gesetzt ist wird der fall diesem besitzer zugeordnet
+	 * @param besitzer     wenn der besitzer gesetzt ist wird der fall diesem besitzer zugeordnet
 	 */
 	private Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer) {
 		final Optional<List<Gesuch>> gesuchByGSName = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
