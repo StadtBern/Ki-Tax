@@ -106,8 +106,8 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
         return undefined;
     }
 
-    cancel(form: IFormController) {
-        form.$setPristine();
+    cancel() {
+        this.form.$setPristine();
     }
 
 

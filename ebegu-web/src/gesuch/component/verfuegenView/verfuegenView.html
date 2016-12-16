@@ -182,14 +182,14 @@
                     </div>
                     <div class="col-md-4"  ng-show="vm.gesuchModelManager.isErstgesuch()">
                         <dv-loading-button type="submit"
-                                           button-click="vm.nichtEintreten(form)"
+                                           button-click="vm.nichtEintreten()"
                                            button-class="dv-btn-sm color-success">
                             <span data-translate="VERFUEGEN_NICHT_EINTRETEN_UPPER"></span>
                         </dv-loading-button>
                     </div>
                     <div class="col-md-4"  ng-show="!vm.gesuchModelManager.isErstgesuch()">
                         <dv-loading-button type="submit"
-                                           button-click="vm.schliessenOhneVerfuegen(form)"
+                                           button-click="vm.schliessenOhneVerfuegen()"
                                            button-class="dv-btn-sm color-success">
                             <span data-translate="VERFUEGEN_ABLEHNEN_UPPER"></span>
                         </dv-loading-button>
@@ -202,7 +202,7 @@
                     </div>
                     <div class="col-md-4" ng-show="vm.showVerfuegen()">
                         <dv-loading-button type="submit"
-                                           button-click="vm.schliessenOhneVerfuegen(form)"
+                                           button-click="vm.schliessenOhneVerfuegen()"
                                            button-class="">
                             <span data-translate="VERFUEGEN_VERZICHTEN_UPPER"></span>
                         </dv-loading-button>
@@ -218,7 +218,7 @@
                 <!-- Navigation Buttons -->
                 <div class="row marginTop50">
                     <div class="col-md-12">
-                        <dv-navigation dv-cancel="vm.cancel(form)" dv-next="false" dv-sub-step="2">
+                        <dv-navigation dv-cancel="vm.cancel()" dv-next="false" dv-sub-step="2">
                         </dv-navigation>
                     </div>
                 </div>

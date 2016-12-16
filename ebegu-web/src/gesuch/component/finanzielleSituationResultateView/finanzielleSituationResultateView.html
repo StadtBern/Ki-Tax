@@ -46,7 +46,7 @@
                                        aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM|translate}}"
                                        ng-model="vm.getFinanzielleSituationGS1().finanzielleSituationJA.bruttovermoegen"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="form.bruttovermoegen.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.bruttovermoegen.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getFinanzielleSituationGS1().finanzielleSituationGS.bruttovermoegen"
                                            ja="vm.getFinanzielleSituationGS1().finanzielleSituationJA.bruttovermoegen"></dv-bisher>
                             </dv-input-container>
@@ -62,7 +62,7 @@
                                        aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_2|translate}}"
                                        ng-model="vm.getFinanzielleSituationGS2().finanzielleSituationJA.bruttovermoegen"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="form.bruttovermoegen.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.bruttovermoegen.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getFinanzielleSituationGS2().finanzielleSituationGS.bruttovermoegen"
                                            ja="vm.getFinanzielleSituationGS2().finanzielleSituationJA.bruttovermoegen"></dv-bisher>
                             </dv-input-container>
@@ -83,7 +83,7 @@
                                        aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM|translate}}"
                                        ng-model="vm.getFinanzielleSituationGS1().finanzielleSituationJA.schulden"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="form.schulden.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.schulden.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getFinanzielleSituationGS1().finanzielleSituationGS.schulden"
                                            ja="vm.getFinanzielleSituationGS1().finanzielleSituationJA.schulden"></dv-bisher>
                             </dv-input-container>
@@ -99,7 +99,7 @@
                                        aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
                                        ng-model="vm.getFinanzielleSituationGS2().finanzielleSituationJA.schulden"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="form.schulden.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.schulden.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getFinanzielleSituationGS2().finanzielleSituationGS.schulden"
                                            ja="vm.getFinanzielleSituationGS2().finanzielleSituationJA.schulden"></dv-bisher>
                             </dv-input-container>

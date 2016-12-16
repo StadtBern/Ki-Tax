@@ -16,6 +16,7 @@ import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ITranslateService = angular.translate.ITranslateService;
 import DateUtil from '../../../utils/DateUtil';
+import IScope = angular.IScope;
 
 
 let template = require('./kindView.html');
@@ -41,7 +42,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         'ErrorService', 'WizardStepManager', '$q', '$translate'];
     /* @ngInject */
     constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
@@ -79,9 +80,9 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         return undefined;
     }
 
-    cancel(form: IFormController) {
+    cancel() {
         this.reset();
-        form.$setPristine();
+        this.form.$setPristine();
     }
 
     reset() {

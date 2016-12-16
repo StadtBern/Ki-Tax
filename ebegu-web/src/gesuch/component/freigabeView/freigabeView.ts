@@ -14,6 +14,7 @@ import DateUtil from '../../../utils/DateUtil';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
+import IScope = angular.IScope;
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -34,13 +35,13 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     isFreigebenClicked: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
-        'DvDialog', 'DownloadRS'];
+        'DvDialog', 'DownloadRS', '$scope'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS) {
+                private downloadRS: DownloadRS, $scope: IScope) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initViewModel();
     }
 
@@ -49,9 +50,9 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
     }
 
-    public gesuchFreigeben(form: IFormController): IPromise<void> {
+    public gesuchFreigeben(): IPromise<void> {
         this.isFreigebenClicked = true;
-        if (form.$valid && this.bestaetigungFreigabequittung === true) {
+        if (this.form.$valid && this.bestaetigungFreigabequittung === true) {
             return this.DvDialog.showDialog(dialogTemplate, RemoveDialogController, {
                 title: 'CONFIRM_GESUCH_FREIGEBEN',
                 deleteText: 'CONFIRM_GESUCH_FREIGEBEN_DESCRIPTION'

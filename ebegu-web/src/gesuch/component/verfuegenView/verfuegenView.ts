@@ -1,4 +1,4 @@
-import {IFormController, IComponentOptions, IPromise, ILogService} from 'angular';
+import {IComponentOptions, IPromise, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -16,6 +16,7 @@ import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSBetreuung from '../../../models/TSBetreuung';
 import IRootScopeService = angular.IRootScopeService;
+import IScope = angular.IScope;
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -40,14 +41,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil, $scope: any, wizardStepManager: WizardStepManager,
+                private ebeguUtil: EbeguUtil, $scope: IScope, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.setBemerkungen();
     }
 
-    cancel(form: IFormController): void {
-        form.$setPristine();
+    cancel(): void {
+        this.form.$setPristine();
     }
 
 
@@ -64,8 +65,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         }
     }
 
-    schliessenOhneVerfuegen(form: IFormController) {
-        if (form.$valid) {
+    schliessenOhneVerfuegen() {
+        if (this.form.$valid) {
             this.verfuegungSchliessenOhenVerfuegen().then(() => {
                 this.$state.go('gesuch.verfuegen', {
                     gesuchId: this.getGesuchId()
@@ -74,8 +75,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         }
     }
 
-    nichtEintreten(form: IFormController) {
-        if (form.$valid) {
+    nichtEintreten() {
+        if (this.form.$valid) {
             this.verfuegungNichtEintreten().then(() => {
                 this.$state.go('gesuch.verfuegen', {
                     gesuchId: this.getGesuchId()

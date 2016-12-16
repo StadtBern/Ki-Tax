@@ -45,7 +45,7 @@ describe('freigabeView', function () {
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            wizardStepManager, dialog, downloadRS);
+            wizardStepManager, dialog, downloadRS, $scope);
     }));
     describe('canBeFreigegeben', function () {
         it('should return false when not all steps are true', function () {
@@ -69,19 +69,19 @@ describe('freigabeView', function () {
     });
     describe('gesuchFreigeben', function () {
         it('should return undefined when the form is not valid', function () {
-            let form: any = {};
-            form.$valid = false;
+            controller.form = new IFormController();
+            controller.form.$valid = false;
 
-            let returned: IPromise<void> = controller.gesuchFreigeben(form);
+            let returned: IPromise<void> = controller.gesuchFreigeben();
 
             expect(returned).toBeUndefined();
         });
         it('should return undefined when the form is not valid', function () {
-            let form: any = {};
-            form.$valid = true;
+            controller.form = new IFormController();
+            controller.form.$valid = true;
             controller.bestaetigungFreigabequittung = false;
 
-            let returned: IPromise<void> = controller.gesuchFreigeben(form);
+            let returned: IPromise<void> = controller.gesuchFreigeben();
 
             expect(returned).toBeUndefined();
         });
@@ -89,8 +89,9 @@ describe('freigabeView', function () {
             TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
             controller.bestaetigungFreigabequittung = true;
 
-            let form: any = {};
-            form.$valid = true;
+            controller.form = new IFormController();
+            controller.form.$valid = true;
+
             spyOn(dialog, 'showDialog').and.returnValue($q.when({}));
             let downloadFile: TSDownloadFile = new TSDownloadFile();
             downloadFile.accessToken = 'token';
@@ -102,7 +103,7 @@ describe('freigabeView', function () {
             gesuch.id = '123';
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
-            let returned: IPromise<void> = controller.gesuchFreigeben(form);
+            let returned: IPromise<void> = controller.gesuchFreigeben();
             $scope.$apply();
 
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);

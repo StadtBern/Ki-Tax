@@ -112,7 +112,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         }
     }
 
-    private save(newStatus: TSBetreuungsstatus, nextStep: string, form: IFormController): void {
+    private save(newStatus: TSBetreuungsstatus, nextStep: string): void {
         this.isSavingData = true;
         this.gesuchModelManager.setBetreuungToWorkWith(this.model); //setze model
         let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
@@ -125,7 +125,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = newStatus;
         this.gesuchModelManager.updateBetreuung(false).then((betreuungResponse: any) => {
             this.isSavingData = false;
-            form.$setPristine();
+            this.form.$setPristine();
             this.$state.go(nextStep);
         }).catch((exception) => {
             //todo team Fehler anzeigen
@@ -144,9 +144,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         this.betreuungsangebotValues = this.ebeguUtil.translateStringList(getTSBetreuungsangebotTypValues());
     }
 
-    public cancel(formCtrl: IFormController) {
+    public cancel() {
         this.reset();
-        formCtrl.$setPristine();
+        this.form.$setPristine();
         this.$state.go('gesuch.betreuungen');
     }
 
@@ -221,19 +221,19 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         }
     }
 
-    public platzAnfordern(form: IFormController): void {
-        if (form.$valid && this.getBetreuungModel().vertrag === true) {
+    public platzAnfordern(): void {
+        if (this.form.$valid && this.getBetreuungModel().vertrag === true) {
             this.flagErrorVertrag = false;
-            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen', form);
+            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
         } else if (this.getBetreuungModel().vertrag !== true) {
             this.flagErrorVertrag = true;
         }
     }
 
-    public platzBestaetigen(form: IFormController): void {
-        if (form.$valid) {
+    public platzBestaetigen(): void {
+        if (this.form.$valid) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
-            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution', form);
+            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
         }
     }
 
@@ -243,18 +243,18 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * In diesem Fall machen wir keine Validierung weil die Daten die eingegeben werden muessen, direkt auf dem Server gecheckt werden
      * @param form
      */
-    public platzAbweisen(form: IFormController): void {
+    public platzAbweisen(): void {
         //copy values modified by the Institution in initialBetreuung
         this.initialBetreuung.erweiterteBeduerfnisse = this.getBetreuungModel().erweiterteBeduerfnisse;
         this.initialBetreuung.grundAblehnung = this.getBetreuungModel().grundAblehnung;
         //restore initialBetreuung
         this.model = angular.copy(this.initialBetreuung);
         this.model.datumAblehnung = DateUtil.today();
-        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', form);
+        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution');
     }
 
-    public platzNichtEingetreten(form: IFormController): void {
-        if (form.$valid) {
+    public platzNichtEingetreten(): void {
+        if (this.form.$valid) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
 
             for (let i: number = 0; i < this.getBetreuungspensen().length; i++) {
@@ -263,13 +263,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             }
             this.getBetreuungModel().erweiterteBeduerfnisse = false;
 
-            this.save(TSBetreuungsstatus.NICHT_EINGETRETEN, 'pendenzenInstitution', form);
+            this.save(TSBetreuungsstatus.NICHT_EINGETRETEN, 'pendenzenInstitution');
         }
     }
 
-    public saveSchulamt(form: IFormController): void {
-        if (form.$valid) {
-            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', form);
+    public saveSchulamt(): void {
+        if (this.form.$valid) {
+            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen');
         }
     }
 

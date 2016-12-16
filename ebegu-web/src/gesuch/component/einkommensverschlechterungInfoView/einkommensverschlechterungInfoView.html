@@ -16,7 +16,7 @@
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
                                 </dv-radio-container>
-                                <dv-error-messages for="form.einkommensverschlechterung.$error"
+                                <dv-error-messages for="vm.form.einkommensverschlechterung.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -35,9 +35,9 @@
                                          translate-values="{basisjahr: vm.getBasisJahrPlusAsString(0)}"></span>
                                 </md-checkbox>
                                 <div class="dv-error-messages">
-                                    <div ng-messages="form.ekvFuerBasisJahrPlus1.$error" role="alert" class="error">
+                                    <div ng-messages="vm.form.ekvFuerBasisJahrPlus1.$error" role="alert" class="error">
                                         <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                             for="form.ekvFuerBasisJahrPlus1.$error"></div>
+                                             for="vm.form.ekvFuerBasisJahrPlus1.$error"></div>
                                     </div>
                                 </div>
                             </div>
@@ -55,7 +55,7 @@
                                     ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
                                     ng-required="true">
                             </select>
-                            <dv-error-messages for="form.stichtagBasisJahrPlus1.$error"
+                            <dv-error-messages for="vm.form.stichtagBasisJahrPlus1.$error"
                                                class="error"></dv-error-messages>
                             <dv-bisher gs="vm.selectedStichtagBjP1_GS"
                                        ja="vm.selectedStichtagBjP1"></dv-bisher>
@@ -73,7 +73,7 @@
                                 <input id="grundFuerBasisJahrPlus1" type="text" name="grundFuerBasisJahrPlus1"
                                        ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1"
                                        class="form-control" required>
-                                <dv-error-messages for="form.grundFuerBasisJahrPlus1.$error"
+                                <dv-error-messages for="vm.form.grundFuerBasisJahrPlus1.$error"
                                                    class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoGS.grundFuerBasisJahrPlus1"
                                            ja="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoJA.grundFuerBasisJahrPlus1"></dv-bisher>
@@ -97,9 +97,9 @@
                                       translate-values="{basisjahr: vm.getBasisJahrPlusAsString(1)}"></span>
                                 </md-checkbox>
                                 <div class="dv-error-messages">
-                                    <div ng-messages="form.ekvFuerBasisJahrPlus2.$error" role="alert" class="error">
+                                    <div ng-messages="vm.form.ekvFuerBasisJahrPlus2.$error" role="alert" class="error">
                                         <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                             for="form.ekvFuerBasisJahrPlus2.$error"></div>
+                                             for="vm.form.ekvFuerBasisJahrPlus2.$error"></div>
                                     </div>
                                 </div>
                             </div>
@@ -117,7 +117,7 @@
                                     ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
                                     ng-required="true">
                             </select>
-                            <dv-error-messages for="form.stichtagBasisJahrPlus2.$error"
+                            <dv-error-messages for="vm.form.stichtagBasisJahrPlus2.$error"
                                                class="error"></dv-error-messages>
                             <dv-bisher gs="vm.selectedStichtagBjP2_GS"
                                        ja="vm.selectedStichtagBjP2"></dv-bisher>
@@ -135,7 +135,7 @@
                                 <input id="grundFuerBasisJahrPlus2" type="text" name="grundFuerBasisJahrPlus2"
                                        ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2"
                                        class="form-control" required>
-                                <dv-error-messages for="form.grundFuerBasisJahrPlus2.$error"
+                                <dv-error-messages for="vm.form.grundFuerBasisJahrPlus2.$error"
                                                    class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoGS.grundFuerBasisJahrPlus2"
                                            ja="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoJA.grundFuerBasisJahrPlus2"></dv-bisher>
