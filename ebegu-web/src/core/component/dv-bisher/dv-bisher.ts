@@ -44,6 +44,7 @@ export class DvBisher {
     ja: any;
     showIfBisherNone: boolean;  // sollen die korrekturen des jugendamts angezeigt werden wenn im GS container kein wert ist
     specificBisherText: string;
+    bisherText: Array<string>;
     blockExisted: boolean;
 
 
@@ -52,26 +53,29 @@ export class DvBisher {
         if (this.showIfBisherNone === undefined) {//wenn nicht von aussen gesetzt auf true
             this.showIfBisherNone = true;
         }
+        this.bisherText = this.specificBisherText ?  this.specificBisherText.split('\n') : undefined
+
     }
 
-    public getBisher() : string {
+    public getBisher() : Array<string> {
         if (this.specificBisherText) {
             // War es eine Loeschung, oder ein Hinzufuegen?
             if (this.hasBisher()) {
-                return this.specificBisherText; // neue eingabe als ein einzelner block
+
+                return this.bisherText; // neue eingabe als ein einzelner block
             } else {
-                return this.$translate.instant('LABEL_KEINE_ANGABE');  //vorher war keine angabe da
+                return [this.$translate.instant('LABEL_KEINE_ANGABE')];  //vorher war keine angabe da
             }
         } else if (this.gs instanceof moment) {
-            return  DateUtil.momentToLocalDateFormat(this.gs, 'DD.MM.YYYY');
+            return  [DateUtil.momentToLocalDateFormat(this.gs, 'DD.MM.YYYY')];
         } else if (this.gs === true) {
-            return this.$translate.instant('LABEL_JA');
+            return [this.$translate.instant('LABEL_JA')];
         } else if (this.gs === false) {
-            return this.$translate.instant('LABEL_NEIN');
+            return [this.$translate.instant('LABEL_NEIN')];
         } else if (!this.hasBisher()) {
-            return this.$translate.instant('LABEL_KEINE_ANGABE');
+            return [this.$translate.instant('LABEL_KEINE_ANGABE')];
         } else {
-            return this.$translate.instant(this.gs);
+            return [this.$translate.instant(this.gs)];
         }
     }
 

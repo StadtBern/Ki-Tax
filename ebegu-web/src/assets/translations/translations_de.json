@@ -4,7 +4,7 @@
     "UPDATE": "Aktualisieren",
     "APP_TITLE": "ebegu",
     "ADMIN": "Administration",
-    "BISHER_GS": "Eingabe Gesuchsteller: ",
+    "BISHER_GS": "Ursprünglich:",
     "BISHER_JA": "Eingabe Jugendamt: ",
     "CANCEL": "Abbrechen",
     "ADD_TAETIGKEIT": "Tätigkeit hinzufügen",
@@ -804,6 +804,6 @@
     "FREIGEBEN": "Freigeben",
     "ERROR_BESTAETIGUNG_REQUIRED": "Bestätigen Sie bitte die Vollständigkeit der Angaben um den Antrag freizugeben",
     "FREIGABEQUITTUNG_NOT_ALLOWED_TEXT": "Um den Antrag freigeben zu können müssen alle Schritte grün markiert sein. Geben Sie dafür bitte alle benötigten Daten ein",
-    "GS_BEANTRAGEN": "Antrag stellen",
-    "JA_KORREKTUR_FACHSTELLE": "Fachstelle {{name}} mit Pensum {{pensum}}, {{von}} - {{bis}}"
+    "JA_KORREKTUR_FACHSTELLE": "Fachstelle {{name}} mit Pensum {{pensum}}, {{von}} - {{bis}}",
+    "JA_KORREKTUR_SELBSTAENDIG": "Selbständigkeit Geschäftsgewinn {{basisjahr}}: {{gewinn1}},\n Geschäftsgewinn {{basisjahr - 1}}: {{gewinn2 }},\n Geschäftsgewinn {{basisjahr - 2}}: {{gewinn3}} "
 }
