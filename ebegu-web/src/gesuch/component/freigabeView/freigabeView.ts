@@ -15,6 +15,7 @@ import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
+import IScope = angular.IScope;
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -36,13 +37,13 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     private showGesuchFreigebenSimulationButton: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', 'ApplicationPropertyRS'];
+        'DvDialog', 'DownloadRS', '$scope','ApplicationPropertyRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS,  private applicationPropertyRS: ApplicationPropertyRS) {
+                private downloadRS: DownloadRS, $scope: IScope,  private applicationPropertyRS: ApplicationPropertyRS) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initViewModel();
     }
 
@@ -52,9 +53,9 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         this.initDevModeParameter();
     }
 
-    public gesuchEinreichen(form: IFormController): IPromise<void> {
+    public gesuchEinreichen(): IPromise<void> {
         this.isFreigebenClicked = true;
-        if (form.$valid && this.bestaetigungFreigabequittung === true) {
+        if (this.form.$valid && this.bestaetigungFreigabequittung === true) {
             return this.DvDialog.showDialog(dialogTemplate, RemoveDialogController, {
                 title: 'CONFIRM_GESUCH_FREIGEBEN',
                 deleteText: 'CONFIRM_GESUCH_FREIGEBEN_DESCRIPTION'

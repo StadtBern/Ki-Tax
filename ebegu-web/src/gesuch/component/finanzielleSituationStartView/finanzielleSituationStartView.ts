@@ -12,6 +12,7 @@ import TSGesuch from '../../../models/TSGesuch';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
 
@@ -29,12 +30,12 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     private initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q'];
+        'WizardStepManager', '$q', '$scope'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
 
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
@@ -56,11 +57,11 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         return this.getFinanzielleSituationGS1().steuerveranlagungErhalten === false;
     }
 
-    private save(form: angular.IFormController): IPromise<TSGesuch> {
-        if (form.$valid) {
+    private save(): IPromise<TSGesuch> {
+        if (this.form.$valid) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
             this.initialModel = angular.copy(this.model);
-            if (!form.$dirty) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch());

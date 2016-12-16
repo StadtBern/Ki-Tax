@@ -9,7 +9,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Willkommnstext bei Erstgesuch-->
@@ -41,7 +41,7 @@
                                                ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true"
                                                class="input-element">
                                 </dv-datepicker>
-                                <dv-error-messages for="form.eingangsdatum.$error"
+                                <dv-error-messages for="vm.form.eingangsdatum.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -67,7 +67,7 @@
                                                 <span>{{current.gesuchsperiodeString}}</span>
                                             </md-radio-button>
                                         </md-radio-group>
-                                        <dv-error-messages for="form.gesuchsperioden.$error"></dv-error-messages>
+                                        <dv-error-messages for="vm.form.gesuchsperioden.$error"></dv-error-messages>
                                     </div>
                                 </div>
                             </div>
@@ -78,7 +78,7 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-next="true" dv-save="vm.save(form)">
+                <dv-navigation dv-next="true" dv-save="vm.save()">
                 </dv-navigation>
 
             </form>
