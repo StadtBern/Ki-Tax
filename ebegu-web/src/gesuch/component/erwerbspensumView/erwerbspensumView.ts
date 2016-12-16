@@ -1,4 +1,4 @@
-import {IComponentOptions, IFormController, IQService, IPromise, IScope} from 'angular';
+import {IComponentOptions, IQService, IPromise, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IErwerbspensumStateParams} from '../../gesuch.route';

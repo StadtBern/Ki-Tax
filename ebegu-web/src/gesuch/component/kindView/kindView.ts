@@ -1,4 +1,4 @@
-import {IComponentOptions, IFormController} from 'angular';
+import {IComponentOptions} from 'angular';
 import {IKindStateParams} from '../../gesuch.route';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKind from '../../../models/TSKind';

@@ -1,4 +1,4 @@
-import {IComponentOptions, IFormController} from 'angular';
+import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';

@@ -11,10 +11,10 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import IScope = angular.IScope;
-import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IHttpBackendService = angular.IHttpBackendService;
+import IFormController = angular.IFormController;
 
 describe('freigabeView', function () {
 
@@ -69,7 +69,7 @@ describe('freigabeView', function () {
     });
     describe('gesuchFreigeben', function () {
         it('should return undefined when the form is not valid', function () {
-            controller.form = new IFormController();
+            controller.form = <IFormController>{};
             controller.form.$valid = false;
 
             let returned: IPromise<void> = controller.gesuchFreigeben();
@@ -77,7 +77,7 @@ describe('freigabeView', function () {
             expect(returned).toBeUndefined();
         });
         it('should return undefined when the form is not valid', function () {
-            controller.form = new IFormController();
+            controller.form = <IFormController>{};
             controller.form.$valid = true;
             controller.bestaetigungFreigabequittung = false;
 
@@ -89,7 +89,7 @@ describe('freigabeView', function () {
             TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
             controller.bestaetigungFreigabequittung = true;
 
-            controller.form = new IFormController();
+            controller.form = <IFormController>{};
             controller.form.$valid = true;
 
             spyOn(dialog, 'showDialog').and.returnValue($q.when({}));
