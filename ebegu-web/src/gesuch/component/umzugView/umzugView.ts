@@ -134,6 +134,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
      */
     private getAdressenListFromGS2(): void {
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2) {
+            this.gesuchModelManager.getGesuch().gesuchsteller2.getUmzugAdressen();
             this.gesuchModelManager.getGesuch().gesuchsteller2.getUmzugAdressen().forEach(umzugAdresse => {
                 umzugAdresse.showDatumVon = true; // wird benoetigt weil es vom Server nicht kommt
                 let foundPosition: number = -1;
@@ -144,6 +145,9 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
                 }
                 if (foundPosition >= 0) {
                     this.model[foundPosition].betroffene = TSBetroffene.BEIDE_GESUCHSTELLER;
+
+                    // speichern der adressContainer vom Gs2 damit wir sie später wieder finden!!!!
+                    this.model[foundPosition].adresseGS2 = umzugAdresse;
                 } else {
                     this.model.push(new TSUmzugAdresse(TSBetroffene.GESUCHSTELLER_2, umzugAdresse));
                 }
@@ -204,7 +208,13 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
 
             } else if (TSBetroffene.BEIDE_GESUCHSTELLER === umzugAdresse.betroffene) {
                 this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller1, umzugAdresse.adresse);
-                this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller2, umzugAdresse.adresse);
+
+                if (!umzugAdresse.adresseGS2) {
+
+                    umzugAdresse.adresseGS2 = new TSAdresseContainer();
+                }
+                umzugAdresse.adresseGS2.adresseJA.copy(umzugAdresse.adresse.adresseJA);
+                this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller2, umzugAdresse.adresseGS2);
             }
         });
     }
