@@ -2,7 +2,7 @@
     <div class="dv-bisher row">
         <span class="bisher" ng-if="vm.showBisher() && !vm.equals(vm.gs, vm.ja)">
             <span data-translate="BISHER_GS"></span>
-            {{vm.getBisher()}}
+            <span ng-repeat="line in vm.getBisher()" class="dv-bisher-content-row">{{line}}</span>
         </span>
     </div>
 </div>

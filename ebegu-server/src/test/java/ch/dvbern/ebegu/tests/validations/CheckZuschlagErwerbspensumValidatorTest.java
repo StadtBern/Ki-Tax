@@ -18,7 +18,7 @@ import static ch.dvbern.ebegu.tests.util.ValidationTestHelper.assertViolated;
 /**
  * Testklasse für Erwerbspensum Validator
  */
-public class CheckZuschlagPensumValidatorTest {
+public class CheckZuschlagErwerbspensumValidatorTest {
 
 	private ValidatorFactory customFactory;
 

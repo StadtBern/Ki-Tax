@@ -11,6 +11,7 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
+import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -554,6 +555,31 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		wizardStepService.saveWizardStep(freigabeStep);
 
 		return updateGesuch(gesuch, true);
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA,	UserRoleName.GESUCHSTELLER})
+	public Gesuch antragFreigeben(@Nonnull String gesuchId) {
+		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
+		if (gesuchOptional.isPresent()) {
+			Gesuch gesuch = gesuchOptional.get();
+			Validate.isTrue(gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG)
+				|| gesuch.getStatus().equals(AntragStatus.IN_BEARBEITUNG_GS),
+				"Gesuch war im falschen Status: " + gesuch.getStatus()+ " wir erwarten aber nur Freigabequittung oder In Bearbeitung GS");
+			this.authorizer.checkWriteAuthorization(gesuch);
+			// Die Daten des GS in die entsprechenden Containers kopieren
+			FreigabeCopyUtil.copyForFreigabe(gesuch);
+			// Den Gesuchsstatus setzen
+			gesuch.setStatus(AntragStatus.FREIGEGEBEN);
+			// Falls es ein OnlineGesuch war: Das Eingangsdatum setzen
+			if (Eingangsart.ONLINE.equals(gesuch.getEingangsart())) {
+				gesuch.setEingangsdatum(LocalDate.now());
+			}
+			return updateGesuch(gesuch, true);
+		} else {
+			throw new EbeguEntityNotFoundException("antragFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
+		}
 	}
 
 	@Override

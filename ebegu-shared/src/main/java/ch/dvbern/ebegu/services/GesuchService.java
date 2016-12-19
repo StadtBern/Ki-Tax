@@ -139,4 +139,11 @@ public interface GesuchService {
 	 * @param statusToChangeTo
 	 */
 	Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch, AntragStatus statusToChangeTo);
+
+	/**
+	 * Gibt das Gesuch frei für das Jugendamt: Anpassung des Status inkl Kopieren der Daten des GS aus den
+	 * JA-Containern in die GS-Containern
+	 */
+	@Nonnull
+	Gesuch antragFreigeben(@Nonnull String gesuchId);
 }
