@@ -6,6 +6,7 @@
 <gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller" gesuchid="{{vm.getGesuchId()}}"
                               dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()">
 </gesuch-toolbar-gesuchsteller>
+<!--Gesuchnavigation (Uebersicht)  fuer den Gesuchsteller (mobile)-->
 <div class="mobile-sidenav-toggle mobile-open" flex="none" layout="row" layout-align="center center" dv-show-element
      dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()" hide-gt-xs>
     <div class="mobile-active" flex layout="row" layout-align="start center" ng-click="vm.toggleSidenav('sidenav')">
@@ -21,6 +22,7 @@
         <span class="fa fa-angle-down" aria-hidden="true"></span>
     </div>
 </div>
+<!--Gesuchnavigation (permanent offen wenn groesser als 600px)-->
 <div layout="row" flex="auto" class="overflow-auto">
     <md-sidenav
         class="md-sidenav-left"

@@ -19,8 +19,7 @@
                         <th st-sort="kindJA.vorname" class="sortable" data-translate="VORNAME"></th>
                         <th st-sort="kindJA.nachname" class="sortable" data-translate="NAME"></th>
                         <th st-sort="kindJA.geburtsdatum" class="sortable" data-translate="GEBURTSDATUM"></th>
-                        <th ng-if="vm.canRemoveKind(row)"></th>
-                        <th ng-if="!vm.canRemoveKind(row) && !vm.isGesuchReadonly()"></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -36,7 +35,7 @@
                                 </i>
                             </dv-loading-button>
                         </td>
-                        <td ng-if="!vm.canRemoveKind(row) && !vm.isGesuchReadonly()"></td>
+                        <td ng-if="!vm.canRemoveKind(row)"></td>
                     </tr>
                     <tr ng-if="vm.getKinderList().length === 0">
                         <td colspan="4" class="empty-table" data-translate="KINDER_NOCH_KEINE"></td>

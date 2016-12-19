@@ -1,3 +1,4 @@
+<!--gesuchtoolbar fuer normale Screens-->
 <div class="gesuch-toolbar-gesuchsteller" flex="100" hide-xs>
     <md-toolbar flex="100">
         <md-menu-bar flex="100" layout="row" layout-align="start center">
@@ -62,28 +63,29 @@
                     <span>Betreuungsgutscheine</span>
                     <span>Effingerstrasse 21</span>
                     <span>Postfach 3001 Bern</span>
-                    <span>Telefon 031 321 51 15</span>
-                    <span>betreuungsgutscheine@bern.ch</span>
+                    <a href="tel:0313215115"><span>031 321 51 15</span></a>
+                    <a href="mailto:info@jugendamt.ch"><span>info@jugendamt.ch</span></a>
                 </md-menu-content>
             </md-menu>
         </md-menu-bar>
     </md-toolbar>
 </div>
+<!--Definition der Toolbar  fuer kleine Screens als Sidebar-->
 <md-sidenav md-component-id="gesuch-toolbar-mobile" class="md-sidenav-right gesuch-toolbar-mobile" flex="100"
             layout="column" layout-align="start center" hide-gt-xs>
-    <button class="gesuch-toolbar-mobile-close" ng-click="vmgs.toggleSidenav('gesuch-toolbar-mobile')">
+    <button class="gesuch-toolbar-mobile-close" ng-click="vmgs.toggleSidenav('gesuch-toolbar-mobile')" aria-label="Schliessen">
+        <!--close knopf-->
         <span>&#10799;</span>
     </button>
-    <!-- <span ng-bind="vmgs.getGesuchName()"></span>-->
     <div ng-if="vmgs.showGesuchPeriodeNavigationMenu()" class="gesuchsperioden-container"
          ng-repeat="(gesuchsperiodeString,antragTypDaten) in vmgs.gesuchNavigationList" layout="column"
          layout-align="start center">
 
         <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setGesuchsperiode(gesuchsperiodeString)"
                 aria-label="{{gesuchsperiodeString}}" class="gesuchsperiode-button">
-                                <span>
-                                    <a href="javascript:void(0)">{{gesuchsperiodeString}}</a>
-                                </span>
+                <span>
+                    <a href="javascript:void(0)">{{gesuchsperiodeString}}</a>
+                </span>
         </button>
 
         <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setAntragTypDatum(antragTypDatum)"
@@ -105,7 +107,6 @@
     <span flex=""></span>
 
     <!--Kontakt-->
-
     <div ng-if="vmgs.showKontaktMenu()" class="mobile-kontakt">
         <span>Jugendamt</span>
         <span>Effingerstrasse 21</span>

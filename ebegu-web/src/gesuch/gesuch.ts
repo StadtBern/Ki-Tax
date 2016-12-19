@@ -11,8 +11,8 @@ import TSGesuch from '../models/TSGesuch';
 import TSUser from '../models/TSUser';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import {TSRole} from '../models/enums/TSRole';
-import ITranslateService = angular.translate.ITranslateService;
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
+import ITranslateService = angular.translate.ITranslateService;
 
 export class GesuchRouteController {
 
@@ -174,15 +174,7 @@ export class GesuchRouteController {
     }
 
     public getGesuchName(): string {
-        if (this.getGesuch()) {
-            var text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
-            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.nachname) {
-                text = text + ' ' + this.getGesuch().gesuchsteller1.nachname;
-            }
-            return text;
-        } else {
-            return '';
-        }
+        return this.gesuchModelManager.getGesuchName();
     }
 
     public getActiveElement(): TSWizardStepName {
