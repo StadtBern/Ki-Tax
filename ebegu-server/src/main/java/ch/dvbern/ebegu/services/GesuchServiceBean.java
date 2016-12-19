@@ -62,6 +62,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 	@Inject
+	private MahnungService mahnungService;
+	@Inject
+	private GeneratedDokumentService generatedDokumentService;
+	@Inject
+	private DokumentGrundService dokumentGrundService;
+	@Inject
 	private Authorizer authorizer;
 	@Inject
 	private PrincipalBean principalBean;
@@ -131,7 +137,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Optional<Gesuch> gesuchOptional = findGesuch(gesuch.getId());
 		authorizer.checkWriteAuthorization(gesuch);
 		Gesuch gesToRemove = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuch));
+
+		//Remove all depending objects
 		wizardStepService.removeSteps(gesToRemove);  //wizard steps removen
+		mahnungService.removeAllMahnungenFromGesuch(gesToRemove);
+		generatedDokumentService.removeAllGeneratedDokumenteFromGesuch(gesToRemove);
+		dokumentGrundService.removeAllDokumentGrundeFromGesuch(gesToRemove);
+		antragStatusHistoryService.removeAllAntragStatusHistoryFromGesuch(gesToRemove);
+
+		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(gesToRemove);
 	}
 

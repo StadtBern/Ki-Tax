@@ -3,10 +3,7 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.WizardStepService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.ebegu.types.DateRange;
@@ -58,6 +55,12 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	private BenutzerService benutzerService;
 	@Inject
 	private WizardStepService wizardStepService;
+	@Inject
+	private AntragStatusHistoryService antragStatusHistoryService;
+	@Inject
+	private DokumentGrundService dokumentGrundService;
+	@Inject
+	private GeneratedDokumentService generatedDokumentService;
 
 	@Inject
 	private InstitutionService institutionService;
@@ -93,12 +96,38 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	public void removeGesuchTest() {
 		Assert.assertNotNull(gesuchService);
 		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
-		Assert.assertEquals(1, readGesucheAsAdmin().size());
+		final GeneratedDokument generatedDokument = TestDataUtil.createGeneratedDokument(gesuch);
+		persistence.persist(generatedDokument);
+		final DokumentGrund dokumentGrund = TestDataUtil.createDefaultDokumentGrund();
+		dokumentGrund.setGesuch(gesuch);
+		persistence.persist(dokumentGrund);
 
-		final List<WizardStep> wizardStepsFromGesuch = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
-		wizardStepsFromGesuch.forEach(wizardStep -> persistence.remove(WizardStep.class, wizardStep.getId()));
+		//check all objects exist
+		Assert.assertEquals(1, readGesucheAsAdmin().size());
+		final List<WizardStep> wizardSteps = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
+		Assert.assertEquals(13, wizardSteps.size());
+		final Collection<AntragStatusHistory> allAntragStatHistory = antragStatusHistoryService.findAllAntragStatusHistoryByGesuch(gesuch);
+		Assert.assertEquals(1, allAntragStatHistory.size());
+		final Collection<DokumentGrund> allDokGrund = dokumentGrundService.findAllDokumentGrundByGesuch(gesuch);
+		Assert.assertEquals(1, allDokGrund.size());
+		final Collection<GeneratedDokument> allGenDok = generatedDokumentService.findGeneratedDokumentsFromGesuch(gesuch);
+		Assert.assertEquals(1, allGenDok.size());
+
+
 		gesuchService.removeGesuch(gesuch);
-		Assert.assertEquals(0, readGesucheAsAdmin().size());
+
+
+		//check all objects don't exist anymore
+		final Collection<Gesuch> gesuche = readGesucheAsAdmin();
+		Assert.assertEquals(0, gesuche.size());
+		final List<WizardStep> wizardStepsRemoved = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
+		Assert.assertEquals(0, wizardStepsRemoved.size());
+		final Collection<AntragStatusHistory> allAntStHistRemoved = antragStatusHistoryService.findAllAntragStatusHistoryByGesuch(gesuch);
+		Assert.assertEquals(0, allAntStHistRemoved.size());
+		final Collection<DokumentGrund> allDokGrundRemoved = dokumentGrundService.findAllDokumentGrundByGesuch(gesuch);
+		Assert.assertEquals(0, allDokGrundRemoved.size());
+		final Collection<GeneratedDokument> allGenDokRemoved = generatedDokumentService.findGeneratedDokumentsFromGesuch(gesuch);
+		Assert.assertEquals(0, allGenDokRemoved.size());
 	}
 
 	@Test

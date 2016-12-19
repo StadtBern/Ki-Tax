@@ -30,10 +30,10 @@ public interface DokumentGrundService {
 	Optional<DokumentGrund> findDokumentGrund(@Nonnull String key);
 
 	@Nonnull
-	Collection<DokumentGrund> getAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch);
+	Collection<DokumentGrund> findAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch);
 
 	@Nonnull
-	Collection<DokumentGrund> getAllDokumentGrundByGesuchAndDokumentType(@Nonnull Gesuch gesuch, @Nonnull DokumentGrundTyp dokumentGrundTyp);
+	Collection<DokumentGrund> findAllDokumentGrundByGesuchAndDokumentType(@Nonnull Gesuch gesuch, @Nonnull DokumentGrundTyp dokumentGrundTyp);
 
 	/**
 	 * Aktualisiert die DokumentGrund in der DB
@@ -44,4 +44,5 @@ public interface DokumentGrundService {
 	DokumentGrund updateDokumentGrund(@Nonnull DokumentGrund dokumentGrund);
 
 
+	void removeAllDokumentGrundeFromGesuch(Gesuch gesuch);
 }
