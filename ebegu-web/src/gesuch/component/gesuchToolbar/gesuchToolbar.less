@@ -84,17 +84,25 @@
 
 .kontakt {
 
-    span {
+    & > span, a span, a {
+        text-decoration: none;
+        letter-spacing: 0.15rem;
+        font-size: 1.6rem;
+        display: block;
+        height: auto;
+        line-height: normal;
         .h1();
         .normal();
         margin: 0 2rem 0.5rem;
         color: @contrast-lightest;
-
+    }
+    a span, a span:first-child, a span:last-child {
+        margin: 0;
     }
     span:first-child {
         margin-top: 2rem;
     }
-    span:last-child {
+    a:last-child {
         margin-bottom: 2rem;
     }
 
