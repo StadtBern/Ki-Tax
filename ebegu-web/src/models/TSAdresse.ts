@@ -50,6 +50,24 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
         );
     }
 
+
+    public copy(toCopy: TSAdresse): void {
+        this._strasse = toCopy.strasse;
+        this._hausnummer = toCopy.hausnummer;
+        this._zusatzzeile = toCopy.zusatzzeile;
+        this._plz = toCopy.plz;
+        this._ort = toCopy.ort;
+        this._land = toCopy.land;
+        this._gemeinde = toCopy.gemeinde;
+        this._adresseTyp = toCopy.adresseTyp;
+        this._nichtInGemeinde = toCopy.nichtInGemeinde;
+        if (!this.gueltigkeit) {
+            this.gueltigkeit = new TSDateRange();
+        }
+        this.gueltigkeit.gueltigAb = toCopy.gueltigkeit.gueltigAb;
+        this.gueltigkeit.gueltigBis = toCopy.gueltigkeit.gueltigBis;
+    }
+
     public get strasse(): string {
         return this._strasse;
     }

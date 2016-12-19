@@ -30,6 +30,7 @@ describe('gesuchToolbar', function () {
     let $scope: IScope;
     let $rootScope: IScope;
     let user: TSUser;
+    let $mdSidenav: ng.material.ISidenavService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -45,12 +46,13 @@ describe('gesuchToolbar', function () {
         ebeguUtil = $injector.get('EbeguUtil');
         $stateParams = $injector.get('$stateParams');
         $rootScope = $injector.get('$rootScope');
+        $mdSidenav = $injector.get('$mdSidenav');
         $scope = $rootScope.$new();
         user = new TSUser('Emiliano', 'Camacho');
         $stateParams.gesuchId = '123456789';
         gesuchToolbarController = new GesuchToolbarController(userRS, ebeguUtil,
-            CONSTANTS, gesuchRS,
-            $state, $stateParams, $scope, gesuchModelManager, authServiceRS);
+            CONSTANTS, gesuchRS, $state, $stateParams, $scope, gesuchModelManager,
+            authServiceRS, $mdSidenav);
     }));
 
     describe('getVerantwortlicherFullName', () => {
