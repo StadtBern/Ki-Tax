@@ -11,7 +11,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form role="form" name="form" class="" unsaved-warning-form="" novalidate>
+            <form role="form" name="vm.form" class="" unsaved-warning-form="" novalidate>
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Steuerveranlagung -->
@@ -28,7 +28,7 @@
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
                                 </dv-radio-container>
-                                <dv-error-messages for="form.steuerveranlagung.$error"
+                                <dv-error-messages for="vm.form.steuerveranlagung.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -47,7 +47,7 @@
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
                                 </dv-radio-container>
-                                <dv-error-messages for="form.steuererklaerung.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.steuererklaerung.$error" class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                                 <input id="nettolohn" type="text" name="nettolohn" ui-number-mask="0"
                                        ng-model="vm.getModel().finanzielleSituationJA.nettolohn"
                                        dv-max-length max="999999999999" class="form-control">
-                                <dv-error-messages for="form.nettolohn.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.nettolohn.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getModel().finanzielleSituationGS.nettolohn"
                                            ja="vm.getModel().finanzielleSituationJA.nettolohn"></dv-bisher>
                             </dv-input-container>
@@ -84,7 +84,7 @@
                                 <input id="familienzulage" type="text" name="familienzulage" ui-number-mask="0"
                                        ng-model="vm.getModel().finanzielleSituationJA.familienzulage"
                                        dv-max-length max="999999999999" class="form-control">
-                                <dv-error-messages for="form.familienzulage.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.familienzulage.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getModel().finanzielleSituationGS.familienzulage"
                                            ja="vm.getModel().finanzielleSituationJA.familienzulage"></dv-bisher>
                             </dv-input-container>
@@ -100,7 +100,7 @@
                                 <input id="ersatzeinkommen" type="text" name="ersatzeinkommen" ui-number-mask="0"
                                        ng-model="vm.getModel().finanzielleSituationJA.ersatzeinkommen"
                                        dv-max-length max="999999999999" class="form-control">
-                                <dv-error-messages for="form.ersatzeinkommen.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.ersatzeinkommen.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getModel().finanzielleSituationGS.ersatzeinkommen"
                                            ja="vm.getModel().finanzielleSituationJA.ersatzeinkommen"></dv-bisher>
                             </dv-input-container>
@@ -116,7 +116,7 @@
                                 <input id="erhalteneAlimente" type="text" name="erhalteneAlimente" ui-number-mask="0"
                                        ng-model="vm.getModel().finanzielleSituationJA.erhalteneAlimente"
                                        dv-max-length max="999999999999" class="form-control">
-                                <dv-error-messages for="form.erhalteneAlimente.$error"
+                                <dv-error-messages for="vm.form.erhalteneAlimente.$error"
                                                    class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getModel().finanzielleSituationGS.erhalteneAlimente"
                                            ja="vm.getModel().finanzielleSituationJA.erhalteneAlimente"></dv-bisher>
@@ -156,10 +156,10 @@
                                            dv-max-length max="999999999999" class="form-control" ui-negative-number
                                            ng-required="vm.isGeschaeftsgewinnRequired()">
                                     <div class="dv-error-messages">
-                                        <div ng-messages="form.geschaeftsgewinnBasisjahr.$error" role="alert"
+                                        <div ng-messages="vm.form.geschaeftsgewinnBasisjahr.$error" role="alert"
                                              class="error">
                                             <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                                 for="form.geschaeftsgewinnBasisjahr.$error"></div>
+                                                 for="vm.form.geschaeftsgewinnBasisjahr.$error"></div>
                                         </div>
                                     </div>
                                     <dv-bisher gs="vm.getModel().finanzielleSituationGS.geschaeftsgewinnBasisjahr"
@@ -185,10 +185,10 @@
                                            dv-max-length max="999999999999" class="form-control" ui-negative-number
                                            ng-required="vm.isGeschaeftsgewinnRequired()">
                                     <div class="dv-error-messages">
-                                        <div ng-messages="form.geschaeftsgewinnBasisjahrMinus1.$error" role="alert"
+                                        <div ng-messages="vm.form.geschaeftsgewinnBasisjahrMinus1.$error" role="alert"
                                              class="error">
                                             <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                                 for="form.geschaeftsgewinnBasisjahrMinus1.$error"></div>
+                                                 for="vm.form.geschaeftsgewinnBasisjahrMinus1.$error"></div>
                                         </div>
                                     </div>
                                     <dv-bisher gs="vm.getModel().finanzielleSituationGS.geschaeftsgewinnBasisjahrMinus1"
@@ -214,10 +214,10 @@
                                            dv-max-length max="999999999999" class="form-control" ui-negative-number
                                            ng-required="vm.isGeschaeftsgewinnRequired()">
                                     <div class="dv-error-messages">
-                                        <div ng-messages="form.geschaeftsgewinnBasisjahrMinus2.$error" role="alert"
+                                        <div ng-messages="vm.form.geschaeftsgewinnBasisjahrMinus2.$error" role="alert"
                                              class="error">
                                             <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                                 for="form.geschaeftsgewinnBasisjahrMinus2.$error"></div>
+                                                 for="vm.form.geschaeftsgewinnBasisjahrMinus2.$error"></div>
                                         </div>
                                     </div>
                                     <dv-bisher gs="vm.getModel().finanzielleSituationGS.geschaeftsgewinnBasisjahrMinus2"
@@ -266,7 +266,7 @@
                                 <input id="geleisteteAlimente" type="text" name="geleisteteAlimente" ui-number-mask="0"
                                        ng-model="vm.getModel().finanzielleSituationJA.geleisteteAlimente"
                                        dv-max-length max="999999999999" class="form-control">
-                                <dv-error-messages for="form.geleisteteAlimente.$error"
+                                <dv-error-messages for="vm.form.geleisteteAlimente.$error"
                                                    class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getModel().finanzielleSituationGS.geleisteteAlimente"
                                            ja="vm.getModel().finanzielleSituationJA.geleisteteAlimente"></dv-bisher>
@@ -277,7 +277,7 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save(form)" dv-sub-step="1">
+                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save()" dv-sub-step="1">
                 </dv-navigation>
             </form>
         </div>

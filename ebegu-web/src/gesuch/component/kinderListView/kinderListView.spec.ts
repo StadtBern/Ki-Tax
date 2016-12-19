@@ -20,9 +20,10 @@ describe('kinderListView', function () {
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         gesuchModelManager = $injector.get('GesuchModelManager');
         spyOn(gesuchModelManager, 'initKinder').and.returnValue({});
-        kinderListViewController = new KinderListViewController(null, gesuchModelManager, null, null, null, wizardStepManager);
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
+        kinderListViewController = new KinderListViewController(null, gesuchModelManager,
+            null, null, null, wizardStepManager, scope );
     }));
 
     beforeEach(function () {

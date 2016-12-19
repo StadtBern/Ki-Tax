@@ -23,7 +23,7 @@
     <div class="row">
         <div class="col-md-12">
 
-            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                           dv-enable-expression="!vm.isGesuchReadonly()">
@@ -41,7 +41,7 @@
                                         ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
                                         ng-required="true">
                                 </select>
-                                <dv-error-messages for="form.betroffene.$error"
+                                <dv-error-messages for="vm.form.betroffene.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -81,7 +81,7 @@
 
                 <dv-navigation dv-show-element
                                dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                               dv-previous="true" dv-next="true" dv-save="vm.save(form)">
+                               dv-previous="true" dv-next="true" dv-save="vm.save()">
                 </dv-navigation>
                 <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"
                                dv-previous="true" dv-next="true">

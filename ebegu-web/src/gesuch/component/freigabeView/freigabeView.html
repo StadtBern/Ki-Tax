@@ -86,9 +86,9 @@
                                 <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TEXT"></span>
                             </md-checkbox>
                             <div class="dv-error-messages">
-                                <div ng-messages="form.bestaetigungFreigabequittung.$error" role="alert" class="error">
+                                <div ng-messages="vm.form.bestaetigungFreigabequittung.$error" role="alert" class="error">
                                     <div ng-message="required" data-translate="ERROR_BESTAETIGUNG_REQUIRED"
-                                         for="form.bestaetigungFreigabequittung.$error"></div>
+                                         for="vm.form.bestaetigungFreigabequittung.$error"></div>
                                 </div>
                             </div>
                         </div>
@@ -115,7 +115,7 @@
 
 
                 <span class="col-md-4">
-                    <dv-loading-button type="submit" button-click="vm.gesuchEinreichen(form)"
+                    <dv-loading-button type="submit" button-click="vm.gesuchEinreichen()"
                                        button-class="dv-btn-sm"
                                        aria-label="{{ANTRAG_EINREICHEN | translate}}">
                         <span data-translate="ANTRAG_EINREICHEN"></span>
