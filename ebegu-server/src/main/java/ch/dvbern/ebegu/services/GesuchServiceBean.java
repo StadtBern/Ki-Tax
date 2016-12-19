@@ -41,6 +41,7 @@ import java.util.*;
 @Stateless
 @Local(GesuchService.class)
 @PermitAll
+@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals"})
 public class GesuchServiceBean extends AbstractBaseService implements GesuchService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
