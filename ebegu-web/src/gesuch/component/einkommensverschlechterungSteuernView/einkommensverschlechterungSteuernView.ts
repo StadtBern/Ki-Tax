@@ -125,23 +125,62 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
 
     private gemeinsameStekClicked_BjP1(): void {
         // Wenn neu NEIN -> Fragen loeschen
-        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
+
+        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false &&
+            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1  && !this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 .isNew()) {
+            this.initSteuerFragen();
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.NOK);
+        } else if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
             this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 = undefined;
             this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1 = undefined;
         } else {
-            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
-            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+            this.initViewModel();
         }
     }
 
     private gemeinsameStekClicked_BjP2(): void {
-        // Wenn neu NEIN -> Fragen loeschen
-        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false) {
+
+        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false &&
+            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2  && !this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 .isNew()) {
+            // Wenn neu NEIN und schon was eingegeben -> Fragen mal auf false setzen und Status auf nok damit man sicher noch weiter muss!
+            this.initSteuerFragen();
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.NOK);
+        } else if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false) {
+            // Wenn neu NEIN -> Fragen loeschen wenn noch nichts eingegeben worden ist
             this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 = undefined;
             this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2 = undefined;
         } else {
-            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
-            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+            this.initViewModel();
+        }
+    }
+
+    /**
+     * Es muss ein Wert geschrieben werden, um ekv persisierten zu können
+     */
+    private initSteuerFragen() {
+        if (this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1) {
+            if (!this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1.steuererklaerungAusgefuellt) {
+                this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1.steuererklaerungAusgefuellt = false;
+                this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1.steuerveranlagungErhalten = false;
+            }
+        }
+        if (this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1) {
+            if (!this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1.steuererklaerungAusgefuellt) {
+                this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1.steuererklaerungAusgefuellt = false;
+                this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1.steuerveranlagungErhalten = false;
+            }
+        }
+        if (this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2) {
+            if (!this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2.steuererklaerungAusgefuellt) {
+                this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2.steuererklaerungAusgefuellt = false;
+                this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2.steuerveranlagungErhalten = false;
+            }
+        }
+        if (this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2) {
+            if (!this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2.steuererklaerungAusgefuellt) {
+                this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2.steuererklaerungAusgefuellt = false;
+                this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2.steuerveranlagungErhalten = false;
+            }
         }
     }
 
