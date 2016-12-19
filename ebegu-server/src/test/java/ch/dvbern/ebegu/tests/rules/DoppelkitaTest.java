@@ -26,7 +26,7 @@ public class DoppelkitaTest extends AbstractBGRechnerTest {
 	@Test
 	public void testfall_Doppelkita_01() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall_DoppelKita_Regel1 testfall = new Testfall_DoppelKita_Regel1(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
@@ -39,7 +39,7 @@ public class DoppelkitaTest extends AbstractBGRechnerTest {
 
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
-				if (betreuung.getInstitutionStammdaten().getInstitution().getId().equals(AbstractTestfall.ID_INSTITUTION_AAREGG)) {
+				if (betreuung.getInstitutionStammdaten().getInstitution().getId().equals(AbstractTestfall.ID_INSTITUTION_WEISSENSTEIN)) {
 					Verfuegung verfuegung = betreuung.getVerfuegung();
 					System.out.println(verfuegung);
 					Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
@@ -70,7 +70,7 @@ public class DoppelkitaTest extends AbstractBGRechnerTest {
 	@Test
 	public void testfall_Doppelkita_02() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall_DoppelKita_Regel2 testfall = new Testfall_DoppelKita_Regel2(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
@@ -83,7 +83,7 @@ public class DoppelkitaTest extends AbstractBGRechnerTest {
 
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
-				if (betreuung.getInstitutionStammdaten().getInstitution().getId().equals(AbstractTestfall.ID_INSTITUTION_AAREGG)) {
+				if (betreuung.getInstitutionStammdaten().getInstitution().getId().equals(AbstractTestfall.ID_INSTITUTION_WEISSENSTEIN)) {
 					Verfuegung verfuegung = betreuung.getVerfuegung();
 					System.out.println(verfuegung);
 					Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
@@ -114,7 +114,7 @@ public class DoppelkitaTest extends AbstractBGRechnerTest {
 	@Test
 	public void testfall_Doppelkita_03() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall_DoppelKita_Regel3 testfall = new Testfall_DoppelKita_Regel3(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
@@ -127,7 +127,7 @@ public class DoppelkitaTest extends AbstractBGRechnerTest {
 
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
-				if (betreuung.getInstitutionStammdaten().getInstitution().getId().equals(AbstractTestfall.ID_INSTITUTION_AAREGG)) {
+				if (betreuung.getInstitutionStammdaten().getInstitution().getId().equals(AbstractTestfall.ID_INSTITUTION_WEISSENSTEIN)) {
 					Verfuegung verfuegung = betreuung.getVerfuegung();
 					System.out.println(verfuegung);
 					Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
