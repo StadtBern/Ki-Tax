@@ -10,6 +10,8 @@ import TestDataUtil from '../../../utils/TestDataUtil';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
+import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
+import {EbeguWebAdmin} from '../../../admin/admin.module';
 import IScope = angular.IScope;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
@@ -26,11 +28,18 @@ describe('freigabeView', function () {
     let $q: IQService;
     let gesuchModelManager: GesuchModelManager;
     let $httpBackend: IHttpBackendService;
+    let applicationPropertyRS: any;
 
     let gesuch: TSGesuch;
 
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
+
+    beforeEach(angular.mock.module(EbeguWebAdmin.name));  //to inject applicationPropertyRS
+
+    beforeEach(angular.mock.inject(function ($injector: any) {
+
+    }));
 
 
     beforeEach(angular.mock.inject(function ($injector: any) {
@@ -41,11 +50,13 @@ describe('freigabeView', function () {
         $q = $injector.get('$q');
         gesuchModelManager = $injector.get('GesuchModelManager');
         $httpBackend = $injector.get('$httpBackend');
+        applicationPropertyRS = $injector.get('ApplicationPropertyRS'); //
 
+        spyOn(applicationPropertyRS , 'isDevMode').and.returnValue($q.when(false));
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            wizardStepManager, dialog, downloadRS, $scope);
+            wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS);
     }));
     describe('canBeFreigegeben', function () {
         it('should return false when not all steps are true', function () {
@@ -72,7 +83,7 @@ describe('freigabeView', function () {
             controller.form = <IFormController>{};
             controller.form.$valid = false;
 
-            let returned: IPromise<void> = controller.gesuchFreigeben();
+            let returned: IPromise<void> = controller.gesuchEinreichen();
 
             expect(returned).toBeUndefined();
         });
@@ -81,7 +92,7 @@ describe('freigabeView', function () {
             controller.form.$valid = true;
             controller.bestaetigungFreigabequittung = false;
 
-            let returned: IPromise<void> = controller.gesuchFreigeben();
+            let returned: IPromise<void> = controller.gesuchEinreichen();
 
             expect(returned).toBeUndefined();
         });
@@ -103,7 +114,7 @@ describe('freigabeView', function () {
             gesuch.id = '123';
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
-            let returned: IPromise<void> = controller.gesuchFreigeben();
+            let returned: IPromise<void> = controller.gesuchEinreichen();
             $scope.$apply();
 
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);

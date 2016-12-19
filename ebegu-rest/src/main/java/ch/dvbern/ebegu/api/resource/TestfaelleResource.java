@@ -56,6 +56,17 @@ public class TestfaelleResource {
 		return Response.ok(responseString.toString()).build();
 	}
 
+	@DELETE
+	@Path("/testfallgs/{username}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeFaelleOfGS(
+		@PathParam("username") String username) {
+
+		testfaelleService.removeGesucheOfGS(username);
+		return Response.ok().build();
+	}
+
+
 	@GET
 	@Path("/testfall/{fallid}/{iterationCount}/{betreuungenBestaetigt}/{verfuegen}")
 	@Consumes(MediaType.WILDCARD)

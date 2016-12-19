@@ -108,18 +108,21 @@
                     </div>
 
                     <!--Zuschlag zu Erwerbspensum-->
-                    <div class="row" ng-if="vm.viewZuschlag()">
+                    <div class="row">
                         <div class="col-md-12">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
                                              name="zuschlag"
-                                             ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled()"
+                                             ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled() || !vm.viewZuschlag()"
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
                                     <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
                                 </md-checkbox>
                                 <dv-error-messages for="vm.form.zuschlag.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum"
+                                           ja="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
+                                           specific-bisher-text="vm.getTextZuschlagErwerbspensumKorrekturJA()"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -148,7 +151,8 @@
                                                class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
                                            ja="vm.model.erwerbspensumJA.zuschlagsgrund"
-                                           show-if-bisher-none="false"></dv-bisher>
+                                           show-if-bisher-none="false"
+                                           block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
                         </div>
                     </div>
                 </div>
@@ -168,7 +172,8 @@
                                                class="error"></dv-error-messages>
                             <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsprozent"
                                        ja="vm.model.erwerbspensumJA.zuschlagsprozent"
-                                       show-if-bisher-none="false"></dv-bisher>
+                                       show-if-bisher-none="false"
+                                       block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
                         </dv-input-container>
                     </div>
                 </div>

@@ -41,6 +41,8 @@ public class FreigabeCopyUtil {
 				}
 				//noinspection ConstantConditions
 				copyFamiliensituation(container.getFamiliensituationGS(), container.getFamiliensituationJA());
+			} else {
+				container.setFamiliensituationGS(null);
 			}
 		}
 	}
@@ -59,6 +61,8 @@ public class FreigabeCopyUtil {
 					container.setKindGS(new Kind());
 				}
 				copyKind(container.getKindGS(), container.getKindJA());
+			} else {
+				container.setKindGS(null);
 			}
 			// Betreuungen pro Kind
 			if (container.getBetreuungen() != null) {
@@ -105,6 +109,8 @@ public class FreigabeCopyUtil {
 					container.setBetreuungspensumGS(new Betreuungspensum());
 				}
 				copyBetreuungspensum(container.getBetreuungspensumGS(), container.getBetreuungspensumJA());
+			} else {
+				container.setBetreuungspensumGS(null);
 			}
 		}
 	}
@@ -122,6 +128,8 @@ public class FreigabeCopyUtil {
 					container.setAbwesenheitGS(new Abwesenheit());
 				}
 				copyAbwesenheit(container.getAbwesenheitGS(), container.getAbwesenheitJA());
+			} else {
+				container.setAbwesenheitGS(null);
 			}
 		}
 	}
@@ -138,6 +146,8 @@ public class FreigabeCopyUtil {
 					container.setGesuchstellerGS(new Gesuchsteller());
 				}
 				copyGesuchsteller(container.getGesuchstellerGS(), container.getGesuchstellerJA());
+			} else {
+				container.setGesuchstellerGS(null);
 			}
 			// Adressen
 			for (GesuchstellerAdresseContainer betreuung : container.getAdressen()) {
@@ -174,6 +184,8 @@ public class FreigabeCopyUtil {
 					container.setGesuchstellerAdresseGS(new GesuchstellerAdresse());
 				}
 				copyGesuchstellerAdresse(container.getGesuchstellerAdresseGS(), container.getGesuchstellerAdresseJA());
+			} else {
+				container.setGesuchstellerAdresseGS(null);
 			}
 		}
 	}
@@ -232,12 +244,16 @@ public class FreigabeCopyUtil {
 					container.setEkvGSBasisJahrPlus1(new Einkommensverschlechterung());
 				}
 				copyEinkommensverschlechterung(container.getEkvGSBasisJahrPlus1(), container.getEkvJABasisJahrPlus1());
+			} else {
+				container.setEkvGSBasisJahrPlus1(null);
 			}
 			if (container.getEkvJABasisJahrPlus2() != null) {
 				if (container.getEkvGSBasisJahrPlus2() == null) {
 					container.setEkvGSBasisJahrPlus2(new Einkommensverschlechterung());
 				}
 				copyEinkommensverschlechterung(container.getEkvGSBasisJahrPlus2(), container.getEkvJABasisJahrPlus2());
+			} else {
+				container.setEkvGSBasisJahrPlus2(null);
 			}
 		}
 	}
@@ -266,6 +282,8 @@ public class FreigabeCopyUtil {
 					container.setFinanzielleSituationGS(new FinanzielleSituation());
 				}
 				copyFinanzielleSituation(container.getFinanzielleSituationGS(), container.getFinanzielleSituationJA());
+			} else {
+				container.setFinanzielleSituationGS(null);
 			}
 		}
 	}
@@ -284,6 +302,8 @@ public class FreigabeCopyUtil {
 					container.setErwerbspensumGS(new Erwerbspensum());
 				}
 				copyErwerbspensum(container.getErwerbspensumGS(), container.getErwerbspensumJA());
+			} else {
+				container.setErwerbspensumGS(null);
 			}
 		}
 	}

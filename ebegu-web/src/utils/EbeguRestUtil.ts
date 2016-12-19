@@ -499,9 +499,12 @@ export default class EbeguRestUtil {
         if (containerFromServer) {
             this.parseAbstractEntity(containerTS, containerFromServer);
 
-            containerTS.familiensituationGS = this.parseFamiliensituation(containerTS.familiensituationGS || new TSFamiliensituation(), containerFromServer.familiensituationGS);
-            containerTS.familiensituationJA = this.parseFamiliensituation(containerTS.familiensituationJA || new TSFamiliensituation(), containerFromServer.familiensituationJA);
-            containerTS.familiensituationErstgesuch = this.parseFamiliensituation(containerTS.familiensituationErstgesuch || new TSFamiliensituation(), containerFromServer.familiensituationErstgesuch);
+            containerTS.familiensituationGS = this.parseFamiliensituation(containerTS.familiensituationGS
+                || new TSFamiliensituation(), containerFromServer.familiensituationGS);
+            containerTS.familiensituationJA = this.parseFamiliensituation(containerTS.familiensituationJA
+                || new TSFamiliensituation(), containerFromServer.familiensituationJA);
+            containerTS.familiensituationErstgesuch = this.parseFamiliensituation(containerTS.familiensituationErstgesuch
+                || new TSFamiliensituation(), containerFromServer.familiensituationErstgesuch);
             return containerTS;
         }
         return undefined;
@@ -547,12 +550,15 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public parseEinkommensverschlechterungInfoContainer(containerTS: TSEinkommensverschlechterungInfoContainer, containerFromServer: any): TSEinkommensverschlechterungInfoContainer {
+    public parseEinkommensverschlechterungInfoContainer(containerTS: TSEinkommensverschlechterungInfoContainer,
+                                                        containerFromServer: any): TSEinkommensverschlechterungInfoContainer {
         if (containerFromServer) {
             this.parseAbstractEntity(containerTS, containerFromServer);
 
-            containerTS.einkommensverschlechterungInfoGS = this.parseEinkommensverschlechterungInfo(containerTS.einkommensverschlechterungInfoGS || new TSEinkommensverschlechterungInfo(), containerFromServer.einkommensverschlechterungInfoGS);
-            containerTS.einkommensverschlechterungInfoJA = this.parseEinkommensverschlechterungInfo(containerTS.einkommensverschlechterungInfoJA || new TSEinkommensverschlechterungInfo(), containerFromServer.einkommensverschlechterungInfoJA);
+            containerTS.einkommensverschlechterungInfoGS = this.parseEinkommensverschlechterungInfo(containerTS.einkommensverschlechterungInfoGS
+                || new TSEinkommensverschlechterungInfo(), containerFromServer.einkommensverschlechterungInfoGS);
+            containerTS.einkommensverschlechterungInfoJA = this.parseEinkommensverschlechterungInfo(containerTS.einkommensverschlechterungInfoJA
+                || new TSEinkommensverschlechterungInfo(), containerFromServer.einkommensverschlechterungInfoJA);
             return containerTS;
         }
         return undefined;
@@ -597,7 +603,8 @@ export default class EbeguRestUtil {
     public parseGesuch(gesuchTS: TSGesuch, gesuchFromServer: any): TSGesuch {
         if (gesuchFromServer) {
             this.parseAbstractAntragEntity(gesuchTS, gesuchFromServer);
-            gesuchTS.einkommensverschlechterungInfoContainer = this.parseEinkommensverschlechterungInfoContainer(new TSEinkommensverschlechterungInfoContainer(), gesuchFromServer.einkommensverschlechterungInfoContainer);
+            gesuchTS.einkommensverschlechterungInfoContainer = this.parseEinkommensverschlechterungInfoContainer(
+                new TSEinkommensverschlechterungInfoContainer(), gesuchFromServer.einkommensverschlechterungInfoContainer);
             gesuchTS.gesuchsteller1 = this.parseGesuchstellerContainer(new TSGesuchstellerContainer(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchstellerContainer(new TSGesuchstellerContainer(), gesuchFromServer.gesuchsteller2);
             gesuchTS.familiensituationContainer = this.parseFamiliensituationContainer(new TSFamiliensituationContainer(), gesuchFromServer.familiensituationContainer);
