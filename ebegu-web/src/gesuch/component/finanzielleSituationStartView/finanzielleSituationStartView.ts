@@ -88,7 +88,6 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     public gemeinsameStekClicked(): void {
-
         if (this.model.gemeinsameSteuererklaerung === false && this.model.finanzielleSituationContainerGS1 && !this.model.finanzielleSituationContainerGS1.isNew()) {
             // Wenn neu NEIN und schon was eingegeben -> Fragen mal auf false setzen und Status auf nok damit man sicher noch weiter muss!
             this.initSteuerFragen();
@@ -103,20 +102,19 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     /**
-     * Es muss ein Wert geschrieben werden, um finsit persisierten zu können
+     * Es muss ein Wert geschrieben werden, um finsit persisierten zu können -> setzt die Antwort der Fragen auf false
      */
     private initSteuerFragen() {
         if (this.model.finanzielleSituationContainerGS1) {
-            if (!this.model.finanzielleSituationContainerGS1.finanzielleSituationJA.steuererklaerungAusgefuellt) {
-                this.model.finanzielleSituationContainerGS1.finanzielleSituationJA.steuererklaerungAusgefuellt = false;
-                this.model.finanzielleSituationContainerGS1.finanzielleSituationJA.steuerveranlagungErhalten = false;
-            }
+            let gs1FinanzielleSituationJA = this.model.finanzielleSituationContainerGS1.finanzielleSituationJA;
+            gs1FinanzielleSituationJA.steuererklaerungAusgefuellt = !gs1FinanzielleSituationJA.steuererklaerungAusgefuellt ? false : gs1FinanzielleSituationJA.steuererklaerungAusgefuellt;
+            gs1FinanzielleSituationJA.steuerveranlagungErhalten = !gs1FinanzielleSituationJA.steuerveranlagungErhalten ? false : gs1FinanzielleSituationJA.steuerveranlagungErhalten;
         }
         if (this.model.finanzielleSituationContainerGS2) {
-            if (!this.model.finanzielleSituationContainerGS2.finanzielleSituationJA.steuererklaerungAusgefuellt) {
-                this.model.finanzielleSituationContainerGS2.finanzielleSituationJA.steuererklaerungAusgefuellt = false;
-                this.model.finanzielleSituationContainerGS2.finanzielleSituationJA.steuerveranlagungErhalten = false;
-            }
+            let gs2FinanzielleSituationJA = this.model.finanzielleSituationContainerGS2.finanzielleSituationJA;
+            gs2FinanzielleSituationJA.steuererklaerungAusgefuellt = !gs2FinanzielleSituationJA.steuererklaerungAusgefuellt ? false : gs2FinanzielleSituationJA.steuererklaerungAusgefuellt;
+            gs2FinanzielleSituationJA.steuerveranlagungErhalten = !gs2FinanzielleSituationJA.steuerveranlagungErhalten ? false : gs2FinanzielleSituationJA.steuerveranlagungErhalten;
+
         }
     }
 
