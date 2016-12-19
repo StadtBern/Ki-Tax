@@ -20,12 +20,12 @@ export class GesuchRouteController {
     TSRoleUtil: any;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-        'AntragStatusHistoryRS', '$translate', 'AuthServiceRS'];
+        'AntragStatusHistoryRS', '$translate', 'AuthServiceRS', '$mdSidenav', 'CONSTANTS'];
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService,
-                private authServiceRS: AuthServiceRS) {
+                private authServiceRS: AuthServiceRS, private $mdSidenav: ng.material.ISidenavService, private CONSTANTS: any) {
         //super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.loadLastStatusChange(this.gesuchModelManager.getGesuch());
         this.TSRole = TSRole;
@@ -42,6 +42,14 @@ export class GesuchRouteController {
             return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().eingangsdatum, 'DD.MM.YYYY');
         }
         return undefined;
+    }
+
+    public toggleSidenav(componentId: string) {
+        this.$mdSidenav(componentId).toggle();
+    }
+
+    public closeSidenav(componentId: string) {
+        this.$mdSidenav(componentId).close();
     }
 
     public getIcon(stepName: TSWizardStepName): string {
@@ -163,6 +171,14 @@ export class GesuchRouteController {
                 return this.$translate.instant('MENU_MUTATION');
             }
         }
+    }
+
+    public getGesuchName(): string {
+        return this.gesuchModelManager.getGesuchName();
+    }
+
+    public getActiveElement(): TSWizardStepName {
+        return this.wizardStepManager.getCurrentStepName();
     }
 
 }

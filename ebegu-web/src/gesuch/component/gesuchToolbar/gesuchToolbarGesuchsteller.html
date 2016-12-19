@@ -1,4 +1,5 @@
-<div class="gesuch-toolbar-gesuchsteller" flex="100">
+<!--gesuchtoolbar fuer normale Screens-->
+<div class="gesuch-toolbar-gesuchsteller" flex="100" hide-xs>
     <md-toolbar flex="100">
         <md-menu-bar flex="100" layout="row" layout-align="start center">
             <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()"></span></span>
@@ -11,7 +12,7 @@
                 </button>
                 <md-menu-content class="no-padding menu-item-container gesuchsteller">
                     <md-menu-item class="menu-item-link gesuchsteller"
-                                  ng-repeat="gesuchsperiodeString in vmgs.getKeys(vmgs.gesuchsperiodeList)"
+                                  ng-repeat="gesuchsperiodeString in vmgs.getKeys(vmgs.gesuchNavigationList)"
                                   ng-value="gesuchsperiodeString">
                         <md-button ng-click="vmgs.setGesuchsperiode(gesuchsperiodeString)"
                                    aria-label="{{gesuchsperiodeString}}">
@@ -33,7 +34,7 @@
                 </button>
                 <md-menu-content class="no-padding menu-item-container gesuchsteller">
                     <md-menu-item class="menu-item-link gesuchsteller"
-                                  ng-repeat="antragTypDatum in vmgs.getKeys(vmgs.antragTypList)"
+                                  ng-repeat="antragTypDatum in vmgs.gesuchNavigationList[vmgs.getCurrentGesuchsperiode()]"
                                   ng-value="antragTypDatum">
                         <md-button ng-click="vmgs.setAntragTypDatum(antragTypDatum)"
                                    aria-label="{{antragTypDatum}}">
@@ -58,14 +59,63 @@
                     <span data-translate="TOOLBAR_KONTAKT"></span>
                 </button>
                 <md-menu-content class="no-padding menu-item-container kontakt gesuchsteller">
-                    <span class="kontaktTop">Jugendamt</span>
+                    <span>Jugendamt</span>
                     <span>Betreuungsgutscheine</span>
                     <span>Effingerstrasse 21</span>
                     <span>Postfach 3001 Bern</span>
-                    <span>Telefon 031 321 51 15</span>
-                    <span class="kontaktBottom">betreuungsgutscheine@bern.ch</span>
+                    <a href="tel:0313215115"><span>031 321 51 15</span></a>
+                    <a href="mailto:info@jugendamt.ch"><span>info@jugendamt.ch</span></a>
                 </md-menu-content>
             </md-menu>
         </md-menu-bar>
     </md-toolbar>
 </div>
+<!--Definition der Toolbar  fuer kleine Screens als Sidebar-->
+<md-sidenav md-component-id="gesuch-toolbar-mobile" class="md-sidenav-right gesuch-toolbar-mobile" flex="100"
+            layout="column" layout-align="start center" hide-gt-xs>
+    <button class="gesuch-toolbar-mobile-close" ng-click="vmgs.toggleSidenav('gesuch-toolbar-mobile')" aria-label="Schliessen">
+        <!--close knopf-->
+        <span>&#10799;</span>
+    </button>
+    <div ng-if="vmgs.showGesuchPeriodeNavigationMenu()" class="gesuchsperioden-container"
+         ng-repeat="(gesuchsperiodeString,antragTypDaten) in vmgs.gesuchNavigationList" layout="column"
+         layout-align="start center">
+
+        <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setGesuchsperiode(gesuchsperiodeString)"
+                aria-label="{{gesuchsperiodeString}}" class="gesuchsperiode-button">
+                <span>
+                    <a href="javascript:void(0)">{{gesuchsperiodeString}}</a>
+                </span>
+        </button>
+
+        <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setAntragTypDatum(antragTypDatum)"
+                aria-label="{{antragTypDatum}}" ng-if="vmgs.showAntragTypListNavigationMenu()"
+                ng-repeat="antragTypDatum  in antragTypDaten"
+                ng-value="antragTypDatum" class="antrag-typ-datum-button">
+                                <span>
+                                    <a href="javascript:void(0)">{{antragTypDatum}}</a>
+                                </span>
+        </button>
+    </div>
+
+
+    <span class="gesuchsperiode-button" ng-if="!vmgs.showGesuchPeriodeNavigationMenu()"
+          ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
+    <span class="antrag-typ-datum-button" ng-if="!vmgs.showAntragTypListNavigationMenu()" ng-bind="vmgs.getAntragTyp()"
+          class="antrag-typ"></span>
+
+    <span flex=""></span>
+
+    <!--Kontakt-->
+    <div ng-if="vmgs.showKontaktMenu()" class="mobile-kontakt">
+        <span>Jugendamt</span>
+        <span>Effingerstrasse 21</span>
+        <span>3001 Bern</span>
+        <a href="tel:0313215115"><span>031 321 51 15</span></a>
+        <a href="mailto:info@jugendamt.ch"><span>info@jugendamt.ch</span></a>
+    </div>
+    <button class="mobile-logout" ng-click="vmgs.toggleSidenav('gsMobile');vmgs.logout()"
+            aria-label="{{'AUSLOGGEN' | translate}}">
+        <span data-translate="AUSLOGGEN"></span>
+    </button>
+</md-sidenav>

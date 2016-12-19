@@ -4,15 +4,18 @@
     <div>
         <dv-loading-button ng-if="vm.dvNext()" button-click="vm.nextStep()" button-class="next"   type="submit"
                            button-disabled="vm.isNextButtonDisabled()" title="{{vm.getTooltip()}}">
-            <span ng-bind="vm.getNextButtonName()"></span>
+            <span ng-bind="vm.getNextButtonName()" hide-sm hide-xs></span>
+            <span class="fa fa-caret-right" hide-gt-sm style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
         </dv-loading-button>
     </div>
     <div>
         <dv-loading-button ng-if="vm.dvPrevious()" button-click="vm.previousStep()" button-class="previous" type="submit">
-            <span ng-bind="vm.getPreviousButtonName()" ></span>
+            <span ng-bind="vm.getPreviousButtonName()" hide-sm hide-xs></span>
+            <span class="fa fa-caret-left" hide-gt-sm style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
         </dv-loading-button>
         <dv-loading-button ng-if="vm.doesCancelExist()" button-click="vm.cancel()" button-class="cancel" type="reset">
-            <span data-translate="ABBRECHEN_UPPER"></span>
+            <span data-translate="ABBRECHEN_UPPER" hide-sm hide-xs></span>
+            <span class="fa fa-caret-left" hide-gt-sm style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
         </dv-loading-button>
     </div>
 

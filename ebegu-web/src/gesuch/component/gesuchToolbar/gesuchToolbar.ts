@@ -10,13 +10,13 @@ import TSAntragDTO from '../../../models/TSAntragDTO';
 import {IGesuchStateParams} from '../../gesuch.route';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {TSAntragStatus, isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
@@ -54,16 +54,20 @@ export class GesuchToolbarController {
     onVerantwortlicherChange: (attr: any) => void;
 
     gesuchsperiodeList: { [key: string]: Array<TSAntragDTO> } = {};
+    gesuchNavigationList: {[key: string]: Array<string>} = {};   //mapped z.B. '2006 / 2007' auf ein array mit den Namen der Antraege
     antragTypList: { [key: string]: TSAntragDTO } = {};
     mutierenPossibleForCurrentAntrag: boolean = false;
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
-        '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS'];
+        '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
+        '$mdSidenav'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
                 private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope,
-                private gesuchModelManager: GesuchModelManager, private authServiceRS: AuthServiceRS) {
+                private gesuchModelManager: GesuchModelManager,
+                private authServiceRS: AuthServiceRS,
+                private $mdSidenav: ng.material.ISidenavService) {
         this.updateUserList();
         this.updateAntragDTOList();
 
@@ -73,6 +77,17 @@ export class GesuchToolbarController {
 
     }
 
+    public toggleSidenav(componentId: string): void {
+        this.$mdSidenav(componentId).toggle();
+    }
+
+    public closeSidenav(componentId: string): void {
+        this.$mdSidenav(componentId).close();
+    }
+
+    public logout(): void {
+        this.$state.go('login', {type: 'logout'});
+    }
 
     private addWatchers($scope: angular.IScope) {
         // needed because of test is not able to inject $scope!
@@ -85,6 +100,7 @@ export class GesuchToolbarController {
                         this.updateAntragDTOList();
                     } else {
                         this.antragTypList = {};
+                        this.gesuchNavigationList = {};
                         this.gesuchsperiodeList = {};
                     }
                 }
@@ -132,18 +148,20 @@ export class GesuchToolbarController {
             this.gesuchRS.getAllAntragDTOForFall(this.getGesuch().fall.id).then((response) => {
                 this.antragList = angular.copy(response);
                 this.updateGesuchperiodeList();
+                this.updateGesuchNavigationList();
                 this.updateAntragTypList();
                 this.antragMutierenPossible();
             });
         } else {
             this.gesuchsperiodeList = {};
+            this.gesuchNavigationList = {};
             this.antragTypList = {};
             this.antragMutierenPossible();
         }
     }
 
     private updateGesuchperiodeList() {
-
+        this.gesuchsperiodeList = {};
         for (var i = 0; i < this.antragList.length; i++) {
             let gs = this.antragList[i].gesuchsperiodeString;
 
@@ -154,7 +172,21 @@ export class GesuchToolbarController {
         }
     }
 
+    private updateGesuchNavigationList() {
+        this.gesuchNavigationList = {};  // clear
+        for (var i = 0; i < this.antragList.length; i++) {
+            let gs = this.antragList[i].gesuchsperiodeString;
+            let antrag: TSAntragDTO = this.antragList[i];
+
+            if (!this.gesuchNavigationList[gs]) {
+                this.gesuchNavigationList[gs] = [];
+            }
+            this.gesuchNavigationList[gs].push(this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer));
+        }
+    }
+
     private updateAntragTypList() {
+        this.antragTypList = {};  //clear
         for (var i = 0; i < this.antragList.length; i++) {
             let antrag: TSAntragDTO = this.antragList[i];
             if (this.getGesuch().gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
@@ -212,18 +244,7 @@ export class GesuchToolbarController {
 
     //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
-        if (this.getGesuch()) {
-            var text = '';
-            if (this.getGesuch().fall) {
-                text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
-            }
-            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.extractNachname()) {
-                text = text + ' ' + this.getGesuch().gesuchsteller1.extractNachname();
-            }
-            return text;
-        } else {
-            return '';
-        }
+        return this.gesuchModelManager.getGesuchName();
     }
 
     public getGesuch(): TSGesuch {
