@@ -7,10 +7,11 @@ import TSExceptionReport from '../../../models/TSExceptionReport';
 import HttpErrorInterceptor from './HttpErrorInterceptor';
 import ErrorService from './ErrorService';
 import IRootScopeService = angular.IRootScopeService;
+
 describe('errorService', function () {
 
-    var httpErrorInterceptor: HttpErrorInterceptor, errorService: ErrorService;
-    var $rootScope: IRootScopeService;
+    let httpErrorInterceptor: HttpErrorInterceptor, errorService: ErrorService;
+    let $rootScope: IRootScopeService;
 
     beforeEach(angular.mock.module('dvbAngular.errors'));
 
@@ -62,17 +63,17 @@ describe('errorService', function () {
 
         describe('addValidationError()', function () {
             it('should add a validation error to errors', function () {
-                var msgKey = 'TEST';
-                var args = {
+                let msgKey = 'TEST';
+                let args = {
                     fieldName: 'field',
                     minlenght: '10'
                 };
                 expect(args).toBeTruthy();
                 errorService.addValidationError(msgKey, args);
 
-                var errors: Array<TSExceptionReport> = errorService.getErrors();
+                let errors: Array<TSExceptionReport> = errorService.getErrors();
                 expect(errors.length === 1).toBeTruthy();
-                var error: TSExceptionReport = errors[0];
+                let error: TSExceptionReport = errors[0];
                 expect(error.severity === TSErrorLevel.SEVERE);
                 expect(error.msgKey).toBe(msgKey);
                 expect(error.argumentList).toEqual(args);
@@ -81,7 +82,7 @@ describe('errorService', function () {
 
             it('should ignore duplicated errors', function () {
                 errorService.addValidationError('TEST');
-                var length = errorService.getErrors().length;
+                let length = errorService.getErrors().length;
                 errorService.addValidationError('TEST');
                 expect(errorService.getErrors().length === length).toBeTruthy();
             });
@@ -129,7 +130,7 @@ describe('errorService', function () {
                 expect($rootScope.$broadcast).toHaveBeenCalledWith(TSMessageEvent.ERROR_UPDATE, errorService.getErrors());
                 errorService.clearError('REMOVE');
                 expect($rootScope.$broadcast).toHaveBeenCalledWith(TSMessageEvent.ERROR_UPDATE, errorService.getErrors());
-                var errors = errorService.getErrors();
+                let errors = errorService.getErrors();
                 expect(errors.length === 1).toBeTruthy();
                 expect(errors[0].msgKey).toBe('KEEP');
             });

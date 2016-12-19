@@ -53,7 +53,7 @@ export class DvBisher {
         if (this.showIfBisherNone === undefined) {//wenn nicht von aussen gesetzt auf true
             this.showIfBisherNone = true;
         }
-        this.bisherText = this.specificBisherText ?  this.specificBisherText.split('\n') : undefined
+        this.bisherText = this.specificBisherText ?  this.specificBisherText.split('\n') : undefined;
     }
 
     public getBisher() : Array<string> {
@@ -85,11 +85,11 @@ export class DvBisher {
         return ((this.showIfBisherNone || this.blockExisted === true) || this.hasBisher()) && this.gesuchModelManager.isKorrekturModusJugendamt();
     }
 
-    public equals(gs: any, ja: any) : boolean {
+    public equals(gs: any, ja: any): boolean {
         if (gs instanceof moment) {
             return this.equals(DateUtil.momentToLocalDateFormat(gs, 'DD.MM.YYYY'), DateUtil.momentToLocalDateFormat(ja, 'DD.MM.YYYY'));
         }
-        return gs === ja || (this.isEmpty(gs) && this.isEmpty(ja));//either they are equal or both are a form of empty
+        return gs === ja || (this.isEmpty(gs) && this.isEmpty(ja)); //either they are equal or both are a form of empty
     }
 
     private isEmpty(val: any): boolean {

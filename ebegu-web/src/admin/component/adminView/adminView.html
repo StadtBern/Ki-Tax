@@ -129,7 +129,7 @@
                             </label>
 
                             <select name="besitzer" id="besitzer"
-                                    ng-model="vm.createAsBesitzer"
+                                    ng-model="vm.selectedBesitzer"
                                     class="form-control"
                                     ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
                                 <option value=""></option>
@@ -208,7 +208,7 @@
                         </label>
 
                         <select name="gesuchsteller" id="gesuchsteller"
-                                ng-model="vm.createAsBesitzer"
+                                ng-model="vm.selectedBesitzer"
                                 class="form-control dv-input-container-small"
                                 ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
                             <option value=""></option>

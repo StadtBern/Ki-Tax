@@ -40,7 +40,7 @@ export class AdminViewController {
 
 
     creationType: string = 'verfuegt';
-    createAsBesitzer: TSUser;
+    selectedBesitzer: TSUser;
     gesuchstellerList: Array<TSUser>;
 
 
@@ -66,8 +66,8 @@ export class AdminViewController {
         if (this.applicationProperty.timestampErstellt) {
             this.applicationPropertyRS.update(this.applicationProperty.name, this.applicationProperty.value)
                 .then((response: any) => {
-                    var index = this.getIndexOfElementwithID(response.data);
-                    var items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
+                    let index = this.getIndexOfElementwithID(response.data);
+                    let items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
                     if (items != null && items.length > 0) {
                         this.applicationProperties[index] = items[0];
                     }
@@ -76,7 +76,7 @@ export class AdminViewController {
         } else {
             this.applicationPropertyRS.create(this.applicationProperty.name, this.applicationProperty.value)
                 .then((response: any) => {
-                    var items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
+                    let items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
                     if (items != null && items.length > 0) {
                         //todo pruefen ob das item schon existiert hat wie oben
                         this.applicationProperties = this.applicationProperties.concat(items[0]);
@@ -90,7 +90,7 @@ export class AdminViewController {
 
     removeRow(row: any): void { // todo team add type (muessen warten bis es eine DefinitelyTyped fuer smarttable gibt)
         this.applicationPropertyRS.remove(row.name).then((reponse: IHttpPromiseCallbackArg<any>) => {
-            var index = this.applicationProperties.indexOf(row);
+            let index = this.applicationProperties.indexOf(row);
             if (index !== -1) {
                 this.applicationProperties.splice(index, 1);
                 this.resetForm();
@@ -111,8 +111,8 @@ export class AdminViewController {
     }
 
     private getIndexOfElementwithID(prop: TSApplicationProperty) {
-        var idToSearch = prop.id;
-        for (var i = 0; i < this.applicationProperties.length; i++) {
+        let idToSearch = prop.id;
+        for (let i = 0; i < this.applicationProperties.length; i++) {
             if (this.applicationProperties[i].id === idToSearch) {
                 return i;
             }
@@ -136,8 +136,8 @@ export class AdminViewController {
             bestaetigt = true;
             verfuegen = true;
         }
-        if (this.createAsBesitzer) {
-            return this.createTestFallGS(testFall, bestaetigt, verfuegen, this.createAsBesitzer.username);
+        if (this.selectedBesitzer) {
+            return this.createTestFallGS(testFall, bestaetigt, verfuegen, this.selectedBesitzer.username);
         } else {
             return this.createTestFall(testFall, bestaetigt, verfuegen);
         }
@@ -170,9 +170,9 @@ export class AdminViewController {
     }
 
     public removeGesucheGS() {
-        this.testFaelleRS.removeFaelleOfGS(this.createAsBesitzer.username).then(()=>{
-            this.errorService.addMesageAsInfo("Gesuche entfernt fuer " + this.createAsBesitzer.username);
-        })
+        this.testFaelleRS.removeFaelleOfGS(this.selectedBesitzer.username).then(() => {
+            this.errorService.addMesageAsInfo('Gesuche entfernt fuer ' + this.selectedBesitzer.username);
+        });
     }
 
 

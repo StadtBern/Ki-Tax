@@ -495,7 +495,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		final CriteriaQuery<String> query = cb.createQuery(String.class);
 		Root<Gesuch> root = query.from(Gesuch.class);
 
-
 		query.select(root.get(Gesuch_.id));
 
 		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
