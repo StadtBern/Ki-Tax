@@ -68,6 +68,10 @@ export class NavigatorController {
         return this.dvCancel !== undefined && this.dvCancel !== null;
     }
 
+    public doesdvTranslateNextExist(): boolean {
+        return this.dvTranslateNext !== undefined && this.dvTranslateNext !== null;
+    }
+
     /**
      * Wenn die function save uebergeben wurde, dann heisst der Button Speichern und weiter. Sonst nur weiter
      * @returns {string}
