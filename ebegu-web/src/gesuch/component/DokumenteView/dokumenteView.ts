@@ -16,6 +16,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import GlobalCacheService from '../../service/globalCacheService';
 import ICacheFactoryService = angular.ICacheFactoryService;
+import IScope = angular.IScope;
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
 
@@ -40,13 +41,13 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
     dokumentePapiergesuch: TSDokumentGrund[] = [];
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil', 'GlobalCacheService'];
+        'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil', 'GlobalCacheService', '$scope'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
                 private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager,
-                private ebeguUtil: EbeguUtil, private globalCacheService: GlobalCacheService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                private ebeguUtil: EbeguUtil, private globalCacheService: GlobalCacheService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.DOKUMENTE);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);

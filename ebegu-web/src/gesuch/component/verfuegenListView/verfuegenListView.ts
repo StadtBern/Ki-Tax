@@ -9,7 +9,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragStatus, isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
@@ -24,6 +24,7 @@ import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import DateUtil from '../../../utils/DateUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
+import IScope = angular.IScope;
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -49,13 +50,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS'];
+        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope'];
     /* @ngInject */
 
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService, private authServiceRs: AuthServiceRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService,
+                private authServiceRs: AuthServiceRS, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initViewModel();
     }
 
@@ -157,7 +159,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return status === TSAntragStatus.VERFUEGT;
+            return isAnyStatusOfVerfuegt(status);
         }
         return true;
 

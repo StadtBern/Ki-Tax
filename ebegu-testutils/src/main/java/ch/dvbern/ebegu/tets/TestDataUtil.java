@@ -181,6 +181,7 @@ public final class TestDataUtil {
 	public static Traegerschaft createDefaultTraegerschaft() {
 		Traegerschaft traegerschaft = new Traegerschaft();
 		traegerschaft.setName("Traegerschaft1");
+		traegerschaft.setMail("hallo@dvbern.ch");
 		return traegerschaft;
 	}
 
@@ -189,6 +190,7 @@ public final class TestDataUtil {
 		institution.setName("Institution1");
 		institution.setMandant(createDefaultMandant());
 		institution.setTraegerschaft(createDefaultTraegerschaft());
+		institution.setMail("hallo@dvbern.ch");
 		return institution;
 	}
 
@@ -204,31 +206,31 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
-	public static InstitutionStammdaten createInstitutionStammdatenKitaAaregg() {
+	public static InstitutionStammdaten createInstitutionStammdatenKitaWeissenstein() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_AAREGG);
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA);
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
-		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_AAREGG);
-		instStammdaten.getInstitution().setName("Kita Aaregg");
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_WEISSENSTEIN);
+		instStammdaten.getInstitution().setName("Kita Aaregg"); //todo eventuell umbennen Weissenstein
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}
 
-	public static InstitutionStammdaten createInstitutionStammdatenTagiAaregg() {
+	public static InstitutionStammdaten createInstitutionStammdatenTagiWeissenstein() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_AAREGG_TAGI);
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_TAGI);
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(244));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
 		instStammdaten.setInstitution(createDefaultInstitution());
-		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_AAREGG);
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_WEISSENSTEIN);
 		instStammdaten.getInstitution().setName("Tagi & Kita Aaregg");
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
@@ -236,7 +238,7 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createInstitutionStammdatenKitaBruennen() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA);
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
@@ -544,7 +546,7 @@ public final class TestDataUtil {
 	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
@@ -573,8 +575,8 @@ public final class TestDataUtil {
 	public static Gesuch createAndPersistFeutzYvonneGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
@@ -584,8 +586,8 @@ public final class TestDataUtil {
 	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);

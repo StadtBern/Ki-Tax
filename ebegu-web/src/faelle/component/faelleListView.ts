@@ -7,7 +7,7 @@ import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
@@ -71,7 +71,7 @@ export class FaelleListViewController {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
                 // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
                 this.gesuchModelManager.clearGesuch();
-                if (antrag.status === TSAntragStatus.VERFUEGT) {
+                if (isAnyStatusOfVerfuegt(antrag.status)) {
                     this.openGesuch(antrag.antragId, 'gesuch.verfuegen');
                 } else {
                     this.openGesuch(antrag.antragId, 'gesuch.betreuungen');

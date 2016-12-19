@@ -158,13 +158,13 @@ public class EinkommensverschlechterungResource {
 			gesuch.setGesuchsteller1(new GesuchstellerContainer());
 			gesuch.getGesuchsteller1().setGesuchstellerJA(new Gesuchsteller());
 			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(
-				converter.finanzielleSituationContainerToStorableEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1()));
+				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1(), new FinanzielleSituationContainer()));
 		}
 		if (jaxFinSitModel.getFinanzielleSituationContainerGS2() != null) {
 			gesuch.setGesuchsteller2(new GesuchstellerContainer());
 			gesuch.getGesuchsteller2().setGesuchstellerJA(new Gesuchsteller());
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(
-				converter.finanzielleSituationContainerToStorableEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2()));
+				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2(), new FinanzielleSituationContainer()));
 		}
 		if (jaxFinSitModel.getEinkommensverschlechterungContainerGS1() != null) {
 			if(gesuch.getGesuchsteller1() ==null) {
@@ -172,7 +172,7 @@ public class EinkommensverschlechterungResource {
 				gesuch.getGesuchsteller1().setGesuchstellerJA(new Gesuchsteller());
 			}
 			gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(
-				converter.einkommensverschlechterungContainerToStorableEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS1()));
+				converter.einkommensverschlechterungContainerToEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS1(), new EinkommensverschlechterungContainer()));
 		}
 		if (jaxFinSitModel.getEinkommensverschlechterungContainerGS2() != null) {
 			if(gesuch.getGesuchsteller2() ==null) {
@@ -180,7 +180,7 @@ public class EinkommensverschlechterungResource {
 				gesuch.getGesuchsteller2().setGesuchstellerJA(new Gesuchsteller());
 			}
 			gesuch.getGesuchsteller2().setEinkommensverschlechterungContainer(
-				converter.einkommensverschlechterungContainerToStorableEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS2()));
+				converter.einkommensverschlechterungContainerToEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS2(), new EinkommensverschlechterungContainer()));
 		}
 		if (jaxFinSitModel.getEinkommensverschlechterungInfoContainer() != null) {
 			gesuch.setEinkommensverschlechterungInfoContainer(

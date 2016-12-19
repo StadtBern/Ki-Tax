@@ -50,7 +50,7 @@ export class DVLoadingButton implements IDirective {
  * @example:
  *
  <dv-loading-button type="submit"
- button-click="vm.mySaveFunction(form)"
+ button-click="vm.mySaveFunction()"
  button-class="btn btn-sm btn-success"
  button-disabled="!vm.isButtonDisabled()">
  <i class="glyphicon glyphicon-plus"></i>

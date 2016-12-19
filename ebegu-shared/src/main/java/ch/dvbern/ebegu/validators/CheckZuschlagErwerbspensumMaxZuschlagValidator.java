@@ -12,12 +12,15 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 /**
  * Validator fuer den Maximalen Zuschlag zum Erwerbspensum
  */
+@SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
 public class CheckZuschlagErwerbspensumMaxZuschlagValidator implements ConstraintValidator<CheckZuschlagErwerbspensumMaxZuschlag, Erwerbspensum> {
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
@@ -57,7 +60,22 @@ public class CheckZuschlagErwerbspensumMaxZuschlagValidator implements Constrain
 		LocalDate stichtagParameter = erwerbspensum.getGueltigkeit().getGueltigAb();
 		int maxValue = getMaxValue(stichtagParameter, em);
         closeEntityManager(em);
-        return erwerbspensum.getZuschlagsprozent() <= maxValue;
+        return validateZuschlagsprozent(constraintValidatorContext, erwerbspensum, maxValue);
+	}
+
+	private boolean validateZuschlagsprozent(ConstraintValidatorContext context, Erwerbspensum erwerbspensum, int maxValue) {
+		if(context != null && erwerbspensum != null && erwerbspensum.getZuschlagsprozent() > maxValue) {
+			ResourceBundle rb = ResourceBundle.getBundle("ValidationMessages");
+			String message = rb.getString("invalid_erwerbspensum_zuschlag");
+			message = MessageFormat.format(message, maxValue);
+
+			context.disableDefaultConstraintViolation();
+			context.buildConstraintViolationWithTemplate(message)
+				.addConstraintViolation();
+
+			return false;
+		}
+		return true;
 	}
 
 	private EntityManager createEntityManager() {

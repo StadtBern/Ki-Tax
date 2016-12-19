@@ -37,8 +37,9 @@ import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
 import {
     TSAntragStatus,
-    isAtLeastFreigegeben,
-    isAtLeastFreigegebenOrFreigabequittung
+    isAtLeastFreigegebenOrFreigabequittung,
+    isStatusVerfuegenVerfuegt,
+    isAtLeastFreigegeben
 } from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
@@ -1063,6 +1064,17 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Antrag freigeben
+     */
+    public antragFreigeben(antragId: string): IPromise<TSGesuch> {
+        return this.gesuchRS.antragFreigeben(antragId).then((response) => {
+            this.setGesuch(response);
+            return response;
+        });
+
+    }
+
+    /**
      * Returns true if the Gesuch has the given status
      * @param status
      * @returns {boolean}
@@ -1072,20 +1084,11 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT or NUR_SCHULAMT
-     * @returns {boolean}
-     */
-    public isGesuchStatusVerfuegenVerfuegt(): boolean {
-        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT)
-            || this.isGesuchStatus(TSAntragStatus.NUR_SCHULAMT);
-    }
-
-    /**
      * Returns true when the Gesuch must be readonly
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return this.isGesuchStatusVerfuegenVerfuegt() || this.isGesuchReadonlyForRole();
+        return isStatusVerfuegenVerfuegt(this.gesuch.status) || this.isGesuchReadonlyForRole();
     }
 
     /**

@@ -9,10 +9,11 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
-import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import IScope = angular.IScope;
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -37,12 +38,12 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     showError: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
-        'WizardStepManager', '$translate', '$q'];
+        'WizardStepManager', '$translate', '$q', '$scope'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
-                private $translate: ITranslateService, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                private $translate: ITranslateService, private $q: IQService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.readStateParams();
         this.initViewModel();
         this.TSRoleUtil = TSRoleUtil;
@@ -83,10 +84,10 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         }
     }
 
-    save(form: angular.IFormController): IPromise<TSGesuch> {
+    save(): IPromise<TSGesuch> {
         this.showError = true;
-        if (form.$valid) {
-            if (!form.$dirty && !this.gesuchModelManager.getGesuch().isNew()) {
+        if (this.form.$valid) {
+            if (!this.form.$dirty && !this.gesuchModelManager.getGesuch().isNew()) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch());

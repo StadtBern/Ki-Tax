@@ -16,6 +16,7 @@ import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./umzugView.html');
 require('./umzugView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -35,13 +36,14 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
     dirty = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'ErrorService', '$translate',
-        'DvDialog', '$q'];
+        'DvDialog', '$q', '$scope'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private errorService: ErrorService,
-                private $translate: ITranslateService, private DvDialog: DvDialog, private $q: IQService) {
+                private $translate: ITranslateService, private DvDialog: DvDialog, private $q: IQService,
+                $scope: IScope) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initViewModel();
     }
 
@@ -56,9 +58,9 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
         return this.model;
     }
 
-    public save(form: angular.IFormController): IPromise<TSGesuchstellerContainer> {
-        if (form.$valid) {
-            if (!form.$dirty && !this.dirty) {
+    public save(): IPromise<TSGesuchstellerContainer> {
+        if (this.form.$valid) {
+            if (!this.form.$dirty && !this.dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith());
