@@ -91,7 +91,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             }
 
         }
-        & > th, & > th {
+        & > th, & > th:empty {
             max-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -113,7 +113,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
         }
     }
     & > tr:first-child {
-        & > th, & > th {
+        & > th, & > th:empty {
             .label();
             height: 3.5rem;
             vertical-align: middle;
@@ -155,7 +155,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
                 border-left: none;
                 border-right: none;
             }
-            & > th, & > th {
+            & > th, & > th:empty {
                 .h3();
                 position: relative;
                 line-height: 3rem;
