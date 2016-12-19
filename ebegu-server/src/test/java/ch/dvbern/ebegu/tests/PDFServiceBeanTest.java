@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.EbeguVorlageService;
 import ch.dvbern.ebegu.services.PDFServiceBean;
@@ -50,6 +51,9 @@ public class PDFServiceBeanTest {
 
 	@InjectIntoMany
 	DokumentGrundService dokumentGrundService = new DokumentGrundServiceMock();
+
+	@InjectIntoMany
+	DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator = new DokumentenverzeichnisEvaluator();
 
 	private Gesuch gesuch;
 
