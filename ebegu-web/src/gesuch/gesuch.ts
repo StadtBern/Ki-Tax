@@ -45,7 +45,7 @@ export class GesuchRouteController {
     }
 
     public getIcon(stepName: TSWizardStepName): string {
-        var step = this.wizardStepManager.getStepByName(stepName);
+        let step = this.wizardStepManager.getStepByName(stepName);
         if (step) {
             let status = step.wizardStepStatus;
             if (status === TSWizardStepStatus.MUTIERT) {
@@ -59,7 +59,7 @@ export class GesuchRouteController {
             } else if (status === TSWizardStepStatus.NOK) {
                 return 'fa-close red';
             } else if (status === TSWizardStepStatus.IN_BEARBEITUNG) {
-                if (step.wizardStepName === TSWizardStepName.DOKUMENTE) { // Dokumenten haben kein Icon wenn nicht alle hochgeladen wurden
+                if (step.wizardStepName === TSWizardStepName.DOKUMENTE || step.wizardStepName === TSWizardStepName.FREIGABE) { // Dokumenten haben kein Icon wenn nicht alle hochgeladen wurden
                     return '';
                 }
                 return 'fa-pencil black';
@@ -78,7 +78,7 @@ export class GesuchRouteController {
      * @returns {boolean} Sollte etwas schief gehen, true wird zurueckgegeben
      */
     public isWizardStepDisabled(stepName: TSWizardStepName): boolean {
-        var step = this.wizardStepManager.getStepByName(stepName);
+        let step = this.wizardStepManager.getStepByName(stepName);
         if (step) {
             return !this.wizardStepManager.isStepClickableForCurrentRole(step, this.gesuchModelManager.getGesuch());
         }
