@@ -88,12 +88,33 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     public gemeinsameStekClicked(): void {
-        // Wenn neu NEIN -> Fragen loeschen
-        if (this.model.gemeinsameSteuererklaerung === false) {
+        if (this.model.gemeinsameSteuererklaerung === false && this.model.finanzielleSituationContainerGS1 && !this.model.finanzielleSituationContainerGS1.isNew()) {
+            // Wenn neu NEIN und schon was eingegeben -> Fragen mal auf false setzen und Status auf nok damit man sicher noch weiter muss!
+            this.initSteuerFragen();
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.NOK);
+        } else if (this.model.gemeinsameSteuererklaerung === false) {
+            // Wenn neu NEIN -> Fragen loeschen wenn noch nichts eingegeben worden ist
             this.model.finanzielleSituationContainerGS1 = undefined;
             this.model.finanzielleSituationContainerGS2 = undefined;
         } else {
             this.model.initFinSit();
+        }
+    }
+
+    /**
+     * Es muss ein Wert geschrieben werden, um finsit persisierten zu können -> setzt die Antwort der Fragen auf false
+     */
+    private initSteuerFragen() {
+        if (this.model.finanzielleSituationContainerGS1) {
+            let gs1FinanzielleSituationJA = this.model.finanzielleSituationContainerGS1.finanzielleSituationJA;
+            gs1FinanzielleSituationJA.steuererklaerungAusgefuellt = !gs1FinanzielleSituationJA.steuererklaerungAusgefuellt ? false : gs1FinanzielleSituationJA.steuererklaerungAusgefuellt;
+            gs1FinanzielleSituationJA.steuerveranlagungErhalten = !gs1FinanzielleSituationJA.steuerveranlagungErhalten ? false : gs1FinanzielleSituationJA.steuerveranlagungErhalten;
+        }
+        if (this.model.finanzielleSituationContainerGS2) {
+            let gs2FinanzielleSituationJA = this.model.finanzielleSituationContainerGS2.finanzielleSituationJA;
+            gs2FinanzielleSituationJA.steuererklaerungAusgefuellt = !gs2FinanzielleSituationJA.steuererklaerungAusgefuellt ? false : gs2FinanzielleSituationJA.steuererklaerungAusgefuellt;
+            gs2FinanzielleSituationJA.steuerveranlagungErhalten = !gs2FinanzielleSituationJA.steuerveranlagungErhalten ? false : gs2FinanzielleSituationJA.steuerveranlagungErhalten;
+
         }
     }
 
