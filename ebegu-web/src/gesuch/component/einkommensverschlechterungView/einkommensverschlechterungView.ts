@@ -161,7 +161,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         }
     }
 
-    public getTextSelbstaendigKorrektur(){
+    public getTextSelbstaendigKorrektur() {
         if (this.showSelbstaendigGS === true && this.model.getEkvToWorkWith_GS()) {
             let gew1 = this.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr;
             if (gew1) {

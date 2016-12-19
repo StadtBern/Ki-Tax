@@ -37,7 +37,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     private showGesuchFreigebenSimulationButton: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$scope','ApplicationPropertyRS'];
+        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
@@ -72,10 +72,10 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     private initDevModeParameter() {
-        this.applicationPropertyRS.isDevMode().then((response :boolean) => {
+        this.applicationPropertyRS.isDevMode().then((response: boolean) => {
             // Die Simulation ist nur im Dev-Mode moeglich und nur, wenn das Gesuch im Status FREIGABEQUITTUNG ist
             this.showGesuchFreigebenSimulationButton = (response && this.isGesuchInStatus(TSAntragStatus.FREIGABEQUITTUNG));
-        })
+        });
     }
 
     public isGesuchFreigegeben(): boolean {

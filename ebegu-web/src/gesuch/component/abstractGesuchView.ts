@@ -7,10 +7,10 @@ import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import IPromise = angular.IPromise;
 import IRootScopeService = angular.IRootScopeService;
-import {TSErrorEvent} from '../../models/enums/TSErrorEvent';
 import TSExceptionReport from '../../models/TSExceptionReport';
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
+import {TSMessageEvent} from '../../models/enums/TSErrorEvent';
 
 export default class AbstractGesuchViewController<T> {
 
@@ -40,7 +40,7 @@ export default class AbstractGesuchViewController<T> {
          * auf !dirty. Dann kann der Benutzer nochmal auf Speichern klicken und die Daten werden gespeichert.
          * Damit dies nicht passiert, hoeren wir in allen Views auf diesen Event und setzen das Form auf dirty
          */
-        this.$scope.$on(TSErrorEvent[TSErrorEvent.UPDATE], (event: any, errors: Array<TSExceptionReport>) => {
+        this.$scope.$on(TSMessageEvent[TSMessageEvent.ERROR_UPDATE], (event: any, errors: Array<TSExceptionReport>) => {
             this.form.$dirty = true;
             this.form.$pristine = false;
         });

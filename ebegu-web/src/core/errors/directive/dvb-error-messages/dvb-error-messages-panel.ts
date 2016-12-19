@@ -1,7 +1,8 @@
 import IComponentOptions = angular.IComponentOptions;
-import {TSErrorEvent} from '../../../../models/enums/TSErrorEvent';
+import {TSMessageEvent} from '../../../../models/enums/TSErrorEvent';
 import ErrorService from '../../service/ErrorService';
 import TSExceptionReport from '../../../../models/TSExceptionReport';
+import {TSErrorLevel} from '../../../../models/enums/TSErrorLevel';
 import IScope = angular.IScope;
 let templ = require('./dvb-error-messages-panel.html');
 let style = require('./dvb-error-messages-panel.less');
@@ -28,14 +29,17 @@ export class DvErrorMessagesPanelComponent {
     }
 
     $onInit() {
-        this.$scope.$on(TSErrorEvent[TSErrorEvent.UPDATE], (event: any, errors: Array<TSExceptionReport>) => {
-            this.errors = errors;
-            this.show();
-        });
-        this.$scope.$on(TSErrorEvent[TSErrorEvent.CLEAR], () => {
+        this.$scope.$on(TSMessageEvent[TSMessageEvent.ERROR_UPDATE], this.displayMessages);
+        this.$scope.$on(TSMessageEvent[TSMessageEvent.INFO_UPDATE], this.displayMessages);
+        this.$scope.$on(TSMessageEvent[TSMessageEvent.CLEAR], () => {
             this.errors = [];
         });
     }
+
+    displayMessages = (event: any, errors: Array<TSExceptionReport>) => {
+            this.errors = errors;
+            this.show();
+        };
 
     show() {
         // this.element.show();
@@ -45,6 +49,15 @@ export class DvErrorMessagesPanelComponent {
     clear() {
         this.errorService.clearAll();
     };
+
+    messageStyle(): string {
+        for (let error of this.errors) {
+            if (error.severity !== TSErrorLevel.INFO) {
+                return '';
+            }
+        }
+        return 'info';
+    }
 
 }
 
