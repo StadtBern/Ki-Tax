@@ -14,6 +14,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -23,6 +24,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.util.*;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer Mahnungen
@@ -43,6 +47,9 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 
 	@Inject
 	private GesuchService gesuchService;
+
+	@Inject
+	private Authorizer authorizer;
 
 
 	@Override
@@ -66,12 +73,16 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	public Optional<Mahnung> findMahnung(@Nonnull String mahnungId) {
 		Objects.requireNonNull(mahnungId, "mahnungId muss gesetzt sein");
 		Mahnung mahnung = persistence.find(Mahnung.class, mahnungId);
+		if (mahnung != null) {
+			authorizer.checkReadAuthorization(mahnung.getGesuch());
+		}
 		return Optional.ofNullable(mahnung);
 	}
 
 	@Override
 	@Nonnull
 	public Collection<Mahnung> findMahnungenForGesuch(@Nonnull Gesuch gesuch) {
+		authorizer.checkReadAuthorization(gesuch);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);
 		Root<Mahnung> root = query.from(Mahnung.class);
@@ -95,6 +106,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Override
 	@Nonnull
 	public String getInitialeBemerkungen(@Nonnull Gesuch gesuch) {
+		authorizer.checkReadAuthorization(gesuch);
 		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
 		dokumentGrundsMerged.addAll(DokumenteUtil
 			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
@@ -137,8 +149,10 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		}
 	}
 
+	@Override
 	@Nonnull
 	public  Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch) {
+		authorizer.checkReadAuthorization(gesuch);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);
 		Root<Mahnung> root = query.from(Mahnung.class);
@@ -153,7 +167,8 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	}
 
 	@Override
-	public void removeMahnungenFromGesuch(Gesuch gesuch) {
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	public void removeAllMahnungenFromGesuch(Gesuch gesuch) {
 		Collection<Mahnung> mahnungenFromGesuch = findMahnungenForGesuch(gesuch);
 		for (Mahnung mahnung : mahnungenFromGesuch) {
 			persistence.remove(Mahnung.class, mahnung.getId());

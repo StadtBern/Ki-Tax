@@ -140,10 +140,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		//Remove all depending objects
 		wizardStepService.removeSteps(gesToRemove);  //wizard steps removen
-		mahnungService.removeMahnungenFromGesuch(gesToRemove);
-		generatedDokumentService.removeGeneratedDokumentFromGesuch(gesToRemove);
-		dokumentGrundService.removeDokumentGrundsFromGesuch(gesToRemove);
-		antragStatusHistoryService.removeAntragStatusHistoryFromGesuch(gesToRemove);
+		mahnungService.removeAllMahnungenFromGesuch(gesToRemove);
+		generatedDokumentService.removeAllGeneratedDokumenteFromGesuch(gesToRemove);
+		dokumentGrundService.removeAllDokumentGrundeFromGesuch(gesToRemove);
+		antragStatusHistoryService.removeAllAntragStatusHistoryFromGesuch(gesToRemove);
 
 		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(gesToRemove);

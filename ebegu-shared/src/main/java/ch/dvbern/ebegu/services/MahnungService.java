@@ -55,5 +55,5 @@ public interface MahnungService {
 	 * Entfernt alle Mahnungen vom gegebenen Gesuch
 	 * @param gesuch
 	 */
-	void removeMahnungenFromGesuch(Gesuch gesuch);
+	void removeAllMahnungenFromGesuch(Gesuch gesuch);
 }

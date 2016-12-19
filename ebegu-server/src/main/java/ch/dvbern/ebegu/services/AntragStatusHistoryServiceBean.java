@@ -88,7 +88,8 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 	}
 
 	@Override
-	public void removeAntragStatusHistoryFromGesuch(Gesuch gesuch) {
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	public void removeAllAntragStatusHistoryFromGesuch(Gesuch gesuch) {
 		Collection<AntragStatusHistory> antragStatusHistoryFromGesuch = findAllAntragStatusHistoryByGesuch(gesuch);
 		for (AntragStatusHistory antragStatusHistory : antragStatusHistoryFromGesuch) {
 			persistence.remove(AntragStatusHistory.class, antragStatusHistory.getId());
@@ -98,6 +99,7 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 	@Override
 	@Nonnull
 	public Collection<AntragStatusHistory> findAllAntragStatusHistoryByGesuch(@Nonnull Gesuch gesuch) {
+		authorizer.checkReadAuthorization(gesuch);
 		Objects.requireNonNull(gesuch);
 		return criteriaQueryHelper.getEntitiesByAttribute(AntragStatusHistory.class, gesuch, AntragStatusHistory_.gesuch);
 	}

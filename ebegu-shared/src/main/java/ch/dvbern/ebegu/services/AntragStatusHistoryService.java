@@ -29,7 +29,11 @@ public interface AntragStatusHistoryService {
 	@Nullable
 	AntragStatusHistory findLastStatusChange(@Nonnull Gesuch gesuch);
 
-	void removeAntragStatusHistoryFromGesuch(Gesuch gesuch);
+	/**
+	 * Entfernt alle AntrasStatusHistory Objekte vom gegebenen Gesuch
+	 * @param gesuch
+	 */
+	void removeAllAntragStatusHistoryFromGesuch(Gesuch gesuch);
 
 	@Nonnull
 	Collection<AntragStatusHistory> findAllAntragStatusHistoryByGesuch(@Nonnull Gesuch gesuch);

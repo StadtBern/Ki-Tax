@@ -44,5 +44,5 @@ public interface DokumentGrundService {
 	DokumentGrund updateDokumentGrund(@Nonnull DokumentGrund dokumentGrund);
 
 
-	void removeDokumentGrundsFromGesuch(Gesuch gesuch);
+	void removeAllDokumentGrundeFromGesuch(Gesuch gesuch);
 }

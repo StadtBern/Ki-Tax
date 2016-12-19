@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -31,11 +33,15 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
 /**
  * Service fuer GeneratedDokument
  */
 @Stateless
 @Local(GeneratedDokumentService.class)
+@PermitAll
 public class GeneratedDokumentServiceBean extends AbstractBaseService implements GeneratedDokumentService {
 
 
@@ -388,7 +394,8 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
-	public void removeGeneratedDokumentFromGesuch(Gesuch gesuch) {
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	public void removeAllGeneratedDokumenteFromGesuch(Gesuch gesuch) {
 		Collection<GeneratedDokument> genDokFromGesuch = findGeneratedDokumentsFromGesuch(gesuch);
 		for (GeneratedDokument generatedDokument : genDokFromGesuch) {
 			persistence.remove(GeneratedDokument.class, generatedDokument.getId());
@@ -398,6 +405,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Override
 	public Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
+		this.authorizer.checkReadAuthorization(gesuch);
 		return criteriaQueryHelper.getEntitiesByAttribute(GeneratedDokument.class, gesuch, GeneratedDokument_.gesuch);
 	}
 }

@@ -49,7 +49,7 @@ public interface GeneratedDokumentService {
 	GeneratedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung,
 																			Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
 
-	void removeGeneratedDokumentFromGesuch(Gesuch gesuch);
+	void removeAllGeneratedDokumenteFromGesuch(Gesuch gesuch);
 
 	Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch);
 }
