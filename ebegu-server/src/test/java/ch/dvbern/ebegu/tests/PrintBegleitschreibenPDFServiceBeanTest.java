@@ -52,7 +52,7 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguLoginT
 	public void testPrintBegleitschreiben() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		testfall.createFall(null);
@@ -71,7 +71,7 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguLoginT
 	public void testPrintBegleitschreibenZwiGesuchsteller() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen()); // sollte tagi aareg sein
 		// ist aber hier egal
 

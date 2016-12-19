@@ -27,7 +27,7 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 	@Test
 	public void testfall01_WaeltiDagmar() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
@@ -43,8 +43,8 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 	@Test
 	public void testfall02_FeutzYvonne() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		testfall.createFall(null);
@@ -59,7 +59,7 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 	@Test
 	public void testfall03_PerreiraMarcia() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		Testfall03_PerreiraMarcia testfall = new Testfall03_PerreiraMarcia(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		testfall.createFall(null);
@@ -74,7 +74,7 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 	@Test
 	public void testfall04_WaltherLaura() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		Testfall04_WaltherLaura testfall = new Testfall04_WaltherLaura(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		testfall.createFall(null);
@@ -89,7 +89,7 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 	@Test
 	public void testfall05_LuethiMeret() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		Testfall05_LuethiMeret testfall = new Testfall05_LuethiMeret(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		testfall.createFall(null);
@@ -104,8 +104,8 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 	@Test
 	public void testfall06_BeckerNora() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
 		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		testfall.createFall(null);
