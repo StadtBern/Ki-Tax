@@ -50,4 +50,10 @@ public interface MahnungService {
 	 * Gibt die (einzige aktive erstmahnung zurueck)
 	 */
 	Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch);
+
+	/**
+	 * Entfernt alle Mahnungen vom gegebenen Gesuch
+	 * @param gesuch
+	 */
+	void removeMahnungenFromGesuch(Gesuch gesuch);
 }

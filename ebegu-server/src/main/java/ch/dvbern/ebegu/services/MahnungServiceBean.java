@@ -98,7 +98,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
 		dokumentGrundsMerged.addAll(DokumenteUtil
 			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
-				dokumentGrundService.getAllDokumentGrundByGesuch(gesuch)));
+				dokumentGrundService.findAllDokumentGrundByGesuch(gesuch)));
 		Collections.sort(dokumentGrundsMerged);
 
 		StringBuilder bemerkungenBuilder = new StringBuilder();
@@ -150,5 +150,13 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		// Wirft eine NonUnique-Exception, falls mehrere aktive ErstMahnungen!
 		Mahnung aktiveErstMahnung = persistence.getCriteriaSingleResult(query);
 		return Optional.ofNullable(aktiveErstMahnung);
+	}
+
+	@Override
+	public void removeMahnungenFromGesuch(Gesuch gesuch) {
+		Collection<Mahnung> mahnungenFromGesuch = findMahnungenForGesuch(gesuch);
+		for (Mahnung mahnung : mahnungenFromGesuch) {
+			persistence.remove(Mahnung.class, mahnung.getId());
+		}
 	}
 }

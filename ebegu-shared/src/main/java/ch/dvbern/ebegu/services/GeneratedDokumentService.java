@@ -12,6 +12,7 @@ import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Collection;
 
 /**
  * Service zum Verwalten von GeneratedDokumenten
@@ -48,4 +49,7 @@ public interface GeneratedDokumentService {
 	GeneratedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung,
 																			Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
 
+	void removeGeneratedDokumentFromGesuch(Gesuch gesuch);
+
+	Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch);
 }

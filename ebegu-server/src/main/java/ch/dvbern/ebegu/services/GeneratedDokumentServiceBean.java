@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.Rule;
@@ -28,10 +29,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service fuer GeneratedDokument
@@ -90,6 +88,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Inject
 	private Authorizer authorizer;
+
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
 
 
 	@Override
@@ -384,5 +385,19 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 		return persistedDokument;
 
+	}
+
+	@Override
+	public void removeGeneratedDokumentFromGesuch(Gesuch gesuch) {
+		Collection<GeneratedDokument> genDokFromGesuch = findGeneratedDokumentsFromGesuch(gesuch);
+		for (GeneratedDokument generatedDokument : genDokFromGesuch) {
+			persistence.remove(GeneratedDokument.class, generatedDokument.getId());
+		}
+	}
+
+	@Override
+	public Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch) {
+		Objects.requireNonNull(gesuch);
+		return criteriaQueryHelper.getEntitiesByAttribute(GeneratedDokument.class, gesuch, GeneratedDokument_.gesuch);
 	}
 }

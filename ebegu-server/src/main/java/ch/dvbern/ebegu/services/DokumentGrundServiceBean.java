@@ -56,14 +56,14 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 
 	@Override
 	@Nonnull
-	public Collection<DokumentGrund> getAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch) {
+	public Collection<DokumentGrund> findAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
 		return criteriaQueryHelper.getEntitiesByAttribute(DokumentGrund.class, gesuch, DokumentGrund_.gesuch);
 	}
 
 	@Override
 	@Nonnull
-	public Collection<DokumentGrund> getAllDokumentGrundByGesuchAndDokumentType(@Nonnull Gesuch gesuch, @Nonnull DokumentGrundTyp dokumentGrundTyp) {
+	public Collection<DokumentGrund> findAllDokumentGrundByGesuchAndDokumentType(@Nonnull Gesuch gesuch, @Nonnull DokumentGrundTyp dokumentGrundTyp) {
 		Objects.requireNonNull(gesuch);
 
 
@@ -92,6 +92,14 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 		final DokumentGrund mergedDokument = persistence.merge(dokumentGrund);
 		wizardStepService.updateSteps(mergedDokument.getGesuch().getId(), null, null, WizardStepName.DOKUMENTE);
 		return mergedDokument;
+	}
+
+	@Override
+	public void removeDokumentGrundsFromGesuch(Gesuch gesuch) {
+		Collection<DokumentGrund> dokumentsFromGesuch = findAllDokumentGrundByGesuch(gesuch);
+		for (DokumentGrund dokument : dokumentsFromGesuch) {
+			persistence.remove(DokumentGrund.class, dokument.getId());
+		}
 	}
 
 }

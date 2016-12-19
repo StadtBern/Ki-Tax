@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
@@ -18,6 +19,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,6 +41,10 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 
 	@Inject
 	private Authorizer authorizer;
+
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
+
 
 	@Nonnull
 	@Override
@@ -79,6 +85,21 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public void removeAntragStatusHistoryFromGesuch(Gesuch gesuch) {
+		Collection<AntragStatusHistory> antragStatusHistoryFromGesuch = findAllAntragStatusHistoryByGesuch(gesuch);
+		for (AntragStatusHistory antragStatusHistory : antragStatusHistoryFromGesuch) {
+			persistence.remove(AntragStatusHistory.class, antragStatusHistory.getId());
+		}
+	}
+
+	@Override
+	@Nonnull
+	public Collection<AntragStatusHistory> findAllAntragStatusHistoryByGesuch(@Nonnull Gesuch gesuch) {
+		Objects.requireNonNull(gesuch);
+		return criteriaQueryHelper.getEntitiesByAttribute(AntragStatusHistory.class, gesuch, AntragStatusHistory_.gesuch);
 	}
 
 }

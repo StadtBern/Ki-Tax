@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Service zum Verwalten von AntragStatusHistory
@@ -27,4 +28,9 @@ public interface AntragStatusHistoryService {
 	 */
 	@Nullable
 	AntragStatusHistory findLastStatusChange(@Nonnull Gesuch gesuch);
+
+	void removeAntragStatusHistoryFromGesuch(Gesuch gesuch);
+
+	@Nonnull
+	Collection<AntragStatusHistory> findAllAntragStatusHistoryByGesuch(@Nonnull Gesuch gesuch);
 }
