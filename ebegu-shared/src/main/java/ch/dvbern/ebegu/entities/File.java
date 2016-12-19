@@ -82,4 +82,12 @@ public abstract class File extends AbstractEntity {
 			.append("filepfad", filepfad)
 			.toString();
 	}
+
+	public File copyForMutation(File mutation) {
+		super.copyForMutation(mutation);
+		mutation.setFilename(this.filename);
+		mutation.setFilepfad(this.filepfad);
+		mutation.setFilesize(this.filesize);
+		return mutation;
+	}
 }

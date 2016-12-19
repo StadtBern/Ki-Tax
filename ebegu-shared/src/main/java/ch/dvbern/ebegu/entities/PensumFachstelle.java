@@ -1,9 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.types.DateRange;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
@@ -36,6 +34,7 @@ public class PensumFachstelle extends AbstractPensumEntity {
 	}
 
 	public PensumFachstelle copyForMutation(PensumFachstelle mutation) {
+		super.copyForMutation(mutation);
 		mutation.setFachstelle(this.getFachstelle());
 		return mutation;
 	}
