@@ -84,6 +84,7 @@ export class DummyAuthenticationListViewController {
         let institution = new TSInstitution();
         institution.name = 'Kita Brünnen';
         institution.id = '1b6f476f-e0f5-4380-9ef6-836d688853a3';
+        institution.mail = 'kita.bruennen@bern.ch';
         institution.traegerschaft = this.traegerschaftStadtBern;
         institution.mandant = this.mandant;
         return institution;
@@ -94,7 +95,8 @@ export class DummyAuthenticationListViewController {
      */
     private getTraegerschaftStadtBern(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
-        traegerschaft.name = 'Stadt Bern';
+        traegerschaft.name = 'Kitas & Tagis Stadt Bern';
+        traegerschaft.mail = 'kitasundtagis@bern.ch';
         traegerschaft.id = 'f9ddee82-81a1-4cda-b273-fb24e9299308';
         return traegerschaft;
     }
@@ -105,6 +107,7 @@ export class DummyAuthenticationListViewController {
     private getTraegerschaftLeoLea(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
         traegerschaft.name = 'LeoLea';
+        traegerschaft.mail = 'info@leolea.ch';
         traegerschaft.id = 'd667e2d0-3702-4933-8fb7-be7a39755232';
         return traegerschaft;
     }
@@ -114,7 +117,8 @@ export class DummyAuthenticationListViewController {
      */
     private getTraegerschaftSGF(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
-        traegerschaft.name = 'Verein SGF';
+        traegerschaft.name = 'SGF';
+        traegerschaft.mail = 'info@sgfbern.ch';
         traegerschaft.id = 'bb5d4bd8-84c9-4cb6-8134-a97312dead67';
         return traegerschaft;
     }
