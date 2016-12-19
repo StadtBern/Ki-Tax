@@ -17,9 +17,15 @@ export class ApplicationPropertyRS {
     }
 
     getByName(name: string): IPromise<TSApplicationProperty> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(name)).then(
+        return this.http.get(this.serviceURL + '/key/' + encodeURIComponent(name)).then(
             (response: any) => this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty(), response.data)
         );
+    }
+
+    isDevMode(): IPromise<boolean> {
+        return this.http.get(this.serviceURL + '/devmode').then((response) => {
+            return response.data;
+        });
     }
 
     create(name: string, value: string): IHttpPromise<any> {

@@ -47,10 +47,10 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private $translate: ITranslateService, private $q: IQService, private $scope: IScope,
+                private $translate: ITranslateService, private $q: IQService, $scope: IScope,
                 private familiensituationRS: FamiliensituationRS) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.gesuchModelManager.initFamiliensituation();
         this.model = angular.copy(this.gesuchModelManager.getGesuch().familiensituationContainer);
         this.initialFamiliensituation = angular.copy(this.gesuchModelManager.getFamiliensituation());
@@ -77,10 +77,10 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
 
-    public confirmAndSave(form: angular.IFormController): IPromise<TSFamiliensituationContainer> {
+    public confirmAndSave(): IPromise<TSFamiliensituationContainer> {
         this.savedClicked = true;
-        if (form.$valid && !this.hasEmptyAenderungPer() && !this.hasError()) {
-            if (!form.$dirty) {
+        if (this.form.$valid && !this.hasEmptyAenderungPer() && !this.hasError()) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch().familiensituationContainer);

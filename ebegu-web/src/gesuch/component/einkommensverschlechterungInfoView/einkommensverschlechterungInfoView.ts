@@ -16,6 +16,7 @@ import TSEinkommensverschlechterungInfoContainer from '../../../models/TSEinkomm
 import EinkommensverschlechterungInfoRS from '../../service/einkommensverschlechterungInfoRS.rest';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
@@ -40,12 +41,13 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'
-        , 'WizardStepManager', 'DvDialog', '$q', 'EinkommensverschlechterungInfoRS'];
+        , 'WizardStepManager', 'DvDialog', '$q', 'EinkommensverschlechterungInfoRS', '$scope'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager,
-                private DvDialog: DvDialog, private $q: IQService, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                private DvDialog: DvDialog, private $q: IQService, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
+                $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initialEinkVersInfo = angular.copy(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer);
         this.model = angular.copy(this.initialEinkVersInfo);
         this.initViewModel();
@@ -129,9 +131,9 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         }
     }
 
-    public confirmAndSave(form: angular.IFormController): IPromise<TSEinkommensverschlechterungInfoContainer> {
-        if (form.$valid) {
-            if (!form.$dirty) {
+    public confirmAndSave(): IPromise<TSEinkommensverschlechterungInfoContainer> {
+        if (this.form.$valid) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.model);

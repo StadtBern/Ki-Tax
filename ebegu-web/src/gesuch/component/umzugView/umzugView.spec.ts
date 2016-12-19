@@ -49,7 +49,7 @@ describe('umzugView', function () {
     describe('getNameFromBetroffene', function () {
         beforeEach(function () {
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
         });
         it('should return the names of the GS or beide Gesuchsteller', function () {
             let gesuch: TSGesuch = new TSGesuch();
@@ -74,7 +74,7 @@ describe('umzugView', function () {
     describe('getBetroffenenList', function () {
         beforeEach(function () {
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
         });
         it('should return a list with only GS1', function () {
             let gesuch: TSGesuch = new TSGesuch();
@@ -104,7 +104,7 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(undefined);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
 
             expect(umzugController.getUmzugAdressenList().length).toBe(0);
         });
@@ -125,7 +125,7 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
 
             expect(umzugController.getUmzugAdressenList().length).toBe(2);
             expect(umzugController.getUmzugAdressenList()[0].betroffene).toBe(TSBetroffene.GESUCHSTELLER_1);
@@ -147,7 +147,7 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
 
             expect(umzugController.getUmzugAdressenList().length).toBe(1);
             expect(umzugController.getUmzugAdressenList()[0].betroffene).toBe(TSBetroffene.BEIDE_GESUCHSTELLER);
@@ -171,7 +171,7 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate, dialog, $q);
+                wizardStepManager, errorService, $translate, dialog, $q, $rootScope);
 
 
             expect(umzugController.getUmzugAdressenList().length).toBe(1);
