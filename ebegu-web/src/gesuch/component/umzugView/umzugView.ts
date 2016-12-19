@@ -136,7 +136,6 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
      */
     private getAdressenListFromGS2(): void {
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2) {
-            this.gesuchModelManager.getGesuch().gesuchsteller2.getUmzugAdressen();
             this.gesuchModelManager.getGesuch().gesuchsteller2.getUmzugAdressen().forEach(umzugAdresse => {
                 umzugAdresse.showDatumVon = true; // wird benoetigt weil es vom Server nicht kommt
                 let foundPosition: number = -1;
@@ -148,7 +147,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
                 if (foundPosition >= 0) {
                     this.model[foundPosition].betroffene = TSBetroffene.BEIDE_GESUCHSTELLER;
 
-                    // speichern der adressContainer vom Gs2 damit wir sie später wieder finden!!!!
+                    // speichern der AdressContainer vom Gs2 damit wir sie später wieder finden
                     this.model[foundPosition].adresseGS2 = umzugAdresse;
                 } else {
                     this.model.push(new TSUmzugAdresse(TSBetroffene.GESUCHSTELLER_2, umzugAdresse));
@@ -175,15 +174,20 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
      * Erstellt eine neue leere Adresse vom Typ WOHNADRESSE
      */
     public createUmzugAdresse(): void {
+        let adresseContainer = this.createAdressContainer();
+        let umzugAdresse: TSUmzugAdresse = new TSUmzugAdresse(undefined, adresseContainer);
+
+        this.model.push(umzugAdresse);
+        this.dirty = true;
+    }
+
+    private createAdressContainer() {
         let adresseContainer: TSAdresseContainer = new TSAdresseContainer();
         let adresse: TSAdresse = new TSAdresse();
         adresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
         adresseContainer.showDatumVon = true;
         adresseContainer.adresseJA = adresse;
-        let umzugAdresse: TSUmzugAdresse = new TSUmzugAdresse(undefined, adresseContainer);
-
-        this.model.push(umzugAdresse);
-        this.dirty = true;
+        return adresseContainer;
     }
 
     /**
@@ -212,8 +216,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
                 this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller1, umzugAdresse.adresse);
 
                 if (!umzugAdresse.adresseGS2) {
-
-                    umzugAdresse.adresseGS2 = new TSAdresseContainer();
+                    umzugAdresse.adresseGS2 = this.createAdressContainer();
                 }
                 umzugAdresse.adresseGS2.adresseJA.copy(umzugAdresse.adresse.adresseJA);
                 this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller2, umzugAdresse.adresseGS2);
