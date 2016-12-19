@@ -61,7 +61,7 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
         this._gemeinde = toCopy.gemeinde;
         this._adresseTyp = toCopy.adresseTyp;
         this._nichtInGemeinde = toCopy.nichtInGemeinde;
-        if(!this.gueltigkeit){
+        if (!this.gueltigkeit) {
             this.gueltigkeit = new TSDateRange();
         }
         this.gueltigkeit.gueltigAb = toCopy.gueltigkeit.gueltigAb;
