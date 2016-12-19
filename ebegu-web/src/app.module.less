@@ -89,10 +89,26 @@ body {
     height: @navbar-height;
     min-height: @navbar-height;
     width: 100%;
-    display: block;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-content: flex-end;
     z-index: @z-index-navbar;
 }
 
+dv-home-icon {
+    margin-left: auto;
+    //margin-right:auto;
+    display: flex;
+    width: @navbar-height;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+}
+
+dv-pulldown-user-menu {
+    //width:0;
+}
 .logo-bern {
     background-image: url('assets/images/logo1-bern.png');
     background-repeat: no-repeat;
@@ -103,12 +119,13 @@ body {
 .logo-house {
     vertical-align: middle;
     padding: 0;
-    float: right;
-    font-size: 4rem;
-}
-
-.logo-house:hover {
-    background-color:@lgrey;
+    font-size: 3rem;
+    height: @navbar-height;
+    width: @navbar-height;
+    line-height: @navbar-height;
+    &:hover {
+        background-color: @contrast-light;
+    }
 }
 
 .logo-text {

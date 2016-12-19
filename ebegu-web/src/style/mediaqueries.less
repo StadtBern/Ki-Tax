@@ -1,6 +1,9 @@
 @import 'variables.less';
 
-@media @mq-md {
+@media @mq-xs {
+    .gesuchModul {
+        padding: 5rem 2.5rem 10rem 5rem;
+    }
     .mainQuestion {
         width: 200%;
     }
@@ -13,22 +16,28 @@
         width: 60rem;
     }
 
-    .gesuchModul {
-        padding-bottom: 10rem;
+    /*  .gesuchModul {
+          padding-bottom: 10rem;
+      }*/
+    #sidenavContainer {
+        width: 35.5rem;
+        min-width: 35.5rem;
+        max-width: 35.5rem;
+        right: unset;
+        li {
+            width: 35.5rem;
+            &:before {
+                width: 30rem; /* or 100px */
+            }
+        }
     }
+}
 
+@media @mq-sm {
     #gesuchContainer {
         .nav-row {
-            flex-direction: row-reverse;
-            -ms-flex-direction: row-reverse;
-            bottom: 4rem;
-            left: 0;
-            right: 0;
-            transform: unset;
             & > div {
-                margin-bottom: 0;
-                display: flex;
-
+                padding: 0 2rem 0;
                 &:nth-of-type(2) {
                     margin-bottom: 0;
                     justify-content: flex-end;

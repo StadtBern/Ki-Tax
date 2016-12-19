@@ -1,6 +1,9 @@
 @import '../variables.less';
 @import '../mixins.less';
 
+.table-responsive {
+    border: none;
+}
 .row-fallnr {
     width: 5%;
 }
@@ -66,9 +69,12 @@ eingangsdatum.row-status {
 }
 
 table, .table > tbody, .table > thead, .table > thead:first-child {
-    margin-bottom: 2rem;
     & > tr {
         & > td {
+            max-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             .h3();
             position: relative;
             line-height: 3rem;
@@ -86,6 +92,10 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
 
         }
         & > th, & > th:empty {
+            max-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             .label();
             height: 5rem;
             vertical-align: middle;
@@ -164,4 +174,8 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             }
         }
     }
+}
+
+table {
+    min-width: 50rem;
 }

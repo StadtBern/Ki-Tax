@@ -52,16 +52,18 @@ export class GesuchToolbarController {
     onVerantwortlicherChange: (attr: any) => void;
 
     gesuchsperiodeList: { [key: string]: Array<TSAntragDTO> } = {};
+    gesuchNavigationList: {[key: string]: Array<string>} = {};
     antragTypList: { [key: string]: TSAntragDTO } = {};
     mutierenPossibleForCurrentAntrag: boolean = false;
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
-        '$state', '$stateParams', '$scope', 'GesuchModelManager'];
+        '$state', '$stateParams', '$scope', 'GesuchModelManager', '$mdSidenav'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
                 private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope,
-                private gesuchModelManager: GesuchModelManager) {
+                private gesuchModelManager: GesuchModelManager,
+                private $mdSidenav: ng.material.ISidenavService) {
         this.updateUserList();
         this.updateAntragDTOList();
 
@@ -71,6 +73,17 @@ export class GesuchToolbarController {
 
     }
 
+    public toggleSidenav(componentId: string): void {
+        this.$mdSidenav(componentId).toggle();
+    }
+
+    public closeSidenav(componentId: string): void {
+        this.$mdSidenav(componentId).close();
+    }
+
+    public logout(): void {
+        this.$state.go('login', {type: 'logout'});
+    }
 
     private addWatchers($scope: angular.IScope) {
         // needed because of test is not able to inject $scope!
@@ -83,6 +96,7 @@ export class GesuchToolbarController {
                         this.updateAntragDTOList();
                     } else {
                         this.antragTypList = {};
+                        this.gesuchNavigationList = {};
                         this.gesuchsperiodeList = {};
                     }
                 }
@@ -130,18 +144,20 @@ export class GesuchToolbarController {
             this.gesuchRS.getAllAntragDTOForFall(this.getGesuch().fall.id).then((response) => {
                 this.antragList = angular.copy(response);
                 this.updateGesuchperiodeList();
+                this.updateGesuchNavigationList();
                 this.updateAntragTypList();
                 this.antragMutierenPossible();
             });
         } else {
             this.gesuchsperiodeList = {};
+            this.gesuchNavigationList = {};
             this.antragTypList = {};
             this.antragMutierenPossible();
         }
     }
 
     private updateGesuchperiodeList() {
-
+        this.gesuchsperiodeList = {};
         for (var i = 0; i < this.antragList.length; i++) {
             let gs = this.antragList[i].gesuchsperiodeString;
 
@@ -152,7 +168,21 @@ export class GesuchToolbarController {
         }
     }
 
+    private updateGesuchNavigationList() {
+        this.gesuchNavigationList = {};
+        for (var i = 0; i < this.antragList.length; i++) {
+            let gs = this.antragList[i].gesuchsperiodeString;
+            let antrag: TSAntragDTO = this.antragList[i];
+
+            if (!this.gesuchNavigationList[gs]) {
+                this.gesuchNavigationList[gs] = [];
+            }
+            this.gesuchNavigationList[gs].push(this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer));
+        }
+    }
+
     private updateAntragTypList() {
+        this.antragTypList = {};
         for (var i = 0; i < this.antragList.length; i++) {
             let antrag: TSAntragDTO = this.antragList[i];
             if (this.getGesuch().gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {

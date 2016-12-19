@@ -1,4 +1,3 @@
-import AbstractGesuchViewController from './component/abstractGesuchView';
 import GesuchModelManager from './service/gesuchModelManager';
 import BerechnungsManager from './service/berechnungsManager';
 import DateUtil from '../utils/DateUtil';
@@ -10,9 +9,9 @@ import {TSAntragStatus} from '../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
 import TSGesuch from '../models/TSGesuch';
 import TSUser from '../models/TSUser';
-import ITranslateService = angular.translate.ITranslateService;
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import {TSRole} from '../models/enums/TSRole';
+import ITranslateService = angular.translate.ITranslateService;
 
 export class GesuchRouteController {
 
@@ -20,11 +19,11 @@ export class GesuchRouteController {
     TSRoleUtil: any;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-        'AntragStatusHistoryRS', '$translate'];
+        'AntragStatusHistoryRS', '$translate', '$mdSidenav', 'CONSTANTS'];
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
-                private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService) {
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService, private $mdSidenav: ng.material.ISidenavService, private CONSTANTS: any) {
         //super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.loadLastStatusChange(this.gesuchModelManager.getGesuch());
         this.TSRole = TSRole;
@@ -41,6 +40,14 @@ export class GesuchRouteController {
             return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().eingangsdatum, 'DD.MM.YYYY');
         }
         return undefined;
+    }
+
+    public toggleSidenav(componentId: string) {
+        this.$mdSidenav(componentId).toggle();
+    }
+
+    public closeSidenav(componentId: string) {
+        this.$mdSidenav(componentId).close();
     }
 
     public getIcon(stepName: TSWizardStepName): string {
@@ -155,6 +162,22 @@ export class GesuchRouteController {
                 return this.$translate.instant('MENU_MUTATION');
             }
         }
+    }
+
+    public getGesuchName(): string {
+        if (this.getGesuch()) {
+            var text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
+            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.nachname) {
+                text = text + ' ' + this.getGesuch().gesuchsteller1.nachname;
+            }
+            return text;
+        } else {
+            return '';
+        }
+    }
+
+    public getActiveElement(): TSWizardStepName {
+        return this.wizardStepManager.getCurrentStepName();
     }
 
 }

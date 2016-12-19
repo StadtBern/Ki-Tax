@@ -777,5 +777,18 @@
     "UMZUG_HINT": "Umzüge, die in der Zukunft liegen, können bereits zum jetzigen Punkt angegeben werden",
     "ABWESENHEIT": "Abwesenheit",
     "ABWESENHEIT_ENTFERNEN": "Abwesenheit löschen",
-    "ABWESENHEIT_ERFASSEN": "Abwesenheit erfassen"
+    "ABWESENHEIT_ERFASSEN": "Abwesenheit erfassen",
+    "FAMILIENSITUATION": "Familiensituation",
+    "GESUCHSTELLER": "Gesuchsteller",
+    "KINDER": "Kinder",
+    "BETREUUNG": "Betreuung",
+    "ERWERBSPENSUM": "Erwerbspensum",
+    "FINANZIELLE_SITUATION": "Finanzielle Situation",
+    "EINKOMMENSVERSCHLECHTERUNG": "Einkommensverschlechterung",
+    "DOKUMENTE": "Dokumente",
+    "FREIGABEQUITTUNG": "Freigabequittung",
+    "VERFUEGEN": "Verfügen",
+    "UMZUG": "Umzug",
+    "ABWESENHEIT": "Abwesenheit",
+    "GESUCH_ERSTELLEN": ""
 }
