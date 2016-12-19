@@ -110,7 +110,7 @@
 
             </div>
         </div>
-<!--selecton fuer parameter die bestimmen wie die testfaelle erzeugt werden-->
+        <!--selecton fuer parameter die bestimmen wie die testfaelle erzeugt werden-->
         <div class="row marginTop10">
             <div class="col-md-8 col-md-offset-2">
                 <div class="row">
@@ -129,10 +129,10 @@
                             </label>
 
                             <select name="besitzer" id="besitzer"
-                                    ng-model="vm.createAsBesitzer"
+                                    ng-model="vm.selectedBesitzer"
                                     class="form-control"
                                     ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
-                                    <option value=""></option>
+                                <option value=""></option>
 
                             </select>
                         </dv-input-container>
@@ -141,6 +141,7 @@
             </div>
         </div>
 
+        <!--Liste der Faelle-->
         <div class="col-md-8 col-md-offset-2 marginTop30">
 
 
@@ -194,6 +195,35 @@
                     </button>
                 </li>
             </ul>
+
+            <!--Gesuche eines GS loeschen-->
+            <h2 class="marginTop20">
+                <span data-translate="Gesuchstellerfaelle loeschen"></span>
+            </h2>
+            <div class="row marginTop30">
+                <div class="col-sm-7 ">
+                    <dv-input-container class="form-group ">
+                        <label class="md-no-float" for="gesuchsteller">
+                            Gesuchsteller dessen Faelle Geloescht werden solllen
+                        </label>
+
+                        <select name="gesuchsteller" id="gesuchsteller"
+                                ng-model="vm.selectedBesitzer"
+                                class="form-control dv-input-container-small"
+                                ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
+                            <option value=""></option>
+
+                        </select>
+                    </dv-input-container>
+                </div>
+
+                <div class="col-sm-4 ">
+                    <dv-loading-button button-class="" button-click="vm.removeGesucheGS()" type="button">
+                        <span data-translate="DELETE"></span>
+                    </dv-loading-button>
+
+                </div>
+            </div>
 
             <h2 class="marginTop20">
                 <span data-translate="Mutiere"></span>

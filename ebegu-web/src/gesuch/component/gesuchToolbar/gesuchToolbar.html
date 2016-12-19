@@ -10,7 +10,7 @@
 
                 <md-menu-content class="no-padding menu-item-container">
                     <md-menu-item class="menu-item-link"
-                                  ng-repeat="gesuchsperiodeString in vmx.getKeys(vmx.gesuchsperiodeList)"
+                                  ng-repeat="gesuchsperiodeString in vmx.getKeys(vmx.gesuchNavigationList)"
                                   ng-value="gesuchsperiodeString">
                         <md-button ng-click="vmx.setGesuchsperiode(gesuchsperiodeString)"
                                    aria-label="{{gesuchsperiodeString}}">
@@ -32,7 +32,8 @@
                     <i class="ellipsis-icon fa fa-chevron-down"></i>
                 </button>
                 <md-menu-content class="no-padding menu-item-container">
-                    <md-menu-item class="menu-item-link" ng-repeat="antragTypDatum in vmx.getKeys(vmx.antragTypList)"
+                    <md-menu-item class="menu-item-link"
+                                  ng-repeat="antragTypDatum in vmx.gesuchNavigationList[vmx.getCurrentGesuchsperiode()]"
                                   ng-value="antragTypDatum">
                         <md-button class="menu-item-link" ng-click="vmx.setAntragTypDatum(antragTypDatum)"
                                    aria-label="{{antragTypDatum}}">

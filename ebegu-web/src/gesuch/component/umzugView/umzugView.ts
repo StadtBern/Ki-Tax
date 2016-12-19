@@ -16,6 +16,7 @@ import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./umzugView.html');
 require('./umzugView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -35,13 +36,14 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
     dirty = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'ErrorService', '$translate',
-        'DvDialog', '$q'];
+        'DvDialog', '$q', '$scope'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private errorService: ErrorService,
-                private $translate: ITranslateService, private DvDialog: DvDialog, private $q: IQService) {
+                private $translate: ITranslateService, private DvDialog: DvDialog, private $q: IQService,
+                $scope: IScope) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initViewModel();
     }
 
@@ -56,9 +58,9 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
         return this.model;
     }
 
-    public save(form: angular.IFormController): IPromise<TSGesuchstellerContainer> {
-        if (form.$valid) {
-            if (!form.$dirty && !this.dirty) {
+    public save(): IPromise<TSGesuchstellerContainer> {
+        if (this.form.$valid) {
+            if (!this.form.$dirty && !this.dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith());
@@ -144,6 +146,9 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
                 }
                 if (foundPosition >= 0) {
                     this.model[foundPosition].betroffene = TSBetroffene.BEIDE_GESUCHSTELLER;
+
+                    // speichern der AdressContainer vom Gs2 damit wir sie später wieder finden
+                    this.model[foundPosition].adresseGS2 = umzugAdresse;
                 } else {
                     this.model.push(new TSUmzugAdresse(TSBetroffene.GESUCHSTELLER_2, umzugAdresse));
                 }
@@ -169,15 +174,20 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
      * Erstellt eine neue leere Adresse vom Typ WOHNADRESSE
      */
     public createUmzugAdresse(): void {
+        let adresseContainer = this.createAdressContainer();
+        let umzugAdresse: TSUmzugAdresse = new TSUmzugAdresse(undefined, adresseContainer);
+
+        this.model.push(umzugAdresse);
+        this.dirty = true;
+    }
+
+    private createAdressContainer() {
         let adresseContainer: TSAdresseContainer = new TSAdresseContainer();
         let adresse: TSAdresse = new TSAdresse();
         adresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
         adresseContainer.showDatumVon = true;
         adresseContainer.adresseJA = adresse;
-        let umzugAdresse: TSUmzugAdresse = new TSUmzugAdresse(undefined, adresseContainer);
-
-        this.model.push(umzugAdresse);
-        this.dirty = true;
+        return adresseContainer;
     }
 
     /**
@@ -204,7 +214,12 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
 
             } else if (TSBetroffene.BEIDE_GESUCHSTELLER === umzugAdresse.betroffene) {
                 this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller1, umzugAdresse.adresse);
-                this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller2, umzugAdresse.adresse);
+
+                if (!umzugAdresse.adresseGS2) {
+                    umzugAdresse.adresseGS2 = this.createAdressContainer();
+                }
+                umzugAdresse.adresseGS2.adresseJA.copy(umzugAdresse.adresse.adresseJA);
+                this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller2, umzugAdresse.adresseGS2);
             }
         });
     }

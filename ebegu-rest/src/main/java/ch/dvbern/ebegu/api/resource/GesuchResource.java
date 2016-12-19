@@ -331,4 +331,23 @@ public class GesuchResource {
 		Gesuch mutationToReturn = gesuchService.createGesuch(gesuchOptional.get());
 		return Response.ok(converter.gesuchToJAX(mutationToReturn)).build();
 	}
+
+	@ApiOperation(value = "Gibt den Antrag frei und bereitet ihn vor für die Bearbeitung durch das Jugendamt")
+	@Nullable
+	@POST
+	@Path("/freigeben/{antragId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response antragFreigeben(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+
+		final String antragId = converter.toEntityId(antragJaxId);
+
+		Gesuch gesuch = gesuchService.antragFreigeben(antragId);
+		return Response.ok(converter.gesuchToJAX(gesuch)).build();
+	}
 }

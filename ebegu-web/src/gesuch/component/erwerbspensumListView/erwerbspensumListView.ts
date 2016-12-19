@@ -14,6 +14,7 @@ import TSKindContainer from '../../../models/TSKindContainer';
 import {TSBetreuungsangebotTypUtil} from '../../../utils/TSBetreuungsangebotTypUtil';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import ILogService = angular.ILogService;
+import IScope = angular.IScope;
 let template = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 require('./erwerbspensumListView.less');
@@ -42,11 +43,13 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     erwerbspensenGS1: Array<TSErwerbspensumContainer> = undefined;
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog', 'ErrorService', 'WizardStepManager'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog',
+        'ErrorService', 'WizardStepManager', '$scope'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initErwerbspensumStepStatus();
     }
 

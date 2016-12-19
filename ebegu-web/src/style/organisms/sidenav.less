@@ -2,14 +2,17 @@
 @import '../mixins.less';
 
 #sidenavContainer {
+    box-shadow: none;
     color: @contrast-darkest;
     overflow-y: auto;
     overflow-x: hidden;
-    flex: 0 0 auto;
+    text-overflow: ellipsis;
     z-index: @z-index-sidenav;
-    width: 35.5rem;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
     background: @contrast-lightest;
-    position: relative;
+    top: @navbar-height;
     .row {
         margin: 0;
     }
@@ -17,22 +20,26 @@
         padding: 0;
         position: absolute;
         left: 0;
+        right: 0;
+        width: auto;
 
     }
     li {
         position: relative;
         height: @sidebar-height;
         box-sizing: content-box;
-        width: 35.5rem;
+        width: 100%;
         list-style: none;
         &:before {
             content: "";
             position: absolute;
             left: 2.5rem;
+            right: 2.5rem;
             bottom: 0;
             height: 0.1rem;
-            width: 30rem; /* or 100px */
+            min-height: 1px;
             border-bottom: 0.1rem solid @contrast;
+            display: block;
         }
         button {
             border: none;
@@ -55,6 +62,10 @@
                 height: @sidebar-height;
                 font-size: 1.6rem;
                 text-align: left;
+                overflow-x: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                padding: 0;
                 color: @contrast-darkest;
                 display: block;
             }
@@ -68,6 +79,9 @@
             font-size: 1.6rem;
             color: @contrast-darkest;
             display: block;
+            overflow-x: visible;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             margin: 0;
             text-align: center;
             padding: 0 3rem 0 0;

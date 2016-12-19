@@ -6,10 +6,14 @@ import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.ErwerbspensumResource;
 import ch.dvbern.ebegu.api.resource.GesuchstellerResource;
+import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
+import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -39,6 +43,8 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 	private Persistence<Gesuch> persistence;
 	@Inject
 	private JaxBConverter converter;
+	@Inject
+	private EbeguParameterService ebeguParameterService;
 	private JaxId gesuchJAXPId;
 
 
@@ -84,6 +90,7 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	@Test
 	public void invalidPercentErwerbspensumTest() throws EbeguException {
 		JaxGesuchstellerContainer jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
@@ -94,6 +101,11 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertNotNull(loadedEwp);
 		loadedEwp.getErwerbspensumGS().setZuschlagsprozent(50);
 		try{
+			EbeguParameter maxErwerbspensum = new EbeguParameter();
+			maxErwerbspensum.setName(EbeguParameterKey.PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM);
+			maxErwerbspensum.setValue("20");
+			maxErwerbspensum.setGueltigkeit(new DateRange(loadedEwp.getErwerbspensumGS().getGueltigAb().minusDays(1), loadedEwp.getErwerbspensumGS().getGueltigBis()));
+			ebeguParameterService.saveEbeguParameter(maxErwerbspensum);
 			erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(storedGS),loadedEwp,null,null);
 			Assert.fail("50% is invalid");
 		} catch (EJBException e){

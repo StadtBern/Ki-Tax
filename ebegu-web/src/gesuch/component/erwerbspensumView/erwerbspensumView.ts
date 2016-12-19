@@ -1,4 +1,4 @@
-import {IComponentOptions, IFormController, IQService, IPromise, IScope} from 'angular';
+import {IComponentOptions, IQService, IPromise, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IErwerbspensumStateParams} from '../../gesuch.route';
@@ -16,6 +16,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -43,12 +44,12 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     patternPercentage: string;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager',
-        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q'];
+        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q', '$translate'];
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: IScope, private errorService: ErrorService,
-                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
         this.gesuchsteller = this.gesuchModelManager.getStammdatenToWorkWith();
@@ -91,10 +92,10 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
         }
     }
 
-    save(form: IFormController): IPromise<any> {
-        if (form.$valid) {
+    save(): IPromise<any> {
+        if (this.form.$valid) {
 
-            if (!form.$dirty) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.model);
@@ -106,8 +107,8 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
         return undefined;
     }
 
-    cancel(form: IFormController) {
-        form.$setPristine();
+    cancel() {
+        this.form.$setPristine();
     }
 
 
@@ -136,5 +137,17 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     erwerbspensumDisabled(): boolean {
         // Disabled wenn Mutation, ausser bei Bearbeiter Jugendamt
         return this.model.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
+
+    public getTextZuschlagErwerbspensumKorrekturJA() : string {
+        if (this.model.erwerbspensumGS && this.model.erwerbspensumGS.zuschlagZuErwerbspensum === true) {
+            let ewp: TSErwerbspensum = this.model.erwerbspensumGS;
+            let grundText = this.$translate.instant(ewp.zuschlagsgrund.toString());
+            return this.$translate.instant('JA_KORREKTUR_ZUSCHLAG_ERWERBSPENSUM', {
+                zuschlagsgrund: grundText,
+                zuschlagsprozent: ewp.zuschlagsprozent});
+        } else {
+            return this.$translate.instant('LABEL_KEINE_ANGABE');
+        }
     }
 }

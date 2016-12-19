@@ -13,7 +13,7 @@ import {UploadRS} from '../../../core/service/uploadRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSWizardStep from '../../../models/TSWizardStep';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import {TSAntragStatus, isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;

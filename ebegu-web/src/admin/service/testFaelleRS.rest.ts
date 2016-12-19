@@ -24,6 +24,13 @@ export class TestFaelleRS {
             + '/' + bestaetigt + '/' + verfuegen + '/' + encodeURIComponent(username));
     }
 
+
+    public removeFaelleOfGS(username: string): IHttpPromise<String> {
+        return this.http.delete(this.serviceURL + '/testfallgs/' + encodeURIComponent(username));
+    }
+
+
+
     public createTestFall(testFall: string, bestaetigt: boolean, verfuegen: boolean): IHttpPromise<String> {
         return this.http.get(this.serviceURL + '/testfall/' + encodeURIComponent(testFall) + '/' + bestaetigt + '/' + verfuegen);
     }

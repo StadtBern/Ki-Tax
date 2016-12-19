@@ -317,9 +317,9 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	 */
 	private Mandant insertInstitutionen() {
 
-		final InstitutionStammdaten institutionStammdatenKitaAaregg = TestDataUtil.createInstitutionStammdatenKitaAaregg();
+		final InstitutionStammdaten institutionStammdatenKitaAaregg = TestDataUtil.createInstitutionStammdatenKitaWeissenstein();
 		final InstitutionStammdaten institutionStammdatenKitaBruennen = TestDataUtil.createInstitutionStammdatenKitaBruennen();
-		final InstitutionStammdaten institutionStammdatenTagiAaregg = TestDataUtil.createInstitutionStammdatenTagiAaregg();
+		final InstitutionStammdaten institutionStammdatenTagiAaregg = TestDataUtil.createInstitutionStammdatenTagiWeissenstein();
 
 		Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
 		traegerschaftService.saveTraegerschaft(traegerschaft);
@@ -340,9 +340,9 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 		institutionService.createInstitution(institutionStammdatenKitaBruennen.getInstitution());
 		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaBruennen);
 
-		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_AAREGG));
-		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_BRUENNEN));
-		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_AAREGG_TAGI));
+		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA));
+		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA));
+		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_TAGI));
 
 		return mandant;
 	}

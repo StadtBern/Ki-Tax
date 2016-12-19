@@ -60,8 +60,8 @@ public class PDFServiceBeanTest {
 	@Before
 	public void setupTestData() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);

@@ -252,7 +252,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		//Die Gesuche sollten im Status IN_BEARBEITUNG_GS sein und zu keinem oder einem Traegerschafts Sachbearbeiter gehoeren, trotzdem sollten wir sie finden
 //		Benutzer user = TestDataUtil.createDummySuperAdmin(persistence);
-		//kita aaregg
+		//kita Weissenstein
 		Institution institutionToSet = gesuch.extractAllBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution();
 		loginAsSachbearbeiterInst("sainst", institutionToSet);
 		Pair<Long, List<Gesuch>> secondResult = gesuchService.searchAntraege(filterDTO);

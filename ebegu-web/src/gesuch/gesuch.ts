@@ -20,12 +20,12 @@ export class GesuchRouteController {
     TSRoleUtil: any;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-        'AntragStatusHistoryRS', '$translate', 'AuthServiceRS'];
+        'AntragStatusHistoryRS', '$translate', 'AuthServiceRS', '$mdSidenav', 'CONSTANTS'];
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService,
-                private authServiceRS: AuthServiceRS) {
+                private authServiceRS: AuthServiceRS, private $mdSidenav: ng.material.ISidenavService, private CONSTANTS: any) {
         //super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.loadLastStatusChange(this.gesuchModelManager.getGesuch());
         this.TSRole = TSRole;
@@ -44,8 +44,16 @@ export class GesuchRouteController {
         return undefined;
     }
 
+    public toggleSidenav(componentId: string) {
+        this.$mdSidenav(componentId).toggle();
+    }
+
+    public closeSidenav(componentId: string) {
+        this.$mdSidenav(componentId).close();
+    }
+
     public getIcon(stepName: TSWizardStepName): string {
-        var step = this.wizardStepManager.getStepByName(stepName);
+        let step = this.wizardStepManager.getStepByName(stepName);
         if (step) {
             let status = step.wizardStepStatus;
             if (status === TSWizardStepStatus.MUTIERT) {
@@ -59,7 +67,7 @@ export class GesuchRouteController {
             } else if (status === TSWizardStepStatus.NOK) {
                 return 'fa-close red';
             } else if (status === TSWizardStepStatus.IN_BEARBEITUNG) {
-                if (step.wizardStepName === TSWizardStepName.DOKUMENTE) { // Dokumenten haben kein Icon wenn nicht alle hochgeladen wurden
+                if (step.wizardStepName === TSWizardStepName.DOKUMENTE || step.wizardStepName === TSWizardStepName.FREIGABE) { // Dokumenten haben kein Icon wenn nicht alle hochgeladen wurden
                     return '';
                 }
                 return 'fa-pencil black';
@@ -78,7 +86,7 @@ export class GesuchRouteController {
      * @returns {boolean} Sollte etwas schief gehen, true wird zurueckgegeben
      */
     public isWizardStepDisabled(stepName: TSWizardStepName): boolean {
-        var step = this.wizardStepManager.getStepByName(stepName);
+        let step = this.wizardStepManager.getStepByName(stepName);
         if (step) {
             return !this.wizardStepManager.isStepClickableForCurrentRole(step, this.gesuchModelManager.getGesuch());
         }
@@ -163,6 +171,14 @@ export class GesuchRouteController {
                 return this.$translate.instant('MENU_MUTATION');
             }
         }
+    }
+
+    public getGesuchName(): string {
+        return this.gesuchModelManager.getGesuchName();
+    }
+
+    public getActiveElement(): TSWizardStepName {
+        return this.wizardStepManager.getCurrentStepName();
     }
 
 }

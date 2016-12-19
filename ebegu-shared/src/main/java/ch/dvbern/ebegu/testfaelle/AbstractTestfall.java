@@ -21,9 +21,13 @@ import java.util.Collection;
  */
 public abstract class AbstractTestfall {
 
-	public static final String ID_INSTITUTION_AAREGG = "11111111-1111-1111-1111-111111111101";
-	public static final String ID_INSTITUTION_BRUENNEN = "11111111-1111-1111-1111-111111111107";
-	public static final String ID_INSTITUTION_AAREGG_TAGI = "11111111-1111-1111-1111-111111111174";
+	public static final String ID_INSTITUTION_WEISSENSTEIN = "ab353df1-47ca-4618-b849-2265cf1c356a";
+	public static final String ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA = "945e3eef-8f43-43d2-a684-4aa61089684b";
+	public static final String ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_TAGI = "3304040a-3eb7-426c-a838-51981df87cec";
+
+	public static final String ID_INSTITUTION_BRUENNEN = "1b6f476f-e0f5-4380-9ef6-836d688853a3";
+	public static final String ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA = "9a0eb656-b6b7-4613-8f55-4e0e4720455e";
+
 
 
 	protected Gesuchsperiode gesuchsperiode;

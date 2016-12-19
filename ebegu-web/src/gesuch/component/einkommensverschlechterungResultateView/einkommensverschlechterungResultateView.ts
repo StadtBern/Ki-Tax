@@ -12,6 +12,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./einkommensverschlechterungResultateView.html');
 require('./einkommensverschlechterungResultateView.less');
 
@@ -32,12 +33,12 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     resultatProzent: string;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q'];
+        'WizardStepManager', '$q', '$scope'];
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungResultateStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         let parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null, parsedBasisJahrPlusNum);
         this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
@@ -78,10 +79,10 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         }
     }
 
-    private save(form: angular.IFormController): IPromise<void> {
-        if (form.$valid) {
+    private save(): IPromise<void> {
+        if (this.form.$valid) {
             //todo team refactoren so dass nur eine resource methode aufgerufen wird (fuer transaktionssicherzheit)
-            if (!form.$dirty) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 // Update wizardStepStatus also if the form is empty and not dirty

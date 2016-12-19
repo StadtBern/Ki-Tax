@@ -55,7 +55,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguLoginTest {
 	public void testGeneriereVerfuegungKita() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Gesuch gesuch = createTestFall(institutionStammdatenList);
 		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
@@ -80,7 +80,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguLoginTest {
 	public void testGeneriereVerfuegungTageselternKleinkinder() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Gesuch gesuch = createTestFall(institutionStammdatenList);
 		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_KLEINKIND);
@@ -106,7 +106,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguLoginTest {
 	public void testGeneriereVerfuegung_TageselternSchulkinder() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Gesuch gesuch = createTestFall(institutionStammdatenList);
 		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
@@ -131,7 +131,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguLoginTest {
 	public void testGeneriereVerfuegung_TagesstatetteSchulkinder() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Gesuch gesuch = createTestFall(institutionStammdatenList);
 		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);

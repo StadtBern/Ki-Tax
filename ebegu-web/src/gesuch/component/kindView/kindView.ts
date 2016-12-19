@@ -1,4 +1,4 @@
-import {IComponentOptions, IFormController} from 'angular';
+import {IComponentOptions} from 'angular';
 import {IKindStateParams} from '../../gesuch.route';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKind from '../../../models/TSKind';
@@ -16,6 +16,7 @@ import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ITranslateService = angular.translate.ITranslateService;
 import DateUtil from '../../../utils/DateUtil';
+import IScope = angular.IScope;
 
 
 let template = require('./kindView.html');
@@ -41,9 +42,9 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         'ErrorService', 'WizardStepManager', '$q', '$translate'];
     /* @ngInject */
     constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith());
         // this.initialModel = angular.copy(this.model);
@@ -64,10 +65,10 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         }
     }
 
-    save(form: IFormController): IPromise<TSKindContainer> {
-        if (form.$valid) {
+    save(): IPromise<TSKindContainer> {
+        if (this.form.$valid) {
             this.gesuchModelManager.setKindToWorkWith(this.model);
-            if (!form.$dirty) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.model);
@@ -79,9 +80,9 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         return undefined;
     }
 
-    cancel(form: IFormController) {
+    cancel() {
         this.reset();
-        form.$setPristine();
+        this.form.$setPristine();
     }
 
     reset() {
@@ -162,7 +163,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         if (this.getContainer().kindGS && this.getContainer().kindGS.pensumFachstelle) {
             let fachstelle : TSPensumFachstelle = this.getContainer().kindGS.pensumFachstelle;
             let vonText = DateUtil.momentToLocalDateFormat(fachstelle.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
-            let bisText = fachstelle.gueltigkeit.gueltigBis ? DateUtil.momentToLocalDateFormat(fachstelle.gueltigkeit.gueltigBis, 'DD.MM.YYYY') : '31.12.9999'
+            let bisText = fachstelle.gueltigkeit.gueltigBis ? DateUtil.momentToLocalDateFormat(fachstelle.gueltigkeit.gueltigBis, 'DD.MM.YYYY') : '31.12.9999';
             return this.$translate.instant('JA_KORREKTUR_FACHSTELLE', {
                 name: fachstelle.fachstelle.name,
                 pensum: fachstelle.pensum,

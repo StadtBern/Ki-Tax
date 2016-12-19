@@ -110,7 +110,7 @@ public class OpenIdmRestService {
 	}
 
 	public Optional<JaxOpenIdmResult> createInstitution(Institution institution, boolean force) {
-		return create(force, institution.getName(), INSTITUTION, convertToOpenIdmInstitutionsUID(institution.getId()));
+		return create(force, institution.getName(), INSTITUTION, convertToOpenIdmInstitutionsUID(institution.getId()), institution.getMail());
 	}
 
 	@Nonnull
@@ -137,13 +137,13 @@ public class OpenIdmRestService {
 	}
 
 	public Optional<JaxOpenIdmResult> createTraegerschaft(Traegerschaft traegerschaft, boolean force) {
-		return create(force, traegerschaft.getName(), TRAEGERSCHAFT, convertToOpenIdmTraegerschaftUID(traegerschaft.getId()));
+		return create(force, traegerschaft.getName(), TRAEGERSCHAFT, convertToOpenIdmTraegerschaftUID(traegerschaft.getId()), traegerschaft.getMail());
 	}
 
 	/**
 	 * creates the passed element in openIDM and returns the result entity or nothing if there is no openidm configured
 	 */
-	private Optional<JaxOpenIdmResult> create(boolean force, String name, String type, String openIdmUID) {
+	private Optional<JaxOpenIdmResult> create(boolean force, String name, String type, String openIdmUID, String mail) {
 		if (configuration.getOpenIdmEnabled() || force) {
 			String user = configuration.getOpenIdmUser();
 			String pass = configuration.getOpenIdmPassword();
@@ -151,7 +151,7 @@ public class OpenIdmRestService {
 			JaxInstitutionOpenIdm jaxInstitutionOpenIdm = new JaxInstitutionOpenIdm();
 			jaxInstitutionOpenIdm.setName(name);
 			jaxInstitutionOpenIdm.setType(type);
-			jaxInstitutionOpenIdm.setMail("");   //todo fehlt noch, wird spaeter in db vorhanden sein
+			jaxInstitutionOpenIdm.setMail(mail);
 
 			Response response = getOpenIdmRESTProxClient().create(user, pass, openIdmUID, jaxInstitutionOpenIdm);
 

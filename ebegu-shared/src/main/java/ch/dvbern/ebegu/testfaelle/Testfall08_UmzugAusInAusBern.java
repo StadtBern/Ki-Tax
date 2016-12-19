@@ -66,8 +66,8 @@ public class Testfall08_UmzugAusInAusBern extends AbstractTestfall {
 		kind.setGesuch(gesuch);
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
-		// Kita Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
+		// Kita Weissenstein
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_WEISSENSTEIN, betreuungenBestaetigt);
 		betreuungKitaAaregg.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaAaregg);
 		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(80, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JANUARY, 31));

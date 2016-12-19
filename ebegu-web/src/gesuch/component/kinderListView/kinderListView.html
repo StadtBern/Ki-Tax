@@ -28,7 +28,6 @@
                         <td ng-bind="row.kindJA.vorname"></td>
                         <td ng-bind="row.kindJA.nachname"></td>
                         <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td ng-if="vm.isGesuchReadonly()"></td>
                         <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
                             <dv-loading-button type="button" button-click="vm.removeKind(row)" button-class="dv-btn-sm"
                                                button-disabled="vm.isKorrekturModusJugendamt()">

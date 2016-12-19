@@ -42,8 +42,8 @@ public class Testfall_DoppelKita_Regel1 extends AbstractTestfall {
 		kind.setGesuch(gesuch);
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
-		// Kita Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
+		// Kita Weissenstein
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_WEISSENSTEIN, betreuungenBestaetigt);
 		betreuungKitaAaregg.setBetreuungNummer(1);
 		betreuungKitaAaregg.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaAaregg);

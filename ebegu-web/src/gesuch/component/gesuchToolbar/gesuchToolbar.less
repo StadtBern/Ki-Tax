@@ -91,10 +91,10 @@
         color: @contrast-lightest;
 
     }
-    .kontaktTop {
+    span:first-child {
         margin-top: 2rem;
     }
-    .kontaktBottom {
+    span:last-child {
         margin-bottom: 2rem;
     }
 
@@ -102,7 +102,8 @@
 
 .gesuch-toolbar {
     .bold-menu {
-        .bold()
+        .bold();
+        white-space: nowrap;
     }
     span {
         .menu-item-link();
@@ -162,6 +163,9 @@
 }
 
 .gesuch-toolbar-gesuchsteller {
+    & > md-backdrop.md-sidenav-backdrop {
+        z-index: (@z-index-mobile-toolbar - 1);
+    }
     .gesuchName > span {
         .bold();
         font-size: 1.6rem;
@@ -199,6 +203,7 @@
             font-size: 1.4rem;
             background: @primary;
             text-align: left;
+            margin: 0;
 
             &:hover, &:focus {
                 background: @primary;
@@ -225,6 +230,149 @@
         .md-button {
             padding: 0;
         }
+    }
+}
+
+.gesuch-toolbar-mobile-close {
+    background-color: transparent;
+    color: @contrast-darkest;
+    font-size: 1.8rem;
+    line-height: @navbar-height;
+    height: @navbar-height;
+    &.active, &:active, &:hover, &:focus {
+        background-color: transparent;
+        color: @contrast-darkest;
+        outline: none !important;
+        text-decoration: none !important;
+
+    }
+
+}
+
+.gesuch-toolbar-mobile {
+    box-shadow: none;
+    color: @contrast-lightest;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: @z-index-mobile-toolbar;
+    width: 90%;
+    min-width: 90%;
+    max-width: 90%;
+    background: @primary;
+    .gesuchsperioden-container {
+        width: 100%;
+    }
+    button.gesuchsperiode-button, button.antrag-typ-datum-button {
+        & > span > a {
+            .bold();
+            letter-spacing: 0.15rem;
+            font-size: 1.6rem;
+        }
+
+        display: block;
+        width: 100%;
+        height: @navbar-height;
+        text-align: left;
+        padding: 0 3rem 0;
+        line-height: @navbar-height;
+        border-bottom: solid @primary-dark .1rem;
+        background-color: transparent;
+        color: @contrast-lightest;
+        &.active, &:active, &:hover, &:focus {
+            background-color: transparent;
+            color: @contrast-lightest;
+            outline: none !important;
+            text-decoration: none !important;
+
+        }
+    }
+    button.gesuchsperiode-button {
+        margin-top: 2rem;
+    }
+    button.antrag-typ-datum-button {
+        padding: 0 0 0 5rem;
+    }
+    & > span {
+        &.antrag-typ-datum-button, &.gesuchsperiode-button {
+
+            .normal();
+            letter-spacing: 0.15rem;
+            font-size: 1.6rem;
+            display: block;
+            width: 100%;
+            height: @navbar-height !important;
+            text-align: left;
+            padding: 0 3rem 0;
+            line-height: @navbar-height !important;
+            border-bottom: solid @primary-dark .1rem;
+            color: @contrast;
+        }
+        &.flex {
+            border: none;
+        }
+        &.antrag-typ-datum-button {
+            padding: 0 5rem 0;
+        }
+    }
+
+    .mobile-kontakt {
+        color: @contrast-lightest;
+        width: 100%;
+        height: auto;
+        text-align: left;
+        padding: 0;
+        border-bottom: solid @primary-dark .1rem;
+        & > button, & > div > button {
+            padding: 0;
+        }
+        & > div {
+            padding: 0 2rem 0;
+        }
+
+        & > span, a span, a {
+            color: @contrast-lightest;
+            .normal();
+            text-decoration: none;
+            letter-spacing: 0.15rem;
+            font-size: 1.6rem;
+            display: block;
+            height: auto;
+            line-height: normal;
+        }
+    }
+    .mobile-kontakt {
+        padding: 2rem 3rem 5rem;
+        & > a {
+            span {
+                .bold()
+            }
+        }
+    }
+
+    .gesuch-toolbar-mobile-close, .mobile-logout {
+        background-color: transparent;
+        color: @contrast-lightest;
+        text-align: right;
+        width: 100%;
+        height: @navbar-height;
+        padding: 0 1.5rem 0 3rem;
+        line-height: @navbar-height;
+        &.active, &:active, &:hover, &:focus {
+            background-color: transparent;
+            color: @contrast-lightest;
+            outline: none !important;
+            text-decoration: none !important;
+
+        }
+
+    }
+    .mobile-logout {
+        text-align: left;
+        span {
+            text-transform: uppercase;
+            font-size: 1.6rem;
+        }
+
     }
 }
 
