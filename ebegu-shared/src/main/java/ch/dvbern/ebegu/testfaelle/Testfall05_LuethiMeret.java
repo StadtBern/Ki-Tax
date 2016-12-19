@@ -30,9 +30,9 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createVerheiratet();
-		Gesuchsteller gesuchsteller1 = createGesuchsteller(FAMILIENNAME, "Meret");
+		GesuchstellerContainer gesuchsteller1 = createGesuchstellerContainer(FAMILIENNAME, "Meret");
 		gesuch.setGesuchsteller1(gesuchsteller1);
-		Gesuchsteller gesuchsteller2 = createGesuchsteller("Beieler", "Jan");
+		GesuchstellerContainer gesuchsteller2 = createGesuchstellerContainer("Beieler", "Jan");
 		gesuch.setGesuchsteller2(gesuchsteller2);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensumGS1 = createErwerbspensum(70, 0);
@@ -45,8 +45,8 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 		gesuch.getKindContainers().add(kind1);
 
 		// Betreuungen
-		// Kind 1: Kita Aaregg
-		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
+		// Kind 1: Kita Weissenstein
+		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_WEISSENSTEIN, betreuungenBestaetigt);
 		betreuungTagiAaregg.setKind(kind1);
 		kind1.getBetreuungen().add(betreuungTagiAaregg);
 		// 50%

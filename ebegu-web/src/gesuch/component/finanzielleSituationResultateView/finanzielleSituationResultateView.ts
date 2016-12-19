@@ -10,6 +10,7 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./finanzielleSituationResultateView.html');
 require('./finanzielleSituationResultateView.less');
 
@@ -28,12 +29,12 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     private initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q'];
+        'WizardStepManager', '$q', '$scope'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
 
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
@@ -56,10 +57,10 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
             this.model.gemeinsameSteuererklaerung === false;
     }
 
-    private save(form: angular.IFormController): IPromise<void> {
-        if (form.$valid) {
+    private save(): IPromise<void> {
+        if (this.form.$valid) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
-            if (!form.$dirty) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 // Update wizardStepStatus also if the form is empty and not dirty

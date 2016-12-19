@@ -11,7 +11,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form="" novalidate>
+            <form role="form" name="vm.form" class="" unsaved-warning-form="" novalidate>
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!-- Total Einkuenfte -->
@@ -47,7 +47,7 @@
                                        aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM|translate}}"
                                        ng-model="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="form.bruttovermoegen.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.bruttovermoegen.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().bruttovermoegen"
                                            ja="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"></dv-bisher>
                             </dv-input-container>
@@ -63,10 +63,9 @@
                                        aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_2|translate}}"
                                        ng-model="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="form.bruttovermoegen.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.bruttovermoegen.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().bruttovermoegen"
-                                           ja="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"
-                                "></dv-bisher>
+                                           ja="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -85,7 +84,7 @@
                                        aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM|translate}}"
                                        ng-model="vm.getEinkommensverschlechterungGS1_JA().schulden"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="form.schulden.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.schulden.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().schulden"
                                            ja="vm.getEinkommensverschlechterungGS1_JA().schulden"></dv-bisher>
                             </dv-input-container>
@@ -101,7 +100,7 @@
                                        aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
                                        ng-model="vm.getEinkommensverschlechterungGS2_JA().schulden"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="form.schulden.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.schulden.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().schulden"
                                            ja="vm.getEinkommensverschlechterungGS2_JA().schulden"></dv-bisher>
                             </dv-input-container>
@@ -229,7 +228,7 @@
                 </fieldset>
 
                 <!-- -------------------------------------------Navigation--------------------------------------------  -->
-                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save(form)" dv-sub-step="4">
+                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save()" dv-sub-step="4">
                 </dv-navigation>
 
             </form>

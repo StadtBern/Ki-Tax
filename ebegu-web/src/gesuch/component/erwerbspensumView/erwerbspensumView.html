@@ -9,7 +9,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
+            <form role="form" name="vm.form" class="" novalidate
                   unsaved-warning-form ng-if="vm.model">
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
@@ -22,7 +22,9 @@
                                        ng-model="vm.model.erwerbspensumJA.bezeichnung"
                                        dv-max-length class="form-control" ng-required="false"
                                        ng-disabled="vm.erwerbspensumDisabled()">
-                                <dv-error-messages for="form.bezeichnung.$error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.bezeichnung.$error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.bezeichnung"
+                                           ja="vm.model.erwerbspensumJA.bezeichnung"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -43,8 +45,10 @@
                                         ng-required="true" ng-change="vm.taetigkeitChanged()"
                                         ng-disabled="vm.erwerbspensumDisabled()">
                                 </select>
-                                <dv-error-messages for="form.taetigkeit.$error"
+                                <dv-error-messages for="vm.form.taetigkeit.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.taetigkeit"
+                                           ja="vm.model.erwerbspensumJA.taetigkeit"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -54,15 +58,16 @@
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="PENSUM" for="taetigkeitPensum"></label>
-                                <input id="taetigkeitPensum" type="text" name="taetigkeitPensum"
+                                <input id="taetigkeitPensum" type="number" name="taetigkeitPensum"
                                        ng-model="vm.model.erwerbspensumJA.pensum"
                                        dv-max-length class="form-control" max="100"
                                        ng-required="true" ng-pattern="vm.patternPercentage"
                                        ng-disabled="vm.erwerbspensumDisabled()"
                                        ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                                <dv-error-messages for="form.taetigkeitPensum.$error"
+                                <dv-error-messages for="vm.form.taetigkeitPensum.$error"
                                                    class="error"></dv-error-messages>
-                                <dv-bisher gs="vm.model.erwerbspensumGS.pensum"></dv-bisher>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.pensum"
+                                           ja="vm.model.erwerbspensumJA.pensum"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -79,8 +84,10 @@
                                                ng-disabled="vm.erwerbspensumDisabled()"
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
-                                <dv-error-messages for="form.taetigkeitAb.$error"
+                                <dv-error-messages for="vm.form.taetigkeitAb.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.gueltigkeit.gueltigAb"
+                                           ja="vm.model.erwerbspensumJA.gueltigkeit.gueltigAb"></dv-bisher>
                             </dv-input-container>
                         </div>
                         <div class="col-sm-12 dv-input-container-small">
@@ -92,25 +99,30 @@
                                                ng-required="false" class="input-element"
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
-                                <dv-error-messages for="form.taetigkeitBis.$error"
+                                <dv-error-messages for="vm.form.taetigkeitBis.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.gueltigkeit.gueltigBis"
+                                           ja="vm.model.erwerbspensumJA.gueltigkeit.gueltigBis"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
 
                     <!--Zuschlag zu Erwerbspensum-->
-                    <div class="row" ng-if="vm.viewZuschlag()">
+                    <div class="row">
                         <div class="col-md-12">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
                                              name="zuschlag"
-                                             ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled()"
+                                             ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled() || !vm.viewZuschlag()"
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
                                     <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
                                 </md-checkbox>
-                                <dv-error-messages for="form.zuschlag.$error"
+                                <dv-error-messages for="vm.form.zuschlag.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum"
+                                           ja="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
+                                           specific-bisher-text="vm.getTextZuschlagErwerbspensumKorrekturJA()"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -121,16 +133,26 @@
                             <div class="form-group">
                                 <label class="md-no-float" data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
                                 </label>
-
+                            <!--im readonly modus wird das select durch ein div ersetzt weil werte gesetzt sein koennen die nicht in der selectbox sind-->
                             <select name="zuschlagsgrund" id="zuschlagsgrund"
                                     ng-model="vm.model.erwerbspensumJA.zuschlagsgrund"
                                     class="form-control"
                                     ng-options="zuschlagsgrund | translate for zuschlagsgrund in vm.getZuschlagsgrundList() "
                                     ng-required="true"
-                                    ng-disabled="vm.erwerbspensumDisabled()">
+                                    ng-disabled="vm.erwerbspensumDisabled()"
+                                    ng-if="!vm.isGesuchReadonly()">
                             </select>
-                            <dv-error-messages for="form.zuschlagsgrund.$error"
+                            <div id="zuschlagsgrund_dvi"
+                                 ng-bind="vm.model.erwerbspensumJA.zuschlagsgrund | translate"
+                                 class="form-control"
+                                 ng-if="vm.isGesuchReadonly()">
+                            </div>
+                            <dv-error-messages for="vm.form.zuschlagsgrund.$error"
                                                class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
+                                           ja="vm.model.erwerbspensumJA.zuschlagsgrund"
+                                           show-if-bisher-none="false"
+                                           block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
                         </div>
                     </div>
                 </div>
@@ -146,9 +168,12 @@
                                    ng-required="true" ng-pattern="vm.patternPercentage"
                                    ng-disabled="vm.erwerbspensumDisabled()"
                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                            <dv-error-messages for="form.zuschlagsprozent.$error"
+                            <dv-error-messages for="vm.form.zuschlagsprozent.$error"
                                                class="error"></dv-error-messages>
-                            <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsprozent"></dv-bisher>
+                            <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsprozent"
+                                       ja="vm.model.erwerbspensumJA.zuschlagsprozent"
+                                       show-if-bisher-none="false"
+                                       block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
                         </dv-input-container>
                     </div>
                 </div>
@@ -157,7 +182,7 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-cancel="vm.cancel(form)" dv-next="true" dv-save="vm.save(form)" dv-sub-step="2" dv-translate-next="{{'SPEICHERN_UPPER'}}">
+                <dv-navigation dv-cancel="vm.cancel()" dv-next="true" dv-save="vm.save()" dv-sub-step="2" dv-translate-next="{{'SPEICHERN_UPPER'}}">
                 </dv-navigation>
 
             </form>

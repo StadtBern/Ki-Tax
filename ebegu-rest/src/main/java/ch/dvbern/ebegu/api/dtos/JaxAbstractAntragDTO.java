@@ -32,6 +32,10 @@ public class JaxAbstractAntragDTO extends JaxAbstractDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate eingangsdatum = null;
 
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate freigabeDatum = null;
+
 	@NotNull
 	private AntragStatusDTO status;
 
@@ -65,6 +69,15 @@ public class JaxAbstractAntragDTO extends JaxAbstractDTO {
 
 	public void setEingangsdatum(@Nullable LocalDate eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
+	}
+
+	@Nullable
+	public LocalDate getFreigabeDatum() {
+		return freigabeDatum;
+	}
+
+	public void setFreigabeDatum(@Nullable LocalDate freigabeDatum) {
+		this.freigabeDatum = freigabeDatum;
 	}
 
 	public AntragStatusDTO getStatus() {

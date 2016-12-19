@@ -27,25 +27,25 @@ public class WohnsitzAbschnittRuleTest {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
 		Gesuch gesuch = betreuung.extractGesuch();
 
-		List<GesuchstellerAdresse> adressen1 = new ArrayList<>();
-		final GesuchstellerAdresse adresse1GS1 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse1GS1.setNichtInGemeinde(false);
-		adresse1GS1.setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(2017, Month.JANUARY, 25)));
+		List<GesuchstellerAdresseContainer> adressen1 = new ArrayList<>();
+		final GesuchstellerAdresseContainer adresse1GS1 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller1());
+		adresse1GS1.getGesuchstellerAdresseJA().setNichtInGemeinde(false);
+		adresse1GS1.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(2017, Month.JANUARY, 25)));
 		adressen1.add(adresse1GS1);
-		final GesuchstellerAdresse adresse2GS1 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse2GS1.setNichtInGemeinde(true);
-		adresse2GS1.setGueltigkeit(new DateRange(LocalDate.of(2017, Month.JANUARY, 26), Constants.END_OF_TIME));
+		final GesuchstellerAdresseContainer adresse2GS1 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller1());
+		adresse2GS1.getGesuchstellerAdresseJA().setNichtInGemeinde(true);
+		adresse2GS1.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(LocalDate.of(2017, Month.JANUARY, 26), Constants.END_OF_TIME));
 		adressen1.add(adresse2GS1);
 		gesuch.getGesuchsteller1().setAdressen(adressen1);
 
-		List<GesuchstellerAdresse> adressen2 = new ArrayList<>();
-		final GesuchstellerAdresse adresse1GS2 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse1GS2.setNichtInGemeinde(true);
-		adresse1GS2.setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(2017, Month.APRIL, 25)));
+		List<GesuchstellerAdresseContainer> adressen2 = new ArrayList<>();
+		final GesuchstellerAdresseContainer adresse1GS2 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller2());
+		adresse1GS2.getGesuchstellerAdresseJA().setNichtInGemeinde(true);
+		adresse1GS2.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(2017, Month.APRIL, 25)));
 		adressen2.add(adresse1GS2);
-		final GesuchstellerAdresse adresse2GS2 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse2GS2.setNichtInGemeinde(false);
-		adresse2GS2.setGueltigkeit(new DateRange(LocalDate.of(2017, Month.APRIL, 26), Constants.END_OF_TIME));
+		final GesuchstellerAdresseContainer adresse2GS2 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller2());
+		adresse2GS2.getGesuchstellerAdresseJA().setNichtInGemeinde(false);
+		adresse2GS2.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(LocalDate.of(2017, Month.APRIL, 26), Constants.END_OF_TIME));
 		adressen2.add(adresse2GS2);
 		gesuch.getGesuchsteller2().setAdressen(adressen2);
 
@@ -106,10 +106,10 @@ public class WohnsitzAbschnittRuleTest {
 
 		createAdressenForGS2(gesuch);
 
-		gesuch.setFamiliensituationErstgesuch(new Familiensituation());
-		gesuch.getFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
-		gesuch.getFamiliensituationErstgesuch().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
-		gesuch.getFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
+		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(new Familiensituation());
+		gesuch.extractFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.extractFamiliensituationErstgesuch().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		gesuch.extractFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
 
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitte = wohnsitzRule.createVerfuegungsZeitabschnitte(betreuung, null);
 
@@ -162,11 +162,11 @@ public class WohnsitzAbschnittRuleTest {
 
 		createAdressenForGS2(gesuch);
 
-		gesuch.setFamiliensituationErstgesuch(new Familiensituation());
-		gesuch.getFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
-		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
-		gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
-		gesuch.getFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
+		gesuch.getFamiliensituationContainer().setFamiliensituationErstgesuch(new Familiensituation());
+		gesuch.extractFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		gesuch.extractFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.extractFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		gesuch.extractFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
 
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitte = wohnsitzRule.createVerfuegungsZeitabschnitte(betreuung, null);
 
@@ -225,20 +225,20 @@ public class WohnsitzAbschnittRuleTest {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
 		Gesuch gesuch = betreuung.extractGesuch();
 
-		List<GesuchstellerAdresse> adressen1 = new ArrayList<>();
-		final GesuchstellerAdresse adresse1GS1 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse1GS1.setNichtInGemeinde(true);
-		adresse1GS1.setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(2017, Month.JANUARY, 25)));
+		List<GesuchstellerAdresseContainer> adressen1 = new ArrayList<>();
+		final GesuchstellerAdresseContainer adresse1GS1 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller1());
+		adresse1GS1.getGesuchstellerAdresseJA().setNichtInGemeinde(true);
+		adresse1GS1.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(2017, Month.JANUARY, 25)));
 		adressen1.add(adresse1GS1);
 
-		final GesuchstellerAdresse adresse2GS1 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse2GS1.setNichtInGemeinde(false);
-		adresse2GS1.setGueltigkeit(new DateRange(LocalDate.of(2017, Month.JANUARY, 26), LocalDate.of(2017, Month.FEBRUARY, 26)));
+		final GesuchstellerAdresseContainer adresse2GS1 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller1());
+		adresse2GS1.getGesuchstellerAdresseJA().setNichtInGemeinde(false);
+		adresse2GS1.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(LocalDate.of(2017, Month.JANUARY, 26), LocalDate.of(2017, Month.FEBRUARY, 26)));
 		adressen1.add(adresse2GS1);
 
-		final GesuchstellerAdresse adresse3GS1 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse3GS1.setNichtInGemeinde(true);
-		adresse3GS1.setGueltigkeit(new DateRange(LocalDate.of(2017, Month.FEBRUARY, 27), Constants.END_OF_TIME));
+		final GesuchstellerAdresseContainer adresse3GS1 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller1());
+		adresse3GS1.getGesuchstellerAdresseJA().setNichtInGemeinde(true);
+		adresse3GS1.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(LocalDate.of(2017, Month.FEBRUARY, 27), Constants.END_OF_TIME));
 		adressen1.add(adresse3GS1);
 
 		gesuch.getGesuchsteller1().setAdressen(adressen1);
@@ -269,27 +269,27 @@ public class WohnsitzAbschnittRuleTest {
 	// HELP METHODS
 
 	private void createAdressenForGS1(Gesuch gesuch) {
-		List<GesuchstellerAdresse> adressen1 = new ArrayList<>();
-		final GesuchstellerAdresse adresse1GS1 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse1GS1.setNichtInGemeinde(false);
-		adresse1GS1.setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(2016, Month.NOVEMBER, 25)));
+		List<GesuchstellerAdresseContainer> adressen1 = new ArrayList<>();
+		final GesuchstellerAdresseContainer adresse1GS1 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller1());
+		adresse1GS1.getGesuchstellerAdresseJA().setNichtInGemeinde(false);
+		adresse1GS1.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(2016, Month.NOVEMBER, 25)));
 		adressen1.add(adresse1GS1);
-		final GesuchstellerAdresse adresse2GS1 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse2GS1.setNichtInGemeinde(true);
-		adresse2GS1.setGueltigkeit(new DateRange(LocalDate.of(2016, Month.NOVEMBER, 26), Constants.END_OF_TIME));
+		final GesuchstellerAdresseContainer adresse2GS1 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller1());
+		adresse2GS1.getGesuchstellerAdresseJA().setNichtInGemeinde(true);
+		adresse2GS1.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(LocalDate.of(2016, Month.NOVEMBER, 26), Constants.END_OF_TIME));
 		adressen1.add(adresse2GS1);
 		gesuch.getGesuchsteller1().setAdressen(adressen1);
 	}
 
 	private void createAdressenForGS2(Gesuch gesuch) {
-		List<GesuchstellerAdresse> adressen2 = new ArrayList<>();
-		final GesuchstellerAdresse adresse1GS2 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse1GS2.setNichtInGemeinde(true);
-		adresse1GS2.setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(2017, Month.FEBRUARY, 25)));
+		List<GesuchstellerAdresseContainer> adressen2 = new ArrayList<>();
+		final GesuchstellerAdresseContainer adresse1GS2 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller2());
+		adresse1GS2.getGesuchstellerAdresseJA().setNichtInGemeinde(true);
+		adresse1GS2.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(Constants.START_OF_TIME, LocalDate.of(2017, Month.FEBRUARY, 25)));
 		adressen2.add(adresse1GS2);
-		final GesuchstellerAdresse adresse2GS2 = TestDataUtil.createDefaultGesuchstellerAdresse();
-		adresse2GS2.setNichtInGemeinde(false);
-		adresse2GS2.setGueltigkeit(new DateRange(LocalDate.of(2017, Month.FEBRUARY, 26), Constants.END_OF_TIME));
+		final GesuchstellerAdresseContainer adresse2GS2 = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuch.getGesuchsteller2());
+		adresse2GS2.getGesuchstellerAdresseJA().setNichtInGemeinde(false);
+		adresse2GS2.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(LocalDate.of(2017, Month.FEBRUARY, 26), Constants.END_OF_TIME));
 		adressen2.add(adresse2GS2);
 		gesuch.getGesuchsteller2().setAdressen(adressen2);
 	}

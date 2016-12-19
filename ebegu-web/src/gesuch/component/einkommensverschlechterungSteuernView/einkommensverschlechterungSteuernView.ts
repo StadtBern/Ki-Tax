@@ -11,6 +11,7 @@ import {TSRole} from '../../../models/enums/TSRole';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./einkommensverschlechterungSteuernView.html');
 require('./einkommensverschlechterungSteuernView.less');
 
@@ -27,11 +28,13 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     allowedRoles: Array<TSRole>;
     initialModel: TSFinanzModel;
 
-    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager', '$q'];
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
+        'WizardStepManager', '$q', '$scope'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager,
+                private $q: IQService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
         this.initialModel = angular.copy(this.model);
@@ -53,7 +56,7 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
-        return this.model.einkommensverschlechterungInfo;
+        return this.model.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA;
     }
 
     showSteuerveranlagung_BjP1(): boolean {
@@ -82,9 +85,9 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         }
     }
 
-    private save(form: angular.IFormController): IPromise<TSGesuch> {
-        if (form.$valid) {
-            if (!form.$dirty) {
+    private save(): IPromise<TSGesuch> {
+        if (this.form.$valid) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch());

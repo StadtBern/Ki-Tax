@@ -10,7 +10,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <form role="form" name="form" class="" novalidate
+            <form role="form" name="vm.form" class="" novalidate
                   unsaved-warning-form>
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
@@ -23,6 +23,7 @@
                                 <div class="form-group">
                                     <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot-{{$index}}">
                                     </label>
+                                    <!-- TODO (team) kann durch JA nicht korrigiert werden -->
                                     <select name="betreuungsangebot-{{$index}}" id="betreuungsangebot-{{$index}}"
                                             ng-model="abwesenheitInstance.kindBetreuung"
                                             class="form-control"
@@ -30,7 +31,7 @@
                                             ng-required="true"
                                             ng-change="vm.changedAngebot('{{abwesenheitInstance.kindBetreuung.kind.id}}', '{{abwesenheitInstance.kindBetreuung.betreuung.id}}')">
                                     </select>
-                                    <dv-error-messages for="form['betreuungsangebot-' + $index].$error"
+                                    <dv-error-messages for="vm.form['betreuungsangebot-' + $index].$error"
                                                        class="error"></dv-error-messages>
                                 </div>
                             </div>
@@ -48,8 +49,10 @@
                                                    ng-required="true"
                                                    ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                     </dv-datepicker>
-                                    <dv-error-messages for="form['datumAb-' + $index].$error"
+                                    <dv-error-messages for="vm.form['datumAb-' + $index].$error"
                                                        class="error"></dv-error-messages>
+                                    <dv-bisher gs="abwesenheitInstance.abwesenheit.abwesenheitGS.gueltigkeit.gueltigAb"
+                                               ja="abwesenheitInstance.abwesenheit.abwesenheitJA.gueltigkeit.gueltigAb"></dv-bisher>
                                 </dv-input-container>
                             </div>
 
@@ -63,8 +66,10 @@
                                                    ng-required="true"
                                                    ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                     </dv-datepicker>
-                                    <dv-error-messages for="form['datumBis-' + $index].$error"
+                                    <dv-error-messages for="vm.form['datumBis-' + $index].$error"
                                                        class="error"></dv-error-messages>
+                                    <dv-bisher gs="abwesenheitInstance.abwesenheit.abwesenheitGS.gueltigkeit.gueltigBis"
+                                               ja="abwesenheitInstance.abwesenheit.abwesenheitJA.gueltigkeit.gueltigBis"></dv-bisher>
                                 </dv-input-container>
                             </div>
                         </div>
@@ -102,7 +107,7 @@
                 </div>
 
                 <!--Buttons-->
-                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save(form)">
+                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save()">
                 </dv-navigation>
 
             </form>

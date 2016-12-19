@@ -37,11 +37,11 @@ describe('ApplicationPropertyRS', function () {
 
     // set the mock response
     beforeEach(function () {
-        $httpBackend.when('GET', REST_API + 'application-properties/' + testName).respond(mockApplicationPropertyRest);
+        $httpBackend.when('GET', REST_API + 'application-properties/key/' + testName).respond(mockApplicationPropertyRest);
         $httpBackend.when('GET', REST_API + 'application-properties/').respond([mockApplicationPropertyRest]);
         $httpBackend.when('DELETE', REST_API + 'application-properties/' + testName).respond(200, '');
         $httpBackend.when('POST', REST_API + 'application-properties/' + testName)
-            .respond(201, mockApplicationPropertyRest, {Location: 'http://localhost:8080/ebegu/api/v1/application-properties/test2'});
+            .respond(201, mockApplicationPropertyRest, {Location: 'http://localhost:8080/ebegu/api/v1/application-properties/key/test2'});
 
     });
 
@@ -67,7 +67,7 @@ describe('ApplicationPropertyRS', function () {
         describe('getByName', function () {
 
             it('should fetch property with given name', function () {
-                $httpBackend.expectGET(REST_API + 'application-properties/' + testName);
+                $httpBackend.expectGET(REST_API + 'application-properties/key/' + testName);
                 let promise: IPromise<TSApplicationProperty> = applicationPropertyRS.getByName(testName);
                 let property: TSApplicationProperty = undefined;
 

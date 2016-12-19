@@ -5,13 +5,14 @@ import WizardStepManager from './service/wizardStepManager';
 import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
 import EbeguUtil from '../utils/EbeguUtil';
-import {TSAntragStatus} from '../models/enums/TSAntragStatus';
+import {TSAntragStatus, IN_BEARBEITUNG_BASE_NAME} from '../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
 import TSGesuch from '../models/TSGesuch';
 import TSUser from '../models/TSUser';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import {TSRole} from '../models/enums/TSRole';
 import ITranslateService = angular.translate.ITranslateService;
+import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 
 export class GesuchRouteController {
 
@@ -19,11 +20,12 @@ export class GesuchRouteController {
     TSRoleUtil: any;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-        'AntragStatusHistoryRS', '$translate', '$mdSidenav', 'CONSTANTS'];
+        'AntragStatusHistoryRS', '$translate', 'AuthServiceRS', '$mdSidenav', 'CONSTANTS'];
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
-                private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService, private $mdSidenav: ng.material.ISidenavService, private CONSTANTS: any) {
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService,
+                private authServiceRS: AuthServiceRS, private $mdSidenav: ng.material.ISidenavService, private CONSTANTS: any) {
         //super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.loadLastStatusChange(this.gesuchModelManager.getGesuch());
         this.TSRole = TSRole;
@@ -31,7 +33,7 @@ export class GesuchRouteController {
     }
 
     showFinanzsituationStart(): boolean {
-        return !!this.gesuchModelManager.isGesuchsteller2Required();
+        return this.gesuchModelManager.isGesuchsteller2Required();
     }
 
 
@@ -51,7 +53,7 @@ export class GesuchRouteController {
     }
 
     public getIcon(stepName: TSWizardStepName): string {
-        var step = this.wizardStepManager.getStepByName(stepName);
+        let step = this.wizardStepManager.getStepByName(stepName);
         if (step) {
             let status = step.wizardStepStatus;
             if (status === TSWizardStepStatus.MUTIERT) {
@@ -65,7 +67,7 @@ export class GesuchRouteController {
             } else if (status === TSWizardStepStatus.NOK) {
                 return 'fa-close red';
             } else if (status === TSWizardStepStatus.IN_BEARBEITUNG) {
-                if (step.wizardStepName === TSWizardStepName.DOKUMENTE) { // Dokumenten haben kein Icon wenn nicht alle hochgeladen wurden
+                if (step.wizardStepName === TSWizardStepName.DOKUMENTE || step.wizardStepName === TSWizardStepName.FREIGABE) { // Dokumenten haben kein Icon wenn nicht alle hochgeladen wurden
                     return '';
                 }
                 return 'fa-pencil black';
@@ -84,7 +86,7 @@ export class GesuchRouteController {
      * @returns {boolean} Sollte etwas schief gehen, true wird zurueckgegeben
      */
     public isWizardStepDisabled(stepName: TSWizardStepName): boolean {
-        var step = this.wizardStepManager.getStepByName(stepName);
+        let step = this.wizardStepManager.getStepByName(stepName);
         if (step) {
             return !this.wizardStepManager.isStepClickableForCurrentRole(step, this.gesuchModelManager.getGesuch());
         }
@@ -111,6 +113,13 @@ export class GesuchRouteController {
         let toTranslate: TSAntragStatus = TSAntragStatus.IN_BEARBEITUNG_JA;
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
             toTranslate = this.gesuchModelManager.calculateNewStatus(this.gesuchModelManager.getGesuch().status);
+        }
+        let isUserGesuchsteller: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles());
+        let isUserJA: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getJugendamtRole());
+
+        if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller
+            || toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
+            return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
         }
         return this.ebeguUtil.translateString(TSAntragStatus[toTranslate]);
     }
@@ -146,7 +155,7 @@ export class GesuchRouteController {
 
     public getGesuchErstellenStepTitle(): string {
         if (this.gesuchModelManager.isErstgesuch()) {
-            if (this.gesuchModelManager.isGesuchSaved()) {
+            if (this.getDateFromGesuch()) {
                 return this.$translate.instant('MENU_ERSTGESUCH_VOM', {
                     date: this.getDateFromGesuch()
                 });
@@ -154,7 +163,7 @@ export class GesuchRouteController {
                 return this.$translate.instant('MENU_ERSTGESUCH');
             }
         } else {
-            if (this.gesuchModelManager.isGesuchSaved()) {
+            if (this.getDateFromGesuch()) {
                 return this.$translate.instant('MENU_MUTATION_VOM', {
                     date: this.getDateFromGesuch()
                 });

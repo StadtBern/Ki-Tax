@@ -22,7 +22,7 @@ public class JaxFinanzModel {
 
 	private JaxEinkommensverschlechterungContainer einkommensverschlechterungContainerGS2;
 
-	private JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo;
+	private JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer;
 
 	private boolean gemeinsameSteuererklaerung;
 
@@ -66,12 +66,12 @@ public class JaxFinanzModel {
 		this.einkommensverschlechterungContainerGS2 = einkommensverschlechterungContainerGS2;
 	}
 
-	public JaxEinkommensverschlechterungInfo getEinkommensverschlechterungInfo() {
-		return einkommensverschlechterungInfo;
+	public JaxEinkommensverschlechterungInfoContainer getEinkommensverschlechterungInfoContainer() {
+		return einkommensverschlechterungInfoContainer;
 	}
 
-	public void setEinkommensverschlechterungInfo(JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo) {
-		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
+	public void setEinkommensverschlechterungInfoContainer(JaxEinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer) {
+		this.einkommensverschlechterungInfoContainer = einkommensverschlechterungInfoContainer;
 	}
 }
 

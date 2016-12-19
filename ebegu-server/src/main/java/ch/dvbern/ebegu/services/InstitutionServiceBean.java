@@ -25,7 +25,6 @@ import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
-
 /**
  * Service fuer Institution
  */
@@ -70,13 +69,13 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Override
 	@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
-	public void setInstitutionInactive(@Nonnull String institutionId) {
+	public Institution setInstitutionInactive(@Nonnull String institutionId) {
 		Validate.notNull(institutionId);
 		Optional<Institution> institutionToRemove = findInstitution(institutionId);
 
 		Institution institution = institutionToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionId));
 		institution.setActive(false);
-		persistence.merge(institution);
+		return persistence.merge(institution);
 	}
 
 	@Override

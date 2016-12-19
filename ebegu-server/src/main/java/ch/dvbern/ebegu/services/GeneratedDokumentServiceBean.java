@@ -74,6 +74,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private MandantService mandantService;
 
 	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
 	private MahnungService mahnungService;
 
 	@Inject
@@ -164,16 +167,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 																	 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
 		GeneratedDokument persistedDokument = null;
-		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
-			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
-			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
-				expectedFilepath);
-			if (persistedDokument == null) {
-				LOG.warn("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-					"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getAntragNummer(), expectedFilepath);
-			}
+		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt() || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+			persistedDokument = getGeneratedDokument(gesuch, dokumentTyp, fileNameForGeneratedDokumentTyp);
 		}
-		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
+		if ((!gesuch.getStatus().isAnyStatusOfVerfuegt() && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
 			|| persistedDokument == null) {
 			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 			authorizer.checkReadAuthorizationFinSit(gesuch);
@@ -193,6 +190,47 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
 				fileNameForGeneratedDokumentTyp);
+		}
+		return persistedDokument;
+	}
+
+	@Override
+	public GeneratedDokument getFreigabequittungAccessTokenGeneratedDokument(final Gesuch gesuch,
+																			 Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getAntragNummer());
+		GeneratedDokument persistedDokument = null;
+		if (!forceCreation || (gesuch.getStatus().isFreigegebenOrFreigabequittung())) {
+
+			persistedDokument = getGeneratedDokument(gesuch, GeneratedDokumentTyp.FREIGABEQUITTUNG, fileNameForGeneratedDokumentTyp);
+		}
+		if (!gesuch.getStatus().isFreigegebenOrFreigabequittung() || persistedDokument == null) {
+			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+			authorizer.checkReadAuthorizationFinSit(gesuch);
+
+			byte[] data;
+			if (!gesuch.getStatus().isFreigegebenOrFreigabequittung()) {
+				//nur wenn das Gesuch noch nicht freigegeben ist, wird
+				gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
+				data = pdfService.generateFreigabequittung(gesuch, zustelladresse);
+			} else { // wir muessen explicit nach FREIGABEQUITTUNG fragen, da sein IF noch eine andere variable enthaelt
+				LOG.warn("Unerwarter Dokumenttyp " + GeneratedDokumentTyp.FREIGABEQUITTUNG.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
+				return null;
+			}
+
+			persistedDokument = updateGeneratedDokument(data, GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch,
+				fileNameForGeneratedDokumentTyp);
+		}
+		return persistedDokument;
+	}
+
+	@Nullable
+	private GeneratedDokument getGeneratedDokument(Gesuch gesuch, GeneratedDokumentTyp dokumentTyp, String fileNameForGeneratedDokumentTyp) {
+		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
+		final GeneratedDokument persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
+			expectedFilepath);
+		if (persistedDokument == null) {
+			LOG.warn("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
+				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getAntragNummer(), expectedFilepath);
 		}
 		return persistedDokument;
 	}
@@ -301,13 +339,13 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			if (mahnung.hasVorgaenger()) {
 				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
-			}else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU) {
+			} else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU) {
 				vorgaengerMahnung = mahnungService.
 					findAktiveErstMahnung(gesuch);
 
 			}
 
-			byte[] data = pdfService.printMahnung(mahnung, vorgaengerMahnung);
+			byte[] data = pdfService.generateMahnung(mahnung, vorgaengerMahnung);
 
 			persistedDokument = vorschauDokument == null ?
 				updateGeneratedDokument(data, dokumentTyp, gesuch,
@@ -330,12 +368,12 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		GeneratedDokument persistedDokument = null;
 
-		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt() || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
 				ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
 		}
 
-		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
+		if ((!gesuch.getStatus().isAnyStatusOfVerfuegt() && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
 			|| persistedDokument == null) {
 			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 

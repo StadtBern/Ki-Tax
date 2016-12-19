@@ -5,6 +5,7 @@ import {IQService, IScope} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import TSGesuch from '../../../models/TSGesuch';
 
 describe('fallCreationView', function () {
 
@@ -27,21 +28,25 @@ describe('fallCreationView', function () {
         form.$valid = true;
         form.$dirty = true;
         fallCreationview = new FallCreationViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'), $injector.get('$translate'), $q);
+            $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'),
+            $injector.get('$translate'), $q, $rootScope);
+        fallCreationview.form = form;
     }));
 
     describe('nextStep', () => {
         it('submitted but rejected -> it does not go to the next step', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.reject({}));
-            fallCreationview.save(form);
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
+            fallCreationview.save();
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
         });
         it('should submit the form and go to the next page', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.when({}));
-            fallCreationview.save(form);
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
+            fallCreationview.save();
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
         });
@@ -49,7 +54,7 @@ describe('fallCreationView', function () {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall');
             form.$valid = false;
-            fallCreationview.save(form);
+            fallCreationview.save();
             expect(gesuchModelManager.saveGesuchAndFall).not.toHaveBeenCalled();
         });
     });
@@ -63,7 +68,7 @@ describe('fallCreationView', function () {
             spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuchsperiode);
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(true);
-            expect(fallCreationview.getTitle()).toBe('Erstgesuch der Periode 2016/2017');
+            expect(fallCreationview.getTitle()).toBe('Erstgesuch der Periode 2016/17');
         });
         it('should return Erstgesuch', () => {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);

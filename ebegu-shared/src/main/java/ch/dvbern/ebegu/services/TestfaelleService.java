@@ -28,6 +28,11 @@ public interface TestfaelleService {
 										  boolean betreuungenBestaetigt,
 										  boolean verfuegen);
 
+	StringBuilder createAndSaveAsOnlineGesuch(@Nonnull String fallid,
+											  boolean betreuungenBestaetigt,
+											  boolean verfuegen,
+											  @Nonnull String username);
+
 	Gesuch createAndSaveTestfaelle(String fallid,
 								   boolean betreuungenBestaetigt,
 								   boolean verfuegen);
@@ -39,4 +44,10 @@ public interface TestfaelleService {
 	Gesuch mutierenScheidung(@Nonnull Long fallNummer,
 							 @Nonnull String gesuchsperiodeId,
 							 @Nonnull LocalDate eingangsdatum, LocalDate aenderungPer, boolean verfuegen);
+
+	/**
+	 * loescht alle Gesuche des Gesuchstellers mit dem gegebenen Namen
+	 * @param username Username des Besitzers der Gesuche die entferntw erden sollen
+	 */
+	void removeGesucheOfGS(String username);
 }

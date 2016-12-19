@@ -11,6 +11,8 @@ import WizardStepManager from '../../service/wizardStepManager';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import {TSRole} from '../../../models/enums/TSRole';
 import TSFinanzModel from '../../../models/TSFinanzModel';
+import IScope = angular.IScope;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -25,19 +27,22 @@ export class EinkommensverschlechterungViewComponentConfig implements IComponent
 export class EinkommensverschlechterungViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
     public showSelbstaendig: boolean;
+    public showSelbstaendigGS: boolean;
     public geschaeftsgewinnBasisjahrMinus1: number;
     public geschaeftsgewinnBasisjahrMinus2: number;
+    public geschaeftsgewinnBasisjahrMinus1GS: number;
+    public geschaeftsgewinnBasisjahrMinus2GS: number;
     allowedRoles: Array<TSRole>;
     public initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
-        'WizardStepManager', '$q'];
+        'WizardStepManager', '$q', '$scope', '$translate'];
 
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private $log: ILogService,
-                wizardStepManager: WizardStepManager, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private $translate: ITranslateService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         let parsedGesuchstelllerNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedGesuchstelllerNum);
@@ -54,14 +59,15 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     }
 
     private initViewModel() {
-
-        //brauchen wir hier das init wirklich nicht mehr? was ist bei mutation etc
-        this.getGeschaeftsgewinnFromFS();
-
+        this.initGeschaeftsgewinnFromFS();
         this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig()
             || (this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== null
             && this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== undefined);
-
+        if (this.model.getFiSiConToWorkWith().finanzielleSituationGS && this.model.getEkvToWorkWith_GS()) {
+            this.showSelbstaendigGS = this.model.getFiSiConToWorkWith().finanzielleSituationGS.isSelbstaendig()
+                || (this.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr !== null
+                && this.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr !== undefined);
+        }
     }
 
     public showSelbstaendigClicked() {
@@ -104,9 +110,9 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         }
     }
 
-    private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungContainer> {
-        if (form.$valid) {
-            if (!form.$dirty) {
+    private save(): IPromise<TSEinkommensverschlechterungContainer> {
+        if (this.form.$valid) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.model.getEkvContToWorkWith());
@@ -130,7 +136,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         return this.berechnungsManager.getEinkommensverschlechterungResultate(this.model.getBasisJahrPlus());
     }
 
-    public getGeschaeftsgewinnFromFS(): void {
+    public initGeschaeftsgewinnFromFS(): void {
         if (!this.model.getFiSiConToWorkWith()
             || !this.model.getFiSiConToWorkWith().finanzielleSituationJA) {
             // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
@@ -139,14 +145,31 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         }
 
         let fs: TSFinanzielleSituation = this.model.getFiSiConToWorkWith().finanzielleSituationJA;
+        let fsGS: TSFinanzielleSituation = this.model.getFiSiConToWorkWith().finanzielleSituationGS;
         if (this.model.getBasisJahrPlus() === 2) {
             //basisjahr Plus 2
             this.geschaeftsgewinnBasisjahrMinus1 = this.model.getEkvContToWorkWith().ekvJABasisJahrPlus1.geschaeftsgewinnBasisjahr;
             this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
+            let einkommensverschlGSBasisjahrPlus1 = this.model.getEkvContToWorkWith().ekvGSBasisJahrPlus1;
+            this.geschaeftsgewinnBasisjahrMinus1GS = einkommensverschlGSBasisjahrPlus1 ? einkommensverschlGSBasisjahrPlus1.geschaeftsgewinnBasisjahr : undefined;
+            this.geschaeftsgewinnBasisjahrMinus2GS = fsGS ? fsGS.geschaeftsgewinnBasisjahr : undefined;
         } else {
             this.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
             this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
+            this.geschaeftsgewinnBasisjahrMinus1GS = fsGS ? fsGS.geschaeftsgewinnBasisjahr : undefined;
+            this.geschaeftsgewinnBasisjahrMinus2GS = fsGS ? fsGS.geschaeftsgewinnBasisjahrMinus1 : undefined;
         }
     }
 
+    public getTextSelbstaendigKorrektur() {
+        if (this.showSelbstaendigGS === true && this.model.getEkvToWorkWith_GS()) {
+            let gew1 = this.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr;
+            if (gew1) {
+                let basisjahr = this.gesuchModelManager.getBasisjahrPlus(this.model.getBasisJahrPlus());
+                return this.$translate.instant('JA_KORREKTUR_SELBSTAENDIG_EKV',
+                    {basisjahr: basisjahr, gewinn1: gew1});
+            }
+        }
+        return this.$translate.instant('LABEL_KEINE_ANGABE');
+    }
 }

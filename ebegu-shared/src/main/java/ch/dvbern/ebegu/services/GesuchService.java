@@ -3,9 +3,12 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -70,10 +73,10 @@ public interface GesuchService {
 	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
 
 	/**
-	 * Gibt alle Antraege des Benutzers mit demn uebergebenen Benutzernamen zurueck.
+	 * Gibt alle Antraege des aktuell eingeloggten Benutzers
      */
 	@Nonnull
-	List<Gesuch> getAntraegeForUsername(String username);
+	List<Gesuch> getAntraegeByCurrentBenutzer();
 
 	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
@@ -81,7 +84,7 @@ public interface GesuchService {
 	 * @param antragSearch
 	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
 	 */
-	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch);
+	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragTableFilterDto);
 
 	/**
 	 * Gibt ein DTO mit saemtlichen Antragen eins bestimmten Falls zurueck
@@ -94,7 +97,7 @@ public interface GesuchService {
 	 * verfuegte Antrag kopiert fuer die Mutation.
 	 */
 	@Nonnull
-	Optional<Gesuch> antragMutieren(@Nonnull String antragId, LocalDate eingangsdatum);
+	Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nullable LocalDate eingangsdatum);
 
 	/**
 	 * hilfsmethode zur mutation von faellen ueber das gui. Wird fuer testzwecke benoetigt
@@ -123,4 +126,24 @@ public interface GesuchService {
 	 * @param fallId
 	 */
 	void updateLaufnummerOfAllGesucheOfFall(String fallId);
+
+	/**
+	 * Alle GesucheIDs des Gesuchstellers zurueckgeben fuer admin
+	 */
+	@Nonnull
+	List<String> getAllGesuchIDsForFall(String fallId);
+
+	/**
+	 * Das gegebene Gesuch wird mit heutigem Datum freigegeben und den Step FREIGABE auf OK gesetzt
+	 * @param gesuch
+	 * @param statusToChangeTo
+	 */
+	Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch, AntragStatus statusToChangeTo);
+
+	/**
+	 * Gibt das Gesuch frei für das Jugendamt: Anpassung des Status inkl Kopieren der Daten des GS aus den
+	 * JA-Containern in die GS-Containern
+	 */
+	@Nonnull
+	Gesuch antragFreigeben(@Nonnull String gesuchId);
 }

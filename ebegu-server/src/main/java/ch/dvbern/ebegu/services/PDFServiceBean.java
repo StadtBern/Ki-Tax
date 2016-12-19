@@ -1,14 +1,18 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
+import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
-import ch.dvbern.ebegu.vorlagen.mahnung.MahnungPrintMergeSource;
+import ch.dvbern.ebegu.vorlagen.freigabequittung.FreigabequittungPrintImpl;
+import ch.dvbern.ebegu.vorlagen.freigabequittung.FreigabequittungPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.mahnung.MahnungPrintImpl;
+import ch.dvbern.ebegu.vorlagen.mahnung.MahnungPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintImpl;
 import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
@@ -36,6 +40,7 @@ import java.util.Optional;
 @Stateless
 @Local(PDFService.class)
 public class PDFServiceBean extends AbstractPrintService implements PDFService {
+
 	@Nonnull
 	@Override
 	public byte[] generateNichteintreten(Betreuung betreuung) throws MergeDocException {
@@ -77,7 +82,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Nonnull
 	@Override
-	public byte[] printMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) throws MergeDocException {
+	public byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) throws MergeDocException {
 
 		DOCXMergeEngine docxME;
 		EbeguVorlageKey vorlageKey;
@@ -92,12 +97,12 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 				vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_2;
 				break;
 			default:
-				throw new MergeDocException("printMahnung()",
+				throw new MergeDocException("generateMahnung()",
 					"Unexpected Mahnung Type", null, new Objects[]{});
 		}
 
 		try {
-			Objects.requireNonNull(mahnung, "Das Argument 'gesuch' darf nicht leer sein");
+			Objects.requireNonNull(mahnung, "Das Argument 'mahnung' darf nicht leer sein");
 			final DateRange gueltigkeit = mahnung.getGesuch().getGesuchsperiode().getGueltigkeit();
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
 			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
@@ -106,9 +111,31 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			is.close();
 			return bytes;
 		} catch (IOException | DocTemplateException e) {
-			throw new MergeDocException("printMahnung()",
+			throw new MergeDocException("generateMahnung()",
 				"Bei der Generierung der Mahnung ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
 
+	}
+
+	@Override
+	@Nonnull
+	public byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustellAdresse) throws MergeDocException {
+
+		EbeguVorlageKey vorlageKey = EbeguVorlageKey.VORLAGE_FREIGABEQUITTUNG;
+		DOCXMergeEngine docxME = new DOCXMergeEngine("Freigabequittung");
+
+		try {
+			Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
+			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
+			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
+			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
+			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
+				docxME.getDocument(is, new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, zustellAdresse))));
+			is.close();
+			return bytes;
+		} catch (IOException | DocTemplateException e) {
+			throw new MergeDocException("generateFreigabequittung()",
+				"Bei der Generierung der Freigabequittung ist ein Fehler aufgetreten", e, new Objects[]{});
+		}
 	}
 }

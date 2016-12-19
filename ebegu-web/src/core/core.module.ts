@@ -62,6 +62,7 @@ import {NavigationLogger} from './service/NavigationLogger';
 import GlobalCacheService from '../gesuch/service/globalCacheService';
 import MahnungRS from '../gesuch/service/mahnungRS.rest';
 import {DvHomeIconComponentConfig} from './component/dv-home-icon/dv-home-icon';
+import DVTrimEmpty from './directive/dv-trim-empty/dv-trim-empty';
 import {DvMobileNavigationToggleComponentConfig} from './component/dv-mobile-navigation-toggle/dv-mobile-navigation-toggle';
 
 let dynamicDependencies = function (): string[] {
@@ -154,6 +155,7 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvSubmitevent', DVSubmitevent.factory())
     .directive('dvShowElement', DVShowElement.factory())
     .directive('dvEnableElement', DVEnableElement.factory())
+    .directive('dvTrimEmpty', DVTrimEmpty.factory())
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
     .service('HttpResponseInterceptor', HttpResponseInterceptor)

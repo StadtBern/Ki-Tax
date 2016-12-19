@@ -1,35 +1,37 @@
-import TSGesuchsteller from './TSGesuchsteller';
 import TSKindContainer from './TSKindContainer';
 import TSAbstractAntragEntity from './TSAbstractAntragEntity';
 import TSFamiliensituation from './TSFamiliensituation';
 import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
 import {TSAntragTyp} from './enums/TSAntragTyp';
+import TSGesuchstellerContainer from './TSGesuchstellerContainer';
+import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlechterungInfoContainer';
+import TSFamiliensituationContainer from './TSFamiliensituationContainer';
+import {TSEingangsart} from './enums/TSEingangsart';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
-    private _gesuchsteller1: TSGesuchsteller;
-    private _gesuchsteller2: TSGesuchsteller;
+    private _gesuchsteller1: TSGesuchstellerContainer;
+    private _gesuchsteller2: TSGesuchstellerContainer;
     private _kindContainers: Array<TSKindContainer>;
-    private _familiensituation: TSFamiliensituation;
-    private _familiensituationErstgesuch: TSFamiliensituation;
-    private _einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo;
+    private _familiensituationContainer: TSFamiliensituationContainer;
+    private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
     private _bemerkungen: string;
     private _laufnummer: number;
 
 
-    public get gesuchsteller1(): TSGesuchsteller {
+    public get gesuchsteller1(): TSGesuchstellerContainer {
         return this._gesuchsteller1;
     }
 
-    public set gesuchsteller1(value: TSGesuchsteller) {
+    public set gesuchsteller1(value: TSGesuchstellerContainer) {
         this._gesuchsteller1 = value;
     }
 
-    public get gesuchsteller2(): TSGesuchsteller {
+    public get gesuchsteller2(): TSGesuchstellerContainer {
         return this._gesuchsteller2;
     }
 
-    public set gesuchsteller2(value: TSGesuchsteller) {
+    public set gesuchsteller2(value: TSGesuchstellerContainer) {
         this._gesuchsteller2 = value;
     }
 
@@ -41,20 +43,20 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._kindContainers = value;
     }
 
-    get familiensituation(): TSFamiliensituation {
-        return this._familiensituation;
+    get familiensituationContainer(): TSFamiliensituationContainer {
+        return this._familiensituationContainer;
     }
 
-    set familiensituation(value: TSFamiliensituation) {
-        this._familiensituation = value;
+    set familiensituationContainer(value: TSFamiliensituationContainer) {
+        this._familiensituationContainer = value;
     }
 
-    get einkommensverschlechterungInfo(): TSEinkommensverschlechterungInfo {
-        return this._einkommensverschlechterungInfo;
+    get einkommensverschlechterungInfoContainer(): TSEinkommensverschlechterungInfoContainer {
+        return this._einkommensverschlechterungInfoContainer;
     }
 
-    set einkommensverschlechterungInfo(value: TSEinkommensverschlechterungInfo) {
-        this._einkommensverschlechterungInfo = value;
+    set einkommensverschlechterungInfoContainer(value: TSEinkommensverschlechterungInfoContainer) {
+        this._einkommensverschlechterungInfoContainer = value;
     }
 
     get bemerkungen(): string {
@@ -77,6 +79,10 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         return this.typ === TSAntragTyp.MUTATION;
     }
 
+    public isOnlineGesuch(): boolean {
+        return TSEingangsart.ONLINE === this.eingangsart;
+    }
+
     /**
      * Schaut ob der GS1 oder der GS2 mindestens eine umzugsadresse hat
      */
@@ -90,12 +96,25 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         return false;
     }
 
-
-    get familiensituationErstgesuch(): TSFamiliensituation {
-        return this._familiensituationErstgesuch;
+    public extractFamiliensituation(): TSFamiliensituation {
+        if (this.familiensituationContainer) {
+            return this.familiensituationContainer.familiensituationJA;
+        }
+        return undefined;
     }
 
-    set familiensituationErstgesuch(value: TSFamiliensituation) {
-        this._familiensituationErstgesuch = value;
+    public extractFamiliensituationErstgesuch(): TSFamiliensituation {
+        if (this.familiensituationContainer) {
+            return this.familiensituationContainer.familiensituationErstgesuch;
+        }
+        return undefined;
+    }
+
+    public extractEinkommensverschlechterungInfo(): TSEinkommensverschlechterungInfo {
+        if (this.einkommensverschlechterungInfoContainer) {
+            return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA;
+        }
+        return undefined;
+
     }
 }

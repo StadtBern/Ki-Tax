@@ -62,6 +62,8 @@ xa-data-source add \
 #Add Properties
 /system-property=ebegu.fedlet.config.path:add(value=fedletConfig/https_test_ebegu_dvbern_ch)
 /system-property=ebegu.client.using.https:add(value=false)
+/system-property=ebegu.openidm.enabled:add(value=true)
+/system-property=ebegu.development.mode:add(value=true)
 
 
 #Helperskripts

@@ -7,6 +7,9 @@ import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import TSFamiliensituationContainer from '../../../models/TSFamiliensituationContainer';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
 describe('finanzielleSituationResultateView', function () {
 
@@ -30,9 +33,10 @@ describe('finanzielleSituationResultateView', function () {
     }));
 
     beforeEach(function () {
-        gesuchModelManager.initGesuch(false);
-        gesuchModelManager.getGesuch().familiensituation = new TSFamiliensituation();
-        gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchsteller();
+        gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
+        gesuchModelManager.getGesuch().familiensituationContainer = new TSFamiliensituationContainer();
+        gesuchModelManager.getGesuch().familiensituationContainer.familiensituationJA = new TSFamiliensituation();
+        gesuchModelManager.getGesuch().gesuchsteller1 = new TSGesuchstellerContainer(new TSGesuchsteller());
     });
 
     it('should be defined', function () {

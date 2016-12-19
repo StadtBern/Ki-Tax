@@ -2,9 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -111,7 +109,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final Collection<Gesuch> allGesuche = readGesucheAsAdmin();
 		Assert.assertEquals(1, allGesuche.size());
 		Gesuch gesuch = allGesuche.iterator().next();
-		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.getEinkommensverschlechterungInfo();
+		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.extractEinkommensverschlechterungInfo();
 		Assert.assertNotNull(einkommensverschlechterungInfo);
 		Assert.assertTrue(einkommensverschlechterungInfo.getEinkommensverschlechterung());
 		Assert.assertTrue(einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus1());
@@ -254,7 +252,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		//Die Gesuche sollten im Status IN_BEARBEITUNG_GS sein und zu keinem oder einem Traegerschafts Sachbearbeiter gehoeren, trotzdem sollten wir sie finden
 //		Benutzer user = TestDataUtil.createDummySuperAdmin(persistence);
-		//kita aaregg
+		//kita Weissenstein
 		Institution institutionToSet = gesuch.extractAllBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution();
 		loginAsSachbearbeiterInst("sainst", institutionToSet);
 		Pair<Long, List<Gesuch>> secondResult = gesuchService.searchAntraege(filterDTO);
@@ -264,7 +262,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuch.getFall().setVerantwortlicher(null);
 		persistence.merge(gesuch);
 		//traegerschaftbenutzer setzten
-		Traegerschaft traegerschaft =institutionToSet.getTraegerschaft();
+		Traegerschaft traegerschaft = institutionToSet.getTraegerschaft();
 		Assert.assertNotNull("Unser testaufbau sieht vor, dass die institution zu einer traegerschaft gehoert", traegerschaft);
 		Benutzer verantwortlicherUser = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "anonymous", traegerschaft, null, TestDataUtil.createDefaultMandant());
 		gesDagmar.getFall().setVerantwortlicher(verantwortlicherUser);
@@ -276,7 +274,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		//aendere user zu einer anderen institution  -> darf nichts mehr finden
 		Institution otherInst = TestDataUtil.createAndPersistDefaultInstitution(persistence);
-		loginAsSachbearbeiterInst("sainst2",otherInst);
+		loginAsSachbearbeiterInst("sainst2", otherInst);
 
 		Pair<Long, List<Gesuch>> fourthResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(0), fourthResult.getLeft());
@@ -304,11 +302,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		// Anzahl erstellte Objekte zaehlen, es muessen im Gesuch und in der Mutation
 		// gleich viele sein
 		Gesuch mutation = gesuchOptional.get();
-		Familiensituation oldFamSit = new Familiensituation(mutation.getFamiliensituationErstgesuch());
-		mutation.setFamiliensituationErstgesuch(null);
-		mutation = gesuchService.createGesuch(mutation);
-		mutation.setFamiliensituationErstgesuch(oldFamSit);
-		mutation = gesuchService.updateGesuch(mutation, false);
 
 		anzahlObjekte = 0;
 		Set<String> idsErstgesuch = new HashSet<>();
@@ -335,6 +328,22 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		// Jetzt sollten keine Ids mehr drinn sein.
 		Assert.assertTrue(intersection.isEmpty());
 	}
+
+	@Test
+	public void testAntragFreigeben() {
+		LocalDate now = LocalDate.now();
+		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_GS);
+
+		final Gesuch freigegebenesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
+
+		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, freigegebenesGesuch.getStatus());
+		Assert.assertFalse(now.isAfter(freigegebenesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
+
+		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
+
+		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
+	}
+
 
 	// HELP METHOD
 
@@ -367,9 +376,11 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		}
 		String id = BeanUtils.getProperty(entity, "id");
 		if (ids.contains(id)) {
-			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode) {
+			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode|| entity instanceof Familiensituation) {
 				// Diese Entitaeten wurden korrekterweise nur umgehaengt und nicht kopiert.
 				// Aus der Liste entfernen
+				// Familiensituation wird hier ebenfalls aufgefuehrt, da sie bei FamiliensituationErstgescuh nur umgehaengt wird
+				// (die "normale" Familiensituation wird aber kopiert, dies wird jetzt nicht mehr getestet)
 				ids.remove(id);
 			}
 		}
@@ -424,7 +435,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		persistence.persist(saja);
 	}
 
-	private void loginAsSachbearbeiterInst(String username , Institution institutionToSet) {
+	private void loginAsSachbearbeiterInst(String username, Institution institutionToSet) {
 		Benutzer user = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, username, null, institutionToSet, institutionToSet.getMandant());
 		user = persistence.merge(user);
 		try {

@@ -28,8 +28,16 @@
 
     .bisher {
         clear: both;
-        float: right;
-        background-color: lightgrey;
+        //todo stylen gem kana
+        background-color: @grey;
+        padding: 0.2rem;
+        //display: block;
+        border-color: @lgrey;
+    }
+    // bei manchen bisher bloecken wollen wir einzelne neue zeilen
+    .dv-bisher-break .dv-bisher-content-row, .dv-bisher-break .bisher:first-child {
+        display: block;
+        background-color: @grey;
     }
 
     .inlineHint {
@@ -161,5 +169,7 @@
     .well-status-abgewiesen {
         background-color: @danger-light;
     }
+
+    .required:after { content:" *"; }
 
 }

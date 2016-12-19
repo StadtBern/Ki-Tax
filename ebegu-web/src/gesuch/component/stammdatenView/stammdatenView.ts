@@ -6,13 +6,16 @@ import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import './stammdatenView.less';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSRole} from '../../../models/enums/TSRole';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import TSAdresseContainer from '../../../models/TSAdresseContainer';
+import TSAdresse from '../../../models/TSAdresse';
+import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import IQService = angular.IQService;
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
@@ -28,13 +31,13 @@ export class StammdatenViewComponentConfig implements IComponentOptions {
 }
 
 
-export class StammdatenViewController extends AbstractGesuchViewController<TSGesuchsteller> {
+export class StammdatenViewController extends AbstractGesuchViewController<TSGesuchstellerContainer> {
     geschlechter: Array<string>;
     showKorrespondadr: boolean;
     ebeguRestUtil: EbeguRestUtil;
     allowedRoles: Array<TSRole>;
     gesuchstellerNumber: number;
-    private initialModel: TSGesuchsteller;
+    private initialModel: TSGesuchstellerContainer;
 
 
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
@@ -42,8 +45,8 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, private $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.ebeguRestUtil = ebeguRestUtil;
         this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(this.gesuchstellerNumber);
@@ -63,13 +66,13 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     }
 
     korrespondenzAdrClicked() {
-        this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
+        this.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    private save(form: angular.IFormController): IPromise<TSGesuchsteller> {
-        if (form.$valid) {
+    private save(): IPromise<TSGesuchstellerContainer> {
+        if (this.form.$valid) {
             this.gesuchModelManager.setStammdatenToWorkWith(this.model);
-            if (!form.$dirty) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && !this.gesuchModelManager.isGesuchsteller2Required()) {
@@ -82,7 +85,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
                 return this.$q.when(this.model);
             }
             if (!this.showKorrespondadr) {
-                this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
+                this.setKorrespondenzAdresse(this.showKorrespondadr);
             }
             if ((this.gesuchModelManager.getGesuch().gesuchsteller1 && this.gesuchModelManager.getGesuch().gesuchsteller1.showUmzug)
                 || (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.showUmzug)
@@ -97,8 +100,12 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         return undefined;
     }
 
-    public getModel(): TSGesuchsteller {
+    public getModel(): TSGesuchstellerContainer {
         return this.model;
+    }
+
+    public getModelJA() {
+        return this.model.gesuchstellerJA;
     }
 
     /**
@@ -114,6 +121,23 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
     public isThereAnyUmzug(): boolean {
         return this.gesuchModelManager.getGesuch().isThereAnyUmzug();
+    }
+
+    private setKorrespondenzAdresse(showKorrespondadr: boolean): void {
+        if (showKorrespondadr) {
+            this.getModel().korrespondenzAdresse = this.initKorrespondenzAdresse();
+        } else {
+            this.getModel().korrespondenzAdresse = undefined;
+        }
+    }
+
+    private initKorrespondenzAdresse(): TSAdresseContainer {
+        let korrespAdresseContanier: TSAdresseContainer = new TSAdresseContainer();
+        let korrAdr = new TSAdresse();
+        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
+        korrespAdresseContanier.showDatumVon = false;
+        korrespAdresseContanier.adresseJA = korrAdr;
+        return korrespAdresseContanier;
     }
 
 }

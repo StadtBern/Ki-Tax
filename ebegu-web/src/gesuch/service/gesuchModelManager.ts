@@ -30,13 +30,17 @@ import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlechterungInfo';
 import TSUser from '../../models/TSUser';
 import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {
+    TSAntragStatus,
+    isAtLeastFreigegebenOrFreigabequittung,
+    isStatusVerfuegenVerfuegt,
+    isAtLeastFreigegeben
+} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
@@ -49,8 +53,12 @@ import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import {isJugendamt, isSchulamt} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
+import TSEinkommensverschlechterungInfoContainer from '../../models/TSEinkommensverschlechterungInfoContainer';
+import TSFamiliensituationContainer from '../../models/TSFamiliensituationContainer';
+import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
+import TSAdresseContainer from '../../models/TSAdresseContainer';
 import IQService = angular.IQService;
 
 export default class GesuchModelManager {
@@ -94,7 +102,7 @@ export default class GesuchModelManager {
     public openGesuch(gesuchId: string): IPromise<TSGesuch> {
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
             return this.gesuchRS.findGesuchForInstitution(gesuchId)
-                .then((response : TSGesuch) => {
+                .then((response: TSGesuch) => {
                     return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(bla => {
                         if (response) {
                             this.setGesuch(response);
@@ -120,6 +128,13 @@ export default class GesuchModelManager {
      * Oder ggf. aus der Liste entfernt
      */
     private setHiddenSteps(): void {
+        //Freigabe
+        if (this.gesuch.isOnlineGesuch()) {
+            this.wizardStepManager.unhideStep(TSWizardStepName.FREIGABE);
+        } else {
+            this.wizardStepManager.hideStep(TSWizardStepName.FREIGABE);
+        }
+
         //Abwesenheit
         if (!this.gesuch.isMutation()) {
             this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
@@ -169,14 +184,14 @@ export default class GesuchModelManager {
 
     public getFamiliensituation(): TSFamiliensituation {
         if (this.gesuch) {
-            return this.gesuch.familiensituation;
+            return this.gesuch.extractFamiliensituation();
         }
         return undefined;
     }
 
     public getFamiliensituationErstgesuch(): TSFamiliensituation {
         if (this.gesuch) {
-            return this.gesuch.familiensituationErstgesuch;
+            return this.gesuch.extractFamiliensituationErstgesuch();
         }
         return undefined;
     }
@@ -229,13 +244,9 @@ export default class GesuchModelManager {
         }
     }
 
-    public updateFamiliensituation(): IPromise<TSFamiliensituation> {
-        return this.familiensituationRS.saveFamiliensituation(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
-            return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
-                this.gesuch = gesuchResponse;
-                this.gesuch.familiensituation = familienResponse;
-                return this.gesuch.familiensituation;
-            });
+    public reloadGesuch(): IPromise<TSGesuch> {
+        return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
+            return this.gesuch = gesuchResponse;
         });
     }
 
@@ -264,7 +275,7 @@ export default class GesuchModelManager {
     /**
      * Speichert den StammdatenToWorkWith.
      */
-    public updateGesuchsteller(umzug: boolean): IPromise<TSGesuchsteller> {
+    public updateGesuchsteller(umzug: boolean): IPromise<TSGesuchstellerContainer> {
         // Da showUmzug nicht im Server gespeichert wird, muessen wir den alten Wert kopieren und nach der Aktualisierung wiedersetzen
         let tempShowUmzug: boolean = this.getStammdatenToWorkWith().showUmzug;
         return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber, umzug)
@@ -293,15 +304,6 @@ export default class GesuchModelManager {
             .then((ekvContRespo: TSEinkommensverschlechterungContainer) => {
                 this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
                 return this.getStammdatenToWorkWith().einkommensverschlechterungContainer;
-            });
-    }
-
-    public updateEinkommensverschlechterungsInfo(): IPromise<TSEinkommensverschlechterungInfo> {
-        return this.einkommensverschlechterungInfoRS.saveEinkommensverschlechterungInfo(
-            this.getGesuch().einkommensverschlechterungInfo, this.gesuch.id)
-            .then((ekvInfoRespo: TSEinkommensverschlechterungInfo) => {
-                this.getGesuch().einkommensverschlechterungInfo = ekvInfoRespo;
-                return this.getGesuch().einkommensverschlechterungInfo;
             });
     }
 
@@ -365,7 +367,7 @@ export default class GesuchModelManager {
         return this.activeGesuchsperiodenList;
     }
 
-    public getStammdatenToWorkWith(): TSGesuchsteller {
+    public getStammdatenToWorkWith(): TSGesuchstellerContainer {
         if (this.gesuchstellerNumber === 2) {
             return this.gesuch.gesuchsteller2;
         } else {
@@ -374,18 +376,18 @@ export default class GesuchModelManager {
     }
 
     private getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
-        if (!this.gesuch.einkommensverschlechterungInfo) {
+        if (!this.gesuch.extractEinkommensverschlechterungInfo()) {
             this.initEinkommensverschlechterungInfo();
         }
 
         if (basisJahrPlus === 2) {
-            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2;
+            return this.gesuch.extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2;
         } else {
-            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1;
+            return this.gesuch.extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1;
         }
     }
 
-    public setStammdatenToWorkWith(gesuchsteller: TSGesuchsteller): TSGesuchsteller {
+    public setStammdatenToWorkWith(gesuchsteller: TSGesuchstellerContainer): TSGesuchstellerContainer {
         if (this.gesuchstellerNumber === 1) {
             return this.gesuch.gesuchsteller1 = gesuchsteller;
         } else {
@@ -395,37 +397,66 @@ export default class GesuchModelManager {
 
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
-            this.setStammdatenToWorkWith(new TSGesuchsteller());
+            let gesuchsteller: TSGesuchsteller;
+            // die daten die wir aus iam importiert haben werden bei gs1 abgefuellt
+            if (this.gesuchstellerNumber === 1 && this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
+                let principal: TSUser = this.authServiceRS.getPrincipal();
+                let name: string = principal ? principal.nachname : undefined;
+                let vorname: string = principal ? principal.vorname : undefined;
+                let email: string = principal ? principal.email : undefined;
+                gesuchsteller = new TSGesuchsteller(vorname, name, undefined, undefined, email);
+            } else {
+                gesuchsteller = new TSGesuchsteller();
+            }
+            this.setStammdatenToWorkWith(new TSGesuchstellerContainer(gesuchsteller));
             this.getStammdatenToWorkWith().adressen = this.initWohnAdresse();
         }
     }
 
-    public getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
-        if (this.getGesuch().einkommensverschlechterungInfo == null) {
-            this.initEinkommensverschlechterungInfo();
-        }
-        return this.getGesuch().einkommensverschlechterungInfo;
-    }
-
     private initEinkommensverschlechterungInfo(): void {
-        if (this.gesuch && !this.gesuch.einkommensverschlechterungInfo) {
-            this.gesuch.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo();
-            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 = false;
-            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 = false;
-
+        if (this.gesuch && !this.gesuch.extractEinkommensverschlechterungInfo()) {
+            this.gesuch.einkommensverschlechterungInfoContainer = new TSEinkommensverschlechterungInfoContainer();
+            this.gesuch.einkommensverschlechterungInfoContainer.init();
         }
     }
 
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
-     * Wenn force werden Gesuch und Fall immer erstellt.
-     * @param forced
+     * Wenn force werden Gesuch und Fall immer erstellt. Das erstellte Gesuch ist ein PAPIER Gesuch
      */
-    public initGesuch(forced: boolean) {
+    public initGesuch(forced: boolean, eingangsart: TSEingangsart) {
         if (forced || (!forced && !this.gesuch)) {
-            this.initAntrag(TSAntragTyp.GESUCH);
+            this.initAntrag(TSAntragTyp.GESUCH, eingangsart);
         }
         this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch());
+    }
+
+    /**
+     * Erstellt ein Gesuch mit der angegebenen Eingangsart und Gesuchsperiode
+     * @param forced
+     * @param eingangsart
+     * @param gesuchsperiodeId
+     * @param fallId
+     */
+    public initGesuchWithEingangsart(forced: boolean, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
+        this.initGesuch(forced, eingangsart);
+        if (gesuchsperiodeId) {
+            this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
+                this.gesuch.gesuchsperiode = periode;
+            });
+        }
+        if (fallId) {
+            this.fallRS.findFall(fallId).then(foundFall => {
+                this.gesuch.fall = foundFall;
+            });
+        }
+        if (forced) {
+            if (TSEingangsart.ONLINE === eingangsart) {
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+            } else {
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+            }
+        }
     }
 
     /**
@@ -434,20 +465,31 @@ export default class GesuchModelManager {
      * mit dem ID des alten Gesuchs aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
      * Daten ueberschreiben
      * @param gesuchID
+     * @param eingangsart
+     * @param gesuchsperiodeId
+     * @param fallId
      */
-    public initMutation(gesuchID: string): void {
-        let gesuchsperiode: TSGesuchsperiode = this.gesuch.gesuchsperiode;
-        this.initAntrag(TSAntragTyp.MUTATION);
+    public initMutation(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string): void {
+        this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
+            this.gesuch.gesuchsperiode = periode;
+        });
+        this.initAntrag(TSAntragTyp.MUTATION, eingangsart);
+        this.fallRS.findFall(fallId).then(foundFall => {
+            this.gesuch.fall = foundFall;
+        });
         this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
-        this.gesuch.gesuchsperiode = gesuchsperiode;
+        if (TSEingangsart.ONLINE === eingangsart) {
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+        } else {
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+        }
     }
 
-    private initAntrag(antragTyp: TSAntragTyp): void {
+    private initAntrag(antragTyp: TSAntragTyp, eingangsart: TSEingangsart): void {
         this.gesuch = new TSGesuch();
         this.gesuch.fall = new TSFall();
         this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
-        this.gesuch.eingangsart = TSEingangsart.PAPIER; //TODO (team) je nach dem anpassen
-        this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
+        this.gesuch.eingangsart = eingangsart;
         this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();
         this.setCurrentUserAsFallVerantwortlicher();
@@ -455,7 +497,8 @@ export default class GesuchModelManager {
 
     public initFamiliensituation() {
         if (!this.getFamiliensituation()) {
-            this.gesuch.familiensituation = new TSFamiliensituation();
+            this.gesuch.familiensituationContainer = new TSFamiliensituationContainer();
+            this.gesuch.familiensituationContainer.familiensituationJA = new TSFamiliensituation();
         }
     }
 
@@ -468,14 +511,6 @@ export default class GesuchModelManager {
     public initBetreuung(): void {
         if (!this.getKindToWorkWith().betreuungen) {
             this.getKindToWorkWith().betreuungen = [];
-        }
-    }
-
-    public setKorrespondenzAdresse(showKorrespondadr: boolean): void {
-        if (showKorrespondadr) {
-            this.getStammdatenToWorkWith().korrespondenzAdresse = this.initKorrespondenzAdresse();
-        } else {
-            this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
         }
     }
 
@@ -528,18 +563,13 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-    private initWohnAdresse(): Array<TSAdresse> {
+    private initWohnAdresse(): Array<TSAdresseContainer> {
+        let wohnAdresseContanier: TSAdresseContainer = new TSAdresseContainer();
         let wohnAdresse = new TSAdresse();
-        wohnAdresse.showDatumVon = false;
         wohnAdresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        return [wohnAdresse];
-    }
-
-    private initKorrespondenzAdresse(): TSAdresse {
-        let korrAdr = new TSAdresse();
-        korrAdr.showDatumVon = false;
-        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
-        return korrAdr;
+        wohnAdresseContanier.showDatumVon = false;
+        wohnAdresseContanier.adresseJA = wohnAdresse;
+        return [wohnAdresseContanier];
     }
 
     public getKinderList(): Array<TSKindContainer> {
@@ -623,7 +653,6 @@ export default class GesuchModelManager {
             return this.gesuch.fall = fallResponse;
         });
     }
-
 
     public getKindToWorkWith(): TSKindContainer {
         if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindNumber) {
@@ -765,13 +794,13 @@ export default class GesuchModelManager {
         return -1;
     }
 
+
     public removeBetreuung(): IPromise<void> {
         return this.betreuungRS.removeBetreuung(this.getBetreuungToWorkWith().id, this.gesuch.id).then((responseBetreuung: any) => {
             this.removeBetreuungFromKind();
             this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id);
         });
     }
-
 
     public removeErwerbspensum(pensum: TSErwerbspensumContainer): void {
         let erwerbspensenOfCurrentGS: Array<TSErwerbspensumContainer>;
@@ -794,17 +823,17 @@ export default class GesuchModelManager {
     }
 
     findIndexOfErwerbspensum(gesuchstellerNumber: number, pensum: any): number {
-        let gesuchsteller: TSGesuchsteller;
+        let gesuchsteller: TSGesuchstellerContainer;
         gesuchsteller = gesuchstellerNumber === 2 ? this.gesuch.gesuchsteller2 : this.gesuch.gesuchsteller1;
         return gesuchsteller.erwerbspensenContainer.indexOf(pensum);
     }
 
-    saveErwerbspensum(gesuchsteller: TSGesuchsteller, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
+    saveErwerbspensum(gesuchsteller: TSGesuchstellerContainer, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
         if (erwerbspensum.id) {
             return this.erwerbspensumRS.saveErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((response: TSErwerbspensumContainer) => {
 
-                    let i :number = EbeguUtil.getIndexOfElementwithID(erwerbspensum, gesuchsteller.erwerbspensenContainer);
+                    let i: number = EbeguUtil.getIndexOfElementwithID(erwerbspensum, gesuchsteller.erwerbspensenContainer);
                     if (i >= 0) {
                         gesuchsteller.erwerbspensenContainer[i] = erwerbspensum;
                     }
@@ -824,7 +853,7 @@ export default class GesuchModelManager {
      * Takes current user and sets it as the verantwortlicher of Fall
      */
     private setCurrentUserAsFallVerantwortlicher() {
-        if (this.authServiceRS) {
+        if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
             this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
         }
     }
@@ -911,7 +940,7 @@ export default class GesuchModelManager {
         });
     }
 
-    public verfuegungSchliessenNichtEintreten():  IPromise<TSVerfuegung> {
+    public verfuegungSchliessenNichtEintreten(): IPromise<TSVerfuegung> {
         return this.verfuegungRS.nichtEintreten(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response: TSVerfuegung) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.NICHT_EINGETRETEN;
@@ -988,12 +1017,31 @@ export default class GesuchModelManager {
         }
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (betreuung.institutionStammdaten.betreuungsangebotTyp !== TSBetreuungsangebotTyp.TAGESSCHULE) {
+                if (!isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind SCHULAMT.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public isThereAnySchulamtAngebot(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -1016,6 +1064,17 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Antrag freigeben
+     */
+    public antragFreigeben(antragId: string): IPromise<TSGesuch> {
+        return this.gesuchRS.antragFreigeben(antragId).then((response) => {
+            this.setGesuch(response);
+            return response;
+        });
+
+    }
+
+    /**
      * Returns true if the Gesuch has the given status
      * @param status
      * @returns {boolean}
@@ -1025,20 +1084,32 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT or NUR_SCHULAMT
-     * @returns {boolean}
-     */
-    public isGesuchStatusVerfuegenVerfuegt(): boolean {
-        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT)
-            || this.isGesuchStatus(TSAntragStatus.NUR_SCHULAMT);
-    }
-
-    /**
      * Returns true when the Gesuch must be readonly
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return this.isGesuchStatusVerfuegenVerfuegt() || this.authServiceRS.isRole(TSRole.SCHULAMT);
+        return isStatusVerfuegenVerfuegt(this.gesuch.status) || this.isGesuchReadonlyForRole();
+    }
+
+    /**
+     * checks if the gesuch is readonly for a given role based on its state
+     */
+    private isGesuchReadonlyForRole(): boolean {
+        if (this.authServiceRS.isRole(TSRole.SCHULAMT)) {
+            return true;  // schulamt hat immer nur readonly zugriff
+        } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+            return isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
+        }
+        return false;
+    }
+
+    /**
+     * Wenn das Gesuch Online durch den GS erstellt wurde, nun aber in Bearbeitung beim JA ist, handelt es sich um
+     * den Korrekturmodus des Jugendamtes.
+     * @returns {boolean}
+     */
+    public isKorrekturModusJugendamt(): boolean {
+        return isAtLeastFreigegeben(this.gesuch.status) && (TSEingangsart.ONLINE === this.getGesuch().eingangsart);
     }
 
     /**
@@ -1122,5 +1193,28 @@ export default class GesuchModelManager {
 
     public clearGesuch(): void {
         this.gesuch = undefined;
+    }
+
+    /**
+     * Schaut alle Betreuungen durch. Wenn es keine "JAAngebote" gibt, gibt es false zurueck.
+     * Nur wenn alle JA-Angebote neu sind, gibt es true zurueck.
+     */
+    public areAllJAAngeboteNew(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        let jaAngeboteFound: boolean = false; // Wenn kein JA-Angebot gefunden wurde geben wir false zurueck
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (isJugendamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    if (betreuung.vorgaengerId) { // eine mutierte JA-Betreuung existiert
+                        return false;
+                    }
+                    jaAngeboteFound = true;
+                }
+            }
+        }
+        return jaAngeboteFound;
     }
 }

@@ -6,6 +6,7 @@ import TSGesuch from '../models/TSGesuch';
 import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
 import MahnungRS from './service/mahnungRS.rest';
+import {TSEingangsart} from '../models/enums/TSEingangsart';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ILogService = angular.ILogService;
@@ -43,7 +44,8 @@ function getStates(): IState[] {
         new EbeguEinkommensverschlechterungSteuernState(),
         new EbeguEinkommensverschlechterungState(),
         new EbeguEinkommensverschlechterungResultateState(),
-        new EbeguDokumenteState()
+        new EbeguDokumenteState(),
+        new EbeguFreigabeState()
     ];
 }
 
@@ -61,7 +63,7 @@ export class EbeguGesuchState implements IState {
 
 export class EbeguNewFallState implements IState {
     name = 'gesuch.fallcreation';
-    url = '/fall/:createNew/:gesuchId';
+    url = '/fall/:createNew/:eingangsart/:gesuchsperiodeId/:gesuchId/:fallId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -79,7 +81,7 @@ export class EbeguNewFallState implements IState {
 
 export class EbeguMutationState implements IState {
     name = 'gesuch.mutation';
-    url = '/mutation/:createMutation/:gesuchId';
+    url = '/mutation/:createMutation/:eingangsart/:gesuchsperiodeId/:gesuchId/:fallId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -456,6 +458,24 @@ export class EbeguDokumenteState implements IState {
     };
 }
 
+export class EbeguFreigabeState implements IState {
+    name = 'gesuch.freigabe';
+    url = '/freigabe/:gesuchId';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<freigabe-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
+}
+
 //PARAMS
 
 export class IGesuchStateParams implements IStateParamsService {
@@ -473,7 +493,10 @@ export class IKindStateParams implements IStateParamsService {
 export class INewFallStateParams implements IStateParamsService {
     createNew: string;
     createMutation: string;
+    eingangsart: TSEingangsart;
+    gesuchsperiodeId: string;
     gesuchId: string;
+    fallId: string;
 }
 
 export class IErwerbspensumStateParams implements IStateParamsService {
@@ -521,7 +544,12 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
                 // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId ueberreinstimmt wird das gesuch neu geladen
                 berechnungsManager.clear();
                 return gesuchModelManager.openGesuch(gesuchIdParam);
+            } else {
+                let deferred = $q.defer();
+                deferred.resolve(gesuchModelManager.getGesuch());
+                return deferred.promise;
             }
+
         }
     }
     $log.warn('keine stateParams oder keine gesuchId, gebe undefined zurueck');
@@ -540,6 +568,12 @@ export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager,
             if ($stateParams.createNew !== 'true') {
                 berechnungsManager.clear();
                 return gesuchModelManager.openGesuch(gesuchIdParams);
+            } else {
+                let eingangsart = $stateParams.eingangsart;
+                let gesuchsperiodeId = $stateParams.gesuchsperiodeId;
+                let fallId = $stateParams.fallId;
+                gesuchModelManager.initGesuchWithEingangsart(true, eingangsart, gesuchsperiodeId, fallId);
+                return gesuchModelManager.openGesuch(gesuchIdParams);
             }
         }
     }
@@ -547,11 +581,14 @@ export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager,
 }
 
 createEmptyMutation.$inject = ['GesuchModelManager', '$stateParams', '$q'];
-export function createEmptyMutation(gesuchModelManager: GesuchModelManager, $stateParams: IGesuchStateParams, $q: any): IPromise<TSGesuch> {
+export function createEmptyMutation(gesuchModelManager: GesuchModelManager, $stateParams: INewFallStateParams, $q: any): IPromise<TSGesuch> {
     if ($stateParams) {
         let gesuchId = $stateParams.gesuchId;
-        if (gesuchId) {
-            gesuchModelManager.initMutation(gesuchId);
+        let eingangsart = $stateParams.eingangsart;
+        let gesuchsperiodeId = $stateParams.gesuchsperiodeId;
+        let fallId = $stateParams.fallId;
+        if (gesuchId && eingangsart) {
+            gesuchModelManager.initMutation(gesuchId, eingangsart, gesuchsperiodeId, fallId);
         }
     }
     return $q.defer(gesuchModelManager.getGesuch());

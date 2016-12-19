@@ -100,172 +100,132 @@
             </form>
         </div>
 
-        <div class="col-md-8 col-md-offset-2">
-            <h3>
-                <span data-translate="TESTFAELLE_EINFUEGEN"></span>
-            </h3>
-            <br/>
-            <h4>
-                <span data-translate="Betreuungen mit Zustand &#034;warten&#034;"></span>
-            </h4>
+
+        <div class="row marginTop10">
+            <div class="col-md-8 col-md-offset-2">
+
+                <h3>
+                    <span data-translate="TESTFAELLE_EINFUEGEN"></span>
+                </h3>
+
+            </div>
+        </div>
+        <!--selecton fuer parameter die bestimmen wie die testfaelle erzeugt werden-->
+        <div class="row marginTop10">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="row">
+
+                    <div class="col-sm-6 ">
+                        <md-radio-group ng-model="vm.creationType">
+                            <md-radio-button value="warten">Betreuungen mit Zustand &#034;warten&#034;</md-radio-button>
+                            <md-radio-button value="bestaetigt">Betreuungen mit Zustand &#034;bestätigt&#034;</md-radio-button>
+                            <md-radio-button value="verfuegt">Verfügte Erstgesuche</md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="col-sm-4 ">
+                        <dv-input-container class="form-group">
+                            <label class="md-no-float" for="besitzer">
+                                Gesuchsteller wenn gewuenscht
+                            </label>
+
+                            <select name="besitzer" id="besitzer"
+                                    ng-model="vm.selectedBesitzer"
+                                    class="form-control"
+                                    ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
+                                <option value=""></option>
+
+                            </select>
+                        </dv-input-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Liste der Faelle-->
+        <div class="col-md-8 col-md-offset-2 marginTop30">
+
+
             <ul>
                 <li>
                     <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('1', false, false)">
+                            ng-click="vm.createTestFallType('1')">
                         <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Dagmar Wälti"></span>
                     </button>
                 </li>
                 <li>
                     <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('2', false, false)">
+                            ng-click="vm.createTestFallType('2')">
                         <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Yvonne Feutz"></span>
                     </button>
                 </li>
                 <li>
                     <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('3', false, false)">
+                            ng-click="vm.createTestFallType('3')">
                         <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Marcia Perreira"></span>
                     </button>
                 </li>
                 <li>
                     <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('4', false, false)">
+                            ng-click="vm.createTestFallType('4')">
                         <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Laura Walther"></span>
                     </button>
                 </li>
                 <li>
                     <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('5', false, false)">
+                            ng-click="vm.createTestFallType('5')">
                         <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Lueti"></span>
                     </button>
                 </li>
                 <li>
                     <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('6', false, false)">
+                            ng-click="vm.createTestFallType('6')">
                         <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Nora Becker"></span>
                     </button>
                 </li>
                 <li>
                     <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('7', false, false)">
+                            ng-click="vm.createTestFallType('7')">
                         <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Meier"></span>
                     </button>
                 </li>
                 <li>
                     <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('8', false, false)">
+                            ng-click="vm.createTestFallType('8')">
                         <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="AusInAusBern"></span>
                     </button>
                 </li>
             </ul>
 
-            <h4>
-                <span data-translate="Betreuungen mit Zustand &#034;bestätigt&#034;"></span>
-            </h4>
-            <ul>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('1', true, false)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Dagmar Wälti"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('2', true, false)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Yvonne Feutz"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('3', true, false)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Marcia Perreira"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('4', true, false)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Laura Walther"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('5', true, false)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Lueti"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('6', true, false)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Nora Becker"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('7', true, false)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Meier"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('8', true, false)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="AusInAusBern"></span>
-                    </button>
-                </li>
-            </ul>
-            <h4>
-                <span data-translate="Verfügte Erstgesuche"></span>
-            </h4>
-            <ul>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('1', true, true)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Dagmar Wälti"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('2', true, true)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Yvonne Feutz"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('3', true, true)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Marcia Perreira"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('4', true, true)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Laura Walther"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('5', true, true)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Lueti"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('6', true, true)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Nora Becker"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('7', true, true)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Meier"></span>
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn-link btn-testfall"
-                            ng-click="vm.createTestFall('8', true, true)">
-                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="AusInAusBern"></span>
-                    </button>
-                </li>
-            </ul>
-            <h2>
+            <!--Gesuche eines GS loeschen-->
+            <h2 class="marginTop20">
+                <span data-translate="Gesuchstellerfaelle loeschen"></span>
+            </h2>
+            <div class="row marginTop30">
+                <div class="col-sm-7 ">
+                    <dv-input-container class="form-group ">
+                        <label class="md-no-float" for="gesuchsteller">
+                            Gesuchsteller dessen Faelle Geloescht werden solllen
+                        </label>
+
+                        <select name="gesuchsteller" id="gesuchsteller"
+                                ng-model="vm.selectedBesitzer"
+                                class="form-control dv-input-container-small"
+                                ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
+                            <option value=""></option>
+
+                        </select>
+                    </dv-input-container>
+                </div>
+
+                <div class="col-sm-4 ">
+                    <dv-loading-button button-class="" button-click="vm.removeGesucheGS()" type="button">
+                        <span data-translate="DELETE"></span>
+                    </dv-loading-button>
+
+                </div>
+            </div>
+
+            <h2 class="marginTop20">
                 <span data-translate="Mutiere"></span>
             </h2>
             <div class="row">

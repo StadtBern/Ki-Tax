@@ -13,7 +13,7 @@ import {UploadRS} from '../../../core/service/uploadRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSWizardStep from '../../../models/TSWizardStep';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
@@ -156,7 +156,7 @@ export class KommentarViewController {
         return (this.wizardStepManager.getCurrentStepName() !== TSWizardStepName.VERFUEGEN
             && this.gesuchModelManager.isGesuchReadonly())
             || (this.wizardStepManager.getCurrentStepName() === TSWizardStepName.VERFUEGEN
-            && this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT));
+            && this.gesuchModelManager.getGesuch() && isAnyStatusOfVerfuegt(this.gesuchModelManager.getGesuch().status));
     }
 
 }

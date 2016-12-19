@@ -3,6 +3,7 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSDownloadFile from '../../models/TSDownloadFile';
 import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp';
 import TSMahnung from '../../models/TSMahnung';
+import {TSZustelladresse} from '../../models/enums/TSZustelladresse';
 
 
 export class DownloadRS {
@@ -39,6 +40,16 @@ export class DownloadRS {
     public getAccessTokenGeneratedDokument(gesuchId: string, generatedDokumentTyp: TSGeneratedDokumentTyp, forceCreation: boolean): IPromise<TSDownloadFile> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
             + encodeURIComponent(TSGeneratedDokumentTyp[generatedDokumentTyp]) + '/' + forceCreation + '/generated')
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getFreigabequittungAccessTokenGeneratedDokument(gesuchId: string, forceCreation: boolean, zustelladresse: TSZustelladresse): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
+            + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.FREIGABEQUITTUNG]) + '/' + forceCreation + '/generated',
+            {params: {zustelladresse: TSZustelladresse[zustelladresse]}})
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);

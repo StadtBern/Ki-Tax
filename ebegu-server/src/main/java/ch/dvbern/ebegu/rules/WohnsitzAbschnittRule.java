@@ -94,39 +94,40 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 	 * geht durch die Adressen des Gesuchstellers und gibt Abschnitte zurueck
 	 */
 	@Nonnull
-	private List<VerfuegungZeitabschnitt> getAdresseAbschnittForGesuchsteller(@Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, boolean gs1) {
+	private List<VerfuegungZeitabschnitt> getAdresseAbschnittForGesuchsteller(@Nonnull Gesuch gesuch, @Nonnull GesuchstellerContainer gesuchsteller, boolean gs1) {
 		List<VerfuegungZeitabschnitt> adressenZeitabschnitte = new ArrayList<>();
-		List<GesuchstellerAdresse> gesuchstellerAdressen = gesuchsteller.getAdressen();
-		gesuchstellerAdressen.stream().filter(gesuchstellerAdresse -> !gesuchstellerAdresse.getAdresseTyp().equals(AdresseTyp.KORRESPONDENZADRESSE))
+		List<GesuchstellerAdresseContainer> gesuchstellerAdressen = gesuchsteller.getAdressen();
+		gesuchstellerAdressen.stream()
+			.filter(gesuchstellerAdresse-> !gesuchstellerAdresse.extractAdresseTyp().equals(AdresseTyp.KORRESPONDENZADRESSE))
 			.forEach(gesuchstellerAdresse -> {
 				if (gs1) {
-					VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gesuchstellerAdresse.getGueltigkeit());
-					zeitabschnitt.setWohnsitzNichtInGemeindeGS1(gesuchstellerAdresse.isNichtInGemeinde());
+					VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gesuchstellerAdresse.extractGueltigkeit());
+					zeitabschnitt.setWohnsitzNichtInGemeindeGS1(gesuchstellerAdresse.extractIsNichtInGemeinde());
 					adressenZeitabschnitte.add(zeitabschnitt);
 				} else { // gs2
-					final DateRange gueltigkeit = new DateRange(gesuchstellerAdresse.getGueltigkeit());
-					if (gesuch.getFamiliensituation().getAenderungPer() != null) {
+					final DateRange gueltigkeit = new DateRange(gesuchstellerAdresse.extractGueltigkeit());
+					if (gesuch.extractFamiliensituation().getAenderungPer() != null) {
 						// from 1GS to 2GS
-						if (!gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && gesuch.getFamiliensituation().hasSecondGesuchsteller()) {
-							if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
-								if (gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer())) {
-									gueltigkeit.setGueltigAb(gesuch.getFamiliensituation().getAenderungPer());
+						if (!gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller() && gesuch.extractFamiliensituation().hasSecondGesuchsteller()) {
+							if (gueltigkeit.getGueltigBis().isAfter(gesuch.extractFamiliensituation().getAenderungPer())) {
+								if (gueltigkeit.getGueltigAb().isBefore(gesuch.extractFamiliensituation().getAenderungPer())) {
+									gueltigkeit.setGueltigAb(gesuch.extractFamiliensituation().getAenderungPer());
 								}
-								createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.isNichtInGemeinde(), gueltigkeit);
+								createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.extractIsNichtInGemeinde(), gueltigkeit);
 							}
 						}
 						// from 2GS to 1GS
-						else if (gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.getFamiliensituation().hasSecondGesuchsteller()
-							&& (gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer()))) {
+						else if (gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.extractFamiliensituation().hasSecondGesuchsteller()
+							&& (gueltigkeit.getGueltigAb().isBefore(gesuch.extractFamiliensituation().getAenderungPer()))) {
 
-							if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
-								gueltigkeit.setGueltigBis(gesuch.getFamiliensituation().getAenderungPer());
+							if (gueltigkeit.getGueltigBis().isAfter(gesuch.extractFamiliensituation().getAenderungPer())) {
+								gueltigkeit.setGueltigBis(gesuch.extractFamiliensituation().getAenderungPer());
 							}
-							createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.isNichtInGemeinde(), gueltigkeit);
+							createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.extractIsNichtInGemeinde(), gueltigkeit);
 						}
 					}
 					else {
-						createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.isNichtInGemeinde(), gueltigkeit);
+						createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.extractIsNichtInGemeinde(), gueltigkeit);
 					}
 				}
 			});

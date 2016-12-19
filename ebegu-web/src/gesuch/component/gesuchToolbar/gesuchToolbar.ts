@@ -10,11 +10,13 @@ import TSAntragDTO from '../../../models/TSAntragDTO';
 import {IGesuchStateParams} from '../../gesuch.route';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {TSAntragStatus, isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
@@ -57,12 +59,14 @@ export class GesuchToolbarController {
     mutierenPossibleForCurrentAntrag: boolean = false;
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
-        '$state', '$stateParams', '$scope', 'GesuchModelManager', '$mdSidenav'];
+        '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
+        '$mdSidenav'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
                 private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope,
                 private gesuchModelManager: GesuchModelManager,
+                private authServiceRS: AuthServiceRS,
                 private $mdSidenav: ng.material.ISidenavService) {
         this.updateUserList();
         this.updateAntragDTOList();
@@ -104,7 +108,7 @@ export class GesuchToolbarController {
             $scope.$watch(() => {
                 return this.gesuchModelManager.getGesuch().status;
             }, (newValue, oldValue) => {
-                if ((newValue !== oldValue) && (newValue === TSAntragStatus.VERFUEGT)) {
+                if ((newValue !== oldValue) && (isAnyStatusOfVerfuegt(newValue))) {
                     this.updateAntragDTOList();
                 }
             });
@@ -241,9 +245,12 @@ export class GesuchToolbarController {
     //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
         if (this.getGesuch()) {
-            var text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
-            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.nachname) {
-                text = text + ' ' + this.getGesuch().gesuchsteller1.nachname;
+            var text = '';
+            if (this.getGesuch().fall) {
+                text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
+            }
+            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.extractNachname()) {
+                text = text + ' ' + this.getGesuch().gesuchsteller1.extractNachname();
             }
             return text;
         } else {
@@ -334,11 +341,17 @@ export class GesuchToolbarController {
 
     public antragMutieren(): void {
         this.mutierenPossibleForCurrentAntrag = false;
-        this.$state.go('gesuch.mutation', {createMutation: true, gesuchId: this.gesuchid});
-        //TODO (hefr) hier muesste dann noch der blaue balken angepasst werden! NACH der mutation!
+        let eingangsart: TSEingangsart;
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
+            eingangsart = TSEingangsart.ONLINE;
+        } else {
+            eingangsart = TSEingangsart.PAPIER;
+        }
+        this.$state.go('gesuch.mutation', {createMutation: true, gesuchId: this.gesuchid,
+            fallId: this.getGesuch().fall.id, eingangsart: eingangsart,
+            gesuchsperiodeId: this.getGesuch().gesuchsperiode.id});
     }
 
-    //TODO (team) den (noch ungespeicherten) Mutationsantrag zur Liste im blauen Balken hinzufuegen
     private addAntragToList(antrag: TSGesuch): void {
         let antragDTO = new TSAntragDTO();
         antragDTO.antragTyp = TSAntragTyp.MUTATION;

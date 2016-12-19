@@ -26,7 +26,8 @@
                     <td ng-bind="row.erwerbspensumJA.zuschlagsprozent ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
                     <td ng-if="vm.isRemoveAllowed(row)">
                         <dv-loading-button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
-                                           button-class="dv-btn-sm" title="{{vm.removeButtonTitle}}">
+                                           button-class="dv-btn-sm" title="{{vm.removeButtonTitle}}"
+                                           button-disabled="!vm.addButtonEnabled">
                             <i class="fa fa-minus">
                             </i>
                         </dv-loading-button>
@@ -44,7 +45,8 @@
     <!--Addbutton -->
     <div class="row" ng-if="vm.addButtonVisible">
         <div class="col-md-12" style="margin-bottom: 2rem">
-            <dv-loading-button type="button" button-click="vm.addClicked()" button-class="dv-btn-sm color-success">
+            <dv-loading-button type="button" button-click="vm.addClicked()" button-class="dv-btn-sm color-success"
+                               button-disabled="!vm.addButtonEnabled">
                 <i class="glyphicon glyphicon-plus">
                 </i> {{vm.addButtonText}}
             </dv-loading-button>

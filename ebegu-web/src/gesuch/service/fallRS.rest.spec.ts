@@ -49,7 +49,7 @@ describe('fallRS', function () {
     describe('API Usage', function () {
         describe('findFall', () => {
             it('should return the Fall by id', () => {
-                $httpBackend.expectGET(fallRS.serviceURL + '/' + mockFall.id).respond(mockFallRest);
+                $httpBackend.expectGET(fallRS.serviceURL + '/id/' + mockFall.id).respond(mockFallRest);
 
                 let foundFall: TSFall;
                 fallRS.findFall(mockFall.id).then((result) => {

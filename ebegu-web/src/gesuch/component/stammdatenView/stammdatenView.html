@@ -10,7 +10,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form role="form" name="form" class="" novalidate
+            <form role="form" name="vm.form" class="" novalidate
                   unsaved-warning-form>
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
@@ -19,15 +19,17 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label class="md-no-float" data-translate="GESCHLECHT"></label>
+                                <label class="md-no-float required" data-translate="GESCHLECHT"></label>
                                 <dv-radio-container name="geschlecht" class="input-element"
                                                     ng-required="true" items="vm.geschlechter"
-                                                    ng-model="vm.getModel().geschlecht" dv-enable-element
+                                                    ng-model="vm.getModelJA().geschlecht" dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly()">
                                 </dv-radio-container>
-                                <dv-error-messages for="form.geschlecht.$error"
+                                <dv-error-messages for="vm.form.geschlecht.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getModel().gesuchstellerGS.geschlecht"
+                                           ja="vm.getModel().gesuchstellerJA.geschlecht"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -36,19 +38,23 @@
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="VORNAME" for="vorname_ID"></label>
-                                <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModel().vorname"
+                                <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModelJA().vorname"
                                        dv-max-length class="form-control input-dv" required>
-                                <dv-error-messages for="form.vorname.$error"
+                                <dv-error-messages for="vm.form.vorname.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getModel().gesuchstellerGS.vorname"
+                                           ja="vm.getModel().gesuchstellerJA.vorname"></dv-bisher>
                             </dv-input-container>
                         </div>
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
-                                <input id="name_ID" type="text" name="name" ng-model="vm.getModel().nachname"
+                                <input id="name_ID" type="text" name="name" ng-model="vm.getModelJA().nachname"
                                        dv-max-length class="form-control" required>
-                                <dv-error-messages for="form.name.$error"
+                                <dv-error-messages for="vm.form.name.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getModel().gesuchstellerGS.nachname"
+                                           ja="vm.getModel().gesuchstellerJA.nachname"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -60,11 +66,13 @@
                                 <label class="md-no-float" data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                                 </label>
                                 <dv-datepicker input-id="geburtsdatum_ID" name="geburtsdatum"
-                                               ng-model="vm.getModel().geburtsdatum" ng-required="true"
+                                               ng-model="vm.getModelJA().geburtsdatum" ng-required="true"
                                                class="input-element">
                                 </dv-datepicker>
-                                <dv-error-messages for="form.geburtsdatum.$error"
+                                <dv-error-messages for="vm.form.geburtsdatum.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getModel().gesuchstellerGS.geburtsdatum"
+                                           ja="vm.getModel().gesuchstellerJA.geburtsdatum"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -88,7 +96,7 @@
                                     <span data-translate="KORRESPONDENZADR"></span>
                                     <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
                                 </md-checkbox>
-                                <dv-error-messages for="form.korrespondenzAdr.$error"
+                                <dv-error-messages for="vm.form.korrespondenzAdr.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -102,14 +110,16 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class=" checkbox">
-                                <md-checkbox ng-model="vm.getModel().diplomatenstatus" name="diplomatenstatus"
+                                <md-checkbox ng-model="vm.getModelJA().diplomatenstatus" name="diplomatenstatus"
                                              aria-label="diplomatenstatus"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchReadonly()">
                                     <span data-translate="GESUCHSTELLER_DIPLOMATENSTATUS"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.diplomatenstatus.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.diplomatenstatus.$error" class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getModel().gesuchstellerGS.diplomatenstatus"
+                                           ja="vm.getModel().gesuchstellerJA.diplomatenstatus"></dv-bisher>
                             </div>
                         </div>
                     </div>
@@ -121,10 +131,10 @@
                                 <md-checkbox ng-model="vm.getModel().showUmzug" name="umzug" aria-label="umzug"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchReadonly() && !vm.isThereAnyUmzug()">
+                                             dv-enable-expression="!vm.isGesuchReadonly() && !vm.isThereAnyUmzug() && !vm.isKorrekturModusJugendamt()">
                                     <span data-translate="UMZUG"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.umzug.$error"
+                                <dv-error-messages for="vm.form.umzug.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -136,11 +146,13 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EMAIL" for="email_ID">
                                 </label>
-                                <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
+                                <input id="email_ID" type="email" name="email" ng-model="vm.getModelJA().mail"
                                        dv-max-length class="form-control" required placeholder="hans.muster@example.com"
                                        ng-pattern="vm.CONSTANTS.PATTERN_EMAIL">
-                                <dv-error-messages for="form.email.$error"
+                                <dv-error-messages for="vm.form.email.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getModel().gesuchstellerGS.mail"
+                                           ja="vm.getModel().gesuchstellerJA.mail"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -152,22 +164,26 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="MOBILE" for="mobile_ID">
                                 </label>
-                                <input id="mobile_ID" type="text" name="mobile" ng-model="vm.getModel().mobile"
+                                <input id="mobile_ID" type="text" name="mobile" ng-model="vm.getModelJA().mobile"
                                        dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
                                        ng-pattern="vm.CONSTANTS.PATTERN_MOBILE">
-                                <dv-error-messages for="form.mobile.$error"
+                                <dv-error-messages for="vm.form.mobile.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getModel().gesuchstellerGS.mobile"
+                                           ja="vm.getModel().gesuchstellerJA.mobile"></dv-bisher>
                             </dv-input-container>
                         </div>
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="TELEFON" for="tel_ID">
                                 </label>
-                                <input id="tel_ID" type="text" name="telefon" ng-model="vm.getModel().telefon"
+                                <input id="tel_ID" type="text" name="telefon" ng-model="vm.getModelJA().telefon"
                                        dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
                                        ng-pattern="vm.CONSTANTS.PATTERN_PHONE">
-                                <dv-error-messages for="form.telefon.$error"
+                                <dv-error-messages for="vm.form.telefon.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getModel().gesuchstellerGS.telefon"
+                                           ja="vm.getModel().gesuchstellerJA.telefon"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -178,10 +194,12 @@
                                 <label class="md-no-float" data-translate="TELEFON_AUSLAND" for="ausl_tel">
                                 </label>
                                 <input id="ausl_tel" type="text" name="telefonAusland"
-                                       ng-model="vm.getModel().telefonAusland"
+                                       ng-model="vm.getModelJA().telefonAusland"
                                        dv-max-length class="form-control">
-                                <dv-error-messages for="form.telefonAusland.$error"
+                                <dv-error-messages for="vm.form.telefonAusland.$error"
                                                    class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getModel().gesuchstellerGS.telefonAusland"
+                                           ja="vm.getModel().gesuchstellerJA.telefonAusland"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -192,7 +210,7 @@
                     <div class="col-md-12">
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                       dv-previous="true" dv-next="true" dv-save="vm.save(form)">
+                                       dv-previous="true" dv-next="true" dv-save="vm.save()">
                         </dv-navigation>
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"

@@ -33,4 +33,12 @@ export default class UserRS implements IEntityRS {
     public getServiceName(): string {
         return 'UserRS';
     }
+
+    public getAllGesuchsteller(): IPromise<TSUser[]> {
+        return this.http.get(this.serviceURL + '/gesuchsteller').then((response: any) => {
+            this.$log.debug('PARSING user REST array object', response.data);
+            return this.ebeguRestUtil.parseUserList(response.data);
+        });
+    }
+
 }

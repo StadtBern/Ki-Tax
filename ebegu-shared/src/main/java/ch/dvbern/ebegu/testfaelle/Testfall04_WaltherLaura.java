@@ -30,9 +30,9 @@ public class Testfall04_WaltherLaura extends AbstractTestfall {
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createVerheiratet();
-		Gesuchsteller gesuchsteller1 = createGesuchsteller(FAMILIENNAME, "Laura");
+		GesuchstellerContainer gesuchsteller1 = createGesuchstellerContainer(FAMILIENNAME, "Laura");
 		gesuch.setGesuchsteller1(gesuchsteller1);
-		Gesuchsteller gesuchsteller2 = createGesuchsteller(FAMILIENNAME, "Thomas");
+		GesuchstellerContainer gesuchsteller2 = createGesuchstellerContainer(FAMILIENNAME, "Thomas");
 		gesuch.setGesuchsteller2(gesuchsteller2);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensumGS1 = createErwerbspensum(90, 0);
@@ -45,8 +45,8 @@ public class Testfall04_WaltherLaura extends AbstractTestfall {
 		gesuch.getKindContainers().add(kind1);
 
 		// Betreuungen
-		// Kind 1: Kita Aaregg
-		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
+		// Kind 1: Kita Weissenstein
+		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_WEISSENSTEIN, betreuungenBestaetigt);
 		betreuungTagiAaregg.setKind(kind1);
 		kind1.getBetreuungen().add(betreuungTagiAaregg);
 		BetreuungspensumContainer betreuungspensumTagiAaregg = createBetreuungspensum(50, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));

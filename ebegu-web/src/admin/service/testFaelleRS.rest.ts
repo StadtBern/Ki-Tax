@@ -19,6 +19,18 @@ export class TestFaelleRS {
         return 'TestFaelleRS';
     }
 
+    public createTestFallGS(testFall: string, bestaetigt: boolean, verfuegen: boolean, username: string): IHttpPromise<String> {
+        return this.http.get(this.serviceURL + '/testfallgs/' + encodeURIComponent(testFall)
+            + '/' + bestaetigt + '/' + verfuegen + '/' + encodeURIComponent(username));
+    }
+
+
+    public removeFaelleOfGS(username: string): IHttpPromise<String> {
+        return this.http.delete(this.serviceURL + '/testfallgs/' + encodeURIComponent(username));
+    }
+
+
+
     public createTestFall(testFall: string, bestaetigt: boolean, verfuegen: boolean): IHttpPromise<String> {
         return this.http.get(this.serviceURL + '/testfall/' + encodeURIComponent(testFall) + '/' + bestaetigt + '/' + verfuegen);
     }

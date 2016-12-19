@@ -2,8 +2,8 @@ import TSFinanzielleSituationContainer from './TSFinanzielleSituationContainer';
 import TSGesuch from './TSGesuch';
 import TSFinanzielleSituation from './TSFinanzielleSituation';
 import TSEinkommensverschlechterungContainer from './TSEinkommensverschlechterungContainer';
-import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
 import TSEinkommensverschlechterung from './TSEinkommensverschlechterung';
+import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlechterungInfoContainer';
 
 export default class TSFinanzModel {
 
@@ -12,7 +12,7 @@ export default class TSFinanzModel {
     private _finanzielleSituationContainerGS2: TSFinanzielleSituationContainer;
     private _einkommensverschlechterungContainerGS1: TSEinkommensverschlechterungContainer;
     private _einkommensverschlechterungContainerGS2: TSEinkommensverschlechterungContainer;
-    private _einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo;
+    private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
 
     private basisjahr: number;
     private basisjahrPlus: number;
@@ -53,7 +53,11 @@ export default class TSFinanzModel {
 
     public copyFinSitDataFromGesuch(gesuch: TSGesuch) {
 
-        this.gemeinsameSteuererklaerung = angular.copy(gesuch.familiensituation.gemeinsameSteuererklaerung);
+        if (gesuch.extractFamiliensituation().gemeinsameSteuererklaerung) {
+            this.gemeinsameSteuererklaerung = angular.copy(gesuch.extractFamiliensituation().gemeinsameSteuererklaerung);
+        } else {
+            this.gemeinsameSteuererklaerung = false;
+        }
         this.finanzielleSituationContainerGS1 = angular.copy(gesuch.gesuchsteller1.finanzielleSituationContainer);
         if (gesuch.gesuchsteller2) {
             this.finanzielleSituationContainerGS2 = angular.copy(gesuch.gesuchsteller2.finanzielleSituationContainer);
@@ -62,10 +66,10 @@ export default class TSFinanzModel {
     }
 
     copyEkvDataFromGesuch(gesuch: TSGesuch) {
-        if (gesuch.einkommensverschlechterungInfo) {
-            this.einkommensverschlechterungInfo = angular.copy(gesuch.einkommensverschlechterungInfo);
+        if (gesuch.einkommensverschlechterungInfoContainer) {
+            this.einkommensverschlechterungInfoContainer = angular.copy(gesuch.einkommensverschlechterungInfoContainer);
         } else {
-            this.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo;
+            this.einkommensverschlechterungInfoContainer = new TSEinkommensverschlechterungInfoContainer;
         }
         //geesuchstelelr1 nullsave?
         this.einkommensverschlechterungContainerGS1 = angular.copy(gesuch.gesuchsteller1.einkommensverschlechterungContainer);
@@ -90,12 +94,12 @@ export default class TSFinanzModel {
     }
 
     copyFinSitDataToGesuch(gesuch: TSGesuch): TSGesuch {
-        gesuch.familiensituation.gemeinsameSteuererklaerung = this.gemeinsameSteuererklaerung;
+        gesuch.extractFamiliensituation().gemeinsameSteuererklaerung = this.gemeinsameSteuererklaerung;
         gesuch.gesuchsteller1.finanzielleSituationContainer = this.finanzielleSituationContainerGS1;
-        if(gesuch.gesuchsteller2){
+        if (gesuch.gesuchsteller2) {
             gesuch.gesuchsteller2.finanzielleSituationContainer = this.finanzielleSituationContainerGS2;
-        } else{
-            if(this.finanzielleSituationContainerGS2){
+        } else {
+            if (this.finanzielleSituationContainerGS2) {
                 //wenn wir keinen gs2 haben sollten wir auch gar keinen solchen container haben
                 console.log('illegal state: finanzielleSituationContainerGS2 exists but no gs2 is available');
             }
@@ -104,7 +108,7 @@ export default class TSFinanzModel {
     }
 
     copyEkvSitDataToGesuch(gesuch: TSGesuch): TSGesuch {
-        gesuch.einkommensverschlechterungInfo = this.einkommensverschlechterungInfo;
+        gesuch.einkommensverschlechterungInfoContainer = this.einkommensverschlechterungInfoContainer;
         gesuch.gesuchsteller1.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerGS1;
         if (gesuch.gesuchsteller2) {
             gesuch.gesuchsteller2.einkommensverschlechterungContainer = this.einkommensverschlechterungContainerGS2;
@@ -193,12 +197,12 @@ export default class TSFinanzModel {
     }
 
 
-    get einkommensverschlechterungInfo(): TSEinkommensverschlechterungInfo {
-        return this._einkommensverschlechterungInfo;
+    get einkommensverschlechterungInfoContainer(): TSEinkommensverschlechterungInfoContainer {
+        return this._einkommensverschlechterungInfoContainer;
     }
 
-    set einkommensverschlechterungInfo(value: TSEinkommensverschlechterungInfo) {
-        this._einkommensverschlechterungInfo = value;
+    set einkommensverschlechterungInfoContainer(value: TSEinkommensverschlechterungInfoContainer) {
+        this._einkommensverschlechterungInfoContainer = value;
     }
 
     public initEinkommensverschlechterungContainer(basisjahrPlus: number, gesuchstellerNumber: number): void {
@@ -242,9 +246,9 @@ export default class TSFinanzModel {
 
     public getGemeinsameSteuererklaerungToWorkWith(): boolean {
         if (this.basisjahrPlus === 2) {
-            return this.einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP2;
+            return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.gemeinsameSteuererklaerung_BjP2;
         } else {
-            return this.einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP1;
+            return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.gemeinsameSteuererklaerung_BjP1;
         }
     }
 

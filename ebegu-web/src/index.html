@@ -40,8 +40,8 @@
                     <a ui-sref="pendenzenInstitution" data-translate="MENU_PENDENZEN_INSTITUTION"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
-                    dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'GESUCHSTELLER', 'SUPER_ADMIN']">
-                    <a ui-sref="gesuch.fallcreation({createNew: true, gesuchId: null})"
+                    dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN']">
+                    <a ui-sref="gesuch.fallcreation({createNew: true, gesuchId: null, eingangsart: 'PAPIER'})"
                        data-translate="MENU_FALL_EROEFFNEN"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element

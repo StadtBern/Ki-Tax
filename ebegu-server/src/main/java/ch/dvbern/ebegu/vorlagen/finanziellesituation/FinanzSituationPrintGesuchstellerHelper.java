@@ -12,7 +12,7 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 */
 
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 
 public final class FinanzSituationPrintGesuchstellerHelper {
 
@@ -31,11 +31,11 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 	 */
 	public static FinanzSituationPrintGesuchsteller getFinanzSituationGesuchsteller1(Gesuch gesuch) {
 
-		Gesuchsteller gesuchsteller1 = gesuch.getGesuchsteller1();
+		GesuchstellerContainer gesuchsteller1 = gesuch.getGesuchsteller1();
 		FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller = new FinanzSituationPrintGesuchsteller(gesuchsteller1.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
 				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
 				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
-				gesuch.getEinkommensverschlechterungInfo());
+				gesuch.extractEinkommensverschlechterungInfo());
 
 		return finanzSituationPrintGesuchsteller;
 	}
@@ -48,14 +48,14 @@ public final class FinanzSituationPrintGesuchstellerHelper {
 	 */
 	public static FinanzSituationPrintGesuchsteller getFinanzSituationGesuchsteller2(Gesuch gesuch) {
 
-		Gesuchsteller gesuchsteller2 = gesuch.getGesuchsteller2();
+		GesuchstellerContainer gesuchsteller2 = gesuch.getGesuchsteller2();
 		if (gesuchsteller2 != null) {
 
 			FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller2 = new FinanzSituationPrintGesuchsteller(
 					gesuchsteller2.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
 					gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
 					gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
-					gesuch.getEinkommensverschlechterungInfo());
+					gesuch.extractEinkommensverschlechterungInfo());
 			return finanzSituationPrintGesuchsteller2;
 		}
 		return null;
