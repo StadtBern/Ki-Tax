@@ -6,9 +6,13 @@
 
                     <!--Einkommensverschlechterung-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
-                                <h4 class="mainQuestion required" data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"></h4>
+                                <div class="viewTitle">
+                                    <h1 class="mainQuestion required"
+                                        data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"></h1>
+                                    <hr class="header"/>
+                                </div>
                                 <dv-radio-container name="einkommensverschlechterung"
                                                     ng-model="vm.getEinkommensverschlechterungsInfo().einkommensverschlechterung"
                                                     ng-required="true" class="radio input-element"

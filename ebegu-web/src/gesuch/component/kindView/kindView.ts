@@ -163,7 +163,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         if (this.getContainer().kindGS && this.getContainer().kindGS.pensumFachstelle) {
             let fachstelle : TSPensumFachstelle = this.getContainer().kindGS.pensumFachstelle;
             let vonText = DateUtil.momentToLocalDateFormat(fachstelle.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
-            let bisText = fachstelle.gueltigkeit.gueltigBis ? DateUtil.momentToLocalDateFormat(fachstelle.gueltigkeit.gueltigBis, 'DD.MM.YYYY') : '31.12.9999'
+            let bisText = fachstelle.gueltigkeit.gueltigBis ? DateUtil.momentToLocalDateFormat(fachstelle.gueltigkeit.gueltigBis, 'DD.MM.YYYY') : '31.12.9999';
             return this.$translate.instant('JA_KORREKTUR_FACHSTELLE', {
                 name: fachstelle.fachstelle.name,
                 pensum: fachstelle.pensum,

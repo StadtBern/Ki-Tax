@@ -457,7 +457,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			predicatesToUse.add(fallPredicate);
 
 			if (institutionstammdatenJoin != null) {
-				if (benutzer.getRole().equals(UserRole.SUPER_ADMIN) || benutzer.getRole().equals(UserRole.ADMIN) || benutzer.getRole().equals(UserRole.SACHBEARBEITER_JA)) {
+				if (benutzer.getRole().equals(UserRole.ADMIN) || benutzer.getRole().equals(UserRole.SACHBEARBEITER_JA)) {
 					predicatesToUse.add(cb.notEqual(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
 				}
 				if (benutzer.getRole().equals(UserRole.SCHULAMT)) {
@@ -486,6 +486,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 
 		return new ArrayList<>();
+	}
+
+	@Override
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	public List<String> getAllGesuchIDsForFall(String fallId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<String> query = cb.createQuery(String.class);
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		query.select(root.get(Gesuch_.id));
+
+		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
+
+		Expression<Boolean> fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
+		query.where(fallPredicate);
+		TypedQuery<String> q = persistence.getEntityManager().createQuery(query);
+		q.setParameter(fallIdParam, fallId);
+
+		return q.getResultList();
+
 	}
 
 	@Override
@@ -554,6 +574,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// Falls es ein OnlineGesuch war: Das Eingangsdatum setzen
 			if (Eingangsart.ONLINE.equals(gesuch.getEingangsart())) {
 				gesuch.setEingangsdatum(LocalDate.now());
+			}
+			// Je nach Status
+			if (!gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG)) {
+				// Es handelt sich um eine Mutation ohne Freigabequittung: Wir setzen das Tagesdatum als FreigabeDatum
+				gesuch.setFreigabeDatum(LocalDate.now());
 			}
 			return updateGesuch(gesuch, true);
 		} else {

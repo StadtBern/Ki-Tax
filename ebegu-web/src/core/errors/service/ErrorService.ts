@@ -1,5 +1,5 @@
 import IRootScopeService = angular.IRootScopeService;
-import {TSErrorEvent} from '../../../models/enums/TSErrorEvent';
+import {TSMessageEvent} from '../../../models/enums/TSErrorEvent';
 import TSExceptionReport from '../../../models/TSExceptionReport';
 import {TSErrorLevel} from '../../../models/enums/TSErrorLevel';
 import {TSErrorType} from '../../../models/enums/TSErrorType';
@@ -28,7 +28,7 @@ export default class ErrorService {
      */
     clearAll() {
         this.errors = [];
-        this.$rootScope.$broadcast(TSErrorEvent[TSErrorEvent.CLEAR]);
+        this.$rootScope.$broadcast(TSMessageEvent[TSMessageEvent.CLEAR]);
     }
 
     /** clear specific error
@@ -45,7 +45,7 @@ export default class ErrorService {
 
         if (cleared.length !== this.errors.length) {
             this.errors = cleared;
-            this.$rootScope.$broadcast(TSErrorEvent[TSErrorEvent.UPDATE], this.errors);
+            this.$rootScope.$broadcast(TSMessageEvent[TSMessageEvent.ERROR_UPDATE], this.errors);
         }
     }
 
@@ -68,7 +68,8 @@ export default class ErrorService {
     addDvbError(dvbError: TSExceptionReport) {
         if (dvbError && dvbError.isValid() && !this.containsError(dvbError)) {
             this.errors.push(dvbError);
-            this.$rootScope.$broadcast(TSErrorEvent[TSErrorEvent.UPDATE], this.errors);
+            let udateEvent: TSMessageEvent = (dvbError.severity === TSErrorLevel.INFO ) ? TSMessageEvent.INFO_UPDATE : TSMessageEvent.ERROR_UPDATE;
+            this.$rootScope.$broadcast(TSMessageEvent[udateEvent], this.errors);
         }
     }
 
@@ -76,6 +77,11 @@ export default class ErrorService {
         let error: TSExceptionReport = new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, msg, null);
         this.addDvbError(error);
 
+    }
+
+    addMesageAsInfo(msg: string) {
+        let error: TSExceptionReport = new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.INFO, msg, null);
+        this.addDvbError(error);
     }
 
     /**

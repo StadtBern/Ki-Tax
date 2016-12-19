@@ -37,7 +37,6 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		// Kinder
 		KindContainer kind = createKind(Geschlecht.MAENNLICH, "Wälti", "Simon", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, true);
 		kind.setGesuch(gesuch);
-		kind.setKindGS(kind.getKindJA());
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
 		// Kita Weissenstein

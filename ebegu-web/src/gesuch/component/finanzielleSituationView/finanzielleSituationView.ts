@@ -56,7 +56,8 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         this.wizardStepManager.setCurrentStep(TSWizardStepName.FINANZIELLE_SITUATION);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig();
-        this.showSelbstaendigGS = this.model.getFiSiConToWorkWith().finanzielleSituationGS ? this.model.getFiSiConToWorkWith().finanzielleSituationGS.isSelbstaendig(): false;
+        this.showSelbstaendigGS = this.model.getFiSiConToWorkWith().finanzielleSituationGS
+            ? this.model.getFiSiConToWorkWith().finanzielleSituationGS.isSelbstaendig() : false;
     }
 
     public showSelbstaendigClicked() {
@@ -133,7 +134,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         return this.berechnungsManager.finanzielleSituationResultate;
     }
 
-    public getTextSelbstaendigKorrektur(){
+    public getTextSelbstaendigKorrektur() {
         let finSitGS = this.getModel().finanzielleSituationGS;
         if (finSitGS && finSitGS.isSelbstaendig()) {
 
@@ -142,7 +143,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
             let gew3 = finSitGS.geschaeftsgewinnBasisjahrMinus2;
             let basisjahr = this.gesuchModelManager.getBasisjahr();
             return this.$translate.instant('JA_KORREKTUR_SELBSTAENDIG',
-                {basisjahr: basisjahr, gewinn1:gew1,  gewinn2:gew2,  gewinn3:gew3});
+                {basisjahr: basisjahr, gewinn1: gew1,  gewinn2: gew2,  gewinn3: gew3});
 
 
                    // return this.$translate.instant('JA_KORREKTUR_FACHSTELLE', {
