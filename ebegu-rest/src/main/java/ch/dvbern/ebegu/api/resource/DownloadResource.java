@@ -191,7 +191,7 @@ public class DownloadResource {
 	public Response getFreigabequittungAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
-		@Nullable @QueryParam("zustelladresse") String zustelladresse,
+		@Nonnull @QueryParam("zustelladresse") String zustelladresse,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
 
 		Validate.notNull(jaxGesuchId.getId());
@@ -199,23 +199,12 @@ public class DownloadResource {
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			if (zustelladresse != null && !zustelladresse.isEmpty()) {
-				GeneratedDokument generatedDokument = generatedDokumentService
-					.getFreigabequittungAccessTokenGeneratedDokument(gesuch.get(), forceCreation, Zustelladresse.valueOf(zustelladresse));
-				if (generatedDokument == null) {
-					return Response.noContent().build();
-				}
-				return getFileDownloadResponse(uriInfo, ip, generatedDokument);
+			GeneratedDokument generatedDokument = generatedDokumentService
+				.getFreigabequittungAccessTokenGeneratedDokument(gesuch.get(), forceCreation, Zustelladresse.valueOf(zustelladresse));
+			if (generatedDokument == null) {
+				return Response.noContent().build();
 			}
-			else {
-				// Wenn die Zustelladresse null ist, handelt es sich definitiv um eine Mutation, die keine Freigabequittung erfordert.
-				// Aus diesem Grund aendert der Status automatisch auf FREIGEGEBEN und wird kein Dokument erstellt
-				if (!gesuch.get().getStatus().isFreigegeben()) {
-					// TODO (team) wenn der Service .antragFreigeben existiert, waere es besser wenn wir hier direkt die Methode aufrufen
-					gesuchService.antragFreigabequittungErstellen(gesuch.get(), AntragStatus.FREIGEGEBEN);
-				}
-				return Response.ok().build();
-			}
+			return getFileDownloadResponse(uriInfo, ip, generatedDokument);
 		}
 		throw new EbeguEntityNotFoundException("getFreigabequittungAccessTokenGeneratedDokument",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId());
