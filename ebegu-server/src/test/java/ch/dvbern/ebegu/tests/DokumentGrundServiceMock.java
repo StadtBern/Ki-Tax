@@ -23,7 +23,7 @@ public class DokumentGrundServiceMock extends DokumentGrundServiceBean {
 
 	@Nonnull
 	@Override
-	public Collection<DokumentGrund> getAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch) {
+	public Collection<DokumentGrund> findAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch) {
 		return Collections.emptyList();
 	}
 }

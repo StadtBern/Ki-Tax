@@ -125,23 +125,62 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
 
     private gemeinsameStekClicked_BjP1(): void {
         // Wenn neu NEIN -> Fragen loeschen
-        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
+
+        let ekvJaBasisJahrPlus1WasAlreadyEntered = this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 && !this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1.isNew();
+        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false && ekvJaBasisJahrPlus1WasAlreadyEntered) {
+            // Wenn neu NEIN und schon was eingegeben -> Fragen mal auf false setzen und Status auf nok damit man sicher noch weiter muss!
+            this.initSteuerFragen();
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.NOK);
+        } else if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
+            // Wenn neu NEIN und noch nichts eingegeben -> Fragen loeschen da noch nichts eingegeben worden ist
             this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 = undefined;
             this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1 = undefined;
         } else {
-            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
-            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+            // Wenn neu JA
+            this.initViewModel();  //review @gapa fragen ist das nicht ein change genueber vorher
         }
     }
 
     private gemeinsameStekClicked_BjP2(): void {
-        // Wenn neu NEIN -> Fragen loeschen
-        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false) {
+        let ekvJaBasisJahrPlus2WasAlreadyEntered : boolean = this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 && !this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2.isNew();
+        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false &&
+            ekvJaBasisJahrPlus2WasAlreadyEntered) {
+            // Wenn neu NEIN und schon was eingegeben -> Fragen mal auf false setzen und Status auf nok damit man sicher noch weiter muss!
+            this.initSteuerFragen();
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.NOK);
+        } else if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false) {
+            // Wenn neu NEIN -> Fragen loeschen wenn noch nichts eingegeben worden ist
             this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 = undefined;
             this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2 = undefined;
         } else {
-            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
-            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+            //Wenn neu JA
+            this.initViewModel(); //review @gapa fragen ist das nicht ein change genueber vorher
+        }
+    }
+
+    /**
+     * Es muss ein Wert geschrieben werden, um ekv persisierten zu können
+     */
+    private initSteuerFragen() {
+        let gs1EkvJABasisJahrPlus1 = this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1;
+        if (gs1EkvJABasisJahrPlus1) {
+            gs1EkvJABasisJahrPlus1.steuererklaerungAusgefuellt = !gs1EkvJABasisJahrPlus1.steuererklaerungAusgefuellt ? false : gs1EkvJABasisJahrPlus1.steuererklaerungAusgefuellt;
+            gs1EkvJABasisJahrPlus1.steuerveranlagungErhalten = !gs1EkvJABasisJahrPlus1.steuerveranlagungErhalten ? false : gs1EkvJABasisJahrPlus1.steuerveranlagungErhalten;
+        }
+        let gs2EkvJABasisJahrPlus1 = this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1;
+        if (gs2EkvJABasisJahrPlus1) {
+            gs2EkvJABasisJahrPlus1.steuererklaerungAusgefuellt = !gs2EkvJABasisJahrPlus1.steuererklaerungAusgefuellt ? false : gs2EkvJABasisJahrPlus1.steuererklaerungAusgefuellt;
+            gs2EkvJABasisJahrPlus1.steuerveranlagungErhalten = !gs2EkvJABasisJahrPlus1.steuerveranlagungErhalten ? false : gs2EkvJABasisJahrPlus1.steuerveranlagungErhalten;
+        }
+        let gs1EkvJABasisJahrPlus2 = this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2;
+        if (gs1EkvJABasisJahrPlus2) {
+            gs1EkvJABasisJahrPlus2.steuererklaerungAusgefuellt = !gs1EkvJABasisJahrPlus2.steuererklaerungAusgefuellt ? false : gs1EkvJABasisJahrPlus2.steuererklaerungAusgefuellt;
+            gs1EkvJABasisJahrPlus2.steuerveranlagungErhalten = !gs1EkvJABasisJahrPlus2.steuerveranlagungErhalten ? false : gs1EkvJABasisJahrPlus2.steuerveranlagungErhalten;
+        }
+        let gs2EkvJABasisJahrPlus2 = this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2;
+        if (gs2EkvJABasisJahrPlus2) {
+            gs2EkvJABasisJahrPlus2.steuererklaerungAusgefuellt = !gs2EkvJABasisJahrPlus2.steuererklaerungAusgefuellt ? false : gs2EkvJABasisJahrPlus2.steuererklaerungAusgefuellt;
+            gs2EkvJABasisJahrPlus2.steuerveranlagungErhalten = !gs2EkvJABasisJahrPlus2.steuerveranlagungErhalten ? false : gs2EkvJABasisJahrPlus2.steuerveranlagungErhalten;
         }
     }
 
