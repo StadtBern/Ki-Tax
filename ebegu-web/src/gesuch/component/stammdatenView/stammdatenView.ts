@@ -150,7 +150,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     public getTextKorrespondenzaddrKorrekturJA(): string {
         if (this.model.korrespondenzAdresse && this.model.korrespondenzAdresse.adresseGS) {
             let adr: TSAdresse = this.model.korrespondenzAdresse.adresseGS;
-            let organsiation: string = adr.organisation ? adr.organisation : '-';
+            let organisation: string = adr.organisation ? adr.organisation : '-';
             let strasse: string = adr.strasse ? adr.strasse : '-';
             let hausnummer: string = adr.hausnummer ? adr.hausnummer : '-';
             let zusatzzeile: string = adr.zusatzzeile ? adr.zusatzzeile : '-';
@@ -158,7 +158,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             let ort: string = adr.ort ? adr.ort : '-';
             let land: string = this.$translate.instant('Land_' + adr.land);
             return this.$translate.instant('JA_KORREKTUR_KORRESPONDENZ_ADDR', {
-                organsiation: organsiation,
+                organisation: organisation,
                 strasse: strasse,
                 hausnummer: hausnummer,
                 zusatzzeile: zusatzzeile,
