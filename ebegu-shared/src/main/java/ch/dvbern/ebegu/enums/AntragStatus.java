@@ -37,7 +37,9 @@ public enum AntragStatus {
 
 	public static final Set<AntragStatus> FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN = EnumSet.range(FREIGEGEBEN, VERFUEGEN);
 
-	private static final Set<AntragStatus> isFreigegeben = EnumSet.range(NUR_SCHULAMT, VERFUEGT);
+	private static final Set<AntragStatus> inBearbeitung = EnumSet.range(IN_BEARBEITUNG_GS, IN_BEARBEITUNG_JA);
+
+
 
     /**
      * Implementierung eines Berechtigungskonzepts fuer die Antragssuche.
@@ -74,11 +76,6 @@ public enum AntragStatus {
 		return getAllVerfuegtStates().contains(this);
 	}
 
-	public boolean isFreigegeben() {
-		return isFreigegeben.contains(this);
-	}
+	public boolean inBearbeitung() { return inBearbeitung.contains(this); }
 
-	public boolean isFreigegebenOrFreigabequittung() {
-		return isFreigegeben.contains(this) || this.equals(FREIGABEQUITTUNG);
-	}
 }

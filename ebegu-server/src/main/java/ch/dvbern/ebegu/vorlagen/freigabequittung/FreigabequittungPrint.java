@@ -38,6 +38,8 @@ public interface FreigabequittungPrint {
 
 	String getAdresseGS1();
 
+	boolean isAddresseGS2();
+
 	String getAdresseGS2();
 
 	List<BetreuungsTabellePrint> getBetreuungen();

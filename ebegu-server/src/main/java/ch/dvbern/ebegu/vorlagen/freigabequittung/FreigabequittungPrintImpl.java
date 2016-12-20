@@ -104,6 +104,11 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 	}
 
 	@Override
+	public boolean isAddresseGS2() {
+		return gesuch.getGesuchsteller2() != null;
+	}
+
+	@Override
 	public String getAdresseGS2() {
 
 		return PrintUtil.getNameAdresseFormatiert(gesuch, gesuch.getGesuchsteller2());
@@ -128,13 +133,17 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 	@Override
 	public List<AufzaehlungPrint> getUnterlagen() {
 		List<AufzaehlungPrint> aufzaehlungPrint = new ArrayList<>();
+		StringBuilder bemerkungenBuilder;
 
 		if (dokumentGrunds != null) {
 			for (DokumentGrund dokumentGrund : dokumentGrunds) {
-				StringBuilder bemerkungenBuilder = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
-				aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));
+				bemerkungenBuilder = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
+				if (bemerkungenBuilder.length() > 0){
+					aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));
+				}
             }
 		}
+
 		return aufzaehlungPrint;
 	}
 

@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.util;
 
 import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 
@@ -82,6 +83,8 @@ public class DokumenteUtil {
 				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG_VORSCHAU, identificationNumber);
 			case NICHTEINTRETEN:
 				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.NICHTEINTRETEN, identificationNumber);
+			case FREIGABEQUITTUNG:
+				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.FREIGABEQUITTUNG, identificationNumber);
 			default:
 				return "file.pdf";
 		}
