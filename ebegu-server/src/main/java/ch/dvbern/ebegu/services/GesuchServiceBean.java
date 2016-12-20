@@ -608,9 +608,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	/**
-	 * wenn ein Gesuch nur Schulamt Betreuuungen hat so geht es beim barcode Scannen in den Zustand NUR_SCHULAMT
-	 * @param gesuch
-	 * @return
+	 * wenn ein Gesuch nur Schulamt Betreuuungen hat so geht es beim barcode Scannen in den Zustand NUR_SCHULAMTM; sonst Freigegeben
 	 */
 	private AntragStatus calculateFreigegebenStatus(@Nonnull Gesuch gesuch) {
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
