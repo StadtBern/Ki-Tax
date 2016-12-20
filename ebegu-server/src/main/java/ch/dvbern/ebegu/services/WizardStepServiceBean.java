@@ -245,7 +245,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				&& !WizardStepStatus.OK.equals(wizardStep.getWizardStepStatus())) {
 				final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
 				if (betreuungenFromGesuch.stream().allMatch(betreuung ->
-						Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) ||
+					Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) ||
 						Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG.equals(betreuung.getBetreuungsstatus()) ||
 						Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus()) ||
 						Betreuungsstatus.GEKUENDIGT_VOR_EINTRITT.equals(betreuung.getBetreuungsstatus()) ||
@@ -266,15 +266,14 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * @param wizardSteps
 	 */
 	private void updateAllStatusForGesuchsteller(List<WizardStep> wizardSteps) {
+		principalBean.isCallerInRole(UserRole.GESUCHSTELLER);
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
 				setWizardStepOkOrMutiert(wizardStep);
 			} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
 				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
 				&& !wizardStep.getVerfuegbar()
-				&& !WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
-				&& AntragTyp.GESUCH.equals(wizardStep.getGesuch().getTyp())) {    //in mutation soll fin sit und einkommensverschl per default nicht verfuegbar sein
-
+				&& !WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
 				wizardStep.setVerfuegbar(true);
 			}
 		}
@@ -365,12 +364,20 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 						wizardStep.setVerfuegbar(true);
 
-					} else if (!wizardStep.getGesuch().isMutation() // fuer Mutationen bleiben diese beide Steps immer noch gruen, da die Werte direkt auf 0 gesetzt werden
-						&& (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))) {
-
-						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+					} else if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())) {
 						wizardStep.setVerfuegbar(false);
+						if (!wizardStep.getGesuch().isMutation()) {
+							wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+						}
+					} else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
+
+						wizardStep.setVerfuegbar(false);
+						if (!wizardStep.getGesuch().isMutation()) {
+							wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+						} else if (wizardStep.getGesuch().getEinkommensverschlechterungInfoContainer() != null) {
+							// Nur auf NOK setzen, wenn es vorher schon eine EKV gab.
+							wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+						}
 					}
 				}
 			}

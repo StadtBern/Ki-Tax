@@ -58,7 +58,7 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 
 		familiensituation.get().extractFamiliensituation().setFamilienstatus(EnumFamilienstatus.KONKUBINAT);
 		FamiliensituationContainer updatedFamsit = familiensituationService.saveFamiliensituation(TestDataUtil.createDefaultGesuch(),
-			familiensituation.get());
+			familiensituation.get(), null);
 		Assert.assertEquals(EnumFamilienstatus.KONKUBINAT, updatedFamsit.extractFamiliensituation().getFamilienstatus());
 		Assert.assertEquals(EnumFamilienstatus.KONKUBINAT,
 			familiensituationService.findFamiliensituation(updatedFamsit.getId()).get().extractFamiliensituation().getFamilienstatus());
@@ -90,7 +90,7 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 		newFamiliensituation.extractFamiliensituation().setGemeinsameSteuererklaerung(null);
 
 		final FamiliensituationContainer persistedFamiliensituation = familiensituationService.saveFamiliensituation(gesuch,
-			newFamiliensituation);
+			newFamiliensituation, null);
 
 		Assert.assertFalse(persistedFamiliensituation.extractFamiliensituation().getGemeinsameSteuererklaerung());
 		Assert.assertFalse(gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1());
@@ -103,7 +103,7 @@ public class FamiliensituationServiceTest extends AbstractEbeguLoginTest {
 	@Nonnull
 	private FamiliensituationContainer insertNewFamiliensituationContainer() {
 		FamiliensituationContainer familiensituationContainer = TestDataUtil.createDefaultFamiliensituationContainer();
-		familiensituationService.saveFamiliensituation(TestDataUtil.createDefaultGesuch(), familiensituationContainer);
+		familiensituationService.saveFamiliensituation(TestDataUtil.createDefaultGesuch(), familiensituationContainer, null);
 		return familiensituationContainer;
 	}
 

@@ -38,16 +38,18 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	@Inject
 	private EinkommensverschlechterungInfoService einkommensverschlechterungInfoService;
 
-
-	@Nonnull
 	@Override
-	public FamiliensituationContainer saveFamiliensituation(Gesuch gesuch, FamiliensituationContainer familiensituationContainer) {
+	public FamiliensituationContainer saveFamiliensituation(Gesuch gesuch,
+															FamiliensituationContainer familiensituationContainer,
+															Familiensituation loadedFamiliensituation) {
 		Objects.requireNonNull(familiensituationContainer);
 		Objects.requireNonNull(gesuch);
 
 		// Falls noch nicht vorhanden, werden die GemeinsameSteuererklaerung fuer FS und EV auf false gesetzt
 		Familiensituation newFamiliensituation = familiensituationContainer.extractFamiliensituation();
 		Objects.requireNonNull(newFamiliensituation);
+
+
 		if (gesuch.isMutation() && EbeguUtil.fromOneGSToTwoGS(familiensituationContainer)) {
 
 			if (newFamiliensituation.getGemeinsameSteuererklaerung() == null) {
@@ -65,20 +67,26 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 		}
 
 		final FamiliensituationContainer mergedFamiliensituationContainer = persistence.merge(familiensituationContainer);
-
 		gesuch.setFamiliensituationContainer(mergedFamiliensituationContainer);
+
+		// get old FamSit to compare with
+		Familiensituation oldFamiliensituation;
+		if (mergedFamiliensituationContainer != null &&mergedFamiliensituationContainer.getFamiliensituationErstgesuch() != null) {
+			oldFamiliensituation = mergedFamiliensituationContainer.getFamiliensituationErstgesuch();
+		} else {
+			oldFamiliensituation = loadedFamiliensituation;
+		}
 
 
 		//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
 		if (gesuch.getGesuchsteller2() != null && isNeededToRemoveGesuchsteller2(gesuch,
-			mergedFamiliensituationContainer.extractFamiliensituation(), mergedFamiliensituationContainer.getFamiliensituationErstgesuch())) {
+			mergedFamiliensituationContainer.extractFamiliensituation(), oldFamiliensituation)) {
 			gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
 			gesuch.setGesuchsteller2(null);
 			newFamiliensituation.setGemeinsameSteuererklaerung(false);
 		}
 
-		wizardStepService.updateSteps(gesuch.getId(), mergedFamiliensituationContainer.getFamiliensituationErstgesuch(),
-			newFamiliensituation, WizardStepName.FAMILIENSITUATION);
+		wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation, newFamiliensituation, WizardStepName.FAMILIENSITUATION);
 
 		return mergedFamiliensituationContainer;
 	}

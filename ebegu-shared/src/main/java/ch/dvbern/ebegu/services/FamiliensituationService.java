@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 
@@ -15,8 +16,7 @@ public interface FamiliensituationService {
 	/**
 	 * Aktualisiert idn Familiensituation in der DB oder erstellt sie wenn sie noch nicht existiert
 	 */
-	@Nonnull
-	FamiliensituationContainer saveFamiliensituation(Gesuch gesuch, FamiliensituationContainer familiensituationContainer);
+	FamiliensituationContainer saveFamiliensituation(Gesuch gesuch, FamiliensituationContainer familiensituationContainer, Familiensituation loadedFamiliensituation);
 
 	/**
 	 * @param key PK (id) der Familiensituation
