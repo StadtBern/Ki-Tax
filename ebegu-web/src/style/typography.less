@@ -13,11 +13,11 @@ h1 {
 }
 
 md-dialog .md-dialog-content h2, h2 {
-    .h2();
+    .ebeguH2();
 }
 
 h3 {
-    .h3();
+    .ebeguH3();
 }
 
 h4 {
@@ -25,15 +25,16 @@ h4 {
 }
 
 p {
-    .p();
+    .ebeguP();
 }
 
 a {
-    .a();
+    .ebeguA();
 }
 
 md-input-container label:not(.md-container-ignore), label {
     .ebeguLabel();
+    display: block;
     color: @danger;
     &:after {
         .ebeguLabel();
@@ -45,6 +46,7 @@ md-input-container label:not(.md-container-ignore), label {
 md-input-container:not(.md-input-invalid).md-input-has-value, md-input-container, md-input-container:not(.md-input-invalid).md-input-focused, md-input-container:not(.md-input-focused):not(.md-input-invalid), .form-group {
     label, label.md-required {
         .ebeguLabel();
+        display: block;
         color: @contrast-darkest;
         &:after {
             .ebeguLabel();
