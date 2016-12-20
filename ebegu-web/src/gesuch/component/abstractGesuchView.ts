@@ -95,17 +95,17 @@ export default class AbstractGesuchViewController<T> {
         this._model = value;
     }
 
-    public extractFullNameGS2(): string {
-        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2) {
-            return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName();
-        }
-        return 'Gesuchsteller 2';
-    }
-
     public extractFullNameGS1(): string {
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1) {
             return this.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName();
         }
-        return 'Gesuchsteller 1';
+        return '';
+    }
+
+    public extractFullNameGS2(): string {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2) {
+            return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName();
+        }
+        return '';
     }
 }
