@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
@@ -438,7 +439,7 @@ public final class TestDataUtil {
 
 	public static Benutzer createDefaultBenutzer() {
 		Benutzer user = new Benutzer();
-		user.setUsername("jula");
+		user.setUsername("jula_" + UUID.randomUUID());
 		user.setNachname("Julio");
 		user.setVorname("Iglesias");
 		user.setEmail("email@server.ch");

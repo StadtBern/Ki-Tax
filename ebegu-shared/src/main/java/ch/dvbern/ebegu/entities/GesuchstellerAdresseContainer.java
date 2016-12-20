@@ -5,7 +5,6 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * Container-Entity für die GesuchstellerAdressen
@@ -27,14 +26,13 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	private GesuchstellerAdresse gesuchstellerAdresseGS;
 
 	@Valid
-	@NotNull
-	@OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchstelleradresse_container_gesuchstellerja_id"))
 	private GesuchstellerAdresse gesuchstellerAdresseJA;
 
 
-
-	public GesuchstellerAdresseContainer() {}
+	public GesuchstellerAdresseContainer() {
+	}
 
 	public GesuchstellerContainer getGesuchstellerContainer() {
 		return gesuchstellerContainer;
@@ -65,7 +63,8 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	 */
 	@Transient
 	public boolean extractIsKorrespondenzAdresse() {
-		return this.gesuchstellerAdresseJA != null && this.gesuchstellerAdresseJA.isKorrespondenzAdresse();
+		return this.gesuchstellerAdresseJA != null && this.gesuchstellerAdresseJA.isKorrespondenzAdresse()
+			|| this.gesuchstellerAdresseJA == null && this.gesuchstellerAdresseGS != null && this.gesuchstellerAdresseGS.isKorrespondenzAdresse();
 	}
 
 	/**
@@ -80,57 +79,51 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 	 * Extracts the Gueltigkeit von gesuchstellerAdresseJA
 	 */
 	public DateRange extractGueltigkeit() {
-		return this.gesuchstellerAdresseJA.getGueltigkeit();
+		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getGueltigkeit() : null;
 	}
 
 	/**
 	 * Extracts the AdresseTyp von gesuchstellerAdresseJA
 	 */
 	public AdresseTyp extractAdresseTyp() {
-		return this.gesuchstellerAdresseJA.getAdresseTyp();
+		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getAdresseTyp() : null;
 	}
 
 	/**
 	 * Extracts the Hausnummer von gesuchstellerAdresseJA
 	 */
 	public String extractHausnummer() {
-		return this.gesuchstellerAdresseJA.getHausnummer();
+		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getHausnummer() : null;
 	}
 
 	/**
 	 * Extracts the Strasse von gesuchstellerAdresseJA
 	 */
 	public String extractStrasse() {
-		return this.gesuchstellerAdresseJA.getStrasse();
+		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getStrasse() : null;
 	}
 
 	/**
 	 * Extracts the Zusatzzeile von gesuchstellerAdresseJA
 	 */
 	public String extractZusatzzeile() {
-		return this.gesuchstellerAdresseJA.getZusatzzeile();
+		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getZusatzzeile() : null;
 	}
 
 	/**
 	 * Extracts the PLZ von gesuchstellerAdresseJA
 	 */
 	public String extractPlz() {
-		return this.gesuchstellerAdresseJA.getPlz();
+		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getPlz() : null;
 	}
 
 	/**
 	 * Extracts the Ort von gesuchstellerAdresseJA
 	 */
 	public String extractOrt() {
-		return this.gesuchstellerAdresseJA.getOrt();
+		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getOrt() : null;
 	}
 
-	/**
-	 * Extracts the Organisation von gesuchstellerAdresseJA
-	 */
-	public String extractOrganisation() {
-		return this.gesuchstellerAdresseJA.getOrganisation();
-	}
 
 	public GesuchstellerAdresseContainer copyForMutation(GesuchstellerAdresseContainer mutation, GesuchstellerContainer gesuchstellerContainer) {
 		super.copyForMutation(mutation);

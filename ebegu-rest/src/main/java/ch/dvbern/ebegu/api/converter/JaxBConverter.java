@@ -328,9 +328,10 @@ public class JaxBConverter {
 		gesuchstellerContJAXP.getAdressen().forEach(jaxAdresse -> gesuchstellerCont.addAdresse(toStoreableAddresse(jaxAdresse)));
 
 		// Zuletzt werden alle gueltigen Adressen sortiert und mit dem entsprechenden AB und BIS aktualisiert
-		gesuchstellerCont.getAdressen().sort((o1, o2) -> o1.extractGueltigkeit().getGueltigAb().compareTo(o2.extractGueltigkeit().getGueltigAb()));
 		List<GesuchstellerAdresseContainer> wohnadressen = gesuchstellerCont.getAdressen().stream()
-			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse()).collect(Collectors.toList());
+			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse())
+			.sorted(Comparator.comparing(o -> o.extractGueltigkeit().getGueltigAb()))
+			.collect(Collectors.toList());
 		for (int i = 0; i < wohnadressen.size(); i++) {
 			if ((i < wohnadressen.size() - 1)) {
 				wohnadressen.get(i).extractGueltigkeit().setGueltigBis(wohnadressen.get(i + 1)
@@ -662,7 +663,7 @@ public class JaxBConverter {
 		Validate.notNull(jaxAdresseCont);
 		Validate.notNull(adresseCont);
 		convertAbstractFieldsToEntity(jaxAdresseCont, adresseCont);
-
+		// ein einmal ersteller GS Container kann nie mehr entfernt werden, daher mergen wir hier nichts wenn null kommt vom client
 		if (jaxAdresseCont.getAdresseGS() != null) {
 			GesuchstellerAdresse gesuchstellerAdresseGS = new GesuchstellerAdresse();
 			if (adresseCont.getGesuchstellerAdresseGS() != null) {
@@ -670,13 +671,16 @@ public class JaxBConverter {
 			}
 			adresseCont.setGesuchstellerAdresseGS(gesuchstellerAdresseToEntity(jaxAdresseCont.getAdresseGS(), gesuchstellerAdresseGS));
 		}
-
+		// ein erstellter AdresseJA Container kann durch das Jugendamt entfernt werden wenn es sich um eine Korrespondenzaddr handelt
 		if (jaxAdresseCont.getAdresseJA() != null) {
 			GesuchstellerAdresse gesuchstellerAdresseJA = new GesuchstellerAdresse();
 			if (adresseCont.getGesuchstellerAdresseJA() != null) {
 				gesuchstellerAdresseJA = adresseCont.getGesuchstellerAdresseJA();
 			}
 			adresseCont.setGesuchstellerAdresseJA(gesuchstellerAdresseToEntity(jaxAdresseCont.getAdresseJA(), gesuchstellerAdresseJA));
+		} else{
+			Validate.isTrue(adresseCont.extractIsKorrespondenzAdresse(), "Nur bei der Korrespondenzadresse kann der AdresseJA Container entfernt werden");
+			adresseCont.setGesuchstellerAdresseJA(null);
 		}
 
 		return adresseCont;

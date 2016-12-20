@@ -1,9 +1,13 @@
 package ch.dvbern.ebegu.vorlagen;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
+import ch.dvbern.ebegu.util.StreamsUtil;
 import com.google.common.base.Strings;
 import org.apache.commons.lang.StringUtils;
 
@@ -34,14 +38,14 @@ public class PrintUtil {
 			// Zuerst suchen wir die Korrespondenzadresse wenn vorhanden
 			final Optional<GesuchstellerAdresseContainer> korrespondenzadresse = adressen.stream().filter(GesuchstellerAdresseContainer::extractIsKorrespondenzAdresse)
 				.reduce(throwExceptionIfMoreThanOneAdresse(gesuchsteller));
-			if (korrespondenzadresse.isPresent()) {
+			if (korrespondenzadresse.isPresent() && korrespondenzadresse.get().getGesuchstellerAdresseJA() != null) {
 				return korrespondenzadresse;
 			}
 
 			// Sonst suchen wir die aktuelle Wohnadresse. Die ist keine KORRESPONDENZADRESSE und das aktuelle Datum liegt innerhalb ihrer Gueltigkeit
 			final LocalDate now = LocalDate.now();
 			for (GesuchstellerAdresseContainer gesuchstellerAdresse : adressen) {
-				if (!gesuchstellerAdresse.extractAdresseTyp().equals(AdresseTyp.KORRESPONDENZADRESSE)
+				if (!gesuchstellerAdresse.extractIsKorrespondenzAdresse()
 					&& !gesuchstellerAdresse.extractGueltigkeit().getGueltigAb().isAfter(now)
 					&& !gesuchstellerAdresse.extractGueltigkeit().getGueltigBis().isBefore(now)) {
 					return Optional.of(gesuchstellerAdresse);
@@ -150,24 +154,24 @@ public class PrintUtil {
 	}
 
 	/**
-	 * Gibt die Organisationsbezeichnung falls sie eingegeben worden ist, sons leer.
+	 * Gibt die Organisationsbezeichnung falls sie eingegeben worden ist, sons leer. Die Organisation MUSS auf einer
+	 * Korrespondenzadresse sein wenn vorhanden
 	 *
 	 * @return GesuchstellerName
 	 */
 
 	public static String getOrganisation(Gesuch gesuch) {
-
 		Optional<GesuchstellerContainer> gesuchsteller = extractGesuchsteller1(gesuch);
 		if (gesuchsteller.isPresent()) {
 			final List<GesuchstellerAdresseContainer> adressen = gesuchsteller.get().getAdressen();
-			for (GesuchstellerAdresseContainer ad : adressen) {
-				if (ad.extractAdresseTyp() == AdresseTyp.KORRESPONDENZADRESSE) {
-					return ad.extractOrganisation();
-				}
+			Optional<GesuchstellerAdresseContainer> korrespondezaddrOpt = adressen.stream().
+				filter(GesuchstellerAdresseContainer::extractIsKorrespondenzAdresse)
+				.reduce(StreamsUtil.toOnlyElement());
+			if (korrespondezaddrOpt.isPresent() && korrespondezaddrOpt.get().getGesuchstellerAdresseJA() != null) {
+				return korrespondezaddrOpt.get().getGesuchstellerAdresseJA().getOrganisation();
 			}
 		}
 		return null;
-
 	}
 
 	/**
