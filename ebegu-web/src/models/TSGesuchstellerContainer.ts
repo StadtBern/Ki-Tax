@@ -140,5 +140,19 @@ export default class TSGesuchstellerContainer extends TSAbstractEntity {
         }
         return undefined;
     }
+
+    public extractMail(): string {
+        if (this.gesuchstellerJA) {
+            return this.gesuchstellerJA.mail;
+        }
+        return undefined;
+    }
+
+    public extractPhone(): string {
+        if (this.gesuchstellerJA) {
+            return this.gesuchstellerJA.getPhone();
+        }
+        return undefined;
+    }
 }
 
