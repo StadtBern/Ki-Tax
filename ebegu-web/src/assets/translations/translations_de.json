@@ -810,6 +810,7 @@
     "JA_KORREKTUR_SELBSTAENDIG": "Selbständigkeit Geschäftsgewinn {{basisjahr}}: {{gewinn1}},\n Geschäftsgewinn {{basisjahr - 1}}: {{gewinn2 }},\n Geschäftsgewinn {{basisjahr - 2}}: {{gewinn3}} ",
     "JA_KORREKTUR_SELBSTAENDIG_EKV": "Selbständigkeit Geschäftsgewinn {{basisjahr}}: {{gewinn1}}",
     "JA_KORREKTUR_ZUSCHLAG_ERWERBSPENSUM": "Zuschlag von {{zuschlagsprozent}} wegen {{zuschlagsgrund}}",
+    "JA_KORREKTUR_KORRESPONDENZ_ADDR": "Organisation: {{organisation}}\nStrasse: {{strasse}} {{hausnummer}}\nZusatz: {{zusatzzeile}}\nPLZ/Ort: {{plz}} {{ort}}\nLand: {{land}}",
     "FAMILIENSITUATION": "Familiensituation",
     "GESUCHSTELLER": "Gesuchsteller",
     "ERWERBSPENSUM": "Erwerbspensum",

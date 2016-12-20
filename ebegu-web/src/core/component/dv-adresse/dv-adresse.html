@@ -2,7 +2,7 @@
 <div ng-form="adresseForm">
     <fieldset>
 
-        <!-- Adresse Zusatz-->
+        <!-- Adresse Organisation-->
         <div class="row" ng-if="vm.organisation">
             <div class="col-xs-12 dv-input-container-small">
                 <dv-input-container class="form-group">
@@ -14,7 +14,9 @@
                     <dv-error-messages for="adresseForm.organisation.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.organisation"
-                               ja="vm.getModel().adresseJA.organisation"></dv-bisher>
+                               ja="vm.getModel().adresseJA.organisation"
+                               show-if-bisher-none="vm.showIfBisherNone !== false"
+                               block-existed="!!vm.getModel().adresseGS"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -30,7 +32,9 @@
                     <dv-error-messages for="adresseForm.adresseStrasse.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.strasse"
-                               ja="vm.getModel().adresseJA.strasse"></dv-bisher>
+                               ja="vm.getModel().adresseJA.strasse"
+                               show-if-bisher-none="vm.showIfBisherNone === true"
+                               block-existed="!!vm.getModel().adresseGS"></dv-bisher>
                 </dv-input-container>
             </div>
             <div class="col-sm-12 dv-input-container-small">
@@ -43,7 +47,9 @@
                     <dv-error-messages for="adresseForm.adresseHausnummer.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.hausnummer"
-                               ja="vm.getModel().adresseJA.hausnummer"></dv-bisher>
+                               ja="vm.getModel().adresseJA.hausnummer"
+                               show-if-bisher-none="vm.showIfBisherNone === true"
+                               block-existed="!!vm.getModel().adresseGS"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -59,7 +65,9 @@
                     <dv-error-messages for="adresseForm.adresseZusatzzeile.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.zusatzzeile"
-                               ja="vm.getModel().adresseJA.zusatzzeile"></dv-bisher>
+                               ja="vm.getModel().adresseJA.zusatzzeile"
+                               show-if-bisher-none="vm.showIfBisherNone === true"
+                               block-existed="!!vm.getModel().adresseGS"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -74,7 +82,9 @@
                     <dv-error-messages for="adresseForm.adressePlz.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.plz"
-                               ja="vm.getModel().adresseJA.plz"></dv-bisher>
+                               ja="vm.getModel().adresseJA.plz"
+                               show-if-bisher-none="vm.showIfBisherNone === true"
+                               block-existed="!!vm.getModel().adresseGS"></dv-bisher>
                 </dv-input-container>
             </div>
             <div class="col-sm-12 dv-input-container-small">
@@ -86,7 +96,9 @@
                     <dv-error-messages for="adresseForm.adresseOrt.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.ort"
-                               ja="vm.getModel().adresseJA.ort"></dv-bisher>
+                               ja="vm.getModel().adresseJA.ort"
+                               show-if-bisher-none="vm.showIfBisherNone === true"
+                               block-existed="!!vm.getModel().adresseGS"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -101,7 +113,9 @@
                     <dv-error-messages for="adresseForm.adresseGemeinde.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.gemeinde"
-                               ja="vm.getModel().adresseJA.gemeinde"></dv-bisher>
+                               ja="vm.getModel().adresseJA.gemeinde"
+                               show-if-bisher-none="vm.showIfBisherNone === true"
+                               block-existed="!!vm.getModel().adresseGS"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -119,7 +133,9 @@
                     <dv-error-messages for="adresseForm.adresseLand.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.land"
-                               ja="vm.getModel().adresseJA.land"></dv-bisher>
+                               ja="vm.getModel().adresseJA.land"
+                               show-if-bisher-none="vm.showIfBisherNone === true"
+                               block-existed="!!vm.getModel().adresseGS"></dv-bisher>
                 </div>
             </div>
         </div>
@@ -161,7 +177,9 @@
                     <dv-error-messages for="adresseForm.gueltigAb.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.gueltigkeit.gueltigAb"
-                               ja="vm.getModel().adresseJA.gueltigkeit.gueltigAb"></dv-bisher>
+                               ja="vm.getModel().adresseJA.gueltigkeit.gueltigAb"
+                               show-if-bisher-none="vm.showIfBisherNone === true"
+                               block-existed="!!vm.getModel().adresseGS"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
@@ -177,7 +195,9 @@
                     <dv-error-messages for="adresseForm.gueltigBis.$error"
                                        class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.gueltigkeit.gueltigBis"
-                               ja="vm.getModel().adresseJA.gueltigkeit.gueltigBis"></dv-bisher>
+                               ja="vm.getModel().adresseJA.gueltigkeit.gueltigBis"
+                               show-if-bisher-none="vm.showIfBisherNone === true"
+                               block-existed="!!vm.getModel().adresseGS"></dv-bisher>
                 </dv-input-container>
             </div>
         </div>
