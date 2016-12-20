@@ -138,7 +138,7 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 		if (dokumentGrunds != null) {
 			for (DokumentGrund dokumentGrund : dokumentGrunds) {
 				bemerkungenBuilder = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
-				if (bemerkungenBuilder.length() > 0){
+				if (bemerkungenBuilder.length() > 0) {
 					aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));
 				}
             }

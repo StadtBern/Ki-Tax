@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.util;
 
 import ch.dvbern.ebegu.entities.DokumentGrund;
-import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 
