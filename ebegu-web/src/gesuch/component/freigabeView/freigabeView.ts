@@ -72,7 +72,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     public gesuchFreigeben(): void {
         let gesuchID = this.gesuchModelManager.getGesuch().id;
-        this.gesuchModelManager.antragFreigeben(gesuchID);
+        this.gesuchModelManager.antragFreigeben(gesuchID, null);
     }
 
     private initDevModeParameter() {

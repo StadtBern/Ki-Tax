@@ -574,7 +574,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA,	UserRoleName.GESUCHSTELLER})
-	public Gesuch antragFreigeben(@Nonnull String gesuchId) {
+	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username) {
 		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
@@ -584,8 +584,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			this.authorizer.checkWriteAuthorization(gesuch);
 			// Die Daten des GS in die entsprechenden Containers kopieren
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
+
 			// Den Gesuchsstatus setzen
 			gesuch.setStatus(AntragStatus.FREIGEGEBEN);
+
+			if (username != null) {
+				Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(username);
+				verantwortlicher.ifPresent(benutzer -> gesuch.getFall().setVerantwortlicher(benutzer));
+			}
+
 			// Falls es ein OnlineGesuch war: Das Eingangsdatum setzen
 			if (Eingangsart.ONLINE.equals(gesuch.getEingangsart())) {
 				gesuch.setEingangsdatum(LocalDate.now());
