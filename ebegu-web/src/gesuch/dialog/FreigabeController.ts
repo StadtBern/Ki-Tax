@@ -24,18 +24,12 @@ export class FreigabeController {
 
     constructor(private docID: string, private $mdDialog: IDialogService, private gesuchRS: GesuchRS, private userRS: UserRS, private authService: AuthServiceRS, private ebeguUtil: EbeguUtil, CONSTANTS: any) {
 
-        //TODO: (medu) comment this next line and use the passed docid, delete before merge to dev
-        // this.docID = "e3fb0f50-57a6-4794-9c93-a5108a569a51";
-
         gesuchRS.findGesuch(this.docID).then((response: TSGesuch) => {
             if (response) {
                 this.gesuch = response;
                 this.fallNummer = ebeguUtil.addZerosToNumber(response.fall.fallNummer, CONSTANTS.FALLNUMMER_LENGTH);
                 this.familie = this.familieText(response);
                 this.selectedUser = authService.getPrincipal().username;
-                //TODO: (medu) REMOVE THIS NEXT LINE FOR TESTING ONLY - FORCING GESUCH STATUS
-                gesuchRS.updateGesuchStatus(this.docID, TSAntragStatus.FREIGABEQUITTUNG);
-                //todo remove above line
             } else {
                 this.errorMessage = "Gesuch nicht gefunden!";
             }
@@ -60,6 +54,10 @@ export class FreigabeController {
         this.userRS.getBenutzerJAorAdmin().then((response: any) => {
             this.userList = angular.copy(response);
         });
+    }
+
+    public isSchulamt(): boolean {
+        return this.gesuch ? this.gesuch.areThereOnlySchulamtAngebote() : false;
     }
 
     public hasError(): boolean {
