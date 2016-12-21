@@ -24,7 +24,8 @@
                 </md-menu-content>
             </md-menu>
 
-            <span ng-if="!vmgs.showGesuchPeriodeNavigationMenu()" ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
+            <span class="gesuchNotLoaded" ng-if="!vmgs.showGesuchPeriodeNavigationMenu()"
+                  ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
 
             <!--Gesuchstyp-->
             <md-menu ng-if="vmgs.showAntragTypListNavigationMenu()">
@@ -47,7 +48,8 @@
             </md-menu>
 
 
-            <span ng-if="!vmgs.showAntragTypListNavigationMenu()" ng-bind="vmgs.getAntragTyp()"></span>
+            <span class="gesuchNotLoaded" ng-if="!vmgs.showAntragTypListNavigationMenu()"
+                  ng-bind="vmgs.getAntragTyp()"></span>
 
             <span flex=""></span>
 

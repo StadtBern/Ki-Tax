@@ -1,26 +1,26 @@
 <gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller">
-    </gesuch-toolbar-gesuchsteller>
+</gesuch-toolbar-gesuchsteller>
 <div class="gesuchstellerDashboardView" flex="auto">
     <div class="dashboardHeader" flex="100" layout="row" layout-align="center center" layout-margin
          layout-xs="column"
          layout-align-xs="space-between center">
 
         <div ng-repeat="periode in vm.getActiveGesuchsperiodenList() | orderBy: 'gueltigkeit.gueltigAb'">
-        <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.openAntrag(periode)"
-                           button-class="dashboardButton">
-            <div flex="auto" class="labelBig">
-                <h2>
-                    <span data-translate="GESUCH"></span>
-                    <span>{{periode.gesuchsperiodeString}}</span>
-                </h2>
-            </div>
-            <div flex="auto" class="labelZeitraum">
-                 {{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} - {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}
-            </div>
-            <div flex="auto" class="labelSmall">
-                <h2><span>{{vm.getButtonText(periode)}}</span></h2>
-            </div>
-        </dv-loading-button>
+            <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.openAntrag(periode)"
+                               button-class="dashboardButton">
+                <div flex="none" class="labelBig" layout="column">
+                    <h2 flex="nogrow">
+                        <span data-translate="GESUCH"></span>
+                        <span>{{periode.gesuchsperiodeString}}</span>
+                    </h2>
+                    <h3 flex="nogrow">
+                        <span>{{periode.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YY'}} - {{periode.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YY'}}</span>
+                    </h3>
+                </div>
+                <div flex="none" class="labelSmall">
+                    <h2><span>{{vm.getButtonText(periode)}}</span></h2>
+                </div>
+            </dv-loading-button>
         </div>
 
         <!--<dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.goToMitteilungenOeffen()"
