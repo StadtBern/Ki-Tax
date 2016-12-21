@@ -53,7 +53,7 @@
 
             <!--Kontakt-->
 
-            <md-menu ng-if="vmgs.showKontaktMenu()">
+            <md-menu>
                 <button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
                     <i class="ellipsis-icon fa fa-envelope"></i>
                     <span data-translate="TOOLBAR_KONTAKT"></span>
@@ -98,15 +98,16 @@
     </div>
 
 
-    <span class="gesuchsperiode-button" ng-if="!vmgs.showGesuchPeriodeNavigationMenu()"
+    <span class="gesuchsperiode-button" ng-if="!vmgs.showGesuchPeriodeNavigationMenu() && vmgs.getGesuch()"
           ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
-    <span class="antrag-typ-datum-button" ng-if="!vmgs.showAntragTypListNavigationMenu()" ng-bind="vmgs.getAntragTyp()"
+    <span class="antrag-typ-datum-button" ng-if="!vmgs.showAntragTypListNavigationMenu() && vmgs.getGesuch()"
+          ng-bind="vmgs.getAntragTyp()"
           class="antrag-typ"></span>
 
     <span flex=""></span>
 
     <!--Kontakt-->
-    <div ng-if="vmgs.showKontaktMenu()" class="mobile-kontakt">
+    <div class="mobile-kontakt">
         <span>Jugendamt</span>
         <span>Effingerstrasse 21</span>
         <span>3008 Bern</span>
