@@ -23,19 +23,6 @@
     .subTitle {
         font-size: 1.8rem;
     }
-
-    .bisher {
-        clear: both;
-        //todo stylen gem kana
-        background-color: @grey;
-        padding: 0.2rem;
-        border-color: @lgrey;
-    }
-    // bei manchen bisher bloecken wollen wir einzelne neue zeilen
-    .dv-bisher-break .dv-bisher-content-row, .dv-bisher-break .bisher:first-child {
-        display: block;
-        background-color: @grey;
-    }
     .inlineHint {
         .ebeguItalic();
         font-size: 1.4rem;
@@ -167,7 +154,7 @@
         background-color: @danger-light;
     }
 
-    .required:after {
+    .required span:after {
         content: " *";
     }
 
