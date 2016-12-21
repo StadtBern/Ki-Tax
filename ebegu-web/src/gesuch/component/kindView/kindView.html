@@ -153,14 +153,11 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
-                                <label class="required">
-                                    <h1>
+                                <h1 class="required">
                                     <span data-translate="EINSCHULUNG"
                                           data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}"> </span>
                                         <dv-tooltip text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
                                     </h1>
-                                </label>
-
                                 <dv-radio-container name="einschulung" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
