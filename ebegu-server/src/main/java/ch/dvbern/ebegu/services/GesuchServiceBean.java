@@ -471,6 +471,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			Expression<Boolean> fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 			predicatesToUse.add(fallPredicate);
 
+			if (!benutzer.getRole().equals(UserRole.GESUCHSTELLER)) {
+				// Nur GS darf ein Gesuch sehen, das sich im Status BEARBEITUNG_GS oder FREIGABEQUITTUNG befindet
+				predicatesToUse.add(root.get(Gesuch_.status).in(AntragStatus.IN_BEARBEITUNG_GS, AntragStatus.FREIGABEQUITTUNG).not());
+			}
+
 			if (institutionstammdatenJoin != null) {
 				if (benutzer.getRole().equals(UserRole.ADMIN) || benutzer.getRole().equals(UserRole.SACHBEARBEITER_JA)) {
 					predicatesToUse.add(cb.notEqual(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
