@@ -1,5 +1,5 @@
 import {IDirective, IDirectiveFactory} from 'angular';
-import {DvDialog} from './directive/dv-dialog/dv-dialog';
+import {DvDialog} from './dv-dialog/dv-dialog';
 import {FreigabeController} from '../../gesuch/dialog/FreigabeController';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
