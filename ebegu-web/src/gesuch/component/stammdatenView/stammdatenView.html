@@ -86,7 +86,7 @@
 
                     <!--Korrenspondenzadr Checkbox (aka Zustelladresse)-->
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-xs-12 dv-input-container-medium">
                             <div class=" checkbox">
                                 <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr"
                                              aria-label="korrespondenzAdr" ng-change="vm.korrespondenzAdrClicked()"
@@ -96,11 +96,11 @@
                                     <span data-translate="KORRESPONDENZADR"></span>
                                     <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
                                 </md-checkbox>
-                                <dv-error-messages for="vm.form.korrespondenzAdr.$error"
-                                                   class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.showKorrespondadrGS" class="dv-bisher-break"
                                            ja="vm.showKorrespondadr"
                                            specific-bisher-text="vm.getTextKorrespondenzaddrKorrekturJA()"></dv-bisher>
+                                <dv-error-messages for="vm.form.korrespondenzAdr.$error"
+                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
