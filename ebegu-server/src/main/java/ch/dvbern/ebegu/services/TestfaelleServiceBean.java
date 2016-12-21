@@ -223,7 +223,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			familiensituationContainer.setFamiliensituationErstgesuch(familiensituationContainer.getFamiliensituationJA());
 			familiensituationContainer.setFamiliensituationJA(newFamsit);
 
-			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer);
+			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer, null);
 			final GesuchstellerContainer gesuchsteller2 = gesuchstellerService
 				.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2, false);
 
@@ -255,7 +255,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			final FamiliensituationContainer familiensituationContainer = mutation.getFamiliensituationContainer();
 			familiensituationContainer.setFamiliensituationErstgesuch(familiensituationContainer.getFamiliensituationJA());
 			familiensituationContainer.setFamiliensituationJA(newFamsit);
-			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer);
+			familiensituationService.saveFamiliensituation(mutation, familiensituationContainer, null);
 			gesuchService.createGesuch(mutation);
 			gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
 			return mutation;
@@ -452,7 +452,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	private void saveFamiliensituation(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
 		if (gesuch.extractFamiliensituation() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.IN_BEARBEITUNG);
-			familiensituationService.saveFamiliensituation(gesuch, gesuch.getFamiliensituationContainer());
+			familiensituationService.saveFamiliensituation(gesuch, gesuch.getFamiliensituationContainer(), null);
 			setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.FAMILIENSITUATION);
 		}
 	}
