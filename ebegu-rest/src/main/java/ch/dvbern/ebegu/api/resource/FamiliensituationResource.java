@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxFamiliensituationContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -56,13 +57,20 @@ public class FamiliensituationResource {
 		if (gesuch.isPresent()) {
 			FamiliensituationContainer familiensituationContainerToMerge = new FamiliensituationContainer();
 			//wenn es sich um ein update handelt
+			Familiensituation oldFamiliensituation = null;
 			if (familiensituationContainerJAXP.getId() != null) {
 				Optional<FamiliensituationContainer> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationContainerJAXP.getId());
-				familiensituationContainerToMerge = loadedFamiliensituation.orElse(new FamiliensituationContainer());
+				if(loadedFamiliensituation.isPresent()) {
+					familiensituationContainerToMerge = loadedFamiliensituation.get();
+					oldFamiliensituation = new Familiensituation(familiensituationContainerToMerge.extractFamiliensituation());
+				}else{
+					familiensituationContainerToMerge = new FamiliensituationContainer();
+				}
 
 			}
+
 			FamiliensituationContainer convertedFamiliensituation = converter.familiensituationContainerToEntity(familiensituationContainerJAXP, familiensituationContainerToMerge);
-			FamiliensituationContainer persistedFamiliensituation = this.familiensituationService.saveFamiliensituation(gesuch.get(), convertedFamiliensituation);
+			FamiliensituationContainer persistedFamiliensituation = this.familiensituationService.saveFamiliensituation(gesuch.get(), convertedFamiliensituation, oldFamiliensituation);
 
 			return converter.familiensituationContainerToJAX(persistedFamiliensituation);
 		}
