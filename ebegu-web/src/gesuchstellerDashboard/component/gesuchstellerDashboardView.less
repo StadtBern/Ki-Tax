@@ -1,7 +1,8 @@
 @import "../../style/variables.less";
+@import "../../style/mixins.less";
 
-@buttonWidth: 23rem;
-@buttonHeight: 14rem;
+@buttonWidth: 24rem;
+@buttonHeight: 15rem;
 
 .gesuchstellerDashboardView {
     h3 {
@@ -40,26 +41,29 @@
             color: @contrast-light;
             margin: 0;
         }
-        .labelZeitraum {
-            color: @contrast-light;
-            background-color: @contrast;
-            margin: 0;
-            height: 2rem;
-        }
         .labelBig {
             top: 0;
             left: 0;
             background-color: @contrast;
             width: @buttonWidth;
-            height: 10rem;
+            height: 11rem;
             min-width: 0;
 
             & h2 {
-                line-height: 10rem;
-                font-weight: 600;
+                .ebeguBold();
+                margin-top: auto;
+                margin-bottom: 0;
+            }
+            & h3 {
+                .ebeguSemi-bold();
+                font-size: 1.4rem;
+                margin-top: 0;
+                margin-bottom: auto;
+                letter-spacing: 0.1rem;
             }
         }
         .labelSmall {
+            text-transform: uppercase;
             bottom: 0;
             left: 0;
             background-color: @primary;
