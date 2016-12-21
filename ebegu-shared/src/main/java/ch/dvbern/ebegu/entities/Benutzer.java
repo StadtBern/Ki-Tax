@@ -15,8 +15,9 @@ import javax.validation.constraints.Size;
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 @Entity
-@Table(indexes = {
-	@Index(columnList = "username,mandant_id", name = "IX_benutzer_username_mandant")
+@Table(
+	uniqueConstraints = {@UniqueConstraint(columnNames = "username", name = "UK_username")},
+	indexes = {@Index(columnList = "username", name = "IX_benutzer_username")
 })
 @Audited
 @CheckBenutzerRoles
@@ -51,6 +52,7 @@ public class Benutzer extends AbstractEntity {
 	@NotNull
 	private UserRole role;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_mandant_id"))
 	private Mandant mandant;

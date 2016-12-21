@@ -121,7 +121,16 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 		CriteriaQuery<GesuchstellerAdresseContainer> query = cb.createQuery(GesuchstellerAdresseContainer.class);
 		Root<GesuchstellerAdresseContainer> root = query.from(GesuchstellerAdresseContainer.class);
 		Predicate gesuchstellerPred = cb.equal(root.get(GesuchstellerAdresseContainer_.gesuchstellerContainer).get(Gesuchsteller_.id), gesuchstellerIdParam);
-		Predicate typePredicate = cb.equal(root.get(GesuchstellerAdresseContainer_.gesuchstellerAdresseJA).get(GesuchstellerAdresse_.adresseTyp), typParam);
+
+		Predicate typePredicate;
+		if (AdresseTyp.KORRESPONDENZADRESSE.equals(typ)) {
+			final Join<GesuchstellerAdresseContainer, GesuchstellerAdresse> joinGS = root.join(GesuchstellerAdresseContainer_.gesuchstellerAdresseGS, JoinType.LEFT);
+			final Join<GesuchstellerAdresseContainer, GesuchstellerAdresse> joinJA = root.join(GesuchstellerAdresseContainer_.gesuchstellerAdresseJA, JoinType.LEFT);
+			typePredicate = cb.or(cb.equal(joinGS.get(GesuchstellerAdresse_.adresseTyp), typParam),
+				cb.equal(joinJA.get(GesuchstellerAdresse_.adresseTyp), typParam));
+		} else {
+			typePredicate = cb.equal(root.get(GesuchstellerAdresseContainer_.gesuchstellerAdresseJA).get(GesuchstellerAdresse_.adresseTyp), typParam);
+		}
 		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
 
 		predicatesToUse.add(gesuchstellerPred);
@@ -140,7 +149,6 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 			predicatesToUse.add(datumBisGreaterThanPRed);
 
 		}
-
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicatesToUse));
 

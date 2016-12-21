@@ -126,7 +126,8 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     private gemeinsameStekClicked_BjP1(): void {
         // Wenn neu NEIN -> Fragen loeschen
 
-        let ekvJaBasisJahrPlus1WasAlreadyEntered = this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 && !this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1.isNew();
+        let ekvJaBasisJahrPlus1WasAlreadyEntered = this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1
+            && !this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1.isNew();
         if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false && ekvJaBasisJahrPlus1WasAlreadyEntered) {
             // Wenn neu NEIN und schon was eingegeben -> Fragen mal auf false setzen und Status auf nok damit man sicher noch weiter muss!
             this.initSteuerFragen();
@@ -142,7 +143,8 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     private gemeinsameStekClicked_BjP2(): void {
-        let ekvJaBasisJahrPlus2WasAlreadyEntered : boolean = this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 && !this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2.isNew();
+        let ekvJaBasisJahrPlus2WasAlreadyEntered : boolean = this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2
+            && !this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2.isNew();
         if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false &&
             ekvJaBasisJahrPlus2WasAlreadyEntered) {
             // Wenn neu NEIN und schon was eingegeben -> Fragen mal auf false setzen und Status auf nok damit man sicher noch weiter muss!

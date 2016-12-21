@@ -9,15 +9,15 @@ h1, h2, h3, label, label:after, p, a {
 }
 
 h1 {
-    .h1();
+    .ebeguH1();
 }
 
 md-dialog .md-dialog-content h2, h2 {
-    .h2();
+    .ebeguH2();
 }
 
 h3 {
-    .h3();
+    .ebeguH3();
 }
 
 h4 {
@@ -25,18 +25,19 @@ h4 {
 }
 
 p {
-    .p();
+    .ebeguP();
 }
 
 a {
-    .a();
+    .ebeguA();
 }
 
 md-input-container label:not(.md-container-ignore), label {
-    .label();
+    .ebeguLabel();
+    display: block;
     color: @danger;
     &:after {
-        .label();
+        .ebeguLabel();
         display: inline-block;
         color: @danger;
     }
@@ -44,10 +45,11 @@ md-input-container label:not(.md-container-ignore), label {
 
 md-input-container:not(.md-input-invalid).md-input-has-value, md-input-container, md-input-container:not(.md-input-invalid).md-input-focused, md-input-container:not(.md-input-focused):not(.md-input-invalid), .form-group {
     label, label.md-required {
-        .label();
+        .ebeguLabel();
+        display: block;
         color: @contrast-darkest;
         &:after {
-            .label();
+            .ebeguLabel();
             display: inline-block;
             color: @contrast-darkest;
         }
@@ -56,7 +58,7 @@ md-input-container:not(.md-input-invalid).md-input-has-value, md-input-container
 
 md-input-container label:not(.md-container-ignore).md-required {
     &:after {
-        .label();
+        .ebeguLabel();
         display: inline-block;
         color: @contrast-darkest;
     }
