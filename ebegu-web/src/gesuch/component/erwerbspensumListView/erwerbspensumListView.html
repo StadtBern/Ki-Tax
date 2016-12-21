@@ -14,7 +14,9 @@
 
     <!--Erwerbspensen von Gesuchsteller 1-->
     <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller1">
-        <h4 ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName()"></h4>
+        <h1 class="mainTitle">
+            <span ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName()"></span>
+        </h1>
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS1()" table-id="erwerbspensenGS1"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
                                add-button-Visible="!vm.isGesuchReadonly()"
@@ -26,7 +28,9 @@
     </div>
     <!--Erwerbspensen von Gesuchsteller 2-->
     <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller2" class="marginTop20">
-        <h4 ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName()"></h4>
+        <h1 class="mainTitle">
+            <span ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName()"></span>
+        </h1>
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS2()" table-id="erwerbspensenGS2"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
                                add-button-Visible="!vm.isGesuchReadonly()"

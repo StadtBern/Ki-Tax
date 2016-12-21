@@ -19,6 +19,8 @@ import javax.validation.constraints.NotNull;
 	},
 	indexes = {
 		@Index(name = "IX_fall_fall_nummer", columnList = "fallNummer"),
+		@Index(name = "IX_fall_besitzer", columnList = "besitzer_id"),
+		@Index(name = "IX_fall_verantwortlicher", columnList = "verantwortlicher_id"),
 		@Index(name = "IX_fall_mandant", columnList = "mandant_id")
 	}
 )
@@ -50,6 +52,7 @@ public class Fall extends AbstractEntity implements HasMandant{
 	@Column(nullable = false)
 	private Integer nextNumberKind = 1;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_mandant_id"))
 	private Mandant mandant; //TODO (Team) Die Abfrage-Skripts muessten noch den Mandanten beruecksichtigen!
