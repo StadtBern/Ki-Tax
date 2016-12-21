@@ -200,11 +200,11 @@ public class VerfuegungResource {
 			betreuung.getAbwesenheitContainers().size();
 		}
 		if (gesuch.getGesuchsteller1() != null) {
-			gesuch.getGesuchsteller1().getAdressen().forEach(GesuchstellerAdresseContainer::extractAdresseTyp);
+			gesuch.getGesuchsteller1().getAdressen().size();
 			gesuch.getGesuchsteller1().getErwerbspensenContainers().size();
 		}
 		if (gesuch.getGesuchsteller2() != null) {
-			gesuch.getGesuchsteller2().getAdressen().forEach(GesuchstellerAdresseContainer::extractAdresseTyp);
+			gesuch.getGesuchsteller2().getAdressen().size();
 			gesuch.getGesuchsteller2().getErwerbspensenContainers().size();
 		}
 		persistence.getEntityManager().detach(gesuch);
