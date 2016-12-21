@@ -80,7 +80,7 @@
 
                     <!-- Kinderabzug -->
                     <div class="row">
-                        <div class="col-xs-12 dv-input-container-medium">
+                        <div class="col-xs-12 dv-input-container-question">
                             <dv-input-container class="form-group">
                                 <h1 class="required">
                                     <span data-translate="KINDERABZUG"></span>
@@ -102,7 +102,7 @@
 
                     <!--familienErgaenzendeBetreuung-->
                     <div class="row">
-                        <div class="col-xs-12 dv-input-container-medium">
+                        <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group">
                                 <h1 class="required">
                                     <span data-translate="FAM_ERGAENZENDE_BETREUUNG"></span>
@@ -127,7 +127,7 @@
 
                     <!--mutterspracheDeutsch-->
                     <div class="row">
-                        <div class="col-xs-12 dv-input-container-medium">
+                        <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                                 <h1 class="required"><span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
                                     <dv-tooltip
@@ -151,7 +151,7 @@
 
                     <!--Das Kind ist per 1.8.XX eingeschult (auch Kindergarten)-->
                     <div class="row">
-                        <div class="col-xs-12 dv-input-container-medium">
+                        <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                                 <label class="required">
                                     <h1 data-translate="EINSCHULUNG"
@@ -200,7 +200,7 @@
 
                     <!--Show Fachstelle?-->
                     <div class="row">
-                        <div class="col-xs-12 dv-input-container-small">
+                        <div class="col-xs-12 dv-input-container-question">
                             <div class=" checkbox" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                                 <md-checkbox ng-model="vm.showFachstelle" name="showFachstelle"
                                              aria-label="showFachstelle"
