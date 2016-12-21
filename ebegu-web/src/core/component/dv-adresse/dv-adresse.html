@@ -11,12 +11,12 @@
                     <input id="{{vm.prefix}}-organisation" type="text" name="organisation"
                            ng-model="vm.getModel().adresseJA.organisation"
                            dv-max-length class="form-control">
-                    <dv-error-messages for="adresseForm.organisation.$error"
-                                       class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.organisation"
                                ja="vm.getModel().adresseJA.organisation"
                                show-if-bisher-none="vm.showIfBisherNone !== false"
                                block-existed="!!vm.getModel().adresseGS"></dv-bisher>
+                    <dv-error-messages for="adresseForm.organisation.$error"
+                                       class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
         </div>
@@ -29,12 +29,12 @@
                     </label>
                     <input id="{{vm.prefix}}-strasse" type="text" name="adresseStrasse" ng-model="vm.getModel().adresseJA.strasse"
                            dv-max-length class="form-control" required>
-                    <dv-error-messages for="adresseForm.adresseStrasse.$error"
-                                       class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.strasse"
                                ja="vm.getModel().adresseJA.strasse"
                                show-if-bisher-none="vm.showIfBisherNone === true"
                                block-existed="!!vm.getModel().adresseGS"></dv-bisher>
+                    <dv-error-messages for="adresseForm.adresseStrasse.$error"
+                                       class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
             <div class="col-sm-12 dv-input-container-small">
@@ -44,12 +44,12 @@
                     <input id="{{vm.prefix}}-hausnummer" type="text" name="adresseHausnummer"
                            ng-model="vm.getModel().adresseJA.hausnummer"
                            dv-max-length dv-trim-empty class="form-control">
-                    <dv-error-messages for="adresseForm.adresseHausnummer.$error"
-                                       class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.hausnummer"
                                ja="vm.getModel().adresseJA.hausnummer"
                                show-if-bisher-none="vm.showIfBisherNone === true"
                                block-existed="!!vm.getModel().adresseGS"></dv-bisher>
+                    <dv-error-messages for="adresseForm.adresseHausnummer.$error"
+                                       class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
         </div>
@@ -62,12 +62,12 @@
                     <input id="{{vm.prefix}}-zusatzzeile" type="text" name="adresseZusatzzeile"
                            ng-model="vm.getModel().adresseJA.zusatzzeile"
                            dv-max-length class="form-control" dv-trim-empty>
-                    <dv-error-messages for="adresseForm.adresseZusatzzeile.$error"
-                                       class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.zusatzzeile"
                                ja="vm.getModel().adresseJA.zusatzzeile"
                                show-if-bisher-none="vm.showIfBisherNone === true"
                                block-existed="!!vm.getModel().adresseGS"></dv-bisher>
+                    <dv-error-messages for="adresseForm.adresseZusatzzeile.$error"
+                                       class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
         </div>
@@ -79,12 +79,12 @@
                     </label>
                     <input id="{{vm.prefix}}-plz" type="text" name="adressePlz" ng-model="vm.getModel().adresseJA.plz"
                            dv-max-length class="form-control" required>
-                    <dv-error-messages for="adresseForm.adressePlz.$error"
-                                       class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.plz"
                                ja="vm.getModel().adresseJA.plz"
                                show-if-bisher-none="vm.showIfBisherNone === true"
                                block-existed="!!vm.getModel().adresseGS"></dv-bisher>
+                    <dv-error-messages for="adresseForm.adressePlz.$error"
+                                       class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
             <div class="col-sm-12 dv-input-container-small">
@@ -93,12 +93,12 @@
                     </label>
                     <input id="{{vm.prefix}}-ort" type="text" name="adresseOrt" ng-model="vm.getModel().adresseJA.ort"
                            dv-max-length class="form-control" required>
-                    <dv-error-messages for="adresseForm.adresseOrt.$error"
-                                       class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.ort"
                                ja="vm.getModel().adresseJA.ort"
                                show-if-bisher-none="vm.showIfBisherNone === true"
                                block-existed="!!vm.getModel().adresseGS"></dv-bisher>
+                    <dv-error-messages for="adresseForm.adresseOrt.$error"
+                                       class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
         </div>
@@ -110,12 +110,12 @@
                     </label>
                     <input id="{{vm.prefix}}-gemeinde" type="text" name="adresseGemeinde" ng-model="vm.getModel().adresseJA.gemeinde"
                            dv-max-length class="form-control">
-                    <dv-error-messages for="adresseForm.adresseGemeinde.$error"
-                                       class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.gemeinde"
                                ja="vm.getModel().adresseJA.gemeinde"
                                show-if-bisher-none="vm.showIfBisherNone === true"
                                block-existed="!!vm.getModel().adresseGS"></dv-bisher>
+                    <dv-error-messages for="adresseForm.adresseGemeinde.$error"
+                                       class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
         </div>
@@ -130,12 +130,12 @@
                             class="form-control"
                             required>
                     </select>
-                    <dv-error-messages for="adresseForm.adresseLand.$error"
-                                       class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.land"
                                ja="vm.getModel().adresseJA.land"
                                show-if-bisher-none="vm.showIfBisherNone === true"
                                block-existed="!!vm.getModel().adresseGS"></dv-bisher>
+                    <dv-error-messages for="adresseForm.adresseLand.$error"
+                                       class="error"></dv-error-messages>
                 </div>
             </div>
         </div>
@@ -174,12 +174,12 @@
                     <!--<button type="button" class="btn btn-default" ng-click="vm.openPopup()">-->
                     <!--<i class="fa fa-calendar"></i></button>-->
                     <!--</span>-->
-                    <dv-error-messages for="adresseForm.gueltigAb.$error"
-                                       class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.gueltigkeit.gueltigAb"
                                ja="vm.getModel().adresseJA.gueltigkeit.gueltigAb"
                                show-if-bisher-none="vm.showIfBisherNone === true"
                                block-existed="!!vm.getModel().adresseGS"></dv-bisher>
+                    <dv-error-messages for="adresseForm.gueltigAb.$error"
+                                       class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
         </div>
@@ -192,12 +192,12 @@
                     <dv-datepicker input-id="{{vm.prefix}}-gueltigBis" input-name="gueltigBis" name="gueltigBis"
                                    ng-model="vm.getModel().adresseJA.gueltigkeit.gueltigBis" ng-required="true">
                     </dv-datepicker>
-                    <dv-error-messages for="adresseForm.gueltigBis.$error"
-                                       class="error"></dv-error-messages>
                     <dv-bisher gs="vm.getModel().adresseGS.gueltigkeit.gueltigBis"
                                ja="vm.getModel().adresseJA.gueltigkeit.gueltigBis"
                                show-if-bisher-none="vm.showIfBisherNone === true"
                                block-existed="!!vm.getModel().adresseGS"></dv-bisher>
+                    <dv-error-messages for="adresseForm.gueltigBis.$error"
+                                       class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
         </div>

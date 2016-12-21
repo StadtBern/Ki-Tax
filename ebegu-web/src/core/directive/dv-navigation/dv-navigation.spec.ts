@@ -155,16 +155,6 @@ describe('dvNavigation', function () {
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.erwerbsPensen', { gesuchId: '123' });
         });
-        it('moves to gesuch.finanzielleSituationStart when coming from ERWERBSPENSUM substep 1 and 2GS required', () => {
-            spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.ERWERBSPENSUM);
-            spyOn(wizardStepManager, 'isNextStepBesucht').and.returnValue(true);
-            spyOn(wizardStepManager, 'isNextStepEnabled').and.returnValue(true);
-            navController.dvSubStep = 1;
-            mockGesuch();
-            spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(true);
-            callNextStep();
-            expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituationStart', { gesuchId: '123' });
-        });
         it('moves to gesuch.dokumente when coming from ERWERBSPENSUM substep 1 and disabled', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.ERWERBSPENSUM);
             spyOn(wizardStepManager, 'getNextStep').and.returnValue(TSWizardStepName.DOKUMENTE);
