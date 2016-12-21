@@ -86,7 +86,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 // Update wizardStepStatus also if the form is empty and not dirty
-                return this.updateStatus();
+                return this.updateStatus(false);
             }
 
             this.model.copyEkvSitDataToGesuch(this.gesuchModelManager.getGesuch());
@@ -97,12 +97,12 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
                     return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
                         this.gesuchModelManager.setGesuchstellerNumber(2);
                         return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
-                            return this.updateStatus();
+                            return this.updateStatus(true);
                         });
                     });
                 } else {
                     return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
-                        return this.updateStatus();
+                        return this.updateStatus(true);
                     });
                 }
             }
@@ -114,16 +114,18 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
      * Hier wird der Status von WizardStep auf OK (MUTIERT fuer Mutationen) aktualisiert aber nur wenn es die letzt Seite EVResultate
      * gespeichert wird. Sonst liefern wir einfach den aktuellen GS als Promise zurueck.
      */
-    private updateStatus(): IPromise<any> {
+    private updateStatus(changes: boolean): IPromise<any> {
         if (this.isLastEinkVersStep()) {
             if (this.gesuchModelManager.getGesuch().isMutation()) {
-                return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
+                if (this.wizardStepManager.getCurrentStep().wizardStepStatus === TSWizardStepStatus.NOK || changes) {
+                    return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
+                }
             } else {
                 return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
             }
-        } else {
-            return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith()); //wenn nichts gespeichert einfach den aktuellen GS zurueckgeben
         }
+        return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith()); //wenn nichts gespeichert einfach den aktuellen GS zurueckgeben
+
     }
 
     calculate() {
