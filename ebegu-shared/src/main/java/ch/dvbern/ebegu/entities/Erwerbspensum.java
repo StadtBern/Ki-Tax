@@ -2,13 +2,12 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
-import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumMaxZuschlag;
 import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -124,5 +123,16 @@ public class Erwerbspensum extends AbstractPensumEntity {
 		mutation.setZuschlagsprozent(this.getZuschlagsprozent());
 		mutation.setBezeichnung(this.getBezeichnung());
 		return mutation;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("bezeichnung", bezeichnung)
+			.append("taetigkeit", taetigkeit)
+			.append("zuschlagZuErwerbspensum", zuschlagZuErwerbspensum)
+			.append("zuschlagsgrund", zuschlagsgrund)
+			.append("zuschlagsprozent", zuschlagsprozent)
+			.toString();
 	}
 }

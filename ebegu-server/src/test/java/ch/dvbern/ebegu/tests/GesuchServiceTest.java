@@ -359,7 +359,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void testAntragFreigeben() {
+	public void testFreigabequittungErstellen() {
 		LocalDate now = LocalDate.now();
 		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_GS);
 
@@ -373,6 +373,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
 	}
 
+
+	//TODO: antragFreigeben missing?
 
 	// HELP METHOD
 

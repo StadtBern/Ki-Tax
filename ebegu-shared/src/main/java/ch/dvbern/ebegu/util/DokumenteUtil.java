@@ -82,6 +82,8 @@ public class DokumenteUtil {
 				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG_VORSCHAU, identificationNumber);
 			case NICHTEINTRETEN:
 				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.NICHTEINTRETEN, identificationNumber);
+			case FREIGABEQUITTUNG:
+				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.FREIGABEQUITTUNG, identificationNumber);
 			default:
 				return "file.pdf";
 		}
