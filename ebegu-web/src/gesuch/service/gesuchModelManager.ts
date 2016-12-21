@@ -584,7 +584,12 @@ export default class GesuchModelManager {
      * @returns {any} Alle KindContainer in denen das Kind Betreuung benoetigt
      */
     public getKinderWithBetreuungList(): Array<TSKindContainer> {
-        return this.gesuch.getKinderWithBetreuungList();
+        let listResult: Array<TSKindContainer> = [];
+        if(this.gesuch){
+            listResult = this.gesuch.getKinderWithBetreuungList();
+        }
+        return listResult
+
     }
 
     public createKind(): void {
@@ -1003,6 +1008,9 @@ export default class GesuchModelManager {
      * Returns false also if there are no Kinder with betreuungsbedarf
      */
     public areThereOnlySchulamtAngebote(): boolean {
+        if(!this.gesuch){
+            return false;
+        }
         return this.gesuch.areThereOnlySchulamtAngebote();
     }
 
