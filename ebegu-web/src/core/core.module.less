@@ -14,13 +14,15 @@
     }
 
     .viewTitle {
-        margin-bottom: 3.5rem;
+        hr.header {
+            margin-bottom: 5rem;
+        }
+        margin-bottom: 2rem;
     }
 
     .subTitle {
         font-size: 1.8rem;
     }
-
 
     .bisher {
         clear: both;
@@ -37,8 +39,9 @@
     }
 
     .inlineHint {
-        font-style: italic;
+        .ebeguItalic();
         font-size: 1.4rem;
+        line-height: 2.5rem;
     }
 
     //SmartTable Styles
@@ -166,6 +169,8 @@
         background-color: @danger-light;
     }
 
-    .required:after { content:" *"; }
+    .required:after {
+        content: " *";
+    }
 
 }

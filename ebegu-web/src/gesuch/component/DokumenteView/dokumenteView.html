@@ -1,18 +1,16 @@
 <div class="dokumente gesuchModul">
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
             <h1>Dokumente</h1>
             <hr class="header"/>
-            <span class="inlineHint" data-translate="DOK_HINT_DOKUMENTE"> </span>
+            <p class="inlineHint" data-translate="DOK_HINT_DOKUMENTE"></p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
 
             <form role="form" name="vm.form" class="" unsaved-warning-form="" novalidate>
-
-
-                <dv-dokumente-list dokumente="vm.dokumenteFamSit" class="row" table-id="dokumenteFamSit"
+                <dv-dokumente-list dokumente="vm.dokumenteFamSit" table-id="dokumenteFamSit"
                                    table-title="DOK_FAMILIENSITUATION" title-value=""
                                    on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFamSit)"
                                    on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteFamSit)">

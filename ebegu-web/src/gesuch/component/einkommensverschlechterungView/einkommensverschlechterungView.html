@@ -24,10 +24,10 @@
 
                     <!--Steuerveranlagung -->
                     <div class="row">
-                        <div class="col-md-6" ng-if="vm.showSteuerveranlagung()">
+                        <div class="col-xs-12 dv-input-container-medium" ng-if="vm.showSteuerveranlagung()">
                             <div class="form-group">
-                                <h4 class="mainQuestion required" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
-                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h4>
+                                <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h1>
                                 <dv-radio-container name="steuerveranlagung"
                                                     ng-model="vm.model.getEkvToWorkWith().steuerveranlagungErhalten"
                                                     ng-required="true" class="radio input-element"
@@ -44,10 +44,11 @@
 
                     <!--Steuererklärung -->
                     <div class="row">
-                        <div class="col-md-6" ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
+                        <div class="col-xs-12 dv-input-container-medium"
+                             ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
                             <div class="form-group">
-                                <h4 class="mainQuestion required" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
-                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h4>
+                                <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h1>
                                 <dv-radio-container name="steuererklaerung"
                                                     ng-model="vm.model.getEkvToWorkWith().steuererklaerungAusgefuellt"
                                                     ng-required="true" class="radio input-element"

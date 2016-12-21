@@ -1,15 +1,11 @@
 <div class="familiensituationView gesuchModul">
 
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
             <h1>
                 <span data-translate="MUTATION_FAMSITUATION_TITLE"></span>
             </h1>
-        </div>
-    </div>
-    <hr class="header"/>
-    <div class="row viewTitle">
-        <div class="col-md-12">
+            <hr class="header"/>
             <p class="inlineHint" data-translate="MUTATION_FAMSITUATION_HINT"></p>
             <div ng-if="vm.showError()" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></div>
         </div>
@@ -52,11 +48,11 @@
 
                 <!--familienstatus-->
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-xs-12 dv-input-container-medium">
                         <div class="form-group">
-                            <h4 class="mainQuestion required"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span>
+                            <h1 class="required"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span>
                                 <dv-tooltip text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip>
-                            </h4>
+                            </h1>
                             <dv-radio-container name="familienstatus"
                                                 ng-model="vm.getFamiliensituation().familienstatus"
                                                 ng-required="true"
@@ -73,9 +69,9 @@
 
                 <!--gesuchstellerKardinalitaet-->
                 <div class="row">
-                    <div class="col-md-6" ng-if="vm.showGesuchstellerKardinalitaet()">
+                    <div class="col-xs-12 dv-input-container-medium" ng-if="vm.showGesuchstellerKardinalitaet()">
                         <div class="form-group">
-                            <h4 class="mainQuestion required" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
+                            <h1 class="required" data-translate="FAMILIENSITUATION_FRAGE_2"></h1>
                             <dv-radio-container name="gesuchstellerKardinalitaet"
                                                 ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet"
                                                 ng-required="true"
