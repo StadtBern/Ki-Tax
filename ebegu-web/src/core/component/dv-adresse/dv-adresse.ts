@@ -36,6 +36,7 @@ export class DvAdresseController {
     TSRoleUtil = TSRoleUtil;
     showNichtInGemeinde: boolean;
     gesuchModelManager: GesuchModelManager;
+    bisherLand: string;
 
     /* @ngInject */
     constructor(adresseRS: AdresseRS, listResourceRS: ListResourceRS, gesuchModelManager: GesuchModelManager) {
@@ -45,6 +46,7 @@ export class DvAdresseController {
         this.popup = {opened: false};
         listResourceRS.getLaenderList().then((laenderList: TSLand[]) => {
             this.laenderList = laenderList;
+            this.bisherLand = this.getBisherLand();
         });
     }
 
@@ -76,8 +78,8 @@ export class DvAdresseController {
     public disableWohnadresseFor2GS(): boolean {
         return (this.prefix !== 'umzug')
             && (this.gesuchModelManager.getGesuch().isMutation() && (this.gesuchModelManager.getGesuchstellerNumber() === 1
-                || (this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== null
-                && this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== undefined)));
+            || (this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== null
+            && this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== undefined)));
     }
 
     public showDatumVon(): boolean {
@@ -86,6 +88,17 @@ export class DvAdresseController {
 
     public getModel(): TSAdresseContainer {
         return this.adresse;
+    }
+
+    private getBisherLand(): string {
+        if (this.getModel().adresseGS) {
+            for (let tsland of this.laenderList) {
+                if(tsland.code === this.getModel().adresseGS.land) {
+                    return tsland.name
+                }
+            }
+        }
+        return "";
     }
 
 }

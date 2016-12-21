@@ -5,7 +5,7 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import ILogService = angular.ILogService;
-let template =  require('./dv-bisher.html');
+let template = require('./dv-bisher.html');
 require('./dv-bisher.less');
 
 /**
@@ -21,6 +21,7 @@ require('./dv-bisher.less');
  * - showIfBisherNone: Zeigt, ob "Keine Eingabe" angezeigt werden soll, wenn es keinen Bisher-Wert
  *      gibt. Normalerweise wollen wir das. Ausnahme sind Blocks, wo wir das "Keine Eingabe" *pro Block* anzeigen wollen
  *      und nicht unter jedem Feld.
+ * - singleBisherText: Text der direkt ohne übersetzung als bisher Wert angezeigt wird
  */
 export class DvBisherComponentConfig implements IComponentOptions {
     transclude = false;
@@ -30,6 +31,7 @@ export class DvBisherComponentConfig implements IComponentOptions {
         specificBisherText: '<',
         blockExisted: '<',
         showIfBisherNone: '<',
+        singleBisherText: '<',
     };
     template = template;
     controller = DvBisher;
@@ -46,17 +48,17 @@ export class DvBisher {
     specificBisherText: string;
     bisherText: Array<string>;
     blockExisted: boolean;
-
+    singleBisherText: string;
 
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, private $translate: ITranslateService, private $log: ILogService) {
         if (this.showIfBisherNone === undefined) {//wenn nicht von aussen gesetzt auf true
             this.showIfBisherNone = true;
         }
-        this.bisherText = this.specificBisherText ?  this.specificBisherText.split('\n') : undefined;
+        this.bisherText = this.specificBisherText ? this.specificBisherText.split('\n') : undefined;
     }
 
-    public getBisher() : Array<string> {
+    public getBisher(): Array<string> {
         if (this.specificBisherText) {
             // War es eine Loeschung, oder ein Hinzufuegen?
             if (this.hasBisher()) {
@@ -64,8 +66,10 @@ export class DvBisher {
             } else {
                 return [this.$translate.instant('LABEL_KEINE_ANGABE')];  //vorher war keine angabe da
             }
+        } else if (this.singleBisherText) {
+            return [this.singleBisherText];
         } else if (this.gs instanceof moment) {
-            return  [DateUtil.momentToLocalDateFormat(this.gs, 'DD.MM.YYYY')];
+            return [DateUtil.momentToLocalDateFormat(this.gs, 'DD.MM.YYYY')];
         } else if (this.gs === true) {
             return [this.$translate.instant('LABEL_JA')];
         } else if (this.gs === false) {
@@ -77,11 +81,11 @@ export class DvBisher {
         }
     }
 
-    public hasBisher() : boolean {
+    public hasBisher(): boolean {
         return !this.isEmpty(this.gs);
     }
 
-    public showBisher() : boolean {
+    public showBisher(): boolean {
         return ((this.showIfBisherNone || this.blockExisted === true) || this.hasBisher()) && this.gesuchModelManager.isKorrekturModusJugendamt();
     }
 
