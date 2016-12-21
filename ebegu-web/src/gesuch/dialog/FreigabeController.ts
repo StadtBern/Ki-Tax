@@ -62,6 +62,10 @@ export class FreigabeController {
         });
     }
 
+    public isSchulamt(): boolean {
+        return this.gesuch.areThereOnlySchulamtAngebote();
+    }
+
     public hasError(): boolean {
         return this.errorMessage != null;
     }

@@ -584,15 +584,7 @@ export default class GesuchModelManager {
      * @returns {any} Alle KindContainer in denen das Kind Betreuung benoetigt
      */
     public getKinderWithBetreuungList(): Array<TSKindContainer> {
-        let listResult: Array<TSKindContainer> = [];
-        if (this.gesuch && this.gesuch.kindContainers) {
-            this.gesuch.kindContainers.forEach((kind) => {
-                if (kind.kindJA.familienErgaenzendeBetreuung) {
-                    listResult.push(kind);
-                }
-            });
-        }
-        return listResult;
+        return this.gesuch.getKinderWithBetreuungList();
     }
 
     public createKind(): void {
@@ -1011,18 +1003,7 @@ export default class GesuchModelManager {
      * Returns false also if there are no Kinder with betreuungsbedarf
      */
     public areThereOnlySchulamtAngebote(): boolean {
-        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
-        if (kinderWithBetreuungList.length <= 0) {
-            return false; // no Kind with bedarf
-        }
-        for (let kind of kinderWithBetreuungList) {
-            for (let betreuung of kind.betreuungen) {
-                if (!isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return this.gesuch.areThereOnlySchulamtAngebote();
     }
 
     /**
