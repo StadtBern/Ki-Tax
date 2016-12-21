@@ -372,7 +372,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
 
-		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId());
+		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
 	}
 
@@ -394,7 +394,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(schulamtGesuch.getId(), WizardStepName.FREIGABE);
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
 
-		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId());
+		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 		Assert.assertEquals(AntragStatus.NUR_SCHULAMT, eingelesenesGesuch.getStatus());
 
 	}
@@ -425,7 +425,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 
-	//TODO: antragFreigeben missing?
 
 	// HELP METHOD
 
