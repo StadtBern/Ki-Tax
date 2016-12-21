@@ -10,6 +10,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
@@ -38,11 +39,11 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     showError: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
-        'WizardStepManager', '$translate', '$q', '$scope'];
+        'WizardStepManager', '$translate', '$q', '$scope' , 'AuthServiceRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
-                private $translate: ITranslateService, private $q: IQService, $scope: IScope) {
+                private $translate: ITranslateService, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.readStateParams();
         this.initViewModel();
@@ -132,5 +133,12 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         } else {
             return this.$translate.instant('ART_DER_MUTATION');
         }
+    }
+
+    public getNextButtonText(): string{
+        if(this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())){
+            return this.$translate.instant('WEITER_ONLY_UPPER');
+        }
+        return this.$translate.instant('WEITER_UPPER')
     }
 }
