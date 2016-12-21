@@ -15,6 +15,7 @@ public interface FamiliensituationService {
 
 	/**
 	 * Aktualisiert idn Familiensituation in der DB oder erstellt sie wenn sie noch nicht existiert
+	 * @param loadedFamiliensituation dies ist der bisher gespeicherte FamiliensituationJA Wert aus der DB
 	 */
 	FamiliensituationContainer saveFamiliensituation(Gesuch gesuch, FamiliensituationContainer familiensituationContainer, Familiensituation loadedFamiliensituation);
 

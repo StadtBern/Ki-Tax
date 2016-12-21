@@ -49,7 +49,6 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 		Familiensituation newFamiliensituation = familiensituationContainer.extractFamiliensituation();
 		Objects.requireNonNull(newFamiliensituation);
 
-
 		if (gesuch.isMutation() && EbeguUtil.fromOneGSToTwoGS(familiensituationContainer)) {
 
 			if (newFamiliensituation.getGemeinsameSteuererklaerung() == null) {
@@ -71,8 +70,8 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 
 		// get old FamSit to compare with
 		Familiensituation oldFamiliensituation;
-		if (mergedFamiliensituationContainer != null &&mergedFamiliensituationContainer.getFamiliensituationErstgesuch() != null) {
-			oldFamiliensituation = mergedFamiliensituationContainer.getFamiliensituationErstgesuch();
+		if (mergedFamiliensituationContainer != null && mergedFamiliensituationContainer.getFamiliensituationErstgesuch() != null) {
+			oldFamiliensituation = mergedFamiliensituationContainer.getFamiliensituationErstgesuch();  //bei mutation immer die Situation vom Erstgesuch als  Basis fuer Wizardstepanpassung
 		} else {
 			oldFamiliensituation = loadedFamiliensituation;
 		}
