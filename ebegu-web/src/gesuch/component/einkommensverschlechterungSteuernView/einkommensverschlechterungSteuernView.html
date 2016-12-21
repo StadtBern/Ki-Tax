@@ -23,7 +23,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <h4 class="mainQuestion required" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
-                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h4>
+                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1), namegs2: vm.extractFullNameGS2()}"></h4>
                                     <dv-radio-container name="gemeinsameSteuererklaerung_BjP1"
                                                         ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1"
                                                         ng-required="true" class="radio input-element"
@@ -98,7 +98,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <h4 class="mainQuestion required" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
-                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2)}"></h4>
+                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2), namegs2: vm.extractFullNameGS2()}"></h4>
                                     <dv-radio-container name="gemeinsameSteuererklaerung_BjP2"
                                                         ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2"
                                                         ng-required="true" class="radio input-element"

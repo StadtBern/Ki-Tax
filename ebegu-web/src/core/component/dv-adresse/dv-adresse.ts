@@ -13,7 +13,8 @@ export class AdresseComponentConfig implements IComponentOptions {
         adresse: '<',
         prefix: '@',
         organisation: '<',
-        showNichtInGemeinde: '<'
+        showNichtInGemeinde: '<',
+        showIfBisherNone: '<'
     };
     template = require('./dv-adresse.html');
     controller = DvAdresseController;
