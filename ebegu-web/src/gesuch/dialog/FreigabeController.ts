@@ -1,13 +1,16 @@
-import GesuchRS from "../service/gesuchRS.rest";
-import TSGesuch from "../../models/TSGesuch";
-import TSUser from "../../models/TSUser";
+import GesuchRS from '../service/gesuchRS.rest';
+import TSGesuch from '../../models/TSGesuch';
+import TSUser from '../../models/TSUser';
+import UserRS from '../../core/service/userRS.rest';
+import EbeguUtil from '../../utils/EbeguUtil';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import IPromise = angular.IPromise;
 import IDialogService = angular.material.IDialogService;
-import UserRS from "../../core/service/userRS.rest";
-import EbeguUtil from "../../utils/EbeguUtil";
-import {TSAntragStatus} from "../../models/enums/TSAntragStatus";
-import AuthServiceRS from "../../authentication/service/AuthServiceRS.rest";
 
+/**
+ * Controller fuer das Freigabe Popup
+ */
 export class FreigabeController {
 
     static $inject: string[] = ['docID', '$mdDialog', 'GesuchRS', 'UserRS', 'AuthServiceRS', 'EbeguUtil', 'CONSTANTS'];
@@ -22,7 +25,7 @@ export class FreigabeController {
     constructor(private docID: string, private $mdDialog: IDialogService, private gesuchRS: GesuchRS, private userRS: UserRS, private authService: AuthServiceRS, private ebeguUtil: EbeguUtil, CONSTANTS: any) {
 
         //TODO: (medu) comment this next line and use the passed docid, delete before merge to dev
-        this.docID = "e3fb0f50-57a6-4794-9c93-a5108a569a51";
+        // this.docID = "e3fb0f50-57a6-4794-9c93-a5108a569a51";
 
         gesuchRS.findGesuch(this.docID).then((response: TSGesuch) => {
             if (response) {
@@ -32,6 +35,7 @@ export class FreigabeController {
                 this.selectedUser = authService.getPrincipal().username;
                 //TODO: (medu) REMOVE THIS NEXT LINE FOR TESTING ONLY - FORCING GESUCH STATUS
                 gesuchRS.updateGesuchStatus(this.docID, TSAntragStatus.FREIGABEQUITTUNG);
+                //todo remove above line
             } else {
                 this.errorMessage = "Gesuch nicht gefunden!";
             }

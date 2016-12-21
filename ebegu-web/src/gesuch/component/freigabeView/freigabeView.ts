@@ -63,7 +63,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
                 if (this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
                     return this.openFreigabequittungPDF();
                 } else {
-                    return this.gesuchFreigeben();
+                    return this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
                 }
             });
         }
