@@ -86,7 +86,7 @@
 
                     <!--Korrenspondenzadr Checkbox (aka Zustelladresse)-->
                     <div class="row">
-                        <div class="col-xs-12 dv-input-container-medium">
+                        <div class="col-xs-12 dv-input-container-question">
                             <div class=" checkbox">
                                 <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr"
                                              aria-label="korrespondenzAdr" ng-change="vm.korrespondenzAdrClicked()"
@@ -111,7 +111,7 @@
 
                     <!-- Diplomatenstatus -->
                     <div class="row">
-                        <div class="col-xs-12 dv-input-container-small">
+                        <div class="col-xs-12 dv-input-container-question">
                             <div class=" checkbox">
                                 <md-checkbox ng-model="vm.getModelJA().diplomatenstatus" name="diplomatenstatus"
                                              aria-label="diplomatenstatus"
@@ -130,7 +130,7 @@
 
                     <!--Umzug checkbox. Bei Mutationen nicht angezeigt-->
                     <div class="row" ng-if="!vm.isMutation()">
-                        <div class="col-md-12">
+                        <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getModel().showUmzug" name="umzug" aria-label="umzug"
                                              dv-enable-element

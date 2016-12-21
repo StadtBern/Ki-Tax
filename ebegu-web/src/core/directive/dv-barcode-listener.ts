@@ -39,7 +39,7 @@ export class DVBarcodeController {
     constructor($document: IDocumentService, $timeout: ITimeoutService, dVDialog: DvDialog, authService: AuthServiceRS,
     errorService: ErrorService) {
 
-        if (authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
+        if (authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole()) || authService.isOneOfRoles(TSRoleUtil.getSchulamtOnlyRoles())) {
 
             $document.bind("keypress", (e) => {
 
