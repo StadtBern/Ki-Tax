@@ -46,10 +46,12 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	@Column(nullable = false)
 	private BetreuungsangebotTyp betreuungsangebotTyp;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_institution_id"), nullable = false)
 	private Institution institution;
 
+	@NotNull
 	@OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_adresse_id"), nullable = false)
 	private Adresse adresse;

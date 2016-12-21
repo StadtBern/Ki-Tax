@@ -1,0 +1,63 @@
+<md-dialog md-theme="default"
+           class="md-default-theme md-transition-in freigabe-dialog"
+           role="dialog" tabindex="-1" aria-describedby="dialogContent">
+
+    <md-dialog-content class="md-dialog-content" role="document" tabindex="-1" id="dialogContent">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 ng-hide="vm.hasError()" class="md-title ng-binding" data-translate="FREIGEBEN_DIALOG_TITLE"></h2>
+
+                <span ng-show="vm.hasError()" ng-bind="vm.errorMessage"></span>
+            </div>
+        </div>
+
+        <div class="row" ng-hide="vm.hasError()">
+            <div class="col-xs-12">
+                <div class="row marginTop10">
+                    <div class="col-xs-3">
+                        <span data-translate="FREIGEBEN_DIALOG_LABEL_FALL"></span>
+                    </div>
+                    <div class="col-xs-9">
+                        <span ng-bind="vm.fallNummer"></span>
+                    </div>
+                </div>
+                <div class="row marginTop10">
+                    <div class="col-xs-3">
+                        <span data-translate="FREIGEBEN_DIALOG_LABEL_FAMILIE"></span>
+                    </div>
+                    <div class="col-xs-9">
+                        <span ng-bind="vm.familie"></span>
+                    </div>
+                </div>
+                <div class="row marginTop10" ng-hide="vm.isSchulamt()">
+                    <div class="col-xs-12 dv-input-container-medium">
+                        <div class="form-group">
+                            <label class="md-no-float" data-translate="FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER"
+                                   for="verantwortlicher">
+                            </label>
+                            <select name="verantwortlicher"
+                                    id="verantwortlicher"
+                                    class="form-control"
+                                    ng-options="user.username as user.getFullName() for user in vm.userList"
+                                    ng-model="vm.selectedUser">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout-align="space-between center">
+        <button class="ng-scope" type="button" ng-class=" {'btn-link' : !vm.hasError()}"
+                ng-click="vm.cancel()" aria-label="{{'CANCEL' | translate}}">
+            <span class="ng-binding ng-scope" data-translate="CANCEL"></span>
+        </button>
+        <button class="" type="button" ng-hide="vm.hasError()"
+                ng-click="vm.hide()" md-autofocus="dialog.$type==='alert'"
+                aria-label="{{'LABEL_FREIGEBEN' | translate}}">
+            <span class="ng-binding ng-scope" data-translate="LABEL_FREIGEBEN"></span>
+        </button>
+    </md-dialog-actions>
+
+</md-dialog>

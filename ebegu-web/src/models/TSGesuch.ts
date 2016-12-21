@@ -7,6 +7,7 @@ import TSGesuchstellerContainer from './TSGesuchstellerContainer';
 import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from './TSFamiliensituationContainer';
 import {TSEingangsart} from './enums/TSEingangsart';
+import {isSchulamt} from "./enums/TSBetreuungsangebotTyp";
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -94,6 +95,41 @@ export default class TSGesuch extends TSAbstractAntragEntity {
             return true;
         }
         return false;
+    }
+
+    /**
+     *
+     * @returns {any} Alle KindContainer in denen das Kind Betreuung benoetigt
+     */
+    public getKinderWithBetreuungList(): Array<TSKindContainer> {
+        let listResult: Array<TSKindContainer> = [];
+        if (this.kindContainers) {
+            this.kindContainers.forEach((kind) => {
+                if (kind.kindJA.familienErgaenzendeBetreuung) {
+                    listResult.push(kind);
+                }
+            });
+        }
+        return listResult;
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind SCHULAMT.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public areThereOnlySchulamtAngebote(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (!isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public extractFamiliensituation(): TSFamiliensituation {

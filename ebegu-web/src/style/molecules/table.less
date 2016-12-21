@@ -4,6 +4,7 @@
 .table-responsive {
     border: none;
 }
+
 .row-fallnr {
     width: 5%;
 }
@@ -28,7 +29,7 @@
 
 }
 
-eingangsdatum.row-status {
+.eingangsdatum.row-status {
     width: 12.5%;
 
 }
@@ -75,14 +76,13 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            .h3();
+            .ebeguH3();
             position: relative;
             line-height: 3rem;
             height: 5rem;
             border: 0.1rem solid @contrast;
             border-left: none;
             border-right: none;
-            display: table-cell;
             vertical-align: middle;
             padding: 0 0.8rem 0;
             color: @contrast-darkest;
@@ -96,36 +96,34 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            .label();
+            .ebeguLabel();
             height: 5rem;
             vertical-align: middle;
             border: 0.1rem solid @contrast;
             border-left: none;
             border-right: none;
             border-radius: 0;
-            display: table-cell !important;
             padding: 0 0.25rem 0;
             color: @contrast-darkest;
             span {
-                .p();
+                .ebeguP();
                 line-height: 0;
             }
         }
     }
     & > tr:first-child {
         & > th, & > th:empty {
-            .label();
+            .ebeguLabel();
             height: 3.5rem;
             vertical-align: middle;
             border: 0.1rem solid @contrast-darkest;
             border-left: none;
             border-right: none;
             border-radius: 0;
-            display: table-cell !important;
             padding: 0 0.8rem 0;
             color: @contrast-darkest;
             span {
-                .p();
+                .ebeguP();
                 line-height: 0;
             }
         }
@@ -136,6 +134,9 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
 }
 
 .gesuchstellerDashboardView {
+    table {
+        min-width: 100%;
+    }
     .table > tbody {
         & > tr, & > tr:first-child {
             &:hover {
@@ -146,21 +147,20 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
     table, .table > tbody, .table > thead, .table > thead:first-child {
         & > tr, & > tr:first-child {
             & > td {
-                .label();
+                .ebeguLabel();
                 height: 5rem;
                 vertical-align: middle;
-                display: table-cell !important;
                 padding: 0 0.8rem 0;
                 border: 0.1rem solid rgba(220, 220, 220, 0.2);
                 border-left: none;
                 border-right: none;
+                color: @contrast-lightest;
             }
             & > th, & > th:empty {
-                .h3();
+                .ebeguH3();
                 position: relative;
                 line-height: 3rem;
                 height: 5rem;
-                display: table-cell;
                 vertical-align: middle;
                 padding: 0 0.8rem 0;
                 border: 0.1rem solid @contrast-lightest;
@@ -168,7 +168,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
                 border-right: none;
                 color: @contrast-lightest;
                 span {
-                    .p();
+                    .ebeguP();
                     line-height: 0;
                 }
             }

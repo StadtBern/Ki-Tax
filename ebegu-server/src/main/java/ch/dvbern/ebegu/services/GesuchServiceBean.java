@@ -474,6 +474,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			Expression<Boolean> fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 			predicatesToUse.add(fallPredicate);
 
+			if (!benutzer.getRole().equals(UserRole.GESUCHSTELLER)) {
+				// Nur GS darf ein Gesuch sehen, das sich im Status BEARBEITUNG_GS oder FREIGABEQUITTUNG befindet
+				predicatesToUse.add(root.get(Gesuch_.status).in(AntragStatus.IN_BEARBEITUNG_GS, AntragStatus.FREIGABEQUITTUNG).not());
+			}
+
 			if (institutionstammdatenJoin != null) {
 				if (benutzer.getRole().equals(UserRole.ADMIN) || benutzer.getRole().equals(UserRole.SACHBEARBEITER_JA)) {
 					predicatesToUse.add(cb.notEqual(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
@@ -577,8 +582,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA,	UserRoleName.GESUCHSTELLER, UserRoleName.SCHULAMT})
-	public Gesuch antragFreigeben(@Nonnull String gesuchId) {
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA,	UserRoleName.GESUCHSTELLER})
+	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username) {
 		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
@@ -596,6 +601,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			// Den Gesuchsstatus setzen
 			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
+
+			if (username != null) {
+				Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(username);
+				verantwortlicher.ifPresent(benutzer -> gesuch.getFall().setVerantwortlicher(benutzer));
+			}
+
 			// Falls es ein OnlineGesuch war: Das Eingangsdatum setzen
 			if (Eingangsart.ONLINE.equals(gesuch.getEingangsart())) {
 				gesuch.setEingangsdatum(LocalDate.now());

@@ -147,5 +147,5 @@ public interface GesuchService {
 	 * JA-Containern in die GS-Containern
 	 */
 	@Nonnull
-	Gesuch antragFreigeben(@Nonnull String gesuchId);
+	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String userID);
 }
