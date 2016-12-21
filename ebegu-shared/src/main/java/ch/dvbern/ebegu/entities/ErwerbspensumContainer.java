@@ -5,6 +5,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Container-Entity für das Erwerbspensum: Diese muss für die  Benutzertypen (GS, JA) einzeln geführt werden,
@@ -17,6 +18,7 @@ public class ErwerbspensumContainer extends AbstractEntity {
 
 	private static final long serialVersionUID = -3084333639027795652L;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_gesuchstellerContainer_id"))
 	private GesuchstellerContainer gesuchstellerContainer;

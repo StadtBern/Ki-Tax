@@ -41,6 +41,7 @@ public class Sequence extends AbstractEntity implements HasMandant{
 	@Column(nullable = false)
 	private Long currentValue;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_sequence_mandant_id"))
 	private Mandant mandant;
