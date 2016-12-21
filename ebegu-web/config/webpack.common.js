@@ -181,9 +181,9 @@ module.exports = {
             chunksSortMode: helpers.packageSort(['polyfills', 'vendor', 'main'])
         }),
 
-        new ExtractTextPlugin('style.css', {
+/*        new ExtractTextPlugin('style.css', {
             allChunks: true
-        })
+        })*/
 
     ],
 
