@@ -44,6 +44,7 @@ export class DVBarcodeController {
             $document.bind("keypress", (e) => {
 
                 if (this.barcodeReading) {
+                    e.preventDefault();
                     if (e.key !== '§') {
                         this.barcodeBuffer.push(e.key);
                         console.log('Current buffer: ' + this.barcodeBuffer.join(""));
@@ -51,6 +52,7 @@ export class DVBarcodeController {
                 }
 
                 if (e.key === '§') {
+                    e.preventDefault();
                     if (this.barcodeReading) {
                         console.log('End Barcode read');
 
