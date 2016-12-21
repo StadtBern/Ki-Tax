@@ -58,9 +58,9 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 		ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
 
 		BitmapCanvasProvider canvas = new BitmapCanvasProvider(
-			bytesOut, "image/x-png", 150, BufferedImage.TYPE_BYTE_BINARY, false, 0);
+			bytesOut, "image/x-png", 175, BufferedImage.TYPE_BYTE_BINARY, false, 0);
 
-		dataMatrixBean.generateBarcode(canvas, "§FREIGABE|OPEN|" + gesuch.getAntragNummer() +"§");
+		dataMatrixBean.generateBarcode(canvas, "§FREIGABE|OPEN|" + gesuch.getId() +"§");
 
 		canvas.finish();
 
@@ -104,6 +104,11 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 	}
 
 	@Override
+	public boolean isAddresseGS2() {
+		return gesuch.getGesuchsteller2() != null;
+	}
+
+	@Override
 	public String getAdresseGS2() {
 
 		return PrintUtil.getNameAdresseFormatiert(gesuch, gesuch.getGesuchsteller2());
@@ -128,13 +133,15 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 	@Override
 	public List<AufzaehlungPrint> getUnterlagen() {
 		List<AufzaehlungPrint> aufzaehlungPrint = new ArrayList<>();
+		StringBuilder bemerkungenBuilder;
 
 		if (dokumentGrunds != null) {
 			for (DokumentGrund dokumentGrund : dokumentGrunds) {
-				StringBuilder bemerkungenBuilder = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
-				aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));
+				 bemerkungenBuilder = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
+				if (bemerkungenBuilder.length() > 0){aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));}
             }
 		}
+
 		return aufzaehlungPrint;
 	}
 

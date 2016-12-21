@@ -1,0 +1,45 @@
+<md-dialog md-theme="default" ng-class="vm.css"
+           class="md-default-theme md-transition-in"
+           role="dialog" tabindex="-1" aria-describedby="dialogContent">
+
+    <md-dialog-content class="md-dialog-content" role="document" tabindex="-1" id="dialogContent">
+
+        <h2 ng-hide="vm.hasError()" class="md-title ng-binding" data-translate="FREIGEBEN_DIALOG_TITLE"></h2>
+
+        <span ng-show="vm.hasError()" ng-bind="vm.errorMessage"></span>
+
+        <div ng-hide="vm.hasError()">
+            <table style="width: 100%;">
+                <tr>
+                    <td data-translate="FREIGEBEN_DIALOG_LABEL_FALL"></td>
+                    <td ng-bind="vm.fallNummer"></td>
+                </tr>
+                <tr>
+                    <td data-translate="FREIGEBEN_DIALOG_LABEL_FAMILIE"></td>
+                    <td ng-bind="vm.familie"></td>
+                </tr>
+            </table>
+
+            <div data-translate="FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER"></div>
+            <select name="verantwortlicher"
+                    id="verantwortlicher"
+                    class="form-control"
+                    ng-options="user.username as user.getFullName() for user in vm.userList"
+                    ng-model="vm.selectedUser">
+            </select>
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions layout-align="center center">
+        <button class="md-default-theme" type="button" ng-hide="vm.hasError()"
+                ng-click="vm.hide()" md-autofocus="dialog.$type==='alert'" aria-label="{{'LABEL_FREIGEBEN' | translate}}">
+            <span class="ng-binding ng-scope" data-translate="LABEL_FREIGEBEN"></span>
+        </button>
+        <button class="ng-scope md-default-theme" type="button"
+                ng-click="vm.cancel()" aria-label="{{'CANCEL' | translate}}">
+        <span class="ng-binding ng-scope" data-translate="CANCEL"></span>
+        </button>
+    </md-dialog-actions>
+
+</md-dialog>
