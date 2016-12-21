@@ -5,6 +5,7 @@ import {IComponentOptions, IFormController} from 'angular';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
+import ITranslateService = angular.translate.ITranslateService;
 require('./dv-adresse.less');
 
 export class AdresseComponentConfig implements IComponentOptions {
@@ -24,11 +25,12 @@ export class AdresseComponentConfig implements IComponentOptions {
 
 
 export class DvAdresseController {
-    static $inject = ['AdresseRS', 'ListResourceRS', 'GesuchModelManager'];
+    static $inject = ['AdresseRS', 'ListResourceRS', 'GesuchModelManager', '$translate'];
 
     adresse: TSAdresseContainer;
     prefix: string;
     adresseRS: AdresseRS;
+    $translate: ITranslateService;
     parentForm: IFormController;
     popup: any;   //todo team welchen datepicker wollen wir
     laenderList: TSLand[];
@@ -39,14 +41,15 @@ export class DvAdresseController {
     bisherLand: string;
 
     /* @ngInject */
-    constructor(adresseRS: AdresseRS, listResourceRS: ListResourceRS, gesuchModelManager: GesuchModelManager) {
+    constructor(adresseRS: AdresseRS, listResourceRS: ListResourceRS, gesuchModelManager: GesuchModelManager, $translate: ITranslateService) {
         this.TSRoleUtil = TSRoleUtil;
         this.adresseRS = adresseRS;
         this.gesuchModelManager = gesuchModelManager;
         this.popup = {opened: false};
+        this.$translate = $translate;
+        this.bisherLand = this.getBisherLand();
         listResourceRS.getLaenderList().then((laenderList: TSLand[]) => {
             this.laenderList = laenderList;
-            this.bisherLand = this.getBisherLand();
         });
     }
 
@@ -92,11 +95,7 @@ export class DvAdresseController {
 
     private getBisherLand(): string {
         if (this.getModel().adresseGS) {
-            for (let tsland of this.laenderList) {
-                if(tsland.code === this.getModel().adresseGS.land) {
-                    return tsland.name
-                }
-            }
+            return this.$translate.instant('Land_' + this.getModel().adresseGS.land);
         }
         return "";
     }
