@@ -70,8 +70,13 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     }
 
     korrespondenzAdrClicked() {
-        if (this.showKorrespondadr && (!this.model.korrespondenzAdresse || !this.model.korrespondenzAdresse.adresseJA)) {
-            this.model.korrespondenzAdresse = this.initKorrespondenzAdresse();
+        if (this.showKorrespondadr) {
+            if (!this.model.korrespondenzAdresse) {
+                this.model.korrespondenzAdresse = this.initKorrespondenzAdresse();
+            }
+            else if (!this.model.korrespondenzAdresse.adresseJA) {
+                this.initKorrespondenzAdresseJA();
+            }
         }
     }
 
@@ -145,6 +150,13 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         korrespAdresseContanier.showDatumVon = false;
         korrespAdresseContanier.adresseJA = korrAdr;
         return korrespAdresseContanier;
+    }
+
+    private initKorrespondenzAdresseJA() {
+        let korrAdr = new TSAdresse();
+        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
+        this.model.korrespondenzAdresse.adresseJA = korrAdr;
+        this.model.korrespondenzAdresse.showDatumVon = false;
     }
 
     public getTextKorrespondenzaddrKorrekturJA(): string {

@@ -124,6 +124,10 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getOrt() : null;
 	}
 
+	public String extractOrganisation() {
+		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getOrganisation() : null;
+	}
+
 
 	public GesuchstellerAdresseContainer copyForMutation(GesuchstellerAdresseContainer mutation, GesuchstellerContainer gesuchstellerContainer) {
 		super.copyForMutation(mutation);

@@ -663,7 +663,7 @@ public class JaxBConverter {
 		Validate.notNull(jaxAdresseCont);
 		Validate.notNull(adresseCont);
 		convertAbstractFieldsToEntity(jaxAdresseCont, adresseCont);
-		// ein einmal ersteller GS Container kann nie mehr entfernt werden, daher mergen wir hier nichts wenn null kommt vom client
+		// ein einmal erstellter GS Container kann nie mehr entfernt werden, daher mergen wir hier nichts wenn null kommt vom client
 		if (jaxAdresseCont.getAdresseGS() != null) {
 			GesuchstellerAdresse gesuchstellerAdresseGS = new GesuchstellerAdresse();
 			if (adresseCont.getGesuchstellerAdresseGS() != null) {

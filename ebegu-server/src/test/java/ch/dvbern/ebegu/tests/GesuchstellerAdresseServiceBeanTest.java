@@ -1,8 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
-import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.services.GesuchstellerAdresseService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -58,6 +56,15 @@ public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguLoginTest 
 		Assert.assertEquals("99", adresseService.findAdresse(updatedAdr.getId()).get().extractHausnummer());
 	}
 
+	@Test
+	public void findKorrAddresse() {
+		Assert.assertNotNull(adresseService);
+		final GesuchstellerContainer gesuchstellerContainer = insertNewEntityWithKorrespondenzadresse();
+		Optional<GesuchstellerAdresseContainer> adresse = adresseService.getKorrespondenzAdr(gesuchstellerContainer.getId());
+		Assert.assertTrue(adresse.isPresent());
+
+	}
+
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@Test
 	public void removeAdresseTest() {
@@ -74,6 +81,21 @@ public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguLoginTest 
 		GesuchstellerContainer pers = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		GesuchstellerContainer storedPers =  persistence.persist(pers);
 		return storedPers.getAdressen().stream().findAny().orElseThrow(() -> new IllegalStateException("Testdaten nicht korrekt aufgesetzt"));
+	}
+
+	private GesuchstellerContainer insertNewEntityWithKorrespondenzadresse() {
+		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		GesuchstellerContainer pers = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
+		GesuchstellerContainer storedPers =  persistence.persist(pers);
+
+		GesuchstellerAdresseContainer korrAddr = TestDataUtil.createDefaultGesuchstellerAdresseContainer(storedPers);
+		korrAddr.getGesuchstellerAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
+		storedPers.addAdresse(korrAddr);
+		GesuchstellerAdresse gsAddresse = korrAddr.getGesuchstellerAdresseJA().copyForMutation(new GesuchstellerAdresse());
+		korrAddr.setGesuchstellerAdresseGS(gsAddresse);
+		korrAddr.setGesuchstellerAdresseJA(null);
+
+	 	return  persistence.merge(storedPers);
 	}
 
 }

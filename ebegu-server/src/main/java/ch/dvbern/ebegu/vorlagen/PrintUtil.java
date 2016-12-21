@@ -167,8 +167,8 @@ public class PrintUtil {
 			Optional<GesuchstellerAdresseContainer> korrespondezaddrOpt = adressen.stream().
 				filter(GesuchstellerAdresseContainer::extractIsKorrespondenzAdresse)
 				.reduce(StreamsUtil.toOnlyElement());
-			if (korrespondezaddrOpt.isPresent() && korrespondezaddrOpt.get().getGesuchstellerAdresseJA() != null) {
-				return korrespondezaddrOpt.get().getGesuchstellerAdresseJA().getOrganisation();
+			if (korrespondezaddrOpt.isPresent()) {
+				return korrespondezaddrOpt.get().extractOrganisation();
 			}
 		}
 		return null;
