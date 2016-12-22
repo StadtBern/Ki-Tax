@@ -5,7 +5,7 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import ILogService = angular.ILogService;
-let template =  require('./dv-bisher.html');
+let template = require('./dv-bisher.html');
 require('./dv-bisher.less');
 
 /**
@@ -29,7 +29,7 @@ export class DvBisherComponentConfig implements IComponentOptions {
         ja: '<',
         specificBisherText: '<',
         blockExisted: '<',
-        showIfBisherNone: '<',
+        showIfBisherNone: '<'
     };
     template = template;
     controller = DvBisher;
@@ -53,11 +53,11 @@ export class DvBisher {
         if (this.showIfBisherNone === undefined) {//wenn nicht von aussen gesetzt auf true
             this.showIfBisherNone = true;
         }
-        this.bisherText = this.specificBisherText ?  this.specificBisherText.split('\n') : undefined;
     }
 
-    public getBisher() : Array<string> {
+    public getBisher(): Array<string> {
         if (this.specificBisherText) {
+            this.bisherText = this.specificBisherText ? this.specificBisherText.split('\n') : undefined;
             // War es eine Loeschung, oder ein Hinzufuegen?
             if (this.hasBisher()) {
                 return this.bisherText; // neue eingabe als ein einzelner block
@@ -65,7 +65,7 @@ export class DvBisher {
                 return [this.$translate.instant('LABEL_KEINE_ANGABE')];  //vorher war keine angabe da
             }
         } else if (this.gs instanceof moment) {
-            return  [DateUtil.momentToLocalDateFormat(this.gs, 'DD.MM.YYYY')];
+            return [DateUtil.momentToLocalDateFormat(this.gs, 'DD.MM.YYYY')];
         } else if (this.gs === true) {
             return [this.$translate.instant('LABEL_JA')];
         } else if (this.gs === false) {
@@ -77,11 +77,11 @@ export class DvBisher {
         }
     }
 
-    public hasBisher() : boolean {
+    public hasBisher(): boolean {
         return !this.isEmpty(this.gs);
     }
 
-    public showBisher() : boolean {
+    public showBisher(): boolean {
         return ((this.showIfBisherNone || this.blockExisted === true) || this.hasBisher()) && this.gesuchModelManager.isKorrekturModusJugendamt();
     }
 
