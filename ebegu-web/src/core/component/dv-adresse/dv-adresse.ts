@@ -94,7 +94,7 @@ export class DvAdresseController {
     }
 
     private getBisherLand(): string {
-        if (this.getModel().adresseGS) {
+        if (this.getModel().adresseGS && this.getModel().adresseGS.land) {
             return this.$translate.instant('Land_' + this.getModel().adresseGS.land);
         }
         return "";
