@@ -303,10 +303,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				predicates.add(cb.equal(root.get(Gesuch_.typ), AntragTyp.valueOf(predicateObjectDto.getAntragTyp())));
 			}
 			if (predicateObjectDto.getGesuchsperiodeString() != null) {
-				String[] years = predicateObjectDto.getGesuchsperiodeString().split("/");
-				if (years.length != 2) {
-					throw new EbeguRuntimeException("searchAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format x/y sondern " + predicateObjectDto.getGesuchsperiodeString());
-				}
+				String[] years = ensureYearFormat(predicateObjectDto.getGesuchsperiodeString());
 				predicates.add(
 					cb.and(
 						cb.equal(cb.function("year", Integer.class, gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb)), years[0]),
@@ -372,6 +369,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 		return result;
 	}
+
+
 
 	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, SetJoin<KindContainer, Betreuung> betreuungen) {
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
@@ -774,6 +773,29 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		} else {
 			return Collections.emptyList();
+		}
+	}
+
+	private String[] ensureYearFormat(String gesuchsperiodeString) {
+		String[] years = gesuchsperiodeString.split("/");
+		if (years.length != 2) {
+			throw new EbeguRuntimeException("searchAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format x/y sondern " +gesuchsperiodeString);
+		}
+		String[] result = new String[2];
+		result[0] = changeTwoDigitYearToFourDigit(years[0]);
+	 	result[1] = changeTwoDigitYearToFourDigit(years[1]);
+		return result;
+	}
+
+	private String changeTwoDigitYearToFourDigit(String year) {
+		//im folgenden wandeln wir z.B 16  in 2016 um. Funktioniert bis ins jahr 9999
+		String currentYearAsString = String.valueOf(LocalDate.now().getYear());
+		if (year.length() == currentYearAsString.length()) {
+			return year;
+		} else if (year.length() < currentYearAsString.length()) { // jahr ist im kurzformat
+			return currentYearAsString.substring(0, currentYearAsString.length() - year.length()) + year;
+		} else{
+			throw new EbeguRuntimeException("searchAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format yy oder yyyy sondern " + year);
 		}
 	}
 }
