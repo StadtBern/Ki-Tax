@@ -168,6 +168,7 @@ public class GesuchstellerContainer extends AbstractEntity {
 		return "";
 	}
 
+
 	public GesuchstellerContainer copyForMutation(GesuchstellerContainer mutation) {
 		super.copyForMutation(mutation);
 		mutation.setVorgaengerId(this.getId());
@@ -185,8 +186,11 @@ public class GesuchstellerContainer extends AbstractEntity {
 			mutation.addErwerbspensumContainer(erwerbspensumContainer.copyForMutation(new ErwerbspensumContainer(), this));
 		}
 		for (GesuchstellerAdresseContainer gesuchstellerAdresse : this.getAdressen()) {
-			mutation.addAdresse(gesuchstellerAdresse.copyForMutation(new GesuchstellerAdresseContainer(), this));
+			if (gesuchstellerAdresse.getGesuchstellerAdresseJA() != null) {
+				mutation.addAdresse(gesuchstellerAdresse.copyForMutation(new GesuchstellerAdresseContainer(), this));
+			}
 		}
 		return mutation;
 	}
+
 }

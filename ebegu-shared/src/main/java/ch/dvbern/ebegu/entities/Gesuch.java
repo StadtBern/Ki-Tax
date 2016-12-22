@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
@@ -26,10 +27,12 @@ public class Gesuch extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_fall_id"))
 	private Fall fall;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_antrag_gesuchsperiode_id"))
 	private Gesuchsperiode gesuchsperiode;
@@ -341,6 +344,19 @@ public class Gesuch extends AbstractEntity {
 		return kindContainers.stream()
 			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
 			.anyMatch(betreuung -> betreuung.getInstitutionStammdaten().getInstitution().equals(institution));
+
+	}
+
+	/**
+	 *
+	 * @return false wenn es ein kind gibt dass eine nicht schulamt betreuung hat, wenn es kein kind oder betr gibt wird false zurueckgegeben
+	 */
+	@Transient
+	public boolean hasOnlyBetreuungenOfSchulamt() {
+		//noinspection SimplifyStreamApiCallChains
+		List<Betreuung> allBetreuungen = kindContainers.stream().flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.collect(Collectors.toList());
+		return !allBetreuungen.isEmpty() && allBetreuungen.stream().allMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
 
 	}
 

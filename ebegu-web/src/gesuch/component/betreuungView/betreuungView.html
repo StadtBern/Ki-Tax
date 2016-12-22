@@ -97,7 +97,7 @@
                     <div class="row marginBottom20" dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                          dv-show-expression="!vm.isTagesschule()">
-                        <div class="col-sm-6">
+                        <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
                                              aria-label="vertrag" ng-disabled="!vm.isEnabled()"
@@ -134,10 +134,10 @@
                                                    ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
                                                    ng-required="true"
                                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                                            <dv-error-messages
-                                                for="vm.form['betreuungspensum-' + $index].$error"></dv-error-messages>
                                             <dv-bisher gs="vm.getBetreuungspensum($index).betreuungspensumGS.pensum"
                                                        ja="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"></dv-bisher>
+                                            <dv-error-messages
+                                                for="vm.form['betreuungspensum-' + $index].$error"></dv-error-messages>
 
 
                                         </dv-input-container>
@@ -156,10 +156,10 @@
                                                            ng-required="true"
                                                            ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                             </dv-datepicker>
-                                            <dv-error-messages
-                                                for="vm.form['datumAb-' + $index].$error"></dv-error-messages>
                                             <dv-bisher gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigAb"
                                                        ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"></dv-bisher>
+                                            <dv-error-messages
+                                                for="vm.form['datumAb-' + $index].$error"></dv-error-messages>
                                         </dv-input-container>
                                     </div>
 
@@ -173,10 +173,10 @@
                                                            ng-required="false"
                                                            ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                             </dv-datepicker>
-                                            <dv-error-messages
-                                                for="vm.form['datumBis-' + $index].$error"></dv-error-messages>
                                             <dv-bisher gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigBis"
                                                        ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"></dv-bisher>
+                                            <dv-error-messages
+                                                for="vm.form['datumBis-' + $index].$error"></dv-error-messages>
                                         </dv-input-container>
                                     </div>
                                 </div>
@@ -228,7 +228,7 @@
 
                             <!--erweiterte Beduerfnisse-->
                             <div class="row marginTop20" ng-if="vm.showErweiterteBeduerfnisse()">
-                                <div class="col-sm-6">
+                                <div class="col-xs-12 dv-input-container-question">
                                     <div class="checkbox">
                                         <md-checkbox ng-model="vm.getBetreuungModel().erweiterteBeduerfnisse"
                                                      name="erweiterteBeduerfnisse"

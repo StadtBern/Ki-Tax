@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.services.interceptors.UpdateStatusToInBearbeitungJAInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
@@ -27,6 +28,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import javax.validation.constraints.NotNull;
@@ -102,6 +104,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@PermitAll
+	@Interceptors(UpdateStatusToInBearbeitungJAInterceptor.class)   //
 	public Optional<Gesuch> findGesuch(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Gesuch a = persistence.find(Gesuch.class, key);
@@ -471,6 +474,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			Expression<Boolean> fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 			predicatesToUse.add(fallPredicate);
 
+			if (!benutzer.getRole().equals(UserRole.GESUCHSTELLER)) {
+				// Nur GS darf ein Gesuch sehen, das sich im Status BEARBEITUNG_GS oder FREIGABEQUITTUNG befindet
+				predicatesToUse.add(root.get(Gesuch_.status).in(AntragStatus.IN_BEARBEITUNG_GS, AntragStatus.FREIGABEQUITTUNG).not());
+			}
+
 			if (institutionstammdatenJoin != null) {
 				if (benutzer.getRole().equals(UserRole.ADMIN) || benutzer.getRole().equals(UserRole.SACHBEARBEITER_JA)) {
 					predicatesToUse.add(cb.notEqual(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
@@ -564,6 +572,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		gesuch.setStatus(statusToChangeTo);
 
 		final WizardStep freigabeStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
+		Objects.requireNonNull(freigabeStep, "FREIGABE WizardStep fuer gesuch nicht gefunden " + gesuch.getId());
 		freigabeStep.setWizardStepStatus(WizardStepStatus.OK);
 
 		wizardStepService.saveWizardStep(freigabeStep);
@@ -574,7 +583,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA,	UserRoleName.GESUCHSTELLER})
-	public Gesuch antragFreigeben(@Nonnull String gesuchId) {
+	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username) {
 		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
@@ -584,21 +593,39 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			this.authorizer.checkWriteAuthorization(gesuch);
 			// Die Daten des GS in die entsprechenden Containers kopieren
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
+			// Je nach Status
+			if (!gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG)) {
+				// Es handelt sich um eine Mutation ohne Freigabequittung: Wir setzen das Tagesdatum als FreigabeDatum an dem es der Gesuchsteller einreicht
+				gesuch.setFreigabeDatum(LocalDate.now());
+			}
+
 			// Den Gesuchsstatus setzen
-			gesuch.setStatus(AntragStatus.FREIGEGEBEN);
+			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
+
+			if (username != null) {
+				Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(username);
+				verantwortlicher.ifPresent(benutzer -> gesuch.getFall().setVerantwortlicher(benutzer));
+			}
+
 			// Falls es ein OnlineGesuch war: Das Eingangsdatum setzen
 			if (Eingangsart.ONLINE.equals(gesuch.getEingangsart())) {
 				gesuch.setEingangsdatum(LocalDate.now());
 			}
-			// Je nach Status
-			if (!gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG)) {
-				// Es handelt sich um eine Mutation ohne Freigabequittung: Wir setzen das Tagesdatum als FreigabeDatum
-				gesuch.setFreigabeDatum(LocalDate.now());
-			}
+
 			return updateGesuch(gesuch, true);
 		} else {
 			throw new EbeguEntityNotFoundException("antragFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
 		}
+	}
+
+	/**
+	 * wenn ein Gesuch nur Schulamt Betreuuungen hat so geht es beim barcode Scannen in den Zustand NUR_SCHULAMTM; sonst Freigegeben
+	 */
+	private AntragStatus calculateFreigegebenStatus(@Nonnull Gesuch gesuch) {
+		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			return AntragStatus.NUR_SCHULAMT;
+		}
+		return AntragStatus.FREIGEGEBEN;
 	}
 
 	@Override

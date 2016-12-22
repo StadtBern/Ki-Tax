@@ -1610,9 +1610,6 @@ ALTER TABLE authorisierter_benutzer
 FOREIGN KEY (benutzer_id)
 REFERENCES benutzer (id);
 
-CREATE INDEX IX_benutzer_username_mandant
-  ON benutzer (username, mandant_id);
-
 ALTER TABLE benutzer
   ADD CONSTRAINT FK_benutzer_institution_id
 FOREIGN KEY (institution_id)

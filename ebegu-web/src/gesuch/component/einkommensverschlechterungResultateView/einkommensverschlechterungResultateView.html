@@ -11,7 +11,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form role="form" name="vm.form" class="" unsaved-warning-form="" novalidate>
+            <form role="form" name="vm.form" unsaved-warning-form="" novalidate>
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!-- Total Einkuenfte -->
@@ -48,9 +48,10 @@
                                        aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM|translate}}"
                                        ng-model="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="vm.form.bruttovermoegen.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().bruttovermoegen"
                                            ja="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"></dv-bisher>
+                                <dv-error-messages for="vm.form.bruttovermoegen.$error"
+                                                   class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -65,9 +66,10 @@
                                        aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_2|translate}}"
                                        ng-model="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="vm.form.bruttovermoegen.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().bruttovermoegen"
                                            ja="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"></dv-bisher>
+                                <dv-error-messages for="vm.form.bruttovermoegen.$error"
+                                                   class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -87,9 +89,9 @@
                                        aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM|translate}}"
                                        ng-model="vm.getEinkommensverschlechterungGS1_JA().schulden"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="vm.form.schulden.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().schulden"
                                            ja="vm.getEinkommensverschlechterungGS1_JA().schulden"></dv-bisher>
+                                <dv-error-messages for="vm.form.schulden.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -104,9 +106,9 @@
                                        aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
                                        ng-model="vm.getEinkommensverschlechterungGS2_JA().schulden"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
-                                <dv-error-messages for="vm.form.schulden.$error" class="error"></dv-error-messages>
                                 <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().schulden"
                                            ja="vm.getEinkommensverschlechterungGS2_JA().schulden"></dv-bisher>
+                                <dv-error-messages for="vm.form.schulden.$error" class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>

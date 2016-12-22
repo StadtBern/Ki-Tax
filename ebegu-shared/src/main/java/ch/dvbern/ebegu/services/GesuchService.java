@@ -39,6 +39,8 @@ public interface GesuchService {
 	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
 
 	/**
+	 * Laedt das Gesuch mit der id aus der DB. ACHTUNG zudem wird hier der Status auf IN_BEARBEITUNG_JA gesetzt
+	 * wenn der Benutzer ein JA Mitarbeiter ist und das Gesuch in FREIGEGEBEN ist
 	 * @param key PK (id) des Gesuches
 	 * @return Gesuch mit dem gegebenen key oder null falls nicht vorhanden
 	 */
@@ -145,5 +147,5 @@ public interface GesuchService {
 	 * JA-Containern in die GS-Containern
 	 */
 	@Nonnull
-	Gesuch antragFreigeben(@Nonnull String gesuchId);
+	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String userID);
 }

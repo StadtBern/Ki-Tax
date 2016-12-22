@@ -585,14 +585,11 @@ export default class GesuchModelManager {
      */
     public getKinderWithBetreuungList(): Array<TSKindContainer> {
         let listResult: Array<TSKindContainer> = [];
-        if (this.gesuch && this.gesuch.kindContainers) {
-            this.gesuch.kindContainers.forEach((kind) => {
-                if (kind.kindJA.familienErgaenzendeBetreuung) {
-                    listResult.push(kind);
-                }
-            });
+        if(this.gesuch){
+            listResult = this.gesuch.getKinderWithBetreuungList();
         }
-        return listResult;
+        return listResult
+
     }
 
     public createKind(): void {
@@ -1011,18 +1008,10 @@ export default class GesuchModelManager {
      * Returns false also if there are no Kinder with betreuungsbedarf
      */
     public areThereOnlySchulamtAngebote(): boolean {
-        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
-        if (kinderWithBetreuungList.length <= 0) {
-            return false; // no Kind with bedarf
+        if(!this.gesuch){
+            return false;
         }
-        for (let kind of kinderWithBetreuungList) {
-            for (let betreuung of kind.betreuungen) {
-                if (!isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return this.gesuch.areThereOnlySchulamtAngebote();
     }
 
     /**
@@ -1066,8 +1055,8 @@ export default class GesuchModelManager {
     /**
      * Antrag freigeben
      */
-    public antragFreigeben(antragId: string): IPromise<TSGesuch> {
-        return this.gesuchRS.antragFreigeben(antragId).then((response) => {
+    public antragFreigeben(antragId: string, username: string): IPromise<TSGesuch> {
+        return this.gesuchRS.antragFreigeben(antragId, username).then((response) => {
             this.setGesuch(response);
             return response;
         });

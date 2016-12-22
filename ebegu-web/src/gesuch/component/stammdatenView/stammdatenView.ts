@@ -70,8 +70,13 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     }
 
     korrespondenzAdrClicked() {
-        if (this.showKorrespondadr && (!this.model.korrespondenzAdresse || !this.model.korrespondenzAdresse.adresseJA)) {
-            this.model.korrespondenzAdresse = this.initKorrespondenzAdresse();
+        if (this.showKorrespondadr) {
+            if (!this.model.korrespondenzAdresse) {
+                this.model.korrespondenzAdresse = this.initKorrespondenzAdresse();
+            }
+            else if (!this.model.korrespondenzAdresse.adresseJA) {
+                this.initKorrespondenzAdresseJA();
+            }
         }
     }
 
@@ -91,7 +96,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
                 return this.$q.when(this.model);
             }
             // wenn keine Korrespondenzaddr da ist koennen wir sie wegmachen
-            this.maybeRestKorrespondadr();
+            this.maybeResetKorrespondadr();
 
             if ((this.gesuchModelManager.getGesuch().gesuchsteller1 && this.gesuchModelManager.getGesuch().gesuchsteller1.showUmzug)
                 || (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.showUmzug)
@@ -129,7 +134,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         return this.gesuchModelManager.getGesuch().isThereAnyUmzug();
     }
 
-    private maybeRestKorrespondadr(): void {
+    private maybeResetKorrespondadr(): void {
         if (!this.showKorrespondadr && !this.showKorrespondadrGS) {
             this.getModel().korrespondenzAdresse = undefined; //keine korrAdr weder von GS noch von JA -> entfernen
         } else if (!this.showKorrespondadr) {
@@ -145,6 +150,13 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         korrespAdresseContanier.showDatumVon = false;
         korrespAdresseContanier.adresseJA = korrAdr;
         return korrespAdresseContanier;
+    }
+
+    private initKorrespondenzAdresseJA() {
+        let korrAdr = new TSAdresse();
+        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
+        this.model.korrespondenzAdresse.adresseJA = korrAdr;
+        this.model.korrespondenzAdresse.showDatumVon = false;
     }
 
     public getTextKorrespondenzaddrKorrekturJA(): string {

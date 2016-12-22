@@ -7,8 +7,8 @@
         @{property}: @value;
 }
 
-.placeholder-specs() {
-    .normal();
+.ebeguPlaceholder-specs() {
+    .ebeguNormal();
     font-size: 1.4rem;
     letter-spacing: 0.1rem;
     line-height: 4rem;
@@ -16,69 +16,68 @@
     color: @contrast-dark;
 }
 
-.placeholder() {
+.ebeguPlaceholder() {
     &::-webkit-input-placeholder {
-        .placeholder-specs()
+        .ebeguPlaceholder-specs()
     }
     &::-moz-placeholder {
-        .placeholder-specs()
+        .ebeguPlaceholder-specs()
     }
     &:-moz-placeholder {
-        .placeholder-specs()
+        .ebeguPlaceholder-specs()
     }
     &:-ms-input-placeholder {
-        .placeholder-specs()
+        .ebeguPlaceholder-specs()
     }
 }
 
-.font-family() {
+.ebeguFont-family() {
     font-family: "Open Sans", Arial, Helvetica, sans-serif;
 }
 
-.normal() {
+.ebeguNormal() {
     font-weight: 400;
     font-style: normal;
 }
 
-.italic() {
+.ebeguItalic() {
     font-weight: 400;
     font-style: italic;
 }
 
-.semi-bold() {
+.ebeguSemi-bold() {
     font-weight: 600;
     font-style: normal;
 }
 
-.bold() {
+.ebeguBold() {
     font-weight: 700;
     font-style: normal;
 }
 
-.capitalize() {
+.ebeguCapitalize() {
     text-transform: capitalize;
 }
 
-.vertical(@a) when (@a=middle) {
+.ebeguVertical(@a) when (@a=middle) {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
 }
 
-;
 
-.h1() {
-    .bold();
+.ebeguH1() {
+    .ebeguBold();
     font-size: 1.6rem;
     letter-spacing: 0.1rem;
     line-height: 2.0rem;
-    margin-top: 2rem;
+    margin-top: 0;
     margin-bottom: 1rem;
 }
 
-.h2() {
-    .semi-bold();
+.ebeguH2() {
+    .ebeguSemi-bold();
     font-size: 2.2rem;
     letter-spacing: 0.15rem;
     line-height: 2rem;
@@ -86,8 +85,8 @@
     margin-bottom: 1rem;
 }
 
-.h3() {
-    .semi-bold();
+.ebeguH3() {
+    .ebeguSemi-bold();
     font-size: 1.4rem;
     letter-spacing: 0.1rem;
     line-height: 2.5rem;
@@ -95,9 +94,8 @@
     margin-bottom: 1rem;
 }
 
-.label() {
-    .normal();
-    display: block;
+.ebeguLabel() {
+    .ebeguNormal();
     font-size: 1.4rem;
     letter-spacing: 0.1rem;
     line-height: normal;
@@ -110,24 +108,24 @@
     white-space: normal;
 }
 
-.p() {
-    .normal();
+.ebeguP() {
+    .ebeguNormal();
     font-size: 1.4rem;
     letter-spacing: 0.135rem;
     line-height: 2.8rem;
     text-align: left;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
 }
 
-.small-text() {
-    .normal();
+.ebeguSmall-text() {
+    .ebeguNormal();
     font-size: 1.2rem;
     letter-spacing: 0.1rem;
     line-height: 2.0rem;
 }
 
-.a() {
-    .normal();
+.ebeguA() {
+    .ebeguNormal();
     font-size: 1.3rem;
     letter-spacing: 0.1rem;
     line-height: 2.0rem;

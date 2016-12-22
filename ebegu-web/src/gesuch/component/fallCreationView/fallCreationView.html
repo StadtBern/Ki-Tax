@@ -15,9 +15,9 @@
                     <!--Willkommnstext bei Erstgesuch-->
                     <div ng-if="vm.gesuchModelManager.isErstgesuch()">
 
-                        <p class="subTitleBold" data-translate="ERSTGESUCH_WILLKOMMEN_TEXT"></p>
-                        <p class="subTitle" data-translate="ERSTGESUCH_WILLKOMMEN_TEXT_2"></p>
-                        <p class="subTitle" data-translate="ERSTGESUCH_WILLKOMMEN_TEXT_3"></p>
+                        <h1 data-translate="ERSTGESUCH_WILLKOMMEN_TEXT"></h1>
+                        <p data-translate="ERSTGESUCH_WILLKOMMEN_TEXT_2"></p>
+                        <p data-translate="ERSTGESUCH_WILLKOMMEN_TEXT_3"></p>
 
                     </div>
 
@@ -78,7 +78,7 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-next="true" dv-save="vm.save()">
+                <dv-navigation dv-next="true" dv-translate-next="{{vm.getNextButtonText()}}" dv-save="vm.save()">
                 </dv-navigation>
 
             </form>

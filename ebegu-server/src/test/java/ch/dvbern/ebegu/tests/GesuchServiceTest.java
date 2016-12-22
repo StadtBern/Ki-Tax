@@ -359,19 +359,71 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void testAntragFreigeben() {
+	public void testAntragEinreichenAndFreigeben() {
 		LocalDate now = LocalDate.now();
 		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_GS);
 
-		final Gesuch freigegebenesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
+		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
 
-		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, freigegebenesGesuch.getStatus());
-		Assert.assertFalse(now.isAfter(freigegebenesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
+		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
+		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
 
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
 
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
+
+		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
 	}
+
+	@Test
+	public void testAntragEinreichenAndFreigebenNurSchulamt() {
+		LocalDate now = LocalDate.now();
+		Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_GS);
+		Assert.assertEquals(0, gesuch.getKindContainers().size());
+		Assert.assertFalse(gesuch.hasOnlyBetreuungenOfSchulamt());  //alle leer gilt aktuell als only schulamt = false
+
+		Gesuch schulamtGesuch = persistNewNurSchulamtGesuchEntity(AntragStatus.IN_BEARBEITUNG_GS);
+
+		Assert.assertEquals(2, schulamtGesuch.getKindContainers().size());
+			Assert.assertTrue(schulamtGesuch.hasOnlyBetreuungenOfSchulamt());
+		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(schulamtGesuch, AntragStatus.FREIGABEQUITTUNG);
+
+		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
+		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum()));
+		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(schulamtGesuch.getId(), WizardStepName.FREIGABE);
+		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
+
+		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+		Assert.assertEquals(AntragStatus.NUR_SCHULAMT, eingelesenesGesuch.getStatus());
+
+	}
+
+	@Test
+	public void testStatusuebergangToInBearbeitungJAIFFreigegeben() {
+		//bei Freigegeben soll ein lesen eines ja benutzers dazu fuehren dass das gesuch in bearbeitung ja wechselt
+		Gesuch gesuch = persistNewEntity(AntragStatus.FREIGEGEBEN, Eingangsart.ONLINE);
+		gesuch = persistence.find(Gesuch.class, gesuch.getId());
+		Assert.assertEquals(AntragStatus.FREIGEGEBEN, gesuch.getStatus());
+		loginAsSachbearbeiterJA();
+		//durch findGesuch setzt der {@link UpdateStatusToInBearbeitungJAInterceptor} den Status um
+		Optional<Gesuch> foundGesuch = gesuchService.findGesuch(gesuch.getId());
+		Assert.assertTrue(foundGesuch.isPresent());
+		Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus());
+	}
+
+	@Test
+	public void testNoStatusuebergangToInBearbeitungJAIFNurSchulamt() {
+		//bei schulamt fuehrt das lesen zu keinem wechsel des Gesuchstatus
+		final Gesuch gesuch = persistNewNurSchulamtGesuchEntity(AntragStatus.NUR_SCHULAMT);
+		Assert.assertTrue(gesuch.hasOnlyBetreuungenOfSchulamt());
+		Assert.assertEquals(AntragStatus.NUR_SCHULAMT, gesuch.getStatus());
+		loginAsSchulamt();
+		Optional<Gesuch> foundGesuch = gesuchService.findGesuch(gesuch.getId());
+		Assert.assertTrue(foundGesuch.isPresent());
+		Assert.assertEquals(AntragStatus.NUR_SCHULAMT, foundGesuch.get().getStatus());
+	}
+
 
 
 	// HELP METHOD
@@ -423,13 +475,39 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		}
 	}
 
+
 	private Gesuch persistNewEntity(AntragStatus status) {
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch.setEingangsart(Eingangsart.PAPIER);
 		gesuch.setStatus(status);
 		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
 		gesuch.setFall(persistence.persist(gesuch.getFall()));
 		gesuchService.createGesuch(gesuch);
 		return gesuch;
+	}
+	private Gesuch persistNewEntity(AntragStatus status, Eingangsart eingangsart) {
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch.setEingangsart(eingangsart);
+		gesuch.setStatus(status);
+		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
+		gesuch.setFall(persistence.persist(gesuch.getFall()));
+		gesuchService.createGesuch(gesuch);
+		return gesuch;
+	}
+
+	private Gesuch persistNewNurSchulamtGesuchEntity(AntragStatus status) {
+		Gesuch gesuch = TestDataUtil.createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		gesuch.setStatus(status);
+		gesuch.setEingangsart(Eingangsart.PAPIER);
+		wizardStepService.createWizardStepList(gesuch);
+		gesuch.getKindContainers().stream()
+			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.forEach((betreuung)
+				-> {
+				betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESSCHULE);
+				persistence.merge(betreuung.getInstitutionStammdaten());
+			});
+		return persistence.merge(gesuch);
 	}
 
 	private Gesuch persistEinkommensverschlechterungEntity() {
@@ -460,8 +538,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		}
 
 		Mandant mandant = persistence.persist(TestDataUtil.createDefaultMandant());
-		Benutzer saja = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
-		persistence.persist(saja);
+		Benutzer admin = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
+		persistence.persist(admin);
 	}
 
 	private void loginAsSachbearbeiterInst(String username, Institution institutionToSet) {
@@ -485,6 +563,18 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			LOG.error("could not login as gesuchsteller {} for tests", username);
 		}
 		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
+	}
+
+	private void loginAsSchulamt() {
+		try {
+			createLoginContext("schulamt", "schulamt").login();
+		} catch (LoginException e) {
+			LOG.error("could not login as sachbearbeiter schulamt for tests");
+		}
+
+		Mandant mandant = persistence.persist(TestDataUtil.createDefaultMandant());
+		Benutzer schulamt = TestDataUtil.createBenutzer(UserRole.SCHULAMT, "schulamt", null, null, mandant);
+		persistence.persist(schulamt);
 	}
 
 
