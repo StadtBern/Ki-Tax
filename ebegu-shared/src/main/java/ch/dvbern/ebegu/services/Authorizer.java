@@ -23,6 +23,8 @@ public interface Authorizer {
 	 */
 	void checkWriteAuthorization(@Nullable  Gesuch gesuch);
 
+	void checkFreigebenAuthorization(Gesuch gesuch);
+
 	/**
 	 * prueft ob der aktuelle user berechtigt ist ein gesuch zu erstellen
 	 */

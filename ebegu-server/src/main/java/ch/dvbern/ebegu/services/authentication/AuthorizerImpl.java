@@ -36,6 +36,7 @@ import static ch.dvbern.ebegu.enums.UserRole.*;
 public class AuthorizerImpl implements Authorizer {
 
 	private static final UserRole[] JA_OR_ADM = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA};
+	private static final UserRole[] JA_OR_SA_OR_ADM = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT};
 	private static final UserRole[] ALL_EXCEPT_INST_TRAEG = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, SCHULAMT, STEUERAMT};
 
 	@Inject
@@ -174,6 +175,17 @@ public class AuthorizerImpl implements Authorizer {
 			return;
 		}
 		boolean allowed = isWriteAuthorized(gesuch.getFall(), principalBean.getPrincipal().getName());
+		if (!allowed) {
+			throwViolation(gesuch);
+		}
+	}
+
+	@Override
+	public void checkFreigebenAuthorization(Gesuch gesuch) {
+		if (gesuch == null) {
+			return;
+		}
+		boolean allowed = isFreigebenAuthorized(gesuch.getFall(), principalBean.getPrincipal().getName());
 		if (!allowed) {
 			throwViolation(gesuch);
 		}
@@ -377,6 +389,9 @@ public class AuthorizerImpl implements Authorizer {
 		return isInRoleOrGSOwner(JA_OR_ADM, () -> entity, principalName);
 	}
 
+	private boolean isFreigebenAuthorized(Fall entity, String principalName) {
+		return isInRoleOrGSOwner(JA_OR_SA_OR_ADM, () -> entity, principalName);
+	}
 
 	private void throwCreateViolation() {
 		throw new EJBAccessException(
