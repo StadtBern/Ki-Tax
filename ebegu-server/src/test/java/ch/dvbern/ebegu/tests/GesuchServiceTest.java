@@ -393,9 +393,11 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum()));
 		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(schulamtGesuch.getId(), WizardStepName.FREIGABE);
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
-
+		loginAsSchulamt();
 		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 		Assert.assertEquals(AntragStatus.NUR_SCHULAMT, eingelesenesGesuch.getStatus());
+
+
 
 	}
 
