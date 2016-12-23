@@ -97,7 +97,7 @@ export class DvAdresseController {
         if (this.getModel() &&  this.getModel().adresseGS && this.getModel().adresseGS.land) {
             return this.$translate.instant('Land_' + this.getModel().adresseGS.land);
         }
-        return "";
+        return '';
     }
 
 }
