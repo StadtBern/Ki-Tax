@@ -289,6 +289,13 @@ public class AuthorizerImpl implements Authorizer {
 		if (finanzielleSituation != null) {
 			// hier fuer alle lesbar ausser fuer institution/traegerschaft
 			String name = principalBean.getPrincipal().getName();
+			if (principalBean.isCallerInRole(GESUCHSTELLER.name())) {
+				Fall owningFall = extractFall(finanzielleSituation);
+				if (owningFall == null) {
+					//wenn wir keinen fall finden dann gehen wir davon aus, dass die finanzielle Situation bzw ihr Gesuchsteller noch nicht gespeichert ist
+					return;
+				}
+			}
 			boolean allowed = isInRoleOrGSOwner(ALL_EXCEPT_INST_TRAEG, () -> extractFall(finanzielleSituation), name);
 			if (!allowed) {
 				throwViolation(finanzielleSituation);
