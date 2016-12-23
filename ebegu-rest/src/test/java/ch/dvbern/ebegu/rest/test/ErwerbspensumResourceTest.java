@@ -2,14 +2,18 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
-import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.resource.ErwerbspensumResource;
 import ch.dvbern.ebegu.api.resource.GesuchstellerResource;
+import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
+import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -39,6 +43,8 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 	private Persistence<Gesuch> persistence;
 	@Inject
 	private JaxBConverter converter;
+	@Inject
+	private EbeguParameterService ebeguParameterService;
 	private JaxId gesuchJAXPId;
 
 
@@ -51,16 +57,16 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 
 	@Test
 	public void createGesuchstelelrWithErwerbspensumTest() throws EbeguException {
-		JaxGesuchsteller testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchstellerWithErwerbsbensum();
-		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, testJaxGesuchsteller, null, null);
+		JaxGesuchstellerContainer testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchstellerWithErwerbsbensum();
+		JaxGesuchstellerContainer jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, testJaxGesuchsteller, null, null);
 		Assert.assertNotNull(jaxGesuchsteller);
 
 	}
 
 	@Test
 	public void createErwerbspensumTest() throws EbeguException {
-		JaxGesuchsteller jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchsteller gesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, jaxGesuchsteller, null, null);
+		JaxGesuchstellerContainer jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
+		JaxGesuchstellerContainer gesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, jaxGesuchsteller, null, null);
 		Response response = erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(gesuchsteller), TestJaxDataUtil.createTestJaxErwerbspensumContainer(), null, null);
 		JaxErwerbspensumContainer jaxErwerbspensum = (JaxErwerbspensumContainer) response.getEntity();
 		Assert.assertNotNull(jaxErwerbspensum);
@@ -69,8 +75,8 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 
 	@Test
 	public void updateGesuchstellerTest() throws EbeguException {
-		JaxGesuchsteller jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchsteller storedGS = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, jaxGesuchsteller, null, null);
+		JaxGesuchstellerContainer jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
+		JaxGesuchstellerContainer storedGS = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, jaxGesuchsteller, null, null);
 		Response response = erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(storedGS), TestJaxDataUtil.createTestJaxErwerbspensumContainer(), null, null);
 		JaxErwerbspensumContainer jaxErwerbspensum = (JaxErwerbspensumContainer) response.getEntity();
 		JaxErwerbspensumContainer loadedEwp = erwerbspensumResource.findErwerbspensum(converter.toJaxId(jaxErwerbspensum));
@@ -84,16 +90,22 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	@Test
 	public void invalidPercentErwerbspensumTest() throws EbeguException {
-		JaxGesuchsteller jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchsteller storedGS = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, jaxGesuchsteller, null, null);
+		JaxGesuchstellerContainer jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
+		JaxGesuchstellerContainer storedGS = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, jaxGesuchsteller, null, null);
 		Response response = erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(storedGS), TestJaxDataUtil.createTestJaxErwerbspensumContainer(), null, null);
 		JaxErwerbspensumContainer jaxErwerbspensum = (JaxErwerbspensumContainer) response.getEntity();
 		JaxErwerbspensumContainer loadedEwp = erwerbspensumResource.findErwerbspensum(converter.toJaxId(jaxErwerbspensum));
 		Assert.assertNotNull(loadedEwp);
 		loadedEwp.getErwerbspensumGS().setZuschlagsprozent(50);
 		try{
+			EbeguParameter maxErwerbspensum = new EbeguParameter();
+			maxErwerbspensum.setName(EbeguParameterKey.PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM);
+			maxErwerbspensum.setValue("20");
+			maxErwerbspensum.setGueltigkeit(new DateRange(loadedEwp.getErwerbspensumGS().getGueltigAb().minusDays(1), loadedEwp.getErwerbspensumGS().getGueltigBis()));
+			ebeguParameterService.saveEbeguParameter(maxErwerbspensum);
 			erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(storedGS),loadedEwp,null,null);
 			Assert.fail("50% is invalid");
 		} catch (EJBException e){

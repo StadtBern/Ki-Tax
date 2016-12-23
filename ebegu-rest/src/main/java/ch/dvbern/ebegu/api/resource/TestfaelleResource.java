@@ -28,6 +28,7 @@ public class TestfaelleResource {
 	@Inject
 	private TestfaelleService testfaelleService;
 
+
 	@GET
 	@Path("/testfall/{fallid}/{betreuungenBestaetigt}/{verfuegen}")
 	@Consumes(MediaType.WILDCARD)
@@ -40,6 +41,31 @@ public class TestfaelleResource {
 		StringBuilder responseString = testfaelleService.createAndSaveTestfaelle(fallid, 1, betreuungenBestaetigt, verfuegen);
 		return Response.ok(responseString.toString()).build();
 	}
+
+	@GET
+	@Path("/testfallgs/{fallid}/{betreuungenBestaetigt}/{verfuegen}/{username}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response getTestFallGS(
+		@PathParam("fallid") String fallid,
+		@PathParam("betreuungenBestaetigt") boolean betreuungenBestaetigt,
+		@PathParam("verfuegen") boolean verfuegen,
+		@PathParam("username") String username) {
+
+		StringBuilder responseString = testfaelleService.createAndSaveAsOnlineGesuch(fallid, betreuungenBestaetigt, verfuegen, username);
+		return Response.ok(responseString.toString()).build();
+	}
+
+	@DELETE
+	@Path("/testfallgs/{username}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeFaelleOfGS(
+		@PathParam("username") String username) {
+
+		testfaelleService.removeGesucheOfGS(username);
+		return Response.ok().build();
+	}
+
 
 	@GET
 	@Path("/testfall/{fallid}/{iterationCount}/{betreuungenBestaetigt}/{verfuegen}")

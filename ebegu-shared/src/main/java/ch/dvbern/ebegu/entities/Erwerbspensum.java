@@ -5,9 +5,9 @@ import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumMaxZuschlag;
 import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -56,14 +56,6 @@ public class Erwerbspensum extends AbstractPensumEntity {
 	public Erwerbspensum() {
 	}
 
-	public Erwerbspensum(@Nonnull Erwerbspensum toCopy) {
-		super(toCopy);
-		this.taetigkeit = toCopy.taetigkeit;
-		this.zuschlagZuErwerbspensum = toCopy.zuschlagZuErwerbspensum;
-		this.zuschlagsgrund = toCopy.zuschlagsgrund;
-		this.zuschlagsprozent = toCopy.zuschlagsprozent;
-		this.bezeichnung = toCopy.bezeichnung;
-	}
 
 	public Taetigkeit getTaetigkeit() {
 		return taetigkeit;
@@ -121,5 +113,26 @@ public class Erwerbspensum extends AbstractPensumEntity {
 
 	public void setBezeichnung(@Nullable String bezeichnung) {
 		this.bezeichnung = bezeichnung;
+	}
+
+	public Erwerbspensum copyForMutation(Erwerbspensum mutation) {
+		super.copyForMutation(mutation);
+		mutation.setTaetigkeit(this.getTaetigkeit());
+		mutation.setZuschlagZuErwerbspensum(this.getZuschlagZuErwerbspensum());
+		mutation.setZuschlagsgrund(this.getZuschlagsgrund());
+		mutation.setZuschlagsprozent(this.getZuschlagsprozent());
+		mutation.setBezeichnung(this.getBezeichnung());
+		return mutation;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("bezeichnung", bezeichnung)
+			.append("taetigkeit", taetigkeit)
+			.append("zuschlagZuErwerbspensum", zuschlagZuErwerbspensum)
+			.append("zuschlagsgrund", zuschlagsgrund)
+			.append("zuschlagsprozent", zuschlagsprozent)
+			.toString();
 	}
 }

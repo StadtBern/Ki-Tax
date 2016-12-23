@@ -6,8 +6,10 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMahnung;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
+import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.*;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.Validate;
 
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -173,6 +176,37 @@ public class DownloadResource {
 			return getFileDownloadResponse(uriInfo, ip, generatedDokument);
 		}
 		throw new EbeguEntityNotFoundException("getDokumentAccessTokenGeneratedDokument",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId());
+	}
+
+	/**
+	 * Wir benutzen dafuer die Methode getDokumentAccessTokenGeneratedDokument nicht damit man unnoetige Parameter (zustelladresse)
+	 * nicht fuer jeden DokumentTyp eingeben muss
+	 */
+	@Nonnull
+	@GET
+	@Path("/{gesuchid}/FREIGABEQUITTUNG/{forceCreation}/generated")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getFreigabequittungAccessTokenGeneratedDokument(
+		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
+		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
+		@Nonnull @QueryParam("zustelladresse") String zustelladresse,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
+
+		Validate.notNull(jaxGesuchId.getId());
+		String ip = getIP(request);
+
+		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
+		if (gesuch.isPresent()) {
+			GeneratedDokument generatedDokument = generatedDokumentService
+				.getFreigabequittungAccessTokenGeneratedDokument(gesuch.get(), forceCreation, Zustelladresse.valueOf(zustelladresse));
+			if (generatedDokument == null) {
+				return Response.noContent().build();
+			}
+			return getFileDownloadResponse(uriInfo, ip, generatedDokument);
+		}
+		throw new EbeguEntityNotFoundException("getFreigabequittungAccessTokenGeneratedDokument",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId());
 	}
 

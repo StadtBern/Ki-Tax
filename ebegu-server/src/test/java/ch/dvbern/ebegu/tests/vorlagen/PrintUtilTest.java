@@ -1,11 +1,11 @@
 package ch.dvbern.ebegu.tests.vorlagen;
 
 import ch.dvbern.ebegu.entities.AdresseTyp;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Gueltigkeit;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,6 +13,7 @@ import org.junit.Test;
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,19 +25,21 @@ public class PrintUtilTest {
 
 	@Test
 	public void testGetGesuchstellerAdresseWithNoAdressen() {
-		final Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		gesuchsteller.setAdressen(new ArrayList<>());
 
-		final Optional<GesuchstellerAdresse> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
+		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
 
 		Assert.assertFalse(gesuchstellerAdresse.isPresent());
 	}
 
 	@Test
 	public void testGetGesuchstellerAdresseWithJustWohnadresse() {
-		final Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 
-		final Optional<GesuchstellerAdresse> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
+		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
 
 		Assert.assertTrue(gesuchstellerAdresse.isPresent());
 		Assert.assertEquals(gesuchsteller.getAdressen().get(0), gesuchstellerAdresse.get());
@@ -44,64 +47,84 @@ public class PrintUtilTest {
 
 	@Test
 	public void testGetGesuchstellerAdresseWithUmzugsadresse() {
-		final Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
-		final GesuchstellerAdresse umzugsadresse = TestDataUtil.createDefaultGesuchstellerAdresse();
-		umzugsadresse.setStrasse("newStrasse");
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
+		final GesuchstellerAdresseContainer umzugsadresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);
+		umzugsadresse.getGesuchstellerAdresseJA().setStrasse("newStrasse");
 		gesuchsteller.addAdresse(umzugsadresse);
 
 		//update Gueltigkeiten
 		final LocalDate now = LocalDate.now();
-		gesuchsteller.getAdressen().get(0).setGueltigkeit(new DateRange(now.minusMonths(5), now.minusDays(1))); // before now
-		gesuchsteller.getAdressen().get(1).setGueltigkeit(new DateRange(now, now.plusMonths(2))); // now liegt in dieser Periode
+		gesuchsteller.getAdressen().get(0).getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(now.minusMonths(5), now.minusDays(1))); // before now
+		gesuchsteller.getAdressen().get(1).getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(now, now.plusMonths(2))); // now liegt in dieser Periode
 
-		final Optional<GesuchstellerAdresse> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
+		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
 
 		Assert.assertTrue(gesuchstellerAdresse.isPresent());
 		Assert.assertEquals(gesuchsteller.getAdressen().get(1), gesuchstellerAdresse.get());
-		Assert.assertEquals("newStrasse", gesuchstellerAdresse.get().getStrasse());
+		Assert.assertEquals("newStrasse", gesuchstellerAdresse.get().extractStrasse());
 	}
 
 	@Test
 	public void testGetGesuchstellerAdresseWithKorrespondezadresse() {
-		final Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
-		final GesuchstellerAdresse korrespondenzadresse = createKorrespondenzadresse(gesuchsteller);
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
+		final GesuchstellerAdresseContainer korrespondenzadresse = createKorrespondenzadresse(gesuchsteller);
 
-		final Optional<GesuchstellerAdresse> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
+		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
 
 		Assert.assertTrue(gesuchstellerAdresse.isPresent());
 		Assert.assertEquals(korrespondenzadresse, gesuchstellerAdresse.get());
-		Assert.assertEquals("korrespondezStrasse", gesuchstellerAdresse.get().getStrasse());
+		Assert.assertEquals("korrespondezStrasse", gesuchstellerAdresse.get().extractStrasse());
+	}
+
+	@Test
+	public void testGetGesuchstellerAdresseWithKorrespondezadresseDeletedByJA() {
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
+		//wir haben eine korrespondenzadresse aber diese wurde vom JA weggenommen
+		final GesuchstellerAdresseContainer korrespondenzadresse = createKorrespondenzadresse(gesuchsteller);
+		korrespondenzadresse.setGesuchstellerAdresseJA(null);
+
+		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
+
+		Assert.assertTrue(gesuchstellerAdresse.isPresent());
+		Assert.assertEquals(gesuchsteller.getAdressen().get(0), gesuchstellerAdresse.get());
+		Assert.assertEquals(AdresseTyp.WOHNADRESSE, gesuchstellerAdresse.get().extractAdresseTyp());
+		Assert.assertEquals("Nussbaumstrasse", gesuchstellerAdresse.get().extractStrasse());
 	}
 
 	@Test
 	public void testGetGesuchstellerAdresseWithKorrespondezadresseAndUmzugsadresse() {
-		final Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
-		final GesuchstellerAdresse korrespondenzadresse = createKorrespondenzadresse(gesuchsteller);
-		final GesuchstellerAdresse umzugsadresse = TestDataUtil.createDefaultGesuchstellerAdresse();
-		umzugsadresse.setStrasse("newStrasse");
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
+		final GesuchstellerAdresseContainer korrespondenzadresse = createKorrespondenzadresse(gesuchsteller);
+		final GesuchstellerAdresseContainer umzugsadresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);
+		umzugsadresse.getGesuchstellerAdresseJA().setStrasse("newStrasse");
 		gesuchsteller.addAdresse(umzugsadresse);
 
 		//update Gueltigkeiten
 		final LocalDate now = LocalDate.now();
-		final List<GesuchstellerAdresse> wohnAdressen = gesuchsteller.getAdressen().stream()
-			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.isKorrespondenzAdresse()).sorted(Gueltigkeit.GUELTIG_AB_COMPARATOR)
+		final List<GesuchstellerAdresseContainer> wohnAdressen = gesuchsteller.getAdressen().stream()
+			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse())
+			.sorted(Comparator.comparing(o -> o.extractGueltigkeit().getGueltigAb()))
 			.collect(Collectors.toList());
-		wohnAdressen.get(0).setGueltigkeit(new DateRange(now.minusMonths(5), now.minusDays(1))); // before now
-		wohnAdressen.get(1).setGueltigkeit(new DateRange(now, now.plusMonths(2))); // now liegt in dieser Periode
+		wohnAdressen.get(0).getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(now.minusMonths(5), now.minusDays(1))); // before now
+		wohnAdressen.get(1).getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(now, now.plusMonths(2))); // now liegt in dieser Periode
 
-		final Optional<GesuchstellerAdresse> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
+		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
 
 		Assert.assertTrue(gesuchstellerAdresse.isPresent());
 		Assert.assertEquals(korrespondenzadresse, gesuchstellerAdresse.get());
-		Assert.assertEquals("korrespondezStrasse", gesuchstellerAdresse.get().getStrasse());
+		Assert.assertEquals("korrespondezStrasse", gesuchstellerAdresse.get().extractStrasse());
 	}
 
 
 	@Nonnull
-	private GesuchstellerAdresse createKorrespondenzadresse(Gesuchsteller gesuchsteller) {
-		final GesuchstellerAdresse korrespondenzadresse = TestDataUtil.createDefaultGesuchstellerAdresse();
-		korrespondenzadresse.setStrasse("korrespondezStrasse");
-		korrespondenzadresse.setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
+	private GesuchstellerAdresseContainer createKorrespondenzadresse(GesuchstellerContainer gesuchsteller) {
+		final GesuchstellerAdresseContainer korrespondenzadresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);
+		korrespondenzadresse.getGesuchstellerAdresseJA().setStrasse("korrespondezStrasse");
+		korrespondenzadresse.getGesuchstellerAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
 		gesuchsteller.addAdresse(korrespondenzadresse);
 		return korrespondenzadresse;
 	}

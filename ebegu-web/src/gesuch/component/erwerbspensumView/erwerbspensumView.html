@@ -1,7 +1,7 @@
 <div class="erwerbspensumView gesuchModul">
     <div class="row viewTitle">
         <div class="col-md-12">
-            <h1 ng-bind="vm.gesuchsteller.getFullName()"></h1>
+            <h1 ng-bind="vm.gesuchsteller.extractFullName()"></h1>
             <hr class="header"/>
             <p class="inlineHint" data-translate="INFOTEXT_ERWERBSPENSUM"></p>
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
@@ -9,8 +9,8 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
-                  unsaved-warning-form ng-if="vm.erwerbspensum">
+            <form role="form" name="vm.form" class="" novalidate
+                  unsaved-warning-form ng-if="vm.model">
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Bezeichnung-->
@@ -19,10 +19,12 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="BEZEICHNUNG" for="bezeichnung"></label>
                                 <input id="bezeichnung" type="text" name="bezeichnung"
-                                       ng-model="vm.erwerbspensum.erwerbspensumJA.bezeichnung"
+                                       ng-model="vm.model.erwerbspensumJA.bezeichnung"
                                        dv-max-length class="form-control" ng-required="false"
                                        ng-disabled="vm.erwerbspensumDisabled()">
-                                <dv-error-messages for="form.bezeichnung.$error"></dv-error-messages>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.bezeichnung"
+                                           ja="vm.model.erwerbspensumJA.bezeichnung"></dv-bisher>
+                                <dv-error-messages for="vm.form.bezeichnung.$error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -37,13 +39,15 @@
                                 </label>
 
                                 <select name="taetigkeit" id="taetigkeit"
-                                        ng-model="vm.erwerbspensum.erwerbspensumJA.taetigkeit"
+                                        ng-model="vm.model.erwerbspensumJA.taetigkeit"
                                         class="form-control"
                                         ng-options="(taetigkeit| translate) for taetigkeit in vm.getTaetigkeitenList() "
                                         ng-required="true" ng-change="vm.taetigkeitChanged()"
                                         ng-disabled="vm.erwerbspensumDisabled()">
                                 </select>
-                                <dv-error-messages for="form.taetigkeit.$error"
+                                <dv-bisher gs="vm.model.erwerbspensumGS.taetigkeit"
+                                           ja="vm.model.erwerbspensumJA.taetigkeit"></dv-bisher>
+                                <dv-error-messages for="vm.form.taetigkeit.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -54,15 +58,16 @@
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="PENSUM" for="taetigkeitPensum"></label>
-                                <input id="taetigkeitPensum" type="text" name="taetigkeitPensum"
-                                       ng-model="vm.erwerbspensum.erwerbspensumJA.pensum"
+                                <input id="taetigkeitPensum" type="number" name="taetigkeitPensum"
+                                       ng-model="vm.model.erwerbspensumJA.pensum"
                                        dv-max-length class="form-control" max="100"
                                        ng-required="true" ng-pattern="vm.patternPercentage"
                                        ng-disabled="vm.erwerbspensumDisabled()"
                                        ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                                <dv-error-messages for="form.taetigkeitPensum.$error"
+                                <dv-bisher gs="vm.model.erwerbspensumGS.pensum"
+                                           ja="vm.model.erwerbspensumJA.pensum"></dv-bisher>
+                                <dv-error-messages for="vm.form.taetigkeitPensum.$error"
                                                    class="error"></dv-error-messages>
-                                <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.pensum"></dv-bisher>
                             </dv-input-container>
                         </div>
                     </div>
@@ -74,12 +79,14 @@
                                 <label class="md-no-float" data-translate="AB" for="taetigkeitAbID">
                                 </label>
                                 <dv-datepicker input-id="taetigkeitAbID" name="taetigkeitAb"
-                                               ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigAb"
+                                               ng-model="vm.model.erwerbspensumJA.gueltigkeit.gueltigAb"
                                                ng-required="true" class="input-element" placeholder=""
                                                ng-disabled="vm.erwerbspensumDisabled()"
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
-                                <dv-error-messages for="form.taetigkeitAb.$error"
+                                <dv-bisher gs="vm.model.erwerbspensumGS.gueltigkeit.gueltigAb"
+                                           ja="vm.model.erwerbspensumJA.gueltigkeit.gueltigAb"></dv-bisher>
+                                <dv-error-messages for="vm.form.taetigkeitAb.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
@@ -88,67 +95,85 @@
                                 <label class="md-no-float" data-translate="BIS" for="taetigkeitBisID">
                                 </label>
                                 <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis"
-                                               ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigBis"
+                                               ng-model="vm.model.erwerbspensumJA.gueltigkeit.gueltigBis"
                                                ng-required="false" class="input-element"
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
-                                <dv-error-messages for="form.taetigkeitBis.$error"
+                                <dv-bisher gs="vm.model.erwerbspensumGS.gueltigkeit.gueltigBis"
+                                           ja="vm.model.erwerbspensumJA.gueltigkeit.gueltigBis"></dv-bisher>
+                                <dv-error-messages for="vm.form.taetigkeitBis.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
 
                     <!--Zuschlag zu Erwerbspensum-->
-                    <div class="row" ng-if="vm.viewZuschlag()">
-                        <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
-                                <md-checkbox ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum"
+                                <md-checkbox ng-model="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
                                              name="zuschlag"
-                                             ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled()"
+                                             ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled() || !vm.viewZuschlag()"
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
                                     <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
                                 </md-checkbox>
-                                <dv-error-messages for="form.zuschlag.$error"
+                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum"
+                                           ja="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
+                                           specific-bisher-text="vm.getTextZuschlagErwerbspensumKorrekturJA()"></dv-bisher>
+                                <dv-error-messages for="vm.form.zuschlag.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
 
                     <!--Zuschlagsgrund-->
-                    <div class="row" ng-if="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum">
+                    <div class="row" ng-if="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum">
                         <div class="col-sm-12 dv-input-container-small">
                             <div class="form-group">
                                 <label class="md-no-float" data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
                                 </label>
-
+                            <!--im readonly modus wird das select durch ein div ersetzt weil werte gesetzt sein koennen die nicht in der selectbox sind-->
                             <select name="zuschlagsgrund" id="zuschlagsgrund"
-                                    ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagsgrund"
+                                    ng-model="vm.model.erwerbspensumJA.zuschlagsgrund"
                                     class="form-control"
                                     ng-options="zuschlagsgrund | translate for zuschlagsgrund in vm.getZuschlagsgrundList() "
                                     ng-required="true"
-                                    ng-disabled="vm.erwerbspensumDisabled()">
+                                    ng-disabled="vm.erwerbspensumDisabled()"
+                                    ng-if="!vm.isGesuchReadonly()">
                             </select>
-                            <dv-error-messages for="form.zuschlagsgrund.$error"
-                                               class="error"></dv-error-messages>
-                        </div>
+                            <div id="zuschlagsgrund_dvi"
+                                 ng-bind="vm.model.erwerbspensumJA.zuschlagsgrund | translate"
+                                 class="form-control"
+                                 ng-if="vm.isGesuchReadonly()">
+                            </div>
+                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
+                                           ja="vm.model.erwerbspensumJA.zuschlagsgrund"
+                                           show-if-bisher-none="false"
+                                           block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
+                                <dv-error-messages for="vm.form.zuschlagsgrund.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
                     </div>
                 </div>
 
                 <!--Zuschlagsprozent-->
-                <div class="row" ng-if="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum">
+                <div class="row" ng-if="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum">
                     <div class="col-sm-12 dv-input-container-small">
                         <dv-input-container class="form-group">
                             <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT" for="zuschlagsprozent"></label>
                             <input type="number" id="zuschlagsprozent" type="text" name="zuschlagsprozent"
-                                   ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagsprozent"
+                                   ng-model="vm.model.erwerbspensumJA.zuschlagsprozent"
                                    dv-max-length class="form-control" max="100"
                                    ng-required="true" ng-pattern="vm.patternPercentage"
                                    ng-disabled="vm.erwerbspensumDisabled()"
                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                            <dv-error-messages for="form.zuschlagsprozent.$error"
+                            <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsprozent"
+                                       ja="vm.model.erwerbspensumJA.zuschlagsprozent"
+                                       show-if-bisher-none="false"
+                                       block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
+                            <dv-error-messages for="vm.form.zuschlagsprozent.$error"
                                                class="error"></dv-error-messages>
-                            <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.zuschlagsprozent"></dv-bisher>
                         </dv-input-container>
                     </div>
                 </div>
@@ -157,12 +182,12 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-cancel="vm.cancel(form)" dv-next="true" dv-save="vm.save(form)" dv-sub-step="2" dv-translate-next="{{'SPEICHERN_UPPER'}}">
+                <dv-navigation dv-cancel="vm.cancel()" dv-next="true" dv-save="vm.save()" dv-sub-step="2" dv-translate-next="{{'SPEICHERN_UPPER'}}">
                 </dv-navigation>
 
             </form>
 
-            <p ng-if="!vm.erwerbspensum">Keine Erwerbspensum Daten vorhanden</p>
+            <p ng-if="!vm.model">Keine Erwerbspensum Daten vorhanden</p>
 
         </div>
     </div>

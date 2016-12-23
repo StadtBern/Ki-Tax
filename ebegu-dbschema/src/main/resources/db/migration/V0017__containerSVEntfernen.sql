@@ -1,8 +1,0 @@
-ALTER TABLE finanzielle_situation_container DROP FOREIGN KEY FK_finanziellesituationcontainer_finanziellesituationsv_id;
-DROP INDEX FK_finanziellesituationcontainer_finanziellesituationsv_id ON finanzielle_situation_container;
-
-UPDATE finanzielle_situation_container SET finanzielle_situationja_id = finanzielle_situationsv_id;
-ALTER TABLE finanzielle_situation_container DROP finanzielle_situationsv_id;
-
-UPDATE finanzielle_situation_container_aud SET finanzielle_situationja_id = finanzielle_situationsv_id;
-ALTER TABLE finanzielle_situation_container_aud DROP finanzielle_situationsv_id;

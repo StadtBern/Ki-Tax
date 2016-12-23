@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>0.13.1</version>
+        <version>0.14.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -85,6 +85,11 @@
             <artifactId>docx-engine</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.sf.barcode4j</groupId>
+            <artifactId>barcode4j</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
             <groupId>fr.opensagres.xdocreport</groupId>
             <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
         </dependency>
@@ -123,6 +128,11 @@
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>
             <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.interceptor</groupId>
+            <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+            <version>1.0.0.Final</version>
         </dependency>
 
     </dependencies>

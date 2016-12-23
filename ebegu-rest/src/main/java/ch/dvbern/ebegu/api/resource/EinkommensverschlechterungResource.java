@@ -2,12 +2,11 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.api.dtos.JaxFinanzModel;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -75,7 +74,7 @@ public class EinkommensverschlechterungResource {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
 		if (gesuch.isPresent()) {
-			Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
+			Optional<GesuchstellerContainer> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
 			if (gesuchsteller.isPresent()) {
 				EinkommensverschlechterungContainer convertedFinSitCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
 				convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
@@ -129,6 +128,65 @@ public class EinkommensverschlechterungResource {
 		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
 
 		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
+		FinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, basisJahrPlus);
+		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
+		context.setRollbackOnly();
+		return Response.ok(abstFinSitResultateDTO).build();
+	}
+
+	/**
+	 * Diese Methode ist aehnlich wie {@link this.calculateEinkommensverschlechterung}
+	 * Hier wird die  Finanzielle Situation als eigenes Model uebergeben statt das ganzes Gesuch
+	 */
+	@Nullable
+	@POST
+	@Path("/calculateTemp/{basisJahrPlusID}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response calculateEinkommensverschlechterungTemp (
+		@Nonnull @NotNull @PathParam("basisJahrPlusID") JaxId basisJahrPlusID,
+		@Nonnull @NotNull @Valid JaxFinanzModel jaxFinSitModel,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(basisJahrPlusID.getId());
+		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
+		Gesuch gesuch = new Gesuch();
+		gesuch.initFamiliensituationContainer();
+		gesuch.extractFamiliensituation().setGemeinsameSteuererklaerung(jaxFinSitModel.isGemeinsameSteuererklaerung());
+		if (jaxFinSitModel.getFinanzielleSituationContainerGS1() != null) {
+			gesuch.setGesuchsteller1(new GesuchstellerContainer());
+			gesuch.getGesuchsteller1().setGesuchstellerJA(new Gesuchsteller());
+			gesuch.getGesuchsteller1().setFinanzielleSituationContainer(
+				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS1(), new FinanzielleSituationContainer()));
+		}
+		if (jaxFinSitModel.getFinanzielleSituationContainerGS2() != null) {
+			gesuch.setGesuchsteller2(new GesuchstellerContainer());
+			gesuch.getGesuchsteller2().setGesuchstellerJA(new Gesuchsteller());
+			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(
+				converter.finanzielleSituationContainerToEntity(jaxFinSitModel.getFinanzielleSituationContainerGS2(), new FinanzielleSituationContainer()));
+		}
+		if (jaxFinSitModel.getEinkommensverschlechterungContainerGS1() != null) {
+			if(gesuch.getGesuchsteller1() ==null) {
+				gesuch.setGesuchsteller1(new GesuchstellerContainer());
+				gesuch.getGesuchsteller1().setGesuchstellerJA(new Gesuchsteller());
+			}
+			gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(
+				converter.einkommensverschlechterungContainerToEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS1(), new EinkommensverschlechterungContainer()));
+		}
+		if (jaxFinSitModel.getEinkommensverschlechterungContainerGS2() != null) {
+			if(gesuch.getGesuchsteller2() ==null) {
+				gesuch.setGesuchsteller2(new GesuchstellerContainer());
+				gesuch.getGesuchsteller2().setGesuchstellerJA(new Gesuchsteller());
+			}
+			gesuch.getGesuchsteller2().setEinkommensverschlechterungContainer(
+				converter.einkommensverschlechterungContainerToEntity(jaxFinSitModel.getEinkommensverschlechterungContainerGS2(), new EinkommensverschlechterungContainer()));
+		}
+		if (jaxFinSitModel.getEinkommensverschlechterungInfoContainer() != null) {
+			gesuch.setEinkommensverschlechterungInfoContainer(
+				converter.einkommensverschlechterungInfoContainerToEntity(jaxFinSitModel.getEinkommensverschlechterungInfoContainer(), new EinkommensverschlechterungInfoContainer()));
+		}
+
 		FinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, basisJahrPlus);
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
 		context.setRollbackOnly();

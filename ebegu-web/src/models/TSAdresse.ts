@@ -11,7 +11,6 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
     private _ort: string;
     private _land: string;
     private _gemeinde: string;
-    private _showDatumVon: boolean;
     private _adresseTyp: TSAdressetyp = TSAdressetyp.WOHNADRESSE;
     private _nichtInGemeinde: boolean;
     private _organisation: string;
@@ -49,6 +48,24 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
             this.gueltigkeit.gueltigAb.isSame(other.gueltigkeit.gueltigAb)
             // gueltigBis wird nicht gecheckt, da es nur relevant ist, wann sie eingezogen sind
         );
+    }
+
+
+    public copy(toCopy: TSAdresse): void {
+        this._strasse = toCopy.strasse;
+        this._hausnummer = toCopy.hausnummer;
+        this._zusatzzeile = toCopy.zusatzzeile;
+        this._plz = toCopy.plz;
+        this._ort = toCopy.ort;
+        this._land = toCopy.land;
+        this._gemeinde = toCopy.gemeinde;
+        this._adresseTyp = toCopy.adresseTyp;
+        this._nichtInGemeinde = toCopy.nichtInGemeinde;
+        if (!this.gueltigkeit) {
+            this.gueltigkeit = new TSDateRange();
+        }
+        this.gueltigkeit.gueltigAb = toCopy.gueltigkeit.gueltigAb;
+        this.gueltigkeit.gueltigBis = toCopy.gueltigkeit.gueltigBis;
     }
 
     public get strasse(): string {
@@ -105,14 +122,6 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
 
     public set gemeinde(value: string) {
         this._gemeinde = value;
-    }
-
-    public get showDatumVon(): boolean {
-        return this._showDatumVon;
-    }
-
-    public set showDatumVon(value: boolean) {
-        this._showDatumVon = value;
     }
 
     get adresseTyp(): TSAdressetyp {

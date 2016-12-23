@@ -29,7 +29,7 @@ public class Testfall06_BeckerNora extends AbstractTestfall {
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createAlleinerziehend();
-		Gesuchsteller gesuchsteller1 = createGesuchsteller(FAMILIENNAME, "Nora");
+		GesuchstellerContainer gesuchsteller1 = createGesuchstellerContainer(FAMILIENNAME, "Nora");
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensumGS1 = createErwerbspensum(60, 0);
@@ -43,15 +43,15 @@ public class Testfall06_BeckerNora extends AbstractTestfall {
 		gesuch.getKindContainers().add(kind2);
 
 		// Betreuungen
-		// Kind 1: Tagi Aaregg
-		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.TAGI, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
+		// Kind 1: Tagi Weissenstein
+		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.TAGI, ID_INSTITUTION_WEISSENSTEIN, betreuungenBestaetigt);
 		betreuungTagiAaregg.setKind(kind1);
 		kind1.getBetreuungen().add(betreuungTagiAaregg);
 		BetreuungspensumContainer betreuungspensumTagiAaregg = createBetreuungspensum(100, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));
 		betreuungspensumTagiAaregg.setBetreuung(betreuungTagiAaregg);
 		betreuungTagiAaregg.getBetreuungspensumContainers().add(betreuungspensumTagiAaregg);
-		// Kind 2: Kita Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
+		// Kind 2: Kita Weissenstein
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_WEISSENSTEIN, betreuungenBestaetigt);
 		betreuungKitaAaregg.setKind(kind2);
 		kind2.getBetreuungen().add(betreuungKitaAaregg);
 		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(100, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));

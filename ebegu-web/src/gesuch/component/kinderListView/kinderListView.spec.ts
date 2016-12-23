@@ -5,6 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {KinderListViewController} from './kinderListView';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
 describe('kinderListView', function () {
 
@@ -19,12 +20,13 @@ describe('kinderListView', function () {
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         gesuchModelManager = $injector.get('GesuchModelManager');
         spyOn(gesuchModelManager, 'initKinder').and.returnValue({});
-        kinderListViewController = new KinderListViewController(null, gesuchModelManager, null, null, null, wizardStepManager);
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
+        kinderListViewController = new KinderListViewController(null, gesuchModelManager,
+            null, null, null, wizardStepManager, scope );
     }));
 
     beforeEach(function () {
-        gesuchModelManager.initGesuch(false);
+        gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
     });
 });

@@ -32,7 +32,10 @@
         <!--<extension module="org.modeshape"/>-->
     </extensions>
 
-    <system-properties>
+	<system-properties>
+		<property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION" value="on"/>
+		<property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION_MIME_TYPES" value="text/javascript,text/css,text/html"/>
+		<property name="ebegu.development.mode" value="true"/>
         <property name="ebegu.client.using.https" value="false"/>
     </system-properties>
 

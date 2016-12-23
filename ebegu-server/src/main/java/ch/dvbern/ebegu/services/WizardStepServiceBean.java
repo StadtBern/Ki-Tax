@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -75,10 +75,22 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 		query.where(predWizardStepFromGesuch);
 		final List<WizardStep> criteriaResults = persistence.getCriteriaResults(query);
-		criteriaResults.forEach(result -> {
-			authorizer.checkReadAuthorization(result);
-		});
+		criteriaResults.forEach(result -> authorizer.checkReadAuthorization(result));
 		return criteriaResults;
+	}
+
+	@Override
+	public WizardStep findWizardStepFromGesuch(String gesuchId, WizardStepName stepName) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<WizardStep> query = cb.createQuery(WizardStep.class);
+		Root<WizardStep> root = query.from(WizardStep.class);
+		Predicate predWizardStepFromGesuch = cb.equal(root.get(WizardStep_.gesuch).get(Gesuch_.id), gesuchId);
+		Predicate predWizardStepName = cb.equal(root.get(WizardStep_.wizardStepName), stepName);
+
+		query.where(predWizardStepFromGesuch, predWizardStepName);
+		final WizardStep result = persistence.getCriteriaSingleResult(query);
+		authorizer.checkReadAuthorization(result);
+		return result;
 	}
 
 	@Override
@@ -105,6 +117,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.OK, true)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.OK, true)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.OK, true)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FREIGABE, WizardStepStatus.OK, true)));
 			// Verfuegen muss WARTEN sein, da die Betreuungen nochmal verfuegt werden muessen
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.WARTEN, true)));
 		} else { // GESUCH
@@ -119,6 +132,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FREIGABE, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT, false)));
 		}
 		return wizardStepList;
@@ -182,7 +196,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 				final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil
 					.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(wizardStep.getGesuch()),
-						dokumentGrundService.getAllDokumentGrundByGesuch(wizardStep.getGesuch()));
+						dokumentGrundService.findAllDokumentGrundByGesuch(wizardStep.getGesuch()));
 
 				boolean allNeededDokumenteUploaded = true;
 				for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
@@ -231,7 +245,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				&& !WizardStepStatus.OK.equals(wizardStep.getWizardStepStatus())) {
 				final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
 				if (betreuungenFromGesuch.stream().allMatch(betreuung ->
-						Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) ||
+					Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) ||
 						Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG.equals(betreuung.getBetreuungsstatus()) ||
 						Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus()) ||
 						Betreuungsstatus.GEKUENDIGT_VOR_EINTRITT.equals(betreuung.getBetreuungsstatus()) ||
@@ -252,15 +266,14 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * @param wizardSteps
 	 */
 	private void updateAllStatusForGesuchsteller(List<WizardStep> wizardSteps) {
+		principalBean.isCallerInRole(UserRole.GESUCHSTELLER);
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
 				setWizardStepOkOrMutiert(wizardStep);
 			} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
 				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
 				&& !wizardStep.getVerfuegbar()
-				&& !WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
-				&& AntragTyp.GESUCH.equals(wizardStep.getGesuch().getTyp())) {    //in mutation soll fin sit und einkommensverschl per default nicht verfuegbar sein
-
+				&& !WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
 				wizardStep.setVerfuegbar(true);
 			}
 		}
@@ -351,12 +364,10 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 						wizardStep.setVerfuegbar(true);
 
-					} else if (!wizardStep.getGesuch().isMutation() // fuer Mutationen bleiben diese beide Steps immer noch gruen, da die Werte direkt auf 0 gesetzt werden
-						&& (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))) {
-
-						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+					} else if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
 						wizardStep.setVerfuegbar(false);
+						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 					}
 				}
 			}
@@ -442,4 +453,11 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		return wizardStep;
 	}
 
+	@Override
+	public void removeSteps(Gesuch gesToRemove) {
+		List<WizardStep> wizardStepsFromGesuch = findWizardStepsFromGesuch(gesToRemove.getId());
+		for (WizardStep wizardStep : wizardStepsFromGesuch) {
+			persistence.remove(WizardStep.class, wizardStep.getId());
+		}
+	}
 }

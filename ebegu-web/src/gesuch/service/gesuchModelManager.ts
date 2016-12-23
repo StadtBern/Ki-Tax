@@ -10,10 +10,8 @@ import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
 import {IPromise, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSFinanzielleSituation from '../../models/TSFinanzielleSituation';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
 import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensverschlechterungContainer';
-import TSEinkommensverschlechterung from '../../models/TSEinkommensverschlechterung';
 import FinanzielleSituationRS from './finanzielleSituationRS.rest';
 import EinkommensverschlechterungContainerRS from './einkommensverschlechterungContainerRS.rest';
 import TSKindContainer from '../../models/TSKindContainer';
@@ -32,13 +30,17 @@ import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlechterungInfo';
 import TSUser from '../../models/TSUser';
 import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {
+    TSAntragStatus,
+    isAtLeastFreigegebenOrFreigabequittung,
+    isStatusVerfuegenVerfuegt,
+    isAtLeastFreigegeben
+} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
@@ -51,12 +53,16 @@ import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
-import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import {isJugendamt, isSchulamt} from '../../models/enums/TSBetreuungsangebotTyp';
+import {TSEingangsart} from '../../models/enums/TSEingangsart';
+import TSEinkommensverschlechterungInfoContainer from '../../models/TSEinkommensverschlechterungInfoContainer';
+import TSFamiliensituationContainer from '../../models/TSFamiliensituationContainer';
+import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
+import TSAdresseContainer from '../../models/TSAdresseContainer';
 import IQService = angular.IQService;
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
-    gesuchSnapshot: TSGesuch;
     gesuchstellerNumber: number = 1;
     basisJahrPlusNumber: number = 1;
     private kindNumber: number;
@@ -69,7 +75,7 @@ export default class GesuchModelManager {
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
         'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS',
-        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS', '$q'];
+        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS', '$q', 'CONSTANTS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -78,7 +84,7 @@ export default class GesuchModelManager {
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService,
-                private adresseRS: AdresseRS, private $q: IQService) {
+                private adresseRS: AdresseRS, private $q: IQService, private CONSTANTS: any) {
 
         this.fachstellenList = [];
         this.activInstitutionenList = [];
@@ -96,7 +102,7 @@ export default class GesuchModelManager {
     public openGesuch(gesuchId: string): IPromise<TSGesuch> {
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
             return this.gesuchRS.findGesuchForInstitution(gesuchId)
-                .then((response : TSGesuch) => {
+                .then((response: TSGesuch) => {
                     return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(bla => {
                         if (response) {
                             this.setGesuch(response);
@@ -122,6 +128,13 @@ export default class GesuchModelManager {
      * Oder ggf. aus der Liste entfernt
      */
     private setHiddenSteps(): void {
+        //Freigabe
+        if (this.gesuch.isOnlineGesuch()) {
+            this.wizardStepManager.unhideStep(TSWizardStepName.FREIGABE);
+        } else {
+            this.wizardStepManager.hideStep(TSWizardStepName.FREIGABE);
+        }
+
         //Abwesenheit
         if (!this.gesuch.isMutation()) {
             this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
@@ -171,14 +184,14 @@ export default class GesuchModelManager {
 
     public getFamiliensituation(): TSFamiliensituation {
         if (this.gesuch) {
-            return this.gesuch.familiensituation;
+            return this.gesuch.extractFamiliensituation();
         }
         return undefined;
     }
 
     public getFamiliensituationErstgesuch(): TSFamiliensituation {
         if (this.gesuch) {
-            return this.gesuch.familiensituationErstgesuch;
+            return this.gesuch.extractFamiliensituationErstgesuch();
         }
         return undefined;
     }
@@ -217,7 +230,6 @@ export default class GesuchModelManager {
                 // Fall ist schon vorhanden
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
                     this.gesuch = gesuchResponse;
-                    this.backupCurrentGesuch();
                     return this.gesuch;
                 });
             } else {
@@ -225,7 +237,6 @@ export default class GesuchModelManager {
                     this.gesuch.fall = angular.copy(fallResponse);
                     return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
                         this.gesuch = gesuchResponse;
-                        this.backupCurrentGesuch();
                         return this.gesuch;
                     });
                 });
@@ -233,14 +244,9 @@ export default class GesuchModelManager {
         }
     }
 
-    public updateFamiliensituation(): IPromise<TSFamiliensituation> {
-        return this.familiensituationRS.saveFamiliensituation(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
-            return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
-                this.gesuch = gesuchResponse;
-                this.gesuch.familiensituation = familienResponse;
-                this.backupCurrentGesuch();
-                return this.gesuch.familiensituation;
-            });
+    public reloadGesuch(): IPromise<TSGesuch> {
+        return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
+            return this.gesuch = gesuchResponse;
         });
     }
 
@@ -251,7 +257,6 @@ export default class GesuchModelManager {
     public updateGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
             this.gesuch = gesuchResponse;
-            this.backupCurrentGesuch();
             return this.gesuch;
         });
     }
@@ -270,15 +275,13 @@ export default class GesuchModelManager {
     /**
      * Speichert den StammdatenToWorkWith.
      */
-    public updateGesuchsteller(umzug: boolean): IPromise<TSGesuchsteller> {
+    public updateGesuchsteller(umzug: boolean): IPromise<TSGesuchstellerContainer> {
         // Da showUmzug nicht im Server gespeichert wird, muessen wir den alten Wert kopieren und nach der Aktualisierung wiedersetzen
         let tempShowUmzug: boolean = this.getStammdatenToWorkWith().showUmzug;
         return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber, umzug)
             .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
-                this.backupCurrentGesuch();
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    this.backupCurrentGesuch();
                     //todo reviewer frage team: muessen wir hier das gesuch wirklich separat speichern? wir brauchen die antwort gar nicht
                     this.getStammdatenToWorkWith().showUmzug = tempShowUmzug;
                     return this.getStammdatenToWorkWith();
@@ -291,7 +294,6 @@ export default class GesuchModelManager {
             this.getStammdatenToWorkWith().finanzielleSituationContainer, this.getStammdatenToWorkWith().id, this.gesuch.id)
             .then((finSitContRespo: TSFinanzielleSituationContainer) => {
                 this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
-                this.backupCurrentGesuch();
                 return this.getStammdatenToWorkWith().finanzielleSituationContainer;
             });
     }
@@ -301,18 +303,7 @@ export default class GesuchModelManager {
             this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith().id, this.gesuch.id)
             .then((ekvContRespo: TSEinkommensverschlechterungContainer) => {
                 this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
-                this.backupCurrentGesuch();
                 return this.getStammdatenToWorkWith().einkommensverschlechterungContainer;
-            });
-    }
-
-    public updateEinkommensverschlechterungsInfo(): IPromise<TSEinkommensverschlechterungInfo> {
-        return this.einkommensverschlechterungInfoRS.saveEinkommensverschlechterungInfo(
-            this.getGesuch().einkommensverschlechterungInfo, this.gesuch.id)
-            .then((ekvInfoRespo: TSEinkommensverschlechterungInfo) => {
-                this.getGesuch().einkommensverschlechterungInfo = ekvInfoRespo;
-                this.backupCurrentGesuch();
-                return this.getGesuch().einkommensverschlechterungInfo;
             });
     }
 
@@ -376,7 +367,7 @@ export default class GesuchModelManager {
         return this.activeGesuchsperiodenList;
     }
 
-    public getStammdatenToWorkWith(): TSGesuchsteller {
+    public getStammdatenToWorkWith(): TSGesuchstellerContainer {
         if (this.gesuchstellerNumber === 2) {
             return this.gesuch.gesuchsteller2;
         } else {
@@ -384,73 +375,19 @@ export default class GesuchModelManager {
         }
     }
 
-    public getEinkommensverschlechterungToWorkWith(): TSEinkommensverschlechterung {
-        if (this.gesuchstellerNumber === 2) {
-            return this.getEkvFromGesuchstellerOfBsj_JA(this.gesuch.gesuchsteller2);
-        } else {
-            return this.getEkvFromGesuchstellerOfBsj_JA(this.gesuch.gesuchsteller1);
-        }
-    }
-
-    public getEinkommensverschlechterungToWorkWith_GS(): TSEinkommensverschlechterung {
-        if (this.gesuchstellerNumber === 2) {
-            return this.getEkvFromGesuchstellerOfBsj_GS(this.gesuch.gesuchsteller2);
-        } else {
-            return this.getEkvFromGesuchstellerOfBsj_GS(this.gesuch.gesuchsteller1);
-        }
-    }
-
-    public getEkvFromGesuchstellerOfBsj_JA(gesuchsteller: TSGesuchsteller): TSEinkommensverschlechterung {
-        if (this.basisJahrPlusNumber === 2) {
-            return gesuchsteller.einkommensverschlechterungContainer.ekvJABasisJahrPlus2;
-        } else {
-            return gesuchsteller.einkommensverschlechterungContainer.ekvJABasisJahrPlus1;
-        }
-    }
-
-    private getEkvFromGesuchstellerOfBsj_GS(gesuchsteller: TSGesuchsteller): TSEinkommensverschlechterung {
-        if (this.basisJahrPlusNumber === 2) {
-            return gesuchsteller.einkommensverschlechterungContainer.ekvGSBasisJahrPlus2;
-        } else {
-            return gesuchsteller.einkommensverschlechterungContainer.ekvGSBasisJahrPlus1;
-        }
-    }
-
-    public getEkvFuerBasisJahrPlusToWorkWith(): boolean {
-        return this.getEkvFuerBasisJahrPlus(this.basisJahrPlusNumber);
-    }
-
-    public getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
-        if (!this.gesuch.einkommensverschlechterungInfo) {
+    private getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
+        if (!this.gesuch.extractEinkommensverschlechterungInfo()) {
             this.initEinkommensverschlechterungInfo();
         }
 
         if (basisJahrPlus === 2) {
-            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2;
+            return this.gesuch.extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2;
         } else {
-            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1;
+            return this.gesuch.extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1;
         }
     }
 
-    public getGemeinsameSteuererklaerungToWorkWith(): boolean {
-        return this.getGemeinsameSteuererklaerungToWorkWith_2(this.basisJahrPlusNumber);
-    }
-
-
-    private getGemeinsameSteuererklaerungToWorkWith_2(basisJahrPlus: number): boolean {
-        if (!this.gesuch.einkommensverschlechterungInfo) {
-            this.initEinkommensverschlechterungInfo();
-        }
-
-        if (basisJahrPlus === 2) {
-            return this.gesuch.einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP2;
-        } else {
-            return this.gesuch.einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP1;
-        }
-    }
-
-
-    public setStammdatenToWorkWith(gesuchsteller: TSGesuchsteller): TSGesuchsteller {
+    public setStammdatenToWorkWith(gesuchsteller: TSGesuchstellerContainer): TSGesuchstellerContainer {
         if (this.gesuchstellerNumber === 1) {
             return this.gesuch.gesuchsteller1 = gesuchsteller;
         } else {
@@ -460,96 +397,66 @@ export default class GesuchModelManager {
 
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
-            this.setStammdatenToWorkWith(new TSGesuchsteller());
+            let gesuchsteller: TSGesuchsteller;
+            // die daten die wir aus iam importiert haben werden bei gs1 abgefuellt
+            if (this.gesuchstellerNumber === 1 && this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
+                let principal: TSUser = this.authServiceRS.getPrincipal();
+                let name: string = principal ? principal.nachname : undefined;
+                let vorname: string = principal ? principal.vorname : undefined;
+                let email: string = principal ? principal.email : undefined;
+                gesuchsteller = new TSGesuchsteller(vorname, name, undefined, undefined, email);
+            } else {
+                gesuchsteller = new TSGesuchsteller();
+            }
+            this.setStammdatenToWorkWith(new TSGesuchstellerContainer(gesuchsteller));
             this.getStammdatenToWorkWith().adressen = this.initWohnAdresse();
         }
     }
 
-    public initFinanzielleSituation(): void {
-        this.initStammdaten();
-        if (this.gesuch && !this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = this.getBasisjahr();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
-        }
-        if (this.gesuch && this.isGesuchsteller2Required() && this.gesuch.gesuchsteller2 && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = this.getBasisjahr();
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
-        }
-    }
-
-    public getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
-        if (this.getGesuch().einkommensverschlechterungInfo == null) {
-            this.initEinkommensverschlechterungInfo();
-        }
-        return this.getGesuch().einkommensverschlechterungInfo;
-    }
-
-    public initEinkommensverschlechterungInfo(): void {
-        if (this.gesuch && !this.gesuch.einkommensverschlechterungInfo) {
-            this.gesuch.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo();
-            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 = false;
-            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 = false;
-
-        }
-    }
-
-    public initEinkommensverschlechterungContainer(basisjahrPlus: number, gesuchstellerNumber: number): void {
-        if (!this.gesuch) {
-            this.initGesuch(false);
-        }
-
-        this.initStammdaten();
-
-        if (gesuchstellerNumber === 1 && this.gesuch.gesuchsteller1) {
-            if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer) {
-                this.gesuch.gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
-            }
-
-            if (basisjahrPlus === 1) {
-                if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1) {
-                    this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
-                }
-            }
-
-            if (basisjahrPlus === 2) {
-                if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2) {
-                    this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
-                }
-            }
-        }
-
-        if (gesuchstellerNumber === 2 && this.gesuch.gesuchsteller2) {
-            if (!this.gesuch.gesuchsteller2.einkommensverschlechterungContainer) {
-                this.gesuch.gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
-            }
-
-            if (basisjahrPlus === 1) {
-                if (!this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1) {
-                    this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
-                }
-            }
-
-            if (basisjahrPlus === 2) {
-                if (!this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2) {
-                    this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
-                }
-            }
+    private initEinkommensverschlechterungInfo(): void {
+        if (this.gesuch && !this.gesuch.extractEinkommensverschlechterungInfo()) {
+            this.gesuch.einkommensverschlechterungInfoContainer = new TSEinkommensverschlechterungInfoContainer();
+            this.gesuch.einkommensverschlechterungInfoContainer.init();
         }
     }
 
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
-     * Wenn force werden Gesuch und Fall immer erstellt.
-     * @param forced
+     * Wenn force werden Gesuch und Fall immer erstellt. Das erstellte Gesuch ist ein PAPIER Gesuch
      */
-    public initGesuch(forced: boolean) {
+    public initGesuch(forced: boolean, eingangsart: TSEingangsart) {
         if (forced || (!forced && !this.gesuch)) {
-            this.initAntrag(TSAntragTyp.GESUCH);
+            this.initAntrag(TSAntragTyp.GESUCH, eingangsart);
         }
         this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch());
-        this.backupCurrentGesuch();
+    }
+
+    /**
+     * Erstellt ein Gesuch mit der angegebenen Eingangsart und Gesuchsperiode
+     * @param forced
+     * @param eingangsart
+     * @param gesuchsperiodeId
+     * @param fallId
+     */
+    public initGesuchWithEingangsart(forced: boolean, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
+        this.initGesuch(forced, eingangsart);
+        if (gesuchsperiodeId) {
+            this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
+                this.gesuch.gesuchsperiode = periode;
+            });
+        }
+        if (fallId) {
+            this.fallRS.findFall(fallId).then(foundFall => {
+                this.gesuch.fall = foundFall;
+            });
+        }
+        if (forced) {
+            if (TSEingangsart.ONLINE === eingangsart) {
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+            } else {
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+            }
+        }
     }
 
     /**
@@ -558,40 +465,40 @@ export default class GesuchModelManager {
      * mit dem ID des alten Gesuchs aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
      * Daten ueberschreiben
      * @param gesuchID
+     * @param eingangsart
+     * @param gesuchsperiodeId
+     * @param fallId
      */
-    public initMutation(gesuchID: string): void {
-        let gesuchsperiode: TSGesuchsperiode = this.gesuch.gesuchsperiode;
-        this.initAntrag(TSAntragTyp.MUTATION);
+    public initMutation(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string): void {
+        this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
+            this.gesuch.gesuchsperiode = periode;
+        });
+        this.initAntrag(TSAntragTyp.MUTATION, eingangsart);
+        this.fallRS.findFall(fallId).then(foundFall => {
+            this.gesuch.fall = foundFall;
+        });
         this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
-        this.gesuch.gesuchsperiode = gesuchsperiode;
+        if (TSEingangsart.ONLINE === eingangsart) {
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+        } else {
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+        }
     }
 
-    private initAntrag(antragTyp: TSAntragTyp): void {
+    private initAntrag(antragTyp: TSAntragTyp, eingangsart: TSEingangsart): void {
         this.gesuch = new TSGesuch();
         this.gesuch.fall = new TSFall();
         this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
-        this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
+        this.gesuch.eingangsart = eingangsart;
         this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();
         this.setCurrentUserAsFallVerantwortlicher();
     }
 
-    /**
-     * erstellt eine kopie der aktuellen gesuchsdaten die spaeter bei bedarf wieder hergestellt werden kann
-     */
-    private backupCurrentGesuch() {
-        this.gesuchSnapshot = angular.copy(this.gesuch);
-        this.wizardStepManager.backupCurrentSteps();
-    }
-
-    public restoreBackupOfPreviousGesuch() {
-        this.gesuch = this.gesuchSnapshot;
-        this.wizardStepManager.restorePreviousSteps();
-    }
-
     public initFamiliensituation() {
         if (!this.getFamiliensituation()) {
-            this.gesuch.familiensituation = new TSFamiliensituation();
+            this.gesuch.familiensituationContainer = new TSFamiliensituationContainer();
+            this.gesuch.familiensituationContainer.familiensituationJA = new TSFamiliensituation();
         }
     }
 
@@ -604,14 +511,6 @@ export default class GesuchModelManager {
     public initBetreuung(): void {
         if (!this.getKindToWorkWith().betreuungen) {
             this.getKindToWorkWith().betreuungen = [];
-        }
-    }
-
-    public setKorrespondenzAdresse(showKorrespondadr: boolean): void {
-        if (showKorrespondadr) {
-            this.getStammdatenToWorkWith().korrespondenzAdresse = this.initKorrespondenzAdresse();
-        } else {
-            this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
         }
     }
 
@@ -664,18 +563,13 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-    private initWohnAdresse(): Array<TSAdresse> {
+    private initWohnAdresse(): Array<TSAdresseContainer> {
+        let wohnAdresseContanier: TSAdresseContainer = new TSAdresseContainer();
         let wohnAdresse = new TSAdresse();
-        wohnAdresse.showDatumVon = false;
         wohnAdresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        return [wohnAdresse];
-    }
-
-    private initKorrespondenzAdresse(): TSAdresse {
-        let korrAdr = new TSAdresse();
-        korrAdr.showDatumVon = false;
-        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
-        return korrAdr;
+        wohnAdresseContanier.showDatumVon = false;
+        wohnAdresseContanier.adresseJA = wohnAdresse;
+        return [wohnAdresseContanier];
     }
 
     public getKinderList(): Array<TSKindContainer> {
@@ -691,12 +585,8 @@ export default class GesuchModelManager {
      */
     public getKinderWithBetreuungList(): Array<TSKindContainer> {
         let listResult: Array<TSKindContainer> = [];
-        if (this.gesuch && this.gesuch.kindContainers) {
-            this.gesuch.kindContainers.forEach((kind) => {
-                if (kind.kindJA.familienErgaenzendeBetreuung) {
-                    listResult.push(kind);
-                }
-            });
+        if (this.gesuch) {
+            listResult = this.gesuch.getKinderWithBetreuungList();
         }
         return listResult;
     }
@@ -727,8 +617,8 @@ export default class GesuchModelManager {
         return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
             .then((betreuungResponse: any) => {
                 this.getKindFromServer();
-                this.backupCurrentGesuch();
-                return this.setBetreuungToWorkWith(betreuungResponse);
+                this.setBetreuungToWorkWith(betreuungResponse);
+                return this.getBetreuungToWorkWith();
             });
     }
 
@@ -736,7 +626,6 @@ export default class GesuchModelManager {
         return this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
             this.setKindToWorkWith(kindResponse);
             this.getFallFromServer();
-            this.backupCurrentGesuch();
             return this.getKindToWorkWith();
         });
     }
@@ -760,7 +649,6 @@ export default class GesuchModelManager {
             return this.gesuch.fall = fallResponse;
         });
     }
-
 
     public getKindToWorkWith(): TSKindContainer {
         if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindNumber) {
@@ -787,7 +675,7 @@ export default class GesuchModelManager {
      * @param kind
      * @returns {TSKindContainer}
      */
-    private setKindToWorkWith(kind: TSKindContainer): TSKindContainer {
+    public setKindToWorkWith(kind: TSKindContainer): TSKindContainer {
         return this.gesuch.kindContainers[this.kindNumber - 1] = kind;
     }
 
@@ -875,7 +763,6 @@ export default class GesuchModelManager {
     public removeKind(): IPromise<void> {
         return this.kindRS.removeKind(this.getKindToWorkWith().id, this.gesuch.id).then((responseKind: any) => {
             this.removeKindFromList();
-            this.backupCurrentGesuch();
             this.gesuchRS.updateGesuch(this.gesuch);
         });
     }
@@ -903,14 +790,13 @@ export default class GesuchModelManager {
         return -1;
     }
 
+
     public removeBetreuung(): IPromise<void> {
         return this.betreuungRS.removeBetreuung(this.getBetreuungToWorkWith().id, this.gesuch.id).then((responseBetreuung: any) => {
             this.removeBetreuungFromKind();
-            this.backupCurrentGesuch();
             this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id);
         });
     }
-
 
     public removeErwerbspensum(pensum: TSErwerbspensumContainer): void {
         let erwerbspensenOfCurrentGS: Array<TSErwerbspensumContainer>;
@@ -922,7 +808,6 @@ export default class GesuchModelManager {
                 this.erwerbspensumRS.removeErwerbspensum(pensumToRemove.id, this.getGesuch().id)
                     .then(() => {
                         erwerbspensenOfCurrentGS.splice(index, 1);
-                        this.backupCurrentGesuch();
                     });
             } else {
                 //sonst nur vom gui wegnehmen
@@ -934,27 +819,26 @@ export default class GesuchModelManager {
     }
 
     findIndexOfErwerbspensum(gesuchstellerNumber: number, pensum: any): number {
-        let gesuchsteller: TSGesuchsteller;
+        let gesuchsteller: TSGesuchstellerContainer;
         gesuchsteller = gesuchstellerNumber === 2 ? this.gesuch.gesuchsteller2 : this.gesuch.gesuchsteller1;
         return gesuchsteller.erwerbspensenContainer.indexOf(pensum);
     }
 
-    saveErwerbspensum(gesuchsteller: TSGesuchsteller, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
+    saveErwerbspensum(gesuchsteller: TSGesuchstellerContainer, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
         if (erwerbspensum.id) {
             return this.erwerbspensumRS.saveErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((response: TSErwerbspensumContainer) => {
-                    let i = gesuchsteller.erwerbspensenContainer.indexOf(erwerbspensum);
+
+                    let i: number = EbeguUtil.getIndexOfElementwithID(erwerbspensum, gesuchsteller.erwerbspensenContainer);
                     if (i >= 0) {
                         gesuchsteller.erwerbspensenContainer[i] = erwerbspensum;
                     }
-                    this.backupCurrentGesuch();
                     return response;
                 });
         } else {
             return this.erwerbspensumRS.saveErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((storedErwerbspensum: TSErwerbspensumContainer) => {
                     gesuchsteller.erwerbspensenContainer.push(storedErwerbspensum);
-                    this.backupCurrentGesuch();
                     return storedErwerbspensum;
                 });
         }
@@ -965,7 +849,7 @@ export default class GesuchModelManager {
      * Takes current user and sets it as the verantwortlicher of Fall
      */
     private setCurrentUserAsFallVerantwortlicher() {
-        if (this.authServiceRS) {
+        if (this.authServiceRS && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
             this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
         }
     }
@@ -987,7 +871,6 @@ export default class GesuchModelManager {
         return this.verfuegungRS.calculateVerfuegung(this.gesuch.id)
             .then((response: TSKindContainer[]) => {
                 this.updateKinderListWithCalculatedVerfuegungen(response);
-                this.backupCurrentGesuch();
                 return;
             });
     }
@@ -1035,7 +918,6 @@ export default class GesuchModelManager {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
             this.calculateGesuchStatus();
-            this.backupCurrentGesuch();
             return this.getVerfuegenToWorkWith();
         });
     }
@@ -1050,17 +932,15 @@ export default class GesuchModelManager {
         return this.verfuegungRS.verfuegungSchliessenOhneVerfuegen(this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG;
             this.calculateGesuchStatus();
-            this.backupCurrentGesuch();
             return;
         });
     }
 
-    public verfuegungSchliessenNichtEintreten():  IPromise<TSVerfuegung> {
+    public verfuegungSchliessenNichtEintreten(): IPromise<TSVerfuegung> {
         return this.verfuegungRS.nichtEintreten(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response: TSVerfuegung) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.NICHT_EINGETRETEN;
             this.calculateGesuchStatus();
-            this.backupCurrentGesuch();
             return this.getVerfuegenToWorkWith();
         });
     }
@@ -1127,18 +1007,29 @@ export default class GesuchModelManager {
      * Returns false also if there are no Kinder with betreuungsbedarf
      */
     public areThereOnlySchulamtAngebote(): boolean {
+        if (!this.gesuch) {
+            return false;
+        }
+        return this.gesuch.areThereOnlySchulamtAngebote();
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind SCHULAMT.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public isThereAnySchulamtAngebot(): boolean {
         let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
         if (kinderWithBetreuungList.length <= 0) {
             return false; // no Kind with bedarf
         }
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (betreuung.institutionStammdaten.betreuungsangebotTyp !== TSBetreuungsangebotTyp.TAGESSCHULE) {
-                    return false;
+                if (isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -1153,12 +1044,22 @@ export default class GesuchModelManager {
             return this.gesuchRS.updateGesuchStatus(this.gesuch.id, status).then(() => {
                 return this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch()).then(() => {
                     this.gesuch.status = this.calculateNewStatus(status);
-                    this.backupCurrentGesuch();
                     return this.gesuch.status;
                 });
             });
         }
         return undefined;
+    }
+
+    /**
+     * Antrag freigeben
+     */
+    public antragFreigeben(antragId: string, username: string): IPromise<TSGesuch> {
+        return this.gesuchRS.antragFreigeben(antragId, username).then((response) => {
+            this.setGesuch(response);
+            return response;
+        });
+
     }
 
     /**
@@ -1171,20 +1072,32 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT or NUR_SCHULAMT
-     * @returns {boolean}
-     */
-    public isGesuchStatusVerfuegenVerfuegt(): boolean {
-        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT)
-            || this.isGesuchStatus(TSAntragStatus.NUR_SCHULAMT);
-    }
-
-    /**
      * Returns true when the Gesuch must be readonly
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return this.isGesuchStatusVerfuegenVerfuegt() || this.authServiceRS.isRole(TSRole.SCHULAMT);
+        return isStatusVerfuegenVerfuegt(this.gesuch.status) || this.isGesuchReadonlyForRole();
+    }
+
+    /**
+     * checks if the gesuch is readonly for a given role based on its state
+     */
+    private isGesuchReadonlyForRole(): boolean {
+        if (this.authServiceRS.isRole(TSRole.SCHULAMT)) {
+            return true;  // schulamt hat immer nur readonly zugriff
+        } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+            return isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
+        }
+        return false;
+    }
+
+    /**
+     * Wenn das Gesuch Online durch den GS erstellt wurde, nun aber in Bearbeitung beim JA ist, handelt es sich um
+     * den Korrekturmodus des Jugendamtes.
+     * @returns {boolean}
+     */
+    public isKorrekturModusJugendamt(): boolean {
+        return isAtLeastFreigegeben(this.gesuch.status) && (TSEingangsart.ONLINE === this.getGesuch().eingangsart);
     }
 
     /**
@@ -1225,7 +1138,6 @@ export default class GesuchModelManager {
             .then((response: TSGesuch) => {
                 this.setGesuch(response);
                 return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {
-                    this.backupCurrentGesuch();
                     return this.getGesuch();
                 });
             });
@@ -1269,5 +1181,44 @@ export default class GesuchModelManager {
 
     public clearGesuch(): void {
         this.gesuch = undefined;
+    }
+
+    /**
+     * Schaut alle Betreuungen durch. Wenn es keine "JAAngebote" gibt, gibt es false zurueck.
+     * Nur wenn alle JA-Angebote neu sind, gibt es true zurueck.
+     */
+    public areAllJAAngeboteNew(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        let jaAngeboteFound: boolean = false; // Wenn kein JA-Angebot gefunden wurde geben wir false zurueck
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (isJugendamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    if (betreuung.vorgaengerId) { // eine mutierte JA-Betreuung existiert
+                        return false;
+                    }
+                    jaAngeboteFound = true;
+                }
+            }
+        }
+        return jaAngeboteFound;
+    }
+
+    //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
+    public getGesuchName(): string {
+        if (this.getGesuch()) {
+            var text = '';
+            if (this.getGesuch().fall) {
+                text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
+            }
+            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.extractNachname()) {
+                text = text + ' ' + this.getGesuch().gesuchsteller1.extractNachname();
+            }
+            return text;
+        } else {
+            return '';
+        }
     }
 }

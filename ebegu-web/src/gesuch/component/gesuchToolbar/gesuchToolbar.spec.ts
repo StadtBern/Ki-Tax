@@ -12,8 +12,10 @@ import TSUser from '../../../models/TSUser';
 import TSGesuch from '../../../models/TSGesuch';
 import TSFall from '../../../models/TSFall';
 import IScope = angular.IScope;
+import {TSRole} from '../../../models/enums/TSRole';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 
-describe('betreuungView', function () {
+describe('gesuchToolbar', function () {
 
     let gesuchModelManager: GesuchModelManager;
     let gesuchToolbarController: GesuchToolbarController;
@@ -28,6 +30,7 @@ describe('betreuungView', function () {
     let $scope: IScope;
     let $rootScope: IScope;
     let user: TSUser;
+    let $mdSidenav: ng.material.ISidenavService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -43,12 +46,13 @@ describe('betreuungView', function () {
         ebeguUtil = $injector.get('EbeguUtil');
         $stateParams = $injector.get('$stateParams');
         $rootScope = $injector.get('$rootScope');
+        $mdSidenav = $injector.get('$mdSidenav');
         $scope = $rootScope.$new();
         user = new TSUser('Emiliano', 'Camacho');
         $stateParams.gesuchId = '123456789';
         gesuchToolbarController = new GesuchToolbarController(userRS, ebeguUtil,
-            CONSTANTS, gesuchRS,
-            $state, $stateParams, $scope, gesuchModelManager);
+            CONSTANTS, gesuchRS, $state, $stateParams, $scope, gesuchModelManager,
+            authServiceRS, $mdSidenav);
     }));
 
     describe('getVerantwortlicherFullName', () => {
@@ -59,7 +63,8 @@ describe('betreuungView', function () {
         it('returns the fullname of the verantwortlicher', () => {
             let verantwortlicher: TSUser = new TSUser('Emiliano', 'Camacho');
             spyOn(authServiceRS, 'getPrincipal').and.returnValue(verantwortlicher);
-            gesuchModelManager.initGesuch(true);
+            spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
+            gesuchModelManager.initGesuch(true, TSEingangsart.PAPIER);
             expect(gesuchToolbarController.getVerantwortlicherFullName()).toEqual('Emiliano Camacho');
         });
     });

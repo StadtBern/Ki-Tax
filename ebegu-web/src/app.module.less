@@ -23,25 +23,31 @@
     -webkit-transition: opacity 0.3s ease;
     transition: opacity 0.3s ease;
 }
+
 html {
     margin-left: auto;
     margin-right: auto;
 }
 
 dv-bisher, .dv-bisher {
-    display: none;
+    //display: none;
 }
+
 /* Required for Angular UI Bootstrap */
 .nav, .pagination, .carousel, .panel-title a {
     cursor: pointer;
 }
 
 body {
+    height: 100%;
+    position: fixed;
+    left: 0;
+    right: 0;
     display: flex;
     flex-direction: column;
     max-height: 100vh;
     font-size: 1.6rem;
-    .font-family();
+    .ebeguFont-family();
     .starter-template {
         padding: 4rem 1.5rem;
         text-align: center;
@@ -66,6 +72,7 @@ body {
     overflow-x: auto;
     overflow-y: scroll;
 }
+
 .dv-progressbar {
     position: fixed;
     width: 100%;
@@ -89,8 +96,23 @@ body {
     height: @navbar-height;
     min-height: @navbar-height;
     width: 100%;
-    display: block;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-content: flex-end;
     z-index: @z-index-navbar;
+}
+
+dv-home-icon {
+    margin-left: auto;
+    display: flex;
+    width: @navbar-height;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+}
+
+dv-pulldown-user-menu {
 }
 
 .logo-bern {
@@ -100,10 +122,22 @@ body {
     background-position: left 0.7rem center;
 }
 
+.logo-house {
+    vertical-align: middle;
+    padding: 0;
+    font-size: 2rem;
+    height: @navbar-height;
+    width: @navbar-height;
+    line-height: @navbar-height;
+    &:hover {
+        background-color: @contrast-light;
+    }
+}
+
 .logo-text {
-    .bold();
-    .capitalize();
-    .vertical(middle);
+    .ebeguBold();
+    .ebeguCapitalize();
+    .ebeguVertical(middle);
     font-size: 1.6rem;
     color: @contrast-darkest;
     letter-spacing: 0.1rem;

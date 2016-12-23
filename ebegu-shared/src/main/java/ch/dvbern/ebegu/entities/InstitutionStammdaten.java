@@ -20,8 +20,14 @@ import java.math.BigDecimal;
 @Audited
 @Entity
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = "adresse_id", name = "UK_institution_stammdaten_adresse_id")
+	uniqueConstraints = @UniqueConstraint(columnNames = "adresse_id", name = "UK_institution_stammdaten_adresse_id"),
+	indexes = {
+		@Index(name =  "IX_institution_stammdaten_gueltig_ab", columnList = "gueltigAb"),
+		@Index(name =  "IX_institution_stammdaten_gueltig_bis", columnList = "gueltigBis")
+	}
 )
+//@Cacheable
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class InstitutionStammdaten extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = -8403411439882700618L;
@@ -46,10 +52,12 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	@Column(nullable = false)
 	private BetreuungsangebotTyp betreuungsangebotTyp;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_institution_id"), nullable = false)
 	private Institution institution;
 
+	@NotNull
 	@OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_adresse_id"), nullable = false)
 	private Adresse adresse;

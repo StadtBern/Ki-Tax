@@ -7,14 +7,14 @@ import ch.dvbern.ebegu.entities.Mahnung_;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
+import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -24,6 +24,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.util.*;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer Mahnungen
@@ -44,6 +47,9 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 
 	@Inject
 	private GesuchService gesuchService;
+
+	@Inject
+	private Authorizer authorizer;
 
 
 	@Override
@@ -67,12 +73,16 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	public Optional<Mahnung> findMahnung(@Nonnull String mahnungId) {
 		Objects.requireNonNull(mahnungId, "mahnungId muss gesetzt sein");
 		Mahnung mahnung = persistence.find(Mahnung.class, mahnungId);
+		if (mahnung != null) {
+			authorizer.checkReadAuthorization(mahnung.getGesuch());
+		}
 		return Optional.ofNullable(mahnung);
 	}
 
 	@Override
 	@Nonnull
 	public Collection<Mahnung> findMahnungenForGesuch(@Nonnull Gesuch gesuch) {
+		authorizer.checkReadAuthorization(gesuch);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);
 		Root<Mahnung> root = query.from(Mahnung.class);
@@ -96,24 +106,18 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Override
 	@Nonnull
 	public String getInitialeBemerkungen(@Nonnull Gesuch gesuch) {
+		authorizer.checkReadAuthorization(gesuch);
 		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
 		dokumentGrundsMerged.addAll(DokumenteUtil
 			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
-				dokumentGrundService.getAllDokumentGrundByGesuch(gesuch)));
+				dokumentGrundService.findAllDokumentGrundByGesuch(gesuch)));
 		Collections.sort(dokumentGrundsMerged);
 
 		StringBuilder bemerkungenBuilder = new StringBuilder();
 		for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
-			if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
-				bemerkungenBuilder.append(ServerMessageUtil.translateEnumValue(dokumentGrund.getDokumentTyp()));
-				if (StringUtils.isNotEmpty(dokumentGrund.getFullName())) {
-					bemerkungenBuilder.append(" (");
-					bemerkungenBuilder.append(dokumentGrund.getFullName());
-					if (dokumentGrund.getTag() != null) {
-						bemerkungenBuilder.append(" / ").append(dokumentGrund.getTag());
-					}
-					bemerkungenBuilder.append(")");
-				}
+			StringBuilder dokumentData = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
+			if (dokumentData.length() > 0) {
+				bemerkungenBuilder.append(dokumentData);
 				bemerkungenBuilder.append("\n");
 			}
 		}
@@ -145,8 +149,10 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		}
 	}
 
+	@Override
 	@Nonnull
-	private Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch) {
+	public  Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch) {
+		authorizer.checkReadAuthorization(gesuch);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);
 		Root<Mahnung> root = query.from(Mahnung.class);
@@ -158,5 +164,14 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		// Wirft eine NonUnique-Exception, falls mehrere aktive ErstMahnungen!
 		Mahnung aktiveErstMahnung = persistence.getCriteriaSingleResult(query);
 		return Optional.ofNullable(aktiveErstMahnung);
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	public void removeAllMahnungenFromGesuch(Gesuch gesuch) {
+		Collection<Mahnung> mahnungenFromGesuch = findMahnungenForGesuch(gesuch);
+		for (Mahnung mahnung : mahnungenFromGesuch) {
+			persistence.remove(Mahnung.class, mahnung.getId());
+		}
 	}
 }

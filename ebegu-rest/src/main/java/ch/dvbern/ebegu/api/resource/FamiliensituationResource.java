@@ -1,11 +1,11 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxFamiliensituation;
+import ch.dvbern.ebegu.api.dtos.JaxFamiliensituationContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -47,32 +47,32 @@ public class FamiliensituationResource {
 	@Path("/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxFamiliensituation saveFamiliensituation(
+	public JaxFamiliensituationContainer saveFamiliensituation(
 		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
-		@Nonnull @NotNull JaxFamiliensituation familiensituationJAXP,
+		@Nonnull @NotNull JaxFamiliensituationContainer familiensituationContainerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
 		if (gesuch.isPresent()) {
-			Familiensituation oldData = new Familiensituation();
-			Familiensituation familiensituationToMerge = new Familiensituation();
+			FamiliensituationContainer familiensituationContainerToMerge = new FamiliensituationContainer();
 			//wenn es sich um ein update handelt
-			if (familiensituationJAXP.getId() != null) {
-				Optional<Familiensituation> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationJAXP.getId());
-				familiensituationToMerge = loadedFamiliensituation.orElse(new Familiensituation());
-				//wenn mutation dann alte daten = bisherige daten
-				if (AntragTyp.MUTATION.equals(gesuch.get().getTyp())) {
-					oldData = gesuch.get().getFamiliensituationErstgesuch();
+			Familiensituation oldFamiliensituation = null;
+			if (familiensituationContainerJAXP.getId() != null) {
+				Optional<FamiliensituationContainer> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationContainerJAXP.getId());
+				if(loadedFamiliensituation.isPresent()) {
+					familiensituationContainerToMerge = loadedFamiliensituation.get();
+					oldFamiliensituation = new Familiensituation(familiensituationContainerToMerge.extractFamiliensituation());
+				}else{
+					familiensituationContainerToMerge = new FamiliensituationContainer();
 				}
-				else {
-					oldData = new Familiensituation(familiensituationToMerge);
-				}
-			}
-			Familiensituation convertedFamiliensituation = converter.familiensituationToEntity(familiensituationJAXP, familiensituationToMerge);
-			Familiensituation persistedFamiliensituation = this.familiensituationService.saveFamiliensituation(gesuch.get(), oldData, convertedFamiliensituation);
 
-			return converter.familiensituationToJAX(persistedFamiliensituation);
+			}
+
+			FamiliensituationContainer convertedFamiliensituation = converter.familiensituationContainerToEntity(familiensituationContainerJAXP, familiensituationContainerToMerge);
+			FamiliensituationContainer persistedFamiliensituation = this.familiensituationService.saveFamiliensituation(gesuch.get(), convertedFamiliensituation, oldFamiliensituation);
+
+			return converter.familiensituationContainerToJAX(persistedFamiliensituation);
 		}
 		throw new EbeguEntityNotFoundException("updateFamiliensituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXPId.getId());
 	}

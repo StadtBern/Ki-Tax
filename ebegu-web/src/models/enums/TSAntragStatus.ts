@@ -18,6 +18,8 @@ export enum TSAntragStatus {
     VERFUEGT = <any> 'VERFUEGT'
 }
 
+export const IN_BEARBEITUNG_BASE_NAME = 'IN_BEARBEITUNG';
+
 export function getTSAntragStatusValues(): Array<TSAntragStatus> {
     return [
         TSAntragStatus.IN_BEARBEITUNG_GS,
@@ -46,4 +48,40 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
  */
 export function getTSAntragStatusPendenzValues(): Array<TSAntragStatus> {
     return getTSAntragStatusValues().filter(element => element !== TSAntragStatus.VERFUEGT);
+}
+
+export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
+    let validStates: Array<TSAntragStatus> = [
+        TSAntragStatus.NUR_SCHULAMT,
+        TSAntragStatus.FREIGEGEBEN,
+        TSAntragStatus.ZURUECKGEWIESEN,
+        TSAntragStatus.ERSTE_MAHNUNG,
+        TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+        TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN,
+        TSAntragStatus.ZWEITE_MAHNUNG,
+        TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+        TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN,
+        TSAntragStatus.IN_BEARBEITUNG_JA,
+        TSAntragStatus.GEPRUEFT,
+        TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN,
+        TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
+        TSAntragStatus.VERFUEGEN,
+        TSAntragStatus.VERFUEGT];
+    return validStates.indexOf(status) !== -1;
+}
+
+export function isAtLeastFreigegebenOrFreigabequittung(status: TSAntragStatus): boolean {
+    return isAtLeastFreigegeben(status) || status === TSAntragStatus.FREIGABEQUITTUNG;
+}
+
+export function isAnyStatusOfVerfuegt(status: TSAntragStatus): boolean {
+    return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.VERFUEGT;
+}
+
+/**
+ * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT or NUR_SCHULAMT
+ * @returns {boolean}
+ */
+export function isStatusVerfuegenVerfuegt(status: TSAntragStatus): boolean {
+    return isAnyStatusOfVerfuegt(status) || status === TSAntragStatus.VERFUEGEN;
 }

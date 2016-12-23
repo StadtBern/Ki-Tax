@@ -1,15 +1,11 @@
 <div class="familiensituationView gesuchModul">
 
-    <div class="row">
+    <div class="row viewTitle">
         <div class="col-md-12">
             <h1>
                 <span data-translate="MUTATION_FAMSITUATION_TITLE"></span>
             </h1>
-        </div>
-    </div>
-    <hr class="header"/>
-    <div class="row viewTitle">
-        <div class="col-md-12">
+            <hr class="header"/>
             <p class="inlineHint" data-translate="MUTATION_FAMSITUATION_HINT"></p>
             <div ng-if="vm.showError()" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></div>
         </div>
@@ -17,7 +13,7 @@
     <div class="row">
         <div class="col-md-12">
 
-            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
 
                 <!--Aenderung per-->
                 <div class="row" ng-if="vm.isMutation()">
@@ -37,7 +33,9 @@
                             </div>
                             <div class="row">
                                 <div class="col-xs-12 error">
-                                    <dv-error-messages for="form.aenderungPer.$error"
+                                    <dv-bisher gs="vm.model.familiensituationGS.aenderungPer"
+                                               ja="vm.model.familiensituationJA.aenderungPer"></dv-bisher>
+                                    <dv-error-messages for="vm.form.aenderungPer.$error"
                                                        class="error"></dv-error-messages>
 
                                 </div>
@@ -50,11 +48,11 @@
 
                 <!--familienstatus-->
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-xs-12 dv-input-container-medium">
                         <div class="form-group">
-                            <h4 class="mainQuestion"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span>
+                            <h1 class="required"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span>
                                 <dv-tooltip text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip>
-                            </h4>
+                            </h1>
                             <dv-radio-container name="familienstatus"
                                                 ng-model="vm.getFamiliensituation().familienstatus"
                                                 ng-required="true"
@@ -63,7 +61,7 @@
                                                 dv-enable-allowed-roles="vm.allowedRoles"
                                                 dv-enable-expression="vm.isEnabled()">
                             </dv-radio-container>
-                            <dv-error-messages for="form.familienstatus.$error"
+                            <dv-error-messages for="vm.form.familienstatus.$error"
                                                class="error"></dv-error-messages>
                         </div>
                     </div>
@@ -71,9 +69,9 @@
 
                 <!--gesuchstellerKardinalitaet-->
                 <div class="row">
-                    <div class="col-md-6" ng-if="vm.showGesuchstellerKardinalitaet()">
+                    <div class="col-xs-12 dv-input-container-medium" ng-if="vm.showGesuchstellerKardinalitaet()">
                         <div class="form-group">
-                            <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
+                            <h1 class="required" data-translate="FAMILIENSITUATION_FRAGE_2"></h1>
                             <dv-radio-container name="gesuchstellerKardinalitaet"
                                                 ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet"
                                                 ng-required="true"
@@ -82,7 +80,7 @@
                                                 dv-enable-allowed-roles="vm.allowedRoles"
                                                 dv-enable-expression="vm.isEnabled()">
                             </dv-radio-container>
-                            <dv-error-messages for="form.gesuchstellerKardinalitaet.$error"
+                            <dv-error-messages for="vm.form.gesuchstellerKardinalitaet.$error"
                                                class="error"></dv-error-messages>
                         </div>
                     </div>
@@ -92,7 +90,7 @@
                     <div class="col-md-12">
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                       dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave(form)">
+                                       dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave()">
                         </dv-navigation>
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"

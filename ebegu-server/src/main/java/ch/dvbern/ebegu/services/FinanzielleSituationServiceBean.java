@@ -3,9 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -83,13 +81,10 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public void removeFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation) {
 		Validate.notNull(finanzielleSituation);
+		//es reicht den container zu nullen, orphan removal deleted dann den unnuetzen container
 		finanzielleSituation.getGesuchsteller().setFinanzielleSituationContainer(null);
 		persistence.merge(finanzielleSituation.getGesuchsteller());
 		authorizer.checkWriteAuthorization(finanzielleSituation);
-		Optional<FinanzielleSituationContainer> propertyToRemove = findFinanzielleSituation(finanzielleSituation.getId());
-		final FinanzielleSituationContainer finSitToRemove = propertyToRemove.orElseThrow(()
-			-> new EbeguEntityNotFoundException("removeFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, finanzielleSituation));
-		persistence.remove(FinanzielleSituationContainer.class, finSitToRemove.getId());
 	}
 
 	@Override

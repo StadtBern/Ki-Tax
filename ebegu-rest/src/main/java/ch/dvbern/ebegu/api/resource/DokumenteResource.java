@@ -12,7 +12,7 @@ import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;
@@ -77,7 +77,7 @@ public class DokumenteResource {
 			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded);
 			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
 
-			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.getAllDokumentGrundByGesuch(gesuch.get());
+			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuch(gesuch.get());
 
 			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund);
 
@@ -102,7 +102,7 @@ public class DokumenteResource {
 
 			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
 
-			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.getAllDokumentGrundByGesuchAndDokumentType(gesuch.get(), dokumentGrundTyp);
+			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuchAndDokumentType(gesuch.get(), dokumentGrundTyp);
 
 			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund);
 

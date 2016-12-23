@@ -49,7 +49,8 @@
 
             <!--FinanzielleSituationPDF anzeigen-->
             <div class="row text-left" dv-show-element
-                 dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
+                 dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                 dv-show-expression="vm.isFinanziellesituationPDFVisible()">
                 <div class="col-md-12">
                     <i class="fa fa-file-text-o"></i>
                     <button type="button" class=" btn-link"
@@ -59,7 +60,7 @@
                 </div>
             </div>
             <!--Begleitschreiben anzeigen-->
-            <div class="row text-left">
+            <div class="row text-left" ng-show="vm.isBegleitschreibenVisible()">
                 <div class="col-md-12">
                     <i class="fa fa-file-text-o"></i>
                     <button type="button" class=" btn-link"
@@ -101,7 +102,7 @@
                     <dv-input-container class="col-md-12 form-group kommentar-feld">
                         <label class="md-no-float" for="bemerkungenID" data-translate="MAHNUNG_FEHLENDE_DOKUMENTE"></label>
                         <textarea name="bemerkungen" md-no-autogrow class="form-control input-element" rows="4" id="bemerkungenID"
-                            ng-model="vm.mahnung.bemerkungen" ng-required="true" maxlength="1000">
+                            ng-model="vm.mahnung.bemerkungen" ng-required="true" maxlength="4000">
                         </textarea>
                         <dv-error-messages for="formMahnung.bemerkungen.$error" class="error"></dv-error-messages>
                     </dv-input-container>
@@ -167,7 +168,7 @@
                         <span data-translate="ZWEITE_MAHNUNG_AUSLOESEN_UPPER"></span>
                     </dv-loading-button>
                 </span>
-                 <span class="col-md-4" ng-show="vm.showMahnlaufBeenden()">
+                <span class="col-md-4" ng-show="vm.showMahnlaufBeenden()">
                     <dv-loading-button button-click="vm.mahnlaufBeenden()"
                                        button-class="dv-btn-sm"
                                        aria-label="{{DOKUMENTE_KOMPLETT_UPPER | translate}}">

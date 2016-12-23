@@ -45,4 +45,15 @@ public interface MahnungService {
 	 * Ueberprueft fuer alle aktiven Mahnungen, ob deren Ablauffrist eingetreten ist
 	 */
 	void fristAblaufTimer();
+
+	/**
+	 * Gibt die (einzige aktive erstmahnung zurueck)
+	 */
+	Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch);
+
+	/**
+	 * Entfernt alle Mahnungen vom gegebenen Gesuch
+	 * @param gesuch
+	 */
+	void removeAllMahnungenFromGesuch(Gesuch gesuch);
 }

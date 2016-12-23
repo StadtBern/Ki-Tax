@@ -1,9 +1,11 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
@@ -26,9 +28,16 @@ public class Institution extends AbstractEntity implements HasMandant {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_traegerschaft_id"))
 	private Traegerschaft traegerschaft;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_mandant_id"))
 	private Mandant mandant;
+
+	@Pattern(regexp = Constants.REGEX_EMAIL, message = "{validator.constraints.Email.message}")
+	@Size(min = 5, max = DB_DEFAULT_MAX_LENGTH)
+	@NotNull
+	@Column(nullable = false)
+	private String mail;
 
 	@NotNull
 	@Column(nullable = false)
@@ -61,6 +70,13 @@ public class Institution extends AbstractEntity implements HasMandant {
 		this.mandant = mandant;
 	}
 
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
 
 	public Boolean getActive() {
 		return active;

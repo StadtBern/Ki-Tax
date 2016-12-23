@@ -34,14 +34,6 @@ public class AbwesenheitContainer extends AbstractEntity implements Comparable<A
 
 
 	public AbwesenheitContainer() {
-
-	}
-
-	public AbwesenheitContainer(@Nonnull AbwesenheitContainer toCopy, @Nonnull Betreuung betreuung) {
-		this.setVorgaengerId(toCopy.getId());
-		this.betreuung = betreuung;
-		this.abwesenheitGS = null;
-		this.abwesenheitJA = new Abwesenheit(toCopy.getAbwesenheitJA());
 	}
 
 
@@ -88,5 +80,13 @@ public class AbwesenheitContainer extends AbstractEntity implements Comparable<A
 		builder.append(this.getAbwesenheitJA(), o.getAbwesenheitJA());
 		builder.append(this.getAbwesenheitJA().getId(), o.getAbwesenheitJA().getId());
 		return builder.toComparison();
+	}
+
+	public AbwesenheitContainer copyForMutation(AbwesenheitContainer mutation, @Nonnull Betreuung betreuungMutation) {
+		super.copyForMutation(mutation);
+		mutation.setBetreuung(betreuungMutation);
+		mutation.setAbwesenheitGS(null);
+		mutation.setAbwesenheitJA(this.getAbwesenheitJA().copyForMutation(new Abwesenheit()));
+		return mutation;
 	}
 }

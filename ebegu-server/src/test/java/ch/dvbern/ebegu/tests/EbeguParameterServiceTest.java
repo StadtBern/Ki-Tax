@@ -79,7 +79,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 
 		Optional<EbeguParameter> ebeguParameterOptional = parameterService.findEbeguParameter(insertedEbeguParameter.getId());
 		Assert.assertTrue(ebeguParameterOptional.isPresent());
-		EbeguParameter persistedInstStammdaten= ebeguParameterOptional.get();
+		EbeguParameter persistedInstStammdaten = ebeguParameterOptional.get();
 		Assert.assertEquals(insertedEbeguParameter.getValue(), persistedInstStammdaten.getValue());
 
 		persistedInstStammdaten.setValue("Mein Test Wert");

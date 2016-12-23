@@ -3,6 +3,7 @@ import TSAbstractEntity from './TSAbstractEntity';
 import TSGesuchsperiode from './TSGesuchsperiode';
 import {TSAntragStatus} from './enums/TSAntragStatus';
 import {TSAntragTyp} from './enums/TSAntragTyp';
+import {TSEingangsart} from './enums/TSEingangsart';
 
 export default class TSAbstractAntragEntity extends TSAbstractEntity {
 
@@ -10,8 +11,10 @@ export default class TSAbstractAntragEntity extends TSAbstractEntity {
     private _fall: TSFall;
     private _gesuchsperiode: TSGesuchsperiode;
     private _eingangsdatum: moment.Moment;
+    private _freigabeDatum: moment.Moment;
     private _status: TSAntragStatus;
     private _typ: TSAntragTyp;
+    private _eingangsart: TSEingangsart;
 
 
     public get fall(): TSFall {
@@ -38,6 +41,14 @@ export default class TSAbstractAntragEntity extends TSAbstractEntity {
         this._eingangsdatum = value;
     }
 
+    get freigabeDatum(): moment.Moment {
+        return this._freigabeDatum;
+    }
+
+    set freigabeDatum(value: moment.Moment) {
+        this._freigabeDatum = value;
+    }
+
     get status(): TSAntragStatus {
         return this._status;
     }
@@ -52,5 +63,13 @@ export default class TSAbstractAntragEntity extends TSAbstractEntity {
 
     set typ(value: TSAntragTyp) {
         this._typ = value;
+    }
+
+    get eingangsart(): TSEingangsart {
+        return this._eingangsart;
+    }
+
+    set eingangsart(value: TSEingangsart) {
+        this._eingangsart = value;
     }
 }

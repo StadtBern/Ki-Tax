@@ -59,25 +59,10 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 	@Column(nullable = true)
 	private BigDecimal nettolohnZus;
 
+
 	public Einkommensverschlechterung() {
 	}
 
-	public Einkommensverschlechterung(@Nonnull Einkommensverschlechterung toCopy) {
-		super(toCopy);
-		this.nettolohnJan = toCopy.nettolohnJan;
-		this.nettolohnFeb = toCopy.nettolohnFeb;
-		this.nettolohnMrz = toCopy.nettolohnMrz;
-		this.nettolohnApr = toCopy.nettolohnApr;
-		this.nettolohnMai = toCopy.nettolohnMai;
-		this.nettolohnJun = toCopy.nettolohnJun;
-		this.nettolohnJul = toCopy.nettolohnJul;
-		this.nettolohnAug = toCopy.nettolohnAug;
-		this.nettolohnSep = toCopy.nettolohnSep;
-		this.nettolohnOkt = toCopy.nettolohnOkt;
-		this.nettolohnNov = toCopy.nettolohnNov;
-		this.nettolohnDez = toCopy.nettolohnDez;
-		this.nettolohnZus = toCopy.nettolohnZus;
-	}
 
 	public BigDecimal getNettolohnJan() {
 		return nettolohnJan;
@@ -191,5 +176,23 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 		return MathUtil.DEFAULT.add(nettolohnJan, nettolohnFeb, nettolohnMrz, nettolohnApr,
 			nettolohnMai, nettolohnJun, nettolohnJul, nettolohnAug, nettolohnSep,
 			nettolohnOkt, nettolohnNov, nettolohnDez, nettolohnZus);
+	}
+
+	public Einkommensverschlechterung copyForMutation(Einkommensverschlechterung mutation) {
+		super.copyForMutation(mutation);
+		mutation.setNettolohnJan(this.getNettolohnJan());
+		mutation.setNettolohnFeb(this.getNettolohnFeb());
+		mutation.setNettolohnMrz(this.getNettolohnMrz());
+		mutation.setNettolohnApr(this.getNettolohnApr());
+		mutation.setNettolohnMai(this.getNettolohnMai());
+		mutation.setNettolohnJun(this.getNettolohnJun());
+		mutation.setNettolohnJul(this.getNettolohnJul());
+		mutation.setNettolohnAug(this.getNettolohnAug());
+		mutation.setNettolohnSep(this.getNettolohnSep());
+		mutation.setNettolohnOkt(this.getNettolohnOkt());
+		mutation.setNettolohnNov(this.getNettolohnNov());
+		mutation.setNettolohnDez(this.getNettolohnDez());
+		mutation.setNettolohnZus(this.getNettolohnZus());
+		return mutation;
 	}
 }

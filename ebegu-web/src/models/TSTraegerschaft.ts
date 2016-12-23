@@ -3,13 +3,17 @@ import TSAbstractEntity from './TSAbstractEntity';
 export class TSTraegerschaft extends TSAbstractEntity {
 
     private _name: string;
-
     private _active: boolean;
+    private _mail: string;
 
-    constructor(name?: string, active?: boolean) {
+    // just to communicate with client
+    private _synchronizedWithOpenIdm: boolean = false;
+
+    constructor(name?: string, active?: boolean, mail?: string) {
         super();
         this._name = name;
         this._active = active;
+        this._mail = mail;
     }
 
 
@@ -27,5 +31,21 @@ export class TSTraegerschaft extends TSAbstractEntity {
 
     set active(value: boolean) {
         this._active = value;
+    }
+
+    get synchronizedWithOpenIdm(): boolean {
+        return this._synchronizedWithOpenIdm;
+    }
+
+    set synchronizedWithOpenIdm(value: boolean) {
+        this._synchronizedWithOpenIdm = value;
+    }
+
+    get mail(): string {
+        return this._mail;
+    }
+
+    set mail(value: string) {
+        this._mail = value;
     }
 }

@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;
@@ -14,33 +15,30 @@ public interface FamiliensituationService {
 
 	/**
 	 * Aktualisiert idn Familiensituation in der DB oder erstellt sie wenn sie noch nicht existiert
-	 *
-	 * @param gesuch -
-	 * @param oldFamiliensituation -
-	 *@param newFamiliensituation die Familiensituation als DTO  @return Die aktualisierte Familiensituation
+	 * @param loadedFamiliensituation dies ist der bisher gespeicherte FamiliensituationJA Wert aus der DB
 	 */
-	@Nonnull
-	Familiensituation saveFamiliensituation(Gesuch gesuch, Familiensituation oldFamiliensituation, @Nonnull Familiensituation newFamiliensituation);
+	FamiliensituationContainer saveFamiliensituation(Gesuch gesuch, FamiliensituationContainer familiensituationContainer, Familiensituation loadedFamiliensituation);
 
 	/**
-	 *
 	 * @param key PK (id) der Familiensituation
 	 * @return Familiensituation mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<Familiensituation> findFamiliensituation(@Nonnull String key);
+	Optional<FamiliensituationContainer> findFamiliensituation(@Nonnull String key);
 
 	/**
 	 * Gibt alle existierenden Familiensituationen zurueck.
+	 *
 	 * @return Liste aller Familiensituationen aus der DB
 	 */
 	@Nonnull
-	Collection<Familiensituation> getAllFamiliensituatione();
+	Collection<FamiliensituationContainer> getAllFamiliensituatione();
 
 	/**
 	 * entfernt eine Familiensituation aus der Database
+	 *
 	 * @param familiensituation die Familiensituation als DTO
 	 */
-	void removeFamiliensituation(@Nonnull Familiensituation familiensituation);
+	void removeFamiliensituation(@Nonnull FamiliensituationContainer familiensituation);
 
 }

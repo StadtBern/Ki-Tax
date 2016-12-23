@@ -4,12 +4,9 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -67,28 +64,7 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	@Column(nullable = true)
 	private LocalDate stichtagFuerBasisJahrPlus2;
 
-	@NotNull
-	@Valid
-	@OneToOne(optional = false, mappedBy = "einkommensverschlechterungInfo")
-	private Gesuch gesuch;
-
 	public EinkommensverschlechterungInfo(){
-	}
-
-	/**
-	 * Copy Constructor. ACHTUNG kopiert nur daten die in dieser Klasse definiert sind
-	 */
-	public EinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfo that) {
-		this.setVorgaengerId(that.getId());
-		this.einkommensverschlechterung = that.einkommensverschlechterung;
-		this.ekvFuerBasisJahrPlus1 = that.ekvFuerBasisJahrPlus1;
-		this.ekvFuerBasisJahrPlus2 = that.ekvFuerBasisJahrPlus2;
-		this.gemeinsameSteuererklaerung_BjP1 = that.gemeinsameSteuererklaerung_BjP1;
-		this.gemeinsameSteuererklaerung_BjP2 = that.gemeinsameSteuererklaerung_BjP2;
-		this.grundFuerBasisJahrPlus1 = that.grundFuerBasisJahrPlus1;
-		this.grundFuerBasisJahrPlus2 = that.grundFuerBasisJahrPlus2;
-		this.stichtagFuerBasisJahrPlus1 = that.stichtagFuerBasisJahrPlus1;
-		this.stichtagFuerBasisJahrPlus2 = that.stichtagFuerBasisJahrPlus2;
 	}
 
 
@@ -153,19 +129,6 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 		this.stichtagFuerBasisJahrPlus2 = stichtagFuerBasisJahrPlus2;
 	}
 
-	public Gesuch getGesuch() {
-		return gesuch;
-	}
-
-	public void setGesuch(Gesuch gesuch) {
-		this.gesuch = gesuch;
-
-		if (gesuch != null &&
-			(gesuch.getEinkommensverschlechterungInfo() == null || !gesuch.getEinkommensverschlechterungInfo().equals(this))) {
-			gesuch.setEinkommensverschlechterungInfo(this);
-		}
-	}
-
 	@Nullable
 	public Boolean getGemeinsameSteuererklaerung_BjP1() {
 		return gemeinsameSteuererklaerung_BjP1;
@@ -182,5 +145,19 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 
 	public void setGemeinsameSteuererklaerung_BjP2(@Nullable Boolean gemeinsameSteuererklaerung_BjP2) {
 		this.gemeinsameSteuererklaerung_BjP2 = gemeinsameSteuererklaerung_BjP2;
+	}
+
+	public EinkommensverschlechterungInfo copyForMutation(EinkommensverschlechterungInfo mutation) {
+		super.copyForMutation(mutation);
+		mutation.setEinkommensverschlechterung(this.getEinkommensverschlechterung());
+		mutation.setEkvFuerBasisJahrPlus1(this.getEkvFuerBasisJahrPlus1());
+		mutation.setEkvFuerBasisJahrPlus2(this.getEkvFuerBasisJahrPlus2());
+		mutation.setGemeinsameSteuererklaerung_BjP1(this.getGemeinsameSteuererklaerung_BjP1());
+		mutation.setGemeinsameSteuererklaerung_BjP2(this.getGemeinsameSteuererklaerung_BjP2());
+		mutation.setGrundFuerBasisJahrPlus1(this.getGrundFuerBasisJahrPlus1());
+		mutation.setGrundFuerBasisJahrPlus2(this.getGrundFuerBasisJahrPlus2());
+		mutation.setStichtagFuerBasisJahrPlus1(this.getStichtagFuerBasisJahrPlus1());
+		mutation.setStichtagFuerBasisJahrPlus2(this.getStichtagFuerBasisJahrPlus2());
+		return mutation;
 	}
 }

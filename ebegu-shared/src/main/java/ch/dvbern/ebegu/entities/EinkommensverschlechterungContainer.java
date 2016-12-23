@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 @Audited
 @Entity
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = "gesuchsteller_id", name = "UK_einkommensverschlechterungcontainer_gesuchsteller")
+	uniqueConstraints = @UniqueConstraint(columnNames = "gesuchsteller_container_id", name = "UK_einkommensverschlechterungcontainer_gesuchsteller")
 )
 public class EinkommensverschlechterungContainer extends AbstractEntity {
 
@@ -28,8 +28,8 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 
 	@NotNull
 	@OneToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_einkommensverschlechterungcontainer_gesuchsteller_id"), nullable = false)
-	private Gesuchsteller gesuchsteller;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_einkommensverschlechterungcontainer_gesuchstellerContainer_id"), nullable = false)
+	private GesuchstellerContainer gesuchstellerContainer;
 
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -51,21 +51,10 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_einkommensverschlechterungcontainer_ekvJABasisJahrPlus2_id"), nullable = true)
 	private Einkommensverschlechterung ekvJABasisJahrPlus2;
 
+
 	public EinkommensverschlechterungContainer() {
 	}
 
-	public EinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
-		this.setVorgaengerId(toCopy.getId());
-		this.gesuchsteller = gesuchsteller;
-		this.ekvGSBasisJahrPlus1 = null;
-		this.ekvGSBasisJahrPlus2 = null;
-		if (toCopy.ekvJABasisJahrPlus1 != null) {
-			this.ekvJABasisJahrPlus1 = new Einkommensverschlechterung(toCopy.ekvJABasisJahrPlus1);
-		}
-		if (toCopy.ekvJABasisJahrPlus2 != null) {
-			this.ekvJABasisJahrPlus2 = new Einkommensverschlechterung(toCopy.ekvJABasisJahrPlus2);
-		}
-	}
 
 	public Einkommensverschlechterung getEkvJABasisJahrPlus2() {
 		return ekvJABasisJahrPlus2;
@@ -99,12 +88,25 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 		this.ekvGSBasisJahrPlus1 = ekvGSBasisJahrPlus1;
 	}
 
-
-	public Gesuchsteller getGesuchsteller() {
-		return gesuchsteller;
+	public GesuchstellerContainer getGesuchsteller() {
+		return gesuchstellerContainer;
 	}
 
-	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
-		this.gesuchsteller = gesuchsteller;
+	public void setGesuchsteller(GesuchstellerContainer gesuchsteller) {
+		this.gesuchstellerContainer = gesuchsteller;
+	}
+
+	public EinkommensverschlechterungContainer copyForMutation(EinkommensverschlechterungContainer mutation, @Nonnull GesuchstellerContainer gesuchstellerMutation) {
+		super.copyForMutation(mutation);
+		mutation.setGesuchsteller(gesuchstellerMutation);
+		mutation.setEkvGSBasisJahrPlus1(null);
+		mutation.setEkvGSBasisJahrPlus2(null);
+		if (this.getEkvJABasisJahrPlus1() != null) {
+			mutation.setEkvJABasisJahrPlus1(this.getEkvJABasisJahrPlus1().copyForMutation(new Einkommensverschlechterung()));
+		}
+		if (this.getEkvJABasisJahrPlus2() != null) {
+			mutation.setEkvJABasisJahrPlus2(this.getEkvJABasisJahrPlus2().copyForMutation(new Einkommensverschlechterung()));
+		}
+		return mutation;
 	}
 }

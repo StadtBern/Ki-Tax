@@ -2,11 +2,11 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 /**
  * Entity fuer PensumFachstelle.
@@ -17,17 +17,15 @@ public class PensumFachstelle extends AbstractPensumEntity {
 
 	private static final long serialVersionUID = -9132257320978374570L;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_pensum_fachstelle_fachstelle_id"))
 	private Fachstelle fachstelle;
 
+
 	public PensumFachstelle() {
 	}
 
-	public PensumFachstelle(@Nonnull PensumFachstelle toCopy) {
-		super(toCopy);
-		this.fachstelle = toCopy.fachstelle;
-	}
 
 	public Fachstelle getFachstelle() {
 		return fachstelle;
@@ -35,5 +33,11 @@ public class PensumFachstelle extends AbstractPensumEntity {
 
 	public void setFachstelle(Fachstelle fachstelle) {
 		this.fachstelle = fachstelle;
+	}
+
+	public PensumFachstelle copyForMutation(PensumFachstelle mutation) {
+		super.copyForMutation(mutation);
+		mutation.setFachstelle(this.getFachstelle());
+		return mutation;
 	}
 }

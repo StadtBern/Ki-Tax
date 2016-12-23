@@ -71,7 +71,7 @@ public class PendenzResourceTest extends AbstractEbeguRestLoginTest {
 
 	private void assertGesuchDaten(Gesuch gesuch1, JaxAntragDTO pendenzenList) {
 		Assert.assertEquals(gesuch1.getFall().getFallNummer(), pendenzenList.getFallNummer());
-		Assert.assertEquals(gesuch1.getGesuchsteller1().getNachname(), pendenzenList.getFamilienName());
+		Assert.assertEquals(gesuch1.getGesuchsteller1().extractNachname(), pendenzenList.getFamilienName());
 		Assert.assertEquals(gesuch1.getEingangsdatum(), pendenzenList.getEingangsdatum());
 		Assert.assertEquals(gesuch1.getStatus(), AntragStatusConverterUtil.convertStatusToEntity(pendenzenList.getStatus()));
 	}

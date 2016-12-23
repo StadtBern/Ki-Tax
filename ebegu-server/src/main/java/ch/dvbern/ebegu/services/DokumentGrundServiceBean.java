@@ -10,6 +10,8 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -21,11 +23,15 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
 /**
  * Service fuer Kind
  */
 @Stateless
 @Local(DokumentGrundService.class)
+@PermitAll
 public class DokumentGrundServiceBean extends AbstractBaseService implements DokumentGrundService {
 
 	@Inject
@@ -35,6 +41,8 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+	@Inject
+	private Authorizer authorizer;
 
 
 	@Nonnull
@@ -56,17 +64,18 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 
 	@Override
 	@Nonnull
-	public Collection<DokumentGrund> getAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch) {
+	public Collection<DokumentGrund> findAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
+		this.authorizer.checkReadAuthorization(gesuch);
 		return criteriaQueryHelper.getEntitiesByAttribute(DokumentGrund.class, gesuch, DokumentGrund_.gesuch);
 	}
 
 	@Override
 	@Nonnull
-	public Collection<DokumentGrund> getAllDokumentGrundByGesuchAndDokumentType(@Nonnull Gesuch gesuch, @Nonnull DokumentGrundTyp dokumentGrundTyp) {
+	public Collection<DokumentGrund> findAllDokumentGrundByGesuchAndDokumentType(@Nonnull Gesuch gesuch, @Nonnull DokumentGrundTyp dokumentGrundTyp) {
 		Objects.requireNonNull(gesuch);
 
-
+		this.authorizer.checkReadAuthorization(gesuch);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<DokumentGrund> query = cb.createQuery(DokumentGrund.class);
 
@@ -92,6 +101,15 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 		final DokumentGrund mergedDokument = persistence.merge(dokumentGrund);
 		wizardStepService.updateSteps(mergedDokument.getGesuch().getId(), null, null, WizardStepName.DOKUMENTE);
 		return mergedDokument;
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN,})
+	public void removeAllDokumentGrundeFromGesuch(Gesuch gesuch) {
+		Collection<DokumentGrund> dokumentsFromGesuch = findAllDokumentGrundByGesuch(gesuch);
+		for (DokumentGrund dokument : dokumentsFromGesuch) {
+			persistence.remove(DokumentGrund.class, dokument.getId());
+		}
 	}
 
 }

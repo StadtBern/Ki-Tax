@@ -9,11 +9,12 @@ import TSBetreuung from '../../../models/TSBetreuung';
 import TSAbwesenheitContainer from '../../../models/TSAbwesenheitContainer';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import ITranslateService = angular.translate.ITranslateService;
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import IQService = angular.IQService;
 import ErrorService from '../../../core/errors/service/ErrorService';
+import ITranslateService = angular.translate.ITranslateService;
+import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./abwesenheitView.html');
 require('./abwesenheitView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -42,21 +43,20 @@ export class AbwesenheitUI {
     }
 }
 
-export class AbwesenheitViewController extends AbstractGesuchViewController {
+export class AbwesenheitViewController extends AbstractGesuchViewController<Array<AbwesenheitUI>> {
 
-    abwesenheitList: Array<AbwesenheitUI> = [];
     betreuungList: Array<KindBetreuungUI>;
     private removed: boolean;
     private changedBetreuungen: Array<TSBetreuung> = [];
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'DvDialog',
-        '$translate', '$q', 'ErrorService'];
+        '$translate', '$q', 'ErrorService', '$scope'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog, private $translate: ITranslateService,
-                private $q: IQService, private errorService: ErrorService) {
+                private $q: IQService, private errorService: ErrorService, $scope: IScope) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initViewModel();
     }
 
@@ -88,11 +88,11 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
     }
 
     private initAbwesenheitList(): void {
-        this.abwesenheitList = [];
+        this.model = [];
         this.betreuungList.forEach((kindBetreuung) => {
             if (kindBetreuung.betreuung.abwesenheitContainers) {
                 kindBetreuung.betreuung.abwesenheitContainers.forEach((abwesenheitCont: TSAbwesenheitContainer) => {
-                    this.abwesenheitList.push(new AbwesenheitUI(kindBetreuung, abwesenheitCont));
+                    this.model.push(new AbwesenheitUI(kindBetreuung, abwesenheitCont));
                 });
             }
         });
@@ -102,10 +102,10 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
         return this.betreuungList;
     }
 
-    public save(form: angular.IFormController): IPromise<Array<TSBetreuung>> {
-        if (form.$valid) {
+    public save(): IPromise<Array<TSBetreuung>> {
+        if (this.form.$valid) {
             this.errorService.clearAll();
-            if (!form.$dirty && !this.removed) {
+            if (!this.form.$dirty && !this.removed) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when([this.gesuchModelManager.getBetreuungToWorkWith()]);
@@ -119,7 +119,7 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
                 });
             });
             //Jetzt koennen wir alle geaenderten Abwesenheiten nochmal hinzufuegen
-            this.abwesenheitList.forEach((abwesenheit: AbwesenheitUI) => {
+            this.model.forEach((abwesenheit: AbwesenheitUI) => {
                 if (!abwesenheit.kindBetreuung.betreuung.abwesenheitContainers) {
                     abwesenheit.kindBetreuung.betreuung.abwesenheitContainers = [];
                 }
@@ -167,25 +167,25 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
     }
 
     private removeAbwesenheit(abwesenheit: AbwesenheitUI) {
-        let indexOf = this.abwesenheitList.lastIndexOf(abwesenheit);
+        let indexOf = this.model.lastIndexOf(abwesenheit);
         if (indexOf >= 0) {
             if (abwesenheit.kindBetreuung) {
                 this.removed = true;
                 this.addChangedBetreuungToList(abwesenheit.kindBetreuung.betreuung);
             }
-            this.abwesenheitList.splice(indexOf, 1);
+            this.model.splice(indexOf, 1);
         }
     }
 
     public createAbwesenheit(): void {
-        if (!this.abwesenheitList) {
-            this.abwesenheitList = [];
+        if (!this.model) {
+            this.model = [];
         }
-        this.abwesenheitList.push(new AbwesenheitUI(undefined, new TSAbwesenheitContainer()));
+        this.model.push(new AbwesenheitUI(undefined, new TSAbwesenheitContainer()));
     }
 
     public getAbwesenheiten(): Array<AbwesenheitUI> {
-        return this.abwesenheitList;
+        return this.model;
     }
 
     /**

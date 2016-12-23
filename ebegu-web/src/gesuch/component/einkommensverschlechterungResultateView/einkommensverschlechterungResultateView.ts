@@ -10,7 +10,9 @@ import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlech
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./einkommensverschlechterungResultateView.html');
 require('./einkommensverschlechterungResultateView.less');
 
@@ -24,23 +26,24 @@ export class EinkommensverschlechterungResultateViewComponentConfig implements I
 /**
  * Controller fuer die Finanzielle Situation
  */
-export class EinkommensverschlechterungResultateViewController extends AbstractGesuchViewController {
+export class EinkommensverschlechterungResultateViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
-    gesuchsteller1EkvCont: TSEinkommensverschlechterungContainer;
-    gesuchsteller2EkvCont: TSEinkommensverschlechterungContainer;
-    parsedBasisJahrPlusNum: number;
+
     resultatVorjahr: TSFinanzielleSituationResultateDTO;
     resultatProzent: string;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q'];
+        'WizardStepManager', '$q', '$scope'];
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungResultateStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
-        this.gesuchModelManager.setBasisJahrPlusNumber(this.parsedBasisJahrPlusNum);
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        let parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
+        this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null, parsedBasisJahrPlusNum);
+        this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.gesuchModelManager.setBasisJahrPlusNumber(parsedBasisJahrPlusNum);
         this.initViewModel();
         this.calculate();
         this.resultatVorjahr = null;
@@ -52,8 +55,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     showGemeinsam(): boolean {
-        return this.gesuchModelManager.isGesuchsteller2Required() &&
-            this.gesuchModelManager.getGemeinsameSteuererklaerungToWorkWith() === true;
+        return this.model.isGesuchsteller2Required() &&
+            this.model.getGemeinsameSteuererklaerungToWorkWith() === true;
     }
 
     showGS1(): boolean {
@@ -61,14 +64,14 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     showGS2(): boolean {
-        return this.gesuchModelManager.isGesuchsteller2Required() &&
-            this.gesuchModelManager.getGemeinsameSteuererklaerungToWorkWith() === false;
+        return this.model.isGesuchsteller2Required() &&
+            this.model.getGemeinsameSteuererklaerungToWorkWith() === false;
     }
 
     showResult(): boolean {
-        if (this.parsedBasisJahrPlusNum === 1) {
-            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
+        if (this.model.getBasisJahrPlus() === 1) {
+            let ekvFuerBasisJahrPlus1 = this.model.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1
+                && this.model.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1 === true;
             return ekvFuerBasisJahrPlus1 === true;
 
         } else {
@@ -76,16 +79,17 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         }
     }
 
-    private save(form: angular.IFormController): IPromise<void> {
-        if (form.$valid) {
+    private save(): IPromise<void> {
+        if (this.form.$valid) {
             //todo team refactoren so dass nur eine resource methode aufgerufen wird (fuer transaktionssicherzheit)
-            if (!form.$dirty) {
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 // Update wizardStepStatus also if the form is empty and not dirty
-                return this.updateStatus();
+                return this.updateStatus(false);
             }
 
+            this.model.copyEkvSitDataToGesuch(this.gesuchModelManager.getGesuch());
             this.errorService.clearAll();
             if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
                 this.gesuchModelManager.setGesuchstellerNumber(1);
@@ -93,12 +97,12 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
                     return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
                         this.gesuchModelManager.setGesuchstellerNumber(2);
                         return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
-                            return this.updateStatus();
+                            return this.updateStatus(true);
                         });
                     });
                 } else {
                     return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
-                        return this.updateStatus();
+                        return this.updateStatus(true);
                     });
                 }
             }
@@ -110,22 +114,24 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
      * Hier wird der Status von WizardStep auf OK (MUTIERT fuer Mutationen) aktualisiert aber nur wenn es die letzt Seite EVResultate
      * gespeichert wird. Sonst liefern wir einfach den aktuellen GS als Promise zurueck.
      */
-    private updateStatus(): IPromise<any> {
+    private updateStatus(changes: boolean): IPromise<any> {
         if (this.isLastEinkVersStep()) {
             if (this.gesuchModelManager.getGesuch().isMutation()) {
-                return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
+                if (this.wizardStepManager.getCurrentStep().wizardStepStatus === TSWizardStepStatus.NOK || changes) {
+                    return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
+                }
             } else {
                 return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
             }
-        } else {
-            return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith()); //wenn nichts gespeichert einfach den aktuellen GS zurueckgeben
         }
+        return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith()); //wenn nichts gespeichert einfach den aktuellen GS zurueckgeben
+
     }
 
     calculate() {
-        if (this.gesuchModelManager.getGesuch() && this.parsedBasisJahrPlusNum) {
+        if (this.model && this.model.getBasisJahrPlus()) {
             this.berechnungsManager
-                .calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), this.parsedBasisJahrPlusNum)
+                .calculateEinkommensverschlechterungTemp(this.model, this.model.getBasisJahrPlus())
                 .then(() => {
                     this.resultatProzent = this.calculateVeraenderung();
                 });
@@ -135,18 +141,11 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     public getEinkommensverschlechterungContainerGS1(): TSEinkommensverschlechterungContainer {
-        if (!this.gesuchsteller1EkvCont) {
-            if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
-                this.gesuchsteller1EkvCont = this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer;
-            } else {
-                this.gesuchsteller1EkvCont = new TSEinkommensverschlechterungContainer();
-            }
-        }
-        return this.gesuchsteller1EkvCont;
+        return this.model.einkommensverschlechterungContainerGS1;
     }
 
     public getEinkommensverschlechterungGS1_GS(): TSEinkommensverschlechterung {
-        if (this.parsedBasisJahrPlusNum === 2) {
+        if (this.model.getBasisJahrPlus() === 2) {
             return this.getEinkommensverschlechterungContainerGS1().ekvGSBasisJahrPlus2;
         } else {
             return this.getEinkommensverschlechterungContainerGS1().ekvGSBasisJahrPlus1;
@@ -154,7 +153,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     public getEinkommensverschlechterungGS1_JA(): TSEinkommensverschlechterung {
-        if (this.parsedBasisJahrPlusNum === 2) {
+        if (this.model.getBasisJahrPlus() === 2) {
             return this.getEinkommensverschlechterungContainerGS1().ekvJABasisJahrPlus2;
         } else {
             return this.getEinkommensverschlechterungContainerGS1().ekvJABasisJahrPlus1;
@@ -162,18 +161,11 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     public getEinkommensverschlechterungContainerGS2(): TSEinkommensverschlechterungContainer {
-        if (!this.gesuchsteller2EkvCont) {
-            if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
-                this.gesuchsteller2EkvCont = this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer;
-            } else {
-                this.gesuchsteller2EkvCont = new TSEinkommensverschlechterungContainer();
-            }
-        }
-        return this.gesuchsteller2EkvCont;
+        return this.model.einkommensverschlechterungContainerGS2;
     }
 
     public getEinkommensverschlechterungGS2_GS(): TSEinkommensverschlechterung {
-        if (this.parsedBasisJahrPlusNum === 2) {
+        if (this.model.getBasisJahrPlus() === 2) {
             return this.getEinkommensverschlechterungContainerGS2().ekvGSBasisJahrPlus2;
         } else {
             return this.getEinkommensverschlechterungContainerGS2().ekvGSBasisJahrPlus1;
@@ -181,7 +173,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     public getEinkommensverschlechterungGS2_JA(): TSEinkommensverschlechterung {
-        if (this.parsedBasisJahrPlusNum === 2) {
+        if (this.model.getBasisJahrPlus() === 2) {
             return this.getEinkommensverschlechterungContainerGS2().ekvJABasisJahrPlus2;
         } else {
             return this.getEinkommensverschlechterungContainerGS2().ekvJABasisJahrPlus1;
@@ -189,7 +181,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     public getResultate(): TSFinanzielleSituationResultateDTO {
-        if (this.parsedBasisJahrPlusNum === 2) {
+        if (this.model.getBasisJahrPlus() === 2) {
             return this.berechnungsManager.einkommensverschlechterungResultateBjP2;
         } else {
             return this.berechnungsManager.einkommensverschlechterungResultateBjP1;
@@ -198,13 +190,13 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     public calculateResultateVorjahr() {
 
-        if (this.parsedBasisJahrPlusNum === 2) {
-            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 1).then((resultatVorjahr) => {
+        if (this.model.getBasisJahrPlus() === 2) {
+            this.berechnungsManager.calculateEinkommensverschlechterungTemp(this.model, 1).then((resultatVorjahr) => {
                 this.resultatVorjahr = resultatVorjahr;
                 this.resultatProzent = this.calculateVeraenderung();
             });
         } else {
-            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch()).then((resultatVorjahr) => {
+            this.berechnungsManager.calculateFinanzielleSituationTemp(this.model).then((resultatVorjahr) => {
                 this.resultatVorjahr = resultatVorjahr;
                 this.resultatProzent = this.calculateVeraenderung();
             });
@@ -252,7 +244,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
      */
     private isLastEinkVersStep(): boolean {
         // Letztes Jahr haengt von den eingegebenen Daten ab
-        return (this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 2)
-            || (!this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 1);
+        return (this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 2)
+            || (!this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 1);
     }
 }

@@ -8,7 +8,9 @@ import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanziell
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./finanzielleSituationResultateView.html');
 require('./finanzielleSituationResultateView.less');
 
@@ -22,29 +24,28 @@ export class FinanzielleSituationResultateViewComponentConfig implements ICompon
 /**
  * Controller fuer die Finanzielle Situation
  */
-export class FinanzielleSituationResultateViewController extends AbstractGesuchViewController {
+export class FinanzielleSituationResultateViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
-    gesuchsteller1FinSit: TSFinanzielleSituationContainer;
-    gesuchsteller2FinSit: TSFinanzielleSituationContainer;
+    private initialModel: TSFinanzModel;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q'];
+        'WizardStepManager', '$q', '$scope'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.initViewModel();
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+
+        this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
+        this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
+        this.initialModel = angular.copy(this.model);
+
         this.calculate();
     }
 
-    private initViewModel() {
-        this.gesuchModelManager.initFinanzielleSituation();
-    }
-
     showGemeinsam(): boolean {
-        return this.gesuchModelManager.isGesuchsteller2Required() &&
-            this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === true;
+        return this.model.isGesuchsteller2Required() &&
+            this.model.gemeinsameSteuererklaerung === true;
     }
 
     showGS1(): boolean {
@@ -52,13 +53,14 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     }
 
     showGS2(): boolean {
-        return this.gesuchModelManager.isGesuchsteller2Required() &&
-            this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === false;
+        return this.model.isGesuchsteller2Required() &&
+            this.model.gemeinsameSteuererklaerung === false;
     }
 
-    private save(form: angular.IFormController): IPromise<void> {
-        if (form.$valid) {
-            if (!form.$dirty) {
+    private save(): IPromise<void> {
+        if (this.form.$valid) {
+            this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
+            if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 // Update wizardStepStatus also if the form is empty and not dirty
@@ -85,34 +87,17 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     }
 
     calculate() {
-        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch());
+        this.berechnungsManager.calculateFinanzielleSituationTemp(this.model);
     }
-
-    resetForm() {
-        this.initViewModel();
-    }
+    //init weg
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituationContainer {
-        if (!this.gesuchsteller1FinSit) {
-            if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
-                this.gesuchsteller1FinSit = this.gesuchModelManager.getGesuch().gesuchsteller1.finanzielleSituationContainer;
-            } else {
-                this.gesuchsteller1FinSit = new TSFinanzielleSituationContainer();
-            }
-        }
-        return this.gesuchsteller1FinSit;
+        return this.model.finanzielleSituationContainerGS1;
 
     }
 
     public getFinanzielleSituationGS2(): TSFinanzielleSituationContainer {
-        if (!this.gesuchsteller2FinSit) {
-            if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
-                this.gesuchsteller2FinSit = this.gesuchModelManager.getGesuch().gesuchsteller2.finanzielleSituationContainer;
-            } else {
-                this.gesuchsteller2FinSit = new TSFinanzielleSituationContainer();
-            }
-        }
-        return this.gesuchsteller2FinSit;
+        return this.model.finanzielleSituationContainerGS2;
     }
 
     public getResultate(): TSFinanzielleSituationResultateDTO {

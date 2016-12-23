@@ -22,6 +22,12 @@ public class JaxInstitution extends JaxAbstractDTO {
 	@NotNull
 	private JaxMandant mandant;
 
+	@NotNull
+	private String mail;
+
+	// just to communicate with client
+	private boolean synchronizedWithOpenIdm = false;
+
 	public String getName() {
 		return name;
 	}
@@ -44,5 +50,21 @@ public class JaxInstitution extends JaxAbstractDTO {
 
 	public void setMandant(JaxMandant mandant) {
 		this.mandant = mandant;
+	}
+
+	public boolean isSynchronizedWithOpenIdm() {
+		return synchronizedWithOpenIdm;
+	}
+
+	public void setSynchronizedWithOpenIdm(boolean synchronizedWithOpenIdm) {
+		this.synchronizedWithOpenIdm = synchronizedWithOpenIdm;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
 	}
 }

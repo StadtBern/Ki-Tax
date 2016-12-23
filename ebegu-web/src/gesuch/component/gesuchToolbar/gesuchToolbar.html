@@ -10,7 +10,7 @@
 
                 <md-menu-content class="no-padding menu-item-container">
                     <md-menu-item class="menu-item-link"
-                                  ng-repeat="gesuchsperiodeString in vmx.getKeys(vmx.gesuchsperiodeList)"
+                                  ng-repeat="gesuchsperiodeString in vmx.getKeys(vmx.gesuchNavigationList)"
                                   ng-value="gesuchsperiodeString">
                         <md-button ng-click="vmx.setGesuchsperiode(gesuchsperiodeString)"
                                    aria-label="{{gesuchsperiodeString}}">
@@ -32,7 +32,8 @@
                     <i class="ellipsis-icon fa fa-chevron-down"></i>
                 </button>
                 <md-menu-content class="no-padding menu-item-container">
-                    <md-menu-item class="menu-item-link" ng-repeat="antragTypDatum in vmx.getKeys(vmx.antragTypList)"
+                    <md-menu-item class="menu-item-link"
+                                  ng-repeat="antragTypDatum in vmx.gesuchNavigationList[vmx.getCurrentGesuchsperiode()]"
                                   ng-value="antragTypDatum">
                         <md-button class="menu-item-link" ng-click="vmx.setAntragTypDatum(antragTypDatum)"
                                    aria-label="{{antragTypDatum}}">
@@ -67,18 +68,17 @@
                 </button>
                 <md-menu-content class="no-padding menu-item-container kontakt">
 
-                    <span class="kontaktTop" ng-bind="vmx.getGesuch().gesuchsteller1.getFullName()"></span>
-                    <span ng-bind="vmx.getGesuch().gesuchsteller1.mail"></span>
-                    <span class="kontaktBottom" ng-bind="vmx.getGesuch().gesuchsteller1.getPhone()"></span>
+                    <span class="kontaktTop" ng-bind="vmx.getGesuch().gesuchsteller1.extractFullName()"></span>
+                    <span ng-bind="vmx.getGesuch().gesuchsteller1.extractMail()"></span>
+                    <span class="kontaktBottom" ng-bind="vmx.getGesuch().gesuchsteller1.extractPhone()"></span>
 
 
                     <span ng-if="vmx.getGesuch().gesuchsteller2"
-                          ng-bind="vmx.getGesuch().gesuchsteller2.getFullName()"></span>
+                          ng-bind="vmx.getGesuch().gesuchsteller2.extractFullName()"></span>
                     <span ng-if="vmx.getGesuch().gesuchsteller2"
-                              ng-bind="vmx.getGesuch().gesuchsteller2.mail"></span>
+                              ng-bind="vmx.getGesuch().gesuchsteller2.extractMail()"></span>
                     <span class="kontaktBottom" ng-if="vmx.getGesuch().gesuchsteller2"
-                          ng-bind="vmx.getGesuch().gesuchsteller2.getPhone()"></span>
-
+                          ng-bind="vmx.getGesuch().gesuchsteller2.extractPhone()"></span>
 
                 </md-menu-content>
             </md-menu>

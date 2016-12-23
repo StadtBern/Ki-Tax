@@ -6,38 +6,131 @@
     margin-top: 0;
 }
 
+.freigabe-dialog{
+    select{
+        background:@contrast-lighter;
+    }
+}
+.mobile-sidenav-toggle {
+    .ebeguBold();
+    height: @navbar-height;
+    position: relative;
+    background: @contrast-lightest;
+    box-sizing: border-box;
+    color: @contrast-darkest;
+    border-top: .1rem @contrast solid;
+    border-bottom: .1rem @contrast solid;
+    &.mobile-open {
+        border-left: 0.7rem @primary solid;
+    }
+    &.mobile-close {
+        border-right: 0.7rem @primary solid;
+    }
+    .mobile-active {
+        padding: 0 1.5rem 0 2.5rem;
+        &:focus {
+            outline: none;
+        }
+        span {
+            letter-spacing: 0.15rem;
+            font-size: 1.6rem;
+            display: none;
+            &.gesuch-name, &.active-element, &.fa-angle-down {
+                overflow: hidden;
+                display: block;
+                max-width: 40%;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            &.active-element {
+                color: @primary;
+                margin-left: auto;
+                margin-right: 2rem;
+                max-width: 55%;
+
+            }
+            &.fa-angle-down {
+                max-width: 5%;
+                font-size: 2rem;
+                overflow: visible;
+                display: block;
+            }
+
+        }
+    }
+    button {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        max-width: unset;
+        height: auto;
+        display: block;
+        background: transparent;
+        color: @contrast-darkest;
+
+        &.active, &:active, &:hover, &:focus,
+        &[disabled], &[disabled]:hover {
+            outline: 0;
+            background: transparent;
+            color: @contrast-darkest;
+        }
+        //IE Fallback
+        text-align: right;
+        text-align: end;
+        &.mobile-sidenav-close {
+            padding: 0 1.5rem 0;
+        }
+        span {
+            font-size: 2rem;
+            line-height: @navbar-height;
+            height: @navbar-height;
+        }
+    }
+}
+
 #gesuchContainer {
+
     background: @contrast-light;
     overflow-y: scroll;
     flex: 1 1 auto;
     min-width: 3rem;
+    display: block;
+    position: relative;
     .nav-row {
         -ms-box-orient: horizontal;
-        display: -webkit-box;
-        display: -moz-box;
         display: -ms-flexbox;
-        display: -moz-flex;
-        display: -webkit-flex;
         display: flex;
-        flex-direction: column-reverse;
+        flex-direction: row-reverse;
+        -ms-flex-direction: row-reverse;
+        bottom: 4rem;
+        left: 0;
+        right: 0;
+        transform: unset;
         position: absolute !important;
-        bottom: 2rem;
-        left: 50%;
-        transform: translateX(-50%);
         margin: 0;
         align-items: center;
         & > div {
             clear: both;
+            margin-bottom: 0;
+            display: flex;
             position: static;
-            padding: 0 2rem 0;
+            padding: 0 3rem 0;
             width: auto;
             min-width: 50%;
-            &:nth-of-type(1) {
-            }
             &:nth-of-type(2) {
-                margin-bottom: 2rem;
+                margin-bottom: 0;
+                justify-content: flex-start;
             }
-
+            &:nth-of-type(1) {
+                justify-content: flex-end;
+            }
+            &:nth-of-type(1).cancel {
+                margin-right: auto;
+                justify-content: flex-start;
+            }
         }
     }
     & > div {
@@ -71,7 +164,7 @@
 }
 
 .gesuchModul {
-    padding: 5rem 2.5rem 15rem 5rem;
+    padding: 5rem 3rem 10rem;
     position: relative;
 
     & div {
@@ -86,7 +179,7 @@
         height: 100% !important;
         display: block;
         position: relative !important;
-        .italic();
+        .ebeguItalic();
     }
 
     .betreuung-bar {
@@ -139,12 +232,12 @@
     color: @contrast-darkest;
 
     .status {
-        .bold();
+        .ebeguBold();
         font-size: 1.4rem;
         letter-spacing: 0.1rem;
     }
     .zuletzt {
-        .italic();
+        .ebeguItalic();
         font-size: 1.2rem;
         letter-spacing: 0.1rem;
     }

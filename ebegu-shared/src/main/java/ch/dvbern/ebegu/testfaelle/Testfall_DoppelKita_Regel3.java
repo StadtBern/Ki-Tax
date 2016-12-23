@@ -32,7 +32,7 @@ public class Testfall_DoppelKita_Regel3 extends AbstractTestfall {
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createAlleinerziehend();
-		Gesuchsteller gesuchsteller1 = createGesuchsteller();
+		GesuchstellerContainer gesuchsteller1 = createGesuchstellerContainer();
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensum = createErwerbspensum(60, 0);
@@ -42,8 +42,8 @@ public class Testfall_DoppelKita_Regel3 extends AbstractTestfall {
 		kind.setGesuch(gesuch);
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
-		// Kita Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
+		// Kita Weissenstein
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_WEISSENSTEIN, betreuungenBestaetigt);
 		betreuungKitaAaregg.setBetreuungNummer(1);
 		betreuungKitaAaregg.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaAaregg);

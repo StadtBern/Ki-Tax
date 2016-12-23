@@ -1,12 +1,15 @@
 package ch.dvbern.ebegu.vorlagen;
 
-import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
+import ch.dvbern.ebegu.util.StreamsUtil;
 import com.google.common.base.Strings;
+import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,24 +30,24 @@ public class PrintUtil {
 	 * vorhanden dann empty
 	 */
 	@Nonnull
-	public static Optional<GesuchstellerAdresse> getGesuchstellerAdresse(@Nullable Gesuchsteller gesuchsteller) {
+	public static Optional<GesuchstellerAdresseContainer> getGesuchstellerAdresse(@Nullable GesuchstellerContainer gesuchsteller) {
 
 		if (gesuchsteller != null) {
-			List<GesuchstellerAdresse> adressen = gesuchsteller.getAdressen();
+			List<GesuchstellerAdresseContainer> adressen = gesuchsteller.getAdressen();
 
 			// Zuerst suchen wir die Korrespondenzadresse wenn vorhanden
-			final Optional<GesuchstellerAdresse> korrespondenzadresse = adressen.stream().filter(GesuchstellerAdresse::isKorrespondenzAdresse)
+			final Optional<GesuchstellerAdresseContainer> korrespondenzadresse = adressen.stream().filter(GesuchstellerAdresseContainer::extractIsKorrespondenzAdresse)
 				.reduce(throwExceptionIfMoreThanOneAdresse(gesuchsteller));
-			if (korrespondenzadresse.isPresent()) {
+			if (korrespondenzadresse.isPresent() && korrespondenzadresse.get().getGesuchstellerAdresseJA() != null) {
 				return korrespondenzadresse;
 			}
 
 			// Sonst suchen wir die aktuelle Wohnadresse. Die ist keine KORRESPONDENZADRESSE und das aktuelle Datum liegt innerhalb ihrer Gueltigkeit
 			final LocalDate now = LocalDate.now();
-			for (GesuchstellerAdresse gesuchstellerAdresse : adressen) {
-				if (!gesuchstellerAdresse.getAdresseTyp().equals(AdresseTyp.KORRESPONDENZADRESSE)
-					&& !gesuchstellerAdresse.getGueltigkeit().getGueltigAb().isAfter(now)
-					&& !gesuchstellerAdresse.getGueltigkeit().getGueltigBis().isBefore(now)) {
+			for (GesuchstellerAdresseContainer gesuchstellerAdresse : adressen) {
+				if (!gesuchstellerAdresse.extractIsKorrespondenzAdresse()
+					&& !gesuchstellerAdresse.extractGueltigkeit().getGueltigAb().isAfter(now)
+					&& !gesuchstellerAdresse.extractGueltigkeit().getGueltigBis().isBefore(now)) {
 					return Optional.of(gesuchstellerAdresse);
 				}
 			}
@@ -53,7 +56,7 @@ public class PrintUtil {
 	}
 
 	@Nonnull
-	private static BinaryOperator<GesuchstellerAdresse> throwExceptionIfMoreThanOneAdresse(@Nonnull Gesuchsteller gesuchsteller) {
+	private static BinaryOperator<GesuchstellerAdresseContainer> throwExceptionIfMoreThanOneAdresse(@Nonnull GesuchstellerContainer gesuchsteller) {
 		return (element, otherElement) -> {
             throw new EbeguRuntimeException("getGesuchstellerAdresse_Korrespondenzadresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchsteller.getId());
         };
@@ -78,15 +81,15 @@ public class PrintUtil {
 	public static String getGesuchstellerName(Gesuch gesuch) {
 
 		StringBuilder name = new StringBuilder();
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1(gesuch);
+		Optional<GesuchstellerContainer> gesuchsteller = extractGesuchsteller1(gesuch);
 		if (gesuchsteller.isPresent()) {
-			name.append(gesuchsteller.get().getFullName());
+			name.append(gesuchsteller.get().extractFullName());
 		}
 		if (gesuch.getGesuchsteller2() != null) {
-			Optional<Gesuchsteller> gesuchsteller2 = extractGesuchsteller2(gesuch);
+			Optional<GesuchstellerContainer> gesuchsteller2 = extractGesuchsteller2(gesuch);
 			if (gesuchsteller.isPresent()) {
 				name.append("\n");
-				name.append(gesuchsteller2.get().getFullName());
+				name.append(gesuchsteller2.get().extractFullName());
 			}
 		}
 		return name.toString();
@@ -98,13 +101,15 @@ public class PrintUtil {
 
 	public static String getGesuchstellerStrasse(Gesuch gesuch) {
 
-		if (extractGesuchsteller1(gesuch).isPresent()) {
-			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1(gesuch).get());
+		final Optional<GesuchstellerContainer> gesuchsteller1 = extractGesuchsteller1(gesuch);
+		if (gesuchsteller1.isPresent()) {
+			Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = getGesuchstellerAdresse(gesuchsteller1.get());
 			if (gesuchstellerAdresse.isPresent()) {
-				if (gesuchstellerAdresse.get().getHausnummer() != null) {
-					return gesuchstellerAdresse.get().getStrasse() + " " + gesuchstellerAdresse.get().getHausnummer();
+				final GesuchstellerAdresseContainer gsAdresseCont = gesuchstellerAdresse.get();
+				if (gsAdresseCont.extractHausnummer() != null) {
+					return gsAdresseCont.extractStrasse() + " " + gsAdresseCont.extractHausnummer();
 				} else {
-					return gesuchstellerAdresse.get().getStrasse();
+					return gsAdresseCont.extractStrasse();
 				}
 			}
 		}
@@ -117,19 +122,21 @@ public class PrintUtil {
 
 	public static String getGesuchstellerPLZStadt(Gesuch gesuch) {
 
-		if (extractGesuchsteller1(gesuch).isPresent()) {
-			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1(gesuch).get());
+		final Optional<GesuchstellerContainer> gesuchsteller1 = extractGesuchsteller1(gesuch);
+		if (gesuchsteller1.isPresent()) {
+			Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = getGesuchstellerAdresse(gesuchsteller1.get());
 			if (gesuchstellerAdresse.isPresent()) {
-				return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
+				final GesuchstellerAdresseContainer gsAdresseCont = gesuchstellerAdresse.get();
+				return gsAdresseCont.extractPlz() + " " + gsAdresseCont.extractOrt();
 			}
 		}
 		return "";
 	}
 
 	@Nonnull
-	private static Optional<Gesuchsteller> extractGesuchsteller1(Gesuch gesuch) {
+	private static Optional<GesuchstellerContainer> extractGesuchsteller1(Gesuch gesuch) {
 
-		Gesuchsteller gs1 = gesuch.getGesuchsteller1();
+		GesuchstellerContainer gs1 = gesuch.getGesuchsteller1();
 		if (gs1 != null) {
 			return Optional.of(gs1);
 		}
@@ -137,9 +144,9 @@ public class PrintUtil {
 	}
 
 	@Nonnull
-	private static Optional<Gesuchsteller> extractGesuchsteller2(Gesuch gesuch) {
+	private static Optional<GesuchstellerContainer> extractGesuchsteller2(Gesuch gesuch) {
 
-		Gesuchsteller gs2 = gesuch.getGesuchsteller2();
+		GesuchstellerContainer gs2 = gesuch.getGesuchsteller2();
 		if (gs2 != null) {
 			return Optional.of(gs2);
 		}
@@ -147,24 +154,24 @@ public class PrintUtil {
 	}
 
 	/**
-	 * Gibt die Organisationsbezeichnung falls sie eingegeben worden ist, sons leer.
+	 * Gibt die Organisationsbezeichnung falls sie eingegeben worden ist, sons leer. Die Organisation MUSS auf einer
+	 * Korrespondenzadresse sein wenn vorhanden
 	 *
 	 * @return GesuchstellerName
 	 */
 
 	public static String getOrganisation(Gesuch gesuch) {
-
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1(gesuch);
+		Optional<GesuchstellerContainer> gesuchsteller = extractGesuchsteller1(gesuch);
 		if (gesuchsteller.isPresent()) {
-			final List<GesuchstellerAdresse> adressen = gesuchsteller.get().getAdressen();
-			for (GesuchstellerAdresse ad : adressen) {
-				if (ad.getAdresseTyp() == AdresseTyp.KORRESPONDENZADRESSE) {
-					return ad.getOrganisation();
-				}
+			final List<GesuchstellerAdresseContainer> adressen = gesuchsteller.get().getAdressen();
+			Optional<GesuchstellerAdresseContainer> korrespondezaddrOpt = adressen.stream().
+				filter(GesuchstellerAdresseContainer::extractIsKorrespondenzAdresse)
+				.reduce(StreamsUtil.toOnlyElement());
+			if (korrespondezaddrOpt.isPresent()) {
+				return korrespondezaddrOpt.get().extractOrganisation();
 			}
 		}
 		return null;
-
 	}
 
 	/**
@@ -173,11 +180,60 @@ public class PrintUtil {
 	@Nullable
 	public static String getAdresszusatz(Gesuch gesuch) {
 		if (extractGesuchsteller1(gesuch).isPresent()) {
-			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1(gesuch).get());
+			Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1(gesuch).get());
 			if (gesuchstellerAdresse.isPresent()) {
-				return gesuchstellerAdresse.get().getZusatzzeile();
+				return gesuchstellerAdresse.get().extractZusatzzeile();
 			}
 		}
 		return null;
+	}
+
+	public static String getNameAdresseFormatiert(Gesuch gesuch, GesuchstellerContainer gesuchsteller){
+
+		if (gesuch != null && gesuchsteller != null){
+			String newlineMSWord = "\n";
+			String adresse = StringUtils.EMPTY;
+
+			adresse += gesuchsteller.extractFullName();
+
+			Optional<GesuchstellerAdresseContainer> gsa = getGesuchstellerAdresse(gesuchsteller);
+			if (gsa.isPresent()) {
+				if (StringUtils.isNotEmpty(gsa.get().extractHausnummer())) {
+					adresse += newlineMSWord + gsa.get().extractStrasse() + " " + gsa.get().extractHausnummer();
+				} else {
+					adresse += newlineMSWord + gsa.get().extractStrasse();
+				}
+			}
+
+			String adrZusatz = getAdresszusatz(gesuch);
+			if (StringUtils.isNotEmpty(adrZusatz)) {
+				adresse += newlineMSWord + adrZusatz;
+			}
+
+			adresse += newlineMSWord + getGesuchstellerPLZStadt(gesuch);
+
+			return adresse;
+		} else{
+			return StringUtils.EMPTY;
+		}
+
+	}
+
+	@Nonnull
+	public static StringBuilder parseDokumentGrundDataToString(DokumentGrund dokumentGrund) {
+		StringBuilder bemerkungenBuilder = new StringBuilder();
+		if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
+			bemerkungenBuilder.append(ServerMessageUtil.translateEnumValue(dokumentGrund.getDokumentTyp()));
+			if (StringUtils.isNotEmpty(dokumentGrund.getFullName())) {
+				bemerkungenBuilder.append(" (");
+				bemerkungenBuilder.append(dokumentGrund.getFullName());
+
+				if (dokumentGrund.getTag() != null) {
+					bemerkungenBuilder.append(" / ").append(dokumentGrund.getTag());
+				}
+				bemerkungenBuilder.append(")");
+			}
+		}
+		return bemerkungenBuilder;
 	}
 }

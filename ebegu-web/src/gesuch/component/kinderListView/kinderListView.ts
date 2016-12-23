@@ -11,6 +11,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
+import IScope = angular.IScope;
 let template = require('./kinderListView.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./kinderListView.less');
@@ -23,14 +24,15 @@ export class KinderListViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class KinderListViewController extends AbstractGesuchViewController {
+export class KinderListViewController extends AbstractGesuchViewController<any> {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog', 'WizardStepManager'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog',
+        'WizardStepManager', '$scope'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $translate: ITranslateService, private DvDialog: DvDialog,
-                wizardStepManager: WizardStepManager) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                wizardStepManager: WizardStepManager, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initViewModel();
     }
 

@@ -1,4 +1,4 @@
-import {IFormController, IComponentOptions, IPromise, ILogService} from 'angular';
+import {IComponentOptions, IPromise, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -16,6 +16,7 @@ import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSBetreuung from '../../../models/TSBetreuung';
 import IRootScopeService = angular.IRootScopeService;
+import IScope = angular.IScope;
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -28,8 +29,9 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class VerfuegenViewController extends AbstractGesuchViewController {
+export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
+    //this is the model...
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
@@ -39,31 +41,19 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager,
+                private ebeguUtil: EbeguUtil, $scope: IScope, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.setBemerkungen();
-
-        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
-            console.log('resetting state due to navigation change, ');
-            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
-                //Wenn die Maske verlassen wird, werden automatisch die Eintraege entfernt, die noch nicht in der DB gespeichert wurden
-                this.reset();
-            }
-        });
     }
 
-    cancel(form: IFormController): void {
-        this.reset();
-        form.$setPristine();
+    cancel(): void {
+        this.form.$setPristine();
     }
 
-    reset(): void {
-        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
-    }
 
-    save(form: IFormController): void {
-        if (form.$valid) {
+    save(): void {
+        if (this.form.$valid) {
             this.saveVerfuegung().then(() => {
                 this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
                     this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
@@ -75,8 +65,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         }
     }
 
-    schliessenOhneVerfuegen(form: IFormController) {
-        if (form.$valid) {
+    schliessenOhneVerfuegen() {
+        if (this.form.$valid) {
             this.verfuegungSchliessenOhenVerfuegen().then(() => {
                 this.$state.go('gesuch.verfuegen', {
                     gesuchId: this.getGesuchId()
@@ -85,8 +75,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         }
     }
 
-    nichtEintreten(form: IFormController) {
-        if (form.$valid) {
+    nichtEintreten() {
+        if (this.form.$valid) {
             this.verfuegungNichtEintreten().then(() => {
                 this.$state.go('gesuch.verfuegen', {
                     gesuchId: this.getGesuchId()
@@ -164,15 +154,15 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     public getAnfangsVerschlechterung1(): string {
-        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo) {
-            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1, 'DD.MM.YYYY');
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()) {
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().stichtagFuerBasisJahrPlus1, 'DD.MM.YYYY');
         }
         return undefined;
     }
 
     public getAnfangsVerschlechterung2(): string {
-        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo) {
-            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2, 'DD.MM.YYYY');
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()) {
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().stichtagFuerBasisJahrPlus2, 'DD.MM.YYYY');
         }
         return undefined;
     }

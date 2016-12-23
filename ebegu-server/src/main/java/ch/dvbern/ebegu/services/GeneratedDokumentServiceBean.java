@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.Rule;
@@ -19,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -27,17 +30,20 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
  * Service fuer GeneratedDokument
  */
 @Stateless
 @Local(GeneratedDokumentService.class)
+@PermitAll
 public class GeneratedDokumentServiceBean extends AbstractBaseService implements GeneratedDokumentService {
 
 
@@ -74,6 +80,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private MandantService mandantService;
 
 	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
 	private MahnungService mahnungService;
 
 	@Inject
@@ -87,6 +96,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Inject
 	private Authorizer authorizer;
+
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
 
 
 	@Override
@@ -164,16 +176,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 																	 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
 		GeneratedDokument persistedDokument = null;
-		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
-			String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
-			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
-				expectedFilepath);
-			if (persistedDokument == null) {
-				LOG.warn("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-					"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getAntragNummer(), expectedFilepath);
-			}
+		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt() || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+			persistedDokument = getGeneratedDokument(gesuch, dokumentTyp, fileNameForGeneratedDokumentTyp);
 		}
-		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
+		if ((!gesuch.getStatus().isAnyStatusOfVerfuegt() && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
 			|| persistedDokument == null) {
 			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 			authorizer.checkReadAuthorizationFinSit(gesuch);
@@ -194,6 +200,53 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
 				fileNameForGeneratedDokumentTyp);
 		}
+		return persistedDokument;
+	}
+
+	@Override
+	public GeneratedDokument getFreigabequittungAccessTokenGeneratedDokument(final Gesuch gesuch,
+																			 Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
+
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getAntragNummer());
+
+		GeneratedDokument persistedDokument = getGeneratedDokument(gesuch, GeneratedDokumentTyp.FREIGABEQUITTUNG, fileNameForGeneratedDokumentTyp);
+
+		if (persistedDokument == null || forceCreation) {
+
+			authorizer.checkReadAuthorizationFinSit(gesuch);
+
+			if (!gesuch.getStatus().inBearbeitung() && persistedDokument == null) {
+				LOG.warn(GeneratedDokumentTyp.FREIGABEQUITTUNG.name() + " für Gesuch " + gesuch.getAntragNummer() + " nicht gefunden.");
+			}
+
+			gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
+			byte[] data = pdfService.generateFreigabequittung(gesuch, zustelladresse);
+
+			persistedDokument = updateGeneratedDokument(data, GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch,
+				fileNameForGeneratedDokumentTyp);
+		}
+
+		return persistedDokument;
+	}
+
+	@Nullable
+	private GeneratedDokument getGeneratedDokument(Gesuch gesuch, GeneratedDokumentTyp dokumentTyp, String fileNameForGeneratedDokumentTyp) {
+
+		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
+
+		final GeneratedDokument persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
+			expectedFilepath);
+
+		if (persistedDokument == null) {
+			LOG.warn("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
+				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getAntragNummer(), expectedFilepath);
+		}
+
+		if (persistedDokument != null && !Files.exists(Paths.get(persistedDokument.getFilepfad()))) {
+			LOG.warn("Die Datei {} könnte nicht gefunden werdern!", persistedDokument.getFilepfad());
+			return null;
+		}
+
 		return persistedDokument;
 	}
 
@@ -297,13 +350,17 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 		if (persistedDokument == null || dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU || forceCreation) {
 
-			Optional<Mahnung> vorgaengerMahnung = null;
+			Optional<Mahnung> vorgaengerMahnung = Optional.empty();
 
 			if (mahnung.hasVorgaenger()) {
 				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
+			} else if (mahnung.getMahnungTyp() == MahnungTyp.ZWEITE_MAHNUNG && dokumentTyp == GeneratedDokumentTyp.MAHNUNG_VORSCHAU) {
+				vorgaengerMahnung = mahnungService.
+					findAktiveErstMahnung(gesuch);
+
 			}
 
-			byte[] data = pdfService.printMahnung(mahnung, vorgaengerMahnung);
+			byte[] data = pdfService.generateMahnung(mahnung, vorgaengerMahnung);
 
 			persistedDokument = vorschauDokument == null ?
 				updateGeneratedDokument(data, dokumentTyp, gesuch,
@@ -326,12 +383,12 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		GeneratedDokument persistedDokument = null;
 
-		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt() || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
 			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
 				ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
 		}
 
-		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
+		if ((!gesuch.getStatus().isAnyStatusOfVerfuegt() && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
 			|| persistedDokument == null) {
 			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 
@@ -342,5 +399,21 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 		return persistedDokument;
 
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	public void removeAllGeneratedDokumenteFromGesuch(Gesuch gesuch) {
+		Collection<GeneratedDokument> genDokFromGesuch = findGeneratedDokumentsFromGesuch(gesuch);
+		for (GeneratedDokument generatedDokument : genDokFromGesuch) {
+			persistence.remove(GeneratedDokument.class, generatedDokument.getId());
+		}
+	}
+
+	@Override
+	public Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch) {
+		Objects.requireNonNull(gesuch);
+		this.authorizer.checkReadAuthorization(gesuch);
+		return criteriaQueryHelper.getEntitiesByAttribute(GeneratedDokument.class, gesuch, GeneratedDokument_.gesuch);
 	}
 }

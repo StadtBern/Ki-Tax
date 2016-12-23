@@ -10,11 +10,13 @@ import {TSBetroffene} from '../../../models/enums/TSBetroffene';
 import TSAdresse from '../../../models/TSAdresse';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import TSUmzugAdresse from '../../../models/TSUmzugAdresse';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import TSAdresseContainer from '../../../models/TSAdresseContainer';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./umzugView.html');
 require('./umzugView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -29,37 +31,36 @@ export class UmzugViewComponentConfig implements IComponentOptions {
 }
 
 
-export class UmzugViewController extends AbstractGesuchViewController {
+export class UmzugViewController extends AbstractGesuchViewController<Array<TSUmzugAdresse>> {
 
-    private umzugAdressen: Array<TSUmzugAdresse> = [];
     dirty = false;
 
-
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'ErrorService', '$translate',
-        'DvDialog', '$q'];
+        'DvDialog', '$q', '$scope'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private errorService: ErrorService,
-                private $translate: ITranslateService, private DvDialog: DvDialog, private $q: IQService) {
+                private $translate: ITranslateService, private DvDialog: DvDialog, private $q: IQService,
+                $scope: IScope) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initViewModel();
     }
 
     private initViewModel(): void {
-        this.umzugAdressen = [];
+        this.model = [];
         this.wizardStepManager.setCurrentStep(TSWizardStepName.UMZUG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
         this.extractAdressenListFromBothGS();
     }
 
     public getUmzugAdressenList(): Array<TSUmzugAdresse> {
-        return this.umzugAdressen;
+        return this.model;
     }
 
-    public save(form: angular.IFormController): IPromise<TSGesuchsteller> {
-        if (form.$valid) {
-            if (!form.$dirty && !this.dirty) {
+    public save(): IPromise<TSGesuchstellerContainer> {
+        if (this.form.$valid) {
+            if (!this.form.$dirty && !this.dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith());
@@ -104,10 +105,10 @@ export class UmzugViewController extends AbstractGesuchViewController {
 
     public getNameFromBetroffene(betroffene: TSBetroffene): string {
         if (TSBetroffene.GESUCHSTELLER_1 === betroffene && this.gesuchModelManager.getGesuch().gesuchsteller1) {
-            return this.gesuchModelManager.getGesuch().gesuchsteller1.getFullName();
+            return this.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName();
 
         } else if (TSBetroffene.GESUCHSTELLER_2 === betroffene && this.gesuchModelManager.getGesuch().gesuchsteller2) {
-            return this.gesuchModelManager.getGesuch().gesuchsteller2.getFullName();
+            return this.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName();
 
         } else if (TSBetroffene.BEIDE_GESUCHSTELLER === betroffene) {
             return this.$translate.instant(TSBetroffene[betroffene]);
@@ -125,7 +126,7 @@ export class UmzugViewController extends AbstractGesuchViewController {
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1) {
             this.gesuchModelManager.getGesuch().gesuchsteller1.getUmzugAdressen().forEach(umzugAdresse => {
                 umzugAdresse.showDatumVon = true; // wird benoetigt weil es vom Server nicht kommt
-                this.umzugAdressen.push(new TSUmzugAdresse(TSBetroffene.GESUCHSTELLER_1, umzugAdresse));
+                this.model.push(new TSUmzugAdresse(TSBetroffene.GESUCHSTELLER_1, umzugAdresse));
             });
         }
     }
@@ -138,15 +139,18 @@ export class UmzugViewController extends AbstractGesuchViewController {
             this.gesuchModelManager.getGesuch().gesuchsteller2.getUmzugAdressen().forEach(umzugAdresse => {
                 umzugAdresse.showDatumVon = true; // wird benoetigt weil es vom Server nicht kommt
                 let foundPosition: number = -1;
-                for (let i = 0; i < this.umzugAdressen.length; i++) {
-                    if (this.umzugAdressen[i].adresse.isSameWohnAdresse(umzugAdresse)) {
+                for (let i = 0; i < this.model.length; i++) {
+                    if (this.model[i].adresse.isSameWohnAdresse(umzugAdresse)) {
                         foundPosition = i;
                     }
                 }
                 if (foundPosition >= 0) {
-                    this.umzugAdressen[foundPosition].betroffene = TSBetroffene.BEIDE_GESUCHSTELLER;
+                    this.model[foundPosition].betroffene = TSBetroffene.BEIDE_GESUCHSTELLER;
+
+                    // speichern der AdressContainer vom Gs2 damit wir sie später wieder finden
+                    this.model[foundPosition].adresseGS2 = umzugAdresse;
                 } else {
-                    this.umzugAdressen.push(new TSUmzugAdresse(TSBetroffene.GESUCHSTELLER_2, umzugAdresse));
+                    this.model.push(new TSUmzugAdresse(TSBetroffene.GESUCHSTELLER_2, umzugAdresse));
                 }
             });
         }
@@ -159,9 +163,9 @@ export class UmzugViewController extends AbstractGesuchViewController {
             deleteText: ''
         }).then(() => {   //User confirmed removal
             this.dirty = true;
-            var indexOf = this.umzugAdressen.lastIndexOf(adresse);
+            var indexOf = this.model.lastIndexOf(adresse);
             if (indexOf >= 0) {
-                this.umzugAdressen.splice(indexOf, 1);
+                this.model.splice(indexOf, 1);
             }
         });
     }
@@ -170,12 +174,20 @@ export class UmzugViewController extends AbstractGesuchViewController {
      * Erstellt eine neue leere Adresse vom Typ WOHNADRESSE
      */
     public createUmzugAdresse(): void {
-        let adresse: TSAdresse = new TSAdresse();
-        adresse.showDatumVon = true;
-        adresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        let umzugAdresse: TSUmzugAdresse = new TSUmzugAdresse(undefined, adresse);
-        this.umzugAdressen.push(umzugAdresse);
+        let adresseContainer = this.createAdressContainer();
+        let umzugAdresse: TSUmzugAdresse = new TSUmzugAdresse(undefined, adresseContainer);
+
+        this.model.push(umzugAdresse);
         this.dirty = true;
+    }
+
+    private createAdressContainer() {
+        let adresseContainer: TSAdresseContainer = new TSAdresseContainer();
+        let adresse: TSAdresse = new TSAdresse();
+        adresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
+        adresseContainer.showDatumVon = true;
+        adresseContainer.adresseJA = adresse;
+        return adresseContainer;
     }
 
     /**
@@ -192,7 +204,7 @@ export class UmzugViewController extends AbstractGesuchViewController {
             && this.gesuchModelManager.getGesuch().gesuchsteller2.adressen.length > 0) {
             this.gesuchModelManager.getGesuch().gesuchsteller2.adressen.length = 1;
         }
-        this.umzugAdressen.forEach(umzugAdresse => {
+        this.model.forEach(umzugAdresse => {
 
             if (TSBetroffene.GESUCHSTELLER_1 === umzugAdresse.betroffene) {
                 this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller1, umzugAdresse.adresse);
@@ -202,12 +214,17 @@ export class UmzugViewController extends AbstractGesuchViewController {
 
             } else if (TSBetroffene.BEIDE_GESUCHSTELLER === umzugAdresse.betroffene) {
                 this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller1, umzugAdresse.adresse);
-                this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller2, umzugAdresse.adresse);
+
+                if (!umzugAdresse.adresseGS2) {
+                    umzugAdresse.adresseGS2 = this.createAdressContainer();
+                }
+                umzugAdresse.adresseGS2.adresseJA.copy(umzugAdresse.adresse.adresseJA);
+                this.addAdresseToGS(this.gesuchModelManager.getGesuch().gesuchsteller2, umzugAdresse.adresseGS2);
             }
         });
     }
 
-    private addAdresseToGS(gesuchsteller: TSGesuchsteller, adresse: TSAdresse) {
+    private addAdresseToGS(gesuchsteller: TSGesuchstellerContainer, adresse: TSAdresseContainer) {
         if (gesuchsteller) {
             if (gesuchsteller.adressen.indexOf(adresse) < 0) {
                 gesuchsteller.addAdresse(adresse);

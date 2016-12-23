@@ -8,9 +8,13 @@ import {INewFallStateParams} from '../../gesuch.route';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -21,36 +25,46 @@ export class FallCreationViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class FallCreationViewController extends AbstractGesuchViewController {
+export class FallCreationViewController extends AbstractGesuchViewController<any> {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
     private createMutation: boolean = false;
+    private eingangsart: TSEingangsart;
+    private fallId: string;
+
+    TSRoleUtil: any;
 
     // showError ist ein Hack damit, die Fehlermeldung fuer die Checkboxes nicht direkt beim Laden der Seite angezeigt wird
     // sondern erst nachdem man auf ein checkbox oder auf speichern geklickt hat
     showError: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
-        'WizardStepManager', '$translate', '$q'];
+        'WizardStepManager', '$translate', '$q', '$scope' , 'AuthServiceRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
-                private $translate: ITranslateService, private $q: IQService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.readCreateNewParam();
-        this.readCreateMutation();
+                private $translate: ITranslateService, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        this.readStateParams();
         this.initViewModel();
+        this.TSRoleUtil = TSRoleUtil;
     }
 
-    private readCreateNewParam() {
+    private readStateParams() {
         if (this.$stateParams.createNew === 'true') {
             this.createNewParam = true;
         }
-    }
-
-    private readCreateMutation() {
         if (this.$stateParams.createMutation === 'true') {
             this.createMutation = true;
+        }
+        if (this.$stateParams.eingangsart) {
+            this.eingangsart = this.$stateParams.eingangsart;
+        }
+        if (this.$stateParams.gesuchsperiodeId && this.$stateParams.gesuchsperiodeId !== '') {
+            this.gesuchsperiodeId = this.$stateParams.gesuchsperiodeId;
+        }
+        if (this.$stateParams.fallId && this.$stateParams.fallId !== '') {
+            this.fallId = this.$stateParams.fallId;
         }
     }
 
@@ -59,20 +73,22 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     }
 
     private initViewModel(): void {
-        this.gesuchModelManager.initGesuch(this.createNewParam);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
-        if (this.gesuchModelManager.getGesuchsperiode()) {
-            this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
+        if (this.gesuchsperiodeId === null || this.gesuchsperiodeId === undefined || this.gesuchsperiodeId === '') {
+            if (this.gesuchModelManager.getGesuchsperiode()) {
+                this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
+            }
         }
+        this.gesuchModelManager.initGesuchWithEingangsart(this.createNewParam, this.eingangsart, this.gesuchsperiodeId, this.fallId);
         if (this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
             this.gesuchModelManager.updateActiveGesuchsperiodenList();
         }
     }
 
-    save(form: angular.IFormController): IPromise<TSGesuch> {
+    save(): IPromise<TSGesuch> {
         this.showError = true;
-        if (form.$valid) {
-            if (!form.$dirty) {
+        if (this.form.$valid) {
+            if (!this.form.$dirty && !this.gesuchModelManager.getGesuch().isNew()) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getGesuch());
@@ -107,7 +123,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
 
     public getTitle(): string {
         if (this.gesuchModelManager.isErstgesuch()) {
-            if (this.gesuchModelManager.isGesuchSaved()) {
+            if (this.gesuchModelManager.isGesuchSaved() && this.gesuchModelManager.getGesuchsperiode()) {
                 return this.$translate.instant('MENU_ERSTGESUCH_PERIODE', {
                     periode: this.gesuchModelManager.getGesuchsperiode().gesuchsperiodeString
                 });
@@ -119,4 +135,10 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         }
     }
 
+    public getNextButtonText(): string{
+        if(this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())){
+            return this.$translate.instant('WEITER_ONLY_UPPER');
+        }
+        return this.$translate.instant('WEITER_UPPER')
+    }
 }

@@ -14,27 +14,34 @@
     }
 
     .viewTitle {
-        margin-bottom: 3.5rem;
+        hr.header {
+            margin-bottom: 5rem;
+        }
+        margin-bottom: 2rem;
     }
 
     .subTitle {
         font-size: 1.8rem;
     }
 
-    .subTitleBold {
-        font-size: 1.8rem;
-        font-weight: bold;
-    }
-
     .bisher {
         clear: both;
-        float: right;
-        background-color: lightgrey;
+        //todo stylen gem kana
+        background-color: @grey;
+        padding: 0.2rem;
+        //display: block;
+        border-color: @lgrey;
+    }
+    // bei manchen bisher bloecken wollen wir einzelne neue zeilen
+    .dv-bisher-break .dv-bisher-content-row, .dv-bisher-break .bisher:first-child {
+        display: block;
+        background-color: @grey;
     }
 
     .inlineHint {
-        font-style: italic;
+        .ebeguItalic();
         font-size: 1.4rem;
+        line-height: 2.5rem;
     }
 
     //SmartTable Styles
@@ -126,7 +133,7 @@
     // aktuell gibt es eingentlich keine hints mehr
     // Damit wir unter den inputs hints anzeigen koennen schieben wir die errors noch bisschen runter wenn ein Hint existiert
     .hint {
-        .italic();
+        .ebeguItalic();
         letter-spacing: 0.135rem;
         position: absolute;
         left: 0.2rem;
@@ -160,6 +167,10 @@
     }
     .well-status-abgewiesen {
         background-color: @danger-light;
+    }
+
+    .required:after {
+        content: " *";
     }
 
 }

@@ -45,7 +45,7 @@ public class FinanzielleSituationRechner {
 
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultateEinkommensverschlechterung(@Nonnull Gesuch gesuch, int basisJahrPlus) {
-		Validate.notNull(gesuch.getEinkommensverschlechterungInfo());
+		Validate.notNull(gesuch.extractEinkommensverschlechterungInfo());
 
 		final FinanzielleSituationResultateDTO einkVerResultDTO = new FinanzielleSituationResultateDTO();
 		setEinkommensverschlechterungParameters(gesuch, basisJahrPlus, einkVerResultDTO);
@@ -88,13 +88,13 @@ public class FinanzielleSituationRechner {
 		Einkommensverschlechterung einkommensverschlechterungGS1_Bjp2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), 2);
 		final FinanzielleSituation finanzielleSituationGS1 = getFinanzielleSituationGS(gesuch.getGesuchsteller1());
 		einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller1(
-			calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS1,einkommensverschlechterungGS1_Bjp1, einkommensverschlechterungGS1_Bjp2, basisJahrPlus));
+			calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS1, einkommensverschlechterungGS1_Bjp1, einkommensverschlechterungGS1_Bjp2, basisJahrPlus));
 
 		Einkommensverschlechterung einkommensverschlechterungGS2_Bjp1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), 1);
 		Einkommensverschlechterung einkommensverschlechterungGS2_Bjp2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), 2);
 		final FinanzielleSituation finanzielleSituationGS2 = getFinanzielleSituationGS(gesuch.getGesuchsteller2());
 		einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller2(
-			calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2,einkommensverschlechterungGS2_Bjp1, einkommensverschlechterungGS2_Bjp2, basisJahrPlus));
+			calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2, einkommensverschlechterungGS2_Bjp1, einkommensverschlechterungGS2_Bjp2, basisJahrPlus));
 
 		if (basisJahrPlus == 2) {
 			calculateZusammen(einkVerResultDTO, einkommensverschlechterungGS1_Bjp2,
@@ -128,10 +128,10 @@ public class FinanzielleSituationRechner {
 		finanzDatenDTO.setMassgebendesEinkBjVorAbzFamGr(finanzielleSituationResultateDTO.getMassgebendesEinkVorAbzFamGr());
 		finanzDatenDTO.setDatumVonBasisjahr(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
 		//Berechnung wird nur ausgefuehrt wenn Daten vorhanden, wenn es keine gibt machen wir nichts
-		if (gesuch.getEinkommensverschlechterungInfo() != null && gesuch.getEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
-			EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.getEinkommensverschlechterungInfo();
+		if (gesuch.extractEinkommensverschlechterungInfo() != null && gesuch.extractEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
+			EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.extractEinkommensverschlechterungInfo();
 			FinanzielleSituationResultateDTO resultateEKV1 = calculateResultateEinkommensverschlechterung(gesuch, 1);
-			if (gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() != null && gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
+			if (gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() != null && gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
 				// In der EKV 1 vergleichen wir immer mit dem Basisjahr
 				BigDecimal massgebendesEinkommenVorjahr = finanzielleSituationResultateDTO.getMassgebendesEinkVorAbzFamGr();
 				BigDecimal massgebendesEinkommenJahr = resultateEKV1.getMassgebendesEinkVorAbzFamGr();
@@ -140,7 +140,7 @@ public class FinanzielleSituationRechner {
 					finanzDatenDTO.setDatumVonBasisjahrPlus1(einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus1());
 				}
 			}
-			if (gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null && gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
+			if (gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null && gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
 				FinanzielleSituationResultateDTO resultateEKV2 = calculateResultateEinkommensverschlechterung(gesuch, 2);
 				// In der EKV 2 vergleichen wir immer mit dem EKV 1, egal ob diese akzeptiert war
 				BigDecimal massgebendesEinkommenVorjahr = resultateEKV1.getMassgebendesEinkVorAbzFamGr();
@@ -215,8 +215,7 @@ public class FinanzielleSituationRechner {
 					finanzielleSituation.getGeschaeftsgewinnBasisjahr(),
 					finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			}
-		}
-		else if (basisJahrPlus == 2 && finanzielleSituation != null && einkVersBjp1 != null && einkVersBjp2 != null) {
+		} else if (basisJahrPlus == 2 && finanzielleSituation != null && einkVersBjp1 != null && einkVersBjp2 != null) {
 			return calcGeschaeftsgewinnDurchschnitt(einkVersBjp2.getGeschaeftsgewinnBasisjahr(),
 				einkVersBjp1.getGeschaeftsgewinnBasisjahr(),
 				finanzielleSituation.getGeschaeftsgewinnBasisjahr());
@@ -369,9 +368,8 @@ public class FinanzielleSituationRechner {
 		return BigDecimal.ZERO;
 	}
 
-	private Einkommensverschlechterung getEinkommensverschlechterungGS(Gesuchsteller gesuchsteller, int basisJahrPlus) {
-		if (gesuchsteller != null) {
-			Validate.notNull(gesuchsteller.getEinkommensverschlechterungContainer());
+	private Einkommensverschlechterung getEinkommensverschlechterungGS(GesuchstellerContainer gesuchsteller, int basisJahrPlus) {
+		if (gesuchsteller != null && gesuchsteller.getEinkommensverschlechterungContainer() != null) {
 			if (basisJahrPlus == 2) {
 				return gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2();
 			} else {
@@ -381,7 +379,7 @@ public class FinanzielleSituationRechner {
 		return null;
 	}
 
-	private FinanzielleSituation getFinanzielleSituationGS(Gesuchsteller gesuchsteller) {
+	private FinanzielleSituation getFinanzielleSituationGS(GesuchstellerContainer gesuchsteller) {
 		if (gesuchsteller != null && gesuchsteller.getFinanzielleSituationContainer() != null) {
 			return gesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationJA();
 		}

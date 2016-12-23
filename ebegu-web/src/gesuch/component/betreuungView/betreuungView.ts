@@ -1,4 +1,4 @@
-import {IComponentOptions, IFormController} from 'angular';
+import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
@@ -19,6 +19,7 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import Moment = moment.Moment;
+import IScope = angular.IScope;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 
@@ -29,37 +30,34 @@ export class BetreuungViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class BetreuungViewController extends AbstractGesuchViewController {
+export class BetreuungViewController extends AbstractGesuchViewController<TSBetreuung> {
     betreuungsangebot: any;
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
     isSavingData: boolean; // Semaphore
     initialBetreuung: TSBetreuung;
     flagErrorVertrag: boolean;
+    kindModel: TSKindContainer;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
-                private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
+                $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.initialBetreuung = angular.copy(this.getBetreuungModel());
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        this.model = angular.copy(this.gesuchModelManager.getBetreuungToWorkWith());
+        this.initialBetreuung = angular.copy(this.gesuchModelManager.getBetreuungToWorkWith());
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
         this.initViewModel();
 
-        //Wir verlassen uns hier darauf, dass zuerst das Popup vom unsavedChanges Plugin kommt welches den user fragt ob er die ungesp. changes verwerfen will
-        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
-            // wenn der user die changes verwerfen will koennen wir die view resetten, ansonsten machen wir nichts da wir hier bleiben
-            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
-                this.reset();  //Maske wird verlasse, changes resettten auf letzten Speicherpunkt (wenn gespeichert wurde wird auf gespeicherten punkt resetted)
-            }
-        });
+
+        // just to read!
+        this.kindModel = this.gesuchModelManager.getKindToWorkWith();
     }
 
     private initViewModel() {
-        this.gesuchModelManager.initGesuch(false); //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.isSavingData = false;
         this.flagErrorVertrag = false;
         if (this.getInstitutionSD()) {
@@ -68,7 +66,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
         this.startEmptyListOfBetreuungspensen();
         //institutionen lazy laden
-        if (this.gesuchModelManager.getActiveInstitutionenList() || this.gesuchModelManager.getActiveInstitutionenList().length <= 0) {
+        if (!this.gesuchModelManager.getActiveInstitutionenList() || this.gesuchModelManager.getActiveInstitutionenList().length <= 0) {
             this.gesuchModelManager.updateActiveInstitutionenList();
         }
         this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
@@ -97,11 +95,11 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public getKindModel(): TSKindContainer {
-        return this.gesuchModelManager.getKindToWorkWith();
+        return this.kindModel;
     }
 
     public getBetreuungModel(): TSBetreuung {
-        return this.gesuchModelManager.getBetreuungToWorkWith();
+        return this.model;
     }
 
     public changedAngebot() {
@@ -114,8 +112,9 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    private save(newStatus: TSBetreuungsstatus, nextStep: string, form: IFormController): void {
+    private save(newStatus: TSBetreuungsstatus, nextStep: string): void {
         this.isSavingData = true;
+        this.gesuchModelManager.setBetreuungToWorkWith(this.model); //setze model
         let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
         if (this.getBetreuungModel()) {
             if (this.isTagesschule()) {
@@ -126,7 +125,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = newStatus;
         this.gesuchModelManager.updateBetreuung(false).then((betreuungResponse: any) => {
             this.isSavingData = false;
-            form.$setPristine();
+            this.form.$setPristine();
             this.$state.go(nextStep);
         }).catch((exception) => {
             //todo team Fehler anzeigen
@@ -135,8 +134,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             this.isSavingData = false;
             this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
             this.startEmptyListOfBetreuungspensen();
-            this.$scope.form.$setUntouched();
-            this.$scope.form.$setPristine();
+            this.form.$setUntouched();
+            this.form.$setPristine();
             return undefined;
         });
     }
@@ -145,19 +144,18 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.betreuungsangebotValues = this.ebeguUtil.translateStringList(getTSBetreuungsangebotTypValues());
     }
 
-    public cancel(formCtrl: IFormController) {
+    public cancel() {
         this.reset();
-        formCtrl.$setPristine();
+        this.form.$setPristine();
         this.$state.go('gesuch.betreuungen');
     }
 
     reset() {
-        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
-        this.removeBetreuungFromKind();
+        this.removeBetreuungFromKind(); //wenn model existiert und nicht neu ist wegnehmen, sonst resetten
     }
 
     private removeBetreuungFromKind(): void {
-        if (this.gesuchModelManager.getBetreuungToWorkWith() && !this.gesuchModelManager.getBetreuungToWorkWith().timestampErstellt) {
+        if (this.model && !this.model.timestampErstellt) {
             //wenn die Betreeung noch nicht erstellt wurde, loeschen wir die Betreuung vom Array
             this.gesuchModelManager.removeBetreuungFromKind();
         }
@@ -218,24 +216,24 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         let instStamList = this.gesuchModelManager.getActiveInstitutionenList();
         for (let i: number = 0; i < instStamList.length; i++) {
             if (instStamList[i].id === this.instStammId) {
-                this.gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = instStamList[i];
+                this.model.institutionStammdaten = instStamList[i];
             }
         }
     }
 
-    public platzAnfordern(form: IFormController): void {
-        if (form.$valid && this.getBetreuungModel().vertrag === true) {
+    public platzAnfordern(): void {
+        if (this.form.$valid && this.getBetreuungModel().vertrag === true) {
             this.flagErrorVertrag = false;
-            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen', form);
+            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
         } else if (this.getBetreuungModel().vertrag !== true) {
             this.flagErrorVertrag = true;
         }
     }
 
-    public platzBestaetigen(form: IFormController): void {
-        if (form.$valid) {
+    public platzBestaetigen(): void {
+        if (this.form.$valid) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
-            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution', form);
+            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
         }
     }
 
@@ -245,18 +243,18 @@ export class BetreuungViewController extends AbstractGesuchViewController {
      * In diesem Fall machen wir keine Validierung weil die Daten die eingegeben werden muessen, direkt auf dem Server gecheckt werden
      * @param form
      */
-    public platzAbweisen(form: IFormController): void {
+    public platzAbweisen(): void {
         //copy values modified by the Institution in initialBetreuung
         this.initialBetreuung.erweiterteBeduerfnisse = this.getBetreuungModel().erweiterteBeduerfnisse;
         this.initialBetreuung.grundAblehnung = this.getBetreuungModel().grundAblehnung;
         //restore initialBetreuung
-        this.gesuchModelManager.setBetreuungToWorkWith(angular.copy(this.initialBetreuung));
-        this.getBetreuungModel().datumAblehnung = DateUtil.today();
-        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', form);
+        this.model = angular.copy(this.initialBetreuung);
+        this.model.datumAblehnung = DateUtil.today();
+        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution');
     }
 
-    public platzNichtEingetreten(form: IFormController): void {
-        if (form.$valid) {
+    public platzNichtEingetreten(): void {
+        if (this.form.$valid) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
 
             for (let i: number = 0; i < this.getBetreuungspensen().length; i++) {
@@ -265,13 +263,13 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             }
             this.getBetreuungModel().erweiterteBeduerfnisse = false;
 
-            this.save(TSBetreuungsstatus.NICHT_EINGETRETEN, 'pendenzenInstitution', form);
+            this.save(TSBetreuungsstatus.NICHT_EINGETRETEN, 'pendenzenInstitution');
         }
     }
 
-    public saveSchulamt(form: IFormController): void {
-        if (form.$valid) {
-            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', form);
+    public saveSchulamt(): void {
+        if (this.form.$valid) {
+            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen');
         }
     }
 

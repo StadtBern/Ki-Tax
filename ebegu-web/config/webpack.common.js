@@ -22,6 +22,7 @@ var currentTime = new Date();
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 /**
  * Webpack Constants
  */
@@ -178,7 +179,11 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'src/index.html',
             chunksSortMode: helpers.packageSort(['polyfills', 'vendor', 'main'])
-        })
+        }),
+
+/*        new ExtractTextPlugin('style.css', {
+            allChunks: true
+        })*/
 
     ],
 

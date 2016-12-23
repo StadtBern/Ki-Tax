@@ -113,7 +113,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguLoginTest {
 		antragStatusHistory.setGesuch(gesuch);
 		antragStatusHistory.setDatum(LocalDateTime.of(2016, Month.APRIL, 1, 0, 0));
 		antragStatusHistories.add(antragStatusHistory);
-		gesuch.getGesuchsteller1().getAdressen().get(0).setGesuchsteller(gesuch.getGesuchsteller1());
+		gesuch.getGesuchsteller1().getAdressen().get(0).setGesuchstellerContainer(gesuch.getGesuchsteller1());
 		persistence.persist(gesuch.getGesuchsteller1().getAdressen().get(0));
 		persistence.persist(antragStatusHistory);
 		persistence.merge(gesuch);

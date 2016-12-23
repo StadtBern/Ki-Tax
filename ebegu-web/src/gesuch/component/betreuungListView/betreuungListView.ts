@@ -15,6 +15,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
+import IScope = angular.IScope;
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -30,15 +31,15 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
 /**
  * View fuer die Liste der Betreeungen der eingegebenen Kinder
  */
-export class BetreuungListViewController extends AbstractGesuchViewController {
+export class BetreuungListViewController extends AbstractGesuchViewController<any> {
 
     static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
-        'ErrorService', 'WizardStepManager'];
+        'ErrorService', 'WizardStepManager', '$scope'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
-                private errorService: ErrorService, wizardStepManager: WizardStepManager) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                private errorService: ErrorService, wizardStepManager: WizardStepManager, $scope: IScope) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 

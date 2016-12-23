@@ -6,11 +6,7 @@
                 <span data-translate="UMZUG_TITLE"></span>
             </h1>
             <hr class="header"/>
-        </div>
-    </div>
-    <div class="row" ng-if="!vm.isGesuchReadonly()">
-        <div class="col-md-12">
-            <p class="inlineHint" data-translate="UMZUG_HINT"></p>
+            <p ng-if="!vm.isGesuchReadonly()" class="inlineHint" data-translate="UMZUG_HINT"></p>
         </div>
     </div>
 
@@ -23,7 +19,7 @@
     <div class="row">
         <div class="col-md-12">
 
-            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+            <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                           dv-enable-expression="!vm.isGesuchReadonly()">
@@ -41,7 +37,7 @@
                                         ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
                                         ng-required="true">
                                 </select>
-                                <dv-error-messages for="form.betroffene.$error"
+                                <dv-error-messages for="vm.form.betroffene.$error"
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
@@ -58,7 +54,7 @@
                              dv-show-allowed-roles = "vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                              dv-show-expression = "!vm.isGesuchReadonly()">
                             <dv-loading-button type="button" button-click="vm.removeUmzugAdresse(umzugAdresse)"
-                                               button-class="dv-btn-sm color-success">
+                                               button-class="dv-btn-sm color-success" button-disabled="vm.isKorrekturModusJugendamt()">
                                 <i class="glyphicon glyphicon-trash"></i>
                                 <span data-translate="UMZUG_ENTFERNEN"></span>
                             </dv-loading-button>
@@ -71,7 +67,7 @@
                          dv-show-allowed-roles = "vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                          dv-show-expression = "!vm.isGesuchReadonly()">
                         <dv-loading-button type="button" button-click="vm.createUmzugAdresse()"
-                                           button-class="dv-btn-sm color-success">
+                                           button-class="dv-btn-sm color-success" button-disabled="vm.isKorrekturModusJugendamt()">
                             <i class="glyphicon glyphicon-plus"></i>
                             <span data-translate="UMZUG_HINZUFUEGEN"></span>
                         </dv-loading-button>
@@ -81,7 +77,7 @@
 
                 <dv-navigation dv-show-element
                                dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                               dv-previous="true" dv-next="true" dv-save="vm.save(form)">
+                               dv-previous="true" dv-next="true" dv-save="vm.save()">
                 </dv-navigation>
                 <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"
                                dv-previous="true" dv-next="true">

@@ -3,12 +3,11 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -17,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
@@ -27,16 +27,21 @@ public class Gesuch extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_fall_id"))
 	private Fall fall;
 
+	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_antrag_gesuchsperiode_id"))
 	private Gesuchsperiode gesuchsperiode;
 
 	@Column(nullable = true)
 	private LocalDate eingangsdatum;
+
+	@Column(nullable = true)
+	private LocalDate freigabeDatum;
 
 	@NotNull
 	@Column(nullable = false)
@@ -48,17 +53,22 @@ public class Gesuch extends AbstractEntity {
 	@Enumerated(EnumType.STRING)
 	private AntragTyp typ = AntragTyp.GESUCH;
 
-	@Valid
-	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller1_id"))
-	private Gesuchsteller gesuchsteller1;
+	@NotNull
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Eingangsart eingangsart = Eingangsart.PAPIER;
 
 	@Valid
 	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller2_id"))
-	private Gesuchsteller gesuchsteller2;
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller_container1_id"), nullable = true)
+	private GesuchstellerContainer gesuchsteller1;
+
+	@Valid
+	@Nullable
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller_container2_id"), nullable = true)
+	private GesuchstellerContainer gesuchsteller2;
 
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
@@ -72,20 +82,14 @@ public class Gesuch extends AbstractEntity {
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_id"))
-	private Familiensituation familiensituation;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_container_id"))
+	private FamiliensituationContainer familiensituationContainer;
 
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_erstgesuch_id"))
-	private Familiensituation familiensituationErstgesuch;
-
-	@Valid
-	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfo_id"))
-	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfoContainer_id"))
+	private EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer;
 
 	@Transient
 	private FinanzDatenDTO finanzDatenDTO;
@@ -109,63 +113,22 @@ public class Gesuch extends AbstractEntity {
 	public Gesuch() {
 	}
 
-	public Gesuch(@Nonnull Gesuch toCopy) {
-		this.setVorgaengerId(toCopy.getId());
-		this.setFall(toCopy.getFall());
-		this.setGesuchsperiode(toCopy.getGesuchsperiode());
-		this.setEingangsdatum(null);
-		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA); //TODO (team) abhaengig vom eingeloggten Benutzer!
-		this.setTyp(AntragTyp.MUTATION);
-
-		if (toCopy.getGesuchsteller1() != null) {
-			this.setGesuchsteller1(new Gesuchsteller(toCopy.getGesuchsteller1()));
-		}
-		if (toCopy.getGesuchsteller2() != null) {
-			this.setGesuchsteller2(new Gesuchsteller(toCopy.getGesuchsteller2()));
-		}
-		for (KindContainer kindContainer : toCopy.getKindContainers()) {
-			this.addKindContainer(new KindContainer(kindContainer, this));
-		}
-		this.setAntragStatusHistories(new LinkedHashSet<>());
-		this.setFamiliensituation(new Familiensituation(toCopy.getFamiliensituation()));
-
-		if (toCopy.isMutation()) {
-			this.familiensituationErstgesuch = toCopy.getFamiliensituationErstgesuch();
-		} else { // beim ErstGesuch holen wir direkt die normale Familiensituation
-			this.familiensituationErstgesuch = toCopy.getFamiliensituation();
-		}
-
-		if (toCopy.getEinkommensverschlechterungInfo() != null) {
-			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
-		}
-
-		if (toCopy.dokumentGrunds != null) {
-			this.dokumentGrunds = new HashSet<>();
-
-			for (DokumentGrund dokumentGrund : toCopy.dokumentGrunds) {
-				this.addDokumentGrund(new DokumentGrund(dokumentGrund));
-			}
-		}
-
-		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
-		this.setLaufnummer(toCopy.getLaufnummer() + 1);
-	}
 
 	@Nullable
-	public Gesuchsteller getGesuchsteller1() {
+	public GesuchstellerContainer getGesuchsteller1() {
 		return gesuchsteller1;
 	}
 
-	public void setGesuchsteller1(@Nullable final Gesuchsteller gesuchsteller1) {
+	public void setGesuchsteller1(@Nullable GesuchstellerContainer gesuchsteller1) {
 		this.gesuchsteller1 = gesuchsteller1;
 	}
 
 	@Nullable
-	public Gesuchsteller getGesuchsteller2() {
+	public GesuchstellerContainer getGesuchsteller2() {
 		return gesuchsteller2;
 	}
 
-	public void setGesuchsteller2(@Nullable final Gesuchsteller gesuchsteller2) {
+	public void setGesuchsteller2(@Nullable GesuchstellerContainer gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
@@ -178,21 +141,12 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
-	public Familiensituation getFamiliensituation() {
-		return familiensituation;
+	public FamiliensituationContainer getFamiliensituationContainer() {
+		return familiensituationContainer;
 	}
 
-	public void setFamiliensituation(@Nullable final Familiensituation familiensituation) {
-		this.familiensituation = familiensituation;
-	}
-
-	@Nullable
-	public Familiensituation getFamiliensituationErstgesuch() {
-		return familiensituationErstgesuch;
-	}
-
-	public void setFamiliensituationErstgesuch(@Nullable final Familiensituation familiensituationErstgesuch) {
-		this.familiensituationErstgesuch = familiensituationErstgesuch;
+	public void setFamiliensituationContainer(@Nullable FamiliensituationContainer familiensituationContainer) {
+		this.familiensituationContainer = familiensituationContainer;
 	}
 
 	public Set<AntragStatusHistory> getAntragStatusHistories() {
@@ -204,15 +158,11 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
-	public EinkommensverschlechterungInfo getEinkommensverschlechterungInfo() {
-		return einkommensverschlechterungInfo;
-	}
-
-	public void setEinkommensverschlechterungInfo(@Nullable final EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
-		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
-		if (this.einkommensverschlechterungInfo != null) {
-			this.einkommensverschlechterungInfo.setGesuch(this);
+	public EinkommensverschlechterungInfo extractEinkommensverschlechterungInfo() {
+		if (einkommensverschlechterungInfoContainer != null) {
+			return einkommensverschlechterungInfoContainer.getEinkommensverschlechterungInfoJA();
 		}
+		return null;
 	}
 
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
@@ -222,6 +172,11 @@ public class Gesuch extends AbstractEntity {
 
 	public boolean addDokumentGrund(@NotNull final DokumentGrund dokumentGrund) {
 		dokumentGrund.setGesuch(this);
+
+		if (this.dokumentGrunds == null) {
+			this.dokumentGrunds = new HashSet<>();
+		}
+
 		return this.dokumentGrunds.add(dokumentGrund);
 	}
 
@@ -266,6 +221,14 @@ public class Gesuch extends AbstractEntity {
 		this.eingangsdatum = eingangsdatum;
 	}
 
+	public LocalDate getFreigabeDatum() {
+		return freigabeDatum;
+	}
+
+	public void setFreigabeDatum(LocalDate freigabeDatum) {
+		this.freigabeDatum = freigabeDatum;
+	}
+
 	public AntragStatus getStatus() {
 		return status;
 	}
@@ -282,6 +245,14 @@ public class Gesuch extends AbstractEntity {
 		this.typ = typ;
 	}
 
+	public Eingangsart getEingangsart() {
+		return eingangsart;
+	}
+
+	public void setEingangsart(Eingangsart eingangsart) {
+		this.eingangsart = eingangsart;
+	}
+
 	@Nullable
 	public Set<DokumentGrund> getDokumentGrunds() {
 		return dokumentGrunds;
@@ -291,13 +262,21 @@ public class Gesuch extends AbstractEntity {
 		this.dokumentGrunds = dokumentGrunds;
 	}
 
-	@Nullable
 	public int getLaufnummer() {
 		return laufnummer;
 	}
 
-	public void setLaufnummer(@Nullable int laufnummer) {
+	public void setLaufnummer(int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	@Nullable
+	public EinkommensverschlechterungInfoContainer getEinkommensverschlechterungInfoContainer() {
+		return einkommensverschlechterungInfoContainer;
+	}
+
+	public void setEinkommensverschlechterungInfoContainer(@Nullable EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer) {
+		this.einkommensverschlechterungInfoContainer = einkommensverschlechterungInfoContainer;
 	}
 
 	@SuppressWarnings("ObjectEquality")
@@ -347,8 +326,8 @@ public class Gesuch extends AbstractEntity {
 	 */
 	@Transient
 	public String extractFamiliennamenString() {
-		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().getNachname() : "");
-		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().getNachname() : "";
+		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().extractNachname() : "");
+		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().extractNachname() : "";
 		return bothFamiliennamen;
 	}
 
@@ -368,10 +347,80 @@ public class Gesuch extends AbstractEntity {
 
 	}
 
+	/**
+	 *
+	 * @return false wenn es ein kind gibt dass eine nicht schulamt betreuung hat, wenn es kein kind oder betr gibt wird false zurueckgegeben
+	 */
+	@Transient
+	public boolean hasOnlyBetreuungenOfSchulamt() {
+		//noinspection SimplifyStreamApiCallChains
+		List<Betreuung> allBetreuungen = kindContainers.stream().flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.collect(Collectors.toList());
+		return !allBetreuungen.isEmpty() && allBetreuungen.stream().allMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
+
+	}
+
 	@Transient
 	public boolean hasBetreuungOfSchulamt() {
 		return kindContainers.stream()
 			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
 			.anyMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
+	}
+
+	public Familiensituation extractFamiliensituation() {
+		if (familiensituationContainer != null) {
+			return familiensituationContainer.extractFamiliensituation();
+		}
+		return null;
+	}
+
+	public Familiensituation extractFamiliensituationErstgesuch() {
+		if (familiensituationContainer != null) {
+			return familiensituationContainer.getFamiliensituationErstgesuch();
+		}
+		return null;
+	}
+
+	public void initFamiliensituationContainer() {
+		familiensituationContainer = new FamiliensituationContainer();
+		familiensituationContainer.setFamiliensituationJA(new Familiensituation());
+	}
+
+	public Gesuch copyForMutation(Gesuch mutation, Eingangsart eingangsart) {
+		super.copyForMutation(mutation);
+		mutation.setEingangsart(eingangsart);
+		mutation.setFall(this.getFall());
+		mutation.setGesuchsperiode(this.getGesuchsperiode());
+		mutation.setEingangsdatum(null);
+		mutation.setStatus(eingangsart == Eingangsart.PAPIER ?  AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
+		mutation.setTyp(AntragTyp.MUTATION);
+		mutation.setLaufnummer(this.getLaufnummer() + 1);
+
+		if (this.getGesuchsteller1() != null) {
+			mutation.setGesuchsteller1(this.getGesuchsteller1().copyForMutation(new GesuchstellerContainer()));
+		}
+		if (this.getGesuchsteller2() != null) {
+			mutation.setGesuchsteller2(this.getGesuchsteller2().copyForMutation(new GesuchstellerContainer()));
+		}
+		for (KindContainer kindContainer : this.getKindContainers()) {
+			mutation.addKindContainer(kindContainer.copyForMutation(new KindContainer(), mutation));
+		}
+		mutation.setAntragStatusHistories(new LinkedHashSet<>());
+
+		if (this.getFamiliensituationContainer() != null) {
+			mutation.setFamiliensituationContainer(this.getFamiliensituationContainer().copyForMutation(new FamiliensituationContainer(), this.isMutation()));
+		}
+
+		if (this.getEinkommensverschlechterungInfoContainer() != null) {
+			mutation.setEinkommensverschlechterungInfoContainer(this.getEinkommensverschlechterungInfoContainer().copyForMutation(new EinkommensverschlechterungInfoContainer(), mutation));
+		}
+
+		if (this.getDokumentGrunds() != null) {
+			mutation.setDokumentGrunds(new HashSet<>());
+			for (DokumentGrund dokumentGrund : this.getDokumentGrunds()) {
+				mutation.addDokumentGrund(dokumentGrund.copyForMutation(new DokumentGrund()));
+			}
+		}
+		return mutation;
 	}
 }

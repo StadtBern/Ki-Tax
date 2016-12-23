@@ -6,6 +6,7 @@ import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSi
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import WizardStepManager from './wizardStepManager';
+import TSFinanzModel from '../../models/TSFinanzModel';
 
 
 export default class EinkommensverschlechterungContainerRS {
@@ -45,6 +46,19 @@ export default class EinkommensverschlechterungContainerRS {
         let gesuchToSend = {};
         gesuchToSend = this.ebeguRestUtil.gesuchToRestObject(gesuchToSend, gesuch);
         return this.http.post(this.serviceURL + '/calculate' + '/' + basisJahrPlus, gesuchToSend, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((httpresponse: any) => {
+            this.log.debug('PARSING Einkommensverschlechterung Result  REST object ', httpresponse.data);
+            return this.ebeguRestUtil.parseFinanzielleSituationResultate(new TSFinanzielleSituationResultateDTO(), httpresponse.data);
+        });
+    }
+
+    public calculateEinkommensverschlechterungTemp(finanzModel: TSFinanzModel, basisJahrPlus: number): IPromise<TSFinanzielleSituationResultateDTO> {
+        let finanzenToSend = {};
+        finanzenToSend = this.ebeguRestUtil.finanzModelToRestObject(finanzenToSend, finanzModel);
+        return this.http.post(this.serviceURL + '/calculateTemp' + '/' + basisJahrPlus, finanzenToSend, {
             headers: {
                 'Content-Type': 'application/json'
             }

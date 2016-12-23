@@ -14,11 +14,13 @@
 
     <!--Erwerbspensen von Gesuchsteller 1-->
     <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller1">
-        <h4 ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller1.getFullName()"></h4>
+        <h1 class="mainTitle">
+            <span ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller1.extractFullName()"></span>
+        </h1>
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS1()" table-id="erwerbspensenGS1"
-                               table-title="Erwerbspensen Gesuchsteller 1"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
                                add-button-Visible="!vm.isGesuchReadonly()"
+                               add-button-enabled="!vm.isKorrekturModusJugendamt()"
                                on-add="vm.createErwerbspensum(1)"
                                on-edit="vm.editPensum(pensum, 1)"
                                on-remove="vm.removePensum(pensum, 1)"></dv-erwerbspensum-list>
@@ -26,11 +28,13 @@
     </div>
     <!--Erwerbspensen von Gesuchsteller 2-->
     <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller2" class="marginTop20">
-        <h4 ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller2.getFullName()"></h4>
+        <h1 class="mainTitle">
+            <span ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName()"></span>
+        </h1>
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS2()" table-id="erwerbspensenGS2"
-                               table-title="Erwerbspensen Gesuchsteller 2"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
                                add-button-Visible="!vm.isGesuchReadonly()"
+                               add-button-enabled="!vm.isKorrekturModusJugendamt()"
                                on-add="vm.createErwerbspensum(2)"
                                on-edit="vm.editPensum(pensum, 2)"
                                on-remove="vm.removePensum(pensum, 2)"></dv-erwerbspensum-list>

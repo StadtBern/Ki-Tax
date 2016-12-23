@@ -28,6 +28,7 @@ import {VerfuegenViewComponentConfig} from './component/verfuegenView/verfuegenV
 import {KommentarViewComponentConfig} from './component/kommentarView/kommentarView';
 import {UmzugViewComponentConfig} from './component/umzugView/umzugView';
 import {AbwesenheitViewComponentConfig} from './component/abwesenheitView/abwesenheitView';
+import {FreigabeViewComponentConfig} from './component/freigabeView/freigabeView';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
@@ -54,5 +55,6 @@ export const EbeguWebGesuch =
         .component('einkommensverschlechterungSteuernView', new EinkommensverschlechterungSteuernViewComponentConfig())
         .component('einkommensverschlechterungView', new EinkommensverschlechterungViewComponentConfig())
         .component('einkommensverschlechterungResultateView', new EinkommensverschlechterungResultateViewComponentConfig())
+        .component('freigabeView', new FreigabeViewComponentConfig())
         .component('dokumenteView', new DokumenteViewComponentConfig())
         .component('kommentarView', new KommentarViewComponentConfig());

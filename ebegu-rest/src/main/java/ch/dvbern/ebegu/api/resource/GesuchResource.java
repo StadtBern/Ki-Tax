@@ -167,7 +167,7 @@ public class GesuchResource {
 	 */
 	private JaxGesuch cleanGesuchForInstitutionTraegerschaft(final JaxGesuch completeGesuch, final Collection<Institution> userInstitutionen) {
 		//clean EKV
-		completeGesuch.setEinkommensverschlechterungInfo(null);
+		completeGesuch.setEinkommensverschlechterungInfoContainer(null);
 
 		//clean GS -> FinSit
 		if (completeGesuch.getGesuchsteller1() != null) {
@@ -309,16 +309,18 @@ public class GesuchResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response antragMutieren(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
-		@Nonnull @QueryParam("date") String stringDate,
+		@Nullable @QueryParam("date") String stringDate,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(antragJaxId.getId());
-		Validate.notNull(stringDate);
 
-		final LocalDate eingangsdatum = DateUtil.parseStringToDateOrReturnNow(stringDate);
+		// Wenn der GS eine Mutation macht, ist das Eingangsdatum erst null. Wir muessen das Gesuch so erstellen
+		LocalDate eingangsdatum = null;
+		if (stringDate != null && !stringDate.isEmpty()) {
+			eingangsdatum = DateUtil.parseStringToDateOrReturnNow(stringDate);
+		}
 		final String antragId = converter.toEntityId(antragJaxId);
-
 
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(antragId, eingangsdatum);
 
@@ -328,5 +330,25 @@ public class GesuchResource {
 
 		Gesuch mutationToReturn = gesuchService.createGesuch(gesuchOptional.get());
 		return Response.ok(converter.gesuchToJAX(mutationToReturn)).build();
+	}
+
+	@ApiOperation(value = "Gibt den Antrag frei und bereitet ihn vor für die Bearbeitung durch das Jugendamt")
+	@Nullable
+	@POST
+	@Path("/freigeben/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response antragFreigeben(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Nullable String username,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+
+		final String antragId = converter.toEntityId(antragJaxId);
+
+		Gesuch gesuch = gesuchService.antragFreigeben(antragId, username);
+		return Response.ok(converter.gesuchToJAX(gesuch)).build();
 	}
 }
