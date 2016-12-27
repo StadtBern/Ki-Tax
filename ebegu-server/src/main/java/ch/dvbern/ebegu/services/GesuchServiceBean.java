@@ -582,7 +582,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA,	UserRoleName.GESUCHSTELLER})
+	@RolesAllowed(value ={UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SCHULAMT, UserRoleName.GESUCHSTELLER})
 	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username) {
 		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
@@ -590,7 +590,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			Validate.isTrue(gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG)
 				|| gesuch.getStatus().equals(AntragStatus.IN_BEARBEITUNG_GS),
 				"Gesuch war im falschen Status: " + gesuch.getStatus()+ " wir erwarten aber nur Freigabequittung oder In Bearbeitung GS");
+
 			this.authorizer.checkWriteAuthorization(gesuch);
+
 			// Die Daten des GS in die entsprechenden Containers kopieren
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			// Je nach Status
@@ -603,8 +605,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
 
 			if (username != null) {
-				Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(username);
-				verantwortlicher.ifPresent(benutzer -> gesuch.getFall().setVerantwortlicher(benutzer));
+				Optional<Benutzer> currentUser = benutzerService.findBenutzer(username);
+				if (currentUser.isPresent() && !currentUser.get().getRole().equals(UserRole.SCHULAMT)) {
+					gesuch.getFall().setVerantwortlicher(currentUser.get());
+				}
 			}
 
 			// Falls es ein OnlineGesuch war: Das Eingangsdatum setzen
@@ -612,7 +616,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				gesuch.setEingangsdatum(LocalDate.now());
 			}
 
-			return updateGesuch(gesuch, true);
+			final Gesuch merged = persistence.merge(gesuch);
+			antragStatusHistoryService.saveStatusChange(merged);
+			return merged;
 		} else {
 			throw new EbeguEntityNotFoundException("antragFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
 		}

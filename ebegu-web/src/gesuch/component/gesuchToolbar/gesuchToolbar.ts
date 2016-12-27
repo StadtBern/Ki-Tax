@@ -53,9 +53,9 @@ export class GesuchToolbarController {
 
     onVerantwortlicherChange: (attr: any) => void;
 
-    gesuchsperiodeList: { [key: string]: Array<TSAntragDTO> } = {};
+    gesuchsperiodeList: {[key: string]: Array<TSAntragDTO>} = {};
     gesuchNavigationList: {[key: string]: Array<string>} = {};   //mapped z.B. '2006 / 2007' auf ein array mit den Namen der Antraege
-    antragTypList: { [key: string]: TSAntragDTO } = {};
+    antragTypList: {[key: string]: TSAntragDTO} = {};
     mutierenPossibleForCurrentAntrag: boolean = false;
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
@@ -105,13 +105,15 @@ export class GesuchToolbarController {
                     }
                 }
             });
-            $scope.$watch(() => {
-                return this.gesuchModelManager.getGesuch().status;
-            }, (newValue, oldValue) => {
-                if ((newValue !== oldValue) && (isAnyStatusOfVerfuegt(newValue))) {
-                    this.updateAntragDTOList();
-                }
-            });
+            if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+                $scope.$watch(() => {
+                    return this.gesuchModelManager.getGesuch().status;
+                }, (newValue, oldValue) => {
+                    if ((newValue !== oldValue) && (isAnyStatusOfVerfuegt(newValue))) {
+                        this.updateAntragDTOList();
+                    }
+                });
+            }
         }
     }
 
@@ -197,7 +199,7 @@ export class GesuchToolbarController {
         }
     }
 
-    getKeys(map: { [key: string]: Array<TSAntragDTO> }): Array<String> {
+    getKeys(map: {[key: string]: Array<TSAntragDTO>}): Array<String> {
         var keys: Array<String> = [];
         for (var key in map) {
             if (map.hasOwnProperty(key)) {
@@ -336,9 +338,11 @@ export class GesuchToolbarController {
         } else {
             eingangsart = TSEingangsart.PAPIER;
         }
-        this.$state.go('gesuch.mutation', {createMutation: true, gesuchId: this.gesuchid,
+        this.$state.go('gesuch.mutation', {
+            createMutation: true, gesuchId: this.gesuchid,
             fallId: this.getGesuch().fall.id, eingangsart: eingangsart,
-            gesuchsperiodeId: this.getGesuch().gesuchsperiode.id});
+            gesuchsperiodeId: this.getGesuch().gesuchsperiode.id
+        });
     }
 
     private addAntragToList(antrag: TSGesuch): void {

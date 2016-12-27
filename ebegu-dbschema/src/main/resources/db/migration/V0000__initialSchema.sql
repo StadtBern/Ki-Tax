@@ -566,6 +566,20 @@ CREATE TABLE einkommensverschlechterung_info_aud (
   PRIMARY KEY (id, rev)
 );
 
+CREATE TABLE einkommensverschlechterung_info_container_aud (
+  id                                   VARCHAR(36) NOT NULL,
+  rev                                  INTEGER     NOT NULL,
+  revtype                              TINYINT,
+  timestamp_erstellt                   DATETIME,
+  timestamp_mutiert                    DATETIME,
+  user_erstellt                        VARCHAR(36),
+  user_mutiert                         VARCHAR(36),
+  vorgaenger_id                        VARCHAR(36),
+  einkommensverschlechterung_infogs_id VARCHAR(36),
+  einkommensverschlechterung_infoja_id VARCHAR(36),
+  PRIMARY KEY (id, rev)
+);
+
 CREATE TABLE einkommensverschlechterung_container (
   id                         VARCHAR(36) NOT NULL,
   timestamp_erstellt         DATETIME    NOT NULL,
@@ -602,27 +616,13 @@ CREATE TABLE einkommensverschlechterung_info (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE einkommensverschlechterung_info_container_aud (
-  id                                   VARCHAR(36) NOT NULL,
-  rev                                  INTEGER NOT NULL,
-  revtype                              TINYINT,
-  timestamp_erstellt                   DATETIME,
-  timestamp_mutiert                    DATETIME,
-  user_erstellt                        VARCHAR(36),
-  user_mutiert                         VARCHAR(36),
-  vorgaenger_id                        VARCHAR(36),
-  einkommensverschlechterung_infogs_id VARCHAR(36),
-  einkommensverschlechterung_infoja_id VARCHAR(36),
-  PRIMARY KEY (id, rev)
-);
-
 CREATE TABLE einkommensverschlechterung_info_container (
   id                                   VARCHAR(36) NOT NULL,
-  timestamp_erstellt                   DATETIME NOT NULL,
-  timestamp_mutiert                    DATETIME NOT NULL,
+  timestamp_erstellt                   DATETIME    NOT NULL,
+  timestamp_mutiert                    DATETIME    NOT NULL,
   user_erstellt                        VARCHAR(36) NOT NULL,
   user_mutiert                         VARCHAR(36) NOT NULL,
-  version                              BIGINT NOT NULL,
+  version                              BIGINT      NOT NULL,
   vorgaenger_id                        VARCHAR(36),
   einkommensverschlechterung_infogs_id VARCHAR(36),
   einkommensverschlechterung_infoja_id VARCHAR(36),
@@ -791,34 +791,33 @@ CREATE TABLE familiensituation_aud (
 );
 
 CREATE TABLE familiensituation_container_aud (
-     id                              VARCHAR(36) NOT NULL,
-     rev                             INTEGER NOT NULL,
-     revtype                         TINYINT,
-     timestamp_erstellt              DATETIME,
-     timestamp_mutiert               DATETIME,
-     user_erstellt                   VARCHAR(36),
-     user_mutiert                    VARCHAR(36),
-     vorgaenger_id                   VARCHAR(36),
-     familiensituation_erstgesuch_id VARCHAR(36),
-     familiensituationgs_id          VARCHAR(36),
-     familiensituationja_id          VARCHAR(36),
-     PRIMARY KEY (id, rev)
+  id                              VARCHAR(36) NOT NULL,
+  rev                             INTEGER     NOT NULL,
+  revtype                         TINYINT,
+  timestamp_erstellt              DATETIME,
+  timestamp_mutiert               DATETIME,
+  user_erstellt                   VARCHAR(36),
+  user_mutiert                    VARCHAR(36),
+  vorgaenger_id                   VARCHAR(36),
+  familiensituation_erstgesuch_id VARCHAR(36),
+  familiensituationgs_id          VARCHAR(36),
+  familiensituationja_id          VARCHAR(36),
+  PRIMARY KEY (id, rev)
 );
 
 CREATE TABLE familiensituation_container (
-     id                              VARCHAR(36) NOT NULL,
-     timestamp_erstellt              DATETIME NOT NULL,
-     timestamp_mutiert               DATETIME NOT NULL,
-     user_erstellt                   VARCHAR(36) NOT NULL,
-     user_mutiert                    VARCHAR(36) NOT NULL,
-     version                         BIGINT NOT NULL,
-     vorgaenger_id                   VARCHAR(36),
-     familiensituation_erstgesuch_id VARCHAR(36),
-     familiensituationgs_id          VARCHAR(36),
-     familiensituationja_id          VARCHAR(36),
-     PRIMARY KEY (id)
+  id                              VARCHAR(36) NOT NULL,
+  timestamp_erstellt              DATETIME    NOT NULL,
+  timestamp_mutiert               DATETIME    NOT NULL,
+  user_erstellt                   VARCHAR(36) NOT NULL,
+  user_mutiert                    VARCHAR(36) NOT NULL,
+  version                         BIGINT      NOT NULL,
+  vorgaenger_id                   VARCHAR(36),
+  familiensituation_erstgesuch_id VARCHAR(36),
+  familiensituationgs_id          VARCHAR(36),
+  familiensituationja_id          VARCHAR(36),
+  PRIMARY KEY (id)
 );
-
 
 CREATE TABLE finanzielle_situation_aud (
   id                                VARCHAR(36) NOT NULL,
@@ -932,51 +931,51 @@ CREATE TABLE generated_dokument (
 );
 
 CREATE TABLE gesuch (
-  id                                 VARCHAR(36)  NOT NULL,
-  timestamp_erstellt                 DATETIME     NOT NULL,
-  timestamp_mutiert                  DATETIME     NOT NULL,
-  user_erstellt                      VARCHAR(36)  NOT NULL,
-  user_mutiert                       VARCHAR(36)  NOT NULL,
-  version                            BIGINT       NOT NULL,
-  vorgaenger_id                      VARCHAR(36),
-  bemerkungen                        VARCHAR(4000),
-  eingangsart                        VARCHAR(255) NOT NULL,
-  eingangsdatum                      DATE,
-  freigabe_datum                     DATE,
-  laufnummer                         INTEGER      NOT NULL,
-  status                             VARCHAR(255) NOT NULL,
-  typ                                VARCHAR(255) NOT NULL,
+  id                                           VARCHAR(36)  NOT NULL,
+  timestamp_erstellt                           DATETIME     NOT NULL,
+  timestamp_mutiert                            DATETIME     NOT NULL,
+  user_erstellt                                VARCHAR(36)  NOT NULL,
+  user_mutiert                                 VARCHAR(36)  NOT NULL,
+  version                                      BIGINT       NOT NULL,
+  vorgaenger_id                                VARCHAR(36),
+  bemerkungen                                  VARCHAR(4000),
+  eingangsart                                  VARCHAR(255) NOT NULL,
+  eingangsdatum                                DATE,
+  freigabe_datum                               DATE,
+  laufnummer                                   INTEGER      NOT NULL,
+  status                                       VARCHAR(255) NOT NULL,
+  typ                                          VARCHAR(255) NOT NULL,
   einkommensverschlechterung_info_container_id VARCHAR(36),
-  fall_id                            VARCHAR(36)  NOT NULL,
-  familiensituation_container_id     VARCHAR(36),
-  gesuchsperiode_id                  VARCHAR(36)  NOT NULL,
-  gesuchsteller1_id                  VARCHAR(36),
-  gesuchsteller2_id                  VARCHAR(36),
+  fall_id                                      VARCHAR(36)  NOT NULL,
+  familiensituation_container_id               VARCHAR(36),
+  gesuchsperiode_id                            VARCHAR(36)  NOT NULL,
+  gesuchsteller1_id                            VARCHAR(36),
+  gesuchsteller2_id                            VARCHAR(36),
   PRIMARY KEY (id)
 );
 
 CREATE TABLE gesuch_aud (
-  id                                 VARCHAR(36) NOT NULL,
-  rev                                INTEGER     NOT NULL,
-  revtype                            TINYINT,
-  timestamp_erstellt                 DATETIME,
-  timestamp_mutiert                  DATETIME,
-  user_erstellt                      VARCHAR(36),
-  user_mutiert                       VARCHAR(36),
-  vorgaenger_id                      VARCHAR(36),
-  bemerkungen                        VARCHAR(4000),
-  eingangsart                        VARCHAR(255),
-  eingangsdatum                      DATE,
-  freigabe_datum                     DATE,
-  laufnummer                         INTEGER,
-  status                             VARCHAR(255),
-  typ                                VARCHAR(255),
+  id                                           VARCHAR(36) NOT NULL,
+  rev                                          INTEGER     NOT NULL,
+  revtype                                      TINYINT,
+  timestamp_erstellt                           DATETIME,
+  timestamp_mutiert                            DATETIME,
+  user_erstellt                                VARCHAR(36),
+  user_mutiert                                 VARCHAR(36),
+  vorgaenger_id                                VARCHAR(36),
+  bemerkungen                                  VARCHAR(4000),
+  eingangsart                                  VARCHAR(255),
+  eingangsdatum                                DATE,
+  freigabe_datum                               DATE,
+  laufnummer                                   INTEGER,
+  status                                       VARCHAR(255),
+  typ                                          VARCHAR(255),
   einkommensverschlechterung_info_container_id VARCHAR(36),
-  fall_id                            VARCHAR(36),
-  familiensituation_container_id     VARCHAR(36),
-  gesuchsperiode_id                  VARCHAR(36),
-  gesuchsteller1_id                  VARCHAR(36),
-  gesuchsteller2_id                  VARCHAR(36),
+  fall_id                                      VARCHAR(36),
+  familiensituation_container_id               VARCHAR(36),
+  gesuchsperiode_id                            VARCHAR(36),
+  gesuchsteller1_id                            VARCHAR(36),
+  gesuchsteller2_id                            VARCHAR(36),
   PRIMARY KEY (id, rev)
 );
 
@@ -1105,7 +1104,7 @@ CREATE TABLE gesuchsteller_adresse_container (
   version                    BIGINT      NOT NULL,
   vorgaenger_id              VARCHAR(36),
   gesuchsteller_adressegs_id VARCHAR(36),
-  gesuchsteller_adresseja_id VARCHAR(36) NOT NULL,
+  gesuchsteller_adresseja_id VARCHAR(36),
   gesuchsteller_container_id VARCHAR(36) NOT NULL,
   PRIMARY KEY (id)
 );
@@ -1153,7 +1152,6 @@ CREATE TABLE institution_aud (
   name               VARCHAR(255),
   mandant_id         VARCHAR(36),
   traegerschaft_id   VARCHAR(36),
-
   PRIMARY KEY (id, rev)
 );
 
@@ -1610,6 +1608,12 @@ ALTER TABLE authorisierter_benutzer
 FOREIGN KEY (benutzer_id)
 REFERENCES benutzer (id);
 
+CREATE INDEX IX_benutzer_username
+  ON benutzer (username);
+
+ALTER TABLE benutzer
+  ADD CONSTRAINT UK_username UNIQUE (username);
+
 ALTER TABLE benutzer
   ADD CONSTRAINT FK_benutzer_institution_id
 FOREIGN KEY (institution_id)
@@ -1806,6 +1810,12 @@ REFERENCES revinfo (rev);
 
 CREATE INDEX IX_fall_fall_nummer
   ON fall (fall_nummer);
+
+CREATE INDEX IX_fall_besitzer
+  ON fall (besitzer_id);
+
+CREATE INDEX IX_fall_verantwortlicher
+  ON fall (verantwortlicher_id);
 
 CREATE INDEX IX_fall_mandant
   ON fall (mandant_id);
@@ -2011,6 +2021,12 @@ ALTER TABLE institution_stammdaten_aud
   ADD CONSTRAINT FK_institution_stammdaten_aud_revinfo
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
+
+CREATE INDEX IX_institution_stammdaten_gueltig_ab
+  ON institution_stammdaten (gueltig_ab);
+
+CREATE INDEX IX_institution_stammdaten_gueltig_bis
+  ON institution_stammdaten (gueltig_bis);
 
 ALTER TABLE institution_stammdaten
   ADD CONSTRAINT UK_institution_stammdaten_adresse_id UNIQUE (adresse_id);

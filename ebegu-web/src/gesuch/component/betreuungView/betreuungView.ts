@@ -66,7 +66,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         }
         this.startEmptyListOfBetreuungspensen();
         //institutionen lazy laden
-        if (this.gesuchModelManager.getActiveInstitutionenList() || this.gesuchModelManager.getActiveInstitutionenList().length <= 0) {
+        if (!this.gesuchModelManager.getActiveInstitutionenList() || this.gesuchModelManager.getActiveInstitutionenList().length <= 0) {
             this.gesuchModelManager.updateActiveInstitutionenList();
         }
         this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);

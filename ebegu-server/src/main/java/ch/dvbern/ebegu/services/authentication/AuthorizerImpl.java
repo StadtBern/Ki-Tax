@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services.authentication;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.Authorizer;
 import ch.dvbern.ebegu.services.FallService;
@@ -9,8 +10,6 @@ import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -173,8 +172,15 @@ public class AuthorizerImpl implements Authorizer {
 		if (gesuch == null) {
 			return;
 		}
-		boolean allowed = isWriteAuthorized(gesuch.getFall(), principalBean.getPrincipal().getName());
-		if (!allowed) {
+		boolean allowedJAORGS = isWriteAuthorized(gesuch.getFall(), principalBean.getPrincipal().getName());
+		//Wir pruefen schulamt separat (schulamt darf schulamt-only Gesuche vom Status FREIGABEQUITTUNG zum Status SCHULAMT schieben)
+		boolean allowedSchulamt = false;
+		if(!allowedJAORGS && principalBean.isCallerInRole(SCHULAMT)
+			&& AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus())){
+			allowedSchulamt = true;
+		}
+
+		if (!allowedJAORGS && !allowedSchulamt) {
 			throwViolation(gesuch);
 		}
 	}
@@ -283,6 +289,13 @@ public class AuthorizerImpl implements Authorizer {
 		if (finanzielleSituation != null) {
 			// hier fuer alle lesbar ausser fuer institution/traegerschaft
 			String name = principalBean.getPrincipal().getName();
+			if (principalBean.isCallerInRole(GESUCHSTELLER.name())) {
+				Fall owningFall = extractFall(finanzielleSituation);
+				if (owningFall == null) {
+					//wenn wir keinen fall finden dann gehen wir davon aus, dass die finanzielle Situation bzw ihr Gesuchsteller noch nicht gespeichert ist
+					return;
+				}
+			}
 			boolean allowed = isInRoleOrGSOwner(ALL_EXCEPT_INST_TRAEG, () -> extractFall(finanzielleSituation), name);
 			if (!allowed) {
 				throwViolation(finanzielleSituation);
@@ -376,7 +389,6 @@ public class AuthorizerImpl implements Authorizer {
 	private boolean isWriteAuthorized(Fall entity, String principalName) {
 		return isInRoleOrGSOwner(JA_OR_ADM, () -> entity, principalName);
 	}
-
 
 	private void throwCreateViolation() {
 		throw new EJBAccessException(

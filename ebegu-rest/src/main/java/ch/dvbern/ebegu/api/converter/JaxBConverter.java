@@ -375,9 +375,20 @@ public class JaxBConverter {
 			jaxGesuchstellerCont.setAdressen(gesuchstellerAdresseContainerListToJAX(
 				persistedGesuchstellerCont.getAdressen().stream().filter(gesuchstellerAdresse
 					-> !gesuchstellerAdresse.extractIsKorrespondenzAdresse()).sorted((o1, o2) ->
-						o1.extractGueltigkeit().getGueltigAb().compareTo(o2.extractGueltigkeit().getGueltigAb()))
-					.collect(Collectors.toList())
-			));
+					{
+						if (o1.extractGueltigkeit() == null && o2.extractGueltigkeit() == null){
+							return 0;
+						}
+						else if (o1.extractGueltigkeit() == null){
+							return 1;
+						}
+						else if (o1.extractGueltigkeit() == null){
+							return -1;
+						} else {
+							return o1.extractGueltigkeit().getGueltigAb().compareTo(o2.extractGueltigkeit().getGueltigAb());
+						}
+					}).collect(Collectors.toList())
+				));
 		}
 
 		// Finanzielle Situation
@@ -453,7 +464,7 @@ public class JaxBConverter {
 	}
 
 	public FamiliensituationContainer familiensituationContainerToEntity(@Nonnull final JaxFamiliensituationContainer containerJAX,
-																								   @Nonnull final FamiliensituationContainer container) {
+																		 @Nonnull final FamiliensituationContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
@@ -678,7 +689,7 @@ public class JaxBConverter {
 				gesuchstellerAdresseJA = adresseCont.getGesuchstellerAdresseJA();
 			}
 			adresseCont.setGesuchstellerAdresseJA(gesuchstellerAdresseToEntity(jaxAdresseCont.getAdresseJA(), gesuchstellerAdresseJA));
-		} else{
+		} else {
 			Validate.isTrue(adresseCont.extractIsKorrespondenzAdresse(), "Nur bei der Korrespondenzadresse kann der AdresseJA Container entfernt werden");
 			adresseCont.setGesuchstellerAdresseJA(null);
 		}
@@ -716,7 +727,7 @@ public class JaxBConverter {
 			final GesuchstellerAdresseContainer altAddrToMerge = gesuchstellerAdresseContainerToEntity(jaxGesuchstellerCont.getAlternativeAdresse(), currentAltAdr);
 			gesuchstellerCont.addAdresse(altAddrToMerge);
 		} //else case: Wenn das haeklein "Zustell / Postadrsse" auf client weggenommen wird muss die Korrespondezadr auf dem Server geloescht werden.
-		else{
+		else {
 			for (Iterator<GesuchstellerAdresseContainer> iterator = gesuchstellerCont.getAdressen().iterator(); iterator.hasNext(); ) {
 				GesuchstellerAdresseContainer next = iterator.next();
 				if (next.extractIsKorrespondenzAdresse()) {
@@ -1107,7 +1118,7 @@ public class JaxBConverter {
 	}
 
 	public FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX,
-																				@Nonnull final FinanzielleSituationContainer container) {
+																			   @Nonnull final FinanzielleSituationContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
