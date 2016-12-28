@@ -1,4 +1,6 @@
 {
+    /* TODO: TEST_HTML entfernen, da es nur zu Demo und Testzwecken verwendet wird/wurde*/
+    "TEST_HTML": "Sie können das Gesuch allein oder gemeinsam mit dem anderen Elternteil stellen, selbst wenn Sie nicht (mehr) in einer Beziehung leben.<br><br>Wenn Sie inzwischen <b>mit einer anderen Person</b>:<br><li>verheiratet sind,</li><li>in eingetragener Partnerschaft,</li><li>seit mehr als 5 Jahren im Konkubinat oder</li><li>im Konkubinat mit gemeinsames Kind leben,</li><br>müssen Sie das Gesuch zusammen mit dieser Person ausfüllen.",
     "AB": "Ab",
     "AKTION": "Aktion",
     "UPDATE": "Aktualisieren",
