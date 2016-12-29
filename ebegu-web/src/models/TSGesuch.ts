@@ -7,7 +7,7 @@ import TSGesuchstellerContainer from './TSGesuchstellerContainer';
 import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from './TSFamiliensituationContainer';
 import {TSEingangsart} from './enums/TSEingangsart';
-import {isSchulamt} from "./enums/TSBetreuungsangebotTyp";
+import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 

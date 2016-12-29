@@ -15,7 +15,6 @@ import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensvers
 import FinanzielleSituationRS from './finanzielleSituationRS.rest';
 import EinkommensverschlechterungContainerRS from './einkommensverschlechterungContainerRS.rest';
 import TSKindContainer from '../../models/TSKindContainer';
-import TSKind from '../../models/TSKind';
 import KindRS from '../../core/service/kindRS.rest';
 import {TSFachstelle} from '../../models/TSFachstelle';
 import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
@@ -591,13 +590,6 @@ export default class GesuchModelManager {
         return listResult;
     }
 
-    public createKind(): void {
-        let tsKindContainer = new TSKindContainer(undefined, new TSKind());
-        this.gesuch.kindContainers.push(tsKindContainer);
-        this.kindNumber = this.gesuch.kindContainers.length;
-        tsKindContainer.kindNummer = this.kindNumber;
-    }
-
     /**
      * Creates a Betreuung for the kind given by the kindNumber attribute of the class.
      * Thus the kindnumber must be set before this method is called.
@@ -622,13 +614,24 @@ export default class GesuchModelManager {
             });
     }
 
-    public updateKind(): IPromise<TSKindContainer> {
-        return this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
-            this.setKindToWorkWith(kindResponse);
-            this.getFallFromServer();
-            return this.getKindToWorkWith();
-        });
+
+    public saveKind(gesuch: TSGesuch, kindToSave: TSKindContainer): IPromise<TSKindContainer> {
+        return this.kindRS.saveKind(kindToSave, gesuch.id)
+            .then((storedKindCont: TSKindContainer) => {
+                this.getFallFromServer();
+                if (!kindToSave.isNew()) {   //gespeichertes kind war nicht neu
+                    let i: number = EbeguUtil.getIndexOfElementwithID(kindToSave, gesuch.kindContainers);
+                       if (i >= 0) {
+                           gesuch.kindContainers[i] = storedKindCont;
+                       }
+                    return storedKindCont;
+                } else{
+                    gesuch.kindContainers.push(storedKindCont);  //neues kind anfuegen
+                    return storedKindCont;
+                }
+            });
     }
+
 
     /**
      * Sucht das KindToWorkWith im Server und aktualisiert es mit dem bekommenen Daten

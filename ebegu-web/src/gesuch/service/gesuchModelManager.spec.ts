@@ -24,8 +24,8 @@ import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import IPromise = angular.IPromise;
 import {TSEingangsart} from '../../models/enums/TSEingangsart';
+import IPromise = angular.IPromise;
 
 describe('gesuchModelManager', function () {
 
@@ -529,9 +529,17 @@ describe('gesuchModelManager', function () {
 
     function createKindContainer() {
         gesuchModelManager.initKinder();
-        gesuchModelManager.createKind();
+        createKind();
         gesuchModelManager.initBetreuung();
     }
+
+    function createKind(): void {
+        let tsKindContainer = new TSKindContainer(undefined, new TSKind());
+        gesuchModelManager.getGesuch().kindContainers.push(tsKindContainer);
+        gesuchModelManager.setKindNumber(gesuchModelManager.getGesuch().kindContainers.length);
+        tsKindContainer.kindNummer = gesuchModelManager.getKindNumber();
+    }
+
 
     function createKindWithBetreuung() {
         createKindContainer();
