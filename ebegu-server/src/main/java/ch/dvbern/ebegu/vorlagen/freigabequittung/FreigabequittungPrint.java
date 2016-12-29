@@ -46,4 +46,6 @@ public interface FreigabequittungPrint {
 
 	List<AufzaehlungPrint> getUnterlagen();
 
+	boolean isWithoutUnterlagen();
+
 }
