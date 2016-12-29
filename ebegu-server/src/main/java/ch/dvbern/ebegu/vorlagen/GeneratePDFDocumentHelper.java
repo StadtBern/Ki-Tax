@@ -11,7 +11,10 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 10.08.2016
 */
 
+import ch.dvbern.ebegu.EBEGUMergeSource;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.lib.doctemplate.common.DocTemplateException;
+import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -37,6 +40,7 @@ public class GeneratePDFDocumentHelper {
 	private static final String PDFENCODING = "ISO-8859-1";
 	private static final String NUMOFPAGE = "#PAGE";
 	private static final String NUMOFPAGES = "#MAX";
+	private static final String	PROP_STANDARD_ANZAHL_SEITEN = "expectedNumberOfPages";
 
 	/**
 	 * Konvertiert ein docx zu einem PDF
@@ -58,6 +62,45 @@ public class GeneratePDFDocumentHelper {
 
 			return manipulatePdf(out.toByteArray());
 		} catch (IOException | InvocationTargetException | DocumentException | IllegalAccessException | NoSuchMethodException e) {
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
+		}
+	}
+
+	/**
+	 * Konvertiert ein docx zu einem PDF
+	 *
+	 * @return das PDF Dokument als Byte
+	 * @throws MergeDocException
+	 */
+	@Nonnull
+	public byte[] generatePDFDocument(@Nonnull byte[] docxTemplate, @Nonnull EBEGUMergeSource mergeSource) throws MergeDocException {
+		try {
+			Objects.requireNonNull(docxTemplate, "generateFrom muss gesetzt sein");
+			Objects.requireNonNull(docxTemplate, "mergeSource muss gesetzt sein");
+
+			DOCXMergeEngine docxme = new DOCXMergeEngine(mergeSource.getClass().getName());
+
+			byte[] mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
+			byte[] mergedPdf = generatePDFDocument(mergedDocx);
+			PdfReader reader = new PdfReader(mergedPdf);
+			int numOfPDFPages = reader.getNumberOfPages();
+			reader.close();
+
+			int expectedNumOfDOCXPages = 0;
+			XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(mergedDocx));
+			if (document.getProperties().getCustomProperties().contains(PROP_STANDARD_ANZAHL_SEITEN)){
+				expectedNumOfDOCXPages = document.getProperties().getCustomProperties()
+					.getProperty(PROP_STANDARD_ANZAHL_SEITEN).getI4();
+			}
+
+			if(expectedNumOfDOCXPages > 0 && expectedNumOfDOCXPages != numOfPDFPages){
+				mergeSource.setPDFLongerThanExpected(true);
+				mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
+				mergedPdf = generatePDFDocument(mergedDocx);
+			}
+
+			return mergedPdf;
+		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
 		}
 	}

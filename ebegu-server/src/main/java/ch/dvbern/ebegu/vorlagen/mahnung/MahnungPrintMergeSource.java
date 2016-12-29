@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.vorlagen.mahnung;
 
+import ch.dvbern.ebegu.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
@@ -18,9 +19,10 @@ import java.util.List;
  * <p>
  * Created by medu on 28/11/2016.
  */
-public class MahnungPrintMergeSource implements MergeSource {
+public class MahnungPrintMergeSource implements EBEGUMergeSource {
 
 	private ManhungPrint mahnung;
+	private boolean isPDFLongerThanExpected = false;
 
 	public MahnungPrintMergeSource(ManhungPrint mahnung) {
 		this.mahnung = mahnung;
@@ -28,7 +30,6 @@ public class MahnungPrintMergeSource implements MergeSource {
 
 	@Override
 	public Object getData(MergeContext mergeContext, String key) throws DocTemplateException {
-
 		if (key.startsWith("mahnung")) {
 			return new BeanMergeSource(mahnung, "mahnung.").getData(mergeContext, key);
 		}
@@ -37,6 +38,9 @@ public class MahnungPrintMergeSource implements MergeSource {
 
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
+		if (key.equals("mahnung.PDFLongerThanExpected")) {
+			return isPDFLongerThanExpected;
+		}
 		return new BeanMergeSource(mahnung, "mahnung.").ifStatement(mergeContext, key);
 	}
 
@@ -46,5 +50,10 @@ public class MahnungPrintMergeSource implements MergeSource {
 			return new BeanMergeSource(mahnung, "mahnung.").whileStatement(mergeContext, key);
 		}
 		return null;
+	}
+
+	@Override
+	public void setPDFLongerThanExpected(boolean isPDFLongerThanExpected) {
+		this.isPDFLongerThanExpected = isPDFLongerThanExpected;
 	}
 }
