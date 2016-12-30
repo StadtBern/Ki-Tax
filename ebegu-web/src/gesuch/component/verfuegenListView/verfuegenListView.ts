@@ -159,15 +159,19 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return isAnyStatusOfVerfuegt(status);
+            return isAnyStatusOfVerfuegt(status) && this.getGesuch().hasFSDokument;
         }
-        return true;
+        return this.getGesuch().hasFSDokument;
 
     }
 
     public isBegleitschreibenVisible(): boolean {
-        //aktuell verhelt sich das imho gleich wie finanzielle Situation PDF Sichtbarkeit
-        return this.isFinanziellesituationPDFVisible();
+        let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
+        if (isGesuchsteller) {
+            let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+            return isAnyStatusOfVerfuegt(status);
+        }
+        return true;
     }
 
     public getFall() {
@@ -202,7 +206,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         });
     }
 
-    public setGesuchStatusVerfuegen(): IPromise<TSAntragStatus> {
+    public setGesuchStatusVerfuegen(): IPromise<TSGesuch> {
         //by default wird alles auf VERFUEGEN gesetzt, da es der normale Fall ist
         let newStatus: TSAntragStatus = TSAntragStatus.VERFUEGEN;
         let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
@@ -212,12 +216,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             deleteTextValue = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT';
             this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
         }
+
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: deleteTextValue
         }).then(() => {
             return this.createNeededPDFs().then(() => {
-                return this.setGesuchStatus(newStatus);
+                this.gesuchModelManager.getGesuch().status = newStatus;
+                return this.gesuchModelManager.updateGesuch()
             });
         });
     }
@@ -377,9 +383,12 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     private createNeededPDFs(): IPromise<TSDownloadFile> {
-        return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FINANZIELLE_SITUATION, true)
-            .then((downloadFile: TSDownloadFile) => {
-                return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.BEGLEITSCHREIBEN, true);
+       return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.BEGLEITSCHREIBEN, true)
+            .then(() => {
+                if (this.getGesuch().hasFSDokument) {
+                    return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FINANZIELLE_SITUATION, true);
+                }
+                return;
             });
     }
 }

@@ -666,6 +666,7 @@ public class JaxBConverter {
 
 		antrag.setBemerkungen(antragJAXP.getBemerkungen());
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
+		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 
 		return antrag;
 	}
@@ -787,6 +788,7 @@ public class JaxBConverter {
 		}
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
+		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
 
 		return jaxGesuch;
 	}

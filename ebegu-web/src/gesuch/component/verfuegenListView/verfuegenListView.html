@@ -133,6 +133,12 @@
                     </dv-loading-button>
                 </span>
                 <span class="col-md-4" ng-show="vm.showVerfuegenStarten()">
+                    <div class="checkbox">
+                    <md-checkbox ng-model="vm.getGesuch().hasFSDokument" name="generateFinanziellenSituation"
+                                 aria-label="{{GENERATE_FINANZIELLEN_SITUATION | translate}}">
+                        <span data-translate="GENERATE_FINANZIELLEN_SITUATION"></span>
+                    </md-checkbox>
+                    </div>
                     <dv-loading-button button-click="vm.setGesuchStatusVerfuegen()"
                                        button-class="dv-btn-sm color-success"
                                        aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
