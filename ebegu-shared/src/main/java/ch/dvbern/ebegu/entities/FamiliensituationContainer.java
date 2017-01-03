@@ -29,7 +29,7 @@ public class FamiliensituationContainer extends AbstractEntity {
 
 	@Valid
 	@Nullable
-	@ManyToOne(optional = true)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_familiensituation_container_familiensituation_erstgesuch_id"))
 	private Familiensituation familiensituationErstgesuch;
 
@@ -41,9 +41,9 @@ public class FamiliensituationContainer extends AbstractEntity {
 		mutation.setFamiliensituationGS(null);
 		mutation.setFamiliensituationJA(getFamiliensituationJA().copyForMutation(new Familiensituation()));
 		if (toCopyisMutation) {
-			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationErstgesuch());
+			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationErstgesuch().copyForMutation(new Familiensituation()));
 		} else { // beim ErstGesuch holen wir direkt die normale Familiensituation
-			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationJA());
+			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationJA().copyForMutation(new Familiensituation()));
 		}
 		return mutation;
 	}

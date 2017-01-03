@@ -155,6 +155,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	@Test
 	public void testAntragMutieren() throws EbeguException {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGT);
 		final Response response = gesuchResource.antragMutieren(new JaxId(gesuch.getId()), LocalDate.now().toString(), null, null);
 
 		Assert.assertNotNull(response);

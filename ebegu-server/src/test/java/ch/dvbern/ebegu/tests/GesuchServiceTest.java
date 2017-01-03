@@ -442,7 +442,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		try {
 			gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
 			Assert.fail("Exception should be thrown. There is already an open Mutation");
-		}catch (EbeguRuntimeException e) {
+		} catch (EbeguRuntimeException e) {
 			// nop
 		}
 
