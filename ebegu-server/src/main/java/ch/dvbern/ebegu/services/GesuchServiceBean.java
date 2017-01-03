@@ -649,11 +649,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			}
-			else{
-				throw new EbeguRuntimeException("antragMutieren", "Es gibt bereits eine öffene Mutation für dieses Gesuch");
+			else {
+				throw new EbeguRuntimeException("antragMutieren", "Fehler beim Erstellen einer Mutation", "Es gibt bereits eine öffene Mutation für dieses Gesuch");
 			}
 		}
-		else{
+		else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen " + antragId, antragId);
 		}
 
@@ -676,7 +676,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			}
 			else{
-				throw new EbeguRuntimeException("antragMutieren", "Es gibt bereits eine öffene Mutation für dieses Gesuch");
+				throw new EbeguRuntimeException("antragMutieren", "Fehler beim Erstellen einer Mutation", "Es gibt bereits eine öffene Mutation für dieses Gesuch");
 			}
 		} else{
 			throw new EbeguEntityNotFoundException("antragMutieren", "fall oder gesuchsperiode konnte nicht geladen werden  fallNr:" + fallNummer + "gsPerID" +gesuchsperiodeId);

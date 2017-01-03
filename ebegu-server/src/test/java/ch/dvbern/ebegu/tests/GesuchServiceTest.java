@@ -398,8 +398,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 		Assert.assertEquals(AntragStatus.NUR_SCHULAMT, eingelesenesGesuch.getStatus());
 
-
-
 	}
 
 	@Test

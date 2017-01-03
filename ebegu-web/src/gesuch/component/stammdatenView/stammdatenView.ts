@@ -73,8 +73,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         if (this.showKorrespondadr) {
             if (!this.model.korrespondenzAdresse) {
                 this.model.korrespondenzAdresse = this.initKorrespondenzAdresse();
-            }
-            else if (!this.model.korrespondenzAdresse.adresseJA) {
+            } else if (!this.model.korrespondenzAdresse.adresseJA) {
                 this.initKorrespondenzAdresseJA();
             }
         }

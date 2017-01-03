@@ -79,17 +79,16 @@ export class DVBarcodeController {
                             }).then(() => {
                                 //TODO: (medu) update view, for example when gesuch is visible in pending table
                             });
-                        } else{
+                        } else {
                             errorService.addMesageAsError('Barcode hat falsches Format: ' + barcodeRead);
                         }
-                    }
-                    else {
+                    } else {
                         console.log('Begin Barcode read');
 
                         this.barcodeReadtimeout = $timeout(() => {
                             this.barcodeReading = false;
                             console.log('End Barcode read');
-                            console.log('Clearing buffer: ' + this.barcodeBuffer.join(""));
+                            console.log('Clearing buffer: ' + this.barcodeBuffer.join(''));
                             this.barcodeBuffer = [];
                         }, 1000);
                     }
