@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
@@ -426,6 +427,30 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(AntragStatus.NUR_SCHULAMT, foundGesuch.get().getStatus());
 	}
 
+	@Test
+	public void testJAAntragMutierenWhenOnlineMutationExists() {
+		loginAsGesuchsteller("gesuchst");
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+
+		gesuch.setStatus(AntragStatus.VERFUEGT);
+		gesuch = gesuchService.updateGesuch(gesuch, true);
+		final Optional<Gesuch> optMutation = gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
+
+		gesuchService.createGesuch(optMutation.get());
+
+		loginAsSachbearbeiterJA();
+		try {
+			gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
+			Assert.fail("Exception should be thrown. There is already an open Mutation");
+		}catch (EbeguRuntimeException e) {
+			// nop
+		}
+
+		optMutation.get().setStatus(AntragStatus.VERFUEGT);
+		gesuchService.updateGesuch(optMutation.get(), true);
+		gesuchService.antragMutieren(gesuch.getId(), LocalDate.now()); // nach dem die Mutation verfuegt ist, darf man es wieder mutieren
+	}
+
 
 
 	// HELP METHOD
@@ -527,7 +552,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			LOG.error("could not login as sachbearbeiter jugendamt saja for tests");
 		}
 
-		Mandant mandant = persistence.persist(TestDataUtil.createDefaultMandant());
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer saja = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
 		persistence.persist(saja);
 	}
@@ -539,7 +564,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			LOG.error("could not login as sachbearbeiter jugendamt admin for tests");
 		}
 
-		Mandant mandant = persistence.persist(TestDataUtil.createDefaultMandant());
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer admin = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
 		persistence.persist(admin);
 	}
@@ -556,7 +581,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	private void loginAsGesuchsteller(String username) {
-		Mandant mandant = persistence.merge(TestDataUtil.createDefaultMandant());
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer user = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, username, null, null, mandant);
 		user = persistence.merge(user);
 		try {
@@ -574,7 +599,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			LOG.error("could not login as sachbearbeiter schulamt for tests");
 		}
 
-		Mandant mandant = persistence.persist(TestDataUtil.createDefaultMandant());
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer schulamt = TestDataUtil.createBenutzer(UserRole.SCHULAMT, "schulamt", null, null, mandant);
 		persistence.persist(schulamt);
 	}

@@ -644,10 +644,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
 			authorizer.checkWriteAuthorization(gesuch.get());
-			Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.get());
-			Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID "+antragId));
-			return getGesuchMutation(eingangsdatum, gesuchForMutation);
-		} else{
+			if (!isThereAnyOpenMutation(gesuch.get().getFall(), gesuch.get().getGesuchsperiode())) {
+				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.get());
+				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
+				return getGesuchMutation(eingangsdatum, gesuchForMutation);
+			}
+			else{
+				throw new EbeguRuntimeException("antragMutieren", "Es gibt bereits eine öffene Mutation für dieses Gesuch");
+			}
+		}
+		else{
 			throw new EbeguEntityNotFoundException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen " + antragId, antragId);
 		}
 
@@ -664,20 +670,42 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		final Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
 
 		if (fall.isPresent() && gesuchsperiode.isPresent()) {
-			Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode.get(), fall.get());
-			Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer Fallnummer "+ fallNummer));
-			return getGesuchMutation(eingangsdatum, gesuchForMutation);
+			if (!isThereAnyOpenMutation(fall.get(), gesuchsperiode.get())) {
+				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode.get(), fall.get());
+				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer Fallnummer "+ fallNummer));
+				return getGesuchMutation(eingangsdatum, gesuchForMutation);
+			}
+			else{
+				throw new EbeguRuntimeException("antragMutieren", "Es gibt bereits eine öffene Mutation für dieses Gesuch");
+			}
 		} else{
 			throw new EbeguEntityNotFoundException("antragMutieren", "fall oder gesuchsperiode konnte nicht geladen werden  fallNr:" + fallNummer + "gsPerID" +gesuchsperiodeId);
 		}
 	}
 
+	private boolean isThereAnyOpenMutation(Fall fall, Gesuchsperiode gesuchsperiode) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicateMutation = root.get(Gesuch_.typ).in(AntragTyp.MUTATION);
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates()).not();
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
+
+		query.where(predicateMutation, predicateStatus, predicateGesuchsperiode, predicateFall);
+		query.select(root);
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+		return !criteriaResults.isEmpty();
+	}
+
 	private Optional<Gesuch> getGesuchMutation(@Nullable LocalDate eingangsdatum, Gesuch gesuchForMutation) {
 		if (gesuchForMutation != null) {
 			Eingangsart eingangsart;
-			if(this.principalBean.isCallerInRole(UserRole.GESUCHSTELLER)){
+			if (this.principalBean.isCallerInRole(UserRole.GESUCHSTELLER)) {
 				eingangsart = Eingangsart.ONLINE;
-			} else{
+			} else {
 				eingangsart = Eingangsart.PAPIER;
 			}
 			Gesuch mutation = gesuchForMutation.copyForMutation(new Gesuch(), eingangsart);
@@ -685,8 +713,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				mutation.setEingangsdatum(eingangsdatum);
 			}
 			return Optional.of(mutation);
-		} else{
-			throw new EbeguRuntimeException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen " );
+		} else {
+			throw new EbeguRuntimeException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen ");
 		}
 	}
 

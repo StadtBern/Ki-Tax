@@ -29,17 +29,11 @@ public class FamiliensituationContainer extends AbstractEntity {
 
 	@Valid
 	@Nullable
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@ManyToOne(optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_familiensituation_container_familiensituation_erstgesuch_id"))
 	private Familiensituation familiensituationErstgesuch;
 
 	public FamiliensituationContainer() {
-	}
-
-	public FamiliensituationContainer(FamiliensituationContainer other) {
-		this.familiensituationJA = other.familiensituationJA;
-		this.familiensituationGS = other.familiensituationGS;
-		this.familiensituationErstgesuch = other.familiensituationErstgesuch;
 	}
 
 	public FamiliensituationContainer copyForMutation(FamiliensituationContainer mutation, boolean toCopyisMutation) {
