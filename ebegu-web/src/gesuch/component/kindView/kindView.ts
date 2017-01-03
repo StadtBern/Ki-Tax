@@ -12,10 +12,10 @@ import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKin
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
+import DateUtil from '../../../utils/DateUtil';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ITranslateService = angular.translate.ITranslateService;
-import DateUtil from '../../../utils/DateUtil';
 import IScope = angular.IScope;
 
 
@@ -60,7 +60,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         if (this.getPensumFachstelle() && this.getPensumFachstelle().fachstelle) {
             this.fachstelleId = this.getPensumFachstelle().fachstelle.id;
         }
-        if (this.gesuchModelManager.getFachstellenList() || this.gesuchModelManager.getFachstellenList().length <= 0) {
+        if (!this.gesuchModelManager.getFachstellenList() || this.gesuchModelManager.getFachstellenList().length <= 0) {
             this.gesuchModelManager.updateFachstellenList();
         }
     }
