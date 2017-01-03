@@ -6,11 +6,11 @@
                    class="table table-hover" id="{{vm.tableId}}" title="{{vm.tableTitle}}">
                 <thead>
                 <tr>
-                    <th st-sort="erwerbspensumJA.taetigkeit" class="sortable" data-translate="TAETIGKEIT"></th>
-                    <th st-sort="erwerbspensumJA.gueltigkeit.gueltigAb" class="sortable" data-translate="AB"></th>
-                    <th st-sort="erwerbspensumJA.gueltigkeit.gueltigBis" class="sortable" data-translate="BIS"></th>
-                    <th st-sort="erwerbspensumJA.pensum" class="sortable" data-translate="PENSUM"></th>
-                    <th st-sort="erwerbspensumJA.zuschlag" class="sortable" data-translate="ZUSCHLAG"></th>
+                    <th st-sort="erwerbspensumJA.taetigkeit" data-translate="TAETIGKEIT"></th>
+                    <th st-sort="erwerbspensumJA.gueltigkeit.gueltigAb" data-translate="AB"></th>
+                    <th st-sort="erwerbspensumJA.gueltigkeit.gueltigBis" data-translate="BIS"></th>
+                    <th st-sort="erwerbspensumJA.pensum" data-translate="PENSUM"></th>
+                    <th st-sort="erwerbspensumJA.zuschlag" data-translate="ZUSCHLAG"></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -21,14 +21,14 @@
                         ng-bind="row.erwerbspensumJA.taetigkeit | translate"></td>
                     <td ng-if="row.erwerbspensumJA.bezeichnung" ng-bind="row.erwerbspensumJA.bezeichnung"></td>
                     <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
-                    <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td ng-bind="(row.erwerbspensumJA.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY')== '31.12.9999' ? '': row.erwerbspensumJA.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td ng-bind="row.erwerbspensumJA.pensum ?  row.erwerbspensumJA.pensum + '%' : ''"></td>
                     <td ng-bind="row.erwerbspensumJA.zuschlagsprozent ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
                     <td ng-if="vm.isRemoveAllowed(row)">
                         <dv-loading-button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
-                                           button-class="dv-btn-sm" title="{{vm.removeButtonTitle}}"
+                                           button-class="dv-btn-operation" title="{{vm.removeButtonTitle}}"
                                            button-disabled="!vm.addButtonEnabled">
-                            <i class="fa fa-minus">
+                            <i class="fa fa-lg fa-trash-o">
                             </i>
                         </dv-loading-button>
                     </td>
@@ -45,9 +45,9 @@
     <!--Addbutton -->
     <div class="row" ng-if="vm.addButtonVisible">
         <div class="col-md-12" style="margin-bottom: 2rem">
-            <dv-loading-button type="button" button-click="vm.addClicked()" button-class="dv-btn-sm color-success"
+            <dv-loading-button type="button" button-click="vm.addClicked()" button-class="dv-btn-operation"
                                button-disabled="!vm.addButtonEnabled">
-                <i class="glyphicon glyphicon-plus">
+                <i class="fa fa-lg fa-plus-circle"></i>
                 </i> {{vm.addButtonText}}
             </dv-loading-button>
         </div>
