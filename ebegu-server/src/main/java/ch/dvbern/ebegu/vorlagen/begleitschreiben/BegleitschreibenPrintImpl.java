@@ -12,102 +12,32 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 */
 
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
-import ch.dvbern.ebegu.vorlagen.PrintUtil;
-import org.apache.commons.lang.StringUtils;
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
+import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 
-import javax.annotation.Nullable;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * Transferobjekt
  */
-public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
-
-	private Gesuch gesuch;
+public class BegleitschreibenPrintImpl extends BriefPrintImpl implements BegleitschreibenPrint {
 
 	/**
 	 * @param gesuch
 	 */
 	public BegleitschreibenPrintImpl(Gesuch gesuch) {
 
-		this.gesuch = gesuch;
-	}
+		super(gesuch);
 
-	/**
-	 * @return GesuchstellerName
-	 */
-	@Override
-	public String getGesuchstellerNameOderOrganisation() {
-
-		String bezeichnung = PrintUtil.getOrganisation(gesuch);
-		if (StringUtils.isNotEmpty(bezeichnung)) {
-			return bezeichnung;
-		}
-		return PrintUtil.getGesuchstellerName(gesuch);
-	}
-
-	/**
-	 * @return Gesuchsteller-Strasse
-	 */
-	@Override
-	public String getGesuchstellerStrasse() {
-
-		return PrintUtil.getGesuchstellerStrasse(gesuch);
-	}
-
-	/**
-	 * @return Gesuchsteller-PLZ Stadt
-	 */
-	@Override
-	public String getGesuchstellerPLZStadt() {
-
-		return PrintUtil.getGesuchstellerPLZStadt(gesuch);
-	}
-
-	/**
-	 * @return Gesuchsteller-ReferenzNummer
-	 */
-	@Override
-	public String getFallNummer() {
-
-		return PrintUtil.createFallNummerString(gesuch);
 	}
 
 	@Override
-	public String getDateCreate() {
-		final String date_pattern = ServerMessageUtil.getMessage("date_letter_pattern");
-		LocalDate date = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
-
-		return date.format(formatter);
+	public List<AufzaehlungPrint> getUnterlagen() {
+		return null;
 	}
 
 	@Override
-	public boolean isPrintTextFamilie() {
-
-		if (StringUtils.isNotEmpty(PrintUtil.getOrganisation(gesuch))) {
-			// Text Familie darf nicht gedruckt werden
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * @return true wenn adresszusatz vorhanden
-	 */
-	@Override
-	public boolean isPrintAdresszusatz() {
-		if (StringUtils.isNotEmpty(PrintUtil.getAdresszusatz(gesuch))) {
-			return true;
-		}
+	public boolean isWithoutUnterlagen() {
 		return false;
-	}
-
-	@Nullable
-	@Override
-	public String getAdresszusatz() {
-		return PrintUtil.getAdresszusatz(gesuch);
 	}
 }

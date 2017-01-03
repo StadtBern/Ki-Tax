@@ -97,17 +97,6 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 	}
 
 	@Override
-	public String getPeriode() {
-		return "(" + gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()
-			+ "/" + gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear() + ")";
-	}
-
-	@Override
-	public String getFallNummer() {
-		return PrintUtil.createFallNummerString(getGesuch());
-	}
-
-	@Override
 	public String getFallDatum() {
 		return Constants.DATE_FORMATTER.format(gesuch.getFall().getTimestampErstellt());
 	}

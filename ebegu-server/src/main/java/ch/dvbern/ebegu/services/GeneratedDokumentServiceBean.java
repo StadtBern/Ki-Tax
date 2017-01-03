@@ -65,9 +65,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private EbeguConfiguration ebeguConfiguration;
 
 	@Inject
-	private PrintBegleitschreibenPDFService printBegleitschreibenPDFService;
-
-	@Inject
 	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
 
 	@Inject
@@ -191,7 +188,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
 				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, famGroessenVerfuegung);
 			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
-				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
+				data = pdfService.generateBegleitschreiben(gesuch);
 			} else {
 				LOG.warn("Unerwarter Dokumenttyp " + dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
 				return null;

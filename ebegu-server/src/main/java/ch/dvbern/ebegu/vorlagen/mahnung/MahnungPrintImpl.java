@@ -88,17 +88,6 @@ public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 	}
 
 	@Override
-	public String getPeriode() {
-		return "(" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()
-			+ "/" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear() + ")";
-	}
-
-	@Override
-	public String getFallNummer() {
-		return PrintUtil.createFallNummerString(getGesuch());
-	}
-
-	@Override
 	public String getEingangsDatum() {
 		LocalDate eingangsdatum = mahnung.getGesuch().getEingangsdatum() != null ? mahnung.getGesuch().getEingangsdatum() : LocalDate.now();
 		return Constants.DATE_FORMATTER.format(eingangsdatum);

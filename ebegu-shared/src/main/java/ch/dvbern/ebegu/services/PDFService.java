@@ -31,4 +31,7 @@ public interface PDFService {
 	@Nonnull
 	byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustelladresse) throws MergeDocException;
 
+	@Nonnull
+	byte[] generateBegleitschreiben(@Nonnull Gesuch gesuch) throws MergeDocException;
+
 }

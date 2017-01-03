@@ -29,19 +29,8 @@ public class NichteintretenPrintImpl extends BriefPrintImpl implements Nichteint
 	}
 
 	@Override
-	public String getFallNummer() {
-		return PrintUtil.createFallNummerString(getGesuch());
-	}
-
-	@Override
 	public String getFallDatum() {
 		return Constants.DATE_FORMATTER.format(getGesuch().getFall().getTimestampErstellt());
-	}
-
-	@Override
-	public String getPeriode() {
-		return "(" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()
-			+ "/" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear() + ")";
 	}
 
 	@Override
@@ -55,7 +44,6 @@ public class NichteintretenPrintImpl extends BriefPrintImpl implements Nichteint
 	}
 
 	@Override
-	//Paola Huber, Angebot Kindertagesstätte Elfenau (16.000701.2.1)
 	public String getAngebotName() {
 		return betreuung.getKind().getKindJA().getFullName()
 			+ ", Angebot " + betreuung.getInstitutionStammdaten().getInstitution().getName()
