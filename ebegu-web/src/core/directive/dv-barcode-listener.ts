@@ -41,13 +41,13 @@ export class DVBarcodeController {
 
         if (authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
 
-            $document.bind("keypress", (e) => {
+            $document.bind('keypress', (e) => {
 
                 if (this.barcodeReading) {
                     e.preventDefault();
                     if (e.key !== '§') {
                         this.barcodeBuffer.push(e.key);
-                        console.log('Current buffer: ' + this.barcodeBuffer.join(""));
+                        console.log('Current buffer: ' + this.barcodeBuffer.join(''));
                     }
                 }
 
@@ -56,11 +56,11 @@ export class DVBarcodeController {
                     if (this.barcodeReading) {
                         console.log('End Barcode read');
 
-                        let barcodeRead: string = this.barcodeBuffer.join("");
+                        let barcodeRead: string = this.barcodeBuffer.join('');
                         console.log('Barcode read:' + barcodeRead);
-                        barcodeRead = barcodeRead.replace("§", "");
+                        barcodeRead = barcodeRead.replace('§', '');
 
-                        let barcodeParts: string[] = barcodeRead.split("|");
+                        let barcodeParts: string[] = barcodeRead.split('|');
 
                         if (barcodeParts.length === 3) {
                             let barcodeDocType: string = barcodeParts[0];
@@ -80,7 +80,7 @@ export class DVBarcodeController {
                                 //TODO: (medu) update view, for example when gesuch is visible in pending table
                             });
                         } else{
-                            errorService.addMesageAsError("Barcode hat falsches Format: " + barcodeRead);
+                            errorService.addMesageAsError('Barcode hat falsches Format: ' + barcodeRead);
                         }
                     }
                     else {
