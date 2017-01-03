@@ -87,7 +87,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
 
     save(): IPromise<TSGesuch> {
         this.showError = true;
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             if (!this.form.$dirty && !this.gesuchModelManager.getGesuch().isNew()) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
@@ -136,9 +136,9 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     public getNextButtonText(): string{
-        if(this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())){
+        if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
             return this.$translate.instant('WEITER_ONLY_UPPER');
         }
-        return this.$translate.instant('WEITER_UPPER')
+        return this.$translate.instant('WEITER_UPPER');
     }
 }

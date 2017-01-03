@@ -50,6 +50,19 @@ export default class AbstractGesuchViewController<T> {
         return this.gesuchModelManager.isGesuchReadonly();
     }
 
+    public isGesuchValid(): boolean {
+        if (this.form.$valid) {
+            return this.form.$valid;
+        } else {
+            let firstInvalid = angular.element('form .ng-invalid').first();
+            if (firstInvalid) {
+                firstInvalid.attr('tabindex', -1).focus();
+
+            }
+            return false;
+        }
+    }
+
     public getGesuchId(): string {
         if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
             return this.gesuchModelManager.getGesuch().id;
