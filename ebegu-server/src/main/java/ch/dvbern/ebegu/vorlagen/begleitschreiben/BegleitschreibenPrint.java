@@ -22,8 +22,10 @@ public interface BegleitschreibenPrint {
 	// mit den Platzhaltern im Word-Template!
 	// ****************************************************************************************************************
 
-	List<AufzaehlungPrint> getUnterlagen();
+	List<AufzaehlungPrint> getBeilagen();
 
-	boolean isWithoutUnterlagen();
+	boolean isHasFSDokument();
+
+	boolean isHasBeilagen();
 
 }

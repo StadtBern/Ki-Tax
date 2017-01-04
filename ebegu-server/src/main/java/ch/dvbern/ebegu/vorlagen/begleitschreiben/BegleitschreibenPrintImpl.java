@@ -11,16 +11,25 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Transferobjekt
  */
 public class BegleitschreibenPrintImpl extends BriefPrintImpl implements BegleitschreibenPrint {
+
+	private List<AufzaehlungPrint> beilagen = new ArrayList<>();
 
 	/**
 	 * @param gesuch
@@ -29,15 +38,38 @@ public class BegleitschreibenPrintImpl extends BriefPrintImpl implements Begleit
 
 		super(gesuch);
 
+		Set<Betreuung> betreuungen = new TreeSet<>();
+
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
+			betreuungen.addAll(kindContainer.getBetreuungen());
+		}
+
+		beilagen.addAll(betreuungen.stream()
+			.filter(betreuung -> betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind())
+			.map(betreuung -> new AufzaehlungPrintImpl("Verfügung zu Betreuungsangebot " + betreuung.getBGNummer()))
+			.collect(Collectors.toList()));
+
+		beilagen.addAll(betreuungen.stream()
+			.filter(betreuung -> ! betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind())
+			.map(betreuung -> new AufzaehlungPrintImpl("Mitteilung zu Betreuungsangebot " + betreuung.getBGNummer()))
+			.collect(Collectors.toList()));
+
 	}
 
 	@Override
-	public List<AufzaehlungPrint> getUnterlagen() {
-		return null;
+	public List<AufzaehlungPrint> getBeilagen() {
+		return beilagen;
 	}
 
 	@Override
-	public boolean isWithoutUnterlagen() {
-		return false;
+	public boolean isHasFSDokument() {
+		//TODO: finish implementaiopn after ebgeu-717 has been merged
+		//return gesuch.hasFSDokument.........?
+		return true;
+	}
+
+	@Override
+	public boolean isHasBeilagen() {
+		return isHasFSDokument() || !beilagen.isEmpty();
 	}
 }
