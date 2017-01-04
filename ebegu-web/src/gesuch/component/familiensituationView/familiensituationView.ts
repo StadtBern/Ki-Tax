@@ -79,7 +79,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     public confirmAndSave(): IPromise<TSFamiliensituationContainer> {
         this.savedClicked = true;
-        if (this.form.$valid && !this.hasEmptyAenderungPer() && !this.hasError()) {
+        if (this.isGesuchValid() && !this.hasEmptyAenderungPer() && !this.hasError()) {
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately

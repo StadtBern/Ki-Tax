@@ -96,7 +96,7 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     private save(): IPromise<TSGesuch> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
