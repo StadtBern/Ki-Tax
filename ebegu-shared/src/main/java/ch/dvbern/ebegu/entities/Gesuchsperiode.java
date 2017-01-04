@@ -30,6 +30,10 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 		this.active = active;
 	}
 
+	public int getBasisJahr() {
+		return getGueltigkeit().getGueltigAb().getYear() - 1;
+	}
+
 	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
 	public boolean isSame(Gesuchsperiode otherGesuchsperiode) {
 		boolean dateRangeIsSame = super.isSame(otherGesuchsperiode);
