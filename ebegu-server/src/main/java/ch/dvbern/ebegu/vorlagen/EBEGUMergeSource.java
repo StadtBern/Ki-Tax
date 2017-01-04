@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu;
+package ch.dvbern.ebegu.vorlagen;
 
 import ch.dvbern.lib.doctemplate.common.MergeSource;
 

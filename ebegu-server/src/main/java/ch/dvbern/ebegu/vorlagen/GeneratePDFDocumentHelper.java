@@ -11,7 +11,6 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 10.08.2016
 */
 
-import ch.dvbern.ebegu.EBEGUMergeSource;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;

@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.vorlagen.mahnung;
 
-import ch.dvbern.ebegu.EBEGUMergeSource;
+import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
