@@ -68,13 +68,13 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         if (this.getPensumFachstelle() && this.getPensumFachstelle().fachstelle) {
             this.fachstelleId = this.getPensumFachstelle().fachstelle.id;
         }
-        if (this.gesuchModelManager.getFachstellenList() || this.gesuchModelManager.getFachstellenList().length <= 0) {
+        if (!this.gesuchModelManager.getFachstellenList() || this.gesuchModelManager.getFachstellenList().length <= 0) {
             this.gesuchModelManager.updateFachstellenList();
         }
     }
 
     save(): IPromise<TSKindContainer> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately

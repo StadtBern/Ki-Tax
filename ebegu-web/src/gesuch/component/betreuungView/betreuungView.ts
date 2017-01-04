@@ -222,7 +222,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public platzAnfordern(): void {
-        if (this.form.$valid && this.getBetreuungModel().vertrag === true) {
+        if (this.isGesuchValid() && this.getBetreuungModel().vertrag === true) {
             this.flagErrorVertrag = false;
             this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
         } else if (this.getBetreuungModel().vertrag !== true) {
@@ -231,7 +231,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public platzBestaetigen(): void {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
             this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
         }
@@ -254,7 +254,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public platzNichtEingetreten(): void {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
 
             for (let i: number = 0; i < this.getBetreuungspensen().length; i++) {
@@ -268,7 +268,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public saveSchulamt(): void {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen');
         }
     }

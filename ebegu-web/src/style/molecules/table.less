@@ -79,7 +79,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             .ebeguH3();
             position: relative;
             line-height: 3rem;
-            height: 5rem;
+            height: 6rem;
             border: 0.1rem solid @contrast;
             border-left: none;
             border-right: none;
@@ -88,6 +88,9 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             color: @contrast-darkest;
             .dvb-loading-button {
                 text-align: end;
+            }
+            &.empty-table {
+                .ebeguItalic();
             }
 
         }
@@ -114,7 +117,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
     & > tr:first-child {
         & > th, & > th:empty {
             .ebeguLabel();
-            height: 3.5rem;
+            height: 4rem;
             vertical-align: middle;
             border: 0.1rem solid @contrast-darkest;
             border-left: none;

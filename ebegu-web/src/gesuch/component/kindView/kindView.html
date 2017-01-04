@@ -156,8 +156,8 @@
                                 <h1 class="required">
                                     <span data-translate="EINSCHULUNG"
                                           data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}"> </span>
-                                        <dv-tooltip text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
-                                    </h1>
+                                    <dv-tooltip text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
+                                </h1>
                                 <dv-radio-container name="einschulung" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
@@ -175,11 +175,13 @@
 
                     <!--Wohnhaft im gleichen Haushalt-->
                     <div class="row">
-                        <div class="col-sm-12 dv-input-container-small">
+                        <div class="col-sm-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                                 <dv-input-container class="form-group">
-                                    <label class="md-no-float" data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT"
-                                           for="gleichemHaushalt"></label>
+                                    <label class="md-no-float"
+                                           for="gleichemHaushalt">
+                                        <span data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT" class="ebeguH1"> </span>
+                                    </label>
                                     <input id="gleichemHaushalt" type="number" name="gleichemHaushalt"
                                            ng-model="vm.getModel().wohnhaftImGleichenHaushalt" max="100"
                                            dv-max-length class="form-control"
@@ -303,7 +305,8 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-cancel="vm.cancel()" dv-next="true" dv-save="vm.save()" dv-sub-step="2" dv-translate-next="{{'SPEICHERN_UPPER'}}">
+                <dv-navigation dv-cancel="vm.cancel()" dv-next="true" dv-save="vm.save()" dv-sub-step="2"
+                               dv-translate-next="{{'SPEICHERN_UPPER'}}">
                 </dv-navigation>
             </form>
         </div>

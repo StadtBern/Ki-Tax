@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
 
@@ -770,14 +771,18 @@ public final class TestDataUtil {
 	}
 
 	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch) {
-		return createMahnung(typ, gesuch, LocalDate.now().plusWeeks(2));
+		return createMahnung(typ, gesuch, LocalDate.now().plusWeeks(2), 3);
 	}
 
-	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch, LocalDate firstAblauf) {
+	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch, LocalDate firstAblauf, int numberOfDocuments) {
 		Mahnung mahnung = new Mahnung();
 		mahnung.setMahnungTyp(typ);
 		mahnung.setActive(true);
-		mahnung.setBemerkungen("Test Dokument 1\nTest Dokument 2\nTest Dokument 3");
+		List<String> bemerkungen = new ArrayList<>();
+		for (int i = 0; i < numberOfDocuments; i++){
+			bemerkungen.add("Test Dokument " + (i+1));
+		}
+		mahnung.setBemerkungen(bemerkungen.stream().collect(Collectors.joining("\n")));
 		mahnung.setDatumFristablauf(firstAblauf);
 		mahnung.setTimestampErstellt(LocalDateTime.now());
 		mahnung.setUserMutiert("Hans Muster");

@@ -17,27 +17,15 @@
         hr.header {
             margin-bottom: 5rem;
         }
-        margin-bottom: 2rem;
+        p:last-child {
+            margin-bottom: 5rem;
+        }
+
     }
 
     .subTitle {
         font-size: 1.8rem;
     }
-
-    .bisher {
-        clear: both;
-        //todo stylen gem kana
-        background-color: @grey;
-        padding: 0.2rem;
-        //display: block;
-        border-color: @lgrey;
-    }
-    // bei manchen bisher bloecken wollen wir einzelne neue zeilen
-    .dv-bisher-break .dv-bisher-content-row, .dv-bisher-break .bisher:first-child {
-        display: block;
-        background-color: @grey;
-    }
-
     .inlineHint {
         .ebeguItalic();
         font-size: 1.4rem;
@@ -116,6 +104,9 @@
     .marginBottom30 {
         margin-bottom: 3rem;
     }
+    .marginBottom80 {
+        margin-bottom: 8rem;
+    }
 
     //errors sofort nach verlassen des feldes anzeigen oder sobald das form submitted wurde
     form:not(.ng-submitted) .form-group {
@@ -169,7 +160,7 @@
         background-color: @danger-light;
     }
 
-    .required:after {
+    .required span:after {
         content: " *";
     }
 

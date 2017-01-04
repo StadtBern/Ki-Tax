@@ -248,6 +248,12 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(new Long(1), result.getLeft());
 		Assert.assertEquals(gesuch.getId(), result.getRight().get(0).getId());
 
+		//search nach kurzem string
+		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString("2017/18");
+		Pair<Long, List<Gesuch>> thirdResult = gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(1), thirdResult.getLeft());
+		Assert.assertEquals(gesuch.getId(), thirdResult.getRight().get(0).getId());
+
 	}
 
 	@Test
