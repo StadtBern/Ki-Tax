@@ -1,8 +1,11 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 
 /**
@@ -50,4 +53,6 @@ public interface TestfaelleService {
 	 * @param username Username des Besitzers der Gesuche die entferntw erden sollen
 	 */
 	void removeGesucheOfGS(String username);
+
+	Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer);
 }

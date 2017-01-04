@@ -67,7 +67,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguLo
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
-		final Verfuegung evaluateFamiliensituation = evaluator.evaluateFamiliensituation(gesuch);
+		final Verfuegung evaluateFamiliensituation = evaluator.evaluateFamiliensituation(gesuch, null);
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, evaluateFamiliensituation);
 		Assert.assertNotNull(bytes);

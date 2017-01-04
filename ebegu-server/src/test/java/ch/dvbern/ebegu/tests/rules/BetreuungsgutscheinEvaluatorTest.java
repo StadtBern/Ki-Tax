@@ -85,7 +85,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 	public void doTestEvaluationForFamiliensituation() {
 		Gesuch testgesuch = createGesuch();
 		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
-		Verfuegung verfuegung = evaluator.evaluateFamiliensituation(testgesuch);
+		Verfuegung verfuegung = evaluator.evaluateFamiliensituation(testgesuch, null);
 
 		Assert.assertNotNull(verfuegung);
 		Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());

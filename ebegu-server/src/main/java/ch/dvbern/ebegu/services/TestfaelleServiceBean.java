@@ -294,7 +294,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	 * @param fromTestfall testfall
 	 * @param besitzer     wenn der besitzer gesetzt ist wird der fall diesem besitzer zugeordnet
 	 */
-	private Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer) {
+	@Override
+	public Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer) {
 		final Optional<List<Gesuch>> gesuchByGSName = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
 		if (gesuchByGSName.isPresent()) {
 			final List<Gesuch> gesuches = gesuchByGSName.get();

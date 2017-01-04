@@ -31,6 +31,7 @@ public class BetreuungsgutscheinEvaluator {
 	private RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
 	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
 	private VerfuegungsMerger verfuegungsMerger = new VerfuegungsMerger();
+	private FinanzdatenVerfuegungsMerger finanzdatenVerfuegungsMerger = new FinanzdatenVerfuegungsMerger();
 	private VerfuegungsVergleicher verfuegungsVergleicher = new VerfuegungsVergleicher();
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
@@ -48,7 +49,7 @@ public class BetreuungsgutscheinEvaluator {
 	/**
 	 * Berechnet nur die Familiengroesse und Abzuege fuer den Print der Familiensituation, es muss min eine Betreuung existieren
 	 */
-	public Verfuegung evaluateFamiliensituation(Gesuch gesuch) {
+	public Verfuegung evaluateFamiliensituation(Gesuch gesuch, Gesuch gesuchForMutation) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
 		if (gesuch.getFinanzDatenDTO() == null) {
@@ -73,6 +74,7 @@ public class BetreuungsgutscheinEvaluator {
 			}
 			// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
 			zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(firstBetreuungOfGesuch, zeitabschnitte);
+			zeitabschnitte = finanzdatenVerfuegungsMerger.createVerfuegungsZeitabschnitte(firstBetreuungOfGesuch, zeitabschnitte, gesuchForMutation);
 		} else {
 			LOG.warn("Keine Betreuung vorhanden kann Familiengroesse und Abzuege nicht berechnen");
 		}
@@ -88,7 +90,7 @@ public class BetreuungsgutscheinEvaluator {
 	}
 
 
-	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO, Gesuch gesuchForMutaion) {
+	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO, Gesuch gesuchForMutation) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
 		if (gesuch.getFinanzDatenDTO() == null) {
@@ -140,7 +142,8 @@ public class BetreuungsgutscheinEvaluator {
 					zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
 					// Ganz am Ende der Berechnung mergen wir das aktuelle Ergebnis mit der Verfügung des letzten Gesuches
-					zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, gesuchForMutaion);
+					zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, gesuchForMutation);
+					zeitabschnitte = finanzdatenVerfuegungsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, gesuchForMutation);
 
 					// Die Verfügung erstellen
 					if (betreuung.getVerfuegung() == null) {
@@ -162,7 +165,7 @@ public class BetreuungsgutscheinEvaluator {
 				betreuung.getVerfuegung().setGeneratedBemerkungen(bemerkungenToShow);
 
 					// Ueberpruefen, ob sich die Verfuegungsdaten veraendert haben
-					betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung, gesuchForMutaion));
+					betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung, gesuchForMutation));
 				}
 			}
 		}
