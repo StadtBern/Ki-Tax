@@ -14,6 +14,8 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
@@ -45,13 +47,15 @@ public class BegleitschreibenPrintImpl extends BriefPrintImpl implements Begleit
 		}
 
 		beilagen.addAll(betreuungen.stream()
-			.filter(betreuung -> betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind())
-			.map(betreuung -> new AufzaehlungPrintImpl("Verfügung zu Betreuungsangebot " + betreuung.getBGNummer()))
+			.filter(betreuung -> betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()
+				&& ! betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG))
+			.map(betreuung -> new AufzaehlungPrintImpl(ServerMessageUtil.getMessage("BegleitschreibenPrintImpl_VERFÜGUNG") + betreuung.getBGNummer()))
 			.collect(Collectors.toList()));
 
 		beilagen.addAll(betreuungen.stream()
-			.filter(betreuung -> ! betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind())
-			.map(betreuung -> new AufzaehlungPrintImpl("Mitteilung zu Betreuungsangebot " + betreuung.getBGNummer()))
+			.filter(betreuung -> ! betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()
+				&& ! betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG))
+			.map(betreuung -> new AufzaehlungPrintImpl(ServerMessageUtil.getMessage("BegleitschreibenPrintImpl_MITTEILUNG") + betreuung.getBGNummer()))
 			.collect(Collectors.toList()));
 
 	}
