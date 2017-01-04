@@ -597,6 +597,7 @@ export default class EbeguRestUtil {
         restGesuch.familiensituationContainer = this.familiensituationContainerToRestObject({}, gesuch.familiensituationContainer);
         restGesuch.bemerkungen = gesuch.bemerkungen;
         restGesuch.laufnummer = gesuch.laufnummer;
+        restGesuch.hasFSDokument = gesuch.hasFSDokument;
         return restGesuch;
     }
 
@@ -611,6 +612,7 @@ export default class EbeguRestUtil {
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;
+            gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
             return gesuchTS;
         }
         return undefined;
