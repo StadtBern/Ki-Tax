@@ -367,12 +367,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					} else if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
 						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
 						wizardStep.setVerfuegbar(false);
-						if (!wizardStep.getGesuch().isMutation()) {
-							wizardStep.setWizardStepStatus(WizardStepStatus.NOK);    // bei erstgesuch auf nok
-						} else if (wizardStep.getGesuch().getEinkommensverschlechterungInfoContainer() != null) {
-							// bei Mutation nur auf NOK setzen, wenn es vorher schon eine EKV gab.
-							wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-						}
+						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 					}
 				}
 			}

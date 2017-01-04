@@ -197,8 +197,8 @@ export default class GesuchModelManager {
     }
 
     public updateFachstellenList(): void {
-        this.fachstelleRS.getAllFachstellen().then((response: any) => {
-            this.fachstellenList = angular.copy(response);
+        this.fachstelleRS.getAllFachstellen().then((response: TSFachstelle[]) => {
+            this.fachstellenList = response;
         });
     }
 
@@ -206,8 +206,8 @@ export default class GesuchModelManager {
      * Retrieves the list of InstitutionStammdaten for the date of today.
      */
     public updateActiveInstitutionenList(): void {
-        this.instStamRS.getAllActiveInstitutionStammdatenByDate(DateUtil.today()).then((response: any) => {
-            this.activInstitutionenList = angular.copy(response);
+        this.instStamRS.getAllActiveInstitutionStammdatenByDate(DateUtil.today()).then((response: TSInstitutionStammdaten[]) => {
+            this.activInstitutionenList = response;
         });
     }
 
@@ -585,11 +585,10 @@ export default class GesuchModelManager {
      */
     public getKinderWithBetreuungList(): Array<TSKindContainer> {
         let listResult: Array<TSKindContainer> = [];
-        if(this.gesuch){
+        if (this.gesuch) {
             listResult = this.gesuch.getKinderWithBetreuungList();
         }
-        return listResult
-
+        return listResult;
     }
 
     public createKind(): void {
@@ -1008,7 +1007,7 @@ export default class GesuchModelManager {
      * Returns false also if there are no Kinder with betreuungsbedarf
      */
     public areThereOnlySchulamtAngebote(): boolean {
-        if(!this.gesuch){
+        if (!this.gesuch) {
             return false;
         }
         return this.gesuch.areThereOnlySchulamtAngebote();
