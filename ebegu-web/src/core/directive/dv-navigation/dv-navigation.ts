@@ -274,13 +274,10 @@ export class NavigatorController {
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName()) {
             if (this.dvSubStep === 1) {
                 this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
-
             } else if (this.dvSubStep === 2) {
                 this.navigateToStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-
             } else if (this.dvSubStep === 3) {
                 this.navigatePreviousEVSubStep3();
-
             } else if (this.dvSubStep === 4) {
                 this.navigatePreviousEVSubStep4();
             }
