@@ -31,7 +31,6 @@ public class BetreuungsgutscheinEvaluator {
 	private RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
 	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
 	private VerfuegungsMerger verfuegungsMerger = new VerfuegungsMerger();
-	private FinanzdatenVerfuegungsMerger finanzdatenVerfuegungsMerger = new FinanzdatenVerfuegungsMerger();
 	private VerfuegungsVergleicher verfuegungsVergleicher = new VerfuegungsVergleicher();
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
@@ -74,7 +73,6 @@ public class BetreuungsgutscheinEvaluator {
 			}
 			// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
 			zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(firstBetreuungOfGesuch, zeitabschnitte);
-			zeitabschnitte = finanzdatenVerfuegungsMerger.createVerfuegungsZeitabschnitte(firstBetreuungOfGesuch, zeitabschnitte, gesuchForMutation);
 		} else {
 			LOG.warn("Keine Betreuung vorhanden kann Familiengroesse und Abzuege nicht berechnen");
 		}
@@ -143,7 +141,6 @@ public class BetreuungsgutscheinEvaluator {
 
 					// Ganz am Ende der Berechnung mergen wir das aktuelle Ergebnis mit der Verfügung des letzten Gesuches
 					zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, gesuchForMutation);
-					zeitabschnitte = finanzdatenVerfuegungsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, gesuchForMutation);
 
 					// Die Verfügung erstellen
 					if (betreuung.getVerfuegung() == null) {

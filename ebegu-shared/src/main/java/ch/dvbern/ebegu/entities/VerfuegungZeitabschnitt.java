@@ -52,6 +52,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@Transient
 	private Boolean wohnsitzNichtInGemeindeGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
+
 	@Transient
 	private Boolean wohnsitzNichtInGemeindeGS2 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
@@ -67,6 +68,22 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@Transient
 	private int anspruchspensumRest;
+
+	@Transient
+	private boolean hasSecondGesuchsteller;
+
+	@Transient
+	private BigDecimal massgebendesEinkommenVorAbzugFamgr_alleine = ZERO;
+
+	@Transient
+	private BigDecimal massgebendesEinkommenVorAbzugFamgr_zuZweit = ZERO;
+
+	@Transient
+	private int einkommensjahr_alleine;
+
+	@Transient
+	private int einkommensjahr_zuZweit;
+
 
 	@Max(100)
 	@Min(0)
@@ -138,7 +155,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.abzugFamGroesse = toCopy.abzugFamGroesse;
 		this.famGroesse = toCopy.famGroesse;
 		this.massgebendesEinkommenVorAbzugFamgr = toCopy.massgebendesEinkommenVorAbzugFamgr;
+		this.massgebendesEinkommenVorAbzugFamgr_alleine = toCopy.massgebendesEinkommenVorAbzugFamgr_alleine;
+		this.massgebendesEinkommenVorAbzugFamgr_zuZweit = toCopy.massgebendesEinkommenVorAbzugFamgr_zuZweit;
+		this.hasSecondGesuchsteller = toCopy.hasSecondGesuchsteller;
 		this.einkommensjahr = toCopy.einkommensjahr;
+		this.einkommensjahr_alleine = toCopy.einkommensjahr_alleine;
+		this.einkommensjahr_zuZweit = toCopy.einkommensjahr_zuZweit;
 		this.bemerkungen = toCopy.bemerkungen;
 		this.verfuegung = null;
 	}
@@ -243,6 +265,30 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr;
 	}
 
+	public BigDecimal getMassgebendesEinkommenVorAbzugFamgr_alleine() {
+		return massgebendesEinkommenVorAbzugFamgr_alleine;
+	}
+
+	public void setMassgebendesEinkommenVorAbzugFamgr_alleine(BigDecimal massgebendesEinkommenVorAbzugFamgr_alleine) {
+		this.massgebendesEinkommenVorAbzugFamgr_alleine = massgebendesEinkommenVorAbzugFamgr_alleine;
+	}
+
+	public BigDecimal getMassgebendesEinkommenVorAbzugFamgr_zuZweit() {
+		return massgebendesEinkommenVorAbzugFamgr_zuZweit;
+	}
+
+	public void setMassgebendesEinkommenVorAbzugFamgr_zuZweit(BigDecimal massgebendesEinkommenVorAbzugFamgr_zuZweit) {
+		this.massgebendesEinkommenVorAbzugFamgr_zuZweit = massgebendesEinkommenVorAbzugFamgr_zuZweit;
+	}
+
+	public boolean isHasSecondGesuchsteller() {
+		return hasSecondGesuchsteller;
+	}
+
+	public void setHasSecondGesuchsteller(boolean hasSecondGesuchsteller) {
+		this.hasSecondGesuchsteller = hasSecondGesuchsteller;
+	}
+
 	@Nullable
 	public String getBemerkungen() {
 		return bemerkungen;
@@ -324,6 +370,22 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.einkommensjahr = einkommensjahr;
 	}
 
+	public int getEinkommensjahr_alleine() {
+		return einkommensjahr_alleine;
+	}
+
+	public void setEinkommensjahr_alleine(int einkommensjahr_alleine) {
+		this.einkommensjahr_alleine = einkommensjahr_alleine;
+	}
+
+	public int getEinkommensjahr_zuZweit() {
+		return einkommensjahr_zuZweit;
+	}
+
+	public void setEinkommensjahr_zuZweit(int einkommensjahr_zuZweit) {
+		this.einkommensjahr_zuZweit = einkommensjahr_zuZweit;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -357,14 +419,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 				(other.getErwerbspensumGS2() != null ? other.getErwerbspensumGS2() : 0));
 		}
 
-		BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
-		if (this.getMassgebendesEinkommenVorAbzFamgr() != null) {
-			massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr.add(this.getMassgebendesEinkommenVorAbzFamgr());
-		}
-		if (other.getMassgebendesEinkommenVorAbzFamgr() != null) {
-			massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr.add(other.getMassgebendesEinkommenVorAbzFamgr());
-		}
-		this.setMassgebendesEinkommenVorAbzugFamgr(massgebendesEinkommenVorAbzugFamgr);
+		this.setMassgebendesEinkommenVorAbzugFamgr(MathUtil.DEFAULT.add(this.getMassgebendesEinkommenVorAbzFamgr(), other.getMassgebendesEinkommenVorAbzFamgr()));
+
+		this.setMassgebendesEinkommenVorAbzugFamgr_alleine(MathUtil.DEFAULT.add(this.getMassgebendesEinkommenVorAbzugFamgr_alleine(), other.getMassgebendesEinkommenVorAbzugFamgr_alleine()));
+
+		this.setMassgebendesEinkommenVorAbzugFamgr_zuZweit(MathUtil.DEFAULT.add(this.getMassgebendesEinkommenVorAbzugFamgr_zuZweit(), other.getMassgebendesEinkommenVorAbzugFamgr_zuZweit()));
 
 		this.addBemerkung(other.getBemerkungen());
 		this.setZuSpaetEingereicht(this.isZuSpaetEingereicht() || other.isZuSpaetEingereicht());
@@ -390,6 +449,13 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		if (other.getEinkommensjahr() != 0) {
 			this.setEinkommensjahr(other.getEinkommensjahr());
 		}
+		if (other.getEinkommensjahr_alleine() != 0) {
+			this.setEinkommensjahr_alleine(other.getEinkommensjahr_alleine());
+		}
+		if (other.getEinkommensjahr_zuZweit() != 0) {
+			this.setEinkommensjahr_zuZweit(other.getEinkommensjahr_zuZweit());
+		}
+		this.setHasSecondGesuchsteller(this.isHasSecondGesuchsteller() || other.isHasSecondGesuchsteller());
 	}
 
 	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey) {
@@ -489,14 +555,19 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			fachstellenpensum == that.fachstellenpensum &&
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
+			hasSecondGesuchsteller == that.hasSecondGesuchsteller &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(famGroesse, that.famGroesse) &&
 			Objects.equals(massgebendesEinkommenVorAbzugFamgr, that.massgebendesEinkommenVorAbzugFamgr) &&
+			Objects.equals(massgebendesEinkommenVorAbzugFamgr_alleine, that.massgebendesEinkommenVorAbzugFamgr_alleine) &&
+			Objects.equals(massgebendesEinkommenVorAbzugFamgr_zuZweit, that.massgebendesEinkommenVorAbzugFamgr_zuZweit) &&
 			(isWohnsitzNichtInGemeindeGS1() && isWohnsitzNichtInGemeindeGS2()) == (that.isWohnsitzNichtInGemeindeGS1() && that.isWohnsitzNichtInGemeindeGS2()) &&
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
 			bezahltVollkosten == that.bezahltVollkosten &&
 			longAbwesenheit == that.longAbwesenheit &&
 			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten &&
+			this.einkommensjahr_alleine == that.einkommensjahr_alleine &&
+			this.einkommensjahr_zuZweit == that.einkommensjahr_zuZweit &&
 			this.einkommensjahr == that.einkommensjahr;
 	}
 

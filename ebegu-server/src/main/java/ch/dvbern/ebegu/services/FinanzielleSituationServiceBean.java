@@ -91,7 +91,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT})
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
-		return finSitRechner.calculateResultateFinanzielleSituation(gesuch);
+		return finSitRechner.calculateResultateFinanzielleSituation(gesuch, gesuch.extractFamiliensituation().hasSecondGesuchsteller());
 	}
 
 	@Override

@@ -52,7 +52,7 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahr(BigDecimal.valueOf(100));
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus1(BigDecimal.valueOf(-100));
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus2(BigDecimal.valueOf(300));
-		FinanzielleSituationResultateDTO finSitResultateDTO1 = finSitRechner.calculateResultateFinanzielleSituation(gesuch);
+		FinanzielleSituationResultateDTO finSitResultateDTO1 = finSitRechner.calculateResultateFinanzielleSituation(gesuch, gesuch.extractFamiliensituation().hasSecondGesuchsteller());
 
 		Assert.assertEquals(BigDecimal.valueOf(100), finSitResultateDTO1.getGeschaeftsgewinnDurchschnittGesuchsteller1());
 	}
@@ -67,7 +67,7 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahr(BigDecimal.valueOf(-100));
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus1(BigDecimal.valueOf(-100));
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus2(BigDecimal.valueOf(-300));
-		FinanzielleSituationResultateDTO finSitResultateDTO2 = finSitRechner.calculateResultateFinanzielleSituation(gesuch);
+		FinanzielleSituationResultateDTO finSitResultateDTO2 = finSitRechner.calculateResultateFinanzielleSituation(gesuch, gesuch.extractFamiliensituation().hasSecondGesuchsteller());
 
 		Assert.assertEquals(BigDecimal.ZERO, finSitResultateDTO2.getGeschaeftsgewinnDurchschnittGesuchsteller1());
 	}

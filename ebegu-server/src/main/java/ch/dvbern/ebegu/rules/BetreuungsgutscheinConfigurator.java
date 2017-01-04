@@ -103,6 +103,10 @@ public class BetreuungsgutscheinConfigurator {
 		// Abwesenheit
 		AbwesenheitAbschnittRule abwesenheitAbschnittRule = new AbwesenheitAbschnittRule(defaultGueltigkeit);
 		rules.add(abwesenheitAbschnittRule);
+
+		// Zivilstandsaenderung
+		ZivilstandsaenderungAbschnittRule zivilstandsaenderungAbschnittRule = new ZivilstandsaenderungAbschnittRule(defaultGueltigkeit);
+		rules.add(zivilstandsaenderungAbschnittRule);
 	}
 
 	private void berechnenAnspruchRegeln() {
@@ -127,6 +131,10 @@ public class BetreuungsgutscheinConfigurator {
 		// - Kind wohnt im gleichen Haushalt: Muss zwingend nach Fachstelle durchgefuehrt werden
 		WohnhaftImGleichenHaushaltCalcRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltCalcRule(defaultGueltigkeit);
 		rules.add(wohnhaftImGleichenHaushaltRule);
+
+		// Zivilstandsaenderung
+		ZivilstandsaenderungCalcRule zivilstandsaenderungCalcRule = new ZivilstandsaenderungCalcRule(defaultGueltigkeit);
+		rules.add(zivilstandsaenderungCalcRule);
 	}
 
 

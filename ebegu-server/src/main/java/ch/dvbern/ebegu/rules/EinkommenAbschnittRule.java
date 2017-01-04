@@ -27,40 +27,88 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 		// Nur ausführen wenn Finanzdaten gesetzt
 		// Der {@link FinanzielleSituationRechner} wurde verwendet um das jeweils geltende  Einkommen auszurechnen. Das heisst im DTO ist schon
 		// jeweils das zu verwendende Einkommen gesetzt
-		FinanzDatenDTO finanzDatenDTO = betreuung.extractGesuch().getFinanzDatenDTO();
-		if (finanzDatenDTO != null) {
+		FinanzDatenDTO finanzDatenDTO_alleine = betreuung.extractGesuch().getFinanzDatenDTO_alleine();
+		FinanzDatenDTO finanzDatenDTO_zuZweit = betreuung.extractGesuch().getFinanzDatenDTO_zuZweit();
+
+		if (finanzDatenDTO_alleine != null && finanzDatenDTO_zuZweit != null) {
 			VerfuegungZeitabschnitt lastAbschnitt;
+
+			int lastYear_alleine = betreuung.extractGesuchsperiode().getBasisJahr();
+			int lastYear_zuZweit = lastYear_alleine;
 
 			// Abschnitt Finanzielle Situation (Massgebendes Einkommen fuer die Gesuchsperiode)
 			VerfuegungZeitabschnitt abschnittFinanzielleSituation = new VerfuegungZeitabschnitt(betreuung.extractGesuchsperiode().getGueltigkeit());
-			abschnittFinanzielleSituation.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
-			abschnittFinanzielleSituation.setEinkommensjahr(betreuung.extractGesuchsperiode().getBasisJahr());
+			abschnittFinanzielleSituation.setMassgebendesEinkommenVorAbzugFamgr_alleine(finanzDatenDTO_alleine.getMassgebendesEinkBjVorAbzFamGr());
+			abschnittFinanzielleSituation.setMassgebendesEinkommenVorAbzugFamgr_zuZweit(finanzDatenDTO_zuZweit.getMassgebendesEinkBjVorAbzFamGr());
+			abschnittFinanzielleSituation.setEinkommensjahr_alleine(lastYear_alleine);
+			abschnittFinanzielleSituation.setEinkommensjahr_zuZweit(lastYear_zuZweit);
 			einkommensAbschnitte.add(abschnittFinanzielleSituation);
 			lastAbschnitt = abschnittFinanzielleSituation;
 
-			// Einkommensverschlechterung 1
-			if (finanzDatenDTO.getDatumVonBasisjahrPlus1() != null) {
-				DateRange rangeEKV1 = new DateRange(finanzDatenDTO.getDatumVonBasisjahrPlus1(), betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
+
+			// Einkommensverschlechterung 1: In mind. 1 Kombination akzeptiert
+			if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() != null || finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1() != null) {
+				DateRange rangeEKV1 = new DateRange(finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1(), betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis()); //TODO das datum, das nicht null ist
 				VerfuegungZeitabschnitt abschnittEinkommensverschlechterung1 = new VerfuegungZeitabschnitt(rangeEKV1);
-				abschnittEinkommensverschlechterung1.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP1VorAbzFamGr());
-				abschnittEinkommensverschlechterung1.setEinkommensjahr(finanzDatenDTO.getDatumVonBasisjahrPlus1().getYear());
+
+				if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() != null) {
+					// EKV1 fuer alleine akzeptiert
+					abschnittEinkommensverschlechterung1.setMassgebendesEinkommenVorAbzugFamgr_alleine(finanzDatenDTO_alleine.getMassgebendesEinkBjP1VorAbzFamGr());
+					abschnittEinkommensverschlechterung1.setEinkommensjahr_alleine(finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1().getYear());
+					lastYear_alleine = finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1().getYear();
+				} else {
+					// EKV1 fuer alleine nicht akzeptiert
+					abschnittEinkommensverschlechterung1.setMassgebendesEinkommenVorAbzugFamgr_alleine(finanzDatenDTO_alleine.getMassgebendesEinkBjVorAbzFamGr());
+					abschnittEinkommensverschlechterung1.setEinkommensjahr_alleine(lastYear_alleine);
+				}
+				if (finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1() != null) {
+					// EKV1 fuer zu Zweit akzeptiert
+					abschnittEinkommensverschlechterung1.setMassgebendesEinkommenVorAbzugFamgr_zuZweit(finanzDatenDTO_zuZweit.getMassgebendesEinkBjP1VorAbzFamGr());
+					abschnittEinkommensverschlechterung1.setEinkommensjahr_zuZweit(finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1().getYear());
+					lastYear_zuZweit = finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1().getYear();
+				} else {
+					// EKV1 fuer zu Zweit nicht akzeptiert
+					abschnittEinkommensverschlechterung1.setMassgebendesEinkommenVorAbzugFamgr_zuZweit(finanzDatenDTO_zuZweit.getMassgebendesEinkBjVorAbzFamGr());
+					abschnittEinkommensverschlechterung1.setEinkommensjahr_zuZweit(lastYear_zuZweit);
+				}
 				einkommensAbschnitte.add(abschnittEinkommensverschlechterung1);
 				// Den vorherigen Zeitabschnitt beenden
 				lastAbschnitt.getGueltigkeit().endOnDayBefore(abschnittEinkommensverschlechterung1.getGueltigkeit());
 				lastAbschnitt = abschnittEinkommensverschlechterung1;
 			}
-			createBemerkungEVK1(lastAbschnitt,finanzDatenDTO, betreuung);
-			// Einkommensverschlechterung 2
-			if (finanzDatenDTO.getDatumVonBasisjahrPlus2() != null) {
-				DateRange rangeEKV2 = new DateRange(finanzDatenDTO.getDatumVonBasisjahrPlus2(), betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
+			createBemerkungEVK1(lastAbschnitt,finanzDatenDTO_alleine, betreuung);
+			createBemerkungEVK1(lastAbschnitt,finanzDatenDTO_zuZweit, betreuung);
+
+
+			// Einkommensverschlechterung 2: In mind. 1 Kombination akzeptiert
+			if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() != null || finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2() != null) {
+				DateRange rangeEKV2 = new DateRange(finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2(), betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 				VerfuegungZeitabschnitt abschnittEinkommensverschlechterung2 = new VerfuegungZeitabschnitt(rangeEKV2);
-				abschnittEinkommensverschlechterung2.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP2VorAbzFamGr());
-				abschnittEinkommensverschlechterung2.setEinkommensjahr(finanzDatenDTO.getDatumVonBasisjahrPlus2().getYear());
+
+				if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() != null) {
+					// EKV2 fuer alleine akzeptiert
+					abschnittEinkommensverschlechterung2.setMassgebendesEinkommenVorAbzugFamgr_alleine(finanzDatenDTO_alleine.getMassgebendesEinkBjP2VorAbzFamGr());
+					abschnittEinkommensverschlechterung2.setEinkommensjahr_alleine(finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2().getYear());
+				} else {
+					// EKV2 fuer alleine nicht akzeptiert
+					abschnittEinkommensverschlechterung2.setMassgebendesEinkommenVorAbzugFamgr_alleine(finanzDatenDTO_alleine.getMassgebendesEinkBjVorAbzFamGr());
+					abschnittEinkommensverschlechterung2.setEinkommensjahr_alleine(lastYear_alleine);
+				}
+				if (finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2() != null) {
+					// EKV2 fuer zu Zweit akzeptiert
+					abschnittEinkommensverschlechterung2.setMassgebendesEinkommenVorAbzugFamgr_zuZweit(finanzDatenDTO_zuZweit.getMassgebendesEinkBjP2VorAbzFamGr());
+					abschnittEinkommensverschlechterung2.setEinkommensjahr_zuZweit(finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2().getYear());
+				} else {
+					// EKV2 fuer zu Zweit nicht akzeptiert
+					abschnittEinkommensverschlechterung2.setMassgebendesEinkommenVorAbzugFamgr_zuZweit(finanzDatenDTO_zuZweit.getMassgebendesEinkBjVorAbzFamGr());
+					abschnittEinkommensverschlechterung2.setEinkommensjahr_zuZweit(lastYear_zuZweit);
+				}
 				einkommensAbschnitte.add(abschnittEinkommensverschlechterung2);
 				// Den vorherigen Zeitabschnitt beenden
 				lastAbschnitt.getGueltigkeit().endOnDayBefore(abschnittEinkommensverschlechterung2.getGueltigkeit());
 			}
-			createBemerkungEVK2(lastAbschnitt,finanzDatenDTO, betreuung);
+			createBemerkungEVK2(lastAbschnitt,finanzDatenDTO_alleine, betreuung);
+			createBemerkungEVK2(lastAbschnitt,finanzDatenDTO_zuZweit, betreuung);
 		}
 		return einkommensAbschnitte;
 	}
