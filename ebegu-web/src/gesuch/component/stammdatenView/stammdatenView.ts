@@ -81,7 +81,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     }
 
     private save(): IPromise<TSGesuchstellerContainer> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.gesuchModelManager.setStammdatenToWorkWith(this.model);
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
