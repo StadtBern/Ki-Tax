@@ -201,20 +201,26 @@ export class NavigatorController {
                     if (this.gesuchModelManager.isGesuchsteller2Required()) {
                         this.navigateToStepEinkommensverschlechterungSteuern();
                     } else {
-                        this.navigateToStepEinkommensverschlechterung('1', undefined);
+                        if (this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1) {
+                            this.navigateToStepEinkommensverschlechterung('1', undefined);
+                        } else {
+                            this.navigateToStepEinkommensverschlechterung('1', '2');
+                        }
                     }
                 } else {
                     this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
                         this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
                     });
-
                 }
 
             } else if (this.dvSubStep === 2) {
-                this.navigateNextEVSubStep2();
-
+                if (this.gesuchModelManager.isRequiredEKV_GS_BJ(1, 1)) { // gehe ekv 1/2
+                    this.navigateToStepEinkommensverschlechterung('1', '1');
+                } else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(1, 2)) { // gehe ekv 1/2
+                    this.navigateToStepEinkommensverschlechterung('1', '2');
+                }
             } else if (this.dvSubStep === 3) {
-                this.navigateToStepEinkommensverschlechterung('1', '1');
+                this.navigateNextEVSubStep3();
 
             } else if (this.dvSubStep === 4) {
                 this.navigateNextEVSubStep4();
@@ -270,10 +276,11 @@ export class NavigatorController {
                 this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
 
             } else if (this.dvSubStep === 2) {
-                this.navigatePreviousEVSubStep2();
+                this.navigateToStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 
             } else if (this.dvSubStep === 3) {
-                this.navigateToStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+                this.navigatePreviousEVSubStep3();
+
             } else if (this.dvSubStep === 4) {
                 this.navigatePreviousEVSubStep4();
             }
@@ -459,67 +466,116 @@ export class NavigatorController {
         return undefined;
     }
 
-    private navigateNextEVSubStep2(): void {
+    private navigateNextEVSubStep3(): void {
         if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.navigateToStepEinkommensverschlechterung('1', '2');
-                } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
+            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) { // ist Zustand 1/1
+                if (this.gesuchModelManager.isRequiredEKV_GS_BJ(2, 1)) { // gehe ekv 2/1
                     this.navigateToStepEinkommensverschlechterung('2', '1');
+                } else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(1, 2)) { // gehe ekv 1/2
+                    this.navigateToStepEinkommensverschlechterung('1', '2');
                 } else {
-                    this.navigateToStepEinkommensverschlechterungResultate('1');
+                    this.navigateToStepEinkommensverschlechterungResultate('1'); // gehe Resultate Bj 1
                 }
-
-            } else if (this.gesuchModelManager.isBasisJahr2Required()) {
-                this.navigateToStepEinkommensverschlechterung('2', '2');
-            } else {
-                this.navigateToStepEinkommensverschlechterungResultate('1');
+            } else { // ist Zustand 2/1
+                if (this.gesuchModelManager.isRequiredEKV_GS_BJ(1, 2)) {
+                    this.navigateToStepEinkommensverschlechterung('1', '2'); // gehe ekv 1/2
+                } else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(2, 2)) {
+                    this.navigateToStepEinkommensverschlechterung('2', '2'); // gehe ekv 2/2
+                } else {
+                    this.navigateToStepEinkommensverschlechterungResultate('1'); // gehe Resultate Bj 1
+                }
             }
-
-        } else { // if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 2)) oder irgendeinanderer Wert
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.navigateToStepEinkommensverschlechterung('2', '1');
-
-            } else {
-                this.navigateToStepEinkommensverschlechterungResultate('1');
+        } else {
+            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) { // ist Zustand 1/2
+                if (this.gesuchModelManager.isRequiredEKV_GS_BJ(2, 2)) { // gehe ekv 2/2
+                    this.navigateToStepEinkommensverschlechterung('2', '2');
+                } else {
+                    if (this.gesuchModelManager.getEkvFuerBasisJahrPlus(1)) {
+                        this.navigateToStepEinkommensverschlechterungResultate('1'); // gehe Resultate Bj 1
+                    } else {
+                        this.navigateToStepEinkommensverschlechterungResultate('2'); // gehe Resultate Bj 2
+                    }
+                }
+            } else { // ist Zustand 2/2
+                if (this.gesuchModelManager.getEkvFuerBasisJahrPlus(1)) {
+                    this.navigateToStepEinkommensverschlechterungResultate('1'); // gehe Resultate Bj 1
+                } else {
+                    this.navigateToStepEinkommensverschlechterungResultate('2'); // gehe Resultate Bj 2
+                }
             }
         }
-    };
+    }
 
-    private navigatePreviousEVSubStep2(): void {
+
+    private navigatePreviousEVSubStep3(): void {
         if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                // 1 , 1
+            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) { // ist Zustand 1/1
                 if (this.gesuchModelManager.isGesuchsteller2Required()) {
                     this.navigateToStepEinkommensverschlechterungSteuern();
                 } else {
                     this.navigateToStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
                 }
-            } else {
-                if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.navigateToStepEinkommensverschlechterung('1', '2');
+            } else { // ist Zustand 2/1
+                if (this.gesuchModelManager.isRequiredEKV_GS_BJ(1, 1)) {
+                    this.navigateToStepEinkommensverschlechterung('1', '1'); // gehe ekv 1/1
+                } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                    this.navigateToStepEinkommensverschlechterungSteuern();
                 } else {
-                    this.navigateToStepEinkommensverschlechterung('1', '1');
+                    this.navigateToStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
                 }
             }
-        } else if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 2)) {
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                this.navigateToStepEinkommensverschlechterung('1', '1');
-            } else {
-                this.navigateToStepEinkommensverschlechterung('2', '1');
+        } else {
+            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) { // ist Zustand 1/2
+                if (this.gesuchModelManager.isRequiredEKV_GS_BJ(2, 1)) { // gehe ekv 2/2
+                    this.navigateToStepEinkommensverschlechterung('2', '1');
+                } else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(1, 1)) {
+                    this.navigateToStepEinkommensverschlechterung('1', '1'); // gehe ekv 1/1
+                } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                    this.navigateToStepEinkommensverschlechterungSteuern();
+                } else {
+                    this.navigateToStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+                }
+            } else { // ist Zustand 2/2
+                if (this.gesuchModelManager.isRequiredEKV_GS_BJ(1, 2)) { // gehe ekv 1/2
+                    this.navigateToStepEinkommensverschlechterung('1', '2');
+                } else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(2, 1)) { // gehe ekv 2/2
+                    this.navigateToStepEinkommensverschlechterung('2', '1');
+                } else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(1, 1)) {
+                    this.navigateToStepEinkommensverschlechterung('1', '1'); // gehe ekv 1/1
+                } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                    this.navigateToStepEinkommensverschlechterungSteuern();
+                } else {
+                    this.navigateToStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+                }
             }
         }
     };
 
     private navigatePreviousEVSubStep4(): void {
         if (this.gesuchModelManager.getBasisJahrPlusNumber() === 2) {
-            this.navigateToStepEinkommensverschlechterungResultate('1');
+            // baisjahrPlus2
+            if (this.gesuchModelManager.getEkvFuerBasisJahrPlus(1)) {
+                this.navigateToStepEinkommensverschlechterungResultate('1'); // gehe Resultate Bj 1
+            }else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(2, 2)) { // gehe ekv 2/2
+                this.navigateToStepEinkommensverschlechterung('2', '2');
+            } else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(1, 2)) { // gehe ekv 1/2
+                this.navigateToStepEinkommensverschlechterung('1', '2');
+            } else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(2, 1)) { // gehe ekv 2/1
+                this.navigateToStepEinkommensverschlechterung('2', '1');
+            } else {
+                this.navigateToStepEinkommensverschlechterung('1', '1'); // gehe ekv 1/1
+            }
         } else {
             // baisjahrPlus1
-            let gesuchsteller2Required: boolean = this.gesuchModelManager.isGesuchsteller2Required();
-            let basisJahr2Required: boolean = this.gesuchModelManager.isBasisJahr2Required();
-
-            this.navigateToStepEinkommensverschlechterung(gesuchsteller2Required === true ? '2' : '1', basisJahr2Required === true ? '2' : '1');
+            if (this.gesuchModelManager.isRequiredEKV_GS_BJ(2, 2)) { // gehe ekv 2/2
+                this.navigateToStepEinkommensverschlechterung('2', '2');
+            } else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(1, 2)) { // gehe ekv 1/2
+                this.navigateToStepEinkommensverschlechterung('1', '2');
+            } else if (this.gesuchModelManager.isRequiredEKV_GS_BJ(2, 1)) { // gehe ekv 2/1
+                this.navigateToStepEinkommensverschlechterung('2', '1');
+            } else  {
+                this.navigateToStepEinkommensverschlechterung('1', '1'); // gehe ekv 1/1
+            }
         }
     };
 

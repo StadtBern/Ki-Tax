@@ -913,6 +913,7 @@ export default class EbeguRestUtil {
         restEinkommensverschlechterung.nettolohnNov = einkommensverschlechterung.nettolohnNov;
         restEinkommensverschlechterung.nettolohnDez = einkommensverschlechterung.nettolohnDez;
         restEinkommensverschlechterung.nettolohnZus = einkommensverschlechterung.nettolohnZus;
+        restEinkommensverschlechterung.geschaeftsgewinnBasisjahrMinus1 = einkommensverschlechterung.geschaeftsgewinnBasisjahrMinus1;
         return restEinkommensverschlechterung;
     }
 
@@ -947,6 +948,7 @@ export default class EbeguRestUtil {
             einkommensverschlechterungTS.nettolohnNov = einkommensverschlechterungFromServer.nettolohnNov;
             einkommensverschlechterungTS.nettolohnDez = einkommensverschlechterungFromServer.nettolohnDez;
             einkommensverschlechterungTS.nettolohnZus = einkommensverschlechterungFromServer.nettolohnZus;
+            einkommensverschlechterungTS.geschaeftsgewinnBasisjahrMinus1 = einkommensverschlechterungFromServer.geschaeftsgewinnBasisjahrMinus1;
 
             return einkommensverschlechterungTS;
         }

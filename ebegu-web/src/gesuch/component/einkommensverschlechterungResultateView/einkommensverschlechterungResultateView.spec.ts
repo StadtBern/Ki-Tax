@@ -118,7 +118,7 @@ describe('einkommensverschlechterungResultateView', function () {
             finsintvj.massgebendesEinkVorAbzFamGr = massgebendesEinkommen_vj;
 
             spyOn(ekvrvc, 'getResultate').and.returnValue(finsint);
-            ekvrvc.resultatVorjahr = finsintvj;
+            ekvrvc.resultatBasisjahr = finsintvj;
         }
 
     });

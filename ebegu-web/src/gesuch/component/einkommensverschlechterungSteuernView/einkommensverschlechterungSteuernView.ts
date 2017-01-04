@@ -44,11 +44,13 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     private initViewModel() {
-        // Basis Jahr 1 braucht es immer
-        this.model.initEinkommensverschlechterungContainer(1, 1);
-        this.model.initEinkommensverschlechterungContainer(1, 2);
+        // Basis Jahr 1 braucht es nur wenn gewünscht
+        if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1) {
+            this.model.initEinkommensverschlechterungContainer(1, 1);
+            this.model.initEinkommensverschlechterungContainer(1, 2);
+        }
 
-        // Basis Jahr 2 braucht nur wenn gewünscht
+        // Basis Jahr 2 braucht es nur wenn gewünscht
         if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2) {
             this.model.initEinkommensverschlechterungContainer(2, 1);
             this.model.initEinkommensverschlechterungContainer(2, 2);
@@ -70,11 +72,19 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
 
 
     showSteuererklaerung_BjP1(): boolean {
-        return this.getEkv_GS1_Bjp1().steuerveranlagungErhalten === false;
+        return this.isSteuerveranlagungErhaltenGS1_Bjp1() === false;
     }
 
     showSteuererklaerung_BjP2(): boolean {
         return this.isSteuerveranlagungErhaltenGS1_Bjp2() === false;
+    }
+
+    isSteuerveranlagungErhaltenGS1_Bjp1(): boolean {
+        if (this.getEkv_GS1_Bjp1()) {
+            return this.getEkv_GS1_Bjp1().steuerveranlagungErhalten;
+        } else {
+            return false;
+        }
     }
 
     isSteuerveranlagungErhaltenGS1_Bjp2(): boolean {
@@ -252,8 +262,7 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     showFragen_BjP1(): boolean {
-        return this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 ||
-            this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2;
+        return this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1;
     }
 
     showFragen_BjP2(): boolean {

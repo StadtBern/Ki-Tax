@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
@@ -59,6 +58,8 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 	@Column(nullable = true)
 	private BigDecimal nettolohnZus;
 
+	@Column(nullable = true)
+	private BigDecimal geschaeftsgewinnBasisjahrMinus1;
 
 	public Einkommensverschlechterung() {
 	}
@@ -160,6 +161,14 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 		this.nettolohnDez = nettolohnDez;
 	}
 
+	public BigDecimal getGeschaeftsgewinnBasisjahrMinus1() {
+		return geschaeftsgewinnBasisjahrMinus1;
+	}
+
+	public void setGeschaeftsgewinnBasisjahrMinus1(BigDecimal geschaeftsgewinnBasisjahrMinus1) {
+		this.geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
+	}
+
 	public BigDecimal getNettolohnZus() {
 
 		return nettolohnZus;
@@ -193,6 +202,7 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 		mutation.setNettolohnNov(this.getNettolohnNov());
 		mutation.setNettolohnDez(this.getNettolohnDez());
 		mutation.setNettolohnZus(this.getNettolohnZus());
+		mutation.setGeschaeftsgewinnBasisjahrMinus1(this.getGeschaeftsgewinnBasisjahrMinus1());
 		return mutation;
 	}
 }
