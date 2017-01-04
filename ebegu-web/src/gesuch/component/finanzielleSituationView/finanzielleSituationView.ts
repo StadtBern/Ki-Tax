@@ -105,7 +105,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     private save(): IPromise<TSFinanzielleSituationContainer> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the

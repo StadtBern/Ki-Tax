@@ -53,7 +53,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
 
     save(): void {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.saveVerfuegung().then(() => {
                 this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
                     this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
@@ -66,7 +66,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     schliessenOhneVerfuegen() {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.verfuegungSchliessenOhenVerfuegen().then(() => {
                 this.$state.go('gesuch.verfuegen', {
                     gesuchId: this.getGesuchId()
@@ -76,7 +76,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     nichtEintreten() {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.verfuegungNichtEintreten().then(() => {
                 this.$state.go('gesuch.verfuegen', {
                     gesuchId: this.getGesuchId()

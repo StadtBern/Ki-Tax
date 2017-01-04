@@ -80,7 +80,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     private save(): IPromise<void> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             //todo team refactoren so dass nur eine resource methode aufgerufen wird (fuer transaktionssicherzheit)
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
