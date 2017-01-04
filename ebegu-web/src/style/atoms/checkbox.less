@@ -17,20 +17,20 @@ md-checkbox {
     height: 2rem;
     width: auto;
     &[disabled] {
-        color: @contrast;
+        color: @contrast-dark;
         .md-label {
             span {
-                color: @contrast;
+                color: @contrast-dark;
             }
         }
         &.md-checked, &:not(.md-checked) {
             .md-icon {
-                border: 0.1rem solid @contrast;
+                border: 0.1rem solid @contrast-dark;
             }
         }
         &.md-checked {
             .md-icon {
-                background: @contrast;
+                background: @contrast-dark;
             }
         }
     }
@@ -40,6 +40,7 @@ md-checkbox {
     .md-container {
         width: 2rem;
         height: 2rem;
+        display: block;
         &:before {
             content: none !important;
         }
@@ -49,14 +50,13 @@ md-checkbox {
     .md-label {
         display: block;
         margin-left: 3rem;
-        line-height: 2rem;
+        line-height: normal;
         height: 2rem;
+        vertical-align: middle;
         span {
             .ebeguH3();
-            line-height: 2rem;
+            line-height: normal;
             margin: 0;
-            display: inline-block;
-            height: 2rem;
         }
     }
     .md-icon {

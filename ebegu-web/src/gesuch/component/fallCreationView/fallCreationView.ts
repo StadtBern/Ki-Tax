@@ -87,7 +87,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
 
     save(): IPromise<TSGesuch> {
         this.showError = true;
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             if (!this.form.$dirty && !this.gesuchModelManager.getGesuch().isNew()) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately

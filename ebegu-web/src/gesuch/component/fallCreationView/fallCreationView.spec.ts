@@ -31,6 +31,9 @@ describe('fallCreationView', function () {
             $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'),
             $injector.get('$translate'), $q, $rootScope, $injector.get('AuthServiceRS'));
         fallCreationview.form = form;
+        spyOn(fallCreationview, 'isGesuchValid').and.callFake(function () {
+            return form.$valid;
+        });
     }));
 
     describe('nextStep', () => {

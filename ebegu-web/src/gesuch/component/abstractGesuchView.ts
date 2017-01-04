@@ -50,6 +50,29 @@ export default class AbstractGesuchViewController<T> {
         return this.gesuchModelManager.isGesuchReadonly();
     }
 
+    /**
+     * Diese Methode prueft ob das Form valid ist. Sollte es nicht valid sein wird das erste fehlende Element gesucht
+     * und fokusiert, damit der Benutzer nicht scrollen muss, um den Fehler zu finden.
+     * Am Ende wird this.form.$valid zurueckgegeben
+     */
+    public isGesuchValid(): boolean {
+        if (!this.form.$valid) {
+            let firstInvalid = angular.element('form .ng-invalid').first();
+            if (firstInvalid) {
+                if (firstInvalid.get(0).tagName == 'DIV') { // sollten wir in einem div sein, suchen wir den ersten subelement, das fehlt
+                    firstInvalid = firstInvalid.find('.ng-invalid').first();
+                }
+                if (firstInvalid.get(0).tagName != 'INPUT') { // Fuer alle Elemente die kein INPUT sind, muessen wir den tabindex setzen, damit focus() funktioniert
+                    firstInvalid.attr('tabindex', -1).focus();
+                } else {
+                    firstInvalid.focus();
+                }
+
+            }
+        }
+        return this.form.$valid;
+    }
+
     public getGesuchId(): string {
         if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
             return this.gesuchModelManager.getGesuch().id;
