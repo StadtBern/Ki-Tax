@@ -58,7 +58,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     private save(): IPromise<TSGesuch> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
             this.initialModel = angular.copy(this.model);
             if (!this.form.$dirty) {

@@ -50,13 +50,18 @@ describe('freigabeView', function () {
         $q = $injector.get('$q');
         gesuchModelManager = $injector.get('GesuchModelManager');
         $httpBackend = $injector.get('$httpBackend');
-        applicationPropertyRS = $injector.get('ApplicationPropertyRS'); //
+        applicationPropertyRS = $injector.get('ApplicationPropertyRS');
 
         spyOn(applicationPropertyRS , 'isDevMode').and.returnValue($q.when(false));
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
             wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS);
+        controller.form = <IFormController>{};
+
+        spyOn(controller, 'isGesuchValid').and.callFake(function () {
+            return controller.form.$valid;
+        });
     }));
     describe('canBeFreigegeben', function () {
         it('should return false when not all steps are true', function () {
@@ -80,7 +85,6 @@ describe('freigabeView', function () {
     });
     describe('gesuchFreigeben', function () {
         it('should return undefined when the form is not valid', function () {
-            controller.form = <IFormController>{};
             controller.form.$valid = false;
 
             let returned: IPromise<void> = controller.gesuchEinreichen();
@@ -88,7 +92,6 @@ describe('freigabeView', function () {
             expect(returned).toBeUndefined();
         });
         it('should return undefined when the form is not valid', function () {
-            controller.form = <IFormController>{};
             controller.form.$valid = true;
             controller.bestaetigungFreigabequittung = false;
 
@@ -100,7 +103,6 @@ describe('freigabeView', function () {
             TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
             controller.bestaetigungFreigabequittung = true;
 
-            controller.form = <IFormController>{};
             controller.form.$valid = true;
 
             spyOn(dialog, 'showDialog').and.returnValue($q.when({}));
