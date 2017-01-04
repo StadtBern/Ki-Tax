@@ -93,7 +93,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
         //todo wenn man aus der verfuegung zurueck kommt muss man hier nicht neu berechnen
-        this.gesuchModelManager.calculateVerfuegungen().then(() => {
+        this.refreshKinderListe();
+    }
+
+    private refreshKinderListe(): IPromise<any> {
+        return this.gesuchModelManager.calculateVerfuegungen().then(() => {
             this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
         });
     }
@@ -223,7 +227,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         }).then(() => {
             return this.createNeededPDFs().then(() => {
                 this.gesuchModelManager.getGesuch().status = newStatus;
-                return this.gesuchModelManager.updateGesuch()
+                return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                    return this.refreshKinderListe().then(() => {
+                        this.form.$dirty = false;
+                        this.form.$pristine = true; // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
+                        return this.gesuchModelManager.getGesuch();
+                    });
+                });
             });
         });
     }
@@ -288,8 +298,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         this.createMahnung(TSMahnungTyp.ZWEITE_MAHNUNG);
     }
 
-    public saveMahnung(form: angular.IFormController): void {
-        if (form.$valid) {
+    public saveMahnung(): void {
+        if (this.form.$valid) {
             this.mahnungRS.saveMahnung(this.mahnung).then((mahnungResponse: TSMahnung) => {
                 this.setGesuchStatus(this.tempAntragStatus).then(any => {
                     this.mahnungList.push(mahnungResponse);
