@@ -195,6 +195,18 @@
                         <span data-translate="ZWEITE_MAHNUNG_NCINT_EINGETRETEN"></span>
                     </dv-loading-button>
                 </span>
+                <span class="col-md-4" ng-show="vm.showBeschwerdeHaengig()">
+                    <dv-loading-button type="button" button-click="vm.setGesuchStatusBeschwerdeHaengig()"
+                                       button-class="dv-btn-sm color-success" aria-label="{{BESCHWERDE_HAENGIG_UPPER | translate}}">
+                        <span data-translate="BESCHWERDE_HAENGIG_UPPER"></span>
+                    </dv-loading-button>
+                </span>
+                <span class="col-md-4" ng-show="vm.showBeschwerdeAbschliessen()">
+                    <dv-loading-button type="button" button-click="vm.setGesuchStatusBeschwerdeAbschliessen()"
+                                       button-class="dv-btn-sm color-success" aria-label="{{BESCHWERDE_ABSCHLIESSEN_UPPER | translate}}">
+                        <span data-translate="BESCHWERDE_ABSCHLIESSEN_UPPER"></span>
+                    </dv-loading-button>
+                </span>
             </div>
         </div>
     </div>

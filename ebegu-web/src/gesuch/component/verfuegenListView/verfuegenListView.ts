@@ -401,4 +401,32 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 return;
             });
     }
+
+    public showBeschwerdeHaengig(): boolean {
+        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        return TSAntragStatus.VERFUEGT === status;
+    }
+
+    public showBeschwerdeAbschliessen(): boolean {
+        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        return TSAntragStatus.BESCHWERDE_HAENGIG === status;
+    }
+
+    public setGesuchStatusBeschwerdeHaengig(): IPromise<TSAntragStatus> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'BESCHWERDE_HAENGIG',
+            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_HAENGIG'
+        }).then(() => {
+            return this.setGesuchStatus(TSAntragStatus.BESCHWERDE_HAENGIG);
+        });
+    }
+
+    public setGesuchStatusBeschwerdeAbschliessen(): IPromise<TSAntragStatus> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'BESCHWERDE_ABSCHLIESSEN',
+            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_ABSCHLIESSEN'
+        }).then(() => {
+            return this.setGesuchStatus(TSAntragStatus.VERFUEGT);
+        });
+    }
 }

@@ -15,7 +15,8 @@ export enum TSAntragStatus {
     PLATZBESTAETIGUNG_ABGEWIESEN = <any> 'PLATZBESTAETIGUNG_ABGEWIESEN',
     PLATZBESTAETIGUNG_WARTEN = <any> 'PLATZBESTAETIGUNG_WARTEN',
     VERFUEGEN = <any> 'VERFUEGEN',
-    VERFUEGT = <any> 'VERFUEGT'
+    VERFUEGT = <any> 'VERFUEGT',
+    BESCHWERDE_HAENGIG = <any> 'BESCHWERDE_HAENGIG'
 }
 
 export const IN_BEARBEITUNG_BASE_NAME = 'IN_BEARBEITUNG';
@@ -38,7 +39,8 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN,
         TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
         TSAntragStatus.VERFUEGEN,
-        TSAntragStatus.VERFUEGT
+        TSAntragStatus.VERFUEGT,
+        TSAntragStatus.BESCHWERDE_HAENGIG
     ];
 }
 
@@ -75,7 +77,7 @@ export function isAtLeastFreigegebenOrFreigabequittung(status: TSAntragStatus): 
 }
 
 export function isAnyStatusOfVerfuegt(status: TSAntragStatus): boolean {
-    return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.VERFUEGT;
+    return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG;
 }
 
 /**
