@@ -109,7 +109,7 @@ export class PendenzenInstitutionListViewController {
                 // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
                 this.gesuchModelManager.clearGesuch();
 
-                this.$state.go('gesuch.betreuung', {gesuchId: pendenz.gesuchId});
+                this.$state.go('gesuch.betreuung', {gesuchId: pendenz.gesuchId, betreuungNumber: betreuungNumber});
             }
         }
     }

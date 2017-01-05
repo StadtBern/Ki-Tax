@@ -59,31 +59,12 @@ describe('gesuchModelManager', function () {
         antragStatusHistoryRS = $injector.get('AntragStatusHistoryRS');
     }));
 
-    describe('Public API', function () {
-        it('should include a createBetreuung() function', function () {
-            expect(gesuchModelManager.createBetreuung).toBeDefined();
-        });
-    });
     describe('API Usage', function () {
-        describe('createBetreuung', () => {
-            it('should create a new empty Betreuung for the current KindContainer', () => {
-                gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
-                createKindContainer();
-                expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
-                expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(0);
-                gesuchModelManager.createBetreuung();
-                expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
-                expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(1);
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toEqual([]);
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
-                expect(gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten).toBeUndefined();
-            });
-        });
         describe('removeBetreuungFromKind', () => {
             it('should remove the current Betreuung from the list of the current Kind', () => {
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 createKindContainer();
-                gesuchModelManager.createBetreuung();
+                createBetreuung();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(1);
                 gesuchModelManager.removeBetreuungFromKind();
@@ -91,21 +72,21 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(0);
             });
         });
-        describe('updateBetreuung', () => {
-            it('creates a new betreuung', () => {
+        describe('saveBetreuung', () => {
+            it('updates a betreuung', () => {
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 createKindContainer();
-                gesuchModelManager.createBetreuung();
+                let betreuung: TSBetreuung = createBetreuung();
                 gesuchModelManager.getKindToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
 
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 let kindToWorkWith: TSKindContainer = gesuchModelManager.getKindToWorkWith();
                 kindToWorkWith.nextNumberBetreuung = 5;
                 spyOn(kindRS, 'findKind').and.returnValue($q.when(kindToWorkWith));
-                spyOn(betreuungRS, 'saveBetreuung').and.returnValue($q.when(gesuchModelManager.getBetreuungToWorkWith()));
+                spyOn(betreuungRS, 'saveBetreuung').and.returnValue($q.when(betreuung));
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
 
-                gesuchModelManager.updateBetreuung(false);
+                gesuchModelManager.saveBetreuung(gesuchModelManager.getKindToWorkWith().betreuungen[0], false);
                 scope.$apply();
 
                 expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined, false);
@@ -272,7 +253,7 @@ describe('gesuchModelManager', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 createKindContainer();
-                gesuchModelManager.createBetreuung();
+                let betreuung: TSBetreuung = createBetreuung();
                 gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
                 let verfuegung: TSVerfuegung = new TSVerfuegung();
                 spyOn(verfuegungRS, 'saveVerfuegung').and.returnValue($q.when(verfuegung));
@@ -530,7 +511,7 @@ describe('gesuchModelManager', function () {
     function createKindContainer() {
         gesuchModelManager.initKinder();
         createKind();
-        gesuchModelManager.initBetreuung();
+        gesuchModelManager.getKindToWorkWith().initBetreuungList();
     }
 
     function createKind(): void {
@@ -544,14 +525,24 @@ describe('gesuchModelManager', function () {
     function createKindWithBetreuung() {
         createKindContainer();
         gesuchModelManager.getKindToWorkWith().kindJA.familienErgaenzendeBetreuung = true;
-        gesuchModelManager.createBetreuung();
-        gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+        createBetreuung();
     }
 
     function setInstitutionToExistingBetreuung(typ: TSBetreuungsangebotTyp) {
         let institution: TSInstitutionStammdaten = new TSInstitutionStammdaten();
         institution.betreuungsangebotTyp = typ;
         gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = institution;
+    }
+
+    function createBetreuung(): TSBetreuung {
+        gesuchModelManager.getKindToWorkWith().initBetreuungList();
+        let tsBetreuung: TSBetreuung = new TSBetreuung();
+        tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
+        tsBetreuung.betreuungNummer = gesuchModelManager.getKindToWorkWith().betreuungen.length;
+        tsBetreuung.id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+        gesuchModelManager.getKindToWorkWith().betreuungen.push(tsBetreuung);
+        gesuchModelManager.setBetreuungNumber(1);
+        return tsBetreuung;
     }
 
 });

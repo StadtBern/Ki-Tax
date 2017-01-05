@@ -50,7 +50,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
         if (betreuungNumber > 0) {
             betreuung.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
-            this.openBetreuungView();
+            this.openBetreuungView(betreuungNumber);
         }
     }
 
@@ -62,8 +62,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let kindNumber: number = this.gesuchModelManager.findKind(kind);
         if (kindNumber > 0) {
             this.gesuchModelManager.setKindNumber(kindNumber);
-            this.gesuchModelManager.createBetreuung();
-            this.openBetreuungView();
+            this.openBetreuungView(undefined);
         }
     }
 
@@ -86,8 +85,8 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         });
     }
 
-    private openBetreuungView(): void {
-        this.$state.go('gesuch.betreuung', {gesuchId: this.getGesuchId()});
+    private openBetreuungView(betreuungNumber: number): void {
+        this.$state.go('gesuch.betreuung', {gesuchId: this.getGesuchId(), betreuungNumber: betreuungNumber});
     }
 
     /**

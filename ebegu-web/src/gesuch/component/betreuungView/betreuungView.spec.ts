@@ -14,6 +14,7 @@ import DateUtil from '../../../utils/DateUtil';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import IFormController = angular.IFormController;
+import {IBetreuungStateParams} from '../../gesuch.route';
 
 describe('betreuungView', function () {
 
@@ -28,6 +29,7 @@ describe('betreuungView', function () {
     let $httpBackend: IHttpBackendService;
     let authServiceRS: AuthServiceRS;
     let wizardStepManager: WizardStepManager;
+    let $stateParams: IBetreuungStateParams;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -38,6 +40,8 @@ describe('betreuungView', function () {
         ebeguUtil = $injector.get('EbeguUtil');
         $httpBackend = $injector.get('$httpBackend');
         $q = $injector.get('$q');
+        $stateParams = $injector.get('$stateParams');
+
         betreuung = new TSBetreuung();
         betreuung.timestampErstellt = DateUtil.today();
         kind = new TSKindContainer();
@@ -53,7 +57,8 @@ describe('betreuungView', function () {
         spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
         wizardStepManager = $injector.get('WizardStepManager');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
-            $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS, wizardStepManager);
+            $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS,
+            wizardStepManager, $stateParams);
         betreuungView.model = betreuung;
 
         let form = createDummyForm();
@@ -71,7 +76,7 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope, null, null, authServiceRS, wizardStepManager);
+                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams);
                 myBetreuungView.model = betreuung;
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(0);
@@ -148,31 +153,33 @@ describe('betreuungView', function () {
         });
         describe('platzAbweisen()', () => {
             it('must change the status of the Betreuung to ABGEWIESEN and restore initial values of Betreuung', () => {
-                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
+                spyOn(gesuchModelManager, 'saveBetreuung').and.returnValue($q.when({}));
                 spyOn(gesuchModelManager, 'setBetreuungToWorkWith').and.stub();
                 betreuungView.model.erweiterteBeduerfnisse = true;
                 betreuungView.model.grundAblehnung = 'mein Grund';
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
                 expect(betreuungView.model.datumAblehnung).toBeUndefined();
+
                 betreuungView.platzAbweisen();
+
                 expect(gesuchModelManager.setBetreuungToWorkWith).toHaveBeenCalledWith(betreuungView.model);
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.ABGEWIESEN);
                 expect(gesuchModelManager.getBetreuungToWorkWith().grundAblehnung).toEqual('mein Grund');
                 expect(gesuchModelManager.getBetreuungToWorkWith().datumAblehnung).toEqual(DateUtil.today());
                 expect(gesuchModelManager.getBetreuungToWorkWith().erweiterteBeduerfnisse).toBe(true);
-                expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
+                expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();
             });
         });
         describe('platzAnfordern()', () => {
             it('must change the status of the Betreuung to WARTEN', () => {
-                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
+                spyOn(gesuchModelManager, 'saveBetreuung').and.returnValue($q.when({}));
                 betreuungView.model.vertrag = true;
                 // betreuung.timestampErstellt = undefined;
                 betreuungView.model.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
                 betreuungView.platzAnfordern();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.WARTEN);
-                expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
+                expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();
             });
         });
         describe('removeBetreuungspensum', () => {
@@ -198,7 +205,7 @@ describe('betreuungView', function () {
     }
 
     /**
-     * Das Parameter promiseResponse ist das Object das die Methode gesuchModelManager.updateBetreuung() zurueckgeben muss. Wenn dieses
+     * Das Parameter promiseResponse ist das Object das die Methode gesuchModelManager.saveBetreuung() zurueckgeben muss. Wenn dieses
      * eine Exception (reject) ist, muss der $state nicht geaendert werden und daher wird die Methode $state.go()  nicht aufgerufen.
      * Ansonsten wird sie mit  dem naechsten state 'gesuch.betreuungen' aufgerufen
      * @param promiseResponse
@@ -206,11 +213,11 @@ describe('betreuungView', function () {
     function testSubmit(promiseResponse: any, moveToNextStep: boolean) {
         betreuungView.model.vertrag = true;
         spyOn($state, 'go');
-        spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue(promiseResponse);
+        spyOn(gesuchModelManager, 'saveBetreuung').and.returnValue(promiseResponse);
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         betreuungView.platzAnfordern();
         $rootScope.$apply();
-        expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
+        expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();
         if (moveToNextStep) {
             expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen');
         } else {

@@ -516,12 +516,6 @@ export default class GesuchModelManager {
         }
     }
 
-    public initBetreuung(): void {
-        if (!this.getKindToWorkWith().betreuungen) {
-            this.getKindToWorkWith().betreuungen = [];
-        }
-    }
-
     /**
      * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde
      * @returns {number}
@@ -599,45 +593,38 @@ export default class GesuchModelManager {
         return listResult;
     }
 
-    /**
-     * Creates a Betreuung for the kind given by the kindNumber attribute of the class.
-     * Thus the kindnumber must be set before this method is called.
-     */
-    public createBetreuung(): void {
-        if (this.getKindToWorkWith()) {
-            this.initBetreuung();
-            let tsBetreuung: TSBetreuung = new TSBetreuung();
-            tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
-            this.getKindToWorkWith().betreuungen.push(tsBetreuung);
-            this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
-            tsBetreuung.betreuungNummer = this.betreuungNumber;
-        }
-    }
-
-    public updateBetreuung(abwesenheit: boolean): IPromise<TSBetreuung> {
-        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
-            .then((betreuungResponse: any) => {
+    public saveBetreuung(betreuungToSave: TSBetreuung, abwesenheit: boolean): IPromise<TSBetreuung> {
+        return this.betreuungRS.saveBetreuung(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
+            .then((storedBetreuung: any) => {
                 this.getKindFromServer();
-                this.setBetreuungToWorkWith(betreuungResponse);
-                return this.getBetreuungToWorkWith();
+                if (!storedBetreuung.isNew()) {   //gespeichertes kind war nicht neu
+                    let i: number = EbeguUtil.getIndexOfElementwithID(betreuungToSave, this.getKindToWorkWith().betreuungen);
+                    if (i >= 0) {
+                        this.getKindToWorkWith().betreuungen[i] = storedBetreuung;
+                        this.betreuungNumber = i;
+                    }
+                } else {
+                    this.getKindToWorkWith().betreuungen.push(storedBetreuung);  //neues kind anfuegen
+                    this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
+                }
+                return storedBetreuung;
             });
     }
 
 
-    public saveKind(gesuch: TSGesuch, kindToSave: TSKindContainer): IPromise<TSKindContainer> {
-        return this.kindRS.saveKind(kindToSave, gesuch.id)
+    public saveKind(kindToSave: TSKindContainer): IPromise<TSKindContainer> {
+        return this.kindRS.saveKind(kindToSave, this.gesuch.id)
             .then((storedKindCont: TSKindContainer) => {
                 this.getFallFromServer();
                 if (!kindToSave.isNew()) {   //gespeichertes kind war nicht neu
-                    let i: number = EbeguUtil.getIndexOfElementwithID(kindToSave, gesuch.kindContainers);
+                    let i: number = EbeguUtil.getIndexOfElementwithID(kindToSave, this.gesuch.kindContainers);
                        if (i >= 0) {
-                           gesuch.kindContainers[i] = storedKindCont;
+                           this.gesuch.kindContainers[i] = storedKindCont;
                        }
-                    return storedKindCont;
-                } else{
-                    gesuch.kindContainers.push(storedKindCont);  //neues kind anfuegen
-                    return storedKindCont;
+                } else {
+                    this.gesuch.kindContainers.push(storedKindCont);  //neues kind anfuegen
                 }
+                return storedKindCont;
             });
     }
 
@@ -1221,7 +1208,7 @@ export default class GesuchModelManager {
     //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
         if (this.getGesuch()) {
-            var text = '';
+            let text = '';
             if (this.getGesuch().fall) {
                 text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
             }

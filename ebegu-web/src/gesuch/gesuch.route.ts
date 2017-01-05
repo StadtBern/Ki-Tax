@@ -207,7 +207,7 @@ export class EbeguBetreuungListState implements IState {
 
 export class EbeguBetreuungState implements IState {
     name = 'gesuch.betreuung';
-    url = '/betreuungen/betreuung/:gesuchId';
+    url = '/betreuungen/betreuung/:gesuchId/:betreuungNumber';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -488,6 +488,10 @@ export class IStammdatenStateParams implements IStateParamsService {
 
 export class IKindStateParams implements IStateParamsService {
     kindNumber: string;
+}
+
+export class IBetreuungStateParams implements IStateParamsService {
+    betreuungNumber: string;
 }
 
 export class INewFallStateParams implements IStateParamsService {
