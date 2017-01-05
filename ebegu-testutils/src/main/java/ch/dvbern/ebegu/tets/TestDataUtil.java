@@ -509,6 +509,8 @@ public final class TestDataUtil {
 		if (gesuch.extractEinkommensverschlechterungInfo() == null) {
 			gesuch.setEinkommensverschlechterungInfoContainer(new EinkommensverschlechterungInfoContainer());
 			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(false);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(false);
 		}
 		if (basisJahrPlus1) {
 			gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
