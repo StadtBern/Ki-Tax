@@ -1,5 +1,6 @@
 import {TSErrorType} from './enums/TSErrorType';
 import {TSErrorLevel} from './enums/TSErrorLevel';
+
 export default class TSExceptionReport {
 
     private _type: TSErrorType;
@@ -35,8 +36,8 @@ export default class TSExceptionReport {
 
 
     isConstantValue(constant: any, value: any) {
-        var keys = Object.keys(constant);
-        for (var i = 0; i < keys.length; i++) {
+        let keys = Object.keys(constant);
+        for (let i = 0; i < keys.length; i++) {
             if (value === constant[keys[i]]) {
                 return true;
             }
@@ -46,10 +47,9 @@ export default class TSExceptionReport {
     }
 
     isValid() {
-
-        var validType = this.isConstantValue(TSErrorType, this.type);
-        var validSeverity = this.isConstantValue(TSErrorLevel, this.severity);
-        var validMsgKey = typeof this.msgKey === 'string' && this.msgKey.length > 0;
+        let validType = this.isConstantValue(TSErrorType, this.type);
+        let validSeverity = this.isConstantValue(TSErrorLevel, this.severity);
+        let validMsgKey = typeof this.msgKey === 'string' && this.msgKey.length > 0;
 
         return validType && validSeverity && validMsgKey;
     };

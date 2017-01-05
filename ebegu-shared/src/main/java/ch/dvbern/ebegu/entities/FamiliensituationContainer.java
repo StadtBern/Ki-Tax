@@ -36,20 +36,14 @@ public class FamiliensituationContainer extends AbstractEntity {
 	public FamiliensituationContainer() {
 	}
 
-	public FamiliensituationContainer(FamiliensituationContainer other) {
-		this.familiensituationJA = other.familiensituationJA;
-		this.familiensituationGS = other.familiensituationGS;
-		this.familiensituationErstgesuch = other.familiensituationErstgesuch;
-	}
-
 	public FamiliensituationContainer copyForMutation(FamiliensituationContainer mutation, boolean toCopyisMutation) {
 		super.copyForMutation(mutation);
 		mutation.setFamiliensituationGS(null);
 		mutation.setFamiliensituationJA(getFamiliensituationJA().copyForMutation(new Familiensituation()));
 		if (toCopyisMutation) {
-			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationErstgesuch());
+			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationErstgesuch().copyForMutation(new Familiensituation()));
 		} else { // beim ErstGesuch holen wir direkt die normale Familiensituation
-			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationJA());
+			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationJA().copyForMutation(new Familiensituation()));
 		}
 		return mutation;
 	}
