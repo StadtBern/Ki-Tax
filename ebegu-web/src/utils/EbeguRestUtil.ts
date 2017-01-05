@@ -597,6 +597,7 @@ export default class EbeguRestUtil {
         restGesuch.familiensituationContainer = this.familiensituationContainerToRestObject({}, gesuch.familiensituationContainer);
         restGesuch.bemerkungen = gesuch.bemerkungen;
         restGesuch.laufnummer = gesuch.laufnummer;
+        restGesuch.hasFSDokument = gesuch.hasFSDokument;
         return restGesuch;
     }
 
@@ -611,6 +612,7 @@ export default class EbeguRestUtil {
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;
+            gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
             return gesuchTS;
         }
         return undefined;
@@ -913,6 +915,7 @@ export default class EbeguRestUtil {
         restEinkommensverschlechterung.nettolohnNov = einkommensverschlechterung.nettolohnNov;
         restEinkommensverschlechterung.nettolohnDez = einkommensverschlechterung.nettolohnDez;
         restEinkommensverschlechterung.nettolohnZus = einkommensverschlechterung.nettolohnZus;
+        restEinkommensverschlechterung.geschaeftsgewinnBasisjahrMinus1 = einkommensverschlechterung.geschaeftsgewinnBasisjahrMinus1;
         return restEinkommensverschlechterung;
     }
 
@@ -947,6 +950,7 @@ export default class EbeguRestUtil {
             einkommensverschlechterungTS.nettolohnNov = einkommensverschlechterungFromServer.nettolohnNov;
             einkommensverschlechterungTS.nettolohnDez = einkommensverschlechterungFromServer.nettolohnDez;
             einkommensverschlechterungTS.nettolohnZus = einkommensverschlechterungFromServer.nettolohnZus;
+            einkommensverschlechterungTS.geschaeftsgewinnBasisjahrMinus1 = einkommensverschlechterungFromServer.geschaeftsgewinnBasisjahrMinus1;
 
             return einkommensverschlechterungTS;
         }

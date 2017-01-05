@@ -101,6 +101,7 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(fsGesuchsteller.getFinanzielleSituation(),
 			fsGesuchsteller.getEinkommensverschlechterung1(),
 			fsGesuchsteller.getEinkommensverschlechterung2(),
+			fsGesuchsteller.getEinkommensverschlechterungInfo(),
 			basisJahrPlus);
 	}
 
@@ -112,6 +113,7 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 			return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(fsGesuchsteller.getFinanzielleSituation(),
 				fsGesuchsteller.getEinkommensverschlechterung1(),
 				fsGesuchsteller.getEinkommensverschlechterung2(),
+				fsGesuchsteller.getEinkommensverschlechterungInfo(),
 				basisJahrPlus);
 		}
 		return null;

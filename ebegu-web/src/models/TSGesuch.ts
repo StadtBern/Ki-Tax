@@ -18,6 +18,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
     private _bemerkungen: string;
     private _laufnummer: number;
+    private _hasFSDokument: boolean;
 
 
     public get gesuchsteller1(): TSGesuchstellerContainer {
@@ -74,6 +75,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set laufnummer(value: number) {
         this._laufnummer = value;
+    }
+
+    get hasFSDokument(): boolean {
+        return this._hasFSDokument;
+    }
+
+    set hasFSDokument(value: boolean) {
+        this._hasFSDokument = value;
     }
 
     public isMutation(): boolean {
