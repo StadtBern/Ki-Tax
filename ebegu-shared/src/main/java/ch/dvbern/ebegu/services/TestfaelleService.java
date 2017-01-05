@@ -30,6 +30,8 @@ public interface TestfaelleService {
 	String ASIV6 = "ASIV6";
 	String ASIV7 = "ASIV7";
 	String ASIV8 = "ASIV8";
+	String ASIV9 = "ASIV9";
+	String ASIV10 = "ASIV10";
 
 
 	String heirat = "1";

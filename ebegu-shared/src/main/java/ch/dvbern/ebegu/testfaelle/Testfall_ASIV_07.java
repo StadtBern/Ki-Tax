@@ -31,12 +31,16 @@ public class Testfall_ASIV_07 extends AbstractASIVTestfall {
 
 	public Gesuch createErstgesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch erstgesuch = createAlleinerziehend();
+		Gesuch erstgesuch = createVerheiratet();
 		GesuchstellerContainer gesuchsteller1 = createGesuchstellerContainer();
 		erstgesuch.setGesuchsteller1(gesuchsteller1);
+		GesuchstellerContainer gesuchsteller2 = createGesuchstellerContainer();
+		erstgesuch.setGesuchsteller2(gesuchsteller2);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensum = createErwerbspensum(100, 0);
 		gesuchsteller1.addErwerbspensumContainer(erwerbspensum);
+		ErwerbspensumContainer erwerbspensumGS2 = createErwerbspensum(100, 0);
+		gesuchsteller2.addErwerbspensumContainer(erwerbspensumGS2);
 		// Kinder
 		KindContainer kind = createKind(Geschlecht.MAENNLICH, "ASIV", "Kind", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, true);
 		kind.setGesuch(erstgesuch);
@@ -53,30 +57,26 @@ public class Testfall_ASIV_07 extends AbstractASIVTestfall {
 		finanzielleSituationContainer.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(70000));
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
+
+		FinanzielleSituationContainer finanzielleSituationGS2 = createFinanzielleSituationContainer();
+		finanzielleSituationGS2.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(30000));
+		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
+		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
+
 		// Einkommensverschlechterug
-		EinkommensverschlechterungContainer ekvContainer = createEinkommensverschlechterungContainer(erstgesuch, null, LocalDate.of(2017, Month.MARCH, 1));
-		ekvContainer.getEkvJABasisJahrPlus2().setNettolohnJan(MathUtil.DEFAULT.from(50000));
+		EinkommensverschlechterungContainer ekvContainer = createEinkommensverschlechterungContainer(erstgesuch, LocalDate.of(2016, Month.OCTOBER, 1), null);
+		ekvContainer.getEkvJABasisJahrPlus1().setNettolohnJan(MathUtil.DEFAULT.from(49000));
 		gesuchsteller1.setEinkommensverschlechterungContainer(ekvContainer);
+
+		EinkommensverschlechterungContainer ekvContainerGS2 = createEinkommensverschlechterungContainer(true, false);
+		ekvContainerGS2.getEkvJABasisJahrPlus1().setNettolohnJan(MathUtil.DEFAULT.from(22000));
+		gesuchsteller2.setEinkommensverschlechterungContainer(ekvContainerGS2);
 		return erstgesuch;
 	}
 
 	public Gesuch createMutation(Gesuch erstgesuch) {
 		// Gesuch, Gesuchsteller
-		Gesuch mutation = createVerheiratet(erstgesuch, LocalDate.of(2017, Month.JANUARY, 15));
-		GesuchstellerContainer gesuchsteller2 = createGesuchstellerContainer();
-		mutation.setGesuchsteller2(gesuchsteller2);
-		// Erwerbspensum
-		ErwerbspensumContainer erwerbspensum = createErwerbspensum(100, 0);
-		gesuchsteller2.addErwerbspensumContainer(erwerbspensum);
-		// Finanzielle Situation
-		FinanzielleSituationContainer finanzielleSituationContainerGS2 = createFinanzielleSituationContainer();
-		finanzielleSituationContainerGS2.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(30000));
-		finanzielleSituationContainerGS2.setGesuchsteller(gesuchsteller2);
-		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationContainerGS2);
-        // Einkommensverschlechterug
-		EinkommensverschlechterungContainer ekvContainerGS2 = createEinkommensverschlechterungContainer(false, true);
-		ekvContainerGS2.getEkvJABasisJahrPlus2().setNettolohnJan(MathUtil.DEFAULT.from(29000));
-		gesuchsteller2.setEinkommensverschlechterungContainer(ekvContainerGS2);
+		Gesuch mutation = createAlleinerziehend(erstgesuch, LocalDate.of(2017, Month.JANUARY, 15));
 		return mutation;
 	}
 

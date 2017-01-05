@@ -13,14 +13,14 @@ import java.util.Collection;
 /**
  *
  */
-public class Testfall_ASIV_05 extends AbstractASIVTestfall {
+public class Testfall_ASIV_09 extends AbstractASIVTestfall {
 
-	public Testfall_ASIV_05(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
+	public Testfall_ASIV_09(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
 							boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 
-	public Testfall_ASIV_05(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList) {
+	public Testfall_ASIV_09(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList) {
 		super(gesuchsperiode, institutionStammdatenList, false);
 	}
 
@@ -54,8 +54,8 @@ public class Testfall_ASIV_05 extends AbstractASIVTestfall {
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
 		// Einkommensverschlechterug
-		EinkommensverschlechterungContainer ekvContainer = createEinkommensverschlechterungContainer(erstgesuch, LocalDate.of(2016, Month.OCTOBER, 1), null);
-		ekvContainer.getEkvJABasisJahrPlus1().setNettolohnJan(MathUtil.DEFAULT.from(49000));
+		EinkommensverschlechterungContainer ekvContainer = createEinkommensverschlechterungContainer(erstgesuch, null, LocalDate.of(2017, Month.MARCH, 1));
+		ekvContainer.getEkvJABasisJahrPlus2().setNettolohnJan(MathUtil.DEFAULT.from(50000));
 		gesuchsteller1.setEinkommensverschlechterungContainer(ekvContainer);
 		return erstgesuch;
 	}
@@ -74,19 +74,19 @@ public class Testfall_ASIV_05 extends AbstractASIVTestfall {
 		finanzielleSituationContainerGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationContainerGS2);
         // Einkommensverschlechterug
-		EinkommensverschlechterungContainer ekvContainerGS2 = createEinkommensverschlechterungContainer(true, false);
-		ekvContainerGS2.getEkvJABasisJahrPlus1().setNettolohnJan(MathUtil.DEFAULT.from(30000));
+		EinkommensverschlechterungContainer ekvContainerGS2 = createEinkommensverschlechterungContainer(false, true);
+		ekvContainerGS2.getEkvJABasisJahrPlus2().setNettolohnJan(MathUtil.DEFAULT.from(29000));
 		gesuchsteller2.setEinkommensverschlechterungContainer(ekvContainerGS2);
 		return mutation;
 	}
 
 	@Override
 	public String getNachname() {
-		return "ASIV_5";
+		return "ASIV_9";
 	}
 
 	@Override
 	public String getVorname() {
-		return "Testfall 5";
+		return "Testfall 9";
 	}
 }
