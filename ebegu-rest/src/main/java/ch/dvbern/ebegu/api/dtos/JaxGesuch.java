@@ -35,10 +35,8 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private String bemerkungen;
 
-	@Nullable
 	private int laufnummer;
 
-	@Nullable
 	private boolean hasFSDokument;
 
 
