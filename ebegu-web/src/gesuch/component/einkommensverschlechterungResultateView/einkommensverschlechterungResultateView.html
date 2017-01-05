@@ -191,11 +191,11 @@
                             <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group">
                                     <label class="md-no-float" data-translate="EVK_EINKOMMEN_JAHR"
-                                           translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()-1}"
+                                           translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"
                                            for="massgebendesEinkommenVJ"></label>
                                     <input id="massgebendesEinkommenVJ" type="text" name="massgebendesEinkommenVJ"
                                            ui-number-mask="0"
-                                           ng-model="vm.resultatVorjahr.massgebendesEinkVorAbzFamGr"
+                                           ng-model="vm.resultatBasisjahr.massgebendesEinkVorAbzFamGr"
                                            dv-max-length max="999999999999" class="form-control" disabled>
                                 </dv-input-container>
                             </div>

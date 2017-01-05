@@ -103,7 +103,7 @@ export class AbwesenheitViewController extends AbstractGesuchViewController<Arra
     }
 
     public save(): IPromise<Array<TSBetreuung>> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.errorService.clearAll();
             if (!this.form.$dirty && !this.removed) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the

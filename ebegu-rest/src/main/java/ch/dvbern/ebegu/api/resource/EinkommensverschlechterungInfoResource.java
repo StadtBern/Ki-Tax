@@ -68,8 +68,7 @@ public class EinkommensverschlechterungInfoResource {
 				Optional<EinkommensverschlechterungInfoContainer> optional = einkommensverschlechterungInfoService.
 					findEinkommensverschlechterungInfo(jaxEinkommensverschlechterungInfoContainer.getId());
 				ekviToMerge = optional.orElse(new EinkommensverschlechterungInfoContainer());
-				oldEVData = new EinkommensverschlechterungInfoContainer();
-				ekviToMerge.copyForMutation(oldEVData); //wir muessen uns merken wie die Daten vorher waren damit wir nachher vergleichen koennen
+				oldEVData = new EinkommensverschlechterungInfoContainer(ekviToMerge); //wir muessen uns merken wie die Daten vorher waren damit wir nachher vergleichen koennen
 			}
 			EinkommensverschlechterungInfoContainer convertedEkvi = converter
 				.einkommensverschlechterungInfoContainerToEntity(jaxEinkommensverschlechterungInfoContainer, ekviToMerge);

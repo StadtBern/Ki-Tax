@@ -112,6 +112,9 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = false)
 	private int laufnummer = 0;
 
+	@Column(nullable = false)
+	private boolean hasFSDokument = true;
+
 
 	public Gesuch() {
 	}
@@ -270,6 +273,14 @@ public class Gesuch extends AbstractEntity {
 
 	public void setLaufnummer(int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	public boolean isHasFSDokument() {
+		return hasFSDokument;
+	}
+
+	public void setHasFSDokument(boolean hasFSDokument) {
+		this.hasFSDokument = hasFSDokument;
 	}
 
 	@Nullable

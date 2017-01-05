@@ -20,6 +20,7 @@ import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintImpl;
 import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+import com.google.common.io.ByteStreams;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -94,16 +95,13 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 	@Override
 	public byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) throws MergeDocException {
 
-		DOCXMergeEngine docxME;
 		EbeguVorlageKey vorlageKey;
 
 		switch (mahnung.getMahnungTyp()) {
 			case ERSTE_MAHNUNG:
-				docxME = new DOCXMergeEngine("ErsteMahnung");
 				vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_1;
 				break;
 			case ZWEITE_MAHNUNG:
-				docxME = new DOCXMergeEngine("ZweiteMahnung");
 				vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_2;
 				break;
 			default:
@@ -117,10 +115,10 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
 			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				docxME.getDocument(is, new MahnungPrintMergeSource(new MahnungPrintImpl(mahnung, vorgaengerMahnung))));
+				ByteStreams.toByteArray(is), new MahnungPrintMergeSource(new MahnungPrintImpl(mahnung, vorgaengerMahnung)));
 			is.close();
 			return bytes;
-		} catch (IOException | DocTemplateException e) {
+		} catch (IOException e) {
 			throw new MergeDocException("generateMahnung()",
 				"Bei der Generierung der Mahnung ist ein Fehler aufgetreten", e, new Objects[]{});
 		}

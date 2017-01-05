@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
@@ -68,13 +67,8 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		removeEinkommensverschlechterungFromGesuchsteller(gesuch.getGesuchsteller1(), oldEVData, convertedEkvi);
 		removeEinkommensverschlechterungFromGesuchsteller(gesuch.getGesuchsteller2(), oldEVData, convertedEkvi);
 
-		EinkommensverschlechterungInfo oldEKI= null;
-		if (oldEVData != null) {
-			oldEKI = oldEVData.getEinkommensverschlechterungInfoJA();
-		}
-
-		wizardStepService.updateSteps(gesuch.getId(), oldEKI,
-			convertedEkvi.getEinkommensverschlechterungInfoJA(), WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+		wizardStepService.updateSteps(gesuch.getId(), oldEVData,
+			convertedEkvi, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 
 		return convertedEkvi;
 	}

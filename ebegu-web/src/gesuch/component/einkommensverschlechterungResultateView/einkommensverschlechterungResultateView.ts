@@ -29,7 +29,7 @@ export class EinkommensverschlechterungResultateViewComponentConfig implements I
 export class EinkommensverschlechterungResultateViewController extends AbstractGesuchViewController<TSFinanzModel> {
 
 
-    resultatVorjahr: TSFinanzielleSituationResultateDTO;
+    resultatBasisjahr: TSFinanzielleSituationResultateDTO;
     resultatProzent: string;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
@@ -46,7 +46,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         this.gesuchModelManager.setBasisJahrPlusNumber(parsedBasisJahrPlusNum);
         this.initViewModel();
         this.calculate();
-        this.resultatVorjahr = null;
+        this.resultatBasisjahr = null;
         this.calculateResultateVorjahr();
     }
 
@@ -80,7 +80,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     private save(): IPromise<void> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             //todo team refactoren so dass nur eine resource methode aufgerufen wird (fuer transaktionssicherzheit)
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
@@ -190,17 +190,10 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     public calculateResultateVorjahr() {
 
-        if (this.model.getBasisJahrPlus() === 2) {
-            this.berechnungsManager.calculateEinkommensverschlechterungTemp(this.model, 1).then((resultatVorjahr) => {
-                this.resultatVorjahr = resultatVorjahr;
-                this.resultatProzent = this.calculateVeraenderung();
-            });
-        } else {
-            this.berechnungsManager.calculateFinanzielleSituationTemp(this.model).then((resultatVorjahr) => {
-                this.resultatVorjahr = resultatVorjahr;
-                this.resultatProzent = this.calculateVeraenderung();
-            });
-        }
+        this.berechnungsManager.calculateFinanzielleSituationTemp(this.model).then((resultatVorjahr) => {
+            this.resultatBasisjahr = resultatVorjahr;
+            this.resultatProzent = this.calculateVeraenderung();
+        });
     }
 
 
@@ -209,13 +202,13 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
      * @returns {string} Veraenderung im Prozent im vergleich zum Vorjahr
      */
     public calculateVeraenderung(): string {
-        if (this.resultatVorjahr) {
+        if (this.resultatBasisjahr) {
 
             let massgebendesEinkVorAbzFamGr = this.getResultate().massgebendesEinkVorAbzFamGr;
-            let massgebendesEinkVorAbzFamGrVJ = this.resultatVorjahr.massgebendesEinkVorAbzFamGr;
-            if (massgebendesEinkVorAbzFamGr && massgebendesEinkVorAbzFamGrVJ) {
+            let massgebendesEinkVorAbzFamGrBJ = this.resultatBasisjahr.massgebendesEinkVorAbzFamGr;
+            if (massgebendesEinkVorAbzFamGr && massgebendesEinkVorAbzFamGrBJ) {
 
-                let promil: number = 1000 - (massgebendesEinkVorAbzFamGr * 1000 / massgebendesEinkVorAbzFamGrVJ);
+                let promil: number = 1000 - (massgebendesEinkVorAbzFamGr * 1000 / massgebendesEinkVorAbzFamGrBJ);
                 let sign: string;
                 promil = Math.round(promil);
                 if (promil > 0) {
@@ -224,7 +217,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
                     sign = '+ ';
                 }
                 return sign + Math.abs(Math.floor(promil / 10)) + '.' + Math.abs(promil % 10) + ' %';
-            } else if (!massgebendesEinkVorAbzFamGr && !massgebendesEinkVorAbzFamGrVJ) {
+            } else if (!massgebendesEinkVorAbzFamGr && !massgebendesEinkVorAbzFamGrBJ) {
                 // case: Kein Einkommen in diesem Jahr und im letzten Jahr
                 return '+ 0 %';
             } else if (!massgebendesEinkVorAbzFamGr) {

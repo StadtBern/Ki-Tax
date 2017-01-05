@@ -66,7 +66,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
     }
 
     save(): IPromise<TSKindContainer> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.gesuchModelManager.setKindToWorkWith(this.model);
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
