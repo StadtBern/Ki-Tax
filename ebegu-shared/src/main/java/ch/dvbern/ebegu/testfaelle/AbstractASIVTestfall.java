@@ -17,6 +17,8 @@ public abstract class AbstractASIVTestfall extends AbstractTestfall {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 
+	public abstract Gesuch createMutation(Gesuch erstgesuch);
+
 	protected Gesuch createAlleinerziehend(Gesuch gesuch, LocalDate ereignisdatum) {
 		// Familiensituation
 		Familiensituation familiensituation = new Familiensituation();

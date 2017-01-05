@@ -66,22 +66,13 @@ public class Testfall_ASIV_02 extends AbstractASIVTestfall {
 	}
 
 	public Gesuch createMutation(Gesuch erstgesuch) {
-		// Gesuch, Gesuchsteller
 		Gesuch mutation = createAlleinerziehend(erstgesuch, LocalDate.of(2016, Month.OCTOBER, 15));
-		// Erwerbspensum
-//		ErwerbspensumContainer erwerbspensum = createErwerbspensum(100, 0);
-//		gesuchsteller2.addErwerbspensumContainer(erwerbspensum);
-		// Finanzielle Situation
-//		FinanzielleSituationContainer finanzielleSituationContainerGS2 = createFinanzielleSituationContainer();
-//		finanzielleSituationContainerGS2.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(30000));
-//		finanzielleSituationContainerGS2.setGesuchsteller(gesuchsteller2);
-//		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationContainerGS2);
 		return mutation;
 	}
 
 	@Override
 	public String getNachname() {
-		return "ASIV";
+		return "ASIV_2";
 	}
 
 	@Override

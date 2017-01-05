@@ -78,7 +78,7 @@ public class Testfall_ASIV_08 extends AbstractASIVTestfall {
 
 	@Override
 	public String getNachname() {
-		return "ASIV";
+		return "ASIV_8";
 	}
 
 	@Override
