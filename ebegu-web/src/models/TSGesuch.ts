@@ -7,7 +7,7 @@ import TSGesuchstellerContainer from './TSGesuchstellerContainer';
 import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from './TSFamiliensituationContainer';
 import {TSEingangsart} from './enums/TSEingangsart';
-import {isSchulamt} from "./enums/TSBetreuungsangebotTyp";
+import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -18,6 +18,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
     private _bemerkungen: string;
     private _laufnummer: number;
+    private _hasFSDokument: boolean;
 
 
     public get gesuchsteller1(): TSGesuchstellerContainer {
@@ -74,6 +75,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set laufnummer(value: number) {
         this._laufnummer = value;
+    }
+
+    get hasFSDokument(): boolean {
+        return this._hasFSDokument;
+    }
+
+    set hasFSDokument(value: boolean) {
+        this._hasFSDokument = value;
     }
 
     public isMutation(): boolean {
