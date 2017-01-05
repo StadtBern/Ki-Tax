@@ -15,6 +15,7 @@ export default class TSEinkommensverschlechterung extends TSAbstractFinanzielleS
     private _nettolohnNov: number;
     private _nettolohnDez: number;
     private _nettolohnZus: number;
+    private _geschaeftsgewinnBasisjahrMinus1: number;
 
     constructor(steuerveranlagungErhalten?: boolean, steuererklaerungAusgefuellt?: boolean,
                 nettolohnJan?: number, nettolohnFeb?: number, nettolohnMrz?: number,
@@ -23,7 +24,7 @@ export default class TSEinkommensverschlechterung extends TSAbstractFinanzielleS
                 nettolohnOkt?: number, nettolohnNov?: number, nettolohnDez?: number,
                 nettolohnZus?: number,
                 familienzulage?: number, ersatzeinkommen?: number, erhalteneAlimente?: number, bruttovermoegen?: number,
-                schulden?: number, geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number) {
+                schulden?: number, geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number, geschaeftsgewinnBasisjahrMinus1?: number) {
         super(steuerveranlagungErhalten, steuererklaerungAusgefuellt,
             familienzulage, ersatzeinkommen, erhalteneAlimente, bruttovermoegen,
             schulden, geschaeftsgewinnBasisjahr, geleisteteAlimente);
@@ -41,6 +42,7 @@ export default class TSEinkommensverschlechterung extends TSAbstractFinanzielleS
         this._nettolohnNov = nettolohnNov;
         this._nettolohnDez = nettolohnDez;
         this._nettolohnZus = nettolohnZus;
+        this._geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
     }
 
 
@@ -140,12 +142,19 @@ export default class TSEinkommensverschlechterung extends TSAbstractFinanzielleS
         this._nettolohnDez = value;
     }
 
-
     get nettolohnZus(): number {
         return this._nettolohnZus;
     }
 
     set nettolohnZus(value: number) {
         this._nettolohnZus = value;
+    }
+
+    get geschaeftsgewinnBasisjahrMinus1(): number {
+        return this._geschaeftsgewinnBasisjahrMinus1;
+    }
+
+    set geschaeftsgewinnBasisjahrMinus1(value: number) {
+        this._geschaeftsgewinnBasisjahrMinus1 = value;
     }
 }

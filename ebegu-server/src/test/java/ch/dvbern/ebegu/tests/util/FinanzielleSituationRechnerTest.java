@@ -31,7 +31,7 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 	private static final BigDecimal EINKOMMEN_EKV_ABGELEHNT = new BigDecimal("80001");
 	private static final BigDecimal EINKOMMEN_EKV_ANGENOMMEN = new BigDecimal("80000");
 	private static final BigDecimal EINKOMMEN_EKV2_ANGENOMMEN = new BigDecimal("50000");
-	private static final BigDecimal EINKOMMEN_EKV2_ABGELEHNT = new BigDecimal("64001");
+	private static final BigDecimal EINKOMMEN_EKV2_ABGELEHNT = new BigDecimal("80002");
 	private static final double DELTA = 1e-15;
 	public static final LocalDate DATE_2005 = LocalDate.of(2005, 12, 31);
 

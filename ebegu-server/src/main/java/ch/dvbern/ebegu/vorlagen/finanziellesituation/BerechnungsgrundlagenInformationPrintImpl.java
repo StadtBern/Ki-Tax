@@ -56,20 +56,22 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 
 		if (fG1.getEinkommensverschlechterungInfo() != null && fG1.getEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
 			// Einkommensverschleschtereung Jahr 1
-			String einkommensverschlechterungJahr1;
-			String ereigniseintritt1 = "";
-			if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1() != null) {
-				einkommensverschlechterungJahr1 = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
-				ereigniseintritt1 = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1());
+			if (fG1.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
+				String einkommensverschlechterungJahr1;
+				String ereigniseintritt1 = "";
+				if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1() != null) {
+					einkommensverschlechterungJahr1 = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
+					ereigniseintritt1 = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1());
+				}
+				else {
+					einkommensverschlechterungJahr1 = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear());
+				}
+				String grundEv1 = fG1.getEinkommensverschlechterungInfo().getGrundFuerBasisJahrPlus1();
+				ev1 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr1, ereigniseintritt1, grundEv1, 1);
 			}
-			else {
-				einkommensverschlechterungJahr1 = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear());
-			}
-			String grundEv1 = fG1.getEinkommensverschlechterungInfo().getGrundFuerBasisJahrPlus1();
-			ev1 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr1, ereigniseintritt1, grundEv1, 1);
 
 			// Einkommensverschleschtereung Jahr 2
-			if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2() != null) {
+			if (fG1.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
 				String einkommensverschlechterungJahr2;
 				String ereigniseintritt2 = "";
 				if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2() != null) {
