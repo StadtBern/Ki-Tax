@@ -41,7 +41,13 @@ export class DVBarcodeController {
 
         if (authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
 
+            console.log("Barcode listener authenticated.");
+
             $document.bind('keypress', (e) => {
+
+                console.log("Barcode listener keypress fired.");
+
+                console.log(e);
 
                 if (this.barcodeReading) {
                     e.preventDefault();
