@@ -54,6 +54,9 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
 	private int bgPensum; //min von anspruchberechtigtesPensum und betreuungspensum
 
+	private Integer einkommensjahr;
+
+
 	public int getBgPensum() {
 		return bgPensum;
 	}
@@ -196,5 +199,13 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
 	public void setFamGroesse(BigDecimal famGroesse) {
 		this.famGroesse = famGroesse;
+	}
+
+	public Integer getEinkommensjahr() {
+		return einkommensjahr;
+	}
+
+	public void setEinkommensjahr(Integer einkommensjahr) {
+		this.einkommensjahr = einkommensjahr;
 	}
 }

@@ -98,8 +98,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Column(nullable = true)
 	private BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
 
-	@Column(nullable = true)
-	private int einkommensjahr;
+	@NotNull
+	@Column(nullable = false)
+	private Integer einkommensjahr;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -316,11 +317,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.famGroesse = famGroesse;
 	}
 
-	public int getEinkommensjahr() {
+	public Integer getEinkommensjahr() {
 		return einkommensjahr;
 	}
 
-	public void setEinkommensjahr(int einkommensjahr) {
+	public void setEinkommensjahr(Integer einkommensjahr) {
 		this.einkommensjahr = einkommensjahr;
 	}
 
@@ -387,7 +388,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			Validate.isTrue(this.getFamGroesse() == null, "Familiengoressen kann nicht gemerged werden");
 			this.setFamGroesse(other.getFamGroesse());
 		}
-		if (other.getEinkommensjahr() != 0) {
+		if (other.getEinkommensjahr() != null) {
 			this.setEinkommensjahr(other.getEinkommensjahr());
 		}
 	}
@@ -497,7 +498,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			bezahltVollkosten == that.bezahltVollkosten &&
 			longAbwesenheit == that.longAbwesenheit &&
 			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten &&
-			this.einkommensjahr == that.einkommensjahr;
+			Objects.equals(this.einkommensjahr, that.einkommensjahr);
 	}
 
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
@@ -519,7 +520,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(famGroesse.compareTo(that.famGroesse) == 0) &&
 			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
 			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0 &&
-			this.einkommensjahr == that.einkommensjahr;
+			Objects.equals(this.einkommensjahr, that.einkommensjahr);
 	}
 
 	/**
