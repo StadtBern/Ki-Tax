@@ -16,8 +16,6 @@ import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
-import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrint;
-import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrintImpl;
 
 import java.util.ArrayList;
 import java.util.List;
