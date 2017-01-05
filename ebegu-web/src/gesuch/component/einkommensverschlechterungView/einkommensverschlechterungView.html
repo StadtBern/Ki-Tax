@@ -383,8 +383,8 @@
                             </div>
                         </div>
 
-                        <!-- Geschäftsgewinn Basisjahr-1 -->
-                        <div class="row">
+                        <!-- Geschäftsgewinn Basisjahr-1 - disabled only show value vor bj-1-->
+                        <div class="row" ng-if="!vm.enableGeschaeftsgewinnBasisjahrMinus1()">
                             <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group">
                                     <label class="md-no-float"
@@ -396,6 +396,30 @@
                                            ng-model="vm.geschaeftsgewinnBasisjahrMinus1"
                                            dv-max-length max="999999999999" class="form-control" disabled
                                            ui-negative-number>
+                                    <dv-bisher
+                                        gs="vm.geschaeftsgewinnBasisjahrMinus1GS"
+                                        ja="vm.geschaeftsgewinnBasisjahrMinus1"
+                                        show-if-bisher-none="false"
+                                        block-existed="vm.showSelbstaendigGS === true"></dv-bisher>
+                                    <dv-error-messages for="vm.form.geschaeftsgewinnBasisjahrMinus1.$error"
+                                                       class="error"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
+
+                        <!-- Geschäftsgewinn Basisjahr-1  - geschaeftsgewinnBasisjahrMinus1 -->
+                        <div class="row" ng-if="vm.enableGeschaeftsgewinnBasisjahrMinus1()">
+                            <div class="col-sm-12 dv-input-container-small">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float"
+                                           data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS1"
+                                           for="geschaeftsgewinnBasisjahrMinus1"
+                                           translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith() - 1}}}"></label>
+                                    <input id="geschaeftsgewinnBasisjahrMinus1" type="text" name="geschaeftsgewinnBasisjahrMinus1"
+                                           ui-number-mask="0"
+                                           ng-model="vm.model.getEkvToWorkWith().geschaeftsgewinnBasisjahrMinus1"
+                                           ng-blur="vm.calculate()"
+                                           dv-max-length max="999999999999" class="form-control" ui-negative-number>
                                     <dv-bisher
                                         gs="vm.geschaeftsgewinnBasisjahrMinus1GS"
                                         ja="vm.geschaeftsgewinnBasisjahrMinus1"
@@ -480,7 +504,7 @@
 
                 </fieldset>
                 <!-- -------------------------------------------Navigation--------------------------------------------  -->
-                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save()" dv-sub-step="2">
+                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save()" dv-sub-step="3">
                 </dv-navigation>
             </form>
         </div>
