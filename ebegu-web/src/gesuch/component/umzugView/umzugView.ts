@@ -59,7 +59,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
     }
 
     public save(): IPromise<TSGesuchstellerContainer> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             if (!this.form.$dirty && !this.dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately

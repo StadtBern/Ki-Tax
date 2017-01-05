@@ -34,6 +34,7 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 			// Abschnitt Finanzielle Situation (Massgebendes Einkommen fuer die Gesuchsperiode)
 			VerfuegungZeitabschnitt abschnittFinanzielleSituation = new VerfuegungZeitabschnitt(betreuung.extractGesuchsperiode().getGueltigkeit());
 			abschnittFinanzielleSituation.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
+			abschnittFinanzielleSituation.setEinkommensjahr(betreuung.extractGesuchsperiode().getBasisJahr());
 			einkommensAbschnitte.add(abschnittFinanzielleSituation);
 			lastAbschnitt = abschnittFinanzielleSituation;
 
@@ -42,22 +43,24 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 				DateRange rangeEKV1 = new DateRange(finanzDatenDTO.getDatumVonBasisjahrPlus1(), betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 				VerfuegungZeitabschnitt abschnittEinkommensverschlechterung1 = new VerfuegungZeitabschnitt(rangeEKV1);
 				abschnittEinkommensverschlechterung1.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP1VorAbzFamGr());
+				abschnittEinkommensverschlechterung1.setEinkommensjahr(finanzDatenDTO.getDatumVonBasisjahrPlus1().getYear());
 				einkommensAbschnitte.add(abschnittEinkommensverschlechterung1);
 				// Den vorherigen Zeitabschnitt beenden
 				lastAbschnitt.getGueltigkeit().endOnDayBefore(abschnittEinkommensverschlechterung1.getGueltigkeit());
 				lastAbschnitt = abschnittEinkommensverschlechterung1;
 			}
-			createBemerkungEVK1(lastAbschnitt,finanzDatenDTO, betreuung);
+			createBemerkungEVK1(lastAbschnitt, finanzDatenDTO, betreuung);
 			// Einkommensverschlechterung 2
 			if (finanzDatenDTO.getDatumVonBasisjahrPlus2() != null) {
 				DateRange rangeEKV2 = new DateRange(finanzDatenDTO.getDatumVonBasisjahrPlus2(), betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 				VerfuegungZeitabschnitt abschnittEinkommensverschlechterung2 = new VerfuegungZeitabschnitt(rangeEKV2);
 				abschnittEinkommensverschlechterung2.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP2VorAbzFamGr());
+				abschnittEinkommensverschlechterung2.setEinkommensjahr(finanzDatenDTO.getDatumVonBasisjahrPlus2().getYear());
 				einkommensAbschnitte.add(abschnittEinkommensverschlechterung2);
 				// Den vorherigen Zeitabschnitt beenden
 				lastAbschnitt.getGueltigkeit().endOnDayBefore(abschnittEinkommensverschlechterung2.getGueltigkeit());
 			}
-			createBemerkungEVK2(lastAbschnitt,finanzDatenDTO, betreuung);
+			createBemerkungEVK2(lastAbschnitt, finanzDatenDTO, betreuung);
 		}
 		return einkommensAbschnitte;
 	}
@@ -82,8 +85,8 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 		} else {
 			//ekv2 wurde nicht akzeptiert
 			if (betreuung.extractGesuch().extractEinkommensverschlechterungInfo() != null
-				&&betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null
-				&&  betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
+				&& betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null
+				&& betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
 				lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_NOT_ACCEPT_MSG);
 			}
 		}

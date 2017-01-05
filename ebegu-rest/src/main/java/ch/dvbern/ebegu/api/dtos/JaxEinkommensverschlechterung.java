@@ -55,6 +55,9 @@ public class JaxEinkommensverschlechterung extends JaxAbstractFinanzielleSituati
 	private BigDecimal nettolohnZus;
 
 	@Nullable
+	private BigDecimal geschaeftsgewinnBasisjahrMinus1;
+
+	@Nullable
 	public BigDecimal getNettolohnJan() {
 		return nettolohnJan;
 	}
@@ -169,5 +172,14 @@ public class JaxEinkommensverschlechterung extends JaxAbstractFinanzielleSituati
 
 	public void setNettolohnZus(@Nullable BigDecimal nettolohnZus) {
 		this.nettolohnZus = nettolohnZus;
+	}
+
+	@Nullable
+	public BigDecimal getGeschaeftsgewinnBasisjahrMinus1() {
+		return geschaeftsgewinnBasisjahrMinus1;
+	}
+
+	public void setGeschaeftsgewinnBasisjahrMinus1(@Nullable BigDecimal geschaeftsgewinnBasisjahrMinus1) {
+		this.geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
 	}
 }

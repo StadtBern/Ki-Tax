@@ -38,6 +38,9 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private int laufnummer;
 
+	@Nullable
+	private boolean hasFSDokument;
+
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -105,5 +108,13 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		this.laufnummer = laufnummer;
 	}
 
+	@Nullable
+	public boolean isHasFSDokument() {
+		return hasFSDokument;
+	}
+
+	public void setHasFSDokument(@Nullable boolean hasFSDokument) {
+		this.hasFSDokument = hasFSDokument;
+	}
 }
 

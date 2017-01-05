@@ -182,6 +182,15 @@ export default class GesuchModelManager {
         return this.getEkvFuerBasisJahrPlus(2);
     }
 
+    public isRequiredEKV_GS_BJ(gs: number, bj: number): boolean {
+        if (gs === 2) {
+            return this.getEkvFuerBasisJahrPlus(bj) && this.isGesuchsteller2Required();
+        } else {
+            return this.getEkvFuerBasisJahrPlus(bj);
+        }
+
+    }
+
     public getFamiliensituation(): TSFamiliensituation {
         if (this.gesuch) {
             return this.gesuch.extractFamiliensituation();
@@ -197,8 +206,8 @@ export default class GesuchModelManager {
     }
 
     public updateFachstellenList(): void {
-        this.fachstelleRS.getAllFachstellen().then((response: any) => {
-            this.fachstellenList = angular.copy(response);
+        this.fachstelleRS.getAllFachstellen().then((response: TSFachstelle[]) => {
+            this.fachstellenList = response;
         });
     }
 
@@ -206,8 +215,8 @@ export default class GesuchModelManager {
      * Retrieves the list of InstitutionStammdaten for the date of today.
      */
     public updateActiveInstitutionenList(): void {
-        this.instStamRS.getAllActiveInstitutionStammdatenByDate(DateUtil.today()).then((response: any) => {
-            this.activInstitutionenList = angular.copy(response);
+        this.instStamRS.getAllActiveInstitutionStammdatenByDate(DateUtil.today()).then((response: TSInstitutionStammdaten[]) => {
+            this.activInstitutionenList = response;
         });
     }
 
@@ -375,7 +384,7 @@ export default class GesuchModelManager {
         }
     }
 
-    private getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
+    public getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
         if (!this.gesuch.extractEinkommensverschlechterungInfo()) {
             this.initEinkommensverschlechterungInfo();
         }

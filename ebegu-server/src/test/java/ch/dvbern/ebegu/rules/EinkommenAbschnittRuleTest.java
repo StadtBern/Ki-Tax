@@ -23,7 +23,7 @@ public class EinkommenAbschnittRuleTest {
 	private static final BigDecimal EINKOMMEN_EKV_ABGELEHNT = new BigDecimal("80001");
 	private static final BigDecimal EINKOMMEN_EKV_ANGENOMMEN = new BigDecimal("80000");
 	private static final BigDecimal EINKOMMEN_EKV2_ANGENOMMEN = new BigDecimal("50000");
-	private static final BigDecimal EINKOMMEN_EKV2_ABGELEHNT = new BigDecimal("64001");
+	private static final BigDecimal EINKOMMEN_EKV2_ABGELEHNT = new BigDecimal("80002");
 
 	private final EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 

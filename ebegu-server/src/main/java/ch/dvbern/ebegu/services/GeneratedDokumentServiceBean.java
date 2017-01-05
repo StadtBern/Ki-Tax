@@ -56,9 +56,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private FileSaverService fileSaverService;
 
 	@Inject
-	private PrintFinanzielleSituationPDFService printFinanzielleSituationPDFService;
-
-	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
 
 	@Inject
@@ -186,7 +183,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
 				final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
 				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
-				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, famGroessenVerfuegung);
+				data = pdfService.generateFinanzielleSituation(gesuch, famGroessenVerfuegung);
 			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = pdfService.generateBegleitschreiben(gesuch);
 			} else {
