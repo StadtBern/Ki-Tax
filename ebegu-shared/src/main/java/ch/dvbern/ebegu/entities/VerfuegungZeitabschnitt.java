@@ -73,16 +73,28 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	private boolean hasSecondGesuchsteller;
 
 	@Transient
-	private BigDecimal massgebendesEinkommenVorAbzugFamgr_alleine = ZERO;
+	private boolean ekv1_alleine;
 
 	@Transient
-	private BigDecimal massgebendesEinkommenVorAbzugFamgr_zuZweit = ZERO;
+	private boolean ekv1_zuZweit;
 
 	@Transient
-	private int einkommensjahr_alleine;
+	private boolean ekv2_alleine;
 
 	@Transient
-	private int einkommensjahr_zuZweit;
+	private boolean ekv2_zuZweit;
+
+	@Transient
+	private boolean ekv1_alleine_notAccepted;
+
+	@Transient
+	private boolean ekv2_alleine_notAccepted;
+
+	@Transient
+	private boolean ekv1_zuZweit_notAccepted;
+
+	@Transient
+	private boolean ekv2_zuZweit_notAccepted;
 
 
 	@Max(100)
@@ -155,12 +167,16 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.abzugFamGroesse = toCopy.abzugFamGroesse;
 		this.famGroesse = toCopy.famGroesse;
 		this.massgebendesEinkommenVorAbzugFamgr = toCopy.massgebendesEinkommenVorAbzugFamgr;
-		this.massgebendesEinkommenVorAbzugFamgr_alleine = toCopy.massgebendesEinkommenVorAbzugFamgr_alleine;
-		this.massgebendesEinkommenVorAbzugFamgr_zuZweit = toCopy.massgebendesEinkommenVorAbzugFamgr_zuZweit;
 		this.hasSecondGesuchsteller = toCopy.hasSecondGesuchsteller;
 		this.einkommensjahr = toCopy.einkommensjahr;
-		this.einkommensjahr_alleine = toCopy.einkommensjahr_alleine;
-		this.einkommensjahr_zuZweit = toCopy.einkommensjahr_zuZweit;
+		this.ekv1_alleine = toCopy.ekv1_alleine;
+		this.ekv1_zuZweit = toCopy.ekv1_zuZweit;
+		this.ekv2_alleine = toCopy.ekv2_alleine;
+		this.ekv2_zuZweit = toCopy.ekv2_zuZweit;
+		this.ekv1_alleine_notAccepted = toCopy.ekv1_alleine_notAccepted;
+		this.ekv1_zuZweit_notAccepted = toCopy.ekv1_zuZweit_notAccepted;
+		this.ekv2_alleine_notAccepted = toCopy.ekv2_alleine_notAccepted;
+		this.ekv2_zuZweit_notAccepted = toCopy.ekv2_zuZweit_notAccepted;
 		this.bemerkungen = toCopy.bemerkungen;
 		this.verfuegung = null;
 	}
@@ -265,22 +281,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr;
 	}
 
-	public BigDecimal getMassgebendesEinkommenVorAbzugFamgr_alleine() {
-		return massgebendesEinkommenVorAbzugFamgr_alleine;
-	}
-
-	public void setMassgebendesEinkommenVorAbzugFamgr_alleine(BigDecimal massgebendesEinkommenVorAbzugFamgr_alleine) {
-		this.massgebendesEinkommenVorAbzugFamgr_alleine = massgebendesEinkommenVorAbzugFamgr_alleine;
-	}
-
-	public BigDecimal getMassgebendesEinkommenVorAbzugFamgr_zuZweit() {
-		return massgebendesEinkommenVorAbzugFamgr_zuZweit;
-	}
-
-	public void setMassgebendesEinkommenVorAbzugFamgr_zuZweit(BigDecimal massgebendesEinkommenVorAbzugFamgr_zuZweit) {
-		this.massgebendesEinkommenVorAbzugFamgr_zuZweit = massgebendesEinkommenVorAbzugFamgr_zuZweit;
-	}
-
 	public boolean isHasSecondGesuchsteller() {
 		return hasSecondGesuchsteller;
 	}
@@ -370,20 +370,68 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.einkommensjahr = einkommensjahr;
 	}
 
-	public int getEinkommensjahr_alleine() {
-		return einkommensjahr_alleine;
+	public boolean isEkv1_alleine() {
+		return ekv1_alleine;
 	}
 
-	public void setEinkommensjahr_alleine(int einkommensjahr_alleine) {
-		this.einkommensjahr_alleine = einkommensjahr_alleine;
+	public void setEkv1_alleine(boolean ekv1_alleine) {
+		this.ekv1_alleine = ekv1_alleine;
 	}
 
-	public int getEinkommensjahr_zuZweit() {
-		return einkommensjahr_zuZweit;
+	public boolean isEkv1_zuZweit() {
+		return ekv1_zuZweit;
 	}
 
-	public void setEinkommensjahr_zuZweit(int einkommensjahr_zuZweit) {
-		this.einkommensjahr_zuZweit = einkommensjahr_zuZweit;
+	public void setEkv1_zuZweit(boolean ekv1_zuZweit) {
+		this.ekv1_zuZweit = ekv1_zuZweit;
+	}
+
+	public boolean isEkv2_alleine() {
+		return ekv2_alleine;
+	}
+
+	public void setEkv2_alleine(boolean ekv2_alleine) {
+		this.ekv2_alleine = ekv2_alleine;
+	}
+
+	public boolean isEkv2_zuZweit() {
+		return ekv2_zuZweit;
+	}
+
+	public void setEkv2_zuZweit(boolean ekv2_zuZweit) {
+		this.ekv2_zuZweit = ekv2_zuZweit;
+	}
+
+	public boolean isEkv1_alleine_notAccepted() {
+		return ekv1_alleine_notAccepted;
+	}
+
+	public void setEkv1_alleine_notAccepted(boolean ekv1_alleine_notAccepted) {
+		this.ekv1_alleine_notAccepted = ekv1_alleine_notAccepted;
+	}
+
+	public boolean isEkv2_alleine_notAccepted() {
+		return ekv2_alleine_notAccepted;
+	}
+
+	public void setEkv2_alleine_notAccepted(boolean ekv2_alleine_notAccepted) {
+		this.ekv2_alleine_notAccepted = ekv2_alleine_notAccepted;
+	}
+
+	public boolean isEkv1_zuZweit_notAccepted() {
+		return ekv1_zuZweit_notAccepted;
+	}
+
+	public void setEkv1_zuZweit_notAccepted(boolean ekv1_zuZweit_notAccepted) {
+		this.ekv1_zuZweit_notAccepted = ekv1_zuZweit_notAccepted;
+	}
+
+	public boolean isEkv2_zuZweit_notAccepted() {
+		return ekv2_zuZweit_notAccepted;
+	}
+
+	public void setEkv2_zuZweit_notAccepted(boolean ekv2_zuZweit_notAccepted) {
+		this.ekv2_zuZweit_notAccepted = ekv2_zuZweit_notAccepted;
 	}
 
 	/**
@@ -421,10 +469,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 		this.setMassgebendesEinkommenVorAbzugFamgr(MathUtil.DEFAULT.add(this.getMassgebendesEinkommenVorAbzFamgr(), other.getMassgebendesEinkommenVorAbzFamgr()));
 
-		this.setMassgebendesEinkommenVorAbzugFamgr_alleine(MathUtil.DEFAULT.add(this.getMassgebendesEinkommenVorAbzugFamgr_alleine(), other.getMassgebendesEinkommenVorAbzugFamgr_alleine()));
-
-		this.setMassgebendesEinkommenVorAbzugFamgr_zuZweit(MathUtil.DEFAULT.add(this.getMassgebendesEinkommenVorAbzugFamgr_zuZweit(), other.getMassgebendesEinkommenVorAbzugFamgr_zuZweit()));
-
 		this.addBemerkung(other.getBemerkungen());
 		this.setZuSpaetEingereicht(this.isZuSpaetEingereicht() || other.isZuSpaetEingereicht());
 
@@ -449,13 +493,16 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		if (other.getEinkommensjahr() != 0) {
 			this.setEinkommensjahr(other.getEinkommensjahr());
 		}
-		if (other.getEinkommensjahr_alleine() != 0) {
-			this.setEinkommensjahr_alleine(other.getEinkommensjahr_alleine());
-		}
-		if (other.getEinkommensjahr_zuZweit() != 0) {
-			this.setEinkommensjahr_zuZweit(other.getEinkommensjahr_zuZweit());
-		}
 		this.setHasSecondGesuchsteller(this.isHasSecondGesuchsteller() || other.isHasSecondGesuchsteller());
+
+		this.ekv1_alleine = (this.ekv1_alleine || other.ekv1_alleine);
+		this.ekv1_zuZweit = (this.ekv1_zuZweit || other.ekv1_zuZweit);
+		this.ekv2_alleine = (this.ekv2_alleine || other.ekv2_alleine);
+		this.ekv2_zuZweit = (this.ekv2_zuZweit || other.ekv2_zuZweit);
+		this.ekv1_alleine_notAccepted = (this.ekv1_alleine_notAccepted || other.ekv1_alleine_notAccepted);
+		this.ekv1_zuZweit_notAccepted = (this.ekv1_zuZweit_notAccepted || other.ekv1_zuZweit_notAccepted);
+		this.ekv2_alleine_notAccepted = (this.ekv2_alleine_notAccepted || other.ekv2_alleine_notAccepted);
+		this.ekv2_zuZweit_notAccepted = (this.ekv2_zuZweit_notAccepted || other.ekv2_zuZweit_notAccepted);
 	}
 
 	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey) {
@@ -559,16 +606,20 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(famGroesse, that.famGroesse) &&
 			Objects.equals(massgebendesEinkommenVorAbzugFamgr, that.massgebendesEinkommenVorAbzugFamgr) &&
-			Objects.equals(massgebendesEinkommenVorAbzugFamgr_alleine, that.massgebendesEinkommenVorAbzugFamgr_alleine) &&
-			Objects.equals(massgebendesEinkommenVorAbzugFamgr_zuZweit, that.massgebendesEinkommenVorAbzugFamgr_zuZweit) &&
 			(isWohnsitzNichtInGemeindeGS1() && isWohnsitzNichtInGemeindeGS2()) == (that.isWohnsitzNichtInGemeindeGS1() && that.isWohnsitzNichtInGemeindeGS2()) &&
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
 			bezahltVollkosten == that.bezahltVollkosten &&
 			longAbwesenheit == that.longAbwesenheit &&
 			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten &&
-			this.einkommensjahr_alleine == that.einkommensjahr_alleine &&
-			this.einkommensjahr_zuZweit == that.einkommensjahr_zuZweit &&
-			this.einkommensjahr == that.einkommensjahr;
+			this.einkommensjahr == that.einkommensjahr &&
+			this.ekv1_alleine == that.ekv1_alleine &&
+			this.ekv1_zuZweit == that.ekv1_zuZweit &&
+			this.ekv2_alleine == that.ekv2_alleine &&
+			this.ekv2_zuZweit == that.ekv2_zuZweit &&
+			this.ekv1_alleine_notAccepted == that.ekv1_alleine_notAccepted &&
+			this.ekv1_zuZweit_notAccepted == that.ekv1_zuZweit_notAccepted &&
+			this.ekv2_alleine_notAccepted == that.ekv2_alleine_notAccepted &&
+			this.ekv2_zuZweit_notAccepted == that.ekv2_zuZweit_notAccepted;
 	}
 
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {

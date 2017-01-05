@@ -21,9 +21,6 @@ import java.util.List;
  */
 public class ZivilstandsaenderungAbschnittRule extends AbstractAbschnittRule {
 
-	private final Logger LOG = LoggerFactory.getLogger(ZivilstandsaenderungAbschnittRule.class.getSimpleName());
-
-
 	public ZivilstandsaenderungAbschnittRule(DateRange validityPeriod) {
 		super(RuleKey.ZIVILSTANDSAENDERUNG, RuleType.GRUNDREGEL_DATA, validityPeriod);
 	}
@@ -35,25 +32,21 @@ public class ZivilstandsaenderungAbschnittRule extends AbstractAbschnittRule {
 		Gesuch gesuch = betreuung.extractGesuch();
 		final List<VerfuegungZeitabschnitt> zivilstandsaenderungAbschnitte = new ArrayList<>();
 
-		boolean hasChanged = false;
-		if (gesuch.extractFamiliensituation() != null && gesuch.extractFamiliensituation().getAenderungPer() != null) {
-			// Ueberpruefen, ob die Gesuchsteller-Kardinalität geändert hat. Nur dann muss evt. anders berechnet werden!
-			if (gesuch.extractFamiliensituation().hasSecondGesuchsteller() != gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller()) {
-				// Die Zivilstandsaenderung gilt ab anfang nächstem Monat
-				final LocalDate stichtag = gesuch.extractFamiliensituation().getAenderungPer().plusMonths(1).withDayOfMonth(1);
+		// Ueberpruefen, ob die Gesuchsteller-Kardinalität geändert hat. Nur dann muss evt. anders berechnet werden!
+		if (gesuch.extractFamiliensituation() != null && gesuch.extractFamiliensituation().getAenderungPer() != null &&
+			gesuch.extractFamiliensituation().hasSecondGesuchsteller() != gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller()) {
 
-				VerfuegungZeitabschnitt abschnittVorMutation = new VerfuegungZeitabschnitt(new DateRange(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), stichtag.minusDays(1)));
-				abschnittVorMutation.setHasSecondGesuchsteller(gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller());
-				zivilstandsaenderungAbschnitte.add(abschnittVorMutation);
+			// Die Zivilstandsaenderung gilt ab anfang nächstem Monat
+			final LocalDate stichtag = gesuch.extractFamiliensituation().getAenderungPer().plusMonths(1).withDayOfMonth(1);
 
-				VerfuegungZeitabschnitt abschnittNachMutation = new VerfuegungZeitabschnitt(new DateRange(stichtag, gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis()));
-				abschnittNachMutation.setHasSecondGesuchsteller(gesuch.extractFamiliensituation().hasSecondGesuchsteller());
-				zivilstandsaenderungAbschnitte.add(abschnittNachMutation);
+			VerfuegungZeitabschnitt abschnittVorMutation = new VerfuegungZeitabschnitt(new DateRange(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), stichtag.minusDays(1)));
+			abschnittVorMutation.setHasSecondGesuchsteller(gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller());
+			zivilstandsaenderungAbschnitte.add(abschnittVorMutation);
 
-				hasChanged = true;
-			}
-		}
-		if (!hasChanged) {
+			VerfuegungZeitabschnitt abschnittNachMutation = new VerfuegungZeitabschnitt(new DateRange(stichtag, gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis()));
+			abschnittNachMutation.setHasSecondGesuchsteller(gesuch.extractFamiliensituation().hasSecondGesuchsteller());
+			zivilstandsaenderungAbschnitte.add(abschnittNachMutation);
+		} else {
 			VerfuegungZeitabschnitt abschnittOhneMutation = new VerfuegungZeitabschnitt(gesuch.getGesuchsperiode().getGueltigkeit());
 			abschnittOhneMutation.setHasSecondGesuchsteller(gesuch.extractFamiliensituation().hasSecondGesuchsteller());
 			zivilstandsaenderungAbschnitte.add(abschnittOhneMutation);

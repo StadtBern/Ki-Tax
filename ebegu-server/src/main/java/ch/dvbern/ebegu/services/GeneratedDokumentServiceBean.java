@@ -208,7 +208,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 							}
 						);
 				}
-				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch, neustesVerfuegtesGesuchFuerGesuch.orElse(null));
+				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
 				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, famGroessenVerfuegung);
 			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);

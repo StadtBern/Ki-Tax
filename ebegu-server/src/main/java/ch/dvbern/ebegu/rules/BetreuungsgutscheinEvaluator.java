@@ -48,7 +48,7 @@ public class BetreuungsgutscheinEvaluator {
 	/**
 	 * Berechnet nur die Familiengroesse und Abzuege fuer den Print der Familiensituation, es muss min eine Betreuung existieren
 	 */
-	public Verfuegung evaluateFamiliensituation(Gesuch gesuch, Gesuch gesuchForMutation) {
+	public Verfuegung evaluateFamiliensituation(Gesuch gesuch) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
 		if (gesuch.getFinanzDatenDTO() == null) {

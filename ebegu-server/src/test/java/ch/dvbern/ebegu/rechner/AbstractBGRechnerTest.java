@@ -415,4 +415,40 @@ public class AbstractBGRechnerTest {
 		VerfuegungZeitabschnitt juli = verfuegung.getZeitabschnitte().get(12);
 		assertZeitabschnittFinanzdaten(juli, 120000, 2015, 11280, 108720, 3);
 	}
+
+	/**
+	 * hilfsmethode um den {@link ch.dvbern.ebegu.testfaelle.Testfall_ASIV_05} auf korrekte berechnung zu pruefen
+	 */
+	public static void checkTestfall_ASIV_05(Gesuch gesuch) {
+		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		Verfuegung verfuegung = betreuung.getVerfuegung();
+		System.out.println(verfuegung.toStringFinanzielleSituation());
+		// Vor EKV
+		VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
+		assertZeitabschnittFinanzdaten(august, 100000, 2015, 11280, 88720, 3);
+		// EKV
+		VerfuegungZeitabschnitt oktober = verfuegung.getZeitabschnitte().get(3);
+		assertZeitabschnittFinanzdaten(oktober, 71000, 2016, 11280, 59720, 3);
+		// Trennung
+		VerfuegungZeitabschnitt juli = verfuegung.getZeitabschnitte().get(12);
+		assertZeitabschnittFinanzdaten(juli, 49000, 2016, 0, 49000, 2);
+	}
+
+	/**
+	 * hilfsmethode um den {@link ch.dvbern.ebegu.testfaelle.Testfall_ASIV_06} auf korrekte berechnung zu pruefen
+	 */
+	public static void checkTestfall_ASIV_06(Gesuch gesuch) {
+		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		Verfuegung verfuegung = betreuung.getVerfuegung();
+		System.out.println(verfuegung.toStringFinanzielleSituation());
+		// Vor EKV
+		VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
+		assertZeitabschnittFinanzdaten(august, 100000, 2015, 11280, 88720, 3);
+		// EKV
+		VerfuegungZeitabschnitt oktober = verfuegung.getZeitabschnitte().get(3);
+		assertZeitabschnittFinanzdaten(oktober, 79000, 2016, 11280, 67720, 3);
+		// Trennung
+		VerfuegungZeitabschnitt juli = verfuegung.getZeitabschnitte().get(12);
+		assertZeitabschnittFinanzdaten(juli, 70000, 2015, 0, 70000, 2);
+	}
 }

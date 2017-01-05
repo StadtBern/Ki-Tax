@@ -132,9 +132,6 @@ public class BetreuungsgutscheinConfigurator {
 		WohnhaftImGleichenHaushaltCalcRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltCalcRule(defaultGueltigkeit);
 		rules.add(wohnhaftImGleichenHaushaltRule);
 
-		// Zivilstandsaenderung
-		ZivilstandsaenderungCalcRule zivilstandsaenderungCalcRule = new ZivilstandsaenderungCalcRule(defaultGueltigkeit);
-		rules.add(zivilstandsaenderungCalcRule);
 	}
 
 
