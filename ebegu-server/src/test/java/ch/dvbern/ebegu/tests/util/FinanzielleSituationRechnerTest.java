@@ -29,6 +29,7 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 	private static final BigDecimal EINKOMMEN_FINANZIELLE_SITUATION = new BigDecimal("100000");
 	private static final BigDecimal EINKOMMEN_EKV_ABGELEHNT = new BigDecimal("80001");
 	private static final BigDecimal EINKOMMEN_EKV_ANGENOMMEN = new BigDecimal("80000");
+	private static final BigDecimal EINKOMMEN_EKV2_ANGENOMMEN = new BigDecimal("79999");
 
 	@Inject
 	private EbeguParameterService ebeguParameterService;
@@ -146,7 +147,7 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ANGENOMMEN, true);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ANGENOMMEN, false);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV2_ANGENOMMEN, false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjVorAbzFamGr());
@@ -155,7 +156,7 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(EINKOMMEN_EKV_ANGENOMMEN, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP1VorAbzFamGr());
 		Assert.assertEquals(TestDataUtil.STICHTAG_EKV_1, gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
 
-		Assert.assertEquals(EINKOMMEN_EKV_ANGENOMMEN, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP2VorAbzFamGr());
+		Assert.assertEquals(EINKOMMEN_EKV2_ANGENOMMEN, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP2VorAbzFamGr());
 		Assert.assertEquals(TestDataUtil.STICHTAG_EKV_2, gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
 	}
 
