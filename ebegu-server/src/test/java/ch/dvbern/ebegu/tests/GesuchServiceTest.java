@@ -351,7 +351,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		// Die Mutation hat immer 1 Objekte mehr als Erstgesuch, und die "FamiliensituationErstgesuch.
 		// Deswegen muessen wir 1 subtrahieren
-        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
+		Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
 
 		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
 		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
@@ -393,7 +393,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Gesuch schulamtGesuch = persistNewNurSchulamtGesuchEntity(AntragStatus.IN_BEARBEITUNG_GS);
 
 		Assert.assertEquals(2, schulamtGesuch.getKindContainers().size());
-			Assert.assertTrue(schulamtGesuch.hasOnlyBetreuungenOfSchulamt());
+		Assert.assertTrue(schulamtGesuch.hasOnlyBetreuungenOfSchulamt());
 		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(schulamtGesuch, AntragStatus.FREIGABEQUITTUNG);
 
 		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
@@ -456,7 +456,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 
-
 	// HELP METHOD
 
 
@@ -488,7 +487,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		}
 		String id = BeanUtils.getProperty(entity, "id");
 		if (ids.contains(id)) {
-			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode|| entity instanceof Familiensituation) {
+			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode || entity instanceof Familiensituation) {
 				// Diese Entitaeten wurden korrekterweise nur umgehaengt und nicht kopiert.
 				// Aus der Liste entfernen
 				// Familiensituation wird hier ebenfalls aufgefuehrt, da sie bei FamiliensituationErstgescuh nur umgehaengt wird
@@ -516,6 +515,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuchService.createGesuch(gesuch);
 		return gesuch;
 	}
+
 	private Gesuch persistNewEntity(AntragStatus status, Eingangsart eingangsart) {
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
 		gesuch.setEingangsart(eingangsart);

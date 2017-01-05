@@ -37,7 +37,7 @@ export class DVBarcodeController {
 
     /* @ngInject */
     constructor($document: IDocumentService, $timeout: ITimeoutService, dVDialog: DvDialog, authService: AuthServiceRS,
-    errorService: ErrorService) {
+                errorService: ErrorService) {
 
         if (authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
 
