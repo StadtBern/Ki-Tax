@@ -154,8 +154,6 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
                 let einkommensverschlGSBasisjahrPlus1 = this.model.getEkvContToWorkWith().ekvGSBasisJahrPlus1;
                 this.geschaeftsgewinnBasisjahrMinus1GS = einkommensverschlGSBasisjahrPlus1 ? einkommensverschlGSBasisjahrPlus1.geschaeftsgewinnBasisjahr : undefined;
             } else {
-                //this.geschaeftsgewinnBasisjahrMinus1 = this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahrMinus1;
-
                 let einkommensverschlGS = this.model.getEkvToWorkWith_GS();
                 this.geschaeftsgewinnBasisjahrMinus1GS = einkommensverschlGS ? einkommensverschlGS.geschaeftsgewinnBasisjahrMinus1 : undefined;
             }
