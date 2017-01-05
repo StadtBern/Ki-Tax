@@ -183,12 +183,11 @@ export default class GesuchModelManager {
     }
 
     public isRequiredEKV_GS_BJ(gs: number, bj: number): boolean {
-        if(gs === 2){
+        if (gs === 2) {
             return this.getEkvFuerBasisJahrPlus(bj) && this.isGesuchsteller2Required();
-        }else{
+        } else {
             return this.getEkvFuerBasisJahrPlus(bj);
         }
-
 
     }
 

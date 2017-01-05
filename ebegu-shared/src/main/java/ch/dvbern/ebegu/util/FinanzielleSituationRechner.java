@@ -147,9 +147,9 @@ public class FinanzielleSituationRechner {
 
 				// MassgebendesEinkommenVJ nur relevant, wenn eine ekv1 eingegeben wurde...
 				BigDecimal massgebendesEinkommenVorjahr;
-				if(gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
+				if (gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
 					massgebendesEinkommenVorjahr = resultateEKV1.getMassgebendesEinkVorAbzFamGr();
-				}else{
+				} else {
 					massgebendesEinkommenVorjahr = massgebendesEinkommenBasisjahr;
 				}
 
@@ -219,9 +219,6 @@ public class FinanzielleSituationRechner {
 	/**
 	 * Diese Methode aufrufen um den GeschaeftsgewinnDurchschnitt fuer die Einkommensverschlechterung zu berechnen. Die finanzielle Situation
 	 * muss auch uebergeben werden, da manche Daten aus ihr genommen werden
-	 *
-	 * @param finanzielleSituation
-	 * @return
 	 */
 	@Nullable
 	public static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable FinanzielleSituation finanzielleSituation,
