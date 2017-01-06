@@ -164,7 +164,7 @@ export class GesuchToolbarController {
 
     private updateGesuchperiodeList() {
         this.gesuchsperiodeList = {};
-        for (var i = 0; i < this.antragList.length; i++) {
+        for (let i = 0; i < this.antragList.length; i++) {
             let gs = this.antragList[i].gesuchsperiodeString;
 
             if (!this.gesuchsperiodeList[gs]) {
@@ -176,7 +176,7 @@ export class GesuchToolbarController {
 
     private updateGesuchNavigationList() {
         this.gesuchNavigationList = {};  // clear
-        for (var i = 0; i < this.antragList.length; i++) {
+        for (let i = 0; i < this.antragList.length; i++) {
             let gs = this.antragList[i].gesuchsperiodeString;
             let antrag: TSAntragDTO = this.antragList[i];
 
@@ -189,7 +189,7 @@ export class GesuchToolbarController {
 
     private updateAntragTypList() {
         this.antragTypList = {};  //clear
-        for (var i = 0; i < this.antragList.length; i++) {
+        for (let i = 0; i < this.antragList.length; i++) {
             let antrag: TSAntragDTO = this.antragList[i];
             if (this.getGesuch().gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
                 let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
@@ -200,8 +200,8 @@ export class GesuchToolbarController {
     }
 
     getKeys(map: {[key: string]: Array<TSAntragDTO>}): Array<String> {
-        var keys: Array<String> = [];
-        for (var key in map) {
+        let keys: Array<String> = [];
+        for (let key in map) {
             if (map.hasOwnProperty(key)) {
                 keys.push(key);
             }
@@ -291,7 +291,7 @@ export class GesuchToolbarController {
 
     private getNewest(arrayTSAntragDTO: Array<TSAntragDTO>): TSAntragDTO {
         let newest: TSAntragDTO = arrayTSAntragDTO[0];
-        for (var i = 0; i < arrayTSAntragDTO.length; i++) {
+        for (let i = 0; i < arrayTSAntragDTO.length; i++) {
             if (arrayTSAntragDTO[i].eingangsdatum.isAfter(newest.eingangsdatum)) {
                 newest = arrayTSAntragDTO[i];
             }
@@ -314,7 +314,7 @@ export class GesuchToolbarController {
     public antragMutierenPossible(): void {
         if (this.antragList) {
             let gesuchInBearbeitungVorhanden = false;
-            for (var i = 0; i < this.antragList.length; i++) {
+            for (let i = 0; i < this.antragList.length; i++) {
                 let antragItem: TSAntragDTO = this.antragList[i];
                 // Wir muessen nur die Antraege der aktuell ausgewaehlten Gesuchsperiode beachten
                 if (antragItem.gesuchsperiodeString === this.getCurrentGesuchsperiode()) {

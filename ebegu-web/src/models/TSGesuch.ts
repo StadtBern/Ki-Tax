@@ -19,6 +19,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _bemerkungen: string;
     private _laufnummer: number;
     private _hasFSDokument: boolean = true;
+    private _gesperrtWegenBeschwerde: boolean = false;
 
 
     public get gesuchsteller1(): TSGesuchstellerContainer {
@@ -83,6 +84,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set hasFSDokument(value: boolean) {
         this._hasFSDokument = value;
+    }
+
+    get gesperrtWegenBeschwerde(): boolean {
+        return this._gesperrtWegenBeschwerde;
+    }
+
+    set gesperrtWegenBeschwerde(value: boolean) {
+        this._gesperrtWegenBeschwerde = value;
     }
 
     public isMutation(): boolean {

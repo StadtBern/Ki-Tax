@@ -77,9 +77,16 @@ describe('freigabeView', function () {
 
             expect(wizardStepManager.hasStepGivenStatus).toHaveBeenCalledWith(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK);
         });
-        it('should return true when all steps are true and all Betreuungen are accepted', function () {
+        it('should return false when all steps are true and all Betreuungen are accepted and the Gesuch is ReadOnly', function () {
             spyOn(wizardStepManager, 'areAllStepsOK').and.returnValue(true);
             spyOn(wizardStepManager, 'hasStepGivenStatus').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuchReadonly').and.returnValue(true);
+            expect(controller.canBeFreigegeben()).toBe(false);
+        });
+        it('should return true when all steps are true and all Betreuungen are accepted and the Gesuch is not ReadOnly', function () {
+            spyOn(wizardStepManager, 'areAllStepsOK').and.returnValue(true);
+            spyOn(wizardStepManager, 'hasStepGivenStatus').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuchReadonly').and.returnValue(false);
             expect(controller.canBeFreigegeben()).toBe(true);
         });
     });

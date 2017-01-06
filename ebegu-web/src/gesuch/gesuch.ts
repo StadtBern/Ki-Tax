@@ -181,4 +181,11 @@ export class GesuchRouteController {
         return this.wizardStepManager.getCurrentStepName();
     }
 
+    public isGesuchGesperrt(): boolean {
+        if (this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde === true;
+        }
+        return false;
+    }
+
 }

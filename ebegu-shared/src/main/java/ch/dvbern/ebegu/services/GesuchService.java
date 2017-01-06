@@ -2,7 +2,9 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -136,6 +138,14 @@ public interface GesuchService {
 	List<String> getAllGesuchIDsForFall(String fallId);
 
 	/**
+	 * Alle Gesuche fuer den gegebenen Fall in der gegebenen Periode
+	 * @param fall
+	 * @param gesuchsperiode
+	 */
+	@Nonnull
+	List<Gesuch> getAllGesucheForFallAndPeriod(@NotNull Fall fall, @NotNull Gesuchsperiode gesuchsperiode);
+
+	/**
 	 * Das gegebene Gesuch wird mit heutigem Datum freigegeben und den Step FREIGABE auf OK gesetzt
 	 * @param gesuch
 	 * @param statusToChangeTo
@@ -148,4 +158,20 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username);
+
+	/**
+	 * Setzt das gegebene Gesuch als Beschwerde hängig und bei allen Gescuhen der Periode den Flag
+	 * gesperrtWegenBeschwerde auf true.
+	 * @return Gibt das aktualisierte gegebene Gesuch zurueck
+	 */
+	@Nonnull
+	Gesuch setBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch);
+
+	/**
+	 * Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag
+	 * gesperrtWegenBeschwerde auf false
+	 * @return Gibt das aktualisierte gegebene Gesuch zurueck
+	 */
+	@Nonnull
+	Gesuch removeBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch);
 }
