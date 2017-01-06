@@ -58,6 +58,7 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 				//maximales einkommen wurde ueberschritten
 				if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
 					verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
+					verfuegungZeitabschnitt.setKategorieMaxEinkommen(true);
 					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMEN_MSG);
 				} else {
 					verfuegungZeitabschnitt.setBezahltVollkosten(true);

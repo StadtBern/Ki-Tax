@@ -1631,7 +1631,8 @@ export default class EbeguRestUtil {
         this.parseAbstractEntity(antragStatusHistoryTS, antragStatusHistoryFromServer);
         antragStatusHistoryTS.gesuchId = antragStatusHistoryFromServer.gesuchId;
         antragStatusHistoryTS.benutzer = this.parseUser(new TSUser(), antragStatusHistoryFromServer.benutzer);
-        antragStatusHistoryTS.datum = DateUtil.localDateTimeToMoment(antragStatusHistoryFromServer.datum);
+        antragStatusHistoryTS.timestampVon = DateUtil.localDateTimeToMoment(antragStatusHistoryFromServer.timestampVon);
+        antragStatusHistoryTS.timestampBis = DateUtil.localDateTimeToMoment(antragStatusHistoryFromServer.timestampBis);
         antragStatusHistoryTS.status = antragStatusHistoryFromServer.status;
         return antragStatusHistoryTS;
     }
@@ -1640,7 +1641,8 @@ export default class EbeguRestUtil {
         this.abstractEntityToRestObject(restAntragStatusHistory, antragStatusHistory);
         restAntragStatusHistory.gesuchId = antragStatusHistory.gesuchId;
         restAntragStatusHistory.benutzer = this.userToRestObject({}, antragStatusHistory.benutzer);
-        restAntragStatusHistory.datum = DateUtil.momentToLocalDateTime(antragStatusHistory.datum);
+        restAntragStatusHistory.timestampVon = DateUtil.momentToLocalDateTime(antragStatusHistory.timestampVon);
+        restAntragStatusHistory.timestampBis = DateUtil.momentToLocalDateTime(antragStatusHistory.timestampBis);
         restAntragStatusHistory.status = antragStatusHistory.status;
         return restAntragStatusHistory;
     }
@@ -1652,7 +1654,7 @@ export default class EbeguRestUtil {
             restMahnung.mahnungTyp = tsMahnung.mahnungTyp;
             restMahnung.datumFristablauf = DateUtil.momentToLocalDate(tsMahnung.datumFristablauf);
             restMahnung.bemerkungen = tsMahnung.bemerkungen;
-            restMahnung.active = tsMahnung.active;
+            restMahnung.timestampAbgeschlossen = DateUtil.momentToLocalDateTime(tsMahnung.timestampAbgeschlossen);
             return restMahnung;
         }
         return undefined;
@@ -1678,7 +1680,7 @@ export default class EbeguRestUtil {
             tsMahnung.mahnungTyp = mahnungFromServer.mahnungTyp;
             tsMahnung.datumFristablauf = DateUtil.localDateToMoment(mahnungFromServer.datumFristablauf);
             tsMahnung.bemerkungen = mahnungFromServer.bemerkungen;
-            tsMahnung.active = mahnungFromServer.active;
+            tsMahnung.timestampAbgeschlossen = DateUtil.localDateTimeToMoment(mahnungFromServer.timestampAbgeschlossen);
             return tsMahnung;
         }
         return undefined;

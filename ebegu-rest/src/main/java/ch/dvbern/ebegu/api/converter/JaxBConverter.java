@@ -2014,7 +2014,8 @@ public class JaxBConverter {
 		jaxAntragStatusHistory.setGesuchId(antragStatusHistory.getGesuch().getId());
 		jaxAntragStatusHistory.setStatus(AntragStatusConverterUtil.convertStatusToDTO(antragStatusHistory.getGesuch(), antragStatusHistory.getStatus()));
 		jaxAntragStatusHistory.setBenutzer(benutzerToAuthLoginElement(antragStatusHistory.getBenutzer()));
-		jaxAntragStatusHistory.setDatum(antragStatusHistory.getDatum());
+		jaxAntragStatusHistory.setTimestampVon(antragStatusHistory.getTimestampVon());
+		jaxAntragStatusHistory.setTimestampBis(antragStatusHistory.getTimestampBis());
 		return jaxAntragStatusHistory;
 
 	}
@@ -2085,7 +2086,7 @@ public class JaxBConverter {
 		mahnung.setMahnungTyp(jaxMahnung.getMahnungTyp());
 		mahnung.setDatumFristablauf(jaxMahnung.getDatumFristablauf());
 		mahnung.setBemerkungen(jaxMahnung.getBemerkungen());
-		mahnung.setActive(jaxMahnung.isActive());
+		mahnung.setTimestampAbgeschlossen(jaxMahnung.getTimestampAbgeschlossen());
 		return mahnung;
 	}
 
@@ -2097,7 +2098,7 @@ public class JaxBConverter {
 		jaxMahnung.setMahnungTyp(persistedMahnung.getMahnungTyp());
 		jaxMahnung.setDatumFristablauf(persistedMahnung.getDatumFristablauf());
 		jaxMahnung.setBemerkungen(persistedMahnung.getBemerkungen());
-		jaxMahnung.setActive(persistedMahnung.isActive());
+		jaxMahnung.setTimestampAbgeschlossen(persistedMahnung.getTimestampAbgeschlossen());
 		return jaxMahnung;
 	}
 

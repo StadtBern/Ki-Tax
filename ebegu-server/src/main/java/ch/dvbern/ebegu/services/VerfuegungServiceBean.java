@@ -69,9 +69,31 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId) {
+		setVerfuegungsKategorien(verfuegung);
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.VERFUEGT);
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedVerfuegung;
+	}
+
+	private void setVerfuegungsKategorien(Verfuegung verfuegung) {
+		for (VerfuegungZeitabschnitt zeitabschnitt : verfuegung.getZeitabschnitte()) {
+			if (zeitabschnitt.isKategorieKeinPensum()) {
+				verfuegung.setKategorieKeinPensum(true);
+			}
+			if (zeitabschnitt.isKategorieMaxEinkommen()) {
+				verfuegung.setKategorieMaxEinkommen(true);
+			}
+			if (zeitabschnitt.isKategorieZuschlagZumErwerbspensum()) {
+				verfuegung.setKategorieZuschlagZumErwerbspensum(true);
+			}
+		}
+		// Wenn es keines der anderen ist, ist es "normal"
+		if (!verfuegung.isKategorieKeinPensum() &&
+			!verfuegung.isKategorieMaxEinkommen() &&
+			!verfuegung.isKategorieZuschlagZumErwerbspensum() &&
+			!verfuegung.isKategorieNichtEintreten()) {
+			verfuegung.setKategorieNormal(true);
+		}
 	}
 
 	@Nonnull
@@ -83,6 +105,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		for (VerfuegungZeitabschnitt zeitabschnitt : verfuegung.getZeitabschnitte()) {
 			zeitabschnitt.setAnspruchberechtigtesPensum(0);
 		}
+		verfuegung.setKategorieNichtEintreten(true);
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.NICHT_EINGETRETEN);
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedVerfuegung;
