@@ -532,6 +532,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@Nonnull
 	public List<Gesuch> getAllGesucheForFallAndPeriod(@NotNull Fall fall, @NotNull Gesuchsperiode gesuchsperiode) {
+		// TODO (team) hier muessen wir unbedingt auf alle Gesuche zugreifen duerfen
+		authorizer.checkReadAuthorizationFall(fall);
+
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
@@ -540,13 +543,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Predicate gesuchsperiodePredicate = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
 
 		query.where(fallPredicate, gesuchsperiodePredicate);
-
-		List<Gesuch> gesuche = persistence.getCriteriaResults(query);
-
-		// TODO (team) hier muessen wir unbedingt auf alle Gesuche zugreifen duerfen
-//		authorizer.checkReadAuthorizationGesuche(gesuche);
-
-		return gesuche;
+		return persistence.getCriteriaResults(query);
 	}
 
 	@Override
