@@ -112,6 +112,9 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = false)
 	private boolean hasFSDokument = true;
 
+	@Column(nullable = false)
+	private boolean gesperrtWegenBeschwerde = false;
+
 
 	public Gesuch() {
 	}
@@ -279,6 +282,14 @@ public class Gesuch extends AbstractEntity {
 
 	public void setHasFSDokument(boolean hasFSDokument) {
 		this.hasFSDokument = hasFSDokument;
+	}
+
+	public boolean isGesperrtWegenBeschwerde() {
+		return gesperrtWegenBeschwerde;
+	}
+
+	public void setGesperrtWegenBeschwerde(boolean gesperrtWegenBeschwerde) {
+		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
 	}
 
 	@Nullable

@@ -114,4 +114,16 @@ export default class GesuchRS implements IEntityRS {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
     }
+
+    public setBeschwerdeHaengig(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/setBeschwerde/' + encodeURIComponent(antragId), null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
+
+    public removeBeschwerdeHaengig(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/removeBeschwerde/' + encodeURIComponent(antragId), null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
 }

@@ -351,4 +351,48 @@ public class GesuchResource {
 		Gesuch gesuch = gesuchService.antragFreigeben(antragId, username);
 		return Response.ok(converter.gesuchToJAX(gesuch)).build();
 	}
+
+	@ApiOperation(value = "Setzt das gegebene Gesuch als Beschwerde hängig und bei allen Gescuhen der Periode den Flag gesperrtWegenBeschwerde auf true")
+	@Nullable
+	@POST
+	@Path("/setBeschwerde/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setBeschwerdeHaengig(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
+
+		if (gesuch.isPresent()) {
+			Gesuch persistedGesuch = gesuchService.setBeschwerdeHaengigForPeriode(gesuch.get());
+			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
+		}
+		throw new EbeguEntityNotFoundException("setBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + antragJaxId.getId());
+	}
+
+	@ApiOperation(value = "Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag gesperrtWegenBeschwerde auf false")
+	@Nullable
+	@POST
+	@Path("/removeBeschwerde/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeBeschwerdeHaengig(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
+
+		if (gesuch.isPresent()) {
+			Gesuch persistedGesuch = gesuchService.removeBeschwerdeHaengigForPeriode(gesuch.get());
+			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
+		}
+		throw new EbeguEntityNotFoundException("removeBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + antragJaxId.getId());
+	}
 }

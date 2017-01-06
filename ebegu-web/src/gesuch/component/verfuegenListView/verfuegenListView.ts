@@ -1,4 +1,4 @@
-import {IComponentOptions, IPromise, ILogService} from 'angular';
+import {IComponentOptions, IPromise, ILogService, IHttpPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -25,6 +25,7 @@ import DateUtil from '../../../utils/DateUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import IScope = angular.IScope;
+import GesuchRS from '../../service/gesuchRS.rest';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -50,13 +51,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope'];
+        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS'];
     /* @ngInject */
 
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService,
-                private authServiceRs: AuthServiceRS, $scope: IScope) {
+                private authServiceRs: AuthServiceRS, $scope: IScope, private gesuchRS: GesuchRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initViewModel();
     }
@@ -412,21 +413,27 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return TSAntragStatus.BESCHWERDE_HAENGIG === status;
     }
 
-    public setGesuchStatusBeschwerdeHaengig(): IPromise<TSAntragStatus> {
+    public setGesuchStatusBeschwerdeHaengig(): IPromise<TSGesuch> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'BESCHWERDE_HAENGIG',
             deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_HAENGIG'
         }).then(() => {
-            return this.setGesuchStatus(TSAntragStatus.BESCHWERDE_HAENGIG);
+            return this.gesuchRS.setBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                return this.gesuchModelManager.getGesuch();
+            });
         });
     }
 
-    public setGesuchStatusBeschwerdeAbschliessen(): IPromise<TSAntragStatus> {
+    public setGesuchStatusBeschwerdeAbschliessen(): IPromise<TSGesuch> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'BESCHWERDE_ABSCHLIESSEN',
             deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_ABSCHLIESSEN'
         }).then(() => {
-            return this.setGesuchStatus(TSAntragStatus.VERFUEGT);
+            return this.gesuchRS.removeBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                return this.gesuchModelManager.getGesuch();
+            });
         });
     }
 }
