@@ -95,6 +95,15 @@ public class Verfuegung extends AbstractEntity{
 		return sb.toString();
 	}
 
+	public String toStringFinanzielleSituation() {
+		StringBuilder sb = new StringBuilder("Verfuegung");
+		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitte) {
+			sb.append("\n");
+			sb.append(zeitabschnitt.toStringFinanzielleSituation());
+		}
+		return sb.toString();
+	}
+
 	public boolean isSameVerfuegungsdaten() {
 		return sameVerfuegungsdaten;
 	}
