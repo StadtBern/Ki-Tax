@@ -1,4 +1,4 @@
-import {IComponentOptions, IPromise, ILogService, IHttpPromise} from 'angular';
+import {IComponentOptions, IPromise, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -255,38 +255,42 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showErsteMahnungErstellen(): boolean {
         // Nur wenn keine offenen Mahnungen vorhanden!
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.mahnung === undefined && !this.hasOffeneMahnungen();
+            && this.mahnung === undefined && !this.hasOffeneMahnungen() && !this.isGesuchReadonly();
     }
 
     public showErsteMahnungAusloesen(): boolean {
-        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ERSTE_MAHNUNG;
+        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ERSTE_MAHNUNG
+            && !this.isGesuchReadonly();
     }
 
     public showZweiteMahnungErstellen(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN)
-            && this.mahnung === undefined;
+            && this.mahnung === undefined && !this.isGesuchReadonly();
     }
 
     public showZweiteMahnungAusloesen(): boolean {
-        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG;
+        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG
+            && !this.isGesuchReadonly();
     }
 
     public showMahnlaufBeenden(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN))
+            && !this.isGesuchReadonly();
     }
 
     public showDokumenteNichtKomplett(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN))
+            && !this.isGesuchReadonly();
     }
 
     public showZweiteMahnungNichtEingetreten(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN) && !this.isGesuchReadonly();
     }
 
     public ersteMahnungErstellen(): void {
@@ -353,7 +357,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showGeprueft(): boolean {
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.wizardStepManager.areAllStepsOK() && this.mahnung === undefined;
+            && this.wizardStepManager.areAllStepsOK() && this.mahnung === undefined && !this.isGesuchReadonly();
     }
 
     /**
@@ -362,7 +366,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showVerfuegenStarten(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
-            && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG);
+            && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
+            && !this.isGesuchReadonly();
             // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
 
@@ -405,7 +410,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public showBeschwerdeHaengig(): boolean {
         let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-        return TSAntragStatus.VERFUEGT === status;
+        return TSAntragStatus.VERFUEGT === status && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public showBeschwerdeAbschliessen(): boolean {

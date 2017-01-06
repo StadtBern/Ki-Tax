@@ -1085,7 +1085,9 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return isStatusVerfuegenVerfuegt(this.gesuch.status) || this.isGesuchReadonlyForRole();
+        return isStatusVerfuegenVerfuegt(this.gesuch.status)
+            || this.isGesuchReadonlyForRole()
+            || this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     /**
@@ -1218,7 +1220,7 @@ export default class GesuchModelManager {
     //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
         if (this.getGesuch()) {
-            var text = '';
+            let text = '';
             if (this.getGesuch().fall) {
                 text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
             }

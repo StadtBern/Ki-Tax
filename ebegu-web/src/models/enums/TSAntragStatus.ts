@@ -68,7 +68,8 @@ export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
         TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN,
         TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
         TSAntragStatus.VERFUEGEN,
-        TSAntragStatus.VERFUEGT];
+        TSAntragStatus.VERFUEGT,
+        TSAntragStatus.BESCHWERDE_HAENGIG];
     return validStates.indexOf(status) !== -1;
 }
 
