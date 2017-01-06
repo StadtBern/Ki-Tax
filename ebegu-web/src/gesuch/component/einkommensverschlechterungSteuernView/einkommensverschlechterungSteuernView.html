@@ -7,153 +7,76 @@
 
                     <!-- -----------------------------------------BasisJahr+1----------------------------------------------- -->
 
-                    <div ng-if="vm.showFragen_BjP1()">
-
-                        <div class="row viewTitle">
-                            <div class="col-md-12">
-                                <h1>
+                    <div class="row viewTitle">
+                        <div class="col-md-12">
+                            <h1>
                     <span data-translate="EKVI_ZUSAETZLICHE_FRAGEN"
                           translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></span>
-                                </h1>
-                                <hr class="header"/>
-                            </div>
+                            </h1>
+                            <hr class="header"/>
                         </div>
-                        <!-- Gemeinsame Steuererklaerung -->
-                        <div class="row">
-                            <div class="col-xs-12 dv-input-container-medium">
-                                <div class="form-group">
-                                    <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
-                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1), namegs2: vm.extractFullNameGS2()}"></h1>
-                                    <dv-radio-container name="gemeinsameSteuererklaerung_BjP1"
-                                                        ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1"
-                                                        ng-required="true" class="radio input-element"
-                                                        ng-change="vm.gemeinsameStekClicked_BjP1()"
-                                                        dv-enable-element
-                                                        dv-enable-allowed-roles="vm.allowedRoles"
-                                                        dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
-                                    </dv-radio-container>
-                                    <dv-error-messages for="vm.form.gemeinsameSteuererklaerung_BjP1.$error"
-                                                       class="error"></dv-error-messages>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Steuerveranlagung -->
-                        <div class="row">
-                            <div class="col-xs-12 dv-input-container-medium" ng-if="vm.showSteuerveranlagung_BjP1()">
-                                <div class="form-group">
-                                    <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
-                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h1>
-                                    <dv-radio-container name="steuerveranlagung_BjP1"
-                                                        ng-model="vm.getEkv_GS1_Bjp1().steuerveranlagungErhalten"
-                                                        ng-required="true" class="radio input-element"
-                                                        ng-change="vm.steuerveranlagungClicked_BjP1()"
-                                                        dv-enable-element
-                                                        dv-enable-allowed-roles="vm.allowedRoles"
-                                                        dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
-                                    </dv-radio-container>
-                                    <dv-error-messages for="vm.form.steuerveranlagung_BjP1.$error"
-                                                       class="error"></dv-error-messages>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Steuererklärung -->
-                        <div class="row">
-                            <div class="col-xs-12 dv-input-container-medium"
-                                 ng-if="vm.showSteuerveranlagung_BjP1() && vm.showSteuererklaerung_BjP1()">
-                                <div class="form-group">
-                                    <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
-                                        translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></h1>
-                                    <dv-radio-container name="steuererklaerung_BjP1"
-                                                        ng-model="vm.getEkv_GS1_Bjp1().steuererklaerungAusgefuellt"
-                                                        ng-required="true" class="radio input-element"
-                                                        ng-change="vm.steuererklaerungClicked_BjP1()"
-                                                        dv-enable-element
-                                                        dv-enable-allowed-roles="vm.allowedRoles"
-                                                        dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
-                                    </dv-radio-container>
-                                    <dv-error-messages for="vm.form.steuererklaerung_BjP1.$error"
-                                                       class="error"></dv-error-messages>
-                                </div>
+                    </div>
+                    <!-- Gemeinsame Steuererklaerung -->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-medium">
+                            <div class="form-group">
+                                <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
+                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1), namegs2: vm.extractFullNameGS2()}"></h1>
+                                <dv-radio-container name="gemeinsameSteuererklaerung_BjP1"
+                                                    ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1"
+                                                    ng-required="true" class="radio input-element"
+                                                    ng-change="vm.gemeinsameStekClicked_BjP1()"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
+                                </dv-radio-container>
+                                <dv-error-messages for="vm.form.gemeinsameSteuererklaerung_BjP1.$error"
+                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
 
-                    <!-- -----------------------------------------BasisJahr+2----------------------------------------------- -->
-
-                    <div ng-if="vm.showFragen_BjP2()">
-                        <!-- Gemeinsame Steuererklaerung -->
-                        <div class="row viewTitle">
-                            <div class="col-md-12">
-                                <h1>
-                    <span data-translate="EKVI_ZUSAETZLICHE_FRAGEN"
-                          translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(2)}}}"></span>
-                                </h1>
-                                <hr class="header"/>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
-                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2), namegs2: vm.extractFullNameGS2()}"></h1>
-                                    <dv-radio-container name="gemeinsameSteuererklaerung_BjP2"
-                                                        ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2"
-                                                        ng-required="true" class="radio input-element"
-                                                        ng-change="vm.gemeinsameStekClicked_BjP2()"
-                                                        dv-enable-element
-                                                        dv-enable-allowed-roles="vm.allowedRoles"
-                                                        dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
-                                    </dv-radio-container>
-                                    <dv-error-messages for="vm.form.gemeinsameSteuererklaerung_BjP2.$error"
-                                                       class="error"></dv-error-messages>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Steuerveranlagung -->
-                        <div class="row">
-                            <div class="col-xs-12 dv-input-container-medium" ng-if="vm.showSteuerveranlagung_BjP2()">
-                                <div class="form-group">
-                                    <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
-                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2)}"></h1>
-                                    <dv-radio-container name="steuerveranlagung_BjP2"
-                                                        ng-model="vm.getEkv_GS1_Bjp2().steuerveranlagungErhalten"
-                                                        ng-required="true" class="radio input-element"
-                                                        ng-change="vm.steuerveranlagungClicked_BjP2()"
-                                                        dv-enable-element
-                                                        dv-enable-allowed-roles="vm.allowedRoles"
-                                                        dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
-                                    </dv-radio-container>
-                                    <dv-error-messages for="vm.form.steuerveranlagung_BjP2.$error"
-                                                       class="error"></dv-error-messages>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Steuererklärung -->
-                        <div class="row">
-                            <div class="col-xs-12 dv-input-container-medium"
-                                 ng-if="vm.showSteuerveranlagung_BjP2() && vm.showSteuererklaerung_BjP2()">
-                                <div class="form-group">
-                                    <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
-                                        translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(2)}}}"></h1>
-                                    <dv-radio-container name="steuererklaerung_BjP2"
-                                                        ng-model="vm.getEkv_GS1_Bjp2().steuererklaerungAusgefuellt"
-                                                        ng-required="true" class="radio input-element"
-                                                        ng-change="vm.steuererklaerungClicked_BjP2()"
-                                                        dv-enable-element
-                                                        dv-enable-allowed-roles="vm.allowedRoles"
-                                                        dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
-                                    </dv-radio-container>
-                                    <dv-error-messages for="vm.form.steuererklaerung_BjP2.$error"
-                                                       class="error"></dv-error-messages>
-                                </div>
+                    <!-- Steuerveranlagung -->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-medium" ng-if="vm.showSteuerveranlagung_BjP1()">
+                            <div class="form-group">
+                                <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h1>
+                                <dv-radio-container name="steuerveranlagung_BjP1"
+                                                    ng-model="vm.getEkv_GS1_Bjp1().steuerveranlagungErhalten"
+                                                    ng-required="true" class="radio input-element"
+                                                    ng-change="vm.steuerveranlagungClicked_BjP1()"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
+                                </dv-radio-container>
+                                <dv-error-messages for="vm.form.steuerveranlagung_BjP1.$error"
+                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Steuererklärung -->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-medium"
+                             ng-if="vm.showSteuerveranlagung_BjP1() && vm.showSteuererklaerung_BjP1()">
+                            <div class="form-group">
+                                <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></h1>
+                                <dv-radio-container name="steuererklaerung_BjP1"
+                                                    ng-model="vm.getEkv_GS1_Bjp1().steuererklaerungAusgefuellt"
+                                                    ng-required="true" class="radio input-element"
+                                                    ng-change="vm.steuererklaerungClicked_BjP1()"
+                                                    dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
+                                </dv-radio-container>
+                                <dv-error-messages for="vm.form.steuererklaerung_BjP1.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
                 </fieldset>
 
                 <!-- -------------------------------------------Navigation--------------------------------------------  -->

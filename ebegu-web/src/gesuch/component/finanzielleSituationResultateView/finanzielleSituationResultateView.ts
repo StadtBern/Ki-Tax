@@ -43,18 +43,8 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
         this.calculate();
     }
 
-    showGemeinsam(): boolean {
-        return this.model.isGesuchsteller2Required() &&
-            this.model.gemeinsameSteuererklaerung === true;
-    }
-
-    showGS1(): boolean {
-        return !this.showGemeinsam();
-    }
-
     showGS2(): boolean {
-        return this.model.isGesuchsteller2Required() &&
-            this.model.gemeinsameSteuererklaerung === false;
+        return this.model.isGesuchsteller2Required();
     }
 
     private save(): IPromise<void> {
