@@ -217,14 +217,14 @@ describe('dvNavigation', function () {
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterungInfo', { gesuchId: '123' });
         });
-        it('moves to gesuch.einkommensverschlechterungSteuern when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 with EV and 2GS required', () => {
+        it('moves to gesuch.einkommensverschlechterung when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 with EV and 2GS required', () => {
             let gesuch = mockGesuch();
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
             spyOn(gesuch, 'extractEinkommensverschlechterungInfo').and.returnValue({einkommensverschlechterung: true});
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(true);
             navController.dvSubStep = 1;
             callNextStep();
-            expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterungSteuern', { gesuchId: '123' });
+            expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterung', { gesuchstellerNumber: '1', basisjahrPlus: '2', gesuchId: '123' });
         });
         it('moves to gesuch.einkommensverschlechterung when coming from EINKOMMENSVERSCHLECHTERUNG substep 1 with EV and 2GS NOT required', () => {
             let gesuch = mockGesuch();
