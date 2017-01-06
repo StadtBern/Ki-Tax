@@ -59,10 +59,10 @@ export default class AbstractGesuchViewController<T> {
         if (!this.form.$valid) {
             let firstInvalid = angular.element('form .ng-invalid').first();
             if (firstInvalid) {
-                if (firstInvalid.get(0).tagName == 'DIV') { // sollten wir in einem div sein, suchen wir den ersten subelement, das fehlt
+                if (firstInvalid.get(0).tagName === 'DIV') { // sollten wir in einem div sein, suchen wir den ersten subelement, das fehlt
                     firstInvalid = firstInvalid.find('.ng-invalid').first();
                 }
-                if (firstInvalid.get(0).tagName != 'INPUT') { // Fuer alle Elemente die kein INPUT sind, muessen wir den tabindex setzen, damit focus() funktioniert
+                if (firstInvalid.get(0).tagName !== 'INPUT') { // Fuer alle Elemente die kein INPUT sind, muessen wir den tabindex setzen, damit focus() funktioniert
                     firstInvalid.attr('tabindex', -1).focus();
                 } else {
                     firstInvalid.focus();

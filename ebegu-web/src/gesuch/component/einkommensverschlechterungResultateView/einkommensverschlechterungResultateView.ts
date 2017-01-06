@@ -54,18 +54,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
     }
 
-    showGemeinsam(): boolean {
-        return this.model.isGesuchsteller2Required() &&
-            this.model.getGemeinsameSteuererklaerungToWorkWith() === true;
-    }
-
-    showGS1(): boolean {
-        return !this.showGemeinsam();
-    }
-
     showGS2(): boolean {
-        return this.model.isGesuchsteller2Required() &&
-            this.model.getGemeinsameSteuererklaerungToWorkWith() === false;
+        return this.model.isGesuchsteller2Required();
     }
 
     showResult(): boolean {

@@ -32,19 +32,15 @@
                         </div>
                     </div>
 
-                    <!-- Vermoegen GS 1 bzw. gemeinsam -->
+                    <!-- Vermoegen GS 1 -->
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM"
-                                       for="bruttovermoegen1"
-                                       ng-if="vm.showGemeinsam()"></label>
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_1"
                                        translate-values="{namegs1: vm.extractFullNameGS1()}"
-                                       for="bruttovermoegen1"
-                                       ng-if="vm.showGS1()"></label>
+                                       for="bruttovermoegen1"></label>
                                 <input id="bruttovermoegen1" type="text" name="bruttovermoegen1" ui-number-mask="0"
-                                       aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM|translate}}"
+                                       aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_1|translate}}"
                                        ng-model="vm.getFinanzielleSituationGS1().finanzielleSituationJA.bruttovermoegen"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
                                 <dv-bisher gs="vm.getFinanzielleSituationGS1().finanzielleSituationGS.bruttovermoegen"
@@ -54,6 +50,7 @@
                             </dv-input-container>
                         </div>
                     </div>
+
                     <!-- Vermoegen GS 2 -->
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small" ng-if="vm.showGS2()">
@@ -73,19 +70,15 @@
                         </div>
                     </div>
 
-                    <!-- Schulden GS 1 bzw. gemeinsam -->
+                    <!-- Schulden GS 1 -->
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM"
-                                       for="schulden1"
-                                       ng-if="vm.showGemeinsam()"></label>
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_1"
                                        translate-values="{namegs1: vm.extractFullNameGS1()}"
-                                       for="schulden1"
-                                       ng-if="vm.showGS1()"></label>
+                                       for="schulden1"></label>
                                 <input id="schulden1" type="text" name="schulden1" ui-number-mask="0"
-                                       aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM|translate}}"
+                                       aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_1|translate}}"
                                        ng-model="vm.getFinanzielleSituationGS1().finanzielleSituationJA.schulden"
                                        dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
                                 <dv-bisher gs="vm.getFinanzielleSituationGS1().finanzielleSituationGS.schulden"
@@ -94,6 +87,7 @@
                             </dv-input-container>
                         </div>
                     </div>
+
                     <!-- Schulden GS 2 -->
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small" ng-if="vm.showGS2()">
