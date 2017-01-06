@@ -11,7 +11,7 @@ import java.time.Month;
 import java.util.Collection;
 
 /**
- *
+ * Wechsel von 2 auf 1. Mit vorheriger EKV, nach Trennung nicht mehr stattgegeben
  */
 public class Testfall_ASIV_08 extends AbstractASIVTestfall {
 

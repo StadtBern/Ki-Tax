@@ -13,10 +13,7 @@ import org.junit.Before;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Superklasse für BG-Rechner-Tests
@@ -70,7 +67,7 @@ public class AbstractBGRechnerTest {
 													  int einkommensjahr, double abzugFam, double massgebendesEinkommen,
 													  double famGroesse) {
 
-		Assert.assertEquals(einkommensjahr, abschnitt.getEinkommensjahr());
+		Assert.assertTrue(Objects.equals(einkommensjahr, abschnitt.getEinkommensjahr()));
 		Assert.assertEquals(MATH.from(famGroesse), MATH.from(abschnitt.getFamGroesse()));
 		Assert.assertEquals(MATH.from(massgebendesEinkVorFamAbz), MATH.from(abschnitt.getMassgebendesEinkommenVorAbzFamgr()));
 		Assert.assertEquals(MATH.from(abzugFam), MATH.from(abschnitt.getAbzugFamGroesse()));

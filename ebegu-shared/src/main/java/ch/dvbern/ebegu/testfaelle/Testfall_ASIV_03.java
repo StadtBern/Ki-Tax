@@ -11,7 +11,7 @@ import java.time.Month;
 import java.util.Collection;
 
 /**
- *
+ * EKV, 1 Gesuchsteller
  */
 public class Testfall_ASIV_03 extends AbstractASIVTestfall {
 

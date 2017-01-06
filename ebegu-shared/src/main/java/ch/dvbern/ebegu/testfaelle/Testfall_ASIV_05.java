@@ -11,7 +11,7 @@ import java.time.Month;
 import java.util.Collection;
 
 /**
- *
+ * Wechsel von 1 auf 2. Mit vorheriger EKV, stattgegeben auch nach Heirat
  */
 public class Testfall_ASIV_05 extends AbstractASIVTestfall {
 

@@ -66,7 +66,7 @@ public class FinanzielleSituationRechner {
 
 		// Die Daten fuer GS 2 werden nur beruecksichtigt, wenn es (aktuell) zwei Gesuchsteller hat
 		FinanzielleSituation finanzielleSituationGS2 = null;
-		if (hasSecondGesuchsteller) {
+		if (hasSecondGesuchsteller && gesuch.getGesuchsteller2() != null) {
 			finanzielleSituationGS2 = getFinanzielleSituationGS(gesuch.getGesuchsteller2());
 			finSitResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller2(calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2));
 		}

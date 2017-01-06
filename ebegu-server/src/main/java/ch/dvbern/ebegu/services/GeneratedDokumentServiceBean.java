@@ -185,26 +185,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			byte[] data;
 			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
 				final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
-
-
-
-
-				final Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = gesuchService.getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(gesuch);
-
-
-				// Wir überprüfen of in der Vorgängerverfügung eine Verfügung ist, welche geschlossen wurde ohne neu zu verfügen
-				// und somit keine neue Verfügung hat
-				if (neustesVerfuegtesGesuchFuerGesuch.isPresent()) {
-
-					gesuch.getKindContainers()
-						.stream()
-						.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
-						.forEach(betreuung -> {
-								Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
-								betreuung.setVorgaengerVerfuegung(vorgaengerVerfuegung.orElse(null));
-							}
-						);
-				}
 				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
 				data = pdfService.generateFinanzielleSituation(gesuch, famGroessenVerfuegung);
 			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
@@ -432,23 +412,5 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		Objects.requireNonNull(gesuch);
 		this.authorizer.checkReadAuthorization(gesuch);
 		return criteriaQueryHelper.getEntitiesByAttribute(GeneratedDokument.class, gesuch, GeneratedDokument_.gesuch);
-	}
-
-	private Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull  Betreuung betreuung) {
-		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
-		if(betreuung.getVorgaengerId()==null) {return Optional.empty();}
-
-		// Achtung, hier wird persistence.find() verwendet, da ich fuer das Vorgaengergesuch evt. nicht
-		// Leseberechtigt bin, fuer die Mutation aber schon!
-		Betreuung vorgaengerbetreuung = persistence.find(Betreuung.class, betreuung.getVorgaengerId());
-		if (vorgaengerbetreuung != null) {
-			if (!vorgaengerbetreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
-				// Hier kann aus demselben Grund die Berechtigung fuer die Vorgaengerverfuegung nicht geprueft werden
-				return Optional.ofNullable(vorgaengerbetreuung.getVerfuegung());
-			} else {
-				return findVorgaengerVerfuegung(vorgaengerbetreuung);
-			}
-		}
-		return Optional.empty();
 	}
 }
