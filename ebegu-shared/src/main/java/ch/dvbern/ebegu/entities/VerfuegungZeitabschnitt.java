@@ -98,6 +98,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Column(nullable = true)
 	private BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
 
+	@NotNull
+	@Column(nullable = false)
+	private Integer einkommensjahr;
+
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
@@ -135,6 +139,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.abzugFamGroesse = toCopy.abzugFamGroesse;
 		this.famGroesse = toCopy.famGroesse;
 		this.massgebendesEinkommenVorAbzugFamgr = toCopy.massgebendesEinkommenVorAbzugFamgr;
+		this.einkommensjahr = toCopy.einkommensjahr;
 		this.bemerkungen = toCopy.bemerkungen;
 		this.verfuegung = null;
 	}
@@ -312,6 +317,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.famGroesse = famGroesse;
 	}
 
+	public Integer getEinkommensjahr() {
+		return einkommensjahr;
+	}
+
+	public void setEinkommensjahr(Integer einkommensjahr) {
+		this.einkommensjahr = einkommensjahr;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -374,6 +387,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		if (other.getFamGroesse() != null) {
 			Validate.isTrue(this.getFamGroesse() == null, "Familiengoressen kann nicht gemerged werden");
 			this.setFamGroesse(other.getFamGroesse());
+		}
+		if (other.getEinkommensjahr() != null) {
+			this.setEinkommensjahr(other.getEinkommensjahr());
 		}
 	}
 
@@ -451,6 +467,18 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		return sb.toString();
 	}
 
+	public String toStringFinanzielleSituation() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
+			.append(" MassgebendesEinkommenVorAbzugFamiliengroesse: ").append(massgebendesEinkommenVorAbzugFamgr).append("\t")
+			.append(" AbzugFamiliengroesse: ").append(abzugFamGroesse).append("\t")
+			.append(" MassgebendesEinkommen: ").append(getMassgebendesEinkommen()).append("\t")
+			.append(" Einkommensjahr: ").append(einkommensjahr).append("\t")
+			.append(" Familiengroesse: ").append(famGroesse).append("\t")
+			.append(" Bemerkungen: ").append(bemerkungen);
+		return sb.toString();
+	}
+
 	//TODO: Ist hier Objects.equals() richtig??
 	public boolean isSame(VerfuegungZeitabschnitt that) {
 		if (this == that) {
@@ -469,7 +497,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
 			bezahltVollkosten == that.bezahltVollkosten &&
 			longAbwesenheit == that.longAbwesenheit &&
-			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten;
+			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten &&
+			Objects.equals(this.einkommensjahr, that.einkommensjahr);
 	}
 
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
@@ -490,7 +519,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(abzugFamGroesse.compareTo(that.abzugFamGroesse) == 0) &&
 			(famGroesse.compareTo(that.famGroesse) == 0) &&
 			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
-			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0;
+			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0 &&
+			Objects.equals(this.einkommensjahr, that.einkommensjahr);
 	}
 
 	/**

@@ -18,7 +18,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
     private _bemerkungen: string;
     private _laufnummer: number;
-    private _hasFSDokument: boolean;
+    private _hasFSDokument: boolean = true;
 
 
     public get gesuchsteller1(): TSGesuchstellerContainer {

@@ -1554,6 +1554,7 @@ export default class EbeguRestUtil {
             zeitabschnitt.famGroesse = zeitabschnittTS.famGroesse;
             zeitabschnitt.status = zeitabschnittTS.status;
             zeitabschnitt.vollkosten = zeitabschnittTS.vollkosten;
+            zeitabschnitt.einkommensjahr = zeitabschnittTS.einkommensjahr;
             return zeitabschnitt;
         }
         return undefined;
@@ -1577,6 +1578,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.famGroesse = zeitabschnittFromServer.famGroesse;
             verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
             verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
+            verfuegungZeitabschnittTS.einkommensjahr = zeitabschnittFromServer.einkommensjahr;
             return verfuegungZeitabschnittTS;
         }
         return undefined;
