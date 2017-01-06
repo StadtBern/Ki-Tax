@@ -1671,10 +1671,10 @@ public class JaxBConverter {
 			jaxZeitabschn.setBetreuungsstunden(zeitabschnitt.getBetreuungsstunden());
 			jaxZeitabschn.setVollkosten(zeitabschnitt.getVollkosten());
 			jaxZeitabschn.setElternbeitrag(zeitabschnitt.getElternbeitrag());
-			jaxZeitabschn.setAbzugFamGroesse(zeitabschnitt.getAbzugFamGroesse());
 			jaxZeitabschn.setMassgebendesEinkommenVorAbzugFamgr(zeitabschnitt.getMassgebendesEinkommenVorAbzFamgr());
 			jaxZeitabschn.setBemerkungen(zeitabschnitt.getBemerkungen());
 			jaxZeitabschn.setFamGroesse(zeitabschnitt.getFamGroesse());
+			jaxZeitabschn.setEinkommensjahr(zeitabschnitt.getEinkommensjahr());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1699,6 +1699,7 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(jaxVerfuegungZeitabschnitt.getMassgebendesEinkommenVorAbzugFamgr());
 		verfuegungZeitabschnitt.setBemerkungen(jaxVerfuegungZeitabschnitt.getBemerkungen());
 		verfuegungZeitabschnitt.setFamGroesse(jaxVerfuegungZeitabschnitt.getFamGroesse());
+		verfuegungZeitabschnitt.setEinkommensjahr(jaxVerfuegungZeitabschnitt.getEinkommensjahr());
 		return verfuegungZeitabschnitt;
 	}
 
