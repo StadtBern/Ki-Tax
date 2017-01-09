@@ -18,10 +18,12 @@ export default class TSAntragDTO {
     private _gesuchsperiodeGueltigBis: moment.Moment;
     private _verfuegt: boolean;
     private _laufnummer : number;
+    private _gesperrtWegenBeschwerde: boolean;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
-                verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment, verfuegt?: boolean, laufnummer?: number) {
+                verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
+                verfuegt?: boolean, laufnummer?: number, gesperrtWegenBeschwerde?: boolean) {
 
         this._antragId = antragId;
         this._fallNummer = fallNummer;
@@ -37,6 +39,7 @@ export default class TSAntragDTO {
         this._gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
         this._verfuegt = verfuegt;
         this._laufnummer = laufnummer;
+        this._gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
     }
 
 
@@ -152,6 +155,13 @@ export default class TSAntragDTO {
         this._laufnummer = value;
     }
 
+    get gesperrtWegenBeschwerde(): boolean {
+        return this._gesperrtWegenBeschwerde;
+    }
+
+    set gesperrtWegenBeschwerde(value: boolean) {
+        this._gesperrtWegenBeschwerde = value;
+    }
 
     get gesuchsperiodeString() {
         if (this._gesuchsperiodeGueltigAb && this._gesuchsperiodeGueltigBis) {

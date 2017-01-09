@@ -80,12 +80,12 @@ export class GesuchstellerDashboardListViewController {
     }
 
     public openAntrag(periode: TSGesuchsperiode): void {
-        let antrag = this.getAntragForGesuchsperiode(periode);
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
         if (antrag) {
             if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
                 // Noch nicht freigegeben
                 this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});
-            } else if (!isAnyStatusOfVerfuegt(antrag.status)) {
+            } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.gesperrtWegenBeschwerde) {
                 // Alles ausser verfuegt und InBearbeitung
                 this.$state.go('gesuch.dokumente', {createNew: false, gesuchId: antrag.antragId});
             } else {
@@ -112,12 +112,12 @@ export class GesuchstellerDashboardListViewController {
     }
 
     public getButtonText(periode: TSGesuchsperiode): string {
-        let antrag = this.getAntragForGesuchsperiode(periode);
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
         if (antrag) {
             if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
                 // Noch nicht freigegeben -> Text BEARBEITEN
                 return this.$translate.instant('GS_BEARBEITEN');
-            } else if (!isAnyStatusOfVerfuegt(antrag.status)) {
+            } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.gesperrtWegenBeschwerde) {
                 // Alles ausser verfuegt und InBearbeitung -> Text DOKUMENTE HOCHLADEN
                 return this.$translate.instant('GS_DOKUMENTE_HOCHLADEN');
             } else {
