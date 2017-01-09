@@ -36,19 +36,19 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 			finanzDatenDTO = betreuung.extractGesuch().getFinanzDatenDTO_zuZweit();
 			setMassgebendesEinkommen(verfuegungZeitabschnitt.isEkv1_zuZweit(), verfuegungZeitabschnitt.isEkv2_zuZweit(), finanzDatenDTO, verfuegungZeitabschnitt, betreuung);
 			if (verfuegungZeitabschnitt.isEkv1_zuZweit_notAccepted()) {
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG1_NOT_ACCEPT_MSG);
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, verfuegungZeitabschnitt.getEinkommensjahr().toString());
 			}
 			if (verfuegungZeitabschnitt.isEkv2_zuZweit_notAccepted()) {
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_NOT_ACCEPT_MSG);
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, verfuegungZeitabschnitt.getEinkommensjahr().toString());
 			}
 		} else {
 			finanzDatenDTO = betreuung.extractGesuch().getFinanzDatenDTO_alleine();
 			setMassgebendesEinkommen(verfuegungZeitabschnitt.isEkv1_alleine(), verfuegungZeitabschnitt.isEkv2_alleine(), finanzDatenDTO, verfuegungZeitabschnitt, betreuung);
 			if (verfuegungZeitabschnitt.isEkv1_alleine_notAccepted()) {
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG1_NOT_ACCEPT_MSG);
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, verfuegungZeitabschnitt.getEinkommensjahr().toString());
 			}
 			if (verfuegungZeitabschnitt.isEkv2_alleine_notAccepted()) {
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_NOT_ACCEPT_MSG);
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, verfuegungZeitabschnitt.getEinkommensjahr().toString());
 			}
 		}
 
@@ -72,11 +72,11 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 		if (isEkv1) {
 			verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP1VorAbzFamGr());
 			verfuegungZeitabschnitt.setEinkommensjahr(finanzDatenDTO.getDatumVonBasisjahrPlus1().getYear());
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG1_ACCEPT_MSG);
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, verfuegungZeitabschnitt.getEinkommensjahr().toString());
 		} else if (isEkv2) {
 			verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP2VorAbzFamGr());
 			verfuegungZeitabschnitt.setEinkommensjahr(finanzDatenDTO.getDatumVonBasisjahrPlus2().getYear());
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_ACCEPT_MSG);
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, verfuegungZeitabschnitt.getEinkommensjahr().toString());
 		} else {
 			verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
 			verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);

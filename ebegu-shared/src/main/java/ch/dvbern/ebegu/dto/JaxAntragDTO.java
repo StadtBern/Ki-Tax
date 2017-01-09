@@ -92,6 +92,8 @@ public class JaxAntragDTO {
 
 	private boolean verfuegt;
 
+	private boolean gesperrtWegenBeschwerde;
+
 
 	public JaxAntragDTO() {
 
@@ -210,5 +212,13 @@ public class JaxAntragDTO {
 
 	public void setLaufnummer(@Nullable int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	public boolean isGesperrtWegenBeschwerde() {
+		return gesperrtWegenBeschwerde;
+	}
+
+	public void setGesperrtWegenBeschwerde(boolean gesperrtWegenBeschwerde) {
+		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
 	}
 }
