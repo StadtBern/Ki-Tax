@@ -28,6 +28,7 @@
                                        aria-label="{{FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS|translate}}"
                                        ng-model="vm.getResultate().einkommenBeiderGesuchsteller"
                                        dv-max-length max="999999999999" class="form-control" disabled>
+                                <div class="dv-error-messages"></div>
                             </dv-input-container>
                         </div>
                     </div>
@@ -116,11 +117,11 @@
                                        ui-number-mask="0"
                                        ng-model="vm.getResultate().nettovermoegenFuenfProzent"
                                        dv-max-length max="999999999999" class="form-control" disabled>
+                                <div class="dv-error-messages"></div>
                             </dv-input-container>
                         </div>
                     </div>
 
-                    <hr/>
 
                     <!-- Anrechenbares Einkommen -->
                     <div class="row">
@@ -133,6 +134,7 @@
                                        ui-number-mask="0"
                                        ng-model="vm.getResultate().anrechenbaresEinkommen"
                                        dv-max-length max="999999999999" class="form-control" disabled>
+                                <div class="dv-error-messages"></div>
                             </dv-input-container>
                         </div>
                     </div>
@@ -149,11 +151,10 @@
                                        aria-label="{{FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE|translate}}"
                                        ng-model="vm.getResultate().abzuegeBeiderGesuchsteller"
                                        dv-max-length max="999999999999" class="form-control" disabled>
+                                <div class="dv-error-messages"></div>
                             </dv-input-container>
                         </div>
                     </div>
-
-                    <hr/>
 
                     <!-- Massgebendes Einkommen vor Abzug Fam Grösse-->
                     <div class="row">
@@ -166,6 +167,7 @@
                                        ui-number-mask="0"
                                        ng-model="vm.getResultate().massgebendesEinkVorAbzFamGr"
                                        dv-max-length max="999999999999" class="form-control" disabled>
+                                <div class="dv-error-messages"></div>
                             </dv-input-container>
                         </div>
                     </div>
