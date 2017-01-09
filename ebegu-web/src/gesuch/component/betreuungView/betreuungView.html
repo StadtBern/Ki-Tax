@@ -55,12 +55,12 @@
                                     <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-select-style">
-                                <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot"
-                                        class="form-control"
-                                        ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
-                                        ng-required="true" ng-disabled="!vm.isEnabled()"
-                                        ng-change="vm.changedAngebot()">
-                                </select>
+                                    <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot"
+                                            class="form-control"
+                                            ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
+                                            ng-required="true" ng-disabled="!vm.isEnabled()"
+                                            ng-change="vm.changedAngebot()">
+                                    </select>
                                 </div>
                                 <dv-error-messages for="vm.form.betreuungsangebot.$error"></dv-error-messages>
                             </div>
