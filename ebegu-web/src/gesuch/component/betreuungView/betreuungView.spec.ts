@@ -28,6 +28,7 @@ describe('betreuungView', function () {
     let $httpBackend: IHttpBackendService;
     let authServiceRS: AuthServiceRS;
     let wizardStepManager: WizardStepManager;
+    let $stateParams: any;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -41,6 +42,7 @@ describe('betreuungView', function () {
         betreuung = new TSBetreuung();
         betreuung.timestampErstellt = DateUtil.today();
         kind = new TSKindContainer();
+        $stateParams = $injector.get('$stateParams');
         spyOn(gesuchModelManager, 'getKindToWorkWith').and.returnValue(kind);
         // model = betreuung;
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.callFake(() => {
@@ -53,7 +55,7 @@ describe('betreuungView', function () {
         spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
         wizardStepManager = $injector.get('WizardStepManager');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
-            $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS, wizardStepManager);
+            $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS, wizardStepManager, $injector.get('$stateParams'));
         betreuungView.model = betreuung;
 
         let form = createDummyForm();
@@ -71,7 +73,7 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope, null, null, authServiceRS, wizardStepManager);
+                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams);
                 myBetreuungView.model = betreuung;
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(0);

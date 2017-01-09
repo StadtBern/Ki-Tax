@@ -70,7 +70,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
             this.gesuchModelManager.calculateVerfuegungen().then(() => {
                 this.setBemerkungen();
             });
-        }else{
+        } else {
             this.setBemerkungen();
         }
 
