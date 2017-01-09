@@ -32,26 +32,32 @@
                         <th><input st-search="geburtsdatum" class="form-control" type="text"/></th>
                         <th><input st-search="typ" class="form-control" type="text"/></th>
                         <th>
-                            <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString" st-search="gesuchsperiodeString" class="form-control"
-                                    ng-options="periode for periode in vm.activeGesuchsperiodenList track by periode"
-                                    ng-model="vm.selectedGesuchsperiode">
-                                <option value="">{{"ALLE" | translate}}</option>
-                            </select>
+                            <div class="dv-select-style">
+                                <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString" st-search="gesuchsperiodeString" class="form-control"
+                                        ng-options="periode for periode in vm.activeGesuchsperiodenList track by periode"
+                                        ng-model="vm.selectedGesuchsperiode">
+                                    <option value="">{{"ALLE" | translate}}</option>
+                                </select>
+                            </div>
                         </th>
                         <th><input st-search="eingangsdatum" class="form-control" type="text"/></th>
                         <th>
-                            <select st-input-event="change" name="betreuungsangebotTyp" id="betreuungsangebotTyp" st-search="betreuungsangebotTyp" class="form-control"
-                                    ng-options="typ | translate for typ in vm.betreuungsangebotTypList track by typ"
-                                    ng-model="vm.selectedBetreuungsangebotTyp">
-                                <option value="">{{"ALLE" | translate}}</option>
-                            </select>
+                            <div class="dv-select-style">
+                                <select st-input-event="change" name="betreuungsangebotTyp" id="betreuungsangebotTyp" st-search="betreuungsangebotTyp" class="form-control"
+                                        ng-options="typ | translate for typ in vm.betreuungsangebotTypList track by typ"
+                                        ng-model="vm.selectedBetreuungsangebotTyp">
+                                    <option value="">{{"ALLE" | translate}}</option>
+                                </select>
+                            </div>
                         </th>
                         <th>
-                            <select st-input-event="change" name="institution" id="institution" st-search="institution" class="form-control"
-                                    ng-options="institution.name for institution in vm.institutionenList track by institution.name"
-                                    ng-model="vm.selectedInstitution">
-                                <option value="">{{"ALLE" | translate}}</option>
-                            </select>
+                            <div class="dv-select-style">
+                                <select st-input-event="change" name="institution" id="institution" st-search="institution" class="form-control"
+                                        ng-options="institution.name for institution in vm.institutionenList track by institution.name"
+                                        ng-model="vm.selectedInstitution">
+                                    <option value="">{{"ALLE" | translate}}</option>
+                                </select>
+                            </div>
                         </th>
                     </tr>
                     </thead>

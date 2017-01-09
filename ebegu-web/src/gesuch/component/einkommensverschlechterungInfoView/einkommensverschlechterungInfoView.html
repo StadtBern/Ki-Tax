@@ -54,11 +54,13 @@
                              ng-if="vm.showEkvi() && vm.showJahrPlus1()">
                             <label class="md-no-float" data-translate="EKVI_MONAT_DES_EREIGNISSES"
                                    for="stichtagBasisJahrPlus1"></label>
-                            <select name="stichtagBasisJahrPlus1" id="stichtagBasisJahrPlus1" class="form-control"
-                                    ng-model="vm.selectedStichtagBjP1"
-                                    ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
-                                    ng-required="true">
-                            </select>
+                            <div class="dv-select-style">
+                                <select name="stichtagBasisJahrPlus1" id="stichtagBasisJahrPlus1" class="form-control"
+                                        ng-model="vm.selectedStichtagBjP1"
+                                        ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
+                                        ng-required="true">
+                                </select>
+                            </div>
                             <dv-bisher gs="vm.selectedStichtagBjP1_GS"
                                        ja="vm.selectedStichtagBjP1"></dv-bisher>
                             <dv-error-messages for="vm.form.stichtagBasisJahrPlus1.$error"
@@ -118,11 +120,13 @@
                              ng-if="vm.showEkvi() && vm.showJahrPlus2()">
                             <label class="md-no-float" data-translate="EKVI_MONAT_DES_EREIGNISSES"
                                    for="stichtagBasisJahrPlus2"></label>
-                            <select name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2" class="form-control"
-                                    ng-model="vm.selectedStichtagBjP2"
-                                    ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
-                                    ng-required="true">
-                            </select>
+                            <div class="dv-select-style">
+                                <select name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2" class="form-control"
+                                        ng-model="vm.selectedStichtagBjP2"
+                                        ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
+                                        ng-required="true">
+                                </select>
+                            </div>
                             <dv-bisher gs="vm.selectedStichtagBjP2_GS"
                                        ja="vm.selectedStichtagBjP2"></dv-bisher>
                             <dv-error-messages for="vm.form.stichtagBasisJahrPlus2.$error"

@@ -37,7 +37,7 @@
                                     <span data-translate="TAETIGKEIT_WAEHLEN"></span>
                                     <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
-
+                                <div class="dv-select-style">
                                 <select name="taetigkeit" id="taetigkeit"
                                         ng-model="vm.model.erwerbspensumJA.taetigkeit"
                                         class="form-control"
@@ -45,6 +45,7 @@
                                         ng-required="true" ng-change="vm.taetigkeitChanged()"
                                         ng-disabled="vm.erwerbspensumDisabled()">
                                 </select>
+                                </div>
                                 <dv-bisher gs="vm.model.erwerbspensumGS.taetigkeit"
                                            ja="vm.model.erwerbspensumJA.taetigkeit"></dv-bisher>
                                 <dv-error-messages for="vm.form.taetigkeit.$error"
@@ -134,7 +135,8 @@
                                 <label class="md-no-float" data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
                                 </label>
                             <!--im readonly modus wird das select durch ein div ersetzt weil werte gesetzt sein koennen die nicht in der selectbox sind-->
-                            <select name="zuschlagsgrund" id="zuschlagsgrund"
+                                <div class="dv-select-style">
+                                    <select name="zuschlagsgrund" id="zuschlagsgrund"
                                     ng-model="vm.model.erwerbspensumJA.zuschlagsgrund"
                                     class="form-control"
                                     ng-options="zuschlagsgrund | translate for zuschlagsgrund in vm.getZuschlagsgrundList() "
@@ -142,6 +144,7 @@
                                     ng-disabled="vm.erwerbspensumDisabled()"
                                     ng-if="!vm.isGesuchReadonly()">
                             </select>
+                                </div>
                             <div id="zuschlagsgrund_dvi"
                                  ng-bind="vm.model.erwerbspensumJA.zuschlagsgrund | translate"
                                  class="form-control"

@@ -225,12 +225,14 @@
                                 <div class="form-group">
                                     <label class="md-no-float" data-translate="FACHSTELLE" for="fachstelle">
                                     </label>
-                                    <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId"
-                                            class="form-control"
-                                            ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'"
-                                            ng-required="vm.isFachstelleRequired()"
-                                            ng-change="vm.setSelectedFachsstelle()">
-                                    </select>
+                                    <div class="dv-select-style">
+                                        <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId"
+                                                class="form-control"
+                                                ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'"
+                                                ng-required="vm.isFachstelleRequired()"
+                                                ng-change="vm.setSelectedFachsstelle()">
+                                        </select>
+                                    </div>
                                     <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.fachstelle.name"
                                                ja="vm.getContainer().kindJA.pensumFachstelle.fachstelle.name"
                                                show-if-bisher-none="false"
