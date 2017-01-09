@@ -142,8 +142,7 @@
                                             class="form-control"
                                             ng-options="zuschlagsgrund | translate for zuschlagsgrund in vm.getZuschlagsgrundList() "
                                             ng-required="true"
-                                            ng-disabled="vm.erwerbspensumDisabled()"
-                                    >
+                                            ng-disabled="vm.erwerbspensumDisabled()">
                                     </select>
 
                                     <input id="zuschlagsgrund_dvi" type="text"
@@ -151,12 +150,12 @@
                                            class="form-control"
                                            ng-disabled="vm.isGesuchReadonly()"
                                            ng-if="vm.isGesuchReadonly()">
-                                <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
-                                           ja="vm.model.erwerbspensumJA.zuschlagsgrund"
-                                           show-if-bisher-none="false"
-                                           block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
-                                <dv-error-messages for="vm.form.zuschlagsgrund.$error"
-                                                   class="error"></dv-error-messages>
+                                    <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
+                                               ja="vm.model.erwerbspensumJA.zuschlagsgrund"
+                                               show-if-bisher-none="false"
+                                               block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
+                                    <dv-error-messages for="vm.form.zuschlagsgrund.$error"
+                                                       class="error"></dv-error-messages>
                                 </div>
                             </div>
                         </div>
@@ -168,7 +167,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT"
                                        for="zuschlagsprozent"></label>
-                                <input type="number" id="zuschlagsprozent" type="text" name="zuschlagsprozent"
+                                <input type="number" id="zuschlagsprozent" name="zuschlagsprozent"
                                        ng-model="vm.model.erwerbspensumJA.zuschlagsprozent"
                                        dv-max-length class="form-control" max="100"
                                        ng-required="true" ng-pattern="vm.patternPercentage"
