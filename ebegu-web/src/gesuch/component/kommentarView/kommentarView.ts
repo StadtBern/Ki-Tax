@@ -179,16 +179,4 @@ export class KommentarViewController {
         return this.gesuchModelManager.isGesuchReadonly();
     }
 
-    /**
-     * StepsComment sind fuer alle Steps disabled wenn das Gesuch VERFUEGEN oder VERFUEGT ist. Fuer den Step VERFUEGEN ist es nur im
-     * Status VERFUEGT DISABLED
-     * @returns {boolean}
-     */
-    public isStepCommentDisabled(): boolean {
-        return (this.wizardStepManager.getCurrentStepName() !== TSWizardStepName.VERFUEGEN
-            && this.gesuchModelManager.isGesuchReadonly())
-            || (this.wizardStepManager.getCurrentStepName() === TSWizardStepName.VERFUEGEN
-            && this.gesuchModelManager.getGesuch() && isAnyStatusOfVerfuegt(this.gesuchModelManager.getGesuch().status));
-    }
-
 }
