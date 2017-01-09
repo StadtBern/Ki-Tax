@@ -47,9 +47,6 @@ import java.util.*;
 public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Inject
-	private Authorizer authorizer;
-
-	@Inject
 	private DokumentGrundService dokumentGrundService;
 
 	@Inject

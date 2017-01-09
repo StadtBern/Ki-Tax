@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
  */
 @Audited
 @Entity
+@EntityListeners({GesuchListener.class})
 public class Gesuch extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;
@@ -112,6 +113,8 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = false)
 	private boolean hasFSDokument = true;
 
+	@Transient
+	private AntragStatus orginalAntragStatus;
 
 	public Gesuch() {
 	}
@@ -238,6 +241,14 @@ public class Gesuch extends AbstractEntity {
 
 	public final void setStatus(AntragStatus status) {
 		this.status = status;
+	}
+
+	public AntragStatus getOrginalStatus() {
+		return orginalAntragStatus;
+	}
+
+	public void setOrginalStatus(AntragStatus orginalAntragStatus) {
+		this.orginalAntragStatus = orginalAntragStatus;
 	}
 
 	public AntragTyp getTyp() {

@@ -67,9 +67,7 @@ public class BegleitschreibenPrintImpl extends BriefPrintImpl implements Begleit
 
 	@Override
 	public boolean isHasFSDokument() {
-		//TODO: finish implementaiopn after ebgeu-717 has been merged
-		//return gesuch.hasFSDokument.........?
-		return true;
+		return gesuch.isHasFSDokument();
 	}
 
 	@Override

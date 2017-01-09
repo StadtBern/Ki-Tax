@@ -66,8 +66,6 @@ public class PDFServiceBeanTest {
 
 	protected BetreuungsgutscheinEvaluator evaluator;
 
-	protected BetreuungsgutscheinEvaluator evaluator;
-
 	@Before
 	public void setupTestData() {
 
@@ -160,7 +158,7 @@ public class PDFServiceBeanTest {
 	@Test
 	public void testPrintErsteMahnungSinglePage() throws Exception {
 
-		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 3);
+		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks(2), 3);
 
 		byte[] bytes = pdfService.generateMahnung(mahnung, null);
 
@@ -177,7 +175,7 @@ public class PDFServiceBeanTest {
 	@Test
 	public void testPrintErsteMahnungTwoPages() throws Exception {
 
-		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 10);
+		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks(2), 10);
 
 		byte[] bytes = pdfService.generateMahnung(mahnung, null);
 
@@ -199,8 +197,8 @@ public class PDFServiceBeanTest {
 	@Test
 	public void testPrintZweiteMahnungSinglePage() throws Exception {
 
-		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 3);
-		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 3);
+		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks(2), 3);
+		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks(2), 3);
 		zweiteMahnung.setVorgaengerId(ersteMahnung.getId());
 
 		byte[] bytes = pdfService.generateMahnung(zweiteMahnung, Optional.of(ersteMahnung));
@@ -218,8 +216,8 @@ public class PDFServiceBeanTest {
 	@Test
 	public void testPrintZweiteMahnungTwoPages() throws Exception {
 
-		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 10);
-		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 10);
+		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks(2), 10);
+		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch_2GS, LocalDate.now().plusWeeks(2), 10);
 		zweiteMahnung.setVorgaengerId(ersteMahnung.getId());
 
 		byte[] bytes = pdfService.generateMahnung(zweiteMahnung, Optional.of(ersteMahnung));
