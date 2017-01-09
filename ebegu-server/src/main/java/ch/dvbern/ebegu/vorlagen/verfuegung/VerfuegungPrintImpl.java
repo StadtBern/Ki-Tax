@@ -151,12 +151,8 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 
 		List<BemerkungPrint> bemerkungen = new ArrayList<>();
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
-		if (verfuegung.isPresent()) {
-			if (StringUtils.isNotEmpty(verfuegung.get().getManuelleBemerkungen())) {
-				bemerkungen.addAll(splitBemerkungen(verfuegung.get().getManuelleBemerkungen()));
-			} else if (StringUtils.isNotEmpty(verfuegung.get().getGeneratedBemerkungen())) {
-				bemerkungen.addAll(splitBemerkungen((verfuegung.get().getGeneratedBemerkungen())));
-			}
+		if (verfuegung.isPresent() && StringUtils.isNotEmpty(verfuegung.get().getManuelleBemerkungen())) {
+			bemerkungen.addAll(splitBemerkungen(verfuegung.get().getManuelleBemerkungen()));
 		}
 		return bemerkungen;
 	}
