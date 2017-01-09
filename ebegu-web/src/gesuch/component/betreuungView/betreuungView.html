@@ -30,6 +30,7 @@
                                 <label class="md-no-float" data-translate="GESCHLECHT"></label>
                                 <input id="geschlecht_ID" type="text" name="geschlecht" ng-disabled="true"
                                        ng-value="vm.getKindModel().kindJA.geschlecht | translate" class="form-control">
+                                <div class="dv-error-messages"></div>
                             </div>
                         </div>
                         <!--Geburtsdatum-->
@@ -39,13 +40,14 @@
                                 <input id="geburtsdatum_ID" type="text" name="geburtsdatum" ng-disabled="true"
                                        ng-value="vm.getKindModel().kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"
                                        class="form-control">
+                                <div class="dv-error-messages"></div>
                             </div>
                         </div>
                     </div>
 
                     <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
                     <div class="row marginTop20">
-                        <div class="col-sm-12 dv-input-container-small ">
+                        <div class="col-sm-12 dv-input-container-medium">
                             <div class="form-group">
                                 <label class="md-no-float"
                                        for="betreuungsangebot">
@@ -191,7 +193,8 @@
                                                            button-click="vm.removeBetreuungspensum(betpen)"
                                                            button-class="dv-btn-operation">
                                             <i class="fa fa-lg fa-trash-o"></i>
-                                            <span data-translate="BETREUUNGSPENSUM_ENTFERNEN"></span>
+                                            <span data-translate="BETREUUNGSPENSUM_ENTFERNEN_INDEX"
+                                                  data-translate-value-betreuungspensumnumber="{{$index + 1}}"></span>
                                         </dv-loading-button>
                                     </div>
                                 </div>
@@ -216,7 +219,7 @@
                             <!--grund Ablehnung-->
                             <div class="row marginTop20" dv-show-element
                                  dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
-                                <div class="col-md-12">
+                                <div class="col-md-12 dv-input-container-medium">
                                     <dv-input-container class="form-group">
                                         <label class="md-no-float" class="inlineHint" for="grundAblehnung"
                                                data-translate="GRUND_ABLEHNUNG"></label>
