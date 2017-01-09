@@ -27,10 +27,10 @@
 
     </div>
     <!--Erwerbspensen von Gesuchsteller 2-->
-    <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller2" class="marginTop20">
-        <h1 class="mainTitle">
+    <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller2">
+        <h2>
             <span ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller2.extractFullName()"></span>
-        </h1>
+        </h2>
         <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS2()" table-id="erwerbspensenGS2"
                                add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
                                add-button-Visible="!vm.isGesuchReadonly()"
