@@ -830,5 +830,6 @@
     "DOKUMENTE": "Dokumente",
     "FREIGABE": "Freigabe",
     "GESUCH_ERSTELLEN": "",
-    "GESPERRT_WEGEN_BESCHWERDE": "gesperrt wegen Beschwerde"
+    "GESPERRT_WEGEN_BESCHWERDE": "gesperrt wegen Beschwerde",
+    "FILE_ZU_GROSS": "Datei zu gross. Maximale Dateigrösse ist 10MB"
 }
