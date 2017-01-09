@@ -13,6 +13,7 @@ import {TSRole} from '../../../models/enums/TSRole';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IScope = angular.IScope;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -59,6 +60,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     }
 
     private initViewModel() {
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         this.initGeschaeftsgewinnFromFS();
         this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig()
             || (this.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr !== null

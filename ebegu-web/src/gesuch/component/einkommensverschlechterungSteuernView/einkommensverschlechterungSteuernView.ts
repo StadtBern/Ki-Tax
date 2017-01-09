@@ -12,6 +12,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./einkommensverschlechterungSteuernView.html');
 require('./einkommensverschlechterungSteuernView.less');
 
@@ -38,6 +39,7 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
         this.initialModel = angular.copy(this.model);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();

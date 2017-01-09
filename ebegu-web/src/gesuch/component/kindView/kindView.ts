@@ -17,6 +17,7 @@ import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 
 
 let template = require('./kindView.html');
@@ -48,6 +49,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith());
         // this.initialModel = angular.copy(this.model);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.KINDER);
         this.initViewModel();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }

@@ -62,14 +62,14 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let kindNumber: number = this.gesuchModelManager.findKind(kind);
         if (kindNumber > 0) {
             this.gesuchModelManager.setKindNumber(kindNumber);
-            let betreuungNumber = this.gesuchModelManager.createBetreuung();
+            let betreuungNumber: number = this.gesuchModelManager.createBetreuung();
             this.openBetreuungView(betreuungNumber, kindNumber);
         }
     }
 
     public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung): void {
         this.gesuchModelManager.findKind(kind);
-        var remTitleText: any = this.$translate.instant('BETREUUNG_LOESCHEN', {
+        let remTitleText: any = this.$translate.instant('BETREUUNG_LOESCHEN', {
             kindname: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
             betreuungsangebottyp: this.ebeguUtil.translateString(TSBetreuungsangebotTyp[betreuung.institutionStammdaten.betreuungsangebotTyp])
         });

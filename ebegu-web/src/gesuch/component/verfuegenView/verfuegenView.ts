@@ -18,6 +18,7 @@ import TSBetreuung from '../../../models/TSBetreuung';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import IRootScopeService = angular.IRootScopeService;
 import IScope = angular.IScope;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -47,13 +48,11 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
-
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
 
         this.initView();
 
-        /**
-         * EBEGE-741: Bemerkungen sollen automatisch zum Inhalt der Verfügung hinzugefügt werden
-         */
+        // EBEGE-741: Bemerkungen sollen automatisch zum Inhalt der Verfügung hinzugefügt werden
         if ($scope) {
             $scope.$watch(() => {
                 return this.gesuchModelManager.getGesuch().bemerkungen;
