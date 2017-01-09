@@ -1278,6 +1278,7 @@ export default class EbeguRestUtil {
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
         restPendenz.laufnummer = pendenz.laufnummer;
+        restPendenz.gesperrtWegenBeschwerde = pendenz.gesperrtWegenBeschwerde;
         return restPendenz;
     }
 
@@ -1296,6 +1297,7 @@ export default class EbeguRestUtil {
         pendenzTS.status = pendenzFromServer.status;
         pendenzTS.verfuegt = pendenzFromServer.verfuegt;
         pendenzTS.laufnummer = pendenzFromServer.laufnummer;
+        pendenzTS.gesperrtWegenBeschwerde = pendenzFromServer.gesperrtWegenBeschwerde;
         return pendenzTS;
     }
 
@@ -1729,7 +1731,7 @@ export default class EbeguRestUtil {
             }
             if (gesuchstellerCont.erwerbspensenContainer) {
                 let erwPensenCont: Array<any> = [];
-                for (var i = 0; i < gesuchstellerCont.erwerbspensenContainer.length; i++) {
+                for (let i = 0; i < gesuchstellerCont.erwerbspensenContainer.length; i++) {
                     erwPensenCont.push(this.erwerbspensumContainerToRestObject({}, gesuchstellerCont.erwerbspensenContainer[i]));
                 }
                 restGSCont.erwerbspensenContainers = erwPensenCont;
@@ -1760,7 +1762,7 @@ export default class EbeguRestUtil {
     private adressenContainerListToRestObject(adressen: Array<TSAdresseContainer>) {
         let list: any[] = [];
         if (adressen) {
-            for (var i = 0; i < adressen.length; i++) {
+            for (let i = 0; i < adressen.length; i++) {
                 list[i] = this.adresseContainerToRestObject({}, adressen[i]);
             }
         }

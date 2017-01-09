@@ -182,16 +182,18 @@
                                            for="gleichemHaushalt">
                                         <span data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT" class="ebeguH1"> </span>
                                     </label>
-                                    <input id="gleichemHaushalt" type="number" name="gleichemHaushalt"
-                                           ng-model="vm.getModel().wohnhaftImGleichenHaushalt" max="100"
-                                           dv-max-length class="form-control"
-                                           ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
-                                           ng-required="vm.getModel().familienErgaenzendeBetreuung"
-                                           ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                                    <dv-bisher gs="vm.getContainer().kindGS.wohnhaftImGleichenHaushalt"
-                                               ja="vm.getContainer().kindJA.wohnhaftImGleichenHaushalt"></dv-bisher>
-                                    <dv-error-messages for="vm.form.gleichemHaushalt.$error"
-                                                       class="error"></dv-error-messages>
+                                    <div class="dv-input-container-small" style="padding-right:32px;">
+                                        <input id="gleichemHaushalt" type="number" name="gleichemHaushalt"
+                                               ng-model="vm.getModel().wohnhaftImGleichenHaushalt" max="100"
+                                               dv-max-length class="form-control"
+                                               ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                                               ng-required="vm.getModel().familienErgaenzendeBetreuung"
+                                               ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
+                                        <dv-bisher gs="vm.getContainer().kindGS.wohnhaftImGleichenHaushalt"
+                                                   ja="vm.getContainer().kindJA.wohnhaftImGleichenHaushalt"></dv-bisher>
+                                        <dv-error-messages for="vm.form.gleichemHaushalt.$error"
+                                                           class="error"></dv-error-messages>
+                                    </div>
                                 </dv-input-container>
                             </div>
                         </div>

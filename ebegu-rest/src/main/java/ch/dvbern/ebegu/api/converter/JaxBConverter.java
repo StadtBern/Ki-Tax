@@ -2068,6 +2068,7 @@ public class JaxBConverter {
 		}
 		antrag.setVerfuegt(AntragStatus.VERFUEGT.equals(gesuch.getStatus()));
 		antrag.setLaufnummer(gesuch.getLaufnummer());
+		antrag.setGesperrtWegenBeschwerde(gesuch.isGesperrtWegenBeschwerde());
 		return antrag;
 	}
 

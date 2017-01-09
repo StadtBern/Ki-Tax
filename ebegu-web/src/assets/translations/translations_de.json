@@ -405,6 +405,7 @@
     "BETREUUNGSPENSUM": "Betreuungspensum {{betreuungspensumnumber}}",
     "BETREUUNGSPENSUM_ERFASSEN": "weiteres Betreuungspensum erfassen",
     "BETREUUNGSPENSUM_ENTFERNEN": "Betreuungspensum entfernen",
+    "BETREUUNGSPENSUM_ENTFERNEN_INDEX": "Betreuungspensum {{betreuungspensumnumber}} entfernen",
     "BETREUUNGSPENSUM_HINT1": "Das Gesuch können Sie nur an das Jugendamt freigeben, wenn die Kita Ihnen den Platz bestätigt. Nach Anforderung der Bestätigung können diese Daten nicht mehr verändert werden.",
     "BETREUUNG_LOESCHEN": "Wollen Sie das Betreuungsangebot \"{{betreuungsangebottyp}}\" vom Kind {{kindname}} wirklich löschen?",
     "BETREUUNG_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
@@ -830,5 +831,6 @@
     "DOKUMENTE": "Dokumente",
     "FREIGABE": "Freigabe",
     "GESUCH_ERSTELLEN": "",
-    "GESPERRT_WEGEN_BESCHWERDE": "gesperrt wegen Beschwerde"
+    "GESPERRT_WEGEN_BESCHWERDE": "gesperrt wegen Beschwerde",
+    "FILE_ZU_GROSS": "Datei zu gross. Maximale Dateigrösse ist 10MB"
 }
