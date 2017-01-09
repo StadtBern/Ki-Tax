@@ -15,6 +15,7 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSBetreuung from '../../../models/TSBetreuung';
+import {IBetreuungStateParams} from '../../gesuch.route';
 import IRootScopeService = angular.IRootScopeService;
 import IScope = angular.IScope;
 let template = require('./verfuegenView.html');
@@ -35,16 +36,59 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log'];
+        'DvDialog', 'DownloadRS', '$log', '$stateParams'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, $scope: IScope, wizardStepManager: WizardStepManager,
-                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
+                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IBetreuungStateParams) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
-        this.setBemerkungen();
+        this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
+        this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
+
+
+        this.initView();
+
+        /**
+         * EBEGE-741: Bemerkungen sollen automatisch zum Inhalt der Verfügung hinzugefügt werden
+         */
+        if ($scope) {
+            $scope.$watch(() => {
+                return this.gesuchModelManager.getGesuch().bemerkungen;
+            }, (newValue, oldValue) => {
+                if ((newValue !== oldValue)) {
+                    this.setBemerkungen();
+                }
+            });
+        }
+    }
+
+    private initView() {
+        if (!this.gesuchModelManager.getVerfuegenToWorkWith()) {
+            this.gesuchModelManager.calculateVerfuegungen().then(() => {
+                this.setBemerkungen();
+            });
+        }else{
+            this.setBemerkungen();
+        }
+
+        if (!this.berechnungsManager.finanzielleSituationResultate) {
+            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch()); //.then(() => {});
+        }
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
+            && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1
+            && !this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
+
+            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 1); //.then(() => {});
+        }
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
+            && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2
+            && !this.berechnungsManager.einkommensverschlechterungResultateBjP2) {
+
+            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
+        }
     }
 
     cancel(): void {
@@ -113,7 +157,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         return undefined;
     }
 
-    public getBetreuung() : TSBetreuung {
+    public getBetreuung(): TSBetreuung {
         return this.gesuchModelManager.getBetreuungToWorkWith();
     }
 

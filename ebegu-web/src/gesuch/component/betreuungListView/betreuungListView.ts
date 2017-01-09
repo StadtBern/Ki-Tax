@@ -46,11 +46,11 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
     }
 
     public editBetreuung(kind: TSKindContainer, betreuung: any): void {
-        this.gesuchModelManager.findKind(kind);
+        let kindNummer: number = this.gesuchModelManager.findKind(kind);
         let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
         if (betreuungNumber > 0) {
             betreuung.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
-            this.openBetreuungView();
+            this.openBetreuungView(betreuungNumber, kindNummer);
         }
     }
 
@@ -62,8 +62,8 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let kindNumber: number = this.gesuchModelManager.findKind(kind);
         if (kindNumber > 0) {
             this.gesuchModelManager.setKindNumber(kindNumber);
-            this.gesuchModelManager.createBetreuung();
-            this.openBetreuungView();
+            let betreuungNumber = this.gesuchModelManager.createBetreuung();
+            this.openBetreuungView(betreuungNumber, kindNumber);
         }
     }
 
@@ -86,8 +86,12 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         });
     }
 
-    private openBetreuungView(): void {
-        this.$state.go('gesuch.betreuung', {gesuchId: this.getGesuchId()});
+    private openBetreuungView(betreuungNumber: number, kindNumber: number): void {
+        this.$state.go('gesuch.betreuung', {
+            betreuungNumber: betreuungNumber,
+            kindNumber: kindNumber,
+            gesuchId: this.getGesuchId()
+        });
     }
 
     /**
