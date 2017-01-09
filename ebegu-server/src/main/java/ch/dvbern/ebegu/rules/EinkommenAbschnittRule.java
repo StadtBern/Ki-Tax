@@ -2,11 +2,12 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,67 +28,90 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 		// Nur ausführen wenn Finanzdaten gesetzt
 		// Der {@link FinanzielleSituationRechner} wurde verwendet um das jeweils geltende  Einkommen auszurechnen. Das heisst im DTO ist schon
 		// jeweils das zu verwendende Einkommen gesetzt
-		FinanzDatenDTO finanzDatenDTO = betreuung.extractGesuch().getFinanzDatenDTO();
-		if (finanzDatenDTO != null) {
+		FinanzDatenDTO finanzDatenDTO_alleine = betreuung.extractGesuch().getFinanzDatenDTO_alleine();
+		FinanzDatenDTO finanzDatenDTO_zuZweit = betreuung.extractGesuch().getFinanzDatenDTO_zuZweit();
+
+		EinkommensverschlechterungInfo ekvInfo = betreuung.extractGesuch().extractEinkommensverschlechterungInfo();
+
+		if (finanzDatenDTO_alleine != null && finanzDatenDTO_zuZweit != null) {
 			VerfuegungZeitabschnitt lastAbschnitt;
 
 			// Abschnitt Finanzielle Situation (Massgebendes Einkommen fuer die Gesuchsperiode)
 			VerfuegungZeitabschnitt abschnittFinanzielleSituation = new VerfuegungZeitabschnitt(betreuung.extractGesuchsperiode().getGueltigkeit());
-			abschnittFinanzielleSituation.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
 			einkommensAbschnitte.add(abschnittFinanzielleSituation);
 			lastAbschnitt = abschnittFinanzielleSituation;
 
-			// Einkommensverschlechterung 1
-			if (finanzDatenDTO.getDatumVonBasisjahrPlus1() != null) {
-				DateRange rangeEKV1 = new DateRange(finanzDatenDTO.getDatumVonBasisjahrPlus1(), betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
+
+			// Einkommensverschlechterung 1: In mind. 1 Kombination akzeptiert
+			if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() != null || finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1() != null) {
+				LocalDate startEKV1 = finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() != null ? finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() : finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1();
+				DateRange rangeEKV1 = new DateRange(startEKV1, betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 				VerfuegungZeitabschnitt abschnittEinkommensverschlechterung1 = new VerfuegungZeitabschnitt(rangeEKV1);
-				abschnittEinkommensverschlechterung1.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP1VorAbzFamGr());
+
+				if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() != null) {
+					// EKV1 fuer alleine akzeptiert
+					abschnittEinkommensverschlechterung1.setEkv1_alleine(true);
+				}
+				if (finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1() != null) {
+					// EKV1 fuer zu Zweit akzeptiert
+					abschnittEinkommensverschlechterung1.setEkv1_zuZweit(true);
+				}
+				if (ekv1NotAccepted(finanzDatenDTO_alleine, ekvInfo)) {
+					// EKV1 fuer alleine nicht akzeptiert
+					abschnittEinkommensverschlechterung1.setEkv1_alleine_notAccepted(true);
+				}
+				if (ekv1NotAccepted(finanzDatenDTO_zuZweit, ekvInfo)) {
+					// EKV1 fuer zu Zweit nicht akzeptiert
+					abschnittEinkommensverschlechterung1.setEkv1_zuZweit_notAccepted(true);
+				}
 				einkommensAbschnitte.add(abschnittEinkommensverschlechterung1);
 				// Den vorherigen Zeitabschnitt beenden
 				lastAbschnitt.getGueltigkeit().endOnDayBefore(abschnittEinkommensverschlechterung1.getGueltigkeit());
 				lastAbschnitt = abschnittEinkommensverschlechterung1;
 			}
-			createBemerkungEVK1(lastAbschnitt,finanzDatenDTO, betreuung);
-			// Einkommensverschlechterung 2
-			if (finanzDatenDTO.getDatumVonBasisjahrPlus2() != null) {
-				DateRange rangeEKV2 = new DateRange(finanzDatenDTO.getDatumVonBasisjahrPlus2(), betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
+
+			// Einkommensverschlechterung 2: In mind. 1 Kombination akzeptiert
+			if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() != null || finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2() != null) {
+				LocalDate startEKV2 = finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() != null ? finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() : finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2();
+				DateRange rangeEKV2 = new DateRange(startEKV2, betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 				VerfuegungZeitabschnitt abschnittEinkommensverschlechterung2 = new VerfuegungZeitabschnitt(rangeEKV2);
-				abschnittEinkommensverschlechterung2.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP2VorAbzFamGr());
+
+				if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() != null) {
+					// EKV2 fuer alleine akzeptiert
+					abschnittEinkommensverschlechterung2.setEkv2_alleine(true);
+				}
+				if (finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2() != null) {
+					// EKV2 fuer zu Zweit akzeptiert
+					abschnittEinkommensverschlechterung2.setEkv2_zuZweit(true);
+				}
+				if (ekv2NotAccepted(finanzDatenDTO_alleine, ekvInfo)) {
+					// EKV2 fuer alleine nicht akzeptiert
+					abschnittEinkommensverschlechterung2.setEkv2_alleine_notAccepted(true);
+				}
+				if (ekv2NotAccepted(finanzDatenDTO_zuZweit, ekvInfo)) {
+					// EKV2 fuer zu Zweit nicht akzeptiert
+					abschnittEinkommensverschlechterung2.setEkv2_zuZweit_notAccepted(true);
+				}
 				einkommensAbschnitte.add(abschnittEinkommensverschlechterung2);
 				// Den vorherigen Zeitabschnitt beenden
 				lastAbschnitt.getGueltigkeit().endOnDayBefore(abschnittEinkommensverschlechterung2.getGueltigkeit());
 			}
-			createBemerkungEVK2(lastAbschnitt,finanzDatenDTO, betreuung);
 		}
 		return einkommensAbschnitte;
 	}
 
-
-	private void createBemerkungEVK1(VerfuegungZeitabschnitt lastAbschnitt, FinanzDatenDTO finanzDatenDTO, Betreuung betreuung) {
-		if (finanzDatenDTO.isEKV1Accepted()) {
-			lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG1_ACCEPT_MSG);
-		} else {
-			//ekv wurde nicht akzeptiert
-			if (betreuung.extractGesuch().extractEinkommensverschlechterungInfo() != null
-				&& betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() != null
-				&& betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
-				lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG1_NOT_ACCEPT_MSG);
-			}
-		}
+	private boolean ekv1NotAccepted(FinanzDatenDTO finanzDatenDTO, EinkommensverschlechterungInfo ekvInfo) {
+		return !finanzDatenDTO.isEKV1Accepted()
+			&& ekvInfo != null
+			&& ekvInfo.getEkvFuerBasisJahrPlus1() != null
+			&& ekvInfo.getEkvFuerBasisJahrPlus1();
 	}
 
-	private void createBemerkungEVK2(VerfuegungZeitabschnitt lastAbschnitt, FinanzDatenDTO finanzDatenDTO, Betreuung betreuung) {
-		if (finanzDatenDTO.isEKV2Accepted()) {
-			lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_ACCEPT_MSG);
-		} else {
-			//ekv2 wurde nicht akzeptiert
-			if (betreuung.extractGesuch().extractEinkommensverschlechterungInfo() != null
-				&&betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null
-				&&  betreuung.extractGesuch().extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
-				lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_NOT_ACCEPT_MSG);
-			}
-		}
-
+	private boolean ekv2NotAccepted(FinanzDatenDTO finanzDatenDTO, EinkommensverschlechterungInfo ekvInfo) {
+		return !finanzDatenDTO.isEKV2Accepted()
+			&& ekvInfo != null
+			&& ekvInfo.getEkvFuerBasisJahrPlus2() != null
+			&& ekvInfo.getEkvFuerBasisJahrPlus2();
 	}
 
 	@Override

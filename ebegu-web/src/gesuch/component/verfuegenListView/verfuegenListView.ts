@@ -25,6 +25,7 @@ import DateUtil from '../../../utils/DateUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import IScope = angular.IScope;
+import GesuchRS from '../../service/gesuchRS.rest';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -50,13 +51,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope'];
+        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS'];
     /* @ngInject */
 
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService,
-                private authServiceRs: AuthServiceRS, $scope: IScope) {
+                private authServiceRs: AuthServiceRS, $scope: IScope, private gesuchRS: GesuchRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
         this.initViewModel();
     }
@@ -254,38 +255,42 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showErsteMahnungErstellen(): boolean {
         // Nur wenn keine offenen Mahnungen vorhanden!
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.mahnung === undefined && !this.hasOffeneMahnungen();
+            && this.mahnung === undefined && !this.hasOffeneMahnungen() && !this.isGesuchReadonly();
     }
 
     public showErsteMahnungAusloesen(): boolean {
-        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ERSTE_MAHNUNG;
+        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ERSTE_MAHNUNG
+            && !this.isGesuchReadonly();
     }
 
     public showZweiteMahnungErstellen(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN)
-            && this.mahnung === undefined;
+            && this.mahnung === undefined && !this.isGesuchReadonly();
     }
 
     public showZweiteMahnungAusloesen(): boolean {
-        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG;
+        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG
+            && !this.isGesuchReadonly();
     }
 
     public showMahnlaufBeenden(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN))
+            && !this.isGesuchReadonly();
     }
 
     public showDokumenteNichtKomplett(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN))
+            && !this.isGesuchReadonly();
     }
 
     public showZweiteMahnungNichtEingetreten(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN) && !this.isGesuchReadonly();
     }
 
     public ersteMahnungErstellen(): void {
@@ -352,7 +357,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showGeprueft(): boolean {
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.wizardStepManager.areAllStepsOK() && this.mahnung === undefined;
+            && this.wizardStepManager.areAllStepsOK() && this.mahnung === undefined && !this.isGesuchReadonly();
     }
 
     /**
@@ -361,7 +366,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showVerfuegenStarten(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
-            && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG);
+            && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
+            && !this.isGesuchReadonly();
             // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
 
@@ -400,5 +406,39 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 }
                 return;
             });
+    }
+
+    public showBeschwerdeHaengig(): boolean {
+        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        return TSAntragStatus.VERFUEGT === status && !this.getGesuch().gesperrtWegenBeschwerde;
+    }
+
+    public showBeschwerdeAbschliessen(): boolean {
+        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        return TSAntragStatus.BESCHWERDE_HAENGIG === status;
+    }
+
+    public setGesuchStatusBeschwerdeHaengig(): IPromise<TSGesuch> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'BESCHWERDE_HAENGIG',
+            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_HAENGIG'
+        }).then(() => {
+            return this.gesuchRS.setBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                return this.gesuchModelManager.getGesuch();
+            });
+        });
+    }
+
+    public setGesuchStatusBeschwerdeAbschliessen(): IPromise<TSGesuch> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'BESCHWERDE_ABSCHLIESSEN',
+            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_ABSCHLIESSEN'
+        }).then(() => {
+            return this.gesuchRS.removeBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                return this.gesuchModelManager.getGesuch();
+            });
+        });
     }
 }

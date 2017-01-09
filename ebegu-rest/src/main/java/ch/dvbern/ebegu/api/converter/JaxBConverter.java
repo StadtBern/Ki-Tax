@@ -667,6 +667,7 @@ public class JaxBConverter {
 		antrag.setBemerkungen(antragJAXP.getBemerkungen());
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
+		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
 
 		return antrag;
 	}
@@ -789,6 +790,7 @@ public class JaxBConverter {
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
+		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
 
 		return jaxGesuch;
 	}
@@ -1265,6 +1267,7 @@ public class JaxBConverter {
 		einkommensverschlechterung.setNettolohnNov(einkommensverschlechterungJAXP.getNettolohnNov());
 		einkommensverschlechterung.setNettolohnDez(einkommensverschlechterungJAXP.getNettolohnDez());
 		einkommensverschlechterung.setNettolohnZus(einkommensverschlechterungJAXP.getNettolohnZus());
+		einkommensverschlechterung.setGeschaeftsgewinnBasisjahrMinus1(einkommensverschlechterungJAXP.getGeschaeftsgewinnBasisjahrMinus1());
 		return einkommensverschlechterung;
 	}
 
@@ -1289,6 +1292,7 @@ public class JaxBConverter {
 			jaxEinkommensverschlechterung.setNettolohnNov(persistedEinkommensverschlechterung.getNettolohnNov());
 			jaxEinkommensverschlechterung.setNettolohnDez(persistedEinkommensverschlechterung.getNettolohnDez());
 			jaxEinkommensverschlechterung.setNettolohnZus(persistedEinkommensverschlechterung.getNettolohnZus());
+			jaxEinkommensverschlechterung.setGeschaeftsgewinnBasisjahrMinus1(persistedEinkommensverschlechterung.getGeschaeftsgewinnBasisjahrMinus1());
 
 			return jaxEinkommensverschlechterung;
 		}
@@ -1669,10 +1673,10 @@ public class JaxBConverter {
 			jaxZeitabschn.setBetreuungsstunden(zeitabschnitt.getBetreuungsstunden());
 			jaxZeitabschn.setVollkosten(zeitabschnitt.getVollkosten());
 			jaxZeitabschn.setElternbeitrag(zeitabschnitt.getElternbeitrag());
-			jaxZeitabschn.setAbzugFamGroesse(zeitabschnitt.getAbzugFamGroesse());
 			jaxZeitabschn.setMassgebendesEinkommenVorAbzugFamgr(zeitabschnitt.getMassgebendesEinkommenVorAbzFamgr());
 			jaxZeitabschn.setBemerkungen(zeitabschnitt.getBemerkungen());
 			jaxZeitabschn.setFamGroesse(zeitabschnitt.getFamGroesse());
+			jaxZeitabschn.setEinkommensjahr(zeitabschnitt.getEinkommensjahr());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1697,6 +1701,7 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(jaxVerfuegungZeitabschnitt.getMassgebendesEinkommenVorAbzugFamgr());
 		verfuegungZeitabschnitt.setBemerkungen(jaxVerfuegungZeitabschnitt.getBemerkungen());
 		verfuegungZeitabschnitt.setFamGroesse(jaxVerfuegungZeitabschnitt.getFamGroesse());
+		verfuegungZeitabschnitt.setEinkommensjahr(jaxVerfuegungZeitabschnitt.getEinkommensjahr());
 		return verfuegungZeitabschnitt;
 	}
 

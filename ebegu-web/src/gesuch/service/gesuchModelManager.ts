@@ -182,6 +182,15 @@ export default class GesuchModelManager {
         return this.getEkvFuerBasisJahrPlus(2);
     }
 
+    public isRequiredEKV_GS_BJ(gs: number, bj: number): boolean {
+        if (gs === 2) {
+            return this.getEkvFuerBasisJahrPlus(bj) && this.isGesuchsteller2Required();
+        } else {
+            return this.getEkvFuerBasisJahrPlus(bj);
+        }
+
+    }
+
     public getFamiliensituation(): TSFamiliensituation {
         if (this.gesuch) {
             return this.gesuch.extractFamiliensituation();
@@ -375,7 +384,7 @@ export default class GesuchModelManager {
         }
     }
 
-    private getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
+    public getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
         if (!this.gesuch.extractEinkommensverschlechterungInfo()) {
             this.initEinkommensverschlechterungInfo();
         }
@@ -1076,7 +1085,9 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return isStatusVerfuegenVerfuegt(this.gesuch.status) || this.isGesuchReadonlyForRole();
+        return isStatusVerfuegenVerfuegt(this.gesuch.status)
+            || this.isGesuchReadonlyForRole()
+            || this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     /**
@@ -1209,7 +1220,7 @@ export default class GesuchModelManager {
     //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
         if (this.getGesuch()) {
-            var text = '';
+            let text = '';
             if (this.getGesuch().fall) {
                 text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
             }

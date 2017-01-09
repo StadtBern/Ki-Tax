@@ -145,14 +145,18 @@ public class ErwerbspensumRuleTest {
 
 		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
 		Assert.assertNotNull(result);
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(3, result.size());
 		Assert.assertEquals(90, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(START_PERIODE, result.get(0).getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(LocalDate.of(2017, Month.MARCH, 25), result.get(0).getGueltigkeit().getGueltigBis());
 
 		Assert.assertEquals(70, result.get(1).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(LocalDate.of(2017, Month.MARCH, 26), result.get(1).getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(ENDE_PERIODE, result.get(1).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(LocalDate.of(2017, Month.MARCH, 31), result.get(1).getGueltigkeit().getGueltigBis());
+
+		Assert.assertEquals(70, result.get(2).getAnspruchberechtigtesPensum());
+		Assert.assertEquals(LocalDate.of(2017, Month.APRIL, 1), result.get(2).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(ENDE_PERIODE, result.get(2).getGueltigkeit().getGueltigBis());
 	}
 
 	@Test
@@ -174,14 +178,18 @@ public class ErwerbspensumRuleTest {
 
 		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
 		Assert.assertNotNull(result);
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(3, result.size());
 		Assert.assertEquals(60, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(START_PERIODE, result.get(0).getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(LocalDate.of(2017, Month.MARCH, 25), result.get(0).getGueltigkeit().getGueltigBis());
 
 		Assert.assertEquals(90, result.get(1).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(LocalDate.of(2017, Month.MARCH, 26), result.get(1).getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(ENDE_PERIODE, result.get(1).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(LocalDate.of(2017, Month.MARCH, 31), result.get(1).getGueltigkeit().getGueltigBis());
+
+		Assert.assertEquals(90, result.get(2).getAnspruchberechtigtesPensum());
+		Assert.assertEquals(LocalDate.of(2017, Month.APRIL, 1), result.get(2).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(ENDE_PERIODE, result.get(2).getGueltigkeit().getGueltigBis());
 	}
 
 

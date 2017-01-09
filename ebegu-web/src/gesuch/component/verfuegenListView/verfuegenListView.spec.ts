@@ -43,7 +43,7 @@ describe('verfuegenListViewTest', function () {
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, berechnungsManager, undefined,
             wizardStepManager, null, $injector.get('DownloadRS'), $injector.get('MahnungRS'), $injector.get('$log'),
-            $injector.get('AuthServiceRS'), $rootScope);
+            $injector.get('AuthServiceRS'), $rootScope, $injector.get('GesuchRS'));
         $rootScope.$apply();
     }));
 

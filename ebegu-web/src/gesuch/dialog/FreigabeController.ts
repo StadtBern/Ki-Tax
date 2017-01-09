@@ -3,7 +3,6 @@ import TSGesuch from '../../models/TSGesuch';
 import TSUser from '../../models/TSUser';
 import UserRS from '../../core/service/userRS.rest';
 import EbeguUtil from '../../utils/EbeguUtil';
-import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import IPromise = angular.IPromise;
 import IDialogService = angular.material.IDialogService;
@@ -22,7 +21,8 @@ export class FreigabeController {
     private familie: string;
     private errorMessage: string;
 
-    constructor(private docID: string, private $mdDialog: IDialogService, private gesuchRS: GesuchRS, private userRS: UserRS, private authService: AuthServiceRS, private ebeguUtil: EbeguUtil, CONSTANTS: any) {
+    constructor(private docID: string, private $mdDialog: IDialogService, private gesuchRS: GesuchRS,
+                private userRS: UserRS, private authService: AuthServiceRS, private ebeguUtil: EbeguUtil, CONSTANTS: any) {
 
         gesuchRS.findGesuch(this.docID).then((response: TSGesuch) => {
             if (response) {
@@ -31,7 +31,7 @@ export class FreigabeController {
                 this.familie = this.familieText(response);
                 this.selectedUser = authService.getPrincipal().username;
             } else {
-                this.errorMessage = "Gesuch nicht gefunden!";
+                this.errorMessage = 'Gesuch nicht gefunden!';
             }
         });
 
@@ -41,11 +41,11 @@ export class FreigabeController {
 
     private familieText(gesuch: TSGesuch): string {
         let familie: string;
-        if (gesuch.gesuchsteller1){
+        if (gesuch.gesuchsteller1) {
             familie = gesuch.gesuchsteller1.extractFullName();
         }
-        if (gesuch.gesuchsteller2){
-            familie += ", " + gesuch.gesuchsteller2.extractFullName();
+        if (gesuch.gesuchsteller2) {
+            familie += ', ' + gesuch.gesuchsteller2.extractFullName();
         }
         return familie;
     }

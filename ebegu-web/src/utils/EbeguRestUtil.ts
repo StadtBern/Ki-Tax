@@ -598,6 +598,7 @@ export default class EbeguRestUtil {
         restGesuch.bemerkungen = gesuch.bemerkungen;
         restGesuch.laufnummer = gesuch.laufnummer;
         restGesuch.hasFSDokument = gesuch.hasFSDokument;
+        restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
         return restGesuch;
     }
 
@@ -613,6 +614,7 @@ export default class EbeguRestUtil {
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;
             gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
+            gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
             return gesuchTS;
         }
         return undefined;
@@ -915,6 +917,7 @@ export default class EbeguRestUtil {
         restEinkommensverschlechterung.nettolohnNov = einkommensverschlechterung.nettolohnNov;
         restEinkommensverschlechterung.nettolohnDez = einkommensverschlechterung.nettolohnDez;
         restEinkommensverschlechterung.nettolohnZus = einkommensverschlechterung.nettolohnZus;
+        restEinkommensverschlechterung.geschaeftsgewinnBasisjahrMinus1 = einkommensverschlechterung.geschaeftsgewinnBasisjahrMinus1;
         return restEinkommensverschlechterung;
     }
 
@@ -949,6 +952,7 @@ export default class EbeguRestUtil {
             einkommensverschlechterungTS.nettolohnNov = einkommensverschlechterungFromServer.nettolohnNov;
             einkommensverschlechterungTS.nettolohnDez = einkommensverschlechterungFromServer.nettolohnDez;
             einkommensverschlechterungTS.nettolohnZus = einkommensverschlechterungFromServer.nettolohnZus;
+            einkommensverschlechterungTS.geschaeftsgewinnBasisjahrMinus1 = einkommensverschlechterungFromServer.geschaeftsgewinnBasisjahrMinus1;
 
             return einkommensverschlechterungTS;
         }
@@ -1552,6 +1556,7 @@ export default class EbeguRestUtil {
             zeitabschnitt.famGroesse = zeitabschnittTS.famGroesse;
             zeitabschnitt.status = zeitabschnittTS.status;
             zeitabschnitt.vollkosten = zeitabschnittTS.vollkosten;
+            zeitabschnitt.einkommensjahr = zeitabschnittTS.einkommensjahr;
             return zeitabschnitt;
         }
         return undefined;
@@ -1575,6 +1580,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.famGroesse = zeitabschnittFromServer.famGroesse;
             verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
             verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
+            verfuegungZeitabschnittTS.einkommensjahr = zeitabschnittFromServer.einkommensjahr;
             return verfuegungZeitabschnittTS;
         }
         return undefined;

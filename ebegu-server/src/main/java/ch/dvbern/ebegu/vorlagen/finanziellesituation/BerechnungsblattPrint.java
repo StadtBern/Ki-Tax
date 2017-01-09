@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen.berechnungsblatt;
+package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 
 import java.math.BigDecimal;
 
@@ -23,6 +23,8 @@ public interface BerechnungsblattPrint {
 	String getVon();
 
 	String getBis();
+
+	String getJahr();
 
 	BigDecimal getMassgebendesEinkommenVorAbzFamgr();
 

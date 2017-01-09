@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
@@ -61,6 +62,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	private DokumentGrundService dokumentGrundService;
 	@Inject
 	private GeneratedDokumentService generatedDokumentService;
+	@Inject
+	private FallService fallService;
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
 	private InstitutionService institutionService;
@@ -350,7 +355,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		// Die Mutation hat immer 1 Objekte mehr als Erstgesuch, und die "FamiliensituationErstgesuch.
 		// Deswegen muessen wir 1 subtrahieren
-        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
+		Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
 
 		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
 		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
@@ -392,7 +397,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Gesuch schulamtGesuch = persistNewNurSchulamtGesuchEntity(AntragStatus.IN_BEARBEITUNG_GS);
 
 		Assert.assertEquals(2, schulamtGesuch.getKindContainers().size());
-			Assert.assertTrue(schulamtGesuch.hasOnlyBetreuungenOfSchulamt());
+		Assert.assertTrue(schulamtGesuch.hasOnlyBetreuungenOfSchulamt());
 		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(schulamtGesuch, AntragStatus.FREIGABEQUITTUNG);
 
 		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
@@ -402,8 +407,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		loginAsSchulamt();
 		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 		Assert.assertEquals(AntragStatus.NUR_SCHULAMT, eingelesenesGesuch.getStatus());
-
-
 
 	}
 
@@ -432,6 +435,134 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(AntragStatus.NUR_SCHULAMT, foundGesuch.get().getStatus());
 	}
 
+	@Test
+	public void testJAAntragMutierenWhenOnlineMutationExists() {
+		loginAsGesuchsteller("gesuchst");
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+
+		gesuch.setStatus(AntragStatus.VERFUEGT);
+		gesuch = gesuchService.updateGesuch(gesuch, true);
+		final Optional<Gesuch> optMutation = gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
+
+		gesuchService.createGesuch(optMutation.get());
+
+		loginAsSachbearbeiterJA();
+		try {
+			gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
+			Assert.fail("Exception should be thrown. There is already an open Mutation");
+		} catch (EbeguRuntimeException e) {
+			// nop
+		}
+
+		optMutation.get().setStatus(AntragStatus.VERFUEGT);
+		gesuchService.updateGesuch(optMutation.get(), true);
+		gesuchService.antragMutieren(gesuch.getId(), LocalDate.now()); // nach dem die Mutation verfuegt ist, darf man es wieder mutieren
+	}
+
+	@Test
+	public void testGetAllGesucheForFallAndPeriod() {
+		final Fall fall = fallService.saveFall(TestDataUtil.createDefaultFall());
+
+		final Gesuchsperiode gesuchsperiode1516 = TestDataUtil.createCustomGesuchsperiode(2015, 2016);
+		final Gesuchsperiode periodeToUpdate = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
+
+		final Gesuchsperiode otherPeriod = gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
+
+		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
+		persistence.persist(gesuch1516_1);
+		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1516_2);
+		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1415_1);
+
+		final List<Gesuch> allGesuche_1 = gesuchService.getAllGesucheForFallAndPeriod(gesuch1516_1.getFall(), gesuch1516_1.getGesuchsperiode());
+		Assert.assertEquals(2, allGesuche_1.size());
+
+		final List<Gesuch> allGesuche_2 = gesuchService.getAllGesucheForFallAndPeriod(gesuch1516_1.getFall(), gesuch1415_1.getGesuchsperiode());
+		Assert.assertEquals(1, allGesuche_2.size());
+	}
+
+	@Test
+	public void testSetBeschwerdeHaengigForPeriode() {
+		final Fall fall = fallService.saveFall(TestDataUtil.createDefaultFall());
+
+		final Gesuchsperiode gesuchsperiode1516 = TestDataUtil.createCustomGesuchsperiode(2015, 2016);
+		final Gesuchsperiode periodeToUpdate = 	gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
+
+		final Gesuchsperiode otherPeriod = 	gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
+
+		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1516_1);
+		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1516_2);
+		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1415_1);
+
+		gesuchService.setBeschwerdeHaengigForPeriode(gesuch1516_1);
+
+		// Pruefen dass nur die Gesuche der gegebenen Periode den Status BESCHWERDE_HAENGIG haben
+		final List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(gesuch1516_1.getFall().getId());
+		Assert.assertEquals(3, allGesuchIDsForFall.size());
+
+		allGesuchIDsForFall.forEach(gesuchID -> {
+			final Optional<Gesuch> foundGesuch = gesuchService.findGesuch(gesuchID);
+			Assert.assertTrue(foundGesuch.isPresent());
+			if (foundGesuch.get().getGesuchsperiode().isSame(periodeToUpdate)) {
+				if (foundGesuch.get().equals(gesuch1516_1)) {
+					Assert.assertEquals(AntragStatus.BESCHWERDE_HAENGIG, foundGesuch.get().getStatus());
+				}
+				else {
+					Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus()); // vergleicht mit IN_BEARBEITUNG_JA weil es so gesetzt wurde
+				}
+				Assert.assertTrue(foundGesuch.get().isGesperrtWegenBeschwerde());
+			}
+			else {
+				Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus()); // vergleicht mit IN_BEARBEITUNG_JA weil es so gesetzt wurde
+				Assert.assertFalse(foundGesuch.get().isGesperrtWegenBeschwerde());
+			}
+		});
+	}
+
+	@Test
+	public void testRemoveBeschwerdeHaengigForPeriode() {
+		final Fall fall = fallService.saveFall(TestDataUtil.createDefaultFall());
+
+		final Gesuchsperiode gesuchsperiode1516 = TestDataUtil.createCustomGesuchsperiode(2015, 2016);
+		final Gesuchsperiode periodeToUpdate = 	gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
+
+		final Gesuchsperiode otherPeriod = 	gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
+
+		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
+		persistence.persist(gesuch1516_1);
+		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1516_2);
+		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1415_1);
+
+		gesuchService.setBeschwerdeHaengigForPeriode(gesuch1516_1);
+		gesuchService.removeBeschwerdeHaengigForPeriode(gesuch1516_1);
+
+		// Pruefen dass nur die Gesuche der gegebenen Periode den Status BESCHWERDE_HAENGIG haben
+		final List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(gesuch1516_1.getFall().getId());
+		Assert.assertEquals(3, allGesuchIDsForFall.size());
+
+		allGesuchIDsForFall.forEach(gesuchID -> {
+			final Optional<Gesuch> foundGesuch = gesuchService.findGesuch(gesuchID);
+			Assert.assertTrue(foundGesuch.isPresent());
+			if (foundGesuch.get().getGesuchsperiode().isSame(periodeToUpdate)) {
+				if (foundGesuch.get().equals(gesuch1516_1)) {
+					Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus());
+				}
+				else {
+					Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus());
+				}
+			}
+			else {
+				Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus());
+			}
+			Assert.assertFalse(foundGesuch.get().isGesperrtWegenBeschwerde());
+		});
+	}
 
 
 	// HELP METHOD
@@ -465,7 +596,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		}
 		String id = BeanUtils.getProperty(entity, "id");
 		if (ids.contains(id)) {
-			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode|| entity instanceof Familiensituation) {
+			if (entity instanceof Fall || entity instanceof Mandant || entity instanceof Gesuchsperiode || entity instanceof Familiensituation) {
 				// Diese Entitaeten wurden korrekterweise nur umgehaengt und nicht kopiert.
 				// Aus der Liste entfernen
 				// Familiensituation wird hier ebenfalls aufgefuehrt, da sie bei FamiliensituationErstgescuh nur umgehaengt wird
@@ -493,6 +624,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuchService.createGesuch(gesuch);
 		return gesuch;
 	}
+
 	private Gesuch persistNewEntity(AntragStatus status, Eingangsart eingangsart) {
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
 		gesuch.setEingangsart(eingangsart);
@@ -533,7 +665,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			LOG.error("could not login as sachbearbeiter jugendamt saja for tests");
 		}
 
-		Mandant mandant = persistence.persist(TestDataUtil.createDefaultMandant());
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer saja = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
 		persistence.persist(saja);
 	}
@@ -545,7 +677,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			LOG.error("could not login as sachbearbeiter jugendamt admin for tests");
 		}
 
-		Mandant mandant = persistence.persist(TestDataUtil.createDefaultMandant());
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer admin = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
 		persistence.persist(admin);
 	}
@@ -562,7 +694,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	private void loginAsGesuchsteller(String username) {
-		Mandant mandant = persistence.merge(TestDataUtil.createDefaultMandant());
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer user = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, username, null, null, mandant);
 		user = persistence.merge(user);
 		try {
@@ -580,7 +712,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			LOG.error("could not login as sachbearbeiter schulamt for tests");
 		}
 
-		Mandant mandant = persistence.persist(TestDataUtil.createDefaultMandant());
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer schulamt = TestDataUtil.createBenutzer(UserRole.SCHULAMT, "schulamt", null, null, mandant);
 		persistence.persist(schulamt);
 	}

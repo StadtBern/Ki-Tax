@@ -530,6 +530,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@Nonnull
+	public List<Gesuch> getAllGesucheForFallAndPeriod(@NotNull Fall fall, @NotNull Gesuchsperiode gesuchsperiode) {
+		// TODO (team) hier muessen wir unbedingt auf alle Gesuche zugreifen duerfen
+		authorizer.checkReadAuthorizationFall(fall);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall), fall);
+		Predicate gesuchsperiodePredicate = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+
+		query.where(fallPredicate, gesuchsperiodePredicate);
+		return persistence.getCriteriaResults(query);
+	}
+
+	@Override
 	public void updateLaufnummerOfAllGesucheOfFall(String fallId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -622,6 +639,34 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 	}
 
+	@Override
+	@Nonnull
+	public Gesuch setBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch) {
+		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
+		allGesucheForFall.iterator().forEachRemaining(gesuch1 -> {
+			if (gesuch.equals(gesuch1)) {
+				gesuch1.setStatus(AntragStatus.BESCHWERDE_HAENGIG);
+			}
+			gesuch1.setGesperrtWegenBeschwerde(true);
+			updateGesuch(gesuch1, true);
+		});
+		return gesuch;
+	}
+
+	@Override
+	@Nonnull
+	public Gesuch removeBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch) {
+		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
+		allGesucheForFall.iterator().forEachRemaining(gesuch1 -> {
+			if (gesuch.equals(gesuch1) && AntragStatus.BESCHWERDE_HAENGIG.equals(gesuch1.getStatus())) {
+				gesuch1.setStatus(AntragStatus.VERFUEGT);
+			}
+			gesuch1.setGesperrtWegenBeschwerde(false);
+			updateGesuch(gesuch1, true);
+		});
+		return gesuch;
+	}
+
 	/**
 	 * wenn ein Gesuch nur Schulamt Betreuuungen hat so geht es beim barcode Scannen in den Zustand NUR_SCHULAMTM; sonst Freigegeben
 	 */
@@ -642,10 +687,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
 			authorizer.checkWriteAuthorization(gesuch.get());
-			Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.get());
-			Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
-			return getGesuchMutation(eingangsdatum, gesuchForMutation);
-		} else {
+			if (!isThereAnyOpenMutation(gesuch.get().getFall(), gesuch.get().getGesuchsperiode())) {
+				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.get());
+				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
+				return getGesuchMutation(eingangsdatum, gesuchForMutation);
+			}
+			else {
+				throw new EbeguRuntimeException("antragMutieren", "Fehler beim Erstellen einer Mutation", "Es gibt bereits eine offene Mutation für dieses Gesuch");
+			}
+		}
+		else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen " + antragId, antragId);
 		}
 
@@ -662,12 +713,34 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		final Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
 
 		if (fall.isPresent() && gesuchsperiode.isPresent()) {
-			Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode.get(), fall.get());
-			Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer Fallnummer " + fallNummer));
-			return getGesuchMutation(eingangsdatum, gesuchForMutation);
+			if (!isThereAnyOpenMutation(fall.get(), gesuchsperiode.get())) {
+				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode.get(), fall.get());
+				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer Fallnummer " + fallNummer));
+				return getGesuchMutation(eingangsdatum, gesuchForMutation);
+			}
+			else{
+				throw new EbeguRuntimeException("antragMutieren", "Fehler beim Erstellen einer Mutation", "Es gibt bereits eine offene Mutation für dieses Gesuch");
+			}
 		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "fall oder gesuchsperiode konnte nicht geladen werden  fallNr:" + fallNummer + "gsPerID" + gesuchsperiodeId);
 		}
+	}
+
+	private boolean isThereAnyOpenMutation(Fall fall, Gesuchsperiode gesuchsperiode) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicateMutation = root.get(Gesuch_.typ).in(AntragTyp.MUTATION);
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates()).not();
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
+
+		query.where(predicateMutation, predicateStatus, predicateGesuchsperiode, predicateFall);
+		query.select(root);
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+		return !criteriaResults.isEmpty();
 	}
 
 	private Optional<Gesuch> getGesuchMutation(@Nullable LocalDate eingangsdatum, Gesuch gesuchForMutation) {
