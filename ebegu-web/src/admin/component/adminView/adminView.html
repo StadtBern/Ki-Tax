@@ -131,7 +131,8 @@
                                 <select name="besitzer" id="besitzer"
                                         ng-model="vm.selectedBesitzer"
                                         class="form-control"
-                                        ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
+                                        ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList"
+                                        style="background:#F0F0F0;">
                                     <option value=""></option>
                                 </select>
                             </div>
@@ -270,7 +271,8 @@
                             <select name="gesuchsteller" id="gesuchsteller"
                                     ng-model="vm.selectedBesitzer"
                                     class="form-control dv-input-container-small"
-                                    ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
+                                    ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList"
+                                    style="background:#F0F0F0;">
                                 <option value=""></option>
                             </select>
                         </div>

@@ -31,7 +31,7 @@
 
                     <!--Taetigkeit-->
                     <div class="row">
-                        <div class="col-sm-12 dv-input-container-small">
+                        <div class="col-sm-12 dv-input-container-medium">
                             <div class="form-group">
                                 <label class="md-no-float required" for="taetigkeit">
                                     <span data-translate="TAETIGKEIT_WAEHLEN"></span>
@@ -45,11 +45,12 @@
                                             ng-required="true" ng-change="vm.taetigkeitChanged()"
                                             ng-disabled="vm.erwerbspensumDisabled()">
                                     </select>
-                                </div>
+
                                 <dv-bisher gs="vm.model.erwerbspensumGS.taetigkeit"
                                            ja="vm.model.erwerbspensumJA.taetigkeit"></dv-bisher>
                                 <dv-error-messages for="vm.form.taetigkeit.$error"
                                                    class="error"></dv-error-messages>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -130,32 +131,33 @@
 
                     <!--Zuschlagsgrund-->
                     <div class="row" ng-if="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum">
-                        <div class="col-sm-12 dv-input-container-small">
+                        <div class="col-sm-12 dv-input-container-medium">
                             <div class="form-group">
                                 <label class="md-no-float" data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
                                 </label>
                                 <!--im readonly modus wird das select durch ein div ersetzt weil werte gesetzt sein koennen die nicht in der selectbox sind-->
-                                <div class="dv-select-style">
+                                <div class="dv-select-style" ng-if="!vm.isGesuchReadonly()">
                                     <select name="zuschlagsgrund" id="zuschlagsgrund"
                                             ng-model="vm.model.erwerbspensumJA.zuschlagsgrund"
                                             class="form-control"
                                             ng-options="zuschlagsgrund | translate for zuschlagsgrund in vm.getZuschlagsgrundList() "
                                             ng-required="true"
                                             ng-disabled="vm.erwerbspensumDisabled()"
-                                            ng-if="!vm.isGesuchReadonly()">
+                                    >
                                     </select>
-                                </div>
-                                <div id="zuschlagsgrund_dvi"
-                                     ng-bind="vm.model.erwerbspensumJA.zuschlagsgrund | translate"
-                                     class="form-control"
-                                     ng-if="vm.isGesuchReadonly()">
-                                </div>
+
+                                    <input id="zuschlagsgrund_dvi" type="text"
+                                           ng-model="vm.model.erwerbspensumJA.zuschlagsgrund | translate"
+                                           class="form-control"
+                                           ng-disabled="vm.isGesuchReadonly()"
+                                           ng-if="vm.isGesuchReadonly()">
                                 <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagsgrund"
                                            ja="vm.model.erwerbspensumJA.zuschlagsgrund"
                                            show-if-bisher-none="false"
                                            block-existed="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum === true"></dv-bisher>
                                 <dv-error-messages for="vm.form.zuschlagsgrund.$error"
                                                    class="error"></dv-error-messages>
+                                </div>
                             </div>
                         </div>
                     </div>

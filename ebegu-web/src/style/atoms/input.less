@@ -18,7 +18,7 @@ md-input-container {
     color: @contrast-darkest;
 }
 
-input[type="text"], input[type="number"], input[type="email"], textarea, textarea.md-input, .form-control, select {
+input[type="text"], input[type="number"], input[type="email"], textarea, textarea.md-input, .form-control, .dv-select-style select {
     width: 100%;
     .table &, &.contrast {
         background: @contrast-lighter;
@@ -54,10 +54,20 @@ input[type="text"], input[type="number"], input[type="email"], textarea, textare
     //  }*/
 }
 
+input[type="number"] {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    -moz-appearance: textfield;
+}
+
 .dv-select-style {
     position: relative !important;
     display: block;
-    background: @contrast-lightest;
+    background: none;
     select {
         width: 100%;
         margin: 0;
@@ -75,7 +85,7 @@ input[type="text"], input[type="number"], input[type="email"], textarea, textare
         font-family: FontAwesome;
         font-size: 1.6rem;
         position: absolute;
-        top: 25%;
+        top: 1rem;
         right: 1rem;
         z-index: 2;
         pointer-events: none;
@@ -92,15 +102,10 @@ input[type="text"], input[type="number"], input[type="email"], textarea, textare
 
     .dv-select-style select {
         padding-right: 2em;
-        background: none;
-        border: 1px solid transparent;
+        border: none;
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
-    }
-
-    .dv-select-style select:focus {
-        border-color: transparent;
     }
 }
 
@@ -114,8 +119,7 @@ input[type="text"], input[type="number"], input[type="email"], textarea, textare
     .dv-select-style select {
         overflow: -moz-hidden-unscrollable;
         padding-right: .4em;
-        background: none;
-        border: 1px solid transparent;
+        border: none;
         /* Firefox < 4 */
         min-width: 6em;
         width: 130%;
@@ -148,20 +152,13 @@ input[type="text"], input[type="number"], input[type="email"], textarea, textare
     .dv-select-style select::-ms-expand {
         display: none;
     }
-
-    .dv-select-style select:focus {
-        border-color: #aaa;
-    }
-
     .dv-select-style select:focus::-ms-value {
-        background: transparent;
         color: #222;
     }
 
     .dv-select-style select {
         padding-right: 2em;
-        background: none;
-        border: 1px solid transparent;
+        border: none;
     }
 
     .dv-select-style::after {

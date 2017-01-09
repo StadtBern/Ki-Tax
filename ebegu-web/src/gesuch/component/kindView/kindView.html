@@ -232,13 +232,14 @@
                                                 ng-required="vm.isFachstelleRequired()"
                                                 ng-change="vm.setSelectedFachsstelle()">
                                         </select>
-                                    </div>
+
                                     <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.fachstelle.name"
                                                ja="vm.getContainer().kindJA.pensumFachstelle.fachstelle.name"
                                                show-if-bisher-none="false"
                                                block-existed="vm.showFachstelleGS === true"></dv-bisher>
                                     <dv-error-messages for="vm.form.fachstelle.$error"
                                                        class="error"></dv-error-messages>
+                                    </div>
                                 </div>
                             </div>
                         </div>
