@@ -41,6 +41,9 @@
                 <br>
                 <span class="zuletzt" data-translate="ZULETZT_BEARBEITER"
                       data-translate-value-username="{{vm.getUserFullname()}}"></span>
+                <br>
+                <span class="gesperrt" ng-if="vm.isGesuchGesperrt()"
+                      data-translate="GESPERRT_WEGEN_BESCHWERDE"></span>
             </div>
 
             <ul class="sidenav gesuchMenu">

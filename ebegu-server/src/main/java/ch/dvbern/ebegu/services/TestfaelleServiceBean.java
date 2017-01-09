@@ -115,6 +115,36 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			} else if (Abwesenheit.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Abwesenheit Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (ASIV1.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_01(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Fall ASIV 1 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (ASIV2.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_02(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Fall ASIV 2 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (ASIV3.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_03(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Fall ASIV 3 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (ASIV4.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_04(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Fall ASIV 4 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (ASIV5.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_05(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Fall ASIV 5 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (ASIV6.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_06(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Fall ASIV 6 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (ASIV7.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_07(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Fall ASIV 7 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (ASIV8.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_08(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Fall ASIV 8 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (ASIV9.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_09(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Fall ASIV 9 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (ASIV10.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveAsivGesuch(new Testfall_ASIV_10(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Fall ASIV 10 Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if ("all".equals(fallid)) {
 				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
@@ -125,7 +155,17 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 				createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
-				responseString.append("Testfaelle 1-9 erstellt");
+				createAndSaveAsivGesuch(new Testfall_ASIV_01(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				createAndSaveAsivGesuch(new Testfall_ASIV_02(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				createAndSaveAsivGesuch(new Testfall_ASIV_03(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				createAndSaveAsivGesuch(new Testfall_ASIV_04(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				createAndSaveAsivGesuch(new Testfall_ASIV_05(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				createAndSaveAsivGesuch(new Testfall_ASIV_06(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				createAndSaveAsivGesuch(new Testfall_ASIV_07(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				createAndSaveAsivGesuch(new Testfall_ASIV_08(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				createAndSaveAsivGesuch(new Testfall_ASIV_09(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				createAndSaveAsivGesuch(new Testfall_ASIV_10(gesuchsperiode, institutionStammdatenList, true), verfuegen, besitzer);
+				responseString.append("Testfaelle 1-9 und ASIV-Testfaelle 1-8 erstellt");
 			} else {
 				responseString.append("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-9. '/all' erstellt alle Testfaelle");
 			}
@@ -182,7 +222,36 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		if (Abwesenheit.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
-
+		if (ASIV1.equals(fallid)) {
+			return createAndSaveAsivGesuch(new Testfall_ASIV_01(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
+		}
+		if (ASIV2.equals(fallid)) {
+			return createAndSaveAsivGesuch(new Testfall_ASIV_02(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
+		}
+		if (ASIV3.equals(fallid)) {
+			return createAndSaveAsivGesuch(new Testfall_ASIV_03(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
+		}
+		if (ASIV4.equals(fallid)) {
+			return createAndSaveAsivGesuch(new Testfall_ASIV_04(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
+		}
+		if (ASIV5.equals(fallid)) {
+			return createAndSaveAsivGesuch(new Testfall_ASIV_05(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
+		}
+		if (ASIV6.equals(fallid)) {
+			return createAndSaveAsivGesuch(new Testfall_ASIV_06(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
+		}
+		if (ASIV7.equals(fallid)) {
+			return createAndSaveAsivGesuch(new Testfall_ASIV_07(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
+		}
+		if (ASIV8.equals(fallid)) {
+			return createAndSaveAsivGesuch(new Testfall_ASIV_08(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
+		}
+		if (ASIV9.equals(fallid)) {
+			return createAndSaveAsivGesuch(new Testfall_ASIV_09(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
+		}
+		if (ASIV10.equals(fallid)) {
+			return createAndSaveAsivGesuch(new Testfall_ASIV_10(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
+		}
 		return null;
 	}
 
@@ -294,7 +363,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	 * @param fromTestfall testfall
 	 * @param besitzer     wenn der besitzer gesetzt ist wird der fall diesem besitzer zugeordnet
 	 */
-	private Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer) {
+	@Override
+	public Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer) {
 		final Optional<List<Gesuch>> gesuchByGSName = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
 		if (gesuchByGSName.isPresent()) {
 			final List<Gesuch> gesuches = gesuchByGSName.get();
@@ -337,6 +407,31 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		return gesuch;
 
+	}
+
+	public Gesuch createAndSaveAsivGesuch(AbstractASIVTestfall fromTestfall, boolean verfuegen, Benutzer besitzer) {
+		final Gesuch erstgesuch = createAndSaveGesuch(fromTestfall, true, besitzer);
+		// Mutation
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(erstgesuch.getId(), LocalDate.of(2016, Month.MARCH, 1));
+		if (gesuchOptional.isPresent()) {
+			Gesuch mutation = fromTestfall.createMutation(gesuchOptional.get());
+			gesuchService.createGesuch(mutation);
+			familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituationContainer(), null);
+			gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
+			setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.GESUCHSTELLER).getId());
+			setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.FINANZIELLE_SITUATION).getId());
+			setWizardStepOkayAndVerfuegbar(wizardStepService.findWizardStepFromGesuch(mutation.getId(), WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getId());
+			return mutation;
+		}
+		return null;
+	}
+
+	private void setWizardStepOkayAndVerfuegbar(String wizardStepId) {
+		Optional<WizardStep> wizardStep = wizardStepService.findWizardStep(wizardStepId);
+		if (wizardStep.isPresent()) {
+			wizardStep.get().setVerfuegbar(true);
+			wizardStep.get().setWizardStepStatus(WizardStepStatus.OK);
+		}
 	}
 
 	private void gesuchVerfuegenUndSpeichern(boolean verfuegen, Gesuch gesuch, boolean mutation) {

@@ -41,17 +41,27 @@ export class DVBarcodeController {
 
         if (authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
 
+            console.log('Barcode listener authenticated.');
+
             $document.bind('keypress', (e) => {
+
+                console.log('Barcode listener keypress fired.');
+
+                console.log(e);
+
+                let char: string =  e.key ? e.key : String.fromCharCode(e.which);
+
+                console.log(char);
 
                 if (this.barcodeReading) {
                     e.preventDefault();
-                    if (e.key !== '§') {
-                        this.barcodeBuffer.push(e.key);
+                    if (char !== '§') {
+                        this.barcodeBuffer.push(char);
                         console.log('Current buffer: ' + this.barcodeBuffer.join(''));
                     }
                 }
 
-                if (e.key === '§') {
+                if (char === '§') {
                     e.preventDefault();
                     if (this.barcodeReading) {
                         console.log('End Barcode read');

@@ -1075,7 +1075,9 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return isStatusVerfuegenVerfuegt(this.gesuch.status) || this.isGesuchReadonlyForRole();
+        return isStatusVerfuegenVerfuegt(this.gesuch.status)
+            || this.isGesuchReadonlyForRole()
+            || this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     /**

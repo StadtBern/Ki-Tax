@@ -18,12 +18,13 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
     private _massgebendesEinkommenVorAbzugFamgr: number;
     private _bemerkungen: string;
     private _status: string;
+    private _einkommensjahr: number;
 
 
     constructor(erwerbspensumGS1?: number, erwerbspensumGS2?: number, betreuungspensum?: number, fachstellenpensum?: number,
                 anspruchspensumRest?: number, anspruchberechtigtesPensum?: number, bgPensum?: number, betreuungsstunden?: number, vollkosten?: number,
                 elternbeitrag?: number, abzugFamGroesse?: number, massgebendesEinkommen?: number, bemerkungen?: string,
-                status?: string, gueltigkeit?: TSDateRange, famGroesse?: number) {
+                status?: string, gueltigkeit?: TSDateRange, famGroesse?: number, einkommensjahr?: number) {
         super(gueltigkeit);
         this._erwerbspensumGS1 = erwerbspensumGS1;
         this._erwerbspensumGS2 = erwerbspensumGS2;
@@ -40,6 +41,7 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._bemerkungen = bemerkungen;
         this._status = status;
         this._famGroesse = famGroesse;
+        this._einkommensjahr = einkommensjahr;
     }
 
     get erwerbspensumGS1(): number {
@@ -160,5 +162,13 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
 
     set famGroesse(value: number) {
         this._famGroesse = value;
+    }
+
+    get einkommensjahr(): number {
+        return this._einkommensjahr;
+    }
+
+    set einkommensjahr(value: number) {
+        this._einkommensjahr = value;
     }
 }

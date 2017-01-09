@@ -13,8 +13,6 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 
 import java.util.List;
 
-import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrint;
-
 public interface BerechnungsgrundlagenInformationPrint {
 	// ****************************************************************************************************************
 	// Achtung, die Methodennamen in dieser Klassen duerfen nicht veraendert werden. Sie muessen identisch sein

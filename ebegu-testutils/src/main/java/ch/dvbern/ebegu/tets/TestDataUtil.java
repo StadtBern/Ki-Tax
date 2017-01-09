@@ -355,7 +355,6 @@ public final class TestDataUtil {
 		return gesuchsperiode;
 	}
 
-
 	public static Gesuchsperiode createGesuchsperiode1617() {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
 		gesuchsperiode.setActive(true);
@@ -363,6 +362,12 @@ public final class TestDataUtil {
 		return gesuchsperiode;
 	}
 
+	public static Gesuchsperiode createCustomGesuchsperiode(int firstYear, int secondYear) {
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		gesuchsperiode.setActive(true);
+		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(firstYear, Month.AUGUST, 1), LocalDate.of(secondYear, Month.JULY, 31)));
+		return gesuchsperiode;
+	}
 
 	public static EbeguParameter createDefaultEbeguParameter(EbeguParameterKey key) {
 		EbeguParameter instStammdaten = new EbeguParameter();
@@ -509,6 +514,8 @@ public final class TestDataUtil {
 		if (gesuch.extractEinkommensverschlechterungInfo() == null) {
 			gesuch.setEinkommensverschlechterungInfoContainer(new EinkommensverschlechterungInfoContainer());
 			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(false);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(false);
 		}
 		if (basisJahrPlus1) {
 			gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
@@ -814,5 +821,13 @@ public final class TestDataUtil {
 		abwesenheit.setGueltigkeit(new DateRange(gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1),
 			gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1).plusDays(Constants.ABWESENHEIT_DAYS_LIMIT)));
 		return abwesenheit;
+	}
+
+	public static Gesuch createGesuch(Fall fall, Gesuchsperiode periodeToUpdate, AntragStatus status) {
+		Gesuch gesuch = new Gesuch();
+		gesuch.setFall(fall);
+		gesuch.setGesuchsperiode(periodeToUpdate);
+		gesuch.setStatus(status);
+		return gesuch;
 	}
 }

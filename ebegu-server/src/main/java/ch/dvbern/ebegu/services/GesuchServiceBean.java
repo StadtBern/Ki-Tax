@@ -530,6 +530,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@Nonnull
+	public List<Gesuch> getAllGesucheForFallAndPeriod(@NotNull Fall fall, @NotNull Gesuchsperiode gesuchsperiode) {
+		// TODO (team) hier muessen wir unbedingt auf alle Gesuche zugreifen duerfen
+		authorizer.checkReadAuthorizationFall(fall);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall), fall);
+		Predicate gesuchsperiodePredicate = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+
+		query.where(fallPredicate, gesuchsperiodePredicate);
+		return persistence.getCriteriaResults(query);
+	}
+
+	@Override
 	public void updateLaufnummerOfAllGesucheOfFall(String fallId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -620,6 +637,34 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		} else {
 			throw new EbeguEntityNotFoundException("antragFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
 		}
+	}
+
+	@Override
+	@Nonnull
+	public Gesuch setBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch) {
+		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
+		allGesucheForFall.iterator().forEachRemaining(gesuch1 -> {
+			if (gesuch.equals(gesuch1)) {
+				gesuch1.setStatus(AntragStatus.BESCHWERDE_HAENGIG);
+			}
+			gesuch1.setGesperrtWegenBeschwerde(true);
+			updateGesuch(gesuch1, true);
+		});
+		return gesuch;
+	}
+
+	@Override
+	@Nonnull
+	public Gesuch removeBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch) {
+		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
+		allGesucheForFall.iterator().forEachRemaining(gesuch1 -> {
+			if (gesuch.equals(gesuch1) && AntragStatus.BESCHWERDE_HAENGIG.equals(gesuch1.getStatus())) {
+				gesuch1.setStatus(AntragStatus.VERFUEGT);
+			}
+			gesuch1.setGesperrtWegenBeschwerde(false);
+			updateGesuch(gesuch1, true);
+		});
+		return gesuch;
 	}
 
 	/**
