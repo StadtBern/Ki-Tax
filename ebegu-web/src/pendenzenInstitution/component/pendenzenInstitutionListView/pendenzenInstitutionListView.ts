@@ -101,7 +101,7 @@ export class PendenzenInstitutionListViewController {
     // Parameter in die URL kommen. Dann kann in editPendenzInstitution() das openGesuch() entfernt werden
     private openBetreuung(pendenz: TSPendenzInstitution): void {
         if (this.gesuchModelManager.getGesuch() && pendenz) {
-            this.gesuchModelManager.findKindById(pendenz.kindId);
+            let kindNumber: number = this.gesuchModelManager.findKindById(pendenz.kindId);
             let betreuungNumber: number = this.gesuchModelManager.findBetreuungById(pendenz.betreuungsId);
             if (betreuungNumber > 0) {
                 this.berechnungsManager.clear(); // nur um sicher zu gehen, dass alle alte Werte geloescht sind
@@ -109,7 +109,11 @@ export class PendenzenInstitutionListViewController {
                 // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
                 this.gesuchModelManager.clearGesuch();
 
-                this.$state.go('gesuch.betreuung', {gesuchId: pendenz.gesuchId});
+                this.$state.go('gesuch.betreuung', {
+                    betreuungNumber: betreuungNumber,
+                    kindNumber: kindNumber,
+                    gesuchId: pendenz.gesuchId
+                });
             }
         }
     }

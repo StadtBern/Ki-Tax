@@ -611,7 +611,7 @@ export default class GesuchModelManager {
      * Creates a Betreuung for the kind given by the kindNumber attribute of the class.
      * Thus the kindnumber must be set before this method is called.
      */
-    public createBetreuung(): void {
+    public createBetreuung(): number {
         if (this.getKindToWorkWith()) {
             this.initBetreuung();
             let tsBetreuung: TSBetreuung = new TSBetreuung();
@@ -619,7 +619,9 @@ export default class GesuchModelManager {
             this.getKindToWorkWith().betreuungen.push(tsBetreuung);
             this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
             tsBetreuung.betreuungNummer = this.betreuungNumber;
+            return this.betreuungNumber;
         }
+        return undefined;
     }
 
     public updateBetreuung(abwesenheit: boolean): IPromise<TSBetreuung> {

@@ -39,18 +39,17 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 
     }
 
     public editBetreuung(kind: TSKindContainer, betreuung: any): void {
-        this.gesuchModelManager.findKind(kind);
+        let kindNummer: number = this.gesuchModelManager.findKind(kind);
         let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
         if (betreuungNumber > 0) {
             betreuung.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
-            this.openBetreuungView();
+            this.openBetreuungView(betreuungNumber, kindNummer);
         }
     }
 
@@ -62,14 +61,14 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let kindNumber: number = this.gesuchModelManager.findKind(kind);
         if (kindNumber > 0) {
             this.gesuchModelManager.setKindNumber(kindNumber);
-            this.gesuchModelManager.createBetreuung();
-            this.openBetreuungView();
+            let betreuungNumber: number = this.gesuchModelManager.createBetreuung();
+            this.openBetreuungView(betreuungNumber, kindNumber);
         }
     }
 
     public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung): void {
         this.gesuchModelManager.findKind(kind);
-        var remTitleText: any = this.$translate.instant('BETREUUNG_LOESCHEN', {
+        let remTitleText: any = this.$translate.instant('BETREUUNG_LOESCHEN', {
             kindname: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
             betreuungsangebottyp: this.ebeguUtil.translateString(TSBetreuungsangebotTyp[betreuung.institutionStammdaten.betreuungsangebotTyp])
         });
@@ -86,8 +85,12 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         });
     }
 
-    private openBetreuungView(): void {
-        this.$state.go('gesuch.betreuung', {gesuchId: this.getGesuchId()});
+    private openBetreuungView(betreuungNumber: number, kindNumber: number): void {
+        this.$state.go('gesuch.betreuung', {
+            betreuungNumber: betreuungNumber,
+            kindNumber: kindNumber,
+            gesuchId: this.getGesuchId()
+        });
     }
 
     /**

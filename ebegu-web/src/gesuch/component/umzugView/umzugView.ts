@@ -43,13 +43,12 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
                 private $translate: ITranslateService, private DvDialog: DvDialog, private $q: IQService,
                 $scope: IScope) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.UMZUG);
         this.initViewModel();
     }
 
     private initViewModel(): void {
         this.model = [];
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.UMZUG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
         this.extractAdressenListFromBothGS();
     }
