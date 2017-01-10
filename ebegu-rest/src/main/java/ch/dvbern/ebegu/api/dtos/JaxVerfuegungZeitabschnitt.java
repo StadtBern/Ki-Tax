@@ -83,6 +83,12 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 	@Transient
 	private String status;
 
+	private boolean kategorieMaxEinkommen = false;
+
+	private boolean kategorieKeinPensum = false;
+
+	private boolean kategorieZuschlagZumErwerbspensum = false;
+
 //	@NotNull
 //	@ManyToOne(optional = false)
 //	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
@@ -207,5 +213,29 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
 	public void setEinkommensjahr(Integer einkommensjahr) {
 		this.einkommensjahr = einkommensjahr;
+	}
+
+	public boolean isKategorieMaxEinkommen() {
+		return kategorieMaxEinkommen;
+	}
+
+	public void setKategorieMaxEinkommen(boolean kategorieMaxEinkommen) {
+		this.kategorieMaxEinkommen = kategorieMaxEinkommen;
+	}
+
+	public boolean isKategorieKeinPensum() {
+		return kategorieKeinPensum;
+	}
+
+	public void setKategorieKeinPensum(boolean kategorieKeinPensum) {
+		this.kategorieKeinPensum = kategorieKeinPensum;
+	}
+
+	public boolean isKategorieZuschlagZumErwerbspensum() {
+		return kategorieZuschlagZumErwerbspensum;
+	}
+
+	public void setKategorieZuschlagZumErwerbspensum(boolean kategorieZuschlagZumErwerbspensum) {
+		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
 	}
 }
