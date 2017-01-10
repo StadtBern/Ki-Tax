@@ -11,23 +11,25 @@
     .ebeguNormal();
     font-size: 1.4rem;
     letter-spacing: 0.1rem;
-    line-height: 4rem;
+    line-height: normal;
     height: 4rem;
     color: @contrast-dark;
 }
 
 .ebeguPlaceholder() {
     &::-webkit-input-placeholder {
-        .ebeguPlaceholder-specs()
+        .ebeguPlaceholder-specs();
     }
     &::-moz-placeholder {
-        .ebeguPlaceholder-specs()
+        .ebeguPlaceholder-specs();
+        line-height: 4rem;
     }
     &:-moz-placeholder {
-        .ebeguPlaceholder-specs()
+        .ebeguPlaceholder-specs();
+        line-height: 4rem;
     }
     &:-ms-input-placeholder {
-        .ebeguPlaceholder-specs()
+        .ebeguPlaceholder-specs();
     }
 }
 

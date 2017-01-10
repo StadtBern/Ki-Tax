@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen.berechnungsblatt;
+package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -34,6 +34,11 @@ public class BerechnungsblattPrintImpl implements BerechnungsblattPrint {
 	public String getBis() {
 
 		return Constants.DATE_FORMATTER.format(verfuegungZeitabschnitt.getGueltigkeit().getGueltigBis());
+	}
+
+	@Override
+	public String getJahr() {
+		return String.valueOf(verfuegungZeitabschnitt.getEinkommensjahr());
 	}
 
 	@Override

@@ -2,13 +2,18 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.EbeguVorlageService;
 import ch.dvbern.ebegu.services.PDFServiceBean;
+import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.parser.PdfTextExtractor;
 import de.akquinet.jbosscc.needle.annotation.InjectIntoMany;
 import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
 import de.akquinet.jbosscc.needle.junit.NeedleRule;
@@ -16,7 +21,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -57,8 +64,13 @@ public class PDFServiceBeanTest {
 
 	private Gesuch gesuch;
 
+	protected BetreuungsgutscheinEvaluator evaluator;
+
 	@Before
 	public void setupTestData() {
+
+		evaluator = AbstractBGRechnerTest.createEvaluator();
+
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
@@ -81,7 +93,7 @@ public class PDFServiceBeanTest {
 	public void	testGenerateFreigabequittungJugendamt() throws Exception {
 
 		byte[] bytes = pdfService.generateFreigabequittung(gesuch, Zustelladresse.JUGENDAMT);
-		Assert.assertNotNull(bytes);
+		assertNotNull(bytes);
 		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Jugendamt(" + gesuch.getAntragNummer() + ").pdf");
 
 	}
@@ -90,7 +102,7 @@ public class PDFServiceBeanTest {
 	public void	testGenerateFreigabequittungSchulamt() throws Exception {
 
 		byte[] bytes = pdfService.generateFreigabequittung(gesuch, Zustelladresse.SCHULAMT);
-		Assert.assertNotNull(bytes);
+		assertNotNull(bytes);
 		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Schulamt(" + gesuch.getAntragNummer() + ").pdf");
 
 	}
@@ -130,28 +142,153 @@ public class PDFServiceBeanTest {
 	}
 
 	@Test
-	public void testPrintErsteMahnung() throws Exception {
+	public void testPrintErsteMahnungSinglePage() throws Exception {
 
-		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch);
+		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 3);
 
 		byte[] bytes = pdfService.generateMahnung(mahnung, null);
 
-		Assert.assertNotNull(bytes);
+		assertNotNull(bytes);
 
-		unitTestTempfolder.writeToTempDir(bytes, "1_Mahnung.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "1_Mahnung_Single_Page.pdf");
+
+		PdfReader pdfRreader = new PdfReader(bytes);
+		pdfRreader.getNumberOfPages();
+		assertEquals("PDF should be one page long.",1, pdfRreader.getNumberOfPages());
+		pdfRreader.close();
 	}
 
 	@Test
-	public void testPrintZweiteMahnung() throws Exception {
+	public void testPrintErsteMahnungTwoPages() throws Exception {
 
-		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch);
-		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch);
+		Mahnung mahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 10);
+
+		byte[] bytes = pdfService.generateMahnung(mahnung, null);
+
+		assertNotNull(bytes);
+
+		unitTestTempfolder.writeToTempDir(bytes, "1_Mahnung_Two_Pages.pdf");
+
+		PdfReader pdfRreader = new PdfReader(bytes);
+		pdfRreader.getNumberOfPages();
+		assertEquals("PDF should be two pages long.",2, pdfRreader.getNumberOfPages());
+
+		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Second page should begin with this text.",
+			pdfTextExtractor.getTextFromPage(2).startsWith("Erst nach Eingang dieser"));
+
+		pdfRreader.close();
+	}
+
+	@Test
+	public void testPrintZweiteMahnungSinglePage() throws Exception {
+
+		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 3);
+		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 3);
 		zweiteMahnung.setVorgaengerId(ersteMahnung.getId());
 
 		byte[] bytes = pdfService.generateMahnung(zweiteMahnung, Optional.of(ersteMahnung));
-		Assert.assertNotNull(bytes);
+		assertNotNull(bytes);
 
-		unitTestTempfolder.writeToTempDir(bytes, "2_Mahnung.pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "2_Mahnung_Single_Page.pdf");
+
+		PdfReader pdfRreader = new PdfReader(bytes);
+		pdfRreader.getNumberOfPages();
+		assertEquals(1, pdfRreader.getNumberOfPages());
+
+		pdfRreader.close();
+	}
+
+	@Test
+	public void testPrintZweiteMahnungTwoPages() throws Exception {
+
+		Mahnung ersteMahnung = TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 10);
+		Mahnung zweiteMahnung = TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch, LocalDate.now().plusWeeks(2), 10);
+		zweiteMahnung.setVorgaengerId(ersteMahnung.getId());
+
+		byte[] bytes = pdfService.generateMahnung(zweiteMahnung, Optional.of(ersteMahnung));
+		assertNotNull(bytes);
+
+		unitTestTempfolder.writeToTempDir(bytes, "2_Mahnung_Two_Pages.pdf");
+
+		PdfReader pdfRreader = new PdfReader(bytes);
+		pdfRreader.getNumberOfPages();
+		assertEquals("PDF should be two pages long.",2, pdfRreader.getNumberOfPages());
+
+		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
+		assertTrue("Second page should begin with this text.",
+			pdfTextExtractor.getTextFromPage(2).startsWith("Wenn Sie die geforderten Angaben"));
+
+		pdfRreader.close();
+	}
+
+	@Test
+	public void testFinanzielleSituation_EinGesuchsteller() throws Exception {
+
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		testfall.createFall(null);
+		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = testfall.fillInGesuch();
+
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		final Verfuegung evaluateFamiliensituation = evaluator.evaluateFamiliensituation(gesuch);
+
+		byte[] bytes = pdfService.generateFinanzielleSituation(gesuch, evaluateFamiliensituation);
+		Assert.assertNotNull(bytes);
+		unitTestTempfolder.writeToTempDir(bytes, "finanzielleSituation1G.pdf");
+	}
+
+	@Test
+	public void testFinanzielleSituation_ZweiGesuchsteller() throws Exception {
+
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());
+		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		testfall.createFall(null);
+		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = testfall.fillInGesuch();
+		// Hack damit Dokument mit zwei Gesuchsteller dargestellt wird
+
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller2(), new BigDecimal("40000"), true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("50000"), false);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller2(), new BigDecimal("30000"), false);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+
+		byte[] bytes = pdfService.generateFinanzielleSituation(gesuch, null);
+		Assert.assertNotNull(bytes);
+		unitTestTempfolder.writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
+	}
+
+	@Test
+	public void testPrintFamilienSituation1() throws Exception {
+
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		testfall.createFall(null);
+		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = testfall.fillInGesuch();
+
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("50000"), false);
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+
+		TestDataUtil.calculateFinanzDaten(gesuch);
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+
+		byte[] bytes = pdfService.generateFinanzielleSituation(gesuch, null);
+
+		unitTestTempfolder.writeToTempDir(bytes, "TN_FamilienStituation1.pdf");
 	}
 
 }

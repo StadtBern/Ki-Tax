@@ -5,8 +5,8 @@
                 <span data-translate="KINDER"></span>
             </h1>
             <hr class="header"/>
-            <p class="inlineHint noMarginY" data-translate="KINDER_HINT1"></p>
-            <p class="inlineHint" data-translate="KINDER_HINT2"></p>
+            <p data-translate="KINDER_HINT1"></p>
+            <p data-translate="KINDER_HINT2"></p>
         </div>
     </div>
     <div class="row">
@@ -16,9 +16,9 @@
                        class="table table-hover" st-delay="20">
                     <thead>
                     <tr>
-                        <th st-sort="kindJA.vorname" class="sortable" data-translate="VORNAME"></th>
-                        <th st-sort="kindJA.nachname" class="sortable" data-translate="NAME"></th>
-                        <th st-sort="kindJA.geburtsdatum" class="sortable" data-translate="GEBURTSDATUM"></th>
+                        <th data-translate="VORNAME"></th>
+                        <th data-translate="NAME"></th>
+                        <th data-translate="GEBURTSDATUM"></th>
                         <th></th>
                     </tr>
                     </thead>
@@ -29,9 +29,10 @@
                         <td ng-bind="row.kindJA.nachname"></td>
                         <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
-                            <dv-loading-button type="button" button-click="vm.removeKind(row)" button-class="dv-btn-sm"
+                            <dv-loading-button type="button" button-click="vm.removeKind(row)"
+                                               button-class="dv-btn-operation"
                                                button-disabled="vm.isKorrekturModusJugendamt()">
-                                <i class="fa fa-minus">
+                                <i class="fa fa-lg fa-trash-o">
                                 </i>
                             </dv-loading-button>
                         </td>
@@ -46,8 +47,8 @@
         </div>
         <div class="col-md-12" style="margin-bottom: 2rem" ng-if="!vm.isGesuchReadonly()">
             <dv-loading-button type="button" button-click="vm.createKind()"
-                               button-class="dv-btn-sm color-success" button-disabled="vm.isKorrekturModusJugendamt()">
-                <i class="glyphicon glyphicon-plus"></i>
+                               button-class="dv-btn-operation" button-disabled="vm.isKorrekturModusJugendamt()">
+                <i class="fa fa-lg fa-plus-circle"></i>
                 <span data-translate="KIND_HINZUFUEGEN"></span>
             </dv-loading-button>
         </div>

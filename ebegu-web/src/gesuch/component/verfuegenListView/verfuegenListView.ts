@@ -25,6 +25,7 @@ import DateUtil from '../../../utils/DateUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import IScope = angular.IScope;
+import GesuchRS from '../../service/gesuchRS.rest';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -50,14 +51,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope'];
+        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS'];
     /* @ngInject */
 
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService,
-                private authServiceRs: AuthServiceRS, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+                private authServiceRs: AuthServiceRS, $scope: IScope, private gesuchRS: GesuchRS) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
         this.initViewModel();
     }
 
@@ -73,7 +74,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      * wir ueberlegen, ob wir es irgendwie anders berechnen koennen um den Server zu entlasten.
      */
     private initViewModel(): void {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.WARTEN);
 
         //Berechnung aller finanziellen Daten
@@ -93,7 +93,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
         //todo wenn man aus der verfuegung zurueck kommt muss man hier nicht neu berechnen
-        this.gesuchModelManager.calculateVerfuegungen().then(() => {
+        this.refreshKinderListe();
+    }
+
+    private refreshKinderListe(): IPromise<any> {
+        return this.gesuchModelManager.calculateVerfuegungen().then(() => {
             this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
         });
     }
@@ -118,8 +122,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 this.gesuchModelManager.setKindNumber(kindNumber);
                 let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
                 if (betreuungNumber > 0) {
-                    this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
                     this.$state.go('gesuch.verfuegenView', {
+                        betreuungNumber: betreuungNumber,
+                        kindNumber: kindNumber,
                         gesuchId: this.getGesuchId()
                     });
                 }
@@ -159,15 +164,19 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return isAnyStatusOfVerfuegt(status);
+            return isAnyStatusOfVerfuegt(status) && this.getGesuch().hasFSDokument;
         }
-        return true;
+        return this.getGesuch().hasFSDokument;
 
     }
 
     public isBegleitschreibenVisible(): boolean {
-        //aktuell verhelt sich das imho gleich wie finanzielle Situation PDF Sichtbarkeit
-        return this.isFinanziellesituationPDFVisible();
+        let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
+        if (isGesuchsteller) {
+            let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+            return isAnyStatusOfVerfuegt(status);
+        }
+        return true;
     }
 
     public getFall() {
@@ -202,7 +211,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         });
     }
 
-    public setGesuchStatusVerfuegen(): IPromise<TSAntragStatus> {
+    public setGesuchStatusVerfuegen(): IPromise<TSGesuch> {
         //by default wird alles auf VERFUEGEN gesetzt, da es der normale Fall ist
         let newStatus: TSAntragStatus = TSAntragStatus.VERFUEGEN;
         let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
@@ -212,19 +221,27 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             deleteTextValue = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT';
             this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
         }
+
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: deleteTextValue
         }).then(() => {
             return this.createNeededPDFs().then(() => {
-                return this.setGesuchStatus(newStatus);
+                this.gesuchModelManager.getGesuch().status = newStatus;
+                return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                    return this.refreshKinderListe().then(() => {
+                        this.form.$dirty = false;
+                        this.form.$pristine = true; // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
+                        return this.gesuchModelManager.getGesuch();
+                    });
+                });
             });
         });
     }
 
     private hasOffeneMahnungen(): boolean {
         for (let mahn of this.mahnungList) {
-            if (mahn.active) {
+            if (!mahn.timestampAbgeschlossen) {
                 return true;
             }
         }
@@ -238,38 +255,42 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showErsteMahnungErstellen(): boolean {
         // Nur wenn keine offenen Mahnungen vorhanden!
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.mahnung === undefined && !this.hasOffeneMahnungen();
+            && this.mahnung === undefined && !this.hasOffeneMahnungen() && !this.isGesuchReadonly();
     }
 
     public showErsteMahnungAusloesen(): boolean {
-        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ERSTE_MAHNUNG;
+        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ERSTE_MAHNUNG
+            && !this.isGesuchReadonly();
     }
 
     public showZweiteMahnungErstellen(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN)
-            && this.mahnung === undefined;
+            && this.mahnung === undefined && !this.isGesuchReadonly();
     }
 
     public showZweiteMahnungAusloesen(): boolean {
-        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG;
+        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG
+            && !this.isGesuchReadonly();
     }
 
     public showMahnlaufBeenden(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN))
+            && !this.isGesuchReadonly();
     }
 
     public showDokumenteNichtKomplett(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN))
+            && !this.isGesuchReadonly();
     }
 
     public showZweiteMahnungNichtEingetreten(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN) && !this.isGesuchReadonly();
     }
 
     public ersteMahnungErstellen(): void {
@@ -282,8 +303,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         this.createMahnung(TSMahnungTyp.ZWEITE_MAHNUNG);
     }
 
-    public saveMahnung(form: angular.IFormController): void {
-        if (form.$valid) {
+    public saveMahnung(): void {
+        if (this.form.$valid) {
             this.mahnungRS.saveMahnung(this.mahnung).then((mahnungResponse: TSMahnung) => {
                 this.setGesuchStatus(this.tempAntragStatus).then(any => {
                     this.mahnungList.push(mahnungResponse);
@@ -299,7 +320,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.mahnung = new TSMahnung();
             this.mahnung.mahnungTyp = typ;
             this.mahnung.gesuch = this.getGesuch();
-            this.mahnung.active = true;
+            this.mahnung.timestampAbgeschlossen = null;
             this.mahnung.bemerkungen = generatedBemerkungen.data;
         });
     }
@@ -336,7 +357,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showGeprueft(): boolean {
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.wizardStepManager.areAllStepsOK() && this.mahnung === undefined;
+            && this.wizardStepManager.areAllStepsOK() && this.mahnung === undefined && !this.isGesuchReadonly();
     }
 
     /**
@@ -345,7 +366,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showVerfuegenStarten(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
-            && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG);
+            && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
+            && !this.isGesuchReadonly();
             // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
 
@@ -377,9 +399,46 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     private createNeededPDFs(): IPromise<TSDownloadFile> {
-        return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FINANZIELLE_SITUATION, true)
-            .then((downloadFile: TSDownloadFile) => {
-                return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.BEGLEITSCHREIBEN, true);
+       return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.BEGLEITSCHREIBEN, true)
+            .then(() => {
+                if (this.getGesuch().hasFSDokument) {
+                    return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FINANZIELLE_SITUATION, true);
+                }
+                return;
             });
+    }
+
+    public showBeschwerdeHaengig(): boolean {
+        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        return TSAntragStatus.VERFUEGT === status && !this.getGesuch().gesperrtWegenBeschwerde;
+    }
+
+    public showBeschwerdeAbschliessen(): boolean {
+        let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        return TSAntragStatus.BESCHWERDE_HAENGIG === status;
+    }
+
+    public setGesuchStatusBeschwerdeHaengig(): IPromise<TSGesuch> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'BESCHWERDE_HAENGIG',
+            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_HAENGIG'
+        }).then(() => {
+            return this.gesuchRS.setBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                return this.gesuchModelManager.getGesuch();
+            });
+        });
+    }
+
+    public setGesuchStatusBeschwerdeAbschliessen(): IPromise<TSGesuch> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'BESCHWERDE_ABSCHLIESSEN',
+            deleteText: 'BESCHREIBUNG_GESUCH_BESCHWERDE_ABSCHLIESSEN'
+        }).then(() => {
+            return this.gesuchRS.removeBeschwerdeHaengig(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                return this.gesuchModelManager.getGesuch();
+            });
+        });
     }
 }

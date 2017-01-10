@@ -61,9 +61,9 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 				if (gesuch.extractEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2() == null) {
 					gesuch.extractEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP2(false);
 				}
-				einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
+					einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfoContainer());
+				}
 			}
-		}
 
 		final FamiliensituationContainer mergedFamiliensituationContainer = persistence.merge(familiensituationContainer);
 		gesuch.setFamiliensituationContainer(mergedFamiliensituationContainer);

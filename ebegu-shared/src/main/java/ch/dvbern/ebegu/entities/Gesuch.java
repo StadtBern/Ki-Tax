@@ -76,7 +76,7 @@ public class Gesuch extends AbstractEntity {
 	private Set<KindContainer> kindContainers = new LinkedHashSet<>();
 
 	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "gesuch", fetch = FetchType.LAZY)
-	@OrderBy("datum")
+	@OrderBy("timestampVon")
 	private Set<AntragStatusHistory> antragStatusHistories = new LinkedHashSet<>();
 
 	@Valid
@@ -92,7 +92,10 @@ public class Gesuch extends AbstractEntity {
 	private EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer;
 
 	@Transient
-	private FinanzDatenDTO finanzDatenDTO;
+	private FinanzDatenDTO finanzDatenDTO_alleine;
+
+	@Transient
+	private FinanzDatenDTO finanzDatenDTO_zuZweit;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -108,6 +111,12 @@ public class Gesuch extends AbstractEntity {
 	@Min(0)
 	@Column(nullable = false)
 	private int laufnummer = 0;
+
+	@Column(nullable = false)
+	private boolean hasFSDokument = true;
+
+	@Column(nullable = false)
+	private boolean gesperrtWegenBeschwerde = false;
 
 
 	public Gesuch() {
@@ -181,11 +190,10 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	public FinanzDatenDTO getFinanzDatenDTO() {
-		return finanzDatenDTO;
-	}
-
-	public void setFinanzDatenDTO(FinanzDatenDTO finanzDatenDTO) {
-		this.finanzDatenDTO = finanzDatenDTO;
+		if (extractFamiliensituation().hasSecondGesuchsteller()) {
+			return finanzDatenDTO_zuZweit;
+		}
+		return finanzDatenDTO_alleine;
 	}
 
 	@Nullable
@@ -270,6 +278,22 @@ public class Gesuch extends AbstractEntity {
 		this.laufnummer = laufnummer;
 	}
 
+	public boolean isHasFSDokument() {
+		return hasFSDokument;
+	}
+
+	public void setHasFSDokument(boolean hasFSDokument) {
+		this.hasFSDokument = hasFSDokument;
+	}
+
+	public boolean isGesperrtWegenBeschwerde() {
+		return gesperrtWegenBeschwerde;
+	}
+
+	public void setGesperrtWegenBeschwerde(boolean gesperrtWegenBeschwerde) {
+		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
+	}
+
 	@Nullable
 	public EinkommensverschlechterungInfoContainer getEinkommensverschlechterungInfoContainer() {
 		return einkommensverschlechterungInfoContainer;
@@ -277,6 +301,22 @@ public class Gesuch extends AbstractEntity {
 
 	public void setEinkommensverschlechterungInfoContainer(@Nullable EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer) {
 		this.einkommensverschlechterungInfoContainer = einkommensverschlechterungInfoContainer;
+	}
+
+	public FinanzDatenDTO getFinanzDatenDTO_alleine() {
+		return finanzDatenDTO_alleine;
+	}
+
+	public void setFinanzDatenDTO_alleine(FinanzDatenDTO finanzDatenDTO_alleine) {
+		this.finanzDatenDTO_alleine = finanzDatenDTO_alleine;
+	}
+
+	public FinanzDatenDTO getFinanzDatenDTO_zuZweit() {
+		return finanzDatenDTO_zuZweit;
+	}
+
+	public void setFinanzDatenDTO_zuZweit(FinanzDatenDTO finanzDatenDTO_zuZweit) {
+		this.finanzDatenDTO_zuZweit = finanzDatenDTO_zuZweit;
 	}
 
 	@SuppressWarnings("ObjectEquality")

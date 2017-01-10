@@ -36,16 +36,17 @@ describe('betreuungListViewTest', function () {
     describe('API Usage', function () {
         describe('createBetreuung', () => {
             it('should create a Betreuung', () => {
-                var tsKindContainer = new TSKindContainer();
+                let tsKindContainer = new TSKindContainer();
                 tsKindContainer.betreuungen = [];
-                spyOn(gesuchModelManager, 'createBetreuung');
                 spyOn($state, 'go');
                 spyOn(gesuchModelManager, 'findKind').and.returnValue(1);
+
                 betreuungListView.createBetreuung(tsKindContainer);
+
                 expect(gesuchModelManager.findKind).toHaveBeenCalledWith(tsKindContainer);
                 expect(gesuchModelManager.getKindNumber()).toBe(1);
-                expect(gesuchModelManager.createBetreuung).toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('gesuch.betreuung', { gesuchId: ''});
+
+                expect($state.go).toHaveBeenCalledWith('gesuch.betreuung', { betreuungNumber: undefined, kindNumber: 1, gesuchId: ''});
             });
         });
     });

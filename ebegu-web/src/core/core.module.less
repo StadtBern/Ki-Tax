@@ -17,27 +17,18 @@
         hr.header {
             margin-bottom: 5rem;
         }
-        margin-bottom: 2rem;
+        p:last-child {
+            margin-bottom: 5rem;
+        }
+
     }
 
     .subTitle {
         font-size: 1.8rem;
+        &.subTitleBold {
+            .ebeguBold();
+        }
     }
-
-    .bisher {
-        clear: both;
-        //todo stylen gem kana
-        background-color: @grey;
-        padding: 0.2rem;
-        //display: block;
-        border-color: @lgrey;
-    }
-    // bei manchen bisher bloecken wollen wir einzelne neue zeilen
-    .dv-bisher-break .dv-bisher-content-row, .dv-bisher-break .bisher:first-child {
-        display: block;
-        background-color: @grey;
-    }
-
     .inlineHint {
         .ebeguItalic();
         font-size: 1.4rem;
@@ -116,6 +107,12 @@
     .marginBottom30 {
         margin-bottom: 3rem;
     }
+    .marginBottom50 {
+        margin-bottom: 5rem;
+    }
+    .marginBottom80 {
+        margin-bottom: 8rem;
+    }
 
     //errors sofort nach verlassen des feldes anzeigen oder sobald das form submitted wurde
     form:not(.ng-submitted) .form-group {
@@ -158,18 +155,44 @@
     ._md-open-menu-container, .md-open-menu-container {
         z-index: @z-index-menu !important;
     }
-
+    .well {
+        margin-left: -5rem;
+        margin-right: -2.5rem;
+        box-shadow: none;
+        border: none;
+        border-bottom: 0.5rem solid black;
+        span {
+            .ebeguH3();
+        }
+        i {
+            padding: 1rem;
+        }
+        border-radius: 0;
+        padding: 3rem 2.5rem 3rem 5rem;
+    }
     .well-status-warten {
         background-color: @warning-light;
+        i {
+            color: @warning;
+        }
+        border-bottom-color: @warning;
     }
     .well-status-bestaetigt {
         background-color: @success-light;
+        i {
+            color: @success;
+        }
+        border-bottom-color: @success;
     }
     .well-status-abgewiesen {
         background-color: @danger-light;
+        i {
+            color: @danger;
+        }
+        border-bottom-color: @danger;
     }
 
-    .required:after {
+    .required span:after {
         content: " *";
     }
 

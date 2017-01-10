@@ -49,12 +49,11 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM);
         this.initErwerbspensumStepStatus();
     }
 
     private initErwerbspensumStepStatus() {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.ERWERBSPENSUM);
         if (this.isSaveDisabled()) {
             this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         } else {

@@ -1,8 +1,6 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.MathUtil;
@@ -70,13 +68,59 @@ public class EinkommenCalcRuleTest {
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 
+	/**
+	 *  Erstellt einen Testfall mit 2 EKV.
+	 *  Am Ende schaut es dass die Bemerkungen richtig geschrieben wurden
+	 */
+	@Test
+	public void testAcceptedEKV() {
+		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGI, 100);
+		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
+
+		gesuch.setEinkommensverschlechterungInfoContainer(new EinkommensverschlechterungInfoContainer());
+		final EinkommensverschlechterungInfo einkommensverschlechterungInfoJA = new EinkommensverschlechterungInfo();
+		einkommensverschlechterungInfoJA.setEinkommensverschlechterung(true);
+		einkommensverschlechterungInfoJA.setEkvFuerBasisJahrPlus1(true);
+		einkommensverschlechterungInfoJA.setEkvFuerBasisJahrPlus2(true);
+		einkommensverschlechterungInfoJA.setStichtagFuerBasisJahrPlus1(LocalDate.of(2016, 10, 1));
+		einkommensverschlechterungInfoJA.setStichtagFuerBasisJahrPlus2(LocalDate.of(2017, 4, 1));
+		gesuch.getEinkommensverschlechterungInfoContainer().setEinkommensverschlechterungInfoJA(einkommensverschlechterungInfoJA);
+
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(new BigDecimal(50000));
+		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(new EinkommensverschlechterungContainer());
+		final Einkommensverschlechterung ekvJABasisJahrPlus1 = new Einkommensverschlechterung();
+		ekvJABasisJahrPlus1.setNettolohnJan(new BigDecimal(25000));
+		gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(ekvJABasisJahrPlus1);
+		final Einkommensverschlechterung ekvJABasisJahrPlus2 = new Einkommensverschlechterung();
+		ekvJABasisJahrPlus2.setNettolohnJan(new BigDecimal(20000));
+		gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(ekvJABasisJahrPlus2);
+
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
+
+		Assert.assertEquals(3, result.size());
+		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
+		Assert.assertEquals(new BigDecimal(50000), result.get(0).getMassgebendesEinkommen());
+		Assert.assertEquals("EINKOMMEN: neues Massgebendes Einkommen aufgrund Einkommensverschlechterung 2016", result.get(1).getBemerkungen());
+		Assert.assertEquals(new BigDecimal(25000), result.get(1).getMassgebendesEinkommen());
+		Assert.assertEquals("EINKOMMEN: neues Massgebendes Einkommen aufgrund Einkommensverschlechterung 2017", result.get(2).getBemerkungen());
+		Assert.assertEquals(new BigDecimal(20000), result.get(2).getMassgebendesEinkommen());
+	}
+
 	private Betreuung prepareData(BigDecimal massgebendesEinkommen, BetreuungsangebotTyp angebot, int pensum) {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, angebot, pensum);
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
-		gesuch.getFinanzDatenDTO().setMassgebendesEinkBjVorAbzFamGr(massgebendesEinkommen);
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(massgebendesEinkommen);
 		return betreuung;
 	}
 }

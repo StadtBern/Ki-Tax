@@ -41,11 +41,13 @@ public class EbeguRuleTestsHelper {
 	private static final MindestalterCalcRule mindestalterCalcRule = new MindestalterCalcRule(Constants.DEFAULT_GUELTIGKEIT);
 	private static final AbwesenheitAbschnittRule abwesenheitAbschnittRule = new AbwesenheitAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 	private static final AbwesenheitCalcRule abwesenheitCalcRule = new AbwesenheitCalcRule(Constants.DEFAULT_GUELTIGKEIT);
+	private static final ZivilstandsaenderungAbschnittRule zivilstandsaenderungAbschnittRule = new ZivilstandsaenderungAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 	private static final RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
 
 	protected static List<VerfuegungZeitabschnitt> calculate(Betreuung betreuung) {
 		// Abschnitte
 		List<VerfuegungZeitabschnitt> initialenRestanspruchAbschnitte = createInitialenRestanspruch(betreuung.extractGesuchsperiode());
+		TestDataUtil.calculateFinanzDaten(betreuung.extractGesuch());
 		return calculate(betreuung, initialenRestanspruchAbschnitte);
 	}
 
@@ -56,6 +58,7 @@ public class EbeguRuleTestsHelper {
 	protected static List<VerfuegungZeitabschnitt> calculateWithRemainingRestanspruch(Betreuung betreuung, int existingRestanspruch) {
 		// Abschnitte
 		List<VerfuegungZeitabschnitt> initialenRestanspruchAbschnitte = createInitialenRestanspruch(betreuung.extractGesuchsperiode());
+		TestDataUtil.calculateFinanzDaten(betreuung.extractGesuch());
 		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : initialenRestanspruchAbschnitte) {
 			verfuegungZeitabschnitt.setAnspruchspensumRest(existingRestanspruch);
 		}
@@ -67,6 +70,7 @@ public class EbeguRuleTestsHelper {
 		List<VerfuegungZeitabschnitt> result = erwerbspensumAbschnittRule.calculate(betreuung, initialenRestanspruchAbschnitte);
 		result = betreuungspensumAbschnittRule.calculate(betreuung, result);
 		result = fachstelleAbschnittRule.calculate(betreuung, result);
+		result = zivilstandsaenderungAbschnittRule.calculate(betreuung, result);
 		result = einkommenAbschnittRule.calculate(betreuung, result);
 		result = einreichungsfristAbschnittRule.calculate(betreuung, result);
 		result = wohnsitzAbschnittRule.calculate(betreuung, result);

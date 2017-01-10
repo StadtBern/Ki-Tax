@@ -35,17 +35,12 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION);
 
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
 
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
-        this.initViewModel();
-    }
-
-    private initViewModel() {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.FINANZIELLE_SITUATION);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
     }
 
@@ -58,7 +53,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     private save(): IPromise<TSGesuch> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
             this.initialModel = angular.copy(this.model);
             if (!this.form.$dirty) {

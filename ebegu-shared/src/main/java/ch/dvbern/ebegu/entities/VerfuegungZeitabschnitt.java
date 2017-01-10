@@ -52,6 +52,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@Transient
 	private Boolean wohnsitzNichtInGemeindeGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
+
 	@Transient
 	private Boolean wohnsitzNichtInGemeindeGS2 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
@@ -67,6 +68,42 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@Transient
 	private int anspruchspensumRest;
+
+	@Transient
+	private boolean hasSecondGesuchsteller;
+
+	@Transient
+	private boolean ekv1_alleine;
+
+	@Transient
+	private boolean ekv1_zuZweit;
+
+	@Transient
+	private boolean ekv2_alleine;
+
+	@Transient
+	private boolean ekv2_zuZweit;
+
+	@Transient
+	private boolean ekv1_alleine_notAccepted;
+
+	@Transient
+	private boolean ekv2_alleine_notAccepted;
+
+	@Transient
+	private boolean ekv1_zuZweit_notAccepted;
+
+	@Transient
+	private boolean ekv2_zuZweit_notAccepted;
+
+	@Transient
+	private boolean kategorieMaxEinkommen = false;
+
+	@Transient
+	private boolean kategorieKeinPensum = false;
+
+	@Transient
+	private boolean kategorieZuschlagZumErwerbspensum = false;
 
 	@Max(100)
 	@Min(0)
@@ -98,6 +135,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Column(nullable = true)
 	private BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
 
+	@NotNull
+	@Column(nullable = false)
+	private Integer einkommensjahr;
+
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
@@ -107,6 +148,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
+
 
 	public VerfuegungZeitabschnitt() {
 	}
@@ -135,8 +177,21 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.abzugFamGroesse = toCopy.abzugFamGroesse;
 		this.famGroesse = toCopy.famGroesse;
 		this.massgebendesEinkommenVorAbzugFamgr = toCopy.massgebendesEinkommenVorAbzugFamgr;
+		this.hasSecondGesuchsteller = toCopy.hasSecondGesuchsteller;
+		this.einkommensjahr = toCopy.einkommensjahr;
+		this.ekv1_alleine = toCopy.ekv1_alleine;
+		this.ekv1_zuZweit = toCopy.ekv1_zuZweit;
+		this.ekv2_alleine = toCopy.ekv2_alleine;
+		this.ekv2_zuZweit = toCopy.ekv2_zuZweit;
+		this.ekv1_alleine_notAccepted = toCopy.ekv1_alleine_notAccepted;
+		this.ekv1_zuZweit_notAccepted = toCopy.ekv1_zuZweit_notAccepted;
+		this.ekv2_alleine_notAccepted = toCopy.ekv2_alleine_notAccepted;
+		this.ekv2_zuZweit_notAccepted = toCopy.ekv2_zuZweit_notAccepted;
 		this.bemerkungen = toCopy.bemerkungen;
 		this.verfuegung = null;
+		this.kategorieMaxEinkommen = toCopy.kategorieMaxEinkommen;
+		this.kategorieKeinPensum = toCopy.kategorieKeinPensum;
+		this.kategorieZuschlagZumErwerbspensum = toCopy.kategorieZuschlagZumErwerbspensum;
 	}
 
 	/**
@@ -239,6 +294,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr;
 	}
 
+	public boolean isHasSecondGesuchsteller() {
+		return hasSecondGesuchsteller;
+	}
+
+	public void setHasSecondGesuchsteller(boolean hasSecondGesuchsteller) {
+		this.hasSecondGesuchsteller = hasSecondGesuchsteller;
+	}
+
 	@Nullable
 	public String getBemerkungen() {
 		return bemerkungen;
@@ -312,6 +375,101 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.famGroesse = famGroesse;
 	}
 
+	public Integer getEinkommensjahr() {
+		return einkommensjahr;
+	}
+
+	public void setEinkommensjahr(Integer einkommensjahr) {
+		this.einkommensjahr = einkommensjahr;
+	}
+
+	public boolean isEkv1_alleine() {
+		return ekv1_alleine;
+	}
+
+	public void setEkv1_alleine(boolean ekv1_alleine) {
+		this.ekv1_alleine = ekv1_alleine;
+	}
+
+	public boolean isEkv1_zuZweit() {
+		return ekv1_zuZweit;
+	}
+
+	public void setEkv1_zuZweit(boolean ekv1_zuZweit) {
+		this.ekv1_zuZweit = ekv1_zuZweit;
+	}
+
+	public boolean isEkv2_alleine() {
+		return ekv2_alleine;
+	}
+
+	public void setEkv2_alleine(boolean ekv2_alleine) {
+		this.ekv2_alleine = ekv2_alleine;
+	}
+
+	public boolean isEkv2_zuZweit() {
+		return ekv2_zuZweit;
+	}
+
+	public void setEkv2_zuZweit(boolean ekv2_zuZweit) {
+		this.ekv2_zuZweit = ekv2_zuZweit;
+	}
+
+	public boolean isEkv1_alleine_notAccepted() {
+		return ekv1_alleine_notAccepted;
+	}
+
+	public void setEkv1_alleine_notAccepted(boolean ekv1_alleine_notAccepted) {
+		this.ekv1_alleine_notAccepted = ekv1_alleine_notAccepted;
+	}
+
+	public boolean isEkv2_alleine_notAccepted() {
+		return ekv2_alleine_notAccepted;
+	}
+
+	public void setEkv2_alleine_notAccepted(boolean ekv2_alleine_notAccepted) {
+		this.ekv2_alleine_notAccepted = ekv2_alleine_notAccepted;
+	}
+
+	public boolean isEkv1_zuZweit_notAccepted() {
+		return ekv1_zuZweit_notAccepted;
+	}
+
+	public void setEkv1_zuZweit_notAccepted(boolean ekv1_zuZweit_notAccepted) {
+		this.ekv1_zuZweit_notAccepted = ekv1_zuZweit_notAccepted;
+	}
+
+	public boolean isEkv2_zuZweit_notAccepted() {
+		return ekv2_zuZweit_notAccepted;
+	}
+
+	public void setEkv2_zuZweit_notAccepted(boolean ekv2_zuZweit_notAccepted) {
+		this.ekv2_zuZweit_notAccepted = ekv2_zuZweit_notAccepted;
+	}
+
+	public boolean isKategorieMaxEinkommen() {
+		return kategorieMaxEinkommen;
+	}
+
+	public void setKategorieMaxEinkommen(boolean kategorieMaxEinkommen) {
+		this.kategorieMaxEinkommen = kategorieMaxEinkommen;
+	}
+
+	public boolean isKategorieKeinPensum() {
+		return kategorieKeinPensum;
+	}
+
+	public void setKategorieKeinPensum(boolean kategorieKeinPensum) {
+		this.kategorieKeinPensum = kategorieKeinPensum;
+	}
+
+	public boolean isKategorieZuschlagZumErwerbspensum() {
+		return kategorieZuschlagZumErwerbspensum;
+	}
+
+	public void setKategorieZuschlagZumErwerbspensum(boolean kategorieZuschlagZumErwerbspensum) {
+		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
+	}
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -345,14 +503,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 				(other.getErwerbspensumGS2() != null ? other.getErwerbspensumGS2() : 0));
 		}
 
-		BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
-		if (this.getMassgebendesEinkommenVorAbzFamgr() != null) {
-			massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr.add(this.getMassgebendesEinkommenVorAbzFamgr());
-		}
-		if (other.getMassgebendesEinkommenVorAbzFamgr() != null) {
-			massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr.add(other.getMassgebendesEinkommenVorAbzFamgr());
-		}
-		this.setMassgebendesEinkommenVorAbzugFamgr(massgebendesEinkommenVorAbzugFamgr);
+		this.setMassgebendesEinkommenVorAbzugFamgr(MathUtil.DEFAULT.add(this.getMassgebendesEinkommenVorAbzFamgr(), other.getMassgebendesEinkommenVorAbzFamgr()));
 
 		this.addBemerkung(other.getBemerkungen());
 		this.setZuSpaetEingereicht(this.isZuSpaetEingereicht() || other.isZuSpaetEingereicht());
@@ -375,6 +526,23 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			Validate.isTrue(this.getFamGroesse() == null, "Familiengoressen kann nicht gemerged werden");
 			this.setFamGroesse(other.getFamGroesse());
 		}
+		if (other.getEinkommensjahr() != null) {
+			this.setEinkommensjahr(other.getEinkommensjahr());
+		}
+		this.setHasSecondGesuchsteller(this.isHasSecondGesuchsteller() || other.isHasSecondGesuchsteller());
+
+		this.ekv1_alleine = (this.ekv1_alleine || other.ekv1_alleine);
+		this.ekv1_zuZweit = (this.ekv1_zuZweit || other.ekv1_zuZweit);
+		this.ekv2_alleine = (this.ekv2_alleine || other.ekv2_alleine);
+		this.ekv2_zuZweit = (this.ekv2_zuZweit || other.ekv2_zuZweit);
+		this.ekv1_alleine_notAccepted = (this.ekv1_alleine_notAccepted || other.ekv1_alleine_notAccepted);
+		this.ekv1_zuZweit_notAccepted = (this.ekv1_zuZweit_notAccepted || other.ekv1_zuZweit_notAccepted);
+		this.ekv2_alleine_notAccepted = (this.ekv2_alleine_notAccepted || other.ekv2_alleine_notAccepted);
+		this.ekv2_zuZweit_notAccepted = (this.ekv2_zuZweit_notAccepted || other.ekv2_zuZweit_notAccepted);
+
+		this.setKategorieKeinPensum(this.kategorieKeinPensum || other.kategorieKeinPensum);
+		this.setKategorieMaxEinkommen(this.kategorieMaxEinkommen || other.kategorieMaxEinkommen);
+		this.setKategorieZuschlagZumErwerbspensum(this.kategorieZuschlagZumErwerbspensum || other.kategorieZuschlagZumErwerbspensum);
 	}
 
 	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey) {
@@ -451,6 +619,18 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		return sb.toString();
 	}
 
+	public String toStringFinanzielleSituation() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
+			.append(" MassgebendesEinkommenVorAbzugFamiliengroesse: ").append(massgebendesEinkommenVorAbzugFamgr).append("\t")
+			.append(" AbzugFamiliengroesse: ").append(abzugFamGroesse).append("\t")
+			.append(" MassgebendesEinkommen: ").append(getMassgebendesEinkommen()).append("\t")
+			.append(" Einkommensjahr: ").append(einkommensjahr).append("\t")
+			.append(" Familiengroesse: ").append(famGroesse).append("\t")
+			.append(" Bemerkungen: ").append(bemerkungen);
+		return sb.toString();
+	}
+
 	//TODO: Ist hier Objects.equals() richtig??
 	public boolean isSame(VerfuegungZeitabschnitt that) {
 		if (this == that) {
@@ -462,6 +642,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			fachstellenpensum == that.fachstellenpensum &&
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
+			hasSecondGesuchsteller == that.hasSecondGesuchsteller &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(famGroesse, that.famGroesse) &&
 			Objects.equals(massgebendesEinkommenVorAbzugFamgr, that.massgebendesEinkommenVorAbzugFamgr) &&
@@ -469,7 +650,16 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
 			bezahltVollkosten == that.bezahltVollkosten &&
 			longAbwesenheit == that.longAbwesenheit &&
-			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten;
+			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten &&
+			Objects.equals(this.einkommensjahr, that.einkommensjahr) &&
+			this.ekv1_alleine == that.ekv1_alleine &&
+			this.ekv1_zuZweit == that.ekv1_zuZweit &&
+			this.ekv2_alleine == that.ekv2_alleine &&
+			this.ekv2_zuZweit == that.ekv2_zuZweit &&
+			this.ekv1_alleine_notAccepted == that.ekv1_alleine_notAccepted &&
+			this.ekv1_zuZweit_notAccepted == that.ekv1_zuZweit_notAccepted &&
+			this.ekv2_alleine_notAccepted == that.ekv2_alleine_notAccepted &&
+			this.ekv2_zuZweit_notAccepted == that.ekv2_zuZweit_notAccepted;
 	}
 
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
@@ -490,7 +680,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(abzugFamGroesse.compareTo(that.abzugFamGroesse) == 0) &&
 			(famGroesse.compareTo(that.famGroesse) == 0) &&
 			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
-			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0;
+			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0 &&
+			Objects.equals(this.einkommensjahr, that.einkommensjahr);
 	}
 
 	/**

@@ -597,6 +597,8 @@ export default class EbeguRestUtil {
         restGesuch.familiensituationContainer = this.familiensituationContainerToRestObject({}, gesuch.familiensituationContainer);
         restGesuch.bemerkungen = gesuch.bemerkungen;
         restGesuch.laufnummer = gesuch.laufnummer;
+        restGesuch.hasFSDokument = gesuch.hasFSDokument;
+        restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
         return restGesuch;
     }
 
@@ -611,6 +613,8 @@ export default class EbeguRestUtil {
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;
+            gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
+            gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
             return gesuchTS;
         }
         return undefined;
@@ -913,6 +917,7 @@ export default class EbeguRestUtil {
         restEinkommensverschlechterung.nettolohnNov = einkommensverschlechterung.nettolohnNov;
         restEinkommensverschlechterung.nettolohnDez = einkommensverschlechterung.nettolohnDez;
         restEinkommensverschlechterung.nettolohnZus = einkommensverschlechterung.nettolohnZus;
+        restEinkommensverschlechterung.geschaeftsgewinnBasisjahrMinus1 = einkommensverschlechterung.geschaeftsgewinnBasisjahrMinus1;
         return restEinkommensverschlechterung;
     }
 
@@ -947,6 +952,7 @@ export default class EbeguRestUtil {
             einkommensverschlechterungTS.nettolohnNov = einkommensverschlechterungFromServer.nettolohnNov;
             einkommensverschlechterungTS.nettolohnDez = einkommensverschlechterungFromServer.nettolohnDez;
             einkommensverschlechterungTS.nettolohnZus = einkommensverschlechterungFromServer.nettolohnZus;
+            einkommensverschlechterungTS.geschaeftsgewinnBasisjahrMinus1 = einkommensverschlechterungFromServer.geschaeftsgewinnBasisjahrMinus1;
 
             return einkommensverschlechterungTS;
         }
@@ -1272,6 +1278,7 @@ export default class EbeguRestUtil {
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
         restPendenz.laufnummer = pendenz.laufnummer;
+        restPendenz.gesperrtWegenBeschwerde = pendenz.gesperrtWegenBeschwerde;
         return restPendenz;
     }
 
@@ -1290,6 +1297,7 @@ export default class EbeguRestUtil {
         pendenzTS.status = pendenzFromServer.status;
         pendenzTS.verfuegt = pendenzFromServer.verfuegt;
         pendenzTS.laufnummer = pendenzFromServer.laufnummer;
+        pendenzTS.gesperrtWegenBeschwerde = pendenzFromServer.gesperrtWegenBeschwerde;
         return pendenzTS;
     }
 
@@ -1493,6 +1501,11 @@ export default class EbeguRestUtil {
             verfuegungTS.manuelleBemerkungen = verfuegungFromServer.manuelleBemerkungen;
             verfuegungTS.zeitabschnitte = this.parseVerfuegungZeitabschnitte(verfuegungFromServer.zeitabschnitte);
             verfuegungTS.sameVerfuegungsdaten = verfuegungFromServer.sameVerfuegungsdaten;
+            verfuegungTS.kategorieKeinPensum = verfuegungFromServer.kategorieKeinPensum;
+            verfuegungTS.kategorieMaxEinkommen = verfuegungFromServer.kategorieMaxEinkommen;
+            verfuegungTS.kategorieNichtEintreten = verfuegungFromServer.kategorieNichtEintreten;
+            verfuegungTS.kategorieNormal = verfuegungFromServer.kategorieNormal;
+            verfuegungTS.kategorieZuschlagZumErwerbspensum = verfuegungFromServer.kategorieZuschlagZumErwerbspensum;
             return verfuegungTS;
         }
         return undefined;
@@ -1505,6 +1518,11 @@ export default class EbeguRestUtil {
             verfuegung.manuelleBemerkungen = verfuegungTS.manuelleBemerkungen;
             verfuegung.zeitabschnitte = this.zeitabschnittListToRestObject(verfuegungTS.zeitabschnitte);
             verfuegung.sameVerfuegungsdaten = verfuegungTS.sameVerfuegungsdaten;
+            verfuegung.kategorieKeinPensum = verfuegungTS.kategorieKeinPensum;
+            verfuegung.kategorieMaxEinkommen = verfuegungTS.kategorieMaxEinkommen;
+            verfuegung.kategorieNichtEintreten = verfuegungTS.kategorieNichtEintreten;
+            verfuegung.kategorieNormal = verfuegungTS.kategorieNormal;
+            verfuegung.kategorieZuschlagZumErwerbspensum = verfuegungTS.kategorieZuschlagZumErwerbspensum;
             return verfuegung;
         }
         return undefined;
@@ -1550,6 +1568,10 @@ export default class EbeguRestUtil {
             zeitabschnitt.famGroesse = zeitabschnittTS.famGroesse;
             zeitabschnitt.status = zeitabschnittTS.status;
             zeitabschnitt.vollkosten = zeitabschnittTS.vollkosten;
+            zeitabschnitt.einkommensjahr = zeitabschnittTS.einkommensjahr;
+            zeitabschnitt.kategorieZuschlagZumErwerbspensum = zeitabschnittTS.kategorieZuschlagZumErwerbspensum;
+            zeitabschnitt.kategorieMaxEinkommen = zeitabschnittTS.kategorieMaxEinkommen;
+            zeitabschnitt.kategorieKeinPensum = zeitabschnittTS.kategorieKeinPensum;
             return zeitabschnitt;
         }
         return undefined;
@@ -1573,6 +1595,10 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.famGroesse = zeitabschnittFromServer.famGroesse;
             verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
             verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
+            verfuegungZeitabschnittTS.einkommensjahr = zeitabschnittFromServer.einkommensjahr;
+            verfuegungZeitabschnittTS.kategorieZuschlagZumErwerbspensum = zeitabschnittFromServer.kategorieZuschlagZumErwerbspensum;
+            verfuegungZeitabschnittTS.kategorieMaxEinkommen = zeitabschnittFromServer.kategorieMaxEinkommen;
+            verfuegungZeitabschnittTS.kategorieKeinPensum = zeitabschnittFromServer.kategorieKeinPensum;
             return verfuegungZeitabschnittTS;
         }
         return undefined;
@@ -1623,7 +1649,8 @@ export default class EbeguRestUtil {
         this.parseAbstractEntity(antragStatusHistoryTS, antragStatusHistoryFromServer);
         antragStatusHistoryTS.gesuchId = antragStatusHistoryFromServer.gesuchId;
         antragStatusHistoryTS.benutzer = this.parseUser(new TSUser(), antragStatusHistoryFromServer.benutzer);
-        antragStatusHistoryTS.datum = DateUtil.localDateTimeToMoment(antragStatusHistoryFromServer.datum);
+        antragStatusHistoryTS.timestampVon = DateUtil.localDateTimeToMoment(antragStatusHistoryFromServer.timestampVon);
+        antragStatusHistoryTS.timestampBis = DateUtil.localDateTimeToMoment(antragStatusHistoryFromServer.timestampBis);
         antragStatusHistoryTS.status = antragStatusHistoryFromServer.status;
         return antragStatusHistoryTS;
     }
@@ -1632,7 +1659,8 @@ export default class EbeguRestUtil {
         this.abstractEntityToRestObject(restAntragStatusHistory, antragStatusHistory);
         restAntragStatusHistory.gesuchId = antragStatusHistory.gesuchId;
         restAntragStatusHistory.benutzer = this.userToRestObject({}, antragStatusHistory.benutzer);
-        restAntragStatusHistory.datum = DateUtil.momentToLocalDateTime(antragStatusHistory.datum);
+        restAntragStatusHistory.timestampVon = DateUtil.momentToLocalDateTime(antragStatusHistory.timestampVon);
+        restAntragStatusHistory.timestampBis = DateUtil.momentToLocalDateTime(antragStatusHistory.timestampBis);
         restAntragStatusHistory.status = antragStatusHistory.status;
         return restAntragStatusHistory;
     }
@@ -1644,7 +1672,7 @@ export default class EbeguRestUtil {
             restMahnung.mahnungTyp = tsMahnung.mahnungTyp;
             restMahnung.datumFristablauf = DateUtil.momentToLocalDate(tsMahnung.datumFristablauf);
             restMahnung.bemerkungen = tsMahnung.bemerkungen;
-            restMahnung.active = tsMahnung.active;
+            restMahnung.timestampAbgeschlossen = DateUtil.momentToLocalDateTime(tsMahnung.timestampAbgeschlossen);
             return restMahnung;
         }
         return undefined;
@@ -1670,7 +1698,7 @@ export default class EbeguRestUtil {
             tsMahnung.mahnungTyp = mahnungFromServer.mahnungTyp;
             tsMahnung.datumFristablauf = DateUtil.localDateToMoment(mahnungFromServer.datumFristablauf);
             tsMahnung.bemerkungen = mahnungFromServer.bemerkungen;
-            tsMahnung.active = mahnungFromServer.active;
+            tsMahnung.timestampAbgeschlossen = DateUtil.localDateTimeToMoment(mahnungFromServer.timestampAbgeschlossen);
             return tsMahnung;
         }
         return undefined;
@@ -1719,7 +1747,7 @@ export default class EbeguRestUtil {
             }
             if (gesuchstellerCont.erwerbspensenContainer) {
                 let erwPensenCont: Array<any> = [];
-                for (var i = 0; i < gesuchstellerCont.erwerbspensenContainer.length; i++) {
+                for (let i = 0; i < gesuchstellerCont.erwerbspensenContainer.length; i++) {
                     erwPensenCont.push(this.erwerbspensumContainerToRestObject({}, gesuchstellerCont.erwerbspensenContainer[i]));
                 }
                 restGSCont.erwerbspensenContainers = erwPensenCont;
@@ -1750,7 +1778,7 @@ export default class EbeguRestUtil {
     private adressenContainerListToRestObject(adressen: Array<TSAdresseContainer>) {
         let list: any[] = [];
         if (adressen) {
-            for (var i = 0; i < adressen.length; i++) {
+            for (let i = 0; i < adressen.length; i++) {
                 list[i] = this.adresseContainerToRestObject({}, adressen[i]);
             }
         }

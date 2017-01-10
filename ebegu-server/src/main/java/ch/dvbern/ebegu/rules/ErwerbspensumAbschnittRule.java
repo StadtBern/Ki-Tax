@@ -63,9 +63,12 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 		final DateRange gueltigkeit = new DateRange(erwerbspensum.getGueltigkeit());
 
 		int erwerbspensumTotal = 0;
+		boolean zuschlagZumErwerbspensum = false;
 		erwerbspensumTotal += erwerbspensum.getPensum();
 		if (erwerbspensum.getZuschlagsprozent() != null) {
 			erwerbspensumTotal += erwerbspensum.getZuschlagsprozent();
+			zuschlagZumErwerbspensum = true;
+
 		}
 		// Wir merken uns hier den eingegebenen Wert, auch wenn dieser (mit Zuschlag) über 100% liegt
 		if (gs2 && gesuch.isMutation() && gesuch.extractFamiliensituationErstgesuch() != null && gesuch.extractFamiliensituation() != null) {
@@ -82,14 +85,19 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 				// 2GS to 1GS
 				gueltigkeit.setGueltigBis(gesuch.extractFamiliensituation().getAenderungPer().minusDays(1));
 			}
-			return createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
+			VerfuegungZeitabschnitt zeitabschnitt = createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
+			zeitabschnitt.setKategorieZuschlagZumErwerbspensum(zuschlagZumErwerbspensum);
+			return zeitabschnitt;
 		}
 		if (gs2 && !gesuch.isMutation()) {
-			return createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
+			VerfuegungZeitabschnitt zeitabschnitt = createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
+			zeitabschnitt.setKategorieZuschlagZumErwerbspensum(zuschlagZumErwerbspensum);
+			return zeitabschnitt;
 		}
 		if (!gs2) {
 			VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gueltigkeit);
 			zeitabschnitt.setErwerbspensumGS1(erwerbspensumTotal);
+			zeitabschnitt.setKategorieZuschlagZumErwerbspensum(zuschlagZumErwerbspensum);
 			return zeitabschnitt;
 		}
 

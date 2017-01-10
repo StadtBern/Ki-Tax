@@ -31,14 +31,17 @@
                             <div class="form-group">
                                 <label data-translate="BETROFFENE_WAEHLEN" for="betroffene">
                                 </label>
-                                <select name="betroffene" id="betroffene"
-                                        ng-model="umzugAdresse.betroffene"
-                                        class="form-control"
-                                        ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
-                                        ng-required="true">
-                                </select>
+                                <div class="dv-select-style">
+                                    <select name="betroffene" id="betroffene"
+                                            ng-model="umzugAdresse.betroffene"
+                                            class="form-control"
+                                            ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
+                                            ng-required="true">
+                                    </select>
+
                                 <dv-error-messages for="vm.form.betroffene.$error"
                                                    class="error"></dv-error-messages>
+                                </div>
                             </div>
                         </div>
 
@@ -54,8 +57,9 @@
                              dv-show-allowed-roles = "vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                              dv-show-expression = "!vm.isGesuchReadonly()">
                             <dv-loading-button type="button" button-click="vm.removeUmzugAdresse(umzugAdresse)"
-                                               button-class="dv-btn-sm color-success" button-disabled="vm.isKorrekturModusJugendamt()">
-                                <i class="glyphicon glyphicon-trash"></i>
+                                               button-class="dv-btn-operation"
+                                               button-disabled="vm.isKorrekturModusJugendamt()">
+                                <i class="fa fa-lg fa-trash-o"></i>
                                 <span data-translate="UMZUG_ENTFERNEN"></span>
                             </dv-loading-button>
                         </div>
@@ -67,8 +71,9 @@
                          dv-show-allowed-roles = "vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                          dv-show-expression = "!vm.isGesuchReadonly()">
                         <dv-loading-button type="button" button-click="vm.createUmzugAdresse()"
-                                           button-class="dv-btn-sm color-success" button-disabled="vm.isKorrekturModusJugendamt()">
-                            <i class="glyphicon glyphicon-plus"></i>
+                                           button-class="dv-btn-operation"
+                                           button-disabled="vm.isKorrekturModusJugendamt()">
+                            <i class="fa fa-lg fa-plus-circle"></i>
                             <span data-translate="UMZUG_HINZUFUEGEN"></span>
                         </dv-loading-button>
                     </div>

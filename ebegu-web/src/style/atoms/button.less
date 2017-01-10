@@ -60,6 +60,39 @@ dv-navigation {
     }
 }
 
+.dv-btn-institution {
+    margin-right: 4rem;
+}
+
+.dv-btn-operation {
+    background: transparent;
+    color: @contrast-darkest;
+    .fa {
+        vertical-align: middle;
+    }
+    &.active, &:active {
+        background: @contrast-lighter;
+        color: @contrast-darkest;
+
+    }
+    &:hover {
+        background: @contrast;
+        color: @contrast-darkest;
+    }
+
+    &:active, &:hover {
+        outline: none !important;
+        text-decoration: none !important;
+    }
+    &:focus {
+        //TODO: Insert outline or smth
+    }
+    &[disabled], &[disabled]:hover {
+        color: @contrast-dark;
+        background: transparent;
+    }
+}
+
 a.dv-btn {
 
     display: block;
@@ -83,9 +116,9 @@ button, .dv-btn {
     padding: 0 1.5rem 0;
     height: 4rem;
     span {
-        height: 4rem;
-        line-height: 4rem;
+        line-height: inherit;
         text-align: center;
+        vertical-align: middle;
     }
     &.active, &:active {
         background: @primary;

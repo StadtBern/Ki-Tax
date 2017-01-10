@@ -125,11 +125,13 @@
                 <div class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_LAND" for="{{vm.prefix}}-land">
                     </label>
-                    <select name="adresseLand" id="{{vm.prefix}}-land" ng-model="vm.getModel().adresseJA.land"
-                            ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
-                            class="form-control"
-                            required>
-                    </select>
+                    <div class="dv-select-style">
+                        <select name="adresseLand" id="{{vm.prefix}}-land" ng-model="vm.getModel().adresseJA.land"
+                                ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
+                                class="form-control"
+                                required>
+                        </select>
+                    </div>
                     <dv-bisher gs="vm.getModel().adresseGS.land"
                                ja="vm.getModel().adresseJA.land"
                                show-if-bisher-none="vm.showIfBisherNone === true"

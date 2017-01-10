@@ -16,6 +16,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
@@ -49,7 +50,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     constructor($stateParams: IErwerbspensumStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM);
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
         this.gesuchsteller = this.gesuchModelManager.getStammdatenToWorkWith();
@@ -93,7 +94,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     }
 
     save(): IPromise<any> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
 
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the

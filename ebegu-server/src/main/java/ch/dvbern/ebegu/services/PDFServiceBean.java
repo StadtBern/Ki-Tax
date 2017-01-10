@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.DokumentGrund;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.enums.Zustelladresse;
@@ -12,6 +9,8 @@ import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
+import ch.dvbern.ebegu.vorlagen.finanziellesituation.BerechnungsgrundlagenInformationPrintImpl;
+import ch.dvbern.ebegu.vorlagen.finanziellesituation.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.freigabequittung.FreigabequittungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.freigabequittung.FreigabequittungPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.mahnung.MahnungPrintImpl;
@@ -20,6 +19,7 @@ import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintImpl;
 import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+import com.google.common.io.ByteStreams;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -43,6 +43,9 @@ import java.util.*;
 @Stateless
 @Local(PDFService.class)
 public class PDFServiceBean extends AbstractPrintService implements PDFService {
+
+	@Inject
+	private Authorizer authorizer;
 
 	@Inject
 	private DokumentGrundService dokumentGrundService;
@@ -94,16 +97,13 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 	@Override
 	public byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) throws MergeDocException {
 
-		DOCXMergeEngine docxME;
 		EbeguVorlageKey vorlageKey;
 
 		switch (mahnung.getMahnungTyp()) {
 			case ERSTE_MAHNUNG:
-				docxME = new DOCXMergeEngine("ErsteMahnung");
 				vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_1;
 				break;
 			case ZWEITE_MAHNUNG:
-				docxME = new DOCXMergeEngine("ZweiteMahnung");
 				vorlageKey = EbeguVorlageKey.VORLAGE_MAHNUNG_2;
 				break;
 			default:
@@ -117,10 +117,10 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
 			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				docxME.getDocument(is, new MahnungPrintMergeSource(new MahnungPrintImpl(mahnung, vorgaengerMahnung))));
+				ByteStreams.toByteArray(is), new MahnungPrintMergeSource(new MahnungPrintImpl(mahnung, vorgaengerMahnung)));
 			is.close();
 			return bytes;
-		} catch (IOException | DocTemplateException e) {
+		} catch (IOException e) {
 			throw new MergeDocException("generateMahnung()",
 				"Bei der Generierung der Mahnung ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
@@ -149,6 +149,30 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("generateFreigabequittung()",
 				"Bei der Generierung der Freigabequittung ist ein Fehler aufgetreten", e, new Objects[]{});
+		}
+	}
+
+	@Nonnull
+	@Override
+	public byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung) throws MergeDocException {
+
+		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
+
+		DOCXMergeEngine docxME = new DOCXMergeEngine("FinanzielleSituation");
+		authorizer.checkReadAuthorizationFinSit(gesuch);
+
+		try {
+			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
+			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
+				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_FINANZIELLE_SITUATION);
+			Objects.requireNonNull(is, "Vorlage fuer Berechnungsgrundlagen nicht gefunden");
+			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
+				docxME.getDocument(is, new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung))));
+			is.close();
+			return bytes;
+		} catch (IOException | DocTemplateException e) {
+			throw new MergeDocException("generateFinanzielleSituation()",
+				"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, new Objects[] {});
 		}
 	}
 

@@ -50,13 +50,18 @@ describe('freigabeView', function () {
         $q = $injector.get('$q');
         gesuchModelManager = $injector.get('GesuchModelManager');
         $httpBackend = $injector.get('$httpBackend');
-        applicationPropertyRS = $injector.get('ApplicationPropertyRS'); //
+        applicationPropertyRS = $injector.get('ApplicationPropertyRS');
 
         spyOn(applicationPropertyRS , 'isDevMode').and.returnValue($q.when(false));
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
             wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS);
+        controller.form = <IFormController>{};
+
+        spyOn(controller, 'isGesuchValid').and.callFake(function () {
+            return controller.form.$valid;
+        });
     }));
     describe('canBeFreigegeben', function () {
         it('should return false when not all steps are true', function () {
@@ -72,15 +77,21 @@ describe('freigabeView', function () {
 
             expect(wizardStepManager.hasStepGivenStatus).toHaveBeenCalledWith(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK);
         });
-        it('should return true when all steps are true and all Betreuungen are accepted', function () {
+        it('should return false when all steps are true and all Betreuungen are accepted and the Gesuch is ReadOnly', function () {
             spyOn(wizardStepManager, 'areAllStepsOK').and.returnValue(true);
             spyOn(wizardStepManager, 'hasStepGivenStatus').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuchReadonly').and.returnValue(true);
+            expect(controller.canBeFreigegeben()).toBe(false);
+        });
+        it('should return true when all steps are true and all Betreuungen are accepted and the Gesuch is not ReadOnly', function () {
+            spyOn(wizardStepManager, 'areAllStepsOK').and.returnValue(true);
+            spyOn(wizardStepManager, 'hasStepGivenStatus').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuchReadonly').and.returnValue(false);
             expect(controller.canBeFreigegeben()).toBe(true);
         });
     });
     describe('gesuchFreigeben', function () {
         it('should return undefined when the form is not valid', function () {
-            controller.form = <IFormController>{};
             controller.form.$valid = false;
 
             let returned: IPromise<void> = controller.gesuchEinreichen();
@@ -88,7 +99,6 @@ describe('freigabeView', function () {
             expect(returned).toBeUndefined();
         });
         it('should return undefined when the form is not valid', function () {
-            controller.form = <IFormController>{};
             controller.form.$valid = true;
             controller.bestaetigungFreigabequittung = false;
 
@@ -100,7 +110,6 @@ describe('freigabeView', function () {
             TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
             controller.bestaetigungFreigabequittung = true;
 
-            controller.form = <IFormController>{};
             controller.form.$valid = true;
 
             spyOn(dialog, 'showDialog').and.returnValue($q.when({}));

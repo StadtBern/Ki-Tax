@@ -2,7 +2,7 @@
     <div class="row viewTitle">
         <div class="col-md-12">
             <h1>
-                <span data-translate="KIND"></span> {{vm.gesuchModelManager.kindNumber}}
+                <span data-translate="KIND"></span> {{vm.kindNumber}}
             </h1>
             <hr class="header"/>
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
@@ -156,8 +156,8 @@
                                 <h1 class="required">
                                     <span data-translate="EINSCHULUNG"
                                           data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}"> </span>
-                                        <dv-tooltip text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
-                                    </h1>
+                                    <dv-tooltip text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
+                                </h1>
                                 <dv-radio-container name="einschulung" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
@@ -175,21 +175,25 @@
 
                     <!--Wohnhaft im gleichen Haushalt-->
                     <div class="row">
-                        <div class="col-sm-12 dv-input-container-small">
+                        <div class="col-sm-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                                 <dv-input-container class="form-group">
-                                    <label class="md-no-float" data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT"
-                                           for="gleichemHaushalt"></label>
-                                    <input id="gleichemHaushalt" type="number" name="gleichemHaushalt"
-                                           ng-model="vm.getModel().wohnhaftImGleichenHaushalt" max="100"
-                                           dv-max-length class="form-control"
-                                           ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
-                                           ng-required="vm.getModel().familienErgaenzendeBetreuung"
-                                           ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                                    <dv-bisher gs="vm.getContainer().kindGS.wohnhaftImGleichenHaushalt"
-                                               ja="vm.getContainer().kindJA.wohnhaftImGleichenHaushalt"></dv-bisher>
-                                    <dv-error-messages for="vm.form.gleichemHaushalt.$error"
-                                                       class="error"></dv-error-messages>
+                                    <label class="md-no-float"
+                                           for="gleichemHaushalt">
+                                        <span data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT" class="ebeguH1"> </span>
+                                    </label>
+                                    <div class="dv-input-container-small" style="padding-right:32px;">
+                                        <input id="gleichemHaushalt" type="number" name="gleichemHaushalt"
+                                               ng-model="vm.getModel().wohnhaftImGleichenHaushalt" max="100"
+                                               dv-max-length class="form-control"
+                                               ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                                               ng-required="vm.getModel().familienErgaenzendeBetreuung"
+                                               ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
+                                        <dv-bisher gs="vm.getContainer().kindGS.wohnhaftImGleichenHaushalt"
+                                                   ja="vm.getContainer().kindJA.wohnhaftImGleichenHaushalt"></dv-bisher>
+                                        <dv-error-messages for="vm.form.gleichemHaushalt.$error"
+                                                           class="error"></dv-error-messages>
+                                    </div>
                                 </dv-input-container>
                             </div>
                         </div>
@@ -217,22 +221,25 @@
                     <!--fachstelle-->
                     <div ng-if="vm.isFachstelleRequired()">
                         <div class="row">
-                            <div class="col-sm-12 dv-input-container-small">
+                            <div class="col-sm-12 dv-input-container-medium">
                                 <div class="form-group">
                                     <label class="md-no-float" data-translate="FACHSTELLE" for="fachstelle">
                                     </label>
-                                    <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId"
-                                            class="form-control"
-                                            ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'"
-                                            ng-required="vm.isFachstelleRequired()"
-                                            ng-change="vm.setSelectedFachsstelle()">
-                                    </select>
+                                    <div class="dv-select-style">
+                                        <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId"
+                                                class="form-control"
+                                                ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'"
+                                                ng-required="vm.isFachstelleRequired()"
+                                                ng-change="vm.setSelectedFachsstelle()">
+                                        </select>
+
                                     <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.fachstelle.name"
                                                ja="vm.getContainer().kindJA.pensumFachstelle.fachstelle.name"
                                                show-if-bisher-none="false"
                                                block-existed="vm.showFachstelleGS === true"></dv-bisher>
                                     <dv-error-messages for="vm.form.fachstelle.$error"
                                                        class="error"></dv-error-messages>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -303,7 +310,8 @@
                 </fieldset>
 
                 <!--Buttons-->
-                <dv-navigation dv-cancel="vm.cancel()" dv-next="true" dv-save="vm.save()" dv-sub-step="2" dv-translate-next="{{'SPEICHERN_UPPER'}}">
+                <dv-navigation dv-cancel="vm.cancel()" dv-next="true" dv-save="vm.save()" dv-sub-step="2"
+                               dv-translate-next="{{'SPEICHERN_UPPER'}}">
                 </dv-navigation>
             </form>
         </div>
