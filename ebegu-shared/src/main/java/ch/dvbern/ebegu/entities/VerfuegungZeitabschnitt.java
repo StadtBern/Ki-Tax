@@ -404,30 +404,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.ekv2ZuZweit = ekv2ZuZweit;
 	}
 
-	public boolean isKategorieMaxEinkommen() {
-		return kategorieMaxEinkommen;
-	}
-
-	public void setKategorieMaxEinkommen(boolean kategorieMaxEinkommen) {
-		this.kategorieMaxEinkommen = kategorieMaxEinkommen;
-	}
-
-	public boolean isKategorieKeinPensum() {
-		return kategorieKeinPensum;
-	}
-
-	public void setKategorieKeinPensum(boolean kategorieKeinPensum) {
-		this.kategorieKeinPensum = kategorieKeinPensum;
-	}
-
-	public boolean isKategorieZuschlagZumErwerbspensum() {
-		return kategorieZuschlagZumErwerbspensum;
-	}
-
-	public void setKategorieZuschlagZumErwerbspensum(boolean kategorieZuschlagZumErwerbspensum) {
-		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
-	}
-
 	public boolean isEkv1NotExisting() {
 		return ekv1NotExisting;
 	}

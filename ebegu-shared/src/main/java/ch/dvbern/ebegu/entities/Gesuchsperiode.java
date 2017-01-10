@@ -35,11 +35,11 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 	}
 
 	public int getBasisJahrPlus1() {
-		return getBasisJahr()+1;
+		return getBasisJahr() + 1;
 	}
 
 	public int getBasisJahrPlus2() {
-		return getBasisJahr()+2;
+		return getBasisJahr() + 2;
 	}
 
 	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
