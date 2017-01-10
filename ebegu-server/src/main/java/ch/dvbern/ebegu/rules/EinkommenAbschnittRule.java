@@ -45,22 +45,13 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 				DateRange rangeEKV1 = new DateRange(startEKV1, betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 				VerfuegungZeitabschnitt abschnittEinkommensverschlechterung1 = new VerfuegungZeitabschnitt(rangeEKV1);
 
-
 				if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus1() != null) {
 					// EKV1 fuer alleine erfasst
-					abschnittEinkommensverschlechterung1.setEkv1_alleine(true);
-					if (!finanzDatenDTO_alleine.isEkv1Accepted()) {
-						// EKV1 fuer alleine nicht akzeptiert
-						abschnittEinkommensverschlechterung1.setEkv1_alleine_notAccepted(true);
-					}
+					abschnittEinkommensverschlechterung1.setEkv1Alleine(true);
 				}
 				if (finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus1() != null) {
 					// EKV1 fuer zu Zweit erfasst
-					abschnittEinkommensverschlechterung1.setEkv1_zuZweit(true);
-					if (!finanzDatenDTO_zuZweit.isEkv1Accepted()) {
-						// EKV1 fuer zu Zweit nicht akzeptiert
-						abschnittEinkommensverschlechterung1.setEkv1_zuZweit_notAccepted(true);
-					}
+					abschnittEinkommensverschlechterung1.setEkv1ZuZweit(true);
 				}
 				einkommensAbschnitte.add(abschnittEinkommensverschlechterung1);
 				// Den vorherigen Zeitabschnitt beenden
@@ -74,23 +65,15 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 				LocalDate startEKV2 = finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() != null ? finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() : finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2();
 				DateRange rangeEKV2 = new DateRange(startEKV2, betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 				VerfuegungZeitabschnitt abschnittEinkommensverschlechterung2 = new VerfuegungZeitabschnitt(rangeEKV2);
-				abschnittEinkommensverschlechterung2.setEkv1_not_existing(!hasEKV1);
+				abschnittEinkommensverschlechterung2.setEkv1NotExisting(!hasEKV1);
 
 				if (finanzDatenDTO_alleine.getDatumVonBasisjahrPlus2() != null) {
 					// EKV2 fuer alleine erfasst
-					abschnittEinkommensverschlechterung2.setEkv2_alleine(true);
-					if (!finanzDatenDTO_alleine.isEkv2Accepted()) {
-						// EKV2 fuer alleine nicht akzeptiert
-						abschnittEinkommensverschlechterung2.setEkv2_alleine_notAccepted(true);
-					}
+					abschnittEinkommensverschlechterung2.setEkv2Alleine(true);
 				}
 				if (finanzDatenDTO_zuZweit.getDatumVonBasisjahrPlus2() != null) {
 					// EKV2 fuer zu Zweit erfasst
-					abschnittEinkommensverschlechterung2.setEkv2_zuZweit(true);
-					if (!finanzDatenDTO_zuZweit.isEkv2Accepted()) {
-						// EKV2 fuer zu Zweit nicht akzeptiert
-						abschnittEinkommensverschlechterung2.setEkv2_zuZweit_notAccepted(true);
-					}
+					abschnittEinkommensverschlechterung2.setEkv2ZuZweit(true);
 				}
 				einkommensAbschnitte.add(abschnittEinkommensverschlechterung2);
 				// Den vorherigen Zeitabschnitt beenden

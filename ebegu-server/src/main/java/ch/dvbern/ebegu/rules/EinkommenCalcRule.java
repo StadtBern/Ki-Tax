@@ -34,10 +34,10 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 		FinanzDatenDTO finanzDatenDTO;
 		if (verfuegungZeitabschnitt.isHasSecondGesuchsteller()) {
 			finanzDatenDTO = betreuung.extractGesuch().getFinanzDatenDTO_zuZweit();
-			setMassgebendesEinkommen(verfuegungZeitabschnitt.isEkv1_zuZweit(), verfuegungZeitabschnitt.isEkv2_zuZweit(), finanzDatenDTO, verfuegungZeitabschnitt, betreuung);
+			setMassgebendesEinkommen(verfuegungZeitabschnitt.isEkv1ZuZweit(), verfuegungZeitabschnitt.isEkv2ZuZweit(), finanzDatenDTO, verfuegungZeitabschnitt, betreuung);
 		} else {
 			finanzDatenDTO = betreuung.extractGesuch().getFinanzDatenDTO_alleine();
-			setMassgebendesEinkommen(verfuegungZeitabschnitt.isEkv1_alleine(), verfuegungZeitabschnitt.isEkv2_alleine(), finanzDatenDTO, verfuegungZeitabschnitt, betreuung);
+			setMassgebendesEinkommen(verfuegungZeitabschnitt.isEkv1Alleine(), verfuegungZeitabschnitt.isEkv2Alleine(), finanzDatenDTO, verfuegungZeitabschnitt, betreuung);
 		}
 
 		// Erst jetzt kann das Maximale Einkommen geprueft werden!
@@ -75,7 +75,7 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 				verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjP2VorAbzFamGr());
 				verfuegungZeitabschnitt.setEinkommensjahr(basisjahrPlus2);
 				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_ACCEPT_MSG, ""+basisjahrPlus2);
-			} else if (verfuegungZeitabschnitt.isEkv1_not_existing()) {
+			} else if (verfuegungZeitabschnitt.isEkv1NotExisting()) {
 				verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(finanzDatenDTO.getMassgebendesEinkBjVorAbzFamGr());
 				verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
 				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG_NOT_ACCEPT_MSG, ""+basisjahrPlus2);
