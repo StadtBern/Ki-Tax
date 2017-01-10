@@ -38,7 +38,7 @@ describe('antragStatusHistoryRS', function () {
         it('should return the last status change for the given gesuch', () => {
             let gesuch: TSGesuch = new TSGesuch();
             gesuch.id = '123456';
-            let antragStatusHistory: TSAntragStatusHistory = new TSAntragStatusHistory(gesuch.id, undefined, DateUtil.today(), TSAntragStatus.VERFUEGEN);
+            let antragStatusHistory: TSAntragStatusHistory = new TSAntragStatusHistory(gesuch.id, undefined, DateUtil.today(), undefined, TSAntragStatus.VERFUEGEN);
             TestDataUtil.setAbstractFieldsUndefined(antragStatusHistory);
             let restAntStatusHistory: any = ebeguRestUtil.antragStatusHistoryToRestObject({}, antragStatusHistory);
             $httpBackend.expectGET(antragStatusHistoryRS.serviceURL + '/' + encodeURIComponent(gesuch.id)).respond(restAntStatusHistory);
@@ -50,8 +50,8 @@ describe('antragStatusHistoryRS', function () {
             $httpBackend.flush();
 
             expect(lastStatusChange).toBeDefined();
-            expect(lastStatusChange.datum.isSame(antragStatusHistory.datum)).toBe(true);
-            lastStatusChange.datum = antragStatusHistory.datum;
+            expect(lastStatusChange.timestampVon.isSame(antragStatusHistory.timestampVon)).toBe(true);
+            lastStatusChange.timestampVon = antragStatusHistory.timestampVon;
             expect(lastStatusChange).toEqual(antragStatusHistory);
         });
         it('should return undefined if the gesuch is undefined', () => {

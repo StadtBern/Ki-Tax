@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Entitaet fuer Mahnungen
@@ -37,9 +38,8 @@ public class Mahnung extends AbstractEntity {
 	@Column(nullable = false, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
-	@NotNull
-	@Column(nullable = false)
-	private boolean active = true;
+	@Column(nullable = true, columnDefinition = "DATETIME(6)")
+	private LocalDateTime timestampAbgeschlossen;
 
 
 	public Gesuch getGesuch() {
@@ -74,11 +74,11 @@ public class Mahnung extends AbstractEntity {
 		this.bemerkungen = bemerkungen;
 	}
 
-	public boolean isActive() {
-		return active;
+	public LocalDateTime getTimestampAbgeschlossen() {
+		return timestampAbgeschlossen;
 	}
 
-	public void setActive(boolean active) {
-		this.active = active;
+	public void setTimestampAbgeschlossen(LocalDateTime timestampBeendet) {
+		this.timestampAbgeschlossen = timestampBeendet;
 	}
 }

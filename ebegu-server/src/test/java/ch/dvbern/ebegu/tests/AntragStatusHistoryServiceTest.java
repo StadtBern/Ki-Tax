@@ -55,7 +55,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(gesuch, createdStatusHistory.getGesuch());
 		Assert.assertEquals(benutzer, createdStatusHistory.getBenutzer());
 		//just check that the generated date is after (or equals) the temporal one we created before
-		Assert.assertTrue(time.isBefore(createdStatusHistory.getDatum()) || time.isEqual(createdStatusHistory.getDatum()));
+		Assert.assertTrue(time.isBefore(createdStatusHistory.getTimestampVon()) || time.isEqual(createdStatusHistory.getTimestampVon()));
 	}
 
 	/**

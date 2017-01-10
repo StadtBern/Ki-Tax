@@ -74,6 +74,29 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		return persistedVerfuegung;
 	}
 
+	private void setVerfuegungsKategorien(Verfuegung verfuegung) {
+		if (!verfuegung.isKategorieNichtEintreten()) {
+			for (VerfuegungZeitabschnitt zeitabschnitt : verfuegung.getZeitabschnitte()) {
+				if (zeitabschnitt.isKategorieKeinPensum()) {
+					verfuegung.setKategorieKeinPensum(true);
+				}
+				if (zeitabschnitt.isKategorieMaxEinkommen()) {
+					verfuegung.setKategorieMaxEinkommen(true);
+				}
+				if (zeitabschnitt.isKategorieZuschlagZumErwerbspensum()) {
+					verfuegung.setKategorieZuschlagZumErwerbspensum(true);
+				}
+			}
+			// Wenn es keines der anderen ist, ist es "normal"
+			if (!verfuegung.isKategorieKeinPensum() &&
+				!verfuegung.isKategorieMaxEinkommen() &&
+				!verfuegung.isKategorieZuschlagZumErwerbspensum() &&
+				!verfuegung.isKategorieNichtEintreten()) {
+				verfuegung.setKategorieNormal(true);
+			}
+		}
+	}
+
 	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
@@ -83,18 +106,19 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		for (VerfuegungZeitabschnitt zeitabschnitt : verfuegung.getZeitabschnitte()) {
 			zeitabschnitt.setAnspruchberechtigtesPensum(0);
 		}
+		verfuegung.setKategorieNichtEintreten(true);
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.NICHT_EINGETRETEN);
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedVerfuegung;
 	}
 
 	@Nonnull
-	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Verfuegung persistVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, @Nonnull Betreuungsstatus betreuungsstatus) {
 		Objects.requireNonNull(verfuegung);
 		Objects.requireNonNull(betreuungId);
 
+		setVerfuegungsKategorien(verfuegung);
 		Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
 		betreuung.setBetreuungsstatus(betreuungsstatus);
 		// setting all depending objects
