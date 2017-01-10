@@ -105,6 +105,7 @@
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
+                                             ng-required="vm.getBetreuungModel().vertrag"
                                              aria-label="vertrag" ng-disabled="!vm.isEnabled()"
                                              ng-class="{true:'checkbox-error', false:''}[vm.flagErrorVertrag]">
                                     <span data-translate="VERTRAG"></span>
