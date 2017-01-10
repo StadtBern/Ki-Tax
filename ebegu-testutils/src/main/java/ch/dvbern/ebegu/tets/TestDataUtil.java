@@ -784,7 +784,7 @@ public final class TestDataUtil {
 	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch, LocalDate firstAblauf, int numberOfDocuments) {
 		Mahnung mahnung = new Mahnung();
 		mahnung.setMahnungTyp(typ);
-		mahnung.setActive(true);
+		mahnung.setTimestampAbgeschlossen(null);
 		List<String> bemerkungen = new ArrayList<>();
 		for (int i = 0; i < numberOfDocuments; i++){
 			bemerkungen.add("Test Dokument " + (i+1));
