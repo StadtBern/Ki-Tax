@@ -13,7 +13,7 @@
             <form role="form" name="vm.form" class="" unsaved-warning-form="" novalidate>
                 <!-- Gemeinsame Steuererklaerung -->
                 <div class="row">
-                    <div class="col-xs-12 dv-input-container-medium">
+                    <div class="col-xs-12 dv-input-container-question">
                         <div class="form-group">
                             <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
                                 translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr(), namegs2: vm.extractFullNameGS2()}"></h1>
@@ -31,7 +31,7 @@
                 </div>
                 <!-- Steuerveranlagung -->
                 <div class="row">
-                    <div class="col-xs-12 dv-input-container-medium" ng-if="vm.showSteuerveranlagung()">
+                    <div class="col-xs-12 dv-input-container-question" ng-if="vm.showSteuerveranlagung()">
                         <div class="form-group">
                             <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                                 translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h1>
@@ -49,7 +49,7 @@
                 </div>
                 <!-- Steuererklärung -->
                 <div class="row">
-                    <div class="col-xs-12 dv-input-container-medium"
+                    <div class="col-xs-12 dv-input-container-question"
                          ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
                         <div class="form-group">
                             <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
