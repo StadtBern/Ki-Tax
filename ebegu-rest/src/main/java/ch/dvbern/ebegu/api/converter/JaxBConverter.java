@@ -1601,6 +1601,11 @@ public class JaxBConverter {
 			jaxVerfuegung.setGeneratedBemerkungen(verfuegung.getGeneratedBemerkungen());
 			jaxVerfuegung.setManuelleBemerkungen(verfuegung.getManuelleBemerkungen());
 			jaxVerfuegung.setSameVerfuegungsdaten(verfuegung.isSameVerfuegungsdaten());
+			jaxVerfuegung.setKategorieZuschlagZumErwerbspensum(verfuegung.isKategorieZuschlagZumErwerbspensum());
+			jaxVerfuegung.setKategorieKeinPensum(verfuegung.isKategorieKeinPensum());
+			jaxVerfuegung.setKategorieMaxEinkommen(verfuegung.isKategorieMaxEinkommen());
+			jaxVerfuegung.setKategorieNichtEintreten(verfuegung.isKategorieNichtEintreten());
+			jaxVerfuegung.setKategorieNormal(verfuegung.isKategorieNormal());
 
 			if (verfuegung.getZeitabschnitte() != null) {
 				jaxVerfuegung.getZeitabschnitte().addAll(
@@ -1628,6 +1633,11 @@ public class JaxBConverter {
 		verfuegung.setGeneratedBemerkungen(jaxVerfuegung.getGeneratedBemerkungen());
 		verfuegung.setManuelleBemerkungen(jaxVerfuegung.getManuelleBemerkungen());
 		verfuegung.setSameVerfuegungsdaten(jaxVerfuegung.isSameVerfuegungsdaten());
+		verfuegung.setKategorieZuschlagZumErwerbspensum(jaxVerfuegung.isKategorieZuschlagZumErwerbspensum());
+		verfuegung.setKategorieKeinPensum(jaxVerfuegung.isKategorieKeinPensum());
+		verfuegung.setKategorieMaxEinkommen(jaxVerfuegung.isKategorieMaxEinkommen());
+		verfuegung.setKategorieNichtEintreten(jaxVerfuegung.isKategorieNichtEintreten());
+		verfuegung.setKategorieNormal(jaxVerfuegung.isKategorieNormal());
 
 		//List of Verfuegungszeitabschnitte converten
 		verfuegungZeitabschnitteToEntity(verfuegung.getZeitabschnitte(), jaxVerfuegung.getZeitabschnitte());
@@ -1677,6 +1687,9 @@ public class JaxBConverter {
 			jaxZeitabschn.setBemerkungen(zeitabschnitt.getBemerkungen());
 			jaxZeitabschn.setFamGroesse(zeitabschnitt.getFamGroesse());
 			jaxZeitabschn.setEinkommensjahr(zeitabschnitt.getEinkommensjahr());
+			jaxZeitabschn.setKategorieKeinPensum(zeitabschnitt.isKategorieKeinPensum());
+			jaxZeitabschn.setKategorieMaxEinkommen(zeitabschnitt.isKategorieMaxEinkommen());
+			jaxZeitabschn.setKategorieZuschlagZumErwerbspensum(zeitabschnitt.isKategorieZuschlagZumErwerbspensum());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1702,6 +1715,9 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setBemerkungen(jaxVerfuegungZeitabschnitt.getBemerkungen());
 		verfuegungZeitabschnitt.setFamGroesse(jaxVerfuegungZeitabschnitt.getFamGroesse());
 		verfuegungZeitabschnitt.setEinkommensjahr(jaxVerfuegungZeitabschnitt.getEinkommensjahr());
+		verfuegungZeitabschnitt.setKategorieMaxEinkommen(jaxVerfuegungZeitabschnitt.isKategorieMaxEinkommen());
+		verfuegungZeitabschnitt.setKategorieKeinPensum(jaxVerfuegungZeitabschnitt.isKategorieKeinPensum());
+		verfuegungZeitabschnitt.setKategorieZuschlagZumErwerbspensum(jaxVerfuegungZeitabschnitt.isKategorieZuschlagZumErwerbspensum());
 		return verfuegungZeitabschnitt;
 	}
 

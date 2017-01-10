@@ -22,8 +22,8 @@ alter table verfuegung add column kategorie_nicht_eintreten bit not null DEFAULT
 alter table verfuegung add column kategorie_normal bit not null DEFAULT false;
 alter table verfuegung add column kategorie_zuschlag_zum_erwerbspensum bit not null DEFAULT false;
 
-alter table verfuegung_aud add column kategorie_kein_pensum bit not null DEFAULT false;
-alter table verfuegung_aud add column kategorie_max_einkommen bit not null DEFAULT false;
-alter table verfuegung_aud add column kategorie_nicht_eintreten bit not null DEFAULT false;
-alter table verfuegung_aud add column kategorie_normal bit not null DEFAULT false;
-alter table verfuegung_aud add column kategorie_zuschlag_zum_erwerbspensum bit not null DEFAULT false;
+alter table verfuegung_aud add column kategorie_kein_pensum bit DEFAULT false;
+alter table verfuegung_aud add column kategorie_max_einkommen bit DEFAULT false;
+alter table verfuegung_aud add column kategorie_nicht_eintreten bit DEFAULT false;
+alter table verfuegung_aud add column kategorie_normal bit DEFAULT false;
+alter table verfuegung_aud add column kategorie_zuschlag_zum_erwerbspensum bit DEFAULT false;

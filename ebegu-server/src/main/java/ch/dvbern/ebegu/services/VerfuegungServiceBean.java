@@ -69,30 +69,31 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId) {
-		setVerfuegungsKategorien(verfuegung);
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.VERFUEGT);
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedVerfuegung;
 	}
 
 	private void setVerfuegungsKategorien(Verfuegung verfuegung) {
-		for (VerfuegungZeitabschnitt zeitabschnitt : verfuegung.getZeitabschnitte()) {
-			if (zeitabschnitt.isKategorieKeinPensum()) {
-				verfuegung.setKategorieKeinPensum(true);
+		if (!verfuegung.isKategorieNichtEintreten()) {
+			for (VerfuegungZeitabschnitt zeitabschnitt : verfuegung.getZeitabschnitte()) {
+				if (zeitabschnitt.isKategorieKeinPensum()) {
+					verfuegung.setKategorieKeinPensum(true);
+				}
+				if (zeitabschnitt.isKategorieMaxEinkommen()) {
+					verfuegung.setKategorieMaxEinkommen(true);
+				}
+				if (zeitabschnitt.isKategorieZuschlagZumErwerbspensum()) {
+					verfuegung.setKategorieZuschlagZumErwerbspensum(true);
+				}
 			}
-			if (zeitabschnitt.isKategorieMaxEinkommen()) {
-				verfuegung.setKategorieMaxEinkommen(true);
+			// Wenn es keines der anderen ist, ist es "normal"
+			if (!verfuegung.isKategorieKeinPensum() &&
+				!verfuegung.isKategorieMaxEinkommen() &&
+				!verfuegung.isKategorieZuschlagZumErwerbspensum() &&
+				!verfuegung.isKategorieNichtEintreten()) {
+				verfuegung.setKategorieNormal(true);
 			}
-			if (zeitabschnitt.isKategorieZuschlagZumErwerbspensum()) {
-				verfuegung.setKategorieZuschlagZumErwerbspensum(true);
-			}
-		}
-		// Wenn es keines der anderen ist, ist es "normal"
-		if (!verfuegung.isKategorieKeinPensum() &&
-			!verfuegung.isKategorieMaxEinkommen() &&
-			!verfuegung.isKategorieZuschlagZumErwerbspensum() &&
-			!verfuegung.isKategorieNichtEintreten()) {
-			verfuegung.setKategorieNormal(true);
 		}
 	}
 
@@ -112,12 +113,12 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	}
 
 	@Nonnull
-	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
 	public Verfuegung persistVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, @Nonnull Betreuungsstatus betreuungsstatus) {
 		Objects.requireNonNull(verfuegung);
 		Objects.requireNonNull(betreuungId);
 
+		setVerfuegungsKategorien(verfuegung);
 		Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
 		betreuung.setBetreuungsstatus(betreuungsstatus);
 		// setting all depending objects
