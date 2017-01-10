@@ -96,6 +96,17 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Transient
 	private boolean ekv2_zuZweit_notAccepted;
 
+	@Transient
+	private boolean ekv1_not_existing;
+
+	@Transient
+	private boolean kategorieMaxEinkommen = false;
+
+	@Transient
+	private boolean kategorieKeinPensum = false;
+
+	@Transient
+	private boolean kategorieZuschlagZumErwerbspensum = false;
 
 	@Max(100)
 	@Min(0)
@@ -141,6 +152,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
 
+
 	public VerfuegungZeitabschnitt() {
 	}
 
@@ -178,8 +190,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.ekv1_zuZweit_notAccepted = toCopy.ekv1_zuZweit_notAccepted;
 		this.ekv2_alleine_notAccepted = toCopy.ekv2_alleine_notAccepted;
 		this.ekv2_zuZweit_notAccepted = toCopy.ekv2_zuZweit_notAccepted;
+		this.ekv1_not_existing = toCopy.ekv1_not_existing;
 		this.bemerkungen = toCopy.bemerkungen;
 		this.verfuegung = null;
+		this.kategorieMaxEinkommen = toCopy.kategorieMaxEinkommen;
+		this.kategorieKeinPensum = toCopy.kategorieKeinPensum;
+		this.kategorieZuschlagZumErwerbspensum = toCopy.kategorieZuschlagZumErwerbspensum;
 	}
 
 	/**
@@ -435,6 +451,38 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.ekv2_zuZweit_notAccepted = ekv2_zuZweit_notAccepted;
 	}
 
+	public boolean isKategorieMaxEinkommen() {
+		return kategorieMaxEinkommen;
+	}
+
+	public void setKategorieMaxEinkommen(boolean kategorieMaxEinkommen) {
+		this.kategorieMaxEinkommen = kategorieMaxEinkommen;
+	}
+
+	public boolean isKategorieKeinPensum() {
+		return kategorieKeinPensum;
+	}
+
+	public void setKategorieKeinPensum(boolean kategorieKeinPensum) {
+		this.kategorieKeinPensum = kategorieKeinPensum;
+	}
+
+	public boolean isKategorieZuschlagZumErwerbspensum() {
+		return kategorieZuschlagZumErwerbspensum;
+	}
+
+	public void setKategorieZuschlagZumErwerbspensum(boolean kategorieZuschlagZumErwerbspensum) {
+		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
+	}
+
+	public boolean isEkv1_not_existing() {
+		return ekv1_not_existing;
+	}
+
+	public void setEkv1_not_existing(boolean ekv1_not_existing) {
+		this.ekv1_not_existing = ekv1_not_existing;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -504,6 +552,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.ekv1_zuZweit_notAccepted = (this.ekv1_zuZweit_notAccepted || other.ekv1_zuZweit_notAccepted);
 		this.ekv2_alleine_notAccepted = (this.ekv2_alleine_notAccepted || other.ekv2_alleine_notAccepted);
 		this.ekv2_zuZweit_notAccepted = (this.ekv2_zuZweit_notAccepted || other.ekv2_zuZweit_notAccepted);
+		this.ekv1_not_existing = (this.ekv1_not_existing || other.ekv1_not_existing);
+
+		this.setKategorieKeinPensum(this.kategorieKeinPensum || other.kategorieKeinPensum);
+		this.setKategorieMaxEinkommen(this.kategorieMaxEinkommen || other.kategorieMaxEinkommen);
+		this.setKategorieZuschlagZumErwerbspensum(this.kategorieZuschlagZumErwerbspensum || other.kategorieZuschlagZumErwerbspensum);
 	}
 
 	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey) {
@@ -620,7 +673,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			this.ekv1_alleine_notAccepted == that.ekv1_alleine_notAccepted &&
 			this.ekv1_zuZweit_notAccepted == that.ekv1_zuZweit_notAccepted &&
 			this.ekv2_alleine_notAccepted == that.ekv2_alleine_notAccepted &&
-			this.ekv2_zuZweit_notAccepted == that.ekv2_zuZweit_notAccepted;
+			this.ekv2_zuZweit_notAccepted == that.ekv2_zuZweit_notAccepted &&
+			this.ekv1_not_existing == that.ekv1_not_existing;
 	}
 
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
