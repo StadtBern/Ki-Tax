@@ -44,7 +44,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
                 private $translate: ITranslateService, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCH_ERSTELLEN);
         this.readStateParams();
         this.initViewModel();
         this.TSRoleUtil = TSRoleUtil;
@@ -73,7 +73,6 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     private initViewModel(): void {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
         if (this.gesuchsperiodeId === null || this.gesuchsperiodeId === undefined || this.gesuchsperiodeId === '') {
             if (this.gesuchModelManager.getGesuchsperiode()) {
                 this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;

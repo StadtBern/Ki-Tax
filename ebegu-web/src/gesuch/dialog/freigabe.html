@@ -35,12 +35,14 @@
                             <label class="md-no-float" data-translate="FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER"
                                    for="verantwortlicher">
                             </label>
-                            <select name="verantwortlicher"
-                                    id="verantwortlicher"
-                                    class="form-control"
-                                    ng-options="user.username as user.getFullName() for user in vm.userList"
-                                    ng-model="vm.selectedUser">
-                            </select>
+                            <div class="dv-select-style">
+                                <select name="verantwortlicher"
+                                        id="verantwortlicher"
+                                        class="form-control"
+                                        ng-options="user.username as user.getFullName() for user in vm.userList"
+                                        ng-model="vm.selectedUser">
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

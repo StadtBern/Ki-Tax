@@ -18,6 +18,7 @@ import DateUtil from '../../../utils/DateUtil';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {IBetreuungStateParams} from '../../gesuch.route';
 import Moment = moment.Moment;
 import IScope = angular.IScope;
 let template = require('./betreuungView.html');
@@ -40,12 +41,15 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     kindModel: TSKindContainer;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
-        'AuthServiceRS', 'WizardStepManager'];
+        'AuthServiceRS', 'WizardStepManager', '$stateParams'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
+        this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
+        this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
+
         this.model = angular.copy(this.gesuchModelManager.getBetreuungToWorkWith());
         this.initialBetreuung = angular.copy(this.gesuchModelManager.getBetreuungToWorkWith());
         this.setBetreuungsangebotTypValues();
@@ -69,7 +73,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (!this.gesuchModelManager.getActiveInstitutionenList() || this.gesuchModelManager.getActiveInstitutionenList().length <= 0) {
             this.gesuchModelManager.updateActiveInstitutionenList();
         }
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
     }
 
     /**

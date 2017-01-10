@@ -43,12 +43,11 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, $scope: IScope,  private applicationPropertyRS: ApplicationPropertyRS) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE);
         this.initViewModel();
     }
 
     private initViewModel(): void {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.FREIGABE);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.initDevModeParameter();
     }

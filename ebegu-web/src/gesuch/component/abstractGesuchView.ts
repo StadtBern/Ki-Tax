@@ -11,6 +11,7 @@ import TSExceptionReport from '../../models/TSExceptionReport';
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
 import {TSMessageEvent} from '../../models/enums/TSErrorEvent';
+import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 
 export default class AbstractGesuchViewController<T> {
 
@@ -24,13 +25,14 @@ export default class AbstractGesuchViewController<T> {
     form: IFormController;
 
     constructor($gesuchModelManager: GesuchModelManager, $berechnungsManager: BerechnungsManager,
-                wizardStepManager: WizardStepManager, $scope: IScope) {
+                wizardStepManager: WizardStepManager, $scope: IScope, stepName: TSWizardStepName) {
         this.gesuchModelManager = $gesuchModelManager;
         this.berechnungsManager = $berechnungsManager;
         this.wizardStepManager = wizardStepManager;
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
         this.$scope = $scope;
+        this.wizardStepManager.setCurrentStep(stepName);
     }
 
     $onInit() {

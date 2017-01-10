@@ -50,7 +50,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
                 private $translate: ITranslateService, private $q: IQService, $scope: IScope,
                 private familiensituationRS: FamiliensituationRS) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FAMILIENSITUATION);
         this.gesuchModelManager.initFamiliensituation();
         this.model = angular.copy(this.gesuchModelManager.getGesuch().familiensituationContainer);
         this.initialFamiliensituation = angular.copy(this.gesuchModelManager.getFamiliensituation());
@@ -71,7 +71,6 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     private initViewModel(): void {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.FAMILIENSITUATION);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }

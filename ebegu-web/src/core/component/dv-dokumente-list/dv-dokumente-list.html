@@ -38,7 +38,6 @@
                 <!--with and without tag-->
                 <td ng-bind="row.dokumentTyp | translate" ngf-drop="vm.uploadAnhaenge($files, row)"
                     ngf-drag-over-class="'dragover'" ngf-multiple="true"
-                    ngf-max-size="'10MB'" ngf-max-total-size="'100MB'"
                     ng-class="{true:'documents-vailable', false:''}[vm.hasDokuments(row)&&!vm.sonstige]"></td>
 
                 <!--with tag-->
@@ -58,7 +57,6 @@
 
                 <td ng-if="vm.isUploadVisible()" ng-click="$event.stopPropagation()">
                     <a ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
-                       ngf-max-size="'10MB'" ngf-max-total-size="100MB"
                        class="fa fa-upload" aria-hidden="true" style="color: black"></a>
                 </td>
                 <!--platzhalter wenn upload invisible-->
