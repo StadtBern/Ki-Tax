@@ -47,20 +47,20 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
 
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         if ($stateParams.betreuungNumber) {
             this.betreuungNumber = parseInt($stateParams.betreuungNumber);
             this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungNumber - 1]);
             this.initialBetreuung = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungNumber - 1]);
-            this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
+            this.gesuchModelManager.setBetreuungNumber(this.betreuungNumber);
         } else {
             //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
             this.model = this.initEmptyBetreuung();
             this.initialBetreuung = angular.copy(this.model);
             this.betreuungNumber = this.gesuchModelManager.getKindToWorkWith().betreuungen ? this.gesuchModelManager.getKindToWorkWith().betreuungen.length + 1 : 1;
-            this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
+            this.gesuchModelManager.setBetreuungNumber( this.betreuungNumber);
         }
 
         this.setBetreuungsangebotTypValues();
@@ -171,7 +171,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public cancel() {
         this.reset();
         this.form.$setPristine();
-        this.$state.go('gesuch.betreuungen');
+        this.$state.go('gesuch.betreuungen', { gesuchId: this.getGesuchId() });
     }
 
     reset() {

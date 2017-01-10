@@ -13,11 +13,11 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
 import DateUtil from '../../../utils/DateUtil';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 
 
 let template = require('./kindView.html');
@@ -50,12 +50,12 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         if ($stateParams.kindNumber) {
             this.kindNumber = parseInt($stateParams.kindNumber);
             this.model = angular.copy(this.gesuchModelManager.getGesuch().kindContainers[this.kindNumber - 1]);
-            this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
+            this.gesuchModelManager.setKindNumber(this.kindNumber);
         } else {
             //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
             this.model = this.initEmptyKind(undefined);
             this.kindNumber = this.gesuchModelManager.getGesuch().kindContainers ? this.gesuchModelManager.getGesuch().kindContainers.length + 1 : 1;
-            this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
+            this.gesuchModelManager.setKindNumber(this.kindNumber);
         }
         this.initViewModel();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
