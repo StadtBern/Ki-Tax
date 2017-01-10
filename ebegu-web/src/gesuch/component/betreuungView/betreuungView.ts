@@ -18,6 +18,7 @@ import DateUtil from '../../../utils/DateUtil';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {IBetreuungStateParams} from '../../gesuch.route';
 import Moment = moment.Moment;
 import IScope = angular.IScope;
 let template = require('./betreuungView.html');
@@ -38,23 +39,47 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     initialBetreuung: TSBetreuung;
     flagErrorVertrag: boolean;
     kindModel: TSKindContainer;
+    betreuungNumber: number;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
-        'AuthServiceRS', 'WizardStepManager'];
+        'AuthServiceRS', 'WizardStepManager', '$stateParams'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
-        this.model = angular.copy(this.gesuchModelManager.getBetreuungToWorkWith());
-        this.initialBetreuung = angular.copy(this.gesuchModelManager.getBetreuungToWorkWith());
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
+
+        this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
+        if ($stateParams.betreuungNumber) {
+            this.betreuungNumber = parseInt($stateParams.betreuungNumber);
+            this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungNumber - 1]);
+            this.initialBetreuung = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungNumber - 1]);
+            this.gesuchModelManager.setBetreuungNumber(this.betreuungNumber);
+        } else {
+            //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
+            this.model = this.initEmptyBetreuung();
+            this.initialBetreuung = angular.copy(this.model);
+            this.betreuungNumber = this.gesuchModelManager.getKindToWorkWith().betreuungen ? this.gesuchModelManager.getKindToWorkWith().betreuungen.length + 1 : 1;
+            this.gesuchModelManager.setBetreuungNumber( this.betreuungNumber);
+        }
+
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
         this.initViewModel();
 
-
         // just to read!
         this.kindModel = this.gesuchModelManager.getKindToWorkWith();
+    }
+
+    /**
+     * Creates a Betreuung for the kind given by the kindNumber attribute of the class.
+     * Thus the kindnumber must be set before this method is called.
+     */
+    public initEmptyBetreuung(): TSBetreuung {
+        let tsBetreuung: TSBetreuung = new TSBetreuung();
+        tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
+        tsBetreuung.betreuungNummer = this.betreuungNumber;
+        return tsBetreuung;
     }
 
     private initViewModel() {
@@ -69,7 +94,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (!this.gesuchModelManager.getActiveInstitutionenList() || this.gesuchModelManager.getActiveInstitutionenList().length <= 0) {
             this.gesuchModelManager.updateActiveInstitutionenList();
         }
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
     }
 
     /**
@@ -115,24 +139,24 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     private save(newStatus: TSBetreuungsstatus, nextStep: string): void {
         this.isSavingData = true;
         this.gesuchModelManager.setBetreuungToWorkWith(this.model); //setze model
-        let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
+        let oldStatus: TSBetreuungsstatus = this.model.betreuungsstatus;
         if (this.getBetreuungModel()) {
             if (this.isTagesschule()) {
                 this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
             }
         }
         this.errorService.clearAll();
-        this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = newStatus;
-        this.gesuchModelManager.updateBetreuung(false).then((betreuungResponse: any) => {
+        this.model.betreuungsstatus = newStatus;
+        this.gesuchModelManager.saveBetreuung(this.model, false).then((betreuungResponse: any) => {
             this.isSavingData = false;
             this.form.$setPristine();
             this.$state.go(nextStep);
         }).catch((exception) => {
             //todo team Fehler anzeigen
             // starting over
-            console.log('there was an error saving the betreuung ', this.gesuchModelManager.getBetreuungToWorkWith());
+            console.log('there was an error saving the betreuung ', this.model);
             this.isSavingData = false;
-            this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
+            this.model.betreuungsstatus = oldStatus;
             this.startEmptyListOfBetreuungspensen();
             this.form.$setUntouched();
             this.form.$setPristine();
@@ -147,7 +171,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public cancel() {
         this.reset();
         this.form.$setPristine();
-        this.$state.go('gesuch.betreuungen');
+        this.$state.go('gesuch.betreuungen', { gesuchId: this.getGesuchId() });
     }
 
     reset() {

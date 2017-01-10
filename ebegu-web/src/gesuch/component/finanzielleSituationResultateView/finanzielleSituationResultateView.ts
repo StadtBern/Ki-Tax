@@ -11,6 +11,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./finanzielleSituationResultateView.html');
 require('./finanzielleSituationResultateView.less');
 
@@ -34,7 +35,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION);
 
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
