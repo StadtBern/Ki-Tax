@@ -383,7 +383,7 @@
     "ERWERBSPENSEN_NOT_REQUIRED": "Erwerbspensum muss nur erfasst werden, falls mind. 1 Kita oder 1 Tageseltern Kleinkind Angebot erfasst wurde und mind. eines dieser Kinder keine Fachstelle involviert hat",
     "KINDER_NOCH_KEINE": "noch keine Kinder erfasst",
     "BETREUUNGEN_NOCH_KEINE": "noch keine Betreuung für dieses Kind erfasst",
-    "WOHNHAFT_IM_GLEICHEN_HAUSHALT": "Wohnt das Kind im gleichen Haushalt?",
+    "WOHNHAFT_IM_GLEICHEN_HAUSHALT": "Zu wie viel Prozent wohnt das KInd im gleichen Haushalt?",
     "KINDER_MIT_BETREUUNG": "Kinder mit familienergänzender Betreuung",
     "KIND": "Kind",
     "KINDER": "Kinder",
@@ -405,6 +405,7 @@
     "BETREUUNGSPENSUM": "Betreuungspensum {{betreuungspensumnumber}}",
     "BETREUUNGSPENSUM_ERFASSEN": "weiteres Betreuungspensum erfassen",
     "BETREUUNGSPENSUM_ENTFERNEN": "Betreuungspensum entfernen",
+    "BETREUUNGSPENSUM_ENTFERNEN_INDEX": "Betreuungspensum {{betreuungspensumnumber}} entfernen",
     "BETREUUNGSPENSUM_HINT1": "Das Gesuch können Sie nur an das Jugendamt freigeben, wenn die Kita Ihnen den Platz bestätigt. Nach Anforderung der Bestätigung können diese Daten nicht mehr verändert werden.",
     "BETREUUNG_LOESCHEN": "Wollen Sie das Betreuungsangebot \"{{betreuungsangebottyp}}\" vom Kind {{kindname}} wirklich löschen?",
     "BETREUUNG_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
@@ -830,5 +831,6 @@
     "DOKUMENTE": "Dokumente",
     "FREIGABE": "Freigabe",
     "GESUCH_ERSTELLEN": "",
-    "GESPERRT_WEGEN_BESCHWERDE": "gesperrt wegen Beschwerde"
+    "GESPERRT_WEGEN_BESCHWERDE": "gesperrt wegen Beschwerde",
+    "FILE_ZU_GROSS": "Datei zu gross. Maximale Dateigrösse ist 10MB"
 }

@@ -49,6 +49,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
 
+        this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         if ($stateParams.betreuungNumber) {
             this.betreuungNumber = parseInt($stateParams.betreuungNumber);
             this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungNumber - 1]);
@@ -93,7 +94,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (!this.gesuchModelManager.getActiveInstitutionenList() || this.gesuchModelManager.getActiveInstitutionenList().length <= 0) {
             this.gesuchModelManager.updateActiveInstitutionenList();
         }
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
     }
 
     /**

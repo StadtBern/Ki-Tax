@@ -11,9 +11,12 @@ import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogControl
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
+import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./dv-dokumente-list.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 require('./dv-dokumente-list.less');
+let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 
 export class DVDokumenteListConfig implements IComponentOptions {
     transclude = false;
@@ -46,11 +49,11 @@ export class DVDokumenteListController {
     sonstige: boolean;
 
     static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS', 'DvDialog', 'WizardStepManager',
-        '$log', 'AuthServiceRS'];
+        '$log', 'AuthServiceRS', '$translate'];
     /* @ngInject */
     constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
                 private downloadRS: DownloadRS, private dvDialog: DvDialog, private wizardStepManager: WizardStepManager,
-                private $log: ILogService, private authServiceRS: AuthServiceRS) {
+                private $log: ILogService, private authServiceRS: AuthServiceRS, private $translate: ITranslateService) {
 
     }
 
@@ -61,17 +64,42 @@ export class DVDokumenteListController {
     uploadAnhaenge(files: any[], selectDokument: TSDokumentGrund) {
         if (this.isUploadVisible() && this.gesuchModelManager.getGesuch()) {
             let gesuchID = this.gesuchModelManager.getGesuch().id;
+            let filesTooBig: any[] = [];
+            let filesOk: any[] = [];
             this.$log.debug('Uploading files on gesuch ' + gesuchID);
             for (let file of files) {
-                this.$log.debug('File: ' + file.name);
+                this.$log.debug('File: ' + file.name + ' size: ' + file.size);
+                if (file.size > 10000000) { // Maximale Filegrösse ist 10MB
+                    filesTooBig.push(file);
+                } else {
+                    filesOk.push(file);
+                }
             }
 
-            this.uploadRS.uploadFile(files, selectDokument, gesuchID).then((response) => {
-                let returnedDG: TSDokumentGrund = angular.copy(response);
-                this.wizardStepManager.findStepsFromGesuch(this.gesuchModelManager.getGesuch().id).then(() => {
-                    this.handleUpload(returnedDG);
+            if (filesTooBig.length > 0) {
+                // DialogBox anzeigen für Files, welche zu gross sind!
+                let returnString = this.$translate.instant('FILE_ZU_GROSS') + '<br/><br/>';
+                returnString += '<ul>';
+                for (let file of filesTooBig) {
+                    returnString += '<li>';
+                    returnString += file.name;
+                    returnString += '</li>';
+                }
+                returnString += '</ul>';
+
+                this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
+                    title: returnString
                 });
-            });
+            }
+
+            if (filesOk.length > 0) {
+                this.uploadRS.uploadFile(filesOk, selectDokument, gesuchID).then((response) => {
+                    let returnedDG: TSDokumentGrund = angular.copy(response);
+                    this.wizardStepManager.findStepsFromGesuch(this.gesuchModelManager.getGesuch().id).then(() => {
+                        this.handleUpload(returnedDG);
+                    });
+                });
+            }
         } else {
             this.$log.warn('No gesuch found to store file or gesuch is status verfuegt');
         }
@@ -138,6 +166,5 @@ export class DVDokumenteListController {
         }
     }
 }
-
 
 

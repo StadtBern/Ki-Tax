@@ -23,13 +23,15 @@
                                     <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot-{{$index}}">
                                     </label>
                                     <!-- TODO (team) kann durch JA nicht korrigiert werden -->
-                                    <select name="betreuungsangebot-{{$index}}" id="betreuungsangebot-{{$index}}"
-                                            ng-model="abwesenheitInstance.kindBetreuung"
-                                            class="form-control"
-                                            ng-options="betreuungsangebot as vm.getTextForBetreuungDDL(betreuungsangebot) for betreuungsangebot in vm.getBetreuungList()"
-                                            ng-required="true"
-                                            ng-change="vm.changedAngebot('{{abwesenheitInstance.kindBetreuung.kind.id}}', '{{abwesenheitInstance.kindBetreuung.betreuung.id}}')">
-                                    </select>
+                                    <div class="dv-select-style">
+                                        <select name="betreuungsangebot-{{$index}}" id="betreuungsangebot-{{$index}}"
+                                                ng-model="abwesenheitInstance.kindBetreuung"
+                                                class="form-control"
+                                                ng-options="betreuungsangebot as vm.getTextForBetreuungDDL(betreuungsangebot) for betreuungsangebot in vm.getBetreuungList()"
+                                                ng-required="true"
+                                                ng-change="vm.changedAngebot('{{abwesenheitInstance.kindBetreuung.kind.id}}', '{{abwesenheitInstance.kindBetreuung.betreuung.id}}')">
+                                        </select>
+                                    </div>
                                     <dv-error-messages for="vm.form['betreuungsangebot-' + $index].$error"
                                                        class="error"></dv-error-messages>
                                 </div>

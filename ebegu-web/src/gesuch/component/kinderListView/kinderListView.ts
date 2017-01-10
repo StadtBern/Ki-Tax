@@ -32,13 +32,12 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $translate: ITranslateService, private DvDialog: DvDialog,
                 wizardStepManager: WizardStepManager, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER);
         this.initViewModel();
     }
 
     private initViewModel(): void {
         this.gesuchModelManager.initKinder();
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.KINDER);
 
         if (this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()) {
             this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);

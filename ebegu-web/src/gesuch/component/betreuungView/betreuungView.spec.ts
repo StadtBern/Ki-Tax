@@ -45,6 +45,7 @@ describe('betreuungView', function () {
         betreuung = new TSBetreuung();
         betreuung.timestampErstellt = DateUtil.today();
         kind = new TSKindContainer();
+        $stateParams = $injector.get('$stateParams');
         spyOn(gesuchModelManager, 'getKindToWorkWith').and.returnValue(kind);
         // model = betreuung;
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.callFake(() => {

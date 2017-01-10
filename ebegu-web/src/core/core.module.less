@@ -25,6 +25,9 @@
 
     .subTitle {
         font-size: 1.8rem;
+        &.subTitleBold {
+            .ebeguBold();
+        }
     }
     .inlineHint {
         .ebeguItalic();
@@ -104,6 +107,9 @@
     .marginBottom30 {
         margin-bottom: 3rem;
     }
+    .marginBottom50 {
+        margin-bottom: 5rem;
+    }
     .marginBottom80 {
         margin-bottom: 8rem;
     }
@@ -149,15 +155,41 @@
     ._md-open-menu-container, .md-open-menu-container {
         z-index: @z-index-menu !important;
     }
-
+    .well {
+        margin-left: -5rem;
+        margin-right: -2.5rem;
+        box-shadow: none;
+        border: none;
+        border-bottom: 0.5rem solid black;
+        span {
+            .ebeguH3();
+        }
+        i {
+            padding: 1rem;
+        }
+        border-radius: 0;
+        padding: 3rem 2.5rem 3rem 5rem;
+    }
     .well-status-warten {
         background-color: @warning-light;
+        i {
+            color: @warning;
+        }
+        border-bottom-color: @warning;
     }
     .well-status-bestaetigt {
         background-color: @success-light;
+        i {
+            color: @success;
+        }
+        border-bottom-color: @success;
     }
     .well-status-abgewiesen {
         background-color: @danger-light;
+        i {
+            color: @danger;
+        }
+        border-bottom-color: @danger;
     }
 
     .required span:after {

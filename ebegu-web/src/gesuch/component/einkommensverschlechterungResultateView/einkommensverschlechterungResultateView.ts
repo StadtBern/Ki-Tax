@@ -38,20 +38,15 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     constructor($stateParams: IEinkommensverschlechterungResultateStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         let parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null, parsedBasisJahrPlusNum);
         this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
         this.gesuchModelManager.setBasisJahrPlusNumber(parsedBasisJahrPlusNum);
-        this.initViewModel();
         this.calculate();
         this.resultatBasisjahr = null;
         this.calculateResultateVorjahr();
-    }
-
-    private initViewModel() {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
     }
 
     showGS2(): boolean {
