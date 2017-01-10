@@ -49,7 +49,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, $scope: IScope,
                 private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCHSTELLER);
         this.ebeguRestUtil = ebeguRestUtil;
         this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(this.gesuchstellerNumber);
@@ -60,7 +60,6 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         this.gesuchModelManager.initStammdaten();
         this.model = angular.copy(this.gesuchModelManager.getStammdatenToWorkWith());
         this.initialModel = angular.copy(this.model);
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCHSTELLER);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.showKorrespondadr = (this.model.korrespondenzAdresse && this.model.korrespondenzAdresse.adresseJA) ? true : false;

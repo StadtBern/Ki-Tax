@@ -16,8 +16,8 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import ITranslateService = angular.translate.ITranslateService;
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -50,11 +50,10 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
     constructor($stateParams: IErwerbspensumStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM);
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
         this.gesuchsteller = this.gesuchModelManager.getStammdatenToWorkWith();
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.ERWERBSPENSUM);
         if (this.gesuchsteller) {
             if ($stateParams.erwerbspensumNum) {
                 let ewpNum = parseInt($stateParams.erwerbspensumNum) | 0;

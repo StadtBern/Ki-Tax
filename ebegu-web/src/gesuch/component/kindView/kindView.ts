@@ -45,11 +45,10 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
     constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith());
         // this.initialModel = angular.copy(this.model);
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.KINDER);
         this.initViewModel();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }

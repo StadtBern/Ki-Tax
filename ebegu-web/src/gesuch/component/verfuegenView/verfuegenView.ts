@@ -45,7 +45,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, $scope: IScope, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IBetreuungStateParams) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
         this.wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);

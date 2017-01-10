@@ -46,7 +46,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
 
@@ -73,7 +73,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (!this.gesuchModelManager.getActiveInstitutionenList() || this.gesuchModelManager.getActiveInstitutionenList().length <= 0) {
             this.gesuchModelManager.updateActiveInstitutionenList();
         }
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
     }
 
     /**
