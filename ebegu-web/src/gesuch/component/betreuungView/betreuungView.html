@@ -54,41 +54,44 @@
                                     <span data-translate="BETREUUNGSANGEBOT_WAEHLEN"></span>
                                     <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
-
-                                <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot"
-                                        class="form-control"
-                                        ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
-                                        ng-required="true" ng-disabled="!vm.isEnabled()"
-                                        ng-change="vm.changedAngebot()">
-                                </select>
-                                <dv-error-messages for="vm.form.betreuungsangebot.$error"></dv-error-messages>
+                                <div class="dv-select-style">
+                                    <select name="betreuungsangebot" id="betreuungsangebot"
+                                            ng-model="vm.betreuungsangebot"
+                                            class="form-control"
+                                            ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
+                                            ng-required="true" ng-disabled="!vm.isEnabled()"
+                                            ng-change="vm.changedAngebot()">
+                                    </select>
+                                    <dv-error-messages for="vm.form.betreuungsangebot.$error"></dv-error-messages>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <!--Institutionen-->
                     <div class="row" ng-if="vm.isEnabled()">
-                        <div class="col-sm-12 dv-input-container-small form-group">
+                        <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                             </label>
-                            <select name="institution" id="institution" ng-model="vm.instStammId"
-                                    class="form-control"
-                                    ng-options="institutionSD.id as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
-                                    ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()"
-                                    ng-disabled="!vm.isEnabled()">
-                            </select>
-                            <dv-error-messages for="vm.form.institution.$error"></dv-error-messages>
+                            <div class="dv-select-style">
+                                <select name="institution" id="institution" ng-model="vm.instStammId"
+                                        class="form-control"
+                                        ng-options="institutionSD.id as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
+                                        ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()"
+                                        ng-disabled="!vm.isEnabled()">
+                                </select>
+                                <dv-error-messages for="vm.form.institution.$error"></dv-error-messages>
+                            </div>
                         </div>
                     </div>
                     <div class="row" ng-if="!vm.isEnabled()">
-                        <div class="col-sm-12 dv-input-container-small form-group">
+                        <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                             </label>
-                            <input name="institution" id="institutioninput"
+                            <input name="institution" id="institutioninput" type="text"
                                    ng-model="vm.getInstitutionSD().institution.name"
                                    class="form-control"
                                    ng-required="true"
                                    ng-disabled="!vm.isEnabled()">
-                            </input>
                             <dv-error-messages for="vm.form.institutioninput.$error"
                                                class="error"></dv-error-messages>
                         </div>

@@ -2,7 +2,7 @@
     <div class="row viewTitle">
         <div class="col-md-12">
             <h1>
-                <span data-translate="KIND"></span> {{vm.gesuchModelManager.kindNumber}}
+                <span data-translate="KIND"></span> {{vm.kindNumber}}
             </h1>
             <hr class="header"/>
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
@@ -221,22 +221,25 @@
                     <!--fachstelle-->
                     <div ng-if="vm.isFachstelleRequired()">
                         <div class="row">
-                            <div class="col-sm-12 dv-input-container-small">
+                            <div class="col-sm-12 dv-input-container-medium">
                                 <div class="form-group">
                                     <label class="md-no-float" data-translate="FACHSTELLE" for="fachstelle">
                                     </label>
-                                    <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId"
-                                            class="form-control"
-                                            ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'"
-                                            ng-required="vm.isFachstelleRequired()"
-                                            ng-change="vm.setSelectedFachsstelle()">
-                                    </select>
+                                    <div class="dv-select-style">
+                                        <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId"
+                                                class="form-control"
+                                                ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'"
+                                                ng-required="vm.isFachstelleRequired()"
+                                                ng-change="vm.setSelectedFachsstelle()">
+                                        </select>
+
                                     <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.fachstelle.name"
                                                ja="vm.getContainer().kindJA.pensumFachstelle.fachstelle.name"
                                                show-if-bisher-none="false"
                                                block-existed="vm.showFachstelleGS === true"></dv-bisher>
                                     <dv-error-messages for="vm.form.fachstelle.$error"
                                                        class="error"></dv-error-messages>
+                                    </div>
                                 </div>
                             </div>
                         </div>

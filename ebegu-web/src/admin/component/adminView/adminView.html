@@ -127,14 +127,15 @@
                             <label class="md-no-float" for="besitzer">
                                 Gesuchsteller wenn gewuenscht
                             </label>
-
-                            <select name="besitzer" id="besitzer"
-                                    ng-model="vm.selectedBesitzer"
-                                    class="form-control"
-                                    ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
-                                <option value=""></option>
-
-                            </select>
+                            <div class="dv-select-style">
+                                <select name="besitzer" id="besitzer"
+                                        ng-model="vm.selectedBesitzer"
+                                        class="form-control"
+                                        ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList"
+                                        style="background:#F0F0F0;">
+                                    <option value=""></option>
+                                </select>
+                            </div>
                         </dv-input-container>
                     </div>
                 </div>
@@ -266,14 +267,15 @@
                         <label class="md-no-float" for="gesuchsteller">
                             Gesuchsteller dessen Faelle Geloescht werden solllen
                         </label>
-
-                        <select name="gesuchsteller" id="gesuchsteller"
-                                ng-model="vm.selectedBesitzer"
-                                class="form-control dv-input-container-small"
-                                ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
-                            <option value=""></option>
-
-                        </select>
+                        <div class="dv-select-style">
+                            <select name="gesuchsteller" id="gesuchsteller"
+                                    ng-model="vm.selectedBesitzer"
+                                    class="form-control dv-input-container-small"
+                                    ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList"
+                                    style="background:#F0F0F0;">
+                                <option value=""></option>
+                            </select>
+                        </div>
                     </dv-input-container>
                 </div>
 

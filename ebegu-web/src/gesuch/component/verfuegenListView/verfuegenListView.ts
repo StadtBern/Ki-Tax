@@ -58,7 +58,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService,
                 private authServiceRs: AuthServiceRS, $scope: IScope, private gesuchRS: GesuchRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
         this.initViewModel();
     }
 
@@ -74,7 +74,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      * wir ueberlegen, ob wir es irgendwie anders berechnen koennen um den Server zu entlasten.
      */
     private initViewModel(): void {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.WARTEN);
 
         //Berechnung aller finanziellen Daten
@@ -123,8 +122,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 this.gesuchModelManager.setKindNumber(kindNumber);
                 let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
                 if (betreuungNumber > 0) {
-                    this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
                     this.$state.go('gesuch.verfuegenView', {
+                        betreuungNumber: betreuungNumber,
+                        kindNumber: kindNumber,
                         gesuchId: this.getGesuchId()
                     });
                 }
