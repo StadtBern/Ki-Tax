@@ -1,0 +1,2 @@
+UPDATE kind SET kinderabzug='GANZER_ABZUG' WHERE kinderabzug='KEINE_STEUERERKLAERUNG';
+UPDATE kind_aud SET kinderabzug='GANZER_ABZUG' WHERE kinderabzug='KEINE_STEUERERKLAERUNG';
