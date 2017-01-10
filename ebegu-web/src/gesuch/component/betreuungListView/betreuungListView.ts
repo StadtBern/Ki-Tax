@@ -61,8 +61,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         let kindNumber: number = this.gesuchModelManager.findKind(kind);
         if (kindNumber > 0) {
             this.gesuchModelManager.setKindNumber(kindNumber);
-            let betreuungNumber: number = this.gesuchModelManager.createBetreuung();
-            this.openBetreuungView(betreuungNumber, kindNumber);
+            this.openBetreuungView(undefined, kindNumber);
         }
     }
 

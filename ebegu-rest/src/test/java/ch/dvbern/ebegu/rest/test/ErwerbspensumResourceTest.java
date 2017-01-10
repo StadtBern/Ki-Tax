@@ -104,7 +104,7 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 			EbeguParameter maxErwerbspensum = new EbeguParameter();
 			maxErwerbspensum.setName(EbeguParameterKey.PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM);
 			maxErwerbspensum.setValue("20");
-			maxErwerbspensum.setGueltigkeit(new DateRange(loadedEwp.getErwerbspensumGS().getGueltigAb().minusDays(1), loadedEwp.getErwerbspensumGS().getGueltigBis()));
+			maxErwerbspensum.setGueltigkeit(new DateRange(loadedEwp.getErwerbspensumGS().getGueltigAb().minusDays(1), loadedEwp.getErwerbspensumGS().getGueltigAb().plusMonths(1)));
 			ebeguParameterService.saveEbeguParameter(maxErwerbspensum);
 			erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(storedGS),loadedEwp,null,null);
 			Assert.fail("50% is invalid");

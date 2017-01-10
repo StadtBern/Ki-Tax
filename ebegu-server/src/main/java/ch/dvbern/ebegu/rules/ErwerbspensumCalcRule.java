@@ -47,6 +47,7 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 		if (anspruch <= 0) {
 			anspruch = 0;
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_ANSPRUCH);
+			verfuegungZeitabschnitt.setKategorieKeinPensum(true);
 		}
 		// Der Anspruch wird immer auf 10-er Schritten gerundet.
 		int roundedAnspruch = MathUtil.roundIntToTens(anspruch);
