@@ -56,13 +56,12 @@ export class AbwesenheitViewController extends AbstractGesuchViewController<Arra
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog, private $translate: ITranslateService,
                 private $q: IQService, private errorService: ErrorService, $scope: IScope) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ABWESENHEIT);
         this.initViewModel();
     }
 
     private initViewModel(): void {
         this.removed = false;
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.ABWESENHEIT);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
         this.setBetreuungList();
         this.initAbwesenheitList();
