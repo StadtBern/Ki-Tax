@@ -45,6 +45,26 @@ public class Verfuegung extends AbstractEntity{
 	@OrderBy("gueltigkeit ASC")
 	private List<VerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
 
+	@NotNull
+	@Column(nullable = false)
+	private boolean kategorieNormal = false;
+
+	@NotNull
+	@Column(nullable = false)
+	private boolean kategorieMaxEinkommen = false;
+
+	@NotNull
+	@Column(nullable = false)
+	private boolean kategorieKeinPensum = false;
+
+	@NotNull
+	@Column(nullable = false)
+	private boolean kategorieZuschlagZumErwerbspensum = false;
+
+	@NotNull
+	@Column(nullable = false)
+	private boolean kategorieNichtEintreten = false;
+
 
 	public String getGeneratedBemerkungen() {
 		return generatedBemerkungen;
@@ -79,6 +99,46 @@ public class Verfuegung extends AbstractEntity{
 
 	public void setBetreuung(Betreuung betreuung) {
 		this.betreuung = betreuung;
+	}
+
+	public boolean isKategorieNormal() {
+		return kategorieNormal;
+	}
+
+	public void setKategorieNormal(boolean kategorieNormal) {
+		this.kategorieNormal = kategorieNormal;
+	}
+
+	public boolean isKategorieMaxEinkommen() {
+		return kategorieMaxEinkommen;
+	}
+
+	public void setKategorieMaxEinkommen(boolean kategorieMaxEinkommen) {
+		this.kategorieMaxEinkommen = kategorieMaxEinkommen;
+	}
+
+	public boolean isKategorieKeinPensum() {
+		return kategorieKeinPensum;
+	}
+
+	public void setKategorieKeinPensum(boolean kategorieKeinPensum) {
+		this.kategorieKeinPensum = kategorieKeinPensum;
+	}
+
+	public boolean isKategorieZuschlagZumErwerbspensum() {
+		return kategorieZuschlagZumErwerbspensum;
+	}
+
+	public void setKategorieZuschlagZumErwerbspensum(boolean kategorieZuschlagZumErwerbspensum) {
+		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
+	}
+
+	public boolean isKategorieNichtEintreten() {
+		return kategorieNichtEintreten;
+	}
+
+	public void setKategorieNichtEintreten(boolean kategorieNichtEintreten) {
+		this.kategorieNichtEintreten = kategorieNichtEintreten;
 	}
 
 	public boolean addZeitabschnitt(@NotNull final VerfuegungZeitabschnitt zeitabschnitt) {
