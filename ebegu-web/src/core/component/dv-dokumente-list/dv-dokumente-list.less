@@ -2,33 +2,58 @@
 @import '../../../style/mixins.less';
 
 .dv-dokumente-list {
+    .dokumentgrundtable {
+        & > tbody > tr:hover {
+            background-color: transparent;
+        }
+    }
     table {
         background-color: transparent !important;
+        margin-bottom: 6rem;
     }
     td.documents-vailable {
         background: @success-light;
+    }
+    td.no-documents {
+        background: @warning-light;
+    }
+
+    td.no-color {
+        background: transparent;
     }
     .sonstige {
         display: none;
     }
     .fa-circle {
+        text-align: center;
         font-size: 1.1rem;
+        color: @warning;
+    }
+    .fa-check {
+        color: @success;
+    }
+    .check-warning {
+        color: @warning;
+    }
+    .symbol {
+        text-align: center;
     }
     .dateientable {
+
         margin-bottom: 0;
         td {
             border: none;
             background-color: @contrast-lightest;
             height: 3.5rem;
         }
-        & > thead:first-child > tr:first-child > th, & > thead > tr > th {
+        & > thead:first-child > tr:first-child > th, & > thead > tr > th, & > thead > tr:first-child > th:empty, & > thead:first-child > tr:first-child > th:empty {
             border-top: none;
             background-color: transparent;
         }
     }
     table > thead:first-child > tr:first-child > th, table > thead > tr > th {
         .ebeguLabel();
-        border: 0.1rem solid @contrast-darkest;
+        border: 1px solid @contrast-darkest;
         border-left: none;
         border-right: none;
         display: table-cell;
@@ -42,13 +67,17 @@
     }
     table > tbody > tr > td {
         .ebeguH3();
-        border: 0.1rem solid @contrast;
+        border: 1px solid @contrast;
         border-left: none;
         border-right: none;
         display: table-cell;
         height: 5rem;
         vertical-align: middle;
         padding: 0 0.8rem 0;
+        &.vorgaenger {
+            .ebeguItalic();
+            font-weight: 600;
+        }
         span {
             line-height: 0;
         }
