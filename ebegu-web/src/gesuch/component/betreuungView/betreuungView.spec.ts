@@ -13,8 +13,8 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import DateUtil from '../../../utils/DateUtil';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSKindContainer from '../../../models/TSKindContainer';
-import IFormController = angular.IFormController;
 import {IBetreuungStateParams} from '../../gesuch.route';
+import IFormController = angular.IFormController;
 
 describe('betreuungView', function () {
 
@@ -89,7 +89,7 @@ describe('betreuungView', function () {
                 spyOn(gesuchModelManager, 'removeBetreuungFromKind');
                 betreuungView.cancel();
                 expect(gesuchModelManager.removeBetreuungFromKind).not.toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen');
+                expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', {gesuchId: ''});
             });
         });
         describe('cancel non-existing object', () => {
@@ -100,7 +100,7 @@ describe('betreuungView', function () {
                 spyOn(gesuchModelManager, 'removeBetreuungFromKind');
                 betreuungView.cancel();
                 expect(gesuchModelManager.removeBetreuungFromKind).toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen');
+                expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', {gesuchId: ''});
             });
         });
         describe('getInstitutionenSDList', () => {

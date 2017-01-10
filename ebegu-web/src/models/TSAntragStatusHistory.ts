@@ -6,15 +6,17 @@ export default class TSAntragStatusHistory extends TSAbstractEntity {
 
     private _gesuchId: string;
     private _benutzer: TSUser;
-    private _datum: moment.Moment;
+    private _timestampVon: moment.Moment;
+    private _timestampBis: moment.Moment;
     private _status: TSAntragStatus;
 
 
-    constructor(gesuchId?: string, benutzer?: TSUser, datum?: moment.Moment, status?: TSAntragStatus) {
+    constructor(gesuchId?: string, benutzer?: TSUser, timestampVon?: moment.Moment, timestampBis?: moment.Moment, status?: TSAntragStatus) {
         super();
         this._gesuchId = gesuchId;
         this._benutzer = benutzer;
-        this._datum = datum;
+        this._timestampVon = timestampVon;
+        this._timestampBis = timestampBis;
         this._status = status;
     }
 
@@ -35,12 +37,20 @@ export default class TSAntragStatusHistory extends TSAbstractEntity {
         this._benutzer = value;
     }
 
-    get datum(): moment.Moment {
-        return this._datum;
+    get timestampVon(): moment.Moment {
+        return this._timestampVon;
     }
 
-    set datum(value: moment.Moment) {
-        this._datum = value;
+    set timestampVon(value: moment.Moment) {
+        this._timestampVon = value;
+    }
+
+    get timestampBis(): moment.Moment {
+        return this._timestampBis;
+    }
+
+    set timestampBis(value: moment.Moment) {
+        this._timestampBis = value;
     }
 
     get status(): TSAntragStatus {

@@ -76,7 +76,7 @@ public class Gesuch extends AbstractEntity {
 	private Set<KindContainer> kindContainers = new LinkedHashSet<>();
 
 	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "gesuch", fetch = FetchType.LAZY)
-	@OrderBy("datum")
+	@OrderBy("timestampVon")
 	private Set<AntragStatusHistory> antragStatusHistories = new LinkedHashSet<>();
 
 	@Valid

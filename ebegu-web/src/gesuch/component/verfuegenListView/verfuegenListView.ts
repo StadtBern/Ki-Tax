@@ -241,7 +241,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     private hasOffeneMahnungen(): boolean {
         for (let mahn of this.mahnungList) {
-            if (mahn.active) {
+            if (!mahn.timestampAbgeschlossen) {
                 return true;
             }
         }
@@ -320,7 +320,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.mahnung = new TSMahnung();
             this.mahnung.mahnungTyp = typ;
             this.mahnung.gesuch = this.getGesuch();
-            this.mahnung.active = true;
+            this.mahnung.timestampAbgeschlossen = null;
             this.mahnung.bemerkungen = generatedBemerkungen.data;
         });
     }
