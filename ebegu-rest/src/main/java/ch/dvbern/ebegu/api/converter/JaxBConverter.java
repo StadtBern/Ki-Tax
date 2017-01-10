@@ -1348,7 +1348,6 @@ public class JaxBConverter {
 		erwerbspensum.setZuschlagsgrund(jaxErwerbspensum.getZuschlagsgrund());
 		erwerbspensum.setZuschlagsprozent(jaxErwerbspensum.getZuschlagsprozent());
 		erwerbspensum.setTaetigkeit(jaxErwerbspensum.getTaetigkeit());
-		erwerbspensum.setPensum(jaxErwerbspensum.getPensum());
 		erwerbspensum.setBezeichnung(jaxErwerbspensum.getBezeichnung());
 		return erwerbspensum;
 	}
@@ -1356,15 +1355,12 @@ public class JaxBConverter {
 	private JaxErwerbspensum erbwerbspensumToJax(@Nullable final Erwerbspensum pensum) {
 		if (pensum != null) {
 			JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
-			jaxErwerbspensum = convertAbstractFieldsToJAX(pensum, jaxErwerbspensum);
-			jaxErwerbspensum.setGueltigAb(pensum.getGueltigkeit().getGueltigAb());
-			jaxErwerbspensum.setGueltigBis(pensum.getGueltigkeit().getGueltigBis());
+			convertAbstractPensumFieldsToJAX(pensum, jaxErwerbspensum);
 			jaxErwerbspensum.setZuschlagZuErwerbspensum(pensum.getZuschlagZuErwerbspensum());
 			jaxErwerbspensum.setZuschlagsgrund(pensum.getZuschlagsgrund());
 			jaxErwerbspensum.setZuschlagsprozent(pensum.getZuschlagsprozent());
 			jaxErwerbspensum.setTaetigkeit(pensum.getTaetigkeit());
 			jaxErwerbspensum.setBezeichnung(pensum.getBezeichnung());
-			jaxErwerbspensum.setPensum(pensum.getPensum());
 			return jaxErwerbspensum;
 		}
 		return null;
