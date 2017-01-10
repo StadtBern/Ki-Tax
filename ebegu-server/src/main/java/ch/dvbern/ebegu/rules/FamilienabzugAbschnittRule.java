@@ -124,7 +124,6 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 	 * KEIN_ABZUG = 0
 	 * HALBER_ABZUG = 0.5
 	 * GANZER_ABZUG = 1
-	 * KEINE_STEUERERKLAERUNG = 1
 	 * <p>
 	 * Nur die Kinder die vor dem uebergebenen Datum geboren sind werden mitberechnet
 	 * <p>
@@ -155,7 +154,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.HALBER_ABZUG) {
 						familiengroesse += 0.5;
 					}
-					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.GANZER_ABZUG || kindContainer.getKindJA().getKinderabzug() == Kinderabzug.KEINE_STEUERERKLAERUNG) {
+					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.GANZER_ABZUG) {
 						familiengroesse++;
 					}
 				}
