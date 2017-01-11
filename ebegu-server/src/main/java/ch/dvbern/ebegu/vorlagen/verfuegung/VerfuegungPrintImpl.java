@@ -142,7 +142,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 				.map(VerfuegungZeitabschnittPrintImpl::new)
 				.collect(Collectors.toList()));
 			ListIterator<VerfuegungZeitabschnittPrint> listIterator = result.listIterator();
-			while (listIterator.hasNext()){
+			while (listIterator.hasNext()) {
 				VerfuegungZeitabschnittPrint zeitabschnitt = listIterator.next();
 				if (zeitabschnitt.getBetreuung() <= 0) {
 					listIterator.remove();
@@ -153,7 +153,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 
 			Collections.reverse(result);
 			listIterator = result.listIterator();
-			while (listIterator.hasNext()){
+			while (listIterator.hasNext()) {
 				VerfuegungZeitabschnittPrint zeitabschnitt = listIterator.next();
 				if (zeitabschnitt.getBetreuung() <= 0) {
 					listIterator.remove();

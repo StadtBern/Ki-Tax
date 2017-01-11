@@ -5,7 +5,6 @@ package ch.dvbern.ebegu.enums;
  */
 public enum DokumentTyp {
 	NACHWEIS_TRENNUNG, //mutation
-	SORGERECHTSVEREINBARUNG,
 	FACHSTELLENBEST_SOZ,
 	FACHSTELLENBEST_BEH,
 	NACHWEIS_ERWERBSPENSUM,

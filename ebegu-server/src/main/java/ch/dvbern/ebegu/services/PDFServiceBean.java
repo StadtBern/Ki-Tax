@@ -10,6 +10,8 @@ import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
+import ch.dvbern.ebegu.vorlagen.begleitschreiben.BegleitschreibenPrintImpl;
+import ch.dvbern.ebegu.vorlagen.begleitschreiben.BegleitschreibenPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.finanziellesituation.BerechnungsgrundlagenInformationPrintImpl;
 import ch.dvbern.ebegu.vorlagen.finanziellesituation.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.freigabequittung.FreigabequittungPrintImpl;
@@ -50,14 +52,13 @@ import java.util.*;
 public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Inject
-	private Authorizer authorizer;
-
-	@Inject
 	private DokumentGrundService dokumentGrundService;
 
 	@Inject
 	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
 
+	@Inject
+	private Authorizer authorizer;
 
 	@Nonnull
 	@Override
@@ -157,6 +158,31 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		}
 	}
 
+	@Override
+	@Nonnull
+	public byte[] generateBegleitschreiben(@Nonnull Gesuch gesuch) throws MergeDocException {
+		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
+		authorizer.checkReadAuthorization(gesuch);
+
+		DOCXMergeEngine docxME = new DOCXMergeEngine("Begleitschreiben");
+
+		try {
+			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
+			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
+				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_BEGLEITSCHREIBEN);
+			Objects.requireNonNull(is, "Vorlage fuer Begleitschreiben nicht gefunden");
+			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
+				docxME.getDocument(is, new BegleitschreibenPrintMergeSource(new BegleitschreibenPrintImpl(gesuch))));
+			is.close();
+			return bytes;
+		} catch (IOException |
+
+			DocTemplateException e) {
+			throw new MergeDocException("printBegleitschreiben()",
+				"Bei der Generierung der Begleitschreibenvorlage ist ein Fehler aufgetreten", e, new Objects[]{});
+		}
+	}
+
 	@Nonnull
 	@Override
 	public byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung) throws MergeDocException {
@@ -177,7 +203,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			return bytes;
 		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("generateFinanzielleSituation()",
-				"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, new Objects[] {});
+				"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
 	}
 
@@ -199,7 +225,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			return bytes;
 		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("printVerfuegungen()",
-				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[] {});
+				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
 	}
 
@@ -213,25 +239,30 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			}
 		}
 		switch (betreuung.getBetreuungsangebotTyp()) {
-			case TAGESELTERN_KLEINKIND: return EbeguVorlageKey.VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER;
-			case TAGESELTERN_SCHULKIND: return EbeguVorlageKey.VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER;
-			case TAGI: return EbeguVorlageKey.VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER;
+			case TAGESELTERN_KLEINKIND:
+				return EbeguVorlageKey.VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER;
+			case TAGESELTERN_SCHULKIND:
+				return EbeguVorlageKey.VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER;
+			case TAGI:
+				return EbeguVorlageKey.VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER;
 			case KITA:
-			default: return EbeguVorlageKey.VORLAGE_VERFUEGUNG_KITA;
+			default:
+				return EbeguVorlageKey.VORLAGE_VERFUEGUNG_KITA;
 		}
 	}
 
 	/**
 	 * In dieser Methode werden alle DokumentGrunds vom Gesuch einer Liste hinzugefuegt. Die die bereits existieren und die
 	 * die noch nicht hochgeladen wurden
+	 *
 	 * @param gesuch
 	 * @return
 	 */
 	private List<DokumentGrund> calculateListOfDokumentGrunds(Gesuch gesuch) {
 		List<DokumentGrund> dokumentGrundsMerged = new ArrayList<>();
 		dokumentGrundsMerged.addAll(DokumenteUtil
-            .mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
-                dokumentGrundService.findAllDokumentGrundByGesuch(gesuch)));
+			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
+				dokumentGrundService.findAllDokumentGrundByGesuch(gesuch)));
 		Collections.sort(dokumentGrundsMerged);
 		return dokumentGrundsMerged;
 	}

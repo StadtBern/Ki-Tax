@@ -446,8 +446,8 @@ public final class TestDataUtil {
 	public static Benutzer createDefaultBenutzer() {
 		Benutzer user = new Benutzer();
 		user.setUsername("jula_" + UUID.randomUUID());
-		user.setNachname("Julio");
-		user.setVorname("Iglesias");
+		user.setNachname("Iglesias");
+		user.setVorname("Julio");
 		user.setEmail("email@server.ch");
 		user.setMandant(createDefaultMandant());
 		user.setRole(UserRole.ADMIN);

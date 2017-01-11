@@ -6,15 +6,11 @@ import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
-import ch.dvbern.ebegu.enums.Kinderabzug;
 
 import java.util.Set;
 
 /**
  * Dokumente für Kinder:
- * <p>
- * Sorgerechtsvereinbarung:
- * Notwendig, wenn Frage nach Abzug Steuererklärung nicht 100%
  * <p>
  * Fachstellenbestätigung (soziale Indikation):
  * Notwendig, wenn Frage nach Kind Fachstelle involviert mit Ja beantwortet, und es wird nicht die „Fachstelle für
@@ -39,7 +35,6 @@ public class KindDokumente extends AbstractDokumente<Kind, Object> {
 		for (KindContainer kindContainer : kindContainers) {
 			final Kind kindJA = kindContainer.getKindJA();
 
-			add(getDokument(DokumentTyp.SORGERECHTSVEREINBARUNG, kindJA, kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
 			add(getDokument(DokumentTyp.FACHSTELLENBEST_SOZ, kindJA, kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
 			add(getDokument(DokumentTyp.FACHSTELLENBEST_BEH, kindJA, kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
 
@@ -50,8 +45,6 @@ public class KindDokumente extends AbstractDokumente<Kind, Object> {
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Kind kind) {
 		if (kind != null) {
 			switch (dokumentTyp) {
-				case SORGERECHTSVEREINBARUNG:
-					return kind.getKinderabzug() != null && kind.getKinderabzug() != Kinderabzug.GANZER_ABZUG;
 				case FACHSTELLENBEST_SOZ:
 					return kind.getPensumFachstelle() != null && kind.getPensumFachstelle().getFachstelle() != null
 						&& !kind.getPensumFachstelle().getFachstelle().isBehinderungsbestaetigung();

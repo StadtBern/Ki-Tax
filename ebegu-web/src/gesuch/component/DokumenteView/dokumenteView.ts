@@ -15,6 +15,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import GlobalCacheService from '../../service/globalCacheService';
+import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import ICacheFactoryService = angular.ICacheFactoryService;
 import IScope = angular.IScope;
 let template = require('./dokumenteView.html');
@@ -92,7 +93,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
 
             // Clear cached Papiergesuch on add...
             if (dokumentGrund.dokumentGrundTyp === TSDokumentGrundTyp.PAPIERGESUCH) {
-                this.globalCacheService.getCache().removeAll();
+                this.globalCacheService.getCache(TSCacheTyp.EBEGU_DOCUMENT).removeAll();
             }
         }
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
@@ -122,7 +123,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
 
                     // Clear cached Papiergesuch on remove...
                     if (dokumentGrund.dokumentGrundTyp === TSDokumentGrundTyp.PAPIERGESUCH) {
-                        this.globalCacheService.getCache().removeAll();
+                        this.globalCacheService.getCache(TSCacheTyp.EBEGU_DOCUMENT).removeAll();
                     }
                 }
             } else {
