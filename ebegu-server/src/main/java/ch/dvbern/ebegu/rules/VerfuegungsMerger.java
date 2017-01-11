@@ -41,14 +41,9 @@ public class VerfuegungsMerger {
 	 */
 	@Nonnull
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
-	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, Gesuch gesuchForMutaion) {
+	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 
-		// Wenn keine Mutation vorhanden ist muss nicht gemerged werden
-		if (gesuchForMutaion == null) {
-			return zeitabschnitte;
-		}
-
-		final Verfuegung verfuegungOnGesuchForMuation = VerfuegungUtil.findVerfuegungOnGesuchForMutation(betreuung, gesuchForMutaion);
+		final Verfuegung verfuegungOnGesuchForMuation = betreuung.getVorgaengerVerfuegung();
 		if (verfuegungOnGesuchForMuation == null) {
 			return zeitabschnitte;
 		}

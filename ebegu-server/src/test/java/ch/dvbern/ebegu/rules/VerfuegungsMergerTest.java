@@ -46,9 +46,10 @@ public class VerfuegungsMergerTest {
 		verfuegungErstgesuch.setZeitabschnitte(monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch));
 		erstgesuchBetreuung.setVerfuegung(verfuegungErstgesuch);
 		final Gesuch erstgesuch = erstgesuchBetreuung.extractGesuch();
+		mutierteBetreuung.setVorgaengerVerfuegung(verfuegungErstgesuch);
 
 		// mergen
-		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert, erstgesuch);
+		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
 
 
 		//ueberprüfen
@@ -79,9 +80,10 @@ public class VerfuegungsMergerTest {
 		verfuegungErstgesuch.setZeitabschnitte(monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch));
 		erstgesuchBetreuung.setVerfuegung(verfuegungErstgesuch);
 		final Gesuch erstgesuch = erstgesuchBetreuung.extractGesuch();
+		mutierteBetreuung.setVorgaengerVerfuegung(verfuegungErstgesuch);
 
 		// mergen
-		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert, erstgesuch);
+		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
 
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
@@ -111,9 +113,10 @@ public class VerfuegungsMergerTest {
 		verfuegungErstgesuch.setZeitabschnitte(monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch));
 		erstgesuchBetreuung.setVerfuegung(verfuegungErstgesuch);
 		final Gesuch erstgesuch = erstgesuchBetreuung.extractGesuch();
+		mutierteBetreuung.setVorgaengerVerfuegung(verfuegungErstgesuch);
 
 		// mergen
-		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert, erstgesuch);
+		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
 
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
@@ -146,9 +149,10 @@ public class VerfuegungsMergerTest {
 		verfuegungErstgesuch.setZeitabschnitte(verfuegungsZeitabschnitteErstgesuch);
 		erstgesuchBetreuung.setVerfuegung(verfuegungErstgesuch);
 		final Gesuch erstgesuch = erstgesuchBetreuung.extractGesuch();
+		mutierteBetreuung.setVorgaengerVerfuegung(verfuegungErstgesuch);
 
 		// mergen
-		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert, erstgesuch);
+		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
 
 
 		//ueberprüfen
@@ -182,9 +186,10 @@ public class VerfuegungsMergerTest {
 		verfuegungErstgesuch.setZeitabschnitte(verfuegungsZeitabschnitteErstgesuch);
 		erstgesuchBetreuung.setVerfuegung(verfuegungErstgesuch);
 		final Gesuch erstgesuch = erstgesuchBetreuung.extractGesuch();
+		mutierteBetreuung.setVorgaengerVerfuegung(verfuegungErstgesuch);
 
 		// mergen
-		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert, erstgesuch);
+		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
 
 
 		//ueberprüfen
@@ -218,9 +223,10 @@ public class VerfuegungsMergerTest {
 		verfuegungErstgesuch.setZeitabschnitte(verfuegungsZeitabschnitteErstgesuch);
 		erstgesuchBetreuung.setVerfuegung(verfuegungErstgesuch);
 		final Gesuch erstgesuch = erstgesuchBetreuung.extractGesuch();
+		mutierteBetreuung.setVorgaengerVerfuegung(verfuegungErstgesuch);
 
 		// mergen
-		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert, erstgesuch);
+		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
 
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
@@ -253,9 +259,10 @@ public class VerfuegungsMergerTest {
 		verfuegungErstgesuch.setZeitabschnitte(verfuegungsZeitabschnitteErstgesuch);
 		erstgesuchBetreuung.setVerfuegung(verfuegungErstgesuch);
 		final Gesuch erstgesuch = erstgesuchBetreuung.extractGesuch();
+		mutierteBetreuung.setVorgaengerVerfuegung(verfuegungErstgesuch);
 
 		// mergen
-		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert, erstgesuch);
+		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
 
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
@@ -289,9 +296,10 @@ public class VerfuegungsMergerTest {
 		verfuegungErstgesuch.setZeitabschnitte(verfuegungsZeitabschnitteErstgesuch);
 		erstgesuchBetreuung.setVerfuegung(verfuegungErstgesuch);
 		final Gesuch erstgesuch = erstgesuchBetreuung.extractGesuch();
+		mutierteBetreuung.setVorgaengerVerfuegung(verfuegungErstgesuch);
 
 		// mergen
-		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert, erstgesuch);
+		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert);
 
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
