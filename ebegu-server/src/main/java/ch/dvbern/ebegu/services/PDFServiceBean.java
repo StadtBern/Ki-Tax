@@ -64,19 +64,16 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 	@Override
 	public byte[] generateNichteintreten(Betreuung betreuung) throws MergeDocException {
 
-		DOCXMergeEngine docxME;
 		EbeguVorlageKey vorlageKey;
 
 		BetreuungsangebotTyp angebotTyp = betreuung.getBetreuungsangebotTyp();
 
 		if (angebotTyp == BetreuungsangebotTyp.KITA
 			|| angebotTyp == BetreuungsangebotTyp.TAGESELTERN_KLEINKIND) {
-			docxME = new DOCXMergeEngine("Nichteintretensverfügung");
 			vorlageKey = EbeguVorlageKey.VORLAGE_NICHT_EINTRETENSVERFUEGUNG;
 		} else if (angebotTyp == BetreuungsangebotTyp.TAGI
 			|| angebotTyp == BetreuungsangebotTyp.TAGESELTERN_SCHULKIND
 			|| angebotTyp == BetreuungsangebotTyp.TAGESSCHULE) {
-			docxME = new DOCXMergeEngine("InfoschreibenMaximaltarif");
 			vorlageKey = EbeguVorlageKey.VORLAGE_INFOSCHREIBEN_MAXIMALTARIF;
 		} else {
 			throw new MergeDocException("generateNichteintreten()",
@@ -89,10 +86,10 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
 			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				docxME.getDocument(is, new NichteintretenPrintMergeSource(new NichteintretenPrintImpl(betreuung))));
+				ByteStreams.toByteArray(is), new NichteintretenPrintMergeSource(new NichteintretenPrintImpl(betreuung)));
 			is.close();
 			return bytes;
-		} catch (IOException | DocTemplateException e) {
+		} catch (IOException e) {
 			throw new MergeDocException("generateNichteintreten()",
 				"Bei der Generierung der Nichteintreten ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
@@ -138,7 +135,6 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 	public byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustellAdresse) throws MergeDocException {
 
 		EbeguVorlageKey vorlageKey = EbeguVorlageKey.VORLAGE_FREIGABEQUITTUNG;
-		DOCXMergeEngine docxME = new DOCXMergeEngine("Freigabequittung");
 
 		try {
 			Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
@@ -149,10 +145,10 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			final List<DokumentGrund> dokumentGrundsMerged = calculateListOfDokumentGrunds(gesuch);
 
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				docxME.getDocument(is, new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, zustellAdresse, dokumentGrundsMerged))));
+				ByteStreams.toByteArray(is), new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, zustellAdresse, dokumentGrundsMerged)));
 			is.close();
 			return bytes;
-		} catch (IOException | DocTemplateException e) {
+		} catch (IOException e) {
 			throw new MergeDocException("generateFreigabequittung()",
 				"Bei der Generierung der Freigabequittung ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
@@ -164,20 +160,16 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 		authorizer.checkReadAuthorization(gesuch);
 
-		DOCXMergeEngine docxME = new DOCXMergeEngine("Begleitschreiben");
-
 		try {
 			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
 				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_BEGLEITSCHREIBEN);
 			Objects.requireNonNull(is, "Vorlage fuer Begleitschreiben nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				docxME.getDocument(is, new BegleitschreibenPrintMergeSource(new BegleitschreibenPrintImpl(gesuch))));
+				ByteStreams.toByteArray(is), new BegleitschreibenPrintMergeSource(new BegleitschreibenPrintImpl(gesuch)));
 			is.close();
 			return bytes;
-		} catch (IOException |
-
-			DocTemplateException e) {
+		} catch (IOException e) {
 			throw new MergeDocException("printBegleitschreiben()",
 				"Bei der Generierung der Begleitschreibenvorlage ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
@@ -189,7 +181,6 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
-		DOCXMergeEngine docxME = new DOCXMergeEngine("FinanzielleSituation");
 		authorizer.checkReadAuthorizationFinSit(gesuch);
 
 		try {
@@ -198,10 +189,10 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_FINANZIELLE_SITUATION);
 			Objects.requireNonNull(is, "Vorlage fuer Berechnungsgrundlagen nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				docxME.getDocument(is, new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung))));
+				ByteStreams.toByteArray(is), new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung)));
 			is.close();
 			return bytes;
-		} catch (IOException | DocTemplateException e) {
+		} catch (IOException e) {
 			throw new MergeDocException("generateFinanzielleSituation()",
 				"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, new Objects[]{});
 		}
@@ -218,12 +209,11 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		Objects.requireNonNull(is, "Vorlage fuer die Verfuegung nicht gefunden");
 		authorizer.checkReadAuthorization(betreuung);
 		try {
-			VerfuegungPrintMergeSource mergeSource = new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung, letzteVerfuegungDatum));
-			byte[] document = docxME.getDocument(is, mergeSource);
-			final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(document);
+			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
+				ByteStreams.toByteArray(is), new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung, letzteVerfuegungDatum)));
 			is.close();
 			return bytes;
-		} catch (IOException | DocTemplateException e) {
+		} catch (IOException e) {
 			throw new MergeDocException("printVerfuegungen()",
 				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[]{});
 		}

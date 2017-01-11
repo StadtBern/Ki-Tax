@@ -11,6 +11,7 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
@@ -18,9 +19,10 @@ import ch.dvbern.lib.doctemplate.common.MergeSource;
 
 import java.util.List;
 
-public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource implements MergeSource {
+public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource implements EBEGUMergeSource {
 
 	private BerechnungsgrundlagenInformationPrint berechnung;
+	private boolean isPDFLongerThanExpected = false;
 
 	/**
 	 * @param berechnung
@@ -40,7 +42,9 @@ public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource impl
 
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
-
+		if (key.equals("berechnung.PDFLongerThanExpected")) {
+			return isPDFLongerThanExpected;
+		}
 		return new BeanMergeSource(berechnung, "berechnung.").ifStatement(mergeContext, key);
 	}
 
@@ -56,5 +60,10 @@ public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource impl
 			return new BeanMergeSource(berechnung, "berechnungsblaetter.").whileStatement(mergeContext, key);
 		}
 		return null;
+	}
+
+	@Override
+	public void setPDFLongerThanExpected(boolean isPDFLongerThanExpected) {
+		this.isPDFLongerThanExpected = isPDFLongerThanExpected;
 	}
 }

@@ -19,6 +19,7 @@ import ch.dvbern.ebegu.util.Gueltigkeit;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
+import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * Transferobjekt
  */
-public class VerfuegungPrintImpl implements VerfuegungPrint {
+public class VerfuegungPrintImpl extends BriefPrintImpl implements VerfuegungPrint {
 
 	private Betreuung betreuung;
 
@@ -42,15 +43,9 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @param betreuung
 	 */
 	public VerfuegungPrintImpl(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) {
+		super(betreuung.extractGesuch());
 		this.letzteVerfuegungDatum = letzteVerfuegungDatum != null ? Constants.DATE_FORMATTER.format(letzteVerfuegungDatum) : null;
 		this.betreuung = betreuung;
-	}
-
-	@Override
-	public String getTitel() {
-
-		// TODO ZEAB Implementieren
-		return "Verfügung / Bestätigung";
 	}
 
 	@Override
@@ -248,12 +243,4 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		return Optional.empty();
 	}
 
-	@Override
-	public String getDateCreate() {
-		final String date_pattern = ServerMessageUtil.getMessage("date_pattern");
-		LocalDate date = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
-
-		return date.format(formatter);
-	}
 }
