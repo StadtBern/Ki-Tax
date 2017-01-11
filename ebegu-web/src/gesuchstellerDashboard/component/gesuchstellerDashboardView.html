@@ -66,6 +66,9 @@
                 <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
                     ng-bind="row.verantwortlicher" hide-xs></td>
             </tr>
+            <tr ng-if="vm.getAntragList().length === 0">
+                <td colspan="3" class="empty-table" data-translate="ANTRAG_NOCH_KEINE"></td>
+            </tr>
             </tbody>
             <tfoot>
             <tr>

@@ -137,28 +137,12 @@ public class DokumentenverzeichnisEvaluatorTest {
 	}
 
 	@Test
-	public void kindDokumentSorgerechtsvereinbarungTest() {
-
-		clearKinder(testgesuch);
-		final String kindName = "Sämi";
-		Kind sämi = createKind(testgesuch, kindName, Kinderabzug.HALBER_ABZUG, null, false);
-
-		Assert.assertTrue(kindDokumente.isDokumentNeeded(DokumentTyp.SORGERECHTSVEREINBARUNG, sämi));
-		Assert.assertFalse(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_BEH, sämi));
-		Assert.assertFalse(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_SOZ, sämi));
-
-		final DokumentGrund dokumentGrund = getDokumentGrund(sämi);
-		Assert.assertEquals(DokumentTyp.SORGERECHTSVEREINBARUNG, dokumentGrund.getDokumentTyp());
-	}
-
-	@Test
 	public void kindDokumentFachstelleSozTest() {
 
 		clearKinder(testgesuch);
 		final String kindName = "Jan";
 		Kind kind = createKind(testgesuch, kindName, Kinderabzug.GANZER_ABZUG, "soz", false);
 
-		Assert.assertFalse(kindDokumente.isDokumentNeeded(DokumentTyp.SORGERECHTSVEREINBARUNG, kind));
 		Assert.assertFalse(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_BEH, kind));
 		Assert.assertTrue(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_SOZ, kind));
 
@@ -173,7 +157,6 @@ public class DokumentenverzeichnisEvaluatorTest {
 		final String kindName = "Jan";
 		Kind kind = createKind(testgesuch, kindName, Kinderabzug.GANZER_ABZUG, "beh", true);
 
-		Assert.assertFalse(kindDokumente.isDokumentNeeded(DokumentTyp.SORGERECHTSVEREINBARUNG, kind));
 		Assert.assertTrue(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_BEH, kind));
 		Assert.assertFalse(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_SOZ, kind));
 

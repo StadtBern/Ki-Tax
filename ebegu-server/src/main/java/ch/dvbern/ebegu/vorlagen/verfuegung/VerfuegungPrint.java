@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.vorlagen.verfuegung;
 
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
+
 import java.util.List;
 
 /*
@@ -45,7 +47,7 @@ public interface VerfuegungPrint {
 	/**
 	 * @return die Bemerkung
 	 */
-	List<BemerkungPrint> getManuelleBemerkungen();
+	List<AufzaehlungPrint> getManuelleBemerkungen();
 
 	/**
 	 * @return true falls Pensum groesser 0 ist

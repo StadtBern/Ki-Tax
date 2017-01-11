@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.vorlagen;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import org.apache.commons.lang.StringUtils;
 
 import java.time.LocalDate;
@@ -39,7 +40,7 @@ public class BriefPrintImpl implements BriefPrint {
 		if (StringUtils.isNotEmpty(organisation)) {
 			zustellAdresse += organisation;
 		} else {
-			zustellAdresse += "Familie";  //TODO: resources/localisation?
+			zustellAdresse += ServerMessageUtil.getMessage("BriefPrintImpl_FAMILIE");
 		}
 
 		zustellAdresse += newlineMSWord + PrintUtil.getGesuchstellerName(gesuch);
@@ -60,6 +61,17 @@ public class BriefPrintImpl implements BriefPrint {
 	@Override
 	public String getZustellDatum() {
 		return Constants.DATE_FORMATTER.format(LocalDate.now());
+	}
+
+	@Override
+	public String getPeriode() {
+		return "(" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()
+			+ "/" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear() + ")";
+	}
+
+	@Override
+	public String getFallNummer() {
+		return PrintUtil.createFallNummerString(getGesuch());
 	}
 
 	@Override

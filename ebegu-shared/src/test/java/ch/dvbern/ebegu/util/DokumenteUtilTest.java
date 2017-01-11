@@ -50,7 +50,7 @@ public class DokumenteUtilTest {
 
 	@Test
 	public void testGetFileNameForGeneratedDokumentTypBEGLEITSCHREIBEN() {
-		Assert.assertEquals("Begleitbrief_16.000001.pdf", DokumenteUtil
+		Assert.assertEquals("Deckblatt_16.000001.pdf", DokumenteUtil
 			.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, "16.000001"));
 	}
 

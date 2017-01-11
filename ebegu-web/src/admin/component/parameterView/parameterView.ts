@@ -14,8 +14,10 @@ import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogControl
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
+import GlobalCacheService from '../../../gesuch/service/globalCacheService';
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
+import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 let template = require('./parameterView.html');
 let style = require('./parameterView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -29,7 +31,7 @@ export class ParameterViewComponentConfig implements IComponentOptions {
 
 export class ParameterViewController {
     static $inject = ['EbeguParameterRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$translate', 'EbeguVorlageRS',
-        'EbeguUtil', 'DvDialog', 'DownloadRS', '$log'];
+        'EbeguUtil', 'DvDialog', 'DownloadRS', '$log', 'GlobalCacheService'];
 
     ebeguParameterRS: EbeguParameterRS;
     ebeguRestUtil: EbeguRestUtil;
@@ -48,7 +50,7 @@ export class ParameterViewController {
     constructor(ebeguParameterRS: EbeguParameterRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 ebeguRestUtil: EbeguRestUtil, private $translate: ITranslateService,
                 private ebeguVorlageRS: EbeguVorlageRS, private ebeguUtil: EbeguUtil,
-                private dvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
+                private dvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, private globalCacheService: GlobalCacheService) {
         this.ebeguParameterRS = ebeguParameterRS;
         this.ebeguRestUtil = ebeguRestUtil;
         this.readGesuchsperioden();
@@ -105,6 +107,7 @@ export class ParameterViewController {
             } else {
                 this.gesuchsperiodenList.push(response);
             }
+            this.globalCacheService.getCache(TSCacheTyp.EBEGU_PARAMETER).removeAll();
             this.readEbeguParameterByGesuchsperiode();
         });
     }
@@ -134,6 +137,7 @@ export class ParameterViewController {
             var param = this.ebeguParameterListGesuchsperiode[i];
             this.ebeguParameterRS.saveEbeguParameter(param);
         }
+        this.globalCacheService.getCache(TSCacheTyp.EBEGU_PARAMETER).removeAll();
         this.gesuchsperiode = undefined;
     }
 
