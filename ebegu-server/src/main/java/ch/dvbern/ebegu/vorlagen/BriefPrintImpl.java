@@ -41,9 +41,9 @@ public class BriefPrintImpl implements BriefPrint {
 			zustellAdresse += organisation;
 		} else {
 			zustellAdresse += ServerMessageUtil.getMessage("BriefPrintImpl_FAMILIE");
+			zustellAdresse += newlineMSWord + PrintUtil.getGesuchstellerName(gesuch);
 		}
 
-		zustellAdresse += newlineMSWord + PrintUtil.getGesuchstellerName(gesuch);
 		zustellAdresse += newlineMSWord + PrintUtil.getGesuchstellerStrasse(gesuch);
 
 		String adrZusatz = PrintUtil.getAdresszusatz(gesuch);
@@ -65,8 +65,8 @@ public class BriefPrintImpl implements BriefPrint {
 
 	@Override
 	public String getPeriode() {
-		return "(" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()
-			+ "/" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear() + ")";
+		return getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()
+			+ "/" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear();
 	}
 
 	@Override

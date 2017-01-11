@@ -9,9 +9,9 @@ export enum TSBetreuungsangebotTyp {
 export function getTSBetreuungsangebotTypValues(): Array<TSBetreuungsangebotTyp> {
     return [
         TSBetreuungsangebotTyp.KITA,
+        TSBetreuungsangebotTyp.TAGI,
         TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND,
         TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND,
-        TSBetreuungsangebotTyp.TAGI,
         TSBetreuungsangebotTyp.TAGESSCHULE
     ];
 }
