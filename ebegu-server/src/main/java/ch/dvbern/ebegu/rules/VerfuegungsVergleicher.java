@@ -10,14 +10,9 @@ import java.util.List;
 
 public class VerfuegungsVergleicher {
 
-	public boolean isSameVerfuegungsdaten(Betreuung betreuung, Gesuch gesuchForMutation) {
+	public boolean isSameVerfuegungsdaten(Betreuung betreuung) {
 
-		// Wenn keine Mutation vorhanden ist muss nicht gemerged werden
-		if (gesuchForMutation == null) {
-			return false;
-		}
-
-		final Verfuegung verfuegungOnGesuchForMuation = VerfuegungUtil.findVerfuegungOnGesuchForMutation(betreuung, gesuchForMutation);
+		final Verfuegung verfuegungOnGesuchForMuation = betreuung.getVorgaengerVerfuegung();
 		if (verfuegungOnGesuchForMuation == null) {
 			return false;
 		}

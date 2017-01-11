@@ -188,7 +188,7 @@
                                 </div>
 
                                 <!--Betreuungspensum entfernen. Wird nur angezeigt wenn status=AUSSTEHEND und es mehrere Betreuungspensen gibt und role=institution-->
-                                <div class="row marginTop20 marginBottom20" dv-show-element
+                                <div class="row marginBottom60 dv-input-container-medium" dv-show-element
                                      dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
                                      dv-show-expression="($index > 0) || (vm.getBetreuungspensen().length > 1)">
                                     <div class="col-md-12">
@@ -199,6 +199,7 @@
                                             <span data-translate="BETREUUNGSPENSUM_ENTFERNEN_INDEX"
                                                   data-translate-value-betreuungspensumnumber="{{$index + 1}}"></span>
                                         </dv-loading-button>
+                                        <hr class="header"/>
                                     </div>
                                 </div>
                             </div>
@@ -258,7 +259,7 @@
                             <div class="col-md-12"
                                  ng-if="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
                                 <div class="well well-status-warten">
-                                    <i class="fa fa-hourglass-half" aria-hidden="true"></i>
+                                    <i class="fa fa-hourglass" aria-hidden="true"></i>
                                     <span data-translate="BETREUUNG_WARTEN_TEXT"></span>
                                 </div>
                             </div>

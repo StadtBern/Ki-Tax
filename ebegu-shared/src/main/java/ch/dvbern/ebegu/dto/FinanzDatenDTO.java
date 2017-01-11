@@ -17,8 +17,12 @@ public class FinanzDatenDTO {
 	private BigDecimal massgebendesEinkBjP2VorAbzFamGr = BigDecimal.ZERO;
 
 	private LocalDate datumVonBasisjahr = null; // Start Gesuchsperiode
-	private LocalDate datumVonBasisjahrPlus1 = null; // 1. des ausgewählten Monats
-	private LocalDate datumVonBasisjahrPlus2 = null; // 1. des ausgewählten Monats
+	private LocalDate datumVonBasisjahrPlus1 = null; // 1. des ausgewählten Monats. Wird auch gesetzt, wenn die EKV abgelehnt wurde!
+	private LocalDate datumVonBasisjahrPlus2 = null; // 1. des ausgewählten Monats. Wird auch gesetzt, wenn die EKV abgelehnt wurde!
+
+	private boolean ekv1Accepted = false;
+	private boolean ekv2Accepted = false;
+
 
 
 	public LocalDate getDatumVonBasisjahr() {
@@ -69,13 +73,19 @@ public class FinanzDatenDTO {
 		this.massgebendesEinkBjP2VorAbzFamGr = massgebendesEinkBjP2VorAbzFamGr;
 	}
 
-	public boolean isEKV2Accepted() {
-//		(Feld ist nur gesetzt wenn EKV akzeptiert wurde)
-		return this.getDatumVonBasisjahrPlus2() != null;
+	public boolean isEkv1Accepted() {
+		return ekv1Accepted;
 	}
 
-	public boolean isEKV1Accepted( ) {
-//		 (Feld ist nur gesetzt wenn EKV akzeptiert wurde)
-		return this.getDatumVonBasisjahrPlus1() != null;
+	public void setEkv1Accepted(boolean ekv1Accepted) {
+		this.ekv1Accepted = ekv1Accepted;
+	}
+
+	public boolean isEkv2Accepted() {
+		return ekv2Accepted;
+	}
+
+	public void setEkv2Accepted(boolean ekv2Accepted) {
+		this.ekv2Accepted = ekv2Accepted;
 	}
 }

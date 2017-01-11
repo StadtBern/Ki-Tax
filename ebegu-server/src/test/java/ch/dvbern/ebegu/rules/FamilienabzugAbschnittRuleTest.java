@@ -223,17 +223,9 @@ public class FamilienabzugAbschnittRuleTest {
 	}
 
 	@Test
-	public void testCalculateFamiliengroesseWithKeineStErklaerungKind() {
-		Gesuch gesuch = createGesuchWithKind(Kinderabzug.KEINE_STEUERERKLAERUNG);
-
-		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now());
-		Assert.assertEquals(3, familiengroesse, DELTA);
-	}
-
-	@Test
 	public void testCalculateFamiliengroesseWithWrongGeburtsdatum() {
 		//das Kind war noch nicht geboren
-		Gesuch gesuch = createGesuchWithKind(Kinderabzug.KEINE_STEUERERKLAERUNG);
+		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG);
 
 		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.of(2005, 5, 25));
 		Assert.assertEquals(2, familiengroesse, DELTA);
@@ -242,7 +234,7 @@ public class FamilienabzugAbschnittRuleTest {
 	@Test
 	public void testCalculateFamiliengroesseWithCorrectGeburtsdatum() {
 		//das Kind war schon geboren
-		Gesuch gesuch = createGesuchWithKind(Kinderabzug.KEINE_STEUERERKLAERUNG);
+		Gesuch gesuch = createGesuchWithKind(Kinderabzug.GANZER_ABZUG);
 
 		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, LocalDate.now());
 		Assert.assertEquals(3, familiengroesse, DELTA);

@@ -17,6 +17,11 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import TSEbeguParameter from '../../../models/TSEbeguParameter';
+import {TSEbeguParameterKey} from '../../../models/enums/TSEbeguParameterKey';
+import GlobalCacheService from '../../service/globalCacheService';
+import {EbeguParameterRS} from '../../../admin/service/ebeguParameterRS.rest';
+import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
@@ -43,13 +48,15 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
 
     gesuchsteller: TSGesuchstellerContainer;
     patternPercentage: string;
+    maxZuschlagsprozent: number = 100;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager',
-        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q', '$translate'];
+        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q', '$translate', 'EbeguParameterRS', 'GlobalCacheService'];
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
-                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService,
+                private $translate: ITranslateService, private ebeguParameterRS: EbeguParameterRS, private globalCacheService: GlobalCacheService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.ERWERBSPENSUM);
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
@@ -66,6 +73,16 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
             errorService.addMesageAsError('Unerwarteter Zustand: Gesuchsteller unbekannt');
             console.log('kein gesuchsteller gefunden');
         }
+        ebeguParameterRS.getEbeguParameterByGesuchsperiodeCached(
+            this.gesuchModelManager.getGesuchsperiode().id,
+            this.globalCacheService.getCache(TSCacheTyp.EBEGU_PARAMETER)).then((response: TSEbeguParameter[]) => {
+            for (let i = 0; i < response.length; i++) {
+                if (response[i].name === TSEbeguParameterKey.PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM) {
+                    // max Wert für Zuschlag Erwerbspensum
+                    this.maxZuschlagsprozent = Number(response[i].value);
+                }
+            }
+        });
 
         //hier muessen wir den event beim verlassen nicht abfangen da wir die daten erst beim erfolgreichen speichern ins model einfuegen
     }
@@ -140,13 +157,14 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
         return this.model.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
     }
 
-    public getTextZuschlagErwerbspensumKorrekturJA() : string {
+    public getTextZuschlagErwerbspensumKorrekturJA(): string {
         if (this.model.erwerbspensumGS && this.model.erwerbspensumGS.zuschlagZuErwerbspensum === true) {
             let ewp: TSErwerbspensum = this.model.erwerbspensumGS;
             let grundText = this.$translate.instant(ewp.zuschlagsgrund.toString());
             return this.$translate.instant('JA_KORREKTUR_ZUSCHLAG_ERWERBSPENSUM', {
                 zuschlagsgrund: grundText,
-                zuschlagsprozent: ewp.zuschlagsprozent});
+                zuschlagsprozent: ewp.zuschlagsprozent
+            });
         } else {
             return this.$translate.instant('LABEL_KEINE_ANGABE');
         }

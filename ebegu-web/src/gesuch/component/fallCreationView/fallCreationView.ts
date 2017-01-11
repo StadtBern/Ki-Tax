@@ -79,7 +79,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             }
         }
         this.gesuchModelManager.initGesuchWithEingangsart(this.createNewParam, this.eingangsart, this.gesuchsperiodeId, this.fallId);
-        if (this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
+        if (!this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
             this.gesuchModelManager.updateActiveGesuchsperiodenList();
         }
     }

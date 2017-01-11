@@ -446,8 +446,8 @@ public final class TestDataUtil {
 	public static Benutzer createDefaultBenutzer() {
 		Benutzer user = new Benutzer();
 		user.setUsername("jula_" + UUID.randomUUID());
-		user.setNachname("Julio");
-		user.setVorname("Iglesias");
+		user.setNachname("Iglesias");
+		user.setVorname("Julio");
 		user.setEmail("email@server.ch");
 		user.setMandant(createDefaultMandant());
 		user.setRole(UserRole.ADMIN);
@@ -784,7 +784,7 @@ public final class TestDataUtil {
 	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch, LocalDate firstAblauf, int numberOfDocuments) {
 		Mahnung mahnung = new Mahnung();
 		mahnung.setMahnungTyp(typ);
-		mahnung.setActive(true);
+		mahnung.setTimestampAbgeschlossen(null);
 		List<String> bemerkungen = new ArrayList<>();
 		for (int i = 0; i < numberOfDocuments; i++){
 			bemerkungen.add("Test Dokument " + (i+1));

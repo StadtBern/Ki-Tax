@@ -19,12 +19,16 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
     private _bemerkungen: string;
     private _status: string;
     private _einkommensjahr: number;
+    private _kategorieMaxEinkommen: boolean;
+    private _kategorieKeinPensum: boolean;
+    private _kategorieZuschlagZumErwerbspensum: boolean;
 
 
     constructor(erwerbspensumGS1?: number, erwerbspensumGS2?: number, betreuungspensum?: number, fachstellenpensum?: number,
                 anspruchspensumRest?: number, anspruchberechtigtesPensum?: number, bgPensum?: number, betreuungsstunden?: number, vollkosten?: number,
                 elternbeitrag?: number, abzugFamGroesse?: number, massgebendesEinkommen?: number, bemerkungen?: string,
-                status?: string, gueltigkeit?: TSDateRange, famGroesse?: number, einkommensjahr?: number) {
+                status?: string, gueltigkeit?: TSDateRange, famGroesse?: number, einkommensjahr?: number, kategorieMaxEinkommen?: boolean,
+                kategorieKeinPensum?: boolean, kategorieZuschlagZumErwerbspensum?: boolean) {
         super(gueltigkeit);
         this._erwerbspensumGS1 = erwerbspensumGS1;
         this._erwerbspensumGS2 = erwerbspensumGS2;
@@ -42,6 +46,9 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._status = status;
         this._famGroesse = famGroesse;
         this._einkommensjahr = einkommensjahr;
+        this._kategorieMaxEinkommen = kategorieMaxEinkommen;
+        this._kategorieKeinPensum = kategorieKeinPensum;
+        this._kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
     }
 
     get erwerbspensumGS1(): number {
@@ -170,5 +177,29 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
 
     set einkommensjahr(value: number) {
         this._einkommensjahr = value;
+    }
+
+    get kategorieMaxEinkommen(): boolean {
+        return this._kategorieMaxEinkommen;
+    }
+
+    set kategorieMaxEinkommen(value: boolean) {
+        this._kategorieMaxEinkommen = value;
+    }
+
+    get kategorieKeinPensum(): boolean {
+        return this._kategorieKeinPensum;
+    }
+
+    set kategorieKeinPensum(value: boolean) {
+        this._kategorieKeinPensum = value;
+    }
+
+    get kategorieZuschlagZumErwerbspensum(): boolean {
+        return this._kategorieZuschlagZumErwerbspensum;
+    }
+
+    set kategorieZuschlagZumErwerbspensum(value: boolean) {
+        this._kategorieZuschlagZumErwerbspensum = value;
     }
 }

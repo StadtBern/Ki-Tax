@@ -504,7 +504,7 @@ public class AbstractBGRechnerTest {
 		// EKV
 		VerfuegungZeitabschnitt oktober = verfuegung.getZeitabschnitte().get(7);
 		assertZeitabschnittFinanzdaten(oktober, 100000, 2015, 11280, 88720, 3);
-		// Trennung
+		// Heirat
 		VerfuegungZeitabschnitt juli = verfuegung.getZeitabschnitte().get(12);
 		assertZeitabschnittFinanzdaten(juli, 79000, 2017, 11280, 67720, 3);
 	}
