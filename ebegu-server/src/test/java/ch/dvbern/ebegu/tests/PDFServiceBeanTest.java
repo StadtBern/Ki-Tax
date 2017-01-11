@@ -5,9 +5,7 @@ import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
-import ch.dvbern.ebegu.services.DokumentGrundService;
-import ch.dvbern.ebegu.services.EbeguVorlageService;
-import ch.dvbern.ebegu.services.PDFServiceBean;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
@@ -28,6 +26,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -69,6 +68,7 @@ public class PDFServiceBeanTest {
 	@Before
 	public void setupTestData() {
 
+		Locale.setDefault(new Locale("de", "CH"));
 		evaluator = AbstractBGRechnerTest.createEvaluator();
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
@@ -289,6 +289,72 @@ public class PDFServiceBeanTest {
 		byte[] bytes = pdfService.generateFinanzielleSituation(gesuch, null);
 
 		unitTestTempfolder.writeToTempDir(bytes, "TN_FamilienStituation1.pdf");
+	}
+
+	@Test
+	public void testGeneriereVerfuegungKita() throws Exception {
+
+		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+
+		Betreuung testBetreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		Assert.assertNotNull(verfuegungsPDF);
+		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_KITA.pdf");
+	}
+
+	@Test
+	public void testGeneriereVerfuegungTageselternKleinkinder() throws Exception {
+
+		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_KLEINKIND);
+
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+
+		Betreuung testBetreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		Assert.assertNotNull(verfuegungsPDF);
+		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_TageselternKleinkinder.pdf");
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void testGeneriereVerfuegung_TageselternSchulkinder() throws Exception {
+
+		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
+
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+
+		Betreuung testBetreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		Assert.assertNotNull(verfuegungsPDF);
+		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_TageselternSchulkinder.pdf");
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void testGeneriereVerfuegung_TagesstatetteSchulkinder() throws Exception {
+
+		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
+
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+
+		Betreuung testBetreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		Assert.assertNotNull(verfuegungsPDF);
+		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_TagesstatetteSchulkinder.pdf");
 	}
 
 }

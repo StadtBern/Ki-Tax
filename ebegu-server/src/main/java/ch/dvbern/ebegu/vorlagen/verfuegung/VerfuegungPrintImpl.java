@@ -15,16 +15,17 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.Gueltigkeit;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -135,7 +136,31 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		List<VerfuegungZeitabschnittPrint> result = new ArrayList<>();
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
-			result.addAll(verfuegung.get().getZeitabschnitte().stream().map(VerfuegungZeitabschnittPrintImpl::new).collect(Collectors.toList()));
+
+			result.addAll(verfuegung.get().getZeitabschnitte().stream()
+				.sorted(Gueltigkeit.GUELTIG_AB_COMPARATOR.reversed())
+				.map(VerfuegungZeitabschnittPrintImpl::new)
+				.collect(Collectors.toList()));
+			ListIterator<VerfuegungZeitabschnittPrint> listIterator = result.listIterator();
+			while (listIterator.hasNext()){
+				VerfuegungZeitabschnittPrint zeitabschnitt = listIterator.next();
+				if (zeitabschnitt.getBetreuung() <= 0) {
+					listIterator.remove();
+				} else {
+					break;
+				}
+			}
+
+			Collections.reverse(result);
+			listIterator = result.listIterator();
+			while (listIterator.hasNext()){
+				VerfuegungZeitabschnittPrint zeitabschnitt = listIterator.next();
+				if (zeitabschnitt.getBetreuung() <= 0) {
+					listIterator.remove();
+				} else {
+					break;
+				}
+			}
 		}
 		return result;
 	}
@@ -147,9 +172,9 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @return
 	 */
 	@Override
-	public List<BemerkungPrint> getManuelleBemerkungen() {
+	public List<AufzaehlungPrint> getManuelleBemerkungen() {
 
-		List<BemerkungPrint> bemerkungen = new ArrayList<>();
+		List<AufzaehlungPrint> bemerkungen = new ArrayList<>();
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent() && StringUtils.isNotEmpty(verfuegung.get().getManuelleBemerkungen())) {
 			bemerkungen.addAll(splitBemerkungen(verfuegung.get().getManuelleBemerkungen()));
@@ -163,13 +188,13 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @param bemerkungen
 	 * @return List mit Bemerkungen
 	 */
-	private List<BemerkungPrint> splitBemerkungen(String bemerkungen) {
+	private List<AufzaehlungPrint> splitBemerkungen(String bemerkungen) {
 
-		List<BemerkungPrint> list = new ArrayList<>();
+		List<AufzaehlungPrint> list = new ArrayList<>();
 		// Leere Zeile werden mit diese Annotation [\\r\\n]+ entfernt
 		String[] splitBemerkungenNewLine = bemerkungen.split("[" + System.getProperty("line.separator") + "]+");
 		for (String bemerkung : splitBemerkungenNewLine) {
-			list.add(new BemerkungPrintImpl(bemerkung));
+			list.add(new AufzaehlungPrintImpl(bemerkung));
 		}
 		return list;
 	}

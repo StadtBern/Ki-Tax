@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.MergeDocException;
@@ -17,16 +18,20 @@ import ch.dvbern.ebegu.vorlagen.mahnung.MahnungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.mahnung.MahnungPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintImpl;
 import ch.dvbern.ebegu.vorlagen.nichteintreten.NichteintretenPrintMergeSource;
+import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintImpl;
+import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import com.google.common.io.ByteStreams;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -173,6 +178,46 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("generateFinanzielleSituation()",
 				"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, new Objects[] {});
+		}
+	}
+
+	@Nonnull
+	@Override
+	public byte[] generateVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) throws MergeDocException {
+		final DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
+
+		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
+		EbeguVorlageKey vorlageFromBetreuungsangebottyp = getVorlageFromBetreuungsangebottyp(betreuung);
+		InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageFromBetreuungsangebottyp);
+		Objects.requireNonNull(is, "Vorlage fuer die Verfuegung nicht gefunden");
+		authorizer.checkReadAuthorization(betreuung);
+		try {
+			VerfuegungPrintMergeSource mergeSource = new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung, letzteVerfuegungDatum));
+			byte[] document = docxME.getDocument(is, mergeSource);
+			final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(document);
+			is.close();
+			return bytes;
+		} catch (IOException | DocTemplateException e) {
+			throw new MergeDocException("printVerfuegungen()",
+				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[] {});
+		}
+	}
+
+	@Nonnull
+	private EbeguVorlageKey getVorlageFromBetreuungsangebottyp(final Betreuung betreuung) {
+		if (Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus())) {
+			if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+				return EbeguVorlageKey.VORLAGE_NICHT_EINTRETENSVERFUEGUNG;
+			} else {
+				return EbeguVorlageKey.VORLAGE_INFOSCHREIBEN_MAXIMALTARIF;
+			}
+		}
+		switch (betreuung.getBetreuungsangebotTyp()) {
+			case TAGESELTERN_KLEINKIND: return EbeguVorlageKey.VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER;
+			case TAGESELTERN_SCHULKIND: return EbeguVorlageKey.VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER;
+			case TAGI: return EbeguVorlageKey.VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER;
+			case KITA:
+			default: return EbeguVorlageKey.VORLAGE_VERFUEGUNG_KITA;
 		}
 	}
 

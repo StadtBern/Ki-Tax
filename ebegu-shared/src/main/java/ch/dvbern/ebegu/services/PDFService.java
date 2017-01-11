@@ -8,6 +8,8 @@ import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.MergeDocException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.time.LocalDate;
 import java.util.Optional;
 
 /*
@@ -34,5 +36,8 @@ public interface PDFService {
 
 	@Nonnull
 	byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung) throws MergeDocException;
+
+	@Nonnull
+	byte[] generateVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) throws MergeDocException;
 
 }

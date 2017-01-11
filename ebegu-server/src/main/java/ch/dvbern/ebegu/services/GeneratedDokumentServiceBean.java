@@ -65,9 +65,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private PrintBegleitschreibenPDFService printBegleitschreibenPDFService;
 
 	@Inject
-	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
-
-	@Inject
 	private PDFService pdfService;
 
 	@Inject
@@ -306,7 +303,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				final byte[] verfuegungsPDF;
 				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
 				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
-				verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum);
+				verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum);
 
 
 				final String fileNameForDocTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
