@@ -43,12 +43,11 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, $scope: IScope,  private applicationPropertyRS: ApplicationPropertyRS) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE);
         this.initViewModel();
     }
 
     private initViewModel(): void {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.FREIGABE);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.initDevModeParameter();
     }
@@ -84,7 +83,8 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     public isGesuchFreigegeben(): boolean {
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
-            return isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status) || (this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG);
+            return isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status)
+                || (this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG);
         }
         return false;
     }
@@ -118,13 +118,23 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         return '';
     }
 
+    public getTextForFreigebenNotAllowed(): string {
+        if (this.isGesuchReadonly()) {
+            return 'FREIGABEQUITTUNG_NOT_ALLOWED_BESCHWERDE_TEXT';
+        } else {
+            return 'FREIGABEQUITTUNG_NOT_ALLOWED_TEXT';
+        }
+    }
+
     /**
      * Die Methodes wizardStepManager.areAllStepsOK() erlaubt dass die Betreuungen in Status PLATZBESTAETIGUNG sind
-     * aber in diesem Fall duerfen diese nur OK sein, deswegen die Frage extra.
+     * aber in diesem Fall duerfen diese nur OK sein, deswegen die Frage extra. Ausserdem darf es nur freigegebn werden
+     * wenn es nicht in ReadOnly modus ist
      */
     public canBeFreigegeben(): boolean {
         return this.wizardStepManager.areAllStepsOK() &&
-            this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG);
+            this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
+            && !this.isGesuchReadonly();
     }
 
     private getZustelladresse(): TSZustelladresse {

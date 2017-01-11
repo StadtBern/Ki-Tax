@@ -1,8 +1,11 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 
 /**
@@ -19,6 +22,16 @@ public interface TestfaelleService {
 	String MeierMeret = "7";
 	String UmzugAusInAusBern = "8";
 	String Abwesenheit = "9";
+	String ASIV1 = "ASIV1";
+	String ASIV2 = "ASIV2";
+	String ASIV3 = "ASIV3";
+	String ASIV4 = "ASIV4";
+	String ASIV5 = "ASIV5";
+	String ASIV6 = "ASIV6";
+	String ASIV7 = "ASIV7";
+	String ASIV8 = "ASIV8";
+	String ASIV9 = "ASIV9";
+	String ASIV10 = "ASIV10";
 
 
 	String heirat = "1";
@@ -50,4 +63,6 @@ public interface TestfaelleService {
 	 * @param username Username des Besitzers der Gesuche die entferntw erden sollen
 	 */
 	void removeGesucheOfGS(String username);
+
+	Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer);
 }

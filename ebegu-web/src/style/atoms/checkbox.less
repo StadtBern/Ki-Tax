@@ -4,6 +4,7 @@
 .checkbox {
     margin: 0 0;
     height: auto;
+    font-size: 0;
     dv-error-messages {
         display: block;
     }
@@ -12,9 +13,9 @@
 md-checkbox {
     //  position: absolute;
     position: relative;
-    min-height: unset;
-    min-width: unset;
-    height: 2rem;
+    min-height: 0;
+    min-width: 0;
+    height: 1.7rem;
     width: auto;
     &[disabled] {
         color: @contrast-dark;
@@ -38,8 +39,8 @@ md-checkbox {
         //TODO Focus  border:red 20px solid;
     }
     .md-container {
-        width: 2rem;
-        height: 2rem;
+        width: 1.7rem;
+        height: 1.7rem;
         display: block;
         &:before {
             content: none !important;
@@ -48,15 +49,19 @@ md-checkbox {
     margin-top: 0;
     margin-bottom: 2rem;
     .md-label {
-        display: block;
+        display: inline-block;
         margin-left: 3rem;
-        line-height: normal;
-        height: 2rem;
+        height: 1.7rem;
+        line-height: 1.7rem;
         vertical-align: middle;
+        font-size: 0;
         span {
             .ebeguH3();
-            line-height: normal;
             margin: 0;
+            line-height: 1.7rem;
+            height: 1.7rem;
+            display: inline-block;
+            margin-right: 1rem;
         }
     }
     .md-icon {
@@ -64,7 +69,7 @@ md-checkbox {
         border-radius: 0.2rem;
         width: auto;
         height: auto;
-        line-height: 2rem;
+        line-height: 1.7rem;
         position: absolute;
         left: 0;
         right: 0;
@@ -77,7 +82,7 @@ md-checkbox {
             &:after {
                 line-height: 175%;
                 position: absolute;
-                font-size: 1rem;
+                font-size: 0.8rem;
                 font-family: 'FontAwesome';
                 left: 0;
                 right: 0;

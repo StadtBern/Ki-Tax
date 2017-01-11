@@ -13,6 +13,7 @@ import {TSRole} from '../../../models/enums/TSRole';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IScope = angular.IScope;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -42,7 +43,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     constructor($stateParams: IEinkommensverschlechterungStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private $log: ILogService,
                 wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         let parsedGesuchstelllerNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedGesuchstelllerNum);
@@ -83,8 +84,13 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         }
     }
 
+    /**
+     *  Wenn z.B. in der Periode 2016/2017 eine Einkommensverschlechterung für 2017 geltend gemacht wird,
+     *  ist es unmöglich, dass die Steuerveranlagung und Steuererklärung für 2017 schon dem Gesuchsteller vorliegt
+     */
     showSteuerveranlagung(): boolean {
-        return !this.model.getGemeinsameSteuererklaerungToWorkWith() || this.model.getGemeinsameSteuererklaerungToWorkWith() === false;
+        return (this.model.getBasisJahrPlus() === 1) &&
+            (!this.model.getGemeinsameSteuererklaerungToWorkWith() || this.model.getGemeinsameSteuererklaerungToWorkWith() === false);
     }
 
     showSteuererklaerung(): boolean {
@@ -169,8 +175,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     }
 
     public enableGeschaeftsgewinnBasisjahrMinus1(): boolean {
-        return this.model.getBasisJahrPlus() === 2 &&
-            !this.model.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1;
+        return this.model.getBasisJahrPlus() === 2 && !this.model.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1;
     }
 
     public getTextSelbstaendigKorrektur() {

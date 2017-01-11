@@ -667,6 +667,7 @@ public class JaxBConverter {
 		antrag.setBemerkungen(antragJAXP.getBemerkungen());
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
+		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
 
 		return antrag;
 	}
@@ -789,6 +790,7 @@ public class JaxBConverter {
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
+		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
 
 		return jaxGesuch;
 	}
@@ -1346,7 +1348,6 @@ public class JaxBConverter {
 		erwerbspensum.setZuschlagsgrund(jaxErwerbspensum.getZuschlagsgrund());
 		erwerbspensum.setZuschlagsprozent(jaxErwerbspensum.getZuschlagsprozent());
 		erwerbspensum.setTaetigkeit(jaxErwerbspensum.getTaetigkeit());
-		erwerbspensum.setPensum(jaxErwerbspensum.getPensum());
 		erwerbspensum.setBezeichnung(jaxErwerbspensum.getBezeichnung());
 		return erwerbspensum;
 	}
@@ -1354,15 +1355,12 @@ public class JaxBConverter {
 	private JaxErwerbspensum erbwerbspensumToJax(@Nullable final Erwerbspensum pensum) {
 		if (pensum != null) {
 			JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
-			jaxErwerbspensum = convertAbstractFieldsToJAX(pensum, jaxErwerbspensum);
-			jaxErwerbspensum.setGueltigAb(pensum.getGueltigkeit().getGueltigAb());
-			jaxErwerbspensum.setGueltigBis(pensum.getGueltigkeit().getGueltigBis());
+			convertAbstractPensumFieldsToJAX(pensum, jaxErwerbspensum);
 			jaxErwerbspensum.setZuschlagZuErwerbspensum(pensum.getZuschlagZuErwerbspensum());
 			jaxErwerbspensum.setZuschlagsgrund(pensum.getZuschlagsgrund());
 			jaxErwerbspensum.setZuschlagsprozent(pensum.getZuschlagsprozent());
 			jaxErwerbspensum.setTaetigkeit(pensum.getTaetigkeit());
 			jaxErwerbspensum.setBezeichnung(pensum.getBezeichnung());
-			jaxErwerbspensum.setPensum(pensum.getPensum());
 			return jaxErwerbspensum;
 		}
 		return null;
@@ -1599,6 +1597,11 @@ public class JaxBConverter {
 			jaxVerfuegung.setGeneratedBemerkungen(verfuegung.getGeneratedBemerkungen());
 			jaxVerfuegung.setManuelleBemerkungen(verfuegung.getManuelleBemerkungen());
 			jaxVerfuegung.setSameVerfuegungsdaten(verfuegung.isSameVerfuegungsdaten());
+			jaxVerfuegung.setKategorieZuschlagZumErwerbspensum(verfuegung.isKategorieZuschlagZumErwerbspensum());
+			jaxVerfuegung.setKategorieKeinPensum(verfuegung.isKategorieKeinPensum());
+			jaxVerfuegung.setKategorieMaxEinkommen(verfuegung.isKategorieMaxEinkommen());
+			jaxVerfuegung.setKategorieNichtEintreten(verfuegung.isKategorieNichtEintreten());
+			jaxVerfuegung.setKategorieNormal(verfuegung.isKategorieNormal());
 
 			if (verfuegung.getZeitabschnitte() != null) {
 				jaxVerfuegung.getZeitabschnitte().addAll(
@@ -1626,6 +1629,11 @@ public class JaxBConverter {
 		verfuegung.setGeneratedBemerkungen(jaxVerfuegung.getGeneratedBemerkungen());
 		verfuegung.setManuelleBemerkungen(jaxVerfuegung.getManuelleBemerkungen());
 		verfuegung.setSameVerfuegungsdaten(jaxVerfuegung.isSameVerfuegungsdaten());
+		verfuegung.setKategorieZuschlagZumErwerbspensum(jaxVerfuegung.isKategorieZuschlagZumErwerbspensum());
+		verfuegung.setKategorieKeinPensum(jaxVerfuegung.isKategorieKeinPensum());
+		verfuegung.setKategorieMaxEinkommen(jaxVerfuegung.isKategorieMaxEinkommen());
+		verfuegung.setKategorieNichtEintreten(jaxVerfuegung.isKategorieNichtEintreten());
+		verfuegung.setKategorieNormal(jaxVerfuegung.isKategorieNormal());
 
 		//List of Verfuegungszeitabschnitte converten
 		verfuegungZeitabschnitteToEntity(verfuegung.getZeitabschnitte(), jaxVerfuegung.getZeitabschnitte());
@@ -1671,10 +1679,13 @@ public class JaxBConverter {
 			jaxZeitabschn.setBetreuungsstunden(zeitabschnitt.getBetreuungsstunden());
 			jaxZeitabschn.setVollkosten(zeitabschnitt.getVollkosten());
 			jaxZeitabschn.setElternbeitrag(zeitabschnitt.getElternbeitrag());
-			jaxZeitabschn.setAbzugFamGroesse(zeitabschnitt.getAbzugFamGroesse());
 			jaxZeitabschn.setMassgebendesEinkommenVorAbzugFamgr(zeitabschnitt.getMassgebendesEinkommenVorAbzFamgr());
 			jaxZeitabschn.setBemerkungen(zeitabschnitt.getBemerkungen());
 			jaxZeitabschn.setFamGroesse(zeitabschnitt.getFamGroesse());
+			jaxZeitabschn.setEinkommensjahr(zeitabschnitt.getEinkommensjahr());
+			jaxZeitabschn.setKategorieKeinPensum(zeitabschnitt.isKategorieKeinPensum());
+			jaxZeitabschn.setKategorieMaxEinkommen(zeitabschnitt.isKategorieMaxEinkommen());
+			jaxZeitabschn.setKategorieZuschlagZumErwerbspensum(zeitabschnitt.isKategorieZuschlagZumErwerbspensum());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1699,6 +1710,10 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(jaxVerfuegungZeitabschnitt.getMassgebendesEinkommenVorAbzugFamgr());
 		verfuegungZeitabschnitt.setBemerkungen(jaxVerfuegungZeitabschnitt.getBemerkungen());
 		verfuegungZeitabschnitt.setFamGroesse(jaxVerfuegungZeitabschnitt.getFamGroesse());
+		verfuegungZeitabschnitt.setEinkommensjahr(jaxVerfuegungZeitabschnitt.getEinkommensjahr());
+		verfuegungZeitabschnitt.setKategorieMaxEinkommen(jaxVerfuegungZeitabschnitt.isKategorieMaxEinkommen());
+		verfuegungZeitabschnitt.setKategorieKeinPensum(jaxVerfuegungZeitabschnitt.isKategorieKeinPensum());
+		verfuegungZeitabschnitt.setKategorieZuschlagZumErwerbspensum(jaxVerfuegungZeitabschnitt.isKategorieZuschlagZumErwerbspensum());
 		return verfuegungZeitabschnitt;
 	}
 
@@ -2011,7 +2026,8 @@ public class JaxBConverter {
 		jaxAntragStatusHistory.setGesuchId(antragStatusHistory.getGesuch().getId());
 		jaxAntragStatusHistory.setStatus(AntragStatusConverterUtil.convertStatusToDTO(antragStatusHistory.getGesuch(), antragStatusHistory.getStatus()));
 		jaxAntragStatusHistory.setBenutzer(benutzerToAuthLoginElement(antragStatusHistory.getBenutzer()));
-		jaxAntragStatusHistory.setDatum(antragStatusHistory.getDatum());
+		jaxAntragStatusHistory.setTimestampVon(antragStatusHistory.getTimestampVon());
+		jaxAntragStatusHistory.setTimestampBis(antragStatusHistory.getTimestampBis());
 		return jaxAntragStatusHistory;
 
 	}
@@ -2064,6 +2080,7 @@ public class JaxBConverter {
 		}
 		antrag.setVerfuegt(AntragStatus.VERFUEGT.equals(gesuch.getStatus()));
 		antrag.setLaufnummer(gesuch.getLaufnummer());
+		antrag.setGesperrtWegenBeschwerde(gesuch.isGesperrtWegenBeschwerde());
 		return antrag;
 	}
 
@@ -2082,7 +2099,7 @@ public class JaxBConverter {
 		mahnung.setMahnungTyp(jaxMahnung.getMahnungTyp());
 		mahnung.setDatumFristablauf(jaxMahnung.getDatumFristablauf());
 		mahnung.setBemerkungen(jaxMahnung.getBemerkungen());
-		mahnung.setActive(jaxMahnung.isActive());
+		mahnung.setTimestampAbgeschlossen(jaxMahnung.getTimestampAbgeschlossen());
 		return mahnung;
 	}
 
@@ -2094,7 +2111,7 @@ public class JaxBConverter {
 		jaxMahnung.setMahnungTyp(persistedMahnung.getMahnungTyp());
 		jaxMahnung.setDatumFristablauf(persistedMahnung.getDatumFristablauf());
 		jaxMahnung.setBemerkungen(persistedMahnung.getBemerkungen());
-		jaxMahnung.setActive(persistedMahnung.isActive());
+		jaxMahnung.setTimestampAbgeschlossen(persistedMahnung.getTimestampAbgeschlossen());
 		return jaxMahnung;
 	}
 

@@ -1,6 +1,9 @@
 @import '../variables.less';
 @import '../mixins.less';
 
+td, th {
+    background-clip: padding-box !important;
+}
 .table-responsive {
     border: none;
 }
@@ -53,6 +56,9 @@
     width: 10%;
 }
 
+.table {
+    margin-bottom: 2rem;
+}
 .table > tbody {
     & > tr, & > tr:first-child {
         &:hover {
@@ -80,7 +86,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             position: relative;
             line-height: 3rem;
             height: 6rem;
-            border: 0.1rem solid @contrast;
+            border: 1px solid @contrast;
             border-left: none;
             border-right: none;
             vertical-align: middle;
@@ -94,6 +100,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             }
 
         }
+
         & > th, & > th:empty {
             max-width: 0;
             overflow: hidden;
@@ -102,7 +109,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             .ebeguLabel();
             height: 5rem;
             vertical-align: middle;
-            border: 0.1rem solid @contrast;
+            border: 1px solid @contrast;
             border-left: none;
             border-right: none;
             border-radius: 0;
@@ -119,7 +126,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
             .ebeguLabel();
             height: 4rem;
             vertical-align: middle;
-            border: 0.1rem solid @contrast-darkest;
+            border: 1px solid @contrast-darkest;
             border-left: none;
             border-right: none;
             border-radius: 0;
@@ -129,6 +136,9 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
                 .ebeguP();
                 line-height: 0;
             }
+        }
+        & > th:first-child {
+            padding-left: 0;
         }
         .text-right {
             text-align: right;
@@ -154,7 +164,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
                 height: 5rem;
                 vertical-align: middle;
                 padding: 0 0.8rem 0;
-                border: 0.1rem solid rgba(220, 220, 220, 0.2);
+                border: 1px solid rgba(220, 220, 220, 0.2);
                 border-left: none;
                 border-right: none;
                 color: @contrast-lightest;
@@ -166,7 +176,7 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
                 height: 5rem;
                 vertical-align: middle;
                 padding: 0 0.8rem 0;
-                border: 0.1rem solid @contrast-lightest;
+                border: 1px solid @contrast-lightest;
                 border-left: none;
                 border-right: none;
                 color: @contrast-lightest;

@@ -35,11 +35,11 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private String bemerkungen;
 
-	@Nullable
 	private int laufnummer;
 
-	@Nullable
 	private boolean hasFSDokument;
+
+	private boolean gesperrtWegenBeschwerde;
 
 
 	public static long getSerialVersionUID() {
@@ -115,6 +115,14 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setHasFSDokument(@Nullable boolean hasFSDokument) {
 		this.hasFSDokument = hasFSDokument;
+	}
+
+	public boolean isGesperrtWegenBeschwerde() {
+		return gesperrtWegenBeschwerde;
+	}
+
+	public void setGesperrtWegenBeschwerde(boolean gesperrtWegenBeschwerde) {
+		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
 	}
 }
 

@@ -59,4 +59,10 @@ export default class TSKindContainer extends TSAbstractEntity {
     set nextNumberBetreuung(value: number) {
         this._nextNumberBetreuung = value;
     }
+
+    public initBetreuungList(): void {
+        if (!this.betreuungen) {
+            this.betreuungen = [];
+        }
+    }
 }

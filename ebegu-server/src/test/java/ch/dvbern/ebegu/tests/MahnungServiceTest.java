@@ -118,7 +118,7 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 		Collection<Mahnung> mahnungenForGesuch = mahnungService.findMahnungenForGesuch(gesuch);
 		Assert.assertNotNull(mahnungenForGesuch);
 		for (Mahnung mahnung : mahnungenForGesuch) {
-			Assert.assertTrue(mahnung.isActive());
+			Assert.assertNull(mahnung.getTimestampAbgeschlossen());
 		}
 
 		mahnungService.mahnlaufBeenden(gesuch);
@@ -127,7 +127,7 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 		mahnungenForGesuch = mahnungService.findMahnungenForGesuch(gesuch);
 		Assert.assertNotNull(mahnungenForGesuch);
 		for (Mahnung mahnung : mahnungenForGesuch) {
-			Assert.assertFalse(mahnung.isActive());
+			Assert.assertNotNull(mahnung.getTimestampAbgeschlossen());
 		}
 	}
 

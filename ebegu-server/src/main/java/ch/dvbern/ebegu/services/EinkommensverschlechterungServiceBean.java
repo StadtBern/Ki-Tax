@@ -70,7 +70,7 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	@Override
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch, int basisJahrPlus) {
-		return finSitRechner.calculateResultateEinkommensverschlechterung(gesuch, basisJahrPlus);
+		return finSitRechner.calculateResultateEinkommensverschlechterung(gesuch, basisJahrPlus, true);
 	}
 
 }

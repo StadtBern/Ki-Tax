@@ -52,6 +52,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@Transient
 	private Boolean wohnsitzNichtInGemeindeGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
+
 	@Transient
 	private Boolean wohnsitzNichtInGemeindeGS2 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
@@ -67,6 +68,33 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@Transient
 	private int anspruchspensumRest;
+
+	@Transient
+	private boolean hasSecondGesuchsteller;
+
+	@Transient
+	private boolean ekv1Alleine;
+
+	@Transient
+	private boolean ekv1ZuZweit;
+
+	@Transient
+	private boolean ekv2Alleine;
+
+	@Transient
+	private boolean ekv2ZuZweit;
+
+	@Transient
+	private boolean ekv1NotExisting;
+
+	@Transient
+	private boolean kategorieMaxEinkommen = false;
+
+	@Transient
+	private boolean kategorieKeinPensum = false;
+
+	@Transient
+	private boolean kategorieZuschlagZumErwerbspensum = false;
 
 	@Max(100)
 	@Min(0)
@@ -98,8 +126,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Column(nullable = true)
 	private BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
 
-	@Column(nullable = true)
-	private int einkommensjahr;
+	@NotNull
+	@Column(nullable = false)
+	private Integer einkommensjahr;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -111,12 +140,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
 
+
 	public VerfuegungZeitabschnitt() {
 	}
 
 	/**
 	 * copy Konstruktor
 	 */
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public VerfuegungZeitabschnitt(VerfuegungZeitabschnitt toCopy) {
 		this.setVorgaengerId(toCopy.getId());
 		this.setGueltigkeit(new DateRange(toCopy.getGueltigkeit()));
@@ -138,9 +169,18 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.abzugFamGroesse = toCopy.abzugFamGroesse;
 		this.famGroesse = toCopy.famGroesse;
 		this.massgebendesEinkommenVorAbzugFamgr = toCopy.massgebendesEinkommenVorAbzugFamgr;
+		this.hasSecondGesuchsteller = toCopy.hasSecondGesuchsteller;
 		this.einkommensjahr = toCopy.einkommensjahr;
+		this.ekv1Alleine = toCopy.ekv1Alleine;
+		this.ekv1ZuZweit = toCopy.ekv1ZuZweit;
+		this.ekv2Alleine = toCopy.ekv2Alleine;
+		this.ekv2ZuZweit = toCopy.ekv2ZuZweit;
+		this.ekv1NotExisting = toCopy.ekv1NotExisting;
 		this.bemerkungen = toCopy.bemerkungen;
 		this.verfuegung = null;
+		this.kategorieMaxEinkommen = toCopy.kategorieMaxEinkommen;
+		this.kategorieKeinPensum = toCopy.kategorieKeinPensum;
+		this.kategorieZuschlagZumErwerbspensum = toCopy.kategorieZuschlagZumErwerbspensum;
 	}
 
 	/**
@@ -243,6 +283,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr;
 	}
 
+	public boolean isHasSecondGesuchsteller() {
+		return hasSecondGesuchsteller;
+	}
+
+	public void setHasSecondGesuchsteller(boolean hasSecondGesuchsteller) {
+		this.hasSecondGesuchsteller = hasSecondGesuchsteller;
+	}
+
 	@Nullable
 	public String getBemerkungen() {
 		return bemerkungen;
@@ -316,17 +364,81 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.famGroesse = famGroesse;
 	}
 
-	public int getEinkommensjahr() {
+	public Integer getEinkommensjahr() {
 		return einkommensjahr;
 	}
 
-	public void setEinkommensjahr(int einkommensjahr) {
+	public void setEinkommensjahr(Integer einkommensjahr) {
 		this.einkommensjahr = einkommensjahr;
 	}
 
+	public boolean isEkv1Alleine() {
+		return ekv1Alleine;
+	}
+
+	public void setEkv1Alleine(boolean ekv1Alleine) {
+		this.ekv1Alleine = ekv1Alleine;
+	}
+
+	public boolean isEkv1ZuZweit() {
+		return ekv1ZuZweit;
+	}
+
+	public void setEkv1ZuZweit(boolean ekv1ZuZweit) {
+		this.ekv1ZuZweit = ekv1ZuZweit;
+	}
+
+	public boolean isEkv2Alleine() {
+		return ekv2Alleine;
+	}
+
+	public void setEkv2Alleine(boolean ekv2Alleine) {
+		this.ekv2Alleine = ekv2Alleine;
+	}
+
+	public boolean isEkv2ZuZweit() {
+		return ekv2ZuZweit;
+	}
+
+	public void setEkv2ZuZweit(boolean ekv2ZuZweit) {
+		this.ekv2ZuZweit = ekv2ZuZweit;
+	}
+
+	public boolean isEkv1NotExisting() {
+		return ekv1NotExisting;
+	}
+
+	public void setEkv1NotExisting(boolean ekv1NotExisting) {
+		this.ekv1NotExisting = ekv1NotExisting;
+	}
+
+	public boolean isKategorieMaxEinkommen() {
+		return kategorieMaxEinkommen;
+	}
+
+	public void setKategorieMaxEinkommen(boolean kategorieMaxEinkommen) {
+		this.kategorieMaxEinkommen = kategorieMaxEinkommen;
+	}
+
+	public boolean isKategorieKeinPensum() {
+		return kategorieKeinPensum;
+	}
+
+	public void setKategorieKeinPensum(boolean kategorieKeinPensum) {
+		this.kategorieKeinPensum = kategorieKeinPensum;
+	}
+
+	public boolean isKategorieZuschlagZumErwerbspensum() {
+		return kategorieZuschlagZumErwerbspensum;
+	}
+
+	public void setKategorieZuschlagZumErwerbspensum(boolean kategorieZuschlagZumErwerbspensum) {
+		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
+	}
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public void add(VerfuegungZeitabschnitt other) {
 		this.setBetreuungspensum(this.getBetreuungspensum() + other.getBetreuungspensum());
 		this.setFachstellenpensum(this.getFachstellenpensum() + other.getFachstellenpensum());
@@ -357,14 +469,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 				(other.getErwerbspensumGS2() != null ? other.getErwerbspensumGS2() : 0));
 		}
 
-		BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
-		if (this.getMassgebendesEinkommenVorAbzFamgr() != null) {
-			massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr.add(this.getMassgebendesEinkommenVorAbzFamgr());
-		}
-		if (other.getMassgebendesEinkommenVorAbzFamgr() != null) {
-			massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr.add(other.getMassgebendesEinkommenVorAbzFamgr());
-		}
-		this.setMassgebendesEinkommenVorAbzugFamgr(massgebendesEinkommenVorAbzugFamgr);
+		this.setMassgebendesEinkommenVorAbzugFamgr(MathUtil.DEFAULT.add(this.getMassgebendesEinkommenVorAbzFamgr(), other.getMassgebendesEinkommenVorAbzFamgr()));
 
 		this.addBemerkung(other.getBemerkungen());
 		this.setZuSpaetEingereicht(this.isZuSpaetEingereicht() || other.isZuSpaetEingereicht());
@@ -387,9 +492,20 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			Validate.isTrue(this.getFamGroesse() == null, "Familiengoressen kann nicht gemerged werden");
 			this.setFamGroesse(other.getFamGroesse());
 		}
-		if (other.getEinkommensjahr() != 0) {
+		if (other.getEinkommensjahr() != null) {
 			this.setEinkommensjahr(other.getEinkommensjahr());
 		}
+		this.setHasSecondGesuchsteller(this.isHasSecondGesuchsteller() || other.isHasSecondGesuchsteller());
+
+		this.ekv1Alleine = (this.ekv1Alleine || other.ekv1Alleine);
+		this.ekv1ZuZweit = (this.ekv1ZuZweit || other.ekv1ZuZweit);
+		this.ekv2Alleine = (this.ekv2Alleine || other.ekv2Alleine);
+		this.ekv2ZuZweit = (this.ekv2ZuZweit || other.ekv2ZuZweit);
+		this.ekv1NotExisting = (this.ekv1NotExisting || other.ekv1NotExisting);
+
+		this.setKategorieKeinPensum(this.kategorieKeinPensum || other.kategorieKeinPensum);
+		this.setKategorieMaxEinkommen(this.kategorieMaxEinkommen || other.kategorieMaxEinkommen);
+		this.setKategorieZuschlagZumErwerbspensum(this.kategorieZuschlagZumErwerbspensum || other.kategorieZuschlagZumErwerbspensum);
 	}
 
 	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey) {
@@ -479,6 +595,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	}
 
 	//TODO: Ist hier Objects.equals() richtig??
+	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject"})
 	public boolean isSame(VerfuegungZeitabschnitt that) {
 		if (this == that) {
 			return true;
@@ -489,6 +606,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			fachstellenpensum == that.fachstellenpensum &&
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
+			hasSecondGesuchsteller == that.hasSecondGesuchsteller &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(famGroesse, that.famGroesse) &&
 			Objects.equals(massgebendesEinkommenVorAbzugFamgr, that.massgebendesEinkommenVorAbzugFamgr) &&
@@ -497,7 +615,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			bezahltVollkosten == that.bezahltVollkosten &&
 			longAbwesenheit == that.longAbwesenheit &&
 			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten &&
-			this.einkommensjahr == that.einkommensjahr;
+			Objects.equals(this.einkommensjahr, that.einkommensjahr) &&
+			this.ekv1Alleine == that.ekv1Alleine &&
+			this.ekv1ZuZweit == that.ekv1ZuZweit &&
+			this.ekv2Alleine == that.ekv2Alleine &&
+			this.ekv2ZuZweit == that.ekv2ZuZweit &&
+			this.ekv1NotExisting == that.ekv1NotExisting;
 	}
 
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
@@ -509,6 +632,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	/**
 	 * Aller persistierten Daten ohne Kommentar
 	 */
+	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject", "QuestionableName"})
 	public boolean isSamePersistedValues(VerfuegungZeitabschnitt that) {
 		return betreuungspensum == that.betreuungspensum &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
@@ -519,7 +643,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(famGroesse.compareTo(that.famGroesse) == 0) &&
 			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
 			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0 &&
-			this.einkommensjahr == that.einkommensjahr;
+			Objects.equals(this.einkommensjahr, that.einkommensjahr);
 	}
 
 	/**
@@ -533,7 +657,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	}
 
 	@Override
-	public int compareTo(VerfuegungZeitabschnitt other) {
+	public int compareTo(@Nonnull VerfuegungZeitabschnitt other) {
 		CompareToBuilder compareToBuilder = new CompareToBuilder();
 		compareToBuilder.append(this.getGueltigkeit(), other.getGueltigkeit());
 		compareToBuilder.append(this.getId(), other.getId());  // wenn ids nicht gleich sind wollen wir auch compare to nicht gleich

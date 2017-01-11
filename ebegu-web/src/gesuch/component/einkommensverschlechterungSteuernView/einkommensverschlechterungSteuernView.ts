@@ -12,6 +12,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./einkommensverschlechterungSteuernView.html');
 require('./einkommensverschlechterungSteuernView.less');
 
@@ -34,7 +35,7 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager,
                 private $q: IQService, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null);
         this.model.copyEkvDataFromGesuch(this.gesuchModelManager.getGesuch());
         this.initialModel = angular.copy(this.model);
@@ -65,31 +66,14 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         return this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === true;
     }
 
-
-    showSteuerveranlagung_BjP2(): boolean {
-        return this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === true;
-    }
-
-
     showSteuererklaerung_BjP1(): boolean {
         return this.isSteuerveranlagungErhaltenGS1_Bjp1() === false;
     }
 
-    showSteuererklaerung_BjP2(): boolean {
-        return this.isSteuerveranlagungErhaltenGS1_Bjp2() === false;
-    }
 
     isSteuerveranlagungErhaltenGS1_Bjp1(): boolean {
         if (this.getEkv_GS1_Bjp1()) {
             return this.getEkv_GS1_Bjp1().steuerveranlagungErhalten;
-        } else {
-            return false;
-        }
-    }
-
-    isSteuerveranlagungErhaltenGS1_Bjp2(): boolean {
-        if (this.getEkv_GS1_Bjp2()) {
-            return this.getEkv_GS1_Bjp2().steuerveranlagungErhalten;
         } else {
             return false;
         }
@@ -121,16 +105,9 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         return this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1;
     }
 
-    public getEkv_GS1_Bjp2(): TSEinkommensverschlechterung {
-        return this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2;
-    }
 
     public getEkv_GS2_Bjp1(): TSEinkommensverschlechterung {
         return this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus1;
-    }
-
-    public getEkv_GS2_Bjp2(): TSEinkommensverschlechterung {
-        return this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2;
     }
 
     private gemeinsameStekClicked_BjP1(): void {
@@ -152,23 +129,6 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         }
     }
 
-    private gemeinsameStekClicked_BjP2(): void {
-        let ekvJaBasisJahrPlus2WasAlreadyEntered : boolean = this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2
-            && !this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2.isNew();
-        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false &&
-            ekvJaBasisJahrPlus2WasAlreadyEntered) {
-            // Wenn neu NEIN und schon was eingegeben -> Fragen mal auf false setzen und Status auf nok damit man sicher noch weiter muss!
-            this.initSteuerFragen();
-            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.NOK);
-        } else if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false) {
-            // Wenn neu NEIN -> Fragen loeschen wenn noch nichts eingegeben worden ist
-            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 = undefined;
-            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2 = undefined;
-        } else {
-            //Wenn neu JA
-            this.initViewModel(); //review @gapa fragen ist das nicht ein change genueber vorher
-        }
-    }
 
     /**
      * Es muss ein Wert geschrieben werden, um ekv persisierten zu können
@@ -184,24 +144,9 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
             gs2EkvJABasisJahrPlus1.steuererklaerungAusgefuellt = !gs2EkvJABasisJahrPlus1.steuererklaerungAusgefuellt ? false : gs2EkvJABasisJahrPlus1.steuererklaerungAusgefuellt;
             gs2EkvJABasisJahrPlus1.steuerveranlagungErhalten = !gs2EkvJABasisJahrPlus1.steuerveranlagungErhalten ? false : gs2EkvJABasisJahrPlus1.steuerveranlagungErhalten;
         }
-        let gs1EkvJABasisJahrPlus2 = this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2;
-        if (gs1EkvJABasisJahrPlus2) {
-            gs1EkvJABasisJahrPlus2.steuererklaerungAusgefuellt = !gs1EkvJABasisJahrPlus2.steuererklaerungAusgefuellt ? false : gs1EkvJABasisJahrPlus2.steuererklaerungAusgefuellt;
-            gs1EkvJABasisJahrPlus2.steuerveranlagungErhalten = !gs1EkvJABasisJahrPlus2.steuerveranlagungErhalten ? false : gs1EkvJABasisJahrPlus2.steuerveranlagungErhalten;
-        }
-        let gs2EkvJABasisJahrPlus2 = this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2;
-        if (gs2EkvJABasisJahrPlus2) {
-            gs2EkvJABasisJahrPlus2.steuererklaerungAusgefuellt = !gs2EkvJABasisJahrPlus2.steuererklaerungAusgefuellt ? false : gs2EkvJABasisJahrPlus2.steuererklaerungAusgefuellt;
-            gs2EkvJABasisJahrPlus2.steuerveranlagungErhalten = !gs2EkvJABasisJahrPlus2.steuerveranlagungErhalten ? false : gs2EkvJABasisJahrPlus2.steuerveranlagungErhalten;
-        }
     }
 
     private removeNotNeededEKV(): void {
-        // Wenn keine gemeinsame Steuererklärung, können hier die zusätzlichen Fragen noch gelöscht werden
-        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false) {
-            this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus2 = undefined;
-            this.model.einkommensverschlechterungContainerGS2.ekvJABasisJahrPlus2 = undefined;
-        }
 
         if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
             this.model.einkommensverschlechterungContainerGS1.ekvJABasisJahrPlus1 = undefined;
@@ -229,43 +174,11 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         }
     }
 
-    private steuerveranlagungClicked_BjP2(): void {
-        // Wenn Steuerveranlagung JA -> auch StekErhalten -> JA
-        // Wenn zusätzlich noch GemeinsameStek -> Dasselbe auch für GS2
-        // Wenn Steuerveranlagung erhalten, muss auch STEK ausgefüllt worden sein
-        if (this.getEkv_GS1_Bjp2().steuerveranlagungErhalten === true) {
-            this.getEkv_GS1_Bjp2().steuererklaerungAusgefuellt = true;
-            if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === true) {
-                this.getEkv_GS2_Bjp2().steuerveranlagungErhalten = true;
-                this.getEkv_GS2_Bjp2().steuererklaerungAusgefuellt = true;
-            }
-        } else if (this.getEkv_GS1_Bjp2().steuerveranlagungErhalten === false) {
-            // Steuerveranlagung neu NEIN -> Fragen loeschen
-            this.getEkv_GS1_Bjp2().steuererklaerungAusgefuellt = undefined;
-            if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === true) {
-                this.getEkv_GS2_Bjp2().steuerveranlagungErhalten = false;
-                this.getEkv_GS2_Bjp2().steuererklaerungAusgefuellt = undefined;
-            }
-        }
-    }
-
     private steuererklaerungClicked_BjP1() {
         if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === true) {
             this.getEkv_GS2_Bjp1().steuererklaerungAusgefuellt = this.getEkv_GS1_Bjp1().steuererklaerungAusgefuellt;
         }
     }
 
-    private steuererklaerungClicked_BjP2() {
-        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === true) {
-            this.getEkv_GS2_Bjp2().steuererklaerungAusgefuellt = this.getEkv_GS1_Bjp2().steuererklaerungAusgefuellt;
-        }
-    }
 
-    showFragen_BjP1(): boolean {
-        return this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1;
-    }
-
-    showFragen_BjP2(): boolean {
-        return this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2;
-    }
 }

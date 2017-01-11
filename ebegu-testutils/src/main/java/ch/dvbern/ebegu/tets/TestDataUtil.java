@@ -355,7 +355,6 @@ public final class TestDataUtil {
 		return gesuchsperiode;
 	}
 
-
 	public static Gesuchsperiode createGesuchsperiode1617() {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
 		gesuchsperiode.setActive(true);
@@ -363,6 +362,12 @@ public final class TestDataUtil {
 		return gesuchsperiode;
 	}
 
+	public static Gesuchsperiode createCustomGesuchsperiode(int firstYear, int secondYear) {
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		gesuchsperiode.setActive(true);
+		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(firstYear, Month.AUGUST, 1), LocalDate.of(secondYear, Month.JULY, 31)));
+		return gesuchsperiode;
+	}
 
 	public static EbeguParameter createDefaultEbeguParameter(EbeguParameterKey key) {
 		EbeguParameter instStammdaten = new EbeguParameter();
@@ -779,7 +784,7 @@ public final class TestDataUtil {
 	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch, LocalDate firstAblauf, int numberOfDocuments) {
 		Mahnung mahnung = new Mahnung();
 		mahnung.setMahnungTyp(typ);
-		mahnung.setActive(true);
+		mahnung.setTimestampAbgeschlossen(null);
 		List<String> bemerkungen = new ArrayList<>();
 		for (int i = 0; i < numberOfDocuments; i++){
 			bemerkungen.add("Test Dokument " + (i+1));
@@ -816,5 +821,13 @@ public final class TestDataUtil {
 		abwesenheit.setGueltigkeit(new DateRange(gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1),
 			gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1).plusDays(Constants.ABWESENHEIT_DAYS_LIMIT)));
 		return abwesenheit;
+	}
+
+	public static Gesuch createGesuch(Fall fall, Gesuchsperiode periodeToUpdate, AntragStatus status) {
+		Gesuch gesuch = new Gesuch();
+		gesuch.setFall(fall);
+		gesuch.setGesuchsperiode(periodeToUpdate);
+		gesuch.setStatus(status);
+		return gesuch;
 	}
 }

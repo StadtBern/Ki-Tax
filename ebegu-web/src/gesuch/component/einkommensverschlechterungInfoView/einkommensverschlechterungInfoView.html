@@ -54,16 +54,18 @@
                              ng-if="vm.showEkvi() && vm.showJahrPlus1()">
                             <label class="md-no-float" data-translate="EKVI_MONAT_DES_EREIGNISSES"
                                    for="stichtagBasisJahrPlus1"></label>
-                            <select name="stichtagBasisJahrPlus1" id="stichtagBasisJahrPlus1" class="form-control"
-                                    ng-model="vm.selectedStichtagBjP1"
-                                    ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
-                                    ng-required="true">
-                            </select>
-                            <dv-bisher gs="vm.selectedStichtagBjP1_GS"
-                                       ja="vm.selectedStichtagBjP1"></dv-bisher>
-                            <dv-error-messages for="vm.form.stichtagBasisJahrPlus1.$error"
-                                               class="error"></dv-error-messages>
+                            <div class="dv-select-style">
+                                <select name="stichtagBasisJahrPlus1" id="stichtagBasisJahrPlus1" class="form-control"
+                                        ng-model="vm.selectedStichtagBjP1"
+                                        ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
+                                        ng-required="true">
+                                </select>
 
+                                <dv-bisher gs="vm.selectedStichtagBjP1_GS"
+                                           ja="vm.selectedStichtagBjP1"></dv-bisher>
+                                <dv-error-messages for="vm.form.stichtagBasisJahrPlus1.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
 
                         </div>
                     </div>
@@ -78,8 +80,9 @@
                                 <input id="grundFuerBasisJahrPlus1" type="text" name="grundFuerBasisJahrPlus1"
                                        ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1"
                                        class="form-control" required>
-                                <dv-bisher gs="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoGS.grundFuerBasisJahrPlus1"
-                                           ja="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoJA.grundFuerBasisJahrPlus1"></dv-bisher>
+                                <dv-bisher
+                                    gs="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoGS.grundFuerBasisJahrPlus1"
+                                    ja="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoJA.grundFuerBasisJahrPlus1"></dv-bisher>
 
                                 <dv-error-messages for="vm.form.grundFuerBasisJahrPlus1.$error"
                                                    class="error"></dv-error-messages>
@@ -118,16 +121,18 @@
                              ng-if="vm.showEkvi() && vm.showJahrPlus2()">
                             <label class="md-no-float" data-translate="EKVI_MONAT_DES_EREIGNISSES"
                                    for="stichtagBasisJahrPlus2"></label>
-                            <select name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2" class="form-control"
-                                    ng-model="vm.selectedStichtagBjP2"
-                                    ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
-                                    ng-required="true">
-                            </select>
-                            <dv-bisher gs="vm.selectedStichtagBjP2_GS"
-                                       ja="vm.selectedStichtagBjP2"></dv-bisher>
-                            <dv-error-messages for="vm.form.stichtagBasisJahrPlus2.$error"
-                                               class="error"></dv-error-messages>
+                            <div class="dv-select-style">
+                                <select name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2" class="form-control"
+                                        ng-model="vm.selectedStichtagBjP2"
+                                        ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
+                                        ng-required="true">
+                                </select>
 
+                                <dv-bisher gs="vm.selectedStichtagBjP2_GS"
+                                           ja="vm.selectedStichtagBjP2"></dv-bisher>
+                                <dv-error-messages for="vm.form.stichtagBasisJahrPlus2.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
 
                         </div>
                     </div>
@@ -142,8 +147,9 @@
                                 <input id="grundFuerBasisJahrPlus2" type="text" name="grundFuerBasisJahrPlus2"
                                        ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2"
                                        class="form-control" required>
-                                <dv-bisher gs="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoGS.grundFuerBasisJahrPlus2"
-                                           ja="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoJA.grundFuerBasisJahrPlus2"></dv-bisher>
+                                <dv-bisher
+                                    gs="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoGS.grundFuerBasisJahrPlus2"
+                                    ja="vm.getEinkommensverschlechterungsInfoContainer().einkommensverschlechterungInfoJA.grundFuerBasisJahrPlus2"></dv-bisher>
 
                                 <dv-error-messages for="vm.form.grundFuerBasisJahrPlus2.$error"
                                                    class="error"></dv-error-messages>

@@ -22,10 +22,11 @@ public class EinkommenAbschnittRuleTest {
 	private static final BigDecimal EINKOMMEN_FINANZIELLE_SITUATION = new BigDecimal("100000");
 	private static final BigDecimal EINKOMMEN_EKV_ABGELEHNT = new BigDecimal("80001");
 	private static final BigDecimal EINKOMMEN_EKV_ANGENOMMEN = new BigDecimal("80000");
-	private static final BigDecimal EINKOMMEN_EKV2_ANGENOMMEN = new BigDecimal("50000");
-	private static final BigDecimal EINKOMMEN_EKV2_ABGELEHNT = new BigDecimal("80002");
+	private static final BigDecimal EINKOMMEN_EKV2_ANGENOMMEN = new BigDecimal("79999");
 
+	private static BigDecimal MAX_EINKOMMEN = new BigDecimal("159000");
 	private final EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
+	private final EinkommenCalcRule einkommenCalcRule = new EinkommenCalcRule(Constants.DEFAULT_GUELTIGKEIT, MAX_EINKOMMEN);
 
 
 	@Test
@@ -36,6 +37,7 @@ public class EinkommenAbschnittRuleTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		List<VerfuegungZeitabschnitt> zeitabschnitte = einkommenAbschnittRule.createVerfuegungsZeitabschnitte(betreuung, new ArrayList<>());
+		zeitabschnitte = einkommenCalcRule.calculate(betreuung, zeitabschnitte);
 		Assert.assertNotNull(zeitabschnitte);
 		Assert.assertEquals(1, zeitabschnitte.size());
 		Assert.assertEquals(0, EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(0).getMassgebendesEinkommen()));
@@ -50,9 +52,11 @@ public class EinkommenAbschnittRuleTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		List<VerfuegungZeitabschnitt> zeitabschnitte = einkommenAbschnittRule.createVerfuegungsZeitabschnitte(betreuung, new ArrayList<>());
+		zeitabschnitte = einkommenCalcRule.calculate(betreuung, zeitabschnitte);
 		Assert.assertNotNull(zeitabschnitte);
-		Assert.assertEquals(1, zeitabschnitte.size());
+		Assert.assertEquals(2, zeitabschnitte.size());
 		Assert.assertEquals(0, EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(0).getMassgebendesEinkommen()));
+		Assert.assertEquals(0, EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(1).getMassgebendesEinkommen())); // Abgelehnt
 	}
 
 	@Test
@@ -64,6 +68,7 @@ public class EinkommenAbschnittRuleTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		List<VerfuegungZeitabschnitt> zeitabschnitte = einkommenAbschnittRule.createVerfuegungsZeitabschnitte(betreuung, new ArrayList<>());
+		zeitabschnitte = einkommenCalcRule.calculate(betreuung, zeitabschnitte);
 		Assert.assertNotNull(zeitabschnitte);
 		Assert.assertEquals(2, zeitabschnitte.size());
 		Assert.assertEquals(0, EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(0).getMassgebendesEinkommen()));
@@ -76,14 +81,16 @@ public class EinkommenAbschnittRuleTest {
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ABGELEHNT, true);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV2_ANGENOMMEN, false);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ANGENOMMEN, false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		List<VerfuegungZeitabschnitt> zeitabschnitte = einkommenAbschnittRule.createVerfuegungsZeitabschnitte(betreuung, new ArrayList<>());
+		zeitabschnitte = einkommenCalcRule.calculate(betreuung, zeitabschnitte);
 		Assert.assertNotNull(zeitabschnitte);
-		Assert.assertEquals(2, zeitabschnitte.size());
+		Assert.assertEquals(3, zeitabschnitte.size());
 		Assert.assertEquals(0, EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(0).getMassgebendesEinkommen()));
-		Assert.assertEquals(0, EINKOMMEN_EKV2_ANGENOMMEN.compareTo(zeitabschnitte.get(1).getMassgebendesEinkommen()));
+		Assert.assertEquals(0, EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(1).getMassgebendesEinkommen())); // Abgelehnt
+		Assert.assertEquals(0, EINKOMMEN_EKV_ANGENOMMEN.compareTo(zeitabschnitte.get(2).getMassgebendesEinkommen()));
 	}
 
 	@Test
@@ -96,6 +103,7 @@ public class EinkommenAbschnittRuleTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		List<VerfuegungZeitabschnitt> zeitabschnitte = einkommenAbschnittRule.createVerfuegungsZeitabschnitte(betreuung, new ArrayList<>());
+		zeitabschnitte = einkommenCalcRule.calculate(betreuung, zeitabschnitte);
 		Assert.assertNotNull(zeitabschnitte);
 		Assert.assertEquals(3, zeitabschnitte.size());
 		Assert.assertEquals(0,EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(0).getMassgebendesEinkommen()));
@@ -109,12 +117,15 @@ public class EinkommenAbschnittRuleTest {
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ABGELEHNT, true);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV2_ABGELEHNT, false);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ABGELEHNT, false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		List<VerfuegungZeitabschnitt> zeitabschnitte = einkommenAbschnittRule.createVerfuegungsZeitabschnitte(betreuung, new ArrayList<>());
+		zeitabschnitte = einkommenCalcRule.calculate(betreuung, zeitabschnitte);
 		Assert.assertNotNull(zeitabschnitte);
-		Assert.assertEquals(1, zeitabschnitte.size());
+		Assert.assertEquals(3, zeitabschnitte.size());
 		Assert.assertEquals(0,EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(0).getMassgebendesEinkommen()));
+		Assert.assertEquals(0,EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(1).getMassgebendesEinkommen())); // Abgelehnt
+		Assert.assertEquals(0,EINKOMMEN_FINANZIELLE_SITUATION.compareTo(zeitabschnitte.get(2).getMassgebendesEinkommen())); // Abgelehnt
 	}
 }

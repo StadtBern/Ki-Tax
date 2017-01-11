@@ -109,13 +109,16 @@
                                 <div class="form-group col-md-6">
                                     <label class="md-no-float" data-translate="TRAEGERSCHAFT"
                                            for="traegerschaft_ID"></label>
-                                    <select name="traegerschaft_ID" id="traegerschaft_ID" class="form-control"
-                                            ng-model="vm.getSelectedInstitution().traegerschaft"
-                                            ng-options="traegerschaft as traegerschaft.name for traegerschaft in vm.getTreagerschaftList() track by traegerschaft.id"
-                                            ng-required="false">
-                                    </select>
+                                    <div class="dv-select-style">
+                                        <select name="traegerschaft_ID" id="traegerschaft_ID" class="form-control"
+                                                ng-model="vm.getSelectedInstitution().traegerschaft"
+                                                ng-options="traegerschaft as traegerschaft.name for traegerschaft in vm.getTreagerschaftList() track by traegerschaft.id"
+                                                ng-required="false">
+                                        </select>
+
                                     <dv-error-messages for="form.traegerschaft_ID.$error"
                                                        class="error"></dv-error-messages>
+                                    </div>
                                 </div>
                             </div>
 
@@ -207,15 +210,18 @@
                                             <label class="md-no-float" data-translate="BETREUUNGSANGEBOT_WAEHLEN"
                                                    for="betreuungsangebot">
                                             </label>
-                                            <select name="betreuungsangebot" id="betreuungsangebot"
-                                                    class="form-control"
-                                                    ng-model="vm.selectedInstitutionStammdatenBetreuungsangebot"
-                                                    ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
-                                                    ng-required="true"
-                                                    ng-disabled="!vm.isCreateStammdatenMode()">
-                                            </select>
+                                            <div class="dv-select-style">
+                                                <select name="betreuungsangebot" id="betreuungsangebot"
+                                                        class="form-control"
+                                                        ng-model="vm.selectedInstitutionStammdatenBetreuungsangebot"
+                                                        ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
+                                                        ng-required="true"
+                                                        ng-disabled="!vm.isCreateStammdatenMode()">
+                                                </select>
+
                                             <dv-error-messages for="form.betreuungsangebot.$error"
                                                                class="error"></dv-error-messages>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -382,14 +388,17 @@
                                                     <label class="md-no-float" data-translate="ADRESSE_LAND"
                                                            for="inst-adr-land">
                                                     </label>
-                                                    <select name="adresseLand" id="inst-adr-land"
-                                                            ng-model="vm.getSelectedInstitutionStammdaten().adresse.land"
-                                                            ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
-                                                            class="form-control"
-                                                            required>
-                                                    </select>
-                                                    <dv-error-messages for="adresseForm.adresseLand.$error"
+                                                    <div class="dv-select-style">
+                                                        <select name="adresseLand" id="inst-adr-land"
+                                                                ng-model="vm.getSelectedInstitutionStammdaten().adresse.land"
+                                                                ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
+                                                                class="form-control"
+                                                                required>
+                                                        </select>
+
+                                                        <dv-error-messages for="adresseForm.adresseLand.$error"
                                                                        class="error"></dv-error-messages>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

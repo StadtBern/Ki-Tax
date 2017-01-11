@@ -62,6 +62,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	private DokumentGrundService dokumentGrundService;
 	@Inject
 	private GeneratedDokumentService generatedDokumentService;
+	@Inject
+	private FallService fallService;
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
 	private InstitutionService institutionService;
@@ -453,6 +457,111 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		optMutation.get().setStatus(AntragStatus.VERFUEGT);
 		gesuchService.updateGesuch(optMutation.get(), true);
 		gesuchService.antragMutieren(gesuch.getId(), LocalDate.now()); // nach dem die Mutation verfuegt ist, darf man es wieder mutieren
+	}
+
+	@Test
+	public void testGetAllGesucheForFallAndPeriod() {
+		final Fall fall = fallService.saveFall(TestDataUtil.createDefaultFall());
+
+		final Gesuchsperiode gesuchsperiode1516 = TestDataUtil.createCustomGesuchsperiode(2015, 2016);
+		final Gesuchsperiode periodeToUpdate = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
+
+		final Gesuchsperiode otherPeriod = gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
+
+		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
+		persistence.persist(gesuch1516_1);
+		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1516_2);
+		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1415_1);
+
+		final List<Gesuch> allGesuche_1 = gesuchService.getAllGesucheForFallAndPeriod(gesuch1516_1.getFall(), gesuch1516_1.getGesuchsperiode());
+		Assert.assertEquals(2, allGesuche_1.size());
+
+		final List<Gesuch> allGesuche_2 = gesuchService.getAllGesucheForFallAndPeriod(gesuch1516_1.getFall(), gesuch1415_1.getGesuchsperiode());
+		Assert.assertEquals(1, allGesuche_2.size());
+	}
+
+	@Test
+	public void testSetBeschwerdeHaengigForPeriode() {
+		final Fall fall = fallService.saveFall(TestDataUtil.createDefaultFall());
+
+		final Gesuchsperiode gesuchsperiode1516 = TestDataUtil.createCustomGesuchsperiode(2015, 2016);
+		final Gesuchsperiode periodeToUpdate = 	gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
+
+		final Gesuchsperiode otherPeriod = 	gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
+
+		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1516_1);
+		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1516_2);
+		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1415_1);
+
+		gesuchService.setBeschwerdeHaengigForPeriode(gesuch1516_1);
+
+		// Pruefen dass nur die Gesuche der gegebenen Periode den Status BESCHWERDE_HAENGIG haben
+		final List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(gesuch1516_1.getFall().getId());
+		Assert.assertEquals(3, allGesuchIDsForFall.size());
+
+		allGesuchIDsForFall.forEach(gesuchID -> {
+			final Optional<Gesuch> foundGesuch = gesuchService.findGesuch(gesuchID);
+			Assert.assertTrue(foundGesuch.isPresent());
+			if (foundGesuch.get().getGesuchsperiode().isSame(periodeToUpdate)) {
+				if (foundGesuch.get().equals(gesuch1516_1)) {
+					Assert.assertEquals(AntragStatus.BESCHWERDE_HAENGIG, foundGesuch.get().getStatus());
+				}
+				else {
+					Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus()); // vergleicht mit IN_BEARBEITUNG_JA weil es so gesetzt wurde
+				}
+				Assert.assertTrue(foundGesuch.get().isGesperrtWegenBeschwerde());
+			}
+			else {
+				Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus()); // vergleicht mit IN_BEARBEITUNG_JA weil es so gesetzt wurde
+				Assert.assertFalse(foundGesuch.get().isGesperrtWegenBeschwerde());
+			}
+		});
+	}
+
+	@Test
+	public void testRemoveBeschwerdeHaengigForPeriode() {
+		final Fall fall = fallService.saveFall(TestDataUtil.createDefaultFall());
+
+		final Gesuchsperiode gesuchsperiode1516 = TestDataUtil.createCustomGesuchsperiode(2015, 2016);
+		final Gesuchsperiode periodeToUpdate = 	gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
+
+		final Gesuchsperiode otherPeriod = 	gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
+
+		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
+		persistence.persist(gesuch1516_1);
+		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1516_2);
+		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.IN_BEARBEITUNG_JA);
+		persistence.persist(gesuch1415_1);
+
+		gesuchService.setBeschwerdeHaengigForPeriode(gesuch1516_1);
+		gesuchService.removeBeschwerdeHaengigForPeriode(gesuch1516_1);
+
+		// Pruefen dass nur die Gesuche der gegebenen Periode den Status BESCHWERDE_HAENGIG haben
+		final List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(gesuch1516_1.getFall().getId());
+		Assert.assertEquals(3, allGesuchIDsForFall.size());
+
+		allGesuchIDsForFall.forEach(gesuchID -> {
+			final Optional<Gesuch> foundGesuch = gesuchService.findGesuch(gesuchID);
+			Assert.assertTrue(foundGesuch.isPresent());
+			if (foundGesuch.get().getGesuchsperiode().isSame(periodeToUpdate)) {
+				if (foundGesuch.get().equals(gesuch1516_1)) {
+					Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus());
+				}
+				else {
+					Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus());
+				}
+			}
+			else {
+				Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus());
+			}
+			Assert.assertFalse(foundGesuch.get().isGesperrtWegenBeschwerde());
+		});
 	}
 
 
