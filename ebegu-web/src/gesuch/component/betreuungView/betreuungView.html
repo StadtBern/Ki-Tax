@@ -345,35 +345,35 @@
                         </div>
                         <!--Institution Buttons-->
 
-                        <div ng-if="!vm.isFromMutation()">
-                            <div dv-show-element
-                                 dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                                 dv-show-expression="vm.isBetreuungsstatusWarten()">
+
+                        <div dv-show-element
+                             dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                             dv-show-expression="vm.isBetreuungsstatusWarten()">
+
+                            <div ng-if="!vm.isFromMutation()">
                                 <dv-loading-button button-click="vm.platzAbweisen()"
 
                                                    aria-label="{{ABWEISEN_UPPER | translate}}">
                                     <span data-translate="ABWEISEN_UPPER"></span>
                                 </dv-loading-button>
+
+
                             </div>
-                        </div>
-                        <div ng-if="vm.isFromMutation()">
-                            <div dv-show-element
-                                 dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                                 dv-show-expression="vm.isBetreuungsstatusWarten()">
+                            <div ng-if="vm.isFromMutation()">
+
                                 <dv-loading-button button-click="vm.platzNichtEingetreten()"
                                                    ng-if="vm.isFromMutation()"
                                                    aria-label="{{NICHT_EINGETRETEN_UPPER | translate}}">
                                     <span data-translate="NICHT_EINGETRETEN_UPPER"></span>
                                 </dv-loading-button>
+
                             </div>
-                        </div>
-                        <div dv-show-element
-                             dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                             dv-show-expression="vm.isBetreuungsstatusWarten()">
+
                             <dv-loading-button button-click="vm.platzBestaetigen()" type="submit"
                                                aria-label="{{BESTAETIGEN_UPPER | translate}}">
                                 <span data-translate="BESTAETIGEN_UPPER"></span>
                             </dv-loading-button>
+
                         </div>
 
 

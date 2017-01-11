@@ -150,6 +150,22 @@
             margin-right: 3rem;
         }
     }
+    .nav-row-betreuung{
+        &>div{
+            &:last-child{
+                margin-left:3rem;
+            }
+            &>div{
+                display:flex;
+                  flex-direction: row;
+                -ms-flex-direction: row;
+                padding: 0 3rem 0;
+                &>div{
+                    padding: 0 0.75rem 0;
+                }
+            }
+        }
+    }
     & > div {
         height: 100%;
         & > * {
@@ -182,9 +198,6 @@
 
 .gesuchModul {
     padding: 5rem 3rem 10rem;
-    &.verfuegenListView {
-        padding: 5rem 3rem 17rem;
-    }
     position: relative;
 
     & div {
