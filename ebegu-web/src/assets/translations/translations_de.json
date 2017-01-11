@@ -526,7 +526,7 @@
     "ZUSCHLAGSGRUND_WAEHLEN": "Zuschlagsgrund wählen",
     "ZUSCHLAG_ZU_ERWERBSPENSUM": "Zuschlag zum Erwerbspensum",
     "ZUSCHLAGSGRUND_HELP": "TODO Hilfetext zum Zuschlaggrund",
-    "ZUSCHLAGSPROZENT": "Zuschlagsprozent",
+    "ZUSCHLAGSPROZENT": "Zuschlag (max. {{max}}%)",
     "GESUNDH_EINSCHRAENKUNGEN": "gesundheitliche Einschränkungen in der Betreuung der Kinder",
     "GESUNDH_EINSCHRAENKUNGEN_HELP": "TODO Hilfetext für Gesundh Einschr definieren",
     "UNREGELMAESSIGE_ARBEITSZEITEN": "Unregelmässige Arbeitszeiten",
