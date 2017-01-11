@@ -163,7 +163,7 @@ export default class TSAntragDTO {
         this._gesperrtWegenBeschwerde = value;
     }
 
-    get gesuchsperiodeString() {
+    get gesuchsperiodeString(): string {
         if (this._gesuchsperiodeGueltigAb && this._gesuchsperiodeGueltigBis) {
             return this._gesuchsperiodeGueltigAb.year() + '/'
                 + (this._gesuchsperiodeGueltigBis.year() - 2000);
