@@ -23,6 +23,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
@@ -98,7 +99,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		// Alle Mahnungen auf erledigt stellen
 		Collection<Mahnung> mahnungenForGesuch = findMahnungenForGesuch(gesuch);
 		for (Mahnung mahnung : mahnungenForGesuch) {
-			mahnung.setActive(false);
+			mahnung.setTimestampAbgeschlossen(LocalDateTime.now());
 			persistence.persist(mahnung);
 		}
 	}
@@ -132,7 +133,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		Root<Mahnung> root = query.from(Mahnung.class);
 		query.distinct(true);
 
-		Predicate predicateAktiv = cb.equal(root.get(Mahnung_.active), Boolean.TRUE);
+		Predicate predicateAktiv = cb.isNull(root.get(Mahnung_.timestampAbgeschlossen));
 		Predicate predicateAbgelaufen = cb.lessThan(root.get(Mahnung_.datumFristablauf), LocalDate.now());
 		query.where(predicateAktiv, predicateAbgelaufen);
 
@@ -158,7 +159,7 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		Root<Mahnung> root = query.from(Mahnung.class);
 		query.select(root);
 		Predicate predicateTyp = cb.equal(root.get(Mahnung_.mahnungTyp), MahnungTyp.ERSTE_MAHNUNG);
-		Predicate predicateAktiv = cb.equal(root.get(Mahnung_.active), Boolean.TRUE);
+		Predicate predicateAktiv = cb.isNull(root.get(Mahnung_.timestampAbgeschlossen));
 		Predicate predicateGesuch = cb.equal(root.get(Mahnung_.gesuch), gesuch);
 		query.where(predicateTyp, predicateAktiv, predicateGesuch);
 		// Wirft eine NonUnique-Exception, falls mehrere aktive ErstMahnungen!

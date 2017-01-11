@@ -29,13 +29,15 @@ public class AntragStatusHistory extends AbstractEntity implements Comparable<An
 
 	@NotNull
 	@Column(nullable = false, columnDefinition = "DATETIME(6)")
-	private LocalDateTime datum;
+	private LocalDateTime timestampVon;
+
+	@Column(nullable = true, columnDefinition = "DATETIME(6)")
+	private LocalDateTime timestampBis;
 
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private AntragStatus status;
-
 
 
 	public Gesuch getGesuch() {
@@ -54,12 +56,20 @@ public class AntragStatusHistory extends AbstractEntity implements Comparable<An
 		this.benutzer = benutzer;
 	}
 
-	public LocalDateTime getDatum() {
-		return datum;
+	public LocalDateTime getTimestampVon() {
+		return timestampVon;
 	}
 
-	public void setDatum(LocalDateTime datum) {
-		this.datum = datum;
+	public void setTimestampVon(LocalDateTime datum) {
+		this.timestampVon = datum;
+	}
+
+	public LocalDateTime getTimestampBis() {
+		return timestampBis;
+	}
+
+	public void setTimestampBis(LocalDateTime timestampBis) {
+		this.timestampBis = timestampBis;
 	}
 
 	public AntragStatus getStatus() {
@@ -73,7 +83,7 @@ public class AntragStatusHistory extends AbstractEntity implements Comparable<An
 	@Override
 	public int compareTo(AntragStatusHistory o) {
 		CompareToBuilder cb = new CompareToBuilder();
-		cb.append(this.getDatum(), o.getDatum())
+		cb.append(this.getTimestampVon(), o.getTimestampVon())
 			.append(this.getId(), o.getId());
 		return cb.toComparison();
 	}
