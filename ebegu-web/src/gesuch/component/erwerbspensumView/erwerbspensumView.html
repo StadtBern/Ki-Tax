@@ -118,8 +118,8 @@
                                              ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled() || !vm.viewZuschlag()"
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
-                                    <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate:'{maxzuschlag: vm.maxZuschlagsprozent}' "></dv-tooltip>
                                 </md-checkbox>
+                                <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate:'{maxzuschlag: vm.maxZuschlagsprozent}' "></dv-tooltip>
                                 <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum"
                                            ja="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
                                            specific-bisher-text="vm.getTextZuschlagErwerbspensumKorrekturJA()"></dv-bisher>
