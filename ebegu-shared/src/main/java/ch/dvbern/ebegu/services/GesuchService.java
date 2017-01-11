@@ -120,8 +120,14 @@ public interface GesuchService {
 
 	/**
 	 * Gibt das letzte verfuegte Gesuch zurueck, also rekursiv ueber die Vorgaenger, nie das uebergebene Gesuch.
-     */
+	 * @deprecated Diese Methode gibt das letzte verfuegte Gesuch zurueck. Dieses Gesuch muss nicht unbedignt
+	 * die richtigen Daten enthalten. Diese Methode sollte deshalb nur vorsichtig benutzt werden.
+	 * Z.B. wenn eine Betreuung im Status GESCHLOSSEN_OHNE_VERFUEGUNG ist, und wir diese Methode benutzen, wird dann die falsche
+	 * Verfuegung geholt
+	 * @return
+	 */
 	@Nonnull
+	@Deprecated
 	Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch);
 
 	/**
