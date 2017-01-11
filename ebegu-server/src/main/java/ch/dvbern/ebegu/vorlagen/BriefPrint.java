@@ -25,6 +25,10 @@ public interface BriefPrint {
 
 	String getZustellDatum();
 
+	String getPeriode();
+
+	String getFallNummer();
+
 	String getUnterzeichner();
 
 }
