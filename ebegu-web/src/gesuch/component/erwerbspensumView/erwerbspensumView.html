@@ -110,6 +110,7 @@
                     </div>
 
                     <!--Zuschlag zu Erwerbspensum-->
+                    <!--TODO wijo dev reinmergen und maxzuschlag bei ZUSCHLAGSGRUND_HELP mitgeben-->
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
@@ -118,7 +119,7 @@
                                              ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled() || !vm.viewZuschlag()"
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
-                                    <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate:'{maxzuschlag: 10}' "></dv-tooltip>
                                 </md-checkbox>
                                 <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum"
                                            ja="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"

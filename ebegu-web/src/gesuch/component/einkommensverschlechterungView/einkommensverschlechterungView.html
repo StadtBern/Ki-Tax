@@ -289,8 +289,10 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_FAMILIENZULAGE"
-                                       for="familienzulage"></label>
+                                <label class="md-no-float" for="familienzulage">
+                                    <span data-translate="FINANZIELLE_SITUATION_FAMILIENZULAGE"></span>
+                                    <dv-tooltip text="'EINKOMMENSVERSCHLECHTERUNG_FAMILIENZULAGE_HELP' | translate"></dv-tooltip>
+                                </label>
                                 <input id="familienzulage" type="text" name="familienzulage" ui-number-mask="0"
                                        ng-model="vm.model.getEkvToWorkWith().familienzulage"
                                        dv-max-length max="999999999999" class="form-control">
@@ -307,8 +309,10 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_ERSATZEINKOMMEN"
-                                       for="ersatzeinkommen"></label>
+                                <label class="md-no-float" for="ersatzeinkommen">
+                                    <span data-translate="FINANZIELLE_SITUATION_ERSATZEINKOMMEN"></span>
+                                    <dv-tooltip text="'EINKOMMENSVERSCHLECHTERUNG_ERSATZEINKOMMEN_HELP' | translate"></dv-tooltip>
+                                </label>
                                 <input id="ersatzeinkommen" type="text" name="ersatzeinkommen" ui-number-mask="0"
                                        ng-model="vm.model.getEkvToWorkWith().ersatzeinkommen"
                                        dv-max-length max="999999999999" class="form-control">
@@ -325,8 +329,10 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_ERHALTENEALIMENTE"
-                                       for="erhalteneAlimente"></label>
+                                <label class="md-no-float" for="erhalteneAlimente">
+                                    <span data-translate="FINANZIELLE_SITUATION_ERHALTENEALIMENTE"></span>
+                                    <dv-tooltip text="'EINKOMMENSVERSCHLECHTERUNG_ERHALTENEALIMENTE_HELP' | translate"></dv-tooltip>
+                                </label>
                                 <input id="erhalteneAlimente" type="text" name="erhalteneAlimente" ui-number-mask="0"
                                        ng-model="vm.model.getEkvToWorkWith().erhalteneAlimente"
                                        dv-max-length max="999999999999" class="form-control">
@@ -350,6 +356,7 @@
                                              ng-change="vm.showSelbstaendigClicked()"
                                              ng-disabled="evm.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig() || vm.isGesuchReadonly()">
                                     <span data-translate="FINANZIELLE_SITUATION_SELBSTAENDIGKEIT"></span>
+                                    <dv-tooltip text="'EINKOMMENSVERSCHLECHTERUNG_SELBSTAENDIGKEIT_HELP' | translate"></dv-tooltip>
                                 </md-checkbox>
                                 <dv-bisher gs="vm.showSelbstaendigGS" class="dv-bisher-break"
                                            ja="vm.showSelbstaendig"
@@ -474,8 +481,10 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_GELEISTETEALIMENTE"
-                                       for="geleisteteAlimente"></label>
+                                <label class="md-no-float" for="geleisteteAlimente">
+                                    <span data-translate="FINANZIELLE_SITUATION_GELEISTETEALIMENTE"></span>
+                                    <dv-tooltip text="'FINANZIELLE_SITUATION_GELEISTETEALIMENTE_HELP' | translate"></dv-tooltip>
+                                </label>
                                 <input id="geleisteteAlimente" type="text" name="geleisteteAlimente" ui-number-mask="0"
                                        ng-model="vm.model.getEkvToWorkWith().geleisteteAlimente"
                                        dv-max-length max="999999999999" class="form-control">

@@ -58,7 +58,7 @@
                                     <select name="betreuungsangebot" id="betreuungsangebot"
                                             ng-model="vm.betreuungsangebot"
                                             class="form-control"
-                                            ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
+                                            ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues"
                                             ng-required="true" ng-disabled="!vm.isEnabled()"
                                             ng-change="vm.changedAngebot()">
                                     </select>
