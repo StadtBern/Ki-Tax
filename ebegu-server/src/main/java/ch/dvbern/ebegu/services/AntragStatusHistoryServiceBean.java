@@ -53,10 +53,16 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 
 		Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
 		if (currentBenutzer.isPresent()) {
+			// Den letzten Eintrag beenden, falls es schon einen gab
+			AntragStatusHistory lastStatusChange = findLastStatusChange(gesuch);
+			if (lastStatusChange != null) {
+				lastStatusChange.setTimestampBis(LocalDateTime.now());
+			}
+			// Und den neuen speichern
 			final AntragStatusHistory newStatusHistory = new AntragStatusHistory();
 			newStatusHistory.setStatus(gesuch.getStatus());
 			newStatusHistory.setGesuch(gesuch);
-			newStatusHistory.setDatum(LocalDateTime.now());
+			newStatusHistory.setTimestampVon(LocalDateTime.now());
 			newStatusHistory.setBenutzer(currentBenutzer.get());
 
 			return persistence.persist(newStatusHistory);
@@ -77,7 +83,7 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 			Predicate predicateInstitution = cb.equal(root.get(AntragStatusHistory_.gesuch).get(Gesuch_.id), gesuch.getId());
 
 			query.where(predicateInstitution);
-			query.orderBy(cb.desc(root.get(AntragStatusHistory_.datum)));
+			query.orderBy(cb.desc(root.get(AntragStatusHistory_.timestampVon)));
 
 			AntragStatusHistory result = persistence.getEntityManager().createQuery(query).setFirstResult(0).setMaxResults(1).getSingleResult();
 			authorizer.checkReadAuthorization(result.getGesuch());

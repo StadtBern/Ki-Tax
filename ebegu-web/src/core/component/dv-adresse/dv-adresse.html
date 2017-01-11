@@ -121,7 +121,7 @@
         </div>
         <!-- Land-->
         <div class="row">
-            <div class="col-sm-12 dv-input-container-small">
+            <div class="col-sm-12 dv-input-container-medium">
                 <div class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_LAND" for="{{vm.prefix}}-land">
                     </label>
@@ -156,16 +156,16 @@
                         <span data-translate="NICHT_IN_BERN_WOHNHAFT"></span>
                     </md-checkbox>
                     <dv-error-messages for="adresseForm.adresseNichtInGemeinde.$error"
-                                       class="error"></dv-error-messages>
+                                       class="error" style="height: 1.5rem;"></dv-error-messages>
                 </div>
             </div>
         </div>
 
 
         <!-- gueltig ab / gueltig bis -->
-        <div class="row">
+        <div class="row marginTop05" ng-if="vm.showDatumVon()">
             <div class="col-sm-12 dv-input-container-small">
-                <dv-input-container class="form-group" ng-if="vm.showDatumVon()">
+                <dv-input-container class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_GUELTIGAB" for="{{vm.prefix}}-gueltigAb">
                     </label>
                     <dv-datepicker input-id="{{vm.prefix}}-gueltigAb" input-name="gueltigAb" name="gueltigAb"

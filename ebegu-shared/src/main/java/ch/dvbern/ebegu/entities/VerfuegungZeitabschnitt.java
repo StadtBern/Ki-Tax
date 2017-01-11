@@ -73,29 +73,28 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	private boolean hasSecondGesuchsteller;
 
 	@Transient
-	private boolean ekv1_alleine;
+	private boolean ekv1Alleine;
 
 	@Transient
-	private boolean ekv1_zuZweit;
+	private boolean ekv1ZuZweit;
 
 	@Transient
-	private boolean ekv2_alleine;
+	private boolean ekv2Alleine;
 
 	@Transient
-	private boolean ekv2_zuZweit;
+	private boolean ekv2ZuZweit;
 
 	@Transient
-	private boolean ekv1_alleine_notAccepted;
+	private boolean ekv1NotExisting;
 
 	@Transient
-	private boolean ekv2_alleine_notAccepted;
+	private boolean kategorieMaxEinkommen = false;
 
 	@Transient
-	private boolean ekv1_zuZweit_notAccepted;
+	private boolean kategorieKeinPensum = false;
 
 	@Transient
-	private boolean ekv2_zuZweit_notAccepted;
-
+	private boolean kategorieZuschlagZumErwerbspensum = false;
 
 	@Max(100)
 	@Min(0)
@@ -141,12 +140,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
 
+
 	public VerfuegungZeitabschnitt() {
 	}
 
 	/**
 	 * copy Konstruktor
 	 */
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public VerfuegungZeitabschnitt(VerfuegungZeitabschnitt toCopy) {
 		this.setVorgaengerId(toCopy.getId());
 		this.setGueltigkeit(new DateRange(toCopy.getGueltigkeit()));
@@ -170,16 +171,16 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.massgebendesEinkommenVorAbzugFamgr = toCopy.massgebendesEinkommenVorAbzugFamgr;
 		this.hasSecondGesuchsteller = toCopy.hasSecondGesuchsteller;
 		this.einkommensjahr = toCopy.einkommensjahr;
-		this.ekv1_alleine = toCopy.ekv1_alleine;
-		this.ekv1_zuZweit = toCopy.ekv1_zuZweit;
-		this.ekv2_alleine = toCopy.ekv2_alleine;
-		this.ekv2_zuZweit = toCopy.ekv2_zuZweit;
-		this.ekv1_alleine_notAccepted = toCopy.ekv1_alleine_notAccepted;
-		this.ekv1_zuZweit_notAccepted = toCopy.ekv1_zuZweit_notAccepted;
-		this.ekv2_alleine_notAccepted = toCopy.ekv2_alleine_notAccepted;
-		this.ekv2_zuZweit_notAccepted = toCopy.ekv2_zuZweit_notAccepted;
+		this.ekv1Alleine = toCopy.ekv1Alleine;
+		this.ekv1ZuZweit = toCopy.ekv1ZuZweit;
+		this.ekv2Alleine = toCopy.ekv2Alleine;
+		this.ekv2ZuZweit = toCopy.ekv2ZuZweit;
+		this.ekv1NotExisting = toCopy.ekv1NotExisting;
 		this.bemerkungen = toCopy.bemerkungen;
 		this.verfuegung = null;
+		this.kategorieMaxEinkommen = toCopy.kategorieMaxEinkommen;
+		this.kategorieKeinPensum = toCopy.kategorieKeinPensum;
+		this.kategorieZuschlagZumErwerbspensum = toCopy.kategorieZuschlagZumErwerbspensum;
 	}
 
 	/**
@@ -371,73 +372,73 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.einkommensjahr = einkommensjahr;
 	}
 
-	public boolean isEkv1_alleine() {
-		return ekv1_alleine;
+	public boolean isEkv1Alleine() {
+		return ekv1Alleine;
 	}
 
-	public void setEkv1_alleine(boolean ekv1_alleine) {
-		this.ekv1_alleine = ekv1_alleine;
+	public void setEkv1Alleine(boolean ekv1Alleine) {
+		this.ekv1Alleine = ekv1Alleine;
 	}
 
-	public boolean isEkv1_zuZweit() {
-		return ekv1_zuZweit;
+	public boolean isEkv1ZuZweit() {
+		return ekv1ZuZweit;
 	}
 
-	public void setEkv1_zuZweit(boolean ekv1_zuZweit) {
-		this.ekv1_zuZweit = ekv1_zuZweit;
+	public void setEkv1ZuZweit(boolean ekv1ZuZweit) {
+		this.ekv1ZuZweit = ekv1ZuZweit;
 	}
 
-	public boolean isEkv2_alleine() {
-		return ekv2_alleine;
+	public boolean isEkv2Alleine() {
+		return ekv2Alleine;
 	}
 
-	public void setEkv2_alleine(boolean ekv2_alleine) {
-		this.ekv2_alleine = ekv2_alleine;
+	public void setEkv2Alleine(boolean ekv2Alleine) {
+		this.ekv2Alleine = ekv2Alleine;
 	}
 
-	public boolean isEkv2_zuZweit() {
-		return ekv2_zuZweit;
+	public boolean isEkv2ZuZweit() {
+		return ekv2ZuZweit;
 	}
 
-	public void setEkv2_zuZweit(boolean ekv2_zuZweit) {
-		this.ekv2_zuZweit = ekv2_zuZweit;
+	public void setEkv2ZuZweit(boolean ekv2ZuZweit) {
+		this.ekv2ZuZweit = ekv2ZuZweit;
 	}
 
-	public boolean isEkv1_alleine_notAccepted() {
-		return ekv1_alleine_notAccepted;
+	public boolean isEkv1NotExisting() {
+		return ekv1NotExisting;
 	}
 
-	public void setEkv1_alleine_notAccepted(boolean ekv1_alleine_notAccepted) {
-		this.ekv1_alleine_notAccepted = ekv1_alleine_notAccepted;
+	public void setEkv1NotExisting(boolean ekv1NotExisting) {
+		this.ekv1NotExisting = ekv1NotExisting;
 	}
 
-	public boolean isEkv2_alleine_notAccepted() {
-		return ekv2_alleine_notAccepted;
+	public boolean isKategorieMaxEinkommen() {
+		return kategorieMaxEinkommen;
 	}
 
-	public void setEkv2_alleine_notAccepted(boolean ekv2_alleine_notAccepted) {
-		this.ekv2_alleine_notAccepted = ekv2_alleine_notAccepted;
+	public void setKategorieMaxEinkommen(boolean kategorieMaxEinkommen) {
+		this.kategorieMaxEinkommen = kategorieMaxEinkommen;
 	}
 
-	public boolean isEkv1_zuZweit_notAccepted() {
-		return ekv1_zuZweit_notAccepted;
+	public boolean isKategorieKeinPensum() {
+		return kategorieKeinPensum;
 	}
 
-	public void setEkv1_zuZweit_notAccepted(boolean ekv1_zuZweit_notAccepted) {
-		this.ekv1_zuZweit_notAccepted = ekv1_zuZweit_notAccepted;
+	public void setKategorieKeinPensum(boolean kategorieKeinPensum) {
+		this.kategorieKeinPensum = kategorieKeinPensum;
 	}
 
-	public boolean isEkv2_zuZweit_notAccepted() {
-		return ekv2_zuZweit_notAccepted;
+	public boolean isKategorieZuschlagZumErwerbspensum() {
+		return kategorieZuschlagZumErwerbspensum;
 	}
 
-	public void setEkv2_zuZweit_notAccepted(boolean ekv2_zuZweit_notAccepted) {
-		this.ekv2_zuZweit_notAccepted = ekv2_zuZweit_notAccepted;
+	public void setKategorieZuschlagZumErwerbspensum(boolean kategorieZuschlagZumErwerbspensum) {
+		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
 	}
-
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public void add(VerfuegungZeitabschnitt other) {
 		this.setBetreuungspensum(this.getBetreuungspensum() + other.getBetreuungspensum());
 		this.setFachstellenpensum(this.getFachstellenpensum() + other.getFachstellenpensum());
@@ -496,14 +497,15 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		}
 		this.setHasSecondGesuchsteller(this.isHasSecondGesuchsteller() || other.isHasSecondGesuchsteller());
 
-		this.ekv1_alleine = (this.ekv1_alleine || other.ekv1_alleine);
-		this.ekv1_zuZweit = (this.ekv1_zuZweit || other.ekv1_zuZweit);
-		this.ekv2_alleine = (this.ekv2_alleine || other.ekv2_alleine);
-		this.ekv2_zuZweit = (this.ekv2_zuZweit || other.ekv2_zuZweit);
-		this.ekv1_alleine_notAccepted = (this.ekv1_alleine_notAccepted || other.ekv1_alleine_notAccepted);
-		this.ekv1_zuZweit_notAccepted = (this.ekv1_zuZweit_notAccepted || other.ekv1_zuZweit_notAccepted);
-		this.ekv2_alleine_notAccepted = (this.ekv2_alleine_notAccepted || other.ekv2_alleine_notAccepted);
-		this.ekv2_zuZweit_notAccepted = (this.ekv2_zuZweit_notAccepted || other.ekv2_zuZweit_notAccepted);
+		this.ekv1Alleine = (this.ekv1Alleine || other.ekv1Alleine);
+		this.ekv1ZuZweit = (this.ekv1ZuZweit || other.ekv1ZuZweit);
+		this.ekv2Alleine = (this.ekv2Alleine || other.ekv2Alleine);
+		this.ekv2ZuZweit = (this.ekv2ZuZweit || other.ekv2ZuZweit);
+		this.ekv1NotExisting = (this.ekv1NotExisting || other.ekv1NotExisting);
+
+		this.setKategorieKeinPensum(this.kategorieKeinPensum || other.kategorieKeinPensum);
+		this.setKategorieMaxEinkommen(this.kategorieMaxEinkommen || other.kategorieMaxEinkommen);
+		this.setKategorieZuschlagZumErwerbspensum(this.kategorieZuschlagZumErwerbspensum || other.kategorieZuschlagZumErwerbspensum);
 	}
 
 	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey) {
@@ -593,6 +595,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	}
 
 	//TODO: Ist hier Objects.equals() richtig??
+	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject"})
 	public boolean isSame(VerfuegungZeitabschnitt that) {
 		if (this == that) {
 			return true;
@@ -613,14 +616,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			longAbwesenheit == that.longAbwesenheit &&
 			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten &&
 			Objects.equals(this.einkommensjahr, that.einkommensjahr) &&
-			this.ekv1_alleine == that.ekv1_alleine &&
-			this.ekv1_zuZweit == that.ekv1_zuZweit &&
-			this.ekv2_alleine == that.ekv2_alleine &&
-			this.ekv2_zuZweit == that.ekv2_zuZweit &&
-			this.ekv1_alleine_notAccepted == that.ekv1_alleine_notAccepted &&
-			this.ekv1_zuZweit_notAccepted == that.ekv1_zuZweit_notAccepted &&
-			this.ekv2_alleine_notAccepted == that.ekv2_alleine_notAccepted &&
-			this.ekv2_zuZweit_notAccepted == that.ekv2_zuZweit_notAccepted;
+			this.ekv1Alleine == that.ekv1Alleine &&
+			this.ekv1ZuZweit == that.ekv1ZuZweit &&
+			this.ekv2Alleine == that.ekv2Alleine &&
+			this.ekv2ZuZweit == that.ekv2ZuZweit &&
+			this.ekv1NotExisting == that.ekv1NotExisting;
 	}
 
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
@@ -632,6 +632,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	/**
 	 * Aller persistierten Daten ohne Kommentar
 	 */
+	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject", "QuestionableName"})
 	public boolean isSamePersistedValues(VerfuegungZeitabschnitt that) {
 		return betreuungspensum == that.betreuungspensum &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
@@ -656,7 +657,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	}
 
 	@Override
-	public int compareTo(VerfuegungZeitabschnitt other) {
+	public int compareTo(@Nonnull VerfuegungZeitabschnitt other) {
 		CompareToBuilder compareToBuilder = new CompareToBuilder();
 		compareToBuilder.append(this.getGueltigkeit(), other.getGueltigkeit());
 		compareToBuilder.append(this.getId(), other.getId());  // wenn ids nicht gleich sind wollen wir auch compare to nicht gleich

@@ -45,7 +45,9 @@ public class BegleitschreibenPrintMergeSource implements MergeSource {
 
 	@Override
 	public List<MergeSource> whileStatement(MergeContext mergeContext, String key) throws DocTemplateException {
-
+		if (key.startsWith("begleitschreiben")) {
+			return new BeanMergeSource(begleitschreiben, "begleitschreiben.").whileStatement(mergeContext, key);
+		}
 		return null;
 	}
 }

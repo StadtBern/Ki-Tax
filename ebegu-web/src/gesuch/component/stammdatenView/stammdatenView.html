@@ -84,6 +84,41 @@
                                     prefix="wohn"></dv-adresse>
                     </fieldset>
 
+                    <!-- Diplomatenstatus -->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class=" checkbox">
+                                <md-checkbox ng-model="vm.getModelJA().diplomatenstatus" name="diplomatenstatus"
+                                             aria-label="diplomatenstatus"
+                                             dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchReadonly()">
+                                    <span data-translate="GESUCHSTELLER_DIPLOMATENSTATUS"></span>
+                                </md-checkbox>
+                                <dv-bisher gs="vm.getModel().gesuchstellerGS.diplomatenstatus"
+                                           ja="vm.getModel().gesuchstellerJA.diplomatenstatus"></dv-bisher>
+                                <dv-error-messages for="vm.form.diplomatenstatus.$error"
+                                                   class="error" style="height:1.5rem;"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Umzug checkbox. Bei Mutationen nicht angezeigt-->
+                    <div class="row" ng-if="!vm.isMutation()">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.getModel().showUmzug" name="umzug" aria-label="umzug"
+                                             dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchReadonly() && !vm.isThereAnyUmzug() && !vm.isKorrekturModusJugendamt()">
+                                    <span data-translate="UMZUG"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="vm.form.umzug.$error"
+                                                   class="error" style="height: 1.5rem;"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
                     <!--Korrenspondenzadr Checkbox (aka Zustelladresse)-->
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
@@ -100,49 +135,14 @@
                                            ja="vm.showKorrespondadr"
                                            specific-bisher-text="vm.getTextKorrespondenzaddrKorrekturJA()"></dv-bisher>
                                 <dv-error-messages for="vm.form.korrespondenzAdr.$error"
-                                                   class="error"></dv-error-messages>
+                                                   class="error" style=""></dv-error-messages>
                             </div>
                         </div>
                     </div>
 
                     <dv-adresse adresse="vm.getModel().korrespondenzAdresse" ng-if="vm.showKorrespondadr"
-                                prefix="korrespondenz"  show-if-bisher-none="false"
+                                prefix="korrespondenz" show-if-bisher-none="false"
                                 organisation="true"></dv-adresse>
-
-                    <!-- Diplomatenstatus -->
-                    <div class="row">
-                        <div class="col-xs-12 dv-input-container-question">
-                            <div class=" checkbox">
-                                <md-checkbox ng-model="vm.getModelJA().diplomatenstatus" name="diplomatenstatus"
-                                             aria-label="diplomatenstatus"
-                                             dv-enable-element
-                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchReadonly()">
-                                    <span data-translate="GESUCHSTELLER_DIPLOMATENSTATUS"></span>
-                                </md-checkbox>
-                                <dv-bisher gs="vm.getModel().gesuchstellerGS.diplomatenstatus"
-                                           ja="vm.getModel().gesuchstellerJA.diplomatenstatus"></dv-bisher>
-                                <dv-error-messages for="vm.form.diplomatenstatus.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!--Umzug checkbox. Bei Mutationen nicht angezeigt-->
-                    <div class="row" ng-if="!vm.isMutation()">
-                        <div class="col-xs-12 dv-input-container-question">
-                            <div class="checkbox">
-                                <md-checkbox ng-model="vm.getModel().showUmzug" name="umzug" aria-label="umzug"
-                                             dv-enable-element
-                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchReadonly() && !vm.isThereAnyUmzug() && !vm.isKorrekturModusJugendamt()">
-                                    <span data-translate="UMZUG"></span>
-                                </md-checkbox>
-                                <dv-error-messages for="vm.form.umzug.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
-                        </div>
-                    </div>
                     <!--Email-->
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-medium">

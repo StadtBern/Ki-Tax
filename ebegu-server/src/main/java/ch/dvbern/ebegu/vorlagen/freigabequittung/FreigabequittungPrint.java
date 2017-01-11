@@ -30,10 +30,6 @@ public interface FreigabequittungPrint {
 
 	boolean isAdresseSchulamt();
 
-	String getPeriode();
-
-	String getFallNummer();
-
 	String getFallDatum();
 
 	String getAdresseGS1();

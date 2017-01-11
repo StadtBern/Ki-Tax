@@ -97,10 +97,11 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjVorAbzFamGr());
 		Assert.assertEquals(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), gesuch.getFinanzDatenDTO().getDatumVonBasisjahr());
 
-		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP1VorAbzFamGr());
-		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP1VorAbzFamGr()); // Abgelehnt
+		Assert.assertNotNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+		Assert.assertFalse(gesuch.getFinanzDatenDTO().isEkv1Accepted());
 
-		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP2VorAbzFamGr());
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP2VorAbzFamGr());
 		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
 	}
 
@@ -118,7 +119,7 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(EINKOMMEN_EKV_ANGENOMMEN, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP1VorAbzFamGr());
 		Assert.assertEquals(TestDataUtil.STICHTAG_EKV_1, gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
 
-		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP2VorAbzFamGr());
+		Assert.assertEquals(EINKOMMEN_EKV_ANGENOMMEN, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP2VorAbzFamGr());
 		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
 	}
 
@@ -134,8 +135,9 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjVorAbzFamGr());
 		Assert.assertEquals(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), gesuch.getFinanzDatenDTO().getDatumVonBasisjahr());
 
-		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP1VorAbzFamGr());
-		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP1VorAbzFamGr()); // Abgelehnt
+		Assert.assertNotNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+		Assert.assertFalse(gesuch.getFinanzDatenDTO().isEkv1Accepted());
 
 		Assert.assertEquals(EINKOMMEN_EKV_ANGENOMMEN, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP2VorAbzFamGr());
 		Assert.assertEquals(TestDataUtil.STICHTAG_EKV_2, gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
@@ -172,11 +174,13 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjVorAbzFamGr());
 		Assert.assertEquals(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), gesuch.getFinanzDatenDTO().getDatumVonBasisjahr());
 
-		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP1VorAbzFamGr());
-		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP1VorAbzFamGr()); // Abgelehnt
+		Assert.assertNotNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+		Assert.assertFalse(gesuch.getFinanzDatenDTO().isEkv1Accepted());
 
-		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP2VorAbzFamGr());
-		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkBjP2VorAbzFamGr()); // Abgelehnt
+		Assert.assertNotNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
+		Assert.assertFalse(gesuch.getFinanzDatenDTO().isEkv2Accepted());
 	}
 
 

@@ -62,12 +62,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private EbeguConfiguration ebeguConfiguration;
 
 	@Inject
-	private PrintBegleitschreibenPDFService printBegleitschreibenPDFService;
-
-	@Inject
-	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
-
-	@Inject
 	private PDFService pdfService;
 
 	@Inject
@@ -173,11 +167,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 																	 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
 		GeneratedDokument persistedDokument = null;
-		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt() || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt()) {
 			persistedDokument = getGeneratedDokument(gesuch, dokumentTyp, fileNameForGeneratedDokumentTyp);
 		}
-		if ((!gesuch.getStatus().isAnyStatusOfVerfuegt() && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
-			|| persistedDokument == null) {
+		if (!gesuch.getStatus().isAnyStatusOfVerfuegt() || persistedDokument == null) {
 			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 			authorizer.checkReadAuthorizationFinSit(gesuch);
 			finanzielleSituationService.calculateFinanzDaten(gesuch);
@@ -188,7 +181,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
 				data = pdfService.generateFinanzielleSituation(gesuch, famGroessenVerfuegung);
 			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
-				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
+				data = pdfService.generateBegleitschreiben(gesuch);
 			} else {
 				LOG.warn("Unerwarter Dokumenttyp " + dokumentTyp.name() + " erwarte FinanzielleSituation oder Begleitschreiben");
 				return null;
@@ -306,7 +299,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				final byte[] verfuegungsPDF;
 				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
 				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
-				verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum);
+				verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum);
 
 
 				final String fileNameForDocTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,

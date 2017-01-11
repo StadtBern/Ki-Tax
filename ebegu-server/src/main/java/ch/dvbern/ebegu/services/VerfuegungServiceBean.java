@@ -56,9 +56,6 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	private ApplicationPropertyService applicationPropertyService;
 
 	@Inject
-	private GesuchService gesuchService;
-
-	@Inject
 	private RulesService rulesService;
 
 	@Inject
@@ -67,34 +64,58 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId) {
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.VERFUEGT);
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedVerfuegung;
 	}
 
+	private void setVerfuegungsKategorien(Verfuegung verfuegung) {
+		if (!verfuegung.isKategorieNichtEintreten()) {
+			for (VerfuegungZeitabschnitt zeitabschnitt : verfuegung.getZeitabschnitte()) {
+				if (zeitabschnitt.isKategorieKeinPensum()) {
+					verfuegung.setKategorieKeinPensum(true);
+				}
+				if (zeitabschnitt.isKategorieMaxEinkommen()) {
+					verfuegung.setKategorieMaxEinkommen(true);
+				}
+				if (zeitabschnitt.isKategorieZuschlagZumErwerbspensum()) {
+					verfuegung.setKategorieZuschlagZumErwerbspensum(true);
+				}
+			}
+			// Wenn es keines der anderen ist, ist es "normal"
+			if (!verfuegung.isKategorieKeinPensum() &&
+				!verfuegung.isKategorieMaxEinkommen() &&
+				!verfuegung.isKategorieZuschlagZumErwerbspensum() &&
+				!verfuegung.isKategorieNichtEintreten()) {
+				verfuegung.setKategorieNormal(true);
+			}
+		}
+	}
+
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Verfuegung nichtEintreten(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId) {
 		// Bei Nich-Eintreten muss der Anspruch auf der Verfuegung auf 0 gesetzt werden, da diese u.U. bei Mutationen
 		// als Vergleichswert hinzugezogen werden
 		for (VerfuegungZeitabschnitt zeitabschnitt : verfuegung.getZeitabschnitte()) {
 			zeitabschnitt.setAnspruchberechtigtesPensum(0);
 		}
+		verfuegung.setKategorieNichtEintreten(true);
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.NICHT_EINGETRETEN);
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedVerfuegung;
 	}
 
 	@Nonnull
-	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Verfuegung persistVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, @Nonnull Betreuungsstatus betreuungsstatus) {
 		Objects.requireNonNull(verfuegung);
 		Objects.requireNonNull(betreuungId);
 
+		setVerfuegungsKategorien(verfuegung);
 		Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
 		betreuung.setBetreuungsstatus(betreuungsstatus);
 		// setting all depending objects
@@ -127,7 +148,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public void removeVerfuegung(@Nonnull Verfuegung verfuegung) {
 		Validate.notNull(verfuegung);
 		Optional<Verfuegung> entityToRemove = this.findVerfuegung(verfuegung.getId());
@@ -148,24 +169,20 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		Boolean enableDebugOutput = applicationPropertyService.findApplicationPropertyAsBoolean(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, true);
 		BetreuungsgutscheinEvaluator bgEvaluator = new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);
 		BGRechnerParameterDTO calculatorParameters = loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());
-		final Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = gesuchService.getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(gesuch);
+
+		// Finde und setze die letzte Verfügung für die Betreuung für den Merger und Vergleicher.
+		// Bei GESCHLOSSEN_OHNE_VERFUEGUNG wird solange ein Vorgänger gesucht, bis  dieser gefunden wird. (Rekursiv)
+		gesuch.getKindContainers()
+			.stream()
+			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.forEach(betreuung -> {
+					Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
+					betreuung.setVorgaengerVerfuegung(vorgaengerVerfuegung.orElse(null));
+				}
+			);
 
 
-		// Wir überprüfen of in der Vorgängerverfügung eine Verfügung ist, welche geschlossen wurde ohne neu zu verfügen
-		// und somit keine neue Verfügung hat
-		if (neustesVerfuegtesGesuchFuerGesuch.isPresent()) {
-
-			gesuch.getKindContainers()
-				.stream()
-				.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
-				.forEach(betreuung -> {
-						Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
-						betreuung.setVorgaengerVerfuegung(vorgaengerVerfuegung.orElse(null));
-					}
-				);
-		}
-
-		bgEvaluator.evaluate(gesuch, calculatorParameters, neustesVerfuegtesGesuchFuerGesuch.orElse(null));
+		bgEvaluator.evaluate(gesuch, calculatorParameters);
 		authorizer.checkReadAuthorizationForAnyBetreuungen(gesuch.extractAllBetreuungen()); // betreuungen pruefen reicht hier glaub
 		return gesuch;
 	}
@@ -173,9 +190,11 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Override
 	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, SCHULAMT})
-	public Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull  Betreuung betreuung) {
+	public Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
-		if(betreuung.getVorgaengerId()==null) {return Optional.empty();}
+		if (betreuung.getVorgaengerId() == null) {
+			return Optional.empty();
+		}
 
 		// Achtung, hier wird persistence.find() verwendet, da ich fuer das Vorgaengergesuch evt. nicht
 		// Leseberechtigt bin, fuer die Mutation aber schon!

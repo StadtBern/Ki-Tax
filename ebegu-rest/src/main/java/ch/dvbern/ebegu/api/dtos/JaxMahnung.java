@@ -1,15 +1,16 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.MahnungTyp;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * DTO fuer Mahnungen
@@ -33,8 +34,9 @@ public class JaxMahnung extends JaxAbstractDTO {
 	@Nullable
 	private String bemerkungen;
 
-	@NotNull
-	private boolean active;
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
+	private LocalDateTime timestampAbgeschlossen;
 
 
 	@Nullable
@@ -73,11 +75,12 @@ public class JaxMahnung extends JaxAbstractDTO {
 		this.bemerkungen = bemerkungen;
 	}
 
-	public boolean isActive() {
-		return active;
+	@Nullable
+	public LocalDateTime getTimestampAbgeschlossen() {
+		return timestampAbgeschlossen;
 	}
 
-	public void setActive(boolean active) {
-		this.active = active;
+	public void setTimestampAbgeschlossen(@Nullable LocalDateTime timestampAbgeschlossen) {
+		this.timestampAbgeschlossen = timestampAbgeschlossen;
 	}
 }

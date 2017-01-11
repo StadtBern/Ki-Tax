@@ -8,15 +8,15 @@ export default class TSMahnung extends TSAbstractEntity {
     private _mahnungTyp: TSMahnungTyp;
     private _datumFristablauf: moment.Moment;
     private _bemerkungen: string;
-    private _active: boolean;
+    private _timestampAbgeschlossen: moment.Moment;
 
-    constructor(gesuch?: TSGesuch, mahnungTyp?: TSMahnungTyp, datumFristablauf?: moment.Moment, bemerkungen?: string, active?: boolean) {
+    constructor(gesuch?: TSGesuch, mahnungTyp?: TSMahnungTyp, datumFristablauf?: moment.Moment, bemerkungen?: string, timestampAbgeschlossen?: moment.Moment) {
         super();
         this._gesuch = gesuch;
         this._mahnungTyp = mahnungTyp;
         this._datumFristablauf = datumFristablauf;
         this._bemerkungen = bemerkungen;
-        this._active = active;
+        this._timestampAbgeschlossen = timestampAbgeschlossen;
     }
 
     get gesuch(): TSGesuch {
@@ -51,11 +51,11 @@ export default class TSMahnung extends TSAbstractEntity {
         this._bemerkungen = value;
     }
 
-    get active(): boolean {
-        return this._active;
+    get timestampAbgeschlossen(): moment.Moment {
+        return this._timestampAbgeschlossen;
     }
 
-    set active(value: boolean) {
-        this._active = value;
+    set timestampAbgeschlossen(value: moment.Moment) {
+        this._timestampAbgeschlossen = value;
     }
 }
