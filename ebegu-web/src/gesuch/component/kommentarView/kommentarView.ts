@@ -12,17 +12,15 @@ import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {UploadRS} from '../../../core/service/uploadRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSWizardStep from '../../../models/TSWizardStep';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 import GlobalCacheService from '../../service/globalCacheService';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {OkHtmlDialogController} from '../../dialog/OkHtmlDialogController';
+import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
-import {OkHtmlDialogController} from '../../dialog/OkHtmlDialogController';
-import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
@@ -57,7 +55,7 @@ export class KommentarViewController {
     private getPapiergesuchFromServer(): IPromise<TSDokumenteDTO> {
 
         return this.dokumenteRS.getDokumenteByTypeCached(
-            this.getGesuch(), TSDokumentGrundTyp.PAPIERGESUCH, this.globalCacheService.getCache(TSCacheTyp.EBEGU_CACHE))
+            this.getGesuch(), TSDokumentGrundTyp.PAPIERGESUCH, this.globalCacheService.getCache(TSCacheTyp.EBEGU_DOCUMENT))
             .then((promiseValue: TSDokumenteDTO) => {
 
                 if (promiseValue.dokumentGruende.length === 1) {
@@ -161,7 +159,7 @@ export class KommentarViewController {
                 if (filesOk.length > 0) {
                     this.uploadRS.uploadFile(filesOk, this.dokumentePapiergesuch, gesuchID).then((response) => {
                         this.dokumentePapiergesuch = angular.copy(response);
-                        this.globalCacheService.getCache(TSCacheTyp.EBEGU_CACHE).removeAll();
+                        this.globalCacheService.getCache(TSCacheTyp.EBEGU_DOCUMENT).removeAll();
                     });
                 }
             }

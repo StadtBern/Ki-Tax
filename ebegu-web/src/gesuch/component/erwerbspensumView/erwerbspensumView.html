@@ -165,7 +165,7 @@
                     <div class="row" ng-if="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum">
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT"
+                                <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT"  data-translate-value-max="{{vm.maxZuschlagsprozent}}"
                                        for="zuschlagsprozent"></label>
                                 <input type="number" id="zuschlagsprozent" name="zuschlagsprozent"
                                        ng-model="vm.model.erwerbspensumJA.zuschlagsprozent"
