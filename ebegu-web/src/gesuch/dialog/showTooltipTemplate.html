@@ -1,0 +1,23 @@
+<md-dialog md-theme="default" ng-class="vm.css"
+           class="md-default-theme md-transition-in dv-tooltip-dialog"
+           role="dialog" tabindex="-1" aria-describedby="dialogContent">
+
+    <div class="tooltip-close-button">
+        <span flex></span>
+        <button class="md-icon-button" ng-click="vm.cancel()">
+            <span>&#10799;</span>
+        </button>
+    </div>
+    <md-dialog-content class="md-dialog-content" role="document" tabindex="-1" id="dialogContent">
+        <div ng-bind-html="vm.text"></div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout-align="center center">
+        <button class=" md-default-theme " type="button"
+                ng-click="vm.cancel()" md-autofocus="dialog.$type==='alert'"
+                aria-label="{{'ZURUECK_ONLY_UPPER' | translate}}">
+            <span class="ng-binding ng-scope" data-translate="ZURUECK_ONLY_UPPER"></span>
+        </button>
+    </md-dialog-actions>
+
+</md-dialog>

@@ -1,3 +1,23 @@
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
 dv-tooltip {
     font-size: 1.6rem;
+}
+
+md-dialog.md-dialog-fullscreen.dv-tooltip-dialog {
+    font-size: 1.6rem;
+    min-height: 100%;
+    min-width: 100%;
+    display: flex;
+    background: @contrast-light;
+    .tooltip-close-button {
+        display: flex;
+    }
+    md-dialog-content {
+        padding: 2.5rem;
+        flex: 1;
+    }
+    md-dialog-actions {
+        padding: 2rem;
+    }
 }

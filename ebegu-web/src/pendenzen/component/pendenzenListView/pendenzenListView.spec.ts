@@ -72,7 +72,7 @@ describe('pendenzenListView', function () {
             it('returns a comma separated string with all BetreuungsangebotTypen', () => {
                 let list: Array<TSBetreuungsangebotTyp> = [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND];
                 expect(pendenzListViewController.translateBetreuungsangebotTypList(list))
-                    .toEqual('Tagesstätte für Kleinkinder, Tageseltern für Kleinkinder');
+                    .toEqual('Kita – Tagesstätte für Kleinkinder, Tageseltern für Kleinkinder');
             });
             it('returns an empty string for invalid values or empty lists', () => {
                 expect(pendenzListViewController.translateBetreuungsangebotTypList([])).toEqual('');
