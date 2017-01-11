@@ -110,7 +110,6 @@
                     </div>
 
                     <!--Zuschlag zu Erwerbspensum-->
-                    <!--TODO wijo dev reinmergen und maxzuschlag bei ZUSCHLAGSGRUND_HELP mitgeben-->
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
@@ -119,7 +118,7 @@
                                              ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled() || !vm.viewZuschlag()"
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
-                                    <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate:'{maxzuschlag: 10}' "></dv-tooltip>
+                                    <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate:'{maxzuschlag: vm.maxZuschlagsprozent}' "></dv-tooltip>
                                 </md-checkbox>
                                 <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum"
                                            ja="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
@@ -166,11 +165,11 @@
                     <div class="row" ng-if="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum">
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT"
+                                <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT"  data-translate-value-max="{{vm.maxZuschlagsprozent}}"
                                        for="zuschlagsprozent"></label>
                                 <input type="number" id="zuschlagsprozent" name="zuschlagsprozent"
                                        ng-model="vm.model.erwerbspensumJA.zuschlagsprozent"
-                                       dv-max-length class="form-control" max="100"
+                                       dv-max-length class="form-control" max="{{vm.maxZuschlagsprozent}}"
                                        ng-required="true" ng-pattern="vm.patternPercentage"
                                        ng-disabled="vm.erwerbspensumDisabled()"
                                        ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">

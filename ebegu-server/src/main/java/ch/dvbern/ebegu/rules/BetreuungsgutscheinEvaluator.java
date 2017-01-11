@@ -84,11 +84,6 @@ public class BetreuungsgutscheinEvaluator {
 	}
 
 	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO) {
-		evaluate(gesuch, bgRechnerParameterDTO, null);
-	}
-
-
-	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO, Gesuch gesuchForMutation) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
 		if (gesuch.getFinanzDatenDTO() == null) {
@@ -111,13 +106,13 @@ public class BetreuungsgutscheinEvaluator {
 
 				if (!betreuung.getBetreuungsangebotTyp().isSchulamt()) {
 
-				if (betreuung.getBetreuungsstatus() != null && betreuung.getBetreuungsstatus().isGeschlossen()) {
-					// Verfuegte Betreuungen duerfen nicht neu berechnet werden
-					LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
-					// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
-					restanspruchZeitabschnitte = getRestanspruchForVerfuegteBetreung(betreuung);
-					continue;
-				}
+					if (betreuung.getBetreuungsstatus() != null && betreuung.getBetreuungsstatus().isGeschlossen()) {
+						// Verfuegte Betreuungen duerfen nicht neu berechnet werden
+						LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
+						// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
+						restanspruchZeitabschnitte = getRestanspruchForVerfuegteBetreung(betreuung);
+						continue;
+					}
 
 					// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
 					List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
@@ -140,7 +135,7 @@ public class BetreuungsgutscheinEvaluator {
 					zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
 					// Ganz am Ende der Berechnung mergen wir das aktuelle Ergebnis mit der Verfügung des letzten Gesuches
-					zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, gesuchForMutation);
+					zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
 					// Die Verfügung erstellen
 					if (betreuung.getVerfuegung() == null) {
@@ -149,20 +144,20 @@ public class BetreuungsgutscheinEvaluator {
 						verfuegung.setBetreuung(betreuung);
 					}
 
-				// Den richtigen Rechner anwerfen
-				AbstractBGRechner rechner = BGRechnerFactory.getRechner(betreuung);
-				if (rechner != null) {
-					for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
-						rechner.calculate(verfuegungZeitabschnitt, betreuung.getVerfuegung(), bgRechnerParameterDTO);
+					// Den richtigen Rechner anwerfen
+					AbstractBGRechner rechner = BGRechnerFactory.getRechner(betreuung);
+					if (rechner != null) {
+						for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
+							rechner.calculate(verfuegungZeitabschnitt, betreuung.getVerfuegung(), bgRechnerParameterDTO);
+						}
 					}
-				}
-				// Und die Resultate in die Verfügung schreiben
-				betreuung.getVerfuegung().setZeitabschnitte(zeitabschnitte);
-				String bemerkungenToShow = BemerkungsMerger.evaluateBemerkungenForVerfuegung(zeitabschnitte);
-				betreuung.getVerfuegung().setGeneratedBemerkungen(bemerkungenToShow);
+					// Und die Resultate in die Verfügung schreiben
+					betreuung.getVerfuegung().setZeitabschnitte(zeitabschnitte);
+					String bemerkungenToShow = BemerkungsMerger.evaluateBemerkungenForVerfuegung(zeitabschnitte);
+					betreuung.getVerfuegung().setGeneratedBemerkungen(bemerkungenToShow);
 
 					// Ueberpruefen, ob sich die Verfuegungsdaten veraendert haben
-					betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung, gesuchForMutation));
+					betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung));
 				}
 			}
 		}

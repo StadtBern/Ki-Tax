@@ -24,7 +24,7 @@
 
                     <!--Steuerveranlagung -->
                     <div class="row">
-                        <div class="col-xs-12 dv-input-container-medium" ng-if="vm.showSteuerveranlagung()">
+                        <div class="col-xs-12 dv-input-container-question" ng-if="vm.showSteuerveranlagung()">
                             <div class="form-group">
                                 <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                                     translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h1>
@@ -44,7 +44,7 @@
 
                     <!--Steuererklärung -->
                     <div class="row">
-                        <div class="col-xs-12 dv-input-container-medium"
+                        <div class="col-xs-12 dv-input-container-question"
                              ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
                             <div class="form-group">
                                 <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"

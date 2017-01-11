@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
+
+import java.util.List;
+
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -18,19 +22,10 @@ public interface BegleitschreibenPrint {
 	// mit den Platzhaltern im Word-Template!
 	// ****************************************************************************************************************
 
-	String getGesuchstellerNameOderOrganisation();
+	List<AufzaehlungPrint> getBeilagen();
 
-	String getGesuchstellerStrasse();
+	boolean isHasFSDokument();
 
-	String getGesuchstellerPLZStadt();
+	boolean isHasBeilagen();
 
-	String getFallNummer();
-
-	String getDateCreate();
-
-	boolean isPrintTextFamilie();
-
-	boolean isPrintAdresszusatz();
-
-	String getAdresszusatz();
 }

@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
-import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -85,17 +84,6 @@ public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 		return concatenateAngebot(listAngebot);
 
-	}
-
-	@Override
-	public String getPeriode() {
-		return "(" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()
-			+ "/" + getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear() + ")";
-	}
-
-	@Override
-	public String getFallNummer() {
-		return PrintUtil.createFallNummerString(getGesuch());
 	}
 
 	@Override

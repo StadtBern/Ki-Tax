@@ -67,16 +67,24 @@ dv-navigation {
 .dv-btn-operation {
     background: transparent;
     color: @contrast-darkest;
+    letter-spacing: 0.1rem;
+    padding: 0;
     .fa {
         vertical-align: middle;
     }
     &.active, &:active {
-        background: @contrast-lighter;
+        .fa {
+            color: @primary;
+        }
+        background: transparent;
         color: @contrast-darkest;
 
     }
     &:hover {
-        background: @contrast;
+        .fa {
+            color: @primary;
+        }
+        background: transparent;
         color: @contrast-darkest;
     }
 
