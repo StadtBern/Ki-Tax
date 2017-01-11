@@ -92,6 +92,7 @@ export class GesuchToolbarController {
     private addWatchers($scope: angular.IScope) {
         // needed because of test is not able to inject $scope!
         if ($scope) {
+            //watcher fuer gesuch id change
             $scope.$watch(() => {
                 return this.gesuchid;
             }, (newValue, oldValue) => {
@@ -102,9 +103,12 @@ export class GesuchToolbarController {
                         this.antragTypList = {};
                         this.gesuchNavigationList = {};
                         this.gesuchsperiodeList = {};
+                        this.antragList = [];
+                        this.antragMutierenPossible(); //neu berechnen ob mutieren moeglich ist
                     }
                 }
             });
+            //watcher fuer status change
             if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
                 $scope.$watch(() => {
                     return this.gesuchModelManager.getGesuch().status;
@@ -312,15 +316,16 @@ export class GesuchToolbarController {
     }
 
     public antragMutierenPossible(): void {
-        if (this.antragList) {
+        if (this.antragList && this.antragList.length != 0) {
             let gesuchInBearbeitungVorhanden = false;
             for (let i = 0; i < this.antragList.length; i++) {
                 let antragItem: TSAntragDTO = this.antragList[i];
                 // Wir muessen nur die Antraege der aktuell ausgewaehlten Gesuchsperiode beachten
                 if (antragItem.gesuchsperiodeString === this.getCurrentGesuchsperiode()) {
-                    // Falls das Gesuch nicht verfuegt ist, darf nicht mutiert werden
+                    // Falls wir ein Gesuch finden das nicht verfuegt ist, darf nicht mutiert werden
                     if (antragItem.verfuegt === false) {
                         gesuchInBearbeitungVorhanden = true;
+                        break;
                     }
                 }
             }
