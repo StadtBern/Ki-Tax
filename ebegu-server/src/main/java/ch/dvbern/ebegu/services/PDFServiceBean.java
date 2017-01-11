@@ -9,6 +9,8 @@ import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
+import ch.dvbern.ebegu.vorlagen.begleitschreiben.BegleitschreibenPrintImpl;
+import ch.dvbern.ebegu.vorlagen.begleitschreiben.BegleitschreibenPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.finanziellesituation.BerechnungsgrundlagenInformationPrintImpl;
 import ch.dvbern.ebegu.vorlagen.finanziellesituation.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.freigabequittung.FreigabequittungPrintImpl;
@@ -45,14 +47,13 @@ import java.util.*;
 public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Inject
-	private Authorizer authorizer;
-
-	@Inject
 	private DokumentGrundService dokumentGrundService;
 
 	@Inject
 	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
 
+	@Inject
+	private Authorizer authorizer;
 
 	@Nonnull
 	@Override
@@ -149,6 +150,31 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("generateFreigabequittung()",
 				"Bei der Generierung der Freigabequittung ist ein Fehler aufgetreten", e, new Objects[]{});
+		}
+	}
+
+	@Override
+	@Nonnull
+	public byte[] generateBegleitschreiben(@Nonnull Gesuch gesuch) throws MergeDocException {
+		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
+		authorizer.checkReadAuthorization(gesuch);
+
+		DOCXMergeEngine docxME = new DOCXMergeEngine("Begleitschreiben");
+
+		try {
+			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
+			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
+				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_BEGLEITSCHREIBEN);
+			Objects.requireNonNull(is, "Vorlage fuer Begleitschreiben nicht gefunden");
+			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
+				docxME.getDocument(is, new BegleitschreibenPrintMergeSource(new BegleitschreibenPrintImpl(gesuch))));
+			is.close();
+			return bytes;
+		} catch (IOException |
+
+			DocTemplateException e) {
+			throw new MergeDocException("printBegleitschreiben()",
+				"Bei der Generierung der Begleitschreibenvorlage ist ein Fehler aufgetreten", e, new Objects[] {});
 		}
 	}
 

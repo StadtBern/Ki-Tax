@@ -11,103 +11,67 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
-import ch.dvbern.ebegu.vorlagen.PrintUtil;
-import org.apache.commons.lang.StringUtils;
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
+import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 
-import javax.annotation.Nullable;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Transferobjekt
  */
-public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
+public class BegleitschreibenPrintImpl extends BriefPrintImpl implements BegleitschreibenPrint {
 
-	private Gesuch gesuch;
+	private List<AufzaehlungPrint> beilagen = new ArrayList<>();
 
 	/**
 	 * @param gesuch
 	 */
 	public BegleitschreibenPrintImpl(Gesuch gesuch) {
 
-		this.gesuch = gesuch;
-	}
+		super(gesuch);
 
-	/**
-	 * @return GesuchstellerName
-	 */
-	@Override
-	public String getGesuchstellerNameOderOrganisation() {
+		Set<Betreuung> betreuungen = new TreeSet<>();
 
-		String bezeichnung = PrintUtil.getOrganisation(gesuch);
-		if (StringUtils.isNotEmpty(bezeichnung)) {
-			return bezeichnung;
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
+			betreuungen.addAll(kindContainer.getBetreuungen());
 		}
-		return PrintUtil.getGesuchstellerName(gesuch);
-	}
 
-	/**
-	 * @return Gesuchsteller-Strasse
-	 */
-	@Override
-	public String getGesuchstellerStrasse() {
+		beilagen.addAll(betreuungen.stream()
+			.filter(betreuung -> betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()
+				&& !betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG))
+			.map(betreuung -> new AufzaehlungPrintImpl(ServerMessageUtil.getMessage("BegleitschreibenPrintImpl_VERFÜGUNG") + betreuung.getBGNummer()))
+			.collect(Collectors.toList()));
 
-		return PrintUtil.getGesuchstellerStrasse(gesuch);
-	}
+		beilagen.addAll(betreuungen.stream()
+			.filter(betreuung -> !betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()
+				&& !betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG))
+			.map(betreuung -> new AufzaehlungPrintImpl(ServerMessageUtil.getMessage("BegleitschreibenPrintImpl_MITTEILUNG") + betreuung.getBGNummer()))
+			.collect(Collectors.toList()));
 
-	/**
-	 * @return Gesuchsteller-PLZ Stadt
-	 */
-	@Override
-	public String getGesuchstellerPLZStadt() {
-
-		return PrintUtil.getGesuchstellerPLZStadt(gesuch);
-	}
-
-	/**
-	 * @return Gesuchsteller-ReferenzNummer
-	 */
-	@Override
-	public String getFallNummer() {
-
-		return PrintUtil.createFallNummerString(gesuch);
 	}
 
 	@Override
-	public String getDateCreate() {
-		final String date_pattern = ServerMessageUtil.getMessage("date_letter_pattern");
-		LocalDate date = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
-
-		return date.format(formatter);
+	public List<AufzaehlungPrint> getBeilagen() {
+		return beilagen;
 	}
 
 	@Override
-	public boolean isPrintTextFamilie() {
-
-		if (StringUtils.isNotEmpty(PrintUtil.getOrganisation(gesuch))) {
-			// Text Familie darf nicht gedruckt werden
-			return false;
-		}
-		return true;
+	public boolean isHasFSDokument() {
+		return gesuch.isHasFSDokument();
 	}
 
-	/**
-	 * @return true wenn adresszusatz vorhanden
-	 */
 	@Override
-	public boolean isPrintAdresszusatz() {
-		if (StringUtils.isNotEmpty(PrintUtil.getAdresszusatz(gesuch))) {
-			return true;
-		}
-		return false;
-	}
-
-	@Nullable
-	@Override
-	public String getAdresszusatz() {
-		return PrintUtil.getAdresszusatz(gesuch);
+	public boolean isHasBeilagen() {
+		return isHasFSDokument() || !beilagen.isEmpty();
 	}
 }
