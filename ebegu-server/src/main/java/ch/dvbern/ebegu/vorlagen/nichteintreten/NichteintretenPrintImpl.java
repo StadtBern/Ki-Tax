@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.vorlagen.nichteintreten;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
-import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland

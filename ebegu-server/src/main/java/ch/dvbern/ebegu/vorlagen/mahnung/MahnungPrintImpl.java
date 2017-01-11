@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
 import ch.dvbern.ebegu.vorlagen.AufzaehlungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
-import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
