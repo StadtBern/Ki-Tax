@@ -201,7 +201,6 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 	@Nonnull
 	@Override
 	public byte[] generateVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) throws MergeDocException {
-		final DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
 
 		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
 		EbeguVorlageKey vorlageFromBetreuungsangebottyp = getVorlageFromBetreuungsangebottyp(betreuung);
