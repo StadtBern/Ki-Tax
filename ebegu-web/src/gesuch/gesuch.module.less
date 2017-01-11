@@ -106,7 +106,7 @@
     min-width: 3rem;
     display: block;
     position: relative;
-    .nav-row {
+    dv-navigation, .nav-row-verfuegen, .nav-row-betreuung {
         -ms-box-orient: horizontal;
         display: -ms-flexbox;
         display: flex;
@@ -116,27 +116,53 @@
         left: 0;
         right: 0;
         transform: unset;
-        position: absolute !important;
+        position: absolute;
         margin: 0;
         align-items: center;
         & > div {
+            flex-direction: row-reverse;
+            -ms-flex-direction: row-reverse;
             clear: both;
             margin-bottom: 0;
             display: flex;
             position: static;
             padding: 0 3rem 0;
+            width: 100%;
+        }
+    }
+    .nav-row-verfuegen {
+        flex-direction: row;
+        -ms-flex-direction: row;
+        dv-navigation {
+            margin-left: 3rem;
+            margin-right: auto;
+
+            position: static;
             width: auto;
-            min-width: 50%;
-            &:nth-of-type(2) {
-                margin-bottom: 0;
-                justify-content: flex-start;
+            & > div {
+                width: auto;
+                padding: 0;
             }
-            &:nth-of-type(1) {
-                justify-content: flex-end;
+        }
+        & > div {
+            padding: 0;
+            width: auto;
+            margin-right: 3rem;
+        }
+    }
+    .nav-row-betreuung{
+        &>div{
+            &:last-child{
+                margin-left:3rem;
             }
-            &.cancel {
-                margin-right: auto;
-                justify-content: flex-start;
+            &>div{
+                display:flex;
+                  flex-direction: row;
+                -ms-flex-direction: row;
+                padding: 0 3rem 0;
+                &>div{
+                    padding: 0 0.75rem 0;
+                }
             }
         }
     }

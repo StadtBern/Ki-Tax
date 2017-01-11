@@ -14,57 +14,64 @@
                         </div>
                     </div>
                     <div class="row marginBottom10">
-                        <div class=" col-xs-12 dv-input-container-small form-group">
+                        <div class=" col-xs-12 dv-input-container-medium form-group">
                             <label class="md-no-float"
                                    data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                    for="finSitEinkommen_ID"></label>
-                            <input id="finSitEinkommen_ID" type="text" name="finSitEinkommen"
-                                   ng-model="vm.berechnungsManager.finanzielleSituationResultate.massgebendesEinkVorAbzFamGr"
-                                   class="form-control" ng-disabled="true">
+                            <div class="dv-input-container-medium-label">
+                                <input id="finSitEinkommen_ID" type="text" name="finSitEinkommen"
+                                       ng-model="vm.berechnungsManager.finanzielleSituationResultate.massgebendesEinkVorAbzFamGr"
+                                       class="form-control" ng-disabled="true"></div>
                         </div>
                     </div>
 
-                    <div ng-if="vm.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1">
-                        <div class="row marginTop20">
+                    <div class="marginBottom20"
+                         ng-if="vm.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1">
+                        <div class="row marginTop20 marginBottom10">
                             <div class="col-md-12">
                         <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
                               data-translate-value-jahr="{{vm.gesuchModelManager.getBasisjahrPlus(1)}}"></span>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-8 form-group">
+                            <div class="col-xs-12 dv-input-container-medium form-group">
                                 <label class="md-no-float"
                                        data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                        for="einVersEinkommen1_ID"></label>
-                                <input id="einVersEinkommen1_ID" type="text" name="einVersEinkommen1"
-                                       ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.massgebendesEinkVorAbzFamGr"
-                                       class="form-control" ng-disabled="true">
+                                <div class="dv-input-container-medium-label">
+                                    <input id="einVersEinkommen1_ID" type="text" name="einVersEinkommen1"
+                                           ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.massgebendesEinkVorAbzFamGr"
+                                           class="form-control" ng-disabled="true">
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div ng-if="vm.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus2">
-                        <div class="row marginTop20">
+                    <div
+                        ng-if="vm.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus2">
+                        <div class="row marginTop20 marginBottom10">
                             <div class="col-md-12">
                         <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
                               data-translate-value-jahr="{{vm.gesuchModelManager.getBasisjahrPlus(2)}}"></span>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-8 form-group">
+                            <div class="col-xs-12 dv-input-container-medium form-group">
                                 <label class="md-no-float"
                                        data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                        for="einVersEinkommen2_ID"></label>
-                                <input id="einVersEinkommen2_ID" type="text" name="einVersEinkommen2"
-                                       ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.massgebendesEinkVorAbzFamGr"
-                                       class="form-control" ng-disabled="true">
+                                <div class="dv-input-container-medium-label">
+                                    <input id="einVersEinkommen2_ID" type="text" name="einVersEinkommen2"
+                                           ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.massgebendesEinkVorAbzFamGr"
+                                           class="form-control" ng-disabled="true">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Titel -->
-                <div class="row marginTop20">
+                <div class="row marginTop40">
                     <div class="col-md-8">
                         <h1 class="mainTitle">
                             {{vm.getKindName()}} / {{vm.getInstitutionName()}}
@@ -87,8 +94,8 @@
                     <div class="col-md-12">
                         <div class="betreuung-status verfuegenView ng-class:vm.getBetreuungsstatus();">
                             <div
-                          ng-bind="vm.getBetreuungsstatus() | translate">
-                    </div>
+                                ng-bind="vm.getBetreuungsstatus() | translate">
+                            </div>
                             <span class="betreuung-bar"></span>
                         </div>
                     </div>
@@ -143,7 +150,8 @@
                 </div>
 
                 <!--bemerkungen-->
-                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                <div class="row marginTop20" dv-show-element
+                     dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
                      dv-show-expression="vm.showVerfuegungsDetails()">
                     <div class="col-md-12 form-group">
                         <label class="md-no-float" class="inlineHint" for="manuelle_notes"
@@ -156,70 +164,67 @@
                 </div>
 
                 <!--VerfuegungPDF anzeigen-->
-                <div class="row marginTop20 text-left" >
-                    <div class="col-md-4" ng-if="vm.showVerfuegungPdfLink()">
-                        <i class="fa fa-file-text-o"></i>
-                        <button type="button" class="btn-link"
+                <div class="row marginTop20 text-left">
+                    <div class="col-xs-12" ng-if="vm.showVerfuegungPdfLink()">
+                        <button type="button" class="btn-link link-underline"
                                 ng-click="vm.openVerfuegungPDF()">
+                            <i class="fa fa-file-text-o"></i>
                             <span data-translate="PDF_VERFUEGUNG_ANZEIGEN"></span>
                         </button>
                     </div>
-                    <div class="col-md-4" ng-if="vm.showNichtEintretenPdfLink()">
-                        <i class="fa fa-file-text-o"></i>
-                        <button type="button" class="btn-link"
+                    <div class="col-xs-12" ng-if="vm.showNichtEintretenPdfLink()">
+                        <button type="button" class="btn-link link-underline"
                                 ng-click="vm.openNichteintretenPDF()">
+                            <i class="fa fa-file-text-o"></i>
                             <span data-translate="PDF_NICHT_EINTRETEN_ANZEIGEN"></span>
                         </button>
                     </div>
                 </div>
 
-                <div class="row marginTop20" ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen()">
-                    <div class="col-md-4 text-center">
-                        <dv-loading-button type="submit"  button-click="vm.save()"
-                                           button-class="dv-btn-sm color-success">
-                            <span data-translate="VERFUEGEN_UPPER"></span>
-                        </dv-loading-button>
-                    </div>
-                    <div class="col-md-4"  ng-show="vm.gesuchModelManager.isErstgesuch()">
-                        <dv-loading-button type="submit"
-                                           button-click="vm.nichtEintreten()"
-                                           button-class="dv-btn-sm color-success">
-                            <span data-translate="VERFUEGEN_NICHT_EINTRETEN_UPPER"></span>
-                        </dv-loading-button>
-                    </div>
-                    <div class="col-md-4"  ng-show="!vm.gesuchModelManager.isErstgesuch()">
-                        <dv-loading-button type="submit"
-                                           button-click="vm.schliessenOhneVerfuegen()"
-                                           button-class="dv-btn-sm color-success">
-                            <span data-translate="VERFUEGEN_ABLEHNEN_UPPER"></span>
-                        </dv-loading-button>
-                    </div>
-                </div>
 
                 <div class="row marginTop20" ng-show="vm.isSameVerfuegungdaten()">
-                    <div class="col-md-4">
-                        <span data-translate="IDENTISCHE_BERECHNUNG"></span>
-                    </div>
-                    <div class="col-md-4" ng-show="vm.showVerfuegen()">
-                        <dv-loading-button type="submit"
-                                           button-click="vm.schliessenOhneVerfuegen()"
-                                           button-class="">
-                            <span data-translate="VERFUEGEN_VERZICHTEN_UPPER"></span>
-                        </dv-loading-button>
-                    </div>
-                    <div class="col-md-4" ng-show="vm.showVerfuegen()">
-                        <dv-loading-button type="submit" button-click="vm.save()"
-                                           button-class="">
-                            <span data-translate="TROTZDEM_VERFUEGEN_UPPER"></span>
-                        </dv-loading-button>
+                    <div class="col-md-12">
+                        <div class="well well-status-warten">
+                            <span data-translate="IDENTISCHE_BERECHNUNG"></span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Navigation Buttons -->
-                <div class="row marginTop50">
-                    <div class="col-md-12">
-                        <dv-navigation dv-cancel="vm.cancel()" dv-next="false" dv-sub-step="2">
-                        </dv-navigation>
+                <div class="nav-row-verfuegen">
+                    <dv-navigation dv-cancel="vm.cancel()" dv-next="false" dv-sub-step="2">
+                    </dv-navigation>
+                    <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                        <div ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen()">
+                            <dv-loading-button type="submit" button-click="vm.save()">
+                                <span data-translate="VERFUEGEN_UPPER"></span>
+                            </dv-loading-button>
+                        </div>
+                        <div
+                            ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen() && vm.gesuchModelManager.isErstgesuch()">
+                            <dv-loading-button type="submit"
+                                               button-click="vm.nichtEintreten()">
+                                <span data-translate="VERFUEGEN_NICHT_EINTRETEN_UPPER"></span>
+                            </dv-loading-button>
+                        </div>
+                        <div
+                            ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen() && !vm.gesuchModelManager.isErstgesuch()">
+                            <dv-loading-button type="submit"
+                                               button-click="vm.schliessenOhneVerfuegen()">
+                                <span data-translate="VERFUEGEN_ABLEHNEN_UPPER"></span>
+                            </dv-loading-button>
+                        </div>
+                        <div ng-show="vm.showVerfuegen() && vm.isSameVerfuegungdaten()">
+                            <dv-loading-button type="submit"
+                                               button-click="vm.schliessenOhneVerfuegen()">
+                                <span data-translate="VERFUEGEN_VERZICHTEN_UPPER"></span>
+                            </dv-loading-button>
+                        </div>
+                        <div ng-show="vm.showVerfuegen() && vm.isSameVerfuegungdaten()">
+                            <dv-loading-button type="submit" button-click="vm.save()">
+                                <span data-translate="TROTZDEM_VERFUEGEN_UPPER"></span>
+                            </dv-loading-button>
+                        </div>
                     </div>
                 </div>
 
