@@ -3,6 +3,8 @@ import TSEbeguParameter from '../../models/TSEbeguParameter';
 import {IHttpService, IPromise} from 'angular';
 import {TSEbeguParameterKey} from '../../models/enums/TSEbeguParameterKey';
 import DateUtil from '../../utils/DateUtil';
+import TSGesuch from '../../models/TSGesuch';
+import ICacheObject = angular.ICacheObject;
 
 
 export class EbeguParameterRS {
@@ -48,6 +50,13 @@ export class EbeguParameterRS {
 
     public getEbeguParameterByGesuchsperiode(gesuchsperiodeId: string): IPromise<TSEbeguParameter[]> {
         return this.http.get(this.serviceURL + '/gesuchsperiode/' + gesuchsperiodeId)
+            .then((response: any) => {
+                return this.ebeguRestUtil.parseEbeguParameters(response.data);
+            });
+    }
+
+    public getEbeguParameterByGesuchsperiodeCached(gesuchsperiodeId: string, cache: ICacheObject): IPromise<TSEbeguParameter[]> {
+        return this.http.get(this.serviceURL + '/gesuchsperiode/' + gesuchsperiodeId, {cache: cache})
             .then((response: any) => {
                 return this.ebeguRestUtil.parseEbeguParameters(response.data);
             });

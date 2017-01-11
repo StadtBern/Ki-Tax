@@ -22,6 +22,7 @@ import IQService = angular.IQService;
 import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
 import {OkHtmlDialogController} from '../../dialog/OkHtmlDialogController';
+import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
@@ -56,7 +57,7 @@ export class KommentarViewController {
     private getPapiergesuchFromServer(): IPromise<TSDokumenteDTO> {
 
         return this.dokumenteRS.getDokumenteByTypeCached(
-            this.getGesuch(), TSDokumentGrundTyp.PAPIERGESUCH, this.globalCacheService.getCache())
+            this.getGesuch(), TSDokumentGrundTyp.PAPIERGESUCH, this.globalCacheService.getCache(TSCacheTyp.EBEGU_CACHE))
             .then((promiseValue: TSDokumenteDTO) => {
 
                 if (promiseValue.dokumentGruende.length === 1) {
@@ -160,7 +161,7 @@ export class KommentarViewController {
                 if (filesOk.length > 0) {
                     this.uploadRS.uploadFile(filesOk, this.dokumentePapiergesuch, gesuchID).then((response) => {
                         this.dokumentePapiergesuch = angular.copy(response);
-                        this.globalCacheService.getCache().removeAll();
+                        this.globalCacheService.getCache(TSCacheTyp.EBEGU_CACHE).removeAll();
                     });
                 }
             }
