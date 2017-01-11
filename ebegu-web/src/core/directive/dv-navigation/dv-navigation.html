@@ -1,23 +1,19 @@
-<div class="row nav-row">
-    <!--Die Order der Knoepfe soll im HTML so sein, dass der weiter Knopf als erster im Form ist, dies wird dann fuer die darstelltung
-    mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
-    <div>
-        <dv-loading-button ng-if="vm.dvNext()" button-click="vm.nextStep()" button-class="next"   type="submit"
-                           button-disabled="vm.isNextButtonDisabled()" title="{{vm.getTooltip()}}">
-            <span ng-if="!vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()" hide-sm hide-xs></span>
-            <span ng-if="vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()"></span>
-            <span ng-if="!vm.doesdvTranslateNextExist()" class="fa fa-caret-right" hide-gt-sm
-                  style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
-        </dv-loading-button>
-    </div>
-    <div>
-        <dv-loading-button ng-if="vm.dvPrevious()" button-click="vm.previousStep()" button-class="previous" type="submit">
-            <span ng-bind="vm.getPreviousButtonName()" hide-sm hide-xs></span>
-            <span class="fa fa-caret-left" hide-gt-sm style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
-        </dv-loading-button>
-        <dv-loading-button ng-if="vm.doesCancelExist()" button-click="vm.cancel()" button-class="cancel" type="reset">
-            <span data-translate="ABBRECHEN_UPPER"></span>
-        </dv-loading-button>
-    </div>
-
+<!--Die Order der Knoepfe soll im HTML so sein, dass der weiter Knopf als erster im Form ist, dies wird dann fuer die darstelltung
+mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
+<div layout="row" layout-align="space-between center" layout-align-gt-sm="center center">
+    <dv-loading-button ng-if="vm.dvNext()" button-click="vm.nextStep()" button-class="next" type="submit"
+                       button-disabled="vm.isNextButtonDisabled()" title="{{vm.getTooltip()}}">
+        <span ng-if="!vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()" hide-sm hide-xs></span>
+        <span ng-if="vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()"></span>
+        <span ng-if="!vm.doesdvTranslateNextExist()" class="fa fa-caret-right" hide-gt-sm
+              style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
+    </dv-loading-button>
+    <dv-loading-button ng-if="vm.dvPrevious()" button-click="vm.previousStep()" button-class="previous"
+                       type="submit">
+        <span ng-bind="vm.getPreviousButtonName()" hide-sm hide-xs></span>
+        <span class="fa fa-caret-left" hide-gt-sm style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
+    </dv-loading-button>
+    <dv-loading-button ng-if="vm.doesCancelExist()" button-click="vm.cancel()" button-class="cancel" type="reset">
+        <span data-translate="ABBRECHEN_UPPER"></span>
+    </dv-loading-button>
 </div>

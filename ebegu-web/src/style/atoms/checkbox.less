@@ -8,15 +8,25 @@
     dv-error-messages {
         display: block;
     }
-
+    dv-tooltip {
+        display: inline-block;
+        height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: middle;
+        font-size: 0;
+        i {
+            font-size: 1.6rem;
+        }
+    }
 }
+
 md-checkbox {
-    //  position: absolute;
     position: relative;
     min-height: 0;
     min-width: 0;
     height: 1.7rem;
     width: auto;
+    margin-right: 0;
     &[disabled] {
         color: @contrast-dark;
         .md-label {
