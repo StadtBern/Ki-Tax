@@ -21,14 +21,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+
+import static org.junit.Assert.*;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -69,6 +71,7 @@ public class PDFServiceBeanTest {
 	@Before
 	public void setupTestData() {
 
+		Locale.setDefault(new Locale("de", "CH"));
 		evaluator = AbstractBGRechnerTest.createEvaluator();
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
@@ -104,7 +107,7 @@ public class PDFServiceBeanTest {
 	}
 
 	@Test
-	public void	testGenerateFreigabequittungJugendamt() throws Exception {
+	public void testGenerateFreigabequittungJugendamt() throws Exception {
 
 		byte[] bytes = pdfService.generateFreigabequittung(gesuch_2GS, Zustelladresse.JUGENDAMT);
 		assertNotNull(bytes);
@@ -113,7 +116,7 @@ public class PDFServiceBeanTest {
 	}
 
 	@Test
-	public void	testGenerateFreigabequittungSchulamt() throws Exception {
+	public void testGenerateFreigabequittungSchulamt() throws Exception {
 
 		byte[] bytes = pdfService.generateFreigabequittung(gesuch_2GS, Zustelladresse.SCHULAMT);
 		assertNotNull(bytes);
@@ -168,7 +171,7 @@ public class PDFServiceBeanTest {
 
 		PdfReader pdfRreader = new PdfReader(bytes);
 		pdfRreader.getNumberOfPages();
-		assertEquals("PDF should be one page long.",1, pdfRreader.getNumberOfPages());
+		assertEquals("PDF should be one page long.", 1, pdfRreader.getNumberOfPages());
 		pdfRreader.close();
 	}
 
@@ -185,7 +188,7 @@ public class PDFServiceBeanTest {
 
 		PdfReader pdfRreader = new PdfReader(bytes);
 		pdfRreader.getNumberOfPages();
-		assertEquals("PDF should be two pages long.",2, pdfRreader.getNumberOfPages());
+		assertEquals("PDF should be two pages long.", 2, pdfRreader.getNumberOfPages());
 
 		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
 		assertTrue("Second page should begin with this text.",
@@ -227,7 +230,7 @@ public class PDFServiceBeanTest {
 
 		PdfReader pdfRreader = new PdfReader(bytes);
 		pdfRreader.getNumberOfPages();
-		assertEquals("PDF should be two pages long.",2, pdfRreader.getNumberOfPages());
+		assertEquals("PDF should be two pages long.", 2, pdfRreader.getNumberOfPages());
 
 		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
 		assertTrue("Second page should begin with this text.",
@@ -322,6 +325,72 @@ public class PDFServiceBeanTest {
 		byte[] bytes = pdfService.generateBegleitschreiben(gesuch_2GS);
 		Assert.assertNotNull(bytes);
 		unitTestTempfolder.writeToTempDir(bytes, "BegleitschreibenFeutz.pdf");
+	}
+
+	@Test
+	public void testGeneriereVerfuegungKita() throws Exception {
+
+		gesuch_1GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+
+		evaluator.evaluate(gesuch_1GS, AbstractBGRechnerTest.getParameter());
+
+		Betreuung testBetreuung = gesuch_1GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		Assert.assertNotNull(verfuegungsPDF);
+		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_KITA.pdf");
+	}
+
+	@Test
+	public void testGeneriereVerfuegungTageselternKleinkinder() throws Exception {
+
+		gesuch_1GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_KLEINKIND);
+
+		evaluator.evaluate(gesuch_1GS, AbstractBGRechnerTest.getParameter());
+
+		Betreuung testBetreuung = gesuch_1GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		Assert.assertNotNull(verfuegungsPDF);
+		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_TageselternKleinkinder.pdf");
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void testGeneriereVerfuegung_TageselternSchulkinder() throws Exception {
+
+		gesuch_1GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
+
+		evaluator.evaluate(gesuch_1GS, AbstractBGRechnerTest.getParameter());
+
+		Betreuung testBetreuung = gesuch_1GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		Assert.assertNotNull(verfuegungsPDF);
+		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_TageselternSchulkinder.pdf");
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void testGeneriereVerfuegung_TagesstatetteSchulkinder() throws Exception {
+
+		gesuch_1GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
+
+		evaluator.evaluate(gesuch_1GS, AbstractBGRechnerTest.getParameter());
+
+		Betreuung testBetreuung = gesuch_1GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		Assert.assertNotNull(verfuegungsPDF);
+		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_TagesstatetteSchulkinder.pdf");
 	}
 
 }
