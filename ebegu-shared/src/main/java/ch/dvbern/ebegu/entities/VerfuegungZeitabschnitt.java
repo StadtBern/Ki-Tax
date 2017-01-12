@@ -47,8 +47,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Transient
 	private int fachstellenpensum;
 
-	@Transient
-	private boolean zuSpaetEingereicht;
 
 	@Transient
 	private Boolean wohnsitzNichtInGemeindeGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
@@ -139,6 +137,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
+
+
+	@Column(nullable = false)
+	private boolean zuSpaetEingereicht;
 
 
 	public VerfuegungZeitabschnitt() {
@@ -649,6 +651,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	/**
 	 * Gibt den Betrag des Gutscheins zurück.
 	 */
+	@Nonnull
 	public BigDecimal getVerguenstigung() {
 		if (vollkosten != null && elternbeitrag != null) {
 			return vollkosten.subtract(elternbeitrag);

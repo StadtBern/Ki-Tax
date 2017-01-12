@@ -22,6 +22,7 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
     private _kategorieMaxEinkommen: boolean;
     private _kategorieKeinPensum: boolean;
     private _kategorieZuschlagZumErwerbspensum: boolean;
+    private _zuSpaetEingereicht: boolean;
 
 
     constructor(erwerbspensumGS1?: number, erwerbspensumGS2?: number, betreuungspensum?: number, fachstellenpensum?: number,
@@ -201,5 +202,14 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
 
     set kategorieZuschlagZumErwerbspensum(value: boolean) {
         this._kategorieZuschlagZumErwerbspensum = value;
+    }
+
+
+    get zuSpaetEingereicht(): boolean {
+        return this._zuSpaetEingereicht;
+    }
+
+    set zuSpaetEingereicht(value: boolean) {
+        this._zuSpaetEingereicht = value;
     }
 }
