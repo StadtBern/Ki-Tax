@@ -150,17 +150,24 @@
             margin-right: 3rem;
         }
     }
-    .nav-row-betreuung{
-        &>div{
-            &:last-child{
-                margin-left:3rem;
+    .nav-row-betreuung {
+        flex-direction: column;
+        -ms-flex-direction: column;
+        bottom: 2rem;
+        & > div {
+            width: auto;
+            margin-bottom: 1rem;
+            &:last-child {
+                margin-left: 0;
+                margin-bottom: 0;
+                width: auto;
             }
-            &>div{
-                display:flex;
-                  flex-direction: row;
+            & > div {
+                display: flex;
+                flex-direction: row;
                 -ms-flex-direction: row;
-                padding: 0 3rem 0;
-                &>div{
+                padding: 0;
+                & > div {
                     padding: 0 0.75rem 0;
                 }
             }
@@ -198,6 +205,9 @@
 
 .gesuchModul {
     padding: 5rem 3rem 10rem;
+    &.betreuungView {
+        padding: 5rem 3rem 14rem;
+    }
     position: relative;
 
     & div {
