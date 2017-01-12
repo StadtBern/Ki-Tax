@@ -89,9 +89,25 @@
                 }
             }
         }
+        dv-navigation, .nav-row-verfuegen {
+            & > div {
+                padding: 0;
+                div {
+                    padding: 0 0.75rem 0;
+                }
 
+            }
+        }
+        .nav-row-verfuegen {
+            dv-navigation {
+                margin-left: auto;
+                margin-right: 0;
+            }
+            & > div {
+                margin-right: auto;
+            }
+        }
     }
-
 }
 
 //Device Media Queries
