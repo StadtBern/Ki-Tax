@@ -106,6 +106,9 @@ public class BetreuungsgutscheinEvaluator {
 
 				if (!betreuung.getBetreuungsangebotTyp().isSchulamt()) {
 
+					// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
+					List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
+
 					if (betreuung.getBetreuungsstatus() != null && betreuung.getBetreuungsstatus().isGeschlossen()) {
 						// Verfuegte Betreuungen duerfen nicht neu berechnet werden
 						LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
@@ -114,8 +117,7 @@ public class BetreuungsgutscheinEvaluator {
 						continue;
 					}
 
-					// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
-					List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
+
 					if (isDebug) {
 						LOG.info("BG-Nummer: " + betreuung.getBGNummer());
 					}
