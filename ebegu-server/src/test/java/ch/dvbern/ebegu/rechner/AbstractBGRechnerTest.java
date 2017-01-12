@@ -13,6 +13,7 @@ import org.junit.Before;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 /**
@@ -120,6 +121,15 @@ public class AbstractBGRechnerTest {
 		kind.setGeburtsdatum(geburtsdatumKind);
 		KindContainer kindContainer = new KindContainer();
 		kindContainer.setKindJA(kind);
+		Gesuch gesuch = new Gesuch();
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		boolean isSecondHalbjahr = LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), Month.JULY, 31));
+		int startyear = isSecondHalbjahr ? LocalDate.now().getYear() : LocalDate.now().getYear() - 1;
+		LocalDate start = LocalDate.of(startyear, Month.AUGUST, 1);
+		LocalDate end = LocalDate.of(startyear + 1, Month.JULY, 31);
+		gesuchsperiode.setGueltigkeit(new DateRange(start, end));
+		gesuch.setGesuchsperiode(gesuchsperiode);
+		kindContainer.setGesuch(gesuch);
 		betreuung.setKind(kindContainer);
 
 		Verfuegung verfuegung = createVerfuegung(von, bis, anspruch, massgebendesEinkommen);
