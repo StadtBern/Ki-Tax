@@ -1398,19 +1398,6 @@ public class JaxBConverter {
 		return betreuung;
 	}
 
-	private Verfuegung verfuegungtoStoreableEntity(JaxVerfuegung verfuegungJAXP) {
-
-		Verfuegung verfToMergeWith = new Verfuegung();
-		if (verfuegungJAXP.getId() != null) {
-
-			final Optional<Verfuegung> existingVerfuegung = verfuegungService.findVerfuegung(verfuegungJAXP.getId());
-			//wenn schon vorhanden updaten
-			if (existingVerfuegung.isPresent()) {
-				verfToMergeWith = existingVerfuegung.get();
-			}
-		}
-		return verfuegungToEntity(verfuegungJAXP, verfToMergeWith);
-	}
 
 	public Betreuung betreuungToStoreableEntity(@Nonnull final JaxBetreuung betreuungJAXP) {
 		Validate.notNull(betreuungJAXP);
