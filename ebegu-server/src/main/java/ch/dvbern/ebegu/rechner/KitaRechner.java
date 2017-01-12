@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.rechner;
 
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.MathUtil;
@@ -16,8 +17,6 @@ import java.util.Objects;
  * einer Betreuung für das Angebot KITA.
  */
 public class KitaRechner extends AbstractBGRechner {
-
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 
 	@Override
@@ -42,10 +41,11 @@ public class KitaRechner extends AbstractBGRechner {
 		BigDecimal anteilMonat = calculateAnteilMonat(von, bis);
 
 		// Abgeltung pro Tag: Abgeltung des Kantons plus Beitrag der Stadt
-		//todo homa hier muss allenfalls auch der parameter fuer das jahr2 beruecksichtigt werden
-		LOG.warn("Aktuell wird immer nur der parameter fuer jahr 1 genommen bei Fixbeitrag Stadt");
-		BigDecimal abgeltungProTag = MathUtil.EXACT.add(parameterDTO.getBeitragKantonProTag(), parameterDTO.getBeitragStadtProTagJahr1());
+		final BigDecimal beitragStadtProTagJahr = getBeitragStadtProTagJahr(parameterDTO, verfuegung.getBetreuung().extractGesuch().getGesuchsperiode(), von);
+		BigDecimal abgeltungProTag = MathUtil.EXACT.add(parameterDTO.getBeitragKantonProTag(), beitragStadtProTagJahr);
 		// Massgebendes Einkommen: Minimum und Maximum berücksichtigen
+
+
 		BigDecimal massgebendesEinkommenBerechnet = (massgebendesEinkommen.max(parameterDTO.getMassgebendesEinkommenMinimal())).min(parameterDTO.getMassgebendesEinkommenMaximal());
 		// Öffnungstage und Öffnungsstunden; Maximum berücksichtigen
 		BigDecimal oeffnungstageBerechnet = oeffnungstage.min(parameterDTO.getAnzahlTageMaximal());
@@ -80,5 +80,15 @@ public class KitaRechner extends AbstractBGRechner {
 		verfuegungZeitabschnitt.setVollkosten(MathUtil.roundToFrankenRappen(vollkostenIntervall));
 		verfuegungZeitabschnitt.setElternbeitrag(MathUtil.roundToFrankenRappen(elternbeitragIntervall));
 		return verfuegungZeitabschnitt;
+	}
+
+	/**
+	 * Beitrag Stadt für erstes Halbjahr oder zweites Halbjahr holen gehen
+	 */
+	private BigDecimal getBeitragStadtProTagJahr(BGRechnerParameterDTO parameterDTO, Gesuchsperiode gesuchsperiode, LocalDate von) {
+		if (von.getYear() == gesuchsperiode.getBasisJahrPlus1()) {
+			return parameterDTO.getBeitragStadtProTagJahr1();
+		}
+		return parameterDTO.getBeitragStadtProTagJahr2();
 	}
 }
