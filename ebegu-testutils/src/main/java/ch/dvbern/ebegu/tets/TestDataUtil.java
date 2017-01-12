@@ -486,7 +486,7 @@ public final class TestDataUtil {
 			gesuch.setGesuchsperiode(createGesuchsperiode1617());
 		}
 		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner();
-		finanzielleSituationRechner.calculateFinanzDaten(gesuch);
+		finanzielleSituationRechner.calculateFinanzDaten(gesuch, BigDecimal.valueOf(0.80));
 	}
 
 	public static Gesuch createTestgesuchDagmar() {
@@ -696,6 +696,7 @@ public final class TestDataUtil {
 		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, "5900", gueltigkeit, persistence);
 		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, "6970", gueltigkeit, persistence);
 		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, "7500", gueltigkeit, persistence);
+		saveParameter(PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG, "20", gueltigkeit, persistence);
 
 	}
 
