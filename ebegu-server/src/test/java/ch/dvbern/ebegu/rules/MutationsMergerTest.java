@@ -341,7 +341,7 @@ public class MutationsMergerTest {
 		zeitabschnitte.stream().
 			filter(za -> za.getGueltigkeit().endsBefore(endsBeforeOrAt) || za.getGueltigkeit().endsSameDay(endsBeforeOrAt)).
 			forEach(za ->
-				Assert.assertEquals("Falsches anspruchberechtiges Pensum in Zeitabschnitt " + za.toString(), anspruchberechtigtesPensum, za.getAnspruchberechtigtesPensum())
+				Assert.assertEquals("Falsches anspruchberechtiges Pensum in Zeitabschnitt " + za, anspruchberechtigtesPensum, za.getAnspruchberechtigtesPensum())
 			);
 	}
 
@@ -349,7 +349,7 @@ public class MutationsMergerTest {
 		zeitabschnitte.stream().
 			filter(za -> za.getGueltigkeit().startsAfter(startAfterOrAt) || za.getGueltigkeit().startsSameDay(startAfterOrAt)).
 			forEach(za ->
-				Assert.assertEquals("Falsches anspruchberechtiges Pensum in Zeitabschnitt " + za.toString(), anspruchberechtigtesPensum, za.getAnspruchberechtigtesPensum())
+				Assert.assertEquals("Falsches anspruchberechtiges Pensum in Zeitabschnitt " + za, anspruchberechtigtesPensum, za.getAnspruchberechtigtesPensum())
 			);
 	}
 
