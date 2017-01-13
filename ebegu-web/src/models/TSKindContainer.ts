@@ -1,6 +1,8 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import TSKind from './TSKind';
 import TSBetreuung from './TSBetreuung';
+import {TSFachstelle} from './TSFachstelle';
+import {TSPensumFachstelle} from './TSPensumFachstelle';
 
 export default class TSKindContainer extends TSAbstractEntity {
 
@@ -66,16 +68,22 @@ export default class TSKindContainer extends TSAbstractEntity {
         }
     }
 
-    public hasFachstelle(): boolean {
+    public hasPensumFachstelle(): boolean {
         return this.kindJA !== null && this.kindJA !== undefined
-            && this.kindJA.pensumFachstelle !== null && this.kindJA.pensumFachstelle !== undefined
-            && this.kindJA.pensumFachstelle.fachstelle !== null && this.kindJA.pensumFachstelle.fachstelle !== undefined;
+            && this.kindJA.pensumFachstelle !== null && this.kindJA.pensumFachstelle !== undefined;
     }
 
-    public extractFachstelleName(): string {
-        if (this.hasFachstelle()) {
-            return this.kindJA.pensumFachstelle.fachstelle.name;
+    public extractFachstelle(): TSFachstelle {
+        if (this.hasPensumFachstelle()) {
+            return this.kindJA.pensumFachstelle.fachstelle;
         }
-        return '';
+        return undefined;
+    }
+
+    public extractPensumFachstelle(): TSPensumFachstelle {
+        if (this.hasPensumFachstelle()) {
+            return this.kindJA.pensumFachstelle;
+        }
+        return undefined;
     }
 }
