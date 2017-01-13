@@ -56,6 +56,7 @@ public class RestanspruchInitializer {
 		} else if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
 			// Schulkind-Angebote: Die aktuelle Betreuung ist ein Schulkind Angebot. Diese verkleinern den Restanspruch nicht
 			// der aktuelle Restanspruch wird also AS-IS auf die nachste Betreuung uebernommen
+			// allerdings ist hier bei verfuegten Schulkindangeboten immer 0 weil wir das nicht speichern. spielt aber keine rolle weil wir schulkinder immer am Ende berechnen
 			targetZeitabschnitt.setAnspruchspensumRest(sourceZeitabschnitt.getAnspruchspensumRest());
 		}
 	}

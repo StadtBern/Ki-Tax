@@ -39,12 +39,12 @@ public class BetreuungComparator implements Comparator<Betreuung>, Serializable 
 
 		// Regel 0: Untenstehendes gilt nur fuer JA-Angebote Kleinkind!
 		if (betreuung1.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
-			// 1 ist JA, aber 2 nicht
+			// 1. ist JA-Kleinkind, aber 2. nicht
 			if (!betreuung2.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
 				return -1;
 			}
 		} else if (betreuung2.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
-			// 2 ist JA, aber 1 nicht
+			// 2. ist JA-Kleinkind, aber 1. nicht
 			return 1;
 		}
 
