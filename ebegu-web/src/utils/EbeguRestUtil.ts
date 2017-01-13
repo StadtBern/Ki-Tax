@@ -1572,6 +1572,7 @@ export default class EbeguRestUtil {
             zeitabschnitt.kategorieZuschlagZumErwerbspensum = zeitabschnittTS.kategorieZuschlagZumErwerbspensum;
             zeitabschnitt.kategorieMaxEinkommen = zeitabschnittTS.kategorieMaxEinkommen;
             zeitabschnitt.kategorieKeinPensum = zeitabschnittTS.kategorieKeinPensum;
+            zeitabschnitt.zuSpaetEingereicht = zeitabschnittTS.zuSpaetEingereicht;
             return zeitabschnitt;
         }
         return undefined;
@@ -1599,6 +1600,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.kategorieZuschlagZumErwerbspensum = zeitabschnittFromServer.kategorieZuschlagZumErwerbspensum;
             verfuegungZeitabschnittTS.kategorieMaxEinkommen = zeitabschnittFromServer.kategorieMaxEinkommen;
             verfuegungZeitabschnittTS.kategorieKeinPensum = zeitabschnittFromServer.kategorieKeinPensum;
+            verfuegungZeitabschnittTS.zuSpaetEingereicht = zeitabschnittFromServer.zuSpaetEingereicht;
             return verfuegungZeitabschnittTS;
         }
         return undefined;
