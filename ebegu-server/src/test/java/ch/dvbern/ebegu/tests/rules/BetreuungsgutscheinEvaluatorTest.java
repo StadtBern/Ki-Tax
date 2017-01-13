@@ -56,6 +56,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 	@Test
 	public void doTestEvaluation(){
 		Gesuch testgesuch = createGesuch();
+		testgesuch.setEingangsdatum(LocalDate.of(2016, 7, 1));
 		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(testgesuch, getParameter());
 		for (KindContainer kindContainer : testgesuch.getKindContainers()) {

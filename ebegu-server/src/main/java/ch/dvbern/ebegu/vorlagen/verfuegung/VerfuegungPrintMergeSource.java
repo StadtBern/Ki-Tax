@@ -11,6 +11,7 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
@@ -18,9 +19,10 @@ import ch.dvbern.lib.doctemplate.common.MergeSource;
 
 import java.util.List;
 
-public class VerfuegungPrintMergeSource implements MergeSource {
+public class VerfuegungPrintMergeSource implements EBEGUMergeSource {
 
 	private VerfuegungPrint verfuegung;
+	private boolean isPDFLongerThanExpected = false;
 
 	/**
 	 * @param verfuegung
@@ -40,7 +42,9 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
-
+		if (key.equals("verfuegung.PDFLongerThanExpected")) {
+			return isPDFLongerThanExpected;
+		}
 		return new BeanMergeSource(verfuegung, "verfuegung.").ifStatement(mergeContext, key);
 	}
 
@@ -57,5 +61,10 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 			return new BeanMergeSource(verfuegung, "Bemerkungen.").whileStatement(mergeContext, key);
 		}
 		return null;
+	}
+
+	@Override
+	public void setPDFLongerThanExpected(boolean isPDFLongerThanExpected) {
+		this.isPDFLongerThanExpected = isPDFLongerThanExpected;
 	}
 }

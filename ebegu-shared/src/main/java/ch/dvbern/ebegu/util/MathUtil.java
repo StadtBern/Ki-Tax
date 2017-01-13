@@ -20,6 +20,8 @@ public enum MathUtil {
 
 	GANZZAHL(19, 0, RoundingMode.HALF_UP),
 	EINE_NACHKOMMASTELLE(19, 1, RoundingMode.HALF_UP),
+	ZWEI_NACHKOMMASTELLE(19, 2, RoundingMode.HALF_UP),
+	VIER_NACHKOMMASTELLE(19, 4, RoundingMode.HALF_DOWN),
 	DEFAULT(19, 2, RoundingMode.HALF_UP),	// Am Schluss muss immer mit diesem gerechnet werden, da sonst nicht in DB gespeichert werden kann!
 	EXACT(30, 10, RoundingMode.HALF_UP);	// Für Zwischenresultate
 

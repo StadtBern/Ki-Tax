@@ -193,7 +193,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
             let massgebendesEinkVorAbzFamGrBJ = this.resultatBasisjahr.massgebendesEinkVorAbzFamGr;
             if (massgebendesEinkVorAbzFamGr && massgebendesEinkVorAbzFamGrBJ) {
 
-                let promil: number = 1000 - (massgebendesEinkVorAbzFamGr * 1000 / massgebendesEinkVorAbzFamGrBJ);
+                // we divide it by 10000 because we need a result with two decimals
+                let promil: number = 10000 - (massgebendesEinkVorAbzFamGr * 10000 / massgebendesEinkVorAbzFamGrBJ);
                 let sign: string;
                 promil = Math.round(promil);
                 if (promil > 0) {
@@ -201,16 +202,16 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
                 } else {
                     sign = '+ ';
                 }
-                return sign + Math.abs(Math.floor(promil / 10)) + '.' + Math.abs(promil % 10) + ' %';
+                return sign + (Math.abs(promil) / 100).toFixed(2) + ' %';
             } else if (!massgebendesEinkVorAbzFamGr && !massgebendesEinkVorAbzFamGrBJ) {
                 // case: Kein Einkommen in diesem Jahr und im letzten Jahr
-                return '+ 0 %';
+                return '+ 0.00 %';
             } else if (!massgebendesEinkVorAbzFamGr) {
                 // case: Kein Einkommen in diesem Jahr aber Einkommen im letzten Jahr
-                return '- 100 %';
+                return '- 100.00 %';
             } else {
                 // case: Kein Einkommen im letzten Jahr aber Einkommen in diesem Jahr
-                return '+ 100 %';
+                return '+ 100.00 %';
             }
         }
         return '';

@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.dto.VerfuegungsBemerkung;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.rules.RuleKey;
 import ch.dvbern.ebegu.types.DateRange;
@@ -508,6 +509,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.setKategorieKeinPensum(this.kategorieKeinPensum || other.kategorieKeinPensum);
 		this.setKategorieMaxEinkommen(this.kategorieMaxEinkommen || other.kategorieMaxEinkommen);
 		this.setKategorieZuschlagZumErwerbspensum(this.kategorieZuschlagZumErwerbspensum || other.kategorieZuschlagZumErwerbspensum);
+	}
+
+	public void addBemerkung(VerfuegungsBemerkung bemerkungContainer) {
+		this.addBemerkung(bemerkungContainer.getRuleKey(), bemerkungContainer.getMsgKey());
 	}
 
 	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey) {

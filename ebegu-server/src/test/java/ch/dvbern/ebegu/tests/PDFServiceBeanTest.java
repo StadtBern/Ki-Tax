@@ -330,12 +330,12 @@ public class PDFServiceBeanTest {
 	@Test
 	public void testGeneriereVerfuegungKita() throws Exception {
 
-		gesuch_1GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+		gesuch_2GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 
-		evaluator.evaluate(gesuch_1GS, AbstractBGRechnerTest.getParameter());
+		evaluator.evaluate(gesuch_2GS, AbstractBGRechnerTest.getParameter());
 
-		Betreuung testBetreuung = gesuch_1GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
-		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+		Betreuung testBetreuung = gesuch_2GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung 1\nTest Bemerkung 2\nTest Bemerkung 3");
 
 		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
 		Assert.assertNotNull(verfuegungsPDF);
@@ -345,12 +345,12 @@ public class PDFServiceBeanTest {
 	@Test
 	public void testGeneriereVerfuegungTageselternKleinkinder() throws Exception {
 
-		gesuch_1GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_KLEINKIND);
+		gesuch_2GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_KLEINKIND);
 
-		evaluator.evaluate(gesuch_1GS, AbstractBGRechnerTest.getParameter());
+		evaluator.evaluate(gesuch_2GS, AbstractBGRechnerTest.getParameter());
 
-		Betreuung testBetreuung = gesuch_1GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
-		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+		Betreuung testBetreuung = gesuch_2GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung 1\nTest Bemerkung 2\nTest Bemerkung 3");
 
 		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
 		Assert.assertNotNull(verfuegungsPDF);
@@ -363,12 +363,12 @@ public class PDFServiceBeanTest {
 	@Test
 	public void testGeneriereVerfuegung_TageselternSchulkinder() throws Exception {
 
-		gesuch_1GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
+		gesuch_2GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
 
-		evaluator.evaluate(gesuch_1GS, AbstractBGRechnerTest.getParameter());
+		evaluator.evaluate(gesuch_2GS, AbstractBGRechnerTest.getParameter());
 
-		Betreuung testBetreuung = gesuch_1GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
-		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+		Betreuung testBetreuung = gesuch_2GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung 1\nTest Bemerkung 2\nTest Bemerkung 3");
 
 		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
 		Assert.assertNotNull(verfuegungsPDF);
@@ -381,12 +381,12 @@ public class PDFServiceBeanTest {
 	@Test
 	public void testGeneriereVerfuegung_TagesstatetteSchulkinder() throws Exception {
 
-		gesuch_1GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
+		gesuch_2GS.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
 
-		evaluator.evaluate(gesuch_1GS, AbstractBGRechnerTest.getParameter());
+		evaluator.evaluate(gesuch_2GS, AbstractBGRechnerTest.getParameter());
 
-		Betreuung testBetreuung = gesuch_1GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
-		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+		Betreuung testBetreuung = gesuch_2GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung 1\nTest Bemerkung 2\nTest Bemerkung 3");
 
 		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
 		Assert.assertNotNull(verfuegungsPDF);
