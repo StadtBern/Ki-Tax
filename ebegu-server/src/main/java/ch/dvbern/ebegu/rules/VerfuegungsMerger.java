@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 import org.slf4j.Logger;
@@ -43,7 +43,11 @@ public class VerfuegungsMerger {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 
+		if (betreuung.extractGesuch().getTyp().equals(AntragTyp.GESUCH)) {
+			return zeitabschnitte;
+		}
 		final Verfuegung verfuegungOnGesuchForMuation = betreuung.getVorgaengerVerfuegung();
+
 
 		final LocalDate mutationsEingansdatum = betreuung.extractGesuch().getEingangsdatum();
 
