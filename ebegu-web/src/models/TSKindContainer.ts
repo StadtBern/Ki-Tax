@@ -65,4 +65,17 @@ export default class TSKindContainer extends TSAbstractEntity {
             this.betreuungen = [];
         }
     }
+
+    public hasFachstelle(): boolean {
+        return this.kindJA !== null && this.kindJA !== undefined
+            && this.kindJA.pensumFachstelle !== null && this.kindJA.pensumFachstelle !== undefined
+            && this.kindJA.pensumFachstelle.fachstelle !== null && this.kindJA.pensumFachstelle.fachstelle !== undefined;
+    }
+
+    public extractFachstelleName(): string {
+        if (this.hasFachstelle()) {
+            return this.kindJA.pensumFachstelle.fachstelle.name;
+        }
+        return '';
+    }
 }

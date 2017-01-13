@@ -43,6 +43,16 @@
                                 <div class="dv-error-messages"></div>
                             </div>
                         </div>
+                        <!--Fachstelle-->
+                        <div class="row" ng-if="vm.getKindModel().hasFachstelle()">
+                            <div class="col-sm-12 dv-input-container-medium form-group">
+                                <label class="md-no-float" data-translate="FACHSTELLE"></label>
+                                <input id="fachstelle_ID" type="text" name="fachstelle" ng-disabled="true"
+                                       ng-value="vm.getKindModel().extractFachstelleName()"
+                                       class="form-control">
+                                <div class="dv-error-messages"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
@@ -226,7 +236,7 @@
                                  dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
                                 <div class="col-md-12 dv-input-container-medium">
                                     <dv-input-container class="form-group">
-                                        <label class="md-no-float" class="inlineHint" for="grundAblehnung"
+                                        <label class="md-no-float inlineHint" for="grundAblehnung"
                                                data-translate="GRUND_ABLEHNUNG"></label>
                                         <textarea md-no-autogrow class="form-control" rows="6" id="grundAblehnung"
                                                   ng-model="vm.getBetreuungModel().grundAblehnung"
