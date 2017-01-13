@@ -107,7 +107,7 @@ export class DVDokumenteListController {
 
     hasDokuments(selectDokument: TSDokumentGrund): boolean {
         if (selectDokument.dokumente) {
-            for (var dokument of selectDokument.dokumente) {
+            for (let dokument of selectDokument.dokumente) {
                 if (dokument.filename) {
                     return true;
                 }
@@ -140,7 +140,6 @@ export class DVDokumenteListController {
             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment);
         });
     }
-
 
     getWidth(): String {
         if (this.sonstige) {
