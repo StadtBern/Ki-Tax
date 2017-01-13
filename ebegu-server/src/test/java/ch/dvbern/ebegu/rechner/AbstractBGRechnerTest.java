@@ -13,6 +13,7 @@ import org.junit.Before;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 /**
@@ -31,16 +32,22 @@ public class AbstractBGRechnerTest {
 
 	public static BetreuungsgutscheinEvaluator createEvaluator() {
 		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = new HashMap<>();
+
 		EbeguParameter paramMaxEinkommen = new EbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, "159000");
 		ebeguParameter.put(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, paramMaxEinkommen);
+
 		EbeguParameter pmab3 = new EbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, "3760");
 		ebeguParameter.put(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, pmab3);
+
 		EbeguParameter pmab4 = new EbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, "5900");
 		ebeguParameter.put(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, pmab4);
+
 		EbeguParameter pmab5 = new EbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, "6970");
 		ebeguParameter.put(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, pmab5);
+
 		EbeguParameter pmab6 = new EbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, "7500");
 		ebeguParameter.put(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, pmab6);
+
 		BetreuungsgutscheinConfigurator configurator = new BetreuungsgutscheinConfigurator();
 		List<Rule> rules = configurator.configureRulesForMandant(null, ebeguParameter);
 		return new BetreuungsgutscheinEvaluator(rules);
@@ -120,6 +127,15 @@ public class AbstractBGRechnerTest {
 		kind.setGeburtsdatum(geburtsdatumKind);
 		KindContainer kindContainer = new KindContainer();
 		kindContainer.setKindJA(kind);
+		Gesuch gesuch = new Gesuch();
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		boolean isSecondHalbjahr = LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), Month.JULY, 31));
+		int startyear = isSecondHalbjahr ? LocalDate.now().getYear() : LocalDate.now().getYear() - 1;
+		LocalDate start = LocalDate.of(startyear, Month.AUGUST, 1);
+		LocalDate end = LocalDate.of(startyear + 1, Month.JULY, 31);
+		gesuchsperiode.setGueltigkeit(new DateRange(start, end));
+		gesuch.setGesuchsperiode(gesuchsperiode);
+		kindContainer.setGesuch(gesuch);
 		betreuung.setKind(kindContainer);
 
 		Verfuegung verfuegung = createVerfuegung(von, bis, anspruch, massgebendesEinkommen);

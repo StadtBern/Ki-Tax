@@ -316,7 +316,7 @@ export class GesuchToolbarController {
     }
 
     public antragMutierenPossible(): void {
-        if (this.antragList && this.antragList.length != 0) {
+        if (this.antragList && this.antragList.length !== 0) {
             let gesuchInBearbeitungVorhanden = false;
             for (let i = 0; i < this.antragList.length; i++) {
                 let antragItem: TSAntragDTO = this.antragList[i];
