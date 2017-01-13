@@ -27,7 +27,7 @@ md-dialog-actions {
     button {
         margin: 0.8rem;
         min-width: 10rem;
-        width:auto;
+        width: auto;
         span {
             font-size: 1.6rem;
         }
@@ -42,6 +42,21 @@ dv-navigation {
 
 .btn-link {
     font-size: 1.4rem;
+    color: @contrast-darkest;
+    &.link-underline {
+        padding: 0;
+        &:hover {
+            color: @contrast-darkest;
+        }
+
+        i {
+            text-decoration: none
+        }
+        span {
+            text-decoration: underline;
+        }
+    }
+    letter-spacing: 0.1rem;
     span {
         line-height: normal;
     }

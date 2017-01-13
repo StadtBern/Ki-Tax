@@ -39,6 +39,12 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     selectedStichtagBjP2_GS: TSMonth = undefined;
     initialEinkVersInfo: TSEinkommensverschlechterungInfoContainer;
     allowedRoles: Array<TSRole>;
+    basisJahrUndPeriode = {
+        jahr1periode: this.gesuchModelManager.getBasisjahrPlus(1),
+        jahr2periode: this.gesuchModelManager.getBasisjahrPlus(2),
+        basisjahr: this.gesuchModelManager.getBasisjahr()
+    };
+
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'
         , 'WizardStepManager', 'DvDialog', '$q', 'EinkommensverschlechterungInfoRS', '$scope'];

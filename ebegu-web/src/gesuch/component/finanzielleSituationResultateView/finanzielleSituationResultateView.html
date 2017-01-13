@@ -40,9 +40,10 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-medium">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_1"
-                                       translate-values="{namegs1: vm.extractFullNameGS1()}"
-                                       for="bruttovermoegen1"></label>
+                                <label class="md-no-float" for="bruttovermoegen1">
+                                    <span data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_1" translate-values="{namegs1: vm.extractFullNameGS1()}"></span>
+                                    <dv-tooltip text="'FINANZIELLE_SITUATION_VERMOEGEN_HELP' | translate"></dv-tooltip>
+                                </label>
                                 <div class="dv-input-container-medium-label">
                                     <input id="bruttovermoegen1" type="text" name="bruttovermoegen1" ui-number-mask="0"
                                            aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_1|translate}}"
@@ -63,9 +64,10 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-medium" ng-if="vm.showGS2()">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_2"
-                                       translate-values="{namegs2: vm.extractFullNameGS2()}"
-                                       for="bruttovermoegen2"></label>
+                                <label class="md-no-float" for="bruttovermoegen2">
+                                    <span data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_2" translate-values="{namegs2: vm.extractFullNameGS2()}"></span>
+                                    <dv-tooltip text="'FINANZIELLE_SITUATION_VERMOEGEN_HELP' | translate"></dv-tooltip>
+                                </label>
                                 <div class="dv-input-container-medium-label">
                                     <input id="bruttovermoegen2" type="text" name="bruttovermoegen2" ui-number-mask="0"
                                            aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_2|translate}}"
@@ -86,9 +88,10 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-medium">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_1"
-                                       translate-values="{namegs1: vm.extractFullNameGS1()}"
-                                       for="schulden1"></label>
+                                <label class="md-no-float" for="schulden1">
+                                    <span data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_1" translate-values="{namegs1: vm.extractFullNameGS1()}"></span>
+                                    <dv-tooltip text="'FINANZIELLE_SITUATION_SCHULDEN_HELP' | translate"></dv-tooltip>
+                                </label>
                                 <div class="dv-input-container-medium-label">
                                     <input id="schulden1" type="text" name="schulden1" ui-number-mask="0"
                                            aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_1|translate}}"
@@ -107,9 +110,10 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-medium" ng-if="vm.showGS2()">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_2"
-                                       translate-values="{namegs2: vm.extractFullNameGS2()}"
-                                       for="schulden2"></label>
+                                <label class="md-no-float" for="schulden2">
+                                    <span data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_2" translate-values="{namegs2: vm.extractFullNameGS2()}"></span>
+                                    <dv-tooltip text="'FINANZIELLE_SITUATION_SCHULDEN_HELP' | translate"></dv-tooltip>
+                                </label>
                                 <div class="dv-input-container-medium-label">
                                     <input id="schulden2" type="text" name="schulden2" ui-number-mask="0"
                                            aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
@@ -146,9 +150,10 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-medium">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float"
-                                       data-translate="FINANZIELLE_SITUATION_ANRECHENBARES_EINKOMMEN"
-                                       for="anrechenbaresEinkommen"></label>
+                                <label class="md-no-float" for="anrechenbaresEinkommen">
+                                    <span data-translate="FINANZIELLE_SITUATION_ANRECHENBARES_EINKOMMEN"></span>
+                                    <dv-tooltip text="'FINANZIELLE_SITUATION_ANRECHENBARES_EINKOMMEN_HELP' | translate"></dv-tooltip>
+                                </label>
                                 <div class="dv-input-container-medium-label">
                                     <input id="anrechenbaresEinkommen" type="text" name="anrechenbaresEinkommen"
                                            ui-number-mask="0"

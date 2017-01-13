@@ -58,7 +58,7 @@
                                     <select name="betreuungsangebot" id="betreuungsangebot"
                                             ng-model="vm.betreuungsangebot"
                                             class="form-control"
-                                            ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
+                                            ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues"
                                             ng-required="true" ng-disabled="!vm.isEnabled()"
                                             ng-change="vm.changedAngebot()">
                                     </select>
@@ -331,11 +331,10 @@
                 <!--Buttons-->
                 <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
                     wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
-                <div class="row nav-row">
+                <div class="nav-row-betreuung">
                     <!--Die Order der Knoepfe soll im HTML so sein, dass der weiter Knopf als erster im Form ist, dies wird dann fuer die darstelltung
                     mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in einem input Feld automaitisch der erste submit button triggered wird-->
-                    <div flex-gt-sm="50" layout="row" layout-align="end center"
-                         layout-align-sm="center center" dv-show-element
+                    <div dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                          dv-show-expression="vm.isBetreuungsstatusSchulamt()">
                         <dv-loading-button button-click="vm.saveSchulamt()" type="submit"
@@ -345,50 +344,50 @@
                     </div>
                     <!--Institution Buttons-->
 
-                    <div flex-gt-sm="25" layout="row-reverse" layout-align="end center"
-                         layout-align-sm="center center" dv-show-element
+
+                    <div dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
                          dv-show-expression="vm.isBetreuungsstatusWarten()">
 
-                        <dv-loading-button button-click="vm.platzAbweisen()"
-                                           ng-if="!vm.isFromMutation()"
-                                           button-class="dv-btn-institution"
-                                           aria-label="{{ABWEISEN_UPPER | translate}}">
-                            <span data-translate="ABWEISEN_UPPER"></span>
-                        </dv-loading-button>
-                        <dv-loading-button button-click="vm.platzNichtEingetreten()"
-                                           ng-if="vm.isFromMutation()"
-                                           button-class="dv-btn-institution"
-                                           aria-label="{{NICHT_EINGETRETEN_UPPER | translate}}">
-                            <span data-translate="NICHT_EINGETRETEN_UPPER"></span>
-                        </dv-loading-button>
+                        <div ng-if="!vm.isFromMutation()">
+                            <dv-loading-button button-click="vm.platzAbweisen()"
+
+                                               aria-label="{{ABWEISEN_UPPER | translate}}">
+                                <span data-translate="ABWEISEN_UPPER"></span>
+                            </dv-loading-button>
+
+
+                        </div>
+                        <div ng-if="vm.isFromMutation()">
+
+                            <dv-loading-button button-click="vm.platzNichtEingetreten()"
+                                               ng-if="vm.isFromMutation()"
+                                               aria-label="{{NICHT_EINGETRETEN_UPPER | translate}}">
+                                <span data-translate="NICHT_EINGETRETEN_UPPER"></span>
+                            </dv-loading-button>
+
+                        </div>
+
                         <dv-loading-button button-click="vm.platzBestaetigen()" type="submit"
-                                           button-class="dv-btn-institution"
                                            aria-label="{{BESTAETIGEN_UPPER | translate}}">
                             <span data-translate="BESTAETIGEN_UPPER"></span>
                         </dv-loading-button>
+
                     </div>
 
 
                     <!--Platz anfordern-->
                     <div dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
-                         dv-show-expression="vm.isBetreuungsstatusAusstehend()"
-                         flex-gt-sm="50" layout="row" layout-align="start center"
-                         layout-align-sm="center center">
+                         dv-show-expression="vm.isBetreuungsstatusAusstehend()">
                         <dv-loading-button button-click="vm.platzAnfordern()">
                             <span data-translate="PLATZBESTAETIGUNG_ANFORDERN"></span>
                         </dv-loading-button>
                     </div>
-                    <div flex-gt-sm="50" layout="row" layout-align="start center"
-                         layout-align-sm="center center" class="cancel">
-                        <dv-loading-button button-click="vm.cancel()" button-class="cancel"
-                                           type="reset">
-                            <span data-translate="ABBRECHEN_UPPER"></span>
-                        </dv-loading-button>
-                    </div>
-
-
+                    <dv-loading-button button-click="vm.cancel()" button-class="cancel"
+                                       type="reset">
+                        <span data-translate="ABBRECHEN_UPPER"></span>
+                    </dv-loading-button>
                 </div>
             </form>
         </div>

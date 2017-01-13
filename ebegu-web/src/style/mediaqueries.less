@@ -1,9 +1,17 @@
 @import 'variables.less';
 
 @media @mq-xs {
+    md-dialog.md-default-theme.md-dialog-fullscreen.dv-tooltip-dialog, md-dialog {
+        font-size: 1.8rem;
+        .md-dialog-content {
+            padding: 5rem;
+        }
+    }
+
     .gesuchModul {
         padding: 5rem 2.5rem 10rem 5rem;
     }
+
     .mainQuestion {
         width: 200%;
     }
@@ -42,28 +50,61 @@
             }
         }
     }
+
 }
 
 @media @mq-sm {
     #gesuchContainer {
-        .nav-row {
+        .nav-row-betreuung {
+            flex-direction: row-reverse;
+            -ms-flex-direction: row-reverse;
+            bottom: 4rem;
             & > div {
-                padding: 0 2rem 0;
-                &:nth-of-type(2) {
-                    margin-bottom: 0;
-                    justify-content: flex-end;
-                }
-                &:nth-of-type(3) {
-                    margin-bottom: 0;
-                    justify-content: flex-end;
-                }
-                &:nth-of-type(1) {
-                    justify-content: flex-start;
-                }
-                &.cancel {
+
+                width: auto;
+                margin-bottom: 0;
+                padding: 0;
+                margin-right: auto;
+                &:first-child {
                     margin-right: auto;
-                    justify-content: flex-end;
                 }
+                &:last-child {
+                    margin-left: auto;
+                    margin-right: 0;
+                    margin-bottom: 0;
+                    padding: 0 0.75rem 0;
+                    padding-left: 0;
+                }
+                & > div {
+                    display: flex;
+                    flex-direction: row;
+                    -ms-flex-direction: row;
+                    padding: 0 0.75rem 0;
+                    &:first-child {
+                        padding-right: 0;
+                    }
+                    & > div {
+                        padding: 0;
+                    }
+                }
+            }
+        }
+        dv-navigation, .nav-row-verfuegen {
+            & > div {
+                padding: 0;
+                div {
+                    padding: 0 0.75rem 0;
+                }
+
+            }
+        }
+        .nav-row-verfuegen {
+            dv-navigation {
+                margin-left: auto;
+                margin-right: 0;
+            }
+            & > div {
+                margin-right: auto;
             }
         }
     }

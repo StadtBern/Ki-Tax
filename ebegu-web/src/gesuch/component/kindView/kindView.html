@@ -84,6 +84,7 @@
                             <dv-input-container class="form-group">
                                 <h1 class="required">
                                     <span data-translate="KINDERABZUG"></span>
+                                    <dv-tooltip text="'KINDERABZUG_HELP' | translate"></dv-tooltip>
                                 </h1>
                                 <dv-radio-container name="kinderabzug" ng-model="vm.getModel().kinderabzug"
                                                     ng-required="true"
@@ -181,6 +182,7 @@
                                     <label class="md-no-float"
                                            for="gleichemHaushalt">
                                         <span data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT" class="ebeguH1"> </span>
+                                        <dv-tooltip text="'WOHNHAFT_IM_GLEICHEN_HAUSHALT_HELP' | translate"></dv-tooltip>
                                     </label>
                                     <div class="dv-input-container-small" style="padding-right:32px;">
                                         <input id="gleichemHaushalt" type="number" name="gleichemHaushalt"
@@ -208,8 +210,8 @@
                                              ng-disabled="vm.isGesuchReadonly()"
                                              ng-change="vm.showFachstelleClicked()">
                                     <span data-translate="INVOLVIERTE_FACHSTELLE"></span>
-                                    <dv-tooltip text="'INVOLVIERTE_FACHSTELLE_HELP' | translate"></dv-tooltip>
                                 </md-checkbox>
+                                <dv-tooltip text="'INVOLVIERTE_FACHSTELLE_HELP' | translate"></dv-tooltip>
                                 <dv-bisher gs="vm.showFachstelleGS"
                                            ja="vm.showFachstelle"
                                            specific-bisher-text="vm.getTextFachstelleKorrekturJA()"></dv-bisher>
@@ -223,7 +225,7 @@
                         <div class="row">
                             <div class="col-sm-12 dv-input-container-medium">
                                 <div class="form-group">
-                                    <label class="md-no-float" data-translate="FACHSTELLE" for="fachstelle">
+                                    <label class="md-no-float required" data-translate="FACHSTELLE" for="fachstelle">
                                     </label>
                                     <div class="dv-select-style">
                                         <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId"
