@@ -34,9 +34,9 @@ import java.util.List;
  * Der Anspruch kann sich erst auf den Folgemonat des Eingangsdatum erhöhen
  * Reduktionen des Anspruchs sind auch rückwirkend erlaubt
  */
-public class VerfuegungsMerger {
+public class MutationsMerger {
 
-	private static final Logger LOG = LoggerFactory.getLogger(VerfuegungsMerger.class.getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(MutationsMerger.class.getSimpleName());
 
 	/**
 	 * Um code lesbar zu halten wird die Regel PMD.CollapsibleIfStatements ausgeschaltet
