@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.vorlagen.nichteintreten;
 
+import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
@@ -18,9 +19,10 @@ import java.util.List;
  * <p>
  * Created by medu on 28/11/2016.
  */
-public class NichteintretenPrintMergeSource implements MergeSource {
+public class NichteintretenPrintMergeSource implements EBEGUMergeSource {
 
 	private NichteintretenPrint nichteintreten;
+	private boolean isPDFLongerThanExpected = false;
 
 	public NichteintretenPrintMergeSource(NichteintretenPrint nichteintreten) {
 		this.nichteintreten = nichteintreten;
@@ -37,6 +39,9 @@ public class NichteintretenPrintMergeSource implements MergeSource {
 
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
+		if (key.equals("printMerge.PDFLongerThanExpected")) {
+			return isPDFLongerThanExpected;
+		}
 		return new BeanMergeSource(nichteintreten, "printMerge.").ifStatement(mergeContext, key);
 	}
 
@@ -46,5 +51,10 @@ public class NichteintretenPrintMergeSource implements MergeSource {
 			return new BeanMergeSource(nichteintreten, "printMerge.").whileStatement(mergeContext, key);
 		}
 		return null;
+	}
+
+	@Override
+	public void setPDFLongerThanExpected(boolean isPDFLongerThanExpected) {
+		this.isPDFLongerThanExpected = isPDFLongerThanExpected;
 	}
 }
