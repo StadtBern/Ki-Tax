@@ -37,6 +37,17 @@ public class BetreuungComparator implements Comparator<Betreuung>, Serializable 
 		Betreuungspensum firstBetreuungspensum1 = betreuungenSorted1.get(0).getBetreuungspensumJA();
 		Betreuungspensum firstBetreuungspensum2 = betreuungenSorted2.get(0).getBetreuungspensumJA();
 
+		// Regel 0: Untenstehendes gilt nur fuer JA-Angebote Kleinkind!
+		if (betreuung1.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+			// 1. ist JA-Kleinkind, aber 2. nicht
+			if (!betreuung2.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+				return -1;
+			}
+		} else if (betreuung2.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+			// 2. ist JA-Kleinkind, aber 1. nicht
+			return 1;
+		}
+
 		// Regel 1: Betreuung, die zuerst beginnt
 		int result = firstBetreuungspensum1.getGueltigkeit().getGueltigAb().compareTo(firstBetreuungspensum2.getGueltigkeit().getGueltigAb());
 		if (result == 0) {

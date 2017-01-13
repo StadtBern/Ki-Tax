@@ -48,7 +48,7 @@ public class GeneratePDFDocumentHelper {
 	 * @throws MergeDocException
 	 */
 	@Nonnull
-	public byte[] generatePDFDocument(@Nonnull byte[] generateFrom) throws MergeDocException {
+	private byte[] generatePDFDocument(@Nonnull byte[] generateFrom) throws MergeDocException {
 		try {
 			Objects.requireNonNull(generateFrom, "generateFrom muss gesetzt sein");
 			final XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(generateFrom));

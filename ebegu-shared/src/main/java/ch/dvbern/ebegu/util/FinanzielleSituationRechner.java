@@ -129,7 +129,7 @@ public class FinanzielleSituationRechner {
 	 *
 	 * @param gesuch das Gesuch dessen finazDatenDTO gesetzt werden soll
 	 */
-	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
+	public void calculateFinanzDaten(@Nonnull Gesuch gesuch, BigDecimal minimumEKV) {
 		FinanzDatenDTO finanzDatenDTO_alleine = new FinanzDatenDTO();
 		FinanzDatenDTO finanzDatenDTO_zuZweit = new FinanzDatenDTO();
 
@@ -151,8 +151,10 @@ public class FinanzielleSituationRechner {
 			BigDecimal massgebendesEinkommenBasisjahr_zuZweit = finanzielleSituationResultateDTO_zuZweit.getMassgebendesEinkVorAbzFamGr();
 			if (gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() != null && gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
 				// In der EKV 1 vergleichen wir immer mit dem Basisjahr
-				handleEKV1(finanzDatenDTO_alleine, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus1(), resultateEKV1_alleine.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenBasisjahr_alleine);
-				handleEKV1(finanzDatenDTO_zuZweit, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus1(), resultateEKV1_zuZweit.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenBasisjahr_zuZweit);
+				handleEKV1(finanzDatenDTO_alleine, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus1(), resultateEKV1_alleine.getMassgebendesEinkVorAbzFamGr(),
+					massgebendesEinkommenBasisjahr_alleine, minimumEKV);
+				handleEKV1(finanzDatenDTO_zuZweit, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus1(), resultateEKV1_zuZweit.getMassgebendesEinkVorAbzFamGr(),
+					massgebendesEinkommenBasisjahr_zuZweit, minimumEKV);
 			}
 
 			BigDecimal massgebendesEinkommenVorjahr_alleine;
@@ -174,8 +176,12 @@ public class FinanzielleSituationRechner {
 				FinanzielleSituationResultateDTO resultateEKV2_alleine = calculateResultateEinkommensverschlechterung(gesuch, 2, false);
 				FinanzielleSituationResultateDTO resultateEKV2_zuZweit = calculateResultateEinkommensverschlechterung(gesuch, 2, true);
 				// In der EKV 2 vergleichen wir immer mit dem EKV 1, egal ob diese akzeptiert war
-				handleEKV2(finanzDatenDTO_alleine, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus2(), resultateEKV2_alleine.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenVorjahr_alleine, massgebendesEinkommenBasisjahr_alleine);
-				handleEKV2(finanzDatenDTO_zuZweit, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus2(), resultateEKV2_zuZweit.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenVorjahr_zuZweit, massgebendesEinkommenBasisjahr_zuZweit);
+				handleEKV2(finanzDatenDTO_alleine, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus2(),
+					resultateEKV2_alleine.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenVorjahr_alleine,
+					massgebendesEinkommenBasisjahr_alleine, minimumEKV);
+				handleEKV2(finanzDatenDTO_zuZweit, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus2(),
+					resultateEKV2_zuZweit.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenVorjahr_zuZweit,
+					massgebendesEinkommenBasisjahr_zuZweit, minimumEKV);
 			} else {
 				finanzDatenDTO_alleine.setMassgebendesEinkBjP2VorAbzFamGr(massgebendesEinkommenVorjahr_alleine);
 				finanzDatenDTO_zuZweit.setMassgebendesEinkBjP2VorAbzFamGr(massgebendesEinkommenVorjahr_zuZweit);
@@ -185,10 +191,11 @@ public class FinanzielleSituationRechner {
 		gesuch.setFinanzDatenDTO_zuZweit(finanzDatenDTO_zuZweit);
 	}
 
-	private void handleEKV1(FinanzDatenDTO finanzDatenDTO, LocalDate stichtagEKV1, BigDecimal massgebendesEinkommenEKV1, BigDecimal massgebendesEinkommenBasisjahr) {
+	private void handleEKV1(FinanzDatenDTO finanzDatenDTO, LocalDate stichtagEKV1, BigDecimal massgebendesEinkommenEKV1, BigDecimal massgebendesEinkommenBasisjahr,
+							BigDecimal minimumEKV) {
         // In der EKV 1 vergleichen wir immer mit dem Basisjahr
 		finanzDatenDTO.setDatumVonBasisjahrPlus1(stichtagEKV1);
-		boolean accepted = acceptEKV(massgebendesEinkommenBasisjahr, massgebendesEinkommenEKV1);
+		boolean accepted = acceptEKV(massgebendesEinkommenBasisjahr, massgebendesEinkommenEKV1, minimumEKV);
 		finanzDatenDTO.setEkv1Accepted(accepted);
 		if (accepted) {
 			finanzDatenDTO.setMassgebendesEinkBjP1VorAbzFamGr(massgebendesEinkommenEKV1);
@@ -197,10 +204,11 @@ public class FinanzielleSituationRechner {
 		}
 	}
 
-	private void handleEKV2(FinanzDatenDTO finanzDatenDTO, LocalDate stichtagEKV2, BigDecimal massgebendesEinkommenEKV2, BigDecimal massgebendesEinkommenVorjahr, BigDecimal massgebendesEinkommenBasisjahr) {
+	private void handleEKV2(FinanzDatenDTO finanzDatenDTO, LocalDate stichtagEKV2, BigDecimal massgebendesEinkommenEKV2, BigDecimal massgebendesEinkommenVorjahr,
+							BigDecimal massgebendesEinkommenBasisjahr, BigDecimal minimumEKV) {
 		// In der EKV 2 vergleichen wir immer mit dem EKV 1, egal ob diese akzeptiert war
 		finanzDatenDTO.setDatumVonBasisjahrPlus2(stichtagEKV2);
-		boolean ekv2AlleineAccepted = acceptEKV2(massgebendesEinkommenVorjahr, massgebendesEinkommenBasisjahr, massgebendesEinkommenEKV2);
+		boolean ekv2AlleineAccepted = acceptEKV2(massgebendesEinkommenVorjahr, massgebendesEinkommenBasisjahr, massgebendesEinkommenEKV2, minimumEKV);
 		finanzDatenDTO.setEkv2Accepted(ekv2AlleineAccepted);
 		if (ekv2AlleineAccepted) {
 			finanzDatenDTO.setMassgebendesEinkBjP2VorAbzFamGr(massgebendesEinkommenEKV2);
@@ -212,22 +220,21 @@ public class FinanzielleSituationRechner {
 	/**
 	 * @return Berechnet ob die Einkommensverschlechterung mehr als 20 % gegenueber dem vorjahr betraegt, gibt true zurueckk wen ja; false sonst
 	 */
-	private boolean acceptEKV(BigDecimal massgebendesEinkommenBasisjahr, BigDecimal massgebendesEinkommenJahr) {
-		BigDecimal minimumEKV = MathUtil.EINE_NACHKOMMASTELLE.from(0.8);
-		// EKV gewährt
+	private boolean acceptEKV(BigDecimal massgebendesEinkommenBasisjahr, BigDecimal massgebendesEinkommenJahr, BigDecimal minimumEKV) {
+		// EKV gewährt. Es braucht VIER_NACHKOMMASTELLE weil wir mit 1-Prozentuell arbeiten und in 100-Prozentuell gilt ZWEI_NACHKOMMASTELLE
 		return massgebendesEinkommenBasisjahr.compareTo(BigDecimal.ZERO) > 0
-			&& MathUtil.EXACT.divide(massgebendesEinkommenJahr, massgebendesEinkommenBasisjahr).compareTo(minimumEKV) <= 0;
+			&& MathUtil.VIER_NACHKOMMASTELLE.divide(massgebendesEinkommenJahr, massgebendesEinkommenBasisjahr).compareTo(minimumEKV) < 0;
 	}
 
 	/**
 	 * @return Die Einkommensverschlechterung II kommt zum Zuge, falls diese grösser als die Einkommensverschlechterung I ist und auch grösser 20%
 	 */
-	private boolean acceptEKV2(BigDecimal massgebendesEinkommenVorjahr, BigDecimal massgebendesEinkommenBasisjahr, BigDecimal massgebendesEinkommenJahr) {
-		BigDecimal minimumEKV = MathUtil.EINE_NACHKOMMASTELLE.from(0.8);
-		// EKV gewährt
+	private boolean acceptEKV2(BigDecimal massgebendesEinkommenVorjahr, BigDecimal massgebendesEinkommenBasisjahr, BigDecimal massgebendesEinkommenJahr,
+							   BigDecimal minimumEKV) {
+		// EKV gewährt. Es braucht VIER_NACHKOMMASTELLE weil wir mit 1-Prozentuell arbeiten und in 100-Prozentuell gilt ZWEI_NACHKOMMASTELLE
 		return massgebendesEinkommenBasisjahr.compareTo(BigDecimal.ZERO) > 0 &&
 			massgebendesEinkommenVorjahr.compareTo(massgebendesEinkommenJahr) > 0 &&
-			MathUtil.EXACT.divide(massgebendesEinkommenJahr, massgebendesEinkommenBasisjahr).compareTo(minimumEKV) <= 0;
+			MathUtil.VIER_NACHKOMMASTELLE.divide(massgebendesEinkommenJahr, massgebendesEinkommenBasisjahr).compareTo(minimumEKV) < 0;
 	}
 
 	private void calculateZusammen(final FinanzielleSituationResultateDTO finSitResultDTO,

@@ -22,13 +22,13 @@ public interface VerfuegungPrint {
 	// mit den Platzhaltern im Word-Template!
 	// ****************************************************************************************************************
 
-	String getTitel();
-
 	String getAngebot();
 
 	String getInstitution();
 
 	String getReferenznummer();
+
+	String getGesuchstellerNames();
 
 	String getVerfuegungsdatum();
 
@@ -69,5 +69,4 @@ public interface VerfuegungPrint {
 	 */
 	boolean isPrintManuellebemerkung();
 
-	String getDateCreate();
 }
