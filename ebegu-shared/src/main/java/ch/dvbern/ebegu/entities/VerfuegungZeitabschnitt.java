@@ -48,7 +48,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Transient
 	private int fachstellenpensum;
 
-
 	@Transient
 	private Boolean wohnsitzNichtInGemeindeGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
@@ -139,7 +138,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
 
-
+	@NotNull
 	@Column(nullable = false)
 	private boolean zuSpaetEingereicht;
 
@@ -641,6 +640,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 */
 	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject", "QuestionableName"})
 	public boolean isSamePersistedValues(VerfuegungZeitabschnitt that) {
+		// zuSpaetEingereicht ist hier nicht aufgefuehrt, weil;
+		// Es sollen die Resultate der Verfuegung verglichen werden und nicht der Weg, wie wir zu diesem Resultat gelangt sind
 		return betreuungspensum == that.betreuungspensum &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			(betreuungsstunden.compareTo(that.betreuungsstunden) == 0) &&

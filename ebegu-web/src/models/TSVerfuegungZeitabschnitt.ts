@@ -204,7 +204,6 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._kategorieZuschlagZumErwerbspensum = value;
     }
 
-
     get zuSpaetEingereicht(): boolean {
         return this._zuSpaetEingereicht;
     }
