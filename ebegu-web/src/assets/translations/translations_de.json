@@ -391,6 +391,7 @@
     "ABBRECHEN_UPPER": "ABBRECHEN",
     "ID_UPPER": "ID",
     "VERFUEGUNGEN_UPPER": "VERFÜGUNGEN",
+    "VERFUEGUNGEN": "Verfügungen",
     "KINDER_HINT1": "Bitte erfassen Sie sowohl die familienergänzend betreuten Kinder wie auch die weiteren Kinder, die in Ihrem Haushalt wohnen.",
     "KINDER_HINT2": "Ebenfalls sind Kinder zu erfassen, welche nicht mehr zu Hause wohnen, sich aber noch in Erstausbildung befinden.",
     "KINDER_TOOLTIP_REQUIRED": "Es muss mindestens ein Kind mit externer Betreuung erfasst werden",
