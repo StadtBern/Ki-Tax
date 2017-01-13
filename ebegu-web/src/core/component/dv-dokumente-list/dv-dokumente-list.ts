@@ -62,7 +62,7 @@ export class DVDokumenteListController {
     }
 
     uploadAnhaenge(files: any[], selectDokument: TSDokumentGrund) {
-        if (this.isUploadVisible() && this.gesuchModelManager.getGesuch()) {
+        if (this.gesuchModelManager.getGesuch()) {
             let gesuchID = this.gesuchModelManager.getGesuch().id;
             let filesTooBig: any[] = [];
             let filesOk: any[] = [];
@@ -155,14 +155,6 @@ export class DVDokumenteListController {
 
     public isGesuchReadonly(): boolean {
         return this.gesuchModelManager.isGesuchReadonly();
-    }
-
-    public isUploadVisible(): boolean {
-        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
-            return true; //gesuchsteller kann immer dokumente hochladen
-        } else {
-            return !this.isGesuchReadonly(); //fuer alle andern nicht verfuegbar wenn gesuch im readonly modus
-        }
     }
 }
 
