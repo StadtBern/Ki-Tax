@@ -53,7 +53,8 @@ public class InstitutionenInsertCreator {
 	private List<String> insertInstitutionsStammdaten = new LinkedList<>();
 
 	private PrintWriter printWriter;
-	private String inputFile = "/institutionen/Institutionen_2016.12.15.xlsx";
+	private String inputFile = "/institutionen/Institutionen_2017.01.13.xlsx";
+	private int anzahlZeilen = 87;
 	private String outoutFile = "insertInstitutionen.sql";
 
 
@@ -94,6 +95,9 @@ public class InstitutionenInsertCreator {
 
 	@SuppressWarnings("OverlyComplexMethod")
 	private void readRow(Row row) {
+		if (row.getRowNum() > anzahlZeilen) {
+			return;
+		}
 		// Traegerschaften
 		String traegerschaftKey = readString(row, COL_TRAEGERSCHAFT_ID);
 		String traegerschaftsId = null;

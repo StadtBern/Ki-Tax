@@ -1,1 +1,0 @@
-alter table gesuch_aud modify column hasfsdokument BIT(1) DEFAULT NULL;

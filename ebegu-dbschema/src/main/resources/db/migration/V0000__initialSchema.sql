@@ -106,8 +106,9 @@ CREATE TABLE antrag_status_history_aud (
   user_erstellt      VARCHAR(36),
   user_mutiert       VARCHAR(36),
   vorgaenger_id      VARCHAR(36),
-  datum              DATETIME(6),
   status             VARCHAR(255),
+  timestamp_bis      DATETIME(6),
+  timestamp_von      DATETIME(6),
   benutzer_id        VARCHAR(36),
   gesuch_id          VARCHAR(36),
   PRIMARY KEY (id, rev)
@@ -121,8 +122,9 @@ CREATE TABLE antrag_status_history (
   user_mutiert       VARCHAR(36)  NOT NULL,
   version            BIGINT       NOT NULL,
   vorgaenger_id      VARCHAR(36),
-  datum              DATETIME(6)  NOT NULL,
   status             VARCHAR(255) NOT NULL,
+  timestamp_bis      DATETIME(6),
+  timestamp_von      DATETIME(6)  NOT NULL,
   benutzer_id        VARCHAR(36)  NOT NULL,
   gesuch_id          VARCHAR(36)  NOT NULL,
   PRIMARY KEY (id)
@@ -462,69 +464,71 @@ CREATE TABLE ebegu_vorlage (
 );
 
 CREATE TABLE einkommensverschlechterung (
-  id                           VARCHAR(36) NOT NULL,
-  timestamp_erstellt           DATETIME    NOT NULL,
-  timestamp_mutiert            DATETIME    NOT NULL,
-  user_erstellt                VARCHAR(36) NOT NULL,
-  user_mutiert                 VARCHAR(36) NOT NULL,
-  version                      BIGINT      NOT NULL,
-  vorgaenger_id                VARCHAR(36),
-  bruttovermoegen              DECIMAL(19, 2),
-  erhaltene_alimente           DECIMAL(19, 2),
-  ersatzeinkommen              DECIMAL(19, 2),
-  familienzulage               DECIMAL(19, 2),
-  geleistete_alimente          DECIMAL(19, 2),
-  geschaeftsgewinn_basisjahr   DECIMAL(19, 2),
-  schulden                     DECIMAL(19, 2),
-  steuererklaerung_ausgefuellt BIT         NOT NULL,
-  steuerveranlagung_erhalten   BIT         NOT NULL,
-  nettolohn_apr                DECIMAL(19, 2),
-  nettolohn_aug                DECIMAL(19, 2),
-  nettolohn_dez                DECIMAL(19, 2),
-  nettolohn_feb                DECIMAL(19, 2),
-  nettolohn_jan                DECIMAL(19, 2),
-  nettolohn_jul                DECIMAL(19, 2),
-  nettolohn_jun                DECIMAL(19, 2),
-  nettolohn_mai                DECIMAL(19, 2),
-  nettolohn_mrz                DECIMAL(19, 2),
-  nettolohn_nov                DECIMAL(19, 2),
-  nettolohn_okt                DECIMAL(19, 2),
-  nettolohn_sep                DECIMAL(19, 2),
-  nettolohn_zus                DECIMAL(19, 2),
+  id                                VARCHAR(36) NOT NULL,
+  timestamp_erstellt                DATETIME    NOT NULL,
+  timestamp_mutiert                 DATETIME    NOT NULL,
+  user_erstellt                     VARCHAR(36) NOT NULL,
+  user_mutiert                      VARCHAR(36) NOT NULL,
+  version                           BIGINT      NOT NULL,
+  vorgaenger_id                     VARCHAR(36),
+  bruttovermoegen                   DECIMAL(19, 2),
+  erhaltene_alimente                DECIMAL(19, 2),
+  ersatzeinkommen                   DECIMAL(19, 2),
+  familienzulage                    DECIMAL(19, 2),
+  geleistete_alimente               DECIMAL(19, 2),
+  geschaeftsgewinn_basisjahr        DECIMAL(19, 2),
+  schulden                          DECIMAL(19, 2),
+  steuererklaerung_ausgefuellt      BIT         NOT NULL,
+  steuerveranlagung_erhalten        BIT         NOT NULL,
+  geschaeftsgewinn_basisjahr_minus1 DECIMAL(19, 2),
+  nettolohn_apr                     DECIMAL(19, 2),
+  nettolohn_aug                     DECIMAL(19, 2),
+  nettolohn_dez                     DECIMAL(19, 2),
+  nettolohn_feb                     DECIMAL(19, 2),
+  nettolohn_jan                     DECIMAL(19, 2),
+  nettolohn_jul                     DECIMAL(19, 2),
+  nettolohn_jun                     DECIMAL(19, 2),
+  nettolohn_mai                     DECIMAL(19, 2),
+  nettolohn_mrz                     DECIMAL(19, 2),
+  nettolohn_nov                     DECIMAL(19, 2),
+  nettolohn_okt                     DECIMAL(19, 2),
+  nettolohn_sep                     DECIMAL(19, 2),
+  nettolohn_zus                     DECIMAL(19, 2),
   PRIMARY KEY (id)
 );
 
 CREATE TABLE einkommensverschlechterung_aud (
-  id                           VARCHAR(36) NOT NULL,
-  rev                          INTEGER     NOT NULL,
-  revtype                      TINYINT,
-  timestamp_erstellt           DATETIME,
-  timestamp_mutiert            DATETIME,
-  user_erstellt                VARCHAR(36),
-  user_mutiert                 VARCHAR(36),
-  vorgaenger_id                VARCHAR(36),
-  bruttovermoegen              DECIMAL(19, 2),
-  erhaltene_alimente           DECIMAL(19, 2),
-  ersatzeinkommen              DECIMAL(19, 2),
-  familienzulage               DECIMAL(19, 2),
-  geleistete_alimente          DECIMAL(19, 2),
-  geschaeftsgewinn_basisjahr   DECIMAL(19, 2),
-  schulden                     DECIMAL(19, 2),
-  steuererklaerung_ausgefuellt BIT,
-  steuerveranlagung_erhalten   BIT,
-  nettolohn_apr                DECIMAL(19, 2),
-  nettolohn_aug                DECIMAL(19, 2),
-  nettolohn_dez                DECIMAL(19, 2),
-  nettolohn_feb                DECIMAL(19, 2),
-  nettolohn_jan                DECIMAL(19, 2),
-  nettolohn_jul                DECIMAL(19, 2),
-  nettolohn_jun                DECIMAL(19, 2),
-  nettolohn_mai                DECIMAL(19, 2),
-  nettolohn_mrz                DECIMAL(19, 2),
-  nettolohn_nov                DECIMAL(19, 2),
-  nettolohn_okt                DECIMAL(19, 2),
-  nettolohn_sep                DECIMAL(19, 2),
-  nettolohn_zus                DECIMAL(19, 2),
+  id                                VARCHAR(36) NOT NULL,
+  rev                               INTEGER     NOT NULL,
+  revtype                           TINYINT,
+  timestamp_erstellt                DATETIME,
+  timestamp_mutiert                 DATETIME,
+  user_erstellt                     VARCHAR(36),
+  user_mutiert                      VARCHAR(36),
+  vorgaenger_id                     VARCHAR(36),
+  bruttovermoegen                   DECIMAL(19, 2),
+  erhaltene_alimente                DECIMAL(19, 2),
+  ersatzeinkommen                   DECIMAL(19, 2),
+  familienzulage                    DECIMAL(19, 2),
+  geleistete_alimente               DECIMAL(19, 2),
+  geschaeftsgewinn_basisjahr        DECIMAL(19, 2),
+  schulden                          DECIMAL(19, 2),
+  steuererklaerung_ausgefuellt      BIT,
+  steuerveranlagung_erhalten        BIT,
+  geschaeftsgewinn_basisjahr_minus1 DECIMAL(19, 2),
+  nettolohn_apr                     DECIMAL(19, 2),
+  nettolohn_aug                     DECIMAL(19, 2),
+  nettolohn_dez                     DECIMAL(19, 2),
+  nettolohn_feb                     DECIMAL(19, 2),
+  nettolohn_jan                     DECIMAL(19, 2),
+  nettolohn_jul                     DECIMAL(19, 2),
+  nettolohn_jun                     DECIMAL(19, 2),
+  nettolohn_mai                     DECIMAL(19, 2),
+  nettolohn_mrz                     DECIMAL(19, 2),
+  nettolohn_nov                     DECIMAL(19, 2),
+  nettolohn_okt                     DECIMAL(19, 2),
+  nettolohn_sep                     DECIMAL(19, 2),
+  nettolohn_zus                     DECIMAL(19, 2),
   PRIMARY KEY (id, rev)
 );
 
@@ -942,6 +946,8 @@ CREATE TABLE gesuch (
   eingangsart                                  VARCHAR(255) NOT NULL,
   eingangsdatum                                DATE,
   freigabe_datum                               DATE,
+  gesperrt_wegen_beschwerde                    BIT          NOT NULL,
+  hasfsdokument                                BIT          NOT NULL,
   laufnummer                                   INTEGER      NOT NULL,
   status                                       VARCHAR(255) NOT NULL,
   typ                                          VARCHAR(255) NOT NULL,
@@ -967,6 +973,8 @@ CREATE TABLE gesuch_aud (
   eingangsart                                  VARCHAR(255),
   eingangsdatum                                DATE,
   freigabe_datum                               DATE,
+  gesperrt_wegen_beschwerde                    BIT,
+  hasfsdokument                                BIT,
   laufnummer                                   INTEGER,
   status                                       VARCHAR(255),
   typ                                          VARCHAR(255),
@@ -1271,35 +1279,35 @@ CREATE TABLE kind_container (
 );
 
 CREATE TABLE mahnung (
-  id                 VARCHAR(36)   NOT NULL,
-  timestamp_erstellt DATETIME      NOT NULL,
-  timestamp_mutiert  DATETIME      NOT NULL,
-  user_erstellt      VARCHAR(36)   NOT NULL,
-  user_mutiert       VARCHAR(36)   NOT NULL,
-  version            BIGINT        NOT NULL,
-  vorgaenger_id      VARCHAR(36),
-  active             BIT           NOT NULL,
-  bemerkungen        VARCHAR(4000) NOT NULL,
-  datum_fristablauf  DATE          NOT NULL,
-  mahnung_typ        VARCHAR(255)  NOT NULL,
-  gesuch_id          VARCHAR(36)   NOT NULL,
+  id                      VARCHAR(36)   NOT NULL,
+  timestamp_erstellt      DATETIME      NOT NULL,
+  timestamp_mutiert       DATETIME      NOT NULL,
+  user_erstellt           VARCHAR(36)   NOT NULL,
+  user_mutiert            VARCHAR(36)   NOT NULL,
+  version                 BIGINT        NOT NULL,
+  vorgaenger_id           VARCHAR(36),
+  bemerkungen             VARCHAR(4000) NOT NULL,
+  datum_fristablauf       DATE          NOT NULL,
+  mahnung_typ             VARCHAR(255)  NOT NULL,
+  timestamp_abgeschlossen DATETIME(6),
+  gesuch_id               VARCHAR(36)   NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE mahnung_aud (
-  id                 VARCHAR(36) NOT NULL,
-  rev                INTEGER     NOT NULL,
-  revtype            TINYINT,
-  timestamp_erstellt DATETIME,
-  timestamp_mutiert  DATETIME,
-  user_erstellt      VARCHAR(36),
-  user_mutiert       VARCHAR(36),
-  vorgaenger_id      VARCHAR(36),
-  active             BIT,
-  bemerkungen        VARCHAR(4000),
-  datum_fristablauf  DATE,
-  mahnung_typ        VARCHAR(255),
-  gesuch_id          VARCHAR(36),
+  id                      VARCHAR(36) NOT NULL,
+  rev                     INTEGER     NOT NULL,
+  revtype                 TINYINT,
+  timestamp_erstellt      DATETIME,
+  timestamp_mutiert       DATETIME,
+  user_erstellt           VARCHAR(36),
+  user_mutiert            VARCHAR(36),
+  vorgaenger_id           VARCHAR(36),
+  bemerkungen             VARCHAR(4000),
+  datum_fristablauf       DATE,
+  mahnung_typ             VARCHAR(255),
+  timestamp_abgeschlossen DATETIME(6),
+  gesuch_id               VARCHAR(36),
   PRIMARY KEY (id, rev)
 );
 
@@ -1409,29 +1417,39 @@ CREATE TABLE traegerschaft_aud (
 );
 
 CREATE TABLE verfuegung (
-  id                    VARCHAR(36) NOT NULL,
-  timestamp_erstellt    DATETIME    NOT NULL,
-  timestamp_mutiert     DATETIME    NOT NULL,
-  user_erstellt         VARCHAR(36) NOT NULL,
-  user_mutiert          VARCHAR(36) NOT NULL,
-  version               BIGINT      NOT NULL,
-  vorgaenger_id         VARCHAR(36),
-  generated_bemerkungen VARCHAR(4000),
-  manuelle_bemerkungen  VARCHAR(4000),
+  id                                   VARCHAR(36) NOT NULL,
+  timestamp_erstellt                   DATETIME    NOT NULL,
+  timestamp_mutiert                    DATETIME    NOT NULL,
+  user_erstellt                        VARCHAR(36) NOT NULL,
+  user_mutiert                         VARCHAR(36) NOT NULL,
+  version                              BIGINT      NOT NULL,
+  vorgaenger_id                        VARCHAR(36),
+  generated_bemerkungen                VARCHAR(4000),
+  kategorie_kein_pensum                BIT         NOT NULL,
+  kategorie_max_einkommen              BIT         NOT NULL,
+  kategorie_nicht_eintreten            BIT         NOT NULL,
+  kategorie_normal                     BIT         NOT NULL,
+  kategorie_zuschlag_zum_erwerbspensum BIT         NOT NULL,
+  manuelle_bemerkungen                 VARCHAR(4000),
   PRIMARY KEY (id)
 );
 
 CREATE TABLE verfuegung_aud (
-  id                    VARCHAR(36) NOT NULL,
-  rev                   INTEGER     NOT NULL,
-  revtype               TINYINT,
-  timestamp_erstellt    DATETIME,
-  timestamp_mutiert     DATETIME,
-  user_erstellt         VARCHAR(36),
-  user_mutiert          VARCHAR(36),
-  vorgaenger_id         VARCHAR(36),
-  generated_bemerkungen VARCHAR(4000),
-  manuelle_bemerkungen  VARCHAR(4000),
+  id                                   VARCHAR(36) NOT NULL,
+  rev                                  INTEGER     NOT NULL,
+  revtype                              TINYINT,
+  timestamp_erstellt                   DATETIME,
+  timestamp_mutiert                    DATETIME,
+  user_erstellt                        VARCHAR(36),
+  user_mutiert                         VARCHAR(36),
+  vorgaenger_id                        VARCHAR(36),
+  generated_bemerkungen                VARCHAR(4000),
+  kategorie_kein_pensum                BIT,
+  kategorie_max_einkommen              BIT,
+  kategorie_nicht_eintreten            BIT,
+  kategorie_normal                     BIT,
+  kategorie_zuschlag_zum_erwerbspensum BIT,
+  manuelle_bemerkungen                 VARCHAR(4000),
   PRIMARY KEY (id, rev)
 );
 
@@ -1451,10 +1469,12 @@ CREATE TABLE verfuegung_zeitabschnitt_aud (
   bemerkungen                            VARCHAR(4000),
   betreuungspensum                       INTEGER,
   betreuungsstunden                      DECIMAL(19, 2),
+  einkommensjahr                         INTEGER,
   elternbeitrag                          DECIMAL(19, 2),
   fam_groesse                            DECIMAL(19, 2),
   massgebendes_einkommen_vor_abzug_famgr DECIMAL(19, 2),
   vollkosten                             DECIMAL(19, 2),
+  zu_spaet_eingereicht                   BIT,
   verfuegung_id                          VARCHAR(36),
   PRIMARY KEY (id, rev)
 );
@@ -1474,10 +1494,12 @@ CREATE TABLE verfuegung_zeitabschnitt (
   bemerkungen                            VARCHAR(4000),
   betreuungspensum                       INTEGER     NOT NULL,
   betreuungsstunden                      DECIMAL(19, 2),
+  einkommensjahr                         INTEGER     NOT NULL,
   elternbeitrag                          DECIMAL(19, 2),
   fam_groesse                            DECIMAL(19, 2),
   massgebendes_einkommen_vor_abzug_famgr DECIMAL(19, 2),
   vollkosten                             DECIMAL(19, 2),
+  zu_spaet_eingereicht                   BIT         NOT NULL,
   verfuegung_id                          VARCHAR(36) NOT NULL,
   PRIMARY KEY (id)
 );
@@ -1691,12 +1713,12 @@ FOREIGN KEY (dokument_grund_id)
 REFERENCES dokument_grund (id);
 
 ALTER TABLE dokument_aud
-  ADD CONSTRAINT FK_dokument_aud_dokumentgrund_id
+  ADD CONSTRAINT FK_dokument_aud_revinfo
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
 ALTER TABLE dokument_grund_aud
-  ADD CONSTRAINT FK_dokumentgrund_aud_gesuch_id
+  ADD CONSTRAINT FK_dokument_grund_aud_revinfo
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
@@ -1973,9 +1995,6 @@ ALTER TABLE gesuchsteller_adresse
   ADD CONSTRAINT FK_gesuchsteller_adresse_adresse
 FOREIGN KEY (id)
 REFERENCES adresse (id);
-
-ALTER TABLE gesuchsteller_adresse_container
-  ADD CONSTRAINT UK_gesuchsteller_adresse_container_gesuchsteller_adresse UNIQUE (gesuchsteller_adresseja_id);
 
 ALTER TABLE gesuchsteller_adresse_container
   ADD CONSTRAINT FK_gesuchstelleradresse_container_gesuchstellergs_id
