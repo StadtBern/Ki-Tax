@@ -130,6 +130,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (this.getBetreuungModel()) {
             if (this.isTagesschule()) {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
+                // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
+                this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
+                this.setSelectedInstitutionStammdaten();
             } else {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             }

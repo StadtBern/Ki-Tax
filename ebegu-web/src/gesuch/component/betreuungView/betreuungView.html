@@ -105,7 +105,7 @@
                         </div>
                     </div>
                     <!--Institutionen-->
-                    <div class="row" ng-if="vm.isEnabled()">
+                    <div class="row" ng-if="vm.isEnabled() && !vm.isTagesschule()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                             </label>
