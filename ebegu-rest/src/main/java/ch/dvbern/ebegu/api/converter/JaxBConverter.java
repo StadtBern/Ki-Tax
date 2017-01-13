@@ -1394,28 +1394,10 @@ public class JaxBConverter {
 		}
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
 
-		if (betreuungJAXP.getVerfuegung() != null) {
-			betreuung.setVerfuegung(this.verfuegungtoStoreableEntity(betreuungJAXP.getVerfuegung()));
-		} else {
-			betreuung.setVerfuegung(null);
-		}
-
+		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
 	}
 
-	private Verfuegung verfuegungtoStoreableEntity(JaxVerfuegung verfuegungJAXP) {
-
-		Verfuegung verfToMergeWith = new Verfuegung();
-		if (verfuegungJAXP.getId() != null) {
-
-			final Optional<Verfuegung> existingVerfuegung = verfuegungService.findVerfuegung(verfuegungJAXP.getId());
-			//wenn schon vorhanden updaten
-			if (existingVerfuegung.isPresent()) {
-				verfToMergeWith = existingVerfuegung.get();
-			}
-		}
-		return verfuegungToEntity(verfuegungJAXP, verfToMergeWith);
-	}
 
 	public Betreuung betreuungToStoreableEntity(@Nonnull final JaxBetreuung betreuungJAXP) {
 		Validate.notNull(betreuungJAXP);
@@ -1686,6 +1668,7 @@ public class JaxBConverter {
 			jaxZeitabschn.setKategorieKeinPensum(zeitabschnitt.isKategorieKeinPensum());
 			jaxZeitabschn.setKategorieMaxEinkommen(zeitabschnitt.isKategorieMaxEinkommen());
 			jaxZeitabschn.setKategorieZuschlagZumErwerbspensum(zeitabschnitt.isKategorieZuschlagZumErwerbspensum());
+			jaxZeitabschn.setZuSpaetEingereicht(zeitabschnitt.isZuSpaetEingereicht());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1714,6 +1697,7 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setKategorieMaxEinkommen(jaxVerfuegungZeitabschnitt.isKategorieMaxEinkommen());
 		verfuegungZeitabschnitt.setKategorieKeinPensum(jaxVerfuegungZeitabschnitt.isKategorieKeinPensum());
 		verfuegungZeitabschnitt.setKategorieZuschlagZumErwerbspensum(jaxVerfuegungZeitabschnitt.isKategorieZuschlagZumErwerbspensum());
+		verfuegungZeitabschnitt.setZuSpaetEingereicht(jaxVerfuegungZeitabschnitt.isZuSpaetEingereicht());
 		return verfuegungZeitabschnitt;
 	}
 

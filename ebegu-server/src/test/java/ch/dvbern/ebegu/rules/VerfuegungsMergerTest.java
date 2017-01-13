@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.Constants;
@@ -33,14 +34,14 @@ public class VerfuegungsMergerTest {
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(6);
 
 		// Mutiertes Gesuch vorbereiten
-		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.MUTATION);
 		List<VerfuegungZeitabschnitt> zabetrMutiert = EbeguRuleTestsHelper.calculate(mutierteBetreuung);
 		mutierteBetreuung.extractGesuch().setEingangsdatum(eingangsdatumMuation);
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteMutiert = monatsRule.createVerfuegungsZeitabschnitte(mutierteBetreuung, zabetrMutiert);
 		setzeAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum, 80);
 
 		// Erstgesuch Gesuch vorbereiten
-		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.GESUCH);
 		List<VerfuegungZeitabschnitt> zabetrErtgesuch = EbeguRuleTestsHelper.calculate(erstgesuchBetreuung);
 		Verfuegung verfuegungErstgesuch = new Verfuegung();
 		verfuegungErstgesuch.setZeitabschnitte(monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch));
@@ -67,14 +68,14 @@ public class VerfuegungsMergerTest {
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(7).plusDays(1);
 
 		// Mutiertes Gesuch vorbereiten
-		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.MUTATION);
 		List<VerfuegungZeitabschnitt> zabetrMutiert = EbeguRuleTestsHelper.calculate(mutierteBetreuung);
 		mutierteBetreuung.extractGesuch().setEingangsdatum(eingangsdatumMuation);
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteMutiert = monatsRule.createVerfuegungsZeitabschnitte(mutierteBetreuung, zabetrMutiert);
 		setzeAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum, 40);
 
 		// Erstgesuch Gesuch vorbereiten
-		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.GESUCH);
 		List<VerfuegungZeitabschnitt> zabetrErtgesuch = EbeguRuleTestsHelper.calculate(erstgesuchBetreuung);
 		Verfuegung verfuegungErstgesuch = new Verfuegung();
 		verfuegungErstgesuch.setZeitabschnitte(monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch));
@@ -100,14 +101,14 @@ public class VerfuegungsMergerTest {
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(5).minusDays(1);
 
 		// Mutiertes Gesuch vorbereiten
-		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.MUTATION);
 		List<VerfuegungZeitabschnitt> zabetrMutiert = EbeguRuleTestsHelper.calculate(mutierteBetreuung);
 		mutierteBetreuung.extractGesuch().setEingangsdatum(eingangsdatumMuation);
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteMutiert = monatsRule.createVerfuegungsZeitabschnitte(mutierteBetreuung, zabetrMutiert);
 		setzeAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum, 40);
 
 		// Erstgesuch Gesuch vorbereiten
-		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.GESUCH);
 		List<VerfuegungZeitabschnitt> zabetrErtgesuch = EbeguRuleTestsHelper.calculate(erstgesuchBetreuung);
 		Verfuegung verfuegungErstgesuch = new Verfuegung();
 		verfuegungErstgesuch.setZeitabschnitte(monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch));
@@ -133,7 +134,7 @@ public class VerfuegungsMergerTest {
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(6);
 
 		// Mutiertes Gesuch vorbereiten
-		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.MUTATION);
 		List<VerfuegungZeitabschnitt> zabetrMutiert = EbeguRuleTestsHelper.calculate(mutierteBetreuung);
 		mutierteBetreuung.extractGesuch().setEingangsdatum(eingangsdatumMuation);
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteMutiert = monatsRule.createVerfuegungsZeitabschnitte(mutierteBetreuung, zabetrMutiert);
@@ -141,7 +142,7 @@ public class VerfuegungsMergerTest {
 		setzeAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum, 100);
 
 		// Erstgesuch Gesuch vorbereiten
-		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.GESUCH);
 		List<VerfuegungZeitabschnitt> zabetrErtgesuch = EbeguRuleTestsHelper.calculate(erstgesuchBetreuung);
 		Verfuegung verfuegungErstgesuch = new Verfuegung();
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteErstgesuch = monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch);
@@ -170,7 +171,7 @@ public class VerfuegungsMergerTest {
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(7).plusDays(1);
 
 		// Mutiertes Gesuch vorbereiten
-		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.MUTATION);
 		List<VerfuegungZeitabschnitt> zabetrMutiert = EbeguRuleTestsHelper.calculate(mutierteBetreuung);
 		mutierteBetreuung.extractGesuch().setEingangsdatum(eingangsdatumMuation);
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteMutiert = monatsRule.createVerfuegungsZeitabschnitte(mutierteBetreuung, zabetrMutiert);
@@ -178,7 +179,7 @@ public class VerfuegungsMergerTest {
 		setzeAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum, 100);
 
 		// Erstgesuch Gesuch vorbereiten
-		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.GESUCH);
 		List<VerfuegungZeitabschnitt> zabetrErtgesuch = EbeguRuleTestsHelper.calculate(erstgesuchBetreuung);
 		Verfuegung verfuegungErstgesuch = new Verfuegung();
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteErstgesuch = monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch);
@@ -207,7 +208,7 @@ public class VerfuegungsMergerTest {
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(5).minusDays(1);
 
 		// Mutiertes Gesuch vorbereiten
-		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.MUTATION);
 		List<VerfuegungZeitabschnitt> zabetrMutiert = EbeguRuleTestsHelper.calculate(mutierteBetreuung);
 		mutierteBetreuung.extractGesuch().setEingangsdatum(eingangsdatumMuation);
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteMutiert = monatsRule.createVerfuegungsZeitabschnitte(mutierteBetreuung, zabetrMutiert);
@@ -215,7 +216,7 @@ public class VerfuegungsMergerTest {
 		setzeAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum, 100);
 
 		// Erstgesuch Gesuch vorbereiten
-		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.GESUCH);
 		List<VerfuegungZeitabschnitt> zabetrErtgesuch = EbeguRuleTestsHelper.calculate(erstgesuchBetreuung);
 		Verfuegung verfuegungErstgesuch = new Verfuegung();
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteErstgesuch = monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch);
@@ -242,7 +243,7 @@ public class VerfuegungsMergerTest {
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(7).plusDays(15);
 
 		// Mutiertes Gesuch vorbereiten
-		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.MUTATION);
 		List<VerfuegungZeitabschnitt> zabetrMutiert = EbeguRuleTestsHelper.calculate(mutierteBetreuung);
 		mutierteBetreuung.extractGesuch().setEingangsdatum(eingangsdatumMuation);
 		List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteMutiert = monatsRule.createVerfuegungsZeitabschnitte(mutierteBetreuung, zabetrMutiert);
@@ -251,7 +252,7 @@ public class VerfuegungsMergerTest {
 		setzeAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum.withDayOfMonth(aenderungsDatumPensum.lengthOfMonth()).plusDays(1), 100);
 
 		// Erstgesuch Gesuch vorbereiten
-		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.GESUCH);
 		List<VerfuegungZeitabschnitt> zabetrErtgesuch = EbeguRuleTestsHelper.calculate(erstgesuchBetreuung);
 		Verfuegung verfuegungErstgesuch = new Verfuegung();
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteErstgesuch = monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch);
@@ -279,7 +280,7 @@ public class VerfuegungsMergerTest {
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(5).plusDays(15);
 
 		// Mutiertes Gesuch vorbereiten
-		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.MUTATION);
 		List<VerfuegungZeitabschnitt> zabetrMutiert = EbeguRuleTestsHelper.calculate(mutierteBetreuung);
 		mutierteBetreuung.extractGesuch().setEingangsdatum(eingangsdatumMuation);
 		List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteMutiert = monatsRule.createVerfuegungsZeitabschnitte(mutierteBetreuung, zabetrMutiert);
@@ -288,7 +289,7 @@ public class VerfuegungsMergerTest {
 		setzeAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum.withDayOfMonth(aenderungsDatumPensum.lengthOfMonth()).plusDays(1), 100);
 
 		// Erstgesuch Gesuch vorbereiten
-		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
+		Betreuung erstgesuchBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100, AntragTyp.GESUCH);
 		List<VerfuegungZeitabschnitt> zabetrErtgesuch = EbeguRuleTestsHelper.calculate(erstgesuchBetreuung);
 		Verfuegung verfuegungErstgesuch = new Verfuegung();
 		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteErstgesuch = monatsRule.createVerfuegungsZeitabschnitte(erstgesuchBetreuung, zabetrErtgesuch);
@@ -358,9 +359,10 @@ public class VerfuegungsMergerTest {
 			.forEach(v -> v.setAnspruchberechtigtesPensum(anspruchberechtigtesPensum));
 	}
 
-	private Betreuung prepareData(BigDecimal massgebendesEinkommen, BetreuungsangebotTyp angebot, int pensum) {
+	private Betreuung prepareData(BigDecimal massgebendesEinkommen, BetreuungsangebotTyp angebot, int pensum, AntragTyp antragTyp) {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, angebot, pensum);
 		final Gesuch gesuch = betreuung.extractGesuch();
+		gesuch.setTyp(antragTyp);
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		Set<KindContainer> kindContainers = new LinkedHashSet<>();
 		final KindContainer kindContainer = betreuung.getKind();

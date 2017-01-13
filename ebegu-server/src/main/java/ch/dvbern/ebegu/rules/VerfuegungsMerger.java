@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +78,22 @@ public class VerfuegungsMerger {
 					zeitabschnitt.addBemerkung(RuleKey.ANSPRUCHSBERECHNUNGSREGELN_MUTATIONEN, MsgKey.REDUCKTION_RUECKWIRKEND_MSG);
 				}
 			}
+
+			//SCHULKINDER: Sonderregel bei zu Mutation von zu spaet eingereichten Schulkindangeboten
+			//fuer Abschnitte ab dem Folgemonat des Mutationseingangs rechnen wir bisher, fuer alle vorherigen folgende Sonderregel
+			if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()
+				&& !isMeldungRechzeitig(zeitabschnitt, mutationsEingansdatum)) {
+				VerfuegungZeitabschnitt zeitabschnittInVorgaenger = findZeitabschnittInVorgaenger(zeitabschnittStart, verfuegungOnGesuchForMuation);
+				// Wenn der Benutzer vorher keine Verfuenstigung bekam weil er zu spaet eingereicht hat DANN bezahlt er auch in Mutation vollkosten
+				if (zeitabschnittInVorgaenger != null
+					&& zeitabschnittInVorgaenger.getVerguenstigung().compareTo(BigDecimal.ZERO) == 0
+					&& zeitabschnittInVorgaenger.isZuSpaetEingereicht()) {
+					zeitabschnitt.setBezahltVollkosten(true);
+					zeitabschnitt.setZuSpaetEingereicht(true);
+					zeitabschnitt.addBemerkung(RuleKey.EINREICHUNGSFRIST, MsgKey.EINREICHUNGSFRIST_VOLLKOSTEN_MSG);
+				}
+			}
+
 			monatsSchritte.add(zeitabschnitt);
 		}
 
@@ -84,6 +102,22 @@ public class VerfuegungsMerger {
 
 	private boolean isMeldungRechzeitig(VerfuegungZeitabschnitt verfuegungZeitabschnitt, LocalDate mutationsEingansdatum) {
 		return verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb().withDayOfMonth(1).isAfter((mutationsEingansdatum));
+	}
+
+	/**
+	 * Hilfsmethode welche in der Vorgaengerferfuegung den gueltigen Zeitabschnitt fuer einen bestimmten Stichtag sucht
+	 */
+	@Nullable
+	private VerfuegungZeitabschnitt findZeitabschnittInVorgaenger(LocalDate stichtag, Verfuegung vorgaengerVerf) {
+		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : vorgaengerVerf.getZeitabschnitte()) {
+			final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
+			if (gueltigkeit.contains(stichtag) || gueltigkeit.startsSameDay(stichtag)) {
+				return verfuegungZeitabschnitt;
+			}
+		}
+
+		LOG.error("Vorgaengerzeitabschnitt fuer Mutation konnte nicht gefunden werden " + stichtag);
+		return null;
 	}
 
 	/**

@@ -49,9 +49,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	private int fachstellenpensum;
 
 	@Transient
-	private boolean zuSpaetEingereicht;
-
-	@Transient
 	private Boolean wohnsitzNichtInGemeindeGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
 	@Transient
@@ -140,6 +137,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
+
+	@NotNull
+	@Column(nullable = false)
+	private boolean zuSpaetEingereicht;
 
 
 	public VerfuegungZeitabschnitt() {
@@ -639,6 +640,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 */
 	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject", "QuestionableName"})
 	public boolean isSamePersistedValues(VerfuegungZeitabschnitt that) {
+		// zuSpaetEingereicht ist hier nicht aufgefuehrt, weil;
+		// Es sollen die Resultate der Verfuegung verglichen werden und nicht der Weg, wie wir zu diesem Resultat gelangt sind
 		return betreuungspensum == that.betreuungspensum &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			(betreuungsstunden.compareTo(that.betreuungsstunden) == 0) &&
@@ -654,6 +657,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	/**
 	 * Gibt den Betrag des Gutscheins zurück.
 	 */
+	@Nonnull
 	public BigDecimal getVerguenstigung() {
 		if (vollkosten != null && elternbeitrag != null) {
 			return vollkosten.subtract(elternbeitrag);
