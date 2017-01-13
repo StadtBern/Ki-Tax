@@ -36,9 +36,6 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Inject
 	private Persistence<Gesuchsperiode> persistence;
 
-	@Inject
-	private CriteriaQueryHelper criteriaQueryHelper;
-
 
 	@Nonnull
 	@Override
@@ -65,7 +62,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);
 		Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
 		query.select(root);
-		query.orderBy(cb.asc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
+		query.orderBy(cb.desc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
 		return persistence.getCriteriaResults(query);
 
 	}
@@ -83,7 +80,12 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Nonnull
 	@PermitAll
 	public Collection<Gesuchsperiode> getAllActiveGesuchsperioden() {
-		return criteriaQueryHelper.getEntitiesByAttribute(Gesuchsperiode.class, true, Gesuchsperiode_.active);
+		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuchsperiode> query = builder.createQuery(Gesuchsperiode.class);
+		final Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
+		query.where(builder.equal(root.get(Gesuchsperiode_.active), Boolean.TRUE));
+		query.orderBy(builder.desc(root.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb)));
+		return persistence.getCriteriaResults(query);
 	}
 
 	/**
