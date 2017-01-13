@@ -10,6 +10,7 @@ import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class DoppelkitaTest extends AbstractBGRechnerTest {
 		Testfall_DoppelKita_Regel1 testfall = new Testfall_DoppelKita_Regel1(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		testfall.createFall(null);
-		testfall.createGesuch(null);
+		testfall.createGesuch(LocalDate.of(2016, 7, 1));
 		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
@@ -75,7 +76,7 @@ public class DoppelkitaTest extends AbstractBGRechnerTest {
 		Testfall_DoppelKita_Regel2 testfall = new Testfall_DoppelKita_Regel2(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		testfall.createFall(null);
-		testfall.createGesuch(null);
+		testfall.createGesuch(LocalDate.of(2016, 7, 1));
 		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
@@ -119,7 +120,7 @@ public class DoppelkitaTest extends AbstractBGRechnerTest {
 		Testfall_DoppelKita_Regel3 testfall = new Testfall_DoppelKita_Regel3(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		testfall.createFall(null);
-		testfall.createGesuch(null);
+		testfall.createGesuch(LocalDate.of(2016, 7, 1));
 		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
