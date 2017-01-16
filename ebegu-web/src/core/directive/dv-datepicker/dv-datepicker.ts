@@ -1,12 +1,8 @@
-import {IDirective, IDirectiveFactory, IScope} from 'angular';
+import {IDirective, IDirectiveFactory} from 'angular';
 import * as moment from 'moment';
-import DateUtil from '../../../utils/DateUtil';
 import Moment = moment.Moment;
 import INgModelController = angular.INgModelController;
 let template = require('./dv-datepicker.html');
-
-export interface DatepickerScope extends IScope { updateModelValue: Function; date: Date;
-}
 
 export class DVDatepicker implements IDirective {
     restrict = 'E';
@@ -36,7 +32,8 @@ export class DatepickerController {
     dateRequired: boolean;
     ngRequired: boolean;
     placeholder: string;
-
+    static allowedFormats: string[] = ['D.M.YYYY', 'DD.MM.YYYY'];
+    static defaultFormat: string = 'DD.MM.YYYY';
 
     constructor() {
     }
@@ -54,6 +51,7 @@ export class DatepickerController {
         if (!this.ngModelCtrl) {
             return;
         }
+
         //wenn kein Placeholder gesetzt wird wird der standardplaceholder verwendet. kann mit placeholder="" ueberscrieben werden
         if (this.placeholder === undefined) {
             this.placeholder = 'tt.mm.jjjj';
@@ -70,14 +68,16 @@ export class DatepickerController {
         };
         this.ngModelCtrl.$formatters.unshift(DatepickerController.momentToDate);
         this.ngModelCtrl.$parsers.push(DatepickerController.dateToMoment);
-        //datum validieren (reihenfolge scheint so zu sein das dieser validator vor dem Datumsfeldvalidator der komponente laeuft)
+
         this.ngModelCtrl.$validators['moment'] = (modelValue: any, viewValue: any) => {
-            let value = modelValue || DatepickerController.dateToMoment(viewValue);
-            if (!value) {
+            // if not required and view value empty, it's ok...
+            if (!this.dateRequired && !viewValue) {
                 return true;
             }
 
-            return moment.isMoment(value) && value.isValid();
+            let value = modelValue || DatepickerController.dateToMoment(viewValue);
+
+            return moment(value, DatepickerController.allowedFormats, true).isValid();
         };
     }
 
@@ -92,19 +92,16 @@ export class DatepickerController {
 
     private static momentToDate(mom: Moment): any {
         if (mom && mom.isValid()) {
-            return mom.toDate();
+            return mom.format(DatepickerController.defaultFormat);
         }
         return '';
     }
 
-    private static dateToMoment(date: Date): any {
-        //nur versuchen das datum als moment zu parsen wenn es kein string ist
-        if (date && !(typeof date === 'string' )) {
-            let dateString = date.toISOString();
-            return DateUtil.localDateTimeToMoment(dateString);
+    private static dateToMoment(date: any): any {
+        if (moment(date, DatepickerController.allowedFormats, true).isValid()) {
+            return moment(date, DatepickerController.allowedFormats, true);
         }
-
-        return date;
+        return null;
     }
 
 
