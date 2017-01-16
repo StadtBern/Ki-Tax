@@ -20,6 +20,7 @@ public class JaxFall extends JaxAbstractDTO {
 
 	@Min(1)
 	private Integer nextNumberKind = 1;
+	private String besitzerUsername; //
 
 	public long getFallNummer() {
 		return fallNummer;
@@ -45,4 +46,11 @@ public class JaxFall extends JaxAbstractDTO {
 		this.nextNumberKind = nextNumberKind;
 	}
 
+	public void setBesitzerUsername(String besitzerUsername) {
+		this.besitzerUsername = besitzerUsername;
+	}
+
+	public String getBesitzerUsername() {
+		return besitzerUsername;
+	}
 }

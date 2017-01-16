@@ -356,4 +356,11 @@ export class GesuchToolbarController {
         let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
         this.antragTypList[txt] = antragDTO;
     }
+
+    private hasBesitzer(): boolean {
+        if(this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall){
+            return this.getGesuch().fall.besitzerUsername !== undefined && this.getGesuch().fall.besitzerUsername !== null;
+        }
+        return false;
+    }
 }

@@ -1,6 +1,7 @@
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 import {TSAntragStatus} from './enums/TSAntragStatus';
+import {TSEingangsart} from './enums/TSEingangsart';
 
 export default class TSAntragDTO {
 
@@ -8,9 +9,11 @@ export default class TSAntragDTO {
     private _fallNummer: number;
     private _familienName: string;
     private _antragTyp: TSAntragTyp;
+    private _eingangsart: TSEingangsart
     private _eingangsdatum: moment.Moment;
     private _aenderungsdatum: moment.Moment;
     private _verantwortlicher: string;
+    private _besitzerUsername: string;
     private _angebote: Array<TSBetreuungsangebotTyp>;
     private _institutionen: Array<string>;
     private _status: TSAntragStatus;
@@ -169,5 +172,27 @@ export default class TSAntragDTO {
                 + (this._gesuchsperiodeGueltigBis.year() - 2000);
         }
         return undefined;
+    }
+
+
+    get eingangsart(): TSEingangsart {
+        return this._eingangsart;
+    }
+
+    set eingangsart(value: TSEingangsart) {
+        this._eingangsart = value;
+    }
+
+
+    get besitzerUsername(): string {
+        return this._besitzerUsername;
+    }
+
+    set besitzerUsername(value: string) {
+        this._besitzerUsername = value;
+    }
+
+    private hasBesitzer(): boolean {
+        return this._besitzerUsername !== undefined && this.besitzerUsername !== null
     }
 }
