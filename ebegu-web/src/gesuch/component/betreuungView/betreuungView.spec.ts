@@ -220,7 +220,7 @@ describe('betreuungView', function () {
         $rootScope.$apply();
         expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();
         if (moveToNextStep) {
-            expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen');
+            expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', { gesuchId: '' });
         } else {
             expect($state.go).not.toHaveBeenCalled();
         }

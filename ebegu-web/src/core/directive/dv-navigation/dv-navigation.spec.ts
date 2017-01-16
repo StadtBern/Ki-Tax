@@ -12,6 +12,7 @@ import IQService = angular.IQService;
 import IScope = angular.IScope;
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import TSFall from '../../../models/TSFall';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 describe('dvNavigation', function () {
 
     let navController: NavigatorController;
@@ -262,7 +263,7 @@ describe('dvNavigation', function () {
             mockGesuch();
             callPreviousStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation',
-                {createNew: 'false', createMutation: 'false', eingangsart: 'ONLINE', gesuchId: '123', gesuchsperiodeId: undefined, fallId: '123' });
+                {createNew: 'false', createMutation: 'false', eingangsart: 'ONLINE', gesuchId: '123', gesuchsperiodeId: '123', fallId: '123' });
         });
         it('moves to gesuch.stammdaten when coming from GESUCHSTELLER from 2GS', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.GESUCHSTELLER);
@@ -456,6 +457,8 @@ describe('dvNavigation', function () {
         gesuch.id = '123';
         gesuch.fall = new TSFall();
         gesuch.fall.id = '123';
+        gesuch.gesuchsperiode = new TSGesuchsperiode();
+        gesuch.gesuchsperiode.id = '123';
         spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
         return gesuch;
     }
