@@ -178,8 +178,6 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@Nonnull
 	private Collection<EbeguParameter> getEbeguParameterByKey(@Nonnull Collection<EbeguParameterKey> keys) {
 		if (!keys.isEmpty()) {
-
-
 			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 			final CriteriaQuery<EbeguParameter> query = cb.createQuery(EbeguParameter.class);
 			Root<EbeguParameter> root = query.from(EbeguParameter.class);
