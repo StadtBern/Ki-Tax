@@ -111,7 +111,6 @@ public class GesuchsperiodeResource {
 	public List<JaxGesuchsperiode> getAllActiveGesuchsperioden() {
 		return gesuchsperiodeService.getAllActiveGesuchsperioden().stream()
 			.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode))
-			.sorted()
 			.collect(Collectors.toList());
 	}
 
