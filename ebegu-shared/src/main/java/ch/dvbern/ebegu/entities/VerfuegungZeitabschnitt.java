@@ -629,6 +629,18 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			this.ekv1NotExisting == that.ekv1NotExisting;
 	}
 
+	public boolean isSameSichtbareDaten(VerfuegungZeitabschnitt that) {
+		if (this == that) {
+			return true;
+		}
+		return
+			betreuungspensum == that.betreuungspensum &&
+			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
+				Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
+				Objects.equals(famGroesse, that.famGroesse) &&
+			Objects.equals(bemerkungen, that.bemerkungen);
+	}
+
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
 		return thisErwerbspensumGS == null && thatErwerbspensumGS == null
 			|| !(thisErwerbspensumGS == null || thatErwerbspensumGS == null)
