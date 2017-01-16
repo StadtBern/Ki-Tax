@@ -8,6 +8,16 @@
         }
     }
 
+    .gesuchstellerDashboardView {
+        .dashboardHeader {
+            margin-top: 20rem;
+        }
+    }
+
+    .dv-progressbar {
+        top: 9.5rem !important;
+    }
+
     .gesuchModul {
         padding: 5rem 2.5rem 10rem 5rem;
     }
@@ -51,8 +61,38 @@
         }
     }
 
+    md-radio-button {
+        margin: 0 0 1.5rem;
+    }
+
 }
 
+@media (@mq-xs  @mq-max-sm ) {
+    .mobile-sidenav-toggle {
+        display: flex;
+    }
+
+    .dv-input-container-small {
+        width: 100%;
+    }
+
+    .dv-input-container-medium-label {
+        width: 100%;
+
+    }
+
+    .dv-input-container-medium {
+        width: 100%;
+    }
+
+    .dv-input-container-question {
+        width: 100%;
+    }
+
+    .gesuchModul {
+        padding: 5rem 3rem 10rem;
+    }
+}
 @media @mq-sm {
     #gesuchContainer {
         .nav-row-betreuung {
@@ -65,15 +105,16 @@
                 margin-bottom: 0;
                 padding: 0;
                 margin-right: auto;
-                &:first-child {
-                    margin-right: auto;
-                }
+
                 &:last-child {
                     margin-left: auto;
                     margin-right: 0;
                     margin-bottom: 0;
                     padding: 0 0.75rem 0;
                     padding-left: 0;
+                }
+                &:first-child {
+                    margin-right: auto;
                 }
                 & > div {
                     display: flex;
@@ -111,11 +152,6 @@
 }
 
 //Device Media Queries
-/*@media @mq-d-sm {
-    html {
-        font-size: @base-font-size*0.25;
-    }
-}*/
 
 @media @mq-d-md {
     html {
@@ -139,4 +175,54 @@
     html {
         font-size: @base-font-size;
     }
+}
+
+@media only screen
+and (min-device-width: 320px)
+and (max-device-width: 480px)
+and (-webkit-min-device-pixel-ratio: 2) {
+
+    input[type="text"], input[type="number"], input[type="email"], textarea, textarea.md-input, .form-control, .dv-select-style select {
+        font-size: 16px;
+    }
+
+    html {
+        font-size: @base-font-size;
+    }
+}
+
+@media only screen
+and (min-device-width: 320px)
+and (max-device-width: 568px)
+and (-webkit-min-device-pixel-ratio: 2) {
+    html {
+        font-size: @base-font-size;
+    }
+}
+
+@media only screen
+and (min-device-width: 375px)
+and (max-device-width: 667px)
+and (-webkit-min-device-pixel-ratio: 2) {
+    html {
+        font-size: @base-font-size;
+    }
+}
+
+@media only screen
+and (min-device-width: 414px)
+and (max-device-width: 736px)
+and (-webkit-min-device-pixel-ratio: 3) {
+    html {
+        font-size: @base-font-size;
+    }
+}
+
+/* iPhone 6 and 6 Plus */
+@media only screen
+and (max-device-width: 640px), only screen and (max-device-width: 667px), only screen and (max-width: 480px) {
+    html {
+        font-size: @base-font-size;
+    }
+
 }

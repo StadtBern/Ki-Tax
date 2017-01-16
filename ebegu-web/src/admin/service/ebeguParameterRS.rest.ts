@@ -68,6 +68,13 @@ export class EbeguParameterRS {
             });
     }
 
+    public getJahresabhParameter(): IPromise<TSEbeguParameter[]> {
+        return this.http.get(this.serviceURL + '/yeardependent')
+            .then((response: any) => {
+                return this.ebeguRestUtil.parseEbeguParameters(response.data);
+            });
+    }
+
     public getEbeguParameterByKeyAndDate(dateParam: moment.Moment, keyParam: TSEbeguParameterKey): IPromise<TSEbeguParameter> {
         return this.http.get(this.serviceURL + '/name/' + keyParam)
             .then((param: TSEbeguParameter) => {

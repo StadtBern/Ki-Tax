@@ -36,9 +36,10 @@
     }
 
     //SmartTable Styles
-    .sortable {
+    .table > thead > tr:first-child > th.sortable, .table > thead:first-child > tr:first-child > th.sortable {
         cursor: pointer;
         white-space: nowrap;
+        padding-right: 0;
     }
     .sortable:after {
         font-size: 1.2rem;
@@ -46,24 +47,42 @@
         display: inline-block;
         line-height: 0.8rem;
         font-family: FontAwesome;
-        content: "\f106\A\f107";
-        white-space: pre;
-        padding-left: 1em;
-
+        content: "\f0dc";
+        margin-left: 1rem;
     }
     .st-sort-ascent:after {
         transition: all 3s;
         font-size: 1.2rem;
         font-family: FontAwesome;
-        content: "\f106\A ";
-        white-space: pre;
+        content: "\f0de";
     }
     .st-sort-descent:after {
         font-size: 1.2rem;
         font-family: FontAwesome;
-        content: " \A\f107";
-        white-space: pre;
+        content: "\f0dd";
+    }
+    .pagination {
 
+        .active {
+            a {
+                background-color: @primary;
+                border-color: @primary-dark;
+                &:hover, &:focus {
+                    background-color: @primary-dark;
+                    border-color: @primary;
+                }
+                color: @contrast-lightest;
+            }
+        }
+        a {
+            &, &:first-child, &:last-child {
+                border-radius: 0;
+            }
+            color: @primary;
+            &:hover, &:focus {
+                color: @primary-dark;
+            }
+        }
     }
 
     hr.header {
@@ -75,47 +94,61 @@
         margin-bottom: 0.5rem;
         margin-top: 0.5rem;
     }
+
     .marginLeft10 {
         margin-left: 1rem;
 
     }
+
     .noMarginY {
         margin-top: 0;
         margin-bottom: 0;
     }
+
     .marginTop05 {
         margin-top: 0.5rem;
     }
+
     .marginTop10 {
         margin-top: 1rem;
     }
+
     .marginTop20 {
         margin-top: 2rem;
     }
+
     .marginTop30 {
         margin-top: 3rem;
     }
+
     .marginTop40 {
         margin-top: 4rem;
     }
+
     .marginTop50 {
         margin-top: 5rem;
     }
+
     .marginBottom10 {
         margin-bottom: 1rem;
     }
+
     .marginBottom20 {
         margin-bottom: 2rem;
     }
+
     .marginBottom30 {
         margin-bottom: 3rem;
     }
+
     .marginBottom50 {
         margin-bottom: 5rem;
     }
+
     .marginBottom60 {
         margin-bottom: 5rem;
     }
+
     .marginBottom80 {
         margin-bottom: 8rem;
     }
@@ -133,6 +166,7 @@
         }
 
     }
+
     // aktuell gibt es eingentlich keine hints mehr
     // Damit wir unter den inputs hints anzeigen koennen schieben wir die errors noch bisschen runter wenn ein Hint existiert
     .hint {
@@ -161,6 +195,7 @@
     ._md-open-menu-container, .md-open-menu-container {
         z-index: @z-index-menu !important;
     }
+
     .well {
         margin-left: -5rem;
         margin-right: -2.5rem;
@@ -171,11 +206,12 @@
             .ebeguH3();
         }
         i {
-            padding: 1rem;
+            padding: 1rem 1rem 1rem 0;
         }
         border-radius: 0;
         padding: 2rem 2.5rem 2rem 5rem;
     }
+
     .well-status-warten {
         background-color: @warning-light;
         i {
@@ -183,6 +219,7 @@
         }
         border-bottom-color: @warning;
     }
+
     .well-status-bestaetigt {
         background-color: @success-light;
         i {
@@ -190,6 +227,7 @@
         }
         border-bottom-color: @success;
     }
+
     .well-status-abgewiesen {
         background-color: @danger-light;
         i {
