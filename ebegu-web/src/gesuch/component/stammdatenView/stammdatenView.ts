@@ -20,6 +20,8 @@ import IQService = angular.IQService;
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITranslateService = angular.translate.ITranslateService;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -40,15 +42,16 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     allowedRoles: Array<TSRole>;
     gesuchstellerNumber: number;
     private initialModel: TSGesuchstellerContainer;
+    private isLastVerfuegtesGesuch: boolean = false;
 
 
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'CONSTANTS', '$q', '$scope', '$translate'];
+        'CONSTANTS', '$q', '$scope', '$translate', 'AuthServiceRS'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, $scope: IScope,
-                private $translate: ITranslateService) {
+                private $translate: ITranslateService, private authServiceRS: AuthServiceRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCHSTELLER);
         this.ebeguRestUtil = ebeguRestUtil;
         this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
@@ -66,6 +69,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         this.showKorrespondadrGS = (this.model.korrespondenzAdresse && this.model.korrespondenzAdresse.adresseGS) ? true : false;
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.getModel().showUmzug = this.getModel().showUmzug || this.getModel().isThereAnyUmzug();
+        this.setLastVerfuegtesGesuch();
     }
 
     korrespondenzAdrClicked() {
@@ -76,6 +80,12 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
                 this.initKorrespondenzAdresseJA();
             }
         }
+    }
+
+    private setLastVerfuegtesGesuch(): void {
+        this.gesuchModelManager.isNeuestesGesuch().then((response: boolean) => {
+            this.isLastVerfuegtesGesuch = response;
+        });
     }
 
     private save(): IPromise<TSGesuchstellerContainer> {
@@ -182,4 +192,15 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
     }
 
+    /**
+     * Checks whether the fields Email and Telefon are editable or not. The conditions for knowing if it is
+     * editable or not are the same ones of isGesuchReadonly(). But in this case, if the user
+     */
+    public areEmailTelefonEditable(): boolean {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole()) && this.isLastVerfuegtesGesuch) {
+            return true;
+        } else {
+            return !this.isGesuchReadonly();
+        }
+    }
 }

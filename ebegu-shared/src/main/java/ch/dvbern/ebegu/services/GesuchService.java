@@ -119,6 +119,15 @@ public interface GesuchService {
 	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch);
 
 	/**
+	 * Gibt das neueste Gesuch der im selben Fall und Periode wie das gegebene Gesuch ist.
+	 * Es wird nach Erstellungsdatum geschaut
+	 * @param gesuch
+	 * @return
+	 */
+	@Nonnull
+	Optional<Gesuch> getNeustesGesuchFuerGesuch(Gesuch gesuch);
+
+	/**
 	 * Gibt das letzte verfuegte Gesuch zurueck, also rekursiv ueber die Vorgaenger, nie das uebergebene Gesuch.
 	 * @deprecated Diese Methode gibt das letzte verfuegte Gesuch zurueck. Dieses Gesuch muss nicht unbedignt
 	 * die richtigen Daten enthalten. Diese Methode sollte deshalb nur vorsichtig benutzt werden.

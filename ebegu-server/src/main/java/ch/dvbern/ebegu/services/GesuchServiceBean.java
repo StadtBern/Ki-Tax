@@ -814,6 +814,36 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.of(gesuch);
 	}
 
+	@Override
+	@Nonnull
+	@PermitAll
+	public Optional<Gesuch> getNeustesGesuchFuerGesuch(Gesuch gesuch) {
+		authorizer.checkReadAuthorization(gesuch);
+		return getNeustesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
+	}
+
+	@Nonnull
+	private Optional<Gesuch> getNeustesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
+		authorizer.checkReadAuthorizationFall(fall);
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
+
+		query.where(predicateGesuchsperiode, predicateFall);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		Gesuch gesuch = criteriaResults.get(0);
+		authorizer.checkReadAuthorization(gesuch);
+		return Optional.of(gesuch);
+	}
+
 	private List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {
 		List<String> uniqueGesuchIds = new ArrayList<>(new LinkedHashSet<>(allGesuchIds)); //keep order but remove duplicate ids
 		int lastindex = Math.min(startindex + maxresults, (uniqueGesuchIds.size()));
