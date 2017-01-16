@@ -61,7 +61,7 @@
                                                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
                                                         ng-required="true">
                                             <md-radio-button
-                                                ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
+                                                ng-repeat="current in vm.getAllActiveGesuchsperioden()"
                                                 ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
                                                 ng-disabled="vm.isGesuchReadonly()  || vm.isKorrekturModusJugendamt()">
                                                 <span>{{current.gesuchsperiodeString}}</span>

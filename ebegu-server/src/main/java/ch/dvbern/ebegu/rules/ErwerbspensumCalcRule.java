@@ -14,6 +14,7 @@ import java.util.Objects;
  * Berechnet die hoehe des ErwerbspensumRule eines bestimmten Erwerbspensums
  * Diese Rule muss immer am Anfang kommen, d.h. sie setzt den initialen Anspruch
  * Die weiteren Rules müssen diesen Wert gegebenenfalls korrigieren.
+ * ACHTUNG! Diese Regel gilt nur fuer Angebote vom Typ isAngebotJugendamtKleinkind
  * Verweis 16.9.2
  */
 public class ErwerbspensumCalcRule extends AbstractCalcRule {
@@ -24,34 +25,36 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		Objects.requireNonNull(betreuung.extractGesuch(), "Gesuch muss gesetzt sein");
-		Objects.requireNonNull(betreuung.extractGesuch().extractFamiliensituation(), "Familiensituation muss gesetzt sein");
-		boolean hasSecondGesuchsteller = hasSecondGSForZeit(betreuung, verfuegungZeitabschnitt.getGueltigkeit());
-		int erwerbspensumOffset = hasSecondGesuchsteller ? 100 : 0;
-		// Erwerbspensum ist immer die erste Rule, d.h. es wird das Erwerbspensum mal als Anspruch angenommen
-		// Das Erwerbspensum muss PRO GESUCHSTELLER auf 100% limitiert werden
-		Integer erwerbspensum1 = verfuegungZeitabschnitt.getErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getErwerbspensumGS1() : 0;
-		if (erwerbspensum1 > 100) {
-			erwerbspensum1 = 100;
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM ,  MsgKey.ERWERBSPENSUM_GS1_MSG);
-		}
-		Integer erwerbspensum2 = 0;
-		if (hasSecondGesuchsteller) {
-			erwerbspensum2 = verfuegungZeitabschnitt.getErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getErwerbspensumGS2() : 0;
-			if (erwerbspensum2 > 100) {
-				erwerbspensum2 = 100;
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_GS2_MSG);
+		if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+			Objects.requireNonNull(betreuung.extractGesuch(), "Gesuch muss gesetzt sein");
+			Objects.requireNonNull(betreuung.extractGesuch().extractFamiliensituation(), "Familiensituation muss gesetzt sein");
+			boolean hasSecondGesuchsteller = hasSecondGSForZeit(betreuung, verfuegungZeitabschnitt.getGueltigkeit());
+			int erwerbspensumOffset = hasSecondGesuchsteller ? 100 : 0;
+			// Erwerbspensum ist immer die erste Rule, d.h. es wird das Erwerbspensum mal als Anspruch angenommen
+			// Das Erwerbspensum muss PRO GESUCHSTELLER auf 100% limitiert werden
+			Integer erwerbspensum1 = verfuegungZeitabschnitt.getErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getErwerbspensumGS1() : 0;
+			if (erwerbspensum1 > 100) {
+				erwerbspensum1 = 100;
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_GS1_MSG);
 			}
+			Integer erwerbspensum2 = 0;
+			if (hasSecondGesuchsteller) {
+				erwerbspensum2 = verfuegungZeitabschnitt.getErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getErwerbspensumGS2() : 0;
+				if (erwerbspensum2 > 100) {
+					erwerbspensum2 = 100;
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_GS2_MSG);
+				}
+			}
+			int anspruch = erwerbspensum1 + erwerbspensum2 - erwerbspensumOffset;
+			if (anspruch <= 0) {
+				anspruch = 0;
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_ANSPRUCH);
+				verfuegungZeitabschnitt.setKategorieKeinPensum(true);
+			}
+			// Der Anspruch wird immer auf 10-er Schritten gerundet.
+			int roundedAnspruch = MathUtil.roundIntToTens(anspruch);
+			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(roundedAnspruch);
 		}
-		int anspruch = erwerbspensum1 + erwerbspensum2 - erwerbspensumOffset;
-		if (anspruch <= 0) {
-			anspruch = 0;
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_ANSPRUCH);
-			verfuegungZeitabschnitt.setKategorieKeinPensum(true);
-		}
-		// Der Anspruch wird immer auf 10-er Schritten gerundet.
-		int roundedAnspruch = MathUtil.roundIntToTens(anspruch);
-		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(roundedAnspruch);
 	}
 
 	private boolean hasSecondGSForZeit(@Nonnull Betreuung betreuung, @Nonnull DateRange gueltigkeit) {

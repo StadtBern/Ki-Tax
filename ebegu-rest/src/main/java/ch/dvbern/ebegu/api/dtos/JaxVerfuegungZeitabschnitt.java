@@ -52,6 +52,8 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 	@NotNull
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
 
+	private boolean zuSpaetEingereicht;
+
 	private int bgPensum; //min von anspruchberechtigtesPensum und betreuungspensum
 
 	private Integer einkommensjahr;
@@ -88,12 +90,6 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 	private boolean kategorieKeinPensum = false;
 
 	private boolean kategorieZuschlagZumErwerbspensum = false;
-
-//	@NotNull
-//	@ManyToOne(optional = false)
-//	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
-//	private Verfuegung verfuegung;
-
 
 	public Integer getErwerbspensumGS1() {
 		return erwerbspensumGS1;
@@ -237,5 +233,13 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
 	public void setKategorieZuschlagZumErwerbspensum(boolean kategorieZuschlagZumErwerbspensum) {
 		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
+	}
+
+	public boolean isZuSpaetEingereicht() {
+		return zuSpaetEingereicht;
+	}
+
+	public void setZuSpaetEingereicht(boolean zuSpaetEingereicht) {
+		this.zuSpaetEingereicht = zuSpaetEingereicht;
 	}
 }

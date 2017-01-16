@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.dto.VerfuegungsBemerkung;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.rules.RuleKey;
 import ch.dvbern.ebegu.types.DateRange;
@@ -46,9 +47,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@Transient
 	private int fachstellenpensum;
-
-	@Transient
-	private boolean zuSpaetEingereicht;
 
 	@Transient
 	private Boolean wohnsitzNichtInGemeindeGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
@@ -139,6 +137,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
+
+	@NotNull
+	@Column(nullable = false)
+	private boolean zuSpaetEingereicht;
 
 
 	public VerfuegungZeitabschnitt() {
@@ -508,6 +510,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.setKategorieZuschlagZumErwerbspensum(this.kategorieZuschlagZumErwerbspensum || other.kategorieZuschlagZumErwerbspensum);
 	}
 
+	public void addBemerkung(VerfuegungsBemerkung bemerkungContainer) {
+		this.addBemerkung(bemerkungContainer.getRuleKey(), bemerkungContainer.getMsgKey());
+	}
+
 	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey) {
 		String bemerkungsText = ServerMessageUtil.translateEnumValue(msgKey);
 		this.addBemerkung(ruleKey.name() + ": " + bemerkungsText);
@@ -634,6 +640,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 */
 	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject", "QuestionableName"})
 	public boolean isSamePersistedValues(VerfuegungZeitabschnitt that) {
+		// zuSpaetEingereicht ist hier nicht aufgefuehrt, weil;
+		// Es sollen die Resultate der Verfuegung verglichen werden und nicht der Weg, wie wir zu diesem Resultat gelangt sind
 		return betreuungspensum == that.betreuungspensum &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			(betreuungsstunden.compareTo(that.betreuungsstunden) == 0) &&
@@ -649,6 +657,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	/**
 	 * Gibt den Betrag des Gutscheins zurück.
 	 */
+	@Nonnull
 	public BigDecimal getVerguenstigung() {
 		if (vollkosten != null && elternbeitrag != null) {
 			return vollkosten.subtract(elternbeitrag);

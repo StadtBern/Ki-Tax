@@ -30,9 +30,9 @@ public class MindestalterAbschnittRule extends AbstractAbschnittRule {
 	@Override
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		List<VerfuegungZeitabschnitt> betreuungspensumAbschnitte = new ArrayList<>();
-		Set<BetreuungspensumContainer> betreuungspensen = betreuung.getBetreuungspensumContainers();
 		LocalDate geburtsdatumKind = betreuung.getKind().getKindJA().getGeburtsdatum();
 		if (geburtsdatumKind != null) {
+			Set<BetreuungspensumContainer> betreuungspensen = betreuung.getBetreuungspensumContainers();
 			LocalDate geburtsdatumKindStichtag = geburtsdatumKind.plusMonths(3);
 			for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensen) {
 				Betreuungspensum betreuungspensum = betreuungspensumContainer.getBetreuungspensumJA();

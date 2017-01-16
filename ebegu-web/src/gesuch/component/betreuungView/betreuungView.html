@@ -43,6 +43,43 @@
                                 <div class="dv-error-messages"></div>
                             </div>
                         </div>
+                        <!--Fachstelle-->
+                        <div ng-if="vm.getKindModel().hasPensumFachstelle()">
+                            <div class="row">
+                                <div class="col-sm-12 dv-input-container-medium form-group">
+                                    <label class="md-no-float" data-translate="FACHSTELLE"></label>
+                                    <input id="fachstelle_ID" type="text" name="fachstelle" ng-disabled="true"
+                                           ng-value="vm.getKindModel().extractFachstelle().name"
+                                           class="form-control">
+                                    <div class="dv-error-messages"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 dv-input-container-small form-group">
+                                    <label class="md-no-float" data-translate="BETREUUNGSPENSUM_FACHSTELLE"></label>
+                                    <input id="pensumFachstelle_ID" type="text" name="pensumFachstelle" ng-disabled="true"
+                                           ng-value="vm.getKindModel().extractPensumFachstelle().pensum"
+                                           class="form-control">
+                                    <div class="dv-error-messages"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 dv-input-container-small form-group">
+                                    <label class="md-no-float" data-translate="VON"></label>
+                                    <input id="pensumFachstelleGueltigAb_ID" type="text" name="pensumFachstelleGueltigAb" ng-disabled="true"
+                                           ng-value="vm.getKindModel().extractPensumFachstelle().gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"
+                                           class="form-control">
+                                    <div class="dv-error-messages"></div>
+                                </div>
+                                <div class="col-sm-6 dv-input-container-small form-group">
+                                    <label class="md-no-float" data-translate="BIS"></label>
+                                    <input id="pensumFachstelleGueltigBis_ID" type="text" name="pensumFachstelleGueltigBis" ng-disabled="true"
+                                           ng-value="vm.getKindModel().extractPensumFachstelle().gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"
+                                           class="form-control">
+                                    <div class="dv-error-messages"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
@@ -68,7 +105,7 @@
                         </div>
                     </div>
                     <!--Institutionen-->
-                    <div class="row" ng-if="vm.isEnabled()">
+                    <div class="row" ng-if="vm.isEnabled() && !vm.isTagesschule()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                             </label>
@@ -226,7 +263,7 @@
                                  dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
                                 <div class="col-md-12 dv-input-container-medium">
                                     <dv-input-container class="form-group">
-                                        <label class="md-no-float" class="inlineHint" for="grundAblehnung"
+                                        <label class="md-no-float inlineHint" for="grundAblehnung"
                                                data-translate="GRUND_ABLEHNUNG"></label>
                                         <textarea md-no-autogrow class="form-control" rows="6" id="grundAblehnung"
                                                   ng-model="vm.getBetreuungModel().grundAblehnung"

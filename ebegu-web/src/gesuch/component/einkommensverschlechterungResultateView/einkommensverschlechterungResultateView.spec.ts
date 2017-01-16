@@ -74,40 +74,58 @@ describe('einkommensverschlechterungResultateView', function () {
             ekvrvc.model.copyFinSitDataFromGesuch(gesuchModelManager.getGesuch());
 
         });
-        it('should return + 100.0%', () => {
+        it('should return + 0.00 %', () => {
+
+            setValues(0, 0);
+            expect(ekvrvc.calculateVeraenderung()).toEqual('+ 0.00 %');
+        });
+
+        it('should return + 0.00 %', () => {
+
+            setValues(100, 100);
+            expect(ekvrvc.calculateVeraenderung()).toEqual('+ 0.00 %');
+        });
+
+        it('should return + 100.00 %', () => {
 
             setValues(100, 200);
-            expect(ekvrvc.calculateVeraenderung()).toEqual('+ 100.0 %');
+            expect(ekvrvc.calculateVeraenderung()).toEqual('+ 100.00 %');
         });
 
-        it('should return - 50.0 %', () => {
+        it('should return - 50.00 %', () => {
 
             setValues(200, 100);
-            expect(ekvrvc.calculateVeraenderung()).toEqual('- 50.0 %');
+            expect(ekvrvc.calculateVeraenderung()).toEqual('- 50.00 %');
         });
 
-        it('should return - 90.0%', () => {
+        it('should return - 90.00 %', () => {
 
             setValues(200, 20);
-            expect(ekvrvc.calculateVeraenderung()).toEqual('- 90.0 %');
+            expect(ekvrvc.calculateVeraenderung()).toEqual('- 90.00 %');
         });
 
-        it('should return - 81.2 %', () => {
+        it('should return - 81.20 %', () => {
 
             setValues(59720, 11230);
-            expect(ekvrvc.calculateVeraenderung()).toEqual('- 81.2 %');
+            expect(ekvrvc.calculateVeraenderung()).toEqual('- 81.20 %');
         });
 
-        it('should return - 100 %', () => {
+        it('should return - 20.01 %', () => {
+
+            setValues(100000, 79990);
+            expect(ekvrvc.calculateVeraenderung()).toEqual('- 20.01 %');
+        });
+
+        it('should return - 100.00 %', () => {
 
             setValues(59720, 0);
-            expect(ekvrvc.calculateVeraenderung()).toEqual('- 100 %');
+            expect(ekvrvc.calculateVeraenderung()).toEqual('- 100.00 %');
         });
 
-        it('should return + 100 %', () => {
+        it('should return + 100.00 %', () => {
 
             setValues(0, 59720);
-            expect(ekvrvc.calculateVeraenderung()).toEqual('+ 100 %');
+            expect(ekvrvc.calculateVeraenderung()).toEqual('+ 100.00 %');
         });
 
         function setValues( massgebendesEinkommen_vj: number, massgebendesEinkommen_bj: number) {

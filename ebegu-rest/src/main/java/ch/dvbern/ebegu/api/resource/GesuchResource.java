@@ -15,6 +15,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BenutzerService;
@@ -157,8 +158,12 @@ public class GesuchResource {
 
 		final Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(this.principalBean.getPrincipal().getName());
 		if (optBenutzer.isPresent()) {
-			Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
-			return cleanGesuchForInstitutionTraegerschaft(completeGesuch, instForCurrBenutzer);
+			if (UserRole.SUPER_ADMIN.equals(optBenutzer.get().getRole())) {
+				return completeGesuch;
+			} else {
+				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+				return cleanGesuchForInstitutionTraegerschaft(completeGesuch, instForCurrBenutzer);
+			}
 		}
 		return null; // aus sicherheitsgruenden geben wir null zurueck wenn etwas nicht stimmmt
 	}
@@ -184,7 +189,6 @@ public class GesuchResource {
 		}
 
 		RestUtil.purgeKinderAndBetreuungenOfInstitutionen(completeGesuch.getKindContainers(), userInstitutionen);
-
 		return completeGesuch;
 	}
 

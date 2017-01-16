@@ -30,7 +30,7 @@ public class BetreuungsgutscheinEvaluator {
 
 	private RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
 	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
-	private VerfuegungsMerger verfuegungsMerger = new VerfuegungsMerger();
+	private MutationsMerger mutationsMerger = new MutationsMerger();
 	private VerfuegungsVergleicher verfuegungsVergleicher = new VerfuegungsVergleicher();
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
@@ -135,7 +135,7 @@ public class BetreuungsgutscheinEvaluator {
 					zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
 					// Ganz am Ende der Berechnung mergen wir das aktuelle Ergebnis mit der Verfügung des letzten Gesuches
-					zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
+					zeitabschnitte = mutationsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
 					// Die Verfügung erstellen
 					if (betreuung.getVerfuegung() == null) {

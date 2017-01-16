@@ -130,13 +130,16 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (this.getBetreuungModel()) {
             if (this.isTagesschule()) {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
+                // Fuer Tagesschule setzen wir eine Dummy-Tagesschule als Institution
+                this.instStammId = this.CONSTANTS.INSTITUTIONSSTAMMDATENID_DUMMY_TAGESSCHULE;
+                this.setSelectedInstitutionStammdaten();
             } else {
                 this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             }
         }
     }
 
-    private save(newStatus: TSBetreuungsstatus, nextStep: string): void {
+    private save(newStatus: TSBetreuungsstatus, nextStep: string, params: any): void {
         this.isSavingData = true;
         this.gesuchModelManager.setBetreuungToWorkWith(this.model); //setze model
         let oldStatus: TSBetreuungsstatus = this.model.betreuungsstatus;
@@ -150,7 +153,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         this.gesuchModelManager.saveBetreuung(this.model, false).then((betreuungResponse: any) => {
             this.isSavingData = false;
             this.form.$setPristine();
-            this.$state.go(nextStep);
+            this.$state.go(nextStep, params);
         }).catch((exception) => {
             //todo team Fehler anzeigen
             // starting over
@@ -248,7 +251,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public platzAnfordern(): void {
         if (this.isGesuchValid() && this.getBetreuungModel().vertrag === true) {
             this.flagErrorVertrag = false;
-            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
+            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen', { gesuchId: this.getGesuchId() });
         } else if (this.getBetreuungModel().vertrag !== true) {
             this.flagErrorVertrag = true;
         }
@@ -257,7 +260,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public platzBestaetigen(): void {
         if (this.isGesuchValid()) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
-            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
+            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution', undefined);
         }
     }
 
@@ -274,7 +277,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         //restore initialBetreuung
         this.model = angular.copy(this.initialBetreuung);
         this.model.datumAblehnung = DateUtil.today();
-        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution');
+        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', undefined);
     }
 
     public platzNichtEingetreten(): void {
@@ -287,13 +290,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             }
             this.getBetreuungModel().erweiterteBeduerfnisse = false;
 
-            this.save(TSBetreuungsstatus.NICHT_EINGETRETEN, 'pendenzenInstitution');
+            this.save(TSBetreuungsstatus.NICHT_EINGETRETEN, 'pendenzenInstitution', undefined);
         }
     }
 
     public saveSchulamt(): void {
         if (this.isGesuchValid()) {
-            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen');
+            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', { gesuchId: this.getGesuchId() });
         }
     }
 
