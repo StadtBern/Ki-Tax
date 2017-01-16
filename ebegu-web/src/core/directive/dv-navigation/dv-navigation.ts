@@ -309,7 +309,7 @@ export class NavigatorController {
                 createMutation: 'false',
                 eingangsart: this.gesuchModelManager.getGesuch().eingangsart,
                 gesuchId: gesuchId,
-                gesuchsperiodeId: this.gesuchModelManager.getGesuch().gesuchsperiode,
+                gesuchsperiodeId: this.gesuchModelManager.getGesuch().gesuchsperiode.id,
                 fallId: this.gesuchModelManager.getGesuch().fall.id
             });
 
