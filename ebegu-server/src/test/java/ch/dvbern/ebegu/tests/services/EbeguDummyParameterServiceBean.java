@@ -25,6 +25,7 @@ import javax.enterprise.inject.Alternative;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
 
@@ -96,6 +97,12 @@ public class EbeguDummyParameterServiceBean extends AbstractBaseService implemen
 	@Nonnull
 	public Collection<EbeguParameter> getEbeguParametersByJahr(@Nonnull Integer jahr) {
 		return dummyObjects.values();
+	}
+
+	@Nonnull
+	@Override
+	public Collection<EbeguParameter> getJahresabhParameter() {
+		return dummyObjects.values().stream().filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toList());
 	}
 
 	@Override

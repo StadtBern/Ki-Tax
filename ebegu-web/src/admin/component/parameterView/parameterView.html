@@ -254,7 +254,38 @@
                                         </h1>
                                     </div>
                                 </div>
+
+
+                                <!-- Gesuchsperioden Tabelle fuer Jahresparameter -->
+                                <div class="row">
+                                    <div class="col-md-12 table-responsive">
+                                        <table st-table="displayedCollection" st-safe-src="vm.ebeguJahresabhParameter"
+                                               st-delay="20"
+                                               class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th data-translate="GESUCHSPERIODE_GUELTIG_AB"></th>
+                                                <th data-translate="GESUCHSPERIODE_GUELTIG_BIS"></th>
+                                                <th data-translate="Name"></th>
+                                                <th data-translate="Wert"></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="row in displayedCollection" st-select-row="row"
+                                                st-select-mode="single"
+                                                ng-click="vm.jahresabhParamSelected(row)">
+                                                <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
+                                                <td ng-bind="row.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
+                                                <td ng-bind="row.name | translate"></td>
+                                                <td ng-bind="row.value"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                                 <!-- Auswahl Jahr -->
+                                <div ng-if="vm.jahr">
                                 <div class="row marginTop10">
                                     <div class="col-md-12 form-group">
 
@@ -316,6 +347,7 @@
                                             <span data-translate="SAVE"></span>
                                         </dv-loading-button>
                                     </div>
+                                </div>
                                 </div>
                             </div>
                         </div>
