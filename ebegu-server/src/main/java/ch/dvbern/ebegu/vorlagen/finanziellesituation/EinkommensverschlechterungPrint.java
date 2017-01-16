@@ -20,7 +20,7 @@ public interface EinkommensverschlechterungPrint extends FinanzDatenPrint {
 	/**
 	 * @return Einkommenverschlescherungsjahr
 	 */
-	String getEinkommensverschlechterungTitle();
+	String getEinkommensverschlechterungJahr();
 
 	/**
 	 * @return das Ereingis eintritt
