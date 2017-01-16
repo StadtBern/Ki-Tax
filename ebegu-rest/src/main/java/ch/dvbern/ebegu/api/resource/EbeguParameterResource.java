@@ -160,6 +160,19 @@ public class EbeguParameterResource {
 			.collect(Collectors.toList());
 	}
 
+	@ApiOperation(value = "Get all E-BEGU that can change within a year (for all years)")
+	@Nonnull
+	@GET
+	@Path("/yeardependent")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxEbeguParameter> getJahresabhParameter() {
+
+		return ebeguParameterService.getJahresabhParameter().stream()
+			.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter))
+			.collect(Collectors.toList());
+
+	}
+
 	@ApiOperation(value = "Get all E-BEGU parameter by key and date")
 	@Nullable
 	@GET

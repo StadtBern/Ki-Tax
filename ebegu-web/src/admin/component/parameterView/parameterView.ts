@@ -41,6 +41,7 @@ export class ParameterViewController {
     gesuchsperiode: TSGesuchsperiode;
 
     jahr: number;
+    ebeguJahresabhParameter: TSEbeguParameter[];
 
     ebeguParameterListGesuchsperiode: TSEbeguParameter[];
     ebeguVorlageListGesuchsperiode: TSEbeguVorlage[];
@@ -58,6 +59,7 @@ export class ParameterViewController {
         this.readGesuchsperioden();
         this.jahr = DateUtil.currentYear();
         this.jahrChanged();
+       this.updateJahresabhParamList()
     }
 
     private readGesuchsperioden(): void {
@@ -88,6 +90,11 @@ export class ParameterViewController {
         } else {
             this.cancelGesuchsperiode();
         }
+    }
+
+    jahresabhParamSelected(parameter : TSEbeguParameter){
+        this.jahr = parameter.gueltigkeit.gueltigAb.get('year');
+        this.jahrChanged();
     }
 
     createGesuchsperiode(): void {
@@ -146,9 +153,14 @@ export class ParameterViewController {
     }
 
     saveParameterByJahr(): void {
-        for (var i = 0; i < this.ebeguParameterListJahr.length; i++) {
-            var param = this.ebeguParameterListJahr[i];
-            this.ebeguParameterRS.saveEbeguParameter(param);
+        if(this.ebeguParameterListJahr.length !== 1) {
+            this.$log.error('Aktuell kann diese oberflaeche nur einene einzelnen Jahresabg. Param speichern.')
+        } else {
+            let param = this.ebeguParameterListJahr[0];
+            this.ebeguParameterRS.saveEbeguParameter(param).then((response) => {
+                this.updateJahresabhParamList()
+            });
+
         }
     }
 
@@ -221,4 +233,9 @@ export class ParameterViewController {
     }
 
 
+    private updateJahresabhParamList() {
+        this.ebeguParameterRS.getJahresabhParameter().then((response: Array<TSEbeguParameter>) => {
+            this.ebeguJahresabhParameter = response;
+        })
+    }
 }

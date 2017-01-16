@@ -120,6 +120,15 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR})
+	public Collection<EbeguParameter> getJahresabhParameter() {
+		List<EbeguParameterKey> jahresabhParamsKey = Arrays.stream(EbeguParameterKey.values()).filter(ebeguParameterKey -> !ebeguParameterKey.isProGesuchsperiode()).collect(Collectors.toList());
+		return getEbeguParameterByKey(jahresabhParamsKey);
+
+	}
+
+	@Override
+	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT,  STEUERAMT})
 	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date) {
 		return getEbeguParameterByKeyAndDate(key, date, persistence.getEntityManager());
@@ -164,6 +173,26 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 			throw new NonUniqueResultException();
 		}
 		return Optional.ofNullable(paramOrNull);
+	}
+
+	@Nonnull
+	private Collection<EbeguParameter> getEbeguParameterByKey(@Nonnull Collection<EbeguParameterKey> keys) {
+		if (!keys.isEmpty()) {
+
+
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<EbeguParameter> query = cb.createQuery(EbeguParameter.class);
+			Root<EbeguParameter> root = query.from(EbeguParameter.class);
+			query.select(root);
+
+			Predicate keyPredicate = root.get(EbeguParameter_.name).in(keys);
+
+			query.where(keyPredicate);
+			query.orderBy(cb.asc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
+			return persistence.getCriteriaResults(query);
+		}
+		return Collections.emptyList();
+
 	}
 
 	private void copyEbeguParameterListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
