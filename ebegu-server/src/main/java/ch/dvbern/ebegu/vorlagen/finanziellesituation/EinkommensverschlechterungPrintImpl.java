@@ -65,12 +65,8 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	}
 
 	@Override
-	public String getEinkommensverschlechterungTitle() {
-		String title =ServerMessageUtil.getMessage("EINKOMMENSVERSCHLECHTERUNG_PRINT_EKV_TITEL");
-		if (ereigniseintritt.isEmpty()) {
-			title =ServerMessageUtil.getMessage("EINKOMMENSVERSCHLECHTERUNG_PRINT_BERECHNUNGSGRUNDL_TITEL");
-		}
-		return title + " " + einkommensverschlechterungJahr;
+	public String getEinkommensverschlechterungJahr() {
+		return einkommensverschlechterungJahr;
 	}
 
 	@Override
