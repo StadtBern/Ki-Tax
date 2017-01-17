@@ -21,20 +21,20 @@
                     <span data-translate="FREIGABEQUITTUNG_AUSSTEHEND_TEXT"></span>
                 </div>
             </div>
-            <div class="row marginTop10" ng-if="vm.isThereFreigabequittung()">
+            <div class="row marginTop50" ng-if="vm.isThereFreigabequittung()">
                 <div class="col-md-12">
-                    <i class="fa fa-file-text-o"></i>
-                    <button type="button" class=" btn-link" ng-click="vm.openFreigabequittungPDF()">
+
+                    <button type="button" class=" btn-link link-underline" ng-click="vm.openFreigabequittungPDF()">
+                        <i class="fa fa-file-text-o"></i>
                         <span data-translate="PDF_FREIGABEQUITTUNG_ANZEIGEN"></span>
                     </button>
                 </div>
             </div>
 
             <!-- Simulationsbutton fuer Quittung einlesen -->
-            <div class="row" ng-if="vm.isFreigabequittungAusstehend()">
+            <div class="row marginTop50" ng-if="vm.isFreigabequittungAusstehend()">
                 <span class="col-md-12" ng-if="vm.showGesuchFreigebenSimulationButton">
-                    <dv-loading-button type="button" button-click="vm.gesuchFreigeben()"
-                                       button-class="dv-btn-sm">
+                    <dv-loading-button type="button" button-click="vm.gesuchFreigeben()">
                         <span data-translate="ANTRAG_FREIGEBEN_SIMULIEREN"></span>
                     </dv-loading-button>
                 </span>
@@ -116,10 +116,9 @@
                     </div>
                 </div>
 
-                <div class="row marginTop20">
+                <div class="row marginTop30">
                     <div class="col-md-4">
                         <dv-loading-button type="submit" button-click="vm.gesuchEinreichen()"
-                                           button-class="dv-btn-sm"
                                            aria-label="{{ANTRAG_EINREICHEN | translate}}">
                             <span data-translate="ANTRAG_EINREICHEN"></span>
                         </dv-loading-button>
