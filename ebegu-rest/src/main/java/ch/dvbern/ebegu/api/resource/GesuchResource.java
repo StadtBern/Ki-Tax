@@ -406,18 +406,18 @@ public class GesuchResource {
 	@GET
 	@Path("/neuestesgesuch/{gesuchId}")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	public JaxGesuch findNeustesGesuchFuerGesuch(
+	@Produces(MediaType.WILDCARD)
+	public boolean isNeustesGesuch(
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
 		Validate.notNull(gesuchJAXPId.getId());
 		String gesuchID = converter.toEntityId(gesuchJAXPId);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
 		if (!gesuchOptional.isPresent()) {
-			return null;
+			return false;
 		}
 
 		Optional<Gesuch> neustesGesuchOptional = gesuchService.getNeustesGesuchFuerGesuch(gesuchOptional.get());
-		return neustesGesuchOptional.map(gesuch -> converter.gesuchToJAX(gesuch)).orElse(null);
+		return neustesGesuchOptional.map(gesuch -> gesuchJAXPId.getId().equals(gesuch.getId())).orElse(false);
 
 	}
 }

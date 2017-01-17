@@ -16,12 +16,12 @@ import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
 import TSAdresse from '../../../models/TSAdresse';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import IQService = angular.IQService;
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITranslateService = angular.translate.ITranslateService;
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -194,7 +194,8 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
     /**
      * Checks whether the fields Email and Telefon are editable or not. The conditions for knowing if it is
-     * editable or not are the same ones of isGesuchReadonly(). But in this case, if the user
+     * editable or not are the same ones of isGesuchReadonly(). But in this case, if the user is from the jugenadamt
+     * and the current gesuch is the newest one they may also edit those fields
      */
     public areEmailTelefonEditable(): boolean {
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole()) && this.isLastVerfuegtesGesuch) {
