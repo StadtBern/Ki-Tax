@@ -437,6 +437,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	public void setKategorieZuschlagZumErwerbspensum(boolean kategorieZuschlagZumErwerbspensum) {
 		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
 	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -457,16 +458,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 		if (this.getErwerbspensumGS1() == null && other.getErwerbspensumGS1() == null) {
 			this.setErwerbspensumGS1(null);
-		}
-		else {
+		} else {
 			this.setErwerbspensumGS1((this.getErwerbspensumGS1() != null ? this.getErwerbspensumGS1() : 0)
 				+ (other.getErwerbspensumGS1() != null ? other.getErwerbspensumGS1() : 0));
 		}
 
 		if (this.getErwerbspensumGS2() == null && other.getErwerbspensumGS2() == null) {
 			this.setErwerbspensumGS2(null);
-		}
-		else {
+		} else {
 			this.setErwerbspensumGS2((this.getErwerbspensumGS2() != null ? this.getErwerbspensumGS2() : 0) +
 				(other.getErwerbspensumGS2() != null ? other.getErwerbspensumGS2() : 0));
 		}
@@ -635,10 +634,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		}
 		return
 			betreuungspensum == that.betreuungspensum &&
-			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
+				anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 				Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 				Objects.equals(famGroesse, that.famGroesse) &&
-			Objects.equals(bemerkungen, that.bemerkungen);
+				Objects.equals(bemerkungen, that.bemerkungen);
 	}
 
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
