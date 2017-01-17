@@ -34,6 +34,8 @@ public class AntragStatusConverterUtil {
 				return AntragStatusDTO.FREIGABEQUITTUNG;
 			case NUR_SCHULAMT:
 				return AntragStatusDTO.NUR_SCHULAMT;
+			case NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN:
+				return AntragStatusDTO.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN;
 			case FREIGEGEBEN:
 				return AntragStatusDTO.FREIGEGEBEN;
 			case IN_BEARBEITUNG_JA:
@@ -99,6 +101,8 @@ public class AntragStatusConverterUtil {
 				return AntragStatus.FREIGABEQUITTUNG;
 			case NUR_SCHULAMT:
 				return AntragStatus.NUR_SCHULAMT;
+			case NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN:
+				return AntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN;
 			case FREIGEGEBEN:
 				return AntragStatus.FREIGEGEBEN;
 			case IN_BEARBEITUNG_JA:
