@@ -546,6 +546,19 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	}
 
 	/**
+	 * Fügt otherBemerkungen zur Liste hinzu, falls sie noch nicht vorhanden sind
+	 * @param otherBemerkungen
+	 */
+	public void mergeBemerkungen(String otherBemerkungen) {
+		String[] otherBemerkungenList = StringUtils.split(otherBemerkungen, "\n");
+		for (String otherBemerkung : otherBemerkungenList) {
+			if (!StringUtils.contains(getBemerkungen(), otherBemerkung)) {
+				addBemerkung(otherBemerkung);
+			}
+		}
+	}
+
+	/**
 	 * Dieses Pensum ist abhängig vom Erwerbspensum der Eltern respektive von dem durch die Fachstelle definierten
 	 * Pensum.
 	 * <p>
@@ -636,8 +649,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		return
 			betreuungspensum == that.betreuungspensum &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
-				Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
-				Objects.equals(famGroesse, that.famGroesse) &&
+			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
+			Objects.equals(famGroesse, that.famGroesse) &&
 			Objects.equals(bemerkungen, that.bemerkungen);
 	}
 
