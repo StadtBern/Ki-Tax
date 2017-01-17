@@ -67,32 +67,6 @@
 
 }
 
-@media (@mq-xs  @mq-max-sm ) {
-    .mobile-sidenav-toggle {
-        display: flex;
-    }
-
-    .dv-input-container-small {
-        width: 100%;
-    }
-
-    .dv-input-container-medium-label {
-        width: 100%;
-
-    }
-
-    .dv-input-container-medium {
-        width: 100%;
-    }
-
-    .dv-input-container-question {
-        width: 100%;
-    }
-
-    .gesuchModul {
-        padding: 5rem 3rem 10rem;
-    }
-}
 @media @mq-sm {
     #gesuchContainer {
         .nav-row-betreuung {
@@ -133,7 +107,7 @@
         dv-navigation, .nav-row-verfuegen {
             & > div {
                 padding: 0;
-                div {
+                & > div {
                     padding: 0 0.75rem 0;
                 }
 
@@ -143,6 +117,10 @@
             dv-navigation {
                 margin-left: auto;
                 margin-right: 0;
+                &:only-child {
+                    margin-right: auto;
+                }
+
             }
             & > div {
                 margin-right: auto;
@@ -179,50 +157,43 @@
 
 @media only screen
 and (min-device-width: 320px)
-and (max-device-width: 480px)
-and (-webkit-min-device-pixel-ratio: 2) {
-
-    input[type="text"], input[type="number"], input[type="email"], textarea, textarea.md-input, .form-control, .dv-select-style select {
-        font-size: 16px;
-    }
-
-    html {
-        font-size: @base-font-size;
-    }
-}
-
-@media only screen
-and (min-device-width: 320px)
 and (max-device-width: 568px)
-and (-webkit-min-device-pixel-ratio: 2) {
-    html {
-        font-size: @base-font-size;
-    }
-}
-
-@media only screen
+and (-webkit-min-device-pixel-ratio: 2), only screen
 and (min-device-width: 375px)
 and (max-device-width: 667px)
-and (-webkit-min-device-pixel-ratio: 2) {
-    html {
-        font-size: @base-font-size;
-    }
-}
-
-@media only screen
+and (-webkit-min-device-pixel-ratio: 2), only screen
 and (min-device-width: 414px)
 and (max-device-width: 736px)
-and (-webkit-min-device-pixel-ratio: 3) {
+and (-webkit-min-device-pixel-ratio: 3), only screen
+and (max-device-width: 640px), only screen
+and (max-device-width: 667px), only screen
+and (max-width: 480px) {
+
+    h2 {
+        line-height: 2.4rem;
+    }
+    .dv-input-container-small {
+        width: 100%;
+    }
+
+    .dv-input-container-medium-label {
+        width: 100%;
+
+    }
+
+    .dv-input-container-medium {
+        width: 100%;
+    }
+
+    .dv-input-container-question {
+        width: 100%;
+    }
+
+    .gesuchModul {
+        padding: 5rem 3rem 10rem;
+    }
+
     html {
         font-size: @base-font-size;
     }
-}
-
-/* iPhone 6 and 6 Plus */
-@media only screen
-and (max-device-width: 640px), only screen and (max-device-width: 667px), only screen and (max-width: 480px) {
-    html {
-        font-size: @base-font-size;
-    }
-
 }
