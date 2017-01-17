@@ -33,6 +33,8 @@ public class AbschlussNormalizer {
 			if (lastZeitabschnitt.isSameSichtbareDaten(zeitabschnitt) && zeitabschnitt.getGueltigkeit().startsDayAfter(lastZeitabschnitt.getGueltigkeit())) {
 				// Gleiche Berechnungsgrundlagen: Den alten um den neuen verlängern
 				lastZeitabschnitt.getGueltigkeit().setGueltigBis(zeitabschnitt.getGueltigkeit().getGueltigBis());
+				// Die Bemerkungen zusammenfügen mit Vermeidung von Duplikaten
+				lastZeitabschnitt.mergeBemerkungen(zeitabschnitt.getBemerkungen());
 				validZeitabschnitte.remove(indexOfLast);
 				validZeitabschnitte.add(lastZeitabschnitt);
 			} else {
