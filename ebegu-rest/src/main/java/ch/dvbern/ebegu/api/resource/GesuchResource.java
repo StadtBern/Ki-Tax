@@ -401,4 +401,23 @@ public class GesuchResource {
 		}
 		throw new EbeguEntityNotFoundException("removeBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 	}
+
+	@Nullable
+	@GET
+	@Path("/neuestesgesuch/{gesuchId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public boolean isNeustesGesuch(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
+		Validate.notNull(gesuchJAXPId.getId());
+		String gesuchID = converter.toEntityId(gesuchJAXPId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
+		if (!gesuchOptional.isPresent()) {
+			return false;
+		}
+
+		Optional<Gesuch> neustesGesuchOptional = gesuchService.getNeustesGesuchFuerGesuch(gesuchOptional.get());
+		return neustesGesuchOptional.map(gesuch -> gesuchJAXPId.getId().equals(gesuch.getId())).orElse(false);
+
+	}
 }
