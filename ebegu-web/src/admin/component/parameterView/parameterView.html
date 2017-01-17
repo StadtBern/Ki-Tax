@@ -340,12 +340,18 @@
                                     </div>
                                 </div>
                                 <!-- Buttons Parameter pro Jahr -->
-                                <div class="row">
-                                    <div class="col-md-2" ng-if="vm.jahr">
+                                <div class="row" ng-if="vm.jahr">
+                                    <div class="col-md-2">
                                         <dv-loading-button type="button" button-click="vm.saveParameterByJahr()"
                                                            button-class="">
                                             <span data-translate="SAVE"></span>
                                         </dv-loading-button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a href="javascript:;" id="cancelJahresabhLink" class="dv-btn" unsaved-warning-clear
+                                           ng-click="vm.cancelJahresabhaengig(); form.$setPristine();form.$setUntouched();">
+                                            <span data-translate="CANCEL"></span>
+                                        </a>
                                     </div>
                                 </div>
                                 </div>
