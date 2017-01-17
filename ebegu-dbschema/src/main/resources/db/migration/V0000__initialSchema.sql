@@ -2140,7 +2140,7 @@ FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
 ALTER TABLE verfuegung_zeitabschnitt_aud
-  ADD CONSTRAINT FKl_verfuegung_zeitabschnitt_aud_rev
+  ADD CONSTRAINT FK_verfuegung_zeitabschnitt_aud_rev
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
