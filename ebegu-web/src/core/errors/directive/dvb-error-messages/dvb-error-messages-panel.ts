@@ -37,9 +37,9 @@ export class DvErrorMessagesPanelComponent {
     }
 
     displayMessages = (event: any, errors: Array<TSExceptionReport>) => {
-            this.errors = errors;
-            this.show();
-        };
+        this.errors = errors;
+        this.show();
+    };
 
     show() {
         // this.element.show();
