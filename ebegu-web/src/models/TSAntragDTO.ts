@@ -9,7 +9,7 @@ export default class TSAntragDTO {
     private _fallNummer: number;
     private _familienName: string;
     private _antragTyp: TSAntragTyp;
-    private _eingangsart: TSEingangsart
+    private _eingangsart: TSEingangsart;
     private _eingangsdatum: moment.Moment;
     private _aenderungsdatum: moment.Moment;
     private _verantwortlicher: string;
@@ -26,7 +26,7 @@ export default class TSAntragDTO {
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
-                verfuegt?: boolean, laufnummer?: number, gesperrtWegenBeschwerde?: boolean) {
+                verfuegt?: boolean, laufnummer?: number, gesperrtWegenBeschwerde?: boolean, besitzerUsername?: string, eingangsart?: TSEingangsart) {
 
         this._antragId = antragId;
         this._fallNummer = fallNummer;
@@ -43,6 +43,8 @@ export default class TSAntragDTO {
         this._verfuegt = verfuegt;
         this._laufnummer = laufnummer;
         this._gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
+        this._besitzerUsername = besitzerUsername;
+        this._eingangsart = eingangsart;
     }
 
 
@@ -174,7 +176,6 @@ export default class TSAntragDTO {
         return undefined;
     }
 
-
     get eingangsart(): TSEingangsart {
         return this._eingangsart;
     }
@@ -182,7 +183,6 @@ export default class TSAntragDTO {
     set eingangsart(value: TSEingangsart) {
         this._eingangsart = value;
     }
-
 
     get besitzerUsername(): string {
         return this._besitzerUsername;

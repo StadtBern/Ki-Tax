@@ -40,7 +40,6 @@ export default class TSFall extends TSAbstractEntity {
         this._nextNumberKind = value;
     }
 
-
     get besitzerUsername(): string {
         return this._besitzerUsername;
     }
