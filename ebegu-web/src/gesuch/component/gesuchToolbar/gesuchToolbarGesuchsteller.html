@@ -1,5 +1,5 @@
 <!--gesuchtoolbar fuer normale Screens-->
-<div class="gesuch-toolbar-gesuchsteller" flex="100" hide-xs>
+<div class="gesuch-toolbar-gesuchsteller" flex="100" hide-sm hide-xs>
     <md-toolbar flex="100">
         <md-menu-bar flex="100" layout="row" layout-align="start center">
             <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()"></span></span>
@@ -73,10 +73,10 @@
 </div>
 <!--Definition der Toolbar  fuer kleine Screens als Sidebar-->
 <md-sidenav md-component-id="gesuch-toolbar-mobile" class="md-sidenav-right gesuch-toolbar-mobile" flex="100"
-            layout="column" layout-align="start center" hide-gt-xs>
+            layout="column" layout-align="start center" hide-gt-sm>
     <button class="gesuch-toolbar-mobile-close" ng-click="vmgs.toggleSidenav('gesuch-toolbar-mobile')" aria-label="Schliessen">
         <!--close knopf-->
-        <span>&#10799;</span>
+        <i class="fa fa-times" aria-hidden="true"></i>
     </button>
     <div ng-if="vmgs.showGesuchPeriodeNavigationMenu()" class="gesuchsperioden-container"
          ng-repeat="(gesuchsperiodeString,antragTypDaten) in vmgs.gesuchNavigationList" layout="column"
@@ -85,7 +85,7 @@
         <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.setGesuchsperiode(gesuchsperiodeString)"
                 aria-label="{{gesuchsperiodeString}}" class="gesuchsperiode-button">
                 <span>
-                    <a href="javascript:void(0)">{{gesuchsperiodeString}}</a>
+                    {{gesuchsperiodeString}}
                 </span>
         </button>
 
@@ -94,7 +94,7 @@
                 ng-repeat="antragTypDatum  in antragTypDaten"
                 ng-value="antragTypDatum" class="antrag-typ-datum-button">
                                 <span>
-                                    <a href="javascript:void(0)">{{antragTypDatum}}</a>
+                                    {{antragTypDatum}}
                                 </span>
         </button>
     </div>

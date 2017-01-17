@@ -8,7 +8,7 @@
 </gesuch-toolbar-gesuchsteller>
 <!--Gesuchnavigation (Uebersicht)  fuer den Gesuchsteller (mobile)-->
 <div class="mobile-sidenav-toggle mobile-open" flex="none" layout="row" layout-align="center center" dv-show-element
-     dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()" hide-gt-xs>
+     dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()" hide-gt-sm>
     <div class="mobile-active" flex layout="row" layout-align="start center" ng-click="vm.toggleSidenav('sidenav')">
         <span ng-bind="vm.getGesuchName()" class="gesuch-name"></span>
         <span ng-if="vm.isStepVisible('GESUCH_ERSTELLEN')" ng-bind="vm.getActiveElement() | translate"
@@ -28,9 +28,9 @@
         class="md-sidenav-left"
         id="sidenavContainer"
         md-component-id="sidenav"
-        md-is-locked-open="$mdMedia('gt-xs')"
+        md-is-locked-open="$mdMedia('gt-sm')"
         md-whiteframe="4">
-        <div class="mobile-sidenav-toggle mobile-close" hide-gt-xs>
+        <div class="mobile-sidenav-toggle mobile-close" hide-gt-sm>
             <button ng-click="vm.toggleSidenav('sidenav')" class="mobile-sidenav-close">
                 <span class="fa fa-angle-left" aria-hidden="true"></span>
             </button>
