@@ -66,17 +66,15 @@ export class DatepickerController {
         this.ngModelCtrl.$render = () => {
             this.date = this.ngModelCtrl.$viewValue;
         };
-        this.ngModelCtrl.$formatters.unshift(DatepickerController.momentToDate);
-        this.ngModelCtrl.$parsers.push(DatepickerController.dateToMoment);
+        this.ngModelCtrl.$formatters.unshift(DatepickerController.momentToString);
+        this.ngModelCtrl.$parsers.push(DatepickerController.stringToMoment);
 
         this.ngModelCtrl.$validators['moment'] = (modelValue: any, viewValue: any) => {
             // if not required and view value empty, it's ok...
             if (!this.dateRequired && !viewValue) {
                 return true;
             }
-
-            let value = modelValue || DatepickerController.dateToMoment(viewValue);
-
+            let value = modelValue || DatepickerController.stringToMoment(viewValue);
             return moment(value, DatepickerController.allowedFormats, true).isValid();
         };
     }
@@ -90,14 +88,14 @@ export class DatepickerController {
     };
 
 
-    private static momentToDate(mom: Moment): any {
+    private static momentToString(mom: Moment): string {
         if (mom && mom.isValid()) {
             return mom.format(DatepickerController.defaultFormat);
         }
         return '';
     }
 
-    private static dateToMoment(date: any): any {
+    private static stringToMoment(date: string): any {
         if (moment(date, DatepickerController.allowedFormats, true).isValid()) {
             return moment(date, DatepickerController.allowedFormats, true);
         }
