@@ -5,7 +5,6 @@ import {IComponentOptions, ILogService} from 'angular';
 import './parameterView.less';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
-import DateUtil from '../../../utils/DateUtil';
 import {TSDateRange} from '../../../models/types/TSDateRange';
 import {EbeguVorlageRS} from '../../service/ebeguVorlageRS.rest';
 import TSEbeguVorlage from '../../../models/TSEbeguVorlage';
@@ -19,6 +18,7 @@ import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
+import ITimeoutService = angular.ITimeoutService;
 let template = require('./parameterView.html');
 let style = require('./parameterView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -32,7 +32,7 @@ export class ParameterViewComponentConfig implements IComponentOptions {
 
 export class ParameterViewController {
     static $inject = ['EbeguParameterRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$translate', 'EbeguVorlageRS',
-        'EbeguUtil', 'DvDialog', 'DownloadRS', '$log', 'GlobalCacheService', 'GesuchModelManager'];
+        'EbeguUtil', 'DvDialog', 'DownloadRS', '$log', 'GlobalCacheService', 'GesuchModelManager', '$timeout'];
 
     ebeguParameterRS: EbeguParameterRS;
     ebeguRestUtil: EbeguRestUtil;
@@ -41,10 +41,11 @@ export class ParameterViewController {
     gesuchsperiode: TSGesuchsperiode;
 
     jahr: number;
+    ebeguJahresabhParameter: TSEbeguParameter[]; // enthält alle Jahresabhängigen Params für alle Jahre
 
     ebeguParameterListGesuchsperiode: TSEbeguParameter[];
     ebeguVorlageListGesuchsperiode: TSEbeguVorlage[];
-    ebeguParameterListJahr: TSEbeguParameter[];
+    ebeguParameterListJahr: TSEbeguParameter[]; // enthält alle Params für nur 1 Jahr
 
 
     /* @ngInject */
@@ -52,12 +53,13 @@ export class ParameterViewController {
                 ebeguRestUtil: EbeguRestUtil, private $translate: ITranslateService,
                 private ebeguVorlageRS: EbeguVorlageRS, private ebeguUtil: EbeguUtil,
                 private dvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService,
-                private globalCacheService: GlobalCacheService, private gesuchModelManager: GesuchModelManager) {
+                private globalCacheService: GlobalCacheService, private gesuchModelManager: GesuchModelManager, private $timeout: ITimeoutService) {
         this.ebeguParameterRS = ebeguParameterRS;
         this.ebeguRestUtil = ebeguRestUtil;
-        this.readGesuchsperioden();
-        this.jahr = DateUtil.currentYear();
-        this.jahrChanged();
+        $timeout(() => {
+            this.readGesuchsperioden();
+            this.updateJahresabhParamList();
+        });
     }
 
     private readGesuchsperioden(): void {
@@ -90,6 +92,11 @@ export class ParameterViewController {
         }
     }
 
+    jahresabhParamSelected(parameter : TSEbeguParameter){
+        this.jahr = parameter.gueltigkeit.gueltigAb.get('year');
+        this.jahrChanged();
+    }
+
     createGesuchsperiode(): void {
         this.gesuchsperiode = new TSGesuchsperiode(false, new TSDateRange());
         if (this.gesuchsperiodenList) {
@@ -110,14 +117,21 @@ export class ParameterViewController {
                 this.gesuchsperiodenList.push(response);
             }
             this.globalCacheService.getCache(TSCacheTyp.EBEGU_PARAMETER).removeAll();
+            // Die E-BEGU-Parameter für die neue Periode lesen bzw. erstellen, wenn noch nicht vorhanden
             this.readEbeguParameterByGesuchsperiode();
+            // Dasselbe fuer die jahresabhaengigen fuer die beiden Halbjahre der Periode
+            this.ebeguParameterRS.getEbeguParameterByJahr(this.gesuchsperiode.gueltigkeit.gueltigAb.year()).then((response: TSEbeguParameter[]) => {
+                this.ebeguParameterRS.getEbeguParameterByJahr(this.gesuchsperiode.gueltigkeit.gueltigBis.year()).then((response: TSEbeguParameter[]) => {
+                    this.updateJahresabhParamList();
+                });
+            });
             this.gesuchModelManager.updateActiveGesuchsperiodenList(); //reset gesuchperioden is manager
         });
     }
 
     private getIndexOfElementwithID(gesuchsperiodeToSearch: TSGesuchsperiode): number {
-        var idToSearch = gesuchsperiodeToSearch.id;
-        for (var i = 0; i < this.gesuchsperiodenList.length; i++) {
+        let idToSearch = gesuchsperiodeToSearch.id;
+        for (let i = 0; i < this.gesuchsperiodenList.length; i++) {
             if (this.gesuchsperiodenList[i].id === idToSearch) {
                 return i;
             }
@@ -131,13 +145,17 @@ export class ParameterViewController {
         this.ebeguParameterListGesuchsperiode = undefined;
     }
 
+    cancelJahresabhaengig(): void {
+        this.jahr = undefined;
+    }
+
     jahrChanged(): void {
         this.readEbeguParameterByJahr();
     }
 
     saveParameterByGesuchsperiode(): void {
-        for (var i = 0; i < this.ebeguParameterListGesuchsperiode.length; i++) {
-            var param = this.ebeguParameterListGesuchsperiode[i];
+        for (let i = 0; i < this.ebeguParameterListGesuchsperiode.length; i++) {
+            let param = this.ebeguParameterListGesuchsperiode[i];
             this.ebeguParameterRS.saveEbeguParameter(param);
         }
         this.globalCacheService.getCache(TSCacheTyp.EBEGU_PARAMETER).removeAll();
@@ -146,9 +164,13 @@ export class ParameterViewController {
     }
 
     saveParameterByJahr(): void {
-        for (var i = 0; i < this.ebeguParameterListJahr.length; i++) {
-            var param = this.ebeguParameterListJahr[i];
-            this.ebeguParameterRS.saveEbeguParameter(param);
+        if(this.ebeguParameterListJahr.length !== 1) {
+            this.$log.error('Aktuell kann diese oberflaeche nur einene einzelnen Jahresabg. Param speichern.')
+        } else {
+            let param = this.ebeguParameterListJahr[0];
+            this.ebeguParameterRS.saveEbeguParameter(param).then((response) => {
+                this.updateJahresabhParamList()
+            });
         }
     }
 
@@ -170,7 +192,7 @@ export class ParameterViewController {
 
     private addResponseToCurrentList(response: TSEbeguVorlage) {
         let returnedDG: TSEbeguVorlage = angular.copy(response);
-        var index = this.getIndexOfElement(returnedDG, this.ebeguVorlageListGesuchsperiode);
+        let index = this.getIndexOfElement(returnedDG, this.ebeguVorlageListGesuchsperiode);
 
         if (index > -1) {
             //this.$log.debug('add dokument to dokumentList');
@@ -180,8 +202,8 @@ export class ParameterViewController {
     }
 
     public getIndexOfElement(entityToSearch: TSEbeguVorlage, listToSearchIn: TSEbeguVorlage[]): number {
-        var idToSearch = entityToSearch.name;
-        for (var i = 0; i < listToSearchIn.length; i++) {
+        let idToSearch = entityToSearch.name;
+        for (let i = 0; i < listToSearchIn.length; i++) {
             if (listToSearchIn[i].name === idToSearch) {
                 return i;
             }
@@ -199,7 +221,7 @@ export class ParameterViewController {
 
                 this.ebeguVorlageRS.deleteEbeguVorlage(ebeguVorlage.id).then((response) => {
 
-                    var index = EbeguUtil.getIndexOfElementwithID(ebeguVorlage, this.ebeguVorlageListGesuchsperiode);
+                    let index = EbeguUtil.getIndexOfElementwithID(ebeguVorlage, this.ebeguVorlageListGesuchsperiode);
                     if (index > -1) {
                         this.$log.debug('remove Vorlage in EbeguVorlage');
                         ebeguVorlage.vorlage = null;
@@ -220,5 +242,9 @@ export class ParameterViewController {
         });
     }
 
-
+    private updateJahresabhParamList() {
+        this.ebeguParameterRS.getJahresabhParameter().then((response: Array<TSEbeguParameter>) => {
+            this.ebeguJahresabhParameter = response;
+        });
+    }
 }
