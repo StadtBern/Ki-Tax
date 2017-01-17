@@ -37,11 +37,11 @@ export class ParameterViewController {
     ebeguParameterRS: EbeguParameterRS;
     ebeguRestUtil: EbeguRestUtil;
 
-    gesuchsperiodenList: Array<TSGesuchsperiode>;
+    gesuchsperiodenList: Array<TSGesuchsperiode> = [];
     gesuchsperiode: TSGesuchsperiode;
 
     jahr: number;
-    ebeguJahresabhParameter: TSEbeguParameter[]; // enthält alle Jahresabhängigen Params für alle Jahre
+    ebeguJahresabhParameter: TSEbeguParameter[] = []; // enthält alle Jahresabhängigen Params für alle Jahre
 
     ebeguParameterListGesuchsperiode: TSEbeguParameter[];
     ebeguVorlageListGesuchsperiode: TSEbeguVorlage[];
@@ -63,8 +63,8 @@ export class ParameterViewController {
     }
 
     private readGesuchsperioden(): void {
-        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: any) => {
-            this.gesuchsperiodenList = angular.copy(response);
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: Array<TSGesuchsperiode>) => {
+            this.gesuchsperiodenList =  response; //angular.copy(response);
         });
     }
 
