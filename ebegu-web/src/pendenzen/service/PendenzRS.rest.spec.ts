@@ -24,7 +24,7 @@ describe('pendenzRS', function () {
 
     beforeEach(() => {
         mockPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.GESUCH, undefined, undefined,
-            [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
+            [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined, undefined, undefined);
         mockPendenzRest = ebeguRestUtil.antragDTOToRestObject({}, mockPendenz);
     });
 
