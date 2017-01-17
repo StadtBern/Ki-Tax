@@ -266,9 +266,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * @param wizardSteps
 	 */
 	private void updateAllStatusForGesuchsteller(List<WizardStep> wizardSteps) {
-		principalBean.isCallerInRole(UserRole.GESUCHSTELLER);
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
+
 				setWizardStepOkOrMutiert(wizardStep);
 			} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
 				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
