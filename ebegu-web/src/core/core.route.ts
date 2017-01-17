@@ -18,7 +18,8 @@ appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'Mand
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
-                       authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService,  $log: ILogService, errorService: ErrorService) {
+                       authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService,
+                       $log: ILogService, errorService: ErrorService) {
     // navigationLogger.toggle();
 
     // Fehler beim Navigieren ueber ui-route ins Log schreiben

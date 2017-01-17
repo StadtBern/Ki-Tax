@@ -32,6 +32,7 @@ public class BetreuungsgutscheinEvaluator {
 	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
 	private MutationsMerger mutationsMerger = new MutationsMerger();
 	private VerfuegungsVergleicher verfuegungsVergleicher = new VerfuegungsVergleicher();
+	private AbschlussNormalizer abschlussNormalizer = new AbschlussNormalizer();
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
 		this.rules = rules;
@@ -130,6 +131,9 @@ public class BetreuungsgutscheinEvaluator {
 					}
 					// Nach der Abhandlung dieser Betreuung die Restansprüche für die nächste Betreuung extrahieren
 					restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
+
+					// Falls jetzt noch Abschnitte "gleich" sind, im Sinne der *angezeigten* Daten, diese auch noch mergen
+					zeitabschnitte = abschlussNormalizer.mergeGleicheSichtbareDaten(zeitabschnitte);
 
 					// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
 					zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
