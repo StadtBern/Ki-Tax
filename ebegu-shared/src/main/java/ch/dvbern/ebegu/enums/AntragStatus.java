@@ -12,6 +12,7 @@ public enum AntragStatus {
     IN_BEARBEITUNG_GS,
     FREIGABEQUITTUNG,   // = GS hat Freigabequittung gedruckt, bzw. den Antrag freigegeben (auch wenn keine Freigabequittung notwendig ist)
     NUR_SCHULAMT,
+	NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
     FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
     IN_BEARBEITUNG_JA,
     ZURUECKGEWIESEN,
