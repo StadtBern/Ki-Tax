@@ -21,12 +21,12 @@ import java.util.Collection;
  */
 public abstract class AbstractTestfall {
 
-	public static final String ID_INSTITUTION_WEISSENSTEIN = "649b15b3-8f27-4bfa-a088-044c99827b34";
-	public static final String ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA = "0676abda-0c21-4b1c-b2e1-4b3a9fab0d3f";
-	public static final String ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_TAGI = "9a80aeef-7069-4004-9407-6c78fc019d39";
+	public static final String ID_INSTITUTION_WEISSENSTEIN = "ab353df1-47ca-4618-b849-2265cf1c356a";
+	public static final String ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA = "945e3eef-8f43-43d2-a684-4aa61089684b";
+	public static final String ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_TAGI = "3304040a-3eb7-426c-a838-51981df87cec";
 
-	public static final String ID_INSTITUTION_BRUENNEN = "8b47dd06-fe2c-4ce1-8f06-53cdd3a0c3ed";
-	public static final String ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA = "3dda9efe-3066-4787-9beb-31f989fde006";
+	public static final String ID_INSTITUTION_BRUENNEN = "1b6f476f-e0f5-4380-9ef6-836d688853a3";
+	public static final String ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA = "9a0eb656-b6b7-4613-8f55-4e0e4720455e";
 
 
 
