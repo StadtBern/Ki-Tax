@@ -44,9 +44,6 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
     private handleErrorResponse(response: any) {
         let errors: Array<TSExceptionReport>;
         // Alle daten loggen um das Debuggen zu vereinfachen
-        this.$log.error(response.status);
-        this.$log.error(response.statusText);
-        this.$log.error(response.data);
         if (this.isDataViolationResponse(response.data)) {
             errors = this.convertViolationReport(response.data);
 
@@ -56,10 +53,11 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
             errors = [];
             errors.push(new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, 'ERROR_FILE_TOO_LARGE', response.data));
         } else {
+            this.$log.error('ErrorStatus: "' + response.status + '" StatusText: "' + response.statusText +'"');
+            this.$log.error('ResponseData:' + JSON.stringify(response.data));
             //the error objects is neither a ViolationReport nor a ExceptionReport. Create a generic error msg
             errors = [];
             errors.push(new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, 'ERROR_UNEXPECTED', response.data));
-
         }
         return errors;
     }
