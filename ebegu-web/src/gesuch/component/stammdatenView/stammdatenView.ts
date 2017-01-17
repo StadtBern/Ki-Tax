@@ -198,7 +198,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
      * and the current gesuch is the newest one they may also edit those fields
      */
     public areEmailTelefonEditable(): boolean {
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole()) && this.isLastVerfuegtesGesuch) {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles()) && this.isLastVerfuegtesGesuch) {
             return true;
         } else {
             return !this.isGesuchReadonly();
