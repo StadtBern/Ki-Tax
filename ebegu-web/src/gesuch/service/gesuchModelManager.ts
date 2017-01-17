@@ -1224,8 +1224,9 @@ export default class GesuchModelManager {
     }
 
     public isNeuestesGesuch(): IPromise<boolean> {
-        return this.gesuchRS.getNeuestesGesuchFromGesuch(this.gesuch.id).then((response: TSGesuch) => {
-               return this.gesuch.id === response.id;
+        let gesuchId = this.gesuch.id;
+        return this.gesuchRS.getNeuestesGesuchFromGesuch(gesuchId).then((response: TSGesuch) => {
+               return gesuchId === response.id;
         });
     }
 }

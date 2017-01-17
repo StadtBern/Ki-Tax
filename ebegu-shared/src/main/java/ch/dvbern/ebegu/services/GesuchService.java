@@ -125,7 +125,7 @@ public interface GesuchService {
 	 * @return
 	 */
 	@Nonnull
-	Optional<Gesuch> getNeustesGesuchFuerGesuch(Gesuch gesuch);
+	Optional<Gesuch> getNeustesGesuchFuerGesuch(@Nonnull Gesuch gesuch);
 
 	/**
 	 * Gibt das letzte verfuegte Gesuch zurueck, also rekursiv ueber die Vorgaenger, nie das uebergebene Gesuch.

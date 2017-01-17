@@ -128,7 +128,7 @@ export default class GesuchRS implements IEntityRS {
     }
 
     public getNeuestesGesuchFromGesuch(gesuchID: string): IPromise<TSGesuch> {
-        return this.http.get(this.serviceURL + '/neuestesgesuch' + encodeURIComponent(gesuchID))
+        return this.http.get(this.serviceURL + '/neuestesgesuch/' + encodeURIComponent(gesuchID))
             .then((response: any) => {
                 this.$log.debug('PARSING gesuch REST object ', response.data);
                 return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
