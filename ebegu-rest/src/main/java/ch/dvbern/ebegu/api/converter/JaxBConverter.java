@@ -588,6 +588,7 @@ public class JaxBConverter {
 			jaxFall.setVerantwortlicher(benutzerToAuthLoginElement(persistedFall.getVerantwortlicher()));
 		}
 		jaxFall.setNextNumberKind(persistedFall.getNextNumberKind());
+		jaxFall.setBesitzerUsername(persistedFall.getBesitzer() != null ? persistedFall.getBesitzer().getUsername() : null);
 		return jaxFall;
 	}
 
@@ -2065,6 +2066,8 @@ public class JaxBConverter {
 		antrag.setVerfuegt(AntragStatus.VERFUEGT.equals(gesuch.getStatus()));
 		antrag.setLaufnummer(gesuch.getLaufnummer());
 		antrag.setGesperrtWegenBeschwerde(gesuch.isGesperrtWegenBeschwerde());
+		antrag.setEingangsart(gesuch.getEingangsart());
+		antrag.setBesitzerUsername(gesuch.getFall().getBesitzer() != null ? gesuch.getFall().getBesitzer().getUsername() : null);
 		return antrag;
 	}
 

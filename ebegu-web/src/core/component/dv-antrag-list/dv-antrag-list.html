@@ -90,8 +90,11 @@
                     <td class="ellipsis" ellipsis-tooltip="{{vm.addZerosToFallnummer(row.fallNummer)}}"
                         ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.familienName}}" ng-bind="row.familienName"></td>
-                    <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}"
-                        ng-bind="row.antragTyp | translate"></td>
+                    <td class="ellipsis" title="{{row.antragTyp | translate}}">
+                        <i class="fa fa-desktop margin-ri" aria-hidden="true" ng-show="row.hasBesitzer()"></i>
+                        <i class="fa fa-file-text" aria-hidden="true" ng-show="!row.hasBesitzer()"></i>
+                        <span  ng-bind="row.antragTyp | translate"   class="marginLeft5"></span>
+                    </td>
                     <td class="ellipsis"
                         ellipsis-tooltip="{{row.gesuchsperiodeString}}"
                         ng-bind="row.gesuchsperiodeString"></td>
