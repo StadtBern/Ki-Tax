@@ -1,7 +1,11 @@
 <div class="gesuch-toolbar" flex="100">
     <md-toolbar flex="100">
         <md-menu-bar flex="100" layout="row" layout-align="start center">
-            <span class="bold-menu" ng-bind="vmx.getGesuchName()"></span>
+            <span class="bold-menu" >
+                <i class="fa fa-desktop" aria-hidden="true" ng-if="vmx.hasBesitzer()"></i>
+                <i class="fa fa-file-text-o" aria-hidden="true" ng-if="!vmx.hasBesitzer()"></i>
+                <span class="bold-menu" ng-bind="vmx.getGesuchName()"></span>
+            </span>
             <md-menu ng-if="vmx.showGesuchPeriodeNavigationMenu()">
                 <button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
                     <span class="bold-menu" ng-bind="vmx.getCurrentGesuchsperiode()"></span>

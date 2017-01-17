@@ -196,6 +196,29 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 	}
 
+
+	@Test
+	public void testSearchByFamilienname() {
+		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
+		final Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		final Gesuch gesuch2 = createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		final Gesuch gesuch3 = createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+
+		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
+		Pair<Long, List<Gesuch>> noFilterResult = gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(4), noFilterResult.getLeft());
+
+		filterDTO.getSearch().getPredicateObject().setFamilienName("Becker");
+		//nach fallnummer geordnete liste
+		Pair<Long, List<Gesuch>> resultpair = gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(1), resultpair.getLeft());
+		List<Gesuch> foundGesuche = resultpair.getRight();
+		Assert.assertNotNull(foundGesuche.get(0).getGesuchsteller1());
+		Assert.assertEquals(gesuch.getGesuchsteller1().getGesuchstellerJA().getNachname(), foundGesuche.get(0).getGesuchsteller1().getGesuchstellerJA().getNachname());
+
+
+	}
+
 	@Test
 	public void testPaginationEdgeCases() {
 		TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));

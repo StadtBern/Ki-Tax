@@ -2,10 +2,7 @@ package ch.dvbern.ebegu.dto;
 
 import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragStatusDTO;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.*;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -26,18 +23,22 @@ public class JaxAntragDTO {
 
 	private static final long serialVersionUID = -1277026654764135397L;
 
+	//probably unused
 	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
-						@Nullable LocalDate eingangsdatum, AntragTyp antragTyp, int laufnummer) {
+						@Nullable LocalDate eingangsdatum, AntragTyp antragTyp, int laufnummer, Eingangsart eingangsart) {
 		this.antragId = antragId;
 		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
 		this.eingangsdatum = eingangsdatum;
 		this.antragTyp = antragTyp;
 		this.laufnummer = laufnummer;
+		this.eingangsart = eingangsart;
 	}
 
+	//constructor fuer query
 	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis,
-						@Nullable LocalDate eingangsdatum, AntragTyp antragTyp, AntragStatus antragStatus, int laufnummer) {
+						@Nullable LocalDate eingangsdatum, AntragTyp antragTyp, AntragStatus antragStatus, int laufnummer,
+						Eingangsart eingangsart, String besitzerUsername) {
 		this.antragId = antragId;
 		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
@@ -45,10 +46,18 @@ public class JaxAntragDTO {
 		this.antragTyp = antragTyp;
 		this.verfuegt = antragStatus.isAnyStatusOfVerfuegt();
 		this.laufnummer = laufnummer;
+		this.eingangsart = eingangsart;
+		this.besitzerUsername = besitzerUsername;
 	}
 
 	@NotNull
 	private String antragId = null;
+
+	@NotNull
+	private  Eingangsart eingangsart;
+
+	@Nullable
+	private  String besitzerUsername;
 
 	@NotNull
 	private long fallNummer;
@@ -220,5 +229,22 @@ public class JaxAntragDTO {
 
 	public void setGesperrtWegenBeschwerde(boolean gesperrtWegenBeschwerde) {
 		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
+	}
+
+	public Eingangsart getEingangsart() {
+		return eingangsart;
+	}
+
+	public void setEingangsart(Eingangsart eingangsart) {
+		this.eingangsart = eingangsart;
+	}
+
+	@Nullable
+	public String getBesitzerUsername() {
+		return besitzerUsername;
+	}
+
+	public void setBesitzerUsername(@Nullable String besitzerUsername) {
+		this.besitzerUsername = besitzerUsername;
 	}
 }

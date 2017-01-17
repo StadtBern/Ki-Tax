@@ -571,6 +571,7 @@ export default class EbeguRestUtil {
             restFall.fallNummer = fall.fallNummer;
             restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
             restFall.nextNumberKind = fall.nextNumberKind;
+            restFall.besitzerUsername = fall.besitzerUsername;
             return restFall;
         }
         return undefined;
@@ -583,6 +584,7 @@ export default class EbeguRestUtil {
             fallTS.fallNummer = fallFromServer.fallNummer;
             fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
             fallTS.nextNumberKind = fallFromServer.nextNumberKind;
+            fallTS.besitzerUsername = fallFromServer.besitzerUsername;
             return fallTS;
         }
         return undefined;
@@ -1279,26 +1281,30 @@ export default class EbeguRestUtil {
         restPendenz.verfuegt = pendenz.verfuegt;
         restPendenz.laufnummer = pendenz.laufnummer;
         restPendenz.gesperrtWegenBeschwerde = pendenz.gesperrtWegenBeschwerde;
+        restPendenz.eingangsart = pendenz.eingangsart;
+        restPendenz.besitzerUsername = pendenz.besitzerUsername;
         return restPendenz;
     }
 
-    public parseAntragDTO(pendenzTS: TSAntragDTO, pendenzFromServer: any): TSAntragDTO {
-        pendenzTS.antragId = pendenzFromServer.antragId;
-        pendenzTS.fallNummer = pendenzFromServer.fallNummer;
-        pendenzTS.familienName = pendenzFromServer.familienName;
-        pendenzTS.angebote = pendenzFromServer.angebote;
-        pendenzTS.antragTyp = pendenzFromServer.antragTyp;
-        pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
-        pendenzTS.aenderungsdatum = DateUtil.localDateTimeToMoment(pendenzFromServer.aenderungsdatum);
-        pendenzTS.gesuchsperiodeGueltigAb = DateUtil.localDateToMoment(pendenzFromServer.gesuchsperiodeGueltigAb);
-        pendenzTS.gesuchsperiodeGueltigBis = DateUtil.localDateToMoment(pendenzFromServer.gesuchsperiodeGueltigBis);
-        pendenzTS.institutionen = pendenzFromServer.institutionen;
-        pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
-        pendenzTS.status = pendenzFromServer.status;
-        pendenzTS.verfuegt = pendenzFromServer.verfuegt;
-        pendenzTS.laufnummer = pendenzFromServer.laufnummer;
-        pendenzTS.gesperrtWegenBeschwerde = pendenzFromServer.gesperrtWegenBeschwerde;
-        return pendenzTS;
+    public parseAntragDTO(antragTS: TSAntragDTO, antragFromServer: any): TSAntragDTO {
+        antragTS.antragId = antragFromServer.antragId;
+        antragTS.fallNummer = antragFromServer.fallNummer;
+        antragTS.familienName = antragFromServer.familienName;
+        antragTS.angebote = antragFromServer.angebote;
+        antragTS.antragTyp = antragFromServer.antragTyp;
+        antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
+        antragTS.aenderungsdatum = DateUtil.localDateTimeToMoment(antragFromServer.aenderungsdatum);
+        antragTS.gesuchsperiodeGueltigAb = DateUtil.localDateToMoment(antragFromServer.gesuchsperiodeGueltigAb);
+        antragTS.gesuchsperiodeGueltigBis = DateUtil.localDateToMoment(antragFromServer.gesuchsperiodeGueltigBis);
+        antragTS.institutionen = antragFromServer.institutionen;
+        antragTS.verantwortlicher = antragFromServer.verantwortlicher;
+        antragTS.status = antragFromServer.status;
+        antragTS.verfuegt = antragFromServer.verfuegt;
+        antragTS.laufnummer = antragFromServer.laufnummer;
+        antragTS.gesperrtWegenBeschwerde = antragFromServer.gesperrtWegenBeschwerde;
+        antragTS.eingangsart = antragFromServer.eingangsart;
+        antragTS.besitzerUsername = antragFromServer.besitzerUsername;
+        return antragTS;
     }
 
     public parseAntragDTOs(data: any): TSAntragDTO[] {

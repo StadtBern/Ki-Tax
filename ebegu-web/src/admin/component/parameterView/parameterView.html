@@ -136,7 +136,7 @@
                                         <hr class="header"/>
                                     </div>
                                 </div>
-                                <!-- Parameter-Liste -->
+                                <!-- Parameter-Liste (repeater) -->
                                 <div ng-repeat="paramgp in vm.ebeguParameterListGesuchsperiode" class="row">
                                     <div class="col-md-12 form-group">
                                         <div class="row">
@@ -259,7 +259,7 @@
                                 <!-- Gesuchsperioden Tabelle fuer Jahresparameter -->
                                 <div class="row">
                                     <div class="col-md-12 table-responsive">
-                                        <table st-table="displayedCollection" st-safe-src="vm.ebeguJahresabhParameter"
+                                        <table st-table="dispCollection" st-safe-src="vm.ebeguJahresabhParameter"
                                                st-delay="20"
                                                class="table table-striped">
                                             <thead>
@@ -271,7 +271,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr ng-repeat="row in displayedCollection" st-select-row="row"
+                                            <tr ng-repeat="row in dispCollection" st-select-row="row"
                                                 st-select-mode="single"
                                                 ng-click="vm.jahresabhParamSelected(row)">
                                                 <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
@@ -295,7 +295,7 @@
                                                        for="jahr"></label>
                                             </div>
                                             <div class="col-md-2">
-                                                <input id="jahr" type="text" name="jahr" ng-model="vm.jahr"
+                                                <input id="jahr" type="text" name="jahr" ng-disabled="true" ng-model="vm.jahr"
                                                        class="input-element"
                                                        required
                                                        ng-change="vm.jahrChanged()">
@@ -340,12 +340,18 @@
                                     </div>
                                 </div>
                                 <!-- Buttons Parameter pro Jahr -->
-                                <div class="row">
-                                    <div class="col-md-2" ng-if="vm.jahr">
+                                <div class="row" ng-if="vm.jahr">
+                                    <div class="col-md-2">
                                         <dv-loading-button type="button" button-click="vm.saveParameterByJahr()"
                                                            button-class="">
                                             <span data-translate="SAVE"></span>
                                         </dv-loading-button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a href="javascript:;" id="cancelJahresabhLink" class="dv-btn" unsaved-warning-clear
+                                           ng-click="vm.cancelJahresabhaengig(); form.$setPristine();form.$setUntouched();">
+                                            <span data-translate="CANCEL"></span>
+                                        </a>
                                     </div>
                                 </div>
                                 </div>
