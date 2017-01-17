@@ -3,11 +3,12 @@
     <div class="row viewTitle">
         <div class="col-md-12">
             <h1>
-                <span data-translate="MUTATION_FAMSITUATION_TITLE"></span>
+                <span ng-if="vm.isMutation()" data-translate="MUTATION_FAMSITUATION_TITLE"></span>
+                <span ng-if="!vm.isMutation()" data-translate="FAMILIENSITUATION"></span>
             </h1>
             <hr class="header"/>
-            <p data-translate="MUTATION_FAMSITUATION_HINT"></p>
-            <div ng-if="vm.showError()" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></div>
+            <p ng-if="vm.isMutation()" data-translate="MUTATION_FAMSITUATION_HINT"></p>
+            <p ng-if="vm.showError()" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></p>
         </div>
     </div>
     <div class="row">

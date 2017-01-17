@@ -21,20 +21,20 @@
                     <span data-translate="FREIGABEQUITTUNG_AUSSTEHEND_TEXT"></span>
                 </div>
             </div>
-            <div class="row marginTop10" ng-if="vm.isThereFreigabequittung()">
+            <div class="row marginTop50" ng-if="vm.isThereFreigabequittung()">
                 <div class="col-md-12">
-                    <i class="fa fa-file-text-o"></i>
-                    <button type="button" class=" btn-link" ng-click="vm.openFreigabequittungPDF()">
+
+                    <button type="button" class=" btn-link link-underline" ng-click="vm.openFreigabequittungPDF()">
+                        <i class="fa fa-file-text-o"></i>
                         <span data-translate="PDF_FREIGABEQUITTUNG_ANZEIGEN"></span>
                     </button>
                 </div>
             </div>
 
             <!-- Simulationsbutton fuer Quittung einlesen -->
-            <div class="row" ng-if="vm.isFreigabequittungAusstehend()">
+            <div class="row marginTop50" ng-if="vm.isFreigabequittungAusstehend()">
                 <span class="col-md-12" ng-if="vm.showGesuchFreigebenSimulationButton">
-                    <dv-loading-button type="button" button-click="vm.gesuchFreigeben()"
-                                       button-class="dv-btn-sm">
+                    <dv-loading-button type="button" button-click="vm.gesuchFreigeben()">
                         <span data-translate="ANTRAG_FREIGEBEN_SIMULIEREN"></span>
                     </dv-loading-button>
                 </span>
@@ -80,7 +80,7 @@
 
                 <div class="row">
                     <div class="col-xs-12 dv-input-container-question">
-                        <div class=" checkbox">
+                        <div class=" checkbox freigeben-checkbox">
                             <md-checkbox ng-model="vm.bestaetigungFreigabequittung" name="bestaetigungFreigabequittung"
                                          aria-label="bestaetigungFreigabequittung"
                                          ng-required="vm.isFreigebenClicked">
@@ -98,31 +98,20 @@
                 </div>
 
                 <div ng-if="vm.isThereAnySchulamtAngebot()">
-                    <div class="row viewTitle">
+                    <div class="row viewTitle marginTop20">
                         <div class="col-md-12">
                             <h1>
                                 <span data-translate="FREIGABEQUITTUNG_TAGESSCHULEN_TITLE"></span>
                             </h1>
                             <hr class="header"/>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class=" checkbox">
-                                <span data-translate="FREIGABEQUITTUNG_TAGESSCHULEN_TEXT"></span>
-                            </div>
+                            <p data-translate="FREIGABEQUITTUNG_TAGESSCHULEN_TEXT"></p>
                         </div>
                     </div>
                 </div>
 
-                <div class="row marginTop20">
+                <div class="row marginTop30">
                     <div class="col-md-4">
-                        <dv-loading-button type="submit" button-click="vm.gesuchEinreichen()"
-                                           button-class="dv-btn-sm"
-                                           aria-label="{{ANTRAG_EINREICHEN | translate}}">
-                            <span data-translate="ANTRAG_EINREICHEN"></span>
-                        </dv-loading-button>
+
                     </div>
                 </div>
 
@@ -131,10 +120,17 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <dv-navigation dv-previous="true" dv-next="true">
-            </dv-navigation>
+    <div class="nav-row-verfuegen">
+
+        <dv-navigation dv-previous="true" dv-next="false" ng-if="vm.canBeFreigegeben()">
+        </dv-navigation>
+        <dv-navigation dv-previous="true" dv-next="true" ng-if="!vm.canBeFreigegeben()" class="freigabe-nav">
+        </dv-navigation>
+        <div>
+            <dv-loading-button type="submit" button-click="vm.gesuchEinreichen()"
+                               aria-label="{{ANTRAG_EINREICHEN | translate}}" ng-if="vm.canBeFreigegeben()">
+                <span data-translate="ANTRAG_EINREICHEN"></span>
+            </dv-loading-button>
         </div>
     </div>
 

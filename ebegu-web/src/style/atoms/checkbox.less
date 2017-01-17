@@ -27,6 +27,7 @@ md-checkbox {
     height: 1.7rem;
     width: auto;
     margin-right: 0;
+
     &[disabled] {
         color: @contrast-dark;
         .md-label {
@@ -110,6 +111,24 @@ md-checkbox {
                 display: block !important;
             }
         }
+    }
+}
+.freigeben-checkbox {
+    md-checkbox {
+        height: auto;
+        min-height: 1.7rem;
+        .md-container {
+            height: auto;
+            min-height: 1.7rem;
+        }
+        .md-label {
+            height: auto;
+            min-height: 1.7rem;
+        }
+    }
+    .dv-error-messages{
+        overflow:visible;
+        height: auto;
     }
 }
 

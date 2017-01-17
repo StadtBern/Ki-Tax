@@ -92,7 +92,7 @@ export class ParameterViewController {
         }
     }
 
-    jahresabhParamSelected(parameter : TSEbeguParameter){
+    jahresabhParamSelected(parameter : TSEbeguParameter) {
         this.jahr = parameter.gueltigkeit.gueltigAb.get('year');
         this.jahrChanged();
     }
@@ -164,12 +164,12 @@ export class ParameterViewController {
     }
 
     saveParameterByJahr(): void {
-        if(this.ebeguParameterListJahr.length !== 1) {
-            this.$log.error('Aktuell kann diese oberflaeche nur einene einzelnen Jahresabg. Param speichern.')
+        if (this.ebeguParameterListJahr.length !== 1) {
+            this.$log.error('Aktuell kann diese oberflaeche nur einene einzelnen Jahresabg. Param speichern.');
         } else {
             let param = this.ebeguParameterListJahr[0];
             this.ebeguParameterRS.saveEbeguParameter(param).then((response) => {
-                this.updateJahresabhParamList()
+                this.updateJahresabhParamList();
             });
         }
     }
