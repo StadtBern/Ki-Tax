@@ -94,6 +94,8 @@
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
                             <td ng-bind="dokument.filesize"
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
+                            <td class="symbol" ng-if="vm.gesuchModelManager.isKorrekturModusJugendamt() || vm.isGesuchReadonly()">
+                            </td>
                             <td class="symbol">
                                 <span ng-click="vm.download(dokument, true)" class="fa fa-download" aria-hidden="true"
                                       style="color: black"></span>
@@ -102,8 +104,8 @@
                                 <span ng-click="vm.download(dokument, false)" class="fa fa-eye" aria-hidden="true"
                                       style="color: black"></span>
                             </td>
-                            <td class="symbol">
-                                <span ng-if="!vm.isGesuchReadonly() && !vm.gesuchModelManager.isKorrekturModusJugendamt()"
+                            <td class="symbol" ng-if="!vm.isGesuchReadonly() && !vm.gesuchModelManager.isKorrekturModusJugendamt()">
+                                <span
                                       ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
                                       style="color: black"></span>
                             </td>
