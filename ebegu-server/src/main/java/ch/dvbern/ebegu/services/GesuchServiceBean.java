@@ -233,12 +233,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 		// Construct from-clause
 		Root<Gesuch> root = query.from(Gesuch.class);
-		// Join all the relevant relations
+		// Join all the relevant relations (except gesuchsteller join, which is only done when needed)
 		Join<Gesuch, Fall> fall = root.join(Gesuch_.fall, JoinType.INNER);
 		Join<Fall, Benutzer> verantwortlicher = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
 		Join<Gesuch, Gesuchsperiode> gesuchsperiode = root.join(Gesuch_.gesuchsperiode, JoinType.INNER);
-		Join<Gesuch, GesuchstellerContainer> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
-		Join<Gesuch, GesuchstellerContainer> gesuchsteller2 = root.join(Gesuch_.gesuchsteller2, JoinType.LEFT);
+
 		SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
 		SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.LEFT);
 		Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
@@ -293,10 +292,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				predicates.add(cb.equal(fall.get(Fall_.fallNummer), Integer.valueOf(predicateObjectDto.readFallNummerAsNumber())));
 			}
 			if (predicateObjectDto.getFamilienName() != null) {
+				Join<Gesuch, GesuchstellerContainer> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
+				Join<Gesuch, GesuchstellerContainer> gesuchsteller2 = root.join(Gesuch_.gesuchsteller2, JoinType.LEFT);
+				Join<GesuchstellerContainer, Gesuchsteller> gesuchsteller1JA = gesuchsteller1.join(GesuchstellerContainer_.gesuchstellerJA, JoinType.LEFT);
+				Join<GesuchstellerContainer, Gesuchsteller> gesuchsteller2JA = gesuchsteller2.join(GesuchstellerContainer_.gesuchstellerJA, JoinType.LEFT);
 				predicates.add(
 					cb.or(
-						cb.like(gesuchsteller1.get(GesuchstellerContainer_.gesuchstellerJA).get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike()),
-						cb.like(gesuchsteller2.get(GesuchstellerContainer_.gesuchstellerJA).get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike())
+						cb.like(gesuchsteller1JA.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike()),
+						cb.like(gesuchsteller2JA.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike())
 					));
 			}
 			if (predicateObjectDto.getAntragTyp() != null) {
