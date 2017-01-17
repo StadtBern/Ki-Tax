@@ -647,17 +647,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		}
 		return
 			betreuungspensum == that.betreuungspensum &&
-<<<<<<< HEAD
+
 				anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 				Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 				Objects.equals(famGroesse, that.famGroesse) &&
 				Objects.equals(bemerkungen, that.bemerkungen);
-=======
-			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
-			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
-			Objects.equals(famGroesse, that.famGroesse) &&
-			Objects.equals(bemerkungen, that.bemerkungen);
->>>>>>> e2b748912a0c4b3b04aa0226a047181217198d0b
 	}
 
 	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
