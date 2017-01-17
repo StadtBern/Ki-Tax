@@ -823,7 +823,7 @@
     "ANTRAG_FREIGEBEN_SIMULIEREN": "Interner Test-Button: Freigabeqittung einlesen simulieren",
     "FREIGABEQUITTUNG_DRUCKEN_TITLE": "Freigabequittung",
     "FREIGABEQUITTUNG_TAGESSCHULEN_TITLE": "Für Eltern mit Kindern in Tagesschulen",
-    "FREIGABEQUITTUNG_DRUCKEN_TEXT": "Ich bestätige, dass alle Angaben vollständig und wahr sind und nehme zur Kenntnis, dass sie bei der Steuerverwaltung überprüft werden können",
+    "FREIGABEQUITTUNG_DRUCKEN_TEXT": "Ich bestätige, dass alle Angaben vollständig und wahr sind und nehme zur Kenntnis, dass sie bei der Steuerverwaltung überprüft werden können.",
     "FREIGABEQUITTUNG_TAGESSCHULEN_TEXT": "Ich bin einverstanden, dass die oben aufgeführten Angaben zur Bemessung/Erhebung der Elterngebühr in der Tagesschule der Stadt Bern verwendet werden. Ich ermächtige das Schulamt, die Angaben zu Kontrollzwecken mit der Steuerverwaltung abzugleichen. Die Ermächtigung beinhaltet die Befugnis von Jugendamt, Schulamt und Steuerverwaltung, einander wechselseitig schriftlich und mündlich die zur Berechnung des massgebenden Einkommens notwendigen Daten zukommen zu lassen",
     "PDF_FREIGABEQUITTUNG_ANZEIGEN": "Freigabequittung als PDF anzeigen",
     "FREIGABEQUITTUNG_ERFOLG_TEXT": "Der Antrag wurde am {{freigabedatum}} erfolgreich eingereicht",
