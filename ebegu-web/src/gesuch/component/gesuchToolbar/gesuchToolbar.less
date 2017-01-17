@@ -277,9 +277,10 @@
     background: @primary;
     .gesuchsperioden-container {
         width: 100%;
+        display:block;
     }
     button.gesuchsperiode-button, button.antrag-typ-datum-button {
-        & > span > a {
+        & > span  {
             .ebeguBold();
             letter-spacing: 0.15rem;
             font-size: 1.6rem;
@@ -288,6 +289,7 @@
         display: block;
         width: 100%;
         height: @navbar-height;
+        min-height: @navbar-height;
         text-align: left;
         padding: 0 3rem 0;
         line-height: @navbar-height;
