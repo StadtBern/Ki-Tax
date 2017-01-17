@@ -5,11 +5,13 @@ import TSExceptionReport from '../../../models/TSExceptionReport';
 import IQService = angular.IQService;
 import IRootScopeService = angular.IRootScopeService;
 import IHttpInterceptor = angular.IHttpInterceptor;
+import ILogService = angular.ILogService;
 export default class HttpErrorInterceptor implements IHttpInterceptor {
 
-    static $inject = ['$rootScope', '$q', 'ErrorService'];
+    static $inject = ['$rootScope', '$q', 'ErrorService', '$log'];
     /* @ngInject */
-    constructor(private $rootScope: IRootScopeService, private $q: IQService, private errorService: ErrorService) {
+    constructor(private $rootScope: IRootScopeService, private $q: IQService, private errorService: ErrorService,
+                private $log: ILogService) {
     }
 
 
@@ -23,7 +25,7 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
             //here we could analyze the http status of the response. But instead we check if the  response has the format
             // of a known response such as errortypes such as violationReport or ExceptionReport and transform it
             //as such. If the response matches know expected format we create an unexpected error.
-            let errors: Array<TSExceptionReport> = this.handleErrorResponse(response.data);
+            let errors: Array<TSExceptionReport> = this.handleErrorResponse(response);
             this.errorService.handleErrors(errors);
             return this.$q.reject(errors);
         }
@@ -37,23 +39,25 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
      * The expected types are ViolationReport objects from JAXRS if there was a beanValidation error
      * or EbeguExceptionReports in case there was some other application exception
      *
-     * @param data
+     * @param response
      */
-    private handleErrorResponse(data: any) {
+    private handleErrorResponse(response: any) {
         let errors: Array<TSExceptionReport>;
-        if (this.isDataViolationResponse(data)) {
-            errors = this.convertViolationReport(data);
+        // Alle daten loggen um das Debuggen zu vereinfachen
+        if (this.isDataViolationResponse(response.data)) {
+            errors = this.convertViolationReport(response.data);
 
-        } else if (this.isDataEbeguExceptionReport(data)) {
-            errors = this.convertEbeguExceptionReport(data);
-        } else if (this.isFileUploadException(data)) {
+        } else if (this.isDataEbeguExceptionReport(response.data)) {
+            errors = this.convertEbeguExceptionReport(response.data);
+        } else if (this.isFileUploadException(response.data)) {
             errors = [];
-            errors.push(new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, 'ERROR_FILE_TOO_LARGE', data));
+            errors.push(new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, 'ERROR_FILE_TOO_LARGE', response.data));
         } else {
+            this.$log.error('ErrorStatus: "' + response.status + '" StatusText: "' + response.statusText +'"');
+            this.$log.error('ResponseData:' + JSON.stringify(response.data));
             //the error objects is neither a ViolationReport nor a ExceptionReport. Create a generic error msg
             errors = [];
-            errors.push(new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, 'ERROR_UNEXPECTED', data));
-
+            errors.push(new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, 'ERROR_UNEXPECTED', response.data));
         }
         return errors;
     }

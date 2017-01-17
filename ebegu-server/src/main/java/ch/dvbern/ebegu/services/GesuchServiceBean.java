@@ -459,6 +459,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				institutionstammdatenJoin = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
 				institutionJoin = institutionstammdatenJoin.join(InstitutionStammdaten_.institution, JoinType.LEFT);
 			}
+			Join<Gesuch, Fall> fallJoin = root.join(Gesuch_.fall);
+			Join<Fall, Benutzer> besitzerJoin = fallJoin.join(Fall_.besitzer, JoinType.LEFT);
 
 			query.multiselect(
 				root.get(Gesuch_.id),
@@ -467,7 +469,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				root.get(Gesuch_.eingangsdatum),
 				root.get(Gesuch_.typ),
 				root.get(Gesuch_.status),
-				root.get(Gesuch_.laufnummer)).distinct(true);
+				root.get(Gesuch_.laufnummer),
+				root.get(Gesuch_.eingangsart),
+				besitzerJoin.get(Benutzer_.username) //wir machen hier extra vorher einen left join
+			).distinct(true);
 
 			ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
 

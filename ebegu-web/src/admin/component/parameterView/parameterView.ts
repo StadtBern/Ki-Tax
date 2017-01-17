@@ -37,11 +37,11 @@ export class ParameterViewController {
     ebeguParameterRS: EbeguParameterRS;
     ebeguRestUtil: EbeguRestUtil;
 
-    gesuchsperiodenList: Array<TSGesuchsperiode>;
+    gesuchsperiodenList: Array<TSGesuchsperiode> = [];
     gesuchsperiode: TSGesuchsperiode;
 
     jahr: number;
-    ebeguJahresabhParameter: TSEbeguParameter[]; // enthält alle Jahresabhängigen Params für alle Jahre
+    ebeguJahresabhParameter: TSEbeguParameter[] = []; // enthält alle Jahresabhängigen Params für alle Jahre
 
     ebeguParameterListGesuchsperiode: TSEbeguParameter[];
     ebeguVorlageListGesuchsperiode: TSEbeguVorlage[];
@@ -63,8 +63,8 @@ export class ParameterViewController {
     }
 
     private readGesuchsperioden(): void {
-        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: any) => {
-            this.gesuchsperiodenList = angular.copy(response);
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: Array<TSGesuchsperiode>) => {
+            this.gesuchsperiodenList =  response; //angular.copy(response);
         });
     }
 
@@ -92,7 +92,7 @@ export class ParameterViewController {
         }
     }
 
-    jahresabhParamSelected(parameter : TSEbeguParameter){
+    jahresabhParamSelected(parameter : TSEbeguParameter) {
         this.jahr = parameter.gueltigkeit.gueltigAb.get('year');
         this.jahrChanged();
     }
@@ -164,12 +164,12 @@ export class ParameterViewController {
     }
 
     saveParameterByJahr(): void {
-        if(this.ebeguParameterListJahr.length !== 1) {
-            this.$log.error('Aktuell kann diese oberflaeche nur einene einzelnen Jahresabg. Param speichern.')
+        if (this.ebeguParameterListJahr.length !== 1) {
+            this.$log.error('Aktuell kann diese oberflaeche nur einene einzelnen Jahresabg. Param speichern.');
         } else {
             let param = this.ebeguParameterListJahr[0];
             this.ebeguParameterRS.saveEbeguParameter(param).then((response) => {
-                this.updateJahresabhParamList()
+                this.updateJahresabhParamList();
             });
         }
     }

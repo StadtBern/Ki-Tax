@@ -4,11 +4,7 @@
         <div>
             <div ng-repeat="error in vm.errors | orderBy:'severity'">
                 <!--maybe we should think a bit harder when to display what but it seems to work for now-->
-                <div ng-if="!error.isInternal() || !error.args || error.args.length === 0"
-                     data-translate="{{error.msgKey}}" data-translate-values="{{error.args}}"></div>
-                <div ng-if="error.isInternal()">
-                    <div ng-repeat="arg in error.args" ng-bind="arg"></div>
-                </div>
+                <div data-translate="{{error.msgKey}}"></div>
             </div>
         </div>
         <a ng-show="vm.errors.length > 0" ng-click="vm.clear()"><i class="close-icon fa fa-times"></i></a>
