@@ -80,7 +80,7 @@
 
                 <div class="row">
                     <div class="col-xs-12 dv-input-container-question">
-                        <div class=" checkbox">
+                        <div class=" checkbox freigeben-checkbox">
                             <md-checkbox ng-model="vm.bestaetigungFreigabequittung" name="bestaetigungFreigabequittung"
                                          aria-label="bestaetigungFreigabequittung"
                                          ng-required="vm.isFreigebenClicked">
@@ -111,10 +111,7 @@
 
                 <div class="row marginTop30">
                     <div class="col-md-4">
-                        <dv-loading-button type="submit" button-click="vm.gesuchEinreichen()"
-                                           aria-label="{{ANTRAG_EINREICHEN | translate}}">
-                            <span data-translate="ANTRAG_EINREICHEN"></span>
-                        </dv-loading-button>
+
                     </div>
                 </div>
 
@@ -123,10 +120,17 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <dv-navigation dv-previous="true" dv-next="true">
-            </dv-navigation>
+    <div class="nav-row-verfuegen">
+
+        <dv-navigation dv-previous="true" dv-next="false" ng-if="vm.canBeFreigegeben()">
+        </dv-navigation>
+        <dv-navigation dv-previous="true" dv-next="true" ng-if="!vm.canBeFreigegeben()" class="freigabe-nav">
+        </dv-navigation>
+        <div>
+            <dv-loading-button type="submit" button-click="vm.gesuchEinreichen()"
+                               aria-label="{{ANTRAG_EINREICHEN | translate}}" ng-if="vm.canBeFreigegeben()">
+                <span data-translate="ANTRAG_EINREICHEN"></span>
+            </dv-loading-button>
         </div>
     </div>
 
