@@ -170,6 +170,7 @@ describe('EbeguRestUtil', function () {
                 TestDataUtil.setAbstractFieldsUndefined(fall);
                 fall.nextNumberKind = 2;
                 myGesuch.fall = fall;
+                myGesuch.fall.besitzerUsername = undefined;
                 let gesuchsteller: TSGesuchstellerContainer = createGesuchsteller();
                 gesuchsteller.gesuchstellerGS = undefined;
                 TestDataUtil.setAbstractFieldsUndefined(gesuchsteller);
