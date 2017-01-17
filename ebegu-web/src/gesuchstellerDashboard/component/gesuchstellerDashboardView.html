@@ -67,7 +67,8 @@
                     ng-bind="row.verantwortlicher" hide-xs></td>
             </tr>
             <tr ng-if="vm.getAntragList().length === 0">
-                <td colspan="3" class="empty-table" data-translate="ANTRAG_NOCH_KEINE"></td>
+                <td colspan="3" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-gt-xs></td>
+                <td colspan="5" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-xs></td>
             </tr>
             </tbody>
             <tfoot>
