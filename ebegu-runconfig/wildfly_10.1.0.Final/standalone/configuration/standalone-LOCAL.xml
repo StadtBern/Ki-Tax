@@ -37,6 +37,12 @@
 		<property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION_MIME_TYPES" value="text/javascript,text/css,text/html"/>
 		<property name="ebegu.development.mode" value="true"/>
         <property name="ebegu.client.using.https" value="false"/>
+		<!-- Mail -->
+		<property name="ebegu.mail.disabled" value="false"/>
+		<property name="ebegu.mail.smtp.from" value="ebegu@dvbern.ch"/>
+		<property name="ebegu.mail.smtp.host" value="mailext.dvbern.ch"/>
+		<property name="ebegu.mail.smtp.port" value="25"/>
+		<property name="ebegu.hostname" value="app.ebegu.ch:3000/#"/>
     </system-properties>
 
 

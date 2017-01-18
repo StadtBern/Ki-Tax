@@ -45,9 +45,10 @@ public class BetreuungResource {
 	private JaxBConverter converter;
 
 
+	//TODO (team) Dieser Service wird immer nur fuer Betreuungen verwendet, nie fuer Abwesenheiten
 	@Nonnull
 	@PUT
-	@Path("/{kindId}/{abwesenheit}")
+	@Path("/betreuung/{kindId}/{abwesenheit}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxBetreuung saveBetreuung(
@@ -68,6 +69,7 @@ public class BetreuungResource {
 		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
 	}
 
+	//TODO (team) dieser service wird immer nur fuer Abwesenheiten verwendet
 	@Nonnull
 	@PUT
 	@Path("/all/{abwesenheit}")
@@ -87,6 +89,50 @@ public class BetreuungResource {
 			resultBetreuungen.add(converter.betreuungToJAX(persistedBetreuung));
 		});
 		return resultBetreuungen;
+	}
+
+	@Nonnull
+	@PUT
+	@Path("/abweisen/{kindId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuung betreuungPlatzAbweisen(
+		@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
+		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
+		if (kind.isPresent()) {
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			convertedBetreuung.setKind(kind.get());
+			Betreuung persistedBetreuung = this.betreuungService.betreuungPlatzAbweisen(convertedBetreuung);
+
+			return converter.betreuungToJAX(persistedBetreuung);
+		}
+		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+	}
+
+	@Nonnull
+	@PUT
+	@Path("/bestaetigen/{kindId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuung betreuungPlatzBestaetigen(
+		@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
+		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
+		if (kind.isPresent()) {
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			convertedBetreuung.setKind(kind.get());
+			Betreuung persistedBetreuung = this.betreuungService.betreuungPlatzBestaetigen(convertedBetreuung);
+
+			return converter.betreuungToJAX(persistedBetreuung);
+		}
+		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
 	}
 
 	@Nullable

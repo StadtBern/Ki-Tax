@@ -193,6 +193,6 @@ export default class TSAntragDTO {
     }
 
     private hasBesitzer(): boolean {
-        return this._besitzerUsername !== undefined && this.besitzerUsername !== null
+        return this._besitzerUsername !== undefined && this.besitzerUsername !== null;
     }
 }

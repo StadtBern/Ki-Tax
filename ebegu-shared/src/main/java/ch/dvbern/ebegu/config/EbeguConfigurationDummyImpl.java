@@ -60,5 +60,13 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 		return false;
 	}
 
+	@Override
+	public boolean isSendingOfMailsDisabled() {
+		return true;
+	}
 
+	@Override
+	public String getSenderAddress() {
+		return "hallo@dvbern.ch";
+	}
 }

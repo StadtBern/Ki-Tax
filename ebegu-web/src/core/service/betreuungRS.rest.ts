@@ -34,7 +34,37 @@ export default class BetreuungRS {
     public saveBetreuung(betreuung: TSBetreuung, kindId: string, gesuchId: string, abwesenheit: boolean): IPromise<TSBetreuung> {
         let restBetreuung = {};
         restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);
-        return this.http.put(this.serviceURL + '/' + encodeURIComponent(kindId) + '/' + abwesenheit, restBetreuung, {
+        return this.http.put(this.serviceURL + '/betreuung/' + encodeURIComponent(kindId) + '/' + abwesenheit, restBetreuung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.log.debug('PARSING Betreuung REST object ', response.data);
+                return this.ebeguRestUtil.parseBetreuung(new TSBetreuung(), response.data);
+            });
+        });
+    }
+
+    public betreuungsPlatzAbweisen(betreuung: TSBetreuung, kindId: string, gesuchId: string): IPromise<TSBetreuung> {
+        let restBetreuung = {};
+        restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);
+        return this.http.put(this.serviceURL + '/abweisen/' + encodeURIComponent(kindId) + '/', restBetreuung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.log.debug('PARSING Betreuung REST object ', response.data);
+                return this.ebeguRestUtil.parseBetreuung(new TSBetreuung(), response.data);
+            });
+        });
+    }
+
+    public betreuungsPlatzBestaetigen(betreuung: TSBetreuung, kindId: string, gesuchId: string): IPromise<TSBetreuung> {
+        let restBetreuung = {};
+        restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);
+        return this.http.put(this.serviceURL + '/bestaetigen/' + encodeURIComponent(kindId) + '/', restBetreuung, {
             headers: {
                 'Content-Type': 'application/json'
             }

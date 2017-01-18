@@ -53,7 +53,7 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
             errors = [];
             errors.push(new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, 'ERROR_FILE_TOO_LARGE', response.data));
         } else {
-            this.$log.error('ErrorStatus: "' + response.status + '" StatusText: "' + response.statusText +'"');
+            this.$log.error('ErrorStatus: "' + response.status + '" StatusText: "' + response.statusText + '"');
             this.$log.error('ResponseData:' + JSON.stringify(response.data));
             //the error objects is neither a ViolationReport nor a ExceptionReport. Create a generic error msg
             errors = [];
