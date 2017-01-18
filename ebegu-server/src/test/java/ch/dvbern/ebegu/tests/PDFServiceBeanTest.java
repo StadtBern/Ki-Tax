@@ -337,7 +337,7 @@ public class PDFServiceBeanTest {
 		Betreuung testBetreuung = gesuch_2GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung 1\nTest Bemerkung 2\nTest Bemerkung 3");
 
-		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, LocalDate.now().minusDays(183));
 		Assert.assertNotNull(verfuegungsPDF);
 		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_KITA.pdf");
 	}
@@ -352,7 +352,7 @@ public class PDFServiceBeanTest {
 		Betreuung testBetreuung = gesuch_2GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung 1\nTest Bemerkung 2\nTest Bemerkung 3");
 
-		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, LocalDate.now().minusDays(183));
 		Assert.assertNotNull(verfuegungsPDF);
 		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_TageselternKleinkinder.pdf");
 	}
@@ -370,7 +370,7 @@ public class PDFServiceBeanTest {
 		Betreuung testBetreuung = gesuch_2GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung 1\nTest Bemerkung 2\nTest Bemerkung 3");
 
-		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, LocalDate.now().minusDays(183));
 		Assert.assertNotNull(verfuegungsPDF);
 		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_TageselternSchulkinder.pdf");
 	}
@@ -388,7 +388,7 @@ public class PDFServiceBeanTest {
 		Betreuung testBetreuung = gesuch_2GS.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 		testBetreuung.getVerfuegung().setManuelleBemerkungen("Test Bemerkung 1\nTest Bemerkung 2\nTest Bemerkung 3");
 
-		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, null);
+		byte[] verfuegungsPDF = pdfService.generateVerfuegungForBetreuung(testBetreuung, LocalDate.now().minusDays(183));
 		Assert.assertNotNull(verfuegungsPDF);
 		unitTestTempfolder.writeToTempDir(verfuegungsPDF, "Verfuegung_TagesstatetteSchulkinder.pdf");
 	}
