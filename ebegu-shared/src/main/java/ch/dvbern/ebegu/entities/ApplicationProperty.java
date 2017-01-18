@@ -22,7 +22,7 @@ public class ApplicationProperty extends AbstractEntity {
 
 	private static final long serialVersionUID = -7687645920282879260L;
 	@NotNull
-	@Column(nullable = false, length = DB_DEFAULT_MAX_LENGTH, unique = true)
+	@Column(nullable = false, length = DB_DEFAULT_MAX_LENGTH)
 	@Enumerated(EnumType.STRING)
 	private ApplicationPropertyKey name;
 

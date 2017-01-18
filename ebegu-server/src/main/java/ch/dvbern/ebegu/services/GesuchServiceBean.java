@@ -594,11 +594,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		gesuch.setStatus(statusToChangeTo);
 
-		final WizardStep freigabeStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
-		Objects.requireNonNull(freigabeStep, "FREIGABE WizardStep fuer gesuch nicht gefunden " + gesuch.getId());
-		freigabeStep.setWizardStepStatus(WizardStepStatus.OK);
-
-		wizardStepService.saveWizardStep(freigabeStep);
+		// Step Freigabe gruen
+		wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
 		return updateGesuch(gesuch, true);
 	}
@@ -626,6 +623,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			// Den Gesuchsstatus setzen
 			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
+
+			// Step Freigabe gruen
+			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
+
+			// Step Verfügen gruen, falls NUR_SCHULAMT
+			if (AntragStatus.NUR_SCHULAMT.equals(gesuch.getStatus())) {
+				wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
+			}
 
 			if (username != null) {
 				Optional<Benutzer> currentUser = benutzerService.findBenutzer(username);

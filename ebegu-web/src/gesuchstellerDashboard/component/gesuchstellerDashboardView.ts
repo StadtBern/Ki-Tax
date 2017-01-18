@@ -162,6 +162,10 @@ export class GesuchstellerDashboardListViewController {
         if (status === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller) {
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
         }
+        if ((status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
+            && isUserGesuchsteller) {
+            return this.ebeguUtil.translateString('ABGESCHLOSSEN');
+        }
         return this.ebeguUtil.translateString(TSAntragStatus[status]);
     }
 }

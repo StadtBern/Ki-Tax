@@ -460,4 +460,14 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			persistence.remove(WizardStep.class, wizardStep.getId());
 		}
 	}
+
+	@Override
+	public void setWizardStepOkay(@Nonnull String gesuchId, @Nonnull WizardStepName stepName) {
+		final WizardStep freigabeStep = findWizardStepFromGesuch(gesuchId, stepName);
+		Objects.requireNonNull(freigabeStep, stepName.name() + " WizardStep fuer gesuch nicht gefunden " + gesuchId);
+		if (!WizardStepStatus.OK.equals(freigabeStep.getWizardStepStatus())) {
+			freigabeStep.setWizardStepStatus(WizardStepStatus.OK);
+			saveWizardStep(freigabeStep);
+		}
+	}
 }

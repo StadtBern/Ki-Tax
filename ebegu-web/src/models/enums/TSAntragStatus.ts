@@ -2,6 +2,7 @@ export enum TSAntragStatus {
     IN_BEARBEITUNG_GS = <any> 'IN_BEARBEITUNG_GS',
     FREIGABEQUITTUNG = <any> 'FREIGABEQUITTUNG',
     NUR_SCHULAMT = <any> 'NUR_SCHULAMT',
+    NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN = <any> 'NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN',
     FREIGEGEBEN = <any> 'FREIGEGEBEN',
     ZURUECKGEWIESEN = <any> 'ZURUECKGEWIESEN',
     ERSTE_MAHNUNG = <any> 'ERSTE_MAHNUNG',
@@ -26,6 +27,7 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.IN_BEARBEITUNG_GS,
         TSAntragStatus.FREIGABEQUITTUNG,
         TSAntragStatus.NUR_SCHULAMT,
+        TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.FREIGEGEBEN,
         TSAntragStatus.ZURUECKGEWIESEN,
         TSAntragStatus.ERSTE_MAHNUNG,
@@ -55,6 +57,7 @@ export function getTSAntragStatusPendenzValues(): Array<TSAntragStatus> {
 export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
     let validStates: Array<TSAntragStatus> = [
         TSAntragStatus.NUR_SCHULAMT,
+        TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
         TSAntragStatus.FREIGEGEBEN,
         TSAntragStatus.ZURUECKGEWIESEN,
         TSAntragStatus.ERSTE_MAHNUNG,
@@ -78,7 +81,8 @@ export function isAtLeastFreigegebenOrFreigabequittung(status: TSAntragStatus): 
 }
 
 export function isAnyStatusOfVerfuegt(status: TSAntragStatus): boolean {
-    return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG;
+    return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN ||
+        status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG;
 }
 
 /**
