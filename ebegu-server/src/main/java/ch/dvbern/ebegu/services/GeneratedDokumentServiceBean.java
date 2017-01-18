@@ -228,12 +228,12 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			expectedFilepath);
 
 		if (persistedDokument == null) {
-			LOG.warn("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
+			LOG.error("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
 				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getAntragNummer(), expectedFilepath);
 		}
 
 		if (persistedDokument != null && !Files.exists(Paths.get(persistedDokument.getFilepfad()))) {
-			LOG.warn("Die Datei {} könnte nicht gefunden werdern!", persistedDokument.getFilepfad());
+			LOG.error("Die Datei {} könnte nicht gefunden werdern!", persistedDokument.getFilepfad());
 			return null;
 		}
 
@@ -373,11 +373,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		GeneratedDokument persistedDokument = null;
 
+		// TODO: Es sollte eine Weg gefunden werden, die Dokumente nur bei der Statusänderung generiert werden...
 		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt() || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
-			//todo wichtig @reviewer sollten wir hier nichtt getGeneratedDokument verwenden? wenn nein warum nicht
 			persistedDokument = getGeneratedDokument(gesuch, dokumentTyp, fileNameForGeneratedDokumentTyp);
-//			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
-//				ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
 		}
 
 		if ((!gesuch.getStatus().isAnyStatusOfVerfuegt() && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
