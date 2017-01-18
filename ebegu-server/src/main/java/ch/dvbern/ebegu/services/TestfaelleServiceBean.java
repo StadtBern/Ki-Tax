@@ -181,7 +181,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		removeGesucheOfGS(username);
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(benutzerService.getCurrentBenutzer().orElse(null));
-		return this.createAndSaveTestfaelle(fallid, 1, true, false, benutzer);
+		return this.createAndSaveTestfaelle(fallid, 1, betreuungenBestaetigt, verfuegen, benutzer);
 
 	}
 
