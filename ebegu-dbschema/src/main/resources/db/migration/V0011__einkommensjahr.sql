@@ -1,2 +1,0 @@
-ALTER TABLE verfuegung_zeitabschnitt ADD einkommensjahr INTEGER;
-ALTER TABLE verfuegung_zeitabschnitt_aud ADD einkommensjahr INTEGER;
