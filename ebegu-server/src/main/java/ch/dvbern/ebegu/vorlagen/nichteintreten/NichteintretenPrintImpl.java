@@ -28,11 +28,6 @@ public class NichteintretenPrintImpl extends BriefPrintImpl implements Nichteint
 	}
 
 	@Override
-	public String getFallDatum() {
-		return Constants.DATE_FORMATTER.format(getGesuch().getFall().getTimestampErstellt());
-	}
-
-	@Override
 	public String getAngebotVon() {
 		return Constants.DATE_FORMATTER.format(getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb());
 	}
