@@ -121,6 +121,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     nichtEintreten() {
         if (this.isGesuchValid()) {
             this.verfuegungNichtEintreten().then(() => {
+                //dokument definitiv generieren
                 this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(this.getBetreuung().id, true).then(() => {
                     this.$state.go('gesuch.verfuegen', {
                         gesuchId: this.getGesuchId()
