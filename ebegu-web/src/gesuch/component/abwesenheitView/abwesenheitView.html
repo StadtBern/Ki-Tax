@@ -81,13 +81,14 @@
                         <div class="row" dv-show-element
                              dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                              dv-show-expression="!vm.isGesuchReadonly()">
-                            <div class="col-md-12">
+                            <div class="col-md-12 dv-input-container-medium">
                                 <dv-loading-button type="button"
                                                    button-click="vm.removeAbwesenheitConfirm(abwesenheitInstance)"
-                                                   button-class="dv-btn-sm color-warning">
-                                    <i class="glyphicon glyphicon-minus"></i>
+                                                   button-class="dv-btn-operation">
+                                    <i class="fa fa-lg fa-trash-o"></i>
                                     <span data-translate="ABWESENHEIT_ENTFERNEN"></span>
                                 </dv-loading-button>
+                                <hr class="header"/>
                             </div>
                         </div>
                         <br/>
@@ -101,9 +102,9 @@
                      dv-show-expression="!vm.isGesuchReadonly()">
                     <div class="col-md-12">
                         <dv-loading-button type="button" button-click="vm.createAbwesenheit()"
-                                           button-class="dv-btn-sm color-success" dv-enable-element
+                                           button-class="dv-btn-operation" dv-enable-element
                                            dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
-                            <i class="glyphicon glyphicon-plus"></i>
+                            <i class="fa fa-lg fa-plus-circle"></i>
                             <span data-translate="ABWESENHEIT_ERFASSEN"></span>
                         </dv-loading-button>
                     </div>

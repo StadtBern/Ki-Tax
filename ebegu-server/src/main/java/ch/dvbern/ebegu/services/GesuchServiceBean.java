@@ -594,11 +594,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		gesuch.setStatus(statusToChangeTo);
 
-		final WizardStep freigabeStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
-		Objects.requireNonNull(freigabeStep, "FREIGABE WizardStep fuer gesuch nicht gefunden " + gesuch.getId());
-		freigabeStep.setWizardStepStatus(WizardStepStatus.OK);
-
-		wizardStepService.saveWizardStep(freigabeStep);
+		// Step Freigabe gruen
+		wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
 		return updateGesuch(gesuch, true);
 	}
@@ -626,6 +623,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			// Den Gesuchsstatus setzen
 			gesuch.setStatus(calculateFreigegebenStatus(gesuch));
+
+			// Step Freigabe gruen
+			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
+
+			// Step Verfügen gruen, falls NUR_SCHULAMT
+			if (AntragStatus.NUR_SCHULAMT.equals(gesuch.getStatus())) {
+				wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
+			}
 
 			if (username != null) {
 				Optional<Benutzer> currentUser = benutzerService.findBenutzer(username);
@@ -813,6 +818,36 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
 		query.select(root);
 		query.orderBy(cb.desc(join.get(AntragStatusHistory_.timestampVon))); // Das mit dem neuesten Verfuegungsdatum
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		Gesuch gesuch = criteriaResults.get(0);
+		authorizer.checkReadAuthorization(gesuch);
+		return Optional.of(gesuch);
+	}
+
+	@Override
+	@Nonnull
+	@PermitAll
+	public Optional<Gesuch> getNeustesGesuchFuerGesuch(@Nonnull Gesuch gesuch) {
+		authorizer.checkReadAuthorization(gesuch);
+		return getNeustesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
+	}
+
+	@Nonnull
+	private Optional<Gesuch> getNeustesGesuchFuerGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall) {
+		authorizer.checkReadAuthorizationFall(fall);
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
+
+		query.where(predicateGesuchsperiode, predicateFall);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
 		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
 		if (criteriaResults.isEmpty()) {
 			return Optional.empty();

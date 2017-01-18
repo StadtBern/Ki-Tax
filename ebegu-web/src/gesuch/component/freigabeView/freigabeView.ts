@@ -64,6 +64,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
                 } else {
                     return this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
                 }
+
             });
         }
         return undefined;

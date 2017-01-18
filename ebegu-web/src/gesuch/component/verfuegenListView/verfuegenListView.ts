@@ -216,12 +216,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let newStatus: TSAntragStatus = TSAntragStatus.VERFUEGEN;
         let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
 
-        if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
-            newStatus = TSAntragStatus.NUR_SCHULAMT;
-            deleteTextValue = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT';
-            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
-        }
-
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: deleteTextValue

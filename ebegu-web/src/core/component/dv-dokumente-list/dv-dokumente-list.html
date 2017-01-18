@@ -56,13 +56,12 @@
                        aria-hidden="true"></i>
                 </td>
 
-                <td width="5%" ng-if="vm.isUploadVisible()" class="symbol" ng-click="$event.stopPropagation()"
+                <td width="5%" class="symbol" ng-click="$event.stopPropagation()"
                     ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row),'no-color' : vm.sonstige}">
                     <a ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
                        class="fa fa-upload" aria-hidden="true" style="color: black"></a>
                 </td>
-                <!--platzhalter wenn upload invisible-->
-                <td ng-if="!vm.isUploadVisible()"></td>
+
             </tr>
             <tr id="rowexpand" colspan="100%" ng-repeat-end ng-if="vm.hasDokuments(row)">
                 <td colspan="100%" style="padding: 0">
@@ -94,6 +93,8 @@
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
                             <td ng-bind="dokument.filesize"
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
+                            <td class="symbol" ng-if="vm.gesuchModelManager.isKorrekturModusJugendamt() || vm.isGesuchReadonly()">
+                            </td>
                             <td class="symbol">
                                 <span ng-click="vm.download(dokument, true)" class="fa fa-download" aria-hidden="true"
                                       style="color: black"></span>
@@ -102,8 +103,8 @@
                                 <span ng-click="vm.download(dokument, false)" class="fa fa-eye" aria-hidden="true"
                                       style="color: black"></span>
                             </td>
-                            <td class="symbol">
-                                <span ng-if="!vm.isGesuchReadonly() && !vm.gesuchModelManager.isKorrekturModusJugendamt()"
+                            <td class="symbol" ng-if="!vm.isGesuchReadonly() && !vm.gesuchModelManager.isKorrekturModusJugendamt()">
+                                <span
                                       ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
                                       style="color: black"></span>
                             </td>
