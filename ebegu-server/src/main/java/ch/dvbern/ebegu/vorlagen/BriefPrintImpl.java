@@ -75,6 +75,11 @@ public class BriefPrintImpl implements BriefPrint {
 	}
 
 	@Override
+	public String getGesuchEingangsDatum() {
+		return Constants.DATE_FORMATTER.format(gesuch.getEingangsdatum());
+	}
+
+	@Override
 	public String getUnterzeichner() {
 		return gesuch.getFall().getVerantwortlicher().getFullName();
 	}
