@@ -24,6 +24,8 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -163,15 +165,26 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public GeneratedDokument getDokumentAccessTokenGeneratedDokumentTransactionRequiresNew(final Gesuch gesuch, final GeneratedDokumentTyp dokumentTyp,
+																						   Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+		return createDokumentAccessTokenGeneratedDokument(gesuch, dokumentTyp, forceCreation);
+	}
+
+	@Override
 	public GeneratedDokument getDokumentAccessTokenGeneratedDokument(final Gesuch gesuch, final GeneratedDokumentTyp dokumentTyp,
 																	 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+		return createDokumentAccessTokenGeneratedDokument(gesuch, dokumentTyp, forceCreation);
+	}
+
+	private GeneratedDokument createDokumentAccessTokenGeneratedDokument(Gesuch gesuch, GeneratedDokumentTyp dokumentTyp, Boolean forceCreation) throws MergeDocException, MimeTypeParseException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
 		GeneratedDokument persistedDokument = null;
 		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt()) {
 			persistedDokument = getGeneratedDokument(gesuch, dokumentTyp, fileNameForGeneratedDokumentTyp);
 		}
 		if (!gesuch.getStatus().isAnyStatusOfVerfuegt() || persistedDokument == null) {
-			//  persistedDokument == null:  Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 			authorizer.checkReadAuthorizationFinSit(gesuch);
 			finanzielleSituationService.calculateFinanzDaten(gesuch);
 

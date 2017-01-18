@@ -11,6 +11,8 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -33,6 +35,9 @@ public interface GeneratedDokumentService {
 
 	@Nonnull
 	GeneratedDokument updateGeneratedDokument(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName) throws MimeTypeParseException;
+
+	GeneratedDokument getDokumentAccessTokenGeneratedDokumentTransactionRequiresNew(final Gesuch gesuch, final GeneratedDokumentTyp dokumentTyp,
+																					Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
 
 	GeneratedDokument getDokumentAccessTokenGeneratedDokument(Gesuch gesuch, GeneratedDokumentTyp dokumentTyp,
 															  Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
