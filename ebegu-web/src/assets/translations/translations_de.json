@@ -400,7 +400,7 @@
     "ERWERBSPENSEN_NOT_REQUIRED": "Erwerbspensum muss nur erfasst werden, falls mind. 1 Kita oder 1 Tageseltern Kleinkind Angebot erfasst wurde und mind. eines dieser Kinder keine Fachstelle involviert hat",
     "KINDER_NOCH_KEINE": "noch keine Kinder erfasst",
     "BETREUUNGEN_NOCH_KEINE": "noch keine Betreuung für dieses Kind erfasst",
-    "WOHNHAFT_IM_GLEICHEN_HAUSHALT": "Zu wie viel Prozent wohnt das KInd im gleichen Haushalt?",
+    "WOHNHAFT_IM_GLEICHEN_HAUSHALT": "Zu wie viel Prozent wohnt das Kind im gleichen Haushalt?",
     "WOHNHAFT_IM_GLEICHEN_HAUSHALT_HELP" : "Falls das Kind an mehreren Orten wohnt: Zu wie vielen Prozenten lebt es in Ihrem Haushalt?",
     "KINDER_MIT_BETREUUNG": "Kinder mit familienergänzender Betreuung",
     "KIND": "Kind",
