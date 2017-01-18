@@ -49,13 +49,13 @@ public class BegleitschreibenPrintImpl extends BriefPrintImpl implements Begleit
 		beilagen.addAll(betreuungen.stream()
 			.filter(betreuung -> betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()
 				&& !betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG))
-			.map(betreuung -> new AufzaehlungPrintImpl(ServerMessageUtil.getMessage("BegleitschreibenPrintImpl_VERFUEGUNG") + betreuung.getBGNummer()))
+			.map(betreuung -> new AufzaehlungPrintImpl(ServerMessageUtil.getMessage("BegleitschreibenPrintImpl_VERFUEGUNG") + " " + betreuung.getBGNummer()))
 			.collect(Collectors.toList()));
 
 		beilagen.addAll(betreuungen.stream()
 			.filter(betreuung -> betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()
 				&& !betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG))
-			.map(betreuung -> new AufzaehlungPrintImpl(ServerMessageUtil.getMessage("BegleitschreibenPrintImpl_MITTEILUNG") + betreuung.getBGNummer()))
+			.map(betreuung -> new AufzaehlungPrintImpl(ServerMessageUtil.getMessage("BegleitschreibenPrintImpl_MITTEILUNG") + " "  + betreuung.getBGNummer()))
 			.collect(Collectors.toList()));
 
 	}
