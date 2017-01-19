@@ -24,6 +24,8 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -191,9 +193,23 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
-	public GeneratedDokument getBegleitschreibenDokumentAccessTokenGeneratedDokument(final Gesuch gesuch,
-																					 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public GeneratedDokument getBegleitschreibenTokenTransactionRequiresNew(final Gesuch gesuch, Boolean forceCreation)
+		throws MimeTypeParseException, MergeDocException {
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getAntragNummer());
+		byte[] data = pdfService.generateBegleitschreiben(gesuch);
+		// BEGLEITSCHREIBEN in einem Zustand isAnyStatusOfVerfuegt, soll das Dokument schreibgeschützt sein!
+		return updateGeneratedDokument(data, GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
+			fileNameForGeneratedDokumentTyp, true);
+	}
 
+	@Override
+	public GeneratedDokument getBegleitschreibenDokument(final Gesuch gesuch,
+														 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+		return createBegleitschreibenAccessTokenGeneratedDokument(gesuch, forceCreation);
+	}
+
+	private GeneratedDokument createBegleitschreibenAccessTokenGeneratedDokument(Gesuch gesuch, Boolean forceCreation) throws MergeDocException, MimeTypeParseException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getAntragNummer());
 		GeneratedDokument persistedDokument = null;
 		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegt()) {

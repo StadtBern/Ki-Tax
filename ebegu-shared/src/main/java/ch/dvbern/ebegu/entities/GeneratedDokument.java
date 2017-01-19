@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
-@EntityListeners({GeneratedDokumentListener.class})
+/*@EntityListeners({GeneratedDokumentListener.class})*/
 public class GeneratedDokument extends File {
 
 	private static final long serialVersionUID = -895840426576485097L;

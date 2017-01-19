@@ -21,7 +21,8 @@ public class GeneratedDokumentListener {
 
 		// Write Protection darf nicht entfernt werden
 		if (generatedDokument.isOrginalWriteProtected() && !generatedDokument.isWriteProtected()) {
-			throw new IllegalStateException("Write protection auf GeneratedDokument darf nicht mehr entfernt werden!");
+			LOG.warn("Write protection auf GeneratedDokument darf nicht mehr entfernt werden!");
+			generatedDokument.setWriteProtected(true);
 		}
 
 		// Wenn es writeProtection nicht neu ist, darf es nicht gespeichert werden! (Wenn WriteProtection neu gesetzt

@@ -1,10 +1,15 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.services.GeneratedDokumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.activation.MimeTypeParseException;
+import javax.enterprise.inject.spi.CDI;
 import javax.persistence.PostLoad;
 import javax.persistence.PostUpdate;
+
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -21,16 +26,16 @@ public class GesuchListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchListener.class);
 
-	/*@Inject
-	private GeneratedDokumentService generatedDokumentService;	*/
+
+	private GeneratedDokumentService generatedDokumentService;
 
 	@PostLoad
-	public void postLoad(Gesuch gesuch){
+	public void postLoad(Gesuch gesuch) {
 		gesuch.setOrginalStatus(gesuch.getStatus());
 	}
 
 	@PostUpdate
-	public void postUpdate(Gesuch gesuch){
+	public void postUpdate(Gesuch gesuch) {
 		LOG.debug("Geusch " + gesuch.getId() + " Status is being updated.");
 		if (gesuch.getOrginalStatus() != null && gesuch.getStatus() != null && gesuch.getOrginalStatus() != gesuch.getStatus()) {
 			LOG.debug("Orignal Status" + gesuch.getOrginalStatus().name());
@@ -40,16 +45,24 @@ public class GesuchListener {
 					gesuch.getId(),
 					gesuch.getOrginalStatus().name(),
 					gesuch.getStatus().name()));
-				// TODO : would like to access GeneratedDokumentService here but not possible due to bug:
-				// https://issues.jboss.org/browse/WFLY-2387
-				/*try {
-					generatedDokumentService.getDokumentAccessTokenGeneratedDokument(gesuch, GeneratedDokumentTyp.BEGLEITSCHREIBEN, false);
+				try {
+					getGeneratedDokumentService().getBegleitschreibenTokenTransactionRequiresNew(gesuch, true);
 				} catch (MimeTypeParseException | MergeDocException e) {
 					LOG.error("Error updating Deckblatt Dokument", e);
-				}*/
+				}
 
 			}
 		}
 	}
+
+	private GeneratedDokumentService getGeneratedDokumentService() {
+		if (generatedDokumentService == null) {
+			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection in Wildfly 10 nicht funktioniert.
+			//noinspection NonThreadSafeLazyInitialization
+			generatedDokumentService = CDI.current().select(GeneratedDokumentService.class).get();
+		}
+		return generatedDokumentService;
+	}
+
 
 }
