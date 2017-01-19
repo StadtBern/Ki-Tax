@@ -59,6 +59,7 @@ export class NavigatorController {
     dvSavingPossible: boolean;
     dvSubStep: number;
     dvTranslateNext: string;
+    isRequestInProgress: boolean = false;
 
     performSave: boolean;
 
@@ -122,15 +123,25 @@ export class NavigatorController {
      * wird dann direkt zum naechsten Step geleitet.
      */
     public nextStep(): void {
-        if (this.isSavingEnabled() && this.dvSave) {
-            let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
-            if (returnValue !== undefined) {
-                this.$q.when(returnValue).then(() => {
-                    this.navigateToNextStep();
-                });
+        if (!this.isRequestInProgress) { //do nothing if we are already saving
+            this.isRequestInProgress = true;
+            if (this.isSavingEnabled() && this.dvSave) {
+                let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
+                if (returnValue !== undefined) {
+                    this.$q.when(returnValue).then(() => {
+                        this.navigateToNextStep();
+                    }).finally(() => {
+                        this.isRequestInProgress = false;
+                    });
+                } else {
+                    this.isRequestInProgress = false;
+                }
+            } else {
+                this.isRequestInProgress = false;
+                this.navigateToNextStep();
             }
         } else {
-            this.navigateToNextStep();
+            console.log("doubleclick suppressed") //for testing
         }
     }
 
@@ -148,15 +159,22 @@ export class NavigatorController {
      * wird dann direkt zum vorherigen Step geleitet.
      */
     public previousStep(): void {
-        if (!this.gesuchModelManager.isGesuchReadonly() && this.dvSave) {
-            let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
-            if (returnValue !== undefined) {
-                this.$q.when(returnValue).then(() => {
-                    this.navigateToPreviousStep();
-                });
+        if (!this.isRequestInProgress) { //do nothing if we are already saving
+            if (this.isSavingEnabled() && this.dvSave) {
+                let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
+                if (returnValue !== undefined) {
+                    this.$q.when(returnValue).then(() => {
+                        this.navigateToPreviousStep();
+                    }).finally(() => {
+                        this.isRequestInProgress = false;
+                    });
+                } else {
+                    this.isRequestInProgress = false;
+                }
+            } else {
+                this.isRequestInProgress = false;
+                this.navigateToPreviousStep();
             }
-        } else {
-            this.navigateToPreviousStep();
         }
     }
 
