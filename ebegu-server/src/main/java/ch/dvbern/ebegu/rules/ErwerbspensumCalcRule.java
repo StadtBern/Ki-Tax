@@ -105,7 +105,7 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 			result += verfuegungZeitabschnitt.getZuschlagErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getZuschlagErwerbspensumGS2() : 0;
 		}
 		if (result > maxZuschlagValue) {
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_MAX_ZUSCHLAG);
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_MAX_ZUSCHLAG, maxZuschlagValue);
 			result = maxZuschlagValue;
 		}
 		return result;
