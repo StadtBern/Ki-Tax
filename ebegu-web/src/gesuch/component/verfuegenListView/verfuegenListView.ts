@@ -393,10 +393,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     private createNeededPDFs(forceCreation: boolean): IPromise<TSDownloadFile> {
         if (this.getGesuch().hasFSDokument) {
-            return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation);
+            return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
         }
         return;
-
     }
 
     public showBeschwerdeHaengig(): boolean {

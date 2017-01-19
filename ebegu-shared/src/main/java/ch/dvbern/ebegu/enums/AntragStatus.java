@@ -91,6 +91,14 @@ public enum AntragStatus {
 		return getAllVerfuegtStates().contains(this);
 	}
 
+	/**
+	 * Ein verfuegtes Gesuch kann mehrere Status haben. Diese Methode immer anwenden um herauszufinden
+	 * ob ein Gesuch verfuegt ist.
+	 */
+	public boolean isAnyStatusOfVerfuegtOrVefuegen() {
+		return getAllVerfuegtStates().contains(this) || this.equals(VERFUEGEN);
+	}
+
 	public boolean inBearbeitung() { return inBearbeitung.contains(this); }
 
 }

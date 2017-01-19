@@ -36,9 +36,6 @@ public interface GeneratedDokumentService {
 	@Nonnull
 	GeneratedDokument updateGeneratedDokument(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName, boolean writeProtected) throws MimeTypeParseException;
 
-	GeneratedDokument getBegleitschreibenTokenTransactionRequiresNew(final Gesuch gesuch,
-																	 Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
-
 	GeneratedDokument getFinSitDokumentAccessTokenGeneratedDokument(Gesuch gesuch,
 																	Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
 

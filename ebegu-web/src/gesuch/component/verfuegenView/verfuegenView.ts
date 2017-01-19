@@ -121,8 +121,11 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     nichtEintreten() {
         if (this.isGesuchValid()) {
             this.verfuegungNichtEintreten().then(() => {
-                this.$state.go('gesuch.verfuegen', {
-                    gesuchId: this.getGesuchId()
+                this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(
+                    this.gesuchModelManager.getBetreuungToWorkWith().id, true).then(() => {
+                    this.$state.go('gesuch.verfuegen', {
+                        gesuchId: this.getGesuchId()
+                    });
                 });
             });
         }
