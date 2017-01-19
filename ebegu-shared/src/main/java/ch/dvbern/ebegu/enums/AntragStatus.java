@@ -80,7 +80,7 @@ public enum AntragStatus {
     }
 
 	public static Collection<AntragStatus> getAllVerfuegtStates() {
-		return Arrays.asList(VERFUEGT, NUR_SCHULAMT, NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
+		return Arrays.asList(VERFUEGT, NUR_SCHULAMT, NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, BESCHWERDE_HAENGIG);
 	}
 
 	/**

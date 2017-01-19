@@ -145,7 +145,6 @@ public class DownloadResource {
 	 * Alle anderen Vorlagen, die andere Daten brauchen, muessen ihre eigene Methode haben. So wie bei VERFUEGUNG
 	 *
 	 * @param jaxGesuchId gesuch ID
-	 * @param dokumentTyp Typ der Vorlage
 	 * @param request     request
 	 * @param uriInfo     uri
 	 * @return ein Response mit dem GeneratedDokument
@@ -154,28 +153,62 @@ public class DownloadResource {
 	 */
 	@Nonnull
 	@GET
-	@Path("/{gesuchid}/{dokumentTyp}/{forceCreation}/generated")
+	@Path("/{gesuchid}/FINANZIELLE_SITUATION/{forceCreation}/generated")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
-	public Response getDokumentAccessTokenGeneratedDokument(
+	public Response getFinSitDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
-		@Nonnull @Valid @PathParam("dokumentTyp") GeneratedDokumentTyp dokumentTyp,
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
 
 		Validate.notNull(jaxGesuchId.getId());
-		Validate.notNull(dokumentTyp);
 		String ip = getIP(request);
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			GeneratedDokument generatedDokument = generatedDokumentService.getDokumentAccessTokenGeneratedDokument(gesuch.get(), dokumentTyp, forceCreation);
+			GeneratedDokument generatedDokument = generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch.get(), forceCreation);
 			if (generatedDokument == null) {
 				return Response.noContent().build();
 			}
 			return getFileDownloadResponse(uriInfo, ip, generatedDokument);
 		}
-		throw new EbeguEntityNotFoundException("getDokumentAccessTokenGeneratedDokument",
+		throw new EbeguEntityNotFoundException("getFinSitDokumentAccessTokenGeneratedDokument",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId());
+	}
+
+	/**
+	 * Methode fuer alle GeneratedDokumentTyp. Hier wird es allgemein mit den Daten vom Gesuch gearbeitet.
+	 * Alle anderen Vorlagen, die andere Daten brauchen, muessen ihre eigene Methode haben. So wie bei VERFUEGUNG
+	 *
+	 * @param jaxGesuchId gesuch ID
+	 * @param request     request
+	 * @param uriInfo     uri
+	 * @return ein Response mit dem GeneratedDokument
+	 * @throws EbeguEntityNotFoundException
+	 * @throws MergeDocException
+	 */
+	@Nonnull
+	@GET
+	@Path("/{gesuchid}/BEGLEITSCHREIBEN/{forceCreation}/generated")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getBegleitschreibenDokumentAccessTokenGeneratedDokument(
+		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
+		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
+
+		Validate.notNull(jaxGesuchId.getId());
+		String ip = getIP(request);
+
+		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
+		if (gesuch.isPresent()) {
+			GeneratedDokument generatedDokument = generatedDokumentService.getBegleitschreibenDokumentAccessTokenGeneratedDokument(gesuch.get(), forceCreation);
+			if (generatedDokument == null) {
+				return Response.noContent().build();
+			}
+			return getFileDownloadResponse(uriInfo, ip, generatedDokument);
+		}
+		throw new EbeguEntityNotFoundException("getBegleitschreibenDokumentAccessTokenGeneratedDokument",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId());
 	}
 

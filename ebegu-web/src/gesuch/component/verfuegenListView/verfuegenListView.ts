@@ -205,9 +205,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'CONFIRM_GESUCH_STATUS_GEPRUEFT',
             deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
         }).then(() => {
-            return this.createNeededPDFs().then(() => {
-                return this.setGesuchStatus(TSAntragStatus.GEPRUEFT);
-            });
+            return this.setGesuchStatus(TSAntragStatus.GEPRUEFT);
         });
     }
 
@@ -220,10 +218,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: deleteTextValue
         }).then(() => {
-            return this.createNeededPDFs().then(() => {
-                this.gesuchModelManager.getGesuch().status = newStatus;
-                return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
-                    return this.refreshKinderListe().then(() => {
+
+            this.gesuchModelManager.getGesuch().status = newStatus;
+            return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                return this.refreshKinderListe().then(() => {
+                    return this.createNeededPDFs(true).then(() => {
                         this.form.$dirty = false;
                         this.form.$pristine = true; // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                         return this.gesuchModelManager.getGesuch();
@@ -362,11 +361,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
             && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
             && !this.isGesuchReadonly();
-            // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
+        // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
 
     public openFinanzielleSituationPDF(): void {
-        this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FINANZIELLE_SITUATION, false)
+        this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
@@ -374,7 +373,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public openBegleitschreibenPDF(): void {
-        this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.BEGLEITSCHREIBEN, false)
+        this.downloadRS.getBegleitschreibenDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
@@ -392,14 +391,12 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             });
     }
 
-    private createNeededPDFs(): IPromise<TSDownloadFile> {
-       return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.BEGLEITSCHREIBEN, true)
-            .then(() => {
-                if (this.getGesuch().hasFSDokument) {
-                    return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FINANZIELLE_SITUATION, true);
-                }
-                return;
-            });
+    private createNeededPDFs(forceCreation: boolean): IPromise<TSDownloadFile> {
+        if (this.getGesuch().hasFSDokument) {
+            return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation);
+        }
+        return;
+
     }
 
     public showBeschwerdeHaengig(): boolean {
