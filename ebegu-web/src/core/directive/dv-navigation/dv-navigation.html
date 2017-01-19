@@ -4,7 +4,7 @@ mit Flexlayout wieder korrigiert. Grund ist, dass beim druecken von Enter in ein
     <dv-loading-button ng-if="vm.dvNext()" button-click="vm.nextStep()" button-class="next" type="submit"
                        button-disabled="vm.isNextButtonDisabled()" title="{{vm.getTooltip()}}">
         <span ng-if="!vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()" hide-xs></span>
-        <span ng-if="vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()" hide-xs></span>
+        <span ng-if="vm.doesdvTranslateNextExist()" ng-bind="vm.getNextButtonName()"></span>
         <span ng-if="!vm.doesdvTranslateNextExist()" class="fa fa-angle-right" hide-gt-xs
               style="font-size: 2rem; height:unset; line-height: 4rem;"></span>
     </dv-loading-button>

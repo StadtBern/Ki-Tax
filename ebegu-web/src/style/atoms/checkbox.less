@@ -14,20 +14,31 @@
         line-height: 1.7rem;
         vertical-align: middle;
         font-size: 0;
+        margin-left: -4rem;
         i {
             font-size: 1.6rem;
         }
     }
+    .dv-error-messages {
+        overflow: visible;
+        height: auto;
+    }
 }
 
 md-checkbox {
+    float:left;
+    font-size:0;
     position: relative;
-    min-height: 0;
+    min-height: 1.7rem;
     min-width: 0;
-    height: 1.7rem;
+    height: auto;
     width: auto;
-    margin-right: 0;
-
+    &:last-of-type {
+        margin-right: 4rem;
+    }
+    margin-right: 4rem;
+    margin-top: 0;
+    margin-bottom: 2rem;
     &[disabled] {
         color: @contrast-dark;
         .md-label {
@@ -57,22 +68,24 @@ md-checkbox {
             content: none !important;
         }
     }
-    margin-top: 0;
-    margin-bottom: 2rem;
     .md-label {
-        display: inline-block;
+        display:block;
         margin-left: 3rem;
-        height: 1.7rem;
+        height: auto;
+        min-height: 1.7rem;
         line-height: 1.7rem;
         vertical-align: middle;
         font-size: 0;
+
         span {
             .ebeguH3();
             margin: 0;
             line-height: 1.7rem;
-            height: 1.7rem;
-            display: inline-block;
+            height: auto;
+            min-height: 1.7rem;
+            display: block;
             margin-right: 1rem;
+            vertical-align: middle;
         }
     }
     .md-icon {
@@ -111,24 +124,6 @@ md-checkbox {
                 display: block !important;
             }
         }
-    }
-}
-.freigeben-checkbox {
-    md-checkbox {
-        height: auto;
-        min-height: 1.7rem;
-        .md-container {
-            height: auto;
-            min-height: 1.7rem;
-        }
-        .md-label {
-            height: auto;
-            min-height: 1.7rem;
-        }
-    }
-    .dv-error-messages{
-        overflow:visible;
-        height: auto;
     }
 }
 
