@@ -4,7 +4,7 @@
 <#-- @ftlvariable name="configuration" type="ch.dvbern.ebegu.config.EbeguConfiguration" -->
 From: ${configuration.senderAddress}
 To: " ${gesuchsteller.fullName} <${gesuchsteller.mail}>
-Subject: Betreuungsplatz abgelehnt
+Subject: <@base64Header>Betreuungsplatz abgelehnt</@base64Header>
 Content-Type: text/html;charset=utf-8
 
 <html>

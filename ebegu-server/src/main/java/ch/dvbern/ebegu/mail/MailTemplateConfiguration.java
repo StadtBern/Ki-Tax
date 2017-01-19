@@ -30,7 +30,7 @@ public class MailTemplateConfiguration {
 	private final Configuration freeMarkerConfiguration;
 
 	@Inject
-	private EbeguConfiguration kurstoolConfiguration;
+	private EbeguConfiguration ebeguConfiguration;
 
 
 	public MailTemplateConfiguration() {
@@ -66,7 +66,7 @@ public class MailTemplateConfiguration {
 		assert name != null;
 		try {
 			final Map<Object, Object> rootMap = new HashMap<>();
-			rootMap.put("configuration", kurstoolConfiguration);
+			rootMap.put("configuration", ebeguConfiguration);
 			rootMap.put("templateConfiguration", this);
 			rootMap.put("base64Header", new UTF8Base64MailHeaderDirective());
 			if (extraValuePairs != null) {
