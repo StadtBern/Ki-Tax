@@ -49,7 +49,7 @@ public class Testfall_ASIV_10 extends AbstractASIVTestfall {
 		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_BRUENNEN, true);
 		betreuungKitaBruennen.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaBruennen);
-		BetreuungspensumContainer betreuungspensumKitaBruennen = createBetreuungspensum(100, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));
+		BetreuungspensumContainer betreuungspensumKitaBruennen = createBetreuungspensum(100, LocalDate.of(gesuchsperiode.getBasisJahrPlus1(), Month.AUGUST, 1), LocalDate.of(gesuchsperiode.getBasisJahrPlus2(), Month.JULY, 31));
 		betreuungspensumKitaBruennen.setBetreuung(betreuungKitaBruennen);
 		betreuungKitaBruennen.getBetreuungspensumContainers().add(betreuungspensumKitaBruennen);
 		// Finanzielle Situation
@@ -67,10 +67,10 @@ public class Testfall_ASIV_10 extends AbstractASIVTestfall {
 	}
 
 	public Gesuch createMutation(Gesuch erstgesuch) {
-		Gesuch mutation = createAlleinerziehend(erstgesuch, LocalDate.of(2017, Month.JANUARY, 15));
+		Gesuch mutation = createAlleinerziehend(erstgesuch, LocalDate.of(gesuchsperiode.getBasisJahrPlus2(), Month.JANUARY, 15));
 
 		// Einkommensverschlechterug
-		EinkommensverschlechterungContainer ekvContainer = createEinkommensverschlechterungContainer(erstgesuch, null, LocalDate.of(2017, Month.MARCH, 1));
+		EinkommensverschlechterungContainer ekvContainer = createEinkommensverschlechterungContainer(erstgesuch, null, LocalDate.of(gesuchsperiode.getBasisJahrPlus2(), Month.MARCH, 1));
 		ekvContainer.getEkvJABasisJahrPlus2().setNettolohnJan(MathUtil.DEFAULT.from(50000));
 		mutation.getGesuchsteller1().setEinkommensverschlechterungContainer(ekvContainer);
 		return mutation;

@@ -24,8 +24,8 @@ import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import DateUtil from '../../../utils/DateUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
-import IScope = angular.IScope;
 import GesuchRS from '../../service/gesuchRS.rest';
+import IScope = angular.IScope;
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -216,12 +216,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let newStatus: TSAntragStatus = TSAntragStatus.VERFUEGEN;
         let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
 
-        if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
-            newStatus = TSAntragStatus.NUR_SCHULAMT;
-            deleteTextValue = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT';
-            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
-        }
-
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: deleteTextValue
@@ -410,6 +404,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public showBeschwerdeHaengig(): boolean {
         let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
+        //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt keine Beschwerden erstellen darf
         return TSAntragStatus.VERFUEGT === status && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 

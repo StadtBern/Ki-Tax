@@ -126,4 +126,11 @@ export default class GesuchRS implements IEntityRS {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
     }
+
+    public getNeuestesGesuchFromGesuch(gesuchID: string):  IPromise<boolean> {
+        return this.http.get(this.serviceURL + '/neuestesgesuch/' + encodeURIComponent(gesuchID))
+            .then((response: any) => {
+                return response.data
+            });
+    }
 }

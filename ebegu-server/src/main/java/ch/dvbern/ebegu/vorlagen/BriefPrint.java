@@ -29,6 +29,8 @@ public interface BriefPrint {
 
 	String getFallNummer();
 
+	String getGesuchEingangsDatum();
+
 	String getUnterzeichner();
 
 }

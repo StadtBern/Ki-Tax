@@ -266,9 +266,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * @param wizardSteps
 	 */
 	private void updateAllStatusForGesuchsteller(List<WizardStep> wizardSteps) {
-		principalBean.isCallerInRole(UserRole.GESUCHSTELLER);
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
+
 				setWizardStepOkOrMutiert(wizardStep);
 			} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
 				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
@@ -458,6 +458,16 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		List<WizardStep> wizardStepsFromGesuch = findWizardStepsFromGesuch(gesToRemove.getId());
 		for (WizardStep wizardStep : wizardStepsFromGesuch) {
 			persistence.remove(WizardStep.class, wizardStep.getId());
+		}
+	}
+
+	@Override
+	public void setWizardStepOkay(@Nonnull String gesuchId, @Nonnull WizardStepName stepName) {
+		final WizardStep freigabeStep = findWizardStepFromGesuch(gesuchId, stepName);
+		Objects.requireNonNull(freigabeStep, stepName.name() + " WizardStep fuer gesuch nicht gefunden " + gesuchId);
+		if (!WizardStepStatus.OK.equals(freigabeStep.getWizardStepStatus())) {
+			freigabeStep.setWizardStepStatus(WizardStepStatus.OK);
+			saveWizardStep(freigabeStep);
 		}
 	}
 }

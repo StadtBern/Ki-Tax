@@ -143,6 +143,10 @@
                     <dv-adresse adresse="vm.getModel().korrespondenzAdresse" ng-if="vm.showKorrespondadr"
                                 prefix="korrespondenz" show-if-bisher-none="false"
                                 organisation="true"></dv-adresse>
+                </fieldset>
+                <fieldset dv-enable-element
+                          dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                          dv-enable-expression="vm.areEmailTelefonEditable()">
                     <!--Email-->
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-medium">
@@ -159,7 +163,6 @@
                             </dv-input-container>
                         </div>
                     </div>
-
 
                     <!--Mobile /Telefon-->
                     <div class="row">
@@ -213,7 +216,7 @@
                     <div class="col-md-12">
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                       dv-previous="true" dv-next="true" dv-save="vm.save()">
+                                       dv-previous="true" dv-next="true" dv-saving-possible="vm.areEmailTelefonEditable()" dv-save="vm.save()">
                         </dv-navigation>
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"

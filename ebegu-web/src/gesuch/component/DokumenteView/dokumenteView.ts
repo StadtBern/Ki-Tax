@@ -147,6 +147,8 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
             this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
         } else if (TSAntragStatus.ZWEITE_MAHNUNG === status) {
             this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        } else if (TSAntragStatus.NUR_SCHULAMT === status) {
+            this.setGesuchStatus(TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
         }
     }
 }

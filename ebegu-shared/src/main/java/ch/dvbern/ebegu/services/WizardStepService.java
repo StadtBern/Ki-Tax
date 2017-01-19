@@ -64,4 +64,9 @@ public interface WizardStepService {
 	 * @param gesToRemove
 	 */
 	void removeSteps(Gesuch gesToRemove);
+
+	/**
+	 * Setzt den übergebenen Step für das übergebene Gesuch auf Okay.
+	 */
+	void setWizardStepOkay(String gesuchId, WizardStepName stepName);
 }

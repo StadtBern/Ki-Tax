@@ -45,7 +45,7 @@ public class Testfall_ASIV_05 extends AbstractASIVTestfall {
 		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_BRUENNEN, true);
 		betreuungKitaBruennen.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaBruennen);
-		BetreuungspensumContainer betreuungspensumKitaBruennen = createBetreuungspensum(100, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));
+		BetreuungspensumContainer betreuungspensumKitaBruennen = createBetreuungspensum(100, LocalDate.of(gesuchsperiode.getBasisJahrPlus1(), Month.AUGUST, 1), LocalDate.of(gesuchsperiode.getBasisJahrPlus2(), Month.JULY, 31));
 		betreuungspensumKitaBruennen.setBetreuung(betreuungKitaBruennen);
 		betreuungKitaBruennen.getBetreuungspensumContainers().add(betreuungspensumKitaBruennen);
 		// Finanzielle Situation
@@ -54,7 +54,7 @@ public class Testfall_ASIV_05 extends AbstractASIVTestfall {
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
 		// Einkommensverschlechterug
-		EinkommensverschlechterungContainer ekvContainer = createEinkommensverschlechterungContainer(erstgesuch, LocalDate.of(2016, Month.OCTOBER, 1), null);
+		EinkommensverschlechterungContainer ekvContainer = createEinkommensverschlechterungContainer(erstgesuch, LocalDate.of(gesuchsperiode.getBasisJahrPlus1(), Month.OCTOBER, 1), null);
 		ekvContainer.getEkvJABasisJahrPlus1().setNettolohnJan(MathUtil.DEFAULT.from(49000));
 		gesuchsteller1.setEinkommensverschlechterungContainer(ekvContainer);
 		return erstgesuch;
@@ -62,7 +62,7 @@ public class Testfall_ASIV_05 extends AbstractASIVTestfall {
 
 	public Gesuch createMutation(Gesuch erstgesuch) {
 		// Gesuch, Gesuchsteller
-		Gesuch mutation = createVerheiratet(erstgesuch, LocalDate.of(2017, Month.JANUARY, 15));
+		Gesuch mutation = createVerheiratet(erstgesuch, LocalDate.of(gesuchsperiode.getBasisJahrPlus2(), Month.JANUARY, 15));
 		GesuchstellerContainer gesuchsteller2 = createGesuchstellerContainer();
 		mutation.setGesuchsteller2(gesuchsteller2);
 		// Erwerbspensum

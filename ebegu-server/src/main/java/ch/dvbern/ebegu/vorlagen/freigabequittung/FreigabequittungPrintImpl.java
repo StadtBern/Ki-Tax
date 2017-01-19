@@ -97,11 +97,6 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 	}
 
 	@Override
-	public String getFallDatum() {
-		return Constants.DATE_FORMATTER.format(gesuch.getFall().getTimestampErstellt());
-	}
-
-	@Override
 	public String getAdresseGS1() {
 
 		return PrintUtil.getNameAdresseFormatiert(gesuch, gesuch.getGesuchsteller1());
