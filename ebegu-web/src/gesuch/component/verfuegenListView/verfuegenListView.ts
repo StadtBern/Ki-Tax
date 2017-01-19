@@ -301,20 +301,24 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.mahnungRS.saveMahnung(this.mahnung).then((mahnungResponse: TSMahnung) => {
                 this.setGesuchStatus(this.tempAntragStatus).then(any => {
                     this.mahnungList.push(mahnungResponse);
-                    this.tempAntragStatus = undefined;
-                    this.mahnung = undefined;
+
+                    this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnungResponse, true).then((response: any) => {
+                        this.tempAntragStatus = undefined;
+                        this.mahnung = undefined;
+                    });
                 });
             });
         }
     }
 
-    private createMahnung(typ: TSMahnungTyp): void {
-        this.mahnungRS.getInitialeBemerkungen(this.getGesuch()).then(generatedBemerkungen => {
+    private createMahnung(typ: TSMahnungTyp): IPromise<any> {
+        return this.mahnungRS.getInitialeBemerkungen(this.getGesuch()).then(generatedBemerkungen => {
             this.mahnung = new TSMahnung();
             this.mahnung.mahnungTyp = typ;
             this.mahnung.gesuch = this.getGesuch();
             this.mahnung.timestampAbgeschlossen = null;
             this.mahnung.bemerkungen = generatedBemerkungen.data;
+            return;
         });
     }
 

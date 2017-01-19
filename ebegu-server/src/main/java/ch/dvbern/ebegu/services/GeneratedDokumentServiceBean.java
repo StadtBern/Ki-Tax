@@ -344,6 +344,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		Gesuch gesuch = mahnung.getGesuch();
 		Mahnung mahnungDB = persistence.find(Mahnung.class, mahnung.getId());
+
+		// TODO: Was soll die scheisse hier? Was hat es damit zu tun ob wir was auf der DB finden oder nicht. Was soll
+		// das mit MahnungVorschau überhaupt????
 		GeneratedDokumentTyp dokumentTyp = mahnungDB == null ? GeneratedDokumentTyp.MAHNUNG_VORSCHAU : GeneratedDokumentTyp.MAHNUNG;
 
 		final String previewNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.MAHNUNG_VORSCHAU, StringUtils.EMPTY);
