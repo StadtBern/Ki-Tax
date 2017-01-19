@@ -1,9 +1,6 @@
 @import '../variables.less';
 @import '../mixins.less';
 
-.dv-radio-container {
-    margin-top: 2rem;
-}
 
 md-radio-group.radio, .radio {
 
@@ -11,9 +8,10 @@ md-radio-group.radio, .radio {
 }
 
 md-radio-button {
-    height: 1.5rem;
+    min-height: 1.5rem;
+    height: auto;
     color: @contrast-darkest;
-    margin: 0 0 4rem;
+    margin: 0 0 1.5rem;
     .md-label {
 
     }
@@ -21,11 +19,13 @@ md-radio-button {
         margin-bottom: 0;
     }
     .md-container {
-        top: 0;
-        height: auto;
-        width: auto;
+        display:block!important;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 1.5rem;
+        width: 1.5rem;
         &:before {
-            content: none !important;
+            content: none;
         }
     }
     .md-label {
@@ -33,7 +33,8 @@ md-radio-button {
         margin-left: 3rem;
         // font-size:1.4rem;
         line-height: 1.5rem;
-        height: 1.5rem;
+        min-height: 1.5rem;
+        height: auto;
         span {
             .ebeguH3();
             // font-size:1.4rem;

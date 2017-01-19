@@ -32,6 +32,7 @@ export class DVNavigation implements IDirective {
         dvNextDisabled: '&?',
         dvSubStep: '<',
         dvSave: '&?',
+        dvSavingPossible: '<?',
         dvTranslateNext: '@'
     };
     controller = NavigatorController;
@@ -55,14 +56,25 @@ export class NavigatorController {
     dvSave: () => any;
     dvCancel: () => any;
     dvNextDisabled: () => any;
+    dvSavingPossible: boolean;
     dvSubStep: number;
     dvTranslateNext: string;
+
+    performSave: boolean;
 
     static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', '$translate', 'ErrorService', '$q'];
     /* @ngInject */
     constructor(private wizardStepManager: WizardStepManager, private state: IStateService, private gesuchModelManager: GesuchModelManager,
                 private $translate: ITranslateService, private errorService: ErrorService, private $q: IQService) {
     }
+
+    //wird von angular aufgerufen
+    $onInit() {
+        //initial nach aktuell eingeloggtem filtern
+        this.dvSavingPossible = this.dvSavingPossible || false;
+
+    }
+
 
     public doesCancelExist(): boolean {
         return this.dvCancel !== undefined && this.dvCancel !== null;
@@ -110,7 +122,7 @@ export class NavigatorController {
      * wird dann direkt zum naechsten Step geleitet.
      */
     public nextStep(): void {
-        if (!this.gesuchModelManager.isGesuchReadonly() && this.dvSave) {
+        if (this.isSavingEnabled() && this.dvSave) {
             let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
             if (returnValue !== undefined) {
                 this.$q.when(returnValue).then(() => {
@@ -119,6 +131,14 @@ export class NavigatorController {
             }
         } else {
             this.navigateToNextStep();
+        }
+    }
+
+    private isSavingEnabled() : boolean {
+        if(this.dvSavingPossible){
+            return true;
+        } else{
+            return !this.gesuchModelManager.isGesuchReadonly();
         }
     }
 

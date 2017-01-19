@@ -18,14 +18,6 @@
         top: 9.5rem !important;
     }
 
-    .gesuchModul {
-        padding: 5rem 2.5rem 10rem 5rem;
-    }
-
-    .mainQuestion {
-        width: 200%;
-    }
-
     .dv-input-container-small {
         width: 30rem;
     }
@@ -60,21 +52,50 @@
             }
         }
     }
-
-    md-radio-button {
-        margin: 0 0 1.5rem;
-    }
-
-}
-
-@media @mq-sm {
     #gesuchContainer {
         .nav-row-betreuung {
             flex-direction: row-reverse;
             -ms-flex-direction: row-reverse;
             bottom: 4rem;
             & > div {
+                width: auto;
+                margin-bottom: 0;
+                padding: 0;
+                margin-right: auto;
 
+                &:last-child {
+                    margin-left: 3rem;
+                    margin-right: auto;
+                    margin-bottom: 0;
+                    padding: 0;
+                }
+                &:first-child {
+                    margin-right: 3rem;
+                    margin-left:auto;
+                }
+                & > div {
+                    display: flex;
+                    flex-direction: row;
+                    -ms-flex-direction: row;
+                    padding: 0;
+                    &:first-child {
+                        padding-right: 0;
+                    }
+                    & > div {
+                        padding: 0;
+                    }
+                }
+            }
+        }}
+}
+
+@media @mq-sm {
+    .gesuchModul {
+        padding: 5rem 2.5rem 10rem 5rem;
+    }
+    #gesuchContainer {
+        .nav-row-betreuung {
+            & > div {
                 width: auto;
                 margin-bottom: 0;
                 padding: 0;
@@ -89,18 +110,10 @@
                 }
                 &:first-child {
                     margin-right: auto;
+                    margin-left:0;
                 }
                 & > div {
-                    display: flex;
-                    flex-direction: row;
-                    -ms-flex-direction: row;
                     padding: 0 0.75rem 0;
-                    &:first-child {
-                        padding-right: 0;
-                    }
-                    & > div {
-                        padding: 0;
-                    }
                 }
             }
         }
@@ -172,6 +185,7 @@ and (max-width: 480px) {
     h2 {
         line-height: 2.4rem;
     }
+
     .dv-input-container-small {
         width: 100%;
     }
