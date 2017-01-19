@@ -402,6 +402,7 @@ public final class TestDataUtil {
 		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MIN));
 		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MAX));
 		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM));
 		return list;
 	}
 
@@ -697,6 +698,7 @@ public final class TestDataUtil {
 		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, "6970", gueltigkeit, persistence);
 		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, "7500", gueltigkeit, persistence);
 		saveParameter(PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG, "20", gueltigkeit, persistence);
+		saveParameter(PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM, "20", gueltigkeit, persistence);
 
 	}
 

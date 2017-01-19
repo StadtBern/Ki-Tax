@@ -82,15 +82,15 @@
     </verfuegungszeitabschnitte>
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
-        <anspruchberechtigtesPensum>50</anspruchberechtigtesPensum>
+        <anspruchberechtigtesPensum>40</anspruchberechtigtesPensum>
         <bemerkungen>ZIVILSTANDSAENDERUNG: Anpassung des Zivilstandes von 1 auf 2 Gesuchsteller
 ANSPRUCHSBERECHNUNGSREGELN_MUTATIONEN: Reduktionen des Anspruchs rückwirkend angepasst</bemerkungen>
         <betreuungspensum>100</betreuungspensum>
-        <elternbeitrag>33.75</elternbeitrag>
+        <elternbeitrag>27.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
         <gueltigAb>15.02.2017</gueltigAb>
         <gueltigBis>28.02.2017</gueltigBis>
-        <vollkosten>570.95</vollkosten>
+        <vollkosten>456.75</vollkosten>
     </verfuegungszeitabschnitte>
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>11280</abzugFamGroesse>
