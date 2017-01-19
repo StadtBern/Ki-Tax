@@ -16,9 +16,9 @@ import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSBetreuung from '../../../models/TSBetreuung';
 import {IBetreuungStateParams} from '../../gesuch.route';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import IRootScopeService = angular.IRootScopeService;
 import IScope = angular.IScope;
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -121,8 +121,11 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     nichtEintreten() {
         if (this.isGesuchValid()) {
             this.verfuegungNichtEintreten().then(() => {
-                this.$state.go('gesuch.verfuegen', {
-                    gesuchId: this.getGesuchId()
+                //dokument definitiv generieren
+                this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(this.getBetreuung().id, true).then(() => {
+                    this.$state.go('gesuch.verfuegen', {
+                        gesuchId: this.getGesuchId()
+                    });
                 });
             });
         }
