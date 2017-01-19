@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
@@ -408,7 +409,18 @@ public class Gesuch extends AbstractEntity {
 		List<Betreuung> allBetreuungen = kindContainers.stream().flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
 			.collect(Collectors.toList());
 		return !allBetreuungen.isEmpty() && allBetreuungen.stream().allMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
+	}
 
+	@Transient
+	public boolean areAllBetreuungenBestaetigt() {
+		List<Betreuung> betreuungs = extractAllBetreuungen();
+		for (Betreuung betreuung : betreuungs) {
+			if (Betreuungsstatus.AUSSTEHEND.equals(betreuung.getBetreuungsstatus()) ||
+				Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Transient

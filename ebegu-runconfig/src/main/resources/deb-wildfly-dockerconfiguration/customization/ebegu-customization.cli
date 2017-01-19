@@ -64,6 +64,11 @@ xa-data-source add \
 /system-property=ebegu.client.using.https:add(value=false)
 /system-property=ebegu.openidm.enabled:add(value=false)
 /system-property=ebegu.development.mode:add(value=true)
+/system-property=ebegu.mail.disabled:add(value=true)
+/system-property=ebegu.mail.smtp.from:add(value=ebegu@dvbern.ch)
+/system-property=ebegu.mail.smtp.host:add(value=mailext.dvbern.ch)
+/system-property=ebegu.mail.smtp.port:add(value=25)
+/system-property=ebegu.hostname:add(value=ebegu.dvbern.ch/web/#)
 
 
 #Helperskripts
@@ -83,6 +88,9 @@ xa-data-source add \
 /subsystem=logging/logger=SAML2.access/:add(category=SAML2.access,level=ERROR,use-parent-handlers=true)
 /subsystem=logging/logger=IDFF.access/:add(category=IDFF.access,level=ERROR,use-parent-handlers=true)
 /subsystem=logging/logger=COT.access/:add(category=COT.access,level=ERROR,use-parent-handlers=true)
+
+#Logoutput fuer Email fuer den Anfang bisschen erhoehen
+/subsystem=logging/logger=ch.dvbern.ebegu.services.MailServiceBean/:add(category=ch.dvbern.ebegu.services.MailServiceBean,level=DEBUG,use-parent-handlers=true)
 
 
 #Cache konfigurieren

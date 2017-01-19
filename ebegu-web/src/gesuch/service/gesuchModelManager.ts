@@ -594,23 +594,38 @@ export default class GesuchModelManager {
     }
 
     public saveBetreuung(betreuungToSave: TSBetreuung, abwesenheit: boolean): IPromise<TSBetreuung> {
-        return this.betreuungRS.saveBetreuung(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
-            .then((storedBetreuung: any) => {
-                this.getKindFromServer();
-                if (!storedBetreuung.isNew()) {   //gespeichertes kind war nicht neu
-                    let i: number = EbeguUtil.getIndexOfElementwithID(betreuungToSave, this.getKindToWorkWith().betreuungen);
-                    if (i >= 0) {
-                        this.getKindToWorkWith().betreuungen[i] = storedBetreuung;
-                        this.betreuungNumber = i;
-                    }
-                } else {
-                    this.getKindToWorkWith().betreuungen.push(storedBetreuung);  //neues kind anfuegen
-                    this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
-                }
-                return storedBetreuung;
-            });
+        if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
+            return this.betreuungRS.betreuungsPlatzAbweisen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.handleSavedBetreuung(storedBetreuung);
+                });
+        } else  if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.BESTAETIGT) {
+            return this.betreuungRS.betreuungsPlatzBestaetigen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.handleSavedBetreuung(storedBetreuung);
+                });
+        } else {
+            return this.betreuungRS.saveBetreuung(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
+                .then((storedBetreuung: any) => {
+                    return this.handleSavedBetreuung(storedBetreuung);
+                });
+        }
     }
 
+    private handleSavedBetreuung(storedBetreuung: TSBetreuung): TSBetreuung {
+        this.getKindFromServer();
+        if (!storedBetreuung.isNew()) {   //gespeichertes kind war nicht neu
+            let i: number = EbeguUtil.getIndexOfElementwithID(storedBetreuung, this.getKindToWorkWith().betreuungen);
+            if (i >= 0) {
+                this.getKindToWorkWith().betreuungen[i] = storedBetreuung;
+                this.betreuungNumber = i;
+            }
+        } else {
+            this.getKindToWorkWith().betreuungen.push(storedBetreuung);  //neues kind anfuegen
+            this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
+        }
+        return storedBetreuung;
+    }
 
     public saveKind(kindToSave: TSKindContainer): IPromise<TSKindContainer> {
         return this.kindRS.saveKind(kindToSave, this.gesuch.id)

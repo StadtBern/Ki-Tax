@@ -55,4 +55,33 @@ public interface EbeguConfiguration {
 	 * Gibt zurueck ob die synchronisierung mit der IDM Rest Schnittstelle fuer Inst und Traegerschaft aktiviert ist
 	 */
 	boolean getOpenIdmEnabled();
+
+	/**
+	 * Gibt zurueck, ob E-Mails versendet werden sollen. Falls nicht, wird der entsprechende Text auf der Console ausgegeben
+	 */
+	boolean isSendingOfMailsDisabled();
+
+	/**
+	 * Gibt einen Host zurück welcher zum Verschicken eines Mails verwendet wird.
+	 * @return einen Hostnamen, oder <code>null</code>
+	 */
+	String getSMTPHost();
+
+	/**
+	 * Gibt den Port zurück welcher zum Verschicken eines Mails verwendet wird.
+	 * @return einen Port, 25 wenn nichts konfiguriert.
+	 */
+	int getSMTPPort();
+
+	/**
+	 * Gibt die Absender-Adresse fuer mails zurück.
+	 * @return die Absender-Adresse oder <code>null</code>
+	 */
+	String getSenderAddress();
+
+	/**
+	 * Gibt den Hostname des Servers zurück.
+	 * @return den Hostname oder <code>null</code>
+	 */
+	String getHostname();
 }
