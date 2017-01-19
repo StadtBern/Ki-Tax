@@ -535,7 +535,6 @@
     "BETREUUNG_NICHT_EINGETRETEN_TEXT": "Dieses Betreuungsangebot wurde am {{date}} mutiert zu \"nicht eingetreten\"",
     "BETREUUNG_ABGEWIESEN_TEXT": "Dieses Betreuungsangebot wurde am {{date}} abgewiesen.<p>{{grund}}<p>",
     "GRUND_ABLEHNUNG": "Grund der Ablehnung",
-    "SCHULJAHR": "Betrifft Schuljahr {{schuljahr}}",
     "ZUSCHLAG": "Zuschlag",
     "ANGESTELLT": "Angestellt",
     "SELBSTAENDIG": "Selbständig",
