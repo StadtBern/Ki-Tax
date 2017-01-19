@@ -9,10 +9,6 @@
         color: white;
     }
 
-    .mainQuestion {
-        font-weight: bold;
-    }
-
     .viewTitle {
         hr.header {
             margin-bottom: 5rem;
@@ -24,7 +20,7 @@
     }
 
     .subTitle {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         &.subTitleBold {
             .ebeguBold();
         }
@@ -239,8 +235,18 @@
         border-bottom-color: @danger;
     }
 
-    .required span:after {
-        content: " *";
+    .required:after {
+        content: "\00a0*";
+        display: inline;
+    }
+    h1.required span:after {
+        content: "\00a0*";
+    }
+    h1.required:after {
+        content: "";
+    }
+    .md-required:after{
+        content: "\00a0*"!important;
     }
 
 }

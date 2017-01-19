@@ -6,7 +6,7 @@
             <span data-translate="{{vm.tableTitle}}"></span>
             {{vm.titleValue}}
         </h2>
-
+        <div class="overflow-scroll-table">
         <table st-table="table" st-safe-src="vm.dokumente" st-
                class="table dokumentgrundtable" id="{{vm.tableId}}">
             <thead>
@@ -63,7 +63,7 @@
                 </td>
 
             </tr>
-            <tr id="rowexpand" colspan="100%" ng-repeat-end ng-if="vm.hasDokuments(row)">
+            <tr id="rowexpand" colspan="100%" ng-if="vm.hasDokuments(row)">
                 <td colspan="100%" style="padding: 0">
                     <table st-table="table2" st-safe-src="row.dokumente" class="table dateientable">
                         <thead>
@@ -113,9 +113,10 @@
                     </table>
                 </td>
             </tr>
+            <tr ng-repeat-end ><td colspan="100%" class="dateien-spacer"></td></tr>
             </tbody>
         </table>
-
+        </div>
     </div>
 
 </div>
