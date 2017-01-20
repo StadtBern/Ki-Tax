@@ -90,7 +90,7 @@ public class FedletSamlServlet extends HttpServlet {
 
 	private static String superUserEmail;
 
-	{
+	static {
 		superUserEmail =  System.getProperty(EbeguConfigurationImpl.EBEGU_SUPERUSER_MAIL, "");
 
 	}
