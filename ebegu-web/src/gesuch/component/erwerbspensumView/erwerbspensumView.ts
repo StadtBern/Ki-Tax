@@ -169,4 +169,10 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
             return this.$translate.instant('LABEL_KEINE_ANGABE');
         }
     }
+
+    public getZuschlagHelpText(): string {
+        return this.$translate.instant('ZUSCHLAGSGRUND_HELP', {
+            maxzuschlag: this.maxZuschlagsprozent
+        });
+    }
 }

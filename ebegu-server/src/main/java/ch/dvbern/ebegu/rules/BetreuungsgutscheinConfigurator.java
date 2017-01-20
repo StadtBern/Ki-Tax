@@ -39,14 +39,15 @@ public class BetreuungsgutscheinConfigurator {
 			PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3,
 			PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4,
 			PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5,
-			PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6);
+			PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6,
+			PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM);
 	}
 
 
 	private void useBernerRules(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 
 		abschnitteErstellenRegeln(ebeguParameter);
-		berechnenAnspruchRegeln();
+		berechnenAnspruchRegeln(ebeguParameter);
 		reduktionsRegeln(ebeguParameter);
 
 	}
@@ -109,7 +110,7 @@ public class BetreuungsgutscheinConfigurator {
 		rules.add(zivilstandsaenderungAbschnittRule);
 	}
 
-	private void berechnenAnspruchRegeln() {
+	private void berechnenAnspruchRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
 
 		// - Gekuendigt vor Eintritt
@@ -117,7 +118,9 @@ public class BetreuungsgutscheinConfigurator {
 		rules.add(gekuendigtVorEintrittCalcRule);
 
 		// - Erwerbspensum
-		ErwerbspensumCalcRule erwerbspensumCalcRule = new ErwerbspensumCalcRule(defaultGueltigkeit);
+		EbeguParameter maxZuschlagValue = ebeguParameter.get(PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM);
+		Objects.requireNonNull(maxZuschlagValue, "Parameter PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM muss gesetzt sein");
+		ErwerbspensumCalcRule erwerbspensumCalcRule = new ErwerbspensumCalcRule(defaultGueltigkeit, maxZuschlagValue.getValueAsInteger());
 		rules.add(erwerbspensumCalcRule);
 
 		// - Betreuungspensum

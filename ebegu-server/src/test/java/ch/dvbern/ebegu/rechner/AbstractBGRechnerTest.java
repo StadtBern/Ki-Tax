@@ -48,6 +48,9 @@ public class AbstractBGRechnerTest {
 		EbeguParameter pmab6 = new EbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, "7500");
 		ebeguParameter.put(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, pmab6);
 
+		EbeguParameter paramZuschlag = new EbeguParameter(EbeguParameterKey.PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM, "20");
+		ebeguParameter.put(EbeguParameterKey.PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM, paramZuschlag);
+
 		BetreuungsgutscheinConfigurator configurator = new BetreuungsgutscheinConfigurator();
 		List<Rule> rules = configurator.configureRulesForMandant(null, ebeguParameter);
 		return new BetreuungsgutscheinEvaluator(rules);
