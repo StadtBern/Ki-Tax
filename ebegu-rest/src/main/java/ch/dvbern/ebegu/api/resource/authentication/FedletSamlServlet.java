@@ -86,6 +86,7 @@ public class FedletSamlServlet extends HttpServlet {
 
 	@Inject
 	private OpenIdmRestService openIdmRestService;
+	private String superUserName;
 
 
 	@Override
@@ -319,7 +320,11 @@ public class FedletSamlServlet extends HttpServlet {
 	}
 
 	public String getSpecialSuperusername() {
-		return configuration.getNameOfSuperUser();
+		if (this.superUserName == null) {
+			this.superUserName =  configuration.getNameOfSuperUser() != null ? configuration.getNameOfSuperUser() : "" ;
+		}
+		return superUserName;
+
 	}
 
 }
