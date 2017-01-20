@@ -35,6 +35,7 @@
         <property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION" value="on"/>
         <property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION_MIME_TYPES" value="text/javascript,text/css,text/html"/>
         <property name="ebegu.development.mode" value="true"/>
+		<property name="ebegu.dummy.login.enabled" value="true"/>
 		<!-- Mail -->
 		<property name="ebegu.mail.disabled" value="true"/>
 		<property name="ebegu.mail.smtp.from" value="ebegu@dvbern.ch"/>

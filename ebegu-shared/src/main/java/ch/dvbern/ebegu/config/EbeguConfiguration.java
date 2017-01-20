@@ -84,4 +84,12 @@ public interface EbeguConfiguration {
 	 * @return den Hostname oder <code>null</code>
 	 */
 	String getHostname();
+
+	/**
+	 * Gibt zurueck ob es moeglich sein soll mit den dummy useren einzulaggen
+	 * @see "dummy-users.properties" and AuthResource#login
+	 * @return true oder false
+	 */
+	boolean isDummyLoginEnabled();
+
 }

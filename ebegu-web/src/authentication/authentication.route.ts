@@ -1,6 +1,10 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
-import {IState} from 'angular-ui-router';
+import {IState, IStateService} from 'angular-ui-router';
+import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import IStateParamsService = angular.ui.IStateParamsService;
+import IQService = angular.IQService;
+import ILogService = angular.ILogService;
+import IPromise = angular.IPromise;
 
 
 authenticationRun.$inject = ['RouterHelper'];
@@ -30,6 +34,9 @@ export class EbeguLocalLoginState implements IState {
     name = 'locallogin';
     template = '<dummy-authentication-view flex="auto" class="overflow-scroll">';
     url = '/locallogin';
+    resolve = {
+        dummyLoginEnabled: readDummyLoginEnabled
+    };
 }
 
 export class EbeguStartState implements IState {
@@ -43,5 +50,25 @@ export class EbeguStartState implements IState {
 export class IAuthenticationStateParams implements IStateParamsService {
     relayPath: string;
     type: string;
+}
+
+readDummyLoginEnabled.$inject = ['ApplicationPropertyRS',  '$state', '$q', '$log'];
+/* @ngInject */
+export function readDummyLoginEnabled(applicationPropertyRS: ApplicationPropertyRS,  $state: IStateService, $q: IQService, $log: ILogService): IPromise<boolean> {
+    return applicationPropertyRS.isDummyMode()
+        .then((response: boolean) => {
+            if (response === false) {
+                $log.debug('page is disabled');
+                $state.go('start');
+            }
+            return response;
+        }).catch(() => {
+            let deferred = $q.defer();
+            deferred.resolve(undefined);
+            $state.go('login');
+            return deferred.promise;
+        });
+
+
 }
 
