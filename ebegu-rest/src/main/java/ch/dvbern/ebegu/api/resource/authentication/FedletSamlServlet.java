@@ -16,6 +16,7 @@ import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
 import ch.dvbern.ebegu.api.util.EBEGUSamlConstants;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.config.EbeguConfigurationImpl;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Institution;
@@ -87,7 +88,12 @@ public class FedletSamlServlet extends HttpServlet {
 	@Inject
 	private OpenIdmRestService openIdmRestService;
 
-	private String superUserEmail;
+	private static String superUserEmail;
+
+	{
+		superUserEmail =  System.getProperty(EbeguConfigurationImpl.EBEGU_SUPERUSER_MAIL, "");
+
+	}
 
 
 	@Override
@@ -162,7 +168,7 @@ public class FedletSamlServlet extends HttpServlet {
 	 * Wir haben per proeprty eine email definiert dem wir immer Super-User zuweisen
 	 */
 	private void checkForSuperuserMail(Benutzer benutzer) {
-		if (benutzer.getEmail().equals(getSpecialSuperuserMail())) {
+		if (benutzer.getEmail().equals(superUserEmail)) {
 			benutzer.setRole(UserRole.SUPER_ADMIN);
 		}
 	}
@@ -320,12 +326,5 @@ public class FedletSamlServlet extends HttpServlet {
 		return result;
 	}
 
-	public String getSpecialSuperuserMail() {
-		if (this.superUserEmail == null) {
-			this.superUserEmail =  configuration.getEmailOfSuperUser() != null ? configuration.getEmailOfSuperUser() : "" ;
-		}
-		return superUserEmail;
-
-	}
 
 }
