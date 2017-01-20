@@ -102,13 +102,25 @@ public class ErwerbspensumRuleTest {
 		Betreuung betreuung = createGesuch(false);
 		Gesuch gesuch = betreuung.extractGesuch();
 
-		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 10));
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 120, 0));
 
 		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
+
+		Betreuung betreuung2 = createGesuch(false);
+		Gesuch gesuch2 = betreuung2.extractGesuch();
+
+		//weniger als 100 ewp aber grosser zuschlag -> keine Bemerkung
+		gesuch2.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 90, 20));
+
+		List<VerfuegungZeitabschnitt> noBemerkungAbschn = EbeguRuleTestsHelper.calculate(betreuung2);
+		Assert.assertNotNull(noBemerkungAbschn);
+		Assert.assertEquals(1, noBemerkungAbschn.size());
+		Assert.assertEquals(100, noBemerkungAbschn.get(0).getAnspruchberechtigtesPensum());
+		Assert.assertTrue(noBemerkungAbschn.get(0).getBemerkungen().isEmpty());
 	}
 
 	@Test
@@ -116,8 +128,8 @@ public class ErwerbspensumRuleTest {
 		Betreuung betreuung = createGesuch(true);
 		Gesuch gesuch = betreuung.extractGesuch();
 
-		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 10));
-		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 10));
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 110, 0));
+		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 110, 10));
 
 		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
 		Assert.assertNotNull(result);
@@ -304,15 +316,15 @@ public class ErwerbspensumRuleTest {
 		Betreuung betreuung = createGesuch(true);
 		Gesuch gesuch = betreuung.extractGesuch();
 
-		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 20));
-		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 20));
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 110, 5));
+		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 90, 20));
 
 		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum GS 1"));
-		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum GS 2"));
+		Assert.assertFalse(result.get(0).getBemerkungen().contains("Erwerbspensum GS 2"));
 		Assert.assertTrue(result.get(0).getBemerkungen().contains("ERWERBSPENSUM: Der Zuschlag zum Erwerbspensum wurde auf den maximalen Wert (20%) limitiert"));
 	}
 
