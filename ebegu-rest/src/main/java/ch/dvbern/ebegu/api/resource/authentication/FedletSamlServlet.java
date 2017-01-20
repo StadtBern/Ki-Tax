@@ -86,7 +86,8 @@ public class FedletSamlServlet extends HttpServlet {
 
 	@Inject
 	private OpenIdmRestService openIdmRestService;
-	private String superUserName;
+
+	private String superUserEmail;
 
 
 	@Override
@@ -127,7 +128,7 @@ public class FedletSamlServlet extends HttpServlet {
 		if (userattrs != null) {
 
 			Benutzer benutzer = convertSAMLAttributesToBenutzer(userattrs);
-			checkForSuperusername(benutzer);
+			checkForSuperuserMail(benutzer);
 			Benutzer storedBenutzer = benutzerService.updateOrStoreUserFromIAM(benutzer);
 
 			AuthorisierterBenutzer authorisedBenutzer = new AuthorisierterBenutzer();
@@ -158,10 +159,10 @@ public class FedletSamlServlet extends HttpServlet {
 	}
 
 	/**
-	 * Wir haben per proeprty einen username definiert dem wir immer Super-User zuweisen
+	 * Wir haben per proeprty eine email definiert dem wir immer Super-User zuweisen
 	 */
-	private void checkForSuperusername(Benutzer benutzer) {
-		if (benutzer.getUsername().equals(getSpecialSuperusername())) {
+	private void checkForSuperuserMail(Benutzer benutzer) {
+		if (benutzer.getEmail().equals(getSpecialSuperuserMail())) {
 			benutzer.setRole(UserRole.SUPER_ADMIN);
 		}
 	}
@@ -319,11 +320,11 @@ public class FedletSamlServlet extends HttpServlet {
 		return result;
 	}
 
-	public String getSpecialSuperusername() {
-		if (this.superUserName == null) {
-			this.superUserName =  configuration.getNameOfSuperUser() != null ? configuration.getNameOfSuperUser() : "" ;
+	public String getSpecialSuperuserMail() {
+		if (this.superUserEmail == null) {
+			this.superUserEmail =  configuration.getEmailOfSuperUser() != null ? configuration.getEmailOfSuperUser() : "" ;
 		}
-		return superUserName;
+		return superUserEmail;
 
 	}
 

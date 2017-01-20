@@ -97,6 +97,6 @@ public interface EbeguConfiguration {
 	 * Der Zweck dieses Users ist, dass wir ihn verwenden koennen um Supportrequests zu reproduzieren etc
 	 * @return Name des SuperUsers
 	 */
-	String getNameOfSuperUser();
+	String getEmailOfSuperUser();
 
 }
