@@ -59,7 +59,7 @@ export class NavigatorController {
     dvSavingPossible: boolean;
     dvSubStep: number;
     dvTranslateNext: string;
-    isRequestInProgress: boolean = false;
+    isRequestInProgress: boolean = false; // this semaphore will prevent a navigation button to be called again until the prozess is not finished
 
     performSave: boolean;
 
@@ -141,14 +141,14 @@ export class NavigatorController {
                 this.navigateToNextStep();
             }
         } else {
-            console.log("doubleclick suppressed") //for testing
+            console.log('doubleclick suppressed'); //for testing
         }
     }
 
-    private isSavingEnabled() : boolean {
-        if(this.dvSavingPossible){
+    private isSavingEnabled(): boolean {
+        if (this.dvSavingPossible) {
             return true;
-        } else{
+        } else {
             return !this.gesuchModelManager.isGesuchReadonly();
         }
     }
