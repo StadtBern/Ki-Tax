@@ -28,6 +28,7 @@
                                     <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
                                                    ng-model="vm.getFamiliensituation().aenderungPer"
                                                    class="input-element"
+                                                   ng-blur="vm.onDatumBlur()"
                                                    ng-disabled="vm.isGesuchReadonly()">
                                     </dv-datepicker>
                                 </div>
