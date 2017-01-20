@@ -52,7 +52,7 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 
 	/**
 	 * Sollte der Anspruch weniger als 0 sein, wird dieser auf 0 gesetzt und eine Bemerkung eingefuegt.
-	 * Wenn der anspruch groesser als 100 ist, wird dieser auf 100 gesetzt. Hier braucht es keine Bemerkung, denn sie
+	 * Wenn der Anspruch groesser als 100 ist, wird dieser auf 100 gesetzt. Hier braucht es keine Bemerkung, denn sie
 	 * wurde bereits in calculateErwerbspensum eingefuegt.
 	 * Am Ende wird der Wert gerundet und zurueckgegeben
 	 */
@@ -72,20 +72,18 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 	@Nonnull
 	private Integer calculateErwerbspensumGS1(@Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Integer erwerbspensum = verfuegungZeitabschnitt.getErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getErwerbspensumGS1() : 0;
-		Integer zuschlag = verfuegungZeitabschnitt.getZuschlagErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getZuschlagErwerbspensumGS1() : 0;
-		return calculateErwerbspensum(verfuegungZeitabschnitt, erwerbspensum, zuschlag, MsgKey.ERWERBSPENSUM_GS1_MSG);
+		return calculateErwerbspensum(verfuegungZeitabschnitt, erwerbspensum, MsgKey.ERWERBSPENSUM_GS1_MSG);
 	}
 
 	@Nonnull
 	private Integer calculateErwerbspensumGS2(@Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Integer erwerbspensum = verfuegungZeitabschnitt.getErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getErwerbspensumGS2() : 0;
-		Integer zuschlag = verfuegungZeitabschnitt.getZuschlagErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getZuschlagErwerbspensumGS2() : 0;
-		return calculateErwerbspensum(verfuegungZeitabschnitt, erwerbspensum, zuschlag, MsgKey.ERWERBSPENSUM_GS2_MSG);
+		return calculateErwerbspensum(verfuegungZeitabschnitt, erwerbspensum, MsgKey.ERWERBSPENSUM_GS2_MSG);
 	}
 
 	@Nonnull
-	private Integer calculateErwerbspensum(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Integer erwerbspensum, Integer zuschlag, MsgKey bemerkung) {
-		if (erwerbspensum > 100 || (erwerbspensum + zuschlag) > 100) {
+	private Integer calculateErwerbspensum(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Integer erwerbspensum, MsgKey bemerkung) {
+		if (erwerbspensum > 100) {
 			if (erwerbspensum > 100) {
 				erwerbspensum = 100;
 			}

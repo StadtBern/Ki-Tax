@@ -78,7 +78,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 				gueltigkeit.setGueltigBis(gesuch.extractFamiliensituation().getAenderungPer().minusDays(1));
 			}
 			VerfuegungZeitabschnitt zeitabschnitt = createZeitAbschnittForGS2(gueltigkeit, erwerbspensum.getPensum(), erwerbspensum.getZuschlagsprozent());
-			setKategorieZuschlagZumErwerbspensum(erwerbspensum, zeitabschnitt);
+			setKategorieZuschlagZumErwerbspensum(erwerbspensum, zeitabschnitt);  //fuer statistik
 			return zeitabschnitt;
 		}
 		if (gs2 && !gesuch.isMutation()) {
