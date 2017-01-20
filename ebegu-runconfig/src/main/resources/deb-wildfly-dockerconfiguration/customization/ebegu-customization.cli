@@ -68,6 +68,7 @@ xa-data-source add \
 /system-property=ebegu.mail.smtp.from:add(value=ebegu@dvbern.ch)
 /system-property=ebegu.mail.smtp.host:add(value=mailext.dvbern.ch)
 /system-property=ebegu.mail.smtp.port:add(value=25)
+/system-property=ebegu.mail.disabled:add(value=false)
 /system-property=ebegu.hostname:add(value=ebegu.dvbern.ch/web/#)
 
 
