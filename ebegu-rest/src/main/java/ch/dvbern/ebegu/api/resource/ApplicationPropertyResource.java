@@ -68,16 +68,16 @@ public class ApplicationPropertyResource {
 	@Produces(MediaType.WILDCARD)
 	@Path("/public/devmode")
 	public Response isDevMode(@Context HttpServletResponse response) {
-		return Response.ok(String.valueOf(ebeguConfiguration.getIsDevmode())).build();
+		return Response.ok(ebeguConfiguration.getIsDevmode()).build();
 	}
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@GET
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.WILDCARD)
 	@Path("/public/dummy")
 	public Response isDummyLoginEnabled(@Context HttpServletResponse response) {
-		return Response.ok(String.valueOf(ebeguConfiguration.isDummyLoginEnabled())).build();
+		return Response.ok(ebeguConfiguration.isDummyLoginEnabled()).build();
 	}
 
 	@Nonnull
