@@ -87,6 +87,9 @@ public class FedletSamlServlet extends HttpServlet {
 	@Inject
 	private OpenIdmRestService openIdmRestService;
 
+	private String superUserEmail;
+
+
 	@Override
 	public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
@@ -125,6 +128,7 @@ public class FedletSamlServlet extends HttpServlet {
 		if (userattrs != null) {
 
 			Benutzer benutzer = convertSAMLAttributesToBenutzer(userattrs);
+			checkForSuperuserMail(benutzer);
 			Benutzer storedBenutzer = benutzerService.updateOrStoreUserFromIAM(benutzer);
 
 			AuthorisierterBenutzer authorisedBenutzer = new AuthorisierterBenutzer();
@@ -151,6 +155,15 @@ public class FedletSamlServlet extends HttpServlet {
 		} else {
 			LOG.warn("Received SAML2 response without RelayState. Staying on page");
 			displayMinimalInfo(printer, userAuth);
+		}
+	}
+
+	/**
+	 * Wir haben per proeprty eine email definiert dem wir immer Super-User zuweisen
+	 */
+	private void checkForSuperuserMail(Benutzer benutzer) {
+		if (benutzer.getEmail().equals(getSpecialSuperuserMail())) {
+			benutzer.setRole(UserRole.SUPER_ADMIN);
 		}
 	}
 
@@ -306,4 +319,13 @@ public class FedletSamlServlet extends HttpServlet {
 
 		return result;
 	}
+
+	public String getSpecialSuperuserMail() {
+		if (this.superUserEmail == null) {
+			this.superUserEmail =  configuration.getEmailOfSuperUser() != null ? configuration.getEmailOfSuperUser() : "" ;
+		}
+		return superUserEmail;
+
+	}
+
 }

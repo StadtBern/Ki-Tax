@@ -92,4 +92,11 @@ public interface EbeguConfiguration {
 	 */
 	boolean isDummyLoginEnabled();
 
+	/**
+	 * Wir definieren einen Benutzernamen dem wir IMMER die Rolle UserRole#SUPER_ADMIN zuweisen wenn er sich ueber IAM einloggt.
+	 * Der Zweck dieses Users ist, dass wir ihn verwenden koennen um Supportrequests zu reproduzieren etc
+	 * @return Name des SuperUsers
+	 */
+	String getEmailOfSuperUser();
+
 }
