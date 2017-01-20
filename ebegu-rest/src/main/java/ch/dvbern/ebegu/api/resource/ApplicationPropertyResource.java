@@ -61,13 +61,23 @@ public class ApplicationPropertyResource {
 		return converter.applicationPropertyToJAX(propertyFromDB.get());
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@ApiOperation(value = "Are we in development mode?", response = Boolean.class)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
-	@Path("/devmode")
-	public boolean isDevMode(@Context HttpServletResponse response) {
-		return ebeguConfiguration.getIsDevmode();
+	@Path("/public/devmode")
+	public Response isDevMode(@Context HttpServletResponse response) {
+		return Response.ok(String.valueOf(ebeguConfiguration.getIsDevmode())).build();
+	}
+
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/public/dummy")
+	public Response isDummyLoginEnabled(@Context HttpServletResponse response) {
+		return Response.ok(String.valueOf(ebeguConfiguration.isDummyLoginEnabled())).build();
 	}
 
 	@Nonnull
