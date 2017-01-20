@@ -36,6 +36,7 @@
     "TAETIGKEIT": "Tätigkeit",
     "ERROR_MAX": "Maximaler Wert überschritten",
     "ERROR_UNEXPECTED": "Es ist ein unerwarteter Fehler aufgetreten",
+    "ERROR_UNEXPECTED_EBEGU_RUNTIME": "Es ist ein Fehler aufgetreten",
     "ERROR_UNAUTHORIZED": "Sie sind für diese Aktion nicht berechtigt",
     "ERWERBSPENSUM_LOESCHEN": "Wollen Sie das Erwerbspensum wirklich löschen",
     "EINKOMMENSVERSCHLECHTERUNG_SELBSTAENDIGKEIT_HELP" : "Für Selbständigerwerbende gilt der in der Steuererklärung ausgewiesene Geschäftsgewinn (Durchschnitt der vergangenen drei Jahre); Ziffer 9210 der Steuererklärung (Formulare 8, 9, 10); gilt für das Jahr der Einkommensverminderung.",

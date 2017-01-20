@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -73,6 +74,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			}
 		} catch (MailException e) {
 			LOG.error("Mail InfoBetreuungAbgelehnt konnte nicht verschickt werden fuer Betreuung " + betreuung.getId(), e);
+			throw new EbeguRuntimeException("betreuungPlatzAbweisen", ErrorCodeEnum.ERROR_MAIL, e);
 		}
 		return persistedBetreuung;
 	}
@@ -90,6 +92,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			}
 		} catch (MailException e) {
 			LOG.error("Mail InfoBetreuungenBestaetigt konnte nicht verschickt werden fuer Betreuung " + betreuung.getId(), e);
+			throw new EbeguRuntimeException("betreuungPlatzBestaetigen", ErrorCodeEnum.ERROR_MAIL, e);
 		}
 		return persistedBetreuung;
 	}

@@ -24,6 +24,7 @@ import java.io.Writer;
 public abstract class AbstractMailServiceBean extends AbstractBaseService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractMailServiceBean.class.getSimpleName());
+	private static final int CONNECTION_TIMEOUT = 15000;
 
 	@Inject
 	private EbeguConfiguration configuration;
@@ -60,7 +61,9 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 	private void doSendMessage(@Nonnull String messageBody, @Nonnull String mailadress) throws MailException {
 		final SMTPClient client = new SMTPClient("UTF-8");
 		try {
+			client.setDefaultTimeout(CONNECTION_TIMEOUT);
 			client.connect(configuration.getSMTPHost(), configuration.getSMTPPort());
+			client.setSoTimeout(CONNECTION_TIMEOUT);
 			assertPositiveCompletion(client);
 			client.helo(configuration.getHostname());
 			assertPositiveCompletion(client);
