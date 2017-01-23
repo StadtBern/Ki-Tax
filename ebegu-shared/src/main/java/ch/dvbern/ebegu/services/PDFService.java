@@ -26,21 +26,21 @@ import java.util.Optional;
 public interface PDFService {
 
 	@Nonnull
-	byte[] generateNichteintreten(Betreuung betreuung) throws MergeDocException;
+	byte[] generateNichteintreten(Betreuung betreuung, boolean writeProtected) throws MergeDocException;
 
 	@Nonnull
-	byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) throws MergeDocException;
+	byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung, boolean writeProtected) throws MergeDocException;
 
 	@Nonnull
-	byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustelladresse) throws MergeDocException;
+	byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustelladresse, boolean writeProtected) throws MergeDocException;
 
 	@Nonnull
-	byte[] generateBegleitschreiben(@Nonnull Gesuch gesuch) throws MergeDocException;
+	byte[] generateBegleitschreiben(@Nonnull Gesuch gesuch, boolean writeProtected) throws MergeDocException;
 
 	@Nonnull
-	byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung) throws MergeDocException;
+	byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung, boolean writeProtected) throws MergeDocException;
 
 	@Nonnull
-	byte[] generateVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) throws MergeDocException;
+	byte[] generateVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum, boolean writeProtected) throws MergeDocException;
 
 }
