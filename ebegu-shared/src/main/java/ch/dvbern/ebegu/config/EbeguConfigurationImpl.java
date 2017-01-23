@@ -36,6 +36,8 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_MAIL_SMTP_HOST = "ebegu.mail.smtp.host";
 	private static final String EBEGU_MAIL_SMTP_PORT = "ebegu.mail.smtp.port";
 	private static final String EBEGU_HOSTNAME = "ebegu.hostname";
+	private static final String EBEGU_DUMMY_LOGIN_ENABLED = "ebegu.dummy.login.enabled";
+	public static final String EBEGU_SUPERUSER_MAIL = "ebegu.superuser.mail";
 
 	public EbeguConfigurationImpl() {
 
@@ -104,5 +106,15 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	@Override
 	public String getHostname() {
 		return getString(EBEGU_HOSTNAME, null);
+	}
+
+	@Override
+	public boolean isDummyLoginEnabled() {
+		return getBoolean(EBEGU_DUMMY_LOGIN_ENABLED, false);
+	}
+
+	@Override
+	public String getEmailOfSuperUser() {
+		return getString(EBEGU_SUPERUSER_MAIL, null);
 	}
 }

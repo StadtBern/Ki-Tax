@@ -166,7 +166,7 @@ export default class TSExceptionReport {
      * @returns {TSExceptionReport}
      */
     public static createFromExceptionReport(data: any) {
-        let msgToDisp =  data.translatedMessage || data.customMessage;
+        let msgToDisp =  data.translatedMessage || data.customMessage || 'ERROR_UNEXPECTED_EBEGU_RUNTIME';
         let exceptionReport: TSExceptionReport = new TSExceptionReport(TSErrorType.BADREQUEST, TSErrorLevel.SEVERE, msgToDisp, data.argumentList);
         exceptionReport.errorCodeEnum = data.errorCodeEnum;
         exceptionReport.exceptionName = data.exceptionName;
