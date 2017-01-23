@@ -187,7 +187,7 @@ public class GeneratePDFDocumentHelper {
 
 			//TODO: Natalie soll uns ein passendes PNG machen
 			Image watermarkImage = Image.getInstance(ByteStreams.toByteArray(
-				this.getClass().getResourceAsStream("vorlagen/entwurfWasserzeichen.png")));
+				this.getClass().getResourceAsStream("/vorlagen/entwurfWasserzeichen.png")));
 
 			float width = pageRectangle.getWidth();
 			float height = pageRectangle.getHeight();

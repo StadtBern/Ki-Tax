@@ -34,7 +34,7 @@ public interface GeneratedDokumentService {
 	GeneratedDokument findGeneratedDokument(String gesuchId, String filename, String path);
 
 	@Nonnull
-	GeneratedDokument updateGeneratedDokument(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName, boolean writeProtected) throws MimeTypeParseException;
+	GeneratedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName, boolean writeProtected) throws MimeTypeParseException;
 
 	GeneratedDokument getFinSitDokumentAccessTokenGeneratedDokument(Gesuch gesuch,
 																	Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
