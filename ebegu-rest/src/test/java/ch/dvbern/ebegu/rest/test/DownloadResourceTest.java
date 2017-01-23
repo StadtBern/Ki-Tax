@@ -116,7 +116,7 @@ public class DownloadResourceTest extends AbstractEbeguRestLoginTest {
 		final Response dokumentResponse = downloadResource
 			.getMahnungDokumentAccessTokenGeneratedDokument(converter.mahnungToJAX(mahnung), true, request, uri);
 
-		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.MAHNUNG_VORSCHAU);
+		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.MAHNUNG);
 	}
 
 	@Test

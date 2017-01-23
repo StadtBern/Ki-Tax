@@ -14,7 +14,10 @@ package ch.dvbern.ebegu.vorlagen;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+import com.google.common.io.ByteStreams;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.poi.xwpf.converter.pdf.PdfConverter;
@@ -72,7 +75,7 @@ public class GeneratePDFDocumentHelper {
 	 * @throws MergeDocException
 	 */
 	@Nonnull
-	public byte[] generatePDFDocument(@Nonnull byte[] docxTemplate, @Nonnull EBEGUMergeSource mergeSource) throws MergeDocException {
+	public byte[] generatePDFDocument(@Nonnull byte[] docxTemplate, @Nonnull EBEGUMergeSource mergeSource, boolean writeProtected) throws MergeDocException {
 		try {
 			Objects.requireNonNull(docxTemplate, "generateFrom muss gesetzt sein");
 			Objects.requireNonNull(docxTemplate, "mergeSource muss gesetzt sein");
@@ -98,8 +101,12 @@ public class GeneratePDFDocumentHelper {
 				mergedPdf = generatePDFDocument(mergedDocx);
 			}
 
+			if (!writeProtected) {
+				mergedPdf = addDraftWatermark(mergedPdf);
+			}
+
 			return mergedPdf;
-		} catch (IOException | DocTemplateException e) {
+		} catch (IOException | DocTemplateException | DocumentException e) {
 			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
 		}
 	}
@@ -152,6 +159,51 @@ public class GeneratePDFDocumentHelper {
 				manipulated.close();
 		}
 		return manipulated.toByteArray();
+	}
+
+	private byte[] addDraftWatermark(byte[] orginalPDF) throws IOException, DocumentException {
+
+		PdfReader pdfReader = null;
+		ByteArrayOutputStream outputStream = null;
+		PdfStamper pdfStamper = null;
+
+		pdfReader = new PdfReader(orginalPDF);
+		outputStream = new ByteArrayOutputStream();
+		pdfStamper = new PdfStamper(pdfReader, outputStream);
+
+		PdfLayer layer = new PdfLayer("watermark", pdfStamper.getWriter());
+
+		for (int pageIndex = 1; pageIndex <= pdfReader.getNumberOfPages(); pageIndex++) {
+			pdfStamper.setFormFlattening(false);
+			Rectangle pageRectangle = pdfReader.getPageSizeWithRotation(pageIndex);
+			PdfContentByte pdfData = pdfStamper.getOverContent(pageIndex);
+
+			pdfData.beginLayer(layer);
+
+			PdfGState graphicsState = new PdfGState();
+			graphicsState.setFillOpacity(0.2F);
+			pdfData.setGState(graphicsState);
+			pdfData.beginText();
+
+			//TODO: Natalie soll uns ein passendes PNG machen
+			Image watermarkImage = Image.getInstance(ByteStreams.toByteArray(
+				this.getClass().getResourceAsStream("vorlagen/entwurfWasserzeichen.png")));
+
+			float width = pageRectangle.getWidth();
+			float height = pageRectangle.getHeight();
+
+			watermarkImage.setAbsolutePosition(width / 2 - watermarkImage.getWidth() / 2, height / 2 - watermarkImage.getHeight() / 2);
+
+			pdfData.addImage(watermarkImage);
+			pdfData.endText();
+			pdfData.endLayer();
+		}
+
+		pdfStamper.close();
+		outputStream.close();
+		pdfReader.close();
+
+		return outputStream.toByteArray();
 	}
 
 	private void setWriterPDFA(@Nonnull PdfStamper stamper) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
