@@ -9,10 +9,6 @@
         color: white;
     }
 
-    .mainQuestion {
-        font-weight: bold;
-    }
-
     .viewTitle {
         hr.header {
             margin-bottom: 5rem;
@@ -23,12 +19,6 @@
 
     }
 
-    .subTitle {
-        font-size: 1.8rem;
-        &.subTitleBold {
-            .ebeguBold();
-        }
-    }
     .inlineHint {
         .ebeguItalic();
         font-size: 1.4rem;
@@ -106,6 +96,9 @@
     .noMarginY {
         margin-top: 0;
         margin-bottom: 0;
+    }
+    .noMargin{
+        margin:0;
     }
 
     .marginTop05 {
@@ -239,8 +232,18 @@
         border-bottom-color: @danger;
     }
 
-    .required span:after {
-        content: " *";
+    .required:after {
+        content: "\00a0*";
+        display: inline;
+    }
+    h1.required span:after {
+        content: "\00a0*";
+    }
+    h1.required:after {
+        content: "";
+    }
+    .md-required:after{
+        content: "\00a0*"!important;
     }
 
 }

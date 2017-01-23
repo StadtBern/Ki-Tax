@@ -21,7 +21,7 @@
                                 <input id="bezeichnung" type="text" name="bezeichnung"
                                        ng-model="vm.model.erwerbspensumJA.bezeichnung"
                                        dv-max-length class="form-control" ng-required="false"
-                                       ng-disabled="vm.erwerbspensumDisabled()">
+                                       ng-disabled="vm.erwerbspensumDisabled()" placeholder="z.B. Arbeitgeber">
                                 <dv-bisher gs="vm.model.erwerbspensumGS.bezeichnung"
                                            ja="vm.model.erwerbspensumJA.bezeichnung"></dv-bisher>
                                 <dv-error-messages for="vm.form.bezeichnung.$error"></dv-error-messages>
@@ -119,7 +119,7 @@
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
                                 </md-checkbox>
-                                <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate:'{maxzuschlag: vm.maxZuschlagsprozent}' "></dv-tooltip>
+                                <dv-tooltip text="vm.getZuschlagHelpText()"></dv-tooltip>
                                 <dv-bisher gs="vm.model.erwerbspensumGS.zuschlagZuErwerbspensum"
                                            ja="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
                                            specific-bisher-text="vm.getTextZuschlagErwerbspensumKorrekturJA()"></dv-bisher>

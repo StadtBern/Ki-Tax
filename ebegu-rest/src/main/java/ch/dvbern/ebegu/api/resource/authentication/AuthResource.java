@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -66,6 +67,9 @@ public class AuthResource {
 
 	@Inject
 	private UsernameRoleChecker usernameRoleChecker;
+
+	@Inject
+	private EbeguConfiguration configuration;
 
 
 	@Path("/singleSignOn")
@@ -147,46 +151,52 @@ public class AuthResource {
 	@Path("/login")
 	@PermitAll
 	public Response login(@Nonnull JaxAuthLoginElement loginElement) {
+		if (configuration.isDummyLoginEnabled()) {
 
-		// zuerst im Container einloggen, sonst schlaegt in den Entities die Mandanten-Validierung fehl
-		if (!usernameRoleChecker.checkLogin(loginElement.getUsername(), loginElement.getPassword())) {
-			return Response.status(Response.Status.UNAUTHORIZED).build();
+			// zuerst im Container einloggen, sonst schlaegt in den Entities die Mandanten-Validierung fehl
+			if (!usernameRoleChecker.checkLogin(loginElement.getUsername(), loginElement.getPassword())) {
+				return Response.status(Response.Status.UNAUTHORIZED).build();
+			}
+			//wir machen kein rollenmapping sondern versuchen direkt in enum zu transformieren
+			String roleString = usernameRoleChecker.getSingleRole(loginElement.getUsername());
+			UserRole validRole = UserRole.valueOf(roleString);
+
+			AuthLoginElement login = new AuthLoginElement(loginElement.getUsername(), loginElement.getPassword(),
+				loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), validRole);
+
+			// Der Benutzer wird gesucht. Wenn er noch nicht existiert wird er erstellt und wenn ja dann aktualisiert
+			Benutzer benutzer = new Benutzer();
+			Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(loginElement.getUsername());
+			if (optBenutzer.isPresent()) {
+				benutzer = optBenutzer.get();
+			}
+			benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer));
+
+			Optional<AuthAccessElement> accessElement = authService.login(login);
+			if (!accessElement.isPresent()) {
+				return Response.status(Response.Status.UNAUTHORIZED).build();
+			}
+			AuthAccessElement access = accessElement.get();
+			JaxAuthAccessElement element = converter.authAccessElementToJax(access);
+
+			boolean cookieSecure = isCookieSecure();
+
+			// Cookie to store auth_token, HTTP-Only Cookie --> Protection from XSS
+			NewCookie authCookie = new NewCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, access.getAuthToken(),
+				COOKIE_PATH, COOKIE_DOMAIN, "authentication", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, true);
+			// Readable Cookie for XSRF Protection (the Cookie can only be read from our Domain)
+			NewCookie xsrfCookie = new NewCookie(AuthDataUtil.COOKIE_XSRF_TOKEN, access.getXsrfToken(),
+				COOKIE_PATH, COOKIE_DOMAIN, "XSRF", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
+			// Readable Cookie storing user data
+			NewCookie principalCookie = new NewCookie(AuthDataUtil.COOKIE_PRINCIPAL, encodeAuthAccessElement(element),
+				COOKIE_PATH, COOKIE_DOMAIN, "principal", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
+
+			return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
+		} else {
+			LOG.warn("Dummy Login is disabled, returning 410");
+			return Response.status(Response.Status.GONE).build();
 		}
-		//wir machen kein rollenmapping sondern versuchen direkt in enum zu transformieren
-		String roleString = usernameRoleChecker.getSingleRole(loginElement.getUsername());
-		UserRole validRole = UserRole.valueOf(roleString);
 
-		AuthLoginElement login = new AuthLoginElement(loginElement.getUsername(), loginElement.getPassword(),
-			loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), validRole);
-
-		// Der Benutzer wird gesucht. Wenn er noch nicht existiert wird er erstellt und wenn ja dann aktualisiert
-		Benutzer benutzer = new Benutzer();
-		Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(loginElement.getUsername());
-		if (optBenutzer.isPresent()) {
-			benutzer = optBenutzer.get();
-		}
-		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer));
-
-		Optional<AuthAccessElement> accessElement = authService.login(login);
-		if (!accessElement.isPresent()) {
-			return Response.status(Response.Status.UNAUTHORIZED).build();
-		}
-		AuthAccessElement access = accessElement.get();
-		JaxAuthAccessElement element = converter.authAccessElementToJax(access);
-
-		boolean cookieSecure = isCookieSecure();
-
-		// Cookie to store auth_token, HTTP-Only Cookie --> Protection from XSS
-		NewCookie authCookie = new NewCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, access.getAuthToken(),
-			COOKIE_PATH, COOKIE_DOMAIN, "authentication", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, true);
-		// Readable Cookie for XSRF Protection (the Cookie can only be read from our Domain)
-		NewCookie xsrfCookie = new NewCookie(AuthDataUtil.COOKIE_XSRF_TOKEN, access.getXsrfToken(),
-			COOKIE_PATH, COOKIE_DOMAIN, "XSRF", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
-		// Readable Cookie storing user data
-		NewCookie principalCookie = new NewCookie(AuthDataUtil.COOKIE_PRINCIPAL, encodeAuthAccessElement(element),
-			COOKIE_PATH, COOKIE_DOMAIN, "principal", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
-
-		return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
 	}
 
 	/**

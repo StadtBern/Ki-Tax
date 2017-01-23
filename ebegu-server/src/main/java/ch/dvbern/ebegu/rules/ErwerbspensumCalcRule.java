@@ -19,8 +19,12 @@ import java.util.Objects;
  */
 public class ErwerbspensumCalcRule extends AbstractCalcRule {
 
-	public ErwerbspensumCalcRule(DateRange validityPeriod) {
+	private int maxZuschlagValue;
+
+
+	public ErwerbspensumCalcRule(DateRange validityPeriod, int maxZuschlagValue) {
 		super(RuleKey.ERWERBSPENSUM, RuleType.GRUNDREGEL_CALC, validityPeriod);
+		this.maxZuschlagValue = maxZuschlagValue;
 	}
 
 	@Override
@@ -32,29 +36,77 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 			int erwerbspensumOffset = hasSecondGesuchsteller ? 100 : 0;
 			// Erwerbspensum ist immer die erste Rule, d.h. es wird das Erwerbspensum mal als Anspruch angenommen
 			// Das Erwerbspensum muss PRO GESUCHSTELLER auf 100% limitiert werden
-			Integer erwerbspensum1 = verfuegungZeitabschnitt.getErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getErwerbspensumGS1() : 0;
-			if (erwerbspensum1 > 100) {
-				erwerbspensum1 = 100;
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_GS1_MSG);
-			}
+			Integer erwerbspensum1 = calculateErwerbspensumGS1(verfuegungZeitabschnitt);
 			Integer erwerbspensum2 = 0;
 			if (hasSecondGesuchsteller) {
-				erwerbspensum2 = verfuegungZeitabschnitt.getErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getErwerbspensumGS2() : 0;
-				if (erwerbspensum2 > 100) {
-					erwerbspensum2 = 100;
-					verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_GS2_MSG);
-				}
+				erwerbspensum2 = calculateErwerbspensumGS2(verfuegungZeitabschnitt);
 			}
-			int anspruch = erwerbspensum1 + erwerbspensum2 - erwerbspensumOffset;
-			if (anspruch <= 0) {
-				anspruch = 0;
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_ANSPRUCH);
-				verfuegungZeitabschnitt.setKategorieKeinPensum(true);
-			}
-			// Der Anspruch wird immer auf 10-er Schritten gerundet.
-			int roundedAnspruch = MathUtil.roundIntToTens(anspruch);
+			int totalZuschlag = calculateTotalZuschlag(verfuegungZeitabschnitt);
+
+			int anspruch = erwerbspensum1 + erwerbspensum2 + totalZuschlag - erwerbspensumOffset;
+			int roundedAnspruch = checkAndRoundAnspruch(verfuegungZeitabschnitt, anspruch);
+
 			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(roundedAnspruch);
 		}
+	}
+
+	/**
+	 * Sollte der Anspruch weniger als 0 sein, wird dieser auf 0 gesetzt und eine Bemerkung eingefuegt.
+	 * Wenn der Anspruch groesser als 100 ist, wird dieser auf 100 gesetzt. Hier braucht es keine Bemerkung, denn sie
+	 * wurde bereits in calculateErwerbspensum eingefuegt.
+	 * Am Ende wird der Wert gerundet und zurueckgegeben
+	 */
+	private int checkAndRoundAnspruch(@Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt, int anspruch) {
+		if (anspruch <= 0) {
+            anspruch = 0;
+            verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_ANSPRUCH);
+            verfuegungZeitabschnitt.setKategorieKeinPensum(true);
+        }
+        else if (anspruch > 100) { // das Ergebniss darf nie mehr als 100 sein
+            anspruch = 100;
+        }
+		// Der Anspruch wird immer auf 10-er Schritten gerundet.
+		return MathUtil.roundIntToTens(anspruch);
+	}
+
+	@Nonnull
+	private Integer calculateErwerbspensumGS1(@Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		Integer erwerbspensum = verfuegungZeitabschnitt.getErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getErwerbspensumGS1() : 0;
+		return calculateErwerbspensum(verfuegungZeitabschnitt, erwerbspensum, MsgKey.ERWERBSPENSUM_GS1_MSG);
+	}
+
+	@Nonnull
+	private Integer calculateErwerbspensumGS2(@Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		Integer erwerbspensum = verfuegungZeitabschnitt.getErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getErwerbspensumGS2() : 0;
+		return calculateErwerbspensum(verfuegungZeitabschnitt, erwerbspensum, MsgKey.ERWERBSPENSUM_GS2_MSG);
+	}
+
+	@Nonnull
+	private Integer calculateErwerbspensum(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Integer erwerbspensum, MsgKey bemerkung) {
+		if (erwerbspensum > 100) {
+			if (erwerbspensum > 100) {
+				erwerbspensum = 100;
+			}
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, bemerkung);
+		}
+		return erwerbspensum;
+	}
+
+	/**
+	 * Nimmt alle Zuschlag-Werte von der Abschnitt und addiert sie. Das Ergebniss darf den macimalen
+	 * Wert nicht ueberschreiten, der als EbeguParam definiert wurde. Sollte dieser ueberschritten werden,
+	 * wird dieser mavimale Wert zurueckgegeben und ein passendes Kommentar eingefuegt.
+	 */
+	private int calculateTotalZuschlag(VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		int result = verfuegungZeitabschnitt.getZuschlagErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getZuschlagErwerbspensumGS1() : 0;
+		if (verfuegungZeitabschnitt.isHasSecondGesuchsteller()) {
+			result += verfuegungZeitabschnitt.getZuschlagErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getZuschlagErwerbspensumGS2() : 0;
+		}
+		if (result > maxZuschlagValue) {
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_MAX_ZUSCHLAG, maxZuschlagValue);
+			result = maxZuschlagValue;
+		}
+		return result;
 	}
 
 	private boolean hasSecondGSForZeit(@Nonnull Betreuung betreuung, @Nonnull DateRange gueltigkeit) {

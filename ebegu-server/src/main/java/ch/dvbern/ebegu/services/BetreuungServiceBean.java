@@ -5,6 +5,8 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
@@ -37,6 +39,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	private InstitutionService institutionService;
 	@Inject
 	private Authorizer authorizer;
+	@Inject
+	private MailService mailService;
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
@@ -46,7 +50,6 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit) {
 		Objects.requireNonNull(betreuung);
-
 		final Betreuung mergedBetreuung = persistence.merge(betreuung);
 
 		//jetzt noch wizard step updaten
@@ -57,6 +60,41 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		}
 
 		return mergedBetreuung;
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION})
+	public Betreuung betreuungPlatzAbweisen(@Valid @Nonnull Betreuung betreuung) {
+		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
+		try {
+			if (betreuung.extractGesuch().getEingangsart().isOnlineGesuch()) {
+				// Bei Ablehnung einer Betreuung muss eine E-Mail geschickt werden
+				mailService.sendInfoBetreuungAbgelehnt(persistedBetreuung);
+			}
+		} catch (MailException e) {
+			LOG.error("Mail InfoBetreuungAbgelehnt konnte nicht verschickt werden fuer Betreuung " + betreuung.getId(), e);
+			throw new EbeguRuntimeException("betreuungPlatzAbweisen", ErrorCodeEnum.ERROR_MAIL, e);
+		}
+		return persistedBetreuung;
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION})
+	public Betreuung betreuungPlatzBestaetigen(@Valid @Nonnull Betreuung betreuung) {
+		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
+		try {
+			Gesuch gesuch = betreuung.extractGesuch();
+			if (gesuch.getEingangsart().isOnlineGesuch() && gesuch.areAllBetreuungenBestaetigt()) {
+				// Sobald alle Betreuungen bestaetigt sind, eine Mail schreiben
+				mailService.sendInfoBetreuungenBestaetigt(gesuch);
+			}
+		} catch (MailException e) {
+			LOG.error("Mail InfoBetreuungenBestaetigt konnte nicht verschickt werden fuer Betreuung " + betreuung.getId(), e);
+			throw new EbeguRuntimeException("betreuungPlatzBestaetigen", ErrorCodeEnum.ERROR_MAIL, e);
+		}
+		return persistedBetreuung;
 	}
 
 	@Override

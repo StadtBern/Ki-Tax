@@ -33,6 +33,7 @@
 			<url-pattern>/api/v1/auth/logout</url-pattern>
 			<url-pattern>/api/v1/auth/singleSignOn</url-pattern>
 			<url-pattern>/api/v1/auth/singleLogout</url-pattern>
+			<url-pattern>/api/v1/application-properties/public/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 

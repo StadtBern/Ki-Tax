@@ -31,6 +31,13 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_OPENIDM_USER = "ebegu.openidm.user";
 	private static final String EBEGU_OPENIDM_PASSWD = "ebegu.openidm.passwd";
 	private static final String EBEGU_OPENIDM_ENABLED = "ebegu.openidm.enabled";
+	private static final String EBEGU_MAIL_DISABLED = "ebegu.mail.disabled";
+	private static final String EBEGU_MAIL_SMTP_FROM = "ebegu.mail.smtp.from";
+	private static final String EBEGU_MAIL_SMTP_HOST = "ebegu.mail.smtp.host";
+	private static final String EBEGU_MAIL_SMTP_PORT = "ebegu.mail.smtp.port";
+	private static final String EBEGU_HOSTNAME = "ebegu.hostname";
+	private static final String EBEGU_DUMMY_LOGIN_ENABLED = "ebegu.dummy.login.enabled";
+	public static final String EBEGU_SUPERUSER_MAIL = "ebegu.superuser.mail";
 
 	public EbeguConfigurationImpl() {
 
@@ -76,4 +83,38 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 		return getBoolean(EBEGU_OPENIDM_ENABLED, false);
 	}
 
+	@Override
+	public boolean isSendingOfMailsDisabled() {
+		return getBoolean(EBEGU_MAIL_DISABLED, getIsDevmode());
+	}
+
+	@Override
+	public String getSMTPHost() {
+		return getString(EBEGU_MAIL_SMTP_HOST, null);
+	}
+
+	@Override
+	public int getSMTPPort() {
+		return getInt(EBEGU_MAIL_SMTP_PORT, 25);
+	}
+
+	@Override
+	public String getSenderAddress() {
+		return getString(EBEGU_MAIL_SMTP_FROM, null);
+	}
+
+	@Override
+	public String getHostname() {
+		return getString(EBEGU_HOSTNAME, null);
+	}
+
+	@Override
+	public boolean isDummyLoginEnabled() {
+		return getBoolean(EBEGU_DUMMY_LOGIN_ENABLED, false);
+	}
+
+	@Override
+	public String getEmailOfSuperUser() {
+		return getString(EBEGU_SUPERUSER_MAIL, null);
+	}
 }

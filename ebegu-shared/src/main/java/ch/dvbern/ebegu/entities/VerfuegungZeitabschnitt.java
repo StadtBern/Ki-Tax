@@ -46,6 +46,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	private Integer erwerbspensumGS2 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
 	@Transient
+	private Integer zuschlagErwerbspensumGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
+
+	@Transient
+	private Integer zuschlagErwerbspensumGS2 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
+
+	@Transient
 	private int fachstellenpensum;
 
 	@Transient
@@ -155,6 +161,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.setGueltigkeit(new DateRange(toCopy.getGueltigkeit()));
 		this.erwerbspensumGS1 = toCopy.erwerbspensumGS1;
 		this.erwerbspensumGS2 = toCopy.erwerbspensumGS2;
+		this.zuschlagErwerbspensumGS1 = toCopy.zuschlagErwerbspensumGS1;
+		this.zuschlagErwerbspensumGS2 = toCopy.zuschlagErwerbspensumGS2;
 		this.fachstellenpensum = toCopy.fachstellenpensum;
 		this.zuSpaetEingereicht = toCopy.zuSpaetEingereicht;
 		this.wohnsitzNichtInGemeindeGS1 = toCopy.wohnsitzNichtInGemeindeGS1;
@@ -206,6 +214,22 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	public void setErwerbspensumGS2(Integer erwerbspensumGS2) {
 		this.erwerbspensumGS2 = erwerbspensumGS2;
+	}
+
+	public Integer getZuschlagErwerbspensumGS1() {
+		return zuschlagErwerbspensumGS1;
+	}
+
+	public void setZuschlagErwerbspensumGS1(Integer zuschlagErwerbspensumGS1) {
+		this.zuschlagErwerbspensumGS1 = zuschlagErwerbspensumGS1;
+	}
+
+	public Integer getZuschlagErwerbspensumGS2() {
+		return zuschlagErwerbspensumGS2;
+	}
+
+	public void setZuschlagErwerbspensumGS2(Integer zuschlagErwerbspensumGS2) {
+		this.zuschlagErwerbspensumGS2 = zuschlagErwerbspensumGS2;
 	}
 
 	public int getBetreuungspensum() {
@@ -470,6 +494,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 				(other.getErwerbspensumGS2() != null ? other.getErwerbspensumGS2() : 0));
 		}
 
+		this.setZuschlagErwerbspensumGS1((this.getZuschlagErwerbspensumGS1() != null ? this.getZuschlagErwerbspensumGS1() : 0)
+			+ (other.getZuschlagErwerbspensumGS1() != null ? other.getZuschlagErwerbspensumGS1() : 0) );
+		this.setZuschlagErwerbspensumGS2((this.getZuschlagErwerbspensumGS2() != null ? this.getZuschlagErwerbspensumGS2() : 0)
+			+ (other.getZuschlagErwerbspensumGS2() != null ? other.getZuschlagErwerbspensumGS2() : 0) );
+
 		this.setMassgebendesEinkommenVorAbzugFamgr(MathUtil.DEFAULT.add(this.getMassgebendesEinkommenVorAbzFamgr(), other.getMassgebendesEinkommenVorAbzFamgr()));
 
 		this.addBemerkung(other.getBemerkungen());
@@ -589,6 +618,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		sb.append("[").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
 			.append(" EP GS1: ").append(erwerbspensumGS1).append("\t")
 			.append(" EP GS2: ").append(erwerbspensumGS2).append("\t")
+			.append(" EP-Zuschlag GS1: ").append(zuschlagErwerbspensumGS1).append("\t")
+			.append(" EP-Zuschlag GS2: ").append(zuschlagErwerbspensumGS2).append("\t")
 			.append(" BetrPensum: ").append(betreuungspensum).append("\t")
 			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
 			.append(" BG-Pensum: ").append(getBgPensum()).append("\t")
@@ -620,6 +651,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		}
 		return isSameErwerbspensum(this.erwerbspensumGS1, that.erwerbspensumGS1) &&
 			isSameErwerbspensum(this.erwerbspensumGS2, that.erwerbspensumGS2) &&
+			Objects.equals(zuschlagErwerbspensumGS1, that.zuschlagErwerbspensumGS1) &&
+			Objects.equals(zuschlagErwerbspensumGS2, that.zuschlagErwerbspensumGS2) &&
 			betreuungspensum == that.betreuungspensum &&
 			fachstellenpensum == that.fachstellenpensum &&
 			anspruchspensumRest == that.anspruchspensumRest &&

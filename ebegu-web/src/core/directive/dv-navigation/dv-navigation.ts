@@ -32,6 +32,7 @@ export class DVNavigation implements IDirective {
         dvNextDisabled: '&?',
         dvSubStep: '<',
         dvSave: '&?',
+        dvSavingPossible: '<?',
         dvTranslateNext: '@'
     };
     controller = NavigatorController;
@@ -55,14 +56,26 @@ export class NavigatorController {
     dvSave: () => any;
     dvCancel: () => any;
     dvNextDisabled: () => any;
+    dvSavingPossible: boolean;
     dvSubStep: number;
     dvTranslateNext: string;
+    isRequestInProgress: boolean = false; // this semaphore will prevent a navigation button to be called again until the prozess is not finished
+
+    performSave: boolean;
 
     static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', '$translate', 'ErrorService', '$q'];
     /* @ngInject */
     constructor(private wizardStepManager: WizardStepManager, private state: IStateService, private gesuchModelManager: GesuchModelManager,
                 private $translate: ITranslateService, private errorService: ErrorService, private $q: IQService) {
     }
+
+    //wird von angular aufgerufen
+    $onInit() {
+        //initial nach aktuell eingeloggtem filtern
+        this.dvSavingPossible = this.dvSavingPossible || false;
+
+    }
+
 
     public doesCancelExist(): boolean {
         return this.dvCancel !== undefined && this.dvCancel !== null;
@@ -110,15 +123,33 @@ export class NavigatorController {
      * wird dann direkt zum naechsten Step geleitet.
      */
     public nextStep(): void {
-        if (!this.gesuchModelManager.isGesuchReadonly() && this.dvSave) {
-            let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
-            if (returnValue !== undefined) {
-                this.$q.when(returnValue).then(() => {
-                    this.navigateToNextStep();
-                });
+        if (!this.isRequestInProgress) { //do nothing if we are already saving
+            this.isRequestInProgress = true;
+            if (this.isSavingEnabled() && this.dvSave) {
+                let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
+                if (returnValue !== undefined) {
+                    this.$q.when(returnValue).then(() => {
+                        this.navigateToNextStep();
+                    }).finally(() => {
+                        this.isRequestInProgress = false;
+                    });
+                } else {
+                    this.isRequestInProgress = false;
+                }
+            } else {
+                this.isRequestInProgress = false;
+                this.navigateToNextStep();
             }
         } else {
-            this.navigateToNextStep();
+            console.log('doubleclick suppressed'); //for testing
+        }
+    }
+
+    private isSavingEnabled(): boolean {
+        if (this.dvSavingPossible) {
+            return true;
+        } else {
+            return !this.gesuchModelManager.isGesuchReadonly();
         }
     }
 
@@ -128,15 +159,22 @@ export class NavigatorController {
      * wird dann direkt zum vorherigen Step geleitet.
      */
     public previousStep(): void {
-        if (!this.gesuchModelManager.isGesuchReadonly() && this.dvSave) {
-            let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
-            if (returnValue !== undefined) {
-                this.$q.when(returnValue).then(() => {
-                    this.navigateToPreviousStep();
-                });
+        if (!this.isRequestInProgress) { //do nothing if we are already saving
+            if (this.isSavingEnabled() && this.dvSave) {
+                let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
+                if (returnValue !== undefined) {
+                    this.$q.when(returnValue).then(() => {
+                        this.navigateToPreviousStep();
+                    }).finally(() => {
+                        this.isRequestInProgress = false;
+                    });
+                } else {
+                    this.isRequestInProgress = false;
+                }
+            } else {
+                this.isRequestInProgress = false;
+                this.navigateToPreviousStep();
             }
-        } else {
-            this.navigateToPreviousStep();
         }
     }
 
