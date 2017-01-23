@@ -181,13 +181,11 @@ public class GeneratePDFDocumentHelper {
 			pdfData.beginLayer(layer);
 
 			PdfGState graphicsState = new PdfGState();
-			graphicsState.setFillOpacity(0.2F);
 			pdfData.setGState(graphicsState);
 			pdfData.beginText();
 
-			//TODO: Natalie soll uns ein passendes PNG machen
 			Image watermarkImage = Image.getInstance(ByteStreams.toByteArray(
-				this.getClass().getResourceAsStream("/vorlagen/entwurfWasserzeichen.png")));
+				GeneratePDFDocumentHelper.class.getResourceAsStream("/vorlagen/entwurfWasserzeichen.png")));
 
 			float width = pageRectangle.getWidth();
 			float height = pageRectangle.getHeight();

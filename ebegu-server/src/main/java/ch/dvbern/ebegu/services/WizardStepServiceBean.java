@@ -8,6 +8,8 @@ import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
@@ -31,6 +33,8 @@ import static ch.dvbern.ebegu.enums.UserRole.*;
 @Local(WizardStepService.class)
 @PermitAll
 public class WizardStepServiceBean extends AbstractBaseService implements WizardStepService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(WizardStepServiceBean.class);
 
 	@Inject
 	private Persistence<WizardStep> persistence;
@@ -260,7 +264,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					try {
 						generatedDokumentService.getBegleitschreibenDokument(wizardStep.getGesuch(), true);
 					} catch (MimeTypeParseException | MergeDocException e) {
-						e.printStackTrace();
+						LOG.error("Error updating Deckblatt Dokument", e);
 					}
 
 					antragStatusHistoryService.saveStatusChange(wizardStep.getGesuch());

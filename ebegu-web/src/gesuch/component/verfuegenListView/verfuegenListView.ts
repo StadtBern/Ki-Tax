@@ -174,9 +174,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-
-            // TODO: Check if not all Schulamt and has verfügte Dokumente
-
             return isAnyStatusOfVerfuegt(status) && !this.gesuchModelManager.areThereOnlySchulamtAngebote() && !this.gesuchModelManager.areThereOnlyGeschlossenOhneVerfuegung();
         }
         return !this.gesuchModelManager.areThereOnlySchulamtAngebote() && !this.gesuchModelManager.areThereOnlyGeschlossenOhneVerfuegung();

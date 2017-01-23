@@ -364,7 +364,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.MAHNUNG;
 
-			Optional<Mahnung> vorgaengerMahnung = Optional.empty();
+			Optional<Mahnung> vorgaengerMahnung;
 
 			if (mahnung.hasVorgaenger()) {
 				vorgaengerMahnung = mahnungService.findMahnung(mahnung.getVorgaengerId());
