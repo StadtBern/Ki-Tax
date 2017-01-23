@@ -29,7 +29,9 @@ ${templateConfiguration.mailCss}
 		bearbeitet werden.
 	</p>
 	<p>
-		Freundliche Grüsse  <br/>
+		Freundliche Grüsse
+    </p>
+    <p>
         Jugendamt, Stadt Bern
 	</p>
 	<p>

@@ -34,6 +34,12 @@ export class ApplicationPropertyRS {
         });
     }
 
+    getBackgroundColor(): IPromise<TSApplicationProperty> {
+        return this.http.get(this.serviceURL + '/public/background').then((response) => {
+            return this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty, response.data)
+        });
+    }
+
     create(name: string, value: string): IHttpPromise<any> {
         return this.http.post(this.serviceURL + '/' + encodeURIComponent(name), value, {
             headers: {

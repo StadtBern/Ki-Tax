@@ -80,6 +80,18 @@ public class ApplicationPropertyResource {
 		return Response.ok(ebeguConfiguration.isDummyLoginEnabled()).build();
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Returns background Color for the current System", response = String.class)
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/public/background")
+	public JaxApplicationProperties getBackgroundColor(@Context HttpServletResponse response) {
+		Optional<ApplicationProperty> propertyFromDB = this.applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.BACKGROUND_COLOR);
+		ApplicationProperty prop = propertyFromDB.orElse(new ApplicationProperty(ApplicationPropertyKey.BACKGROUND_COLOR, "#FFFFFF"));
+		return converter.applicationPropertyToJAX(prop);
+	}
+
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
