@@ -59,15 +59,6 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
         this.initViewModel();
 
-        if ($scope) {
-            $scope.$watch(() => {
-                return this.model.familiensituationJA.aenderungPer;
-            }, (newValue, oldValue) => {
-                if ((newValue !== oldValue) && (!newValue)) {
-                    this.resetFamsit();
-                }
-            });
-        }
     }
 
     private initViewModel(): void {
@@ -202,5 +193,11 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     public showError(): boolean {
         return this.hasError() && this.savedClicked;
+    }
+
+    public onDatumBlur(): void {
+        if (this.hasEmptyAenderungPer()) {
+            this.resetFamsit();
+        }
     }
 }

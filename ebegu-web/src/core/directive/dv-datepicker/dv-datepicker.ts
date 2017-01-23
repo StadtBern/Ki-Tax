@@ -12,7 +12,8 @@ export class DVDatepicker implements IDirective {
         inputId: '@',
         ngRequired: '<',
         placeholder: '@',
-        ngDisabled: '<'
+        ngDisabled: '<',
+        dvOnBlur: '&?'
     };
     controller = DatepickerController;
     controllerAs = 'vm';
@@ -32,6 +33,7 @@ export class DatepickerController {
     dateRequired: boolean;
     ngRequired: boolean;
     placeholder: string;
+    dvOnBlur: () => void;
     static allowedFormats: string[] = ['D.M.YYYY', 'DD.MM.YYYY'];
     static defaultFormat: string = 'DD.MM.YYYY';
 
@@ -80,6 +82,9 @@ export class DatepickerController {
     }
 
     onBlur() {
+        if (this.dvOnBlur) { // userdefined onBlur event
+            this.dvOnBlur();
+        }
         this.ngModelCtrl.$setTouched();
     }
 
