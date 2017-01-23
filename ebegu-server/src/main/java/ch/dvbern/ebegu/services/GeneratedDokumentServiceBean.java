@@ -225,7 +225,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			authorizer.checkReadAuthorizationFinSit(gesuch);
 
-			if (!gesuch.getStatus().inBearbeitung()) {
+			if (!gesuch.getStatus().inBearbeitung() && !forceCreation) {
 				LOG.error(GeneratedDokumentTyp.FREIGABEQUITTUNG.name() + " für Gesuch " + gesuch.getAntragNummer() + " nicht gefunden.");
 			}
 

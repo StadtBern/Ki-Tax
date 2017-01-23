@@ -915,7 +915,7 @@ CREATE TABLE generated_dokument_aud (
   filesize           VARCHAR(255),
   typ                VARCHAR(255),
   gesuch_id          VARCHAR(36),
-  write_protected    BIT          NOT NULL,
+  write_protected    BIT,
   PRIMARY KEY (id, rev)
 );
 
