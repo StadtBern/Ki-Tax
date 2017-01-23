@@ -269,8 +269,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
 				setWizardStepOkOrMutiert(wizardStep);
-			}
-			else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+			} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
 				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
 				&& !wizardStep.getVerfuegbar()
 				&& !WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
@@ -369,6 +368,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						wizardStep.setVerfuegbar(false);
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 					}
+					//kann man effektiv sagen dass bei nur einem GS niemals Rote Schritte FinanzielleSituation und EVK gibt
 				} else if (!newEntity.hasSecondGesuchsteller() && wizardStep.getGesuch().getGesuchsteller1() != null) { // nur 1 GS
 					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName()) && wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
 						wizardStep.setWizardStepStatus(WizardStepStatus.OK);
