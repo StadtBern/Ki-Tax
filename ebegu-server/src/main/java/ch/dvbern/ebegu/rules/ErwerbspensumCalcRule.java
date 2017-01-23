@@ -67,7 +67,7 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 	}
 
 	/**
-	 * pfueft dass Erwerbspensumg + Zuschlag fuer den GS2  100% nicht uebschreitet. Zudem darf der Zuschlag
+	 * pfueft dass Erwerbspensum + Zuschlag fuer den GS2  100% nicht uebschreitet. Zudem darf der Zuschlag
 	 * von Gesuchsteller2 plus der Zuschlag von Gesuchsteler1 den maximale zugelassenen Wert nicht ueberschreiten.
 	 * @param erwerbspensum2 erwerbspensum von GS2
 	 * @param zuschlagGS1 bereits verbrauchter zuschlag von GS1 (ist immer kleiner gleich 'maxvalue')
