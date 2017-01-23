@@ -113,8 +113,8 @@ export class DVAntragListController {
         this.onRemove({antrag: antragToRemove});
     }
 
-    editClicked(antragToEdit: any) {
-        this.onEdit({antrag: antragToEdit});
+    editClicked(antragToEdit: any, event: any) {
+        this.onEdit({antrag: antragToEdit, event: event});
     }
 
     addClicked() {
