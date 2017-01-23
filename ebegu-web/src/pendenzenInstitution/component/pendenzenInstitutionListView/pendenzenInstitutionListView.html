@@ -63,7 +63,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-click="vm.editPendenzInstitution(row)">
+                        ng-click="vm.editPendenzInstitution(row, $event)">
 
                         <td ng-bind="row.betreuungsNummer"></td>
                         <td ng-bind="row.name"></td>
