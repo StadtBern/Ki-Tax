@@ -67,8 +67,8 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 	}
 
 	/**
-	 * pfueft dass das Erwerbspensumg + zuschlag fuer den GS2 nicht 100 prozent uebschreitet. Zudem darf der Zuschlag
-	 * von Gesuchsteller2 plus der Zuschlag von Gesuchsteler1 den maximalen Wert nicht ueberschreiten.
+	 * pfueft dass Erwerbspensumg + Zuschlag fuer den GS2  100% nicht uebschreitet. Zudem darf der Zuschlag
+	 * von Gesuchsteller2 plus der Zuschlag von Gesuchsteler1 den maximale zugelassenen Wert nicht ueberschreiten.
 	 * @param erwerbspensum2 erwerbspensum von GS2
 	 * @param zuschlagGS1 bereits verbrauchter zuschlag von GS1 (ist immer kleiner gleich 'maxvalue')
 	 * @param verfuegungZeitabschnitt verfuegungsabschnitt aus dem der zuschlag vom GS2 extrahiert wird
@@ -76,20 +76,17 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 	 */
 	private Integer calculateZuschlagGS2(Integer erwerbspensum2, Integer zuschlagGS1, VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Integer zuschlag2 = verfuegungZeitabschnitt.getZuschlagErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getZuschlagErwerbspensumGS2() : 0;
-		int internalMaxZuschlag = 0;
+		int maximalerZuschlagGS2 = zuschlag2;
 		if ((erwerbspensum2 + zuschlag2) > 100) {
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_ZUSCHLAG_GS2_MSG);
-			internalMaxZuschlag = 100 - erwerbspensum2;
-		} else {
-			internalMaxZuschlag = zuschlag2;
-
+			maximalerZuschlagGS2 = 100 - erwerbspensum2;
 		}
-		//wenn gs1 schon einen zuschlag beansprucht darf hier nur noch der rest vergeben werden
-		if (zuschlagGS1 + internalMaxZuschlag > maxZuschlagValue) {
+		//wenn gs1 schon einen Uuschlag beansprucht, darf hier nur noch der Rest vergeben werden
+		if (zuschlagGS1 + maximalerZuschlagGS2 > maxZuschlagValue) {
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_MAX_ZUSCHLAG, maxZuschlagValue);
-			internalMaxZuschlag = maxZuschlagValue - zuschlagGS1;
+			maximalerZuschlagGS2 = maxZuschlagValue - zuschlagGS1;
 		}
-		return internalMaxZuschlag;
+		return maximalerZuschlagGS2;
 	}
 
 	/**
