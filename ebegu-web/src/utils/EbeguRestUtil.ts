@@ -58,6 +58,7 @@ import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../models/TSAdresseContainer';
 import TSEinkommensverschlechterungInfoContainer from '../models/TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
+import TSMitteilung from '../models/TSMitteilung';
 
 
 export default class EbeguRestUtil {
@@ -1821,5 +1822,47 @@ export default class EbeguRestUtil {
             return adresseContainerTS;
         }
         return undefined;
+    }
+
+    public parseMitteilung(tsMitteilung: TSMitteilung, mitteilungFromServer: any): TSMitteilung {
+        if (mitteilungFromServer) {
+            this.parseAbstractEntity(tsMitteilung, mitteilungFromServer);
+            tsMitteilung.fall = this.parseFall(new TSFall(), mitteilungFromServer.fall);
+            tsMitteilung.senderTyp = mitteilungFromServer.senderTyp;
+            tsMitteilung.empfaengerTyp = mitteilungFromServer.empfaengerTyp;
+            tsMitteilung.sender = this.parseUser(new TSUser(), mitteilungFromServer.sender);
+            tsMitteilung.empfaenger = this.parseUser(new TSUser(), mitteilungFromServer.empfaenger);
+            tsMitteilung.subject = mitteilungFromServer.subject;
+            tsMitteilung.message = mitteilungFromServer.message;
+            tsMitteilung.mitteilungStatus = mitteilungFromServer.mitteilungStatus;
+            return tsMitteilung;
+        }
+        return undefined;
+    }
+
+    public mitteilungToRestObject(restMitteilung: any, tsMitteilung: TSMitteilung): any {
+        if (tsMitteilung) {
+            this.abstractEntityToRestObject(restMitteilung, tsMitteilung);
+            restMitteilung.fall = this.fallToRestObject({}, tsMitteilung.fall);
+            restMitteilung.senderTyp = tsMitteilung.senderTyp;
+            restMitteilung.empfaengerTyp = tsMitteilung.empfaengerTyp;
+            restMitteilung.sender = this.userToRestObject({}, tsMitteilung.sender);
+            restMitteilung.empfaenger = this.userToRestObject({}, tsMitteilung.empfaenger);
+            restMitteilung.subject = tsMitteilung.subject;
+            restMitteilung.message = tsMitteilung.message;
+            restMitteilung.mitteilungStatus = tsMitteilung.mitteilungStatus;
+            return restMitteilung;
+        }
+        return undefined;
+    }
+
+    public parseMitteilungen(mitteilungen: any): Array<TSMitteilung> {
+        let mitteilungenList: Array<TSMitteilung> = [];
+        if (mitteilungen) {
+            for (let i = 0; i < mitteilungen.length; i++) {
+                mitteilungenList.push(this.parseMitteilung(new TSMitteilung(), mitteilungen[i]));
+            }
+        }
+        return mitteilungenList;
     }
 }
