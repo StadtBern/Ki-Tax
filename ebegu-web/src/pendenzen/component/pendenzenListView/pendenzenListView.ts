@@ -125,11 +125,15 @@ export class PendenzenListViewController {
     public editPendenzJA(pendenz: TSAntragDTO, event: any): void {
         if (pendenz) {
             let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
+            let navObj: any = {
+                createNew: false,
+                gesuchId: pendenz.antragId
+            };
             if (isCtrlKeyPressed) {
-                let url = this.$state.href('gesuch.fallcreation', {createNew: false, gesuchId: pendenz.antragId});
+                let url = this.$state.href('gesuch.fallcreation', navObj);
                 window.open(url, '_blank');
             } else {
-                this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: pendenz.antragId});
+                this.$state.go('gesuch.fallcreation', navObj);
             }
         }
     }
