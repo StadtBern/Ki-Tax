@@ -86,7 +86,7 @@
                 <!--Spaltendefinitionen-->
                 <tbody>
                 <tr ng-repeat="row in vm.displayedCollection" st-select-row="row" st-select-mode="single"
-                    ng-click="vm.editClicked(row)">
+                    ng-click="vm.editClicked(row, $event)">
                     <td class="ellipsis" ellipsis-tooltip="{{vm.addZerosToFallnummer(row.fallNummer)}}"
                         ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.familienName}}" ng-bind="row.familienName"></td>
