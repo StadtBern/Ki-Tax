@@ -89,17 +89,18 @@ export class PendenzenInstitutionListViewController {
         return gesuchsperiode.gesuchsperiodeString;
     }
 
-    public editPendenzInstitution(pendenz: TSPendenzInstitution): void {
+    public editPendenzInstitution(pendenz: TSPendenzInstitution, event: any): void {
         if (pendenz) {
             this.gesuchModelManager.openGesuch(pendenz.gesuchId).then(() => {
-                this.openBetreuung(pendenz);
+                let isCtrlKeyPressed : boolean =(event && event.ctrlKey);
+                this.openBetreuung(pendenz, isCtrlKeyPressed);
             });
         }
     }
 
     //TODO (team) Hier wird mit findBetreuungById die Kind-Id auf dem GMM gespeichert, spaeter soll diese als
     // Parameter in die URL kommen. Dann kann in editPendenzInstitution() das openGesuch() entfernt werden
-    private openBetreuung(pendenz: TSPendenzInstitution): void {
+    private openBetreuung(pendenz: TSPendenzInstitution, isCtrlKeyPressed: boolean): void {
         if (this.gesuchModelManager.getGesuch() && pendenz) {
             let kindNumber: number = this.gesuchModelManager.findKindById(pendenz.kindId);
             let betreuungNumber: number = this.gesuchModelManager.findBetreuungById(pendenz.betreuungsId);
@@ -108,12 +109,17 @@ export class PendenzenInstitutionListViewController {
 
                 // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
                 this.gesuchModelManager.clearGesuch();
-
-                this.$state.go('gesuch.betreuung', {
+                let navObj: any = {
                     betreuungNumber: betreuungNumber,
                     kindNumber: kindNumber,
                     gesuchId: pendenz.gesuchId
-                });
+                };
+                if (isCtrlKeyPressed) {
+                    let url = this.$state.href('gesuch.betreuung', navObj);
+                    window.open(url, '_blank');
+                } else {
+                    this.$state.go('gesuch.betreuung', navObj);
+                }
             }
         }
     }

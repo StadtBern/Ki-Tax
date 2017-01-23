@@ -7,17 +7,20 @@ import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 import TSUser from '../models/TSUser';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import ErrorService from './errors/service/ErrorService';
+import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
+import TSApplicationProperty from '../models/TSApplicationProperty';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
 import ILocationService = angular.ILocationService;
 import ILogService = angular.ILogService;
+import IInjectorService = angular.auto.IInjectorService;
 
-appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$rootScope', 'hotkeys',
+appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$injector', '$rootScope', 'hotkeys',
     '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log' , 'ErrorService'];
 
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
-                       mandantRS: MandantRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
+                       mandantRS: MandantRS, $injector: IInjectorService, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
                        authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService,
                        $log: ILogService, errorService: ErrorService) {
     // navigationLogger.toggle();
@@ -85,6 +88,16 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         console.log('logged in from cookie');
     }
 
+    if (ENV !== 'test') {
+        //Hintergrundfarbe anpassen (testsystem kann zB andere Farbe haben)
+        let applicationPropertyRS = $injector.get('ApplicationPropertyRS');
+        applicationPropertyRS.getBackgroundColor().then((prop: TSApplicationProperty) => {
+            if (prop && prop.value !== '#FFFFFF') {
+                angular.element('#Intro').css('background-color', prop.value);
+                angular.element('.user-menu').find('button').first().css('background', prop.value);
+            }
+        });
+    }
 
     // Wir meochten eigentlich ueberall mit einem hotkey das formular submitten koennen
     //https://github.com/chieffancypants/angular-hotkeys#angular-hotkeys-

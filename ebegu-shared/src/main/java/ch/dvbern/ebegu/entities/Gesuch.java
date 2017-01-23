@@ -415,7 +415,8 @@ public class Gesuch extends AbstractEntity {
 		List<Betreuung> betreuungs = extractAllBetreuungen();
 		for (Betreuung betreuung : betreuungs) {
 			if (Betreuungsstatus.AUSSTEHEND.equals(betreuung.getBetreuungsstatus()) ||
-				Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
+				Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus()) ||
+				Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
 				return false;
 			}
 		}

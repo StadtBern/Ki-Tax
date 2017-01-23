@@ -94,11 +94,9 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
-                if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && !this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
-                }
-                if (this.gesuchModelManager.getGesuchstellerNumber() === 2) {
-                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                if ((this.gesuchModelManager.getGesuchstellerNumber() === 1 && !this.gesuchModelManager.isGesuchsteller2Required())
+                    || this.gesuchModelManager.getGesuchstellerNumber() === 2) {
+                    this.updateGSDependentWizardSteps();
                 }
 
                 return this.$q.when(this.model);
@@ -117,6 +115,19 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             return this.gesuchModelManager.updateGesuchsteller(false);
         }
         return undefined;
+    }
+
+    /**
+     * Aktualisiert alle Steps die Abhaengigkeiten mit dem Status von GS haben.
+     */
+    private updateGSDependentWizardSteps() {
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK); // GESUCHSTELLER
+        if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.NOK)) {
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.OK);
+        }
+        if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, TSWizardStepStatus.NOK)) {
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, TSWizardStepStatus.OK);
+        }
     }
 
     public getModel(): TSGesuchstellerContainer {
