@@ -221,14 +221,18 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getAntragNummer());
 
-		GeneratedDokument persistedDokument = getGeneratedDokument(gesuch, GeneratedDokumentTyp.FREIGABEQUITTUNG, fileNameForGeneratedDokumentTyp);
+		GeneratedDokument persistedDokument = null;
+
+		if (!forceCreation) {
+			persistedDokument = getGeneratedDokument(gesuch, GeneratedDokumentTyp.FREIGABEQUITTUNG, fileNameForGeneratedDokumentTyp);
+		}
 
 		if (persistedDokument == null || forceCreation) {
 
 			authorizer.checkReadAuthorizationFinSit(gesuch);
 
-			if (!gesuch.getStatus().inBearbeitung() && persistedDokument == null) {
-				LOG.warn(GeneratedDokumentTyp.FREIGABEQUITTUNG.name() + " für Gesuch " + gesuch.getAntragNummer() + " nicht gefunden.");
+			if (!gesuch.getStatus().inBearbeitung()) {
+				LOG.error(GeneratedDokumentTyp.FREIGABEQUITTUNG.name() + " für Gesuch " + gesuch.getAntragNummer() + " nicht gefunden.");
 			}
 
 			gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
