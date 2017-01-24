@@ -120,7 +120,7 @@ public class ErwerbspensumRuleTest {
 		Assert.assertNotNull(noBemerkungAbschn);
 		Assert.assertEquals(1, noBemerkungAbschn.size());
 		Assert.assertEquals(100, noBemerkungAbschn.get(0).getAnspruchberechtigtesPensum());
-		Assert.assertTrue(noBemerkungAbschn.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller1"));
+		Assert.assertTrue(noBemerkungAbschn.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller 1"));
 	}
 
 	@Test
@@ -324,8 +324,8 @@ public class ErwerbspensumRuleTest {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum GS 1"));
-		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller1"));
-		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller2"));
+		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller 1"));
+		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller 2"));
 	}
 
 	@Test
@@ -340,8 +340,8 @@ public class ErwerbspensumRuleTest {
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(90, result.get(0).getAnspruchberechtigtesPensum());
-		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller1"));
-		Assert.assertFalse(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller2"));
+		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller 1"));
+		Assert.assertFalse(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller 2"));
 		Assert.assertTrue(result.get(0).getBemerkungen().contains("Der Zuschlag zum Erwerbspensum wurde auf den maximalen Wert "));
 	}
 
