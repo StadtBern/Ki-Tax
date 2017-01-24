@@ -33,9 +33,6 @@ public class TestfaelleResource {
 	@Inject
 	private SchulungService schulungService;
 
-	@Inject
-	private JaxBConverter converter;
-
 	@GET
 	@Path("/testfall/{fallid}/{betreuungenBestaetigt}/{verfuegen}")
 	@Consumes(MediaType.WILDCARD)
