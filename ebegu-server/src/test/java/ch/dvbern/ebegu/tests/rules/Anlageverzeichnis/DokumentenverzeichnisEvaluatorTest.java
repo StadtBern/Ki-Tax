@@ -490,7 +490,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN_JAHR, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 
 
 		//Test wenn Steuererklärung nicht ausgefüllt ist
@@ -508,7 +508,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_VERMOEGEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_SCHULDEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN_JAHR, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 	}
 
 	@Test
