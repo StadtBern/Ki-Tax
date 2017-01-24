@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.MitteilungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -16,14 +17,11 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import javax.security.auth.login.LoginException;
-
-import ch.dvbern.lib.cdipersistence.Persistence;
-
 import java.util.Collection;
 import java.util.Optional;
 
 /**
- * Tests fuer die Klasse KindService
+ * Tests fuer die Klasse MitteilungService
  */
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
