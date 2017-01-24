@@ -358,6 +358,25 @@
                 <scope>provided</scope>
             </dependency>
 
+            <!-- Hibernate-Search dependencies-->
+            <dependency>
+               <groupId>org.hibernate</groupId>
+               <artifactId>hibernate-search-orm</artifactId>
+               <version>5.5.4.Final</version>
+                <scope>provided</scope>
+            </dependency>
+            <!--<dependency>-->
+                           <!--<groupId>org.hibernate</groupId>-->
+                           <!--<artifactId>hibernate-search-engine</artifactId>-->
+                           <!--<version>${hibernate-search.version}</version>-->
+                       <!--</dependency>-->
+            <!-- Infinispan integration: -->
+            <!--<dependency>-->
+               <!--<groupId>org.infinispan</groupId>-->
+               <!--<artifactId>infinispan-directory-provider</artifactId>-->
+               <!--<version>8.2.4.Final</version>-->
+            <!--</dependency>-->
+
 
         </dependencies>
 

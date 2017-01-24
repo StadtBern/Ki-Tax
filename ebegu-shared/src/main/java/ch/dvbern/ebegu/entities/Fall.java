@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
@@ -24,6 +25,7 @@ import javax.validation.constraints.NotNull;
 		@Index(name = "IX_fall_mandant", columnList = "mandant_id")
 	}
 )
+@Indexed
 public class Fall extends AbstractEntity implements HasMandant{
 
 	private static final long serialVersionUID = -9154456879261811678L;

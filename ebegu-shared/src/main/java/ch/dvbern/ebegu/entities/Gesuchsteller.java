@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
  */
 @Audited
 @Entity
+@Indexed
 public class Gesuchsteller extends AbstractPersonEntity {
 
 	private static final long serialVersionUID = -9032257320578372570L;
