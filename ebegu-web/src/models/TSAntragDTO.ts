@@ -4,7 +4,6 @@ import {TSAntragStatus} from './enums/TSAntragStatus';
 import {TSEingangsart} from './enums/TSEingangsart';
 
 export default class TSAntragDTO {
-
     private _antragId: string;
     private _fallNummer: number;
     private _familienName: string;
@@ -20,13 +19,13 @@ export default class TSAntragDTO {
     private _gesuchsperiodeGueltigAb: moment.Moment;
     private _gesuchsperiodeGueltigBis: moment.Moment;
     private _verfuegt: boolean;
-    private _laufnummer : number;
-    private _gesperrtWegenBeschwerde: boolean;
+    private _beschwerdeHaengig: boolean;
+    private _laufnummer: number;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
-                verfuegt?: boolean, laufnummer?: number, gesperrtWegenBeschwerde?: boolean, besitzerUsername?: string, eingangsart?: TSEingangsart) {
+                verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean) {
 
         this._antragId = antragId;
         this._fallNummer = fallNummer;
@@ -42,9 +41,9 @@ export default class TSAntragDTO {
         this._gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
         this._verfuegt = verfuegt;
         this._laufnummer = laufnummer;
-        this._gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
         this._besitzerUsername = besitzerUsername;
         this._eingangsart = eingangsart;
+        this._beschwerdeHaengig = beschwerdeHaengig;
     }
 
 
@@ -160,14 +159,6 @@ export default class TSAntragDTO {
         this._laufnummer = value;
     }
 
-    get gesperrtWegenBeschwerde(): boolean {
-        return this._gesperrtWegenBeschwerde;
-    }
-
-    set gesperrtWegenBeschwerde(value: boolean) {
-        this._gesperrtWegenBeschwerde = value;
-    }
-
     get gesuchsperiodeString(): string {
         if (this._gesuchsperiodeGueltigAb && this._gesuchsperiodeGueltigBis) {
             return this._gesuchsperiodeGueltigAb.year() + '/'
@@ -195,4 +186,14 @@ export default class TSAntragDTO {
     private hasBesitzer(): boolean {
         return this._besitzerUsername !== undefined && this.besitzerUsername !== null;
     }
+
+    get beschwerdeHaengig(): boolean {
+        return this._beschwerdeHaengig;
+    }
+
+    set beschwerdeHaengig(value: boolean) {
+        this._beschwerdeHaengig = value;
+    }
+
+
 }

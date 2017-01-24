@@ -91,8 +91,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
 
     if (ENV !== 'test') {
         //Hintergrundfarbe anpassen (testsystem kann zB andere Farbe haben)
-        let applicationPropertyRS: ApplicationPropertyRS;
-        applicationPropertyRS = $injector.get<ApplicationPropertyRS>('ApplicationPropertyRS');
+        let applicationPropertyRS = $injector.get<ApplicationPropertyRS>('ApplicationPropertyRS');
         applicationPropertyRS.getBackgroundColor().then((prop: TSApplicationProperty) => {
             if (prop && prop.value !== '#FFFFFF') {
                 angular.element('#Intro').css('background-color', prop.value);

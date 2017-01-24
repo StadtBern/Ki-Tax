@@ -85,8 +85,9 @@ public class KindServiceBeanTest extends AbstractEbeguLoginTest {
 		final List<KindContainer> allKinderFromGesuch = kindService.findAllKinderFromGesuch(gesuch.getId());
 
 		Assert.assertEquals(2, allKinderFromGesuch.size());
-		Assert.assertEquals(persitedKind1, allKinderFromGesuch.get(0));
-		Assert.assertEquals(persitedKind2, allKinderFromGesuch.get(1));
+		Assert.assertTrue(allKinderFromGesuch.contains(persitedKind1));
+		Assert.assertTrue(allKinderFromGesuch.contains(persitedKind2));
+
 	}
 
 

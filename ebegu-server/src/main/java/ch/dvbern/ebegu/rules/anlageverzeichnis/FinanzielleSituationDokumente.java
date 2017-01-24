@@ -52,15 +52,17 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 			gesuch.extractFamiliensituation().getGemeinsameSteuererklaerung() != null &&
 			gesuch.extractFamiliensituation().getGemeinsameSteuererklaerung();
 
+		final int basisJahr = gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear();
+
 		final GesuchstellerContainer gesuchsteller1 = gesuch.getGesuchsteller1();
-		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller1, gemeinsam, 1);
+		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller1, gemeinsam, 1, basisJahr);
 
 		final GesuchstellerContainer gesuchsteller2 = gesuch.getGesuchsteller2();
-		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller2, gemeinsam, 2);
+		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller2, gemeinsam, 2, basisJahr);
 	}
 
 	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, GesuchstellerContainer gesuchsteller,
-												boolean gemeinsam, int gesuchstellerNumber) {
+											  boolean gemeinsam, int gesuchstellerNumber, int basisJahr) {
 
 		if (gesuchsteller == null || gesuchsteller.getFinanzielleSituationContainer() == null) {
 			return;
@@ -70,9 +72,9 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 
 		final FinanzielleSituation finanzielleSituationJA = finanzielleSituationContainer.getFinanzielleSituationJA();
 
-		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.extractFullName(), null, gemeinsam, gesuchstellerNumber, finanzielleSituationJA, DokumentGrundTyp.FINANZIELLESITUATION);
+		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.extractFullName(), basisJahr, gemeinsam, gesuchstellerNumber, finanzielleSituationJA, DokumentGrundTyp.FINANZIELLESITUATION);
 
-		add(getDokument(DokumentTyp.JAHRESLOHNAUSWEISE, finanzielleSituationJA, gesuchsteller.extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.JAHRESLOHNAUSWEISE, finanzielleSituationJA, gesuchsteller.extractFullName(), String.valueOf(basisJahr), DokumentGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
 
 	}
 
@@ -89,14 +91,17 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 	}
 
 	@Override
-	protected boolean isErfolgsrechnungNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation) {
+	protected boolean isErfolgsrechnungNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation, int minus) {
 		if (abstractFinanzielleSituation instanceof FinanzielleSituation) {
 			FinanzielleSituation finanzielleSituation = (FinanzielleSituation) abstractFinanzielleSituation;
-
-			return !finanzielleSituation.getSteuerveranlagungErhalten() &&
-				(finanzielleSituation.getGeschaeftsgewinnBasisjahr() != null
-					|| finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null
-					|| finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null);
+			switch (minus) {
+				case 0:
+					return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahr() != null);
+				case 1:
+					return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null);
+				case 2:
+					return !finanzielleSituation.getSteuerveranlagungErhalten() && (finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null);
+			}
 		}
 		return false;
 	}

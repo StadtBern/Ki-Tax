@@ -32,7 +32,7 @@ import java.util.Set;
  * Notwendig, wenn Schulden > 0
  * <p>
  * Erfolgsrechnungen der letzten drei Jahre (Jahr der Einkommensverschlechterung: x, x-1, x-2)
- * Notwendig, wenn Summe der Erfolgsrechnungen > 0
+ * Notwendig, wenn Erfolgsrechnungen des Jahres nicht null
  * <p>
  * Unterstützungsnachweis / Bestätigung Sozialdienst (Ersatzeinkommen)
  * Notwendig, wenn Nettolohn > 0 => nicht mehr nötig!
@@ -48,14 +48,14 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 
 		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.extractEinkommensverschlechterungInfo();
 
-		final String basisJahrPlus1 = String.valueOf(gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear() + 1);
-		final String basisJahrPlus2 = String.valueOf(gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear() + 2);
+		final int basisJahrPlus1 = gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear() + 1;
+		final int basisJahrPlus2 = gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear().getYear() + 2;
 
 		final GesuchstellerContainer gesuchsteller1 = gesuch.getGesuchsteller1();
 		final GesuchstellerContainer gesuchsteller2 = gesuch.getGesuchsteller2();
 
 		if (einkommensverschlechterungInfo != null) {
-			if (einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus1() || einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus2()) {
+			if (einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus1()) {
 				getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller1, gemeinsam, 1, 1, basisJahrPlus1);
 				getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller2, gemeinsam, 2, 1, basisJahrPlus1);
 			}
@@ -68,7 +68,7 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 	}
 
 	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, GesuchstellerContainer gesuchsteller,
-											  boolean gemeinsam, int gesuchstellerNumber, int basisJahrPlusNumber, String basisJahr) {
+											  boolean gemeinsam, int gesuchstellerNumber, int basisJahrPlusNumber, int basisJahr) {
 
 		if (gesuchsteller == null || gesuchsteller.getEinkommensverschlechterungContainer() == null) {
 			return;
@@ -86,7 +86,7 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 			gesuchstellerNumber, einkommensverschlechterung, DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
 
 		add(getDokument(DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, einkommensverschlechterung, gesuchsteller.extractFullName(),
-			basisJahr, DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG), anlageVerzeichnis);
+			String.valueOf(basisJahr), DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG), anlageVerzeichnis);
 
 	}
 
@@ -112,6 +112,20 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 						einkommensverschlechterung.getNettolohnDez() != null && einkommensverschlechterung.getNettolohnDez().compareTo(BigDecimal.ZERO) > 0 ||
 						einkommensverschlechterung.getNettolohnZus() != null && einkommensverschlechterung.getNettolohnZus().compareTo(BigDecimal.ZERO) > 0
 				);
+		}
+		return false;
+	}
+
+	@Override
+	protected boolean isErfolgsrechnungNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation, int minus) {
+		if (abstractFinanzielleSituation instanceof Einkommensverschlechterung) {
+			Einkommensverschlechterung einkommensverschlechterung = (Einkommensverschlechterung) abstractFinanzielleSituation;
+			switch (minus) {
+				case 0:
+					return !einkommensverschlechterung.getSteuerveranlagungErhalten() && (einkommensverschlechterung.getGeschaeftsgewinnBasisjahr() != null);
+				case 1:
+					return !einkommensverschlechterung.getSteuerveranlagungErhalten() && (einkommensverschlechterung.getGeschaeftsgewinnBasisjahrMinus1() != null);
+			}
 		}
 		return false;
 	}

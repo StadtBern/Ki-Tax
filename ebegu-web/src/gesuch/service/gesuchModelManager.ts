@@ -593,6 +593,7 @@ export default class GesuchModelManager {
         return listResult;
     }
 
+
     public saveBetreuung(betreuungToSave: TSBetreuung, abwesenheit: boolean): IPromise<TSBetreuung> {
         if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
             return this.betreuungRS.betreuungsPlatzAbweisen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
@@ -1025,6 +1026,17 @@ export default class GesuchModelManager {
             return false;
         }
         return this.gesuch.areThereOnlySchulamtAngebote();
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind SCHULAMT.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
+    public areThereOnlyGeschlossenOhneVerfuegung(): boolean {
+        if (!this.gesuch) {
+            return false;
+        }
+        return this.gesuch.areThereOnlyGeschlossenOhneVerfuegung();
     }
 
     /**

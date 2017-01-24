@@ -41,7 +41,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS, $scope: IScope,  private applicationPropertyRS: ApplicationPropertyRS) {
+                private downloadRS: DownloadRS, $scope: IScope, private applicationPropertyRS: ApplicationPropertyRS) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE);
         this.initViewModel();
@@ -60,7 +60,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
                 deleteText: 'CONFIRM_GESUCH_FREIGEBEN_DESCRIPTION'
             }).then(() => {
                 if (this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
-                    return this.openFreigabequittungPDF();
+                    return this.openFreigabequittungPDF(true);
                 } else {
                     return this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
                 }
@@ -97,9 +97,8 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         return false;
     }
 
-
-    public openFreigabequittungPDF(): IPromise<void> {
-        return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false, this.getZustelladresse())
+    public openFreigabequittungPDF(forceCreation: boolean): IPromise<void> {
+        return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation, this.getZustelladresse())
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
                 this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id).then(() => {

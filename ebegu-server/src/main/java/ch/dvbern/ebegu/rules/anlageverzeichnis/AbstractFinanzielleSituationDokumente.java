@@ -14,26 +14,30 @@ import java.util.Set;
 abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<AbstractFinanzielleSituation, Object> {
 
 
-	void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, String fullname, String basisJahr,
+	void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, String fullname, int basisJahr,
 									  boolean gemeinsam, int gesuchstellerNumber, AbstractFinanzielleSituation abstractFinanzielleSituation, DokumentGrundTyp dokumentGrundTyp) {
+
+		final String basisJahrString = String.valueOf(basisJahr);
 
 		if (gemeinsam) {
 			if (gesuchstellerNumber == 1) {
-				add(getDokument(DokumentTyp.STEUERVERANLAGUNG, abstractFinanzielleSituation, null, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
-				add(getDokument(DokumentTyp.STEUERERKLAERUNG, abstractFinanzielleSituation, null, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+				add(getDokument(DokumentTyp.STEUERVERANLAGUNG, abstractFinanzielleSituation, null, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
+				add(getDokument(DokumentTyp.STEUERERKLAERUNG, abstractFinanzielleSituation, null, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
 			}
 		} else {
-			add(getDokument(DokumentTyp.STEUERVERANLAGUNG, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.STEUERERKLAERUNG, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.STEUERVERANLAGUNG, abstractFinanzielleSituation, fullname, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.STEUERERKLAERUNG, abstractFinanzielleSituation, fullname, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
 		}
 
-		add(getDokument(DokumentTyp.NACHWEIS_FAMILIENZULAGEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.NACHWEIS_VERMOEGEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.NACHWEIS_SCHULDEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.ERFOLGSRECHNUNGEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_FAMILIENZULAGEN, abstractFinanzielleSituation, fullname, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, abstractFinanzielleSituation, fullname, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, abstractFinanzielleSituation, fullname, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, abstractFinanzielleSituation, fullname, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_VERMOEGEN, abstractFinanzielleSituation, fullname, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_SCHULDEN, abstractFinanzielleSituation, fullname, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.ERFOLGSRECHNUNGEN_JAHR, abstractFinanzielleSituation, fullname, basisJahrString, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.ERFOLGSRECHNUNGEN_JAHR_MINUS1, abstractFinanzielleSituation, fullname, String.valueOf(basisJahr -1), dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.ERFOLGSRECHNUNGEN_JAHR_MINUS2, abstractFinanzielleSituation, fullname, String.valueOf(basisJahr -2), dokumentGrundTyp), anlageVerzeichnis);
 	}
 
 
@@ -75,8 +79,12 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 						!abstractFinanzielleSituation.getSteuererklaerungAusgefuellt() &&
 						abstractFinanzielleSituation.getSchulden() != null &&
 						abstractFinanzielleSituation.getSchulden().compareTo(BigDecimal.ZERO) > 0;
-				case ERFOLGSRECHNUNGEN:
-					return isErfolgsrechnungNeeded(abstractFinanzielleSituation);
+				case ERFOLGSRECHNUNGEN_JAHR:
+					return isErfolgsrechnungNeeded(abstractFinanzielleSituation, 0);
+				case ERFOLGSRECHNUNGEN_JAHR_MINUS1:
+					return isErfolgsrechnungNeeded(abstractFinanzielleSituation, 1);
+				case ERFOLGSRECHNUNGEN_JAHR_MINUS2:
+					return isErfolgsrechnungNeeded(abstractFinanzielleSituation, 2);
 				default:
 					return false;
 			}
@@ -88,13 +96,7 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 		return false;
 	}
 
-	protected boolean isErfolgsrechnungNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation) {
-		if (abstractFinanzielleSituation != null) {
-			return !abstractFinanzielleSituation.getSteuerveranlagungErhalten() &&
-				abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr() != null;
-		}
-		return false;
-	}
+	protected abstract boolean isErfolgsrechnungNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation, int minus);
 
 	protected boolean isMonatsLohnausweisNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation) {
 		return false;

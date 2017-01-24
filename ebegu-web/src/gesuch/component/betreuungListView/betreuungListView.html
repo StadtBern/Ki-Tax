@@ -80,6 +80,15 @@
 
                 </div>
             </div>
+            <div class="row marginTop20" ng-show="vm.hasBetreuungInStatusWarten()" dv-show-element
+                 dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()">
+                <div class="col-md-12">
+                    <div class="well well-status-warten">
+                        <i class="fa fa-hourglass" aria-hidden="true"></i>
+                        <span data-translate="BETREUUNG_IN_STATUS_WARTEN"></span>
+                    </div>
+                </div>
+            </div>
             <!--Buttons-->
             <dv-navigation dv-previous="true" dv-next="true" dv-sub-step="1">
             </dv-navigation>
