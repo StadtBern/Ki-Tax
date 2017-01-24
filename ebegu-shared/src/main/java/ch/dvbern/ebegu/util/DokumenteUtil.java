@@ -78,8 +78,6 @@ public class DokumenteUtil {
 				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.VERFUEGUNG, identificationNumber);
 			case MAHNUNG:
 				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG, identificationNumber);
-			case MAHNUNG_VORSCHAU:
-				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.MAHNUNG_VORSCHAU, identificationNumber);
 			case NICHTEINTRETEN:
 				return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.NICHTEINTRETEN, identificationNumber);
 			case FREIGABEQUITTUNG:
