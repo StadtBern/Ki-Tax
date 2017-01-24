@@ -3,11 +3,15 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
@@ -30,6 +34,8 @@ import static ch.dvbern.ebegu.enums.UserRole.*;
 @PermitAll
 public class WizardStepServiceBean extends AbstractBaseService implements WizardStepService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(WizardStepServiceBean.class);
+
 	@Inject
 	private Persistence<WizardStep> persistence;
 	@Inject
@@ -48,6 +54,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private Authorizer authorizer;
 	@Inject
 	private PrincipalBean principalBean;
+	@Inject
+	private GeneratedDokumentService generatedDokumentService;
 
 
 	@Override
@@ -253,6 +261,12 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
+					try {
+						generatedDokumentService.getBegleitschreibenDokument(wizardStep.getGesuch(), true);
+					} catch (MimeTypeParseException | MergeDocException e) {
+						LOG.error("Error updating Deckblatt Dokument", e);
+					}
+
 					antragStatusHistoryService.saveStatusChange(wizardStep.getGesuch());
 				}
 			}

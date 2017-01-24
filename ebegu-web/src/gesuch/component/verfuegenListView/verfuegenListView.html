@@ -4,7 +4,7 @@
 
         <div class="row viewTitle">
             <div class="col-md-12">
-                <h1 data-translate="VERFUEGUNGEN_UPPER"></h1>
+                <h1 data-translate="VERFUEGUNGEN"></h1>
                 <hr class="header"/>
             </div>
         </div>
@@ -17,10 +17,10 @@
                                class="table table-hover" st-delay="20">
                             <thead>
                             <tr>
-                                <th data-translate="KIND_UPPER"></th>
-                                <th data-translate="BETREUUNG_UPPER"></th>
-                                <th data-translate="ID_UPPER"></th>
-                                <th data-translate="STATUS_UPPER"></th>
+                                <th data-translate="KIND"></th>
+                                <th data-translate="BETREUUNG"></th>
+                                <th data-translate="ID"></th>
+                                <th data-translate="STATUS"></th>
                             </tr>
                             </thead>
                             <tbody ng-repeat="kindContainer in displayedCollection">
@@ -77,7 +77,7 @@
                 <!-- Liste der bisherige Mahnungen -->
                 <div class="row text-left" ng-if="vm.getMahnungList().length > 0">
                     <div class="col-md-12">
-                        <h1 data-translate="MAHNUNGEN_ZURUECKSTELLUNG"></h1>
+                        <h1 data-translate="MAHNUNGEN"></h1>
                         <hr class="header"/>
                     </div>
                     <div class="col-md-12" ng-repeat="mahn in vm.getMahnungList()">
@@ -87,10 +87,10 @@
                                   data-translate-value-mahnung-typ="{{mahn.mahnungTyp | translate}}"
                                   data-translate-value-date="{{mahn.timestampErstellt | amDateFormat : 'DD.MM.YYYY'}}"
                                   data-translate-value-fristablauf="{{mahn.datumFristablauf | amDateFormat : 'DD.MM.YYYY'}}"></span>
-                            <span ng-if="mahn.timestampBis" data-translate="MAHNUNG_ABGESCHLOSSEN"></span>
-                            <span ng-if="!mahn.timestampBis && !vm.isFristAbgelaufen(mahn)"
+                            <span ng-if="mahn.timestampAbgeschlossen" data-translate="MAHNUNG_ABGESCHLOSSEN"></span>
+                            <span ng-if="!mahn.timestampAbgeschlossen && !vm.isFristAbgelaufen(mahn)"
                                   data-translate="MAHNUNG_OFFEN"></span>
-                            <span ng-if="!mahn.timestampBis && vm.isFristAbgelaufen(mahn)"
+                            <span ng-if="!mahn.timestampAbgeschlossen && vm.isFristAbgelaufen(mahn)"
                                   data-translate="MAHNUNG_NICHT_EINGETRETEN"></span>
                         </button>
                     </div>
@@ -141,7 +141,8 @@
                         <div class="checkbox">
                             <md-checkbox ng-model="vm.getGesuch().hasFSDokument"
                                          name="generateFinanziellenSituation"
-                                         aria-label="{{GENERATE_FINANZIELLEN_SITUATION | translate}}">
+                                         aria-label="{{GENERATE_FINANZIELLEN_SITUATION | translate}}"
+                                         ng-change="vm.fsDokumentChanged()">
                                 <span data-translate="GENERATE_FINANZIELLEN_SITUATION"></span>
                             </md-checkbox>
                         </div>

@@ -92,7 +92,7 @@ export class PendenzenInstitutionListViewController {
     public editPendenzInstitution(pendenz: TSPendenzInstitution, event: any): void {
         if (pendenz) {
             this.gesuchModelManager.openGesuch(pendenz.gesuchId).then(() => {
-                let isCtrlKeyPressed : boolean =(event && event.ctrlKey);
+                let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
                 this.openBetreuung(pendenz, isCtrlKeyPressed);
             });
         }

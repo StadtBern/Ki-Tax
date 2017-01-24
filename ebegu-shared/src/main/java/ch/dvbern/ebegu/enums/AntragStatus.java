@@ -80,7 +80,7 @@ public enum AntragStatus {
     }
 
 	public static Collection<AntragStatus> getAllVerfuegtStates() {
-		return Arrays.asList(VERFUEGT, NUR_SCHULAMT, NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
+		return Arrays.asList(VERFUEGT, NUR_SCHULAMT, NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, BESCHWERDE_HAENGIG);
 	}
 
 	/**
@@ -89,6 +89,14 @@ public enum AntragStatus {
 	 */
 	public boolean isAnyStatusOfVerfuegt() {
 		return getAllVerfuegtStates().contains(this);
+	}
+
+	/**
+	 * Ein verfuegtes Gesuch kann mehrere Status haben. Diese Methode immer anwenden um herauszufinden
+	 * ob ein Gesuch verfuegt ist.
+	 */
+	public boolean isAnyStatusOfVerfuegtOrVefuegen() {
+		return getAllVerfuegtStates().contains(this) || this.equals(VERFUEGEN);
 	}
 
 	public boolean inBearbeitung() { return inBearbeitung.contains(this); }

@@ -36,7 +36,7 @@ export class ApplicationPropertyRS {
 
     getBackgroundColor(): IPromise<TSApplicationProperty> {
         return this.http.get(this.serviceURL + '/public/background').then((response) => {
-            return this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty, response.data)
+            return this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty, response.data);
         });
     }
 
