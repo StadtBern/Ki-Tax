@@ -56,8 +56,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
     public getKinderWithBetreuungList(): Array<TSKindContainer> {
         return this.gesuchModelManager.getKinderWithBetreuungList();
     }
+
     public hasBetreuungInStatusWarten(): boolean {
-        if(this.gesuchModelManager.getGesuch()){
+        if (this.gesuchModelManager.getGesuch()) {
             return this.gesuchModelManager.getGesuch().hasBetreuungInStatusWarten();
         }
         return false;

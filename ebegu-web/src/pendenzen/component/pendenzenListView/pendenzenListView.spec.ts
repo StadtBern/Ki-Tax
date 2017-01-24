@@ -92,7 +92,7 @@ describe('pendenzenListView', function () {
                 let tsGesuch = new TSGesuch();
                 spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));
 
-                pendenzListViewController.editPendenzJA(mockPendenz); //pendenz wird eidtiert
+                pendenzListViewController.editPendenzJA(mockPendenz, undefined); //pendenz wird eidtiert
                 $scope.$apply();
 
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
