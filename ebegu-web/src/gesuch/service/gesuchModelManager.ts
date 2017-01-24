@@ -593,6 +593,7 @@ export default class GesuchModelManager {
         return listResult;
     }
 
+
     public saveBetreuung(betreuungToSave: TSBetreuung, abwesenheit: boolean): IPromise<TSBetreuung> {
         if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
             return this.betreuungRS.betreuungsPlatzAbweisen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
