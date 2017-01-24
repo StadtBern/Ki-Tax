@@ -62,7 +62,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Nonnull
 	@Override
-	public byte[] generateNichteintreten(Betreuung betreuung) throws MergeDocException {
+	public byte[] generateNichteintreten(Betreuung betreuung, boolean writeProtected) throws MergeDocException {
 
 		EbeguVorlageKey vorlageKey;
 
@@ -86,7 +86,8 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
 			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				ByteStreams.toByteArray(is), new NichteintretenPrintMergeSource(new NichteintretenPrintImpl(betreuung)));
+				ByteStreams.toByteArray(is), new NichteintretenPrintMergeSource(new NichteintretenPrintImpl(betreuung)),
+				writeProtected);
 			is.close();
 			return bytes;
 		} catch (IOException e) {
@@ -98,7 +99,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Nonnull
 	@Override
-	public byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) throws MergeDocException {
+	public byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung, boolean writeProtected) throws MergeDocException {
 
 		EbeguVorlageKey vorlageKey;
 
@@ -120,7 +121,8 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageKey);
 			Objects.requireNonNull(is, "Vorlage '" + vorlageKey.name() + "' nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				ByteStreams.toByteArray(is), new MahnungPrintMergeSource(new MahnungPrintImpl(mahnung, vorgaengerMahnung)));
+				ByteStreams.toByteArray(is), new MahnungPrintMergeSource(new MahnungPrintImpl(mahnung, vorgaengerMahnung)),
+				writeProtected);
 			is.close();
 			return bytes;
 		} catch (IOException e) {
@@ -132,7 +134,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Override
 	@Nonnull
-	public byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustellAdresse) throws MergeDocException {
+	public byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustellAdresse, boolean writeProtected) throws MergeDocException {
 
 		EbeguVorlageKey vorlageKey = EbeguVorlageKey.VORLAGE_FREIGABEQUITTUNG;
 
@@ -145,7 +147,8 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 			final List<DokumentGrund> dokumentGrundsMerged = calculateListOfDokumentGrunds(gesuch);
 
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				ByteStreams.toByteArray(is), new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, zustellAdresse, dokumentGrundsMerged)));
+				ByteStreams.toByteArray(is), new FreigabequittungPrintMergeSource(new FreigabequittungPrintImpl(gesuch, zustellAdresse, dokumentGrundsMerged)),
+				writeProtected);
 			is.close();
 			return bytes;
 		} catch (IOException e) {
@@ -156,7 +159,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Override
 	@Nonnull
-	public byte[] generateBegleitschreiben(@Nonnull Gesuch gesuch) throws MergeDocException {
+	public byte[] generateBegleitschreiben(@Nonnull Gesuch gesuch, boolean writeProtected) throws MergeDocException {
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 		authorizer.checkReadAuthorization(gesuch);
 
@@ -166,7 +169,8 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_BEGLEITSCHREIBEN);
 			Objects.requireNonNull(is, "Vorlage fuer Begleitschreiben nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				ByteStreams.toByteArray(is), new BegleitschreibenPrintMergeSource(new BegleitschreibenPrintImpl(gesuch)));
+				ByteStreams.toByteArray(is), new BegleitschreibenPrintMergeSource(new BegleitschreibenPrintImpl(gesuch)),
+				writeProtected);
 			is.close();
 			return bytes;
 		} catch (IOException e) {
@@ -177,7 +181,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Nonnull
 	@Override
-	public byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung) throws MergeDocException {
+	public byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung, boolean writeProtected) throws MergeDocException {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
@@ -189,7 +193,9 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_FINANZIELLE_SITUATION);
 			Objects.requireNonNull(is, "Vorlage fuer Berechnungsgrundlagen nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				ByteStreams.toByteArray(is), new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung)));
+				ByteStreams.toByteArray(is), new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung)),
+				writeProtected);
+
 			is.close();
 			return bytes;
 		} catch (IOException e) {
@@ -200,7 +206,7 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 
 	@Nonnull
 	@Override
-	public byte[] generateVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) throws MergeDocException {
+	public byte[] generateVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum, boolean writeProtected) throws MergeDocException {
 
 		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
 		EbeguVorlageKey vorlageFromBetreuungsangebottyp = getVorlageFromBetreuungsangebottyp(betreuung);
@@ -209,7 +215,8 @@ public class PDFServiceBean extends AbstractPrintService implements PDFService {
 		authorizer.checkReadAuthorization(betreuung);
 		try {
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-				ByteStreams.toByteArray(is), new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung, letzteVerfuegungDatum)));
+				ByteStreams.toByteArray(is), new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung, letzteVerfuegungDatum)),
+				writeProtected);
 			is.close();
 			return bytes;
 		} catch (IOException e) {

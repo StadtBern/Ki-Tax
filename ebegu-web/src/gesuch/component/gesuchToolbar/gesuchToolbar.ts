@@ -317,19 +317,19 @@ export class GesuchToolbarController {
 
     public antragMutierenPossible(): void {
         if (this.antragList && this.antragList.length !== 0) {
-            let gesuchInBearbeitungVorhanden = false;
+            let mutierenGesperrt = false;
             for (let i = 0; i < this.antragList.length; i++) {
                 let antragItem: TSAntragDTO = this.antragList[i];
                 // Wir muessen nur die Antraege der aktuell ausgewaehlten Gesuchsperiode beachten
                 if (antragItem.gesuchsperiodeString === this.getCurrentGesuchsperiode()) {
-                    // Falls wir ein Gesuch finden das nicht verfuegt ist, darf nicht mutiert werden
-                    if (antragItem.verfuegt === false) {
-                        gesuchInBearbeitungVorhanden = true;
+                    // Falls wir ein Gesuch finden das nicht verfuegt ist oder eine Beschwerde hängig ist, darf nicht mutiert werden
+                    if (antragItem.verfuegt === false || antragItem.beschwerdeHaengig === true) {
+                        mutierenGesperrt = true;
                         break;
                     }
                 }
             }
-            this.mutierenPossibleForCurrentAntrag = !gesuchInBearbeitungVorhanden;
+            this.mutierenPossibleForCurrentAntrag = !mutierenGesperrt;
         } else {
             this.mutierenPossibleForCurrentAntrag = false;
         }

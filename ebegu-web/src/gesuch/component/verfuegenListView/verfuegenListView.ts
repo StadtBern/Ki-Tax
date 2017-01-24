@@ -174,9 +174,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
         if (isGesuchsteller) {
             let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-            return isAnyStatusOfVerfuegt(status);
+            return isAnyStatusOfVerfuegt(status) && !this.gesuchModelManager.areThereOnlySchulamtAngebote() && !this.gesuchModelManager.areThereOnlyGeschlossenOhneVerfuegung();
         }
-        return true;
+        return !this.gesuchModelManager.areThereOnlySchulamtAngebote() && !this.gesuchModelManager.areThereOnlyGeschlossenOhneVerfuegung();
     }
 
     public getFall() {
@@ -205,9 +205,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'CONFIRM_GESUCH_STATUS_GEPRUEFT',
             deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
         }).then(() => {
-            return this.createNeededPDFs().then(() => {
-                return this.setGesuchStatus(TSAntragStatus.GEPRUEFT);
-            });
+            return this.setGesuchStatus(TSAntragStatus.GEPRUEFT);
         });
     }
 
@@ -220,12 +218,12 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: deleteTextValue
         }).then(() => {
-            return this.createNeededPDFs().then(() => {
-                this.gesuchModelManager.getGesuch().status = newStatus;
-                return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
-                    return this.refreshKinderListe().then(() => {
-                        this.form.$dirty = false;
-                        this.form.$pristine = true; // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
+
+            this.gesuchModelManager.getGesuch().status = newStatus;
+            return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
+                return this.refreshKinderListe().then(() => {
+                    return this.createNeededPDFs(true).then(() => {
                         return this.gesuchModelManager.getGesuch();
                     });
                 });
@@ -302,20 +300,24 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             this.mahnungRS.saveMahnung(this.mahnung).then((mahnungResponse: TSMahnung) => {
                 this.setGesuchStatus(this.tempAntragStatus).then(any => {
                     this.mahnungList.push(mahnungResponse);
-                    this.tempAntragStatus = undefined;
-                    this.mahnung = undefined;
+
+                    this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnungResponse, true).then((response: any) => {
+                        this.tempAntragStatus = undefined;
+                        this.mahnung = undefined;
+                    });
                 });
             });
         }
     }
 
-    private createMahnung(typ: TSMahnungTyp): void {
-        this.mahnungRS.getInitialeBemerkungen(this.getGesuch()).then(generatedBemerkungen => {
+    private createMahnung(typ: TSMahnungTyp): IPromise<any> {
+        return this.mahnungRS.getInitialeBemerkungen(this.getGesuch()).then(generatedBemerkungen => {
             this.mahnung = new TSMahnung();
             this.mahnung.mahnungTyp = typ;
             this.mahnung.gesuch = this.getGesuch();
             this.mahnung.timestampAbgeschlossen = null;
             this.mahnung.bemerkungen = generatedBemerkungen.data;
+            return;
         });
     }
 
@@ -362,11 +364,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
             && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
             && !this.isGesuchReadonly();
-            // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
+        // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
 
     public openFinanzielleSituationPDF(): void {
-        this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FINANZIELLE_SITUATION, false)
+        this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
@@ -374,7 +376,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public openBegleitschreibenPDF(): void {
-        this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.BEGLEITSCHREIBEN, false)
+        this.downloadRS.getBegleitschreibenDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
@@ -392,14 +394,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             });
     }
 
-    private createNeededPDFs(): IPromise<TSDownloadFile> {
-       return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.BEGLEITSCHREIBEN, true)
-            .then(() => {
-                if (this.getGesuch().hasFSDokument) {
-                    return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FINANZIELLE_SITUATION, true);
-                }
-                return;
-            });
+    private createNeededPDFs(forceCreation: boolean): IPromise<TSDownloadFile> {
+        if (this.getGesuch().hasFSDokument) {
+            return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
+        }
+        return;
     }
 
     public showBeschwerdeHaengig(): boolean {
@@ -435,5 +434,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 return this.gesuchModelManager.getGesuch();
             });
         });
+    }
+
+    public fsDokumentChanged(): void{
+        // dirty checker wird hier ausgeschaltet. Aenderungen des fs flag wird automatisch gespeichert wenn gesuch auf geprüft gesetzt wird
+        // Aus performance Gründen wird hier daruf verzichtet das Gesuch neu zu persisten, nur weil das Flag ändert.
+        this.form.$setPristine();
     }
 }

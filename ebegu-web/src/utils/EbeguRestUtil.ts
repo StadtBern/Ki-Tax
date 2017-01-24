@@ -1279,8 +1279,8 @@ export default class EbeguRestUtil {
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
+        restPendenz.beschwerdeHaengig = pendenz.beschwerdeHaengig;
         restPendenz.laufnummer = pendenz.laufnummer;
-        restPendenz.gesperrtWegenBeschwerde = pendenz.gesperrtWegenBeschwerde;
         restPendenz.eingangsart = pendenz.eingangsart;
         restPendenz.besitzerUsername = pendenz.besitzerUsername;
         return restPendenz;
@@ -1300,8 +1300,8 @@ export default class EbeguRestUtil {
         antragTS.verantwortlicher = antragFromServer.verantwortlicher;
         antragTS.status = antragFromServer.status;
         antragTS.verfuegt = antragFromServer.verfuegt;
+        antragTS.beschwerdeHaengig = antragFromServer.beschwerdeHaengig;
         antragTS.laufnummer = antragFromServer.laufnummer;
-        antragTS.gesperrtWegenBeschwerde = antragFromServer.gesperrtWegenBeschwerde;
         antragTS.eingangsart = antragFromServer.eingangsart;
         antragTS.besitzerUsername = antragFromServer.besitzerUsername;
         return antragTS;
