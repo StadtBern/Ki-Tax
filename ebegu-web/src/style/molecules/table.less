@@ -67,8 +67,14 @@ td, th {
             color: @contrast-darkest;
         }
         &.disabled-row, &.disabled-row:hover {
-            background: transparent;
-            cursor: text;
+            &:focus {
+                outline: none;
+            }
+            background: @contrast;
+            cursor: default;
+            & > td {
+                border-color: @contrast-dark;
+            }
         }
     }
 }
@@ -76,7 +82,6 @@ td, th {
 table, .table > tbody, .table > thead, .table > thead:first-child {
     & > tr {
         & > td {
-            max-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -100,7 +105,6 @@ table, .table > tbody, .table > thead, .table > thead:first-child {
         }
 
         & > th, & > th:empty {
-            max-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
