@@ -268,7 +268,6 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private void updateAllStatusForGesuchsteller(List<WizardStep> wizardSteps) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
-
 				setWizardStepOkOrMutiert(wizardStep);
 			} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
 				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
@@ -358,7 +357,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) { // vermeide, dass der Status eines unbesuchten Steps geaendert wird
 				if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
 					setWizardStepOkOrMutiert(wizardStep);
-				} else if (EbeguUtil.fromOneGSToTwoGS(oldEntity, newEntity)) {
+				} else if (EbeguUtil.fromOneGSToTwoGS(oldEntity, newEntity) && wizardStep.getGesuch().getGesuchsteller2() == null) {
 
 					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
@@ -368,6 +367,17 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
 						wizardStep.setVerfuegbar(false);
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+					}
+					//kann man effektiv sagen dass bei nur einem GS niemals Rote Schritte FinanzielleSituation und EVK gibt
+				} else if (!newEntity.hasSecondGesuchsteller() && wizardStep.getGesuch().getGesuchsteller1() != null) { // nur 1 GS
+					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName()) && wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
+						wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+
+					} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
+						&& wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
+						wizardStep.setVerfuegbar(true);
+						wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 					}
 				}
 			}

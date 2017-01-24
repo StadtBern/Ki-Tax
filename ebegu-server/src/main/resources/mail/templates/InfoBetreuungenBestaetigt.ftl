@@ -27,7 +27,9 @@ ${templateConfiguration.mailCss}
         <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/freigabe/${gesuch.id}">hier</a>
         freigegeben werden.
     <p>
-        Freundliche Grüsse  <br/>
+        Freundliche Grüsse
+    </p>
+    <p>
         Jugendamt, Stadt Bern
     </p>
     <p>

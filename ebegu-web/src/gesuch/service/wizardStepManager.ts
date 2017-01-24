@@ -125,7 +125,7 @@ export default class WizardStepManager {
      * @param newStepStatus
      * @returns {any}
      */
-    private updateWizardStepStatus(stepName: TSWizardStepName, newStepStatus: TSWizardStepStatus): IPromise<void> {
+    public updateWizardStepStatus(stepName: TSWizardStepName, newStepStatus: TSWizardStepStatus): IPromise<void> {
         let step: TSWizardStep = this.getStepByName(stepName);
         step.verfuegbar = true;
         if (this.needNewStatusSave(step.wizardStepStatus, newStepStatus)) { // nur wenn der Status sich geaendert hat updaten und steps laden

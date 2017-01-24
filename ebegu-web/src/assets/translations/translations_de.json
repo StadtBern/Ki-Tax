@@ -852,5 +852,6 @@
     "GESUCH_ERSTELLEN": "",
     "GESPERRT_WEGEN_BESCHWERDE": "gesperrt wegen Beschwerde",
     "FILE_ZU_GROSS": "Datei zu gross. Maximale Dateigrösse ist 10MB",
-    "ANTRAG_NOCH_KEINE": "Es wurde noch kein Betreuungsgutschein beantragt"
+    "ANTRAG_NOCH_KEINE": "Es wurde noch kein Betreuungsgutschein beantragt",
+    "BETREUUNG_IN_STATUS_WARTEN" : "Die Platzbestätigung ist bei der Institution hängig. Sie werden per E-Mail benachrichtigt, sobald diese eingetroffen ist."
 }

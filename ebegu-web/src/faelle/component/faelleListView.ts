@@ -7,7 +7,7 @@ import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import {TSAntragStatus, isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
@@ -65,19 +65,21 @@ export class FaelleListViewController {
      * Fuer Benutzer mit der Rolle SACHBEARBEITER_INSTITUTION oder SACHBEARBEITER_TRAEGERSCHAFT oeffnet es das Gesuch mit beschraenkten Daten
      * Fuer anderen Benutzer wird das Gesuch mit allen Daten geoeffnet
      * @param antrag
+     * @param event optinally this function can check if ctrl was clicked when opeing
      */
-    public editFall(antrag: TSAntragDTO): void {
+    public editFall(antrag: TSAntragDTO, event: any): void {
         if (antrag) {
+            let isCtrlKeyPressed : boolean =(event && event.ctrlKey);
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
                 // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
                 this.gesuchModelManager.clearGesuch();
                 if (isAnyStatusOfVerfuegt(antrag.status)) {
-                    this.openGesuch(antrag.antragId, 'gesuch.verfuegen');
+                    this.openGesuch(antrag.antragId, 'gesuch.verfuegen', isCtrlKeyPressed);
                 } else {
-                    this.openGesuch(antrag.antragId, 'gesuch.betreuungen');
+                    this.openGesuch(antrag.antragId, 'gesuch.betreuungen', isCtrlKeyPressed);
                 }
             } else {
-                this.openGesuch(antrag.antragId, 'gesuch.fallcreation');
+                this.openGesuch(antrag.antragId, 'gesuch.fallcreation', isCtrlKeyPressed);
             }
         }
     }
@@ -86,11 +88,16 @@ export class FaelleListViewController {
      * Oeffnet das Gesuch und geht zur gegebenen Seite (route)
      * @param antragId
      * @param urlToGoTo
+     * @param isCtrlKeyPressed true if user pressed ctrl when clicking
      */
-    private openGesuch(antragId: string, urlToGoTo: string): void {
+    private openGesuch(antragId: string, urlToGoTo: string, isCtrlKeyPressed: boolean): void {
         if (antragId) {
-            this.$state.go(urlToGoTo, {createNew: false, gesuchId: antragId});
+            if(isCtrlKeyPressed) {
+                let url = this.$state.href(urlToGoTo, {createNew: false, gesuchId: antragId});
+                window.open(url,'_blank');
+            } else{
+                this.$state.go(urlToGoTo, {createNew: false, gesuchId: antragId});
+            }
         }
     }
-
 }

@@ -21,5 +21,10 @@ public enum ApplicationPropertyKey {
 	 */
 	EVALUATOR_DEBUG_ENABLED,
 
+	/**
+	 * Damit wir Test/Produktion leichter unterscheiden koennen kann man die Hintergrundfarbe einstellen
+	 */
+	BACKGROUND_COLOR
+
 
 }
