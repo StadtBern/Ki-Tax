@@ -130,9 +130,11 @@ export class DVAntragListController {
         if (this.onFilterChange && angular.isFunction(this.onFilterChange)) {
             this.onFilterChange({tableState: tableFilterState}).then((result: TSAntragSearchresultDTO) => {
                 // this.pagination.totalItemCount = result.totalResultSize;
-                pagination.totalItemCount = result.totalResultSize;
-                pagination.numberOfPages = Math.ceil(result.totalResultSize / pagination.number);
-                this.displayedCollection = [].concat(result.antragDTOs); //todo homa nachher schnell ohne safe list probieren
+                if (result) {
+                    pagination.totalItemCount = result.totalResultSize;
+                    pagination.numberOfPages = Math.ceil(result.totalResultSize / pagination.number);
+                    this.displayedCollection = [].concat(result.antragDTOs);
+                }
             });
         } else {
             this.$log.info('no callback function spcified for filtering');

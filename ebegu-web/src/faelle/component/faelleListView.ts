@@ -12,6 +12,7 @@ import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
+import IQService = angular.IQService;
 let template = require('./faelleListView.html');
 require('./faelleListView.less');
 
@@ -26,14 +27,16 @@ export class FaelleListViewController {
 
     private antragList: Array<TSAntragDTO>;
     totalResultCount: string = '-';
+    private ignoreRequest: boolean = true; //we want to ignore the first filter request because the default sort triggers always a second one
 
 
     static $inject: string[] = ['$filter', 'GesuchRS', 'GesuchModelManager',
-        'BerechnungsManager', '$state', '$log', 'CONSTANTS', 'AuthServiceRS'];
+        'BerechnungsManager', '$state', '$log', 'CONSTANTS', 'AuthServiceRS', '$q'];
 
     constructor(private $filter: IFilterService, private gesuchRS: GesuchRS,
                 private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
-                private $state: IStateService, private $log: ILogService, private CONSTANTS: any, private authServiceRS: AuthServiceRS) {
+                private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
+                private authServiceRS: AuthServiceRS, private $q: IQService) {
         this.initViewModel();
     }
 
@@ -44,12 +47,20 @@ export class FaelleListViewController {
 
 
     public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
-        this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
-        return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
-            this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : undefined;
-            this.antragList = response.antragDTOs;
-            return response;
-        });
+        if (!this.ignoreRequest) {
+
+            this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
+            return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
+                this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : undefined;
+                this.antragList = response.antragDTOs;
+                return response;
+            });
+        } else {
+            this.ignoreRequest = false;
+            let deferred = this.$q.defer();
+            deferred.resolve(undefined);
+            return deferred.promise;
+        }
     };
 
 

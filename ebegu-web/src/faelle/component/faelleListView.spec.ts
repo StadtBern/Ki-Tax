@@ -57,11 +57,14 @@ describe('faelleListView', function () {
             it('should return the list with found Faellen', function () {
                 mockRestCalls();
                 faelleListViewController = new FaelleListViewController($filter, gesuchRS,
-                    gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS);
+                    gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS, $q);
 
                 faelleListViewController.passFilterToServer({});
                 $scope.$apply();
-                expect(gesuchRS.searchAntraege).toHaveBeenCalled();
+                expect(gesuchRS.searchAntraege).toHaveBeenCalledTimes(0); //erster request wird ignoriert
+                faelleListViewController.passFilterToServer({});
+                expect(gesuchRS.searchAntraege).toHaveBeenCalledTimes(1); //erster request wird ignoriert
+                                $scope.$apply();
 
                 let list: Array<TSAntragDTO> = faelleListViewController.getAntragList();
                 expect(list).toBeDefined();
@@ -112,12 +115,12 @@ describe('faelleListView', function () {
         spyOn($state, 'go');
         spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
         faelleListViewController = new FaelleListViewController($filter, gesuchRS,
-            gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS);
+            gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS, $q);
 
         let tsGesuch = new TSGesuch();
         spyOn(gesuchRS, methodName).and.returnValue($q.when(tsGesuch));
 
-        faelleListViewController.editFall(mockAntrag);
+        faelleListViewController.editFall(mockAntrag, undefined);
         $scope.$apply();
         return tsGesuch;
     }
