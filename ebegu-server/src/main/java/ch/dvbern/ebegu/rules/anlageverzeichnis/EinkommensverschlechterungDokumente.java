@@ -55,7 +55,7 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 		final GesuchstellerContainer gesuchsteller2 = gesuch.getGesuchsteller2();
 
 		if (einkommensverschlechterungInfo != null) {
-			if (einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus1() || einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus2()) {
+			if (einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus1()) {
 				getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller1, gemeinsam, 1, 1, basisJahrPlus1);
 				getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller2, gemeinsam, 2, 1, basisJahrPlus1);
 			}
