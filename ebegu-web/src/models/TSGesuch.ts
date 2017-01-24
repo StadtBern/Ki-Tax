@@ -8,6 +8,7 @@ import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlecht
 import TSFamiliensituationContainer from './TSFamiliensituationContainer';
 import {TSEingangsart} from './enums/TSEingangsart';
 import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
+import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -148,6 +149,18 @@ export default class TSGesuch extends TSAbstractAntragEntity {
             }
         }
         return true;
+    }
+
+    public hasBetreuungInStatusWarten(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.betreuungsstatus === TSBetreuungsstatus.WARTEN) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public extractFamiliensituation(): TSFamiliensituation {

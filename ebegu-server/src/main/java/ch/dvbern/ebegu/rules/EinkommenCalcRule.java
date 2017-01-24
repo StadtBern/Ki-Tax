@@ -32,7 +32,7 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 
 		// Die Finanzdaten berechnen
 		FinanzDatenDTO finanzDatenDTO;
-		if (verfuegungZeitabschnitt.isHasSecondGesuchsteller()) {
+		if (verfuegungZeitabschnitt.isHasSecondGesuchstellerForFinanzielleSituation()) {
 			finanzDatenDTO = betreuung.extractGesuch().getFinanzDatenDTO_zuZweit();
 			setMassgebendesEinkommen(verfuegungZeitabschnitt.isEkv1ZuZweit(), verfuegungZeitabschnitt.isEkv2ZuZweit(), finanzDatenDTO, verfuegungZeitabschnitt, betreuung);
 		} else {
