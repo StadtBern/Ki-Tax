@@ -8,7 +8,6 @@ import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlecht
 import TSFamiliensituationContainer from './TSFamiliensituationContainer';
 import {TSEingangsart} from './enums/TSEingangsart';
 import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
-import TSBetreuungspensum from './TSBetreuungspensum';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 
 export default class TSGesuch extends TSAbstractAntragEntity {

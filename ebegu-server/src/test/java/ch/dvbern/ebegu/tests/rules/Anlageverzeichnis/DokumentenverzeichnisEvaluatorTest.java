@@ -34,8 +34,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		testgesuch = new Gesuch();
 		testgesuch.setGesuchsperiode(TestDataUtil.createDefaultGesuchsperiode());
-		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigAb(LocalDate.of(2015, 1, 1));
-		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigBis(LocalDate.of(2016, 1, 1));
+		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigAb(LocalDate.of(2017, 8, 1));
+		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigBis(LocalDate.of(2018, 7, 31));
 		testgesuch.setKindContainers(new HashSet<>());
 	}
 
@@ -190,8 +190,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensum));
 
-		erwerbspensum.getGueltigkeit().setGueltigAb(LocalDate.of(2015, 9, 1));
-		Assert.assertTrue(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensum, LocalDate.of(2015, 1, 1)));
+		erwerbspensum.getGueltigkeit().setGueltigAb(LocalDate.of(2017, 9, 1));
+		Assert.assertTrue(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensum, LocalDate.of(2016, 1, 1)));
 
 		final Set<DokumentGrund> calculate = evaluator.calculate(testgesuch);
 		final DokumentGrund dokumentGrund = calculate.iterator().next();
@@ -419,11 +419,11 @@ public class DokumentenverzeichnisEvaluatorTest {
 		checkDokumentGrundGS(dokumentGrundGS1);
 
 		final Set<DokumentGrund> dokumentGrundGS2 = getDokumentGrundsForGS(testgesuch.getGesuchsteller2(), dokumentGrunds);
-		checkType(dokumentGrundGS2, DokumentTyp.STEUERVERANLAGUNG, testgesuch.getGesuchsteller2().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS2, DokumentTyp.STEUERVERANLAGUNG, testgesuch.getGesuchsteller2().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
 	}
 
 	private void checkDokumentGrundGS(Set<DokumentGrund> dokumentGrundGS1) {
-		checkType(dokumentGrundGS1, DokumentTyp.STEUERVERANLAGUNG, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.STEUERVERANLAGUNG, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
 	}
 
 	@Test
@@ -439,14 +439,14 @@ public class DokumentenverzeichnisEvaluatorTest {
 		final Set<DokumentGrund> dokumentGrundGS1 = getDokumentGrundsForGS(testgesuch.getGesuchsteller1(), dokumentGrunds);
 		Assert.assertEquals(2, dokumentGrundGS1.size());
 
-		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
 
 		final Set<DokumentGrund> dokumentGrundGS2 = getDokumentGrundsForGS(testgesuch.getGesuchsteller2(), dokumentGrunds);
 		Assert.assertEquals(2, dokumentGrundGS2.size());
 
-		checkType(dokumentGrundGS2, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller2().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS2, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller2().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS2, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller2().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS2, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller2().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
 	}
 
 
@@ -475,40 +475,46 @@ public class DokumentenverzeichnisEvaluatorTest {
 		finanzielleSituationJA.setBruttovermoegen(BigDecimal.valueOf(100000));
 		finanzielleSituationJA.setSchulden(BigDecimal.valueOf(100000));
 		finanzielleSituationJA.setGeschaeftsgewinnBasisjahr(BigDecimal.valueOf(100000));
+		finanzielleSituationJA.setGeschaeftsgewinnBasisjahrMinus1(BigDecimal.valueOf(100000));
+		finanzielleSituationJA.setGeschaeftsgewinnBasisjahrMinus2(BigDecimal.valueOf(100000));
 
 
 		//Test wenn Steuererklärung ausgefüllt ist
 		Set<DokumentGrund> dokumentGrunds = evaluator.calculate(testgesuch);
-		Assert.assertEquals(7, dokumentGrunds.size());
+		Assert.assertEquals(9, dokumentGrunds.size());
 
 		Set<DokumentGrund> dokumentGrundGS1 = getDokumentGrundsForGS(testgesuch.getGesuchsteller1(), dokumentGrunds);
-		Assert.assertEquals(7, dokumentGrundGS1.size());
+		Assert.assertEquals(9, dokumentGrundGS1.size());
 
-		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_FAMILIENZULAGEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN_JAHR, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_FAMILIENZULAGEN, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN_JAHR, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN_JAHR_MINUS1, testgesuch.getGesuchsteller1().extractFullName(), "2015", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN_JAHR_MINUS2, testgesuch.getGesuchsteller1().extractFullName(), "2014", DokumentGrundTyp.FINANZIELLESITUATION);
 
 
 		//Test wenn Steuererklärung nicht ausgefüllt ist
 		finanzielleSituationJA.setSteuererklaerungAusgefuellt(false);
 		dokumentGrunds = evaluator.calculate(testgesuch);
-		Assert.assertEquals(8, dokumentGrunds.size());
+		Assert.assertEquals(10, dokumentGrunds.size());
 
 		dokumentGrundGS1 = getDokumentGrundsForGS(testgesuch.getGesuchsteller1(), dokumentGrunds);
-		Assert.assertEquals(8, dokumentGrundGS1.size());
+		Assert.assertEquals(10, dokumentGrundGS1.size());
 
-		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_FAMILIENZULAGEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_VERMOEGEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_SCHULDEN, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN_JAHR, testgesuch.getGesuchsteller1().extractFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_FAMILIENZULAGEN, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_VERMOEGEN, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_SCHULDEN, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN_JAHR, testgesuch.getGesuchsteller1().extractFullName(), "2016", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN_JAHR_MINUS1, testgesuch.getGesuchsteller1().extractFullName(), "2015", DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN_JAHR_MINUS2, testgesuch.getGesuchsteller1().extractFullName(), "2014", DokumentGrundTyp.FINANZIELLESITUATION);
 	}
 
 	@Test
