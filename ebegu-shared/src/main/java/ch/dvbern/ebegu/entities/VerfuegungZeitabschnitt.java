@@ -74,7 +74,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	private int anspruchspensumRest;
 
 	@Transient
-	private boolean hasSecondGesuchsteller;
+	// Achtung, dieses Flag wird erst ab 1. des Folgemonats gesetzt, weil die Finanzielle Situation ab dann gilt. Für Erwerbspensen zählt der GS2 ab sofort!
+	private boolean hasSecondGesuchstellerForFinanzielleSituation;
 
 	@Transient
 	private boolean ekv1Alleine;
@@ -179,7 +180,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.abzugFamGroesse = toCopy.abzugFamGroesse;
 		this.famGroesse = toCopy.famGroesse;
 		this.massgebendesEinkommenVorAbzugFamgr = toCopy.massgebendesEinkommenVorAbzugFamgr;
-		this.hasSecondGesuchsteller = toCopy.hasSecondGesuchsteller;
+		this.hasSecondGesuchstellerForFinanzielleSituation = toCopy.hasSecondGesuchstellerForFinanzielleSituation;
 		this.einkommensjahr = toCopy.einkommensjahr;
 		this.ekv1Alleine = toCopy.ekv1Alleine;
 		this.ekv1ZuZweit = toCopy.ekv1ZuZweit;
@@ -309,12 +310,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr;
 	}
 
-	public boolean isHasSecondGesuchsteller() {
-		return hasSecondGesuchsteller;
+	public boolean isHasSecondGesuchstellerForFinanzielleSituation() {
+		return hasSecondGesuchstellerForFinanzielleSituation;
 	}
 
-	public void setHasSecondGesuchsteller(boolean hasSecondGesuchsteller) {
-		this.hasSecondGesuchsteller = hasSecondGesuchsteller;
+	public void setHasSecondGesuchstellerForFinanzielleSituation(boolean hasSecondGesuchstellerForFinanzielleSituation) {
+		this.hasSecondGesuchstellerForFinanzielleSituation = hasSecondGesuchstellerForFinanzielleSituation;
 	}
 
 	@Nullable
@@ -525,7 +526,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		if (other.getEinkommensjahr() != null) {
 			this.setEinkommensjahr(other.getEinkommensjahr());
 		}
-		this.setHasSecondGesuchsteller(this.isHasSecondGesuchsteller() || other.isHasSecondGesuchsteller());
+		this.setHasSecondGesuchstellerForFinanzielleSituation(this.isHasSecondGesuchstellerForFinanzielleSituation() || other.isHasSecondGesuchstellerForFinanzielleSituation());
 
 		this.ekv1Alleine = (this.ekv1Alleine || other.ekv1Alleine);
 		this.ekv1ZuZweit = (this.ekv1ZuZweit || other.ekv1ZuZweit);
@@ -657,7 +658,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			fachstellenpensum == that.fachstellenpensum &&
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
-			hasSecondGesuchsteller == that.hasSecondGesuchsteller &&
+			hasSecondGesuchstellerForFinanzielleSituation == that.hasSecondGesuchstellerForFinanzielleSituation &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(famGroesse, that.famGroesse) &&
 			Objects.equals(massgebendesEinkommenVorAbzugFamgr, that.massgebendesEinkommenVorAbzugFamgr) &&

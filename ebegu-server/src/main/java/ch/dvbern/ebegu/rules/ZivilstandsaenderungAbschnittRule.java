@@ -50,21 +50,21 @@ public class ZivilstandsaenderungAbschnittRule extends AbstractAbschnittRule {
 			}
 
 			VerfuegungZeitabschnitt abschnittVorMutation = new VerfuegungZeitabschnitt(new DateRange(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), ereignistag.minusDays(1)));
-			abschnittVorMutation.setHasSecondGesuchsteller(gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller());
+			abschnittVorMutation.setHasSecondGesuchstellerForFinanzielleSituation(gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller());
 			zivilstandsaenderungAbschnitte.add(abschnittVorMutation);
 
 			VerfuegungZeitabschnitt abschnittVorStichtag = new VerfuegungZeitabschnitt(new DateRange(ereignistag, stichtag.minusDays(1)));
-			abschnittVorStichtag.setHasSecondGesuchsteller(gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller());
+			abschnittVorStichtag.setHasSecondGesuchstellerForFinanzielleSituation(gesuch.extractFamiliensituationErstgesuch().hasSecondGesuchsteller());
 			abschnittVorStichtag.addBemerkung(bemerkungContainer);
 			zivilstandsaenderungAbschnitte.add(abschnittVorStichtag);
 
 			VerfuegungZeitabschnitt abschnittNachMutation = new VerfuegungZeitabschnitt(new DateRange(stichtag, gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis()));
-			abschnittNachMutation.setHasSecondGesuchsteller(gesuch.extractFamiliensituation().hasSecondGesuchsteller());
+			abschnittNachMutation.setHasSecondGesuchstellerForFinanzielleSituation(gesuch.extractFamiliensituation().hasSecondGesuchsteller());
 			abschnittNachMutation.addBemerkung(bemerkungContainer);
 			zivilstandsaenderungAbschnitte.add(abschnittNachMutation);
 		} else {
 			VerfuegungZeitabschnitt abschnittOhneMutation = new VerfuegungZeitabschnitt(gesuch.getGesuchsperiode().getGueltigkeit());
-			abschnittOhneMutation.setHasSecondGesuchsteller(gesuch.extractFamiliensituation().hasSecondGesuchsteller());
+			abschnittOhneMutation.setHasSecondGesuchstellerForFinanzielleSituation(gesuch.extractFamiliensituation().hasSecondGesuchsteller());
 			zivilstandsaenderungAbschnitte.add(abschnittOhneMutation);
 		}
 		return zivilstandsaenderungAbschnitte;
