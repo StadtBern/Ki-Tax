@@ -57,7 +57,7 @@ public class SchulungServiceBeanTest extends AbstractEbeguLoginTest {
 	private MandantService mandantService;
 
 	@Inject
-	private Persistence persistence;
+	private Persistence<AbstractEntity> persistence;
 
 
 	@Test
