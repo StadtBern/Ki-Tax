@@ -221,10 +221,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
             this.gesuchModelManager.getGesuch().status = newStatus;
             return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                this.form.$dirty = false;
+                this.form.$pristine = true; // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                 return this.refreshKinderListe().then(() => {
                     return this.createNeededPDFs(true).then(() => {
-                        this.form.$dirty = false;
-                        this.form.$pristine = true; // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                         return this.gesuchModelManager.getGesuch();
                     });
                 });
@@ -435,5 +435,12 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 return this.gesuchModelManager.getGesuch();
             });
         });
+    }
+
+    public fsDokumentChanged(): void{
+        // dirty checker wird hier ausgeschaltet. Aenderungen des fs flag wird automatisch gespeichert wenn gesuch auf geprüft gesetzt wird
+        // Aus performance Gründen wird hier daruf verzichtet das Gesuch neu zu persisten, nur weil das Flag ändert.
+        this.form.$dirty = false;
+        this.form.$pristine = true;
     }
 }

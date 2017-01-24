@@ -42,7 +42,7 @@ public class GeneratePDFDocumentHelper {
 	private static final String PDFENCODING = "ISO-8859-1";
 	private static final String NUMOFPAGE = "#PAGE";
 	private static final String NUMOFPAGES = "#MAX";
-	private static final String	PROP_STANDARD_ANZAHL_SEITEN = "expectedNumberOfPages";
+	private static final String PROP_STANDARD_ANZAHL_SEITEN = "expectedNumberOfPages";
 
 	/**
 	 * Konvertiert ein docx zu einem PDF
@@ -64,7 +64,7 @@ public class GeneratePDFDocumentHelper {
 
 			return manipulatePdf(out.toByteArray());
 		} catch (IOException | InvocationTargetException | DocumentException | IllegalAccessException | NoSuchMethodException e) {
-			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[]{});
 		}
 	}
 
@@ -90,12 +90,12 @@ public class GeneratePDFDocumentHelper {
 
 			int expectedNumOfDOCXPages = 0;
 			XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(mergedDocx));
-			if (document.getProperties().getCustomProperties().contains(PROP_STANDARD_ANZAHL_SEITEN)){
+			if (document.getProperties().getCustomProperties().contains(PROP_STANDARD_ANZAHL_SEITEN)) {
 				expectedNumOfDOCXPages = document.getProperties().getCustomProperties()
 					.getProperty(PROP_STANDARD_ANZAHL_SEITEN).getI4();
 			}
 
-			if(expectedNumOfDOCXPages > 0 && expectedNumOfDOCXPages != numOfPDFPages){
+			if (expectedNumOfDOCXPages > 0 && expectedNumOfDOCXPages != numOfPDFPages) {
 				mergeSource.setPDFLongerThanExpected(true);
 				mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
 				mergedPdf = generatePDFDocument(mergedDocx);
@@ -107,7 +107,7 @@ public class GeneratePDFDocumentHelper {
 
 			return mergedPdf;
 		} catch (IOException | DocTemplateException | DocumentException e) {
-			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[]{});
 		}
 	}
 
@@ -119,6 +119,7 @@ public class GeneratePDFDocumentHelper {
 
 	/**
 	 * PDF has to be manipulated in order to set the right page number.
+	 *
 	 * @throws IOException
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
@@ -152,11 +153,11 @@ public class GeneratePDFDocumentHelper {
 			setWriterPDFA(stamper);
 
 		} finally {
-				if (stamper != null) {
-					stamper.close();
-				}
-				reader.close();
-				manipulated.close();
+			if (stamper != null) {
+				stamper.close();
+			}
+			reader.close();
+			manipulated.close();
 		}
 		return manipulated.toByteArray();
 	}
