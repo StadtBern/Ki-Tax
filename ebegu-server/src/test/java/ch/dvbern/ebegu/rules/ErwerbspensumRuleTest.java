@@ -326,7 +326,6 @@ public class ErwerbspensumRuleTest {
 		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum GS 1"));
 		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller1"));
 		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller2"));
-
 	}
 
 	@Test
@@ -344,10 +343,7 @@ public class ErwerbspensumRuleTest {
 		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller1"));
 		Assert.assertFalse(result.get(0).getBemerkungen().contains("Erwerbspensum + Zuschlag wurde auf 100% limitiert für Gesuchsteller2"));
 		Assert.assertTrue(result.get(0).getBemerkungen().contains("Der Zuschlag zum Erwerbspensum wurde auf den maximalen Wert "));
-
 	}
-
-
 
 	private Betreuung createGesuch(final boolean gs2) {
 		final Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(gs2);

@@ -131,23 +131,6 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 		return erwerbspensum;
 	}
 
-	/**
-	 * Nimmt alle Zuschlag-Werte von der Abschnitt und addiert sie. Das Ergebniss darf den macimalen
-	 * Wert nicht ueberschreiten, der als EbeguParam definiert wurde. Sollte dieser ueberschritten werden,
-	 * wird dieser mavimale Wert zurueckgegeben und ein passendes Kommentar eingefuegt.
-	 */
-//	private int calculateTotalZuschlag(VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-//		int result = verfuegungZeitabschnitt.getZuschlagErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getZuschlagErwerbspensumGS1() : 0;
-//		if (verfuegungZeitabschnitt.isHasSecondGesuchsteller()) {
-//			result += verfuegungZeitabschnitt.getZuschlagErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getZuschlagErwerbspensumGS2() : 0;
-//		}
-//		if (result > maxZuschlagValue) {
-//			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_MAX_ZUSCHLAG, maxZuschlagValue);
-//			result = maxZuschlagValue;
-//		}
-//		return result;
-//	}
-
 	private boolean hasSecondGSForZeit(@Nonnull Betreuung betreuung, @Nonnull DateRange gueltigkeit) {
 		final Gesuch gesuch = betreuung.extractGesuch();
 		if (gesuch.extractFamiliensituation().getAenderungPer() != null && gesuch.extractFamiliensituationErstgesuch() != null
