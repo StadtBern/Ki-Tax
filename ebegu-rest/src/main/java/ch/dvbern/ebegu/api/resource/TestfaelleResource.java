@@ -137,7 +137,7 @@ public class TestfaelleResource {
 	}
 
 	@DELETE
-	@Path("/schulung")
+	@Path("/schulung/delete")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response deleteSchulungsdaten() {
@@ -155,7 +155,7 @@ public class TestfaelleResource {
 	}
 
 	@GET
-	@Path("/schulung")
+	@Path("/schulung/public/user")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
 	public Response getSchulungBenutzer() {

@@ -83,7 +83,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		iterationCount = (iterationCount == null || iterationCount == 0) ? 1 : iterationCount;
 
 		Gesuchsperiode gesuchsperiode = getGesuchsperiode();
-		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionStammdatens();
+		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionsstammdatenForTestfaelle();
 
 		StringBuilder responseString = new StringBuilder("");
 		for (int i = 0; i < iterationCount; i++) {
@@ -193,7 +193,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 										  boolean verfuegen) {
 
 		Gesuchsperiode gesuchsperiode = getGesuchsperiode();
-		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionStammdatens();
+		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionsstammdatenForTestfaelle();
 
 		if (WaeltiDagmar.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
@@ -338,7 +338,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		return allActiveGesuchsperioden.iterator().next();
 	}
 
-	private List<InstitutionStammdaten> getInstitutionStammdatens() {
+	@Override
+	public List<InstitutionStammdaten> getInstitutionsstammdatenForTestfaelle() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		Optional<InstitutionStammdaten> optionalAaregg = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA);
 		Optional<InstitutionStammdaten> optionalBruennen = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA);

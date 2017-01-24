@@ -65,11 +65,11 @@ export class TestFaelleRS {
     }
 
     public deleteSchulungsdaten(): IHttpPromise<String> {
-        return this.http.delete(this.serviceURL + '/schulung/');
+        return this.http.delete(this.serviceURL + '/schulung/delete');
     }
 
     public getSchulungBenutzer(): IPromise<String[]> {
-        return this.http.get(this.serviceURL + '/schulung/').then((response: any) => {
+        return this.http.get(this.serviceURL + '/schulung/public/user').then((response: any) => {
             return response.data;
         });
     }
