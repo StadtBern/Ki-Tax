@@ -45,6 +45,6 @@ public interface AdresseService {
 	 *
 	 * @param adresse Adresse zu entfernen
 	 */
-	void removeAdresse(@Nonnull Adresse adresse);
+	void removeAdresse(@Nonnull String adresseId);
 
 }

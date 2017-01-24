@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.api.resource;
 
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.services.SchulungService;
 import ch.dvbern.ebegu.services.TestfaelleService;
 import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
@@ -28,6 +30,11 @@ public class TestfaelleResource {
 	@Inject
 	private TestfaelleService testfaelleService;
 
+	@Inject
+	private SchulungService schulungService;
+
+	@Inject
+	private JaxBConverter converter;
 
 	@GET
 	@Path("/testfall/{fallid}/{betreuungenBestaetigt}/{verfuegen}")
@@ -123,4 +130,39 @@ public class TestfaelleResource {
 		return Response.ok(FALL + fallNummer + " konnte nicht mutiert").build();
 	}
 
+	@GET
+	@Path("/schulung/reset")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response resetSchulungsdaten() {
+		schulungService.resetSchulungsdaten();
+		return Response.ok("Schulungsdaten zurückgesetzt").build();
+	}
+
+	@DELETE
+	@Path("/schulung")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response deleteSchulungsdaten() {
+		schulungService.deleteSchulungsdaten();
+		return Response.ok("Schulungsdaten gelöscht").build();
+	}
+
+	@GET
+	@Path("/schulung/create")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response createSchulungsdaten() {
+		schulungService.createSchulungsdaten();
+		return Response.ok("Schulungsdaten erstellt").build();
+	}
+
+	@GET
+	@Path("/schulung")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getSchulungBenutzer() {
+		String[] schulungBenutzer = schulungService.getSchulungBenutzer();
+		return Response.ok(schulungBenutzer).build();
+	}
 }

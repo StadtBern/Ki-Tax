@@ -266,7 +266,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 				.forEach(gesuchId -> gesuchService.findGesuch(gesuchId)
 					.ifPresent((gesuch) -> {
 						LOG.info("Removing Gesuch for user " + (benutzer != null ? benutzer.getUsername() : "-") + " with id " + gesuch.getId());
-						gesuchService.removeGesuch(gesuch);
+						gesuchService.removeGesuch(gesuch.getId());
 					}));
 		}
 

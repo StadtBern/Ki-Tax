@@ -74,6 +74,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         if (currentPath.indexOf('fedletSSOInit') === -1
             && ($state.current !== undefined && $state.current.name !== 'login')
             && ($state.current !== undefined && $state.current.name !== 'locallogin')
+            && ($state.current !== undefined && $state.current.name !== 'schulung')
             && currentPath.indexOf('sendRedirectForValidation') === -1) {
             $state.go('login', {relayPath: currentPath, type: 'login'});
         } else {
@@ -90,7 +91,8 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
 
     if (ENV !== 'test') {
         //Hintergrundfarbe anpassen (testsystem kann zB andere Farbe haben)
-        let applicationPropertyRS = $injector.get('ApplicationPropertyRS');
+        let applicationPropertyRS: ApplicationPropertyRS;
+        applicationPropertyRS = $injector.get<ApplicationPropertyRS>('ApplicationPropertyRS');
         applicationPropertyRS.getBackgroundColor().then((prop: TSApplicationProperty) => {
             if (prop && prop.value !== '#FFFFFF') {
                 angular.element('#Intro').css('background-color', prop.value);

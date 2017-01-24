@@ -197,4 +197,34 @@ export class AdminViewController {
             });
         });
     }
+
+    public resetSchulungsdaten(): IPromise<any> {
+        return this.testFaelleRS.resetSchulungsdaten().then((respone) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: respone.data
+            }).then(() => {
+                //do nothing
+            });
+        });
+    }
+
+    public createSchulungsdaten(): IPromise<any> {
+        return this.testFaelleRS.createSchulungsdaten().then((respone) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: respone.data
+            }).then(() => {
+                //do nothing
+            });
+        });
+    }
+
+    public deleteSchulungsdaten(): IPromise<any> {
+        return this.testFaelleRS.deleteSchulungsdaten().then((respone) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: respone.data
+            }).then(() => {
+                //do nothing
+            });
+        });
+    }
 }

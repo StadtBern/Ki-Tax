@@ -71,7 +71,7 @@ public interface GesuchService {
 	 * @param gesuch der Gesuch zu entfernen
 	 */
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-	void removeGesuch(@Nonnull Gesuch gesuch);
+	void removeGesuch(@Nonnull String gesuchId);
 
 	@Nonnull
 	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
