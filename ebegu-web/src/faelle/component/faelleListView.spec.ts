@@ -63,8 +63,8 @@ describe('faelleListView', function () {
                 $scope.$apply();
                 expect(gesuchRS.searchAntraege).toHaveBeenCalledTimes(0); //erster request wird ignoriert
                 faelleListViewController.passFilterToServer({});
-                expect(gesuchRS.searchAntraege).toHaveBeenCalledTimes(1); //erster request wird ignoriert
-                                $scope.$apply();
+                expect(gesuchRS.searchAntraege).toHaveBeenCalledTimes(1);
+                $scope.$apply();
 
                 let list: Array<TSAntragDTO> = faelleListViewController.getAntragList();
                 expect(list).toBeDefined();

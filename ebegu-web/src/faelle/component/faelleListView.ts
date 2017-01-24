@@ -48,7 +48,6 @@ export class FaelleListViewController {
 
     public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
         if (!this.ignoreRequest) {
-
             this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
             return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
                 this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : undefined;
