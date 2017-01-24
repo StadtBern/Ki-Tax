@@ -592,23 +592,7 @@ export default class GesuchModelManager {
         }
         return listResult;
     }
-    public hasBetreuungInStatusWarten(): boolean {
-        let listResult: Array<TSKindContainer> = [];
-        if (this.gesuch) {
-            listResult = this.gesuch.getKinderWithBetreuungList();
-            for (let i = 0; i < listResult.length; i++) {
-                let kind: TSKindContainer = listResult[i];
-                for (let j = 0; j < kind.betreuungen.length; j++) {
-                    let betreuung: TSBetreuung = kind.betreuungen[j];
-                    if ( betreuung.betreuungsstatus === TSBetreuungsstatus.WARTEN) {
-                        return true;
-                    }
-                }
 
-            }
-        }
-        return false;
-    }
 
     public saveBetreuung(betreuungToSave: TSBetreuung, abwesenheit: boolean): IPromise<TSBetreuung> {
         if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
