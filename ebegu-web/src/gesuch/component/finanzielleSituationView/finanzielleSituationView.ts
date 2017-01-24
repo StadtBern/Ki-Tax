@@ -42,7 +42,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
                 wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
-        if(!parsedNum){
+        if (!parsedNum) {
             parsedNum = 1;
         }
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();

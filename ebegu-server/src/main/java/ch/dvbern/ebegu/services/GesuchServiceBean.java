@@ -130,6 +130,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
 		query.where(predicateStatus);
+		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.fallNummer)));
 		return persistence.getCriteriaResults(query);
 	}
 
