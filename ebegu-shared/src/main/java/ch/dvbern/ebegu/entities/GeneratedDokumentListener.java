@@ -17,7 +17,7 @@ public class GeneratedDokumentListener {
 	}
 
 	@PreUpdate
-	public void postUpdate(GeneratedDokument generatedDokument) {
+	public void preUpdate(GeneratedDokument generatedDokument) {
 
 		// Write Protection darf nicht entfernt werden
 		if (generatedDokument.isOrginalWriteProtected() && !generatedDokument.isWriteProtected()) {

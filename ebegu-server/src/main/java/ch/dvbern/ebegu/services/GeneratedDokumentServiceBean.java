@@ -151,10 +151,13 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		generatedDokument.setGesuch(gesuch);
 		generatedDokument.setWriteProtected(writeProtected);
 
+		GeneratedDokument returnDocument = this.saveGeneratedDokument(generatedDokument);
+
 		if (filePathToRemove != null) {
 			fileSaverService.remove(filePathToRemove);
 		}
-		return this.saveGeneratedDokument(generatedDokument);
+
+		return returnDocument;
 	}
 
 
@@ -359,7 +362,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		if (persistedDokument == null || generateFinalVersion) {
 
-			// generateFinalVersion only true, when button "Mahnung erstellen" is pressed. Therefor we can use as trigger for write protection
+			// generateFinalVersion only true, when button "Mahnung erstellen" is pressed. Therefore we can use as trigger for write protection
 			boolean writeProtectPDF = generateFinalVersion;
 
 			GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.MAHNUNG;
