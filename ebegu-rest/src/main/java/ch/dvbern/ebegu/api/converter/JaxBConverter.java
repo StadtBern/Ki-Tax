@@ -5,10 +5,7 @@ import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
@@ -378,20 +375,18 @@ public class JaxBConverter {
 			jaxGesuchstellerCont.setAdressen(gesuchstellerAdresseContainerListToJAX(
 				persistedGesuchstellerCont.getAdressen().stream().filter(gesuchstellerAdresse
 					-> !gesuchstellerAdresse.extractIsKorrespondenzAdresse()).sorted((o1, o2) ->
-					{
-						if (o1.extractGueltigkeit() == null && o2.extractGueltigkeit() == null){
-							return 0;
-						}
-						else if (o1.extractGueltigkeit() == null){
-							return 1;
-						}
-						else if (o1.extractGueltigkeit() == null){
-							return -1;
-						} else {
-							return o1.extractGueltigkeit().getGueltigAb().compareTo(o2.extractGueltigkeit().getGueltigAb());
-						}
-					}).collect(Collectors.toList())
-				));
+				{
+					if (o1.extractGueltigkeit() == null && o2.extractGueltigkeit() == null) {
+						return 0;
+					} else if (o1.extractGueltigkeit() == null) {
+						return 1;
+					} else if (o1.extractGueltigkeit() == null) {
+						return -1;
+					} else {
+						return o1.extractGueltigkeit().getGueltigAb().compareTo(o2.extractGueltigkeit().getGueltigAb());
+					}
+				}).collect(Collectors.toList())
+			));
 		}
 
 		// Finanzielle Situation
@@ -2067,8 +2062,8 @@ public class JaxBConverter {
 			antrag.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
 		}
 		antrag.setVerfuegt(gesuch.getStatus().isAnyStatusOfVerfuegt());
+		antrag.setBeschwerdeHaengig(gesuch.getStatus().equals(AntragStatus.BESCHWERDE_HAENGIG));
 		antrag.setLaufnummer(gesuch.getLaufnummer());
-		antrag.setGesperrtWegenBeschwerde(gesuch.isGesperrtWegenBeschwerde());
 		antrag.setEingangsart(gesuch.getEingangsart());
 		antrag.setBesitzerUsername(gesuch.getFall().getBesitzer() != null ? gesuch.getFall().getBesitzer().getUsername() : null);
 		return antrag;

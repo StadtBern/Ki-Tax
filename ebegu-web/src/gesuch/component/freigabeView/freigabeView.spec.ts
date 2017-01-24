@@ -126,7 +126,7 @@ describe('freigabeView', function () {
             let returned: IPromise<void> = controller.gesuchEinreichen();
             $scope.$apply();
 
-            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);
+            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, true, TSZustelladresse.JUGENDAMT);
             expect(downloadRS.startDownload).toHaveBeenCalledWith(downloadFile.accessToken, downloadFile.filename, false);
             expect(returned).toBeDefined();
         });
@@ -145,7 +145,7 @@ describe('freigabeView', function () {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(false);
 
-            controller.openFreigabequittungPDF();
+            controller.openFreigabequittungPDF(false);
             $scope.$apply();
 
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);
@@ -154,7 +154,7 @@ describe('freigabeView', function () {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'areThereOnlySchulamtAngebote').and.returnValue(true);
 
-            controller.openFreigabequittungPDF();
+            controller.openFreigabequittungPDF(false);
             $scope.$apply();
 
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.SCHULAMT);
@@ -163,7 +163,7 @@ describe('freigabeView', function () {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
             spyOn(gesuchModelManager, 'areAllJAAngeboteNew').and.returnValue(true);
 
-            controller.openFreigabequittungPDF();
+            controller.openFreigabequittungPDF(false);
             $scope.$apply();
 
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, TSZustelladresse.JUGENDAMT);
@@ -172,7 +172,7 @@ describe('freigabeView', function () {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
             spyOn(gesuchModelManager, 'areAllJAAngeboteNew').and.returnValue(false);
 
-            controller.openFreigabequittungPDF();
+            controller.openFreigabequittungPDF(false);
             $scope.$apply();
 
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false, undefined);

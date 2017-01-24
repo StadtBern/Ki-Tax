@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
+@EntityListeners({GeneratedDokumentListener.class})
 public class GeneratedDokument extends File {
 
 	private static final long serialVersionUID = -895840426576485097L;
@@ -27,6 +29,11 @@ public class GeneratedDokument extends File {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_generated_dokument_gesuch_id"), nullable = false)
 	private Gesuch gesuch;
 
+	@Column(nullable = false)
+	private boolean writeProtected = false;
+
+	@Transient
+	private boolean orginalWriteProtected;
 
 	public GeneratedDokument() {
 	}
@@ -45,6 +52,22 @@ public class GeneratedDokument extends File {
 
 	public void setGesuch(Gesuch gesuch) {
 		this.gesuch = gesuch;
+	}
+
+	public boolean isWriteProtected() {
+		return writeProtected;
+	}
+
+	public void setWriteProtected(boolean writeProtected) {
+		this.writeProtected = writeProtected;
+	}
+
+	public boolean isOrginalWriteProtected() {
+		return orginalWriteProtected;
+	}
+
+	public void setOrginalWriteProtected(boolean orginalWriteProtected) {
+		this.orginalWriteProtected = orginalWriteProtected;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlecht
 import TSFamiliensituationContainer from './TSFamiliensituationContainer';
 import {TSEingangsart} from './enums/TSEingangsart';
 import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
+import TSBetreuungspensum from './TSBetreuungspensum';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
@@ -144,6 +145,24 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
                 if (!isSchulamt(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns true when all Betreuungen are geschlossen ohne verfuegung
+     */
+    public areThereOnlyGeschlossenOhneVerfuegung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
                     return false;
                 }
             }
