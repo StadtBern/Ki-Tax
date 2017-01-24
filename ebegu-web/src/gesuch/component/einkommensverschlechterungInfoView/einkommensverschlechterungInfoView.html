@@ -6,13 +6,11 @@
 
                     <!--Einkommensverschlechterung-->
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group">
-                                <div class="viewTitle">
-                                    <h1 class="required"
-                                        data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN" data-translate-values="{{vm.basisJahrUndPeriode}}"></h1>
-                                    <hr class="header"/>
-                                </div>
+                                <h1 class="required"
+                                    data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"
+                                    data-translate-values="{{vm.basisJahrUndPeriode}}"></h1>
                                 <dv-radio-container name="einkommensverschlechterung"
                                                     ng-model="vm.getEinkommensverschlechterungsInfo().einkommensverschlechterung"
                                                     ng-required="true" class="radio input-element"
@@ -88,7 +86,7 @@
                                                    class="error"></dv-error-messages>
 
                             </dv-input-container>
-<hr class="header"/>
+                            <hr class="header"/>
                         </div>
                     </div>
 
