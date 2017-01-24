@@ -61,7 +61,7 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguLoginTest {
 		byte[] data = new byte[0];
 		final String newFileName = "Newname.pdf";
 		final GeneratedDokument generatedDokument = generatedDokumentService
-			.updateGeneratedDokument(data, GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch, newFileName);
+			.saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch, newFileName, false);
 
 		Assert.assertNotNull(generatedDokument);
 		Assert.assertEquals(newFileName, generatedDokument.getFilename());

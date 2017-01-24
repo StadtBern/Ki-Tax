@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
  */
 @Audited
 @Entity
-@EntityListeners({GesuchListener.class})
 public class Gesuch extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;
