@@ -45,6 +45,7 @@ public class JaxAntragDTO {
 		this.eingangsdatum = eingangsdatum;
 		this.antragTyp = antragTyp;
 		this.verfuegt = antragStatus.isAnyStatusOfVerfuegt();
+		this.beschwerdeHaengig = antragStatus.equals(AntragStatus.BESCHWERDE_HAENGIG);
 		this.laufnummer = laufnummer;
 		this.eingangsart = eingangsart;
 		this.besitzerUsername = besitzerUsername;
@@ -54,10 +55,10 @@ public class JaxAntragDTO {
 	private String antragId = null;
 
 	@NotNull
-	private  Eingangsart eingangsart;
+	private Eingangsart eingangsart;
 
 	@Nullable
-	private  String besitzerUsername;
+	private String besitzerUsername;
 
 	@NotNull
 	private long fallNummer;
@@ -101,8 +102,7 @@ public class JaxAntragDTO {
 
 	private boolean verfuegt;
 
-	private boolean gesperrtWegenBeschwerde;
-
+	private boolean beschwerdeHaengig;
 
 	public JaxAntragDTO() {
 
@@ -214,6 +214,14 @@ public class JaxAntragDTO {
 		this.verfuegt = verfuegt;
 	}
 
+	public boolean isBeschwerdeHaengig() {
+		return beschwerdeHaengig;
+	}
+
+	public void setBeschwerdeHaengig(boolean beschwerdeHaengig) {
+		this.beschwerdeHaengig = beschwerdeHaengig;
+	}
+
 	@Nullable
 	public int getLaufnummer() {
 		return laufnummer;
@@ -221,14 +229,6 @@ public class JaxAntragDTO {
 
 	public void setLaufnummer(@Nullable int laufnummer) {
 		this.laufnummer = laufnummer;
-	}
-
-	public boolean isGesperrtWegenBeschwerde() {
-		return gesperrtWegenBeschwerde;
-	}
-
-	public void setGesperrtWegenBeschwerde(boolean gesperrtWegenBeschwerde) {
-		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
 	}
 
 	public Eingangsart getEingangsart() {

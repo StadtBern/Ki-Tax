@@ -91,7 +91,7 @@ export class GesuchstellerDashboardListViewController {
             if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
                 // Noch nicht freigegeben
                 this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});
-            } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.gesperrtWegenBeschwerde) {
+            } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.beschwerdeHaengig) {
                 // Alles ausser verfuegt und InBearbeitung
                 this.$state.go('gesuch.dokumente', {createNew: false, gesuchId: antrag.antragId});
             } else {
@@ -123,7 +123,7 @@ export class GesuchstellerDashboardListViewController {
             if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
                 // Noch nicht freigegeben -> Text BEARBEITEN
                 return this.$translate.instant('GS_BEARBEITEN');
-            } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.gesperrtWegenBeschwerde) {
+            } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.beschwerdeHaengig) {
                 // Alles ausser verfuegt und InBearbeitung -> Text DOKUMENTE HOCHLADEN
                 return this.$translate.instant('GS_DOKUMENTE_HOCHLADEN');
             } else {

@@ -37,9 +37,16 @@ export class DownloadRS {
             });
     }
 
-    public getAccessTokenGeneratedDokument(gesuchId: string, generatedDokumentTyp: TSGeneratedDokumentTyp, forceCreation: boolean): IPromise<TSDownloadFile> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
-            + encodeURIComponent(TSGeneratedDokumentTyp[generatedDokumentTyp]) + '/' + forceCreation + '/generated')
+    public getFinSitDokumentAccessTokenGeneratedDokument(gesuchId: string, forceCreation: boolean): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/FINANZIELLE_SITUATION/' + forceCreation + '/generated')
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getBegleitschreibenDokumentAccessTokenGeneratedDokument(gesuchId: string, forceCreation: boolean): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/BEGLEITSCHREIBEN/' + forceCreation + '/generated')
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
