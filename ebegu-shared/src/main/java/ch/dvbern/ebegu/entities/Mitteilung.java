@@ -21,8 +21,8 @@ public class Mitteilung extends AbstractEntity {
 
 	private static final long serialVersionUID = 489324250198016526L;
 
-	@Nullable
-	@ManyToOne(optional = true)
+	@NotNull
+	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_mitteilung_fall_id"))
 	private Fall fall;
 
@@ -62,12 +62,12 @@ public class Mitteilung extends AbstractEntity {
 	private MitteilungStatus mitteilungStatus;
 
 
-	@Nullable
+	@NotNull
 	public Fall getFall() {
 		return fall;
 	}
 
-	public void setFall(@Nullable Fall fall) {
+	public void setFall(@NotNull Fall fall) {
 		this.fall = fall;
 	}
 

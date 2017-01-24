@@ -12,7 +12,7 @@ CREATE TABLE mitteilung (
   sender_typ         VARCHAR(255) NOT NULL,
   subject            VARCHAR(255) NOT NULL,
   empfaenger_id      VARCHAR(36),
-  fall_id            VARCHAR(36),
+  fall_id            VARCHAR(36)  NOT NULL,
   sender_id          VARCHAR(36)  NOT NULL,
   PRIMARY KEY (id)
 );
