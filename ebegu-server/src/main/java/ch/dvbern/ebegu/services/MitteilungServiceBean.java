@@ -16,6 +16,9 @@ import javax.inject.Inject;
 import javax.persistence.criteria.*;
 import java.util.*;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+
 
 /**
  * Service fuer Mitteilungen
@@ -32,6 +35,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Inject
 	private BenutzerService benutzerService;
+
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
 
 
 	@Nonnull
@@ -118,6 +124,15 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		query.orderBy(cb.desc(root.get(Mitteilung_.timestampErstellt)));
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	public void removeAllMitteilungenForFall(Fall fall) {
+		Collection<Mitteilung> mitteilungen = criteriaQueryHelper.getEntitiesByAttribute(Mitteilung.class, fall, Mitteilung_.fall);
+		for (Mitteilung poscht : mitteilungen) {
+			persistence.remove(Mitteilung.class, poscht.getId());
+		}
 	}
 
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {

@@ -29,4 +29,6 @@ public interface MitteilungService {
 
 	@Nonnull
 	Collection<Mitteilung> getMitteilungenForPosteingang();
+
+	void removeAllMitteilungenForFall(Fall fall);
 }

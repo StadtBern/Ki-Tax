@@ -257,7 +257,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	@Override
 	public void removeGesucheOfGS(String username) {
-		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(benutzerService.getCurrentBenutzer().orElse(null));
+		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(null);
 		Optional<Fall> existingFall = fallService.findFallByBesitzer(benutzer);
 		if (existingFall.isPresent()) {
 			//unschoen: eigentlich nur das gesuch fuer das jahr loeschen fuer welches der testfall erzeugt wird
@@ -268,8 +268,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 						LOG.info("Removing Gesuch for user " + (benutzer != null ? benutzer.getUsername() : "-") + " with id " + gesuch.getId());
 						gesuchService.removeGesuch(gesuch.getId());
 					}));
+			fallService.removeFall(existingFall.get());
 		}
-
 	}
 
 	@Override
@@ -366,12 +366,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	 */
 	@Override
 	public Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer) {
-		final Optional<List<Gesuch>> gesuchByGSName = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
-		if (gesuchByGSName.isPresent()) {
-			final List<Gesuch> gesuches = gesuchByGSName.get();
-			if (!gesuches.isEmpty()) {
-				fromTestfall.setFall(gesuches.iterator().next().getFall());
-			}
+		final List<Gesuch> gesuche = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
+		if (!gesuche.isEmpty()) {
+			fromTestfall.setFall(gesuche.iterator().next().getFall());
 		}
 
 		final Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();

@@ -1,8 +1,10 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.testfaelle.*;
 import ch.dvbern.ebegu.types.DateRange;
@@ -30,7 +32,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 /**
  * Service fuer erstellen und mutieren von Schulungsdaten
  */
-@SuppressWarnings(value = {"DLS_DEAD_LOCAL_STORE", "DM_CONVERT_CASE", "EI_EXPOSE_REP", "ConstantNamingConvention", "NonBooleanMethodNameMayNotStartWithQuestion"})
+@SuppressWarnings(value = {"DLS_DEAD_LOCAL_STORE", "DM_CONVERT_CASE", "EI_EXPOSE_REP", "ConstantNamingConvention", "NonBooleanMethodNameMayNotStartWithQuestion", "SpringAutowiredFieldsWarningInspection"})
 @Stateless
 @Local(SchulungService.class)
 @RolesAllowed({SUPER_ADMIN, ADMIN})
@@ -74,9 +76,6 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 
 	@Inject
 	private GesuchService gesuchService;
-
-	@Inject
-	private FallService fallService;
 
 	@Inject
 	private MandantService mandantService;
@@ -150,16 +149,6 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		}
 	}
 
-	private void removeBenutzer(String username) {
-		Collection<AuthorisierterBenutzer> entitiesByAttribute = criteriaQueryHelper.getEntitiesByAttribute(AuthorisierterBenutzer.class, username, AuthorisierterBenutzer_.username);
-		for (AuthorisierterBenutzer authorisierterBenutzer : entitiesByAttribute) {
-			persistence.remove(authorisierterBenutzer);
-		}
-		if (benutzerService.findBenutzer(username).isPresent()) {
-			benutzerService.removeBenutzer(username);
-		}
-	}
-
 	@Override
 	public void createSchulungsdaten() {
 		Traegerschaft traegerschaftFisch = createTraegerschaft(TRAEGERSCHAFT_FISCH_ID, "Fisch");
@@ -190,6 +179,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		return (String[]) ArrayUtils.clone(GESUCHSTELLER_LIST);
 	}
 
+	@SuppressWarnings("SameParameterValue")
 	private Traegerschaft createTraegerschaft(String id, String name) {
 		Traegerschaft traegerschaft = new Traegerschaft();
 		traegerschaft.setId(id);
@@ -209,6 +199,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		return institutionService.createInstitution(institution);
 	}
 
+	@SuppressWarnings("MagicNumber")
 	private InstitutionStammdaten createInstitutionStammdaten(String id, Institution institution, BetreuungsangebotTyp betreuungsangebotTyp) {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
 		instStammdaten.setId(id);
@@ -276,20 +267,8 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 	}
 
 	private void removeGesucheFallAndBenutzer(String nachname) {
-		Optional<Benutzer> benutzerOptional = benutzerService.findBenutzer(getUsername(nachname));
-		if (benutzerOptional.isPresent()) {
-			Benutzer benutzer = benutzerOptional.get();
-			Optional<Fall> fallOptional = fallService.findFallByBesitzer(benutzer);
-			if (fallOptional.isPresent()) {
-				Fall fall = fallOptional.get();
-				List<JaxAntragDTO> allAntragDTOForFall = gesuchService.getAllAntragDTOForFall(fall.getId());
-				for (JaxAntragDTO jaxAntragDTO : allAntragDTOForFall) {
-					gesuchService.removeGesuch(jaxAntragDTO.getAntragId());
-				}
-				fallService.removeFall(fall);
-			}
-			removeBenutzer(getUsername(nachname));
-		}
+		testfaelleService.removeGesucheOfGS(getUsername(nachname));
+		removeBenutzer(getUsername(nachname));
 	}
 
 	private void createFaelleForSuche(List<InstitutionStammdaten> institutionenForSchulung) {
@@ -329,23 +308,29 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 
 	private void createFall(AbstractTestfall testfall, String id, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung) {
 		testfall.setFixId(GESUCH_ID.replaceAll("XX", id));
-		createFallForSuche(testfall, nachname, vorname, institutionenForSchulung);
+		Gesuch gesuch = createFallForSuche(testfall, nachname, vorname, institutionenForSchulung);
+		FreigabeCopyUtil.copyForFreigabe(gesuch);
+		gesuchService.updateGesuch(gesuch, false);
 	}
 
 	private void createFall(AbstractTestfall testfall, String id, List<InstitutionStammdaten> institutionenForSchulung) {
 		testfall.setFixId(GESUCH_ID.replaceAll("XX", id));
-		createFallForSuche(testfall, institutionenForSchulung);
-	}
-
-	private void createFallForSuche(AbstractTestfall testfall, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung ) {
 		Gesuch gesuch = createFallForSuche(testfall, institutionenForSchulung);
-		gesuch.getGesuchsteller1().getGesuchstellerJA().setNachname(nachname);
-		gesuch.getGesuchsteller1().getGesuchstellerJA().setVorname(vorname);
+		FreigabeCopyUtil.copyForFreigabe(gesuch);
 		gesuchService.updateGesuch(gesuch, false);
 	}
 
+	@SuppressWarnings("ConstantConditions")
+	private Gesuch createFallForSuche(AbstractTestfall testfall, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung ) {
+		Gesuch gesuch = createFallForSuche(testfall, institutionenForSchulung);
+		gesuch.getGesuchsteller1().getGesuchstellerJA().setNachname(nachname);
+		gesuch.getGesuchsteller1().getGesuchstellerJA().setVorname(vorname);
+		return gesuchService.updateGesuch(gesuch, false);
+	}
+
 	private Gesuch createFallForSuche(AbstractTestfall testfall, List<InstitutionStammdaten> institutionenForSchulung ) {
-		boolean verfuegen = RANDOM.nextBoolean() && RANDOM.nextBoolean();
+		@SuppressWarnings("DuplicateBooleanBranch")
+		boolean verfuegen = RANDOM.nextBoolean() && RANDOM.nextBoolean(); // Damit VERFUEGT nicht zu haeufig...
 		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, verfuegen, null);
 		gesuch.setEingangsdatum(LocalDate.now());
 
@@ -362,6 +347,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 			if (verfuegen) {
 				betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
 			} else {
+				// Etwas haeufiger WARTEN als BESTAETIGT/ABGELEHNT
 				Betreuungsstatus[] statussis = new Betreuungsstatus[]{Betreuungsstatus.WARTEN, Betreuungsstatus.WARTEN,Betreuungsstatus.WARTEN,Betreuungsstatus.BESTAETIGT, Betreuungsstatus.ABGEWIESEN};
 				Betreuungsstatus status = Collections.unmodifiableList(Arrays.asList(statussis)).get(RANDOM.nextInt(statussis.length));
 				betreuung.setBetreuungsstatus(status);
@@ -370,17 +356,27 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 				}
 			}
 		}
-
-		FreigabeCopyUtil.copyForFreigabe(gesuch);
 		return gesuchService.updateGesuch(gesuch, false);
 	}
 
+	private void removeBenutzer(String username) {
+		Collection<AuthorisierterBenutzer> entitiesByAttribute = criteriaQueryHelper.getEntitiesByAttribute(AuthorisierterBenutzer.class, username, AuthorisierterBenutzer_.username);
+		for (AuthorisierterBenutzer authorisierterBenutzer : entitiesByAttribute) {
+			persistence.remove(authorisierterBenutzer);
+		}
+		if (benutzerService.findBenutzer(username).isPresent()) {
+			benutzerService.removeBenutzer(username);
+		}
+	}
+
+	@SuppressWarnings("MagicNumber")
 	private void removeFaelleForSuche() {
 		int anzahlFaelle = 25;
 		for (int i = 1; i <= anzahlFaelle; i++) {
 			String id = GESUCH_ID.replaceAll("XX", StringUtils.leftPad("" + i, 2, "0"));
 			Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(id);
 			gesuchOptional.ifPresent(gesuch -> gesuchService.removeGesuch(id));
+			persistence.getEntityManager().flush();
 		}
 	}
 }
