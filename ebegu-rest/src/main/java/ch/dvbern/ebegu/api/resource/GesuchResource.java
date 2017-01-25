@@ -15,6 +15,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BenutzerService;
@@ -54,6 +55,8 @@ import java.util.*;
 @Stateless
 @Api
 public class GesuchResource {
+
+	public static final String GESUCH_ID_INVALID = "GesuchId invalid: ";
 
 	@Inject
 	private GesuchService gesuchService;
@@ -155,8 +158,12 @@ public class GesuchResource {
 
 		final Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(this.principalBean.getPrincipal().getName());
 		if (optBenutzer.isPresent()) {
-			Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
-			return cleanGesuchForInstitutionTraegerschaft(completeGesuch, instForCurrBenutzer);
+			if (UserRole.SUPER_ADMIN.equals(optBenutzer.get().getRole())) {
+				return completeGesuch;
+			} else {
+				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+				return cleanGesuchForInstitutionTraegerschaft(completeGesuch, instForCurrBenutzer);
+			}
 		}
 		return null; // aus sicherheitsgruenden geben wir null zurueck wenn etwas nicht stimmmt
 	}
@@ -182,7 +189,6 @@ public class GesuchResource {
 		}
 
 		RestUtil.purgeKinderAndBetreuungenOfInstitutionen(completeGesuch.getKindContainers(), userInstitutionen);
-
 		return completeGesuch;
 	}
 
@@ -207,7 +213,7 @@ public class GesuchResource {
 
 			return Response.ok().build();
 		}
-		throw new EbeguEntityNotFoundException("updateBemerkung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
+		throw new EbeguEntityNotFoundException("updateBemerkung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
 	}
 
 	@Nullable
@@ -232,7 +238,7 @@ public class GesuchResource {
 			return Response.ok().build();
 		}
 		LOG.error("Could not update Status because the Geusch with ID " + gesuchJAXPId.getId() + " could not be read");
-		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
+		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
 	}
 
 	@Nonnull
@@ -350,5 +356,68 @@ public class GesuchResource {
 
 		Gesuch gesuch = gesuchService.antragFreigeben(antragId, username);
 		return Response.ok(converter.gesuchToJAX(gesuch)).build();
+	}
+
+	@ApiOperation(value = "Setzt das gegebene Gesuch als Beschwerde hängig und bei allen Gescuhen der Periode den Flag gesperrtWegenBeschwerde auf true")
+	@Nullable
+	@POST
+	@Path("/setBeschwerde/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setBeschwerdeHaengig(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
+
+		if (gesuch.isPresent()) {
+			Gesuch persistedGesuch = gesuchService.setBeschwerdeHaengigForPeriode(gesuch.get());
+			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
+		}
+		throw new EbeguEntityNotFoundException("setBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
+	}
+
+	@ApiOperation(value = "Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag gesperrtWegenBeschwerde auf false")
+	@Nullable
+	@POST
+	@Path("/removeBeschwerde/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeBeschwerdeHaengig(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
+
+		if (gesuch.isPresent()) {
+			Gesuch persistedGesuch = gesuchService.removeBeschwerdeHaengigForPeriode(gesuch.get());
+			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
+		}
+		throw new EbeguEntityNotFoundException("removeBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
+	}
+
+	@Nullable
+	@GET
+	@Path("/neuestesgesuch/{gesuchId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public boolean isNeustesGesuch(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
+		Validate.notNull(gesuchJAXPId.getId());
+		String gesuchID = converter.toEntityId(gesuchJAXPId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
+		if (!gesuchOptional.isPresent()) {
+			return false;
+		}
+
+		Optional<Gesuch> neustesGesuchOptional = gesuchService.getNeustesGesuchFuerGesuch(gesuchOptional.get());
+		return neustesGesuchOptional.map(gesuch -> gesuchJAXPId.getId().equals(gesuch.getId())).orElse(false);
+
 	}
 }

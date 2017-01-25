@@ -1,27 +1,31 @@
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 import {TSAntragStatus} from './enums/TSAntragStatus';
+import {TSEingangsart} from './enums/TSEingangsart';
 
 export default class TSAntragDTO {
-
     private _antragId: string;
     private _fallNummer: number;
     private _familienName: string;
     private _antragTyp: TSAntragTyp;
+    private _eingangsart: TSEingangsart;
     private _eingangsdatum: moment.Moment;
     private _aenderungsdatum: moment.Moment;
     private _verantwortlicher: string;
+    private _besitzerUsername: string;
     private _angebote: Array<TSBetreuungsangebotTyp>;
     private _institutionen: Array<string>;
     private _status: TSAntragStatus;
     private _gesuchsperiodeGueltigAb: moment.Moment;
     private _gesuchsperiodeGueltigBis: moment.Moment;
     private _verfuegt: boolean;
-    private _laufnummer : number;
+    private _beschwerdeHaengig: boolean;
+    private _laufnummer: number;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
-                verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment, verfuegt?: boolean, laufnummer?: number) {
+                verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment,
+                verfuegt?: boolean, laufnummer?: number, besitzerUsername?: string, eingangsart?: TSEingangsart, beschwerdeHaengig?: boolean) {
 
         this._antragId = antragId;
         this._fallNummer = fallNummer;
@@ -37,6 +41,9 @@ export default class TSAntragDTO {
         this._gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
         this._verfuegt = verfuegt;
         this._laufnummer = laufnummer;
+        this._besitzerUsername = besitzerUsername;
+        this._eingangsart = eingangsart;
+        this._beschwerdeHaengig = beschwerdeHaengig;
     }
 
 
@@ -152,12 +159,41 @@ export default class TSAntragDTO {
         this._laufnummer = value;
     }
 
-
-    get gesuchsperiodeString() {
+    get gesuchsperiodeString(): string {
         if (this._gesuchsperiodeGueltigAb && this._gesuchsperiodeGueltigBis) {
             return this._gesuchsperiodeGueltigAb.year() + '/'
                 + (this._gesuchsperiodeGueltigBis.year() - 2000);
         }
         return undefined;
     }
+
+    get eingangsart(): TSEingangsart {
+        return this._eingangsart;
+    }
+
+    set eingangsart(value: TSEingangsart) {
+        this._eingangsart = value;
+    }
+
+    get besitzerUsername(): string {
+        return this._besitzerUsername;
+    }
+
+    set besitzerUsername(value: string) {
+        this._besitzerUsername = value;
+    }
+
+    private hasBesitzer(): boolean {
+        return this._besitzerUsername !== undefined && this.besitzerUsername !== null;
+    }
+
+    get beschwerdeHaengig(): boolean {
+        return this._beschwerdeHaengig;
+    }
+
+    set beschwerdeHaengig(value: boolean) {
+        this._beschwerdeHaengig = value;
+    }
+
+
 }

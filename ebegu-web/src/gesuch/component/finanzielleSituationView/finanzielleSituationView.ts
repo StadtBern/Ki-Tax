@@ -40,8 +40,11 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
+        if (!parsedNum) {
+            parsedNum = 1;
+        }
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), parsedNum);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
@@ -52,8 +55,6 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     private initViewModel() {
-
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.FINANZIELLE_SITUATION);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.showSelbstaendig = this.model.getFiSiConToWorkWith().finanzielleSituationJA.isSelbstaendig();
         this.showSelbstaendigGS = this.model.getFiSiConToWorkWith().finanzielleSituationGS
@@ -105,7 +106,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     private save(): IPromise<TSFinanzielleSituationContainer> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.model.copyFinSitDataToGesuch(this.gesuchModelManager.getGesuch());
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the

@@ -121,6 +121,8 @@ public class VerfuegungResource {
 		}
 	}
 
+	//vorschlag: hier koennten wir auch nur die Bemerkungen vom client mitgeben und die Verfuegung nochmal neu berechnen.
+	// Das ware sicherer gegen client manipulationen.
 	@Nullable
 	@PUT
 	@Path("/{gesuchId}/{betreuungId}")

@@ -18,12 +18,6 @@ public interface NichteintretenPrint {
 	// mit den Platzhaltern im Word-Template!
 	// ****************************************************************************************************************
 
-	String getFallNummer();
-
-	String getFallDatum();
-
-	String getPeriode();
-
 	String getAngebotVon();
 
 	String getAngebotBis();

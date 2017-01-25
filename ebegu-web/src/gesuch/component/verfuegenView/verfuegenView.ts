@@ -15,6 +15,8 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSBetreuung from '../../../models/TSBetreuung';
+import {IBetreuungStateParams} from '../../gesuch.route';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import IRootScopeService = angular.IRootScopeService;
 import IScope = angular.IScope;
 let template = require('./verfuegenView.html');
@@ -35,16 +37,57 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log'];
+        'DvDialog', 'DownloadRS', '$log', '$stateParams'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, $scope: IScope, wizardStepManager: WizardStepManager,
-                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
-        this.setBemerkungen();
+                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IBetreuungStateParams) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
+        this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
+        this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
+
+        this.initView();
+
+        // EBEGE-741: Bemerkungen sollen automatisch zum Inhalt der Verfügung hinzugefügt werden
+        if ($scope) {
+            $scope.$watch(() => {
+                return this.gesuchModelManager.getGesuch().bemerkungen;
+            }, (newValue, oldValue) => {
+                if ((newValue !== oldValue)) {
+                    this.setBemerkungen();
+                }
+            });
+        }
+    }
+
+    private initView() {
+        if (!this.gesuchModelManager.getVerfuegenToWorkWith()) {
+            this.gesuchModelManager.calculateVerfuegungen().then(() => {
+                this.setBemerkungen();
+            });
+        } else {
+            this.setBemerkungen();
+        }
+
+        if (!this.berechnungsManager.finanzielleSituationResultate) {
+            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch()); //.then(() => {});
+        }
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
+            && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1
+            && !this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
+
+            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 1); //.then(() => {});
+        }
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
+            && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2
+            && !this.berechnungsManager.einkommensverschlechterungResultateBjP2) {
+
+            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
+        }
     }
 
     cancel(): void {
@@ -53,7 +96,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
 
     save(): void {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.saveVerfuegung().then(() => {
                 this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
                     this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
@@ -66,7 +109,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     schliessenOhneVerfuegen() {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.verfuegungSchliessenOhenVerfuegen().then(() => {
                 this.$state.go('gesuch.verfuegen', {
                     gesuchId: this.getGesuchId()
@@ -76,10 +119,13 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     nichtEintreten() {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.verfuegungNichtEintreten().then(() => {
-                this.$state.go('gesuch.verfuegen', {
-                    gesuchId: this.getGesuchId()
+                this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(
+                    this.gesuchModelManager.getBetreuungToWorkWith().id, true).then(() => {
+                    this.$state.go('gesuch.verfuegen', {
+                        gesuchId: this.getGesuchId()
+                    });
                 });
             });
         }
@@ -113,7 +159,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         return undefined;
     }
 
-    public getBetreuung() : TSBetreuung {
+    public getBetreuung(): TSBetreuung {
         return this.gesuchModelManager.getBetreuungToWorkWith();
     }
 

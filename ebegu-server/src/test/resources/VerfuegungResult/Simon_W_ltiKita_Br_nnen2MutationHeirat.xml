@@ -6,7 +6,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>0</anspruchberechtigtesPensum>
-        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da Restanspruch nicht übeschritten werden kann</bemerkungen>
+        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da das Kind weitere Betreuungsangebote beansprucht</bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -17,7 +17,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>0</anspruchberechtigtesPensum>
-        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da Restanspruch nicht übeschritten werden kann</bemerkungen>
+        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da das Kind weitere Betreuungsangebote beansprucht</bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -28,7 +28,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>0</anspruchberechtigtesPensum>
-        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da Restanspruch nicht übeschritten werden kann</bemerkungen>
+        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da das Kind weitere Betreuungsangebote beansprucht</bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -39,7 +39,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>0</anspruchberechtigtesPensum>
-        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da Restanspruch nicht übeschritten werden kann</bemerkungen>
+        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da das Kind weitere Betreuungsangebote beansprucht</bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -50,7 +50,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>0</anspruchberechtigtesPensum>
-        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da Restanspruch nicht übeschritten werden kann</bemerkungen>
+        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da das Kind weitere Betreuungsangebote beansprucht</bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -61,7 +61,7 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>0</anspruchberechtigtesPensum>
-        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da Restanspruch nicht übeschritten werden kann</bemerkungen>
+        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 80% auf 0% da das Kind weitere Betreuungsangebote beansprucht</bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -72,7 +72,9 @@
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>0</abzugFamGroesse>
         <anspruchberechtigtesPensum>0</anspruchberechtigtesPensum>
-        <bemerkungen>RESTANSPRUCH: Anspruch nach unten korrigiert von 70% auf 0% da Restanspruch nicht übeschritten werden kann</bemerkungen>
+        <bemerkungen>ZIVILSTANDSAENDERUNG: Anpassung des Zivilstandes von 1 auf 2 Gesuchsteller
+ERWERBSPENSUM: Der Zuschlag zum Erwerbspensum wurde auf den maximalen Wert (20%) limitiert
+RESTANSPRUCH: Anspruch nach unten korrigiert von 60% auf 0% da das Kind weitere Betreuungsangebote beansprucht</bemerkungen>
         <betreuungspensum>0</betreuungspensum>
         <elternbeitrag>0.00</elternbeitrag>
         <famGroesse>2.0</famGroesse>
@@ -82,8 +84,9 @@
     </verfuegungszeitabschnitte>
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>11280</abzugFamGroesse>
-        <anspruchberechtigtesPensum>70</anspruchberechtigtesPensum>
-        <bemerkungen></bemerkungen>
+        <anspruchberechtigtesPensum>60</anspruchberechtigtesPensum>
+        <bemerkungen>ZIVILSTANDSAENDERUNG: Anpassung des Zivilstandes von 1 auf 2 Gesuchsteller
+ERWERBSPENSUM: Der Zuschlag zum Erwerbspensum wurde auf den maximalen Wert (20%) limitiert</bemerkungen>
         <betreuungspensum>40</betreuungspensum>
         <elternbeitrag>54.35</elternbeitrag>
         <famGroesse>3.0</famGroesse>
@@ -93,8 +96,9 @@
     </verfuegungszeitabschnitte>
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>11280</abzugFamGroesse>
-        <anspruchberechtigtesPensum>70</anspruchberechtigtesPensum>
-        <bemerkungen></bemerkungen>
+        <anspruchberechtigtesPensum>60</anspruchberechtigtesPensum>
+        <bemerkungen>ZIVILSTANDSAENDERUNG: Anpassung des Zivilstandes von 1 auf 2 Gesuchsteller
+ERWERBSPENSUM: Der Zuschlag zum Erwerbspensum wurde auf den maximalen Wert (20%) limitiert</bemerkungen>
         <betreuungspensum>40</betreuungspensum>
         <elternbeitrag>54.35</elternbeitrag>
         <famGroesse>3.0</famGroesse>
@@ -104,8 +108,9 @@
     </verfuegungszeitabschnitte>
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>11280</abzugFamGroesse>
-        <anspruchberechtigtesPensum>70</anspruchberechtigtesPensum>
-        <bemerkungen></bemerkungen>
+        <anspruchberechtigtesPensum>60</anspruchberechtigtesPensum>
+        <bemerkungen>ZIVILSTANDSAENDERUNG: Anpassung des Zivilstandes von 1 auf 2 Gesuchsteller
+ERWERBSPENSUM: Der Zuschlag zum Erwerbspensum wurde auf den maximalen Wert (20%) limitiert</bemerkungen>
         <betreuungspensum>40</betreuungspensum>
         <elternbeitrag>54.35</elternbeitrag>
         <famGroesse>3.0</famGroesse>
@@ -115,8 +120,9 @@
     </verfuegungszeitabschnitte>
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>11280</abzugFamGroesse>
-        <anspruchberechtigtesPensum>70</anspruchberechtigtesPensum>
-        <bemerkungen></bemerkungen>
+        <anspruchberechtigtesPensum>60</anspruchberechtigtesPensum>
+        <bemerkungen>ZIVILSTANDSAENDERUNG: Anpassung des Zivilstandes von 1 auf 2 Gesuchsteller
+ERWERBSPENSUM: Der Zuschlag zum Erwerbspensum wurde auf den maximalen Wert (20%) limitiert</bemerkungen>
         <betreuungspensum>40</betreuungspensum>
         <elternbeitrag>54.35</elternbeitrag>
         <famGroesse>3.0</famGroesse>
@@ -126,8 +132,9 @@
     </verfuegungszeitabschnitte>
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>11280</abzugFamGroesse>
-        <anspruchberechtigtesPensum>70</anspruchberechtigtesPensum>
-        <bemerkungen></bemerkungen>
+        <anspruchberechtigtesPensum>60</anspruchberechtigtesPensum>
+        <bemerkungen>ZIVILSTANDSAENDERUNG: Anpassung des Zivilstandes von 1 auf 2 Gesuchsteller
+ERWERBSPENSUM: Der Zuschlag zum Erwerbspensum wurde auf den maximalen Wert (20%) limitiert</bemerkungen>
         <betreuungspensum>40</betreuungspensum>
         <elternbeitrag>54.35</elternbeitrag>
         <famGroesse>3.0</famGroesse>
@@ -137,8 +144,9 @@
     </verfuegungszeitabschnitte>
     <verfuegungszeitabschnitte>
         <abzugFamGroesse>11280</abzugFamGroesse>
-        <anspruchberechtigtesPensum>70</anspruchberechtigtesPensum>
-        <bemerkungen></bemerkungen>
+        <anspruchberechtigtesPensum>60</anspruchberechtigtesPensum>
+        <bemerkungen>ZIVILSTANDSAENDERUNG: Anpassung des Zivilstandes von 1 auf 2 Gesuchsteller
+ERWERBSPENSUM: Der Zuschlag zum Erwerbspensum wurde auf den maximalen Wert (20%) limitiert</bemerkungen>
         <betreuungspensum>40</betreuungspensum>
         <elternbeitrag>54.35</elternbeitrag>
         <famGroesse>3.0</famGroesse>

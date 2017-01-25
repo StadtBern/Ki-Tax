@@ -13,6 +13,7 @@ import {TSRole} from '../../../models/enums/TSRole';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IScope = angular.IScope;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -42,7 +43,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     constructor($stateParams: IEinkommensverschlechterungStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private $log: ILogService,
                 wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         let parsedGesuchstelllerNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedGesuchstelllerNum);
@@ -83,8 +84,13 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         }
     }
 
+    /**
+     *  Wenn z.B. in der Periode 2016/2017 eine Einkommensverschlechterung für 2017 geltend gemacht wird,
+     *  ist es unmöglich, dass die Steuerveranlagung und Steuererklärung für 2017 schon dem Gesuchsteller vorliegt
+     */
     showSteuerveranlagung(): boolean {
-        return !this.model.getGemeinsameSteuererklaerungToWorkWith() || this.model.getGemeinsameSteuererklaerungToWorkWith() === false;
+        return (this.model.getBasisJahrPlus() === 1) &&
+            (!this.model.getGemeinsameSteuererklaerungToWorkWith() || this.model.getGemeinsameSteuererklaerungToWorkWith() === false);
     }
 
     showSteuererklaerung(): boolean {
@@ -111,7 +117,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     }
 
     private save(): IPromise<TSEinkommensverschlechterungContainer> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
@@ -148,10 +154,17 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         let fsGS: TSFinanzielleSituation = this.model.getFiSiConToWorkWith().finanzielleSituationGS;
         if (this.model.getBasisJahrPlus() === 2) {
             //basisjahr Plus 2
-            this.geschaeftsgewinnBasisjahrMinus1 = this.model.getEkvContToWorkWith().ekvJABasisJahrPlus1.geschaeftsgewinnBasisjahr;
+            if (this.model.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1) {
+                let einkommensverschlJABasisjahrPlus1 = this.model.getEkvContToWorkWith().ekvJABasisJahrPlus1;
+                this.geschaeftsgewinnBasisjahrMinus1 = einkommensverschlJABasisjahrPlus1 ? einkommensverschlJABasisjahrPlus1.geschaeftsgewinnBasisjahr : undefined;
+                let einkommensverschlGSBasisjahrPlus1 = this.model.getEkvContToWorkWith().ekvGSBasisJahrPlus1;
+                this.geschaeftsgewinnBasisjahrMinus1GS = einkommensverschlGSBasisjahrPlus1 ? einkommensverschlGSBasisjahrPlus1.geschaeftsgewinnBasisjahr : undefined;
+            } else {
+                let einkommensverschlGS = this.model.getEkvToWorkWith_GS();
+                this.geschaeftsgewinnBasisjahrMinus1GS = einkommensverschlGS ? einkommensverschlGS.geschaeftsgewinnBasisjahrMinus1 : undefined;
+            }
+
             this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
-            let einkommensverschlGSBasisjahrPlus1 = this.model.getEkvContToWorkWith().ekvGSBasisJahrPlus1;
-            this.geschaeftsgewinnBasisjahrMinus1GS = einkommensverschlGSBasisjahrPlus1 ? einkommensverschlGSBasisjahrPlus1.geschaeftsgewinnBasisjahr : undefined;
             this.geschaeftsgewinnBasisjahrMinus2GS = fsGS ? fsGS.geschaeftsgewinnBasisjahr : undefined;
         } else {
             this.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
@@ -159,6 +172,10 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
             this.geschaeftsgewinnBasisjahrMinus1GS = fsGS ? fsGS.geschaeftsgewinnBasisjahr : undefined;
             this.geschaeftsgewinnBasisjahrMinus2GS = fsGS ? fsGS.geschaeftsgewinnBasisjahrMinus1 : undefined;
         }
+    }
+
+    public enableGeschaeftsgewinnBasisjahrMinus1(): boolean {
+        return this.model.getBasisJahrPlus() === 2 && !this.model.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA.ekvFuerBasisJahrPlus1;
     }
 
     public getTextSelbstaendigKorrektur() {

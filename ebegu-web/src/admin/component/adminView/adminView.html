@@ -127,14 +127,15 @@
                             <label class="md-no-float" for="besitzer">
                                 Gesuchsteller wenn gewuenscht
                             </label>
-
-                            <select name="besitzer" id="besitzer"
-                                    ng-model="vm.selectedBesitzer"
-                                    class="form-control"
-                                    ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
-                                <option value=""></option>
-
-                            </select>
+                            <div class="dv-select-style">
+                                <select name="besitzer" id="besitzer"
+                                        ng-model="vm.selectedBesitzer"
+                                        class="form-control"
+                                        ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList"
+                                        style="background:#F0F0F0;">
+                                    <option value=""></option>
+                                </select>
+                            </div>
                         </dv-input-container>
                     </div>
                 </div>
@@ -194,6 +195,66 @@
                         <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="AusInAusBern"></span>
                     </button>
                 </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('ASIV1')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 1"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('ASIV2')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 2"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('ASIV3')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 3"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('ASIV4')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 4"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('ASIV5')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 5"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('ASIV6')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 6"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('ASIV7')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 7"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('ASIV8')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 8"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('ASIV9')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 9"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn-link btn-testfall"
+                            ng-click="vm.createTestFallType('ASIV10')">
+                        <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 10"></span>
+                    </button>
+                </li>
             </ul>
 
             <!--Gesuche eines GS loeschen-->
@@ -206,14 +267,15 @@
                         <label class="md-no-float" for="gesuchsteller">
                             Gesuchsteller dessen Faelle Geloescht werden solllen
                         </label>
-
-                        <select name="gesuchsteller" id="gesuchsteller"
-                                ng-model="vm.selectedBesitzer"
-                                class="form-control dv-input-container-small"
-                                ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList">
-                            <option value=""></option>
-
-                        </select>
+                        <div class="dv-select-style">
+                            <select name="gesuchsteller" id="gesuchsteller"
+                                    ng-model="vm.selectedBesitzer"
+                                    class="form-control dv-input-container-small"
+                                    ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList"
+                                    style="background:#F0F0F0;">
+                                <option value=""></option>
+                            </select>
+                        </div>
                     </dv-input-container>
                 </div>
 

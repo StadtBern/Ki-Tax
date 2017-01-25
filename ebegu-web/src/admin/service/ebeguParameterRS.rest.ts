@@ -3,6 +3,7 @@ import TSEbeguParameter from '../../models/TSEbeguParameter';
 import {IHttpService, IPromise} from 'angular';
 import {TSEbeguParameterKey} from '../../models/enums/TSEbeguParameterKey';
 import DateUtil from '../../utils/DateUtil';
+import ICacheObject = angular.ICacheObject;
 
 
 export class EbeguParameterRS {
@@ -53,8 +54,22 @@ export class EbeguParameterRS {
             });
     }
 
+    public getEbeguParameterByGesuchsperiodeCached(gesuchsperiodeId: string, cache: ICacheObject): IPromise<TSEbeguParameter[]> {
+        return this.http.get(this.serviceURL + '/gesuchsperiode/' + gesuchsperiodeId, {cache: cache})
+            .then((response: any) => {
+                return this.ebeguRestUtil.parseEbeguParameters(response.data);
+            });
+    }
+
     public getEbeguParameterByJahr(year: number): IPromise<TSEbeguParameter[]> {
         return this.http.get(this.serviceURL + '/year/' + year)
+            .then((response: any) => {
+                return this.ebeguRestUtil.parseEbeguParameters(response.data);
+            });
+    }
+
+    public getJahresabhParameter(): IPromise<TSEbeguParameter[]> {
+        return this.http.get(this.serviceURL + '/yeardependent')
             .then((response: any) => {
                 return this.ebeguRestUtil.parseEbeguParameters(response.data);
             });

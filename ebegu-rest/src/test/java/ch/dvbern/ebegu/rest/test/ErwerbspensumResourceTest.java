@@ -90,28 +90,4 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestLoginTest {
 
 	}
 
-	@SuppressWarnings("ConstantConditions")
-	@Test
-	public void invalidPercentErwerbspensumTest() throws EbeguException {
-		JaxGesuchstellerContainer jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchstellerContainer storedGS = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, false, jaxGesuchsteller, null, null);
-		Response response = erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(storedGS), TestJaxDataUtil.createTestJaxErwerbspensumContainer(), null, null);
-		JaxErwerbspensumContainer jaxErwerbspensum = (JaxErwerbspensumContainer) response.getEntity();
-		JaxErwerbspensumContainer loadedEwp = erwerbspensumResource.findErwerbspensum(converter.toJaxId(jaxErwerbspensum));
-		Assert.assertNotNull(loadedEwp);
-		loadedEwp.getErwerbspensumGS().setZuschlagsprozent(50);
-		try{
-			EbeguParameter maxErwerbspensum = new EbeguParameter();
-			maxErwerbspensum.setName(EbeguParameterKey.PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM);
-			maxErwerbspensum.setValue("20");
-			maxErwerbspensum.setGueltigkeit(new DateRange(loadedEwp.getErwerbspensumGS().getGueltigAb().minusDays(1), loadedEwp.getErwerbspensumGS().getGueltigBis()));
-			ebeguParameterService.saveEbeguParameter(maxErwerbspensum);
-			erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(storedGS),loadedEwp,null,null);
-			Assert.fail("50% is invalid");
-		} catch (EJBException e){
-			Assert.assertNotNull(e);
-		}
-
-	}
-
 }

@@ -30,12 +30,6 @@ public interface FreigabequittungPrint {
 
 	boolean isAdresseSchulamt();
 
-	String getPeriode();
-
-	String getFallNummer();
-
-	String getFallDatum();
-
 	String getAdresseGS1();
 
 	boolean isAddresseGS2();
@@ -45,5 +39,7 @@ public interface FreigabequittungPrint {
 	List<BetreuungsTabellePrint> getBetreuungen();
 
 	List<AufzaehlungPrint> getUnterlagen();
+
+	boolean isWithoutUnterlagen();
 
 }

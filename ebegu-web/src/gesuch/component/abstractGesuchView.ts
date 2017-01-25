@@ -11,6 +11,7 @@ import TSExceptionReport from '../../models/TSExceptionReport';
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
 import {TSMessageEvent} from '../../models/enums/TSErrorEvent';
+import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 
 export default class AbstractGesuchViewController<T> {
 
@@ -24,13 +25,14 @@ export default class AbstractGesuchViewController<T> {
     form: IFormController;
 
     constructor($gesuchModelManager: GesuchModelManager, $berechnungsManager: BerechnungsManager,
-                wizardStepManager: WizardStepManager, $scope: IScope) {
+                wizardStepManager: WizardStepManager, $scope: IScope, stepName: TSWizardStepName) {
         this.gesuchModelManager = $gesuchModelManager;
         this.berechnungsManager = $berechnungsManager;
         this.wizardStepManager = wizardStepManager;
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
         this.$scope = $scope;
+        this.wizardStepManager.setCurrentStep(stepName);
     }
 
     $onInit() {
@@ -48,6 +50,29 @@ export default class AbstractGesuchViewController<T> {
 
     public isGesuchReadonly(): boolean {
         return this.gesuchModelManager.isGesuchReadonly();
+    }
+
+    /**
+     * Diese Methode prueft ob das Form valid ist. Sollte es nicht valid sein wird das erste fehlende Element gesucht
+     * und fokusiert, damit der Benutzer nicht scrollen muss, um den Fehler zu finden.
+     * Am Ende wird this.form.$valid zurueckgegeben
+     */
+    public isGesuchValid(): boolean {
+        if (!this.form.$valid) {
+            let firstInvalid = angular.element('form .ng-invalid').first();
+            if (firstInvalid) {
+                if (firstInvalid.get(0).tagName === 'DIV') { // sollten wir in einem div sein, suchen wir den ersten subelement, das fehlt
+                    firstInvalid = firstInvalid.find('.ng-invalid').first();
+                }
+                if (firstInvalid.get(0).tagName !== 'INPUT') { // Fuer alle Elemente die kein INPUT sind, muessen wir den tabindex setzen, damit focus() funktioniert
+                    firstInvalid.attr('tabindex', -1).focus();
+                } else {
+                    firstInvalid.focus();
+                }
+
+            }
+        }
+        return this.form.$valid;
     }
 
     public getGesuchId(): string {

@@ -92,6 +92,7 @@ export class GesuchToolbarController {
     private addWatchers($scope: angular.IScope) {
         // needed because of test is not able to inject $scope!
         if ($scope) {
+            //watcher fuer gesuch id change
             $scope.$watch(() => {
                 return this.gesuchid;
             }, (newValue, oldValue) => {
@@ -102,9 +103,12 @@ export class GesuchToolbarController {
                         this.antragTypList = {};
                         this.gesuchNavigationList = {};
                         this.gesuchsperiodeList = {};
+                        this.antragList = [];
+                        this.antragMutierenPossible(); //neu berechnen ob mutieren moeglich ist
                     }
                 }
             });
+            //watcher fuer status change
             if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
                 $scope.$watch(() => {
                     return this.gesuchModelManager.getGesuch().status;
@@ -164,7 +168,7 @@ export class GesuchToolbarController {
 
     private updateGesuchperiodeList() {
         this.gesuchsperiodeList = {};
-        for (var i = 0; i < this.antragList.length; i++) {
+        for (let i = 0; i < this.antragList.length; i++) {
             let gs = this.antragList[i].gesuchsperiodeString;
 
             if (!this.gesuchsperiodeList[gs]) {
@@ -176,7 +180,7 @@ export class GesuchToolbarController {
 
     private updateGesuchNavigationList() {
         this.gesuchNavigationList = {};  // clear
-        for (var i = 0; i < this.antragList.length; i++) {
+        for (let i = 0; i < this.antragList.length; i++) {
             let gs = this.antragList[i].gesuchsperiodeString;
             let antrag: TSAntragDTO = this.antragList[i];
 
@@ -189,7 +193,7 @@ export class GesuchToolbarController {
 
     private updateAntragTypList() {
         this.antragTypList = {};  //clear
-        for (var i = 0; i < this.antragList.length; i++) {
+        for (let i = 0; i < this.antragList.length; i++) {
             let antrag: TSAntragDTO = this.antragList[i];
             if (this.getGesuch().gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
                 let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
@@ -200,8 +204,8 @@ export class GesuchToolbarController {
     }
 
     getKeys(map: {[key: string]: Array<TSAntragDTO>}): Array<String> {
-        var keys: Array<String> = [];
-        for (var key in map) {
+        let keys: Array<String> = [];
+        for (let key in map) {
             if (map.hasOwnProperty(key)) {
                 keys.push(key);
             }
@@ -291,7 +295,7 @@ export class GesuchToolbarController {
 
     private getNewest(arrayTSAntragDTO: Array<TSAntragDTO>): TSAntragDTO {
         let newest: TSAntragDTO = arrayTSAntragDTO[0];
-        for (var i = 0; i < arrayTSAntragDTO.length; i++) {
+        for (let i = 0; i < arrayTSAntragDTO.length; i++) {
             if (arrayTSAntragDTO[i].eingangsdatum.isAfter(newest.eingangsdatum)) {
                 newest = arrayTSAntragDTO[i];
             }
@@ -312,19 +316,20 @@ export class GesuchToolbarController {
     }
 
     public antragMutierenPossible(): void {
-        if (this.antragList) {
-            let gesuchInBearbeitungVorhanden = false;
-            for (var i = 0; i < this.antragList.length; i++) {
+        if (this.antragList && this.antragList.length !== 0) {
+            let mutierenGesperrt = false;
+            for (let i = 0; i < this.antragList.length; i++) {
                 let antragItem: TSAntragDTO = this.antragList[i];
                 // Wir muessen nur die Antraege der aktuell ausgewaehlten Gesuchsperiode beachten
                 if (antragItem.gesuchsperiodeString === this.getCurrentGesuchsperiode()) {
-                    // Falls das Gesuch nicht verfuegt ist, darf nicht mutiert werden
-                    if (antragItem.verfuegt === false) {
-                        gesuchInBearbeitungVorhanden = true;
+                    // Falls wir ein Gesuch finden das nicht verfuegt ist oder eine Beschwerde hängig ist, darf nicht mutiert werden
+                    if (antragItem.verfuegt === false || antragItem.beschwerdeHaengig === true) {
+                        mutierenGesperrt = true;
+                        break;
                     }
                 }
             }
-            this.mutierenPossibleForCurrentAntrag = !gesuchInBearbeitungVorhanden;
+            this.mutierenPossibleForCurrentAntrag = !mutierenGesperrt;
         } else {
             this.mutierenPossibleForCurrentAntrag = false;
         }
@@ -350,5 +355,12 @@ export class GesuchToolbarController {
         antragDTO.antragTyp = TSAntragTyp.MUTATION;
         let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
         this.antragTypList[txt] = antragDTO;
+    }
+
+    private hasBesitzer(): boolean {
+        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall) {
+            return this.getGesuch().fall.besitzerUsername !== undefined && this.getGesuch().fall.besitzerUsername !== null;
+        }
+        return false;
     }
 }

@@ -3,11 +3,12 @@
     <div class="row viewTitle">
         <div class="col-md-12">
             <h1>
-                <span data-translate="MUTATION_FAMSITUATION_TITLE"></span>
+                <span ng-if="vm.isMutation()" data-translate="MUTATION_FAMSITUATION_TITLE"></span>
+                <span ng-if="!vm.isMutation()" data-translate="FAMILIENSITUATION"></span>
             </h1>
             <hr class="header"/>
-            <p class="inlineHint" data-translate="MUTATION_FAMSITUATION_HINT"></p>
-            <div ng-if="vm.showError()" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></div>
+            <p ng-if="vm.isMutation()" data-translate="MUTATION_FAMSITUATION_HINT"></p>
+            <p ng-if="vm.showError()" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></p>
         </div>
     </div>
     <div class="row">
@@ -27,6 +28,7 @@
                                     <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
                                                    ng-model="vm.getFamiliensituation().aenderungPer"
                                                    class="input-element"
+                                                   dv-on-blur="vm.onDatumBlur()"
                                                    ng-disabled="vm.isGesuchReadonly()">
                                     </dv-datepicker>
                                 </div>
@@ -48,11 +50,9 @@
 
                 <!--familienstatus-->
                 <div class="row">
-                    <div class="col-xs-12 dv-input-container-medium">
+                    <div class="col-xs-12 dv-input-container-question">
                         <div class="form-group">
-                            <h1 class="required"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span>
-                                <dv-tooltip text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip>
-                            </h1>
+                            <h1 class="required"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span></h1>
                             <dv-radio-container name="familienstatus"
                                                 ng-model="vm.getFamiliensituation().familienstatus"
                                                 ng-required="true"
@@ -69,9 +69,12 @@
 
                 <!--gesuchstellerKardinalitaet-->
                 <div class="row">
-                    <div class="col-xs-12 dv-input-container-medium" ng-if="vm.showGesuchstellerKardinalitaet()">
+                    <div class="col-xs-12 dv-input-container-question" ng-if="vm.showGesuchstellerKardinalitaet()">
                         <div class="form-group">
-                            <h1 class="required" data-translate="FAMILIENSITUATION_FRAGE_2"></h1>
+                            <h1 class="required">
+                                <span data-translate="FAMILIENSITUATION_FRAGE_2"></span>
+                                <dv-tooltip text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip>
+                            </h1>
                             <dv-radio-container name="gesuchstellerKardinalitaet"
                                                 ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet"
                                                 ng-required="true"

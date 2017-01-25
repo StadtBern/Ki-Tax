@@ -11,6 +11,7 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
@@ -18,9 +19,10 @@ import ch.dvbern.lib.doctemplate.common.MergeSource;
 
 import java.util.List;
 
-public class BegleitschreibenPrintMergeSource implements MergeSource {
+public class BegleitschreibenPrintMergeSource implements EBEGUMergeSource {
 
 	private BegleitschreibenPrint begleitschreiben;
+	private boolean isPDFLongerThanExpected = false;
 
 	/**
 	 * @param begleitschreibenPrint
@@ -40,12 +42,22 @@ public class BegleitschreibenPrintMergeSource implements MergeSource {
 
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
+		if (key.equals("begleitschreiben.PDFLongerThanExpected")) {
+			return isPDFLongerThanExpected;
+		}
 		return new BeanMergeSource(begleitschreiben, "begleitschreiben.").ifStatement(mergeContext, key);
 	}
 
 	@Override
 	public List<MergeSource> whileStatement(MergeContext mergeContext, String key) throws DocTemplateException {
-
+		if (key.startsWith("begleitschreiben")) {
+			return new BeanMergeSource(begleitschreiben, "begleitschreiben.").whileStatement(mergeContext, key);
+		}
 		return null;
+	}
+
+	@Override
+	public void setPDFLongerThanExpected(boolean isPDFLongerThanExpected) {
+		this.isPDFLongerThanExpected = isPDFLongerThanExpected;
 	}
 }

@@ -43,11 +43,11 @@
             <tr>
 
                 <th st-sort="antragTyp" class="sortable" data-translate="TYP_UPPER"></th>
-                <th st-sort="gesuchsperiodeString" class="sortable" data-translate="PERIODE_UPPER" hide-xs></th>
-                <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable"
+                <th st-sort="gesuchsperiodeString" class="sortable" data-translate="PERIODE_UPPER" hide-sm hide-xs></th>
+                <th st-sort="eingangsdatum" st-sort-default="true" class="sortable"
                     data-translate="EINGANG_UPPER"></th>
                 <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
-                <th st-sort="verantwortlicher" class="sortable" data-translate="VERANTWORTLICH_UPPER" hide-xs></th>
+                <th st-sort="verantwortlicher" class="sortable" data-translate="VERANTWORTLICH_UPPER" hide-sm hide-xs></th>
             </tr>
             </thead>
             <tbody>
@@ -57,22 +57,26 @@
                     ng-bind="row.antragTyp | translate"></td>
                 <td class="ellipsis"
                     ellipsis-tooltip="{{row.gesuchsperiodeString}}"
-                    ng-bind="row.gesuchsperiodeString" hide-xs></td>
+                    ng-bind="row.gesuchsperiodeString" hide-sm hide-xs></td>
                 <td class="ellipsis"
                     ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                     ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                 <td class="ellipsis" ellipsis-tooltip="{{vm.translate(row.status)}}"
                     ng-bind="vm.translate(row.status)"></td>
                 <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
-                    ng-bind="row.verantwortlicher" hide-xs></td>
+                    ng-bind="row.verantwortlicher" hide-sm hide-xs></td>
+            </tr>
+            <tr ng-if="vm.getAntragList().length === 0">
+                <td colspan="3" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-gt-sm></td>
+                <td colspan="5" class="empty-table" data-translate="ANTRAG_NOCH_KEINE" hide-sm hide-xs></td>
             </tr>
             </tbody>
             <tfoot>
             <tr>
-                <td colspan="5" class="text-center" hide-xs>
+                <td colspan="5" class="text-center" hide-sm hide-xs>
                     <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
                 </td>
-                <td colspan="3" class="text-center" hide-gt-xs>
+                <td colspan="3" class="text-center" hide-gt-sm>
                     <div st-pagination="" st-items-by-page="10" st-displayed-pages="5"></div>
                 </td>
             </tr>

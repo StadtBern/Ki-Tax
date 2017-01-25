@@ -61,13 +61,35 @@ public class ApplicationPropertyResource {
 		return converter.applicationPropertyToJAX(propertyFromDB.get());
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	@ApiOperation(value = "Are we in development mode?", response = Boolean.class)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
-	@Path("/devmode")
-	public boolean isDevMode(@Context HttpServletResponse response) {
-		return ebeguConfiguration.getIsDevmode();
+	@Path("/public/devmode")
+	public Response isDevMode(@Context HttpServletResponse response) {
+		return Response.ok(ebeguConfiguration.getIsDevmode()).build();
+	}
+
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	@Path("/public/dummy")
+	public Response isDummyLoginEnabled(@Context HttpServletResponse response) {
+		return Response.ok(ebeguConfiguration.isDummyLoginEnabled()).build();
+	}
+
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Returns background Color for the current System", response = String.class)
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/public/background")
+	public JaxApplicationProperties getBackgroundColor(@Context HttpServletResponse response) {
+		Optional<ApplicationProperty> propertyFromDB = this.applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.BACKGROUND_COLOR);
+		ApplicationProperty prop = propertyFromDB.orElse(new ApplicationProperty(ApplicationPropertyKey.BACKGROUND_COLOR, "#FFFFFF"));
+		return converter.applicationPropertyToJAX(prop);
 	}
 
 	@Nonnull

@@ -15,6 +15,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import GlobalCacheService from '../../service/globalCacheService';
+import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import ICacheFactoryService = angular.ICacheFactoryService;
 import IScope = angular.IScope;
 let template = require('./dokumenteView.html');
@@ -47,9 +48,8 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
                 private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager,
                 private ebeguUtil: EbeguUtil, private globalCacheService: GlobalCacheService, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.DOKUMENTE);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.DOKUMENTE);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.calculate();
     }
@@ -75,12 +75,32 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
     private searchDokumente(alleDokumente: TSDokumenteDTO, dokumenteForType: TSDokumentGrund[], dokumentGrundTyp: TSDokumentGrundTyp) {
 
         let dokumentGruende: Array<TSDokumentGrund> = alleDokumente.dokumentGruende;
-        for (var i = 0; i < dokumentGruende.length; i++) {
-            var tsDokument: TSDokumentGrund = dokumentGruende[i];
+        for (let i = 0; i < dokumentGruende.length; i++) {
+            let tsDokument: TSDokumentGrund = dokumentGruende[i];
             if (tsDokument.dokumentGrundTyp === dokumentGrundTyp) {
                 dokumenteForType.push(tsDokument);
             }
         }
+        dokumenteForType.sort((n1: TSDokumentGrund, n2: TSDokumentGrund) => {
+            let result : number = 0;
+
+            if (n1 && n2) {
+                if(n1.fullName && n2.fullName) {
+                    result = n1.fullName.localeCompare(n2.fullName);
+                }
+                if(result == 0){
+                    if(n1.tag && n2.tag) {
+                        result = n1.tag.localeCompare(n2.tag);
+                    }
+                }
+                if(result == 0){
+                    if(n1.dokumentTyp && n2.dokumentTyp) {
+                        result = n1.dokumentTyp.toString().localeCompare(n2.dokumentTyp.toString());
+                    }
+                }
+            }
+            return result;
+        });
     }
 
     addUploadedDokuments(dokumentGrund: any, dokumente: TSDokumentGrund[]): void {
@@ -93,7 +113,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
 
             // Clear cached Papiergesuch on add...
             if (dokumentGrund.dokumentGrundTyp === TSDokumentGrundTyp.PAPIERGESUCH) {
-                this.globalCacheService.getCache().removeAll();
+                this.globalCacheService.getCache(TSCacheTyp.EBEGU_DOCUMENT).removeAll();
             }
         }
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
@@ -123,7 +143,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
 
                     // Clear cached Papiergesuch on remove...
                     if (dokumentGrund.dokumentGrundTyp === TSDokumentGrundTyp.PAPIERGESUCH) {
-                        this.globalCacheService.getCache().removeAll();
+                        this.globalCacheService.getCache(TSCacheTyp.EBEGU_DOCUMENT).removeAll();
                     }
                 }
             } else {
@@ -140,13 +160,15 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
         this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
     }
 
-    private resetAntragStatusIfNecessary() : void {
+    private resetAntragStatusIfNecessary(): void {
         // Falls bereits Dokumente gemahnt wurden, muss das JA erfahren, wenn neue Dokumente hochgeladen wurden
         let status = this.gesuchModelManager.getGesuch().status;
         if (TSAntragStatus.ERSTE_MAHNUNG === status) {
             this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
         } else if (TSAntragStatus.ZWEITE_MAHNUNG === status) {
             this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+        } else if (TSAntragStatus.NUR_SCHULAMT === status) {
+            this.setGesuchStatus(TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
         }
     }
 }

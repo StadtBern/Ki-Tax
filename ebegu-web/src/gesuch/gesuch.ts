@@ -121,6 +121,12 @@ export class GesuchRouteController {
             || toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
         }
+
+        if ((toTranslate === TSAntragStatus.NUR_SCHULAMT || toTranslate === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
+            && isUserGesuchsteller) {
+            return this.ebeguUtil.translateString('ABGESCHLOSSEN');
+        }
+
         return this.ebeguUtil.translateString(TSAntragStatus[toTranslate]);
     }
 
@@ -179,6 +185,13 @@ export class GesuchRouteController {
 
     public getActiveElement(): TSWizardStepName {
         return this.wizardStepManager.getCurrentStepName();
+    }
+
+    public isGesuchGesperrt(): boolean {
+        if (this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde === true;
+        }
+        return false;
     }
 
 }

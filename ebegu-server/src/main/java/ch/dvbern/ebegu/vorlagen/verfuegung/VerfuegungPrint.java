@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.vorlagen.verfuegung;
 
+import ch.dvbern.ebegu.vorlagen.AufzaehlungPrint;
+
 import java.util.List;
 
 /*
@@ -20,13 +22,13 @@ public interface VerfuegungPrint {
 	// mit den Platzhaltern im Word-Template!
 	// ****************************************************************************************************************
 
-	String getTitel();
-
 	String getAngebot();
 
 	String getInstitution();
 
 	String getReferenznummer();
+
+	String getGesuchstellerNames();
 
 	String getVerfuegungsdatum();
 
@@ -45,7 +47,7 @@ public interface VerfuegungPrint {
 	/**
 	 * @return die Bemerkung
 	 */
-	List<BemerkungPrint> getManuelleBemerkungen();
+	List<AufzaehlungPrint> getManuelleBemerkungen();
 
 	/**
 	 * @return true falls Pensum groesser 0 ist
@@ -67,5 +69,4 @@ public interface VerfuegungPrint {
 	 */
 	boolean isPrintManuellebemerkung();
 
-	String getDateCreate();
 }

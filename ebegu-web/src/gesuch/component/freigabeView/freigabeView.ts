@@ -41,30 +41,30 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS, $scope: IScope,  private applicationPropertyRS: ApplicationPropertyRS) {
+                private downloadRS: DownloadRS, $scope: IScope, private applicationPropertyRS: ApplicationPropertyRS) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE);
         this.initViewModel();
     }
 
     private initViewModel(): void {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.FREIGABE);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.initDevModeParameter();
     }
 
     public gesuchEinreichen(): IPromise<void> {
         this.isFreigebenClicked = true;
-        if (this.form.$valid && this.bestaetigungFreigabequittung === true) {
+        if (this.isGesuchValid() && this.bestaetigungFreigabequittung === true) {
             return this.DvDialog.showDialog(dialogTemplate, RemoveDialogController, {
                 title: 'CONFIRM_GESUCH_FREIGEBEN',
                 deleteText: 'CONFIRM_GESUCH_FREIGEBEN_DESCRIPTION'
             }).then(() => {
                 if (this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
-                    return this.openFreigabequittungPDF();
+                    return this.openFreigabequittungPDF(true);
                 } else {
                     return this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
                 }
+
             });
         }
         return undefined;
@@ -84,7 +84,8 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     public isGesuchFreigegeben(): boolean {
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
-            return isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status) || (this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG);
+            return isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status)
+                || (this.gesuchModelManager.getGesuch().status === TSAntragStatus.FREIGABEQUITTUNG);
         }
         return false;
     }
@@ -96,9 +97,8 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         return false;
     }
 
-
-    public openFreigabequittungPDF(): IPromise<void> {
-        return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false, this.getZustelladresse())
+    public openFreigabequittungPDF(forceCreation: boolean): IPromise<void> {
+        return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation, this.getZustelladresse())
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
                 this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id).then(() => {
@@ -118,13 +118,23 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         return '';
     }
 
+    public getTextForFreigebenNotAllowed(): string {
+        if (this.isGesuchReadonly()) {
+            return 'FREIGABEQUITTUNG_NOT_ALLOWED_BESCHWERDE_TEXT';
+        } else {
+            return 'FREIGABEQUITTUNG_NOT_ALLOWED_TEXT';
+        }
+    }
+
     /**
      * Die Methodes wizardStepManager.areAllStepsOK() erlaubt dass die Betreuungen in Status PLATZBESTAETIGUNG sind
-     * aber in diesem Fall duerfen diese nur OK sein, deswegen die Frage extra.
+     * aber in diesem Fall duerfen diese nur OK sein, deswegen die Frage extra. Ausserdem darf es nur freigegebn werden
+     * wenn es nicht in ReadOnly modus ist
      */
     public canBeFreigegeben(): boolean {
         return this.wizardStepManager.areAllStepsOK() &&
-            this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG);
+            this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
+            && !this.isGesuchReadonly();
     }
 
     private getZustelladresse(): TSZustelladresse {

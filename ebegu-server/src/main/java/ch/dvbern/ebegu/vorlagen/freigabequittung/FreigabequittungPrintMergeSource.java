@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.vorlagen.freigabequittung;
 
+import ch.dvbern.ebegu.vorlagen.EBEGUMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
@@ -19,8 +20,9 @@ import java.util.List;
  * <p>
  * Created by medu on 28/11/2016.
  */
-public class FreigabequittungPrintMergeSource implements MergeSource {
+public class FreigabequittungPrintMergeSource implements EBEGUMergeSource {
 
+	private boolean isPDFLongerThanExpected = false;
 	private FreigabequittungPrint quittung;
 
 	public FreigabequittungPrintMergeSource(FreigabequittungPrint quittung) {
@@ -47,6 +49,9 @@ public class FreigabequittungPrintMergeSource implements MergeSource {
 
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
+		if (key.equals("printMerge.PDFLongerThanExpected")) {
+			return isPDFLongerThanExpected;
+		}
 		return new BeanMergeSource(quittung, "printMerge.").ifStatement(mergeContext, key);
 	}
 
@@ -66,5 +71,10 @@ public class FreigabequittungPrintMergeSource implements MergeSource {
 
 		return null;
 
+	}
+
+	@Override
+	public void setPDFLongerThanExpected(boolean isPDFLongerThanExpected) {
+		this.isPDFLongerThanExpected = isPDFLongerThanExpected;
 	}
 }

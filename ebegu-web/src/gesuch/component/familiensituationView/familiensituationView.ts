@@ -50,7 +50,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
                 private $translate: ITranslateService, private $q: IQService, $scope: IScope,
                 private familiensituationRS: FamiliensituationRS) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FAMILIENSITUATION);
         this.gesuchModelManager.initFamiliensituation();
         this.model = angular.copy(this.gesuchModelManager.getGesuch().familiensituationContainer);
         this.initialFamiliensituation = angular.copy(this.gesuchModelManager.getFamiliensituation());
@@ -59,19 +59,9 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
         this.initViewModel();
 
-        if ($scope) {
-            $scope.$watch(() => {
-                return this.model.familiensituationJA.aenderungPer;
-            }, (newValue, oldValue) => {
-                if ((newValue !== oldValue) && (!newValue)) {
-                    this.resetFamsit();
-                }
-            });
-        }
     }
 
     private initViewModel(): void {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.FAMILIENSITUATION);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
@@ -79,7 +69,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     public confirmAndSave(): IPromise<TSFamiliensituationContainer> {
         this.savedClicked = true;
-        if (this.form.$valid && !this.hasEmptyAenderungPer() && !this.hasError()) {
+        if (this.isGesuchValid() && !this.hasEmptyAenderungPer() && !this.hasError()) {
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
@@ -100,6 +90,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
             } else {
                 return this.save();
             }
+
         }
         return undefined;
     }
@@ -202,5 +193,11 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     public showError(): boolean {
         return this.hasError() && this.savedClicked;
+    }
+
+    public onDatumBlur(): void {
+        if (this.hasEmptyAenderungPer()) {
+            this.resetFamsit();
+        }
     }
 }

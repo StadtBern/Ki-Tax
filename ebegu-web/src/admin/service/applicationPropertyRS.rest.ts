@@ -23,8 +23,20 @@ export class ApplicationPropertyRS {
     }
 
     isDevMode(): IPromise<boolean> {
-        return this.http.get(this.serviceURL + '/devmode').then((response) => {
+        return this.http.get(this.serviceURL + '/public/devmode').then((response) => {
             return response.data;
+        });
+    }
+
+    isDummyMode(): IPromise<boolean> {
+        return this.http.get(this.serviceURL + '/public/dummy').then((response) => {
+            return response.data;
+        });
+    }
+
+    getBackgroundColor(): IPromise<TSApplicationProperty> {
+        return this.http.get(this.serviceURL + '/public/background').then((response) => {
+            return this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty, response.data);
         });
     }
 

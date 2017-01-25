@@ -1,5 +1,5 @@
 <div class="pendenzenInstitutionListView">
-    <div class="col-md-10 col-md-offset-1">
+    <div class="col-md-12">
         <div class="row">
             <div class="col-md-11">
                 <h3 data-translate="PENDENZEN_LIST"></h3>
@@ -32,32 +32,38 @@
                         <th><input st-search="geburtsdatum" class="form-control" type="text"/></th>
                         <th><input st-search="typ" class="form-control" type="text"/></th>
                         <th>
-                            <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString" st-search="gesuchsperiodeString" class="form-control"
-                                    ng-options="periode for periode in vm.activeGesuchsperiodenList track by periode"
-                                    ng-model="vm.selectedGesuchsperiode">
-                                <option value="">{{"ALLE" | translate}}</option>
-                            </select>
+                            <div class="dv-select-style">
+                                <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString" st-search="gesuchsperiodeString" class="form-control"
+                                        ng-options="periode for periode in vm.activeGesuchsperiodenList track by periode"
+                                        ng-model="vm.selectedGesuchsperiode">
+                                    <option value="">{{"ALLE" | translate}}</option>
+                                </select>
+                            </div>
                         </th>
                         <th><input st-search="eingangsdatum" class="form-control" type="text"/></th>
                         <th>
-                            <select st-input-event="change" name="betreuungsangebotTyp" id="betreuungsangebotTyp" st-search="betreuungsangebotTyp" class="form-control"
-                                    ng-options="typ | translate for typ in vm.betreuungsangebotTypList track by typ"
-                                    ng-model="vm.selectedBetreuungsangebotTyp">
-                                <option value="">{{"ALLE" | translate}}</option>
-                            </select>
+                            <div class="dv-select-style">
+                                <select st-input-event="change" name="betreuungsangebotTyp" id="betreuungsangebotTyp" st-search="betreuungsangebotTyp" class="form-control"
+                                        ng-options="typ | translate for typ in vm.betreuungsangebotTypList track by typ"
+                                        ng-model="vm.selectedBetreuungsangebotTyp">
+                                    <option value="">{{"ALLE" | translate}}</option>
+                                </select>
+                            </div>
                         </th>
                         <th>
-                            <select st-input-event="change" name="institution" id="institution" st-search="institution" class="form-control"
-                                    ng-options="institution.name for institution in vm.institutionenList track by institution.name"
-                                    ng-model="vm.selectedInstitution">
-                                <option value="">{{"ALLE" | translate}}</option>
-                            </select>
+                            <div class="dv-select-style">
+                                <select st-input-event="change" name="institution" id="institution" st-search="institution" class="form-control"
+                                        ng-options="institution.name for institution in vm.institutionenList track by institution.name"
+                                        ng-model="vm.selectedInstitution">
+                                    <option value="">{{"ALLE" | translate}}</option>
+                                </select>
+                            </div>
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-click="vm.editPendenzInstitution(row)">
+                        ng-click="vm.editPendenzInstitution(row, $event)">
 
                         <td ng-bind="row.betreuungsNummer"></td>
                         <td ng-bind="row.name"></td>

@@ -2,6 +2,7 @@
 @import '../mixins.less';
 
 #sidenavContainer {
+    display: flex;
     box-shadow: none;
     color: @contrast-darkest;
     overflow-y: auto;
@@ -18,9 +19,6 @@
     }
     .gesuchMenu {
         padding: 0;
-        position: absolute;
-        left: 0;
-        right: 0;
         width: auto;
 
     }
@@ -38,7 +36,7 @@
             bottom: 0;
             height: 0.1rem;
             min-height: 1px;
-            border-bottom: 0.1rem solid @contrast;
+            border-bottom: 1px solid @contrast;
             display: block;
         }
         button {

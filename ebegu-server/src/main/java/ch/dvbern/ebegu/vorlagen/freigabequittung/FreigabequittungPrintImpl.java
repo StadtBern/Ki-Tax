@@ -39,6 +39,7 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 	private Gesuch gesuch;
 	private Zustelladresse zustellAmt;
 	private List<DokumentGrund> dokumentGrunds;
+	private List<AufzaehlungPrint> unterlagen;
 
 	public FreigabequittungPrintImpl(Gesuch gesuch, Zustelladresse zustellAmt, List<DokumentGrund> dokumentGrunds) {
 
@@ -47,7 +48,22 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 		this.dokumentGrunds = dokumentGrunds;
 		this.gesuch = gesuch;
 		this.zustellAmt = zustellAmt;
+		this.unterlagen = buildUnterlagen();
 
+	}
+
+	private List<AufzaehlungPrint> buildUnterlagen() {
+		List<AufzaehlungPrint> aufzaehlungPrint = new ArrayList<>();
+		StringBuilder bemerkungenBuilder;
+
+		if (dokumentGrunds != null) {
+			for (DokumentGrund dokumentGrund : dokumentGrunds) {
+				bemerkungenBuilder = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
+				if (bemerkungenBuilder.length() > 0){aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));}
+			}
+		}
+
+		return aufzaehlungPrint;
 	}
 
 	@Override
@@ -78,22 +94,6 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 	@Override
 	public boolean isAdresseSchulamt() {
 		return zustellAmt == Zustelladresse.SCHULAMT;
-	}
-
-	@Override
-	public String getPeriode() {
-		return "(" + gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()
-			+ "/" + gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis().getYear() + ")";
-	}
-
-	@Override
-	public String getFallNummer() {
-		return PrintUtil.createFallNummerString(getGesuch());
-	}
-
-	@Override
-	public String getFallDatum() {
-		return Constants.DATE_FORMATTER.format(gesuch.getFall().getTimestampErstellt());
 	}
 
 	@Override
@@ -132,17 +132,12 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 
 	@Override
 	public List<AufzaehlungPrint> getUnterlagen() {
-		List<AufzaehlungPrint> aufzaehlungPrint = new ArrayList<>();
-		StringBuilder bemerkungenBuilder;
+		return this.unterlagen;
+	}
 
-		if (dokumentGrunds != null) {
-			for (DokumentGrund dokumentGrund : dokumentGrunds) {
-				 bemerkungenBuilder = PrintUtil.parseDokumentGrundDataToString(dokumentGrund);
-				if (bemerkungenBuilder.length() > 0){aufzaehlungPrint.add(new AufzaehlungPrintImpl(bemerkungenBuilder.toString()));}
-            }
-		}
-
-		return aufzaehlungPrint;
+	@Override
+	public boolean isWithoutUnterlagen() {
+		return this.unterlagen == null || this.unterlagen.isEmpty();
 	}
 
 }

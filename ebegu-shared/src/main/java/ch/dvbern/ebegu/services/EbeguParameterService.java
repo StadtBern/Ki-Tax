@@ -62,6 +62,13 @@ public interface EbeguParameterService {
 	Collection<EbeguParameter> getEbeguParametersByJahr(@Nonnull Integer jahr);
 
 	/**
+	 * Gibt alle Jahresabh Parameter zuruek fuer die verschiendenen Jahre
+	 * @return
+	 */
+	@Nonnull
+	Collection<EbeguParameter> getJahresabhParameter();
+
+	/**
 	 * Sucht den am Stichtag gueltigen Ebegu-Parameter mit dem übergebenen Key.
 	 */
 	@Nonnull

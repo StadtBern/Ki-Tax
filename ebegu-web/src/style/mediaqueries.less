@@ -2,14 +2,35 @@
 
 @media @mq-xs {
     .gesuchModul {
-        padding: 5rem 2.5rem 10rem 5rem;
+        &.betreuungView {
+            padding: 5rem 3rem 10rem;
+        }
     }
-    .mainQuestion {
-        width: 200%;
+
+    md-dialog.md-default-theme.md-dialog-fullscreen.dv-tooltip-dialog, md-dialog {
+        font-size: 1.8rem;
+        .md-dialog-content {
+            padding: 5rem;
+        }
+    }
+
+    .gesuchstellerDashboardView {
+        .dashboardHeader {
+            margin-top: 20rem;
+        }
+    }
+
+    .dv-progressbar {
+        top: 9.5rem !important;
     }
 
     .dv-input-container-small {
         width: 30rem;
+    }
+
+    .dv-input-container-medium-label {
+        width: 30rem;
+        padding-right: 32px;
     }
 
     .dv-input-container-medium {
@@ -37,35 +58,120 @@
             }
         }
     }
+
+    #gesuchContainer {
+        .nav-row-betreuung {
+            flex-direction: row-reverse;
+            -ms-flex-direction: row-reverse;
+            bottom: 4rem;
+            & > div {
+                width: auto;
+                margin-bottom: 0;
+                padding: 0;
+                margin-right: auto;
+
+                &:last-child {
+                    margin-left: 3rem;
+                    margin-right: auto;
+                    margin-bottom: 0;
+                    padding: 0;
+                }
+                &:first-child {
+                    margin-right: 3rem;
+                    margin-left: auto;
+                }
+                &:only-child {
+                    margin-left: 3rem;
+                    margin-right: auto;
+                }
+                & > div {
+                    display: flex;
+                    flex-direction: row;
+                    -ms-flex-direction: row;
+                    padding: 0;
+                    &:first-child {
+                        padding-right: 0;
+                    }
+                    & > div {
+                        padding: 0;
+                    }
+                }
+            }
+        }
+        .nav-row-verfuegen {
+            & > div {
+                padding: 0;
+                & > div {
+                    padding: 0 0.75rem 0;
+                }
+
+            }
+        }
+    }
 }
 
 @media @mq-sm {
+    .gesuchModul {
+        padding: 5rem 2.5rem 10rem 5rem;
+        &.betreuungView {
+            padding: 5rem 2.5rem 10rem 5rem;
+        }
+    }
+
     #gesuchContainer {
-        .nav-row {
+        .nav-row-betreuung {
             & > div {
-                padding: 0 2rem 0;
-                &:nth-of-type(2) {
+                width: auto;
+                margin-bottom: 0;
+                padding: 0;
+                margin-right: auto;
+
+                &:last-child {
+                    margin-left: auto;
+                    margin-right: 0;
                     margin-bottom: 0;
-                    justify-content: flex-end;
+                    padding: 0 0.75rem 0;
+                    padding-left: 0;
                 }
-                &:nth-of-type(1) {
-                    justify-content: flex-start;
-                }
-                &:nth-of-type(1).cancel {
+                &:first-child {
                     margin-right: auto;
-                    justify-content: flex-end;
+                    margin-left: 0;
                 }
+                &:only-child {
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+                & > div {
+                    padding: 0 0.75rem 0;
+                }
+            }
+        }
+        dv-navigation, .nav-row-verfuegen {
+            & > div {
+                padding: 0;
+                & > div {
+                    padding: 0 0.75rem 0;
+                }
+
+            }
+        }
+        .nav-row-verfuegen {
+            dv-navigation {
+                margin-left: auto;
+                margin-right: 0;
+                &:only-child {
+                    margin-right: auto;
+                }
+
+            }
+            & > div {
+                margin-right: auto;
             }
         }
     }
 }
 
 //Device Media Queries
-/*@media @mq-d-sm {
-    html {
-        font-size: @base-font-size*0.25;
-    }
-}*/
 
 @media @mq-d-md {
     html {
@@ -86,6 +192,50 @@
 }
 
 @media @mq-d-xxlg {
+    html {
+        font-size: @base-font-size;
+    }
+}
+
+@media only screen
+and (min-device-width: 320px)
+and (max-device-width: 568px)
+and (-webkit-min-device-pixel-ratio: 2), only screen
+and (min-device-width: 375px)
+and (max-device-width: 667px)
+and (-webkit-min-device-pixel-ratio: 2), only screen
+and (min-device-width: 414px)
+and (max-device-width: 736px)
+and (-webkit-min-device-pixel-ratio: 3), only screen
+and (max-device-width: 640px), only screen
+and (max-device-width: 667px), only screen
+and (max-width: 480px) {
+
+    h2 {
+        line-height: 2.4rem;
+    }
+
+    .dv-input-container-small {
+        width: 100%;
+    }
+
+    .dv-input-container-medium-label {
+        width: 100%;
+
+    }
+
+    .dv-input-container-medium {
+        width: 100%;
+    }
+
+    .dv-input-container-question {
+        width: 100%;
+    }
+
+    .gesuchModul {
+        padding: 5rem 3rem 10rem;
+    }
+
     html {
         font-size: @base-font-size;
     }

@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
 
@@ -354,7 +355,6 @@ public final class TestDataUtil {
 		return gesuchsperiode;
 	}
 
-
 	public static Gesuchsperiode createGesuchsperiode1617() {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
 		gesuchsperiode.setActive(true);
@@ -362,6 +362,12 @@ public final class TestDataUtil {
 		return gesuchsperiode;
 	}
 
+	public static Gesuchsperiode createCustomGesuchsperiode(int firstYear, int secondYear) {
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		gesuchsperiode.setActive(true);
+		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(firstYear, Month.AUGUST, 1), LocalDate.of(secondYear, Month.JULY, 31)));
+		return gesuchsperiode;
+	}
 
 	public static EbeguParameter createDefaultEbeguParameter(EbeguParameterKey key) {
 		EbeguParameter instStammdaten = new EbeguParameter();
@@ -396,6 +402,7 @@ public final class TestDataUtil {
 		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MIN));
 		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MAX));
 		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM));
 		return list;
 	}
 
@@ -440,8 +447,8 @@ public final class TestDataUtil {
 	public static Benutzer createDefaultBenutzer() {
 		Benutzer user = new Benutzer();
 		user.setUsername("jula_" + UUID.randomUUID());
-		user.setNachname("Julio");
-		user.setVorname("Iglesias");
+		user.setNachname("Iglesias");
+		user.setVorname("Julio");
 		user.setEmail("email@server.ch");
 		user.setMandant(createDefaultMandant());
 		user.setRole(UserRole.ADMIN);
@@ -480,7 +487,7 @@ public final class TestDataUtil {
 			gesuch.setGesuchsperiode(createGesuchsperiode1617());
 		}
 		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner();
-		finanzielleSituationRechner.calculateFinanzDaten(gesuch);
+		finanzielleSituationRechner.calculateFinanzDaten(gesuch, BigDecimal.valueOf(0.80));
 	}
 
 	public static Gesuch createTestgesuchDagmar() {
@@ -508,11 +515,13 @@ public final class TestDataUtil {
 		if (gesuch.extractEinkommensverschlechterungInfo() == null) {
 			gesuch.setEinkommensverschlechterungInfoContainer(new EinkommensverschlechterungInfoContainer());
 			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(false);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(false);
 		}
 		if (basisJahrPlus1) {
 			gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
 			gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
-			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
+			gesuch.extractEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);;
 			gesuch.extractEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
 			gesuch.extractEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		} else {
@@ -688,6 +697,8 @@ public final class TestDataUtil {
 		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, "5900", gueltigkeit, persistence);
 		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, "6970", gueltigkeit, persistence);
 		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, "7500", gueltigkeit, persistence);
+		saveParameter(PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG, "20", gueltigkeit, persistence);
+		saveParameter(PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM, "20", gueltigkeit, persistence);
 
 	}
 
@@ -770,14 +781,18 @@ public final class TestDataUtil {
 	}
 
 	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch) {
-		return createMahnung(typ, gesuch, LocalDate.now().plusWeeks(2));
+		return createMahnung(typ, gesuch, LocalDate.now().plusWeeks(2), 3);
 	}
 
-	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch, LocalDate firstAblauf) {
+	public static Mahnung createMahnung(MahnungTyp typ, Gesuch gesuch, LocalDate firstAblauf, int numberOfDocuments) {
 		Mahnung mahnung = new Mahnung();
 		mahnung.setMahnungTyp(typ);
-		mahnung.setActive(true);
-		mahnung.setBemerkungen("Test Dokument 1\nTest Dokument 2\nTest Dokument 3");
+		mahnung.setTimestampAbgeschlossen(null);
+		List<String> bemerkungen = new ArrayList<>();
+		for (int i = 0; i < numberOfDocuments; i++){
+			bemerkungen.add("Test Dokument " + (i+1));
+		}
+		mahnung.setBemerkungen(bemerkungen.stream().collect(Collectors.joining("\n")));
 		mahnung.setDatumFristablauf(firstAblauf);
 		mahnung.setTimestampErstellt(LocalDateTime.now());
 		mahnung.setUserMutiert("Hans Muster");
@@ -809,5 +824,13 @@ public final class TestDataUtil {
 		abwesenheit.setGueltigkeit(new DateRange(gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1),
 			gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1).plusDays(Constants.ABWESENHEIT_DAYS_LIMIT)));
 		return abwesenheit;
+	}
+
+	public static Gesuch createGesuch(Fall fall, Gesuchsperiode periodeToUpdate, AntragStatus status) {
+		Gesuch gesuch = new Gesuch();
+		gesuch.setFall(fall);
+		gesuch.setGesuchsperiode(periodeToUpdate);
+		gesuch.setStatus(status);
+		return gesuch;
 	}
 }

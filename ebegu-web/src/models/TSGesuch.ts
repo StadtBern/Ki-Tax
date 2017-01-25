@@ -7,7 +7,8 @@ import TSGesuchstellerContainer from './TSGesuchstellerContainer';
 import TSEinkommensverschlechterungInfoContainer from './TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from './TSFamiliensituationContainer';
 import {TSEingangsart} from './enums/TSEingangsart';
-import {isSchulamt} from "./enums/TSBetreuungsangebotTyp";
+import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
+import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -18,6 +19,8 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
     private _bemerkungen: string;
     private _laufnummer: number;
+    private _hasFSDokument: boolean = true;
+    private _gesperrtWegenBeschwerde: boolean = false;
 
 
     public get gesuchsteller1(): TSGesuchstellerContainer {
@@ -76,6 +79,22 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._laufnummer = value;
     }
 
+    get hasFSDokument(): boolean {
+        return this._hasFSDokument;
+    }
+
+    set hasFSDokument(value: boolean) {
+        this._hasFSDokument = value;
+    }
+
+    get gesperrtWegenBeschwerde(): boolean {
+        return this._gesperrtWegenBeschwerde;
+    }
+
+    set gesperrtWegenBeschwerde(value: boolean) {
+        this._gesperrtWegenBeschwerde = value;
+    }
+
     public isMutation(): boolean {
         return this.typ === TSAntragTyp.MUTATION;
     }
@@ -130,6 +149,36 @@ export default class TSGesuch extends TSAbstractAntragEntity {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns true when all Betreuungen are geschlossen ohne verfuegung
+     */
+    public areThereOnlyGeschlossenOhneVerfuegung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        if (kinderWithBetreuungList.length <= 0) {
+            return false; // no Kind with bedarf
+        }
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public hasBetreuungInStatusWarten(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.betreuungsstatus === TSBetreuungsstatus.WARTEN) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public extractFamiliensituation(): TSFamiliensituation {

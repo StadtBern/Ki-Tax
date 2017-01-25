@@ -25,7 +25,10 @@ public class JaxAntragStatusHistory extends JaxAbstractDTO {
 
 	@NotNull
 	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
-	private LocalDateTime datum;
+	private LocalDateTime timestampVon;
+
+	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
+	private LocalDateTime timestampBis;
 
 	@NotNull
 	private AntragStatusDTO status;
@@ -47,12 +50,20 @@ public class JaxAntragStatusHistory extends JaxAbstractDTO {
 		this.benutzer = benutzer;
 	}
 
-	public LocalDateTime getDatum() {
-		return datum;
+	public LocalDateTime getTimestampVon() {
+		return timestampVon;
 	}
 
-	public void setDatum(LocalDateTime datum) {
-		this.datum = datum;
+	public void setTimestampVon(LocalDateTime timestampVon) {
+		this.timestampVon = timestampVon;
+	}
+
+	public LocalDateTime getTimestampBis() {
+		return timestampBis;
+	}
+
+	public void setTimestampBis(LocalDateTime timestampBis) {
+		this.timestampBis = timestampBis;
 	}
 
 	public AntragStatusDTO getStatus() {

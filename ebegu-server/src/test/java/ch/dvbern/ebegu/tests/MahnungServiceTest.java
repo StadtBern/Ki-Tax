@@ -118,7 +118,7 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 		Collection<Mahnung> mahnungenForGesuch = mahnungService.findMahnungenForGesuch(gesuch);
 		Assert.assertNotNull(mahnungenForGesuch);
 		for (Mahnung mahnung : mahnungenForGesuch) {
-			Assert.assertTrue(mahnung.isActive());
+			Assert.assertNull(mahnung.getTimestampAbgeschlossen());
 		}
 
 		mahnungService.mahnlaufBeenden(gesuch);
@@ -127,7 +127,7 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 		mahnungenForGesuch = mahnungService.findMahnungenForGesuch(gesuch);
 		Assert.assertNotNull(mahnungenForGesuch);
 		for (Mahnung mahnung : mahnungenForGesuch) {
-			Assert.assertFalse(mahnung.isActive());
+			Assert.assertNotNull(mahnung.getTimestampAbgeschlossen());
 		}
 	}
 
@@ -139,12 +139,12 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 		Gesuch gesuchMitMahnung = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuchMitMahnung.setStatus(AntragStatus.ERSTE_MAHNUNG);
 		persistence.merge(gesuchMitMahnung);
-		mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuchMitMahnung, LocalDate.now().plusWeeks(1)));
+		mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuchMitMahnung, LocalDate.now().plusWeeks(1), 3));
 
 		Gesuch gesuchMitAbgelaufenerMahnung = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuchMitAbgelaufenerMahnung.setStatus(AntragStatus.ERSTE_MAHNUNG);
 		persistence.merge(gesuchMitAbgelaufenerMahnung);
-		mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuchMitAbgelaufenerMahnung, LocalDate.now().minusDays(1)));
+		mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuchMitAbgelaufenerMahnung, LocalDate.now().minusDays(1), 3));
 
 		mahnungService.fristAblaufTimer();
 

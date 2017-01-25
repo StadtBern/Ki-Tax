@@ -43,13 +43,12 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
                 private $translate: ITranslateService, private DvDialog: DvDialog, private $q: IQService,
                 $scope: IScope) {
 
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.UMZUG);
         this.initViewModel();
     }
 
     private initViewModel(): void {
         this.model = [];
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.UMZUG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
         this.extractAdressenListFromBothGS();
     }
@@ -59,7 +58,7 @@ export class UmzugViewController extends AbstractGesuchViewController<Array<TSUm
     }
 
     public save(): IPromise<TSGesuchstellerContainer> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             if (!this.form.$dirty && !this.dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately

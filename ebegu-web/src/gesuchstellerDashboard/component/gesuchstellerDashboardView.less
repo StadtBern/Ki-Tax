@@ -19,7 +19,7 @@
     background-size: cover;
 
     .dashboardHeader {
-        margin-top: 20rem;
+        margin-top: 6rem;
         z-index: @z-index-dashboard;
     }
     .dashboardButton {
@@ -33,6 +33,11 @@
             border: none;
             border-radius: 0;
             outline: none;
+        }
+        &:hover {
+            .labelSmall {
+                background: @primary-dark;
+            }
         }
         h2 {
             font-family: "Open Sans", Arial, Helvetica, sans-serif;
@@ -52,7 +57,7 @@
             & h2 {
                 .ebeguBold();
                 margin-top: auto;
-                margin-bottom: 0;
+                margin-bottom: 2rem;
             }
             & h3 {
                 .ebeguSemi-bold();

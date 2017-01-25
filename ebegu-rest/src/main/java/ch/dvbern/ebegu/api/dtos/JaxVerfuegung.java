@@ -33,6 +33,16 @@ public class JaxVerfuegung extends JaxAbstractDTO {
 
 	private boolean sameVerfuegungsdaten;
 
+	private boolean kategorieNormal = false;
+
+	private boolean kategorieMaxEinkommen = false;
+
+	private boolean kategorieKeinPensum = false;
+
+	private boolean kategorieZuschlagZumErwerbspensum = false;
+
+	private boolean kategorieNichtEintreten = false;
+
 
 	@Nullable
 	public String getGeneratedBemerkungen() {
@@ -67,5 +77,50 @@ public class JaxVerfuegung extends JaxAbstractDTO {
 
 	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
 		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
+	}
+
+	@Nonnull
+	public boolean isKategorieNormal() {
+		return kategorieNormal;
+	}
+
+	public void setKategorieNormal(@Nonnull boolean kategorieNormal) {
+		this.kategorieNormal = kategorieNormal;
+	}
+
+	@Nonnull
+	public boolean isKategorieMaxEinkommen() {
+		return kategorieMaxEinkommen;
+	}
+
+	public void setKategorieMaxEinkommen(@Nonnull boolean kategorieMaxEinkommen) {
+		this.kategorieMaxEinkommen = kategorieMaxEinkommen;
+	}
+
+	@Nonnull
+	public boolean isKategorieKeinPensum() {
+		return kategorieKeinPensum;
+	}
+
+	public void setKategorieKeinPensum(@Nonnull boolean kategorieKeinPensum) {
+		this.kategorieKeinPensum = kategorieKeinPensum;
+	}
+
+	@Nonnull
+	public boolean isKategorieZuschlagZumErwerbspensum() {
+		return kategorieZuschlagZumErwerbspensum;
+	}
+
+	public void setKategorieZuschlagZumErwerbspensum(@Nonnull boolean kategorieZuschlagZumErwerbspensum) {
+		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
+	}
+
+	@Nonnull
+	public boolean isKategorieNichtEintreten() {
+		return kategorieNichtEintreten;
+	}
+
+	public void setKategorieNichtEintreten(@Nonnull boolean kategorieNichtEintreten) {
+		this.kategorieNichtEintreten = kategorieNichtEintreten;
 	}
 }

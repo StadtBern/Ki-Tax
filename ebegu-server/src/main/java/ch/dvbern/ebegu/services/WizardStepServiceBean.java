@@ -3,11 +3,15 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
@@ -30,6 +34,8 @@ import static ch.dvbern.ebegu.enums.UserRole.*;
 @PermitAll
 public class WizardStepServiceBean extends AbstractBaseService implements WizardStepService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(WizardStepServiceBean.class);
+
 	@Inject
 	private Persistence<WizardStep> persistence;
 	@Inject
@@ -48,6 +54,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private Authorizer authorizer;
 	@Inject
 	private PrincipalBean principalBean;
+	@Inject
+	private GeneratedDokumentService generatedDokumentService;
 
 
 	@Override
@@ -253,6 +261,12 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
+					try {
+						generatedDokumentService.getBegleitschreibenDokument(wizardStep.getGesuch(), true);
+					} catch (MimeTypeParseException | MergeDocException e) {
+						LOG.error("Error updating Deckblatt Dokument", e);
+					}
+
 					antragStatusHistoryService.saveStatusChange(wizardStep.getGesuch());
 				}
 			}
@@ -266,7 +280,6 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * @param wizardSteps
 	 */
 	private void updateAllStatusForGesuchsteller(List<WizardStep> wizardSteps) {
-		principalBean.isCallerInRole(UserRole.GESUCHSTELLER);
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
 				setWizardStepOkOrMutiert(wizardStep);
@@ -358,7 +371,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) { // vermeide, dass der Status eines unbesuchten Steps geaendert wird
 				if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
 					setWizardStepOkOrMutiert(wizardStep);
-				} else if (EbeguUtil.fromOneGSToTwoGS(oldEntity, newEntity)) {
+				} else if (EbeguUtil.fromOneGSToTwoGS(oldEntity, newEntity) && wizardStep.getGesuch().getGesuchsteller2() == null) {
 
 					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
@@ -368,6 +381,17 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
 						wizardStep.setVerfuegbar(false);
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+					}
+					//kann man effektiv sagen dass bei nur einem GS niemals Rote Schritte FinanzielleSituation und EVK gibt
+				} else if (!newEntity.hasSecondGesuchsteller() && wizardStep.getGesuch().getGesuchsteller1() != null) { // nur 1 GS
+					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName()) && wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
+						wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+
+					} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
+						&& wizardStep.getWizardStepStatus().equals(WizardStepStatus.NOK)) {
+						wizardStep.setVerfuegbar(true);
+						wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 					}
 				}
 			}
@@ -458,6 +482,16 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		List<WizardStep> wizardStepsFromGesuch = findWizardStepsFromGesuch(gesToRemove.getId());
 		for (WizardStep wizardStep : wizardStepsFromGesuch) {
 			persistence.remove(WizardStep.class, wizardStep.getId());
+		}
+	}
+
+	@Override
+	public void setWizardStepOkay(@Nonnull String gesuchId, @Nonnull WizardStepName stepName) {
+		final WizardStep freigabeStep = findWizardStepFromGesuch(gesuchId, stepName);
+		Objects.requireNonNull(freigabeStep, stepName.name() + " WizardStep fuer gesuch nicht gefunden " + gesuchId);
+		if (!WizardStepStatus.OK.equals(freigabeStep.getWizardStepStatus())) {
+			freigabeStep.setWizardStepStatus(WizardStepStatus.OK);
+			saveWizardStep(freigabeStep);
 		}
 	}
 }

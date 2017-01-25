@@ -2,33 +2,77 @@
 @import '../../../style/mixins.less';
 
 .dv-dokumente-list {
+    .overflow-scroll-table {
+        overflow-x: auto;
+        margin-bottom: 4rem;
+    }
+    .dokumentgrundtable {
+        & > tbody > tr:hover {
+            background-color: transparent;
+        }
+    }
     table {
         background-color: transparent !important;
+        margin-bottom: 0;
     }
+
     td.documents-vailable {
         background: @success-light;
+    }
+    td.no-documents {
+        background: @warning-light;
+    }
+
+    td.no-color {
+        background: transparent;
     }
     .sonstige {
         display: none;
     }
     .fa-circle {
+        text-align: center;
         font-size: 1.1rem;
+        color: @warning;
+    }
+    .fa-check {
+        color: @success;
+    }
+    .check-warning {
+        color: @warning;
+    }
+
+    .symbol {
+        text-align: center;
+        padding: 0;
+        span, a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        a {
+            line-height: 5rem
+        }
+        span {
+            line-height: 3rem;
+        }
     }
     .dateientable {
+        font-size: 1.2rem;
         margin-bottom: 0;
-        td {
+        td, th {
             border: none;
-            background-color: @contrast-lightest;
-            height: 3.5rem;
+            background-color: transparent;
+            height: 3rem;
         }
-        & > thead:first-child > tr:first-child > th, & > thead > tr > th {
+        & > thead:first-child > tr:first-child > th, & > thead > tr > th, & > thead > tr:first-child > th:empty, & > thead:first-child > tr:first-child > th:empty {
             border-top: none;
+            height: 3rem;
             background-color: transparent;
         }
     }
     table > thead:first-child > tr:first-child > th, table > thead > tr > th {
         .ebeguLabel();
-        border: 0.1rem solid @contrast-darkest;
+        border: 1px solid @contrast-darkest;
         border-left: none;
         border-right: none;
         display: table-cell;
@@ -42,18 +86,35 @@
     }
     table > tbody > tr > td {
         .ebeguH3();
-        border: 0.1rem solid @contrast;
-        border-left: none;
-        border-right: none;
+        border: none;
         display: table-cell;
         height: 5rem;
         vertical-align: middle;
         padding: 0 0.8rem 0;
+        &.dateien-spacer {
+            height: 1.5rem;
+        }
+        &.vorgaenger {
+            .ebeguItalic();
+            font-weight: 600;
+        }
         span {
             line-height: 0;
         }
     }
+
     table > tbody > tr:first-child > td {
-        border-top-color: @contrast-darkest;
+        &.documents-vailable, &.no-documents, &.no-color {
+            border-top: 1px solid @contrast-darkest;
+        }
+
     }
+
+    table.dateientable > thead:first-child > tr:first-child > th, table.dateientable > thead > tr > th, table.dateientable > tbody > tr > td, table.dateientable > tbody > tr:first-child > td {
+        font-size: 1.2rem;
+        span {
+            font-size: 1.2rem;
+        }
+    }
+
 }

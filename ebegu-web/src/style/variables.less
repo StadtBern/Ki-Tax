@@ -19,7 +19,10 @@
 @mq-d-xlg: ~"(min-device-width: @{bp-lg})";
 @mq-d-xxlg: ~"(min-device-width: @{bp-xlg})";
 @mq-d-xxxlg: ~"(min-device-width: @{bp-xxlg})";
-@mq-retina: ~"(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)";
+@mq-retina: ~"(-webkit-min-device-pixel-ratio: 2) and(min-resolution: 192dpi)";
+@mq-portrait: ~"and (orientation: portrait)";
+@mq-landscape: ~"and (orientation: landscape)";
+@mq-max-sm: ~"and (max-width: @{bp-sm})";
 
 @background-color: @white;
 @state-danger-text: red;
@@ -112,7 +115,7 @@
 @z-index-mobile-toolbar: 105;
 @z-index-kommentar: 101;
 @z-index-toolbar: 104;
-@z-index-dialog: 102;
+@z-index-dialog: 104;
 @z-index-error: 106;
 
 /**/

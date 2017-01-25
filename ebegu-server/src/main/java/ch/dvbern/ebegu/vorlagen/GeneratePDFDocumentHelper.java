@@ -12,7 +12,12 @@ package ch.dvbern.ebegu.vorlagen;
 */
 
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.lib.doctemplate.common.DocTemplateException;
+import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+import com.google.common.io.ByteStreams;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.poi.xwpf.converter.pdf.PdfConverter;
@@ -37,6 +42,7 @@ public class GeneratePDFDocumentHelper {
 	private static final String PDFENCODING = "ISO-8859-1";
 	private static final String NUMOFPAGE = "#PAGE";
 	private static final String NUMOFPAGES = "#MAX";
+	private static final String PROP_STANDARD_ANZAHL_SEITEN = "expectedNumberOfPages";
 
 	/**
 	 * Konvertiert ein docx zu einem PDF
@@ -45,7 +51,7 @@ public class GeneratePDFDocumentHelper {
 	 * @throws MergeDocException
 	 */
 	@Nonnull
-	public byte[] generatePDFDocument(@Nonnull byte[] generateFrom) throws MergeDocException {
+	private byte[] generatePDFDocument(@Nonnull byte[] generateFrom) throws MergeDocException {
 		try {
 			Objects.requireNonNull(generateFrom, "generateFrom muss gesetzt sein");
 			final XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(generateFrom));
@@ -58,7 +64,50 @@ public class GeneratePDFDocumentHelper {
 
 			return manipulatePdf(out.toByteArray());
 		} catch (IOException | InvocationTargetException | DocumentException | IllegalAccessException | NoSuchMethodException e) {
-			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[]{});
+		}
+	}
+
+	/**
+	 * Konvertiert ein docx zu einem PDF
+	 *
+	 * @return das PDF Dokument als Byte
+	 * @throws MergeDocException
+	 */
+	@Nonnull
+	public byte[] generatePDFDocument(@Nonnull byte[] docxTemplate, @Nonnull EBEGUMergeSource mergeSource, boolean writeProtected) throws MergeDocException {
+		try {
+			Objects.requireNonNull(docxTemplate, "generateFrom muss gesetzt sein");
+			Objects.requireNonNull(docxTemplate, "mergeSource muss gesetzt sein");
+
+			DOCXMergeEngine docxme = new DOCXMergeEngine(mergeSource.getClass().getName());
+
+			byte[] mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
+			byte[] mergedPdf = generatePDFDocument(mergedDocx);
+			PdfReader reader = new PdfReader(mergedPdf);
+			int numOfPDFPages = reader.getNumberOfPages();
+			reader.close();
+
+			int expectedNumOfDOCXPages = 0;
+			XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(mergedDocx));
+			if (document.getProperties().getCustomProperties().contains(PROP_STANDARD_ANZAHL_SEITEN)) {
+				expectedNumOfDOCXPages = document.getProperties().getCustomProperties()
+					.getProperty(PROP_STANDARD_ANZAHL_SEITEN).getI4();
+			}
+
+			if (expectedNumOfDOCXPages > 0 && expectedNumOfDOCXPages != numOfPDFPages) {
+				mergeSource.setPDFLongerThanExpected(true);
+				mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
+				mergedPdf = generatePDFDocument(mergedDocx);
+			}
+
+			if (!writeProtected) {
+				mergedPdf = addDraftWatermark(mergedPdf);
+			}
+
+			return mergedPdf;
+		} catch (IOException | DocTemplateException | DocumentException e) {
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[]{});
 		}
 	}
 
@@ -70,6 +119,7 @@ public class GeneratePDFDocumentHelper {
 
 	/**
 	 * PDF has to be manipulated in order to set the right page number.
+	 *
 	 * @throws IOException
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
@@ -103,13 +153,56 @@ public class GeneratePDFDocumentHelper {
 			setWriterPDFA(stamper);
 
 		} finally {
-				if (stamper != null) {
-					stamper.close();
-				}
-				reader.close();
-				manipulated.close();
+			if (stamper != null) {
+				stamper.close();
+			}
+			reader.close();
+			manipulated.close();
 		}
 		return manipulated.toByteArray();
+	}
+
+	private byte[] addDraftWatermark(byte[] orginalPDF) throws IOException, DocumentException {
+
+		PdfReader pdfReader = null;
+		ByteArrayOutputStream outputStream = null;
+		PdfStamper pdfStamper = null;
+
+		pdfReader = new PdfReader(orginalPDF);
+		outputStream = new ByteArrayOutputStream();
+		pdfStamper = new PdfStamper(pdfReader, outputStream);
+
+		PdfLayer layer = new PdfLayer("watermark", pdfStamper.getWriter());
+
+		for (int pageIndex = 1; pageIndex <= pdfReader.getNumberOfPages(); pageIndex++) {
+			pdfStamper.setFormFlattening(false);
+			Rectangle pageRectangle = pdfReader.getPageSizeWithRotation(pageIndex);
+			PdfContentByte pdfData = pdfStamper.getOverContent(pageIndex);
+
+			pdfData.beginLayer(layer);
+
+			PdfGState graphicsState = new PdfGState();
+			pdfData.setGState(graphicsState);
+			pdfData.beginText();
+
+			Image watermarkImage = Image.getInstance(ByteStreams.toByteArray(
+				GeneratePDFDocumentHelper.class.getResourceAsStream("/vorlagen/entwurfWasserzeichen.png")));
+
+			float width = pageRectangle.getWidth();
+			float height = pageRectangle.getHeight();
+
+			watermarkImage.setAbsolutePosition(width / 2 - watermarkImage.getWidth() / 2, height / 2 - watermarkImage.getHeight() / 2);
+
+			pdfData.addImage(watermarkImage);
+			pdfData.endText();
+			pdfData.endLayer();
+		}
+
+		pdfStamper.close();
+		outputStream.close();
+		pdfReader.close();
+
+		return outputStream.toByteArray();
 	}
 
 	private void setWriterPDFA(@Nonnull PdfStamper stamper) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {

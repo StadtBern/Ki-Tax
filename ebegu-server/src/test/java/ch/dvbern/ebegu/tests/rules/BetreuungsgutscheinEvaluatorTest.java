@@ -56,6 +56,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 	@Test
 	public void doTestEvaluation(){
 		Gesuch testgesuch = createGesuch();
+		testgesuch.setEingangsdatum(LocalDate.of(2016, 7, 1));
 		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(testgesuch, getParameter());
 		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
@@ -91,9 +92,9 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
 
 		Assert.assertEquals(MathUtil.EINE_NACHKOMMASTELLE.from(3d), verfuegung.getZeitabschnitte().get(0).getFamGroesse());
-		Assert.assertEquals(new BigDecimal("20000"), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommenVorAbzFamgr());
-		Assert.assertEquals(new BigDecimal("11280"), verfuegung.getZeitabschnitte().get(0).getAbzugFamGroesse());
-		Assert.assertEquals(new BigDecimal("8720"), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
+		Assert.assertEquals(0, new BigDecimal("20000").compareTo(verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommenVorAbzFamgr()));
+		Assert.assertEquals(0, new BigDecimal("11280").compareTo(verfuegung.getZeitabschnitte().get(0).getAbzugFamGroesse()));
+		Assert.assertEquals(0, new BigDecimal("8720").compareTo(verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen()));
 	}
 
 

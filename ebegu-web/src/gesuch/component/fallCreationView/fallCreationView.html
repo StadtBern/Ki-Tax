@@ -16,17 +16,21 @@
                     <div ng-if="vm.gesuchModelManager.isErstgesuch()">
 
                         <h1 data-translate="ERSTGESUCH_WILLKOMMEN_TEXT"></h1>
-                        <p data-translate="ERSTGESUCH_WILLKOMMEN_TEXT_2"></p>
-                        <p data-translate="ERSTGESUCH_WILLKOMMEN_TEXT_3"></p>
+                        <br>
+                        <p>
+                            {{"ERSTGESUCH_WILLKOMMEN_TEXT_2"|translate}} {{"ERSTGESUCH_WILLKOMMEN_TEXT_3"|translate}}
+                        </p>
 
                     </div>
 
                     <!--Mutationelemente auswaehlen. Nur fuer Mutationen-->
                     <div ng-if="!vm.gesuchModelManager.isErstgesuch()">
 
-                        <p class="subTitleBold" data-translate="MUTATION_AUSWAHL_TEXT_1"></p>
-                        <p class="subTitle" data-translate="MUTATION_AUSWAHL_TEXT_2"></p>
-                        <p class="subTitle" data-translate="MUTATION_AUSWAHL_TEXT_3"></p>
+                        <h1 data-translate="MUTATION_AUSWAHL_TEXT_1"></h1>
+                        <br>
+                        <p>
+                            {{"MUTATION_AUSWAHL_TEXT_2"|translate}} {{"MUTATION_AUSWAHL_TEXT_3"|translate}}
+                        </p>
 
                     </div>
 
@@ -61,7 +65,7 @@
                                                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
                                                         ng-required="true">
                                             <md-radio-button
-                                                ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
+                                                ng-repeat="current in vm.getAllActiveGesuchsperioden()"
                                                 ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
                                                 ng-disabled="vm.isGesuchReadonly()  || vm.isKorrekturModusJugendamt()">
                                                 <span>{{current.gesuchsperiodeString}}</span>

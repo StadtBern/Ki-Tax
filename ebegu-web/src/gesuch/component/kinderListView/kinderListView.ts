@@ -32,13 +32,12 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $translate: ITranslateService, private DvDialog: DvDialog,
                 wizardStepManager: WizardStepManager, $scope: IScope) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER);
         this.initViewModel();
     }
 
     private initViewModel(): void {
         this.gesuchModelManager.initKinder();
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.KINDER);
 
         if (this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()) {
             this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
@@ -52,8 +51,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     }
 
     createKind(): void {
-        this.gesuchModelManager.createKind();
-        this.openKindView(this.gesuchModelManager.getKindNumber());
+        this.openKindView(undefined); //neues kind hat noch keinen index
     }
 
     editKind(kind: any): void {
@@ -61,6 +59,8 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
         if (kindNumber > 0) {
             kind.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
             this.openKindView(kindNumber);
+        } else {
+            console.error('kind not found in list');
         }
     }
 
@@ -69,7 +69,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     }
 
     removeKind(kind: any): void {
-        var remTitleText = this.$translate.instant('KIND_LOESCHEN', {kindname: kind.kindJA.getFullName()});
+        let remTitleText = this.$translate.instant('KIND_LOESCHEN', {kindname: kind.kindJA.getFullName()});
         this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: remTitleText,
             deleteText: 'KIND_LOESCHEN_BESCHREIBUNG'

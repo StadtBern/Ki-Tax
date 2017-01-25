@@ -27,7 +27,7 @@ md-dialog-actions {
     button {
         margin: 0.8rem;
         min-width: 10rem;
-        width:auto;
+        width: auto;
         span {
             font-size: 1.6rem;
         }
@@ -42,6 +42,21 @@ dv-navigation {
 
 .btn-link {
     font-size: 1.4rem;
+    color: @contrast-darkest;
+    &.link-underline {
+        padding: 0;
+        &:hover {
+            color: @contrast-darkest;
+        }
+
+        i {
+            text-decoration: none
+        }
+        span {
+            text-decoration: underline;
+        }
+    }
+    letter-spacing: 0.1rem;
     span {
         line-height: normal;
     }
@@ -57,6 +72,47 @@ dv-navigation {
     letter-spacing: normal;
     span {
         line-height: 3rem;
+    }
+}
+
+.dv-btn-institution {
+    margin-right: 4rem;
+}
+
+.dv-btn-operation {
+    background: transparent;
+    color: @contrast-darkest;
+    letter-spacing: 0.1rem;
+    padding: 0;
+    .fa {
+        vertical-align: middle;
+    }
+    &.active, &:active {
+        .fa {
+            color: @primary;
+        }
+        background: transparent;
+        color: @contrast-darkest;
+
+    }
+    &:hover {
+        .fa {
+            color: @primary;
+        }
+        background: transparent;
+        color: @contrast-darkest;
+    }
+
+    &:active, &:hover {
+        outline: none !important;
+        text-decoration: none !important;
+    }
+    &:focus {
+        //TODO: Insert outline or smth
+    }
+    &[disabled], &[disabled]:hover {
+        color: @contrast-dark;
+        background: transparent;
     }
 }
 
@@ -83,9 +139,9 @@ button, .dv-btn {
     padding: 0 1.5rem 0;
     height: 4rem;
     span {
-        height: 4rem;
-        line-height: 4rem;
+        line-height: inherit;
         text-align: center;
+        vertical-align: middle;
     }
     &.active, &:active {
         background: @primary;

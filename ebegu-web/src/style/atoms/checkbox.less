@@ -4,33 +4,57 @@
 .checkbox {
     margin: 0 0;
     height: auto;
+    font-size: 0;
     dv-error-messages {
         display: block;
     }
-
+    dv-tooltip {
+        display: inline-block;
+        height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: middle;
+        font-size: 0;
+        margin-left: -4rem;
+        i {
+            font-size: 1.6rem;
+        }
+    }
+    .dv-error-messages {
+        overflow: visible;
+        height: auto;
+        min-height:1.7rem;
+    }
 }
+
 md-checkbox {
-    //  position: absolute;
+    //float:left;
+    font-size:0;
     position: relative;
-    min-height: unset;
-    min-width: unset;
-    height: 2rem;
+    min-height: 1.7rem;
+    min-width:0;
+    height: auto;
     width: auto;
+    &:last-of-type {
+        margin-right: 4rem;
+    }
+    margin-right: 4rem;
+    margin-top: 0;
+    margin-bottom: 2rem;
     &[disabled] {
-        color: @contrast;
+        color: @contrast-dark;
         .md-label {
             span {
-                color: @contrast;
+                color: @contrast-dark;
             }
         }
         &.md-checked, &:not(.md-checked) {
             .md-icon {
-                border: 0.1rem solid @contrast;
+                border: 1px solid @contrast-dark;
             }
         }
         &.md-checked {
             .md-icon {
-                background: @contrast;
+                background: @contrast-dark;
             }
         }
     }
@@ -38,33 +62,39 @@ md-checkbox {
         //TODO Focus  border:red 20px solid;
     }
     .md-container {
-        width: 2rem;
-        height: 2rem;
+        width: 1.7rem;
+        height: 1.7rem;
+        display: block;
         &:before {
             content: none !important;
         }
     }
-    margin-top: 0;
-    margin-bottom: 2rem;
     .md-label {
-        display: block;
+        display:inline-block;
         margin-left: 3rem;
-        line-height: 2rem;
-        height: 2rem;
+        height: auto;
+        min-height: 1.7rem;
+        line-height: 1.7rem;
+        vertical-align: middle;
+        font-size: 0;
+
         span {
             .ebeguH3();
-            line-height: 2rem;
             margin: 0;
-            display: inline-block;
-            height: 2rem;
+            line-height: 1.7rem;
+            height: auto;
+            min-height: 1.7rem;
+            display: block;
+            margin-right: 1rem;
+            vertical-align: middle;
         }
     }
     .md-icon {
-        border: 0.1rem solid @contrast-darkest;
+        border: 1px solid @contrast-darkest;
         border-radius: 0.2rem;
         width: auto;
         height: auto;
-        line-height: 2rem;
+        line-height: 1.7rem;
         position: absolute;
         left: 0;
         right: 0;
@@ -77,7 +107,7 @@ md-checkbox {
             &:after {
                 line-height: 175%;
                 position: absolute;
-                font-size: 1rem;
+                font-size: 0.8rem;
                 font-family: 'FontAwesome';
                 left: 0;
                 right: 0;

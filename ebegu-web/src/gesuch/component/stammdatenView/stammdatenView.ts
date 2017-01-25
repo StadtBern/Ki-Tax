@@ -16,6 +16,8 @@ import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
 import TSAdresse from '../../../models/TSAdresse';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import IQService = angular.IQService;
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
@@ -40,16 +42,17 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     allowedRoles: Array<TSRole>;
     gesuchstellerNumber: number;
     private initialModel: TSGesuchstellerContainer;
+    private isLastVerfuegtesGesuch: boolean = false;
 
 
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'CONSTANTS', '$q', '$scope', '$translate'];
+        'CONSTANTS', '$q', '$scope', '$translate', 'AuthServiceRS'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, $scope: IScope,
-                private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+                private $translate: ITranslateService, private authServiceRS: AuthServiceRS) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCHSTELLER);
         this.ebeguRestUtil = ebeguRestUtil;
         this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(this.gesuchstellerNumber);
@@ -60,37 +63,40 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         this.gesuchModelManager.initStammdaten();
         this.model = angular.copy(this.gesuchModelManager.getStammdatenToWorkWith());
         this.initialModel = angular.copy(this.model);
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCHSTELLER);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.showKorrespondadr = (this.model.korrespondenzAdresse && this.model.korrespondenzAdresse.adresseJA) ? true : false;
         this.showKorrespondadrGS = (this.model.korrespondenzAdresse && this.model.korrespondenzAdresse.adresseGS) ? true : false;
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.getModel().showUmzug = this.getModel().showUmzug || this.getModel().isThereAnyUmzug();
+        this.setLastVerfuegtesGesuch();
     }
 
     korrespondenzAdrClicked() {
         if (this.showKorrespondadr) {
             if (!this.model.korrespondenzAdresse) {
                 this.model.korrespondenzAdresse = this.initKorrespondenzAdresse();
-            }
-            else if (!this.model.korrespondenzAdresse.adresseJA) {
+            } else if (!this.model.korrespondenzAdresse.adresseJA) {
                 this.initKorrespondenzAdresseJA();
             }
         }
     }
 
+    private setLastVerfuegtesGesuch(): void {
+        this.gesuchModelManager.isNeuestesGesuch().then((response: boolean) => {
+            this.isLastVerfuegtesGesuch = response;
+        });
+    }
+
     private save(): IPromise<TSGesuchstellerContainer> {
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             this.gesuchModelManager.setStammdatenToWorkWith(this.model);
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
-                if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && !this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
-                }
-                if (this.gesuchModelManager.getGesuchstellerNumber() === 2) {
-                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                if ((this.gesuchModelManager.getGesuchstellerNumber() === 1 && !this.gesuchModelManager.isGesuchsteller2Required())
+                    || this.gesuchModelManager.getGesuchstellerNumber() === 2) {
+                    this.updateGSDependentWizardSteps();
                 }
 
                 return this.$q.when(this.model);
@@ -109,6 +115,19 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             return this.gesuchModelManager.updateGesuchsteller(false);
         }
         return undefined;
+    }
+
+    /**
+     * Aktualisiert alle Steps die Abhaengigkeiten mit dem Status von GS haben.
+     */
+    private updateGSDependentWizardSteps() {
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK); // GESUCHSTELLER
+        if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.NOK)) {
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.OK);
+        }
+        if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, TSWizardStepStatus.NOK)) {
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, TSWizardStepStatus.OK);
+        }
     }
 
     public getModel(): TSGesuchstellerContainer {
@@ -184,4 +203,16 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
     }
 
+    /**
+     * Checks whether the fields Email and Telefon are editable or not. The conditions for knowing if it is
+     * editable or not are the same ones of isGesuchReadonly(). But in this case, if the user is from the jugenadamt
+     * and the current gesuch is the newest one they may also edit those fields
+     */
+    public areEmailTelefonEditable(): boolean {
+        if (this.isLastVerfuegtesGesuch && this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles())) {
+            return true;
+        } else {
+            return !this.isGesuchReadonly();
+        }
+    }
 }

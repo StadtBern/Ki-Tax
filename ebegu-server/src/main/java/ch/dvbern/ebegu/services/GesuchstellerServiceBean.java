@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -75,17 +76,36 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 		}
 
 		final GesuchstellerContainer mergedGesuchsteller = persistence.merge(gesuchsteller);
+		updateWizStepsForGesuchstellerView(gesuch, gsNumber, umzug);
+		return mergedGesuchsteller;
+	}
 
-		if ((gesuch.extractFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
-			|| (!gesuch.extractFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
-			if (umzug) {
-				wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.UMZUG);
+	private void updateWizStepsForGesuchstellerView(Gesuch gesuch, Integer gsNumber, boolean umzug) {
+		//Wenn beide Gesuchsteller ausgefuellt werden muessen (z.B bei einer Mutation die die Familiensituation aendert
+		// (i.e. von 1GS auf 2GS) wollen wir den Benutzer zwingen beide Gesuchsteller Seiten zu besuchen bevor wir auf ok setzten.
+		// Ansonsten setzten wir es sofort auf ok
+		if (umzug) {
+			wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.UMZUG);
+		} else {
+			WizardStep existingWizStep = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.GESUCHSTELLER);
+			WizardStepStatus gesuchStepStatus = existingWizStep != null ?  existingWizStep.getWizardStepStatus() : null;
+			if (WizardStepStatus.NOK.equals(gesuchStepStatus) || WizardStepStatus.IN_BEARBEITUNG.equals(gesuchStepStatus)) {
+				if (isSavingLastNecessaryGesuchsteller(gesuch, gsNumber)) {
+					wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
+				}
 			} else {
 				wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
 			}
 		}
+	}
 
-		return mergedGesuchsteller;
+	/**
+	 * Wenn aufgrund der Familiensituation 2 GS noetig sind kommt hier true zurueck wenn gsNumber = 2 ist. sonst false
+	 * Wenn aufgrund der Familiensitation 1 GS noetig ist kommt hier true zurueck wenn gsNumber = 1
+	 */
+	private boolean isSavingLastNecessaryGesuchsteller(Gesuch gesuch, Integer gsNumber) {
+		return (gesuch.extractFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
+			|| (!gesuch.extractFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1);
 	}
 
 	@Nonnull

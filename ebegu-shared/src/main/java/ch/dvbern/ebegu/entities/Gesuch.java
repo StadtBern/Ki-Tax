@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
@@ -76,7 +77,7 @@ public class Gesuch extends AbstractEntity {
 	private Set<KindContainer> kindContainers = new LinkedHashSet<>();
 
 	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "gesuch", fetch = FetchType.LAZY)
-	@OrderBy("datum")
+	@OrderBy("timestampVon")
 	private Set<AntragStatusHistory> antragStatusHistories = new LinkedHashSet<>();
 
 	@Valid
@@ -92,7 +93,10 @@ public class Gesuch extends AbstractEntity {
 	private EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer;
 
 	@Transient
-	private FinanzDatenDTO finanzDatenDTO;
+	private FinanzDatenDTO finanzDatenDTO_alleine;
+
+	@Transient
+	private FinanzDatenDTO finanzDatenDTO_zuZweit;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -109,6 +113,14 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = false)
 	private int laufnummer = 0;
 
+	@Column(nullable = false)
+	private boolean hasFSDokument = true;
+
+	@Column(nullable = false)
+	private boolean gesperrtWegenBeschwerde = false;
+
+	@Transient
+	private AntragStatus orginalAntragStatus;
 
 	public Gesuch() {
 	}
@@ -181,11 +193,10 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	public FinanzDatenDTO getFinanzDatenDTO() {
-		return finanzDatenDTO;
-	}
-
-	public void setFinanzDatenDTO(FinanzDatenDTO finanzDatenDTO) {
-		this.finanzDatenDTO = finanzDatenDTO;
+		if (extractFamiliensituation().hasSecondGesuchsteller()) {
+			return finanzDatenDTO_zuZweit;
+		}
+		return finanzDatenDTO_alleine;
 	}
 
 	@Nullable
@@ -237,6 +248,14 @@ public class Gesuch extends AbstractEntity {
 		this.status = status;
 	}
 
+	public AntragStatus getOrginalStatus() {
+		return orginalAntragStatus;
+	}
+
+	public void setOrginalStatus(AntragStatus orginalAntragStatus) {
+		this.orginalAntragStatus = orginalAntragStatus;
+	}
+
 	public AntragTyp getTyp() {
 		return typ;
 	}
@@ -270,6 +289,22 @@ public class Gesuch extends AbstractEntity {
 		this.laufnummer = laufnummer;
 	}
 
+	public boolean isHasFSDokument() {
+		return hasFSDokument;
+	}
+
+	public void setHasFSDokument(boolean hasFSDokument) {
+		this.hasFSDokument = hasFSDokument;
+	}
+
+	public boolean isGesperrtWegenBeschwerde() {
+		return gesperrtWegenBeschwerde;
+	}
+
+	public void setGesperrtWegenBeschwerde(boolean gesperrtWegenBeschwerde) {
+		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
+	}
+
 	@Nullable
 	public EinkommensverschlechterungInfoContainer getEinkommensverschlechterungInfoContainer() {
 		return einkommensverschlechterungInfoContainer;
@@ -277,6 +312,22 @@ public class Gesuch extends AbstractEntity {
 
 	public void setEinkommensverschlechterungInfoContainer(@Nullable EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer) {
 		this.einkommensverschlechterungInfoContainer = einkommensverschlechterungInfoContainer;
+	}
+
+	public FinanzDatenDTO getFinanzDatenDTO_alleine() {
+		return finanzDatenDTO_alleine;
+	}
+
+	public void setFinanzDatenDTO_alleine(FinanzDatenDTO finanzDatenDTO_alleine) {
+		this.finanzDatenDTO_alleine = finanzDatenDTO_alleine;
+	}
+
+	public FinanzDatenDTO getFinanzDatenDTO_zuZweit() {
+		return finanzDatenDTO_zuZweit;
+	}
+
+	public void setFinanzDatenDTO_zuZweit(FinanzDatenDTO finanzDatenDTO_zuZweit) {
+		this.finanzDatenDTO_zuZweit = finanzDatenDTO_zuZweit;
 	}
 
 	@SuppressWarnings("ObjectEquality")
@@ -357,7 +408,19 @@ public class Gesuch extends AbstractEntity {
 		List<Betreuung> allBetreuungen = kindContainers.stream().flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
 			.collect(Collectors.toList());
 		return !allBetreuungen.isEmpty() && allBetreuungen.stream().allMatch(betreuung -> betreuung.getBetreuungsangebotTyp().isSchulamt());
+	}
 
+	@Transient
+	public boolean areAllBetreuungenBestaetigt() {
+		List<Betreuung> betreuungs = extractAllBetreuungen();
+		for (Betreuung betreuung : betreuungs) {
+			if (Betreuungsstatus.AUSSTEHEND.equals(betreuung.getBetreuungsstatus()) ||
+				Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus()) ||
+				Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Transient

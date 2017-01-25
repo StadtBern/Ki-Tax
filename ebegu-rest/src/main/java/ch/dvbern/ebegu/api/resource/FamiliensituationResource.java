@@ -48,7 +48,7 @@ public class FamiliensituationResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxFamiliensituationContainer saveFamiliensituation(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull JaxFamiliensituationContainer familiensituationContainerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -60,10 +60,10 @@ public class FamiliensituationResource {
 			Familiensituation oldFamiliensituation = null;
 			if (familiensituationContainerJAXP.getId() != null) {
 				Optional<FamiliensituationContainer> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationContainerJAXP.getId());
-				if(loadedFamiliensituation.isPresent()) {
+				if (loadedFamiliensituation.isPresent()) {
 					familiensituationContainerToMerge = loadedFamiliensituation.get();
 					oldFamiliensituation = new Familiensituation(familiensituationContainerToMerge.extractFamiliensituation());
-				}else{
+				} else {
 					familiensituationContainerToMerge = new FamiliensituationContainer();
 				}
 

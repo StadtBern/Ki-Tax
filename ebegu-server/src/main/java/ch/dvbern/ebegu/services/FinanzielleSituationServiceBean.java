@@ -1,11 +1,14 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
+import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
+import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -14,6 +17,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -43,6 +47,9 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Inject
 	private Authorizer authorizer;
+
+	@Inject
+	private EbeguParameterService ebeguParameterService;
 
 
 	@Nonnull
@@ -91,12 +98,28 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT})
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
-		return finSitRechner.calculateResultateFinanzielleSituation(gesuch);
+		return finSitRechner.calculateResultateFinanzielleSituation(gesuch, true);
 	}
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, GESUCHSTELLER, STEUERAMT, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT})
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
-		finSitRechner.calculateFinanzDaten(gesuch);
+		final BigDecimal minimumEKV = calculateGrenzwertEKV(gesuch);
+		finSitRechner.calculateFinanzDaten(gesuch, minimumEKV);
+	}
+
+	/**
+	 * Es wird nach dem Param PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG gesucht, der einen Wert von 0 bis 100 haben muss. Dann wird
+	 * die 100-komplementaer Zahl berechnet und 1-prozentuell zurueckgegeben. z.B:
+	 * PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG = 20 --> return 0.80
+	 * Sollte der Parameter nicht definiert sein, wird 1.00 zurueckgegeben, d.h. keine Grenze fuer EKV
+	 */
+	private BigDecimal calculateGrenzwertEKV(@Nonnull Gesuch gesuch) {
+		final Optional<EbeguParameter> optGrenzwert = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG,
+			gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+		if (optGrenzwert.isPresent()) {
+			return MathUtil.ZWEI_NACHKOMMASTELLE.divide(BigDecimal.valueOf(100).subtract(optGrenzwert.get().getValueAsBigDecimal()), BigDecimal.valueOf(100));
+		}
+		return BigDecimal.ONE; // By default wird 1 als Grenz gesetzt und alle EKV werden akzeptiert
 	}
 }

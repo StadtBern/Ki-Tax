@@ -12,15 +12,18 @@ import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {UploadRS} from '../../../core/service/uploadRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSWizardStep from '../../../models/TSWizardStep';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
+import GlobalCacheService from '../../service/globalCacheService';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {OkHtmlDialogController} from '../../dialog/OkHtmlDialogController';
+import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ICacheFactoryService = angular.ICacheFactoryService;
-import GlobalCacheService from '../../service/globalCacheService';
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
+let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 
 export class KommentarViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -37,11 +40,12 @@ export class KommentarViewController {
     dokumentePapiergesuch: TSDokumentGrund;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
-        'WizardStepManager', 'GlobalCacheService'];
+        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate'];
     /* @ngInject */
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
                 private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
-                private uploadRS: UploadRS, private wizardStepManager: WizardStepManager, private globalCacheService: GlobalCacheService) {
+                private uploadRS: UploadRS, private wizardStepManager: WizardStepManager, private globalCacheService: GlobalCacheService,
+                private dvDialog: DvDialog, private $translate: ITranslateService) {
 
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
@@ -51,7 +55,7 @@ export class KommentarViewController {
     private getPapiergesuchFromServer(): IPromise<TSDokumenteDTO> {
 
         return this.dokumenteRS.getDokumenteByTypeCached(
-            this.getGesuch(), TSDokumentGrundTyp.PAPIERGESUCH, this.globalCacheService.getCache())
+            this.getGesuch(), TSDokumentGrundTyp.PAPIERGESUCH, this.globalCacheService.getCache(TSCacheTyp.EBEGU_DOCUMENT))
             .then((promiseValue: TSDokumenteDTO) => {
 
                 if (promiseValue.dokumentGruende.length === 1) {
@@ -123,14 +127,41 @@ export class KommentarViewController {
             } else {
                 let gesuchID = this.getGesuch().id;
                 console.log('Uploading files on gesuch ' + gesuchID);
-                for (var file of files) {
-                    console.log('File: ' + file.name);
+
+                let filesTooBig: any[] = [];
+                let filesOk: any[] = [];
+                this.$log.debug('Uploading files on gesuch ' + gesuchID);
+                for (let file of files) {
+                    this.$log.debug('File: ' + file.name + ' size: ' + file.size);
+                    if (file.size > 10000000) { // Maximale Filegrösse ist 10MB
+                        filesTooBig.push(file);
+                    } else {
+                        filesOk.push(file);
+                    }
                 }
 
-                this.uploadRS.uploadFile(files, this.dokumentePapiergesuch, gesuchID).then((response) => {
-                    this.dokumentePapiergesuch = angular.copy(response);
-                    this.globalCacheService.getCache().removeAll();
-                });
+                if (filesTooBig.length > 0) {
+                    // DialogBox anzeigen für Files, welche zu gross sind!
+                    let returnString = this.$translate.instant('FILE_ZU_GROSS') + '<br/><br/>';
+                    returnString += '<ul>';
+                    for (let file of filesTooBig) {
+                        returnString += '<li>';
+                        returnString += file.name;
+                        returnString += '</li>';
+                    }
+                    returnString += '</ul>';
+
+                    this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
+                        title: returnString
+                    });
+                }
+
+                if (filesOk.length > 0) {
+                    this.uploadRS.uploadFile(filesOk, this.dokumentePapiergesuch, gesuchID).then((response) => {
+                        this.dokumentePapiergesuch = angular.copy(response);
+                        this.globalCacheService.getCache(TSCacheTyp.EBEGU_DOCUMENT).removeAll();
+                    });
+                }
             }
         });
     }
@@ -145,18 +176,6 @@ export class KommentarViewController {
 
     public isGesuchReadonly(): boolean {
         return this.gesuchModelManager.isGesuchReadonly();
-    }
-
-    /**
-     * StepsComment sind fuer alle Steps disabled wenn das Gesuch VERFUEGEN oder VERFUEGT ist. Fuer den Step VERFUEGEN ist es nur im
-     * Status VERFUEGT DISABLED
-     * @returns {boolean}
-     */
-    public isStepCommentDisabled(): boolean {
-        return (this.wizardStepManager.getCurrentStepName() !== TSWizardStepName.VERFUEGEN
-            && this.gesuchModelManager.isGesuchReadonly())
-            || (this.wizardStepManager.getCurrentStepName() === TSWizardStepName.VERFUEGEN
-            && this.gesuchModelManager.getGesuch() && isAnyStatusOfVerfuegt(this.gesuchModelManager.getGesuch().status));
     }
 
 }

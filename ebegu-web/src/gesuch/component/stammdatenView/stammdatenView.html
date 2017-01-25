@@ -84,31 +84,6 @@
                                     prefix="wohn"></dv-adresse>
                     </fieldset>
 
-                    <!--Korrenspondenzadr Checkbox (aka Zustelladresse)-->
-                    <div class="row">
-                        <div class="col-xs-12 dv-input-container-question">
-                            <div class=" checkbox">
-                                <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr"
-                                             aria-label="korrespondenzAdr" ng-change="vm.korrespondenzAdrClicked()"
-                                             dv-enable-element
-                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchReadonly()">
-                                    <span data-translate="KORRESPONDENZADR"></span>
-                                    <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
-                                </md-checkbox>
-                                <dv-bisher gs="vm.showKorrespondadrGS" class="dv-bisher-break"
-                                           ja="vm.showKorrespondadr"
-                                           specific-bisher-text="vm.getTextKorrespondenzaddrKorrekturJA()"></dv-bisher>
-                                <dv-error-messages for="vm.form.korrespondenzAdr.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
-                        </div>
-                    </div>
-
-                    <dv-adresse adresse="vm.getModel().korrespondenzAdresse" ng-if="vm.showKorrespondadr"
-                                prefix="korrespondenz"  show-if-bisher-none="false"
-                                organisation="true"></dv-adresse>
-
                     <!-- Diplomatenstatus -->
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
@@ -123,7 +98,7 @@
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.diplomatenstatus"
                                            ja="vm.getModel().gesuchstellerJA.diplomatenstatus"></dv-bisher>
                                 <dv-error-messages for="vm.form.diplomatenstatus.$error"
-                                                   class="error"></dv-error-messages>
+                                                   class="error" style="height:1.5rem;"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -139,10 +114,39 @@
                                     <span data-translate="UMZUG"></span>
                                 </md-checkbox>
                                 <dv-error-messages for="vm.form.umzug.$error"
-                                                   class="error"></dv-error-messages>
+                                                   class="error" style="height: 1.5rem;"></dv-error-messages>
                             </div>
                         </div>
                     </div>
+
+                    <!--Korrenspondenzadr Checkbox (aka Zustelladresse)-->
+                    <div class="row">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class=" checkbox">
+                                <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr"
+                                             aria-label="korrespondenzAdr" ng-change="vm.korrespondenzAdrClicked()"
+                                             dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchReadonly()">
+                                    <span data-translate="KORRESPONDENZADR"></span>
+                                </md-checkbox>
+                                <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
+                                <dv-bisher gs="vm.showKorrespondadrGS" class="dv-bisher-break"
+                                           ja="vm.showKorrespondadr"
+                                           specific-bisher-text="vm.getTextKorrespondenzaddrKorrekturJA()"></dv-bisher>
+                                <dv-error-messages for="vm.form.korrespondenzAdr.$error"
+                                                   class="error" style=""></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <dv-adresse adresse="vm.getModel().korrespondenzAdresse" ng-if="vm.showKorrespondadr"
+                                prefix="korrespondenz" show-if-bisher-none="false"
+                                organisation="true"></dv-adresse>
+                </fieldset>
+                <fieldset dv-enable-element
+                          dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                          dv-enable-expression="vm.areEmailTelefonEditable()">
                     <!--Email-->
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-medium">
@@ -159,7 +163,6 @@
                             </dv-input-container>
                         </div>
                     </div>
-
 
                     <!--Mobile /Telefon-->
                     <div class="row">
@@ -213,7 +216,7 @@
                     <div class="col-md-12">
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                       dv-previous="true" dv-next="true" dv-save="vm.save()">
+                                       dv-previous="true" dv-next="true" dv-saving-possible="vm.areEmailTelefonEditable()" dv-save="vm.save()">
                         </dv-navigation>
                         <dv-navigation dv-show-element
                                        dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()"

@@ -50,11 +50,11 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 		betreuungTagiAaregg.setKind(kind1);
 		kind1.getBetreuungen().add(betreuungTagiAaregg);
 		// 50%
-		BetreuungspensumContainer betreuungspensumTagiAaregg1 = createBetreuungspensum(50, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2016, Month.DECEMBER, 31));
+		BetreuungspensumContainer betreuungspensumTagiAaregg1 = createBetreuungspensum(50, LocalDate.of(gesuchsperiode.getBasisJahrPlus1(), Month.AUGUST, 1), LocalDate.of(gesuchsperiode.getBasisJahrPlus1(), Month.DECEMBER, 31));
 		betreuungspensumTagiAaregg1.setBetreuung(betreuungTagiAaregg);
 		betreuungTagiAaregg.getBetreuungspensumContainers().add(betreuungspensumTagiAaregg1);
 		// 60%
-		BetreuungspensumContainer betreuungspensumTagiAaregg2 = createBetreuungspensum(60, LocalDate.of(2017, Month.JANUARY, 1), LocalDate.of(2017, Month.JULY, 31));
+		BetreuungspensumContainer betreuungspensumTagiAaregg2 = createBetreuungspensum(60, LocalDate.of(gesuchsperiode.getBasisJahrPlus2(), Month.JANUARY, 1), LocalDate.of(gesuchsperiode.getBasisJahrPlus2(), Month.JULY, 31));
 		betreuungspensumTagiAaregg2.setBetreuung(betreuungTagiAaregg);
 		betreuungTagiAaregg.getBetreuungspensumContainers().add(betreuungspensumTagiAaregg2);
 

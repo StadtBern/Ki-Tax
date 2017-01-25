@@ -80,12 +80,12 @@ export class GesuchstellerDashboardListViewController {
     }
 
     public openAntrag(periode: TSGesuchsperiode): void {
-        let antrag = this.getAntragForGesuchsperiode(periode);
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
         if (antrag) {
             if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
                 // Noch nicht freigegeben
                 this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});
-            } else if (!isAnyStatusOfVerfuegt(antrag.status)) {
+            } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.beschwerdeHaengig) {
                 // Alles ausser verfuegt und InBearbeitung
                 this.$state.go('gesuch.dokumente', {createNew: false, gesuchId: antrag.antragId});
             } else {
@@ -112,12 +112,12 @@ export class GesuchstellerDashboardListViewController {
     }
 
     public getButtonText(periode: TSGesuchsperiode): string {
-        let antrag = this.getAntragForGesuchsperiode(periode);
+        let antrag: TSAntragDTO = this.getAntragForGesuchsperiode(periode);
         if (antrag) {
             if (TSAntragStatus.IN_BEARBEITUNG_GS === antrag.status) {
                 // Noch nicht freigegeben -> Text BEARBEITEN
                 return this.$translate.instant('GS_BEARBEITEN');
-            } else if (!isAnyStatusOfVerfuegt(antrag.status)) {
+            } else if (!isAnyStatusOfVerfuegt(antrag.status) || antrag.beschwerdeHaengig) {
                 // Alles ausser verfuegt und InBearbeitung -> Text DOKUMENTE HOCHLADEN
                 return this.$translate.instant('GS_DOKUMENTE_HOCHLADEN');
             } else {
@@ -161,6 +161,10 @@ export class GesuchstellerDashboardListViewController {
         let isUserGesuchsteller: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles());
         if (status === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller) {
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
+        }
+        if ((status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
+            && isUserGesuchsteller) {
+            return this.ebeguUtil.translateString('ABGESCHLOSSEN');
         }
         return this.ebeguUtil.translateString(TSAntragStatus[status]);
     }

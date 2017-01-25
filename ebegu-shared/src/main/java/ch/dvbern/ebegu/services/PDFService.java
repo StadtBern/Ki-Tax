@@ -3,10 +3,13 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.MergeDocException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.time.LocalDate;
 import java.util.Optional;
 
 /*
@@ -23,12 +26,21 @@ import java.util.Optional;
 public interface PDFService {
 
 	@Nonnull
-	byte[] generateNichteintreten(Betreuung betreuung) throws MergeDocException;
+	byte[] generateNichteintreten(Betreuung betreuung, boolean writeProtected) throws MergeDocException;
 
 	@Nonnull
-	byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung) throws MergeDocException;
+	byte[] generateMahnung(Mahnung mahnung, Optional<Mahnung> vorgaengerMahnung, boolean writeProtected) throws MergeDocException;
 
 	@Nonnull
-	byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustelladresse) throws MergeDocException;
+	byte[] generateFreigabequittung(Gesuch gesuch, Zustelladresse zustelladresse, boolean writeProtected) throws MergeDocException;
+
+	@Nonnull
+	byte[] generateBegleitschreiben(@Nonnull Gesuch gesuch, boolean writeProtected) throws MergeDocException;
+
+	@Nonnull
+	byte[] generateFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung, boolean writeProtected) throws MergeDocException;
+
+	@Nonnull
+	byte[] generateVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum, boolean writeProtected) throws MergeDocException;
 
 }

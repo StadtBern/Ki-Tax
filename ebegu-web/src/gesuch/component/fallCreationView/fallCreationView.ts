@@ -44,7 +44,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
                 private $translate: ITranslateService, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCH_ERSTELLEN);
         this.readStateParams();
         this.initViewModel();
         this.TSRoleUtil = TSRoleUtil;
@@ -73,21 +73,20 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     private initViewModel(): void {
-        this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
         if (this.gesuchsperiodeId === null || this.gesuchsperiodeId === undefined || this.gesuchsperiodeId === '') {
             if (this.gesuchModelManager.getGesuchsperiode()) {
                 this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
             }
         }
         this.gesuchModelManager.initGesuchWithEingangsart(this.createNewParam, this.eingangsart, this.gesuchsperiodeId, this.fallId);
-        if (this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
+        if (!this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
             this.gesuchModelManager.updateActiveGesuchsperiodenList();
         }
     }
 
     save(): IPromise<TSGesuch> {
         this.showError = true;
-        if (this.form.$valid) {
+        if (this.isGesuchValid()) {
             if (!this.form.$dirty && !this.gesuchModelManager.getGesuch().isNew()) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
@@ -135,10 +134,10 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         }
     }
 
-    public getNextButtonText(): string{
-        if(this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())){
+    public getNextButtonText(): string {
+        if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
             return this.$translate.instant('WEITER_ONLY_UPPER');
         }
-        return this.$translate.instant('WEITER_UPPER')
+        return this.$translate.instant('WEITER_UPPER');
     }
 }

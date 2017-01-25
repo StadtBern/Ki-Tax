@@ -15,7 +15,6 @@ import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensvers
 import FinanzielleSituationRS from './finanzielleSituationRS.rest';
 import EinkommensverschlechterungContainerRS from './einkommensverschlechterungContainerRS.rest';
 import TSKindContainer from '../../models/TSKindContainer';
-import TSKind from '../../models/TSKind';
 import KindRS from '../../core/service/kindRS.rest';
 import {TSFachstelle} from '../../models/TSFachstelle';
 import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
@@ -182,6 +181,15 @@ export default class GesuchModelManager {
         return this.getEkvFuerBasisJahrPlus(2);
     }
 
+    public isRequiredEKV_GS_BJ(gs: number, bj: number): boolean {
+        if (gs === 2) {
+            return this.getEkvFuerBasisJahrPlus(bj) && this.isGesuchsteller2Required();
+        } else {
+            return this.getEkvFuerBasisJahrPlus(bj);
+        }
+
+    }
+
     public getFamiliensituation(): TSFamiliensituation {
         if (this.gesuch) {
             return this.gesuch.extractFamiliensituation();
@@ -197,8 +205,8 @@ export default class GesuchModelManager {
     }
 
     public updateFachstellenList(): void {
-        this.fachstelleRS.getAllFachstellen().then((response: any) => {
-            this.fachstellenList = angular.copy(response);
+        this.fachstelleRS.getAllFachstellen().then((response: TSFachstelle[]) => {
+            this.fachstellenList = response;
         });
     }
 
@@ -206,8 +214,8 @@ export default class GesuchModelManager {
      * Retrieves the list of InstitutionStammdaten for the date of today.
      */
     public updateActiveInstitutionenList(): void {
-        this.instStamRS.getAllActiveInstitutionStammdatenByDate(DateUtil.today()).then((response: any) => {
-            this.activInstitutionenList = angular.copy(response);
+        this.instStamRS.getAllActiveInstitutionStammdatenByDate(DateUtil.today()).then((response: TSInstitutionStammdaten[]) => {
+            this.activInstitutionenList = response;
         });
     }
 
@@ -375,7 +383,7 @@ export default class GesuchModelManager {
         }
     }
 
-    private getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
+    public getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
         if (!this.gesuch.extractEinkommensverschlechterungInfo()) {
             this.initEinkommensverschlechterungInfo();
         }
@@ -508,12 +516,6 @@ export default class GesuchModelManager {
         }
     }
 
-    public initBetreuung(): void {
-        if (!this.getKindToWorkWith().betreuungen) {
-            this.getKindToWorkWith().betreuungen = [];
-        }
-    }
-
     /**
      * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde
      * @returns {number}
@@ -591,44 +593,57 @@ export default class GesuchModelManager {
         return listResult;
     }
 
-    public createKind(): void {
-        let tsKindContainer = new TSKindContainer(undefined, new TSKind());
-        this.gesuch.kindContainers.push(tsKindContainer);
-        this.kindNumber = this.gesuch.kindContainers.length;
-        tsKindContainer.kindNummer = this.kindNumber;
-    }
 
-    /**
-     * Creates a Betreuung for the kind given by the kindNumber attribute of the class.
-     * Thus the kindnumber must be set before this method is called.
-     */
-    public createBetreuung(): void {
-        if (this.getKindToWorkWith()) {
-            this.initBetreuung();
-            let tsBetreuung: TSBetreuung = new TSBetreuung();
-            tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
-            this.getKindToWorkWith().betreuungen.push(tsBetreuung);
-            this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
-            tsBetreuung.betreuungNummer = this.betreuungNumber;
+    public saveBetreuung(betreuungToSave: TSBetreuung, abwesenheit: boolean): IPromise<TSBetreuung> {
+        if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN) {
+            return this.betreuungRS.betreuungsPlatzAbweisen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.handleSavedBetreuung(storedBetreuung);
+                });
+        } else  if (betreuungToSave.betreuungsstatus === TSBetreuungsstatus.BESTAETIGT) {
+            return this.betreuungRS.betreuungsPlatzBestaetigen(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id)
+                .then((storedBetreuung: any) => {
+                    return this.handleSavedBetreuung(storedBetreuung);
+                });
+        } else {
+            return this.betreuungRS.saveBetreuung(betreuungToSave, this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
+                .then((storedBetreuung: any) => {
+                    return this.handleSavedBetreuung(storedBetreuung);
+                });
         }
     }
 
-    public updateBetreuung(abwesenheit: boolean): IPromise<TSBetreuung> {
-        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
-            .then((betreuungResponse: any) => {
-                this.getKindFromServer();
-                this.setBetreuungToWorkWith(betreuungResponse);
-                return this.getBetreuungToWorkWith();
+    private handleSavedBetreuung(storedBetreuung: TSBetreuung): TSBetreuung {
+        this.getKindFromServer();
+        if (!storedBetreuung.isNew()) {   //gespeichertes kind war nicht neu
+            let i: number = EbeguUtil.getIndexOfElementwithID(storedBetreuung, this.getKindToWorkWith().betreuungen);
+            if (i >= 0) {
+                this.getKindToWorkWith().betreuungen[i] = storedBetreuung;
+                this.betreuungNumber = i;
+            }
+        } else {
+            this.getKindToWorkWith().betreuungen.push(storedBetreuung);  //neues kind anfuegen
+            this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
+        }
+        return storedBetreuung;
+    }
+
+    public saveKind(kindToSave: TSKindContainer): IPromise<TSKindContainer> {
+        return this.kindRS.saveKind(kindToSave, this.gesuch.id)
+            .then((storedKindCont: TSKindContainer) => {
+                this.getFallFromServer();
+                if (!kindToSave.isNew()) {   //gespeichertes kind war nicht neu
+                    let i: number = EbeguUtil.getIndexOfElementwithID(kindToSave, this.gesuch.kindContainers);
+                       if (i >= 0) {
+                           this.gesuch.kindContainers[i] = storedKindCont;
+                       }
+                } else {
+                    this.gesuch.kindContainers.push(storedKindCont);  //neues kind anfuegen
+                }
+                return storedKindCont;
             });
     }
 
-    public updateKind(): IPromise<TSKindContainer> {
-        return this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
-            this.setKindToWorkWith(kindResponse);
-            this.getFallFromServer();
-            return this.getKindToWorkWith();
-        });
-    }
 
     /**
      * Sucht das KindToWorkWith im Server und aktualisiert es mit dem bekommenen Daten
@@ -1017,6 +1032,17 @@ export default class GesuchModelManager {
      * Returns true when all Betreuungen are of kind SCHULAMT.
      * Returns false also if there are no Kinder with betreuungsbedarf
      */
+    public areThereOnlyGeschlossenOhneVerfuegung(): boolean {
+        if (!this.gesuch) {
+            return false;
+        }
+        return this.gesuch.areThereOnlyGeschlossenOhneVerfuegung();
+    }
+
+    /**
+     * Returns true when all Betreuungen are of kind SCHULAMT.
+     * Returns false also if there are no Kinder with betreuungsbedarf
+     */
     public isThereAnySchulamtAngebot(): boolean {
         let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
         if (kinderWithBetreuungList.length <= 0) {
@@ -1076,7 +1102,9 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return isStatusVerfuegenVerfuegt(this.gesuch.status) || this.isGesuchReadonlyForRole();
+        return isStatusVerfuegenVerfuegt(this.gesuch.status)
+            || this.isGesuchReadonlyForRole()
+            || this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     /**
@@ -1209,7 +1237,7 @@ export default class GesuchModelManager {
     //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
         if (this.getGesuch()) {
-            var text = '';
+            let text = '';
             if (this.getGesuch().fall) {
                 text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
             }
@@ -1220,5 +1248,12 @@ export default class GesuchModelManager {
         } else {
             return '';
         }
+    }
+
+    public isNeuestesGesuch(): IPromise<boolean> {
+        let gesuchId = this.gesuch.id;
+        return this.gesuchRS.getNeuestesGesuchFromGesuch(gesuchId).then((response: boolean) => {
+               return response;
+        });
     }
 }

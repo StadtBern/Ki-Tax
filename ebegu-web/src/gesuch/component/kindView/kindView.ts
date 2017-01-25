@@ -12,10 +12,11 @@ import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKin
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
+import DateUtil from '../../../utils/DateUtil';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ITranslateService = angular.translate.ITranslateService;
-import DateUtil from '../../../utils/DateUtil';
 import IScope = angular.IScope;
 
 
@@ -36,6 +37,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
     showFachstelleGS: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
     allowedRoles: Array<TSRole>;
+    kindNumber: number;
     // private initialModel: TSKindContainer; brauchts hier nicht da das kind glaub ich erst im then eingefuegt wird
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
@@ -44,10 +46,17 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
     constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, $scope: IScope, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope);
-        this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
-        this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith());
-        // this.initialModel = angular.copy(this.model);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER);
+        if ($stateParams.kindNumber) {
+            this.kindNumber = parseInt($stateParams.kindNumber);
+            this.model = angular.copy(this.gesuchModelManager.getGesuch().kindContainers[this.kindNumber - 1]);
+            this.gesuchModelManager.setKindNumber(this.kindNumber);
+        } else {
+            //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
+            this.model = this.initEmptyKind(undefined);
+            this.kindNumber = this.gesuchModelManager.getGesuch().kindContainers ? this.gesuchModelManager.getGesuch().kindContainers.length + 1 : 1;
+            this.gesuchModelManager.setKindNumber(this.kindNumber);
+        }
         this.initViewModel();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
@@ -60,14 +69,13 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         if (this.getPensumFachstelle() && this.getPensumFachstelle().fachstelle) {
             this.fachstelleId = this.getPensumFachstelle().fachstelle.id;
         }
-        if (this.gesuchModelManager.getFachstellenList() || this.gesuchModelManager.getFachstellenList().length <= 0) {
+        if (!this.gesuchModelManager.getFachstellenList() || this.gesuchModelManager.getFachstellenList().length <= 0) {
             this.gesuchModelManager.updateFachstellenList();
         }
     }
 
     save(): IPromise<TSKindContainer> {
-        if (this.form.$valid) {
-            this.gesuchModelManager.setKindToWorkWith(this.model);
+        if (this.isGesuchValid()) {
             if (!this.form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
@@ -75,7 +83,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
             }
 
             this.errorService.clearAll();
-            return this.gesuchModelManager.updateKind();
+            return this.gesuchModelManager.saveKind(this.model);
         }
         return undefined;
     }
@@ -172,6 +180,12 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         } else {
             return this.$translate.instant('LABEL_KEINE_ANGABE');
         }
+    }
+
+    private initEmptyKind(kindNumber: number) : TSKindContainer {
+        let tsKindContainer = new TSKindContainer(undefined, new TSKind());
+        tsKindContainer.kindNummer = kindNumber;
+        return tsKindContainer;
     }
 }
 

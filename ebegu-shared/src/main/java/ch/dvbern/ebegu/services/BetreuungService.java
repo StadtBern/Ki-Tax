@@ -23,6 +23,19 @@ public interface BetreuungService {
 	Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit);
 
 	/**
+	 * Setzt die Betreuungsplatzanfrage auf ABGEWIESEN und sendet dem Gesuchsteller eine E-Mail
+	 */
+	@Nonnull
+	Betreuung betreuungPlatzAbweisen(@Valid @Nonnull Betreuung betreuung);
+
+	/**
+	 * Setzt die Betreuungsplatzanfrage auf BESTAETIGT und sendet dem Gesuchsteller eine E-Mail,
+	 * falls damit alle Betreuungen des Gesuchs bestaetigt sind.
+	 */
+	@Nonnull
+	Betreuung betreuungPlatzBestaetigen(@Valid @Nonnull Betreuung betreuung);
+
+	/**
 	 * @param key PK (id) der Betreuung
 	 * @return Betreuung mit dem gegebenen key oder null falls nicht vorhanden
 	 */

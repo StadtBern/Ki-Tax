@@ -1,15 +1,17 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,26 +34,22 @@ import java.util.List;
  * Der Anspruch kann sich erst auf den Folgemonat des Eingangsdatum erhöhen
  * Reduktionen des Anspruchs sind auch rückwirkend erlaubt
  */
-public class VerfuegungsMerger {
+public class MutationsMerger {
 
-	private static final Logger LOG = LoggerFactory.getLogger(VerfuegungsMerger.class.getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(MutationsMerger.class.getSimpleName());
 
 	/**
 	 * Um code lesbar zu halten wird die Regel PMD.CollapsibleIfStatements ausgeschaltet
 	 */
 	@Nonnull
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
-	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, Gesuch gesuchForMutaion) {
+	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 
-		// Wenn keine Mutation vorhanden ist muss nicht gemerged werden
-		if (gesuchForMutaion == null) {
+		if (betreuung.extractGesuch().getTyp().equals(AntragTyp.GESUCH)) {
 			return zeitabschnitte;
 		}
+		final Verfuegung verfuegungOnGesuchForMuation = betreuung.getVorgaengerVerfuegung();
 
-		final Verfuegung verfuegungOnGesuchForMuation = VerfuegungUtil.findVerfuegungOnGesuchForMutation(betreuung, gesuchForMutaion);
-		if (verfuegungOnGesuchForMuation == null) {
-			return zeitabschnitte;
-		}
 
 		final LocalDate mutationsEingansdatum = betreuung.extractGesuch().getEingangsdatum();
 
@@ -80,6 +78,22 @@ public class VerfuegungsMerger {
 					zeitabschnitt.addBemerkung(RuleKey.ANSPRUCHSBERECHNUNGSREGELN_MUTATIONEN, MsgKey.REDUCKTION_RUECKWIRKEND_MSG);
 				}
 			}
+
+			//SCHULKINDER: Sonderregel bei zu Mutation von zu spaet eingereichten Schulkindangeboten
+			//fuer Abschnitte ab dem Folgemonat des Mutationseingangs rechnen wir bisher, fuer alle vorherigen folgende Sonderregel
+			if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()
+				&& !isMeldungRechzeitig(zeitabschnitt, mutationsEingansdatum)) {
+				VerfuegungZeitabschnitt zeitabschnittInVorgaenger = findZeitabschnittInVorgaenger(zeitabschnittStart, verfuegungOnGesuchForMuation);
+				// Wenn der Benutzer vorher keine Verfuenstigung bekam weil er zu spaet eingereicht hat DANN bezahlt er auch in Mutation vollkosten
+				if (zeitabschnittInVorgaenger != null
+					&& zeitabschnittInVorgaenger.getVerguenstigung().compareTo(BigDecimal.ZERO) == 0
+					&& zeitabschnittInVorgaenger.isZuSpaetEingereicht()) {
+					zeitabschnitt.setBezahltVollkosten(true);
+					zeitabschnitt.setZuSpaetEingereicht(true);
+					zeitabschnitt.addBemerkung(RuleKey.EINREICHUNGSFRIST, MsgKey.EINREICHUNGSFRIST_VOLLKOSTEN_MSG);
+				}
+			}
+
 			monatsSchritte.add(zeitabschnitt);
 		}
 
@@ -91,18 +105,36 @@ public class VerfuegungsMerger {
 	}
 
 	/**
+	 * Hilfsmethode welche in der Vorgaengerferfuegung den gueltigen Zeitabschnitt fuer einen bestimmten Stichtag sucht
+	 */
+	@Nullable
+	private VerfuegungZeitabschnitt findZeitabschnittInVorgaenger(LocalDate stichtag, Verfuegung vorgaengerVerf) {
+		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : vorgaengerVerf.getZeitabschnitte()) {
+			final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
+			if (gueltigkeit.contains(stichtag) || gueltigkeit.startsSameDay(stichtag)) {
+				return verfuegungZeitabschnitt;
+			}
+		}
+
+		LOG.error("Vorgaengerzeitabschnitt fuer Mutation konnte nicht gefunden werden " + stichtag);
+		return null;
+	}
+
+	/**
 	 * Findet das anspruchberechtigtes Pensum zum Zeitpunkt des neuen Zeitabschnitt-Start
 	 */
 	private int findAnspruchberechtigtesPensumAt(LocalDate zeitabschnittStart, Verfuegung verfuegungGSM) {
 
-		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegungGSM.getZeitabschnitte()) {
-			final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
-			if (gueltigkeit.contains(zeitabschnittStart) || gueltigkeit.startsSameDay(zeitabschnittStart)) {
-				return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
+		if (verfuegungGSM != null) {
+			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegungGSM.getZeitabschnitte()) {
+				final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
+				if (gueltigkeit.contains(zeitabschnittStart) || gueltigkeit.startsSameDay(zeitabschnittStart)) {
+					return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
+				}
 			}
+			LOG.error("Anspruch berechtigtes Pensum beim Gesuch für Mutation konnte nicht gefunden werden");
 		}
 
-		LOG.error("Anspruch berechtigtes Pensum beim Gesuch für Mutation konnte nicht gefunden werden");
 		return 0;
 	}
 
