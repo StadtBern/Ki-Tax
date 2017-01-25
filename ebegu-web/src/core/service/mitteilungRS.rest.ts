@@ -59,14 +59,14 @@ export default class MitteilungRS {
     }
 
     public getMitteilungenForCurrentRolle(fallId: string): IPromise<Array<TSMitteilung>> {
-        return this.http.put(this.serviceURL + '/forrole/' + fallId, null).then((response: any) => {
+        return this.http.get(this.serviceURL + '/forrole/' + fallId).then((response: any) => {
             this.log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilungen(response.data);
         });
     }
 
     public getMitteilungenForPosteingang(): IPromise<Array<TSMitteilung>> {
-        return this.http.put(this.serviceURL + '/posteingang', null).then((response: any) => {
+        return this.http.get(this.serviceURL + '/posteingang').then((response: any) => {
             this.log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilungen(response.data);
         });

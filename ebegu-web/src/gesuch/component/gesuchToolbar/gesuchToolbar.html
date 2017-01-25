@@ -53,6 +53,16 @@
 
             <span flex=""></span>
 
+            <!-- Mitteilungen -->
+
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtRoles()">
+                <button ng-click="vmx.openMitteilungen()"
+                        aria-label="{{TOOLBAR_MITTEILUNGEN | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
+                </button>
+            </div>
+
             <!-- Mutieren -->
 
             <div dv-show-element

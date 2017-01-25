@@ -363,4 +363,10 @@ export class GesuchToolbarController {
         }
         return false;
     }
+
+    public openMitteilungen(): void {
+        this.$state.go('mitteilungen', {
+            fallId: this.getGesuch().fall.id
+        });
+    }
 }
