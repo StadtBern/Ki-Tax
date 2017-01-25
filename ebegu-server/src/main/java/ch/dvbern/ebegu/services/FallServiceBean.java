@@ -114,4 +114,16 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		authorizer.checkWriteAuthorization(loadedFall);
 		persistence.remove(loadedFall);
 	}
+
+	@Override
+	public Optional<Fall> createFallForCurrentGesuchstellerAsBesitzer() {
+		Optional<Benutzer> currentBenutzerOptional = benutzerService.getCurrentBenutzer();
+		if (currentBenutzerOptional.isPresent() && UserRole.GESUCHSTELLER.equals(currentBenutzerOptional.get().getRole())) {
+			final Optional<Fall> existingFall = findFallByCurrentBenutzerAsBesitzer();
+			if (!existingFall.isPresent()) {
+				return Optional.of(saveFall(new Fall()));
+			}
+		}
+		return Optional.empty();
+	}
 }

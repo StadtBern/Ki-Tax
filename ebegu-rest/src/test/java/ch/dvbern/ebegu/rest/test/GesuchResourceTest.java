@@ -176,7 +176,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 		try {
 			JBossLoginContextFactory.createLoginContext(username, username).login();
 		} catch (LoginException e) {
-			LOG.error("could not log in as user "+username, e);
+			LOG.error("could not log in as user " + username, e);
 			throw new RuntimeException("could not log in");
 		}
 		return benutzer;

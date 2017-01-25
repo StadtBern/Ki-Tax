@@ -2156,4 +2156,63 @@ public class JaxBConverter {
 	public GesuchstellerAdresseContainer adresseContainerToEntity(JaxAdresseContainer alternativeAdresse, GesuchstellerAdresseContainer gesuchstellerAdresseContainer) {
 		return null;
 	}
+
+	public Mitteilung mitteilungToEntity(JaxMitteilung mitteilungJAXP, Mitteilung mitteilung) {
+		Validate.notNull(mitteilungJAXP);
+		Validate.notNull(mitteilung);
+
+		convertAbstractFieldsToEntity(mitteilungJAXP, mitteilung);
+
+		if (mitteilungJAXP.getEmpfaenger() != null) {
+			Optional<Benutzer> empfaenger = benutzerService.findBenutzer(mitteilungJAXP.getEmpfaenger().getUsername());
+			if (empfaenger.isPresent()) {
+				mitteilung.setEmpfaenger(empfaenger.get()); // because the user doesn't come from the client but from the server
+			} else {
+				throw new EbeguEntityNotFoundException("mitteilungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, mitteilungJAXP.getEmpfaenger());
+			}
+		}
+
+		mitteilung.setEmpfaengerTyp(mitteilungJAXP.getEmpfaengerTyp());
+		if (mitteilungJAXP.getFall() != null) {
+			mitteilung.setFall(fallToEntity(mitteilungJAXP.getFall(), new Fall()));
+		} else {
+			throw new EbeguEntityNotFoundException("mitteilungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, mitteilungJAXP.getFall());
+		}
+		mitteilung.setMessage(mitteilungJAXP.getMessage());
+		mitteilung.setMitteilungStatus(mitteilungJAXP.getMitteilungStatus());
+
+		if (mitteilungJAXP.getSender() != null) {
+			Optional<Benutzer> sender = benutzerService.findBenutzer(mitteilungJAXP.getSender().getUsername());
+			if (sender.isPresent()) {
+				mitteilung.setSender(sender.get()); // because the user doesn't come from the client but from the server
+			} else {
+				throw new EbeguEntityNotFoundException("mitteilungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, mitteilungJAXP.getSender());
+			}
+		}
+
+		mitteilung.setSenderTyp(mitteilungJAXP.getSenderTyp());
+		mitteilung.setSubject(mitteilungJAXP.getSubject());
+
+		return mitteilung;
+	}
+
+	public JaxMitteilung mitteilungToJAX(Mitteilung persistedMitteilung) {
+		final JaxMitteilung jaxMitteilung = new JaxMitteilung();
+		convertAbstractFieldsToJAX(persistedMitteilung, jaxMitteilung);
+		if (persistedMitteilung.getEmpfaenger() != null) {
+			jaxMitteilung.setEmpfaenger(benutzerToAuthLoginElement(persistedMitteilung.getEmpfaenger()));
+		}
+		jaxMitteilung.setEmpfaengerTyp(persistedMitteilung.getEmpfaengerTyp());
+		if (persistedMitteilung.getFall() != null) {
+			jaxMitteilung.setFall(fallToJAX(persistedMitteilung.getFall()));
+		}
+		jaxMitteilung.setMessage(persistedMitteilung.getMessage());
+		jaxMitteilung.setMitteilungStatus(persistedMitteilung.getMitteilungStatus());
+		if (persistedMitteilung.getSender() != null) {
+			jaxMitteilung.setSender(benutzerToAuthLoginElement(persistedMitteilung.getSender()));
+		}
+		jaxMitteilung.setSenderTyp(persistedMitteilung.getSenderTyp());
+		jaxMitteilung.setSubject(persistedMitteilung.getSubject());
+		return jaxMitteilung;
+	}
 }
