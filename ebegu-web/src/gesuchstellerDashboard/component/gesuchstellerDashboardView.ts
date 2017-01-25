@@ -53,6 +53,12 @@ export class GesuchstellerDashboardListViewController {
                 this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
                     this.antragList = angular.copy(response);
                 });
+            } else { //fall es fuer den GS noch keine Fall gibt, erstellen wir einen
+                this.fallRS.createFallForCurrentBenutzerAsBesitzer().then((createdFall: TSFall) => {
+                    if (createdFall) {
+                        this.fallId = createdFall.id;
+                    }
+                });
             }
         });
     }
