@@ -5,44 +5,48 @@
                 <span data-translate="KINDER"></span>
             </h1>
             <hr class="header"/>
-            <p data-translate="KINDER_HINT1"></p>
-            <p data-translate="KINDER_HINT2"></p>
+            <p>
+                <span data-translate="KINDER_HINT1">
+                </span>
+                <span data-translate="KINDER_HINT2">
+                </span>
+            </p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-safe-src="vm.getKinderList()"
-                       class="table table-hover" st-delay="20">
-                    <thead>
-                    <tr>
-                        <th data-translate="VORNAME"></th>
-                        <th data-translate="NAME"></th>
-                        <th data-translate="GEBURTSDATUM"></th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-click="vm.editKind(row)">
-                        <td ng-bind="row.kindJA.vorname"></td>
-                        <td ng-bind="row.kindJA.nachname"></td>
-                        <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
-                            <dv-loading-button type="button" button-click="vm.removeKind(row)"
-                                               button-class="dv-btn-operation"
-                                               button-disabled="vm.isKorrekturModusJugendamt()">
-                                <i class="fa fa-lg fa-trash-o">
-                                </i>
-                            </dv-loading-button>
-                        </td>
-                        <td ng-if="!vm.canRemoveKind(row)"></td>
-                    </tr>
-                    <tr ng-if="vm.getKinderList().length === 0">
-                        <td colspan="4" class="empty-table" data-translate="KINDER_NOCH_KEINE"></td>
-                    </tr>
-                    </tbody>
-                </table>
+            <table st-table="displayedCollection" st-safe-src="vm.getKinderList()"
+                   class="table table-hover" st-delay="20">
+                <thead>
+                <tr>
+                    <th data-translate="VORNAME"></th>
+                    <th data-translate="NAME"></th>
+                    <th data-translate="GEBURTSDATUM"></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                    ng-click="vm.editKind(row)">
+                    <td ng-bind="row.kindJA.vorname"></td>
+                    <td ng-bind="row.kindJA.nachname"></td>
+                    <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
+                        <dv-loading-button type="button" button-click="vm.removeKind(row)"
+                                           button-class="dv-btn-operation"
+                                           button-disabled="vm.isKorrekturModusJugendamt()">
+                            <i class="fa fa-lg fa-trash-o">
+                            </i>
+                        </dv-loading-button>
+                    </td>
+                    <td ng-if="!vm.canRemoveKind(row)"></td>
+                </tr>
+                <tr ng-if="vm.getKinderList().length === 0">
+                    <td colspan="4" class="empty-table" data-translate="KINDER_NOCH_KEINE"></td>
+                </tr>
+                </tbody>
+            </table>
 
         </div>
         <div class="col-md-12" style="margin-bottom: 2rem" ng-if="!vm.isGesuchReadonly()">

@@ -42,6 +42,9 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
                 wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FINANZIELLE_SITUATION);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
+        if (!parsedNum) {
+            parsedNum = 1;
+        }
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), parsedNum);
         this.model.copyFinSitDataFromGesuch(this.gesuchModelManager.getGesuch());
