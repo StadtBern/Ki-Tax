@@ -128,14 +128,26 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		removeBenutzer(getUsername(BENUTZER_FISCH_NAME, BENUTZER_FISCH_VORNAME));
 		removeBenutzer(getUsername(BENUTZER_FORELLE_NAME, BENUTZER_FORELLE_VORNAME));
 
-		institutionStammdatenService.removeInstitutionStammdaten(KITA_FORELLE_ID);
-		institutionStammdatenService.removeInstitutionStammdaten(TAGESELTERN_FORELLE_ID);
-		institutionStammdatenService.removeInstitutionStammdaten(KITA_HECHT_ID);
+		if (institutionStammdatenService.findInstitutionStammdaten(KITA_FORELLE_ID).isPresent()) {
+			institutionStammdatenService.removeInstitutionStammdaten(KITA_FORELLE_ID);
+		}
+		if (institutionStammdatenService.findInstitutionStammdaten(TAGESELTERN_FORELLE_ID).isPresent()) {
+			institutionStammdatenService.removeInstitutionStammdaten(TAGESELTERN_FORELLE_ID);
+		}
+		if (institutionStammdatenService.findInstitutionStammdaten(KITA_HECHT_ID).isPresent()) {
+			institutionStammdatenService.removeInstitutionStammdaten(KITA_HECHT_ID);
+		}
 
-		institutionService.deleteInstitution(INSTITUTION_FORELLE_ID);
-		institutionService.deleteInstitution(INSTITUTION_HECHT_ID);
+		if (institutionService.findInstitution(INSTITUTION_FORELLE_ID).isPresent()) {
+			institutionService.deleteInstitution(INSTITUTION_FORELLE_ID);
+		}
+		if (institutionService.findInstitution(INSTITUTION_HECHT_ID).isPresent()) {
+			institutionService.deleteInstitution(INSTITUTION_HECHT_ID);
+		}
 
-		traegerschaftService.removeTraegerschaft(TRAEGERSCHAFT_FISCH_ID);
+		if (traegerschaftService.findTraegerschaft(TRAEGERSCHAFT_FISCH_ID).isPresent()) {
+			traegerschaftService.removeTraegerschaft(TRAEGERSCHAFT_FISCH_ID);
+		}
 	}
 
 	private void removeBenutzer(String username) {
@@ -143,7 +155,9 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		for (AuthorisierterBenutzer authorisierterBenutzer : entitiesByAttribute) {
 			persistence.remove(authorisierterBenutzer);
 		}
-		benutzerService.removeBenutzer(username);
+		if (benutzerService.findBenutzer(username).isPresent()) {
+			benutzerService.removeBenutzer(username);
+		}
 	}
 
 	@Override

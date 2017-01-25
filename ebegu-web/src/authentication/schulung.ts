@@ -43,7 +43,7 @@ export class SchulungViewController {
             for (var i = 0; i < this.gesuchstellerList.length; i++) {
                 var name = this.gesuchstellerList[i];
                 var username = 'sandra.' + name.toLocaleLowerCase();
-                username.replace('ü', 'ue');
+                username = username.replace('ü', 'ue');
                 this.usersList.push(new TSUser('Sandra', name, username, 'password1', 'dummyuser@dvbern.ch', this.mandant, TSRole.GESUCHSTELLER));
             }
 

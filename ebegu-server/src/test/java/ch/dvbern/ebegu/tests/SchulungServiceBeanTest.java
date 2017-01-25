@@ -79,6 +79,13 @@ public class SchulungServiceBeanTest extends AbstractEbeguLoginTest {
 		assertEmpty();
 	}
 
+	@Test
+	public void deleteSchulungsdaten() {
+		// Es muss auch "geloescht" werden koennen, wenn es schon (oder teilweise) geloescht ist
+		schulungService.deleteSchulungsdaten();
+		schulungService.deleteSchulungsdaten();
+	}
+
 	private void assertEmpty() {
 		Assert.assertEquals(3, adresseService.getAllAdressen().size());
 		Assert.assertEquals(3, institutionStammdatenService.getAllInstitutionStammdaten().size());
