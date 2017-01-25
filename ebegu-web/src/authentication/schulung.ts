@@ -42,13 +42,15 @@ export class SchulungViewController {
             this.gesuchstellerList = response;
             for (var i = 0; i < this.gesuchstellerList.length; i++) {
                 var name = this.gesuchstellerList[i];
-                var username = 'sandra.'+name.toLocaleLowerCase();
+                var username = 'sandra.' + name.toLocaleLowerCase();
                 username.replace('ü', 'ue');
                 this.usersList.push(new TSUser('Sandra', name, username, 'password1', 'dummyuser@dvbern.ch', this.mandant, TSRole.GESUCHSTELLER));
             }
 
-            this.usersList.push(new TSUser('Fritz', 'Fisch', 'fritz.fisch', 'password1', 'fritz.fisch@mailinator.com', this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftFisch, undefined));
-            this.usersList.push(new TSUser('Franz', 'Forelle', 'franz.forelle', 'password1', 'franz.forelle@mailinator.com', this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institutionForelle));
+            this.usersList.push(new TSUser('Fritz', 'Fisch', 'fritz.fisch', 'password1', 'fritz.fisch@mailinator.com',
+                this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftFisch, undefined));
+            this.usersList.push(new TSUser('Franz', 'Forelle', 'franz.forelle', 'password1', 'franz.forelle@mailinator.com',
+                this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institutionForelle));
         });
     }
 

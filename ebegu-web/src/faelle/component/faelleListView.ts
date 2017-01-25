@@ -79,7 +79,7 @@ export class FaelleListViewController {
      */
     public editFall(antrag: TSAntragDTO, event: any): void {
         if (antrag) {
-            let isCtrlKeyPressed : boolean =(event && event.ctrlKey);
+            let isCtrlKeyPressed : boolean = (event && event.ctrlKey);
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
                 // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
                 this.gesuchModelManager.clearGesuch();
@@ -102,10 +102,10 @@ export class FaelleListViewController {
      */
     private openGesuch(antragId: string, urlToGoTo: string, isCtrlKeyPressed: boolean): void {
         if (antragId) {
-            if(isCtrlKeyPressed) {
+            if (isCtrlKeyPressed) {
                 let url = this.$state.href(urlToGoTo, {createNew: false, gesuchId: antragId});
-                window.open(url,'_blank');
-            } else{
+                window.open(url, '_blank');
+            } else {
                 this.$state.go(urlToGoTo, {createNew: false, gesuchId: antragId});
             }
         }
