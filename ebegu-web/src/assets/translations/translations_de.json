@@ -860,5 +860,6 @@
     "BETREUUNG_IN_STATUS_WARTEN" : "Die Platzbestätigung ist bei der Institution hängig. Sie werden per E-Mail benachrichtigt, sobald diese eingetroffen ist.",
     "MITTEILUNG_SUBJECT": "Betreff",
     "MITTEILUNG_MESSAGE": "Nachricht",
-    "MITTEILUNG_SENDEN": "Senden"
+    "MITTEILUNG_SENDEN": "Senden",
+    "MITTEILUNG_ENTWURF_SPEICHERN": "Entwurf speichern"
 }

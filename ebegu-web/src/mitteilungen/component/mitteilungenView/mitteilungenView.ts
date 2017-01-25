@@ -64,7 +64,7 @@ export class MitteilungenViewController {
         this.currentMitteilung = new TSMitteilung();
         this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
         this.currentMitteilung.fall = this.fall;
-        this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
+        this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
         this.currentMitteilung.sender = currentUser;
 
         //role-depending attributes
@@ -82,9 +82,14 @@ export class MitteilungenViewController {
         return this.currentMitteilung;
     }
 
+    /**
+     * Wechselt den Status der aktuellen Mitteilung auf NEU und schickt diese zum Server
+     */
     public sendMitteilung(): void {
+        this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
         this.mitteilungRS.createMitteilung(this.getCurrentMitteilung()).then((response) => {
-            this.currentMitteilung = response;
+            this.loadEntwurf();
+            this.loadAllMitteilungen();
         });
     }
 
@@ -96,10 +101,9 @@ export class MitteilungenViewController {
 
     public getIcon(mitteilung: TSMitteilung): string {
         if (mitteilung) {
-            if (!this.isCurrentUserTheSender(mitteilung)) { // is a response
+            if (this.isCurrentUserTypTheSenderTyp(mitteilung)) { // is a response
                 return 'fa fa-lg fa-share';
-            }
-            else if (TSMitteilungStatus.NEU === mitteilung.mitteilungStatus) {
+            } else if (TSMitteilungStatus.NEU === mitteilung.mitteilungStatus) {
                 return 'fa fa-lg fa-folder-open';
             } else if (TSMitteilungStatus.ERLEDIGT === mitteilung.mitteilungStatus) {
                 return 'fa fa-lg fa-check';
@@ -111,11 +115,22 @@ export class MitteilungenViewController {
     }
 
     /**
-     * Gibt true zurueck wenn der aktuelle Benutzer, der Sender der uebergenenen Mitteilung ist
+     * Gibt true zurueck wenn der aktuelle BenutzerTyp, der Sender der uebergenenen Mitteilung ist.
      */
-    private isCurrentUserTheSender(mitteilung: TSMitteilung): boolean {
+    private isCurrentUserTypTheSenderTyp(mitteilung: TSMitteilung): boolean {
         return mitteilung && mitteilung.sender && this.authServiceRS.getPrincipal()
             && mitteilung.sender.username === this.authServiceRS.getPrincipal().username;
     }
-}
 
+    public isSenderTypInstitution(mitteilung: TSMitteilung): boolean {
+        return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.INSTITUTION;
+    }
+
+    public isSenderTypJugendamt(mitteilung: TSMitteilung): boolean {
+        return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.JUGENDAMT;
+    }
+
+    public isSenderTypGesuchsteller(mitteilung: TSMitteilung): boolean {
+        return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
+    }
+}

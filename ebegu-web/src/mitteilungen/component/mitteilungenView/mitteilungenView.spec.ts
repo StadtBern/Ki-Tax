@@ -42,26 +42,21 @@ describe('mitteilungenView', function () {
     describe('loading initial data', function () {
         it('should create an empty TSMItteilung for GS', function () {
             let gesuchsteller: TSUser = new TSUser();
-            createMitteilungForGS(gesuchsteller);
+            gesuchsteller.role = TSRole.GESUCHSTELLER;
+            spyOn(authServiceRS, 'isRole').and.returnValue(true);
 
-            expect(controller.getCurrentMitteilung()).toBeDefined();
-            expect(controller.getCurrentMitteilung().empfaenger).toBeUndefined();
-            expect(controller.getCurrentMitteilung().fall).toBe(fall);
-            expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.NEU);
-            expect(controller.getCurrentMitteilung().sender).toBe(gesuchsteller);
-            expect(controller.getCurrentMitteilung().subject).toBeUndefined();
-            expect(controller.getCurrentMitteilung().message).toBeUndefined();
+            createMitteilungForUser(gesuchsteller);
+
+            compareCommonAttributes(controller, gesuchsteller);
             expect(controller.getCurrentMitteilung().senderTyp).toBe(TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
             expect(controller.getCurrentMitteilung().empfaengerTyp).toBe(TSMitteilungTeilnehmerTyp.JUGENDAMT);
         });
         it('should create an empty TSMItteilung for JA', function () {
             let sachbearbeiter_ja: TSUser = new TSUser();
             sachbearbeiter_ja.role = TSRole.SACHBEARBEITER_JA;
-            spyOn(authServiceRS, 'getPrincipal').and.returnValue(sachbearbeiter_ja);
-            spyOn(fallRS, 'findFall').and.returnValue($q.when(fall));
+            spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
 
-            let controller: MitteilungenViewController = new MitteilungenViewController(stateParams, mitteilungRS, authServiceRS, fallRS);
-            $rootScope.$apply();
+            createMitteilungForUser(sachbearbeiter_ja);
 
             compareCommonAttributes(controller, sachbearbeiter_ja);
             expect(controller.getCurrentMitteilung().empfaengerTyp).toBe(TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
@@ -71,15 +66,19 @@ describe('mitteilungenView', function () {
     describe('sendMitteilung', function () {
         it('should send the current mitteilung and update currentMitteilung with the new content', function () {
             let gesuchsteller: TSUser = new TSUser();
-            createMitteilungForGS(gesuchsteller);
+            gesuchsteller.role = TSRole.GESUCHSTELLER;
+            spyOn(authServiceRS, 'isRole').and.returnValue(true);
+
+            createMitteilungForUser(gesuchsteller);
 
             // mock saved mitteilung
             let savedMitteilung: TSMitteilung = new TSMitteilung();
             savedMitteilung.id = '321';
             spyOn(mitteilungRS, 'createMitteilung').and.returnValue($q.when(savedMitteilung));
 
-            let controller: MitteilungenViewController = new MitteilungenViewController(stateParams, mitteilungRS, authServiceRS, fallRS);
             controller.sendMitteilung();
+            expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.NEU);
+
             $rootScope.$apply();
 
             expect(controller.getCurrentMitteilung()).toBeDefined();
@@ -87,23 +86,25 @@ describe('mitteilungenView', function () {
         });
     });
 
-   function compareCommonAttributes(controller: MitteilungenViewController, sachbearbeiter_ja: TSUser): void {
+
+
+    function compareCommonAttributes(controller: MitteilungenViewController, sachbearbeiter_ja: TSUser): void {
         expect(controller.getCurrentMitteilung()).toBeDefined();
         expect(controller.getCurrentMitteilung().empfaenger).toBeUndefined();
         expect(controller.getCurrentMitteilung().fall).toBe(fall);
-        expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.NEU);
+        expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.ENTWURF);
         expect(controller.getCurrentMitteilung().sender).toBe(sachbearbeiter_ja);
         expect(controller.getCurrentMitteilung().subject).toBeUndefined();
         expect(controller.getCurrentMitteilung().message).toBeUndefined();
     }
 
-    function createMitteilungForGS(gesuchsteller: TSUser): void {
-        gesuchsteller.role = TSRole.GESUCHSTELLER;
-        spyOn(authServiceRS, 'getPrincipal').and.returnValue(gesuchsteller);
+    function createMitteilungForUser(user: TSUser): void {
+        spyOn(authServiceRS, 'getPrincipal').and.returnValue(user);
         spyOn(fallRS, 'findFall').and.returnValue($q.when(fall));
+        spyOn(mitteilungRS, 'getMitteilungenForCurrentRolle').and.returnValue($q.when([{}]));
 
         controller = new MitteilungenViewController(stateParams, mitteilungRS, authServiceRS, fallRS);
         $rootScope.$apply();
-    };
+    }
 
 });
