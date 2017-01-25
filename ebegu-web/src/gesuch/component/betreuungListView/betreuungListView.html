@@ -23,60 +23,62 @@
                 <div class="row">
                     <div class="col-md-12 table-responsive">
 
-                    <table st-table="displayedCollection" st-safe-src="kind.betreuungen"
-                           class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th class="betreuung-table-header" data-translate="BETREUUNG"></th>
-                            <th data-translate="STATUS"></th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="betreuung in displayedCollection" st-select-row="betreuung"
-                            st-select-mode="single"
-                            ng-click="vm.editBetreuung(kind, betreuung)">
-                            <td ng-bind="vm.getBetreuungsangebotTyp(betreuung) | translate"></td>
-                            <td class="betreuung-status ng-class:betreuung.betreuungsstatus;">
-                                <div ng-bind="betreuung.betreuungsstatus | translate"></div>
-                                <span class="betreuung-bar"></span>
-                            </td>
-                            <td dv-show-element
-                                dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                dv-show-expression="vm.canRemoveBetreuung(betreuung)"
-                                ng-click="$event.stopPropagation()">
-                                <dv-loading-button type="button" button-click="vm.removeBetreuung(kind, betreuung)"
-                                                   button-disabled="vm.isKorrekturModusJugendamt()"
-                                                   button-class="dv-btn-operation">
-                                    <i class="fa fa-lg fa-trash-o">
-                                    </i>
-                                </dv-loading-button>
-                            </td>
-                            <td dv-show-element
-                                dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                dv-show-expression="!vm.canRemoveBetreuung(betreuung)">
-                                <!-- Fuer Alle ausser Institutionen, wenn der Status ist verfuegt oder Verfuegen oder bei Mutation-->
-                            </td>
-                            <td dv-show-element
-                                dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()">
-                                <!--Fuer Institutionen und Traegerschaft wird der Button Loeschen nicht angezeigt -->
-                            </td>
-                        </tr>
-                        <tr ng-if="(!kind.betreuungen) || (kind.betreuungen.length === 0)">
-                            <td colspan="4" class="empty-table" data-translate="BETREUUNGEN_NOCH_KEINE"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-md-12" dv-show-element
-                     dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                     dv-show-expression="!vm.isGesuchReadonly()">
-                    <dv-loading-button type="button" button-click="vm.createBetreuung(kind)"
-                                       button-class="dv-btn-operation" button-disabled="vm.isKorrekturModusJugendamt()">
-                        <i class="fa fa-lg fa-plus-circle"></i>
-                        <span data-translate="BETREUUNG_HINZUFUEGEN"></span>
-                    </dv-loading-button>
-                </div>
+                        <table st-table="displayedCollection" st-safe-src="kind.betreuungen"
+                               class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th data-translate="BETREUUNG"></th>
+                                <th data-translate="STATUS"></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="betreuung in displayedCollection" st-select-row="betreuung"
+                                st-select-mode="single"
+                                ng-click="vm.editBetreuung(kind, betreuung)">
+                                <td ng-bind="vm.getBetreuungsangebotTyp(betreuung) | translate"
+                                    class="betreuung-table-header"></td>
+                                <td class="betreuung-status ng-class:betreuung.betreuungsstatus;">
+                                    <div ng-bind="betreuung.betreuungsstatus | translate"></div>
+                                    <span class="betreuung-bar"></span>
+                                </td>
+                                <td dv-show-element
+                                    dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                    dv-show-expression="vm.canRemoveBetreuung(betreuung)"
+                                    ng-click="$event.stopPropagation()">
+                                    <dv-loading-button type="button" button-click="vm.removeBetreuung(kind, betreuung)"
+                                                       button-disabled="vm.isKorrekturModusJugendamt()"
+                                                       button-class="dv-btn-operation">
+                                        <i class="fa fa-lg fa-trash-o">
+                                        </i>
+                                    </dv-loading-button>
+                                </td>
+                                <td dv-show-element
+                                    dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                    dv-show-expression="!vm.canRemoveBetreuung(betreuung)">
+                                    <!-- Fuer Alle ausser Institutionen, wenn der Status ist verfuegt oder Verfuegen oder bei Mutation-->
+                                </td>
+                                <td dv-show-element
+                                    dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles()">
+                                    <!--Fuer Institutionen und Traegerschaft wird der Button Loeschen nicht angezeigt -->
+                                </td>
+                            </tr>
+                            <tr ng-if="(!kind.betreuungen) || (kind.betreuungen.length === 0)">
+                                <td colspan="4" class="empty-table" data-translate="BETREUUNGEN_NOCH_KEINE"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-12" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                         dv-show-expression="!vm.isGesuchReadonly()">
+                        <dv-loading-button type="button" button-click="vm.createBetreuung(kind)"
+                                           button-class="dv-btn-operation"
+                                           button-disabled="vm.isKorrekturModusJugendamt()">
+                            <i class="fa fa-lg fa-plus-circle"></i>
+                            <span data-translate="BETREUUNG_HINZUFUEGEN"></span>
+                        </dv-loading-button>
+                    </div>
 
                 </div>
             </div>

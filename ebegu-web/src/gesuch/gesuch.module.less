@@ -217,7 +217,7 @@
     }
 }
 .betreuung-table-header{
-    width: 30rem;
+   width: 40rem;
 }
 .betreuung-status {
     position: relative !important;
@@ -239,8 +239,11 @@
         border-bottom: 0.5rem solid;
 
     }
-    &.BESTAETIGT.verfuegenView .betreuung-bar {
+    &.verfuegenView .betreuung-bar {
         left: 0;
+    }
+    &.verfuegenView.NICHT_EINGETRETEN {
+        border-bottom:1px solid @contrast-darkest;
     }
     &.BESTAETIGT .betreuung-bar {
         border-color: @success;

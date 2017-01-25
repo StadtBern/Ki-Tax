@@ -14,7 +14,6 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
-import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentTyp';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSMahnung from '../../../models/TSMahnung';
 import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
@@ -436,7 +435,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         });
     }
 
-    public fsDokumentChanged(): void{
+    public fsDokumentChanged(): void {
         // dirty checker wird hier ausgeschaltet. Aenderungen des fs flag wird automatisch gespeichert wenn gesuch auf geprüft gesetzt wird
         // Aus performance Gründen wird hier daruf verzichtet das Gesuch neu zu persisten, nur weil das Flag ändert.
         this.form.$setPristine();

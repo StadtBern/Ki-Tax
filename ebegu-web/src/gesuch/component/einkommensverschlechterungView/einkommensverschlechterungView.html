@@ -403,6 +403,7 @@
                                            ng-model="vm.geschaeftsgewinnBasisjahrMinus1"
                                            dv-max-length max="999999999999" class="form-control" disabled
                                            ui-negative-number>
+                                    <div class="dv-error-messages"></div>
                                 </dv-input-container>
                             </div>
                         </div>
@@ -444,6 +445,7 @@
                                            ng-model="vm.geschaeftsgewinnBasisjahrMinus2"
                                            dv-max-length max="999999999999" class="form-control" disabled
                                            ui-negative-number>
+                                    <div class="dv-error-messages"></div>
                                 </dv-input-container>
                             </div>
                         </div>
@@ -460,6 +462,7 @@
                                            name="geschaeftsgewinnDurchschnittGS1" ui-number-mask="0"
                                            ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller1"
                                            dv-max-length max="999999999999" class="form-control" disabled>
+                                    <div class="dv-error-messages"></div>
                                 </dv-input-container>
                                 <dv-input-container class="form-group"
                                                     ng-if="vm.gesuchModelManager.gesuchstellerNumber === 2">
@@ -470,6 +473,7 @@
                                            name="geschaeftsgewinnDurchschnittGS2" ui-number-mask="0"
                                            ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller2"
                                            dv-max-length max="999999999999" class="form-control" disabled>
+                                    <div class="dv-error-messages"></div>
                                 </dv-input-container>
                             </div>
                         </div>

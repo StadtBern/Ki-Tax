@@ -14,11 +14,11 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <span data-translate="FREIGABEQUITTUNG_ERFOLG_TEXT"
-                          data-translate-value-freigabedatum="{{vm.getFreigabeDatum()}}"></span>
+                    <p data-translate="FREIGABEQUITTUNG_ERFOLG_TEXT"
+                          data-translate-value-freigabedatum="{{vm.getFreigabeDatum()}}"></p>
                 </div>
                 <div class="col-md-12" ng-if="vm.isFreigabequittungAusstehend()">
-                    <span data-translate="FREIGABEQUITTUNG_AUSSTEHEND_TEXT"></span>
+                    <p data-translate="FREIGABEQUITTUNG_AUSSTEHEND_TEXT"></p>
                 </div>
             </div>
             <div class="row marginTop50" ng-if="vm.isThereFreigabequittung()">
