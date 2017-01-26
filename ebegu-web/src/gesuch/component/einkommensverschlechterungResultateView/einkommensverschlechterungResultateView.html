@@ -24,11 +24,12 @@
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_EINKOMMEN_EIN_GS"
                                        for="einkommenBeiderGesuchsteller"
                                        ng-if="!vm.model.isGesuchsteller2Required()"></label>
-                                <input id="einkommenBeiderGesuchsteller" type="text" name="einkommenBeiderGesuchsteller"
-                                       ui-number-mask="0"
-                                       aria-label="{{FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS|translate}}"
-                                       ng-model="vm.getResultate().einkommenBeiderGesuchsteller"
-                                       dv-max-length max="999999999999" class="form-control" disabled>
+                                <dv-valueinput input-id="einkommenBeiderGesuchsteller"
+                                               name="einkommenBeiderGesuchsteller"
+                                               ng-model="vm.getResultate().einkommenBeiderGesuchsteller"
+                                               aria-label="{{FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS|translate}}"
+                                               class="input-element" ng-disabled="true">
+                                </dv-valueinput>
                                 <div class="dv-error-messages"></div>
                             </dv-input-container>
                         </div>
@@ -45,14 +46,16 @@
                                         text="'EINKOMMENSVERSCHLECHTERUNG_VERMOEGEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-input-container-medium-label">
-                                    <input id="bruttovermoegen1" type="text" name="bruttovermoegen1" ui-number-mask="0"
-                                           aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_1|translate}}"
-                                           ng-model="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"
-                                           dv-max-length max="999999999999" class="form-control"
-                                           ng-blur="vm.calculate()">
+                                    <dv-valueinput input-id="bruttovermoegen1"
+                                                   name="bruttovermoegen1"
+                                                   ng-model="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"
+                                                   aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_1|translate}}"
+                                                   class="input-element"
+                                                   dv-on-blur="vm.calculate()">
+                                    </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().bruttovermoegen"
                                                ja="vm.getEinkommensverschlechterungGS1_JA().bruttovermoegen"></dv-bisher>
-                                    <dv-error-messages for="vm.form.bruttovermoegen.$error"
+                                    <dv-error-messages for="vm.form.bruttovermoegen1.$error"
                                                        class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
@@ -69,14 +72,16 @@
                                         text="'EINKOMMENSVERSCHLECHTERUNG_VERMOEGEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-input-container-medium-label">
-                                    <input id="bruttovermoegen2" type="text" name="bruttovermoegen2" ui-number-mask="0"
-                                           aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_2|translate}}"
-                                           ng-model="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"
-                                           dv-max-length max="999999999999" class="form-control"
-                                           ng-blur="vm.calculate()">
+                                    <dv-valueinput input-id="bruttovermoegen2"
+                                                   name="bruttovermoegen2"
+                                                   ng-model="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"
+                                                   aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_2|translate}}"
+                                                   class="input-element"
+                                                   dv-on-blur="vm.calculate()">
+                                    </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().bruttovermoegen"
                                                ja="vm.getEinkommensverschlechterungGS2_JA().bruttovermoegen"></dv-bisher>
-                                    <dv-error-messages for="vm.form.bruttovermoegen.$error"
+                                    <dv-error-messages for="vm.form.bruttovermoegen2.$error"
                                                        class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
@@ -94,14 +99,16 @@
                                         text="'EINKOMMENSVERSCHLECHTERUNG_SCHULDEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-input-container-medium-label">
-                                    <input id="schulden1" type="text" name="schulden1" ui-number-mask="0"
-                                           aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_1|translate}}"
-                                           ng-model="vm.getEinkommensverschlechterungGS1_JA().schulden"
-                                           dv-max-length max="999999999999" class="form-control"
-                                           ng-blur="vm.calculate()">
+                                    <dv-valueinput input-id="schulden1"
+                                                   name="schulden1"
+                                                   ng-model="vm.getEinkommensverschlechterungGS1_JA().schulden"
+                                                   aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_1|translate}}"
+                                                   class="input-element"
+                                                   dv-on-blur="vm.calculate()">
+                                    </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().schulden"
                                                ja="vm.getEinkommensverschlechterungGS1_JA().schulden"></dv-bisher>
-                                    <dv-error-messages for="vm.form.schulden.$error" class="error"></dv-error-messages>
+                                    <dv-error-messages for="vm.form.schulden1.$error" class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
                         </div>
@@ -117,14 +124,16 @@
                                         text="'EINKOMMENSVERSCHLECHTERUNG_SCHULDEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-input-container-medium-label">
-                                    <input id="schulden2" type="text" name="schulden2" ui-number-mask="0"
-                                           aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
-                                           ng-model="vm.getEinkommensverschlechterungGS2_JA().schulden"
-                                           dv-max-length max="999999999999" class="form-control"
-                                           ng-blur="vm.calculate()">
+                                    <dv-valueinput input-id="schulden2"
+                                                   name="schulden2"
+                                                   ng-model="vm.getEinkommensverschlechterungGS2_JA().schulden"
+                                                   aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
+                                                   class="input-element"
+                                                   dv-on-blur="vm.calculate()">
+                                    </dv-valueinput>
                                     <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().schulden"
                                                ja="vm.getEinkommensverschlechterungGS2_JA().schulden"></dv-bisher>
-                                    <dv-error-messages for="vm.form.schulden.$error" class="error"></dv-error-messages>
+                                    <dv-error-messages for="vm.form.schulden2.$error" class="error"></dv-error-messages>
                                 </div>
                             </dv-input-container>
                         </div>
@@ -136,10 +145,12 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_NETTOVERMOEGEN"
                                        for="nettovermoegenFuenfProzent"></label>
-                                <input id="nettovermoegenFuenfProzent" type="text" name="nettovermoegenFuenfProzent"
-                                       ui-number-mask="0"
-                                       ng-model="vm.getResultate().nettovermoegenFuenfProzent"
-                                       dv-max-length max="999999999999" class="form-control" disabled>
+                                <dv-valueinput input-id="nettovermoegenFuenfProzent"
+                                               name="nettovermoegenFuenfProzent"
+                                               ng-model="vm.getResultate().nettovermoegenFuenfProzent"
+                                               class="input-element"
+                                               ng-disabled="true">
+                                </dv-valueinput>
                                 <div class="dv-error-messages"></div>
                             </dv-input-container>
                         </div>
@@ -155,10 +166,12 @@
                                     <dv-tooltip
                                         text="'EINKOMMENSVERSCHLECHTERUNG_ANRECHENBARES_EINKOMMEN_HELP' | translate"></dv-tooltip>
                                 </label>
-                                <input id="anrechenbaresEinkommen" type="text" name="anrechenbaresEinkommen"
-                                       ui-number-mask="0"
-                                       ng-model="vm.getResultate().anrechenbaresEinkommen"
-                                       dv-max-length max="999999999999" class="form-control" disabled>
+                                <dv-valueinput input-id="anrechenbaresEinkommen"
+                                               name="anrechenbaresEinkommen"
+                                               ng-model="vm.getResultate().anrechenbaresEinkommen"
+                                               class="input-element"
+                                               ng-disabled="true">
+                                </dv-valueinput>
                                 <div class="dv-error-messages"></div>
                             </dv-input-container>
                         </div>
@@ -171,11 +184,13 @@
                                 <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE"
                                        for="abzuegeBeiderGesuchsteller"></label>
                                 <div class="dv-input-container-medium-label">
-                                    <input id="abzuegeBeiderGesuchsteller" type="text" name="abzuegeBeiderGesuchsteller"
-                                           ui-number-mask="0"
-                                           aria-label="{{FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE|translate}}"
-                                           ng-model="vm.getResultate().abzuegeBeiderGesuchsteller"
-                                           dv-max-length max="999999999999" class="form-control" disabled>
+                                    <dv-valueinput input-id="abzuegeBeiderGesuchsteller"
+                                                   name="abzuegeBeiderGesuchsteller"
+                                                   aria-label="{{FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE|translate}}"
+                                                   ng-model="vm.getResultate().abzuegeBeiderGesuchsteller"
+                                                   class="input-element"
+                                                   ng-disabled="true">
+                                    </dv-valueinput>
                                     <div class="dv-error-messages"></div>
                                 </div>
                             </dv-input-container>
@@ -191,11 +206,12 @@
                                        data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                        for="massgebendesEinkVorAbzFamGr"></label>
                                 <div class="dv-input-container-medium-label">
-                                    <input id="massgebendesEinkVorAbzFamGr" type="text"
-                                           name="massgebendesEinkVorAbzFamGr"
-                                           ui-number-mask="0"
-                                           ng-model="vm.getResultate().massgebendesEinkVorAbzFamGr"
-                                           dv-max-length max="999999999999" class="form-control" disabled>
+                                    <dv-valueinput input-id="massgebendesEinkVorAbzFamGr"
+                                                   name="massgebendesEinkVorAbzFamGr"
+                                                   ng-model="vm.getResultate().massgebendesEinkVorAbzFamGr"
+                                                   class="input-element"
+                                                   ng-disabled="true">
+                                    </dv-valueinput>
                                     <div class="dv-error-messages"></div>
                                 </div>
                             </dv-input-container>
@@ -219,10 +235,12 @@
                                     <label class="md-no-float" data-translate="EVK_EINKOMMEN_JAHR"
                                            translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"
                                            for="massgebendesEinkommenVJ"></label>
-                                    <input id="massgebendesEinkommenVJ" type="text" name="massgebendesEinkommenVJ"
-                                           ui-number-mask="0"
-                                           ng-model="vm.resultatBasisjahr.massgebendesEinkVorAbzFamGr"
-                                           dv-max-length max="999999999999" class="form-control" disabled>
+                                    <dv-valueinput input-id="massgebendesEinkommenVJ"
+                                                   name="massgebendesEinkommenVJ"
+                                                   ng-model="vm.resultatBasisjahr.massgebendesEinkVorAbzFamGr"
+                                                   class="input-element"
+                                                   ng-disabled="true">
+                                    </dv-valueinput>
                                     <div class="dv-error-messages"></div>
                                 </dv-input-container>
                             </div>
@@ -234,10 +252,12 @@
                                     <label class="md-no-float" data-translate="EVK_EINKOMMEN_JAHR"
                                            translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()}"
                                            for="massgebendesEinkommenJetzt"></label>
-                                    <input id="massgebendesEinkommenJetzt" type="text" name="massgebendesEinkommenJetzt"
-                                           ui-number-mask="0"
-                                           ng-model="vm.getResultate().massgebendesEinkVorAbzFamGr"
-                                           dv-max-length max="999999999999" class="form-control" disabled>
+                                    <dv-valueinput input-id="massgebendesEinkommenJetzt"
+                                                   name="massgebendesEinkommenJetzt"
+                                                   ng-model="vm.getResultate().massgebendesEinkVorAbzFamGr"
+                                                   class="input-element"
+                                                   ng-disabled="true">
+                                    </dv-valueinput>
                                     <div class="dv-error-messages"></div>
                                 </dv-input-container>
                             </div>
@@ -253,7 +273,7 @@
                                         <input id="ekvInProzent" type="text" name="ekvInProzent"
                                                ng-model="vm.resultatProzent"
                                                dv-max-length class="form-control"
-                                               ng-required="true" disabled>
+                                               ng-required="true" disabled/>
                                         <div class="dv-error-messages"></div>
                                     </div>
                                 </dv-input-container>
