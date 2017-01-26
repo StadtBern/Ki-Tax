@@ -35,12 +35,8 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 	private Persistence<Fall> persistence;
 
 
-
-
 	@Test
 	public void createFallTest() {
-
-
 		Assert.assertNotNull(fallService);
 		Fall fall = TestDataUtil.createDefaultFall();
 		fallService.saveFall(fall);
@@ -66,7 +62,6 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void changeVerantwortlicherOfFallTest() {
-
 		Fall fall = TestDataUtil.createDefaultFall();
 		Fall savedFall = fallService.saveFall(fall);
 
@@ -93,6 +88,39 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 
 		fallService.removeFall(fall);
 		Assert.assertEquals(0, fallService.getAllFalle().size());
+	}
+
+	@Test
+	public void testCreateFallForGSNoGS() {
+		loginAsSachbearbeiterJA();
+
+		final Optional<Fall> fall = fallService.createFallForCurrentGesuchstellerAsBesitzer();
+		Assert.assertFalse(fall.isPresent());
+	}
+
+	@Test
+	public void testCreateFallForGSTwoTimes() {
+		loginAsGesuchsteller("gesuchst");
+
+		final Optional<Fall> fall = fallService.createFallForCurrentGesuchstellerAsBesitzer();
+		Assert.assertTrue(fall.isPresent());
+		Assert.assertEquals("gesuchst", fall.get().getBesitzer().getUsername());
+
+		final Optional<Fall> fall2 = fallService.createFallForCurrentGesuchstellerAsBesitzer();
+		Assert.assertFalse(fall2.isPresent()); // if a fall already exists for this GS it is not created again
+	}
+
+	@Test
+	public void testCreateFallForTwoDifferentGS() {
+		loginAsGesuchsteller("gesuchst");
+		final Optional<Fall> fall = fallService.createFallForCurrentGesuchstellerAsBesitzer();
+		Assert.assertTrue(fall.isPresent());
+		Assert.assertEquals("gesuchst", fall.get().getBesitzer().getUsername());
+
+		loginAsGesuchsteller("gesuchst2");
+		final Optional<Fall> fall2 = fallService.createFallForCurrentGesuchstellerAsBesitzer();
+		Assert.assertTrue(fall2.isPresent()); // if a fall already exists for this GS it is not created again
+		Assert.assertEquals("gesuchst2", fall2.get().getBesitzer().getUsername());
 	}
 
 }

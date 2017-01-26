@@ -58,4 +58,14 @@ export default class FallRS {
         return 'FallRS';
     }
 
+    public createFallForCurrentBenutzerAsBesitzer(): IPromise<TSFall> {
+        return this.http.put(this.serviceURL + '/createforcurrentbenutzer/', null, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.$log.debug('PARSING fall REST object ', response.data);
+            return this.ebeguRestUtil.parseFall(new TSFall(), response.data);
+        });
+    }
 }

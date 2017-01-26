@@ -53,8 +53,16 @@
 
             <span flex=""></span>
 
-            <!--Kontakt-->
+            <!-- Mitteilungen -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()">
+                <button ng-click="vmgs.openMitteilungen()"
+                        aria-label="{{TOOLBAR_MITTEILUNGEN | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
+                </button>
+            </div>
 
+            <!--Kontakt-->
             <md-menu>
                 <button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
                     <i class="ellipsis-icon fa fa-envelope"></i>
@@ -102,9 +110,8 @@
 
     <span class="gesuchsperiode-button" ng-if="!vmgs.showGesuchPeriodeNavigationMenu() && vmgs.getGesuch()"
           ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
-    <span class="antrag-typ-datum-button" ng-if="!vmgs.showAntragTypListNavigationMenu() && vmgs.getGesuch()"
-          ng-bind="vmgs.getAntragTyp()"
-          class="antrag-typ"></span>
+    <span class="antrag-typantrag-typ-datum-button" ng-if="!vmgs.showAntragTypListNavigationMenu() && vmgs.getGesuch()"
+          ng-bind="vmgs.getAntragTyp()"></span>
 
     <span flex=""></span>
 

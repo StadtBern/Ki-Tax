@@ -67,6 +67,7 @@ import {DvHomeIconComponentConfig} from './component/dv-home-icon/dv-home-icon';
 import {DVBarcodeListener} from './directive/dv-barcode-listener';
 import DVTrimEmpty from './directive/dv-trim-empty/dv-trim-empty';
 import {DvMobileNavigationToggleComponentConfig} from './component/dv-mobile-navigation-toggle/dv-mobile-navigation-toggle';
+import MitteilungRS from './service/mitteilungRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -150,6 +151,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('DownloadRS', DownloadRS)
     .service('WizardStepRS', WizardStepRS)
     .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
+    .service('MitteilungRS', MitteilungRS)
     .service('GlobalCacheService', GlobalCacheService)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())

@@ -58,6 +58,7 @@ import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../models/TSAdresseContainer';
 import TSEinkommensverschlechterungInfoContainer from '../models/TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
+import TSMitteilung from '../models/TSMitteilung';
 
 
 export default class EbeguRestUtil {
@@ -571,7 +572,7 @@ export default class EbeguRestUtil {
             restFall.fallNummer = fall.fallNummer;
             restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
             restFall.nextNumberKind = fall.nextNumberKind;
-            restFall.besitzerUsername = fall.besitzerUsername;
+            restFall.besitzer = this.userToRestObject({}, fall.besitzer);
             return restFall;
         }
         return undefined;
@@ -584,7 +585,7 @@ export default class EbeguRestUtil {
             fallTS.fallNummer = fallFromServer.fallNummer;
             fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
             fallTS.nextNumberKind = fallFromServer.nextNumberKind;
-            fallTS.besitzerUsername = fallFromServer.besitzerUsername;
+            fallTS.besitzer = this.parseUser(new TSUser(), fallFromServer.besitzer);
             return fallTS;
         }
         return undefined;
@@ -1821,5 +1822,49 @@ export default class EbeguRestUtil {
             return adresseContainerTS;
         }
         return undefined;
+    }
+
+    public parseMitteilung(tsMitteilung: TSMitteilung, mitteilungFromServer: any): TSMitteilung {
+        if (mitteilungFromServer) {
+            this.parseAbstractEntity(tsMitteilung, mitteilungFromServer);
+            tsMitteilung.fall = this.parseFall(new TSFall(), mitteilungFromServer.fall);
+            tsMitteilung.senderTyp = mitteilungFromServer.senderTyp;
+            tsMitteilung.empfaengerTyp = mitteilungFromServer.empfaengerTyp;
+            tsMitteilung.sender = this.parseUser(new TSUser(), mitteilungFromServer.sender);
+            tsMitteilung.empfaenger = this.parseUser(new TSUser(), mitteilungFromServer.empfaenger);
+            tsMitteilung.subject = mitteilungFromServer.subject;
+            tsMitteilung.message = mitteilungFromServer.message;
+            tsMitteilung.mitteilungStatus = mitteilungFromServer.mitteilungStatus;
+            tsMitteilung.sentDatum = DateUtil.localDateTimeToMoment(mitteilungFromServer.sentDatum);
+            return tsMitteilung;
+        }
+        return undefined;
+    }
+
+    public mitteilungToRestObject(restMitteilung: any, tsMitteilung: TSMitteilung): any {
+        if (tsMitteilung) {
+            this.abstractEntityToRestObject(restMitteilung, tsMitteilung);
+            restMitteilung.fall = this.fallToRestObject({}, tsMitteilung.fall);
+            restMitteilung.senderTyp = tsMitteilung.senderTyp;
+            restMitteilung.empfaengerTyp = tsMitteilung.empfaengerTyp;
+            restMitteilung.sender = this.userToRestObject({}, tsMitteilung.sender);
+            restMitteilung.empfaenger = this.userToRestObject({}, tsMitteilung.empfaenger);
+            restMitteilung.subject = tsMitteilung.subject;
+            restMitteilung.message = tsMitteilung.message;
+            restMitteilung.mitteilungStatus = tsMitteilung.mitteilungStatus;
+            restMitteilung.sentDatum = DateUtil.momentToLocalDateTime(tsMitteilung.sentDatum);
+            return restMitteilung;
+        }
+        return undefined;
+    }
+
+    public parseMitteilungen(mitteilungen: any): Array<TSMitteilung> {
+        let mitteilungenList: Array<TSMitteilung> = [];
+        if (mitteilungen) {
+            for (let i = 0; i < mitteilungen.length; i++) {
+                mitteilungenList.push(this.parseMitteilung(new TSMitteilung(), mitteilungen[i]));
+            }
+        }
+        return mitteilungenList;
     }
 }

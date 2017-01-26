@@ -170,7 +170,7 @@ describe('EbeguRestUtil', function () {
                 TestDataUtil.setAbstractFieldsUndefined(fall);
                 fall.nextNumberKind = 2;
                 myGesuch.fall = fall;
-                myGesuch.fall.besitzerUsername = undefined;
+                myGesuch.fall.besitzer = undefined;
                 let gesuchsteller: TSGesuchstellerContainer = createGesuchsteller();
                 gesuchsteller.gesuchstellerGS = undefined;
                 TestDataUtil.setAbstractFieldsUndefined(gesuchsteller);
@@ -240,7 +240,7 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseInstitution()', () => {
             it('should transform TSInstitution to REST object and back', () => {
-                var myInstitution = createInstitution();
+                let myInstitution = createInstitution();
 
                 let restInstitution = ebeguRestUtil.institutionToRestObject({}, myInstitution);
                 expect(restInstitution).toBeDefined();
@@ -317,7 +317,7 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseInstitutionStammdaten()', () => {
             it('should transform TSInstitutionStammdaten to REST object and back', () => {
-                var myInstitution = createInstitution();
+                let myInstitution = createInstitution();
                 let myInstitutionStammdaten = new TSInstitutionStammdaten('iban', 250, 12, TSBetreuungsangebotTyp.KITA, myInstitution, undefined,
                     new TSDateRange(DateUtil.today(), DateUtil.today()));
                 TestDataUtil.setAbstractFieldsUndefined(myInstitutionStammdaten);
@@ -342,7 +342,7 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseErwerbspensenContainer()', () => {
             it('should transform TSErwerbspensum to REST object and back', () => {
-                var erwerbspensumContainer = TestDataUtil.createErwerbspensumContainer();
+                let erwerbspensumContainer = TestDataUtil.createErwerbspensumContainer();
                 let erwerbspensumJA = erwerbspensumContainer.erwerbspensumJA;
 
                 let restErwerbspensum = ebeguRestUtil.erwerbspensumToRestObject({}, erwerbspensumContainer.erwerbspensumJA);

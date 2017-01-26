@@ -575,6 +575,14 @@ public class JaxBConverter {
 		if (fallJAXP.getNextNumberKind() != null) {
 			fall.setNextNumberKind(fallJAXP.getNextNumberKind());
 		}
+		if (fallJAXP.getBesitzer() != null) {
+			Optional<Benutzer> besitzer = benutzerService.findBenutzer(fallJAXP.getBesitzer().getUsername());
+			if (besitzer.isPresent()) {
+				fall.setBesitzer(besitzer.get()); // because the user doesn't come from the client but from the server
+			} else {
+				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getBesitzer());
+			}
+		}
 		return fall;
 	}
 
@@ -586,7 +594,9 @@ public class JaxBConverter {
 			jaxFall.setVerantwortlicher(benutzerToAuthLoginElement(persistedFall.getVerantwortlicher()));
 		}
 		jaxFall.setNextNumberKind(persistedFall.getNextNumberKind());
-		jaxFall.setBesitzerUsername(persistedFall.getBesitzer() != null ? persistedFall.getBesitzer().getUsername() : null);
+		if (persistedFall.getBesitzer() != null) {
+			jaxFall.setBesitzer(benutzerToAuthLoginElement(persistedFall.getBesitzer()));
+		}
 		return jaxFall;
 	}
 
@@ -2155,5 +2165,66 @@ public class JaxBConverter {
 
 	public GesuchstellerAdresseContainer adresseContainerToEntity(JaxAdresseContainer alternativeAdresse, GesuchstellerAdresseContainer gesuchstellerAdresseContainer) {
 		return null;
+	}
+
+	public Mitteilung mitteilungToEntity(JaxMitteilung mitteilungJAXP, Mitteilung mitteilung) {
+		Validate.notNull(mitteilungJAXP);
+		Validate.notNull(mitteilung);
+
+		convertAbstractFieldsToEntity(mitteilungJAXP, mitteilung);
+
+		if (mitteilungJAXP.getEmpfaenger() != null) {
+			Optional<Benutzer> empfaenger = benutzerService.findBenutzer(mitteilungJAXP.getEmpfaenger().getUsername());
+			if (empfaenger.isPresent()) {
+				mitteilung.setEmpfaenger(empfaenger.get()); // because the user doesn't come from the client but from the server
+			} else {
+				throw new EbeguEntityNotFoundException("mitteilungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, mitteilungJAXP.getEmpfaenger());
+			}
+		}
+
+		mitteilung.setEmpfaengerTyp(mitteilungJAXP.getEmpfaengerTyp());
+		if (mitteilungJAXP.getFall() != null) {
+			mitteilung.setFall(fallToEntity(mitteilungJAXP.getFall(), new Fall()));
+		} else {
+			throw new EbeguEntityNotFoundException("mitteilungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, mitteilungJAXP.getFall());
+		}
+		mitteilung.setMessage(mitteilungJAXP.getMessage());
+		mitteilung.setMitteilungStatus(mitteilungJAXP.getMitteilungStatus());
+
+		if (mitteilungJAXP.getSender() != null) {
+			Optional<Benutzer> sender = benutzerService.findBenutzer(mitteilungJAXP.getSender().getUsername());
+			if (sender.isPresent()) {
+				mitteilung.setSender(sender.get()); // because the user doesn't come from the client but from the server
+			} else {
+				throw new EbeguEntityNotFoundException("mitteilungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, mitteilungJAXP.getSender());
+			}
+		}
+
+		mitteilung.setSenderTyp(mitteilungJAXP.getSenderTyp());
+		mitteilung.setSubject(mitteilungJAXP.getSubject());
+		mitteilung.setSentDatum(mitteilungJAXP.getSentDatum());
+
+		return mitteilung;
+	}
+
+	public JaxMitteilung mitteilungToJAX(Mitteilung persistedMitteilung) {
+		final JaxMitteilung jaxMitteilung = new JaxMitteilung();
+		convertAbstractFieldsToJAX(persistedMitteilung, jaxMitteilung);
+		if (persistedMitteilung.getEmpfaenger() != null) {
+			jaxMitteilung.setEmpfaenger(benutzerToAuthLoginElement(persistedMitteilung.getEmpfaenger()));
+		}
+		jaxMitteilung.setEmpfaengerTyp(persistedMitteilung.getEmpfaengerTyp());
+		if (persistedMitteilung.getFall() != null) {
+			jaxMitteilung.setFall(fallToJAX(persistedMitteilung.getFall()));
+		}
+		jaxMitteilung.setMessage(persistedMitteilung.getMessage());
+		jaxMitteilung.setMitteilungStatus(persistedMitteilung.getMitteilungStatus());
+		if (persistedMitteilung.getSender() != null) {
+			jaxMitteilung.setSender(benutzerToAuthLoginElement(persistedMitteilung.getSender()));
+		}
+		jaxMitteilung.setSenderTyp(persistedMitteilung.getSenderTyp());
+		jaxMitteilung.setSubject(persistedMitteilung.getSubject());
+		jaxMitteilung.setSentDatum(persistedMitteilung.getSentDatum());
+		return jaxMitteilung;
 	}
 }
