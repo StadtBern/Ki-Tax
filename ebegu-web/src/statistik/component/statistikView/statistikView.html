@@ -1,51 +1,184 @@
 <div class="statistikView">
-        <div class="row">
-            <div class="col-md-10 col-md-offset-1">
-                <h2 data-translate="MENU_STATISTIK"></h2>
-            </div>
-        </div>
     <div class="row marginTop50">
         <div class="col-md-10 col-md-offset-1">
-            <div class="accordion">
-              <div class="accordion_title" ng-click="vm.toggleAccordion('tab1')">
-                Tab 1
-              </div>
-                <div class="accordion_content" ng-show="vm.isAccordionOpen('tab1')">
-                    Tab 1 Content
-                </div>
-            </div>
-            <div class="accordion">
-                <div class="accordion_title" ng-click="vm.toggleAccordion('tab2')">
-                    Tab 2
-                </div>
-                <div class="accordion_content" ng-show="vm.isAccordionOpen('tab2')">
-                    Tab 2 Content
-                </div>
-            </div>
-            <div class="accordion">
-                <div class="accordion_title" ng-click="vm.toggleAccordion('tab3')">
-                    Tab 3
-                </div>
-                <div class="accordion_content" ng-show="vm.isAccordionOpen('tab3')">
-                    Tab 3 Content
-                </div>
-            </div>
-            <div class="accordion">
-                <div class="accordion_title" ng-click="vm.toggleAccordion('tab4')">
-                    Tab 4
-                </div>
-                <div class="accordion_content" ng-show="vm.isAccordionOpen('tab4')">
-                    Tab 4 Content
-                </div>
-            </div>
-            <div class="accordion">
-                <div class="accordion_title" ng-click="vm.toggleAccordion('tab5')">
-                    Tab 5
-                </div>
-                <div class="accordion_content" ng-show="vm.isAccordionOpen('tab5')">
-                    Tab 5 Content
-                </div>
-            </div>
+            <!-- TODO: Remove Show-Off Inputs and replace with real ones-->
+            <dv-accordion onlyone="true">
+                <dv-accordion-tab title="GESUCHE" tabid="1">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">von</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">bis</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="form-group">
+                                <label class="md-no-float">
+                                    Periode
+                                </label>
+                                <div class="dv-select-style">
+                                    <select ng-model=""
+                                            ng-options=""
+                                            class="form-control"
+                                             >
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3" style="margin-top:3rem;">
+                            <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;">
+                                <span>  GENERIEREN</span>
+                            </dv-loading-button>
+                        </div>
+                    </div>
+                </dv-accordion-tab>
+                <dv-accordion-tab title="KINDER" tabid="2">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">von</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">bis</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="form-group">
+                                <label class="md-no-float">
+                                    Periode
+                                </label>
+                                <div class="dv-select-style">
+                                    <select ng-model=""
+                                            ng-options=""
+                                            class="form-control"
+                                             >
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3" style="margin-top:3rem;">
+                            <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;">
+                                <span>  GENERIEREN</span>
+                            </dv-loading-button>
+                        </div>
+                    </div>
+                </dv-accordion-tab>
+                <dv-accordion-tab title="GESUCHSTELLER" tabid="3">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">von</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">bis</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="form-group">
+                                <label class="md-no-float">
+                                    Periode
+                                </label>
+                                <div class="dv-select-style">
+                                    <select ng-model=""
+                                            ng-options=""
+                                            class="form-control"
+                                             >
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3" style="margin-top:3rem;">
+                            <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;">
+                                <span>  GENERIEREN</span>
+                            </dv-loading-button>
+                        </div>
+                    </div>
+                </dv-accordion-tab>
+                <dv-accordion-tab title="KANTON" tabid="4">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">von</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">bis</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="form-group">
+                                <label class="md-no-float">
+                                    Periode
+                                </label>
+                                <div class="dv-select-style">
+                                    <select ng-model=""
+                                            ng-options=""
+                                            class="form-control"
+                                             >
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3" style="margin-top:3rem;">
+                            <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;">
+                                <span>  GENERIEREN</span>
+                            </dv-loading-button>
+                        </div>
+                    </div>
+                </dv-accordion-tab>
+                <dv-accordion-tab title="GESUCHSTELLER-KINDER-BETREUUNG" tabid="5">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">von</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">bis</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="form-group">
+                                <label class="md-no-float">
+                                    Periode
+                                </label>
+                                <div class="dv-select-style">
+                                    <select ng-model=""
+                                            ng-options=""
+                                            class="form-control"
+                                             >
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3" style="margin-top:3rem;">
+                            <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;">
+                                <span>  GENERIEREN</span>
+                            </dv-loading-button>
+                        </div>
+                    </div>
+                </dv-accordion-tab>
+            </dv-accordion>
         </div>
     </div>
 </div>

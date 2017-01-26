@@ -1,0 +1,6 @@
+<div class="dv-accordion-tab-title" ng-click="vmt.vma.toggleTab(vmt.tabid)"
+     ng-class="{'tab-open': vmt.vma.isTagOpen(vmt.tabid)}">
+    {{vmt.title}}
+</div>
+<div class="dv-accordion-tab-content" ng-show="vmt.vma.isTagOpen(vmt.tabid)" ng-transclude>
+</div>
