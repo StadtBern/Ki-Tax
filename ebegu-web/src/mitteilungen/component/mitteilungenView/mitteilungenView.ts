@@ -14,6 +14,7 @@ import DateUtil from '../../../utils/DateUtil';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IFormController = angular.IFormController;
+import TSGesuch from '../../../models/TSGesuch';
 
 let template = require('./mitteilungenView.html');
 require('./mitteilungenView.less');
@@ -31,6 +32,8 @@ export class MitteilungenViewController {
     currentMitteilung: TSMitteilung;
     allMitteilungen: Array<TSMitteilung>;
     form: IFormController;
+    TSRole: any;
+    TSRoleUtil: any;
 
 
     static $inject: string[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS', '$q'];
@@ -38,6 +41,8 @@ export class MitteilungenViewController {
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS, private authServiceRS: AuthServiceRS,
                 private fallRS: FallRS, private $q: IQService) {
         this.initViewModel();
+        this.TSRole = TSRole;
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private initViewModel(): void {
