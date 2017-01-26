@@ -10,6 +10,7 @@ import TSFall from '../../../models/TSFall';
 import FallRS from '../../../gesuch/service/fallRS.rest';
 import {IMitteilungenStateParams} from '../../mitteilungen.route';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import DateUtil from '../../../utils/DateUtil';
 
 let template = require('./mitteilungenView.html');
 require('./mitteilungenView.less');
@@ -50,11 +51,13 @@ export class MitteilungenViewController {
      * Mitteilung zurueck.
      */
     private loadEntwurf() {
-        // if (entwurf.exists()) {
-        //     this.currentMitteilung = entwurf;
-        // } else {
-            this.initMitteilungForCurrentBenutzer();
-        // }
+        this.mitteilungRS.getEntwurfForCurrentRolle(this.fall.id).then((entwurf: TSMitteilung) => {
+            if (entwurf) {
+                this.currentMitteilung = entwurf;
+            } else {
+                this.initMitteilungForCurrentBenutzer();
+            }
+        });
     }
 
     private initMitteilungForCurrentBenutzer() {
@@ -62,19 +65,26 @@ export class MitteilungenViewController {
 
         //common attributes
         this.currentMitteilung = new TSMitteilung();
-        this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
         this.currentMitteilung.fall = this.fall;
         this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
         this.currentMitteilung.sender = currentUser;
 
-        //role-depending attributes
-        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
+        //role-dependent attributes
+        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) { // Ein GS darf nur dem JA schreiben
+            this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
             this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
             this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
 
-        } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) {
+        } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) { // Das JA darf nur dem GS schreiben
+            this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
             this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
             this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
+
+        } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) { // Eine Institution darf nur dem JA schreiben
+            this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
+            this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
+            this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.INSTITUTION;
+
         }
     }
 
@@ -87,6 +97,15 @@ export class MitteilungenViewController {
      */
     public sendMitteilung(): void {
         this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
+        this.currentMitteilung.sentDatum = DateUtil.now();
+        this.saveMitteilung();
+    }
+
+    public saveEntwurf(): void {
+        this.saveMitteilung();
+    }
+
+    private saveMitteilung(): void {
         this.mitteilungRS.createMitteilung(this.getCurrentMitteilung()).then((response) => {
             this.loadEntwurf();
             this.loadAllMitteilungen();
@@ -97,21 +116,6 @@ export class MitteilungenViewController {
         this.mitteilungRS.getMitteilungenForCurrentRolle(this.fall.id).then((response) => {
             this.allMitteilungen = response;
         });
-    }
-
-    public getIcon(mitteilung: TSMitteilung): string {
-        if (mitteilung) {
-            if (this.isCurrentUserTypTheSenderTyp(mitteilung)) { // is a response
-                return 'fa fa-lg fa-share';
-            } else if (TSMitteilungStatus.NEU === mitteilung.mitteilungStatus) {
-                return 'fa fa-lg fa-folder-open';
-            } else if (TSMitteilungStatus.ERLEDIGT === mitteilung.mitteilungStatus) {
-                return 'fa fa-lg fa-check';
-            } else if (TSMitteilungStatus.GELESEN === mitteilung.mitteilungStatus) {
-                return 'fa fa-lg fa-eye';
-            }
-        }
-        return 'fa fa-lg fa-folder-open'; // by default neu
     }
 
     /**

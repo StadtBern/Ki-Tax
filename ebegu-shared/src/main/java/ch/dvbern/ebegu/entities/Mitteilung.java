@@ -9,6 +9,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import java.time.LocalDateTime;
+
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
 
@@ -60,6 +62,10 @@ public class Mitteilung extends AbstractEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MitteilungStatus mitteilungStatus;
+
+	@Nullable
+	@Column(nullable = true)
+	private LocalDateTime sentDatum;
 
 
 	@NotNull
@@ -126,5 +132,14 @@ public class Mitteilung extends AbstractEntity {
 
 	public void setMitteilungStatus(MitteilungStatus mitteilungStatus) {
 		this.mitteilungStatus = mitteilungStatus;
+	}
+
+	@Nullable
+	public LocalDateTime getSentDatum() {
+		return sentDatum;
+	}
+
+	public void setSentDatum(@Nullable LocalDateTime sentDatum) {
+		this.sentDatum = sentDatum;
 	}
 }

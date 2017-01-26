@@ -1835,6 +1835,7 @@ export default class EbeguRestUtil {
             tsMitteilung.subject = mitteilungFromServer.subject;
             tsMitteilung.message = mitteilungFromServer.message;
             tsMitteilung.mitteilungStatus = mitteilungFromServer.mitteilungStatus;
+            tsMitteilung.sentDatum = DateUtil.localDateTimeToMoment(mitteilungFromServer.sentDatum);
             return tsMitteilung;
         }
         return undefined;
@@ -1851,6 +1852,7 @@ export default class EbeguRestUtil {
             restMitteilung.subject = tsMitteilung.subject;
             restMitteilung.message = tsMitteilung.message;
             restMitteilung.mitteilungStatus = tsMitteilung.mitteilungStatus;
+            restMitteilung.sentDatum = DateUtil.momentToLocalDateTime(tsMitteilung.sentDatum);
             return restMitteilung;
         }
         return undefined;

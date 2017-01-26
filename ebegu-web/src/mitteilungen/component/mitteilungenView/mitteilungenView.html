@@ -33,17 +33,17 @@
             <!--Send Buttons-->
             <div class="row">
                 <div class="col-sm-6 dv-input-container-medium">
-                    <dv-loading-button button-click="vm.sendMitteilung()" type="button"
-                                       button-class="dv-btn-operation" >
-                        <i class="fa fa-lg fa-paper-plane"></i>
-                        <span data-translate="MITTEILUNG_SENDEN"></span>
-                    </dv-loading-button>
-                </div>
-                <div class="col-sm-6 dv-input-container-medium">
                     <dv-loading-button button-click="vm.saveEntwurf()" type="button"
                                        button-class="dv-btn-operation" >
                         <i class="fa fa-lg fa-pencil"></i>
                         <span data-translate="MITTEILUNG_ENTWURF_SPEICHERN"></span>
+                    </dv-loading-button>
+                </div>
+                <div class="col-sm-6 dv-input-container-medium">
+                    <dv-loading-button button-click="vm.sendMitteilung()" type="button"
+                                       button-class="dv-btn-operation" >
+                        <i class="fa fa-lg fa-paper-plane"></i>
+                        <span data-translate="MITTEILUNG_SENDEN"></span>
                     </dv-loading-button>
                 </div>
             </div>
@@ -51,16 +51,15 @@
             <!--Alle Mitteilungen-->
             <div class="row mitteilungenList marginLeft10 marginTop50">
                 <div ng-repeat="mitteilung in vm.allMitteilungen"
-                     ng-class="{'row': true, 'marginLeft50': vm.isCurrentUserTypTheSenderTyp(mitteilung),
+                     ng-class="{'row': true, 'marginTop10': true, 'mitteilungItem': true,
+                        'marginLeft50': vm.isCurrentUserTypTheSenderTyp(mitteilung),
                         'marginLeft10': !vm.isCurrentUserTypTheSenderTyp(mitteilung),
                         'institution': vm.isSenderTypInstitution(mitteilung),
                         'jugendamt': vm.isSenderTypJugendamt(mitteilung),
                         'gesuchsteller': vm.isSenderTypGesuchsteller(mitteilung)}"
                      ng-value="mitteilung.username"
                      ng-click="showDetails = !showDetails">
-                    <div class="row">
-                        <i ng-class="vm.getIcon(mitteilung)"></i>
-                    </div>
+
                     <div class="row">
                         <div class="row">
                             <div class="col-md-12 dv-input-container-medium">
@@ -72,12 +71,12 @@
                                 <span ng-bind="mitteilung.sender.getFullName()"></span>
                             </div>
                             <div class="col-md-12 dv-input-container-medium">
-                                <span ng-bind="mitteilung.timestampMutiert | amDateFormat : 'DD.MM.YYYY / hh:mm'"></span>
+                                <span ng-bind="mitteilung.sentDatum | amDateFormat : 'DD.MM.YYYY / HH:mm'"></span>
                             </div>
                         </div>
                     </div>
                     <hr class="marginTop05 marginBottom10">
-                    <div class="row" ng-show="showDetails">
+                    <div class="row message" ng-show="showDetails">
                         <span ng-bind="mitteilung.message"></span>
                     </div>
                 </div>

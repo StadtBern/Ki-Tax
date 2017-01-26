@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.util.Constants;
@@ -9,6 +10,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalDateTime;
 
 /**
  * DTO fuer Stammdaten der Mitteilungen
@@ -43,6 +46,10 @@ public class JaxMitteilung extends JaxAbstractDTO {
 
 	@NotNull
 	private MitteilungStatus mitteilungStatus;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
+	private LocalDateTime sentDatum;
 
 
 	@Nullable
@@ -109,5 +116,14 @@ public class JaxMitteilung extends JaxAbstractDTO {
 
 	public void setMitteilungStatus(MitteilungStatus mitteilungStatus) {
 		this.mitteilungStatus = mitteilungStatus;
+	}
+
+	@Nullable
+	public LocalDateTime getSentDatum() {
+		return sentDatum;
+	}
+
+	public void setSentDatum(@Nullable LocalDateTime sentDatum) {
+		this.sentDatum = sentDatum;
 	}
 }

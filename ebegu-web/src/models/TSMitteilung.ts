@@ -14,10 +14,12 @@ export default class TSMitteilung extends TSAbstractEntity {
     private _subject: string;
     private _message: string;
     private _mitteilungStatus: TSMitteilungStatus;
+    private _sentDatum: moment.Moment;
 
 
     constructor(fall?: TSFall, senderTyp?: TSMitteilungTeilnehmerTyp, empfaengerTyp?: TSMitteilungTeilnehmerTyp, sender?: TSUser,
-                empfaenger?: TSUser, subject?: string, message?: string, mitteilungStatus?: TSMitteilungStatus) {
+                empfaenger?: TSUser, subject?: string, message?: string, mitteilungStatus?: TSMitteilungStatus,
+                sentDatum?: moment.Moment) {
         super();
         this._fall = fall;
         this._senderTyp = senderTyp;
@@ -27,6 +29,7 @@ export default class TSMitteilung extends TSAbstractEntity {
         this._subject = subject;
         this._message = message;
         this._mitteilungStatus = mitteilungStatus;
+        this._sentDatum = sentDatum;
     }
 
     get fall(): TSFall {
@@ -91,5 +94,13 @@ export default class TSMitteilung extends TSAbstractEntity {
 
     set mitteilungStatus(value: TSMitteilungStatus) {
         this._mitteilungStatus = value;
+    }
+
+    get sentDatum(): moment.Moment {
+        return this._sentDatum;
+    }
+
+    set sentDatum(value: moment.Moment) {
+        this._sentDatum = value;
     }
 }

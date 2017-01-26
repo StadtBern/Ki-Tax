@@ -2192,6 +2192,7 @@ public class JaxBConverter {
 
 		mitteilung.setSenderTyp(mitteilungJAXP.getSenderTyp());
 		mitteilung.setSubject(mitteilungJAXP.getSubject());
+		mitteilung.setSentDatum(mitteilungJAXP.getSentDatum());
 
 		return mitteilung;
 	}
@@ -2213,6 +2214,7 @@ public class JaxBConverter {
 		}
 		jaxMitteilung.setSenderTyp(persistedMitteilung.getSenderTyp());
 		jaxMitteilung.setSubject(persistedMitteilung.getSubject());
+		jaxMitteilung.setSentDatum(persistedMitteilung.getSentDatum());
 		return jaxMitteilung;
 	}
 }

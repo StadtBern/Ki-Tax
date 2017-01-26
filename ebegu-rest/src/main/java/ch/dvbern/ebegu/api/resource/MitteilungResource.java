@@ -50,13 +50,19 @@ public class MitteilungResource {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxMitteilung createMitteilung(
+	public JaxMitteilung saveMitteilung(
 		@Nonnull @NotNull @Valid JaxMitteilung mitteilungJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Mitteilung convertedMitteilung = converter.mitteilungToEntity(mitteilungJAXP, new Mitteilung());
-		Mitteilung persistedMitteilung = this.mitteilungService.createMitteilung(convertedMitteilung);
+		Mitteilung mitteilung = new Mitteilung();
+		if (mitteilungJAXP.getId() != null) {
+			final Optional<Mitteilung> optMitteilung = mitteilungService.findMitteilung(mitteilungJAXP.getId());
+			mitteilung = optMitteilung.orElse(new Mitteilung());
+		}
+
+		Mitteilung convertedMitteilung = converter.mitteilungToEntity(mitteilungJAXP, mitteilung);
+		Mitteilung persistedMitteilung = this.mitteilungService.saveMitteilung(convertedMitteilung);
 
 		return converter.mitteilungToJAX(persistedMitteilung);
 	}
@@ -139,5 +145,28 @@ public class MitteilungResource {
 
 		final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForPosteingang();
 		return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
+	}
+
+	@Nullable
+	@GET
+	@Path("/entwurf/{fallId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxMitteilung getEntwurfForCurrentRolle(
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(fallId.getId());
+		String mitteilungID = converter.toEntityId(fallId);
+		Optional<Fall> fall = fallService.findFall(mitteilungID);
+		if (fall.isPresent()) {
+			final Mitteilung mitteilung = mitteilungService.getEntwurfForCurrentRolle(fall.get());
+			if (mitteilung == null) {
+				return null;
+			}
+			return converter.mitteilungToJAX(mitteilung);
+		}
+		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "FallID invalid: " + fallId.getId());
 	}
 }

@@ -37,6 +37,7 @@ describe('mitteilungenView', function () {
         stateParams.fallId = '123';
         fall = new TSFall();
         fall.id = stateParams.fallId;
+        spyOn(mitteilungRS, 'getEntwurfForCurrentRolle').and.returnValue($q.when(undefined));
     }));
 
     describe('loading initial data', function () {
@@ -64,7 +65,7 @@ describe('mitteilungenView', function () {
         });
     });
     describe('sendMitteilung', function () {
-        it('should send the current mitteilung and update currentMitteilung with the new content', function () {
+        itmit('should send the current mitteilung and update currentMitteilung with the new content', function () {
             let gesuchsteller: TSUser = new TSUser();
             gesuchsteller.role = TSRole.GESUCHSTELLER;
             spyOn(authServiceRS, 'isRole').and.returnValue(true);
@@ -78,11 +79,12 @@ describe('mitteilungenView', function () {
 
             controller.sendMitteilung();
             expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.NEU);
+            expect(controller.getCurrentMitteilung().sentDatum).toBeDefined();
 
             $rootScope.$apply();
 
             expect(controller.getCurrentMitteilung()).toBeDefined();
-            expect(controller.getCurrentMitteilung().id).toBe(savedMitteilung.id);
+            expect(controller.getCurrentMitteilung().id).toBeUndefined();
         });
     });
 
