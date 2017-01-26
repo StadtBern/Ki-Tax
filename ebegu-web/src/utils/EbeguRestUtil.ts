@@ -572,7 +572,7 @@ export default class EbeguRestUtil {
             restFall.fallNummer = fall.fallNummer;
             restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
             restFall.nextNumberKind = fall.nextNumberKind;
-            restFall.besitzerUsername = fall.besitzerUsername;
+            restFall.besitzer = this.userToRestObject({}, fall.besitzer);
             return restFall;
         }
         return undefined;
@@ -585,7 +585,7 @@ export default class EbeguRestUtil {
             fallTS.fallNummer = fallFromServer.fallNummer;
             fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
             fallTS.nextNumberKind = fallFromServer.nextNumberKind;
-            fallTS.besitzerUsername = fallFromServer.besitzerUsername;
+            fallTS.besitzer = this.parseUser(new TSUser(), fallFromServer.besitzer);
             return fallTS;
         }
         return undefined;
@@ -1835,6 +1835,7 @@ export default class EbeguRestUtil {
             tsMitteilung.subject = mitteilungFromServer.subject;
             tsMitteilung.message = mitteilungFromServer.message;
             tsMitteilung.mitteilungStatus = mitteilungFromServer.mitteilungStatus;
+            tsMitteilung.sentDatum = DateUtil.localDateTimeToMoment(mitteilungFromServer.sentDatum);
             return tsMitteilung;
         }
         return undefined;
@@ -1851,6 +1852,7 @@ export default class EbeguRestUtil {
             restMitteilung.subject = tsMitteilung.subject;
             restMitteilung.message = tsMitteilung.message;
             restMitteilung.mitteilungStatus = tsMitteilung.mitteilungStatus;
+            restMitteilung.sentDatum = DateUtil.momentToLocalDateTime(tsMitteilung.sentDatum);
             return restMitteilung;
         }
         return undefined;
