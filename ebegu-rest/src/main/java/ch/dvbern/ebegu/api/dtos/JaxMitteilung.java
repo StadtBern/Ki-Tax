@@ -36,12 +36,12 @@ public class JaxMitteilung extends JaxAbstractDTO {
 	@Nullable
 	private JaxAuthLoginElement empfaenger;
 
-	@Size(min = 1, max = Constants.DB_DEFAULT_MAX_LENGTH)
-	@NotNull
+	@Size(min = 0, max = Constants.DB_DEFAULT_MAX_LENGTH)
+	@Nullable
 	private String subject;
 
-	@Size(min = 1, max = Constants.DB_TEXTAREA_LENGTH)
-	@NotNull
+	@Size(min = 0, max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
 	private String message;
 
 	@NotNull
@@ -94,6 +94,7 @@ public class JaxMitteilung extends JaxAbstractDTO {
 		this.empfaenger = empfaenger;
 	}
 
+	@Nullable
 	public String getSubject() {
 		return subject;
 	}
@@ -102,6 +103,7 @@ public class JaxMitteilung extends JaxAbstractDTO {
 		this.subject = subject;
 	}
 
+	@Nullable
 	public String getMessage() {
 		return message;
 	}

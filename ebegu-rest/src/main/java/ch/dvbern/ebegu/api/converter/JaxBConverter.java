@@ -575,6 +575,14 @@ public class JaxBConverter {
 		if (fallJAXP.getNextNumberKind() != null) {
 			fall.setNextNumberKind(fallJAXP.getNextNumberKind());
 		}
+		if (fallJAXP.getBesitzer() != null) {
+			Optional<Benutzer> besitzer = benutzerService.findBenutzer(fallJAXP.getBesitzer().getUsername());
+			if (besitzer.isPresent()) {
+				fall.setBesitzer(besitzer.get()); // because the user doesn't come from the client but from the server
+			} else {
+				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getBesitzer());
+			}
+		}
 		return fall;
 	}
 
@@ -586,7 +594,9 @@ public class JaxBConverter {
 			jaxFall.setVerantwortlicher(benutzerToAuthLoginElement(persistedFall.getVerantwortlicher()));
 		}
 		jaxFall.setNextNumberKind(persistedFall.getNextNumberKind());
-		jaxFall.setBesitzerUsername(persistedFall.getBesitzer() != null ? persistedFall.getBesitzer().getUsername() : null);
+		if (persistedFall.getBesitzer() != null) {
+			jaxFall.setBesitzer(benutzerToAuthLoginElement(persistedFall.getBesitzer()));
+		}
 		return jaxFall;
 	}
 

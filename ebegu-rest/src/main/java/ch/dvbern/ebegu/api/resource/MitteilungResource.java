@@ -23,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.Optional;
@@ -168,5 +169,22 @@ public class MitteilungResource {
 			return converter.mitteilungToJAX(mitteilung);
 		}
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "FallID invalid: " + fallId.getId());
+	}
+
+	@Nullable
+	@DELETE
+	@Path("/{mitteilungId}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeMitteilung(
+		@Nonnull @NotNull @PathParam("mitteilungId") JaxId mitteilungJAXPId,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(mitteilungJAXPId.getId());
+		Optional<Mitteilung> mitteilung = mitteilungService.findMitteilung(mitteilungJAXPId.getId());
+		if (mitteilung.isPresent()) {
+			mitteilungService.removeMitteilung(mitteilung.get());
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("removeMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "MitteilungID invalid: " + mitteilungJAXPId.getId());
 	}
 }

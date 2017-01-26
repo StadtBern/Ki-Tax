@@ -8,8 +8,9 @@
                     <dv-input-container class="form-group">
                         <label class="md-no-float" data-translate="MITTEILUNG_SUBJECT" for="subject_ID"></label>
                         <input id="subject_ID" type="text" name="subject" ng-model="vm.getCurrentMitteilung().subject"
-                               ng-required="true" dv-max-length
-                               class="form-control input-dv">
+                               dv-max-length
+                               class="form-control input-dv"
+                               ng-blur="vm.saveEntwurf()">
                         <dv-error-messages for="vm.form.subject.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
@@ -23,8 +24,9 @@
                         <label class="md-no-float" for="message"
                                data-translate="MITTEILUNG_MESSAGE"></label>
                         <textarea md-no-autogrow class="form-control" rows="4" id="message"
-                                  ng-required="true" maxlength="4000"
-                                  ng-model="vm.getCurrentMitteilung().message">
+                                  maxlength="4000"
+                                  ng-model="vm.getCurrentMitteilung().message"
+                                  ng-blur="vm.saveEntwurf()">
                         </textarea>
                     </dv-input-container>
                 </div>
@@ -32,14 +34,7 @@
 
             <!--Send Buttons-->
             <div class="row">
-                <div class="col-sm-6 dv-input-container-medium">
-                    <dv-loading-button button-click="vm.saveEntwurf()" type="button"
-                                       button-class="dv-btn-operation" >
-                        <i class="fa fa-lg fa-pencil"></i>
-                        <span data-translate="MITTEILUNG_ENTWURF_SPEICHERN"></span>
-                    </dv-loading-button>
-                </div>
-                <div class="col-sm-6 dv-input-container-medium">
+                <div class="col-sm-12 dv-input-container-medium">
                     <dv-loading-button button-click="vm.sendMitteilung()" type="button"
                                        button-class="dv-btn-operation" >
                         <i class="fa fa-lg fa-paper-plane"></i>

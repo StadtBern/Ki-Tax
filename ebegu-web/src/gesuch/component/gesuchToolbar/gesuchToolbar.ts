@@ -359,7 +359,7 @@ export class GesuchToolbarController {
 
     private hasBesitzer(): boolean {
         if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall) {
-            return this.getGesuch().fall.besitzerUsername !== undefined && this.getGesuch().fall.besitzerUsername !== null;
+            return this.getGesuch().fall.besitzer !== undefined && this.getGesuch().fall.besitzer !== null;
         }
         return false;
     }

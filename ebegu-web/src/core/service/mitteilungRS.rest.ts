@@ -78,4 +78,11 @@ export default class MitteilungRS {
             return this.ebeguRestUtil.parseMitteilungen(response.data);
         });
     }
+
+    public removeEntwurf(mitteilung: TSMitteilung): IPromise<any> {
+        return this.http.delete(this.serviceURL + '/' + encodeURIComponent(mitteilung.id))
+            .then((response) => {
+                return response;
+            });
+    }
 }

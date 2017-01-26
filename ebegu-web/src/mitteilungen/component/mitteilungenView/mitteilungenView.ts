@@ -11,6 +11,9 @@ import FallRS from '../../../gesuch/service/fallRS.rest';
 import {IMitteilungenStateParams} from '../../mitteilungen.route';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import DateUtil from '../../../utils/DateUtil';
+import IPromise = angular.IPromise;
+import IQService = angular.IQService;
+import IFormController = angular.IFormController;
 
 let template = require('./mitteilungenView.html');
 require('./mitteilungenView.less');
@@ -27,12 +30,13 @@ export class MitteilungenViewController {
     fall: TSFall;
     currentMitteilung: TSMitteilung;
     allMitteilungen: Array<TSMitteilung>;
+    form: IFormController;
 
 
-    static $inject: string[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS'];
+    static $inject: string[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS', '$q'];
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS, private authServiceRS: AuthServiceRS,
-                private fallRS: FallRS) {
+                private fallRS: FallRS, private $q: IQService) {
         this.initViewModel();
     }
 
@@ -76,7 +80,7 @@ export class MitteilungenViewController {
             this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
 
         } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) { // Das JA darf nur dem GS schreiben
-            this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
+            this.currentMitteilung.empfaenger = this.fall.besitzer ? this.fall.besitzer : undefined;
             this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
             this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
 
@@ -98,18 +102,49 @@ export class MitteilungenViewController {
     public sendMitteilung(): void {
         this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
         this.currentMitteilung.sentDatum = DateUtil.now();
-        this.saveMitteilung();
+        this.saveMitteilung(true).catch(() => {
+            // All set data have to be set back to be able to save as Entwurf again
+            this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
+            this.currentMitteilung.sentDatum = undefined;
+            // forward promise
+            let deferred = this.$q.defer();
+            deferred.resolve(undefined);
+            return deferred.promise;
+        });
     }
 
     public saveEntwurf(): void {
-        this.saveMitteilung();
+        this.saveMitteilung(false);
     }
 
-    private saveMitteilung(): void {
-        this.mitteilungRS.createMitteilung(this.getCurrentMitteilung()).then((response) => {
-            this.loadEntwurf();
-            this.loadAllMitteilungen();
-        });
+    /**
+     * Speichert die aktuelle Mitteilung nur wenn das formular dirty ist oder wenn das Parameter forceSave true ist.
+     * Wenn das Formular leer ist, wird der Entwurf geloescht (falls er bereits existiert)
+     */
+    private saveMitteilung(forceSave: boolean): IPromise<TSMitteilung> {
+        if (((this.form.$dirty && !this.isMitteilungEmpty())) || forceSave === true) {
+            return this.mitteilungRS.createMitteilung(this.getCurrentMitteilung()).then((response) => {
+                this.loadEntwurf();
+                this.loadAllMitteilungen();
+                return this.currentMitteilung;
+            }).finally(() => {
+                this.form.$setPristine();
+                this.form.$setUntouched();
+            });
+
+        } else if (this.isMitteilungEmpty() && !this.currentMitteilung.isNew() && this.currentMitteilung.id) {
+            return this.mitteilungRS.removeEntwurf(this.getCurrentMitteilung()).then((response) => {
+                this.initMitteilungForCurrentBenutzer();
+                return this.currentMitteilung;
+            });
+        } else {
+            return this.$q.when(this.currentMitteilung);
+        }
+    }
+
+    private isMitteilungEmpty() {
+        return (!this.currentMitteilung.message || this.currentMitteilung.message.length <= 0)
+            && (!this.currentMitteilung.subject || this.currentMitteilung.subject.length <= 0);
     }
 
     private loadAllMitteilungen(): void {

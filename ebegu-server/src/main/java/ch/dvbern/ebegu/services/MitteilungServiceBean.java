@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.Mitteilung_;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.UserRoleName;
@@ -31,7 +34,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence<Mitteilung> persistence;
 
 	@Inject
 	private BenutzerService benutzerService;
@@ -158,6 +161,13 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaSingleResult(query);
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public void removeMitteilung(Mitteilung mitteilung) {
+		Objects.requireNonNull(mitteilung);
+		persistence.remove(mitteilung);
 	}
 
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {

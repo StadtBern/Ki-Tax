@@ -23,6 +23,8 @@ describe('mitteilungenView', function () {
     let $rootScope: IScope;
     let $q: IQService;
     let controller: MitteilungenViewController;
+    let besitzer: TSUser;
+    let verantwortlicher: TSUser;
 
 
     beforeEach(angular.mock.module(EbeguWebMitteilungen.name));
@@ -34,9 +36,18 @@ describe('mitteilungenView', function () {
         stateParams = $injector.get('$stateParams');
         $rootScope = $injector.get('$rootScope');
         $q = $injector.get('$q');
+
+        // prepare fall
         stateParams.fallId = '123';
         fall = new TSFall();
         fall.id = stateParams.fallId;
+        besitzer = new TSUser();
+        besitzer.nachname = 'Romualdo Besitzer';
+        fall.besitzer = besitzer;
+        verantwortlicher = new TSUser();
+        verantwortlicher.nachname = 'Arnaldo Verantwortlicher';
+        fall.verantwortlicher = verantwortlicher;
+
         spyOn(mitteilungRS, 'getEntwurfForCurrentRolle').and.returnValue($q.when(undefined));
     }));
 
@@ -48,24 +59,42 @@ describe('mitteilungenView', function () {
 
             createMitteilungForUser(gesuchsteller);
 
-            compareCommonAttributes(controller, gesuchsteller);
+            compareCommonAttributes(gesuchsteller);
+            expect(controller.getCurrentMitteilung().empfaenger).toBe(verantwortlicher);
             expect(controller.getCurrentMitteilung().senderTyp).toBe(TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
             expect(controller.getCurrentMitteilung().empfaengerTyp).toBe(TSMitteilungTeilnehmerTyp.JUGENDAMT);
         });
         it('should create an empty TSMItteilung for JA', function () {
             let sachbearbeiter_ja: TSUser = new TSUser();
             sachbearbeiter_ja.role = TSRole.SACHBEARBEITER_JA;
-            spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
+            spyOn(authServiceRS, 'isOneOfRoles').and.callFake((roles: Array<TSRole>) => {
+                return roles.indexOf(TSRole.SACHBEARBEITER_JA) >= 0;
+            });
 
             createMitteilungForUser(sachbearbeiter_ja);
 
-            compareCommonAttributes(controller, sachbearbeiter_ja);
+            compareCommonAttributes(sachbearbeiter_ja);
+            expect(controller.getCurrentMitteilung().empfaenger).toBe(besitzer);
             expect(controller.getCurrentMitteilung().empfaengerTyp).toBe(TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
             expect(controller.getCurrentMitteilung().senderTyp).toBe(TSMitteilungTeilnehmerTyp.JUGENDAMT);
         });
+        it('should create an empty TSMItteilung for Institution', function () {
+            let sachbearbeiter_inst: TSUser = new TSUser();
+            sachbearbeiter_inst.role = TSRole.SACHBEARBEITER_INSTITUTION;
+            spyOn(authServiceRS, 'isOneOfRoles').and.callFake((roles: Array<TSRole>) => {
+                return roles.indexOf(TSRole.SACHBEARBEITER_INSTITUTION) >= 0;
+            });
+
+            createMitteilungForUser(sachbearbeiter_inst);
+
+            compareCommonAttributes(sachbearbeiter_inst);
+            expect(controller.getCurrentMitteilung().empfaenger).toBe(verantwortlicher);
+            expect(controller.getCurrentMitteilung().empfaengerTyp).toBe(TSMitteilungTeilnehmerTyp.JUGENDAMT);
+            expect(controller.getCurrentMitteilung().senderTyp).toBe(TSMitteilungTeilnehmerTyp.INSTITUTION);
+        });
     });
     describe('sendMitteilung', function () {
-        itmit('should send the current mitteilung and update currentMitteilung with the new content', function () {
+        it('should send the current mitteilung and update currentMitteilung with the new content', function () {
             let gesuchsteller: TSUser = new TSUser();
             gesuchsteller.role = TSRole.GESUCHSTELLER;
             spyOn(authServiceRS, 'isRole').and.returnValue(true);
@@ -76,6 +105,8 @@ describe('mitteilungenView', function () {
             let savedMitteilung: TSMitteilung = new TSMitteilung();
             savedMitteilung.id = '321';
             spyOn(mitteilungRS, 'createMitteilung').and.returnValue($q.when(savedMitteilung));
+            controller.getCurrentMitteilung().subject = 'subject';
+            controller.getCurrentMitteilung().message = 'message';
 
             controller.sendMitteilung();
             expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.NEU);
@@ -90,12 +121,11 @@ describe('mitteilungenView', function () {
 
 
 
-    function compareCommonAttributes(controller: MitteilungenViewController, sachbearbeiter_ja: TSUser): void {
+    function compareCommonAttributes(currentUser: TSUser): void {
         expect(controller.getCurrentMitteilung()).toBeDefined();
-        expect(controller.getCurrentMitteilung().empfaenger).toBeUndefined();
         expect(controller.getCurrentMitteilung().fall).toBe(fall);
         expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.ENTWURF);
-        expect(controller.getCurrentMitteilung().sender).toBe(sachbearbeiter_ja);
+        expect(controller.getCurrentMitteilung().sender).toBe(currentUser);
         expect(controller.getCurrentMitteilung().subject).toBeUndefined();
         expect(controller.getCurrentMitteilung().message).toBeUndefined();
     }

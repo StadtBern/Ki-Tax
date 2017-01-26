@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
+import ch.dvbern.ebegu.validators.CheckMitteilungCompleteness;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -19,6 +20,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
  */
 @Audited
 @Entity
+@CheckMitteilungCompleteness
 public class Mitteilung extends AbstractEntity {
 
 	private static final long serialVersionUID = 489324250198016526L;
@@ -48,14 +50,14 @@ public class Mitteilung extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Mitteilung_empfaenger"))
 	private Benutzer empfaenger;
 
-	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
-	@Column(nullable = false)
-	@NotNull
+	@Size(min = 0, max = DB_DEFAULT_MAX_LENGTH)
+	@Column(nullable = true)
+	@Nullable
 	private String subject;
 
-	@Size(min = 1, max = DB_TEXTAREA_LENGTH)
-	@Column(nullable = false)
-	@NotNull
+	@Size(min = 0, max = DB_TEXTAREA_LENGTH)
+	@Column(nullable = true)
+	@Nullable
 	private String message;
 
 	@NotNull
@@ -110,6 +112,7 @@ public class Mitteilung extends AbstractEntity {
 		this.empfaenger = empfaenger;
 	}
 
+	@Nullable
 	public String getSubject() {
 		return subject;
 	}
@@ -118,6 +121,7 @@ public class Mitteilung extends AbstractEntity {
 		this.subject = subject;
 	}
 
+	@Nullable
 	public String getMessage() {
 		return message;
 	}
@@ -141,5 +145,9 @@ public class Mitteilung extends AbstractEntity {
 
 	public void setSentDatum(@Nullable LocalDateTime sentDatum) {
 		this.sentDatum = sentDatum;
+	}
+
+	public boolean isEntwurf() {
+		return MitteilungStatus.ENTWURF.equals(this.mitteilungStatus);
 	}
 }
