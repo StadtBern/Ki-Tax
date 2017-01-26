@@ -65,6 +65,7 @@ import {DvHomeIconComponentConfig} from './component/dv-home-icon/dv-home-icon';
 import {DVBarcodeListener} from './directive/dv-barcode-listener';
 import DVTrimEmpty from './directive/dv-trim-empty/dv-trim-empty';
 import {DvMobileNavigationToggleComponentConfig} from './component/dv-mobile-navigation-toggle/dv-mobile-navigation-toggle';
+import {DVValueinput} from './directive/dv-valueinput/dv-valueinput';
 import MitteilungRS from './service/mitteilungRS.rest';
 
 let dynamicDependencies = function (): string[] {
@@ -96,7 +97,6 @@ const dependencies: string[] = [
     'pascalprecht.translate',
     'angularMoment',
     'cfp.hotkeys',
-    'ui.utils.masks',
     'ngFileUpload',
     'unsavedChanges'
 ];
@@ -153,6 +153,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('GlobalCacheService', GlobalCacheService)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
+    .directive('dvValueinput', DVValueinput.factory())
     .directive('dvUserselect', DVUserselect.factory())
     .directive('dvNavigation', DVNavigation.factory())
     .directive('dvLoading', DVLoading.factory())
