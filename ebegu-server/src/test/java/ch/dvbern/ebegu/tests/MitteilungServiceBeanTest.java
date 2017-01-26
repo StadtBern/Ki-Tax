@@ -46,7 +46,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 		Mitteilung mitteilung = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		final Mitteilung persistedMitteilung = mitteilungService.createMitteilung(mitteilung);
+		final Mitteilung persistedMitteilung = mitteilungService.saveMitteilung(mitteilung);
 
 		final Optional<Mitteilung> foundMitteilung = mitteilungService.findMitteilung(persistedMitteilung.getId());
 
@@ -68,7 +68,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 		Mitteilung mitteilung = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		final Mitteilung persistedMitteilung = mitteilungService.createMitteilung(mitteilung);
+		final Mitteilung persistedMitteilung = mitteilungService.saveMitteilung(mitteilung);
 
 		final Optional<Mitteilung> foundMitteilung = mitteilungService.findMitteilung(persistedMitteilung.getId());
 		Assert.assertTrue(foundMitteilung.isPresent());
@@ -90,11 +90,11 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		mitteilungService.createMitteilung(mitteilung1);
+		mitteilungService.saveMitteilung(mitteilung1);
 
 		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, empfaengerINST, MitteilungTeilnehmerTyp.INSTITUTION,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		mitteilungService.createMitteilung(mitteilung2);
+		mitteilungService.saveMitteilung(mitteilung2);
 
 		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForCurrentRolle(mitteilung1.getFall());
 
@@ -109,11 +109,11 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		mitteilungService.createMitteilung(mitteilung1);
+		mitteilungService.saveMitteilung(mitteilung1);
 
 		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, null, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		mitteilungService.createMitteilung(mitteilung2);
+		mitteilungService.saveMitteilung(mitteilung2);
 
 		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang();
 
