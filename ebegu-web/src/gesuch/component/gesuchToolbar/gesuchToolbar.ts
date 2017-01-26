@@ -121,7 +121,7 @@ export class GesuchToolbarController {
                     }
                 });
             }
-            //watcher fuer gesuch id change
+            //watcher fuer fall id change
             $scope.$watch(() => {
                 return this.fallid;
             }, (newValue, oldValue) => {
@@ -180,7 +180,7 @@ export class GesuchToolbarController {
         } else if (this.fallid) {
             this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
                 this.antragList = angular.copy(response);
-                this.gesuchRS.findGesuch(this.getNewest(this.antragList).antragId).then((response) =>{
+                this.gesuchRS.findGesuch(this.getNewest(this.antragList).antragId).then((response) => {
                     this.gesuchModelManager.setGesuch(angular.copy(response));
                     this.updateGesuchperiodeList();
                     this.updateGesuchNavigationList();
@@ -225,20 +225,12 @@ export class GesuchToolbarController {
         this.antragTypList = {};  //clear
         for (let i = 0; i < this.antragList.length; i++) {
             let antrag: TSAntragDTO = this.antragList[i];
-            if(this.getGesuch()) {
-                if (this.getGesuch().gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
-                    let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
+            if (this.getGesuch().gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
+                let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
 
-                    this.antragTypList[txt] = antrag;
-                }
-            }else{
-                let gsp: Array<TSGesuchsperiode> = this.gesuchModelManager.getAllActiveGesuchsperioden();
-                if (gsp[gsp.length-1].gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
-                    let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
-
-                    this.antragTypList[txt] = antrag;
-                }
+                this.antragTypList[txt] = antrag;
             }
+
         }
     }
 
@@ -292,7 +284,7 @@ export class GesuchToolbarController {
     }
 
     public getGesuch(): TSGesuch {
-            return this.gesuchModelManager.getGesuch();
+        return this.gesuchModelManager.getGesuch();
     }
 
     public getCurrentGesuchsperiode(): string {

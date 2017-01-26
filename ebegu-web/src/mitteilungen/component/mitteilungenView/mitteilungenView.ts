@@ -14,7 +14,6 @@ import DateUtil from '../../../utils/DateUtil';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IFormController = angular.IFormController;
-import TSGesuch from '../../../models/TSGesuch';
 
 let template = require('./mitteilungenView.html');
 require('./mitteilungenView.less');
