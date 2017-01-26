@@ -12,6 +12,7 @@ import TSFall from '../../../models/TSFall';
 import IScope = angular.IScope;
 import IQService = angular.IQService;
 import TSMitteilung from '../../../models/TSMitteilung';
+import TestDataUtil from '../../../utils/TestDataUtil';
 
 describe('mitteilungenView', function () {
 
@@ -108,7 +109,10 @@ describe('mitteilungenView', function () {
             controller.getCurrentMitteilung().subject = 'subject';
             controller.getCurrentMitteilung().message = 'message';
 
+            controller.form = TestDataUtil.createDummyForm();
+            controller.form.$dirty = true;
             controller.sendMitteilung();
+
             expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.NEU);
             expect(controller.getCurrentMitteilung().sentDatum).toBeDefined();
 
@@ -135,7 +139,7 @@ describe('mitteilungenView', function () {
         spyOn(fallRS, 'findFall').and.returnValue($q.when(fall));
         spyOn(mitteilungRS, 'getMitteilungenForCurrentRolle').and.returnValue($q.when([{}]));
 
-        controller = new MitteilungenViewController(stateParams, mitteilungRS, authServiceRS, fallRS);
+        controller = new MitteilungenViewController(stateParams, mitteilungRS, authServiceRS, fallRS, $q);
         $rootScope.$apply();
     }
 

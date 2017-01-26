@@ -158,7 +158,7 @@ export class MitteilungenViewController {
      */
     private isCurrentUserTypTheSenderTyp(mitteilung: TSMitteilung): boolean {
         return mitteilung && mitteilung.sender && this.authServiceRS.getPrincipal()
-            && mitteilung.sender.username === this.authServiceRS.getPrincipal().username;
+            && mitteilung.senderTyp === this.getMitteilungTeilnehmerTypForUserRole(this.authServiceRS.getPrincipal().role);
     }
 
     public isSenderTypInstitution(mitteilung: TSMitteilung): boolean {
@@ -172,4 +172,24 @@ export class MitteilungenViewController {
     public isSenderTypGesuchsteller(mitteilung: TSMitteilung): boolean {
         return mitteilung && mitteilung.sender && mitteilung.senderTyp === TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
     }
+
+    private getMitteilungTeilnehmerTypForUserRole(role: TSRole): TSMitteilungTeilnehmerTyp {
+        switch (role) {
+            case TSRole.GESUCHSTELLER: {
+                return TSMitteilungTeilnehmerTyp.GESUCHSTELLER;
+            }
+            case TSRole.SACHBEARBEITER_INSTITUTION:
+            case TSRole.SACHBEARBEITER_TRAEGERSCHAFT: {
+                return TSMitteilungTeilnehmerTyp.INSTITUTION;
+            }
+            case TSRole.SUPER_ADMIN:
+            case TSRole.ADMIN:
+            case TSRole.SACHBEARBEITER_JA: {
+                return TSMitteilungTeilnehmerTyp.JUGENDAMT;
+            }
+            default:
+                return null;
+        }
+    }
+
 }
