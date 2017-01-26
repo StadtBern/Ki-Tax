@@ -1,0 +1,86 @@
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
+
+.statistikView {
+    padding-top: 3rem;
+    .accordion {
+        overflow: hidden;
+        .accordion_title {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari*/
+            -khtml-user-select: none; /* Konqueror */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+            z-index: 2;
+            &:focus {
+                outline: none;
+            }
+            border-bottom: 1px solid @contrast;
+            opacity: 1;
+            padding: 0 1rem 0;
+            display: block;
+            width: 100%;
+            height: 5rem;
+            background: @contrast-lightest;
+            line-height:5rem;
+            .ebeguBold();
+            color: @primary;
+            margin: 0;
+
+            &.accordion-open {
+                background: @primary;
+                border-bottom: 1px solid @primary;
+                color: @contrast-lightest;
+            }
+
+        }
+
+        .accordion_content {
+            z-index: 1;
+            opacity: 1;
+            padding: 2rem;
+            display: block;
+            width: 100%;
+            height: 10rem;
+            background: @contrast-light;
+            &.ng-hide-add {
+                transition: all 0.5s ease-out;
+                opacity: 1;
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+                height: 10rem;
+
+            }
+            &.ng-hide-add.ng-hide-add-active {
+                opacity: 0;
+                height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                // -webkit-transform: translate3d(0, -100%, 0) scaleY(0);
+                // transform: translate3d(0, -100%, 0);
+            }
+
+            &.ng-hide-remove {
+                opacity: 0;
+                height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                //   -webkit-transform: translate3d(0, -100%, 0);
+                //  transform: translate3d(0, -100%, 0);
+                transition: all 0.5s ease-out;
+
+            }
+
+            &.ng-hide-remove.ng-hide-remove-active {
+                opacity: 1;
+                -webkit-transform: none;
+                transform: none;
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+                height: 10rem;
+
+            }
+        }
+    }
+}
