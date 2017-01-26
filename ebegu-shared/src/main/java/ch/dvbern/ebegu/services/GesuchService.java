@@ -71,10 +71,14 @@ public interface GesuchService {
 	 * @param gesuch der Gesuch zu entfernen
 	 */
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-	void removeGesuch(@Nonnull Gesuch gesuch);
+	void removeGesuch(@Nonnull String gesuchId);
 
+	/**
+	 * Gibt eine Liste von Gesuchen zureck, deren Gesuchsteller 1 den angegebenen Namen und Vornamen hat.
+	 * Achtung, damit ist ein Gesuchsteller nicht eindeutig identifiziert!
+	 */
 	@Nonnull
-	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
+	List<Gesuch> findGesuchByGSName(String nachname, String vorname);
 
 	/**
 	 * Gibt alle Antraege des aktuell eingeloggten Benutzers

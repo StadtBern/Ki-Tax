@@ -67,13 +67,13 @@ export default class ErrorService {
 
     addDvbError(dvbError: TSExceptionReport) {
         if (dvbError && dvbError.isValid()) {
-            if(!this.containsError(dvbError)) {
+            if (!this.containsError(dvbError)) {
                 this.errors.push(dvbError);
                 let udateEvent: TSMessageEvent = (dvbError.severity === TSErrorLevel.INFO ) ? TSMessageEvent.INFO_UPDATE : TSMessageEvent.ERROR_UPDATE;
                 this.$rootScope.$broadcast(TSMessageEvent[udateEvent], this.errors);
             }
-        } else{
-            console.log('could not display received TSExceptionReport '+  dvbError);
+        } else {
+            console.log('could not display received TSExceptionReport ' +  dvbError);
         }
     }
 

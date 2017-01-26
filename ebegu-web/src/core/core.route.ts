@@ -74,6 +74,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         if (currentPath.indexOf('fedletSSOInit') === -1
             && ($state.current !== undefined && $state.current.name !== 'login')
             && ($state.current !== undefined && $state.current.name !== 'locallogin')
+            && ($state.current !== undefined && $state.current.name !== 'schulung')
             && currentPath.indexOf('sendRedirectForValidation') === -1) {
             $state.go('login', {relayPath: currentPath, type: 'login'});
         } else {

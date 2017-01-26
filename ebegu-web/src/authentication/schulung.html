@@ -1,0 +1,13 @@
+<div class="schulungView row">
+    <h3 class="col-md-5 col-md-offset-3">
+        Willkommen zur Schulung von E-BEGU! <br/>
+        Bitte loggen Sie sich mit dem Benutzer ein, welcher auf Ihren Schulungsunterlagen aufgeführt ist:
+    </h3>
+    <div class="col-md-5 col-md-offset-3">
+        <div class="panel panel-default" ng-repeat="user in vm.usersList">
+            <div class="mark-hover panel-body" ng-click="vm.logIn(user)"
+                 ng-bind="user.vorname + ' ' + user.nachname + ', Rolle ' + (user.getRoleKey() | translate) + ' '
+                          + user.institution.name + user.traegerschaft.name"></div>
+        </div>
+    </div>
+</div>

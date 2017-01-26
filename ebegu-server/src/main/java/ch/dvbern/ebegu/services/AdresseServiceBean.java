@@ -59,10 +59,10 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 	}
 
 	@Override
-	public void removeAdresse(@Nonnull Adresse adresse) {
-		Validate.notNull(adresse);
-		Optional<Adresse> propertyToRemove = findAdresse(adresse.getId());
-		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeAdresse", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, adresse));
+	public void removeAdresse(@Nonnull String adresseId) {
+		Validate.notNull(adresseId);
+		Optional<Adresse> propertyToRemove = findAdresse(adresseId);
+		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeAdresse", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, adresseId));
 		persistence.remove(propertyToRemove.get());
 	}
 
