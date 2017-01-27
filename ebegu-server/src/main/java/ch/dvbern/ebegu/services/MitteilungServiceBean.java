@@ -39,6 +39,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Inject
 	private BenutzerService benutzerService;
 
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
+
 
 	@Nonnull
 	@Override
@@ -168,6 +171,15 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	public void removeMitteilung(Mitteilung mitteilung) {
 		Objects.requireNonNull(mitteilung);
 		persistence.remove(mitteilung);
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	public void removeAllMitteilungenForFall(Fall fall) {
+		Collection<Mitteilung> mitteilungen = criteriaQueryHelper.getEntitiesByAttribute(Mitteilung.class, fall, Mitteilung_.fall);
+		for (Mitteilung poscht : mitteilungen) {
+			persistence.remove(Mitteilung.class, poscht.getId());
+		}
 	}
 
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {

@@ -118,7 +118,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, allGenDok.size());
 
 
-		gesuchService.removeGesuch(gesuch);
+		gesuchService.removeGesuch(gesuch.getId());
 
 
 		//check all objects don't exist anymore

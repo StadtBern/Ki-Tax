@@ -1,6 +1,7 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IHttpPromise} from 'angular';
 import DateUtil from '../../utils/DateUtil';
+import IPromise = angular.IPromise;
 
 export class TestFaelleRS {
     serviceURL: string;
@@ -52,6 +53,24 @@ export class TestFaelleRS {
                 mutationsdatum: DateUtil.momentToLocalDate(mutationsdatum),
                 aenderungper: DateUtil.momentToLocalDate(aenderungper)
             }
+        });
+    }
+
+    public resetSchulungsdaten(): IHttpPromise<String> {
+        return this.http.get(this.serviceURL + '/schulung/reset');
+    }
+
+    public createSchulungsdaten(): IHttpPromise<String> {
+        return this.http.get(this.serviceURL + '/schulung/create');
+    }
+
+    public deleteSchulungsdaten(): IHttpPromise<String> {
+        return this.http.delete(this.serviceURL + '/schulung/delete');
+    }
+
+    public getSchulungBenutzer(): IPromise<String[]> {
+        return this.http.get(this.serviceURL + '/schulung/public/user').then((response: any) => {
+            return response.data;
         });
     }
 }
