@@ -35,4 +35,6 @@ public interface MitteilungService {
 	Mitteilung getEntwurfForCurrentRolle(Fall fall);
 
 	void removeMitteilung(Mitteilung mitteilungId);
+
+	void removeAllMitteilungenForFall(Fall fall);
 }
