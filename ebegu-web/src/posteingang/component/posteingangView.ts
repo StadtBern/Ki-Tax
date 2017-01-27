@@ -6,6 +6,7 @@ import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;
+import IStateService = angular.ui.IStateService;
 let template = require('./posteingangView.html');
 require('./posteingangView.less');
 
@@ -23,9 +24,9 @@ export class PosteingangViewController {
     itemsByPage: number = 20;
     numberOfPages: number = 1;
 
-    static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS'];
+    static $inject: string[] = ['MitteilungRS', 'EbeguUtil', 'CONSTANTS', '$state'];
 
-    constructor(private mitteilungRS: MitteilungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any) {
+    constructor(private mitteilungRS: MitteilungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $state: IStateService) {
         this.initViewModel();
     }
 
@@ -49,6 +50,8 @@ export class PosteingangViewController {
     }
 
     private gotoMitteilung(mitteilung: TSMitteilung) {
-        window.alert('Mitteilung anzeigen');
+        this.$state.go('mitteilungen', {
+            fallId: mitteilung.fall.id
+        });
     }
 }

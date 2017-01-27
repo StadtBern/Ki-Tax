@@ -101,7 +101,8 @@ describe('posteingangView', function () {
         mockFall.fallNummer = 123;
         let gesuchsteller: TSUser = new TSUser();
         gesuchsteller.role = TSRole.GESUCHSTELLER;
-        let mockMitteilung: TSMitteilung = new TSMitteilung(mockFall, TSMitteilungTeilnehmerTyp.GESUCHSTELLER, TSMitteilungTeilnehmerTyp.JUGENDAMT, gesuchsteller, undefined, 'Frage', 'Warum ist die Banane krumm?', TSMitteilungStatus.NEU, undefined);
+        let mockMitteilung: TSMitteilung = new TSMitteilung(mockFall, TSMitteilungTeilnehmerTyp.GESUCHSTELLER, TSMitteilungTeilnehmerTyp.JUGENDAMT,
+            gesuchsteller, undefined, 'Frage', 'Warum ist die Banane krumm?', TSMitteilungStatus.NEU, undefined);
         let dtoList: Array<TSMitteilung> = [mockMitteilung];
         let totalSize: number = 1;
         spyOn(mitteilungRS, 'getMitteilungenForPosteingang').and.returnValue($q.when(dtoList));

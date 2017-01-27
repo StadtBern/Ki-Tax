@@ -30,6 +30,7 @@ describe('posteingangFilter', function () {
         let fall1 = new TSFall();
         fall1.fallNummer = 112;
         fall1.besitzer = gesuchsteller1;
+        fall1.verantwortlicher = ja;
 
         let gesuchsteller2 = new TSUser();
         gesuchsteller2.nachname = 'Gerber';
@@ -79,18 +80,18 @@ describe('posteingangFilter', function () {
         });
         it('should return an array with only the elements with the given subject', function () {
             expect(posteingangFilter(mitteilungArray, {subject: 'Frage'})).toEqual([mitteilung1, mitteilung3]);
-            expect(posteingangFilter(mitteilungArray, {subject: 'Dok'})).toEqual([mitteilung2]);
+            expect(posteingangFilter(mitteilungArray, {subject: 'Dok'})).toEqual([mitteilung3]);
             expect(posteingangFilter(mitteilungArray, {subject: ''})).toEqual([mitteilung1, mitteilung2, mitteilung3, mitteilung4]);
             expect(posteingangFilter(mitteilungArray, {subject: 'rrr'})).toEqual([]); // no familienname with this pattern
         });
         it('should return an array with only the elements of the given sentDatum', function () {
-            expect(posteingangFilter(mitteilungArray, {sentDatum: '2016-02-02'})).toEqual([mitteilung2, mitteilung4]);
+            expect(posteingangFilter(mitteilungArray, {sentDatum: '02.02.2016'})).toEqual([mitteilung2, mitteilung4]);
             expect(posteingangFilter(mitteilungArray, {sentDatum: ''})).toEqual([mitteilung1, mitteilung2, mitteilung3, mitteilung4]);
             expect(posteingangFilter(mitteilungArray, {sentDatum: '2016-05-05'})).toEqual([]);
         });
         it('should return an array with only the elements of the given verantwortlicher', function () {
-            expect(posteingangFilter(mitteilungArray, {verantwortlicher: 'Blaser'})).toEqual([mitteilung2, mitteilung3, mitteilung4]);
-            expect(posteingangFilter(mitteilungArray, {verantwortlicher: 'ser'})).toEqual([mitteilung2, mitteilung3, mitteilung4]);
+            expect(posteingangFilter(mitteilungArray, {verantwortlicher: 'Blaser'})).toEqual([mitteilung1, mitteilung2]);
+            expect(posteingangFilter(mitteilungArray, {verantwortlicher: 'ser'})).toEqual([mitteilung1, mitteilung2]);
             expect(posteingangFilter(mitteilungArray, {verantwortlicher: ''})).toEqual([mitteilung1, mitteilung2, mitteilung3, mitteilung4]);
             expect(posteingangFilter(mitteilungArray, {verantwortlicher: 'rrr'})).toEqual([]);
         });
