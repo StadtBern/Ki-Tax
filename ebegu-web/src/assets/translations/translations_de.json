@@ -489,6 +489,7 @@
     "MENU_MUTATION_VOM": "Mutation vom {{date}}",
     "MENU_MUTATION": "Erstellen einer Mutation",
     "MENU_ERSTGESUCH_PERIODE": "Erstgesuch der Periode {{periode}}",
+    "MENU_POSTEINGANG": "POSTEINGANG",
     "ART_DER_MUTATION": "Erstellen einer Mutation",
     "MENU_VERFUEGEN": "Verfügen",
     "MENU_UMZUG": "Umzug",
@@ -863,5 +864,12 @@
     "MITTEILUNG_SENDEN": "Senden",
     "SCHULUNG": "Schulung",
     "SCHULUNG_CREATE_DATA": "Schulungsdaten erstellen",
-    "SCHULUNG_DELETE_DATA": "Schulungsdaten löschen"
+    "SCHULUNG_DELETE_DATA": "Schulungsdaten löschen",
+    "POSTEINGANG": "Posteingang",
+    "POSTEINGANG_VON_UPPER": "VON",
+    "POSTEINGANG_FALL_UPPER": "FALL",
+    "POSTEINGANG_FAMILIE_UPPER": "FAMILIE",
+    "POSTEINGANG_BETREFF_UPPER": "BETREFF",
+    "POSTEINGANG_DATUM_UPPER": "DATUM",
+    "POSTEINGANG_VERANTWORTLICH_UPPER": "VERANTWORTLICH"
 }
