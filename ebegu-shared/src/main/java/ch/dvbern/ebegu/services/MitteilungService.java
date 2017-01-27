@@ -14,7 +14,10 @@ import java.util.Optional;
 public interface MitteilungService {
 
 	@Nonnull
-	Mitteilung saveMitteilung(@Nonnull Mitteilung mitteilung);
+	Mitteilung sendMitteilung(@Nonnull Mitteilung mitteilung);
+
+	@Nonnull
+	Mitteilung saveEntwurf(@Nonnull Mitteilung mitteilung);
 
 	@Nonnull
 	Mitteilung setMitteilungGelesen(@Nonnull String mitteilungsId);

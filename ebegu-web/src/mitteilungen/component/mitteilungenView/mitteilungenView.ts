@@ -100,30 +100,34 @@ export class MitteilungenViewController {
      * Wechselt den Status der aktuellen Mitteilung auf NEU und schickt diese zum Server
      */
     public sendMitteilung(): void {
-        this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
-        this.currentMitteilung.sentDatum = DateUtil.now();
-        this.saveMitteilung(true).catch(() => {
-            // All set data have to be set back to be able to save as Entwurf again
-            this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
-            this.currentMitteilung.sentDatum = undefined;
-            // forward promise
-            let deferred = this.$q.defer();
-            deferred.resolve(undefined);
-            return deferred.promise;
+        this.doSendMitteilung();
+    }
+
+    /**
+     * Speichert die aktuelle Mitteilung als gesendet.
+     */
+    private doSendMitteilung(): IPromise<TSMitteilung> {
+        return this.mitteilungRS.sendMitteilung(this.getCurrentMitteilung()).then((response) => {
+            this.loadEntwurf();
+            this.loadAllMitteilungen();
+            return this.currentMitteilung;
+        }).finally(() => {
+            this.form.$setPristine();
+            this.form.$setUntouched();
         });
     }
 
     public saveEntwurf(): void {
-        this.saveMitteilung(false);
+        this.doSaveEntwurf();
     }
 
     /**
-     * Speichert die aktuelle Mitteilung nur wenn das formular dirty ist oder wenn das Parameter forceSave true ist.
+     * Speichert die aktuelle Mitteilung nur wenn das formular dirty ist.
      * Wenn das Formular leer ist, wird der Entwurf geloescht (falls er bereits existiert)
      */
-    private saveMitteilung(forceSave: boolean): IPromise<TSMitteilung> {
-        if (((this.form.$dirty && !this.isMitteilungEmpty())) || forceSave === true) {
-            return this.mitteilungRS.createMitteilung(this.getCurrentMitteilung()).then((response) => {
+    private doSaveEntwurf(): IPromise<TSMitteilung> {
+        if (((this.form.$dirty && !this.isMitteilungEmpty()))) {
+            return this.mitteilungRS.saveEntwurf(this.getCurrentMitteilung()).then((response) => {
                 this.loadEntwurf();
                 this.loadAllMitteilungen();
                 return this.currentMitteilung;

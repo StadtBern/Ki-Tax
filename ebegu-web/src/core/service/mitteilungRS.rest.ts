@@ -31,10 +31,23 @@ export default class MitteilungRS {
             });
     }
 
-    public createMitteilung(mitteilung: TSMitteilung): IPromise<TSMitteilung> {
+    public sendMitteilung(mitteilung: TSMitteilung): IPromise<TSMitteilung> {
         let restMitteilung = {};
         restMitteilung = this.ebeguRestUtil.mitteilungToRestObject(restMitteilung, mitteilung);
-        return this.http.put(this.serviceURL, restMitteilung, {
+        return this.http.put(this.serviceURL + '/send', restMitteilung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.log.debug('PARSING mitteilung REST object ', response.data);
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
+        });
+    }
+
+    public saveEntwurf(mitteilung: TSMitteilung): IPromise<TSMitteilung> {
+        let restMitteilung = {};
+        restMitteilung = this.ebeguRestUtil.mitteilungToRestObject(restMitteilung, mitteilung);
+        return this.http.put(this.serviceURL + '/entwurf', restMitteilung, {
             headers: {
                 'Content-Type': 'application/json'
             }
