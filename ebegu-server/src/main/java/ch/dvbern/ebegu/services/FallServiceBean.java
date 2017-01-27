@@ -43,6 +43,9 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Inject
 	private PrincipalBean principalBean;
 
+	@Inject
+	private GesuchService gesuchService;
+
 	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  GESUCHSTELLER })
@@ -113,7 +116,13 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		Optional<Fall> fallToRemove = findFall(fall.getId());
 		Fall loadedFall = fallToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fall));
 		authorizer.checkWriteAuthorization(loadedFall);
-		//TODO (team) muessten die Gesuche hier auch geloescht werden?
+		// Alle Gesuche des Falls ebenfalls loeschen
+		final List<String> allGesucheForFall = gesuchService.getAllGesuchIDsForFall(loadedFall.getId());
+		allGesucheForFall
+			.forEach(gesuchId -> gesuchService.findGesuch(gesuchId)
+				.ifPresent((gesuch) -> {
+					gesuchService.removeGesuch(gesuch.getId());
+				}));
 		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(loadedFall);
 	}

@@ -51,6 +51,8 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 
 	private static final String GESUCH_ID = "44444444-1111-1111-1111-1111111111XX";
 
+	private static final String BENUTZER_FISCH_USERNAME = "sch16";
+	private static final String BENUTZER_FORELLE_USERNAME = "sch17";
 	private static final String BENUTZER_FISCH_NAME = "Fisch";
 	private static final String BENUTZER_FISCH_VORNAME = "Fritz";
 	private static final String BENUTZER_FORELLE_NAME = "Forelle";
@@ -99,6 +101,9 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
+	private FallService fallService;
+
+	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Inject
@@ -120,12 +125,12 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 
 		removeFaelleForSuche();
 
-		for (String s : GESUCHSTELLER_LIST) {
-			removeGesucheFallAndBenutzer(s);
+		for (int i = 0; i < GESUCHSTELLER_LIST.length; i++) {
+			removeGesucheFallAndBenutzer(i + 1);
 		}
 
-		removeBenutzer(getUsername(BENUTZER_FISCH_NAME, BENUTZER_FISCH_VORNAME));
-		removeBenutzer(getUsername(BENUTZER_FORELLE_NAME, BENUTZER_FORELLE_VORNAME));
+		removeBenutzer(BENUTZER_FISCH_USERNAME);
+		removeBenutzer(BENUTZER_FORELLE_USERNAME);
 
 		if (institutionStammdatenService.findInstitutionStammdaten(KITA_FORELLE_ID).isPresent()) {
 			institutionStammdatenService.removeInstitutionStammdaten(KITA_FORELLE_ID);
@@ -163,11 +168,11 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		institutionenForSchulung.add(tageselternForelle);
 		institutionenForSchulung.add(kitaHecht);
 
-		createBenutzer(BENUTZER_FISCH_NAME, BENUTZER_FISCH_VORNAME, traegerschaftFisch, null);
-		createBenutzer(BENUTZER_FORELLE_NAME, BENUTZER_FORELLE_VORNAME, null, institutionForelle);
+		createBenutzer(BENUTZER_FISCH_NAME, BENUTZER_FISCH_VORNAME, traegerschaftFisch, null, BENUTZER_FISCH_USERNAME);
+		createBenutzer(BENUTZER_FORELLE_NAME, BENUTZER_FORELLE_VORNAME, null, institutionForelle, BENUTZER_FORELLE_USERNAME);
 
-		for (String s : GESUCHSTELLER_LIST) {
-			createGesuchsteller(s);
+		for (int i = 0; i < GESUCHSTELLER_LIST.length; i++) {
+			createGesuchsteller(GESUCHSTELLER_LIST[i], getUsername(i + 1));
 		}
 
 		createFaelleForSuche(institutionenForSchulung);
@@ -224,19 +229,19 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		return adresse;
 	}
 
-	private Benutzer createGesuchsteller(String name) {
+	private Benutzer createGesuchsteller(String name, String username) {
 		Mandant mandant = mandantService.getFirst();
 		Benutzer benutzer = new Benutzer();
 		benutzer.setVorname(GESUCHSTELLER_VORNAME);
 		benutzer.setNachname(name);
 		benutzer.setRole(UserRole.GESUCHSTELLER);
-		benutzer.setEmail(getUsername(name) + "@mailinator.com");
-		benutzer.setUsername(getUsername(name));
+		benutzer.setEmail(GESUCHSTELLER_VORNAME.toLowerCase(Locale.GERMAN) + "." + name.toLowerCase(Locale.GERMAN) + "@mailinator.com");
+		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);
 		return benutzerService.saveBenutzer(benutzer);
 	}
 
-	private Benutzer createBenutzer(String name, String vorname, Traegerschaft traegerschaft, Institution institution) {
+	private Benutzer createBenutzer(String name, String vorname, Traegerschaft traegerschaft, Institution institution, String username) {
 		Mandant mandant = mandantService.getFirst();
 		Benutzer benutzer = new Benutzer();
 		benutzer.setVorname(vorname);
@@ -249,26 +254,21 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 			benutzer.setRole(UserRole.SACHBEARBEITER_INSTITUTION);
 			benutzer.setInstitution(institution);
 		}
-		benutzer.setEmail(getUsername(name) + "@mailinator.com");
-		benutzer.setUsername(getUsername(name, vorname));
+		benutzer.setEmail(vorname.toLowerCase(Locale.GERMAN) + "." + name.toLowerCase(Locale.GERMAN) + "@mailinator.com");
+		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);
 		return benutzerService.saveBenutzer(benutzer);
 	}
 
-	private String getUsername(String name) {
-		return getUsername(name, GESUCHSTELLER_VORNAME);
-	}
-
 	@SuppressWarnings(value = {"DM_CONVERT_CASE"})
-	private String getUsername(String name, String vorname) {
-		String username = vorname.toLowerCase(Locale.GERMAN) + "." + name.toLowerCase(Locale.GERMAN);
-		username = username.replaceAll("ü", "ue");
+	private String getUsername(int position) {
+		String username = "sch" + String.format("%02d", position);
 		return username;
 	}
 
-	private void removeGesucheFallAndBenutzer(String nachname) {
-		testfaelleService.removeGesucheOfGS(getUsername(nachname));
-		removeBenutzer(getUsername(nachname));
+	private void removeGesucheFallAndBenutzer(int position) {
+		testfaelleService.removeGesucheOfGS(getUsername(position));
+		removeBenutzer(getUsername(position));
 	}
 
 	private void createFaelleForSuche(List<InstitutionStammdaten> institutionenForSchulung) {
@@ -375,8 +375,13 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		for (int i = 1; i <= anzahlFaelle; i++) {
 			String id = GESUCH_ID.replaceAll("XX", StringUtils.leftPad("" + i, 2, "0"));
 			Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(id);
-			gesuchOptional.ifPresent(gesuch -> gesuchService.removeGesuch(id));
-			persistence.getEntityManager().flush();
+			if (gesuchOptional.isPresent()) {
+				final Optional<Fall> fall = fallService.findFall(gesuchOptional.get().getFall().getId());
+				if (fall.isPresent()) {
+					// Fall und seine abhaengigen Gesuche loeschen
+					fallService.removeFall(fall.get());
+				}
+			}
 		}
 	}
 }

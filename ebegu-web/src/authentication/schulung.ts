@@ -29,7 +29,7 @@ export class SchulungViewController {
     private institutionForelle: TSInstitution;
     private traegerschaftFisch: TSTraegerschaft;
 
-    static $inject: string[] = ['$state', 'AuthServiceRS', '$rootScope', '$timeout' , 'TestFaelleRS'];
+    static $inject: string[] = ['$state', 'AuthServiceRS', '$rootScope', '$timeout', 'TestFaelleRS'];
 
     constructor(private $state: IStateService, private authServiceRS: AuthServiceRS,
                 private $rootScope: IRootScopeService, private $timeout: ITimeoutService,
@@ -40,16 +40,15 @@ export class SchulungViewController {
         this.institutionForelle = this.getInstitutionForelle();
         this.testFaelleRS.getSchulungBenutzer().then((response: any) => {
             this.gesuchstellerList = response;
-            for (var i = 0; i < this.gesuchstellerList.length; i++) {
-                var name = this.gesuchstellerList[i];
-                var username = 'sandra.' + name.toLocaleLowerCase();
-                username = username.replace('ü', 'ue');
-                this.usersList.push(new TSUser('Sandra', name, username, 'password1', username+'@mailinator.com', this.mandant, TSRole.GESUCHSTELLER));
+            for (let i = 0; i < this.gesuchstellerList.length; i++) {
+                let name = this.gesuchstellerList[i];
+                let username = 'sch' + (((i + 1) < 10) ? '0' + (i + 1).toString() : (i + 1).toString());
+                this.usersList.push(new TSUser('Sandra', name, username, 'password1', 'sandra.' + name.toLocaleLowerCase() + '@mailinator.com', this.mandant, TSRole.GESUCHSTELLER));
             }
 
-            this.usersList.push(new TSUser('Fritz', 'Fisch', 'fritz.fisch', 'password1', 'fritz.fisch@mailinator.com',
+            this.usersList.push(new TSUser('Fritz', 'Fisch', 'sch16', 'password1', 'fritz.fisch@mailinator.com',
                 this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftFisch, undefined));
-            this.usersList.push(new TSUser('Franz', 'Forelle', 'franz.forelle', 'password1', 'franz.forelle@mailinator.com',
+            this.usersList.push(new TSUser('Franz', 'Forelle', 'sch17', 'password1', 'franz.forelle@mailinator.com',
                 this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institutionForelle));
         });
     }
@@ -92,9 +91,6 @@ export class SchulungViewController {
     public logIn(user: TSUser): void {
         this.authServiceRS.loginRequest(user).then(() => {
             AuthenticationUtil.navigateToStartPageForRole(user, this.$state);
-            this.$timeout(() => {
-                this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.CHANGE_USER]);
-            }, 1000);
         });
     }
 }

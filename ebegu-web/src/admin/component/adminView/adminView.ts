@@ -199,19 +199,9 @@ export class AdminViewController {
     }
 
     public resetSchulungsdaten(): IPromise<any> {
-        return this.testFaelleRS.resetSchulungsdaten().then((respone) => {
+        return this.testFaelleRS.resetSchulungsdaten().then((response) => {
             return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                title: respone.data
-            }).then(() => {
-                //do nothing
-            });
-        });
-    }
-
-    public createSchulungsdaten(): IPromise<any> {
-        return this.testFaelleRS.createSchulungsdaten().then((respone) => {
-            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                title: respone.data
+                title: response.data
             }).then(() => {
                 //do nothing
             });
@@ -219,9 +209,9 @@ export class AdminViewController {
     }
 
     public deleteSchulungsdaten(): IPromise<any> {
-        return this.testFaelleRS.deleteSchulungsdaten().then((respone) => {
+        return this.testFaelleRS.deleteSchulungsdaten().then((response) => {
             return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                title: respone.data
+                title: response.data
             }).then(() => {
                 //do nothing
             });

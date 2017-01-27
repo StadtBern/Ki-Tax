@@ -5,7 +5,7 @@ import AuthServiceRS from './service/AuthServiceRS.rest';
 import HttpBuffer from './service/HttpBuffer';
 import {AuthenticationComponentConfig} from './authenticaton';
 import {StartComponentConfig} from './component/startView/startView';
-import {SchulungViewController, SchulungComponentConfig} from './schulung';
+import {SchulungComponentConfig} from './schulung';
 
 export const EbeguAuthentication: angular.IModule =
     angular.module('dvbAngular.authentication', ['ngCookies', 'utf8-base64'])
