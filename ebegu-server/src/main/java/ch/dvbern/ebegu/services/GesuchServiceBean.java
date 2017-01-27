@@ -73,8 +73,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private Authorizer authorizer;
 	@Inject
 	private PrincipalBean principalBean;
-	@Inject
-	private MitteilungService mitteilungService;
 
 
 	@Nonnull

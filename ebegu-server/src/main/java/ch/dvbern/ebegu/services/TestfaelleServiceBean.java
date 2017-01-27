@@ -62,8 +62,6 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Inject
 	private VerfuegungService verfuegungService;
 
-	private static final Logger LOG = LoggerFactory.getLogger(TestfaelleServiceBean.class);
-
 	@Override
 	@Nonnull
 	public StringBuilder createAndSaveTestfaelle(String fallid,
@@ -260,14 +258,6 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(null);
 		Optional<Fall> existingFall = fallService.findFallByBesitzer(benutzer);
 		if (existingFall.isPresent()) {
-			//unschoen: eigentlich nur das gesuch fuer das jahr loeschen fuer welches der testfall erzeugt wird
-			List<String> allGesucheForBenutzer = gesuchService.getAllGesuchIDsForFall(existingFall.get().getId());
-			allGesucheForBenutzer
-				.forEach(gesuchId -> gesuchService.findGesuch(gesuchId)
-					.ifPresent((gesuch) -> {
-						LOG.info("Removing Gesuch for user " + (benutzer != null ? benutzer.getUsername() : "-") + " with id " + gesuch.getId());
-						gesuchService.removeGesuch(gesuch.getId());
-					}));
 			fallService.removeFall(existingFall.get());
 		}
 	}

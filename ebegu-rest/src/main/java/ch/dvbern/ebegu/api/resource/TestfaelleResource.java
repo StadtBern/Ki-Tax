@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.SchulungService;
 import ch.dvbern.ebegu.services.TestfaelleService;

@@ -44,6 +44,9 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	private PrincipalBean principalBean;
 
 	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
 	private MitteilungService mitteilungService;
 
 
@@ -117,6 +120,13 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		Optional<Fall> fallToRemove = findFall(fall.getId());
 		Fall loadedFall = fallToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fall));
 		authorizer.checkWriteAuthorization(loadedFall);
+		// Alle Gesuche des Falls ebenfalls loeschen
+		final List<String> allGesucheForFall = gesuchService.getAllGesuchIDsForFall(loadedFall.getId());
+		allGesucheForFall
+			.forEach(gesuchId -> gesuchService.findGesuch(gesuchId)
+				.ifPresent((gesuch) -> {
+					gesuchService.removeGesuch(gesuch.getId());
+				}));
 		// Remove all depending objects
 		mitteilungService.removeAllMitteilungenForFall(loadedFall);
 		//TODO (team) muessten die Gesuche hier auch geloescht werden?
