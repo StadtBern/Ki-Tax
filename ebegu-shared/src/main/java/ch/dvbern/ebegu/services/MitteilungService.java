@@ -46,4 +46,6 @@ public interface MitteilungService {
 	 * ihren Status auf GELESEN.
 	 */
 	Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(Fall fall);
+
+	Collection<Mitteilung> getNewMitteilungenForCurrentRolle(Fall fall);
 }
