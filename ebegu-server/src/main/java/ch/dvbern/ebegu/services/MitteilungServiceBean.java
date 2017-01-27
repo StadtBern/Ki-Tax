@@ -228,6 +228,18 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		}
 	}
 
+	@Override
+	public Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(Fall fall) {
+		Collection<Mitteilung> mitteilungen = getMitteilungenForCurrentRolle(fall);
+		for (Mitteilung mitteilung : mitteilungen) {
+			if (MitteilungStatus.NEU.equals(mitteilung.getMitteilungStatus())) {
+				setMitteilungsStatusIfBerechtigt(mitteilung, MitteilungStatus.GELESEN);
+			}
+			persistence.merge(mitteilung);
+		}
+		return mitteilungen;
+	}
+
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {
 		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getMitteilungenForCurrentRolle", "No User is logged in"));
 		//noinspection EnumSwitchStatementWhichMissesCases
@@ -255,8 +267,12 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		if (!statusRequired.equals(mitteilung.getMitteilungStatus())) {
 			throw new IllegalStateException("Mitteilung " + mitteilungsId + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt " + statusRequired);
 		}
+		return setMitteilungsStatusIfBerechtigt(statusRequested, mitteilungStatus);
+	}
+
+	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull Mitteilung mitteilung, MitteilungStatus mitteilungStatus) {
 		if (mitteilung.getEmpfaengerTyp().equals(getMitteilungTeilnehmerTypForCurrentUser())) {
-			mitteilung.setMitteilungStatus(statusRequested);
+			mitteilung.setMitteilungStatus(mitteilungStatus);
 		}
 		return persistence.merge(mitteilung);
 	}

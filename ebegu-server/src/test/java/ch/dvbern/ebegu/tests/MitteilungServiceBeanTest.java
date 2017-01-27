@@ -23,6 +23,7 @@ import java.util.Optional;
 /**
  * Tests fuer die Klasse MitteilungService
  */
+@SuppressWarnings("ALL")
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
@@ -123,6 +124,55 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertNotNull(mitteilungenForCurrentRolle);
 		Assert.assertEquals(1, mitteilungenForCurrentRolle.size());
 		Assert.assertEquals(MitteilungTeilnehmerTyp.JUGENDAMT, mitteilungenForCurrentRolle.iterator().next().getEmpfaengerTyp());
+	}
+
+	@Test
+	public void testSetAllNewMitteilungenOfFallGelesen() {
+		prepareDependentObjects();
+
+		Mitteilung entwurf = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		entwurf.setMitteilungStatus(MitteilungStatus.ENTWURF);
+		final Mitteilung persistedEntwurf = mitteilungService.saveMitteilung(entwurf);
+
+		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		final Mitteilung mitFromGSToJA = mitteilungService.saveMitteilung(mitteilung1);
+
+		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, sender, MitteilungTeilnehmerTyp.GESUCHSTELLER,
+			empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT);
+		final Mitteilung mitFromJAToGS = mitteilungService.saveMitteilung(mitteilung2);
+
+		Assert.assertEquals(MitteilungStatus.ENTWURF, persistedEntwurf.getMitteilungStatus());
+		Assert.assertEquals(MitteilungStatus.NEU, mitFromGSToJA.getMitteilungStatus());
+		Assert.assertEquals(MitteilungStatus.NEU, mitFromJAToGS.getMitteilungStatus());
+
+		// Set Gelesen as JA
+		mitteilungService.setAllNewMitteilungenOfFallGelesen(fall);
+
+		final Optional<Mitteilung> entwurfUpdated1 = mitteilungService.findMitteilung(persistedEntwurf.getId());
+		Assert.assertTrue(entwurfUpdated1.isPresent());
+		Assert.assertEquals(MitteilungStatus.ENTWURF, entwurfUpdated1.get().getMitteilungStatus());
+		final Optional<Mitteilung> mitFromGSToJAUpdated1 = mitteilungService.findMitteilung(mitFromGSToJA.getId());
+		Assert.assertTrue(mitFromGSToJAUpdated1.isPresent());
+		Assert.assertEquals(MitteilungStatus.GELESEN, mitFromGSToJAUpdated1.get().getMitteilungStatus());
+		final Optional<Mitteilung> mitFromJAToGSUpdated1 = mitteilungService.findMitteilung(mitFromJAToGS.getId());
+		Assert.assertTrue(mitFromJAToGSUpdated1.isPresent());
+		Assert.assertEquals(MitteilungStatus.NEU, mitFromJAToGSUpdated1.get().getMitteilungStatus());
+
+		// Set Gelesen as GS
+		loginAsGesuchsteller("gesuchst");
+		mitteilungService.setAllNewMitteilungenOfFallGelesen(fall);
+
+		final Optional<Mitteilung> entwurfUpdated2 = mitteilungService.findMitteilung(persistedEntwurf.getId());
+		Assert.assertTrue(entwurfUpdated2.isPresent());
+		Assert.assertEquals(MitteilungStatus.ENTWURF, entwurfUpdated2.get().getMitteilungStatus());
+		final Optional<Mitteilung> mitFromGSToJAUpdated2 = mitteilungService.findMitteilung(mitFromGSToJA.getId());
+		Assert.assertTrue(mitFromGSToJAUpdated2.isPresent());
+		Assert.assertEquals(MitteilungStatus.GELESEN, mitFromGSToJAUpdated2.get().getMitteilungStatus());
+		final Optional<Mitteilung> mitFromJAToGSUpdated2 = mitteilungService.findMitteilung(mitFromJAToGS.getId());
+		Assert.assertTrue(mitFromJAToGSUpdated2.isPresent());
+		Assert.assertEquals(MitteilungStatus.GELESEN, mitFromJAToGSUpdated2.get().getMitteilungStatus());
 	}
 
 

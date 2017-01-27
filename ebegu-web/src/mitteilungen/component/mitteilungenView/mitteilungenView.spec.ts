@@ -135,6 +135,7 @@ describe('mitteilungenView', function () {
         spyOn(authServiceRS, 'getPrincipal').and.returnValue(user);
         spyOn(fallRS, 'findFall').and.returnValue($q.when(fall));
         spyOn(mitteilungRS, 'getMitteilungenForCurrentRolle').and.returnValue($q.when([{}]));
+        spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
 
         controller = new MitteilungenViewController(stateParams, mitteilungRS, authServiceRS, fallRS, $q);
         $rootScope.$apply();

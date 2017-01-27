@@ -48,7 +48,9 @@ export class MitteilungenViewController {
             this.fallRS.findFall(this.$stateParams.fallId).then((response) => {
                 this.fall = response;
                 this.loadEntwurf();
-                this.loadAllMitteilungen();
+                this.setAllMitteilungenGelesen().then((response) => {
+                    this.loadAllMitteilungen();
+                });
             });
         }
     }
@@ -192,4 +194,7 @@ export class MitteilungenViewController {
         }
     }
 
+    private setAllMitteilungenGelesen(): IPromise<Array<TSMitteilung>> {
+        return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
+    }
 }
