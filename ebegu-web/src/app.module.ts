@@ -8,6 +8,7 @@ import {EbeguWebPendenzenInstitution} from './pendenzenInstitution/pendenzenInst
 import {EbeguWebFaelle} from './faelle/faelle.module';
 import {EbeguWebGesuchstellerDashboard} from './gesuchstellerDashboard/gesuchstellerDashboard.module';
 import {EbeguWebMitteilungen} from './mitteilungen/mitteilungen.module';
+import {EbeguWebPosteingang} from './posteingang/posteingang.module';
 
 export default angular.module('ebeguWeb', [EbeguWebCore.name, EbeguWebAdmin.name, EbeguWebGesuch.name, EbeguWebPendenzen.name,
-    EbeguWebPendenzenInstitution.name, EbeguWebFaelle.name, EbeguWebGesuchstellerDashboard.name, EbeguWebMitteilungen.name]);
+    EbeguWebPendenzenInstitution.name, EbeguWebFaelle.name, EbeguWebGesuchstellerDashboard.name, EbeguWebMitteilungen.name, EbeguWebPosteingang.name]);

@@ -128,10 +128,6 @@ export class DummyAuthenticationListViewController {
 
             AuthenticationUtil.navigateToStartPageForRole(user, this.$state);
 
-            this.$timeout(() => {
-                this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.CHANGE_USER]);
-            }, 1000);
-
         });
     }
 }

@@ -103,4 +103,11 @@ export default class TSMitteilung extends TSAbstractEntity {
     set sentDatum(value: moment.Moment) {
         this._sentDatum = value;
     }
+
+    get verantwortlicher(): string {
+        if (this._fall.verantwortlicher) {
+            return this._fall.verantwortlicher.getFullName();
+        }
+        return '';
+    }
 }
