@@ -343,7 +343,11 @@ public class Gesuch extends AbstractEntity {
 			&& Objects.equals(this.getGesuchsperiode(), otherAntrag.getGesuchsperiode()));
 	}
 
-	public String getAntragNummer() {
+	/**
+	 * Gibt das Startjahr der Gesuchsperiode (zweistellig) gefolgt von Fall-Nummer als String zurück.
+	 * Achtung, entspricht NICHT der Antragsnummer! (siehe Antrag.laufnummer)
+	 */
+	public String getJahrAndFallnummer() {
 		if (getGesuchsperiode() == null) {
 			return "-";
 		}
