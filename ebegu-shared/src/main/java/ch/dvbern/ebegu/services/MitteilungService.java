@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Mitteilung;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 public interface MitteilungService {
 
 	@Nonnull
-	Mitteilung createMitteilung(@Nonnull Mitteilung mitteilung);
+	Mitteilung saveMitteilung(@Nonnull Mitteilung mitteilung);
 
 	@Nonnull
 	Mitteilung setMitteilungGelesen(@Nonnull String mitteilungsId);
@@ -29,6 +30,11 @@ public interface MitteilungService {
 
 	@Nonnull
 	Collection<Mitteilung> getMitteilungenForPosteingang();
+
+	@Nullable
+	Mitteilung getEntwurfForCurrentRolle(Fall fall);
+
+	void removeMitteilung(Mitteilung mitteilungId);
 
 	void removeAllMitteilungenForFall(Fall fall);
 }

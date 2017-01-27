@@ -82,7 +82,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
             }
         }
         dokumenteForType.sort((n1: TSDokumentGrund, n2: TSDokumentGrund) => {
-            let result : number = 0;
+            let result: number = 0;
 
             if (n1 && n2) {
                 if (n1.fullName && n2.fullName) {
