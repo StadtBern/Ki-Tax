@@ -119,6 +119,37 @@ describe('mitteilungenView', function () {
             expect(controller.getCurrentMitteilung().id).toBeUndefined();
         });
     });
+    describe('setErledigt', function () {
+        it('should change the status from GELESEN to ERLEDIGT and save the mitteilung', function () {
+            let gesuchsteller: TSUser = new TSUser();
+            gesuchsteller.role = TSRole.GESUCHSTELLER;
+            spyOn(authServiceRS, 'isRole').and.returnValue(true);
+
+            createMitteilungForUser(gesuchsteller);
+
+            let mitteilung: TSMitteilung = new TSMitteilung();
+            spyOn(mitteilungRS, 'createMitteilung').and.returnValue($q.when(mitteilung));
+
+            mitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.ENTWURF); // Status ENTWURF wird nicht geaendert
+            expect(mitteilungRS.createMitteilung).not.toHaveBeenCalled();
+
+            mitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.NEU); // Status NEU wird nicht geaendert
+            expect(mitteilungRS.createMitteilung).not.toHaveBeenCalled();
+
+            mitteilung.mitteilungStatus = TSMitteilungStatus.GELESEN;
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.ERLEDIGT); // von GELESEN auf ERLEDIGT
+            expect(mitteilungRS.createMitteilung).toHaveBeenCalledWith(mitteilung);
+
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.GELESEN); // von ERLEDIGT auf GELESEN
+            expect(mitteilungRS.createMitteilung).toHaveBeenCalledWith(mitteilung);
+        });
+    });
 
 
 

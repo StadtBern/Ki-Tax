@@ -197,4 +197,23 @@ export class MitteilungenViewController {
     private setAllMitteilungenGelesen(): IPromise<Array<TSMitteilung>> {
         return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
     }
+
+    /**
+     * Aendert den Status der gegebenen Mitteilung auf ERLEDIGT wenn es GELESEN war oder
+     * auf GELESEN wenn es ERLEDIGT war
+     */
+    public setErledigt(mitteilung: TSMitteilung): void {
+        if (mitteilung && mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN) {
+            mitteilung.mitteilungStatus = TSMitteilungStatus.ERLEDIGT;
+            this.mitteilungRS.createMitteilung(mitteilung);
+
+        } else if (mitteilung && mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT) {
+            mitteilung.mitteilungStatus = TSMitteilungStatus.GELESEN;
+            this.mitteilungRS.createMitteilung(mitteilung);
+        }
+    }
+
+    public isStatusErledigtGelesen(mitteilung: TSMitteilung): boolean {
+        return mitteilung && (mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT || mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN);
+    }
 }

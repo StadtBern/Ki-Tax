@@ -71,10 +71,20 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12 dv-input-container-medium">
+                            <div class="col-md-4 dv-input-container-medium">
                                 <span ng-bind="mitteilung.sender.getFullName()"></span>
                             </div>
-                            <div class="col-md-12 dv-input-container-medium">
+                            <div class="col-md-4 dv-input-container-medium"
+                                 dv-show-element
+                                 dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                                 dv-show-expression="!vm.isCurrentUserTypTheSenderTyp(mitteilung) && vm.isStatusErledigtGelesen(mitteilung)">
+                                <md-checkbox name="erledigt-{{$index}}" aria-label="erledigt"
+                                             ng-checked="mitteilung.mitteilungStatus === 'ERLEDIGT'"
+                                             ng-click="vm.setErledigt(mitteilung); $event.stopPropagation()">
+                                    <span data-translate="MITTEILUNGEN_ERLEDIGT"></span>
+                                </md-checkbox>
+                            </div>
+                            <div class="col-md-4 dv-input-container-medium">
                                 <span ng-bind="mitteilung.sentDatum | amDateFormat : 'DD.MM.YYYY / HH:mm'"></span>
                             </div>
                         </div>
