@@ -10,7 +10,6 @@ import TSFall from '../../../models/TSFall';
 import FallRS from '../../../gesuch/service/fallRS.rest';
 import {IMitteilungenStateParams} from '../../mitteilungen.route';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import DateUtil from '../../../utils/DateUtil';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IFormController = angular.IFormController;
@@ -101,35 +100,28 @@ export class MitteilungenViewController {
     }
 
     /**
-     * Wechselt den Status der aktuellen Mitteilung auf NEU und schickt diese zum Server
-     */
-    public sendMitteilung(): void {
-        this.doSendMitteilung();
-    }
-
-    /**
      * Speichert die aktuelle Mitteilung als gesendet.
      */
-    private doSendMitteilung(): IPromise<TSMitteilung> {
-        return this.mitteilungRS.sendMitteilung(this.getCurrentMitteilung()).then((response) => {
-            this.loadEntwurf();
-            this.loadAllMitteilungen();
-            return this.currentMitteilung;
-        }).finally(() => {
-            this.form.$setPristine();
-            this.form.$setUntouched();
-        });
-    }
-
-    public saveEntwurf(): void {
-        this.doSaveEntwurf();
+    public sendMitteilung(): IPromise<TSMitteilung> {
+        if (!this.isMitteilungEmpty()) {
+            return this.mitteilungRS.sendMitteilung(this.getCurrentMitteilung()).then((response) => {
+                this.loadEntwurf();
+                this.loadAllMitteilungen();
+                return this.currentMitteilung;
+            }).finally(() => {
+                this.form.$setPristine();
+                this.form.$setUntouched();
+            });
+        } else {
+            return this.$q.when(this.currentMitteilung);
+        }
     }
 
     /**
      * Speichert die aktuelle Mitteilung nur wenn das formular dirty ist.
      * Wenn das Formular leer ist, wird der Entwurf geloescht (falls er bereits existiert)
      */
-    private doSaveEntwurf(): IPromise<TSMitteilung> {
+    public saveEntwurf(): IPromise<TSMitteilung> {
         if (((this.form.$dirty && !this.isMitteilungEmpty()))) {
             return this.mitteilungRS.saveEntwurf(this.getCurrentMitteilung()).then((response) => {
                 this.loadEntwurf();

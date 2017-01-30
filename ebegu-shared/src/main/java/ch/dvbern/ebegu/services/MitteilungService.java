@@ -37,7 +37,7 @@ public interface MitteilungService {
 	@Nullable
 	Mitteilung getEntwurfForCurrentRolle(Fall fall);
 
-	void removeMitteilung(Mitteilung mitteilungId);
+	void removeMitteilung(Mitteilung mitteilung);
 
 	void removeAllMitteilungenForFall(Fall fall);
 }

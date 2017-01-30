@@ -22,6 +22,9 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.criteria.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -63,10 +66,18 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		}
 		mitteilung.setMitteilungStatus(MitteilungStatus.NEU);
 		mitteilung.setSentDatum(LocalDateTime.now());
-		// Falls die Mitteilung an einen Gesuchsteller geht, muss dieser benachrichtigt werden
+		// Falls die Mitteilung an einen Gesuchsteller geht, muss dieser benachrichtigt werden. Es muss zuerst geprueft werden, dass
+		// die Mitteilung valid ist, dafuer brauchen wir den Validator
 		try {
-			if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp()) && mitteilung.getEmpfaenger() != null) {
-				mailService.sendInfoMitteilungErhalten(mitteilung);
+			Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
+			final Set<ConstraintViolation<Mitteilung>> validationValues = validator.validate(mitteilung);
+			if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp())) {
+				if (validationValues.isEmpty() && mitteilung.getEmpfaenger() != null) {
+					mailService.sendInfoMitteilungErhalten(mitteilung);
+				}
+				else {
+					throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, "Mitteilung is not valid");
+				}
 			}
 		} catch (MailException e) {
 			LOG.error("Mail InfoMitteilungErhalten konnte nicht verschickt werden fuer Mitteilung " + mitteilung.getId(), e);
