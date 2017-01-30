@@ -58,7 +58,7 @@ export class MitteilungenViewController {
      * Mitteilung zurueck.
      */
     private loadEntwurf() {
-        this.mitteilungRS.getEntwurfForCurrentRolle(this.fall.id).then((entwurf: TSMitteilung) => {
+        this.mitteilungRS.getEntwurfForCurrentRolleForFall(this.fall.id).then((entwurf: TSMitteilung) => {
             if (entwurf) {
                 this.currentMitteilung = entwurf;
             } else {
@@ -148,7 +148,7 @@ export class MitteilungenViewController {
     }
 
     private loadAllMitteilungen(): void {
-        this.mitteilungRS.getMitteilungenForCurrentRolle(this.fall.id).then((response) => {
+        this.mitteilungRS.getMitteilungenForCurrentRolleForFall(this.fall.id).then((response) => {
             this.allMitteilungen = response;
         });
     }

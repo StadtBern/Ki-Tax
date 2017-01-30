@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Mitteilung;
 
@@ -32,12 +33,18 @@ public interface MitteilungService {
 	Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall);
 
 	@Nonnull
+	Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Betreuung betreuung);
+
+	@Nonnull
 	Collection<Mitteilung> getMitteilungenForPosteingang();
 
 	@Nullable
-	Mitteilung getEntwurfForCurrentRolle(Fall fall);
+	Mitteilung getEntwurfForCurrentRolle(@Nonnull Fall fall);
 
-	void removeMitteilung(Mitteilung mitteilung);
+	@Nullable
+	Mitteilung getEntwurfForCurrentRolle(@Nonnull Betreuung betreuung);
 
-	void removeAllMitteilungenForFall(Fall fall);
+	void removeMitteilung(@Nonnull Mitteilung mitteilung);
+
+	void removeAllMitteilungenForFall(@Nonnull Fall fall);
 }

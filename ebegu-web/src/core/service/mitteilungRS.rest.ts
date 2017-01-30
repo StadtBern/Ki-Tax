@@ -71,15 +71,29 @@ export default class MitteilungRS {
         });
     }
 
-    public getEntwurfForCurrentRolle(fallId: string): IPromise<TSMitteilung> {
-        return this.http.get(this.serviceURL + '/entwurf/' + fallId).then((response: any) => {
+    public getEntwurfForCurrentRolleForFall(fallId: string): IPromise<TSMitteilung> {
+        return this.http.get(this.serviceURL + '/entwurf/fall/' + fallId).then((response: any) => {
             this.log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
         });
     }
 
-    public getMitteilungenForCurrentRolle(fallId: string): IPromise<Array<TSMitteilung>> {
-        return this.http.get(this.serviceURL + '/forrole/' + fallId).then((response: any) => {
+    public getEntwurfForCurrentRolleForBetreuung(betreuungId: string): IPromise<TSMitteilung> {
+        return this.http.get(this.serviceURL + '/entwurf/betreuung/' + betreuungId).then((response: any) => {
+            this.log.debug('PARSING mitteilung REST object ', response.data);
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
+        });
+    }
+
+    public getMitteilungenForCurrentRolleForFall(fallId: string): IPromise<Array<TSMitteilung>> {
+        return this.http.get(this.serviceURL + '/forrole/fall/' + fallId).then((response: any) => {
+            this.log.debug('PARSING mitteilung REST object ', response.data);
+            return this.ebeguRestUtil.parseMitteilungen(response.data);
+        });
+    }
+
+    public getMitteilungenForCurrentRolleForBetreuung(betreuungId: string): IPromise<Array<TSMitteilung>> {
+        return this.http.get(this.serviceURL + '/forrole/betreuung/' + betreuungId).then((response: any) => {
             this.log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilungen(response.data);
         });

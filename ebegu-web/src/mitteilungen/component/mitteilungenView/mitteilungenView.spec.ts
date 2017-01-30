@@ -49,7 +49,7 @@ describe('mitteilungenView', function () {
         verantwortlicher.nachname = 'Arnaldo Verantwortlicher';
         fall.verantwortlicher = verantwortlicher;
 
-        spyOn(mitteilungRS, 'getEntwurfForCurrentRolle').and.returnValue($q.when(undefined));
+        spyOn(mitteilungRS, 'getEntwurfForCurrentRolleForFall').and.returnValue($q.when(undefined));
     }));
 
     describe('loading initial data', function () {
@@ -134,7 +134,7 @@ describe('mitteilungenView', function () {
     function createMitteilungForUser(user: TSUser): void {
         spyOn(authServiceRS, 'getPrincipal').and.returnValue(user);
         spyOn(fallRS, 'findFall').and.returnValue($q.when(fall));
-        spyOn(mitteilungRS, 'getMitteilungenForCurrentRolle').and.returnValue($q.when([{}]));
+        spyOn(mitteilungRS, 'getMitteilungenForCurrentRolleForFall').and.returnValue($q.when([{}]));
 
         controller = new MitteilungenViewController(stateParams, mitteilungRS, authServiceRS, fallRS, $q);
         $rootScope.$apply();

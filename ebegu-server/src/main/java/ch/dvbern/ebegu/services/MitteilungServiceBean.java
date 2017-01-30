@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Mitteilung;
-import ch.dvbern.ebegu.entities.Mitteilung_;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
@@ -148,6 +145,34 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return persistence.getCriteriaResults(query);
 	}
 
+	@Nonnull
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung muss gesetzt sein");
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
+		Root<Mitteilung> root = query.from(Mitteilung.class);
+		List<Expression<Boolean>> predicates = new ArrayList<>();
+
+		Predicate predicateBetreuung = cb.equal(root.get(Mitteilung_.betreuung), betreuung);
+		predicates.add(predicateBetreuung);
+
+		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
+		predicates.add(predicateEntwurf);
+
+		MitteilungTeilnehmerTyp mitteilungTeilnehmerTyp = getMitteilungTeilnehmerTypForCurrentUser();
+		Predicate predicateSender = cb.equal(root.get(Mitteilung_.senderTyp), mitteilungTeilnehmerTyp);
+		Predicate predicateEmpfaenger = cb.equal(root.get(Mitteilung_.empfaengerTyp), mitteilungTeilnehmerTyp);
+		Predicate predicateSenderOrEmpfaenger = cb.or(predicateSender, predicateEmpfaenger);
+		predicates.add(predicateSenderOrEmpfaenger);
+
+		query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+		return persistence.getCriteriaResults(query);
+	}
+
 	@SuppressWarnings("LocalVariableNamingConvention")
 	@Nonnull
 	@Override
@@ -190,7 +215,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Override
 	@Nullable
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
-	public Mitteilung getEntwurfForCurrentRolle(Fall fall) {
+	public Mitteilung getEntwurfForCurrentRolle(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -213,15 +238,40 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
+	@Nullable
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
-	public void removeMitteilung(Mitteilung mitteilung) {
+	public Mitteilung getEntwurfForCurrentRolle(@Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung muss gesetzt sein");
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
+		Root<Mitteilung> root = query.from(Mitteilung.class);
+		List<Expression<Boolean>> predicates = new ArrayList<>();
+
+		Predicate predicateBetreuung = cb.equal(root.get(Mitteilung_.betreuung), betreuung);
+		predicates.add(predicateBetreuung);
+
+		Predicate predicateEntwurf = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
+		predicates.add(predicateEntwurf);
+
+		MitteilungTeilnehmerTyp mitteilungTeilnehmerTyp = getMitteilungTeilnehmerTypForCurrentUser();
+		Predicate predicateSender = cb.equal(root.get(Mitteilung_.senderTyp), mitteilungTeilnehmerTyp);
+		predicates.add(predicateSender);
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+		return persistence.getCriteriaSingleResult(query);
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public void removeMitteilung(@Nonnull Mitteilung mitteilung) {
 		Objects.requireNonNull(mitteilung);
 		persistence.remove(mitteilung);
 	}
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN})
-	public void removeAllMitteilungenForFall(Fall fall) {
+	public void removeAllMitteilungenForFall(@Nonnull Fall fall) {
 		Collection<Mitteilung> mitteilungen = criteriaQueryHelper.getEntitiesByAttribute(Mitteilung.class, fall, Mitteilung_.fall);
 		for (Mitteilung poscht : mitteilungen) {
 			persistence.remove(Mitteilung.class, poscht.getId());
