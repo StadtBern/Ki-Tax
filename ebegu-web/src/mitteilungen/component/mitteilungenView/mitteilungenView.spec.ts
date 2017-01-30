@@ -119,6 +119,38 @@ describe('mitteilungenView', function () {
             expect(controller.getCurrentMitteilung().id).toBeUndefined();
         });
     });
+    describe('setErledigt', function () {
+        it('should change the status from GELESEN to ERLEDIGT and save the mitteilung', function () {
+            let gesuchsteller: TSUser = new TSUser();
+            gesuchsteller.role = TSRole.GESUCHSTELLER;
+            spyOn(authServiceRS, 'isRole').and.returnValue(true);
+
+            createMitteilungForUser(gesuchsteller);
+
+            let mitteilung: TSMitteilung = new TSMitteilung();
+            mitteilung.id = '123';
+            spyOn(mitteilungRS, 'setMitteilungErledigt').and.returnValue($q.when(mitteilung));
+
+            mitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.ENTWURF); // Status ENTWURF wird nicht geaendert
+            expect(mitteilungRS.setMitteilungErledigt).not.toHaveBeenCalled();
+
+            mitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.NEU); // Status NEU wird nicht geaendert
+            expect(mitteilungRS.setMitteilungErledigt).not.toHaveBeenCalled();
+
+            mitteilung.mitteilungStatus = TSMitteilungStatus.GELESEN;
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.ERLEDIGT); // von GELESEN auf ERLEDIGT
+            expect(mitteilungRS.setMitteilungErledigt).toHaveBeenCalledWith('123');
+
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.GELESEN); // von ERLEDIGT auf GELESEN
+            expect(mitteilungRS.setMitteilungErledigt).toHaveBeenCalledWith('123');
+        });
+    });
 
 
 
@@ -135,6 +167,7 @@ describe('mitteilungenView', function () {
         spyOn(authServiceRS, 'getPrincipal').and.returnValue(user);
         spyOn(fallRS, 'findFall').and.returnValue($q.when(fall));
         spyOn(mitteilungRS, 'getMitteilungenForCurrentRolle').and.returnValue($q.when([{}]));
+        spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
 
         controller = new MitteilungenViewController(stateParams, mitteilungRS, authServiceRS, fallRS, $q);
         $rootScope.$apply();

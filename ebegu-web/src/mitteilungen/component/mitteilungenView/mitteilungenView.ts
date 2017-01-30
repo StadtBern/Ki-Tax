@@ -48,7 +48,9 @@ export class MitteilungenViewController {
             this.fallRS.findFall(this.$stateParams.fallId).then((response) => {
                 this.fall = response;
                 this.loadEntwurf();
-                this.loadAllMitteilungen();
+                this.setAllMitteilungenGelesen().then((response) => {
+                    this.loadAllMitteilungen();
+                });
             });
         }
     }
@@ -194,5 +196,28 @@ export class MitteilungenViewController {
             default:
                 return null;
         }
+    }
+
+    private setAllMitteilungenGelesen(): IPromise<Array<TSMitteilung>> {
+        return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
+    }
+
+    /**
+     * Aendert den Status der gegebenen Mitteilung auf ERLEDIGT wenn es GELESEN war oder
+     * auf GELESEN wenn es ERLEDIGT war
+     */
+    public setErledigt(mitteilung: TSMitteilung): void {
+        if (mitteilung && mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN) {
+            mitteilung.mitteilungStatus = TSMitteilungStatus.ERLEDIGT;
+            this.mitteilungRS.setMitteilungErledigt(mitteilung.id);
+
+        } else if (mitteilung && mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT) {
+            mitteilung.mitteilungStatus = TSMitteilungStatus.GELESEN;
+            this.mitteilungRS.setMitteilungGelesen(mitteilung.id);
+        }
+    }
+
+    public isStatusErledigtGelesen(mitteilung: TSMitteilung): boolean {
+        return mitteilung && (mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT || mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN);
     }
 }

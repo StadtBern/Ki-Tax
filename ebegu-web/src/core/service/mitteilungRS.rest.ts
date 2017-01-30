@@ -98,4 +98,11 @@ export default class MitteilungRS {
                 return response;
             });
     }
+
+    public setAllNewMitteilungenOfFallGelesen(fallId: string): IPromise<Array<TSMitteilung>> {
+        return this.http.put(this.serviceURL + '/setallgelesen/' + fallId, null).then((response: any) => {
+            this.log.debug('PARSING mitteilungen REST objects ', response.data);
+            return this.ebeguRestUtil.parseMitteilungen(response.data);
+        });
+    }
 }
