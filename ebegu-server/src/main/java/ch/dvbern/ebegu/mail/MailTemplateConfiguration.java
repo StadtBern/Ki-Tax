@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -40,25 +41,35 @@ public class MailTemplateConfiguration {
 		this.freeMarkerConfiguration = ourFreeMarkerConfig;
 	}
 
-	public String getInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung, Gesuchsteller gesuchsteller) {
+	public String getInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung, @Nonnull Gesuchsteller gesuchsteller) {
 		return processInfoBetreuungAbgelehntTemplate("InfoBetreuungAbgelehnt.ftl", betreuung, gesuchsteller);
 	}
 
-	private String processInfoBetreuungAbgelehntTemplate(@Nonnull String nameOfTemplate, @Nonnull Betreuung betreuung, Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
+	private String processInfoBetreuungAbgelehntTemplate(@Nonnull String nameOfTemplate, @Nonnull Betreuung betreuung, @Nonnull Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };
 		paramsToPass[paramsToPass.length - 2] = new Object[] { "gesuchsteller", gesuchsteller };
 		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
-	public String getInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
+	public String getInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller) {
 		return processInfoBetreuungenBestaetigtTemplate("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller);
 	}
 
-	private String processInfoBetreuungenBestaetigtTemplate(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
+	private String processInfoBetreuungenBestaetigtTemplate(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "gesuch", gesuch };
 		paramsToPass[paramsToPass.length - 2] = new Object[] { "gesuchsteller", gesuchsteller };
+		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
+	}
+
+	public String getInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung) {
+		return processInfoMitteilungErhaltenTemplate("InfoMitteilungErhalten.ftl", mitteilung);
+	}
+
+	private String processInfoMitteilungErhaltenTemplate(@Nonnull String nameOfTemplate, @Nonnull Mitteilung mitteilung, Object[]... extraValuePairs) {
+		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 1);
+		paramsToPass[paramsToPass.length - 1] = new Object[] { "mitteilung", mitteilung };
 		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 

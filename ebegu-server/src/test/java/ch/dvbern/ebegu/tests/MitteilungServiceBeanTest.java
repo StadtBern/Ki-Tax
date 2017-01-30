@@ -46,7 +46,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 		Mitteilung mitteilung = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		final Mitteilung persistedMitteilung = mitteilungService.saveMitteilung(mitteilung);
+		final Mitteilung persistedMitteilung = mitteilungService.sendMitteilung(mitteilung);
 
 		final Optional<Mitteilung> foundMitteilung = mitteilungService.findMitteilung(persistedMitteilung.getId());
 
@@ -56,33 +56,35 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testSetMitteilungGelesen() {
-		testSetMitteilungChangeStatus(MitteilungStatus.GELESEN);
-	}
-
-	@Test
-	public void testSetMitteilungErledigt() {
-		testSetMitteilungChangeStatus(MitteilungStatus.ERLEDIGT);
-	}
-
-	private void testSetMitteilungChangeStatus(MitteilungStatus status) {
 		prepareDependentObjects();
 		Mitteilung mitteilung = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		final Mitteilung persistedMitteilung = mitteilungService.saveMitteilung(mitteilung);
+		final Mitteilung persistedMitteilung = mitteilungService.sendMitteilung(mitteilung);
 
 		final Optional<Mitteilung> foundMitteilung = mitteilungService.findMitteilung(persistedMitteilung.getId());
 		Assert.assertTrue(foundMitteilung.isPresent());
 		Assert.assertEquals(MitteilungStatus.NEU, foundMitteilung.get().getMitteilungStatus());
 
-		Mitteilung mitteilungNewStatus = null;
-		if (MitteilungStatus.ERLEDIGT.equals(status)) {
-			mitteilungNewStatus = mitteilungService.setMitteilungErledigt(foundMitteilung.get().getId());
-		}
-		else if (MitteilungStatus.GELESEN.equals(status)) {
-			mitteilungNewStatus = mitteilungService.setMitteilungGelesen(foundMitteilung.get().getId());
-		}
+		Mitteilung mitteilungNewStatus = mitteilungService.setMitteilungGelesen(foundMitteilung.get().getId());
 		Assert.assertNotNull(mitteilungNewStatus);
-		Assert.assertEquals(status, mitteilungNewStatus.getMitteilungStatus());
+		Assert.assertEquals(MitteilungStatus.GELESEN, mitteilungNewStatus.getMitteilungStatus());
+	}
+
+	@Test
+	public void testSetMitteilungErledigt() {
+		prepareDependentObjects();
+		Mitteilung mitteilung = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		final Mitteilung persistedMitteilung = mitteilungService.sendMitteilung(mitteilung);
+
+		final Optional<Mitteilung> foundMitteilung = mitteilungService.findMitteilung(persistedMitteilung.getId());
+		Assert.assertTrue(foundMitteilung.isPresent());
+		Assert.assertEquals(MitteilungStatus.NEU, foundMitteilung.get().getMitteilungStatus());
+		mitteilungService.setMitteilungGelesen(foundMitteilung.get().getId());
+
+		Mitteilung mitteilungNewStatus = mitteilungService.setMitteilungErledigt(foundMitteilung.get().getId());
+		Assert.assertNotNull(mitteilungNewStatus);
+		Assert.assertEquals(MitteilungStatus.ERLEDIGT, mitteilungNewStatus.getMitteilungStatus());
 	}
 
 	@Test
@@ -90,11 +92,11 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		mitteilungService.saveMitteilung(mitteilung1);
+		mitteilungService.sendMitteilung(mitteilung1);
 
 		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, empfaengerINST, MitteilungTeilnehmerTyp.INSTITUTION,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		mitteilungService.saveMitteilung(mitteilung2);
+		mitteilungService.sendMitteilung(mitteilung2);
 
 		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForCurrentRolle(mitteilung1.getFall());
 
@@ -109,11 +111,11 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		prepareDependentObjects();
 		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		mitteilungService.saveMitteilung(mitteilung1);
+		mitteilungService.sendMitteilung(mitteilung1);
 
 		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, null, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		mitteilungService.saveMitteilung(mitteilung2);
+		mitteilungService.sendMitteilung(mitteilung2);
 
 		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang();
 

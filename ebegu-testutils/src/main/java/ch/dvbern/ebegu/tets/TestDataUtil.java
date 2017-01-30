@@ -840,7 +840,7 @@ public final class TestDataUtil {
 		mitteilung.setFall(fall);
 		mitteilung.setEmpfaenger(empfaenger);
 		mitteilung.setSender(sender);
-		mitteilung.setMitteilungStatus(MitteilungStatus.NEU);
+		mitteilung.setMitteilungStatus(MitteilungStatus.ENTWURF);
 		mitteilung.setSubject("Subject");
 		mitteilung.setEmpfaengerTyp(empfaengerTyp);
 		mitteilung.setSenderTyp(senderTyp);

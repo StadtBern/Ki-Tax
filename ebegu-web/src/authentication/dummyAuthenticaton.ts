@@ -6,7 +6,6 @@ import AuthServiceRS from './service/AuthServiceRS.rest';
 import {TSMandant} from '../models/TSMandant';
 import TSInstitution from '../models/TSInstitution';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
-import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import IRootScopeService = angular.IRootScopeService;
