@@ -14,7 +14,10 @@ import java.util.Optional;
 public interface MitteilungService {
 
 	@Nonnull
-	Mitteilung saveMitteilung(@Nonnull Mitteilung mitteilung);
+	Mitteilung sendMitteilung(@Nonnull Mitteilung mitteilung);
+
+	@Nonnull
+	Mitteilung saveEntwurf(@Nonnull Mitteilung mitteilung);
 
 	@Nonnull
 	Mitteilung setMitteilungGelesen(@Nonnull String mitteilungsId);
@@ -34,7 +37,7 @@ public interface MitteilungService {
 	@Nullable
 	Mitteilung getEntwurfForCurrentRolle(Fall fall);
 
-	void removeMitteilung(Mitteilung mitteilungId);
+	void removeMitteilung(Mitteilung mitteilung);
 
 	void removeAllMitteilungenForFall(Fall fall);
 }

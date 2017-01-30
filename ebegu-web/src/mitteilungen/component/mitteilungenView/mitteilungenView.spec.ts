@@ -105,7 +105,8 @@ describe('mitteilungenView', function () {
             // mock saved mitteilung
             let savedMitteilung: TSMitteilung = new TSMitteilung();
             savedMitteilung.id = '321';
-            spyOn(mitteilungRS, 'createMitteilung').and.returnValue($q.when(savedMitteilung));
+            savedMitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
+            spyOn(mitteilungRS, 'sendMitteilung').and.returnValue($q.when(savedMitteilung));
             controller.getCurrentMitteilung().subject = 'subject';
             controller.getCurrentMitteilung().message = 'message';
 
@@ -113,12 +114,8 @@ describe('mitteilungenView', function () {
             controller.form.$dirty = true;
             controller.sendMitteilung();
 
-            expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.NEU);
-            expect(controller.getCurrentMitteilung().sentDatum).toBeDefined();
-
-            $rootScope.$apply();
-
-            expect(controller.getCurrentMitteilung()).toBeDefined();
+            expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.ENTWURF);
+            expect(controller.getCurrentMitteilung().sentDatum).toBeUndefined();
             expect(controller.getCurrentMitteilung().id).toBeUndefined();
         });
     });

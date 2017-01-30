@@ -49,22 +49,31 @@ public class MitteilungResource {
 
 	@Nullable
 	@PUT
+	@Path("/send")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxMitteilung saveMitteilung(
+	public JaxMitteilung sendMitteilung(
 		@Nonnull @NotNull @Valid JaxMitteilung mitteilungJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Mitteilung mitteilung = new Mitteilung();
-		if (mitteilungJAXP.getId() != null) {
-			final Optional<Mitteilung> optMitteilung = mitteilungService.findMitteilung(mitteilungJAXP.getId());
-			mitteilung = optMitteilung.orElse(new Mitteilung());
-		}
+		Mitteilung mitteilung = readAndConvertMitteilung(mitteilungJAXP);
+		Mitteilung persistedMitteilung = this.mitteilungService.sendMitteilung(mitteilung);
+		return converter.mitteilungToJAX(persistedMitteilung);
+	}
 
-		Mitteilung convertedMitteilung = converter.mitteilungToEntity(mitteilungJAXP, mitteilung);
-		Mitteilung persistedMitteilung = this.mitteilungService.saveMitteilung(convertedMitteilung);
+	@Nullable
+	@PUT
+	@Path("/entwurf")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxMitteilung saveEntwurf(
+		@Nonnull @NotNull @Valid JaxMitteilung mitteilungJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
 
+		Mitteilung mitteilung = readAndConvertMitteilung(mitteilungJAXP);
+		Mitteilung persistedMitteilung = this.mitteilungService.saveEntwurf(mitteilung);
 		return converter.mitteilungToJAX(persistedMitteilung);
 	}
 
@@ -186,5 +195,16 @@ public class MitteilungResource {
 			return Response.ok().build();
 		}
 		throw new EbeguEntityNotFoundException("removeMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "MitteilungID invalid: " + mitteilungJAXPId.getId());
+	}
+
+	private Mitteilung readAndConvertMitteilung(@Nonnull JaxMitteilung mitteilungJAXP) {
+		Mitteilung mitteilung = new Mitteilung();
+		if (mitteilungJAXP.getId() != null) {
+			final Optional<Mitteilung> optMitteilung = mitteilungService.findMitteilung(mitteilungJAXP.getId());
+			mitteilung = optMitteilung.orElse(new Mitteilung());
+		}
+
+		Mitteilung convertedMitteilung = converter.mitteilungToEntity(mitteilungJAXP, mitteilung);
+		return convertedMitteilung;
 	}
 }
