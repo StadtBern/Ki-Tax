@@ -29,6 +29,7 @@ export class DvQuicksearchboxController {
 
     selectedItem: TSSearchResultEntry;
     searchQuery: string;
+    searchString: string;
 
     static $inject: any[] = ['EbeguUtil', '$timeout', '$log', '$q', 'SearchIndexRS', 'CONSTANTS', '$filter', '$translate',
         '$state', 'AuthServiceRS', 'GesuchModelManager'];
@@ -47,6 +48,7 @@ export class DvQuicksearchboxController {
 
 
     public querySearch(query: string): IPromise<Array<TSSearchResultEntry>> {
+        this.searchString = query;
         let deferred = this.$q.defer();
         this.searchIndexRS.quickSearch(query).then((quickSearchResult: TSQuickSearchResult) => {
             this.limitResultsize(quickSearchResult);
@@ -98,7 +100,8 @@ export class DvQuicksearchboxController {
                 this.openGesuch(this.selectedItem.gesuchID, 'gesuch.fallcreation');
             }
         } else {
-            window.alert('navigate to result page')
+
+            this.$state.go('search', {searchString: this.searchString});
         }
     }
 
