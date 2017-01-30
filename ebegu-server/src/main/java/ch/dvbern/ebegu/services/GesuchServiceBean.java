@@ -2,8 +2,8 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.PredicateObjectDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -35,6 +35,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -71,6 +72,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private DokumentGrundService dokumentGrundService;
 	@Inject
 	private Authorizer authorizer;
+	@Inject
+	private BooleanAuthorizer booleanAuthorizer;
 	@Inject
 	private PrincipalBean principalBean;
 
@@ -110,6 +113,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Gesuch a = persistence.find(Gesuch.class, key);
 		authorizer.checkReadAuthorization(a);
 		return Optional.ofNullable(a);
+	}
+
+	@PermitAll
+	@Override
+	public List<Gesuch> findReadableGesuche(@Nullable Collection<String> gesuchIds) {
+		if(gesuchIds == null || gesuchIds.isEmpty()){
+			return Collections.emptyList();
+		}
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicateId = root.get(Gesuch_.id).in(gesuchIds);
+		query.where(predicateId);
+		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.id)));
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+		return criteriaResults.stream()
+			.filter(gesuch -> this.booleanAuthorizer.hasReadAuthorization(gesuch))
+			.collect(Collectors.toList());
 	}
 
 	@Nonnull

@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.Authorizer;
+import ch.dvbern.ebegu.services.BooleanAuthorizer;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -32,7 +33,7 @@ import static ch.dvbern.ebegu.enums.UserRole.*;
  */
 @RequestScoped
 @SuppressFBWarnings("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
-public class AuthorizerImpl implements Authorizer {
+public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	private static final UserRole[] JA_OR_ADM = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA};
 	private static final UserRole[] ALL_EXCEPT_INST_TRAEG = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, SCHULAMT, STEUERAMT};
@@ -361,6 +362,8 @@ public class AuthorizerImpl implements Authorizer {
 
 	private boolean isReadAuthorized(Gesuch entity) {
 		boolean isOwnerOrAdmin = isInRoleOrGSOwner(JA_OR_ADM, entity::getFall, principalBean.getPrincipal().getName());
+		//todo team eigentlich muessten wir beim gesuch auch noch pruefen ob es freigegeben ist um zu wissen ob JA zugriff hat
+		// das wird neu wichtig fuer die quicksearch suche
 		if (isOwnerOrAdmin) {
 			return true;
 		}
@@ -448,4 +451,10 @@ public class AuthorizerImpl implements Authorizer {
 		query.where(predicateGs1OrGs2);
 		return persistence.getCriteriaSingleResult(query);
 	}
+
+	@Override
+	public boolean hasReadAuthorization(@Nullable Gesuch gesuch) {
+		return isReadAuthorized(gesuch);
+	}
+
 }

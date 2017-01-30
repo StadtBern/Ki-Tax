@@ -51,7 +51,9 @@ public interface Constants {
 
 	DateRange DEFAULT_GUELTIGKEIT = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
 
-	long MAX_TEMP_DOWNLOAD_AGE_MINUTES = 3;
+	long MAX_TEMP_DOWNLOAD_AGE_MINUTES = 3L;
 
 	int FALLNUMMER_LENGTH = 6;
+	long MAX_LUCENE_QUERY_RUNTIME = 500L;
+	int MAX_LUCENE_QUICKSEARCH_RESULTS = 15; // hier gibt es ein Problem, wenn wir fuer keines der Resultate berechtigt sind wird unser resultset leer sein auf client
 }

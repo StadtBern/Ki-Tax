@@ -46,6 +46,16 @@
 
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    <dv-loading-button force-wait-service="true" button-click="vm.startReindex()">Suchindex neu erstellen</dv-loading-button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    <dv-quicksearchbox></dv-quicksearchbox>
+                </div>
+            </div>
 
             <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate
                   ng-if="vm.applicationProperty"
