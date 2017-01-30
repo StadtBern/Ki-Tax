@@ -833,4 +833,18 @@ public final class TestDataUtil {
 		gesuch.setStatus(status);
 		return gesuch;
 	}
+
+	public static Mitteilung createMitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp,
+											  Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
+		Mitteilung mitteilung = new Mitteilung();
+		mitteilung.setFall(fall);
+		mitteilung.setEmpfaenger(empfaenger);
+		mitteilung.setSender(sender);
+		mitteilung.setMitteilungStatus(MitteilungStatus.NEU);
+		mitteilung.setSubject("Subject");
+		mitteilung.setEmpfaengerTyp(empfaengerTyp);
+		mitteilung.setSenderTyp(senderTyp);
+		mitteilung.setMessage("Message");
+		return mitteilung;
+	}
 }

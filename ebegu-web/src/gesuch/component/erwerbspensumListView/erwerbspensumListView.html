@@ -5,8 +5,10 @@
                 <span data-translate="ERWERBSPENSEN_LIST_TITLE"></span>
             </h1>
             <hr class="header"/>
-            <div ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="well well-status-warten"
-               data-translate="ERWERBSPENSEN_LIST_HINT"></div>
+            <div ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="well well-status-warten">
+                <h3 data-translate="ERWERBSPENSEN_LIST_HINT">
+                </h3>
+            </div>
             <p class="inlineHint" ng-if="!vm.isErwerbspensumRequired()" data-translate="ERWERBSPENSEN_NOT_REQUIRED"></p>
         </div>
     </div>

@@ -30,6 +30,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 
 	@Inject
 	private Persistence<Fall> persistence;
+
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
@@ -41,6 +42,13 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 
 	@Inject
 	private PrincipalBean principalBean;
+
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private MitteilungService mitteilungService;
+
 
 	@Nonnull
 	@Override
@@ -112,6 +120,29 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		Optional<Fall> fallToRemove = findFall(fall.getId());
 		Fall loadedFall = fallToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fall));
 		authorizer.checkWriteAuthorization(loadedFall);
+		// Alle Gesuche des Falls ebenfalls loeschen
+		final List<String> allGesucheForFall = gesuchService.getAllGesuchIDsForFall(loadedFall.getId());
+		allGesucheForFall
+			.forEach(gesuchId -> gesuchService.findGesuch(gesuchId)
+				.ifPresent((gesuch) -> {
+					gesuchService.removeGesuch(gesuch.getId());
+				}));
+		// Remove all depending objects
+		mitteilungService.removeAllMitteilungenForFall(loadedFall);
+		//TODO (team) muessten die Gesuche hier auch geloescht werden?
+		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(loadedFall);
+	}
+
+	@Override
+	public Optional<Fall> createFallForCurrentGesuchstellerAsBesitzer() {
+		Optional<Benutzer> currentBenutzerOptional = benutzerService.getCurrentBenutzer();
+		if (currentBenutzerOptional.isPresent() && UserRole.GESUCHSTELLER.equals(currentBenutzerOptional.get().getRole())) {
+			final Optional<Fall> existingFall = findFallByCurrentBenutzerAsBesitzer();
+			if (!existingFall.isPresent()) {
+				return Optional.of(saveFall(new Fall()));
+			}
+		}
+		return Optional.empty();
 	}
 }

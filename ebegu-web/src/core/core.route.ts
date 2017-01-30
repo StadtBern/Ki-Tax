@@ -58,11 +58,6 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         }
     });
 
-    $rootScope.$on(TSAuthEvent[TSAuthEvent.CHANGE_USER], () => {
-        // User has changed with backdoor, we need to reload app to delete stored data.
-        // See: http://stackoverflow.com/questions/26522875/best-practices-for-clearing-data-in-sevices-on-logout-in-angularjs
-        $window.location.reload();
-    });
 
     $rootScope.$on(TSAuthEvent[TSAuthEvent.NOT_AUTHENTICATED], () => {
         //user is not yet authenticated, show loginpage
@@ -74,6 +69,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         if (currentPath.indexOf('fedletSSOInit') === -1
             && ($state.current !== undefined && $state.current.name !== 'login')
             && ($state.current !== undefined && $state.current.name !== 'locallogin')
+            && ($state.current !== undefined && $state.current.name !== 'schulung')
             && currentPath.indexOf('sendRedirectForValidation') === -1) {
             $state.go('login', {relayPath: currentPath, type: 'login'});
         } else {

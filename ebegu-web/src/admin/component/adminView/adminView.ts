@@ -201,6 +201,26 @@ export class AdminViewController {
         });
     }
 
+    public resetSchulungsdaten(): IPromise<any> {
+        return this.testFaelleRS.resetSchulungsdaten().then((response) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: response.data
+            }).then(() => {
+                //do nothing
+            });
+        });
+    }
+
+    public deleteSchulungsdaten(): IPromise<any> {
+        return this.testFaelleRS.deleteSchulungsdaten().then((response) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: response.data
+            }).then(() => {
+                //do nothing
+            });
+        });
+    }
+
     public startReindex(){
         return this.reindexRS.reindex();
     }

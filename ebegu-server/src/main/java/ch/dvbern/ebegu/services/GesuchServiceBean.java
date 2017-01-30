@@ -159,12 +159,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN})
-	public void removeGesuch(@Nonnull Gesuch gesuch) {
-		Validate.notNull(gesuch);
-		Optional<Gesuch> gesuchOptional = findGesuch(gesuch.getId());
-		authorizer.checkWriteAuthorization(gesuch);
-		Gesuch gesToRemove = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuch));
-
+	public void removeGesuch(@Nonnull String gesuchId) {
+		Validate.notNull(gesuchId);
+		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
+		Gesuch gesToRemove = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("removeGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId));
+		authorizer.checkWriteAuthorization(gesuchOptional.get());
 		//Remove all depending objects
 		wizardStepService.removeSteps(gesToRemove);  //wizard steps removen
 		mahnungService.removeAllMahnungenFromGesuch(gesToRemove);
@@ -179,7 +178,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
-	public Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname) {
+	public List<Gesuch> findGesuchByGSName(String nachname, String vorname) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
@@ -196,7 +195,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		q.setParameter(nameParam, nachname);
 		q.setParameter(vornameParam, vorname);
 
-		return Optional.ofNullable(q.getResultList());
+		return q.getResultList();
 	}
 
 	@Override

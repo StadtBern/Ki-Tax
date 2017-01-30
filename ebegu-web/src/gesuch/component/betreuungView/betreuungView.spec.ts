@@ -62,7 +62,7 @@ describe('betreuungView', function () {
             wizardStepManager, $stateParams);
         betreuungView.model = betreuung;
 
-        let form = createDummyForm();
+        let form = TestDataUtil.createDummyForm();
         // $rootScope.form = form;
         betreuungView.form = form;
     }));
@@ -224,14 +224,6 @@ describe('betreuungView', function () {
         } else {
             expect($state.go).not.toHaveBeenCalled();
         }
-    }
-
-    function createDummyForm(): any {
-        let form: any = {};
-        form.$valid = true;
-        form.$setPristine = () => {};
-        form.$setUntouched = () => {};
-        return form;
     }
 
 });

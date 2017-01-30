@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import org.apache.commons.lang.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ public abstract class AbstractTestfall {
 	protected Gesuchsperiode gesuchsperiode;
 	protected Collection<InstitutionStammdaten> institutionStammdatenList;
 
+	protected String fixId = null;
 	protected Fall fall = null;
 	protected Gesuch gesuch = null;
 	protected boolean betreuungenBestaetigt;
@@ -68,6 +70,9 @@ public abstract class AbstractTestfall {
 		}
 		// Gesuch
 		gesuch = new Gesuch();
+		if (StringUtils.isNotEmpty(fixId)) {
+			gesuch.setId(fixId);
+		}
 		gesuch.setGesuchsperiode(gesuchsperiode);
 		gesuch.setFall(fall);
 		gesuch.setEingangsdatum(eingangsdatum);
@@ -286,5 +291,13 @@ public abstract class AbstractTestfall {
 
 	public Gesuch getGesuch() {
 		return gesuch;
+	}
+
+	public String getFixId() {
+		return fixId;
+	}
+
+	public void setFixId(String fixId) {
+		this.fixId = fixId;
 	}
 }

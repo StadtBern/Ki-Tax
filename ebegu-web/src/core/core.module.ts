@@ -68,7 +68,7 @@ import {DvMobileNavigationToggleComponentConfig} from './component/dv-mobile-nav
 import {SearchIndexRS} from './service/searchIndexRS.rest';
 import {DvSearchResultIconComponentConfig} from './component/dv-search/dv-search-result-icon/dv-search-result-icon';
 import {DvQuicksearchboxComponentConfig} from './component/dv-search/dv-quicksearchbox/dv-quicksearchbox';
-
+import MitteilungRS from './service/mitteilungRS.rest';
 let dynamicDependencies = function (): string[] {
 
     let dynDep: string [] = [];
@@ -151,6 +151,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('DownloadRS', DownloadRS)
     .service('WizardStepRS', WizardStepRS)
     .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
+    .service('MitteilungRS', MitteilungRS)
     .service('GlobalCacheService', GlobalCacheService)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
