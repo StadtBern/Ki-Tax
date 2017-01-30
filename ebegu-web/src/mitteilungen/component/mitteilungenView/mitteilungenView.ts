@@ -60,13 +60,18 @@ export class MitteilungenViewController {
      * Mitteilung zurueck.
      */
     private loadEntwurf() {
-        this.mitteilungRS.getEntwurfForCurrentRolle(this.fall.id).then((entwurf: TSMitteilung) => {
-            if (entwurf) {
-                this.currentMitteilung = entwurf;
-            } else {
-                this.initMitteilungForCurrentBenutzer();
-            }
-        });
+        // Wenn der Fall keinen Besitzer hat, darf auch keine Nachricht geschrieben werden
+        if (this.fall.besitzer) {
+            this.mitteilungRS.getEntwurfForCurrentRolle(this.fall.id).then((entwurf: TSMitteilung) => {
+                if (entwurf) {
+                    this.currentMitteilung = entwurf;
+                } else {
+                    this.initMitteilungForCurrentBenutzer();
+                }
+            });
+        } else {
+            this.currentMitteilung = undefined;
+        }
     }
 
     private initMitteilungForCurrentBenutzer() {
@@ -93,7 +98,6 @@ export class MitteilungenViewController {
             this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
             this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
             this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.INSTITUTION;
-
         }
     }
 

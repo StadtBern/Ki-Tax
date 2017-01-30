@@ -74,8 +74,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp())) {
 				if (validationValues.isEmpty() && mitteilung.getEmpfaenger() != null) {
 					mailService.sendInfoMitteilungErhalten(mitteilung);
-				}
-				else {
+				} else {
 					throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, "Mitteilung is not valid");
 				}
 			}
