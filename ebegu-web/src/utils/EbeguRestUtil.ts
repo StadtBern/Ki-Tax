@@ -58,6 +58,8 @@ import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../models/TSAdresseContainer';
 import TSEinkommensverschlechterungInfoContainer from '../models/TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
+import TSQuickSearchResult from '../models/dto/TSQuickSearchResult';
+import TSSearchResultEntry from '../models/dto/TSSearchResultEntry';
 
 
 export default class EbeguRestUtil {
@@ -1317,6 +1319,34 @@ export default class EbeguRestUtil {
             pendenzen[0] = this.parseAntragDTO(new TSAntragDTO(), data);
         }
         return pendenzen;
+    }
+
+    public parseQuickSearchResult(dataFromServer: any): TSQuickSearchResult{
+        if(dataFromServer ){
+            let resultEntries: Array<TSSearchResultEntry>= this.parseSearchResultEntries(dataFromServer.resultEntities);
+            return new TSQuickSearchResult(resultEntries, dataFromServer.numberOfResults);
+        }
+        return undefined;
+    }
+
+    private parseSearchResultEntries(entries: Array<any>): Array<TSSearchResultEntry> {
+        let searchResultEntries: TSSearchResultEntry[] = [];
+        if (entries && Array.isArray(entries)) {
+            for (let i = 0; i < entries.length; i++) {
+                searchResultEntries[i] = this.parseSearchResultEntry(new TSSearchResultEntry(), entries[i]);
+            }
+        }
+        return searchResultEntries;
+    }
+
+    private parseSearchResultEntry(entry: TSSearchResultEntry, dataFromServer: any): TSSearchResultEntry {
+        entry.additionalInformation = dataFromServer.additionalInformation;
+        entry.gesuchID = dataFromServer.gesuchID;
+        entry.resultId = dataFromServer.resultId;
+        entry.text = dataFromServer.text;
+        entry.entity = dataFromServer.entity;
+        entry.antragDTO = this.parseAntragDTO(new TSAntragDTO(), dataFromServer.antragDTO);
+        return entry;
     }
 
     public pendenzInstitutionToRestObject(restPendenz: any, pendenz: TSPendenzInstitution): any {

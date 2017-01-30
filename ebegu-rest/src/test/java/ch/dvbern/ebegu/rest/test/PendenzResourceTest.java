@@ -46,6 +46,8 @@ public class PendenzResourceTest extends AbstractEbeguRestLoginTest {
 		TestDataUtil.persistEntities(gesuch2, persistence);
 
 		List<JaxAntragDTO> pendenzenList = pendenzResource.getAllPendenzenJA();
+		// Die Antraege muessen sortiert werden, damit der Test immer gleich ablaeuft
+//		Collections.sort(pendenzenList, (o1, o2) -> o1.getFallNummer() > o2.getFallNummer() ? 1 : -1);
 
 		Assert.assertNotNull(pendenzenList);
 		Assert.assertEquals(2, pendenzenList.size());

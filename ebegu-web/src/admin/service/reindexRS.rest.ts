@@ -2,7 +2,7 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IHttpPromise} from 'angular';
 
 
-export class SearchIndexRS {
+export class ReindexRS {
     serviceURL: string;
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
@@ -18,5 +18,6 @@ export class SearchIndexRS {
     reindex(): IHttpPromise<any> {
         return this.http.get(this.serviceURL + '/' );
     }
+
 }
 

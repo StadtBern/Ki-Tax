@@ -1,0 +1,20 @@
+<md-autocomplete flex=""
+                 md-input-name="autocompleteField"
+                 md-min-length="2"
+                 md-no-cache="vm.noCache"
+                 md-delay="vm.delay"
+                 md-selected-item="vm.selectedItem"
+                 md-selected-item-change="vm.selectItemChanged()"
+                 md-search-text="vm.searchQuery"
+                 md-items="item in vm.querySearch(vm.searchQuery)"
+                 md-item-text="item.antragDTO.getQuicksearchString()"
+                 md-require-match="false"
+                 placeholder="Schnellsuche">
+    <md-item-template>
+        <span md-highlight-text="vm.searchQuery" md-highlight-flags="i">
+            {{item.antragDTO.getQuicksearchString()}}{{' ('+ item.text+ ') '}}
+        </span>
+        <dv-search-result-icon entry="item"></dv-search-result-icon>
+    </md-item-template>
+
+</md-autocomplete>

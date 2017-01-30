@@ -6,7 +6,7 @@ import {AdminViewComponentConfig} from './component/adminView/adminView';
 import {InstitutionViewComponentConfig} from './component/institutionView/institutionView';
 import {ParameterViewComponentConfig} from './component/parameterView/parameterView';
 import {ApplicationPropertyRS} from './service/applicationPropertyRS.rest';
-import {SearchIndexRS} from './service/searchIndexRS.rest';
+import {ReindexRS} from './service/reindexRS.rest';
 import {adminRun} from './admin.route';
 import {InstitutionRS} from '../core/service/institutionRS.rest';
 import {EbeguParameterRS} from './service/ebeguParameterRS.rest';
@@ -19,7 +19,7 @@ export const EbeguWebAdmin = angular.module('ebeguWeb.admin', [EbeguWebCore.name
     .service('InstitutionRS', InstitutionRS)
     .service('EbeguParameterRS', EbeguParameterRS)
     .service('EbeguVorlageRS', EbeguVorlageRS)
-    .service('SearchIndexRS', SearchIndexRS)
+    .service('ReindexRS', ReindexRS)
     .service('TestFaelleRS', TestFaelleRS)
     .component('dvAdminView', new AdminViewComponentConfig())
     .component('dvInstitutionView', new InstitutionViewComponentConfig())

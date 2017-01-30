@@ -54,4 +54,6 @@ public interface Constants {
 	long MAX_TEMP_DOWNLOAD_AGE_MINUTES = 3;
 
 	int FALLNUMMER_LENGTH = 6;
+	long MAX_LUCENE_QUERY_RUNTIME = 500;
+	int MAX_LUCENE_QUICKSEARCH_RESULTS = 15; // hier gibt es ein Problem, wenn wir fuer keines der Resultate berechtigt sind wird unser resultset leer sein auf client
 }

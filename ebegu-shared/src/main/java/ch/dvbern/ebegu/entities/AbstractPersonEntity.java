@@ -1,8 +1,11 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EbeguLocalDateBridge;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -42,6 +45,8 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 
 	@Column(nullable = false)
 	@NotNull
+	@FieldBridge(impl=EbeguLocalDateBridge.class)   //wir indizieren dates als string
+	@Field(analyze= Analyze.NO) //datumsfelder nicht tokenizen etc
 	private LocalDate geburtsdatum;
 
 
