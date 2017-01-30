@@ -59,6 +59,9 @@
 
             <!--Alle Mitteilungen-->
             <div class="row mitteilungenList marginLeft10 marginTop50">
+                <div ng-if="vm.allMitteilungen.length === 0">
+                    <span data-translate="MITTEILUNGEN_NOCH_KEINE"></span>
+                </div>
                 <div ng-repeat="mitteilung in vm.allMitteilungen"
                      ng-class="{'row': true, 'marginTop10': true, 'mitteilungItem': true,
                         'marginLeft50': vm.isCurrentUserTypTheSenderTyp(mitteilung),
