@@ -48,6 +48,7 @@ public class SearchIndexServiceBean implements SearchIndexService {
 			.filter(SearchEntityType::isGlobalSearch)
 			.map(searchEntityType -> new SearchFilter(searchEntityType, Constants.MAX_LUCENE_QUICKSEARCH_RESULTS))
 			.collect(Collectors.toList());
+
 	private static final String WILDCARD = "*";
 
 	@Inject
@@ -69,7 +70,7 @@ public class SearchIndexServiceBean implements SearchIndexService {
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT, SCHULAMT})
 	public QuickSearchResultDTO search(@Nonnull String searchText, @Nonnull List<SearchFilter> filters) {
-		Validate.notNull(searchText,"searchText must be set");
+		Validate.notNull(searchText, "searchText must be set");
 		Validate.notNull(filters, "filters must be set");
 		QuickSearchResultDTO result = new QuickSearchResultDTO();
 		List<String> stringsToMatch = tokenizeAndAndAddWildcardToQuery(searchText);
@@ -87,7 +88,6 @@ public class SearchIndexServiceBean implements SearchIndexService {
 	 * Es sollte drauf geachtet werden, dass der gleiche Analyzer verwendet wird mit dem jeweils auch der Index erzeugt wird.
 	 * Wir fuehren diesen schritt manuell durch weil Hibernate-Search bei wildcard queries den analyzer NICHT anwendet
 	 * vergl.doku (Wildcard queries do not apply the analyzer on the matching terms. Otherwise the risk of * or ? being mangled is too high.)
-	 *
 	 *
 	 * @param searchText searchstring der tokenized werden soll
 	 * @return Liste der normalizierten und um wildcards ergaenzten suchstrings
@@ -130,7 +130,6 @@ public class SearchIndexServiceBean implements SearchIndexService {
 
 
 	//hibernate-search dsl is not well suited for programmatic queries which is why this code is kind of unwieldy.
-	@Nonnull
 	private FullTextQuery buildLuceneQuery(@Nonnull List<String> searchTermList, @Nonnull SearchFilter filter) {
 		Class<Searchable> entityClass = filter.getSearchEntityType().getEntityClass();
 		Validate.notNull(filter.getSearchEntityType());
@@ -149,7 +148,6 @@ public class SearchIndexServiceBean implements SearchIndexService {
 
 		Query query = booleanJunction.createQuery();
 		return fullTextEntityManager.createFullTextQuery(query, entityClass);
-
 	}
 
 	/**
@@ -175,8 +173,7 @@ public class SearchIndexServiceBean implements SearchIndexService {
 			termCtxt = termCtxt.andField(s).ignoreFieldBridge();
 		}
 		TermTermination matching = termCtxt.matching(currSearchTerm);
-		Query query = matching.createQuery();
-		return query;
+		return matching.createQuery();
 	}
 
 }

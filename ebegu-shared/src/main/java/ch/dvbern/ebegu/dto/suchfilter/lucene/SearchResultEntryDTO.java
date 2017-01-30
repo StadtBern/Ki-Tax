@@ -49,6 +49,7 @@ public class SearchResultEntryDTO implements Serializable {
 		return entity;
 	}
 
+	@Nonnull
 	public String getResultId() {
 		return resultId;
 	}
