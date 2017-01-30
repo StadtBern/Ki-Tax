@@ -71,8 +71,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp())) {
 				if (validationValues.isEmpty() && mitteilung.getEmpfaenger() != null) {
 					mailService.sendInfoMitteilungErhalten(mitteilung);
-				}
-				else {
+				} else {
 					throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, "Mitteilung is not valid");
 				}
 			}
@@ -98,7 +97,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Mitteilung setMitteilungGelesen(@Nonnull String mitteilungsId) {
-		return setMitteilungsStatusIfBerechtigt(mitteilungsId, MitteilungStatus.GELESEN, MitteilungStatus.NEU);
+		return setMitteilungsStatusIfBerechtigt(mitteilungsId, MitteilungStatus.GELESEN, MitteilungStatus.NEU, MitteilungStatus.ERLEDIGT);
 	}
 
 	@Nonnull
@@ -278,6 +277,18 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		}
 	}
 
+	@Override
+	public Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(Fall fall) {
+		Collection<Mitteilung> mitteilungen = getMitteilungenForCurrentRolle(fall);
+		for (Mitteilung mitteilung : mitteilungen) {
+			if (MitteilungStatus.NEU.equals(mitteilung.getMitteilungStatus())) {
+				setMitteilungsStatusIfBerechtigt(mitteilung, MitteilungStatus.GELESEN, MitteilungStatus.NEU);
+			}
+			persistence.merge(mitteilung);
+		}
+		return mitteilungen;
+	}
+
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {
 		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getMitteilungenForCurrentRolle", "No User is logged in"));
 		//noinspection EnumSwitchStatementWhichMissesCases
@@ -299,11 +310,15 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		}
 	}
 
-	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull String mitteilungsId, MitteilungStatus statusRequested, MitteilungStatus statusRequired) {
+	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull String mitteilungsId, MitteilungStatus statusRequested, @Nonnull MitteilungStatus... statusRequired) {
 		Optional<Mitteilung> mitteilungOptional = findMitteilung(mitteilungsId);
 		Mitteilung mitteilung = mitteilungOptional.orElseThrow(() -> new EbeguRuntimeException("setMitteilungsStatusIfBerechtigt", "Mitteilung not found"));
-		if (!statusRequired.equals(mitteilung.getMitteilungStatus())) {
-			throw new IllegalStateException("Mitteilung " + mitteilungsId + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt " + statusRequired);
+		return setMitteilungsStatusIfBerechtigt(mitteilung, statusRequested, statusRequired);
+	}
+
+	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull Mitteilung mitteilung, MitteilungStatus statusRequested, @Nonnull MitteilungStatus... statusRequired) {
+		if (!Arrays.asList(statusRequired).contains(mitteilung.getMitteilungStatus())) {
+			throw new IllegalStateException("Mitteilung " + mitteilung.getId() + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt " + Arrays.toString(statusRequired));
 		}
 		if (mitteilung.getEmpfaengerTyp().equals(getMitteilungTeilnehmerTypForCurrentUser())) {
 			mitteilung.setMitteilungStatus(statusRequested);

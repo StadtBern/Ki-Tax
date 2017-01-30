@@ -48,7 +48,9 @@ export class MitteilungenViewController {
             this.fallRS.findFall(this.$stateParams.fallId).then((response) => {
                 this.fall = response;
                 this.loadEntwurf();
-                this.loadAllMitteilungen();
+                this.setAllMitteilungenGelesen().then((response) => {
+                    this.loadAllMitteilungen();
+                });
             });
         }
     }
@@ -58,13 +60,18 @@ export class MitteilungenViewController {
      * Mitteilung zurueck.
      */
     private loadEntwurf() {
-        this.mitteilungRS.getEntwurfForCurrentRolleForFall(this.fall.id).then((entwurf: TSMitteilung) => {
-            if (entwurf) {
-                this.currentMitteilung = entwurf;
-            } else {
-                this.initMitteilungForCurrentBenutzer();
-            }
-        });
+        // Wenn der Fall keinen Besitzer hat, darf auch keine Nachricht geschrieben werden
+        if (this.fall.besitzer) {
+            this.mitteilungRS.getEntwurfForCurrentRolleForFall(this.fall.id).then((entwurf: TSMitteilung) => {
+                if (entwurf) {
+                    this.currentMitteilung = entwurf;
+                } else {
+                    this.initMitteilungForCurrentBenutzer();
+                }
+            });
+        } else {
+            this.currentMitteilung = undefined;
+        }
     }
 
     private initMitteilungForCurrentBenutzer() {
@@ -91,7 +98,6 @@ export class MitteilungenViewController {
             this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
             this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
             this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.INSTITUTION;
-
         }
     }
 
@@ -192,4 +198,26 @@ export class MitteilungenViewController {
         }
     }
 
+    private setAllMitteilungenGelesen(): IPromise<Array<TSMitteilung>> {
+        return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
+    }
+
+    /**
+     * Aendert den Status der gegebenen Mitteilung auf ERLEDIGT wenn es GELESEN war oder
+     * auf GELESEN wenn es ERLEDIGT war
+     */
+    public setErledigt(mitteilung: TSMitteilung): void {
+        if (mitteilung && mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN) {
+            mitteilung.mitteilungStatus = TSMitteilungStatus.ERLEDIGT;
+            this.mitteilungRS.setMitteilungErledigt(mitteilung.id);
+
+        } else if (mitteilung && mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT) {
+            mitteilung.mitteilungStatus = TSMitteilungStatus.GELESEN;
+            this.mitteilungRS.setMitteilungGelesen(mitteilung.id);
+        }
+    }
+
+    public isStatusErledigtGelesen(mitteilung: TSMitteilung): boolean {
+        return mitteilung && (mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT || mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN);
+    }
 }

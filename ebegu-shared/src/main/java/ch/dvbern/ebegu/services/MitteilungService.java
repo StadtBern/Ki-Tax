@@ -47,4 +47,10 @@ public interface MitteilungService {
 	void removeMitteilung(@Nonnull Mitteilung mitteilung);
 
 	void removeAllMitteilungenForFall(@Nonnull Fall fall);
+
+	/**
+	 * Sucht alle Mitteilungen des uebergebenen Falls und fuer jede, die im Status NEU ist, wechselt
+	 * ihren Status auf GELESEN.
+	 */
+	Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(Fall fall);
 }

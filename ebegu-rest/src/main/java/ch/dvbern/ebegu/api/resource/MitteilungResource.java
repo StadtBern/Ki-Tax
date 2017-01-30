@@ -140,8 +140,8 @@ public class MitteilungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(fallId.getId());
-		String mitteilungID = converter.toEntityId(fallId);
-		Optional<Fall> fall = fallService.findFall(mitteilungID);
+		String convertedFallID = converter.toEntityId(fallId);
+		Optional<Fall> fall = fallService.findFall(convertedFallID);
 		if (fall.isPresent()) {
 			final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForCurrentRolle(fall.get());
 			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
@@ -193,8 +193,8 @@ public class MitteilungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(fallId.getId());
-		String mitteilungID = converter.toEntityId(fallId);
-		Optional<Fall> fall = fallService.findFall(mitteilungID);
+		String convertedFallID = converter.toEntityId(fallId);
+		Optional<Fall> fall = fallService.findFall(convertedFallID);
 		if (fall.isPresent()) {
 			final Mitteilung mitteilung = mitteilungService.getEntwurfForCurrentRolle(fall.get());
 			if (mitteilung == null) {
@@ -243,6 +243,26 @@ public class MitteilungResource {
 			return Response.ok().build();
 		}
 		throw new EbeguEntityNotFoundException("removeMitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "MitteilungID invalid: " + mitteilungJAXPId.getId());
+	}
+
+	@Nullable
+	@PUT
+	@Path("/setallgelesen/{fallId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<JaxMitteilung> setAllNewMitteilungenOfFallGelesen(
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(fallId.getId());
+		String convertedFallID = converter.toEntityId(fallId);
+		Optional<Fall> fall = fallService.findFall(convertedFallID);
+		if (fall.isPresent()) {
+			final Collection<Mitteilung> mitteilungen = mitteilungService.setAllNewMitteilungenOfFallGelesen(fall.get());
+			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
+		}
+		throw new EbeguEntityNotFoundException("setAllNewMitteilungenOfFallGelesen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "FallID invalid: " + fallId.getId());
 	}
 
 	private Mitteilung readAndConvertMitteilung(@Nonnull JaxMitteilung mitteilungJAXP) {

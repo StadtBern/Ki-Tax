@@ -11,50 +11,58 @@
     <div class="col-md-12">
         <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
 
+            <!-- Entwurf / Neue Mitteilung -->
+            <div ng-if="vm.getCurrentMitteilung()">
 
-            <!--Subject-->
-            <div class="row">
-                <div class="col-sm-12 dv-input-container-medium">
-                    <dv-input-container class="form-group">
-                        <label class="md-no-float" data-translate="MITTEILUNG_SUBJECT" for="subject_ID"></label>
-                        <input id="subject_ID" type="text" name="subject" ng-model="vm.getCurrentMitteilung().subject"
-                               dv-max-length
-                               class="form-control input-dv"
-                               ng-blur="vm.saveEntwurf()">
-                        <dv-error-messages for="vm.form.subject.$error"
-                                           class="error"></dv-error-messages>
-                    </dv-input-container>
+                <!--Subject-->
+                <div class="row">
+                    <div class="col-sm-12 dv-input-container-medium">
+                        <dv-input-container class="form-group">
+                            <label class="md-no-float" data-translate="MITTEILUNG_SUBJECT" for="subject_ID"></label>
+                            <input id="subject_ID" type="text" name="subject"
+                                   ng-model="vm.getCurrentMitteilung().subject"
+                                   dv-max-length
+                                   class="form-control input-dv"
+                                   ng-blur="vm.saveEntwurf()">
+                            <dv-error-messages for="vm.form.subject.$error"
+                                               class="error"></dv-error-messages>
+                        </dv-input-container>
+                    </div>
                 </div>
-            </div>
 
-            <!--Message-->
-            <div class="row">
-                <div class="col-sm-12 dv-input-container-medium">
-                    <dv-input-container class="form-group kommentar-feld">
-                        <label class="md-no-float" for="message"
-                               data-translate="MITTEILUNG_MESSAGE"></label>
-                        <textarea md-no-autogrow class="form-control" rows="4" id="message"
-                                  maxlength="4000"
-                                  ng-model="vm.getCurrentMitteilung().message"
-                                  ng-blur="vm.saveEntwurf()">
-                        </textarea>
-                    </dv-input-container>
+                <!--Message-->
+                <div class="row">
+                    <div class="col-sm-12 dv-input-container-medium">
+                        <dv-input-container class="form-group kommentar-feld">
+                            <label class="md-no-float" for="message"
+                                   data-translate="MITTEILUNG_MESSAGE"></label>
+                            <textarea md-no-autogrow class="form-control" rows="4" id="message"
+                                      maxlength="4000"
+                                      ng-model="vm.getCurrentMitteilung().message"
+                                      ng-blur="vm.saveEntwurf()">
+                            </textarea>
+                        </dv-input-container>
+                    </div>
                 </div>
-            </div>
 
-            <!--Send Buttons-->
-            <div class="row">
-                <div class="col-sm-12 dv-input-container-medium">
-                    <dv-loading-button button-click="vm.sendMitteilung()" type="button"
-                                       button-class="dv-btn-operation" >
-                        <i class="fa fa-lg fa-paper-plane"></i>
-                        <span data-translate="MITTEILUNG_SENDEN"></span>
-                    </dv-loading-button>
+                <!--Send Buttons-->
+                <div class="row">
+                    <div class="col-sm-12 dv-input-container-medium">
+                        <dv-loading-button button-click="vm.sendMitteilung()" type="button"
+                                           button-class="dv-btn-operation">
+                            <i class="fa fa-lg fa-paper-plane"></i>
+                            <span data-translate="MITTEILUNG_SENDEN"></span>
+                        </dv-loading-button>
+                    </div>
                 </div>
+
             </div>
 
             <!--Alle Mitteilungen-->
             <div class="row mitteilungenList marginLeft10 marginTop50">
+                <div ng-if="vm.allMitteilungen.length === 0">
+                    <span data-translate="MITTEILUNGEN_NOCH_KEINE"></span>
+                </div>
                 <div ng-repeat="mitteilung in vm.allMitteilungen"
                      ng-class="{'row': true, 'marginTop10': true, 'mitteilungItem': true,
                         'marginLeft50': vm.isCurrentUserTypTheSenderTyp(mitteilung),
@@ -72,10 +80,20 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12 dv-input-container-medium">
+                            <div class="col-md-4 dv-input-container-medium">
                                 <span ng-bind="mitteilung.sender.getFullName()"></span>
                             </div>
-                            <div class="col-md-12 dv-input-container-medium">
+                            <div class="col-md-4 dv-input-container-medium"
+                                 dv-show-element
+                                 dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                                 dv-show-expression="!vm.isCurrentUserTypTheSenderTyp(mitteilung) && vm.isStatusErledigtGelesen(mitteilung)">
+                                <md-checkbox name="erledigt-{{$index}}" aria-label="erledigt"
+                                             ng-checked="mitteilung.mitteilungStatus === 'ERLEDIGT'"
+                                             ng-click="vm.setErledigt(mitteilung); $event.stopPropagation()">
+                                    <span data-translate="MITTEILUNGEN_ERLEDIGT"></span>
+                                </md-checkbox>
+                            </div>
+                            <div class="col-md-4 dv-input-container-medium">
                                 <span ng-bind="mitteilung.sentDatum | amDateFormat : 'DD.MM.YYYY / HH:mm'"></span>
                             </div>
                         </div>
