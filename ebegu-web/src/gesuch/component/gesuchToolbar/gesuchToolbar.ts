@@ -27,6 +27,7 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
         gesuchid: '@',
         onVerantwortlicherChange: '&',
         fallid: '@',
+        isDashboardScreen: '@',
     };
 
     template = templateX;
@@ -39,6 +40,7 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
     bindings: any = {
         gesuchid: '@',
         fallid: '@',
+        isDashboardScreen: '@',
     };
     template = templateGS;
     controller = GesuchToolbarController;
@@ -52,6 +54,7 @@ export class GesuchToolbarController {
     antragList: Array<TSAntragDTO>;
     gesuchid: string;
     fallid: string;
+    isDashboardScreen: boolean;
     TSRoleUtil: any;
 
     onVerantwortlicherChange: (attr: any) => void;
@@ -141,11 +144,14 @@ export class GesuchToolbarController {
     }
 
     public showGesuchPeriodeNavigationMenu(): boolean {
-        return !angular.equals(this.gesuchsperiodeList, {});
+        return !this.isDashboardScreen && !angular.equals(this.gesuchsperiodeList, {});
     }
 
+    /**
+     * Die Liste wird nicht angezeigt wenn sie leer ist oder wenn der Benutzer sich auf dem Dashboard befindet
+     */
     public showAntragTypListNavigationMenu(): boolean {
-        return !angular.equals(this.antragTypList, {});
+        return !this.isDashboardScreen && !angular.equals(this.antragTypList, {});
     }
 
     public showKontaktMenu(): boolean {
