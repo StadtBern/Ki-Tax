@@ -62,6 +62,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate datumBestaetigung = null;
 
+	@NotNull
+	private String kindFullname;
+
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
 		return institutionStammdaten;
@@ -153,6 +156,14 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setDatumBestaetigung(@Nullable LocalDate datumBestaetigung) {
 		this.datumBestaetigung = datumBestaetigung;
+	}
+
+	public String getKindFullname() {
+		return kindFullname;
+	}
+
+	public void setKindFullname(String kindFullname) {
+		this.kindFullname = kindFullname;
 	}
 
 	@Override

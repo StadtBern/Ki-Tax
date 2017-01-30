@@ -1084,6 +1084,7 @@ export default class EbeguRestUtil {
                 restBetreuung.abwesenheitContainers.push(this.abwesenheitContainerToRestObject({}, abwesenheitCont));
             });
         }
+        restBetreuung.kindFullname = betreuung.kindFullname;
         restBetreuung.betreuungNummer = betreuung.betreuungNummer;
         return restBetreuung;
     }
@@ -1147,6 +1148,7 @@ export default class EbeguRestUtil {
             betreuungTS.abwesenheitContainers = this.parseAbwesenheitContainers(betreuungFromServer.abwesenheitContainers);
             betreuungTS.betreuungNummer = betreuungFromServer.betreuungNummer;
             betreuungTS.verfuegung = this.parseVerfuegung(new TSVerfuegung(), betreuungFromServer.verfuegung);
+            betreuungTS.kindFullname = betreuungFromServer.kindFullname;
             return betreuungTS;
         }
         return undefined;
