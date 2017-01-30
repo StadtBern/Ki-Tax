@@ -30,7 +30,7 @@ export class GesuchstellerDashboardListViewController {
 
     private antragList: Array<TSAntragDTO> = [];
     private _activeGesuchsperiodenList: Array<TSGesuchsperiode>;
-    private fallId: string;
+    fallId: string;
     totalResultCount: string = '-';
     amountNewMitteilungen: number;
 
@@ -56,14 +56,16 @@ export class GesuchstellerDashboardListViewController {
         return this.fallRS.findFallByCurrentBenutzerAsBesitzer().then((existingFall: TSFall) => {
             if (existingFall) {
                 this.fallId = existingFall.id;
-                this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
+                return this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
                     this.antragList = angular.copy(response);
+                    return this.antragList;
                 });
             } else { //fall es fuer den GS noch keine Fall gibt, erstellen wir einen
-                this.fallRS.createFallForCurrentBenutzerAsBesitzer().then((createdFall: TSFall) => {
+                return this.fallRS.createFallForCurrentBenutzerAsBesitzer().then((createdFall: TSFall) => {
                     if (createdFall) {
                         this.fallId = createdFall.id;
                     }
+                    return this.antragList;
                 });
             }
         });

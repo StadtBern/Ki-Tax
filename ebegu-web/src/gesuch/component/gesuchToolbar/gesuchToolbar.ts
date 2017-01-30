@@ -403,7 +403,7 @@ export class GesuchToolbarController {
 
     public openMitteilungen(): void {
         this.$state.go('mitteilungen', {
-            fallId: this.getGesuch().fall.id
+            fallId: this.fallid
         });
     }
 }
