@@ -269,7 +269,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull Mitteilung mitteilung, MitteilungStatus statusRequested, @Nonnull MitteilungStatus... statusRequired) {
 		if (!Arrays.asList(statusRequired).contains(mitteilung.getMitteilungStatus())) {
-			throw new IllegalStateException("Mitteilung " + mitteilung.getId() + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt " + statusRequired);
+			throw new IllegalStateException("Mitteilung " + mitteilung.getId() + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt " + Arrays.toString(statusRequired));
 		}
 		if (mitteilung.getEmpfaengerTyp().equals(getMitteilungTeilnehmerTypForCurrentUser())) {
 			mitteilung.setMitteilungStatus(statusRequested);
