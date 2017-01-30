@@ -128,26 +128,27 @@ describe('mitteilungenView', function () {
             createMitteilungForUser(gesuchsteller);
 
             let mitteilung: TSMitteilung = new TSMitteilung();
-            spyOn(mitteilungRS, 'createMitteilung').and.returnValue($q.when(mitteilung));
+            mitteilung.id = '123';
+            spyOn(mitteilungRS, 'setMitteilungErledigt').and.returnValue($q.when(mitteilung));
 
             mitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
             controller.setErledigt(mitteilung);
             expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.ENTWURF); // Status ENTWURF wird nicht geaendert
-            expect(mitteilungRS.createMitteilung).not.toHaveBeenCalled();
+            expect(mitteilungRS.setMitteilungErledigt).not.toHaveBeenCalled();
 
             mitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
             controller.setErledigt(mitteilung);
             expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.NEU); // Status NEU wird nicht geaendert
-            expect(mitteilungRS.createMitteilung).not.toHaveBeenCalled();
+            expect(mitteilungRS.setMitteilungErledigt).not.toHaveBeenCalled();
 
             mitteilung.mitteilungStatus = TSMitteilungStatus.GELESEN;
             controller.setErledigt(mitteilung);
             expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.ERLEDIGT); // von GELESEN auf ERLEDIGT
-            expect(mitteilungRS.createMitteilung).toHaveBeenCalledWith(mitteilung);
+            expect(mitteilungRS.setMitteilungErledigt).toHaveBeenCalledWith('123');
 
             controller.setErledigt(mitteilung);
             expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.GELESEN); // von ERLEDIGT auf GELESEN
-            expect(mitteilungRS.createMitteilung).toHaveBeenCalledWith(mitteilung);
+            expect(mitteilungRS.setMitteilungErledigt).toHaveBeenCalledWith('123');
         });
     });
 

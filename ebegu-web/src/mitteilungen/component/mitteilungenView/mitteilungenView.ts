@@ -205,11 +205,11 @@ export class MitteilungenViewController {
     public setErledigt(mitteilung: TSMitteilung): void {
         if (mitteilung && mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN) {
             mitteilung.mitteilungStatus = TSMitteilungStatus.ERLEDIGT;
-            this.mitteilungRS.createMitteilung(mitteilung);
+            this.mitteilungRS.setMitteilungErledigt(mitteilung.id);
 
         } else if (mitteilung && mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT) {
             mitteilung.mitteilungStatus = TSMitteilungStatus.GELESEN;
-            this.mitteilungRS.createMitteilung(mitteilung);
+            this.mitteilungRS.setMitteilungGelesen(mitteilung.id);
         }
     }
 

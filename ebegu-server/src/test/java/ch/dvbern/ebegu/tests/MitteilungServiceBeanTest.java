@@ -132,16 +132,17 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 		Mitteilung entwurf = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		entwurf.setMitteilungStatus(MitteilungStatus.ENTWURF);
-		final Mitteilung persistedEntwurf = mitteilungService.saveMitteilung(entwurf);
+		final Mitteilung persistedEntwurf = mitteilungService.saveEntwurf(entwurf);
 
 		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
-		final Mitteilung mitFromGSToJA = mitteilungService.saveMitteilung(mitteilung1);
+		mitteilung1.setMitteilungStatus(MitteilungStatus.NEU);
+		final Mitteilung mitFromGSToJA = persistence.persist(mitteilung1);
 
 		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, sender, MitteilungTeilnehmerTyp.GESUCHSTELLER,
 			empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT);
-		final Mitteilung mitFromJAToGS = mitteilungService.saveMitteilung(mitteilung2);
+		mitteilung2.setMitteilungStatus(MitteilungStatus.NEU);
+		final Mitteilung mitFromJAToGS = persistence.persist(mitteilung2);
 
 		Assert.assertEquals(MitteilungStatus.ENTWURF, persistedEntwurf.getMitteilungStatus());
 		Assert.assertEquals(MitteilungStatus.NEU, mitFromGSToJA.getMitteilungStatus());

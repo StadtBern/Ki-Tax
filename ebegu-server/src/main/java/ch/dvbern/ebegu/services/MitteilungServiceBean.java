@@ -101,7 +101,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Mitteilung setMitteilungGelesen(@Nonnull String mitteilungsId) {
-		return setMitteilungsStatusIfBerechtigt(mitteilungsId, MitteilungStatus.GELESEN, MitteilungStatus.NEU);
+		return setMitteilungsStatusIfBerechtigt(mitteilungsId, MitteilungStatus.GELESEN, MitteilungStatus.NEU, MitteilungStatus.ERLEDIGT);
 	}
 
 	@Nonnull
@@ -233,7 +233,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Collection<Mitteilung> mitteilungen = getMitteilungenForCurrentRolle(fall);
 		for (Mitteilung mitteilung : mitteilungen) {
 			if (MitteilungStatus.NEU.equals(mitteilung.getMitteilungStatus())) {
-				setMitteilungsStatusIfBerechtigt(mitteilung, MitteilungStatus.GELESEN);
+				setMitteilungsStatusIfBerechtigt(mitteilung, MitteilungStatus.GELESEN, MitteilungStatus.NEU);
 			}
 			persistence.merge(mitteilung);
 		}
@@ -261,18 +261,18 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		}
 	}
 
-	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull String mitteilungsId, MitteilungStatus statusRequested, MitteilungStatus statusRequired) {
+	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull String mitteilungsId, MitteilungStatus statusRequested, @Nonnull MitteilungStatus... statusRequired) {
 		Optional<Mitteilung> mitteilungOptional = findMitteilung(mitteilungsId);
 		Mitteilung mitteilung = mitteilungOptional.orElseThrow(() -> new EbeguRuntimeException("setMitteilungsStatusIfBerechtigt", "Mitteilung not found"));
-		if (!statusRequired.equals(mitteilung.getMitteilungStatus())) {
-			throw new IllegalStateException("Mitteilung " + mitteilungsId + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt " + statusRequired);
-		}
-		return setMitteilungsStatusIfBerechtigt(statusRequested, mitteilungStatus);
+		return setMitteilungsStatusIfBerechtigt(mitteilung, statusRequested, statusRequired);
 	}
 
-	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull Mitteilung mitteilung, MitteilungStatus mitteilungStatus) {
+	private Mitteilung setMitteilungsStatusIfBerechtigt(@Nonnull Mitteilung mitteilung, MitteilungStatus statusRequested, @Nonnull MitteilungStatus... statusRequired) {
+		if (!Arrays.asList(statusRequired).contains(mitteilung.getMitteilungStatus())) {
+			throw new IllegalStateException("Mitteilung " + mitteilung.getId() + " ist im falschen Status: " + mitteilung.getMitteilungStatus() + " anstatt " + statusRequired);
+		}
 		if (mitteilung.getEmpfaengerTyp().equals(getMitteilungTeilnehmerTypForCurrentUser())) {
-			mitteilung.setMitteilungStatus(mitteilungStatus);
+			mitteilung.setMitteilungStatus(statusRequested);
 		}
 		return persistence.merge(mitteilung);
 	}
