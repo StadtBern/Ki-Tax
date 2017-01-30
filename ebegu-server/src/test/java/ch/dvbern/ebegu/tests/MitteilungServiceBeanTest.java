@@ -114,12 +114,12 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
 		mitteilung1.setMitteilungStatus(MitteilungStatus.NEU);
 		mitteilung1.setMessage("Neue Mitteilung");
-		mitteilungService.saveMitteilung(mitteilung1);
+		persistence.persist(mitteilung1);
 
 		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
 		mitteilung2.setMitteilungStatus(MitteilungStatus.GELESEN);
-		mitteilungService.saveMitteilung(mitteilung2);
+		persistence.persist(mitteilung2);
 
 		final Collection<Mitteilung> newMitteilungenCurrentRolle = mitteilungService.getNewMitteilungenForCurrentRolle(mitteilung1.getFall());
 
