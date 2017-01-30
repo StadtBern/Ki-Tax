@@ -1828,6 +1828,7 @@ export default class EbeguRestUtil {
         if (mitteilungFromServer) {
             this.parseAbstractEntity(tsMitteilung, mitteilungFromServer);
             tsMitteilung.fall = this.parseFall(new TSFall(), mitteilungFromServer.fall);
+            tsMitteilung.betreuung = this.parseBetreuung(new TSBetreuung(), mitteilungFromServer.betreuung);
             tsMitteilung.senderTyp = mitteilungFromServer.senderTyp;
             tsMitteilung.empfaengerTyp = mitteilungFromServer.empfaengerTyp;
             tsMitteilung.sender = this.parseUser(new TSUser(), mitteilungFromServer.sender);
@@ -1845,6 +1846,7 @@ export default class EbeguRestUtil {
         if (tsMitteilung) {
             this.abstractEntityToRestObject(restMitteilung, tsMitteilung);
             restMitteilung.fall = this.fallToRestObject({}, tsMitteilung.fall);
+            restMitteilung.betreuung = this.betreuungToRestObject({}, tsMitteilung.betreuung);
             restMitteilung.senderTyp = tsMitteilung.senderTyp;
             restMitteilung.empfaengerTyp = tsMitteilung.empfaengerTyp;
             restMitteilung.sender = this.userToRestObject({}, tsMitteilung.sender);
