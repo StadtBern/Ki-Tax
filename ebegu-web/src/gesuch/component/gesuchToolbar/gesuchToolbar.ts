@@ -398,7 +398,7 @@ export class GesuchToolbarController {
         if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall) {
             return this.getGesuch().fall.besitzer !== undefined && this.getGesuch().fall.besitzer.getFullName();
         }
-        return "";
+        return '';
     }
 
     public openMitteilungen(): void {
