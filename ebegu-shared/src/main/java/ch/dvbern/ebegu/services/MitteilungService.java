@@ -52,5 +52,9 @@ public interface MitteilungService {
 	 * Sucht alle Mitteilungen des uebergebenen Falls und fuer jede, die im Status NEU ist, wechselt
 	 * ihren Status auf GELESEN.
 	 */
-	Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(Fall fall);
+	@Nonnull
+	Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(@Nonnull Fall fall);
+
+	@Nonnull
+	Collection<Mitteilung> getNewMitteilungenForCurrentRolle(@Nonnull Fall fall);
 }
