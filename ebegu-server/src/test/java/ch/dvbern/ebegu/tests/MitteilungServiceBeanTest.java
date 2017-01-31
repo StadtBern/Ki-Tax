@@ -108,6 +108,30 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
+	public void testGetNewMitteilungenForCurrentRolle() throws LoginException {
+		prepareDependentObjects();
+		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		mitteilung1.setMitteilungStatus(MitteilungStatus.NEU);
+		mitteilung1.setMessage("Neue Mitteilung");
+		persistence.persist(mitteilung1);
+
+		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+		mitteilung2.setMitteilungStatus(MitteilungStatus.GELESEN);
+		persistence.persist(mitteilung2);
+
+		final Collection<Mitteilung> newMitteilungenCurrentRolle = mitteilungService.getNewMitteilungenForCurrentRolle(mitteilung1.getFall());
+
+		//AS SUPERADMIN
+		Assert.assertNotNull(newMitteilungenCurrentRolle);
+		Assert.assertEquals(1, newMitteilungenCurrentRolle.size());
+		final Mitteilung foundMitteilung = newMitteilungenCurrentRolle.iterator().next();
+		Assert.assertEquals(MitteilungTeilnehmerTyp.JUGENDAMT, foundMitteilung.getEmpfaengerTyp());
+		Assert.assertEquals("Neue Mitteilung", foundMitteilung.getMessage());
+	}
+
+	@Test
 	public void testGetMitteilungenForPosteingang() throws LoginException {
 		prepareDependentObjects();
 		Mitteilung mitteilung1 = TestDataUtil.createMitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
