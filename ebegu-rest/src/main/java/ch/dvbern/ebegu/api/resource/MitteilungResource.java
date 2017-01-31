@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
 @Api(description = "Resource zum verwalten von Mitteilungen")
 public class MitteilungResource {
 
+	public static final String FALL_ID_INVALID = "FallID invalid: ";
+
 	@Inject
 	private MitteilungService mitteilungService;
 
@@ -141,7 +143,7 @@ public class MitteilungResource {
 			final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForCurrentRolle(fall.get());
 			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
 		}
-		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "FallID invalid: " + fallId.getId());
+		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}
 
 	@Nullable
@@ -177,7 +179,7 @@ public class MitteilungResource {
 			}
 			return converter.mitteilungToJAX(mitteilung);
 		}
-		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "FallID invalid: " + fallId.getId());
+		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}
 
 	@Nullable
@@ -214,7 +216,7 @@ public class MitteilungResource {
 			final Collection<Mitteilung> mitteilungen = mitteilungService.setAllNewMitteilungenOfFallGelesen(fall.get());
 			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
 		}
-		throw new EbeguEntityNotFoundException("setAllNewMitteilungenOfFallGelesen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "FallID invalid: " + fallId.getId());
+		throw new EbeguEntityNotFoundException("setAllNewMitteilungenOfFallGelesen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}
 
 	private Mitteilung readAndConvertMitteilung(@Nonnull JaxMitteilung mitteilungJAXP) {
@@ -226,5 +228,24 @@ public class MitteilungResource {
 
 		Mitteilung convertedMitteilung = converter.mitteilungToEntity(mitteilungJAXP, mitteilung);
 		return convertedMitteilung;
+	}
+
+	@Nullable
+	@GET
+	@Path("/amountnew/{fallId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Integer getAmountNewMitteilungenForCurrentRolle(
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(fallId.getId());
+		String mitteilungID = converter.toEntityId(fallId);
+		Optional<Fall> fall = fallService.findFall(mitteilungID);
+		if (fall.isPresent()) {
+			return mitteilungService.getNewMitteilungenForCurrentRolle(fall.get()).size();
+		}
+		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}
 }

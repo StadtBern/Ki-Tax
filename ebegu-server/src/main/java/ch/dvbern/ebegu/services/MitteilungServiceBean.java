@@ -239,6 +239,29 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return mitteilungen;
 	}
 
+	@Override
+	public Collection<Mitteilung> getNewMitteilungenForCurrentRolle(Fall fall) {
+		Objects.requireNonNull(fall, "fall muss gesetzt sein");
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
+		Root<Mitteilung> root = query.from(Mitteilung.class);
+		List<Expression<Boolean>> predicates = new ArrayList<>();
+
+		Predicate predicateFall = cb.equal(root.get(Mitteilung_.fall), fall);
+		predicates.add(predicateFall);
+
+		Predicate predicateNew = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.NEU);
+		predicates.add(predicateNew);
+
+		MitteilungTeilnehmerTyp mitteilungTeilnehmerTyp = getMitteilungTeilnehmerTypForCurrentUser();
+		Predicate predicateEmpfaenger = cb.equal(root.get(Mitteilung_.empfaengerTyp), mitteilungTeilnehmerTyp);
+		predicates.add(predicateEmpfaenger);
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+		return persistence.getCriteriaResults(query);
+	}
+
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {
 		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getMitteilungenForCurrentRolle", "No User is logged in"));
 		//noinspection EnumSwitchStatementWhichMissesCases
