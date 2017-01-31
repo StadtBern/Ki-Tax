@@ -107,12 +107,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@PermitAll
-	@Interceptors(UpdateStatusToInBearbeitungJAInterceptor.class)   //
+	@Interceptors(UpdateStatusToInBearbeitungJAInterceptor.class)
 	public Optional<Gesuch> findGesuch(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Gesuch a = persistence.find(Gesuch.class, key);
-		authorizer.checkReadAuthorization(a);
-		return Optional.ofNullable(a);
+		Gesuch gesuch = persistence.find(Gesuch.class, key);
+		authorizer.checkReadAuthorization(gesuch);
+		return Optional.ofNullable(gesuch);
 	}
 
 	@PermitAll
