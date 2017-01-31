@@ -3,11 +3,13 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.MitteilungService;
 import io.swagger.annotations.Api;
@@ -44,6 +46,9 @@ public class MitteilungResource {
 
 	@Inject
 	private FallService fallService;
+
+	@Inject
+	private BetreuungService betreuungService;
 
 	@Inject
 	private JaxBConverter converter;
@@ -128,10 +133,10 @@ public class MitteilungResource {
 
 	@Nullable
 	@GET
-	@Path("/forrole/{fallId}")
+	@Path("/forrole/fall/{fallId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<JaxMitteilung> getMitteilungenForCurrentRolle(
+	public Collection<JaxMitteilung> getMitteilungenForCurrentRolleForFall(
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -144,6 +149,26 @@ public class MitteilungResource {
 			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
 		}
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
+	}
+
+	@Nullable
+	@GET
+	@Path("/forrole/betreuung/{betreuungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<JaxMitteilung> getMitteilungenForCurrentRolleForBetreuung(
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(betreuungId.getId());
+		String id = converter.toEntityId(betreuungId);
+		Optional<Betreuung> betreuung = betreuungService.findBetreuung(id);
+		if (betreuung.isPresent()) {
+			final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForCurrentRolle(betreuung.get());
+			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
+		}
+		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolleForBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 	}
 
 	@Nullable
@@ -161,10 +186,10 @@ public class MitteilungResource {
 
 	@Nullable
 	@GET
-	@Path("/entwurf/{fallId}")
+	@Path("/entwurf/fall/{fallId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxMitteilung getEntwurfForCurrentRolle(
+	public JaxMitteilung getEntwurfForCurrentRolleForFall(
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -180,6 +205,29 @@ public class MitteilungResource {
 			return converter.mitteilungToJAX(mitteilung);
 		}
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
+	}
+
+	@Nullable
+	@GET
+	@Path("/entwurf/betreuung/{betreuungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxMitteilung getEntwurfForCurrentRolleForBetreuung(
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(betreuungId.getId());
+		String id = converter.toEntityId(betreuungId);
+		Optional<Betreuung> betreuung = betreuungService.findBetreuung(id);
+		if (betreuung.isPresent()) {
+			final Mitteilung mitteilung = mitteilungService.getEntwurfForCurrentRolle(betreuung.get());
+			if (mitteilung == null) {
+				return null;
+			}
+			return converter.mitteilungToJAX(mitteilung);
+		}
+		throw new EbeguEntityNotFoundException("getEntwurfForCurrentRolleForBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungId invalid: " + betreuungId.getId());
 	}
 
 	@Nullable
