@@ -16,6 +16,7 @@ import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyR
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
+import EbeguUtil from '../../../utils/EbeguUtil';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -37,11 +38,12 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     private showGesuchFreigebenSimulationButton: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS'];
+        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS', '$window'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS, $scope: IScope, private applicationPropertyRS: ApplicationPropertyRS) {
+                private downloadRS: DownloadRS, $scope: IScope, private applicationPropertyRS: ApplicationPropertyRS,
+                private $window: ng.IWindowService) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE);
         this.initViewModel();
@@ -98,11 +100,12 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public openFreigabequittungPDF(forceCreation: boolean): IPromise<void> {
+        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
         return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation, this.getZustelladresse())
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
                 this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id).then(() => {
-                    this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                    this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
                 });
             });
     }

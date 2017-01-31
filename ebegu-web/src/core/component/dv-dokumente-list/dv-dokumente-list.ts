@@ -10,7 +10,6 @@ import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRole} from '../../../models/enums/TSRole';
 import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./dv-dokumente-list.html');
@@ -49,11 +48,12 @@ export class DVDokumenteListController {
     sonstige: boolean;
 
     static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS', 'DvDialog', 'WizardStepManager',
-        '$log', 'AuthServiceRS', '$translate'];
+        '$log', 'AuthServiceRS', '$translate', '$window'];
     /* @ngInject */
     constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
                 private downloadRS: DownloadRS, private dvDialog: DvDialog, private wizardStepManager: WizardStepManager,
-                private $log: ILogService, private authServiceRS: AuthServiceRS, private $translate: ITranslateService) {
+                private $log: ILogService, private authServiceRS: AuthServiceRS, private $translate: ITranslateService,
+                private $window: ng.IWindowService) {
 
     }
 
@@ -134,10 +134,11 @@ export class DVDokumenteListController {
 
     download(dokument: TSDokument, attachment: boolean) {
         this.$log.debug('download dokument ' + dokument.filename);
+        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
 
         this.downloadRS.getAccessTokenDokument(dokument.id).then((downloadFile: TSDownloadFile) => {
             this.$log.debug('accessToken: ' + downloadFile.accessToken);
-            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment);
+            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
         });
     }
 

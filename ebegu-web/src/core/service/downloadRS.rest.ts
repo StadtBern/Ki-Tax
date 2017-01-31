@@ -4,6 +4,7 @@ import TSDownloadFile from '../../models/TSDownloadFile';
 import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp';
 import TSMahnung from '../../models/TSMahnung';
 import {TSZustelladresse} from '../../models/enums/TSZustelladresse';
+import IWindowService = angular.IWindowService;
 
 
 export class DownloadRS {
@@ -103,7 +104,15 @@ export class DownloadRS {
         return 'DownloadRS';
     }
 
-    public startDownload(accessToken: string, dokumentName: string, attachment: boolean): boolean {
+    /**
+     *
+     * @param accessToken
+     * @param dokumentName
+     * @param attachment
+     * @param myWindow -> Das Window muss als Parameter mitgegeben werden, damit der Popup Blocker das Oeffnen dieses Fesnters nicht als Popup identifiziert.
+     * @returns {boolean}
+     */
+    public startDownload(accessToken: string, dokumentName: string, attachment: boolean, myWindow: IWindowService): boolean {
         let name: string = accessToken + '/' + dokumentName;
         let href: string = this.serviceURL + '/blobdata/' + name;
 
@@ -113,20 +122,20 @@ export class DownloadRS {
         if (attachment) {
             // add MatrixParam for to download file instead of inline
             href = href + ';attachment=true;';
-            let win = this.$window.open(href, '_blank');
-            if (!win) {
+            if (!myWindow) {
                 this.log.error(warn);
                 this.$window.alert(warn);
                 return false;
             }
+            myWindow.open(href, myWindow.name);
         } else {
-            let win = this.$window.open(href, '_blank');
-            if (!win) {
+            if (!myWindow) {
                 this.log.error(warn);
                 this.$window.alert(warn);
                 return false;
             } else {
-                win.focus();
+                myWindow.focus();
+                myWindow.open(href, myWindow.name);
             }
         }
 

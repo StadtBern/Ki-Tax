@@ -32,7 +32,8 @@ export class ParameterViewComponentConfig implements IComponentOptions {
 
 export class ParameterViewController {
     static $inject = ['EbeguParameterRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$translate', 'EbeguVorlageRS',
-        'EbeguUtil', 'DvDialog', 'DownloadRS', '$log', 'GlobalCacheService', 'GesuchModelManager', '$timeout'];
+        'EbeguUtil', 'DvDialog', 'DownloadRS', '$log', 'GlobalCacheService', 'GesuchModelManager', '$timeout',
+        '$window'];
 
     ebeguParameterRS: EbeguParameterRS;
     ebeguRestUtil: EbeguRestUtil;
@@ -53,7 +54,8 @@ export class ParameterViewController {
                 ebeguRestUtil: EbeguRestUtil, private $translate: ITranslateService,
                 private ebeguVorlageRS: EbeguVorlageRS, private ebeguUtil: EbeguUtil,
                 private dvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService,
-                private globalCacheService: GlobalCacheService, private gesuchModelManager: GesuchModelManager, private $timeout: ITimeoutService) {
+                private globalCacheService: GlobalCacheService, private gesuchModelManager: GesuchModelManager,
+                private $timeout: ITimeoutService, private $window: ng.IWindowService) {
         this.ebeguParameterRS = ebeguParameterRS;
         this.ebeguRestUtil = ebeguRestUtil;
         $timeout(() => {
@@ -235,10 +237,11 @@ export class ParameterViewController {
 
     download(ebeguVorlage: TSEbeguVorlage, attachment: boolean) {
         this.$log.debug('download vorlage ' + ebeguVorlage.vorlage.filename);
+        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
 
         this.downloadRS.getAccessTokenVorlage(ebeguVorlage.vorlage.id).then((downloadFile: TSDownloadFile) => {
             this.$log.debug('accessToken: ' + downloadFile.accessToken);
-            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment);
+            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment, win);
         });
     }
 

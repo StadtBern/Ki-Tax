@@ -50,13 +50,15 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS'];
+        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS', '$window'];
     /* @ngInject */
 
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService,
-                private authServiceRs: AuthServiceRS, $scope: IScope, private gesuchRS: GesuchRS) {
+                private authServiceRs: AuthServiceRS, $scope: IScope, private gesuchRS: GesuchRS,
+                private $window: ng.IWindowService) {
+
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
         this.initViewModel();
     }
@@ -367,29 +369,32 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public openFinanzielleSituationPDF(): void {
+        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
         this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
 
     public openBegleitschreibenPDF(): void {
+        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
         this.downloadRS.getBegleitschreibenDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
 
     public openMahnungPDF(mahnung: TSMahnung): void {
+        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
         if (mahnung == null) {
             mahnung = this.mahnung;
         }
         this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnung, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
 

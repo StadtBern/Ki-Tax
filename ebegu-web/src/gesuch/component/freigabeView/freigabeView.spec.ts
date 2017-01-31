@@ -17,6 +17,7 @@ import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IFormController = angular.IFormController;
+import IWindowService = angular.IWindowService;
 
 describe('freigabeView', function () {
 
@@ -29,6 +30,7 @@ describe('freigabeView', function () {
     let gesuchModelManager: GesuchModelManager;
     let $httpBackend: IHttpBackendService;
     let applicationPropertyRS: any;
+    let $window: IWindowService;
 
     let gesuch: TSGesuch;
 
@@ -51,12 +53,13 @@ describe('freigabeView', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $httpBackend = $injector.get('$httpBackend');
         applicationPropertyRS = $injector.get('ApplicationPropertyRS');
+        $window = $injector.get('$window');
 
         spyOn(applicationPropertyRS , 'isDevMode').and.returnValue($q.when(false));
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS);
+            wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS, $window);
         controller.form = <IFormController>{};
 
         spyOn(controller, 'isGesuchValid').and.callFake(function () {
@@ -127,7 +130,7 @@ describe('freigabeView', function () {
             $scope.$apply();
 
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, true, TSZustelladresse.JUGENDAMT);
-            expect(downloadRS.startDownload).toHaveBeenCalledWith(downloadFile.accessToken, downloadFile.filename, false);
+            expect(downloadRS.startDownload).toHaveBeenCalledWith(downloadFile.accessToken, downloadFile.filename, false, jasmine.any(Object));
             expect(returned).toBeDefined();
         });
     });

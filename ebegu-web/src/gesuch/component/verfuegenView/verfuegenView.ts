@@ -37,14 +37,16 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log', '$stateParams'];
+        'DvDialog', 'DownloadRS', '$log', '$stateParams', '$window'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, $scope: IScope, wizardStepManager: WizardStepManager,
-                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IBetreuungStateParams) {
+                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IBetreuungStateParams,
+                private $window: ng.IWindowService) {
+
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
@@ -280,19 +282,21 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     public openVerfuegungPDF(): void {
+        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
         this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
             this.getBetreuung().id, false, this.bemerkungen)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
 
     public openNichteintretenPDF(): void {
+        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
         this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(this.getBetreuung().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
 
