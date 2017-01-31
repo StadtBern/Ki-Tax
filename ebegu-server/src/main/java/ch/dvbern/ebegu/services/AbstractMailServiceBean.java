@@ -76,7 +76,7 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 			writer.close();
 			assertPositiveIntermediate(client);
 			client.quit();
-		} catch (final IOException e) {
+		} catch (final RuntimeException | IOException e) {
 			LOG.error("Error while sending Mail to: '" + mailadress + "'", e);
 			throw new MailException("Error while sending Mail to: '" + mailadress + "'", e);
 		} finally {
