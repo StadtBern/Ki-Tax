@@ -56,7 +56,7 @@ public enum AntragStatus {
 
 
 
-    /**
+	/**
      * Implementierung eines Berechtigungskonzepts fuer die Antragssuche.
      *
      * @param userRole die Rolle
@@ -101,4 +101,14 @@ public enum AntragStatus {
 
 	public boolean inBearbeitung() { return inBearbeitung.contains(this); }
 
+	/**
+	 *
+	 * @return true wenn das Jugendamt das Gesuch oeffnen darf (Unsichtbar sind also Gesuch die von Gesuchsteller noch
+	 * nicht eingereichte wurden und solche die NUR_SCHULAMT sind
+	 */
+	public boolean isReadableByJASachbearbeiter() {
+		//Jugendamt darf keine Gesuche sehen die noch nicht Freigegeben sind,
+		return !(this.equals(FREIGABEQUITTUNG) || this.equals(IN_BEARBEITUNG_GS)) &&
+			!(this.equals(NUR_SCHULAMT) || this.equals(NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN));
+	}
 }

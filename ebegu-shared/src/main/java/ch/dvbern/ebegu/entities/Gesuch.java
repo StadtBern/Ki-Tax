@@ -509,7 +509,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Nonnull
 	@Override
 	public String getSearchResultSummary() {
-		return getJahrAndFallnummer();
+		return getAntragNummer();
 	}
 
 	@Nullable
