@@ -282,7 +282,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     public openVerfuegungPDF(): void {
-        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
+        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
         this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
             this.getBetreuung().id, false, this.bemerkungen)
             .then((downloadFile: TSDownloadFile) => {
@@ -292,7 +292,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     public openNichteintretenPDF(): void {
-        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
+        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
         this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(this.getBetreuung().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);

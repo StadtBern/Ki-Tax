@@ -134,7 +134,7 @@ export class DVDokumenteListController {
 
     download(dokument: TSDokument, attachment: boolean) {
         this.$log.debug('download dokument ' + dokument.filename);
-        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
+        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
 
         this.downloadRS.getAccessTokenDokument(dokument.id).then((downloadFile: TSDownloadFile) => {
             this.$log.debug('accessToken: ' + downloadFile.accessToken);

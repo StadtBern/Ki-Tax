@@ -97,7 +97,7 @@ export class KommentarViewController {
     }
 
     download() {
-        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
+        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
         this.getPapiergesuchFromServer().then((promiseValue: any) => {
             if (!this.hasPapiergesuch()) {
                 this.$log.error('Kein Papiergesuch für Download vorhanden!');

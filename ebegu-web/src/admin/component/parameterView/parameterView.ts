@@ -237,7 +237,7 @@ export class ParameterViewController {
 
     download(ebeguVorlage: TSEbeguVorlage, attachment: boolean) {
         this.$log.debug('download vorlage ' + ebeguVorlage.vorlage.filename);
-        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
+        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
 
         this.downloadRS.getAccessTokenVorlage(ebeguVorlage.vorlage.id).then((downloadFile: TSDownloadFile) => {
             this.$log.debug('accessToken: ' + downloadFile.accessToken);

@@ -100,7 +100,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public openFreigabequittungPDF(forceCreation: boolean): IPromise<void> {
-        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
+        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
         return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation, this.getZustelladresse())
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht

@@ -28,6 +28,7 @@ import IScope = angular.IScope;
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
+let spinnerTempl = require('../../../spinner/spinner.html');
 
 
 export class VerfuegenListViewComponentConfig implements IComponentOptions {
@@ -369,7 +370,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public openFinanzielleSituationPDF(): void {
-        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
+        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
         this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
@@ -378,7 +379,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public openBegleitschreibenPDF(): void {
-        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
+        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
         this.downloadRS.getBegleitschreibenDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
@@ -387,7 +388,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public openMahnungPDF(mahnung: TSMahnung): void {
-        let win: Window = this.$window.open('about:blank', EbeguUtil.generateRandomName(5));
+        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
         if (mahnung == null) {
             mahnung = this.mahnung;
         }
