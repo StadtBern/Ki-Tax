@@ -26,6 +26,7 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
     bindings: any = {
         gesuchid: '@',
         onVerantwortlicherChange: '&',
+        fallid: '@',
     };
 
     template = templateX;
@@ -36,7 +37,8 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
 export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
-        gesuchid: '@'
+        gesuchid: '@',
+        fallid: '@',
     };
     template = templateGS;
     controller = GesuchToolbarController;
@@ -49,6 +51,7 @@ export class GesuchToolbarController {
     userList: Array<TSUser>;
     antragList: Array<TSAntragDTO>;
     gesuchid: string;
+    fallid: string;
     TSRoleUtil: any;
 
     onVerantwortlicherChange: (attr: any) => void;
@@ -118,6 +121,22 @@ export class GesuchToolbarController {
                     }
                 });
             }
+            //watcher fuer fall id change
+            $scope.$watch(() => {
+                return this.fallid;
+            }, (newValue, oldValue) => {
+                if (newValue !== oldValue) {
+                    if (this.fallid) {
+                        this.updateAntragDTOList();
+                    } else {
+                        this.antragTypList = {};
+                        this.gesuchNavigationList = {};
+                        this.gesuchsperiodeList = {};
+                        this.antragList = [];
+                        this.antragMutierenPossible(); //neu berechnen ob mutieren moeglich ist
+                    }
+                }
+            });
         }
     }
 
@@ -157,6 +176,17 @@ export class GesuchToolbarController {
                 this.updateGesuchNavigationList();
                 this.updateAntragTypList();
                 this.antragMutierenPossible();
+            });
+        } else if (this.fallid) {
+            this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
+                this.antragList = angular.copy(response);
+                this.gesuchRS.findGesuch(this.getNewest(this.antragList).antragId).then((response) => {
+                    this.gesuchModelManager.setGesuch(angular.copy(response));
+                    this.updateGesuchperiodeList();
+                    this.updateGesuchNavigationList();
+                    this.updateAntragTypList();
+                    this.antragMutierenPossible();
+                });
             });
         } else {
             this.gesuchsperiodeList = {};
@@ -200,6 +230,7 @@ export class GesuchToolbarController {
 
                 this.antragTypList[txt] = antrag;
             }
+
         }
     }
 
@@ -248,7 +279,6 @@ export class GesuchToolbarController {
         return undefined;
     }
 
-    //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
         return this.gesuchModelManager.getGesuchName();
     }
@@ -362,6 +392,13 @@ export class GesuchToolbarController {
             return this.getGesuch().fall.besitzer !== undefined && this.getGesuch().fall.besitzer !== null;
         }
         return false;
+    }
+
+    private getBesitzer(): string {
+        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall) {
+            return this.getGesuch().fall.besitzer !== undefined && this.getGesuch().fall.besitzer.getFullName();
+        }
+        return '';
     }
 
     public openMitteilungen(): void {

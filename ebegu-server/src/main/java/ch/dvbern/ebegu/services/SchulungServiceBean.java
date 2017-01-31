@@ -1,10 +1,8 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.Eingangsart;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.testfaelle.*;
 import ch.dvbern.ebegu.types.DateRange;
@@ -22,6 +20,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -175,13 +174,20 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 			createGesuchsteller(GESUCHSTELLER_LIST[i], getUsername(i + 1));
 		}
 
-		createFaelleForSuche(institutionenForSchulung);
+		try {
+			createFaelleForSuche(institutionenForSchulung);
+		} catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+			throw new EbeguRuntimeException("createSchulungsdaten", "Could not create Schulungsdaten", e);
+		}
 	}
 
 	@Override
 	@PermitAll
 	public String[] getSchulungBenutzer() {
-		return (String[]) ArrayUtils.clone(GESUCHSTELLER_LIST);
+		String[] clone = (String[]) ArrayUtils.clone(GESUCHSTELLER_LIST);
+		List<String> list = Arrays.asList(clone);
+		Collections.sort(list);
+		return list.toArray(new String[list.size()]);
 	}
 
 	@SuppressWarnings("SameParameterValue")
@@ -262,8 +268,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 
 	@SuppressWarnings(value = {"DM_CONVERT_CASE"})
 	private String getUsername(int position) {
-		String username = "sch" + String.format("%02d", position);
-		return username;
+		return "sch" + String.format("%02d", position);
 	}
 
 	private void removeGesucheFallAndBenutzer(int position) {
@@ -271,66 +276,68 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		removeBenutzer(getUsername(position));
 	}
 
-	private void createFaelleForSuche(List<InstitutionStammdaten> institutionenForSchulung) {
+	private void createFaelleForSuche(List<InstitutionStammdaten> institutionenForSchulung) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.getAllActiveGesuchsperioden().iterator().next();
 		List<InstitutionStammdaten> institutionenForTestfall = testfaelleService.getInstitutionsstammdatenForTestfaelle();
 
-		createFall(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionenForTestfall), "01", institutionenForSchulung);
-		createFall(new Testfall02_FeutzYvonne(gesuchsperiode, institutionenForTestfall), "02", institutionenForSchulung);
-		createFall(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionenForTestfall), "03", institutionenForSchulung);
-		createFall(new Testfall04_WaltherLaura(gesuchsperiode, institutionenForTestfall), "04", institutionenForSchulung);
-		createFall(new Testfall05_LuethiMeret(gesuchsperiode, institutionenForTestfall), "05", institutionenForSchulung);
-		createFall(new Testfall06_BeckerNora(gesuchsperiode, institutionenForTestfall), "06", institutionenForSchulung);
-		createFall(new Testfall07_MeierMeret(gesuchsperiode, institutionenForTestfall), "07", institutionenForSchulung);
+		createFall(Testfall01_WaeltiDagmar.class, gesuchsperiode, institutionenForTestfall, "01", null, null, institutionenForSchulung);
+		createFall(Testfall02_FeutzYvonne.class, gesuchsperiode, institutionenForTestfall, "02",null, null, institutionenForSchulung);
+		createFall(Testfall03_PerreiraMarcia.class, gesuchsperiode, institutionenForTestfall, "03",null, null, institutionenForSchulung);
+		createFall(Testfall04_WaltherLaura.class, gesuchsperiode, institutionenForTestfall, "04", null, null, institutionenForSchulung);
+		createFall(Testfall05_LuethiMeret.class, gesuchsperiode, institutionenForTestfall, "05", null, null, institutionenForSchulung);
+		createFall(Testfall06_BeckerNora.class, gesuchsperiode, institutionenForTestfall, "06", null, null, institutionenForSchulung);
+		createFall(Testfall07_MeierMeret.class, gesuchsperiode, institutionenForTestfall, "07", null, null, institutionenForSchulung);
 
-		createFall(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionenForTestfall), "08", "Gerber", "Milena", institutionenForSchulung);
-		createFall(new Testfall02_FeutzYvonne(gesuchsperiode, institutionenForTestfall), "09", "Bernasconi", "Claudia", institutionenForSchulung);
-		createFall(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionenForTestfall), "10", "Odermatt", "Yasmin", institutionenForSchulung);
-		createFall(new Testfall04_WaltherLaura(gesuchsperiode, institutionenForTestfall), "11", "Hefti", "Sarah", institutionenForSchulung);
-		createFall(new Testfall05_LuethiMeret(gesuchsperiode, institutionenForTestfall), "12", "Schmid", "Natalie", institutionenForSchulung);
-		createFall(new Testfall06_BeckerNora(gesuchsperiode, institutionenForTestfall), "13", "Kälin", "Judith", institutionenForSchulung);
-		createFall(new Testfall07_MeierMeret(gesuchsperiode, institutionenForTestfall), "14", "Werlen", "Franziska", institutionenForSchulung);
+		createFall(Testfall01_WaeltiDagmar.class, gesuchsperiode, institutionenForTestfall, "08", "Gerber", "Milena", institutionenForSchulung);
+		createFall(Testfall02_FeutzYvonne.class, gesuchsperiode, institutionenForTestfall, "09", "Bernasconi", "Claudia", institutionenForSchulung);
+		createFall(Testfall03_PerreiraMarcia.class, gesuchsperiode, institutionenForTestfall, "10", "Odermatt", "Yasmin", institutionenForSchulung);
+		createFall(Testfall04_WaltherLaura.class, gesuchsperiode, institutionenForTestfall, "11", "Hefti", "Sarah", institutionenForSchulung);
+		createFall(Testfall05_LuethiMeret.class, gesuchsperiode, institutionenForTestfall, "12", "Schmid", "Natalie", institutionenForSchulung);
+		createFall(Testfall06_BeckerNora.class, gesuchsperiode, institutionenForTestfall, "13", "Kälin", "Judith", institutionenForSchulung);
+		createFall(Testfall07_MeierMeret.class, gesuchsperiode, institutionenForTestfall, "14", "Werlen", "Franziska", institutionenForSchulung);
 
-		createFall(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionenForTestfall), "15", "Iten", "Joy", institutionenForSchulung);
-		createFall(new Testfall02_FeutzYvonne(gesuchsperiode, institutionenForTestfall), "16", "Keller", "Birgit", institutionenForSchulung);
-		createFall(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionenForTestfall), "17", "Hofer", "Melanie", institutionenForSchulung);
-		createFall(new Testfall04_WaltherLaura(gesuchsperiode, institutionenForTestfall), "18", "Steiner", "Stefanie", institutionenForSchulung);
-		createFall(new Testfall05_LuethiMeret(gesuchsperiode, institutionenForTestfall), "19", "Widmer", "Ursula", institutionenForSchulung);
-		createFall(new Testfall06_BeckerNora(gesuchsperiode, institutionenForTestfall), "20", "Graf", "Anna", institutionenForSchulung);
-		createFall(new Testfall07_MeierMeret(gesuchsperiode, institutionenForTestfall), "21", "Zimmermann", "Katrin", institutionenForSchulung);
+		createFall(Testfall01_WaeltiDagmar.class, gesuchsperiode, institutionenForTestfall, "15", "Iten", "Joy", institutionenForSchulung);
+		createFall(Testfall02_FeutzYvonne.class, gesuchsperiode, institutionenForTestfall, "16", "Keller", "Birgit", institutionenForSchulung);
+		createFall(Testfall03_PerreiraMarcia.class, gesuchsperiode, institutionenForTestfall, "17", "Hofer", "Melanie", institutionenForSchulung);
+		createFall(Testfall04_WaltherLaura.class, gesuchsperiode, institutionenForTestfall, "18", "Steiner", "Stefanie", institutionenForSchulung);
+		createFall(Testfall05_LuethiMeret.class, gesuchsperiode, institutionenForTestfall, "19", "Widmer", "Ursula", institutionenForSchulung);
+		createFall(Testfall06_BeckerNora.class, gesuchsperiode, institutionenForTestfall, "20", "Graf", "Anna", institutionenForSchulung);
+		createFall(Testfall07_MeierMeret.class, gesuchsperiode, institutionenForTestfall, "21", "Zimmermann", "Katrin", institutionenForSchulung);
 
-		createFall(new Testfall02_FeutzYvonne(gesuchsperiode, institutionenForTestfall), "22", "Hofstetter", "Anneliese", institutionenForSchulung);
-		createFall(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionenForTestfall), "23", "Arnold", "Madeleine", institutionenForSchulung);
-		createFall(new Testfall04_WaltherLaura(gesuchsperiode, institutionenForTestfall), "24", "Schneebeli", "Janine", institutionenForSchulung);
-		createFall(new Testfall05_LuethiMeret(gesuchsperiode, institutionenForTestfall), "25", "Weber", "Marianne", institutionenForSchulung);
+		createFall(Testfall02_FeutzYvonne.class, gesuchsperiode, institutionenForTestfall, "22", "Hofstetter", "Anneliese", institutionenForSchulung);
+		createFall(Testfall03_PerreiraMarcia.class, gesuchsperiode, institutionenForTestfall, "23", "Arnold", "Madeleine", institutionenForSchulung);
+		createFall(Testfall04_WaltherLaura.class, gesuchsperiode, institutionenForTestfall, "24", "Schneebeli", "Janine", institutionenForSchulung);
+		createFall(Testfall05_LuethiMeret.class, gesuchsperiode, institutionenForTestfall, "25", "Weber", "Marianne", institutionenForSchulung);
 
 	}
 
-	private void createFall(AbstractTestfall testfall, String id, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung) {
+	private void createFall(Class<? extends AbstractTestfall> classTestfall, Gesuchsperiode gesuchsperiode, List<InstitutionStammdaten> institutionenForTestfall, String id, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+		boolean verfuegen = RANDOM.nextBoolean() && RANDOM.nextBoolean(); // Damit VERFUEGT nicht zu haeufig...
+		AbstractTestfall testfall = classTestfall.getConstructor(Gesuchsperiode.class, Collection.class, Boolean.TYPE).newInstance(gesuchsperiode, institutionenForTestfall, verfuegen);
 		testfall.setFixId(GESUCH_ID.replaceAll("XX", id));
-		Gesuch gesuch = createFallForSuche(testfall, nachname, vorname, institutionenForSchulung);
-		FreigabeCopyUtil.copyForFreigabe(gesuch);
-		gesuchService.updateGesuch(gesuch, false);
-	}
-
-	private void createFall(AbstractTestfall testfall, String id, List<InstitutionStammdaten> institutionenForSchulung) {
-		testfall.setFixId(GESUCH_ID.replaceAll("XX", id));
-		Gesuch gesuch = createFallForSuche(testfall, institutionenForSchulung);
+		Gesuch gesuch = createFallForSuche(testfall, nachname, vorname, institutionenForSchulung, verfuegen);
 		FreigabeCopyUtil.copyForFreigabe(gesuch);
 		gesuchService.updateGesuch(gesuch, false);
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	private Gesuch createFallForSuche(AbstractTestfall testfall, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung ) {
-		Gesuch gesuch = createFallForSuche(testfall, institutionenForSchulung);
-		gesuch.getGesuchsteller1().getGesuchstellerJA().setNachname(nachname);
-		gesuch.getGesuchsteller1().getGesuchstellerJA().setVorname(vorname);
+	private Gesuch createFallForSuche(AbstractTestfall testfall, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung, boolean verfuegen) {
+		Gesuch gesuch = createFallForSuche(testfall, institutionenForSchulung, verfuegen);
+		if (StringUtils.isNotEmpty(nachname)) {
+			gesuch.getGesuchsteller1().getGesuchstellerJA().setNachname(nachname);
+		}
+		if (StringUtils.isNotEmpty(vorname)) {
+			gesuch.getGesuchsteller1().getGesuchstellerJA().setVorname(vorname);
+		}
 		return gesuchService.updateGesuch(gesuch, false);
 	}
 
-	private Gesuch createFallForSuche(AbstractTestfall testfall, List<InstitutionStammdaten> institutionenForSchulung ) {
+	@Inject
+	private WizardStepService wizardStepService;
+
+	private Gesuch createFallForSuche(AbstractTestfall testfall, List<InstitutionStammdaten> institutionenForSchulung, boolean verfuegen) {
 		@SuppressWarnings("DuplicateBooleanBranch")
-		boolean verfuegen = RANDOM.nextBoolean() && RANDOM.nextBoolean(); // Damit VERFUEGT nicht zu haeufig...
+
 		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, verfuegen, null);
 		gesuch.setEingangsdatum(LocalDate.now());
 
@@ -346,6 +353,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 			betreuung.setInstitutionStammdaten(institutionStammdaten);
 			if (verfuegen) {
 				betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
+
 			} else {
 				// Etwas haeufiger WARTEN als BESTAETIGT/ABGELEHNT
 				Betreuungsstatus[] statussis = new Betreuungsstatus[]{Betreuungsstatus.WARTEN, Betreuungsstatus.WARTEN,Betreuungsstatus.WARTEN,Betreuungsstatus.BESTAETIGT, Betreuungsstatus.ABGEWIESEN};
@@ -356,7 +364,11 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 				}
 			}
 		}
-		return gesuchService.updateGesuch(gesuch, false);
+		Gesuch savedGesuch = gesuchService.updateGesuch(gesuch, false);
+		if (verfuegen) {
+			wizardStepService.updateSteps(savedGesuch.getId(), null, null, WizardStepName.VERFUEGEN);
+		}
+		return savedGesuch;
 	}
 
 	private void removeBenutzer(String username) {
