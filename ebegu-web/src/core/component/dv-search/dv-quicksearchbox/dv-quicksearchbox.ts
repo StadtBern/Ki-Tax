@@ -9,13 +9,16 @@ import {isAnyStatusOfVerfuegt} from '../../../../models/enums/TSAntragStatus';
 import GesuchModelManager from '../../../../gesuch/service/gesuchModelManager';
 import EbeguUtil from '../../../../utils/EbeguUtil';
 import {SearchIndexRS} from '../../../service/searchIndexRS.rest';
+import TSAntragDTO from '../../../../models/TSAntragDTO';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
+import IInjectorService = angular.auto.IInjectorService;
 let template = require('./dv-quicksearchbox.html');
+require('./dv-quicksearchbox.less');
 
 
 export class DvQuicksearchboxComponentConfig implements IComponentOptions {
-    transclude = true;
+    transclude = false;
     template = template;
     controller = DvQuicksearchboxController;
     controllerAs = 'vm';
@@ -29,6 +32,8 @@ export class DvQuicksearchboxController {
 
     selectedItem: TSSearchResultEntry;
     searchQuery: string;
+    TSRoleUtil: TSRoleUtil;
+    gesuchModelManager: GesuchModelManager;
 
     static $inject: any[] = ['EbeguUtil', '$timeout', '$log', '$q', 'SearchIndexRS', 'CONSTANTS', '$filter', '$translate',
         '$state', 'AuthServiceRS', 'GesuchModelManager'];
@@ -36,8 +41,8 @@ export class DvQuicksearchboxController {
     constructor(private ebeguUtil: EbeguUtil, private $timeout: IFilterService, private $log: ILogService,
                 private $q: IQService, private searchIndexRS: SearchIndexRS, private CONSTANTS: any,
                 private $filter: IFilterService, private $translate: ITranslateService,
-                private $state: IStateService, private authServiceRS: AuthServiceRS, private gesuchModelManager: GesuchModelManager) {
-
+                private $state: IStateService, private authServiceRS: AuthServiceRS, private $injector: IInjectorService) {
+                this.TSRoleUtil = TSRoleUtil;
     }
 
     //wird von angular aufgerufen
@@ -69,7 +74,10 @@ export class DvQuicksearchboxController {
     private addFakeTotalResultEntry(quickSearchResult: TSQuickSearchResult, limitedResults: TSSearchResultEntry[]) {
         if (angular.isArray(limitedResults) && limitedResults.length > 0) {
             let totalResEntry: TSSearchResultEntry = new TSSearchResultEntry();
-            totalResEntry.text = this.$translate.instant('QUICKSEARCH_ALL_RESULTS', {totalNum: quickSearchResult.totalResultSize});
+            let alleFaelleEntry = new TSAntragDTO();
+            alleFaelleEntry.familienName = this.$translate.instant('QUICKSEARCH_ALL_RESULTS', {totalNum: quickSearchResult.totalResultSize});
+            totalResEntry.entity = 'ALL';
+            totalResEntry.antragDTO = alleFaelleEntry;
             limitedResults.push(totalResEntry);
         }
         quickSearchResult.resultEntities = limitedResults;
@@ -81,11 +89,14 @@ export class DvQuicksearchboxController {
     }
 
 
-    //TODO: ähnlicher code wie bei faelleListView.
+    //TODO: ähnlicher code wie bei faelleListView.  Ausserdem waere es wohl besser den gesuchModelManager lazy zu injecten
     private navigateToFall() {
         if (this.selectedItem && this.selectedItem.gesuchID) {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {
-                // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
+                // Reload Gesuch in gesuchModelManager on Init in fallCreationView because  maybe it has been changed since last time
+                if(!this.gesuchModelManager){
+                    this.gesuchModelManager =  this.$injector.get<GesuchModelManager>('GesuchModelManager');
+                }
                 this.gesuchModelManager.clearGesuch();
                 if (isAnyStatusOfVerfuegt(this.selectedItem.antragDTO.status)) {
 
@@ -96,7 +107,7 @@ export class DvQuicksearchboxController {
             } else {
                 this.openGesuch(this.selectedItem.gesuchID, 'gesuch.fallcreation');
             }
-        } else {
+        } else if(this.selectedItem){
             window.alert('navigate to result page')
         }
     }
