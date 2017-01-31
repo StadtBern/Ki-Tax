@@ -202,7 +202,7 @@ export default class TSAntragDTO {
             text = EbeguUtil.addZerosToNumber(this.fallNummer, 6);
         }
         if (this.familienName) {
-            text = text + ' ' + this.familienName
+            text = text + ' ' + this.familienName;
         }
         return text;
     }

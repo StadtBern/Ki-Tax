@@ -30,11 +30,11 @@ export class DVPendenzenListConfig implements IComponentOptions {
         addButtonText: '@'
     };
     template = template;
-    controller = DVAntragListController;
+    controller = DVPendenzenListController;
     controllerAs = 'vm';
 }
 
-export class DVAntragListController {
+export class DVPendenzenListController {
 
     antraege: Array<TSAntragDTO> = []; //muss hier gesuch haben damit Felder die wir anzeigen muessen da sind
 

@@ -53,7 +53,7 @@ export class SearchListViewController {
         this.searchIndexRS.globalSearch(this.searchString).then((quickSearchResult: TSQuickSearchResult) => {
             this.antragList = [];
             for (let res of quickSearchResult.resultEntities) {
-                this.antragList.push(res.antragDTO)
+                this.antragList.push(res.antragDTO);
             }
             this.ebeguUtil.handleSmarttablesUpdateBug(this.antragList);
         }).catch(() => {

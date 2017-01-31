@@ -65,7 +65,7 @@ export class DvQuicksearchboxController {
 
         let limitedResults = this.$filter('limitTo')(quickSearchResult.resultEntities, 8);
         // if (limitedResults.length < quickSearchResult.length) { //total immer anzeigen
-        this.addFakeTotalResultEntry(quickSearchResult, limitedResults)
+        this.addFakeTotalResultEntry(quickSearchResult, limitedResults);
     }
 
     private addFakeTotalResultEntry(quickSearchResult: TSQuickSearchResult, limitedResults: TSSearchResultEntry[]) {
@@ -79,8 +79,7 @@ export class DvQuicksearchboxController {
     }
 
     private selectItemChanged() {
-        this.navigateToFall()
-
+        this.navigateToFall();
     }
 
 
