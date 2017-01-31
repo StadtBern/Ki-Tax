@@ -92,6 +92,17 @@ public class JaxAntragDTO implements Serializable {
 	@NotNull
 	private Set<BetreuungsangebotTyp> angebote;
 
+	public Set<String> getKinder() {
+		return kinder;
+	}
+
+	public void setKinder(Set<String> kinder) {
+		this.kinder = kinder;
+	}
+
+	@NotNull
+	private Set<String> kinder;
+
 	@NotNull
 	private Set<String> institutionen;
 

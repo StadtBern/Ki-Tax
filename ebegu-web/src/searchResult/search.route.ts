@@ -1,7 +1,6 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState} from 'angular-ui-router';
 import {IStateParamsService} from 'angular-ui-router';
-import TSSearchResultEntry from '../models/dto/TSSearchResultEntry';
 
 
 searchRun.$inject = ['RouterHelper'];

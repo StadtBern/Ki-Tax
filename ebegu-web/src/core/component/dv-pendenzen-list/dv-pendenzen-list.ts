@@ -23,12 +23,8 @@ export class DVPendenzenListConfig implements IComponentOptions {
     bindings: any = {
         antraege: '<',
         itemsByPage: '<',
-        tableId: '@',
-        tableTitle: '@',
-        actionVisible: '@',
-        addButtonVisible: '@',
-        addButtonText: '@'
     };
+
     template = template;
     controller = DVPendenzenListController;
     controllerAs = 'vm';
@@ -38,8 +34,6 @@ export class DVPendenzenListController {
 
     antraege: Array<TSAntragDTO> = []; //muss hier gesuch haben damit Felder die wir anzeigen muessen da sind
 
-    tableId: string;
-    tableTitle: string;
     itemsByPage: number;
 
     selectedBetreuungsangebotTyp: string;

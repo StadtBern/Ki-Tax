@@ -57,7 +57,7 @@ export class SearchListViewController {
             }
             this.ebeguUtil.handleSmarttablesUpdateBug(this.antragList);
         }).catch(() => {
-            this.$log.warn('error during quicksearch');
+            this.$log.warn('error during globalSearch');
         });
     }
 
