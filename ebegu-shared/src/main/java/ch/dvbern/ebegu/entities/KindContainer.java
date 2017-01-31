@@ -1,8 +1,13 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +27,9 @@ import java.util.TreeSet;
 @Table(
 	uniqueConstraints = @UniqueConstraint(columnNames = {"kindNummer", "gesuch_id"}, name = "UK_kindcontainer_gesuch_kind_nummer")
 )
-public class KindContainer extends AbstractEntity implements Comparable<KindContainer>{
+@Indexed
+@Analyzer(impl = EBEGUGermanAnalyzer.class)
+public class KindContainer extends AbstractEntity implements Comparable<KindContainer>, Searchable {
 
 	private static final long serialVersionUID = -6784985260190035840L;
 
@@ -39,6 +46,7 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_container_kindja_id"), nullable = true)
+	@IndexedEmbedded
 	private Kind kindJA;
 
 	@NotNull
@@ -136,5 +144,31 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 			}
 		}
 		return mutation;
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultId() {
+		return this.getId();
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultSummary() {
+		if(getKindJA()!=null){
+			return getKindJA().getFullName();
+		}
+		return "-";
+	}
+
+	@Nullable
+	@Override
+	public String getSearchResultAdditionalInformation() {
+		return this.toString();
+	}
+
+	@Override
+	public String getOwningGesuchId() {
+		return getGesuch().getId();
 	}
 }

@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.dto.suchfilter;
+package ch.dvbern.ebegu.dto.suchfilter.smarttable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 
 /**
- * * Klasse zum deserialisieren/serialisieren des Sortfilters in Java
+ * * Klasse zum deserialisieren/serialisieren des Sortfilters in Java  (smarttable)
  */
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)

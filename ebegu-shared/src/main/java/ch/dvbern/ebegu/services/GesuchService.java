@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -48,6 +48,14 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	Optional<Gesuch> findGesuch(@Nonnull String key);
+
+	/**
+	 * Gibt alle Gesuche zurueck die in der Liste der gesuchIds auftauchen und fuer die der Benutzer berechtigt ist.
+	 * Gesuche fuer die der Benutzer nicht berechtigt ist werden uebersprungen
+	 * @param gesuchIds
+	 *
+	 */
+	List<Gesuch> findReadableGesuche(@Nullable Collection<String> gesuchIds);
 
 	/**
 	 * Gibt alle existierenden Gesuche zurueck.

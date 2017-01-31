@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -16,7 +15,7 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
-public class Kind extends AbstractPersonEntity {
+public class Kind extends AbstractPersonEntity{
 
 	private static final long serialVersionUID = -9032257320578372570L;
 

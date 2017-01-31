@@ -603,6 +603,7 @@
     "PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM": "Maximaler Zuschlag zum Erwerbspensum",
     "PLATZBESTAETIGUNG": "Platzbestätigung",
     "PLATZBESTAETIGUNG_MUTATION": "Platz mutieren",
+    "QUICKSEARCH_ALL_RESULTS": "Alle Resultate anzeigen ({{totalNum}})",
     "INSTITUTION_HINZUFUEGEN": "Institution hinzufügen",
     "INSTITUTION_SPEICHERN": "Institution speichern",
     "INSTITUTIONEN_NOCH_KEINE": "Noch keine Institutionen",
