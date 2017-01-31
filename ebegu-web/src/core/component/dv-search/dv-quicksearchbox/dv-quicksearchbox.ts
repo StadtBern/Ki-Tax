@@ -71,7 +71,8 @@ export class DvQuicksearchboxController {
     private addFakeTotalResultEntry(quickSearchResult: TSQuickSearchResult, limitedResults: TSSearchResultEntry[]) {
         if (angular.isArray(limitedResults) && limitedResults.length > 0) {
             let totalResEntry: TSSearchResultEntry = new TSSearchResultEntry();
-            totalResEntry.text = this.$translate.instant('QUICKSEARCH_ALL_RESULTS', {totalNum: quickSearchResult.totalResultSize});
+            // Total Anzahl wird momentan nicht angezeigt, weil diese meistens falsch ist
+            totalResEntry.text = this.$translate.instant('QUICKSEARCH_ALL_RESULTS');
             limitedResults.push(totalResEntry);
         }
         quickSearchResult.resultEntities = limitedResults;

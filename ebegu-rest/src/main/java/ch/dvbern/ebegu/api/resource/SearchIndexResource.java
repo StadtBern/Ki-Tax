@@ -154,7 +154,7 @@ public class SearchIndexResource {
 		Map<String, Gesuch> gesuchMap = new HashMap<>();
 		for (Fall fall : fallToAntragMultimap.keySet()) {
 			List<Gesuch> antraege = fallToAntragMultimap.get(fall);
-			antraege.sort(Comparator.comparing(Gesuch::getLaufnummer));
+			antraege.sort(Comparator.comparing(Gesuch::getLaufnummer).reversed());
 			gesuchMap.put(antraege.get(0).getId(), antraege.get(0)); //nur neusten Antrag zurueckgeben
 		}
 
