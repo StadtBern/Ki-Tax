@@ -56,6 +56,12 @@ public class SearchIndexResource {
 	@Inject
 	private PrincipalBean principalBean;
 
+	/**
+	 * Not used at the moment
+	 * @param searchStringParam
+	 * @param filters
+	 * @return
+	 */
 	@POST()
 	@Path("/parameterized/query/{searchString}")
 	@Consumes(MediaType.APPLICATION_JSON)

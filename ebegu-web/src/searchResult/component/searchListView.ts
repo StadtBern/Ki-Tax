@@ -61,73 +61,9 @@ export class SearchListViewController {
         });
     }
 
-
-    public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
-        if (!this.ignoreRequest) {
-            this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
-            let x= new TSAntragSearchresultDTO;
-            x.antragDTOs = this.getAntragList();
-            x.totalResultSize = 27;
-            return this.$q.when(x);
-/*            return this.gesuchRS.searchAntraegeWithQuicksearch(tableFilterState, this.searchString).then((response: TSAntragSearchresultDTO) => {
-                this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : undefined;
-                this.antragList = response.antragDTOs;
-                return response;
-            });*/
-        } else {
-            this.ignoreRequest = false;
-            let deferred = this.$q.defer();
-            deferred.resolve(undefined);
-            return deferred.promise;
-        }
-    };
-
-
-    public getAntragList(): Array<TSAntragDTO> {
+    public getSearchList(): Array<TSAntragDTO> {
         return this.antragList;
     }
 
-    public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return gesuchsperiode.gesuchsperiodeString;
-    }
 
-    /**
-     * Fuer Benutzer mit der Rolle SACHBEARBEITER_INSTITUTION oder SACHBEARBEITER_TRAEGERSCHAFT oeffnet es das Gesuch mit beschraenkten Daten
-     * Fuer anderen Benutzer wird das Gesuch mit allen Daten geoeffnet
-     * @param antrag
-     * @param event optinally this function can check if ctrl was clicked when opeing
-     */
-    public editFall(antrag: TSAntragDTO, event: any): void {
-        if (antrag) {
-            let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
-            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
-                // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
-                this.gesuchModelManager.clearGesuch();
-                if (isAnyStatusOfVerfuegt(antrag.status)) {
-                    this.openGesuch(antrag.antragId, 'gesuch.verfuegen', isCtrlKeyPressed);
-                } else {
-                    this.openGesuch(antrag.antragId, 'gesuch.betreuungen', isCtrlKeyPressed);
-                }
-            } else {
-                this.openGesuch(antrag.antragId, 'gesuch.fallcreation', isCtrlKeyPressed);
-            }
-        }
-    }
-
-    /**
-     * Oeffnet das Gesuch und geht zur gegebenen Seite (route)
-     * @param antragId
-     * @param urlToGoTo
-     * @param isCtrlKeyPressed true if user pressed ctrl when clicking
-     */
-    private openGesuch(antragId: string, urlToGoTo: string, isCtrlKeyPressed: boolean): void {
-        if (antragId) {
-            if (isCtrlKeyPressed) {
-                let url = this.$state.href(urlToGoTo, {createNew: false, gesuchId: antragId});
-                window.open(url, '_blank');
-            } else {
-                this.$state.go(urlToGoTo, {createNew: false, gesuchId: antragId});
-            }
-        }
-    }
 }

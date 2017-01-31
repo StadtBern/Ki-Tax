@@ -5,19 +5,14 @@
                 <h3 data-translate="SEARCH_LIST"></h3>
             </div>
             <div class="col-md-1 text-right">
-                <h3 ng-bind="vm.totalResultCount"></h3>
+                <h3 ng-bind="vm.getSearchList() ? vm.getSearchList().length-1 : 0"></h3>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <dv-antrag-list
-                    antraege="vm.getAntragList()"
-                                on-filter-change="vm.passFilterToServer(tableState)"
-                                on-edit="vm.editFall(antrag, event)"
-                                add-button-visible="false"
-                                action-visible="false">
 
-                </dv-antrag-list>
+                <dv-pendenzen-list antraege="vm.getSearchList()" items-by-page="20"></dv-pendenzen-list>
+
             </div>
         </div>
     </div>
