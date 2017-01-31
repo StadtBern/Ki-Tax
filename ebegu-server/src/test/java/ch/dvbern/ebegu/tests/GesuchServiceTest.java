@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBException;
 import javax.inject.Inject;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
@@ -405,8 +407,43 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
 
+		loginAsSachbearbeiterJA();
 		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
+	}
+
+	@Test
+	public void testExceptionOnInvalidFreigabe() {
+		LocalDate now = LocalDate.now();
+		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_GS);
+
+		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
+
+		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
+		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
+
+		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
+
+		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
+
+		Benutzer gesuchsteller = loginAsGesuchsteller("gesuchst");
+		try {
+			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+			Assert.fail("No Besitzer is present. must fail for Role Gesuchsteller");
+		} catch (EJBAccessException e) {
+		//noop
+		}
+
+		gesuch.getFall().setBesitzer(gesuchsteller);
+		persistence.merge(gesuch.getFall());
+		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
+		try {
+			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+			Assert.fail("Gesuch is already freigegeben. Wrong state should be detected");
+		} catch (EJBException e){
+			Assert.assertTrue(e.getCausedByException() instanceof IllegalArgumentException);
+		}
 	}
 
 	@Test

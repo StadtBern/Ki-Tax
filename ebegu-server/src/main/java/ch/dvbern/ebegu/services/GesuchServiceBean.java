@@ -627,7 +627,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SCHULAMT, UserRoleName.GESUCHSTELLER})
 	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username) {
-		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
+		Optional<Gesuch> gesuchOptional = Optional.ofNullable(persistence.find(Gesuch.class, gesuchId)); //direkt ueber persistence da wir eigentlich noch nicht leseberechtigt sind)
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
 			Validate.isTrue(gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG)
@@ -650,7 +650,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-			// Step Verfügen gruen, falls NUR_SCHULAMT
+			// Step Verfuegen gruen, falls NUR_SCHULAMT
 			if (AntragStatus.NUR_SCHULAMT.equals(gesuch.getStatus())) {
 				wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
 			}
