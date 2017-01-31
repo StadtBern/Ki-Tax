@@ -10,7 +10,6 @@ import TSFall from '../../../models/TSFall';
 import FallRS from '../../../gesuch/service/fallRS.rest';
 import {IMitteilungenStateParams} from '../../mitteilungen.route';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import DateUtil from '../../../utils/DateUtil';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IFormController = angular.IFormController;
@@ -31,6 +30,8 @@ export class MitteilungenViewController {
     currentMitteilung: TSMitteilung;
     allMitteilungen: Array<TSMitteilung>;
     form: IFormController;
+    TSRole: any;
+    TSRoleUtil: any;
 
 
     static $inject: string[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS', '$q'];
@@ -38,6 +39,8 @@ export class MitteilungenViewController {
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS, private authServiceRS: AuthServiceRS,
                 private fallRS: FallRS, private $q: IQService) {
         this.initViewModel();
+        this.TSRole = TSRole;
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private initViewModel(): void {
@@ -45,7 +48,9 @@ export class MitteilungenViewController {
             this.fallRS.findFall(this.$stateParams.fallId).then((response) => {
                 this.fall = response;
                 this.loadEntwurf();
-                this.loadAllMitteilungen();
+                this.setAllMitteilungenGelesen().then((response) => {
+                    this.loadAllMitteilungen();
+                });
             });
         }
     }
@@ -55,13 +60,18 @@ export class MitteilungenViewController {
      * Mitteilung zurueck.
      */
     private loadEntwurf() {
-        this.mitteilungRS.getEntwurfForCurrentRolle(this.fall.id).then((entwurf: TSMitteilung) => {
-            if (entwurf) {
-                this.currentMitteilung = entwurf;
-            } else {
-                this.initMitteilungForCurrentBenutzer();
-            }
-        });
+        // Wenn der Fall keinen Besitzer hat, darf auch keine Nachricht geschrieben werden
+        if (this.fall.besitzer) {
+            this.mitteilungRS.getEntwurfForCurrentRolle(this.fall.id).then((entwurf: TSMitteilung) => {
+                if (entwurf) {
+                    this.currentMitteilung = entwurf;
+                } else {
+                    this.initMitteilungForCurrentBenutzer();
+                }
+            });
+        } else {
+            this.currentMitteilung = undefined;
+        }
     }
 
     private initMitteilungForCurrentBenutzer() {
@@ -88,7 +98,6 @@ export class MitteilungenViewController {
             this.currentMitteilung.empfaenger = this.fall.verantwortlicher ? this.fall.verantwortlicher : undefined;
             this.currentMitteilung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
             this.currentMitteilung.senderTyp = TSMitteilungTeilnehmerTyp.INSTITUTION;
-
         }
     }
 
@@ -97,33 +106,30 @@ export class MitteilungenViewController {
     }
 
     /**
-     * Wechselt den Status der aktuellen Mitteilung auf NEU und schickt diese zum Server
+     * Speichert die aktuelle Mitteilung als gesendet.
      */
-    public sendMitteilung(): void {
-        this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
-        this.currentMitteilung.sentDatum = DateUtil.now();
-        this.saveMitteilung(true).catch(() => {
-            // All set data have to be set back to be able to save as Entwurf again
-            this.currentMitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
-            this.currentMitteilung.sentDatum = undefined;
-            // forward promise
-            let deferred = this.$q.defer();
-            deferred.resolve(undefined);
-            return deferred.promise;
-        });
-    }
-
-    public saveEntwurf(): void {
-        this.saveMitteilung(false);
+    public sendMitteilung(): IPromise<TSMitteilung> {
+        if (!this.isMitteilungEmpty()) {
+            return this.mitteilungRS.sendMitteilung(this.getCurrentMitteilung()).then((response) => {
+                this.loadEntwurf();
+                this.loadAllMitteilungen();
+                return this.currentMitteilung;
+            }).finally(() => {
+                this.form.$setPristine();
+                this.form.$setUntouched();
+            });
+        } else {
+            return this.$q.when(this.currentMitteilung);
+        }
     }
 
     /**
-     * Speichert die aktuelle Mitteilung nur wenn das formular dirty ist oder wenn das Parameter forceSave true ist.
+     * Speichert die aktuelle Mitteilung nur wenn das formular dirty ist.
      * Wenn das Formular leer ist, wird der Entwurf geloescht (falls er bereits existiert)
      */
-    private saveMitteilung(forceSave: boolean): IPromise<TSMitteilung> {
-        if (((this.form.$dirty && !this.isMitteilungEmpty())) || forceSave === true) {
-            return this.mitteilungRS.createMitteilung(this.getCurrentMitteilung()).then((response) => {
+    public saveEntwurf(): IPromise<TSMitteilung> {
+        if (((this.form.$dirty && !this.isMitteilungEmpty()))) {
+            return this.mitteilungRS.saveEntwurf(this.getCurrentMitteilung()).then((response) => {
                 this.loadEntwurf();
                 this.loadAllMitteilungen();
                 return this.currentMitteilung;
@@ -192,4 +198,26 @@ export class MitteilungenViewController {
         }
     }
 
+    private setAllMitteilungenGelesen(): IPromise<Array<TSMitteilung>> {
+        return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
+    }
+
+    /**
+     * Aendert den Status der gegebenen Mitteilung auf ERLEDIGT wenn es GELESEN war oder
+     * auf GELESEN wenn es ERLEDIGT war
+     */
+    public setErledigt(mitteilung: TSMitteilung): void {
+        if (mitteilung && mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN) {
+            mitteilung.mitteilungStatus = TSMitteilungStatus.ERLEDIGT;
+            this.mitteilungRS.setMitteilungErledigt(mitteilung.id);
+
+        } else if (mitteilung && mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT) {
+            mitteilung.mitteilungStatus = TSMitteilungStatus.GELESEN;
+            this.mitteilungRS.setMitteilungGelesen(mitteilung.id);
+        }
+    }
+
+    public isStatusErledigtGelesen(mitteilung: TSMitteilung): boolean {
+        return mitteilung && (mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT || mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN);
+    }
 }

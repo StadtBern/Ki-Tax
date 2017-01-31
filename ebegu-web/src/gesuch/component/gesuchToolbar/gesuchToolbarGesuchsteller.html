@@ -2,7 +2,7 @@
 <div class="gesuch-toolbar-gesuchsteller" flex="100" hide-sm hide-xs>
     <md-toolbar flex="100">
         <md-menu-bar flex="100" layout="row" layout-align="start center">
-            <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()"></span></span>
+            <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()"  title="{{vmx.getBesitzer()}}"></span></span>
             <span flex="40"></span>
             <md-menu ng-if="vmgs.showGesuchPeriodeNavigationMenu()">
                 <button ng-click="$mdOpenMenu()"
