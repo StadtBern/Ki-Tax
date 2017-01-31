@@ -130,6 +130,7 @@ public class SearchIndexServiceBean implements SearchIndexService {
 
 
 	//hibernate-search dsl is not well suited for programmatic queries which is why this code is kind of unwieldy.
+	@Nonnull
 	private FullTextQuery buildLuceneQuery(@Nonnull List<String> searchTermList, @Nonnull SearchFilter filter) {
 		Class<Searchable> entityClass = filter.getSearchEntityType().getEntityClass();
 		Validate.notNull(filter.getSearchEntityType());
