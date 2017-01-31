@@ -15,6 +15,7 @@ import TSUser from '../../../models/TSUser';
 import Moment = moment.Moment;
 import IFormController = angular.IFormController;
 import IQService = angular.IQService;
+import IWindowService = angular.IWindowService;
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 
@@ -25,7 +26,6 @@ export class DVMitteilungListConfig implements IComponentOptions {
         fall: '<',
         betreuung: '<',
         form: '<',
-        onCancel: '&'
     };
 
     template = template;
@@ -38,7 +38,6 @@ export class DVMitteilungListController {
     fall: TSFall;
     betreuung: TSBetreuung;
     form: IFormController;
-    onCancel: () => void;
 
     currentMitteilung: TSMitteilung;
     allMitteilungen: Array<TSMitteilung>;
@@ -47,10 +46,10 @@ export class DVMitteilungListController {
 
 
     static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS',
-        'FallRS', 'BetreuungRS', '$q'];
+        'FallRS', 'BetreuungRS', '$q', '$window'];
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS, private authServiceRS: AuthServiceRS,
-                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService) {
+                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window :IWindowService) {
 
         this.initViewModel();
         this.TSRole = TSRole;
@@ -79,7 +78,7 @@ export class DVMitteilungListController {
 
     public cancel() : void {
         this.form.$setPristine();
-        this.onCancel();
+        this.$window.history.back();
     }
 
     /**
@@ -88,7 +87,9 @@ export class DVMitteilungListController {
      */
     private loadEntwurf() {
         // Wenn der Fall keinen Besitzer hat, darf auch keine Nachricht geschrieben werden
-        if (this.fall.besitzer) {
+        // Ausser wir sind Institutionsbenutzer
+        let isInstitutionsUser : boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
+        if (this.fall.besitzer || isInstitutionsUser) {
             if (this.betreuung) {
                 this.mitteilungRS.getEntwurfForCurrentRolleForBetreuung(this.betreuung.id).then((entwurf: TSMitteilung) => {
                     if (entwurf) {
