@@ -186,13 +186,15 @@ export class GesuchToolbarController {
         } else if (this.fallid) {
             this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
                 this.antragList = angular.copy(response);
-                this.gesuchRS.findGesuch(this.getNewest(this.antragList).antragId).then((response) => {
-                    this.gesuchModelManager.setGesuch(angular.copy(response));
-                    this.updateGesuchperiodeList();
-                    this.updateGesuchNavigationList();
-                    this.updateAntragTypList();
-                    this.antragMutierenPossible();
-                });
+                if (response && response.length > 0) {
+                    this.gesuchRS.findGesuch(this.getNewest(this.antragList).antragId).then((response) => {
+                        this.gesuchModelManager.setGesuch(angular.copy(response));
+                        this.updateGesuchperiodeList();
+                        this.updateGesuchNavigationList();
+                        this.updateAntragTypList();
+                        this.antragMutierenPossible();
+                    });
+                }
             });
         } else {
             this.gesuchsperiodeList = {};
