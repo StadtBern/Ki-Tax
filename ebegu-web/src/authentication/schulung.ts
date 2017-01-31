@@ -6,7 +6,6 @@ import AuthServiceRS from './service/AuthServiceRS.rest';
 import {TSMandant} from '../models/TSMandant';
 import TSInstitution from '../models/TSInstitution';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
-import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {TestFaelleRS} from '../admin/service/testFaelleRS.rest';
 import IRootScopeService = angular.IRootScopeService;
@@ -25,6 +24,7 @@ export class SchulungViewController {
 
     public usersList: Array<TSUser> = Array<TSUser>();
     private gesuchstellerList: string[];
+    private institutionsuserList: Array<TSUser> = Array<TSUser>();
     private mandant: TSMandant;
     private institutionForelle: TSInstitution;
     private traegerschaftFisch: TSTraegerschaft;
@@ -46,9 +46,9 @@ export class SchulungViewController {
                 this.usersList.push(new TSUser('Sandra', name, username, 'password1', 'sandra.' + name.toLocaleLowerCase() + '@mailinator.com', this.mandant, TSRole.GESUCHSTELLER));
             }
 
-            this.usersList.push(new TSUser('Fritz', 'Fisch', 'sch16', 'password1', 'fritz.fisch@mailinator.com',
+            this.institutionsuserList.push(new TSUser('Fritz', 'Fisch', 'sch16', 'password1', 'fritz.fisch@mailinator.com',
                 this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftFisch, undefined));
-            this.usersList.push(new TSUser('Franz', 'Forelle', 'sch17', 'password1', 'franz.forelle@mailinator.com',
+            this.institutionsuserList.push(new TSUser('Franz', 'Forelle', 'sch17', 'password1', 'franz.forelle@mailinator.com',
                 this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institutionForelle));
         });
     }

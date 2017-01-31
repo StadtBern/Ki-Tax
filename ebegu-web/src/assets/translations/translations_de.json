@@ -863,6 +863,7 @@
     "MITTEILUNG_SUBJECT": "Betreff",
     "MITTEILUNG_MESSAGE": "Nachricht",
     "MITTEILUNG_SENDEN": "Senden",
+    "MITTEILUNGEN_ERLEDIGT": "erledigt",
     "SCHULUNG": "Schulung",
     "SCHULUNG_CREATE_DATA": "Schulungsdaten erstellen",
     "SCHULUNG_DELETE_DATA": "Schulungsdaten löschen",
@@ -872,5 +873,6 @@
     "POSTEINGANG_FAMILIE_UPPER": "FAMILIE",
     "POSTEINGANG_BETREFF_UPPER": "BETREFF",
     "POSTEINGANG_DATUM_UPPER": "DATUM",
-    "POSTEINGANG_VERANTWORTLICH_UPPER": "VERANTWORTLICH"
+    "POSTEINGANG_VERANTWORTLICH_UPPER": "VERANTWORTLICH",
+    "MITTEILUNGEN_NOCH_KEINE": "Für diesen Fall wurden noch keine Mitteilungen gesendet"
 }

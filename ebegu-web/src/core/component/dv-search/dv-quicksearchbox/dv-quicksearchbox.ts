@@ -82,9 +82,8 @@ export class DvQuicksearchboxController {
 
     }
 
-    /**
-     * ähnlicher code wie bei faelleListView. Ev gemeinsame basisklasse?
-     */
+
+    //TODO: ähnlicher code wie bei faelleListView.
     private navigateToFall() {
         if (this.selectedItem && this.selectedItem.gesuchID) {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {
@@ -105,8 +104,8 @@ export class DvQuicksearchboxController {
         }
     }
 
+
     /**
-     * ähnlicher code wie bei faelleListView. Ev gemeinsame basisklasse?
      * Oeffnet das Gesuch und geht zur gegebenen Seite (route)
      * @param antragId
      * @param urlToGoTo

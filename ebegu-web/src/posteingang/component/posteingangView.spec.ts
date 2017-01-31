@@ -66,7 +66,7 @@ describe('posteingangView', function () {
         describe('getMitteilungen', function () {
             it('should return the list of Mitteilungen', function () {
                 mockRestCalls();
-                posteingangViewController = new PosteingangViewController(mitteilungRS, ebeguUtil, CONSTANTS);
+                posteingangViewController = new PosteingangViewController(mitteilungRS, ebeguUtil, CONSTANTS, undefined);
                 $scope.$apply();
                 expect(mitteilungRS.getMitteilungenForPosteingang).toHaveBeenCalled();
                 let list: Array<TSMitteilung> = posteingangViewController.getMitteilungen();
@@ -75,25 +75,6 @@ describe('posteingangView', function () {
                 expect(list[0]).toEqual(mockMitteilung);
             });
         });
-        // describe('editPendenzJA', function () {
-        //     it('should call findGesuch and open the view gesuch.fallcreation with it for normal user', function () {
-        //         let tsGesuch = callEditFall('findGesuch');
-        //
-        //         expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', { createNew: false, gesuchId: '66345345' });
-        //
-        //     });
-        //     it('should call findGesuch and open the view gesuch.betreuungen with it for INS/TRAEGER user if gesuch not verfuegt', function () {
-        //         spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
-        //         let tsGesuch = callEditFall('findGesuchForInstitution');
-        //         expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', { createNew: false, gesuchId: '66345345' });
-        //     });
-        //     it('should call findGesuch and open the view gesuch.verfuegen with it for INS/TRAEGER user if gesuch verfuegt', function () {
-        //        spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
-        //         mockMitteilung.status = TSAntragStatus.VERFUEGT;
-        //        let tsGesuch = callEditFall('findGesuchForInstitution');
-        //        expect($state.go).toHaveBeenCalledWith('gesuch.verfuegen', { createNew: false, gesuchId: '66345345' });
-        //    });
-        // });
     });
 
     function mockGetMitteilung(): TSMitteilung {
@@ -115,20 +96,5 @@ describe('posteingangView', function () {
         $httpBackend.when('GET', '/ebegu/api/v1/benutzer').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
     }
-
-    // function callEditFall(methodName: string): TSGesuch {
-    //     mockRestCalls();
-    //     spyOn($state, 'go');
-    //     spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
-    //     posteingangViewController = new PosteingangViewController($filter, gesuchRS,
-    //         gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS, $q);
-    //
-    //     let tsGesuch = new TSGesuch();
-    //     spyOn(gesuchRS, methodName).and.returnValue($q.when(tsGesuch));
-    //
-    //     posteingangViewController.editFall(mockAntrag, undefined);
-    //     $scope.$apply();
-    //     return tsGesuch;
-    // }
 });
 
