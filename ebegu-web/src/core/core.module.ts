@@ -65,8 +65,10 @@ import {DvHomeIconComponentConfig} from './component/dv-home-icon/dv-home-icon';
 import {DVBarcodeListener} from './directive/dv-barcode-listener';
 import DVTrimEmpty from './directive/dv-trim-empty/dv-trim-empty';
 import {DvMobileNavigationToggleComponentConfig} from './component/dv-mobile-navigation-toggle/dv-mobile-navigation-toggle';
+import {SearchIndexRS} from './service/searchIndexRS.rest';
+import {DvSearchResultIconComponentConfig} from './component/dv-search/dv-search-result-icon/dv-search-result-icon';
+import {DvQuicksearchboxComponentConfig} from './component/dv-search/dv-quicksearchbox/dv-quicksearchbox';
 import MitteilungRS from './service/mitteilungRS.rest';
-
 let dynamicDependencies = function (): string[] {
 
     let dynDep: string [] = [];
@@ -167,6 +169,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('HttpResponseInterceptor', HttpResponseInterceptor)
     .service('WizardStepManager', WizardStepManager)
     .service('NavigationLogger', NavigationLogger)
+    .service('SearchIndexRS', SearchIndexRS)
     .controller('DVElementController', DVRoleElementController)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
@@ -180,5 +183,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())
+    .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
+    .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
     .service('MahnungRS', MahnungRS);
 
