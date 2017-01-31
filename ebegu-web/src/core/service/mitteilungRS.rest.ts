@@ -105,4 +105,10 @@ export default class MitteilungRS {
             return this.ebeguRestUtil.parseMitteilungen(response.data);
         });
     }
+
+    public getAmountNewMitteilungenForCurrentRolle(fallId: string): IPromise<number> {
+        return this.http.get(this.serviceURL + '/amountnew/' + fallId).then((response: any) => {
+            return response.data;
+        });
+    }
 }

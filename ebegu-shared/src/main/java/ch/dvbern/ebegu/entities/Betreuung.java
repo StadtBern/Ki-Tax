@@ -271,7 +271,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		if (getKind().getGesuch() != null) {
 			String kind = "" + getKind().getKindNummer();
 			String betreuung = "" + getBetreuungNummer();
-			return getKind().getGesuch().getAntragNummer() + "." + kind + "." + betreuung;
+			return getKind().getGesuch().getJahrAndFallnummer() + "." + kind + "." + betreuung;
 		}
 		return "";
 	}
