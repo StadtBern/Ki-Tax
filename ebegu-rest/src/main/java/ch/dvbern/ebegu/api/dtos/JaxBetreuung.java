@@ -62,7 +62,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate datumBestaetigung = null;
 
-	@NotNull
+	@Nullable
 	private String kindFullname;
 
 
