@@ -35,17 +35,19 @@ public interface MitteilungService {
 	Collection<Mitteilung> getMitteilungenForPosteingang();
 
 	@Nullable
-	Mitteilung getEntwurfForCurrentRolle(Fall fall);
+	Mitteilung getEntwurfForCurrentRolle(@Nonnull Fall fall);
 
-	void removeMitteilung(Mitteilung mitteilung);
+	void removeMitteilung(@Nonnull Mitteilung mitteilung);
 
-	void removeAllMitteilungenForFall(Fall fall);
+	void removeAllMitteilungenForFall(@Nonnull Fall fall);
 
 	/**
 	 * Sucht alle Mitteilungen des uebergebenen Falls und fuer jede, die im Status NEU ist, wechselt
 	 * ihren Status auf GELESEN.
 	 */
-	Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(Fall fall);
+	@Nonnull
+	Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(@Nonnull Fall fall);
 
-	Collection<Mitteilung> getNewMitteilungenForCurrentRolle(Fall fall);
+	@Nonnull
+	Collection<Mitteilung> getNewMitteilungenForCurrentRolle(@Nonnull Fall fall);
 }

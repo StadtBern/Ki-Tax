@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 public class MitteilungResource {
 
 	public static final String FALL_ID_INVALID = "FallID invalid: ";
+
 	@Inject
 	private MitteilungService mitteilungService;
 
