@@ -353,7 +353,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 			if (predicateObjectDto.getKinder() != null) {
 				predicates.add(cb.like(kinder.get(Kind_.vorname), predicateObjectDto.getKindNameForLike()));
-				//predicates.add(cb.equal(kinder.get(Kind_.vorname), predicateObjectDto.getKinder()));
 			}
 			if (predicateObjectDto.getVerantwortlicher() != null) {
 				String[] strings = predicateObjectDto.getVerantwortlicher().split(" ");

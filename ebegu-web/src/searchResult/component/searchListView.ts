@@ -1,20 +1,10 @@
 import {IComponentOptions, IFilterService} from 'angular';
-import {IStateService} from 'angular-ui-router';
-import GesuchRS from '../../gesuch/service/gesuchRS.rest';
-import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
-import BerechnungsManager from '../../gesuch/service/berechnungsManager';
-import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import TSAntragDTO from '../../models/TSAntragDTO';
-import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
-import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
-import {isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
-import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;
 import {ISearchResultateStateParams} from '../search.route';
-import {IStateParamsService} from 'angular-ui-router';
 import TSQuickSearchResult from '../../models/dto/TSQuickSearchResult';
 import {SearchIndexRS} from '../../core/service/searchIndexRS.rest';
 import EbeguUtil from '../../utils/EbeguUtil';
@@ -36,13 +26,9 @@ export class SearchListViewController {
     searchString: string;
 
 
-    static $inject: string[] = ['$filter', 'GesuchRS', 'GesuchModelManager',
-        'BerechnungsManager', '$state', '$log', 'CONSTANTS', 'AuthServiceRS', '$q', '$stateParams', 'SearchIndexRS', 'EbeguUtil'];
+    static $inject: string[] = [ '$log', '$stateParams', 'SearchIndexRS', 'EbeguUtil'];
 
-    constructor(private $filter: IFilterService, private gesuchRS: GesuchRS,
-                private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
-                private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
-                private authServiceRS: AuthServiceRS, private $q: IQService, $stateParams : ISearchResultateStateParams,
+    constructor(private $log: ILogService,  $stateParams : ISearchResultateStateParams,
                 private searchIndexRS : SearchIndexRS, private ebeguUtil: EbeguUtil) {
         this.searchString = $stateParams.searchString;
         this.initViewModel();

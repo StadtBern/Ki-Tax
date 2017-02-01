@@ -22,7 +22,7 @@ export class SearchIndexRS {
      * @returns {IPromise<TSQuickSearchResult>}
      */
     quickSearch(query: string): IHttpPromise<TSQuickSearchResult> {
-        return this.http.get(this.serviceURL + '/quicksearch' + '/' + query).then((response: any) => {
+        return this.http.get(this.serviceURL + 'quicksearch' + '/' + query).then((response: any) => {
             return this.ebeguRestUtil.parseQuickSearchResult(response.data);
         });
     }
@@ -34,7 +34,7 @@ export class SearchIndexRS {
      * @returns {IPromise<TSQuickSearchResult>}
      */
     globalSearch(query: string): IHttpPromise<TSQuickSearchResult> {
-        return this.http.get(this.serviceURL + '/globalsearch' + '/' + query).then((response: any) => {
+        return this.http.get(this.serviceURL + 'globalsearch' + '/' + query).then((response: any) => {
             return this.ebeguRestUtil.parseQuickSearchResult(response.data);
         });
     }

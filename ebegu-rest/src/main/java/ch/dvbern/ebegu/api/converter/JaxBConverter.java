@@ -1568,7 +1568,9 @@ public class JaxBConverter {
 		jaxBetreuung.setErweiterteBeduerfnisse(betreuungFromServer.getErweiterteBeduerfnisse());
 		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(betreuungFromServer.getInstitutionStammdaten()));
 		jaxBetreuung.setBetreuungNummer(betreuungFromServer.getBetreuungNummer());
-
+		if (betreuungFromServer.getKind() != null) {
+			jaxBetreuung.setKindFullname(betreuungFromServer.getKind().getKindJA().getFullName());
+		}
 		if (betreuungFromServer.getVerfuegung() != null) {
 			jaxBetreuung.setVerfuegung(verfuegungToJax(betreuungFromServer.getVerfuegung()));
 		}
@@ -2037,7 +2039,6 @@ public class JaxBConverter {
 		}
 
 		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
-
 		antrag.setKinder(createKinderList(jaxKindContainers));
 
 		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
@@ -2209,6 +2210,9 @@ public class JaxBConverter {
 		} else {
 			throw new EbeguEntityNotFoundException("mitteilungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, mitteilungJAXP.getFall());
 		}
+		if (mitteilungJAXP.getBetreuung() != null) {
+			mitteilung.setBetreuung(betreuungToEntity(mitteilungJAXP.getBetreuung(), new Betreuung()));
+		}
 		mitteilung.setMessage(mitteilungJAXP.getMessage());
 		mitteilung.setMitteilungStatus(mitteilungJAXP.getMitteilungStatus());
 
@@ -2237,6 +2241,9 @@ public class JaxBConverter {
 		jaxMitteilung.setEmpfaengerTyp(persistedMitteilung.getEmpfaengerTyp());
 		if (persistedMitteilung.getFall() != null) {
 			jaxMitteilung.setFall(fallToJAX(persistedMitteilung.getFall()));
+		}
+		if (persistedMitteilung.getBetreuung() != null) {
+			jaxMitteilung.setBetreuung(betreuungToJAX(persistedMitteilung.getBetreuung()));
 		}
 		jaxMitteilung.setMessage(persistedMitteilung.getMessage());
 		jaxMitteilung.setMitteilungStatus(persistedMitteilung.getMitteilungStatus());

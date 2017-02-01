@@ -114,7 +114,16 @@ dv-home-icon {
 
 
 dv-quicksearchbox {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+    border-right: 0.1rem solid #e6e6e6; //todo mara wie machen wir das besser?
+    min-width: 43rem;
+}
 
+.md-virtual-repeat-container.md-autocomplete-suggestions-container {
+    z-index: @z-index-mobile-toolbar; //todo mara das ist wohl nicht so gut
 }
 
 dv-pulldown-user-menu {
