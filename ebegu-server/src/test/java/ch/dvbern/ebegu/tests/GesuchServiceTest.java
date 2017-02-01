@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -118,7 +118,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, allGenDok.size());
 
 
-		gesuchService.removeGesuch(gesuch);
+		gesuchService.removeGesuch(gesuch.getId());
 
 
 		//check all objects don't exist anymore

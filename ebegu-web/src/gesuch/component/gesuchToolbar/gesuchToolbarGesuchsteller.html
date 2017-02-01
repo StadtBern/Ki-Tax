@@ -2,7 +2,7 @@
 <div class="gesuch-toolbar-gesuchsteller" flex="100" hide-sm hide-xs>
     <md-toolbar flex="100">
         <md-menu-bar flex="100" layout="row" layout-align="start center">
-            <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()"></span></span>
+            <span class="gesuchName"><span ng-bind="vmgs.getGesuchName()"  title="{{vmx.getBesitzer()}}"></span></span>
             <span flex="40"></span>
             <md-menu ng-if="vmgs.showGesuchPeriodeNavigationMenu()">
                 <button ng-click="$mdOpenMenu()"
@@ -24,7 +24,7 @@
                 </md-menu-content>
             </md-menu>
 
-            <span class="gesuchNotLoaded" ng-if="!vmgs.showGesuchPeriodeNavigationMenu()"
+            <span class="gesuchNotLoaded" ng-if="!vmgs.showGesuchPeriodeNavigationMenu() && !vmgs.isDashboardScreen"
                   ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
 
             <!--Gesuchstyp-->
@@ -47,14 +47,21 @@
                 </md-menu-content>
             </md-menu>
 
-
-            <span class="gesuchNotLoaded" ng-if="!vmgs.showAntragTypListNavigationMenu()"
+            <span class="gesuchNotLoaded" ng-if="!vmgs.showAntragTypListNavigationMenu() && !vmgs.isDashboardScreen"
                   ng-bind="vmgs.getAntragTyp()"></span>
 
             <span flex=""></span>
 
-            <!--Kontakt-->
+            <!-- Mitteilungen -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()">
+                <button ng-click="vmgs.openMitteilungen()"
+                        aria-label="{{TOOLBAR_MITTEILUNGEN | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
+                </button>
+            </div>
 
+            <!--Kontakt-->
             <md-menu>
                 <button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
                     <i class="ellipsis-icon fa fa-envelope"></i>
@@ -102,9 +109,8 @@
 
     <span class="gesuchsperiode-button" ng-if="!vmgs.showGesuchPeriodeNavigationMenu() && vmgs.getGesuch()"
           ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
-    <span class="antrag-typ-datum-button" ng-if="!vmgs.showAntragTypListNavigationMenu() && vmgs.getGesuch()"
-          ng-bind="vmgs.getAntragTyp()"
-          class="antrag-typ"></span>
+    <span class="antrag-typantrag-typ-datum-button" ng-if="!vmgs.showAntragTypListNavigationMenu() && vmgs.getGesuch()"
+          ng-bind="vmgs.getAntragTyp()"></span>
 
     <span flex=""></span>
 

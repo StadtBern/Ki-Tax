@@ -113,7 +113,7 @@ public class PDFServiceBeanTest {
 
 		byte[] bytes = pdfService.generateFreigabequittung(gesuch_2GS, Zustelladresse.JUGENDAMT, writeProtectPDF);
 		assertNotNull(bytes);
-		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Jugendamt(" + gesuch_2GS.getAntragNummer() + ").pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Jugendamt(" + gesuch_2GS.getJahrAndFallnummer() + ").pdf");
 
 	}
 
@@ -122,7 +122,7 @@ public class PDFServiceBeanTest {
 
 		byte[] bytes = pdfService.generateFreigabequittung(gesuch_2GS, Zustelladresse.SCHULAMT, writeProtectPDF);
 		assertNotNull(bytes);
-		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Schulamt(" + gesuch_2GS.getAntragNummer() + ").pdf");
+		unitTestTempfolder.writeToTempDir(bytes, "Freigabequittung_Schulamt(" + gesuch_2GS.getJahrAndFallnummer() + ").pdf");
 
 	}
 

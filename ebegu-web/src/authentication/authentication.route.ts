@@ -17,6 +17,7 @@ function getStates(): IState[] {
     return [
         new EbeguLoginState(),
         new EbeguLocalLoginState(),
+        new EbeguSchulungState(),
         new EbeguStartState()
     ];
 }
@@ -34,6 +35,15 @@ export class EbeguLocalLoginState implements IState {
     name = 'locallogin';
     template = '<dummy-authentication-view flex="auto" class="overflow-scroll">';
     url = '/locallogin';
+    resolve = {
+        dummyLoginEnabled: readDummyLoginEnabled
+    };
+}
+
+export class EbeguSchulungState implements IState {
+    name = 'schulung';
+    template = '<schulung-view flex="auto" class="overflow-scroll">';
+    url = '/schulung';
     resolve = {
         dummyLoginEnabled: readDummyLoginEnabled
     };

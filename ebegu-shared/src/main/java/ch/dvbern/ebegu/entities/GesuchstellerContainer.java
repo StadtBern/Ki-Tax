@@ -1,8 +1,13 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,7 +24,9 @@ import java.util.Set;
  */
 @Audited
 @Entity
-public class GesuchstellerContainer extends AbstractEntity {
+@Indexed
+@Analyzer(impl = EBEGUGermanAnalyzer.class)
+public class GesuchstellerContainer extends AbstractEntity implements Searchable {
 
 	private static final long serialVersionUID = -8403117439764700618L;
 
@@ -33,6 +40,7 @@ public class GesuchstellerContainer extends AbstractEntity {
 	@Valid
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchsteller_container_gesuchstellerja_id"), nullable = true)
+	@IndexedEmbedded
 	private Gesuchsteller gesuchstellerJA;
 
 	@Nullable
@@ -193,4 +201,26 @@ public class GesuchstellerContainer extends AbstractEntity {
 		return mutation;
 	}
 
+	@Nonnull
+	@Override
+	public String getSearchResultId() {
+		return getId();
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultSummary() {
+		return extractFullName();
+	}
+
+	@Nullable
+	@Override
+	public String getSearchResultAdditionalInformation() {
+		return toString();
+	}
+
+	@Override
+	public String getOwningGesuchId() {
+		return null;   //leider nicht ohne serviceabfrage verfuegbar
+	}
 }

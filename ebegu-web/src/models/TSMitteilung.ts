@@ -3,10 +3,12 @@ import TSFall from './TSFall';
 import TSUser from './TSUser';
 import {TSMitteilungTeilnehmerTyp} from './enums/TSMitteilungTeilnehmerTyp';
 import {TSMitteilungStatus} from './enums/TSMitteilungStatus';
+import TSBetreuung from './TSBetreuung';
 
 export default class TSMitteilung extends TSAbstractEntity {
 
     private _fall: TSFall;
+    private _betreuung: TSBetreuung;
     private _senderTyp: TSMitteilungTeilnehmerTyp;
     private _empfaengerTyp: TSMitteilungTeilnehmerTyp;
     private _sender: TSUser;
@@ -14,12 +16,15 @@ export default class TSMitteilung extends TSAbstractEntity {
     private _subject: string;
     private _message: string;
     private _mitteilungStatus: TSMitteilungStatus;
+    private _sentDatum: moment.Moment;
 
 
-    constructor(fall?: TSFall, senderTyp?: TSMitteilungTeilnehmerTyp, empfaengerTyp?: TSMitteilungTeilnehmerTyp, sender?: TSUser,
-                empfaenger?: TSUser, subject?: string, message?: string, mitteilungStatus?: TSMitteilungStatus) {
+    constructor(fall?: TSFall, betreuung?: TSBetreuung, senderTyp?: TSMitteilungTeilnehmerTyp, empfaengerTyp?: TSMitteilungTeilnehmerTyp, sender?: TSUser,
+                empfaenger?: TSUser, subject?: string, message?: string, mitteilungStatus?: TSMitteilungStatus,
+                sentDatum?: moment.Moment) {
         super();
         this._fall = fall;
+        this._betreuung = betreuung;
         this._senderTyp = senderTyp;
         this._empfaengerTyp = empfaengerTyp;
         this._sender = sender;
@@ -27,6 +32,7 @@ export default class TSMitteilung extends TSAbstractEntity {
         this._subject = subject;
         this._message = message;
         this._mitteilungStatus = mitteilungStatus;
+        this._sentDatum = sentDatum;
     }
 
     get fall(): TSFall {
@@ -35,6 +41,14 @@ export default class TSMitteilung extends TSAbstractEntity {
 
     set fall(value: TSFall) {
         this._fall = value;
+    }
+
+    get betreuung(): TSBetreuung {
+        return this._betreuung;
+    }
+
+    set betreuung(value: TSBetreuung) {
+        this._betreuung = value;
     }
 
     get senderTyp(): TSMitteilungTeilnehmerTyp {
@@ -91,5 +105,20 @@ export default class TSMitteilung extends TSAbstractEntity {
 
     set mitteilungStatus(value: TSMitteilungStatus) {
         this._mitteilungStatus = value;
+    }
+
+    get sentDatum(): moment.Moment {
+        return this._sentDatum;
+    }
+
+    set sentDatum(value: moment.Moment) {
+        this._sentDatum = value;
+    }
+
+    get verantwortlicher(): string {
+        if (this._fall.verantwortlicher) {
+            return this._fall.verantwortlicher.getFullName();
+        }
+        return '';
     }
 }

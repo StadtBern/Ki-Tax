@@ -2,12 +2,15 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
+import ch.dvbern.ebegu.validators.CheckMitteilungCompleteness;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import java.time.LocalDateTime;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
@@ -17,6 +20,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
  */
 @Audited
 @Entity
+@CheckMitteilungCompleteness
 public class Mitteilung extends AbstractEntity {
 
 	private static final long serialVersionUID = 489324250198016526L;
@@ -25,6 +29,10 @@ public class Mitteilung extends AbstractEntity {
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_mitteilung_fall_id"))
 	private Fall fall;
+
+	@ManyToOne(optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_mitteilung_betreuung_id"))
+	private Betreuung betreuung;
 
 	@NotNull
 	@Column(nullable = false)
@@ -46,20 +54,24 @@ public class Mitteilung extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Mitteilung_empfaenger"))
 	private Benutzer empfaenger;
 
-	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
-	@Column(nullable = false)
-	@NotNull
+	@Size(min = 0, max = DB_DEFAULT_MAX_LENGTH)
+	@Column(nullable = true)
+	@Nullable
 	private String subject;
 
-	@Size(min = 1, max = DB_TEXTAREA_LENGTH)
-	@Column(nullable = false)
-	@NotNull
+	@Size(min = 0, max = DB_TEXTAREA_LENGTH)
+	@Column(nullable = true)
+	@Nullable
 	private String message;
 
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MitteilungStatus mitteilungStatus;
+
+	@Nullable
+	@Column(nullable = true)
+	private LocalDateTime sentDatum;
 
 
 	@NotNull
@@ -69,6 +81,14 @@ public class Mitteilung extends AbstractEntity {
 
 	public void setFall(@NotNull Fall fall) {
 		this.fall = fall;
+	}
+
+	public Betreuung getBetreuung() {
+		return betreuung;
+	}
+
+	public void setBetreuung(Betreuung betreuung) {
+		this.betreuung = betreuung;
 	}
 
 	public MitteilungTeilnehmerTyp getSenderTyp() {
@@ -104,6 +124,7 @@ public class Mitteilung extends AbstractEntity {
 		this.empfaenger = empfaenger;
 	}
 
+	@Nullable
 	public String getSubject() {
 		return subject;
 	}
@@ -112,6 +133,7 @@ public class Mitteilung extends AbstractEntity {
 		this.subject = subject;
 	}
 
+	@Nullable
 	public String getMessage() {
 		return message;
 	}
@@ -126,5 +148,18 @@ public class Mitteilung extends AbstractEntity {
 
 	public void setMitteilungStatus(MitteilungStatus mitteilungStatus) {
 		this.mitteilungStatus = mitteilungStatus;
+	}
+
+	@Nullable
+	public LocalDateTime getSentDatum() {
+		return sentDatum;
+	}
+
+	public void setSentDatum(@Nullable LocalDateTime sentDatum) {
+		this.sentDatum = sentDatum;
+	}
+
+	public boolean isEntwurf() {
+		return MitteilungStatus.ENTWURF.equals(this.mitteilungStatus);
 	}
 }

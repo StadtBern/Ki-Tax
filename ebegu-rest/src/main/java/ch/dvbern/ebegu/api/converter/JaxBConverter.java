@@ -575,6 +575,14 @@ public class JaxBConverter {
 		if (fallJAXP.getNextNumberKind() != null) {
 			fall.setNextNumberKind(fallJAXP.getNextNumberKind());
 		}
+		if (fallJAXP.getBesitzer() != null) {
+			Optional<Benutzer> besitzer = benutzerService.findBenutzer(fallJAXP.getBesitzer().getUsername());
+			if (besitzer.isPresent()) {
+				fall.setBesitzer(besitzer.get()); // because the user doesn't come from the client but from the server
+			} else {
+				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getBesitzer());
+			}
+		}
 		return fall;
 	}
 
@@ -586,7 +594,9 @@ public class JaxBConverter {
 			jaxFall.setVerantwortlicher(benutzerToAuthLoginElement(persistedFall.getVerantwortlicher()));
 		}
 		jaxFall.setNextNumberKind(persistedFall.getNextNumberKind());
-		jaxFall.setBesitzerUsername(persistedFall.getBesitzer() != null ? persistedFall.getBesitzer().getUsername() : null);
+		if (persistedFall.getBesitzer() != null) {
+			jaxFall.setBesitzer(benutzerToAuthLoginElement(persistedFall.getBesitzer()));
+		}
 		return jaxFall;
 	}
 
@@ -1558,7 +1568,9 @@ public class JaxBConverter {
 		jaxBetreuung.setErweiterteBeduerfnisse(betreuungFromServer.getErweiterteBeduerfnisse());
 		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(betreuungFromServer.getInstitutionStammdaten()));
 		jaxBetreuung.setBetreuungNummer(betreuungFromServer.getBetreuungNummer());
-
+		if (betreuungFromServer.getKind() != null) {
+			jaxBetreuung.setKindFullname(betreuungFromServer.getKind().getKindJA().getFullName());
+		}
 		if (betreuungFromServer.getVerfuegung() != null) {
 			jaxBetreuung.setVerfuegung(verfuegungToJax(betreuungFromServer.getVerfuegung()));
 		}
@@ -2178,6 +2190,9 @@ public class JaxBConverter {
 		} else {
 			throw new EbeguEntityNotFoundException("mitteilungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, mitteilungJAXP.getFall());
 		}
+		if (mitteilungJAXP.getBetreuung() != null) {
+			mitteilung.setBetreuung(betreuungToEntity(mitteilungJAXP.getBetreuung(), new Betreuung()));
+		}
 		mitteilung.setMessage(mitteilungJAXP.getMessage());
 		mitteilung.setMitteilungStatus(mitteilungJAXP.getMitteilungStatus());
 
@@ -2192,6 +2207,7 @@ public class JaxBConverter {
 
 		mitteilung.setSenderTyp(mitteilungJAXP.getSenderTyp());
 		mitteilung.setSubject(mitteilungJAXP.getSubject());
+		mitteilung.setSentDatum(mitteilungJAXP.getSentDatum());
 
 		return mitteilung;
 	}
@@ -2206,6 +2222,9 @@ public class JaxBConverter {
 		if (persistedMitteilung.getFall() != null) {
 			jaxMitteilung.setFall(fallToJAX(persistedMitteilung.getFall()));
 		}
+		if (persistedMitteilung.getBetreuung() != null) {
+			jaxMitteilung.setBetreuung(betreuungToJAX(persistedMitteilung.getBetreuung()));
+		}
 		jaxMitteilung.setMessage(persistedMitteilung.getMessage());
 		jaxMitteilung.setMitteilungStatus(persistedMitteilung.getMitteilungStatus());
 		if (persistedMitteilung.getSender() != null) {
@@ -2213,6 +2232,7 @@ public class JaxBConverter {
 		}
 		jaxMitteilung.setSenderTyp(persistedMitteilung.getSenderTyp());
 		jaxMitteilung.setSubject(persistedMitteilung.getSubject());
+		jaxMitteilung.setSentDatum(persistedMitteilung.getSentDatum());
 		return jaxMitteilung;
 	}
 }

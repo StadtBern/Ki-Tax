@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.util.Constants;
@@ -9,6 +10,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalDateTime;
 
 /**
  * DTO fuer Stammdaten der Mitteilungen
@@ -20,6 +23,9 @@ public class JaxMitteilung extends JaxAbstractDTO {
 
 	@Nullable
 	private JaxFall fall;
+
+	@Nullable
+	private JaxBetreuung betreuung;
 
 	@NotNull
 	private MitteilungTeilnehmerTyp senderTyp;
@@ -33,16 +39,20 @@ public class JaxMitteilung extends JaxAbstractDTO {
 	@Nullable
 	private JaxAuthLoginElement empfaenger;
 
-	@Size(min = 1, max = Constants.DB_DEFAULT_MAX_LENGTH)
-	@NotNull
+	@Size(min = 0, max = Constants.DB_DEFAULT_MAX_LENGTH)
+	@Nullable
 	private String subject;
 
-	@Size(min = 1, max = Constants.DB_TEXTAREA_LENGTH)
-	@NotNull
+	@Size(min = 0, max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
 	private String message;
 
 	@NotNull
 	private MitteilungStatus mitteilungStatus;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
+	private LocalDateTime sentDatum;
 
 
 	@Nullable
@@ -52,6 +62,15 @@ public class JaxMitteilung extends JaxAbstractDTO {
 
 	public void setFall(@Nullable JaxFall fall) {
 		this.fall = fall;
+	}
+
+	@Nullable
+	public JaxBetreuung getBetreuung() {
+		return betreuung;
+	}
+
+	public void setBetreuung(@Nullable JaxBetreuung betreuung) {
+		this.betreuung = betreuung;
 	}
 
 	public MitteilungTeilnehmerTyp getSenderTyp() {
@@ -87,6 +106,7 @@ public class JaxMitteilung extends JaxAbstractDTO {
 		this.empfaenger = empfaenger;
 	}
 
+	@Nullable
 	public String getSubject() {
 		return subject;
 	}
@@ -95,6 +115,7 @@ public class JaxMitteilung extends JaxAbstractDTO {
 		this.subject = subject;
 	}
 
+	@Nullable
 	public String getMessage() {
 		return message;
 	}
@@ -109,5 +130,14 @@ public class JaxMitteilung extends JaxAbstractDTO {
 
 	public void setMitteilungStatus(MitteilungStatus mitteilungStatus) {
 		this.mitteilungStatus = mitteilungStatus;
+	}
+
+	@Nullable
+	public LocalDateTime getSentDatum() {
+		return sentDatum;
+	}
+
+	public void setSentDatum(@Nullable LocalDateTime sentDatum) {
+		this.sentDatum = sentDatum;
 	}
 }

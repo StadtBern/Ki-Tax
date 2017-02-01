@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
@@ -8,7 +10,11 @@ import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -24,13 +30,16 @@ import java.util.stream.Collectors;
  */
 @Audited
 @Entity
-public class Gesuch extends AbstractEntity {
+@Indexed
+@Analyzer(impl = EBEGUGermanAnalyzer.class)
+public class Gesuch extends AbstractEntity implements Searchable{
 
 	private static final long serialVersionUID = -8403487439884700618L;
 
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_fall_id"))
+	@IndexedEmbedded
 	private Fall fall;
 
 	@NotNull
@@ -343,7 +352,11 @@ public class Gesuch extends AbstractEntity {
 			&& Objects.equals(this.getGesuchsperiode(), otherAntrag.getGesuchsperiode()));
 	}
 
-	public String getAntragNummer() {
+	/**
+	 * Gibt das Startjahr der Gesuchsperiode (zweistellig) gefolgt von Fall-Nummer als String zurück.
+	 * Achtung, entspricht NICHT der Antragsnummer! (siehe Antrag.laufnummer)
+	 */
+	public String getJahrAndFallnummer() {
 		if (getGesuchsperiode() == null) {
 			return "-";
 		}
@@ -485,5 +498,28 @@ public class Gesuch extends AbstractEntity {
 			}
 		}
 		return mutation;
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultId() {
+		return getId();
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultSummary() {
+		return getJahrAndFallnummer();
+	}
+
+	@Nullable
+	@Override
+	public String getSearchResultAdditionalInformation() {
+		return toString();
+	}
+
+	@Override
+	public String getOwningGesuchId() {
+		return getId();
 	}
 }

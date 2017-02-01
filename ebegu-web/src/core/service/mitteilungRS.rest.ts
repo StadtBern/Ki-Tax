@@ -31,10 +31,23 @@ export default class MitteilungRS {
             });
     }
 
-    public createMitteilung(mitteilung: TSMitteilung): IPromise<TSMitteilung> {
+    public sendMitteilung(mitteilung: TSMitteilung): IPromise<TSMitteilung> {
         let restMitteilung = {};
         restMitteilung = this.ebeguRestUtil.mitteilungToRestObject(restMitteilung, mitteilung);
-        return this.http.put(this.serviceURL, restMitteilung, {
+        return this.http.put(this.serviceURL + '/send', restMitteilung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.log.debug('PARSING mitteilung REST object ', response.data);
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
+        });
+    }
+
+    public saveEntwurf(mitteilung: TSMitteilung): IPromise<TSMitteilung> {
+        let restMitteilung = {};
+        restMitteilung = this.ebeguRestUtil.mitteilungToRestObject(restMitteilung, mitteilung);
+        return this.http.put(this.serviceURL + '/entwurf', restMitteilung, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -58,17 +71,58 @@ export default class MitteilungRS {
         });
     }
 
-    public getMitteilungenForCurrentRolle(fallId: string): IPromise<Array<TSMitteilung>> {
-        return this.http.put(this.serviceURL + '/forrole/' + fallId, null).then((response: any) => {
+    public getEntwurfForCurrentRolleForFall(fallId: string): IPromise<TSMitteilung> {
+        return this.http.get(this.serviceURL + '/entwurf/fall/' + fallId).then((response: any) => {
+            this.log.debug('PARSING mitteilung REST object ', response.data);
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
+        });
+    }
+
+    public getEntwurfForCurrentRolleForBetreuung(betreuungId: string): IPromise<TSMitteilung> {
+        return this.http.get(this.serviceURL + '/entwurf/betreuung/' + betreuungId).then((response: any) => {
+            this.log.debug('PARSING mitteilung REST object ', response.data);
+            return this.ebeguRestUtil.parseMitteilung(new TSMitteilung(), response.data);
+        });
+    }
+
+    public getMitteilungenForCurrentRolleForFall(fallId: string): IPromise<Array<TSMitteilung>> {
+        return this.http.get(this.serviceURL + '/forrole/fall/' + fallId).then((response: any) => {
+            this.log.debug('PARSING mitteilung REST object ', response.data);
+            return this.ebeguRestUtil.parseMitteilungen(response.data);
+        });
+    }
+
+    public getMitteilungenForCurrentRolleForBetreuung(betreuungId: string): IPromise<Array<TSMitteilung>> {
+        return this.http.get(this.serviceURL + '/forrole/betreuung/' + betreuungId).then((response: any) => {
             this.log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilungen(response.data);
         });
     }
 
     public getMitteilungenForPosteingang(): IPromise<Array<TSMitteilung>> {
-        return this.http.put(this.serviceURL + '/posteingang', null).then((response: any) => {
+        return this.http.get(this.serviceURL + '/posteingang').then((response: any) => {
             this.log.debug('PARSING mitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseMitteilungen(response.data);
+        });
+    }
+
+    public removeEntwurf(mitteilung: TSMitteilung): IPromise<any> {
+        return this.http.delete(this.serviceURL + '/' + encodeURIComponent(mitteilung.id))
+            .then((response) => {
+                return response;
+            });
+    }
+
+    public setAllNewMitteilungenOfFallGelesen(fallId: string): IPromise<Array<TSMitteilung>> {
+        return this.http.put(this.serviceURL + '/setallgelesen/' + fallId, null).then((response: any) => {
+            this.log.debug('PARSING mitteilungen REST objects ', response.data);
+            return this.ebeguRestUtil.parseMitteilungen(response.data);
+        });
+    }
+
+    public getAmountNewMitteilungenForCurrentRolle(fallId: string): IPromise<number> {
+        return this.http.get(this.serviceURL + '/amountnew/' + fallId).then((response: any) => {
+            return response.data;
         });
     }
 }

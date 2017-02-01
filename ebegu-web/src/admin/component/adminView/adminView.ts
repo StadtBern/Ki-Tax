@@ -9,6 +9,7 @@ import {LinkDialogController} from '../../../gesuch/dialog/LinkDialogController'
 import TSUser from '../../../models/TSUser';
 import UserRS from '../../../core/service/userRS.rest';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import {ReindexRS} from '../../service/reindexRS.rest';
 require('./adminView.less');
 let template = require('./adminView.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
@@ -25,7 +26,8 @@ export class AdminViewComponentConfig implements IComponentOptions {
 }
 
 export class AdminViewController {
-    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH', 'EbeguRestUtil', 'TestFaelleRS', 'DvDialog', 'UserRS', 'ErrorService'];
+    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH', 'EbeguRestUtil', 'TestFaelleRS', 'DvDialog', 'UserRS',
+        'ErrorService', 'ReindexRS'];
 
     length: number;
     applicationProperty: TSApplicationProperty;
@@ -46,7 +48,8 @@ export class AdminViewController {
 
     /* @ngInject */
     constructor(applicationPropertyRS: ApplicationPropertyRS, MAX_LENGTH: number, ebeguRestUtil: EbeguRestUtil,
-                testFaelleRS: TestFaelleRS, private dvDialog: DvDialog, private userRS: UserRS, private errorService: ErrorService) {
+                testFaelleRS: TestFaelleRS, private dvDialog: DvDialog, private userRS: UserRS,
+                private errorService: ErrorService, private reindexRS: ReindexRS) {
         this.length = MAX_LENGTH;
         this.applicationProperty = undefined;
         this.applicationPropertyRS = applicationPropertyRS;
@@ -196,5 +199,29 @@ export class AdminViewController {
                 //do nothing
             });
         });
+    }
+
+    public resetSchulungsdaten(): IPromise<any> {
+        return this.testFaelleRS.resetSchulungsdaten().then((response) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: response.data
+            }).then(() => {
+                //do nothing
+            });
+        });
+    }
+
+    public deleteSchulungsdaten(): IPromise<any> {
+        return this.testFaelleRS.deleteSchulungsdaten().then((response) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: response.data
+            }).then(() => {
+                //do nothing
+            });
+        });
+    }
+
+    public startReindex(){
+        return this.reindexRS.reindex();
     }
 }

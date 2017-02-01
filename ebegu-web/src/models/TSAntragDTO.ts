@@ -2,6 +2,7 @@ import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 import {TSAntragStatus} from './enums/TSAntragStatus';
 import {TSEingangsart} from './enums/TSEingangsart';
+import EbeguUtil from '../utils/EbeguUtil';
 
 export default class TSAntragDTO {
     private _antragId: string;
@@ -194,6 +195,18 @@ export default class TSAntragDTO {
     set beschwerdeHaengig(value: boolean) {
         this._beschwerdeHaengig = value;
     }
+
+    public getQuicksearchString(): string {
+        let text = '';
+        if (this.fallNummer) {
+            text = EbeguUtil.addZerosToNumber(this.fallNummer, 6);
+        }
+        if (this.familienName) {
+            text = text + ' ' + this.familienName
+        }
+        return text;
+    }
+
 
 
 }
