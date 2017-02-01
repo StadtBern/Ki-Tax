@@ -1,31 +1,29 @@
-<div class="dv-antrag-list">
+<div class="dv-pendenzen-list">
     <div class="row">
 
         <div class="col-md-12 table-responsive">
             <!--Tabelle-->
-            <table st-table="vm.displayedCollection" st-delay="20"
-                   st-pipe="vm.callServer" class="table fixedtable table-hover" id="{{vm.tableId}}"
-                   title="{{vm.tableTitle}}">
+            <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getPendenzenList()"
+                   st-delay="20"
+                   class="table table-striped fixedtable">
                 <thead>
-                <!--Sortierspalten-->
                 <tr>
                     <th st-sort="fallNummer" class="sortable row-fallnr" data-translate="FALL_UPPER"></th>
                     <th st-sort="familienName" class="sortable row-name" data-translate="FAMILIE_UPPER"></th>
                     <th st-sort="kinder" class="sortable row-name" data-translate="KINDER_UPPER"></th>
                     <th st-sort="antragTyp" class="sortable row-antrag" data-translate="TYP_UPPER"></th>
-                    <th st-sort="gesuchsperiodeString" class="sortable row-periode" data-translate="PERIODE_UPPER"></th>
-                    <th st-sort="aenderungsdatum" st-sort-default="true" class="sortable row-geandert"
-                        data-translate="GEANDERT_UPPER"></th>
-
+                    <th st-sort="gesuchsperiodeString" class="sortable row-periode"
+                        data-translate="PERIODE_UPPER"></th>
+                    <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable row-geandert"
+                        data-translate="EINGANG_UPPER"></th>
                     <th st-sort="status" class="sortable row-status" data-translate="STATUS_UPPER"></th>
                     <th st-sort="angebote" class="sortable row-angebot" data-translate="ANGEBOT_UPPER"></th>
                     <th st-sort="institutionen" class="sortable row-inst" data-translate="INSTITUTION_UPPER"></th>
-                    <th st-sort="verantwortlicher" class="sortable row-ver" data-translate="VERANTWORTLICH_UPPER"></th>
-                    <th class="row-action" ng-if="vm.isActionsVisible()"></th>
+                    <th st-sort="verantwortlicher" class="sortable row-ver"
+                        data-translate="VERANTWORTLICH_UPPER"></th>
                 </tr>
-                <!--Filterspalten-->
                 <tr>
-                    <th><input st-search="fallNummer" class="form-control" type="text" max="999999"/></th>
+                    <th><input st-search="fallNummer" class="form-control" type="text"/></th>
                     <th><input st-search="familienName" class="form-control" type="text"/></th>
                     <th><input st-search="kinder" class="form-control" type="text"/></th>
                     <th>
@@ -48,7 +46,7 @@
                             </select>
                         </div>
                     </th>
-                    <th><input st-search="aenderungsdatum" class="form-control" type="text"/></th>
+                    <th><input st-search="eingangsdatum" class="form-control" type="text"/></th>
                     <th>
                         <div class="dv-select-style">
                             <select st-input-event="change" name="antragStatus" id="antragStatus" st-search="status"
@@ -80,29 +78,27 @@
                         </div>
                     </th>
                     <th>
-                        <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher" initial-all="true"></dv-userselect>
+                        <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher"></dv-userselect>
                     </th>
-                    <th ng-if="vm.isActionsVisible()"></th>
                 </tr>
                 </thead>
-                <!--Spaltendefinitionen-->
                 <tbody>
-                <tr ng-repeat="row in vm.displayedCollection" st-select-row="row" st-select-mode="single"
-                    ng-click="vm.editClicked(row, $event)">
+                <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                    ng-click="vm.editPendenzJA(row, $event)">
                     <td class="ellipsis" ellipsis-tooltip="{{vm.addZerosToFallnummer(row.fallNummer)}}"
                         ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.familienName}}" ng-bind="row.familienName"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.kinder}}" ng-bind="row.kinder"></td>
-                    <td class="ellipsis" title="{{row.antragTyp | translate}}">
-                        <i class="fa fa-desktop margin-ri" aria-hidden="true" ng-show="row.hasBesitzer()"></i>
+                    <td class="ellipsis"  title="{{row.antragTyp | translate}}">
+                        <i class="fa fa-desktop" aria-hidden="true" ng-show="row.hasBesitzer()"></i>
                         <i class="fa fa-file-text-o" aria-hidden="true" ng-show="!row.hasBesitzer()"></i>
-                        <span  ng-bind="row.antragTyp | translate"   class="marginLeft5"></span>
+                        <span  ng-bind="row.antragTyp | translate" class="marginLeft5"></span>
                     </td>
                     <td class="ellipsis"
                         ellipsis-tooltip="{{row.gesuchsperiodeString}}"
                         ng-bind="row.gesuchsperiodeString"></td>
-                    <td class="ellipsis" ellipsis-tooltip="{{row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'}}"
-                        ng-bind="row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
+                        ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.status | translate}}"
                         ng-bind="row.status | translate"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{vm.translateBetreuungsangebotTypList(row.angebote)}}"
@@ -111,39 +107,17 @@
                     <td class="ellipsis" ellipsis-tooltip="{{row.institutionen}}" ng-bind="row.institutionen"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
                         ng-bind="row.verantwortlicher"></td>
-
-                    <td class="ellipsis" ng-if="vm.isActionsVisible()">
-                        <dv-loading-button type="button" button-click="vm.removeClicked(row); $event.stopPropagation()"
-                                           button-class="dv-btn-sm" title="{{vm.removeButtonTitle}}">
-                            <i class="fa fa-minus">
-                            </i>
-                        </dv-loading-button>
-                    </td>
-                </tr>
-                <tr>
-                <tr ng-if="vm.displayedCollection.length === 0">
-                    <td colspan="9" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
                 </tr>
                 </tbody>
                 <tfoot>
                 <tr>
                     <td colspan="9" class="text-center">
-                        <div st-pagination="" st-items-by-page="20" st-displayed-pages="10"></div>
+                        <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
                     </td>
                 </tr>
                 </tfoot>
             </table>
 
-        </div>
-    </div>
-    <!--Addbutton -->
-    <div class="row">
-
-        <div class="col-md-12" style="margin-bottom: 2rem" ng-if="vm.isAddButtonVisible()">
-            <dv-loading-button type="button" button-click="vm.addClicked()" button-class="dv-btn-sm color-success">
-                <i class="glyphicon glyphicon-plus">
-                </i> {{vm.addButtonText}}
-            </dv-loading-button>
         </div>
     </div>
 

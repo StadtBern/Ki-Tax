@@ -1,6 +1,3 @@
-import {EbeguWebPendenzen} from '../../pendenzen.module';
-import PendenzRS from '../../service/PendenzRS.rest';
-import {PendenzenListViewController} from './pendenzenListView';
 import {IScope, IQService, IFilterService, IHttpBackendService} from 'angular';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
@@ -14,14 +11,18 @@ import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuch from '../../../models/TSGesuch';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
+import {PendenzenListViewController} from '../../../pendenzen/component/pendenzenListView/pendenzenListView';
+import PendenzRS from '../../../pendenzen/service/PendenzRS.rest';
+import {EbeguWebPendenzen} from '../../../pendenzen/pendenzen.module';
+import {DVPendenzenListController} from './dv-pendenzen-list';
 
-describe('pendenzenListView', function () {
+describe('DVPendenzenList', function () {
 
     let institutionRS: InstitutionRS;
     let gesuchsperiodeRS: GesuchsperiodeRS;
     let gesuchRS: GesuchRS;
     let pendenzRS: PendenzRS;
-    let pendenzListViewController: PendenzenListViewController;
+    let pendenzListViewController: DVPendenzenListController;
     let $q: IQService;
     let $scope: IScope;
     let $filter: IFilterService;
@@ -52,29 +53,18 @@ describe('pendenzenListView', function () {
     }));
 
     describe('API Usage', function () {
-        describe('getPendenzenList', function () {
-            it('should return the list with all pendenzen', function () {
-                let mockPendenz: TSAntragDTO = mockGetPendenzenList();
-                mockRestCalls();
-                pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
-                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
 
-                $scope.$apply();
-                expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
-
-                let list: Array<TSAntragDTO> = pendenzListViewController.getPendenzenList();
-                expect(list).toBeDefined();
-                expect(list.length).toBe(1);
-                expect(list[0]).toEqual(mockPendenz);
-            });
-        });
         describe('translateBetreuungsangebotTypList', () => {
             it('returns a comma separated string with all BetreuungsangebotTypen', () => {
+                pendenzListViewController = new DVPendenzenListController(pendenzRS, undefined, $filter,
+                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
                 let list: Array<TSBetreuungsangebotTyp> = [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND];
                 expect(pendenzListViewController.translateBetreuungsangebotTypList(list))
                     .toEqual('Kita – Tagesstätte für Kleinkinder, Tageseltern für Kleinkinder');
             });
             it('returns an empty string for invalid values or empty lists', () => {
+                pendenzListViewController = new DVPendenzenListController(pendenzRS, undefined, $filter,
+                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
                 expect(pendenzListViewController.translateBetreuungsangebotTypList([])).toEqual('');
                 expect(pendenzListViewController.translateBetreuungsangebotTypList(undefined)).toEqual('');
                 expect(pendenzListViewController.translateBetreuungsangebotTypList(null)).toEqual('');
@@ -86,7 +76,7 @@ describe('pendenzenListView', function () {
                 mockRestCalls();
                 spyOn($state, 'go');
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
-                pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
+                pendenzListViewController = new DVPendenzenListController(pendenzRS, undefined, $filter,
                     institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
 
                 let tsGesuch = new TSGesuch();
@@ -95,7 +85,6 @@ describe('pendenzenListView', function () {
                 pendenzListViewController.editPendenzJA(mockPendenz, undefined); //pendenz wird eidtiert
                 $scope.$apply();
 
-                expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
                 expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', {createNew: false, gesuchId: '66345345'});
 
             });
