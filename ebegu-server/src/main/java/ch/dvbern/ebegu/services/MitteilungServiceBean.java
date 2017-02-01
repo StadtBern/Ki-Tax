@@ -210,14 +210,26 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		// Entweder das eine oder das andere...
 		predicates.add(cb.or(predicateEmpfaenger, predicateEmpfaengerNullAberRichtigerTyp));
 
-		// Aber auf jeden Fall unerledigt
-		Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
-		predicates.add(predicateNichtErledigt);
+
+
+		switch (mode){
+			case COUNT:
+				// Nur die Neuen
+				Predicate predicateNeu = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.NEU);
+				predicates.add(predicateNeu);
+				break;
+			case SEARCH:
+				// Aber auf jeden Fall unerledigt
+				Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
+				predicates.add(predicateNichtErledigt);
+				break;
+		}
+
 
 		Pair<Long, Collection<Mitteilung>> result = null;
 		switch (mode){
 			case COUNT:
-				query.select(cb.count(query.from(Mitteilung.class)));
+				query.select(cb.countDistinct(root));
 				query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 				Long count = (Long) persistence.getCriteriaSingleResult(query);
 				result = new ImmutablePair<>(count, null);
