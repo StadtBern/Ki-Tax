@@ -9,10 +9,12 @@
                  md-items="item in vm.querySearch(vm.searchQuery)"
                  md-item-text="item.antragDTO.getQuicksearchString()"
                  md-require-match="false"
-                 placeholder="Schnellsuche">
+                 placeholder="Schnellsuche"
+                 >
     <md-item-template>
-        <span md-highlight-text="vm.searchQuery" md-highlight-flags="i">
-            {{item.antragDTO.getQuicksearchString()}}{{' ('+ item.text+ ') '}}
+        <span md-highlight-text="vm.searchQuery" md-highlight-flags="i"
+              ng-class="{'ALL':'allresultsLink'}[item.entity]">
+            {{item.antragDTO.getQuicksearchString()}}{{item.text ? ' ('+ item.text+ ') ': ''}}
         </span>
         <dv-search-result-icon entry="item"></dv-search-result-icon>
     </md-item-template>

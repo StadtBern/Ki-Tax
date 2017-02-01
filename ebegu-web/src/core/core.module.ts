@@ -69,6 +69,8 @@ import {SearchIndexRS} from './service/searchIndexRS.rest';
 import {DvSearchResultIconComponentConfig} from './component/dv-search/dv-search-result-icon/dv-search-result-icon';
 import {DvQuicksearchboxComponentConfig} from './component/dv-search/dv-quicksearchbox/dv-quicksearchbox';
 import MitteilungRS from './service/mitteilungRS.rest';
+import {DVMitteilungListConfig} from './component/dv-mitteilung-list/dv-mitteilung-list';
+
 let dynamicDependencies = function (): string[] {
 
     let dynDep: string [] = [];
@@ -185,5 +187,6 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvAntragList', new DVAntragListConfig())
     .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
     .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
+    .component('dvMitteilungList', new DVMitteilungListConfig())
     .service('MahnungRS', MahnungRS);
 
