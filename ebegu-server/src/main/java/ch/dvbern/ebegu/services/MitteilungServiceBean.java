@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.MitteilungStatus;
-import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
-import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -68,8 +65,35 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		}
 		mitteilung.setMitteilungStatus(MitteilungStatus.NEU);
 		mitteilung.setSentDatum(LocalDateTime.now());
-		// Falls der dazugehörige Fall noch keinen Verantwortlichen hat, so soll die Mitteilung beim vom Admin
-		// definierten Default-Verantwortlichen angezeigt werden
+		ensureEmpfaengerIsSet(mitteilung);
+
+		// Falls die Mitteilung an einen Gesuchsteller geht, muss dieser benachrichtigt werden. Es muss zuerst geprueft werden, dass
+		// die Mitteilung valid ist, dafuer brauchen wir den Validator
+		try {
+			Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
+			final Set<ConstraintViolation<Mitteilung>> validationValues = validator.validate(mitteilung);
+			if (validationValues.isEmpty() && mitteilung.getEmpfaenger() != null) {
+				if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp())) {
+					mailService.sendInfoMitteilungErhalten(mitteilung);
+				}
+			} else {
+				throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, "Mitteilung is not valid");
+			}
+		} catch (MailException e) {
+			LOG.error("Mail InfoMitteilungErhalten konnte nicht verschickt werden fuer Mitteilung " + mitteilung.getId(), e);
+			throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, e);
+		}
+		return persistence.merge(mitteilung);
+	}
+
+	/**
+	 * Falls der dazugehörige Fall noch keinen Verantwortlichen hat, so soll die Mitteilung beim vom Admin
+	 * definierten Default-Verantwortlichen angezeigt werden
+	 *
+	 * @param mitteilung
+	 */
+	private void ensureEmpfaengerIsSet(@Nonnull Mitteilung mitteilung) {
+
 		if (MitteilungTeilnehmerTyp.JUGENDAMT.equals(mitteilung.getEmpfaengerTyp()) && mitteilung.getEmpfaenger() == null) {
 			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
 			if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
@@ -77,23 +101,6 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				benutzer.ifPresent(mitteilung::setEmpfaenger);
 			}
 		}
-		// Falls die Mitteilung an einen Gesuchsteller geht, muss dieser benachrichtigt werden. Es muss zuerst geprueft werden, dass
-		// die Mitteilung valid ist, dafuer brauchen wir den Validator
-		try {
-			Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
-			final Set<ConstraintViolation<Mitteilung>> validationValues = validator.validate(mitteilung);
-			if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp())) {
-				if (validationValues.isEmpty() && mitteilung.getEmpfaenger() != null) {
-					mailService.sendInfoMitteilungErhalten(mitteilung);
-				} else {
-					throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, "Mitteilung is not valid");
-				}
-			}
-		} catch (MailException e) {
-			LOG.error("Mail InfoMitteilungErhalten konnte nicht verschickt werden fuer Mitteilung " + mitteilung.getId(), e);
-			throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, e);
-		}
-		return persistence.merge(mitteilung);
 	}
 
 	@Override
@@ -183,7 +190,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Root<Mitteilung> root = query.from(Mitteilung.class);
 		List<Expression<Boolean>> predicates = new ArrayList<>();
 
-        // Keine Entwuerfe fuer Posteingang
+		// Keine Entwuerfe fuer Posteingang
 		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
 		predicates.add(predicateEntwurf);
 
