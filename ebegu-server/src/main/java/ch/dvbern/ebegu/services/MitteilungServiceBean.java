@@ -1,10 +1,10 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Mitteilung;
-import ch.dvbern.ebegu.entities.Mitteilung_;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.MitteilungStatus;
+import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
+import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -20,6 +20,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.criteria.*;
+import javax.persistence.metamodel.SingularAttribute;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -134,14 +135,25 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
+		return getMitteilungenForCurrentRolle(Mitteilung_.fall, fall);
+	}
 
+	@Nonnull
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung muss gesetzt sein");
+		return getMitteilungenForCurrentRolle(Mitteilung_.betreuung, betreuung);
+	}
+
+	private <T> Collection<Mitteilung> getMitteilungenForCurrentRolle(SingularAttribute<Mitteilung, T> attribute, @Nonnull T linkedEntity) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
 		List<Expression<Boolean>> predicates = new ArrayList<>();
 
-		Predicate predicateFall = cb.equal(root.get(Mitteilung_.fall), fall);
-		predicates.add(predicateFall);
+		Predicate predicateLinkedObject = cb.equal(root.get(attribute), linkedEntity);
+		predicates.add(predicateLinkedObject);
 
 		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
 		predicates.add(predicateEntwurf);
@@ -192,16 +204,27 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Override
 	@Nullable
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
-	public Mitteilung getEntwurfForCurrentRolle(Fall fall) {
+	public Mitteilung getEntwurfForCurrentRolle(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
+		return getEntwurfForCurrentRolle(Mitteilung_.fall, fall);
+	}
 
+	@Override
+	@Nullable
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public Mitteilung getEntwurfForCurrentRolle(@Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung muss gesetzt sein");
+		return getEntwurfForCurrentRolle(Mitteilung_.betreuung, betreuung);
+	}
+
+	private <T> Mitteilung getEntwurfForCurrentRolle(SingularAttribute<Mitteilung, T> attribute, @Nonnull T linkedEntity) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
 		List<Expression<Boolean>> predicates = new ArrayList<>();
 
-		Predicate predicateFall = cb.equal(root.get(Mitteilung_.fall), fall);
-		predicates.add(predicateFall);
+		Predicate predicateLinkedObject = cb.equal(root.get(attribute), linkedEntity);
+		predicates.add(predicateLinkedObject);
 
 		Predicate predicateEntwurf = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
 		predicates.add(predicateEntwurf);
@@ -216,14 +239,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
-	public void removeMitteilung(Mitteilung mitteilung) {
+	public void removeMitteilung(@Nonnull Mitteilung mitteilung) {
 		Objects.requireNonNull(mitteilung);
 		persistence.remove(mitteilung);
 	}
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN})
-	public void removeAllMitteilungenForFall(Fall fall) {
+	public void removeAllMitteilungenForFall(@Nonnull Fall fall) {
 		Collection<Mitteilung> mitteilungen = criteriaQueryHelper.getEntitiesByAttribute(Mitteilung.class, fall, Mitteilung_.fall);
 		for (Mitteilung poscht : mitteilungen) {
 			persistence.remove(Mitteilung.class, poscht.getId());

@@ -133,25 +133,27 @@ export default class GesuchModelManager {
      * Oder ggf. aus der Liste entfernt
      */
     private setHiddenSteps(): void {
-        //Freigabe
-        if (this.gesuch.isOnlineGesuch()) {
-            this.wizardStepManager.unhideStep(TSWizardStepName.FREIGABE);
-        } else {
-            this.wizardStepManager.hideStep(TSWizardStepName.FREIGABE);
-        }
+        if (this.gesuch) {
+            //Freigabe
+            if (this.gesuch.isOnlineGesuch()) {
+                this.wizardStepManager.unhideStep(TSWizardStepName.FREIGABE);
+            } else {
+                this.wizardStepManager.hideStep(TSWizardStepName.FREIGABE);
+            }
 
-        //Abwesenheit
-        if (!this.gesuch.isMutation()) {
-            this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
-        } else {
-            this.wizardStepManager.unhideStep(TSWizardStepName.ABWESENHEIT);
-        }
+            //Abwesenheit
+            if (!this.gesuch.isMutation()) {
+                this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
+            } else {
+                this.wizardStepManager.unhideStep(TSWizardStepName.ABWESENHEIT);
+            }
 
-        //Umzug
-        if (!this.gesuch.isMutation() && !this.getGesuch().isThereAnyUmzug()) {
-            this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
-        } else {
-            this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
+            //Umzug
+            if (!this.gesuch.isMutation() && !this.getGesuch().isThereAnyUmzug()) {
+                this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
+            } else {
+                this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
+            }
         }
     }
 

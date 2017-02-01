@@ -469,6 +469,7 @@
     "PERIODE_UPPER": "PERIODE",
     "TYP_UPPER": "TYP",
     "FAMILIE_UPPER": "FAMILIE",
+    "KINDER_UPPER": "KINDER",
     "FALL_UPPER": "FALL",
     "KIND_UPPER": "KIND",
     "MENU_ALL_FAELLE": "ALLE FÄLLE",
@@ -512,7 +513,7 @@
     "LABEL_OK": "OK",
     "LABEL_NEIN": "Nein",
     "LABEL_KEINE_ANGABE": "Keine Angabe",
-    "PENDENZEN_LIST": "PENDENZENLISTE",
+    "PENDENZEN_LIST": "Pendenzenliste",
     "LOESCHEN_DIALOG_TITLE": "Wollen Sie das Element wirklich löschen?",
     "LOESCHEN_DIALOG_TEXT": "Alle verknüpften Elemente werden ebenfalls entfernt",
     "KITA": "Kita – Tagesstätte für Kleinkinder",
@@ -528,6 +529,7 @@
     "BETREUUNG": "Betreuung",
     "BETREUUNG_UPPER": "BETREUUNG",
     "STATUS": "Status",
+    "MITTEILUNG": "Mitteilung",
     "AUSSTEHEND": "ausstehend",
     "WARTEN": "warten",
     "SCHULAMT": "nicht nötig",
@@ -602,7 +604,7 @@
     "PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM": "Maximaler Zuschlag zum Erwerbspensum",
     "PLATZBESTAETIGUNG": "Platzbestätigung",
     "PLATZBESTAETIGUNG_MUTATION": "Platz mutieren",
-    "QUICKSEARCH_ALL_RESULTS": "Alle Resultate anzeigen ({{totalNum}})",
+    "QUICKSEARCH_ALL_RESULTS": "Alle Resultate (bis zu {{totalNum}} weitere)",
     "INSTITUTION_HINZUFUEGEN": "Institution hinzufügen",
     "INSTITUTION_SPEICHERN": "Institution speichern",
     "INSTITUTIONEN_NOCH_KEINE": "Noch keine Institutionen",
@@ -874,5 +876,6 @@
     "POSTEINGANG_BETREFF_UPPER": "BETREFF",
     "POSTEINGANG_DATUM_UPPER": "DATUM",
     "POSTEINGANG_VERANTWORTLICH_UPPER": "VERANTWORTLICH",
-    "MITTEILUNGEN_NOCH_KEINE": "Für diesen Fall wurden noch keine Mitteilungen gesendet"
+    "MITTEILUNGEN_NOCH_KEINE": "Für diesen Fall wurden noch keine Mitteilungen gesendet",
+    "SEARCH_LIST": "Alle Suchresultate"
 }

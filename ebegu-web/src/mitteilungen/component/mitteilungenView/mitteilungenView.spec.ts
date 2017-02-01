@@ -13,6 +13,8 @@ import IScope = angular.IScope;
 import IQService = angular.IQService;
 import TSMitteilung from '../../../models/TSMitteilung';
 import TestDataUtil from '../../../utils/TestDataUtil';
+import {DVMitteilungListController} from '../../../core/component/dv-mitteilung-list/dv-mitteilung-list';
+import BetreuungRS from '../../../core/service/betreuungRS.rest';
 
 describe('mitteilungenView', function () {
 
@@ -20,10 +22,11 @@ describe('mitteilungenView', function () {
     let authServiceRS: AuthServiceRS;
     let stateParams: IMitteilungenStateParams;
     let fallRS: FallRS;
+    let betreuungRS: BetreuungRS;
     let fall: TSFall;
     let $rootScope: IScope;
     let $q: IQService;
-    let controller: MitteilungenViewController;
+    let controller: DVMitteilungListController;
     let besitzer: TSUser;
     let verantwortlicher: TSUser;
 
@@ -34,6 +37,7 @@ describe('mitteilungenView', function () {
         mitteilungRS = $injector.get('MitteilungRS');
         authServiceRS = $injector.get('AuthServiceRS');
         fallRS = $injector.get('FallRS');
+        betreuungRS = $injector.get('BetreuungRS');
         stateParams = $injector.get('$stateParams');
         $rootScope = $injector.get('$rootScope');
         $q = $injector.get('$q');
@@ -49,7 +53,7 @@ describe('mitteilungenView', function () {
         verantwortlicher.nachname = 'Arnaldo Verantwortlicher';
         fall.verantwortlicher = verantwortlicher;
 
-        spyOn(mitteilungRS, 'getEntwurfForCurrentRolle').and.returnValue($q.when(undefined));
+        spyOn(mitteilungRS, 'getEntwurfForCurrentRolleForFall').and.returnValue($q.when(undefined));
     }));
 
     describe('loading initial data', function () {
@@ -166,10 +170,10 @@ describe('mitteilungenView', function () {
     function createMitteilungForUser(user: TSUser): void {
         spyOn(authServiceRS, 'getPrincipal').and.returnValue(user);
         spyOn(fallRS, 'findFall').and.returnValue($q.when(fall));
-        spyOn(mitteilungRS, 'getMitteilungenForCurrentRolle').and.returnValue($q.when([{}]));
+        spyOn(mitteilungRS, 'getMitteilungenForCurrentRolleForFall').and.returnValue($q.when([{}]));
         spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
 
-        controller = new MitteilungenViewController(stateParams, mitteilungRS, authServiceRS, fallRS, $q);
+        controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q);
         $rootScope.$apply();
     }
 

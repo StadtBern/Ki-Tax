@@ -24,6 +24,9 @@ public class JaxMitteilung extends JaxAbstractDTO {
 	@Nullable
 	private JaxFall fall;
 
+	@Nullable
+	private JaxBetreuung betreuung;
+
 	@NotNull
 	private MitteilungTeilnehmerTyp senderTyp;
 
@@ -59,6 +62,15 @@ public class JaxMitteilung extends JaxAbstractDTO {
 
 	public void setFall(@Nullable JaxFall fall) {
 		this.fall = fall;
+	}
+
+	@Nullable
+	public JaxBetreuung getBetreuung() {
+		return betreuung;
+	}
+
+	public void setBetreuung(@Nullable JaxBetreuung betreuung) {
+		this.betreuung = betreuung;
 	}
 
 	public MitteilungTeilnehmerTyp getSenderTyp() {

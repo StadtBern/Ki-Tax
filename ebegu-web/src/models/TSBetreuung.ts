@@ -18,12 +18,13 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _erweiterteBeduerfnisse: boolean;
     private _datumAblehnung: moment.Moment;
     private _datumBestaetigung: moment.Moment;
+    private _kindFullname: string;
 
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,
-                grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment) {
+                grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment, kindFullname?: string) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -36,6 +37,7 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._erweiterteBeduerfnisse = erweiterteBeduerfnisse ? true : false;
         this._datumAblehnung = datumAblehnung;
         this._datumBestaetigung = datumBestaetigung;
+        this._kindFullname = kindFullname;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -124,5 +126,13 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     set datumBestaetigung(value: moment.Moment) {
         this._datumBestaetigung = value;
+    }
+
+    get kindFullname(): string {
+        return this._kindFullname;
+    }
+
+    set kindFullname(value: string) {
+        this._kindFullname = value;
     }
 }
