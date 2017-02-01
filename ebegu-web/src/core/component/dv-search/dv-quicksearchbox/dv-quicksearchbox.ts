@@ -84,7 +84,8 @@ export class DvQuicksearchboxController {
     }
 
     private selectItemChanged() {
-        this.navigateToFall()
+        this.navigateToFall();
+        this.selectedItem = undefined;
 
     }
 
