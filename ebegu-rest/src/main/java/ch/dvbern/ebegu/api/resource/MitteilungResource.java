@@ -13,6 +13,7 @@ import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.MitteilungService;
 import io.swagger.annotations.Api;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -182,6 +183,18 @@ public class MitteilungResource {
 
 		final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForPosteingang();
 		return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
+	}
+
+	@Nullable
+	@GET
+	@Path("/posteingangamount")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Integer getAmountMitteilungenForPosteingang(
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		return mitteilungService.countMitteilungenForPosteingang().intValue();
 	}
 
 	@Nullable
