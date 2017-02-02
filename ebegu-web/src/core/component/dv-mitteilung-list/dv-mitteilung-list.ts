@@ -16,6 +16,8 @@ import Moment = moment.Moment;
 import IFormController = angular.IFormController;
 import IQService = angular.IQService;
 import IWindowService = angular.IWindowService;
+import {IStateService} from 'angular-ui-router';
+import EbeguUtil from '../../../utils/EbeguUtil';
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 
@@ -43,17 +45,20 @@ export class DVMitteilungListController {
     allMitteilungen: Array<TSMitteilung>;
     TSRole: any;
     TSRoleUtil: any;
+    ebeguUtil: EbeguUtil;
 
 
     static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS',
-        'FallRS', 'BetreuungRS', '$q', '$window'];
+        'FallRS', 'BetreuungRS', '$q', '$window', '$state', 'EbeguUtil'];
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS, private authServiceRS: AuthServiceRS,
-                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window :IWindowService) {
+                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window :IWindowService,
+                private $state: IStateService, ebeguUtil: EbeguUtil) {
 
         this.initViewModel();
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
+        this.ebeguUtil = ebeguUtil;
     }
 
     private initViewModel() {
@@ -264,5 +269,22 @@ export class DVMitteilungListController {
 
     public isStatusErledigtGelesen(mitteilung: TSMitteilung): boolean {
         return mitteilung && (mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT || mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN);
+    }
+
+    public betreuungAsString(mitteilung : TSMitteilung) : string {
+        let betreuungAsString : string;
+        if (mitteilung.betreuung) {
+            let bgNummer :string = this.ebeguUtil.calculateBetreuungsId(mitteilung.betreuung.gesuchsperiode, mitteilung.fall, mitteilung.betreuung.kindNummer, mitteilung.betreuung.betreuungNummer);
+            betreuungAsString = mitteilung.betreuung.kindFullname + ', ' + bgNummer;
+        }
+        return betreuungAsString;
+    }
+
+    public gotoBetreuung(mitteilung : TSMitteilung) :void {
+        this.$state.go('gesuch.betreuung', {
+            betreuungNumber: mitteilung.betreuung.betreuungNummer,
+            kindNumber: mitteilung.betreuung.kindNummer,
+            gesuchId: mitteilung.betreuung.gesuchId
+        });
     }
 }
