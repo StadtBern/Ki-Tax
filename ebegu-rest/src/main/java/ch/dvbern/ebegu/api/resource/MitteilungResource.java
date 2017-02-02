@@ -13,7 +13,6 @@ import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.MitteilungService;
 import io.swagger.annotations.Api;
-import io.swagger.models.auth.In;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
