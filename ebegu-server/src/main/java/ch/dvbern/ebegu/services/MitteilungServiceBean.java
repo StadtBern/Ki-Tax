@@ -1,14 +1,12 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.MitteilungStatus;
-import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
-import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +19,7 @@ import javax.inject.Inject;
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
@@ -51,6 +50,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Inject
 	private MailService mailService;
 
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
+
 	private final Logger LOG = LoggerFactory.getLogger(MitteilungServiceBean.class.getSimpleName());
 
 
@@ -64,23 +66,49 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		}
 		mitteilung.setMitteilungStatus(MitteilungStatus.NEU);
 		mitteilung.setSentDatum(LocalDateTime.now());
+		ensureEmpfaengerIsSet(mitteilung);
+
 		// Falls die Mitteilung an einen Gesuchsteller geht, muss dieser benachrichtigt werden. Es muss zuerst geprueft werden, dass
 		// die Mitteilung valid ist, dafuer brauchen wir den Validator
+
 		try {
 			Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
-			final Set<ConstraintViolation<Mitteilung>> validationValues = validator.validate(mitteilung);
-			if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp())) {
-				if (validationValues.isEmpty() && mitteilung.getEmpfaenger() != null) {
-					mailService.sendInfoMitteilungErhalten(mitteilung);
-				} else {
-					throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, "Mitteilung is not valid");
-				}
+			final Set<ConstraintViolation<Mitteilung>> validationErrors = validator.validate(mitteilung);
+			if (!validationErrors.isEmpty()) {
+				throw new ConstraintViolationException(validationErrors);
 			}
+
+			if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp()) && mitteilung.getEmpfaenger() != null) {
+				mailService.sendInfoMitteilungErhalten(mitteilung);
+			}
+
 		} catch (MailException e) {
 			LOG.error("Mail InfoMitteilungErhalten konnte nicht verschickt werden fuer Mitteilung " + mitteilung.getId(), e);
 			throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, e);
 		}
+
 		return persistence.merge(mitteilung);
+	}
+
+	/**
+	 * Falls der dazugehörige Fall noch keinen Verantwortlichen hat, so soll die Mitteilung beim vom Admin
+	 * definierten Default-Verantwortlichen angezeigt werden
+	 *
+	 * @param mitteilung
+	 */
+	private void ensureEmpfaengerIsSet(@Nonnull Mitteilung mitteilung) {
+
+		if (MitteilungTeilnehmerTyp.JUGENDAMT.equals(mitteilung.getEmpfaengerTyp()) && mitteilung.getEmpfaenger() == null) {
+			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+			if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
+				Optional<Benutzer> benutzer = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
+				if (benutzer.isPresent()) {
+					mitteilung.setEmpfaenger(benutzer.get());
+				} else{
+					LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen");
+				}
+			}
+		}
 	}
 
 	@Override
@@ -170,21 +198,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Root<Mitteilung> root = query.from(Mitteilung.class);
 		List<Expression<Boolean>> predicates = new ArrayList<>();
 
-		// Persönlicher Empfänger
-		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getMitteilungenForCurrentRolle", "No User is logged in"));
-		Predicate predicateEmpfaenger = cb.equal(root.get(Mitteilung_.empfaenger), loggedInBenutzer);
-
+		// Keine Entwuerfe fuer Posteingang
 		Predicate predicateEntwurf = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ENTWURF);
 		predicates.add(predicateEntwurf);
 
-		// Kein Persönlicher Empfänger, aber richtiger Empfangs-Typ
+		// Richtiger Empfangs-Typ. Persoenlicher Empfaenger wird nicht beachtet sondern auf Client mit Filter geloest
 		MitteilungTeilnehmerTyp mitteilungTeilnehmerTyp = getMitteilungTeilnehmerTypForCurrentUser();
-		Predicate predicateEmpfaengerNull = cb.isNull(root.get(Mitteilung_.empfaenger));
 		Predicate predicateEmpfaengerTyp = cb.equal(root.get(Mitteilung_.empfaengerTyp), mitteilungTeilnehmerTyp);
-		Predicate predicateEmpfaengerNullAberRichtigerTyp = cb.and(predicateEmpfaengerNull, predicateEmpfaengerTyp);
-
-		// Entweder das eine oder das andere...
-		predicates.add(cb.or(predicateEmpfaenger, predicateEmpfaengerNullAberRichtigerTyp));
+		predicates.add(predicateEmpfaengerTyp);
 
 		// Aber auf jeden Fall unerledigt
 		Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);

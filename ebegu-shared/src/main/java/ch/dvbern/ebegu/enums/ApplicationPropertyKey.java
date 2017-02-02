@@ -24,7 +24,12 @@ public enum ApplicationPropertyKey {
 	/**
 	 * Damit wir Test/Produktion leichter unterscheiden koennen kann man die Hintergrundfarbe einstellen
 	 */
-	BACKGROUND_COLOR
+	BACKGROUND_COLOR,
 
+	/**
+	 * Wenn eine Nachricht zu einem Fall eintrifft, welcher noch keinen Verantwortlichen hat, so soll diese an den
+	 * Default-Verantwortlichen geschickt werden.
+	 */
+	DEFAULT_VERANTWORTLICHER,
 
 }

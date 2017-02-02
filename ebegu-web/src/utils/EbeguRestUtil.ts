@@ -1281,6 +1281,7 @@ export default class EbeguRestUtil {
         restPendenz.gesuchsperiodeGueltigAb = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigAb);
         restPendenz.gesuchsperiodeGueltigBis = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigBis);
         restPendenz.institutionen = pendenz.institutionen;
+        restPendenz.kinder = pendenz.kinder;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
@@ -1296,6 +1297,7 @@ export default class EbeguRestUtil {
         antragTS.fallNummer = antragFromServer.fallNummer;
         antragTS.familienName = antragFromServer.familienName;
         antragTS.angebote = antragFromServer.angebote;
+        antragTS.kinder = antragFromServer.kinder;
         antragTS.antragTyp = antragFromServer.antragTyp;
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
         antragTS.aenderungsdatum = DateUtil.localDateTimeToMoment(antragFromServer.aenderungsdatum);
