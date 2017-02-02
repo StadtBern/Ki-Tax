@@ -74,16 +74,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		try {
 			Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
 			final Set<ConstraintViolation<Mitteilung>> validationErrors = validator.validate(mitteilung);
-			if(!validationErrors.isEmpty()){
+			if (!validationErrors.isEmpty()) {
 				throw new ConstraintViolationException(validationErrors);
 			}
-			if (mitteilung.getEmpfaenger() != null) {
-				if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp())) {
-					mailService.sendInfoMitteilungErhalten(mitteilung);
-				}
-			} else {
-				throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, "Kein Empfaenger");
+
+			if (MitteilungTeilnehmerTyp.GESUCHSTELLER.equals(mitteilung.getEmpfaengerTyp()) && mitteilung.getEmpfaenger() != null) {
+				mailService.sendInfoMitteilungErhalten(mitteilung);
 			}
+
 		} catch (MailException e) {
 			LOG.error("Mail InfoMitteilungErhalten konnte nicht verschickt werden fuer Mitteilung " + mitteilung.getId(), e);
 			throw new EbeguRuntimeException("sendMitteilung", ErrorCodeEnum.ERROR_MAIL, e);
@@ -104,7 +102,11 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
 			if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
 				Optional<Benutzer> benutzer = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
-				benutzer.ifPresent(mitteilung::setEmpfaenger);
+				if (benutzer.isPresent()) {
+					mitteilung.setEmpfaenger(benutzer.get());
+				} else{
+					LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen");
+				}
 			}
 		}
 	}
