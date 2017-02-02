@@ -1,4 +1,4 @@
-import {IComponentOptions, IFilterService, IPromise, ILogService} from 'angular';
+import {IComponentOptions, IFilterService} from 'angular';
 import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
 import {TSAntragStatus, getTSAntragStatusPendenzValues} from '../../../models/enums/TSAntragStatus';
 import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
@@ -8,12 +8,12 @@ import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
-import Moment = moment.Moment;
 import PendenzRS from '../../../pendenzen/service/PendenzRS.rest';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import {IStateService} from 'angular-ui-router';
+import Moment = moment.Moment;
 let template = require('./dv-pendenzen-list.html');
 require('./dv-pendenzen-list.less');
 
@@ -23,6 +23,7 @@ export class DVPendenzenListConfig implements IComponentOptions {
     bindings: any = {
         antraege: '<',
         itemsByPage: '<',
+        initialAll: '=',
     };
 
     template = template;
@@ -35,6 +36,7 @@ export class DVPendenzenListController {
     antraege: Array<TSAntragDTO> = []; //muss hier gesuch haben damit Felder die wir anzeigen muessen da sind
 
     itemsByPage: number;
+    initialAll: boolean;
 
     selectedBetreuungsangebotTyp: string;
     selectedAntragTyp: string;
