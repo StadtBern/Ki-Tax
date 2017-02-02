@@ -13,6 +13,8 @@ import IScope = angular.IScope;
 import IQService = angular.IQService;
 import TSMitteilung from '../../../models/TSMitteilung';
 import TestDataUtil from '../../../utils/TestDataUtil';
+import {DVMitteilungListController} from '../../../core/component/dv-mitteilung-list/dv-mitteilung-list';
+import BetreuungRS from '../../../core/service/betreuungRS.rest';
 
 describe('mitteilungenView', function () {
 
@@ -20,10 +22,11 @@ describe('mitteilungenView', function () {
     let authServiceRS: AuthServiceRS;
     let stateParams: IMitteilungenStateParams;
     let fallRS: FallRS;
+    let betreuungRS: BetreuungRS;
     let fall: TSFall;
     let $rootScope: IScope;
     let $q: IQService;
-    let controller: MitteilungenViewController;
+    let controller: DVMitteilungListController;
     let besitzer: TSUser;
     let verantwortlicher: TSUser;
 
@@ -34,6 +37,7 @@ describe('mitteilungenView', function () {
         mitteilungRS = $injector.get('MitteilungRS');
         authServiceRS = $injector.get('AuthServiceRS');
         fallRS = $injector.get('FallRS');
+        betreuungRS = $injector.get('BetreuungRS');
         stateParams = $injector.get('$stateParams');
         $rootScope = $injector.get('$rootScope');
         $q = $injector.get('$q');
@@ -49,7 +53,7 @@ describe('mitteilungenView', function () {
         verantwortlicher.nachname = 'Arnaldo Verantwortlicher';
         fall.verantwortlicher = verantwortlicher;
 
-        spyOn(mitteilungRS, 'getEntwurfForCurrentRolle').and.returnValue($q.when(undefined));
+        spyOn(mitteilungRS, 'getEntwurfForCurrentRolleForFall').and.returnValue($q.when(undefined));
     }));
 
     describe('loading initial data', function () {
@@ -105,7 +109,8 @@ describe('mitteilungenView', function () {
             // mock saved mitteilung
             let savedMitteilung: TSMitteilung = new TSMitteilung();
             savedMitteilung.id = '321';
-            spyOn(mitteilungRS, 'createMitteilung').and.returnValue($q.when(savedMitteilung));
+            savedMitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
+            spyOn(mitteilungRS, 'sendMitteilung').and.returnValue($q.when(savedMitteilung));
             controller.getCurrentMitteilung().subject = 'subject';
             controller.getCurrentMitteilung().message = 'message';
 
@@ -113,13 +118,41 @@ describe('mitteilungenView', function () {
             controller.form.$dirty = true;
             controller.sendMitteilung();
 
-            expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.NEU);
-            expect(controller.getCurrentMitteilung().sentDatum).toBeDefined();
-
-            $rootScope.$apply();
-
-            expect(controller.getCurrentMitteilung()).toBeDefined();
+            expect(controller.getCurrentMitteilung().mitteilungStatus).toBe(TSMitteilungStatus.ENTWURF);
+            expect(controller.getCurrentMitteilung().sentDatum).toBeUndefined();
             expect(controller.getCurrentMitteilung().id).toBeUndefined();
+        });
+    });
+    describe('setErledigt', function () {
+        it('should change the status from GELESEN to ERLEDIGT and save the mitteilung', function () {
+            let gesuchsteller: TSUser = new TSUser();
+            gesuchsteller.role = TSRole.GESUCHSTELLER;
+            spyOn(authServiceRS, 'isRole').and.returnValue(true);
+
+            createMitteilungForUser(gesuchsteller);
+
+            let mitteilung: TSMitteilung = new TSMitteilung();
+            mitteilung.id = '123';
+            spyOn(mitteilungRS, 'setMitteilungErledigt').and.returnValue($q.when(mitteilung));
+
+            mitteilung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.ENTWURF); // Status ENTWURF wird nicht geaendert
+            expect(mitteilungRS.setMitteilungErledigt).not.toHaveBeenCalled();
+
+            mitteilung.mitteilungStatus = TSMitteilungStatus.NEU;
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.NEU); // Status NEU wird nicht geaendert
+            expect(mitteilungRS.setMitteilungErledigt).not.toHaveBeenCalled();
+
+            mitteilung.mitteilungStatus = TSMitteilungStatus.GELESEN;
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.ERLEDIGT); // von GELESEN auf ERLEDIGT
+            expect(mitteilungRS.setMitteilungErledigt).toHaveBeenCalledWith('123');
+
+            controller.setErledigt(mitteilung);
+            expect(mitteilung.mitteilungStatus).toBe(TSMitteilungStatus.GELESEN); // von ERLEDIGT auf GELESEN
+            expect(mitteilungRS.setMitteilungErledigt).toHaveBeenCalledWith('123');
         });
     });
 
@@ -137,9 +170,10 @@ describe('mitteilungenView', function () {
     function createMitteilungForUser(user: TSUser): void {
         spyOn(authServiceRS, 'getPrincipal').and.returnValue(user);
         spyOn(fallRS, 'findFall').and.returnValue($q.when(fall));
-        spyOn(mitteilungRS, 'getMitteilungenForCurrentRolle').and.returnValue($q.when([{}]));
+        spyOn(mitteilungRS, 'getMitteilungenForCurrentRolleForFall').and.returnValue($q.when([{}]));
+        spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
 
-        controller = new MitteilungenViewController(stateParams, mitteilungRS, authServiceRS, fallRS, $q);
+        controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q);
         $rootScope.$apply();
     }
 

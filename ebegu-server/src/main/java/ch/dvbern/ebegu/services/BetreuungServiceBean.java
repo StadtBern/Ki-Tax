@@ -42,7 +42,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Inject
 	private MailService mailService;
 
-	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
+	private final Logger LOG = LoggerFactory.getLogger(BetreuungServiceBean.class.getSimpleName());
 
 
 	@Override

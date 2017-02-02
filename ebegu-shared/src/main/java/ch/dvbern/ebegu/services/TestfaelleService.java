@@ -2,11 +2,13 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Service zum berechnen und speichern der Verfuegung
@@ -63,6 +65,12 @@ public interface TestfaelleService {
 	 * @param username Username des Besitzers der Gesuche die entferntw erden sollen
 	 */
 	void removeGesucheOfGS(String username);
+
+	/**
+	 * Gibt die Institutionsstammdaten zurück, welche in den gelieferten Testfällen verwendet werden,
+	 * also Brünnen und Weissenstein Kita und Tagi
+	 */
+	List<InstitutionStammdaten> getInstitutionsstammdatenForTestfaelle();
 
 	Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer);
 }

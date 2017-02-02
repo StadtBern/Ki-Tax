@@ -165,7 +165,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	public GeneratedDokument getFinSitDokumentAccessTokenGeneratedDokument(final Gesuch gesuch,
 																		   Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 
-		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getAntragNummer());
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer());
 		GeneratedDokument persistedDokument = null;
 		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
 			persistedDokument = getGeneratedDokument(gesuch, GeneratedDokumentTyp.FINANZIELLE_SITUATION, fileNameForGeneratedDokumentTyp);
@@ -193,7 +193,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Override
 	public GeneratedDokument getBegleitschreibenDokument(final Gesuch gesuch,
 														 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
-		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getAntragNummer());
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer());
 		GeneratedDokument persistedDokument = null;
 		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
 			persistedDokument = getGeneratedDokument(gesuch, GeneratedDokumentTyp.BEGLEITSCHREIBEN, fileNameForGeneratedDokumentTyp);
@@ -201,7 +201,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		if (!gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen() || persistedDokument == null) {
 			//  persistedDokument == null:  Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 
-			boolean writeProtectPDF = gesuch.getStatus().isAnyStatusOfVerfuegt() || gesuch.getStatus().equals(AntragStatus.VERFUEGEN);
+			boolean writeProtectPDF = gesuch.getStatus().isAnyStatusOfVerfuegt();
 			byte[] data = pdfService.generateBegleitschreiben(gesuch, writeProtectPDF);
 			// BEGLEITSCHREIBEN in einem Zustand isAnyStatusOfVerfuegt oder Verfügen, soll das Dokument schreibgeschützt sein!
 			persistedDokument = saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
@@ -216,7 +216,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	public GeneratedDokument getFreigabequittungAccessTokenGeneratedDokument(final Gesuch gesuch,
 																			 Boolean forceCreation, Zustelladresse zustelladresse) throws MimeTypeParseException, MergeDocException {
 
-		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getAntragNummer());
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getJahrAndFallnummer());
 
 		GeneratedDokument persistedDokument = null;
 
@@ -229,7 +229,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			authorizer.checkReadAuthorizationFinSit(gesuch);
 
 			if (!gesuch.getStatus().inBearbeitung() && !forceCreation) {
-				LOG.error(GeneratedDokumentTyp.FREIGABEQUITTUNG.name() + " für Gesuch " + gesuch.getAntragNummer() + " nicht gefunden.");
+				LOG.error(GeneratedDokumentTyp.FREIGABEQUITTUNG.name() + " für Gesuch " + gesuch.getJahrAndFallnummer() + " nicht gefunden.");
 			}
 
 			gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
@@ -253,7 +253,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		if (persistedDokument == null) {
 			LOG.error("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getAntragNummer(), expectedFilepath);
+				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getJahrAndFallnummer(), expectedFilepath);
 		}
 
 		if (persistedDokument != null && !Files.exists(Paths.get(persistedDokument.getFilepfad()))) {

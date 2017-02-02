@@ -145,8 +145,8 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 				} else {
 					familiengroesse = familiengroesse + (gesuch.extractFamiliensituation().hasSecondGesuchsteller() ? 2 : 1);
 				}
-			} else{
-				LOG.warn("Die Familiengroesse kann noch nicht richtig berechnet werden weil die Familiensituation nicht richtig ausgefuellt ist. Antragnummer: {}" , gesuch.getAntragNummer() );
+			} else {
+				LOG.warn("Die Familiengroesse kann noch nicht richtig berechnet werden weil die Familiensituation nicht richtig ausgefuellt ist. Antragnummer: {}" , gesuch.getJahrAndFallnummer() );
 			}
 
 			for (KindContainer kindContainer : gesuch.getKindContainers()) {

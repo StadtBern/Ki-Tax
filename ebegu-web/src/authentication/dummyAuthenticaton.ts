@@ -6,7 +6,6 @@ import AuthServiceRS from './service/AuthServiceRS.rest';
 import {TSMandant} from '../models/TSMandant';
 import TSInstitution from '../models/TSInstitution';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
-import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import IRootScopeService = angular.IRootScopeService;
@@ -56,7 +55,7 @@ export class DummyAuthenticationListViewController {
             this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftLeoLea));
         this.usersList.push(new TSUser('Simon', 'Gfeller', 'gfsi', 'password8', 'simon.gfeller@gugus.ch',
             this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftSGF));
-        this.usersList.push(new TSUser('Emma', 'Gerber', 'geem', 'password6', 'emma.gerber@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
+        this.usersList.push(new TSUser('Emma', 'Gerber', 'geem', 'password6', 'imanol.bernabeu@dvbern.ch', this.mandant, TSRole.GESUCHSTELLER));
         this.usersList.push(new TSUser('Heinrich', 'Mueller', 'muhe', 'password6', 'heinrich.mueller@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
         this.usersList.push(new TSUser('Michael', 'Berger', 'bemi', 'password6', 'michael.berger@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
         this.usersList.push(new TSUser('Hans', 'Zimmermann', 'ziha', 'password6', 'hans.zimmermann@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
@@ -127,10 +126,6 @@ export class DummyAuthenticationListViewController {
         this.authServiceRS.loginRequest(user).then(() => {
 
             AuthenticationUtil.navigateToStartPageForRole(user, this.$state);
-
-            this.$timeout(() => {
-                this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.CHANGE_USER]);
-            }, 1000);
 
         });
     }

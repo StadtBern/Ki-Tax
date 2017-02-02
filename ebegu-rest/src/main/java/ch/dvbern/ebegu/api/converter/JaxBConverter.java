@@ -1568,7 +1568,9 @@ public class JaxBConverter {
 		jaxBetreuung.setErweiterteBeduerfnisse(betreuungFromServer.getErweiterteBeduerfnisse());
 		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(betreuungFromServer.getInstitutionStammdaten()));
 		jaxBetreuung.setBetreuungNummer(betreuungFromServer.getBetreuungNummer());
-
+		if (betreuungFromServer.getKind() != null) {
+			jaxBetreuung.setKindFullname(betreuungFromServer.getKind().getKindJA().getFullName());
+		}
 		if (betreuungFromServer.getVerfuegung() != null) {
 			jaxBetreuung.setVerfuegung(verfuegungToJax(betreuungFromServer.getVerfuegung()));
 		}
@@ -2035,11 +2037,13 @@ public class JaxBConverter {
 		for (final KindContainer kind : gesuch.getKindContainers()) {
 			jaxKindContainers.add(kindContainerToJAX(kind));
 		}
+
+		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
+		antrag.setKinder(createKinderList(jaxKindContainers));
+
 		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
 			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(jaxKindContainers, allowedInst);
 		}
-
-		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
 
 		antrag.setAngebote(createAngeboteList(jaxKindContainers));
 		antrag.setInstitutionen(createInstitutionenList(jaxKindContainers));
@@ -2050,6 +2054,7 @@ public class JaxBConverter {
 
 	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch) {
 		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
+		antrag.setKinder(createKinderList(gesuch.getKindContainers()));
 		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
 		antrag.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
 		return antrag;
@@ -2124,6 +2129,14 @@ public class JaxBConverter {
 		return resultSet;
 	}
 
+	private Set<String> createKinderList(Set<KindContainer> kindContainers) {
+		Set<String> resultSet = new HashSet<>();
+		kindContainers.forEach(kindContainer -> {
+				resultSet.add(kindContainer.getKindJA().getVorname());
+		});
+		return resultSet;
+	}
+
 	private Set<BetreuungsangebotTyp> createAngeboteList(Collection<JaxKindContainer> jaxKindContainers) {
 
 		Set<BetreuungsangebotTyp> resultSet = new HashSet<>();
@@ -2131,6 +2144,15 @@ public class JaxBConverter {
 			kindContainer.getBetreuungen().forEach(betreuung -> {
 				resultSet.add(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
 			});
+		});
+		return resultSet;
+	}
+
+	private Set<String> createKinderList(Collection<JaxKindContainer> jaxKindContainers) {
+
+		Set<String> resultSet = new HashSet<>();
+		jaxKindContainers.forEach(kindContainer -> {
+				resultSet.add(kindContainer.getKindJA().getVorname());
 		});
 		return resultSet;
 	}
@@ -2188,6 +2210,9 @@ public class JaxBConverter {
 		} else {
 			throw new EbeguEntityNotFoundException("mitteilungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, mitteilungJAXP.getFall());
 		}
+		if (mitteilungJAXP.getBetreuung() != null) {
+			mitteilung.setBetreuung(betreuungToEntity(mitteilungJAXP.getBetreuung(), new Betreuung()));
+		}
 		mitteilung.setMessage(mitteilungJAXP.getMessage());
 		mitteilung.setMitteilungStatus(mitteilungJAXP.getMitteilungStatus());
 
@@ -2216,6 +2241,9 @@ public class JaxBConverter {
 		jaxMitteilung.setEmpfaengerTyp(persistedMitteilung.getEmpfaengerTyp());
 		if (persistedMitteilung.getFall() != null) {
 			jaxMitteilung.setFall(fallToJAX(persistedMitteilung.getFall()));
+		}
+		if (persistedMitteilung.getBetreuung() != null) {
+			jaxMitteilung.setBetreuung(betreuungToJAX(persistedMitteilung.getBetreuung()));
 		}
 		jaxMitteilung.setMessage(persistedMitteilung.getMessage());
 		jaxMitteilung.setMitteilungStatus(persistedMitteilung.getMitteilungStatus());

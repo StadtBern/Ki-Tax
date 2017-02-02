@@ -2,8 +2,8 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.PredicateObjectDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -35,6 +35,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -71,6 +72,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private DokumentGrundService dokumentGrundService;
 	@Inject
 	private Authorizer authorizer;
+	@Inject
+	private BooleanAuthorizer booleanAuthorizer;
 	@Inject
 	private PrincipalBean principalBean;
 
@@ -112,6 +115,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.ofNullable(a);
 	}
 
+	@PermitAll
+	@Override
+	public List<Gesuch> findReadableGesuche(@Nullable Collection<String> gesuchIds) {
+		if(gesuchIds == null || gesuchIds.isEmpty()){
+			return Collections.emptyList();
+		}
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicateId = root.get(Gesuch_.id).in(gesuchIds);
+		query.where(predicateId);
+		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.id)));
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+		return criteriaResults.stream()
+			.filter(gesuch -> this.booleanAuthorizer.hasReadAuthorization(gesuch))
+			.collect(Collectors.toList());
+	}
+
 	@Nonnull
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
@@ -136,12 +159,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN})
-	public void removeGesuch(@Nonnull Gesuch gesuch) {
-		Validate.notNull(gesuch);
-		Optional<Gesuch> gesuchOptional = findGesuch(gesuch.getId());
-		authorizer.checkWriteAuthorization(gesuch);
-		Gesuch gesToRemove = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuch));
-
+	public void removeGesuch(@Nonnull String gesuchId) {
+		Validate.notNull(gesuchId);
+		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
+		Gesuch gesToRemove = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("removeGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId));
+		authorizer.checkWriteAuthorization(gesuchOptional.get());
 		//Remove all depending objects
 		wizardStepService.removeSteps(gesToRemove);  //wizard steps removen
 		mahnungService.removeAllMahnungenFromGesuch(gesToRemove);
@@ -156,7 +178,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
-	public Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname) {
+	public List<Gesuch> findGesuchByGSName(String nachname, String vorname) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
@@ -173,7 +195,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		q.setParameter(nameParam, nachname);
 		q.setParameter(vornameParam, vorname);
 
-		return Optional.ofNullable(q.getResultList());
+		return q.getResultList();
 	}
 
 	@Override
@@ -241,6 +263,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
 		SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.LEFT);
+		Join<KindContainer, Kind> kinder = kindContainers.join(KindContainer_.kindJA, JoinType.LEFT);
 		Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
 		Join<InstitutionStammdaten, Institution> institution = institutionstammdaten.join(InstitutionStammdaten_.institution, JoinType.LEFT);
 
@@ -328,6 +351,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (predicateObjectDto.getInstitutionen() != null) {
 				predicates.add(cb.equal(institution.get(Institution_.name), predicateObjectDto.getInstitutionen()));
 			}
+			if (predicateObjectDto.getKinder() != null) {
+				predicates.add(cb.like(kinder.get(Kind_.vorname), predicateObjectDto.getKindNameForLike()));
+			}
 			if (predicateObjectDto.getVerantwortlicher() != null) {
 				String[] strings = predicateObjectDto.getVerantwortlicher().split(" ");
 				predicates.add(
@@ -342,7 +368,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case SEARCH:
 				query.select(root.get(Gesuch_.id))
 					.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-				constructOrderByClause(antragTableFilterDto, cb, query, root, betreuungen);
+				constructOrderByClause(antragTableFilterDto, cb, query, root, betreuungen, kinder);
 				break;
 			case COUNT:
 				query.select(cb.countDistinct(root.get(Gesuch_.id)))
@@ -375,7 +401,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 
-	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, SetJoin<KindContainer, Betreuung> betreuungen) {
+	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, SetJoin<KindContainer, Betreuung> betreuungen, Join<KindContainer, Kind> kinder) {
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
 			Expression<?> expression;
 			switch (antragTableFilterDto.getSort().getPredicate()) {
@@ -408,6 +434,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					break;
 				case "verantwortlicher":
 					expression = root.get(Gesuch_.fall).get(Fall_.verantwortlicher);
+					break;
+				case "kinder":
+					expression = kinder.get(Kind_.vorname);
 					break;
 				default:
 					LOG.warn("Using default sort by FallNummer because there is no specific clause for predicate " + antragTableFilterDto.getSort().getPredicate());

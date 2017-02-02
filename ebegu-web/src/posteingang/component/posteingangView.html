@@ -1,0 +1,83 @@
+<div class="posteingangView">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-11">
+                <h3 data-translate="POSTEINGANG"></h3>
+            </div>
+            <div class="col-md-1 text-right">
+                <h3 ng-bind="vm.getMitteilungen() ? vm.getMitteilungen().length : 0"></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 table-responsive">
+
+                <table st-table="displayedCollection" st-set-filter="posteingangFilter" st-safe-src="vm.getMitteilungen()"
+                       st-delay="20"
+                       class="table table-striped fixedtable">
+                    <thead>
+                    <tr>
+                        <!-- Von -->
+                        <th st-sort="sender" class="sortable row-sender" data-translate="POSTEINGANG_VON_UPPER"></th>
+                        <!-- Fall-Nummer -->
+                        <th st-sort="fallNummer" class="sortable row-fallNummer" data-translate="POSTEINGANG_FALL_UPPER"></th>
+                        <!-- Familie -->
+                        <th st-sort="besitzer" class="sortable row-besitzer" data-translate="POSTEINGANG_FAMILIE_UPPER"></th>
+                        <!-- Betreff -->
+                        <th st-sort="subject" class="sortable row-subject" data-translate="POSTEINGANG_BETREFF_UPPER"></th>
+                        <!-- Datum -->
+                        <th st-sort="sentDatum" class="sortable row-sentDatum" data-translate="POSTEINGANG_DATUM_UPPER"></th>
+                        <!-- Verantwortliche Person -->
+                        <th st-sort="verantwortlicher" class="sortable row-verantwortlicher" data-translate="POSTEINGANG_VERANTWORTLICH_UPPER"></th>
+                    </tr>
+                    <tr>
+                        <!-- Von -->
+                        <th><input st-search="sender" class="form-control" type="text"/></th>
+                        <!-- Fall-Nummer -->
+                        <th><input st-search="fall.fallNummer" class="form-control" type="text"/></th>
+                        <!-- Familie -->
+                        <th><input st-search="fall.besitzer" class="form-control" type="text"/></th>
+                        <!-- Betreff -->
+                        <th><input st-search="subject" class="form-control" type="text"/></th>
+                        <!-- Datum -->
+                        <th><input st-search="sentDatum" class="form-control" type="text"/></th>
+                        <!-- Verantwortliche Person -->
+                        <th>
+                            <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher"></dv-userselect>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single" ng-click="vm.gotoMitteilung(row)" ng-class="{'mitteilung_neu': ('NEU' === row.mitteilungStatus.toString())}">
+                        <!-- Von -->
+                        <td ellipsis-tooltip="{{row.sender.getFullName()}}"
+                            ng-bind="row.sender.getFullName()"></td>
+                        <!-- Fall-Nummer -->
+                        <td class="ellipsis" ellipsis-tooltip="{{vm.addZerosToFallNummer(row.fall.fallNummer)}}"
+                            ng-bind="vm.addZerosToFallNummer(row.fall.fallNummer)"></td>
+                        <!-- Familie -->
+                        <td class="ellipsis" ellipsis-tooltip="{{row.fall.besitzer.getFullName()}}"
+                            ng-bind="row.fall.besitzer.getFullName()"></td>
+                        <!-- Betreff -->
+                        <td class="ellipsis" ellipsis-tooltip="{{row.subject}}"
+                            ng-bind="row.subject"></td>
+                        <!-- Datum -->
+                        <td class="ellipsis" ellipsis-tooltip="{{row.sentDatum | amDateFormat : 'DD.MM.YYYY'}}"
+                            ng-bind="row.sentDatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <!-- Verantwortliche Person -->
+                        <td class="ellipsis" ellipsis-tooltip="{{row.empfaenger.getFullName()}}"
+                            ng-bind="row.empfaenger.getFullName()"></td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
