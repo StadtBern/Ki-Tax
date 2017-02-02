@@ -114,10 +114,10 @@ export class DownloadRS {
             // add MatrixParam for to download file instead of inline
             this.download(href);
         } else {
-            let win =this.$window.open(href, '_blank');
+            let win = this.$window.open(href, '_blank');
             if (!win) {
                 let warn: string = 'Popup-Blocker scheint eingeschaltet zu sein. ' +
-                    'Dadurch kann das Dokument im Browser nicht angezeigt werden und wird heruntergeladen. '+
+                    'Dadurch kann das Dokument im Browser nicht angezeigt werden und wird heruntergeladen. ' +
                     'Bitte erlauben Sie der Seite Pop-Ups öffnen zu dürfen, um das Dokument im Browser anzuzeigen.';
                 this.log.error(warn);
                 this.download(href);
