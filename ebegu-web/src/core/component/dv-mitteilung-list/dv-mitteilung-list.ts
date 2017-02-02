@@ -71,7 +71,9 @@ export class DVMitteilungListController {
                     this.loadEntwurf();
                     this.setAllMitteilungenGelesen().then((response) => {
                         this.loadAllMitteilungen();
-                        this.$rootScope.$emit('POSTEINGANG_MAY_CHANGED', null);
+                        if (this.$rootScope) {
+                            this.$rootScope.$emit('POSTEINGANG_MAY_CHANGED', null);
+                        }
                     });
                 }
             });

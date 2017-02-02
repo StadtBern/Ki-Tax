@@ -63,8 +63,6 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 
-
-
 	@Override
 	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
@@ -113,7 +111,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				Optional<Benutzer> benutzer = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
 				if (benutzer.isPresent()) {
 					mitteilung.setEmpfaenger(benutzer.get());
-				} else{
+				} else {
 					LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen");
 				}
 			}
@@ -205,15 +203,16 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return getMitteilungenForPosteingang(Mode.SEARCH).getRight();
 	}
 
-	private Pair<Long, Collection<Mitteilung>> getMitteilungenForPosteingang(Mode mode){
+	private Pair<Long, Collection<Mitteilung>> getMitteilungenForPosteingang(Mode mode) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 
-		CriteriaQuery query = null;
-		switch (mode){
+		CriteriaQuery query;
+		switch (mode) {
 			case COUNT:
 				query = cb.createQuery(Long.class);
 				break;
 			case SEARCH:
+			default:
 				query = cb.createQuery(Mitteilung.class);
 				break;
 		}
@@ -232,8 +231,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		predicates.add(predicateEmpfaengerTyp);
 
 
-
-		switch (mode){
+		switch (mode) {
 			case COUNT:
 				// Nur die Neuen
 				Predicate predicateNeu = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.NEU);
@@ -248,7 +246,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 
 		Pair<Long, Collection<Mitteilung>> result = null;
-		switch (mode){
+		switch (mode) {
 			case COUNT:
 				query.select(cb.countDistinct(root));
 				query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));

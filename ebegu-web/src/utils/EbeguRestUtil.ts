@@ -1326,9 +1326,9 @@ export default class EbeguRestUtil {
         return pendenzen;
     }
 
-    public parseQuickSearchResult(dataFromServer: any): TSQuickSearchResult{
-        if(dataFromServer ){
-            let resultEntries: Array<TSSearchResultEntry>= this.parseSearchResultEntries(dataFromServer.resultEntities);
+    public parseQuickSearchResult(dataFromServer: any): TSQuickSearchResult {
+        if (dataFromServer) {
+            let resultEntries: Array<TSSearchResultEntry> = this.parseSearchResultEntries(dataFromServer.resultEntities);
             return new TSQuickSearchResult(resultEntries, dataFromServer.numberOfResults);
         }
         return undefined;
