@@ -238,6 +238,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				predicates.add(predicateNeu);
 				break;
 			case SEARCH:
+			default:
 				// Aber auf jeden Fall unerledigt
 				Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
 				predicates.add(predicateNichtErledigt);
@@ -254,6 +255,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				result = new ImmutablePair<>(count, null);
 				break;
 			case SEARCH:
+			default:
 				query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
 				query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 				final List<Mitteilung> results = persistence.getCriteriaResults(query);
