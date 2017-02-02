@@ -221,7 +221,7 @@ export class AdminViewController {
         });
     }
 
-    public startReindex(){
+    public startReindex() {
         return this.reindexRS.reindex();
     }
 }

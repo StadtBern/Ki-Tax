@@ -16,6 +16,7 @@ import Moment = moment.Moment;
 import IFormController = angular.IFormController;
 import IQService = angular.IQService;
 import IWindowService = angular.IWindowService;
+import IRootScopeService = angular.IRootScopeService;
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 
@@ -46,10 +47,10 @@ export class DVMitteilungListController {
 
 
     static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS',
-        'FallRS', 'BetreuungRS', '$q', '$window'];
+        'FallRS', 'BetreuungRS', '$q', '$window', '$rootScope'];
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS, private authServiceRS: AuthServiceRS,
-                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window :IWindowService) {
+                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window: IWindowService, private $rootScope: IRootScopeService) {
 
         this.initViewModel();
         this.TSRole = TSRole;
@@ -70,13 +71,16 @@ export class DVMitteilungListController {
                     this.loadEntwurf();
                     this.setAllMitteilungenGelesen().then((response) => {
                         this.loadAllMitteilungen();
+                        if (this.$rootScope) {
+                            this.$rootScope.$emit('POSTEINGANG_MAY_CHANGED', null);
+                        }
                     });
                 }
             });
         }
     }
 
-    public cancel() : void {
+    public cancel(): void {
         this.form.$setPristine();
         this.$window.history.back();
     }
@@ -88,7 +92,7 @@ export class DVMitteilungListController {
     private loadEntwurf() {
         // Wenn der Fall keinen Besitzer hat, darf auch keine Nachricht geschrieben werden
         // Ausser wir sind Institutionsbenutzer
-        let isInstitutionsUser : boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
+        let isInstitutionsUser: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
         if (this.fall.besitzer || isInstitutionsUser) {
             if (this.betreuung) {
                 this.mitteilungRS.getEntwurfForCurrentRolleForBetreuung(this.betreuung.id).then((entwurf: TSMitteilung) => {
