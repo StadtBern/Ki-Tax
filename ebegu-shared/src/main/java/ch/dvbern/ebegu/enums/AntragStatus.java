@@ -115,7 +115,7 @@ public enum AntragStatus {
 	 * @return true wenn das Jugendamt das Gesuch oeffnen darf (Unsichtbar sind also Gesuch die von Gesuchsteller noch
 	 * nicht eingereichte wurden und solche die NUR_SCHULAMT sind
 	 */
-	public boolean isReadableByJASachbearbeiter() {
+	public boolean isReadableByJugendamtSteueramt() {
 		//Jugendamt darf keine Gesuche sehen die noch nicht Freigegeben sind, und keine die nur Schulamt sind
 		return !(this.isAnyOfInBearbeitungGS()) &&
 			!(isAnyOfSchulamtOnly());

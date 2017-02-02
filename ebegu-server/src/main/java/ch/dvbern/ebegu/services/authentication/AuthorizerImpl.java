@@ -36,7 +36,7 @@ import static ch.dvbern.ebegu.enums.UserRole.*;
 public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	private static final UserRole[] JA_OR_ADM = {ADMIN, SACHBEARBEITER_JA};
-	private static final UserRole[] OTHER_JA_ROLES = { REVISOR, JURIST,  STEUERAMT};
+	private static final UserRole[] OTHER_AMT_ROLES = { REVISOR, JURIST,  STEUERAMT};
 
 	@Inject
 	private PrincipalBean principalBean;
@@ -300,7 +300,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			Boolean allowedSchulamt = isAllowedSchulamt(owningGesuch);
 
 			Boolean allowedOthers = false;
-			if (principalBean.isCallerInAnyOfRole(OTHER_JA_ROLES) &&  (owningGesuch.getStatus().isReadableByJASachbearbeiter())) {
+			if (principalBean.isCallerInAnyOfRole(OTHER_AMT_ROLES) &&  (owningGesuch.getStatus().isReadableByJugendamtSteueramt())) {
 					allowedOthers = true;
 			}
 			Boolean allowedOwner = isGSOwner(owningGesuch::getFall, name);
@@ -410,7 +410,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		}
 		//JA Benutzer duerfen nur freigegebene Gesuche anschauen, zudem muessen die gesuche ein Jugendamtbetreung haben (also nicht im Status NUR_SCHULAMT sein)
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
-			return entity.getStatus().isReadableByJASachbearbeiter();
+			return entity.getStatus().isReadableByJugendamtSteueramt();
 		}
 		return false;
 	}
@@ -431,7 +431,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		}
 		Gesuch gesuch = gesuchSupplier.get();
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
-			return gesuch.getStatus().isReadableByJASachbearbeiter() || AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus());
+			return gesuch.getStatus().isReadableByJugendamtSteueramt() || AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus());
 		}
 
 		if (isGSOwner(() -> gesuch.getFall(), principalName)) {

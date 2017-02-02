@@ -9,7 +9,7 @@ INSERT INTO sequence (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, 
      'flyway',
      0,
      'FALL_NUMMER',
-     coalesce(MAX(fall.fall_nummer), 10),
+     coalesce(MAX(fall.fall_nummer), 100),
      -- aktuell hoechste fallnummer oder 10  wenn keine vorhanden  (coalesce gibt ersten nonnull wert zurueck)
      'e3736eb8-6eef-40ef-9e52-96ab48d8f220' # mandant id des fixen mandanten
    FROM fall);
