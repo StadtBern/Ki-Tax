@@ -35,6 +35,7 @@
     "ERSTGESUCH_WILLKOMMEN_TEXT_3": "Sollten Sie zu einer Angabe weitere Informationen benötigen klicken Sie auf das Infofeld",
     "TAETIGKEIT": "Tätigkeit",
     "ERROR_MAX": "Maximaler Wert überschritten",
+    "ERROR_VALUE": "Wert zu gross oder falsch formatiert",
     "ERROR_UNEXPECTED": "Es ist ein unerwarteter Fehler aufgetreten",
     "ERROR_UNEXPECTED_EBEGU_RUNTIME": "Es ist ein Fehler aufgetreten",
     "ERROR_UNAUTHORIZED": "Sie sind für diese Aktion nicht berechtigt",
@@ -469,6 +470,7 @@
     "PERIODE_UPPER": "PERIODE",
     "TYP_UPPER": "TYP",
     "FAMILIE_UPPER": "FAMILIE",
+    "KINDER_UPPER": "KINDER",
     "FALL_UPPER": "FALL",
     "KIND_UPPER": "KIND",
     "MENU_ALL_FAELLE": "ALLE FÄLLE",
@@ -512,7 +514,7 @@
     "LABEL_OK": "OK",
     "LABEL_NEIN": "Nein",
     "LABEL_KEINE_ANGABE": "Keine Angabe",
-    "PENDENZEN_LIST": "PENDENZENLISTE",
+    "PENDENZEN_LIST": "Pendenzenliste",
     "LOESCHEN_DIALOG_TITLE": "Wollen Sie das Element wirklich löschen?",
     "LOESCHEN_DIALOG_TEXT": "Alle verknüpften Elemente werden ebenfalls entfernt",
     "KITA": "Kita – Tagesstätte für Kleinkinder",
@@ -875,5 +877,6 @@
     "POSTEINGANG_BETREFF_UPPER": "BETREFF",
     "POSTEINGANG_DATUM_UPPER": "DATUM",
     "POSTEINGANG_VERANTWORTLICH_UPPER": "VERANTWORTLICH",
-    "MITTEILUNGEN_NOCH_KEINE": "Für diesen Fall wurden noch keine Mitteilungen gesendet"
+    "MITTEILUNGEN_NOCH_KEINE": "Für diesen Fall wurden noch keine Mitteilungen gesendet",
+    "SEARCH_LIST": "Alle Suchresultate"
 }

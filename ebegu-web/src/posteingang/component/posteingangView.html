@@ -64,8 +64,8 @@
                         <td class="ellipsis" ellipsis-tooltip="{{row.sentDatum | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.sentDatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <!-- Verantwortliche Person -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
-                            ng-bind="row.verantwortlicher"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.empfaenger.getFullName()}}"
+                            ng-bind="row.empfaenger.getFullName()"></td>
                     </tr>
                     </tbody>
                     <tfoot>

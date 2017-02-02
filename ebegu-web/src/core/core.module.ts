@@ -57,6 +57,7 @@ import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
 import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensverschlechterungInfoRS.rest';
 import {DVNavigation} from './directive/dv-navigation/dv-navigation';
 import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
+import {DVPendenzenListConfig} from './component/dv-pendenzen-list/dv-pendenzen-list';
 import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 import {NavigationLogger} from './service/NavigationLogger';
 import GlobalCacheService from '../gesuch/service/globalCacheService';
@@ -68,6 +69,7 @@ import {DvMobileNavigationToggleComponentConfig} from './component/dv-mobile-nav
 import {SearchIndexRS} from './service/searchIndexRS.rest';
 import {DvSearchResultIconComponentConfig} from './component/dv-search/dv-search-result-icon/dv-search-result-icon';
 import {DvQuicksearchboxComponentConfig} from './component/dv-search/dv-quicksearchbox/dv-quicksearchbox';
+import {DVValueinput} from './directive/dv-valueinput/dv-valueinput';
 import MitteilungRS from './service/mitteilungRS.rest';
 import {DVMitteilungListConfig} from './component/dv-mitteilung-list/dv-mitteilung-list';
 
@@ -100,7 +102,6 @@ const dependencies: string[] = [
     'pascalprecht.translate',
     'angularMoment',
     'cfp.hotkeys',
-    'ui.utils.masks',
     'ngFileUpload',
     'unsavedChanges'
 ];
@@ -157,6 +158,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('GlobalCacheService', GlobalCacheService)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
+    .directive('dvValueinput', DVValueinput.factory())
     .directive('dvUserselect', DVUserselect.factory())
     .directive('dvNavigation', DVNavigation.factory())
     .directive('dvLoading', DVLoading.factory())
@@ -185,6 +187,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())
+    .component('dvPendenzenList', new DVPendenzenListConfig())
     .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
     .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
     .component('dvMitteilungList', new DVMitteilungListConfig())

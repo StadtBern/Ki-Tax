@@ -32,6 +32,7 @@ export class DvQuicksearchboxController {
 
     selectedItem: TSSearchResultEntry;
     searchQuery: string;
+    searchString: string;
     TSRoleUtil: TSRoleUtil;
     gesuchModelManager: GesuchModelManager;
 
@@ -52,6 +53,7 @@ export class DvQuicksearchboxController {
 
 
     public querySearch(query: string): IPromise<Array<TSSearchResultEntry>> {
+        this.searchString = query;
         let deferred = this.$q.defer();
         this.searchIndexRS.quickSearch(query).then((quickSearchResult: TSQuickSearchResult) => {
             this.limitResultsize(quickSearchResult);
@@ -68,7 +70,7 @@ export class DvQuicksearchboxController {
 
         let limitedResults = this.$filter('limitTo')(quickSearchResult.resultEntities, 8);
         // if (limitedResults.length < quickSearchResult.length) { //total immer anzeigen
-        this.addFakeTotalResultEntry(quickSearchResult, limitedResults)
+        this.addFakeTotalResultEntry(quickSearchResult, limitedResults);
     }
 
     private addFakeTotalResultEntry(quickSearchResult: TSQuickSearchResult, limitedResults: TSSearchResultEntry[]) {
@@ -84,7 +86,8 @@ export class DvQuicksearchboxController {
     }
 
     private selectItemChanged() {
-        this.navigateToFall()
+        this.navigateToFall();
+        this.selectedItem = undefined;
 
     }
 
@@ -108,7 +111,8 @@ export class DvQuicksearchboxController {
                 this.openGesuch(this.selectedItem.gesuchID, 'gesuch.fallcreation');
             }
         } else if(this.selectedItem){
-            window.alert('navigate to result page')
+
+            this.$state.go('search', {searchString: this.searchString});
         }
     }
 

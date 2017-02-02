@@ -140,13 +140,14 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 		Mitteilung mitteilung2 = TestDataUtil.createMitteilung(fall, null, MitteilungTeilnehmerTyp.JUGENDAMT,
 			sender, MitteilungTeilnehmerTyp.GESUCHSTELLER);
+
 		mitteilungService.sendMitteilung(mitteilung2);
 
 		final Collection<Mitteilung> mitteilungenForCurrentRolle = mitteilungService.getMitteilungenForPosteingang();
 
 		//AS SUPERADMIN
 		Assert.assertNotNull(mitteilungenForCurrentRolle);
-		Assert.assertEquals(1, mitteilungenForCurrentRolle.size());
+		Assert.assertEquals(2, mitteilungenForCurrentRolle.size()); // Wir sehen grundsätzliche alle Nachrichten, die ans JA gehen
 		Assert.assertEquals(MitteilungTeilnehmerTyp.JUGENDAMT, mitteilungenForCurrentRolle.iterator().next().getEmpfaengerTyp());
 	}
 
