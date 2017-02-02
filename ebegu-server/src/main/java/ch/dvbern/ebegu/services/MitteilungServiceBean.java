@@ -102,7 +102,11 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
 			if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
 				Optional<Benutzer> benutzer = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
-				benutzer.ifPresent(mitteilung::setEmpfaenger);
+				if (benutzer.isPresent()) {
+					mitteilung.setEmpfaenger(benutzer.get());
+				} else{
+					LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen");
+				}
 			}
 		}
 	}
