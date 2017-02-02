@@ -16,38 +16,24 @@ dv-accordion {
             &:focus {
                 outline: none;
             }
-            border-bottom: 1px solid @contrast;
-            opacity: 1;
-            padding: 0 2rem 0;
             display: block;
             width: 100%;
-            height: 5rem;
-            background: @contrast-lightest;
-            line-height: 5rem;
-            font-size: 1.6rem;
-            .ebeguBold();
-            letter-spacing: 0.15rem;
-            color: @primary;
+            background: darkgrey;
+            color: black;
             margin: 0;
             transition: all 0.5s ease;
             &.tab-open {
-                background: @primary;
-                border-bottom: 1px solid @primary;
-                color: @contrast-lightest;
+                background: grey;
+                color: black;
             }
         }
         .dv-accordion-tab-content {
             overflow: hidden;
-            opacity: 1;
             display: block;
             width: 100%;
             height: auto;
             max-height: 15rem;
-            background: @contrast-light;
-            padding: 0 2rem 0;
-            & > * {
-                margin: 2rem 0 2rem;
-            }
+            background: lightblue;
             &.ng-hide-add {
                 max-height: 15rem;
                 transition: all 1s ease;
