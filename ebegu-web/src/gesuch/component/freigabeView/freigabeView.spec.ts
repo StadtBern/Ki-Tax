@@ -62,6 +62,10 @@ describe('freigabeView', function () {
         spyOn(controller, 'isGesuchValid').and.callFake(function () {
             return controller.form.$valid;
         });
+
+        let form = TestDataUtil.createDummyForm();
+        // $rootScope.form = form;
+        controller.form = form;
     }));
     describe('canBeFreigegeben', function () {
         it('should return false when not all steps are true', function () {
