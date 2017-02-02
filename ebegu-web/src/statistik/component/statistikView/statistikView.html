@@ -3,7 +3,36 @@
         <div class="col-md-10 col-md-offset-1">
             <!-- TODO: Remove Show-Off Inputs and replace with real ones-->
             <dv-accordion onlyone="true">
-                <dv-accordion-tab title="GESUCHE" tabid="1">
+                <dv-accordion-tab title="GESUCHE NACH STICHTAG" tabid="1">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float">Stichtag</label>
+                                <input type="text" class="form-control"  >
+                            </dv-input-container>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="form-group">
+                                <label class="md-no-float">
+                                    Periode
+                                </label>
+                                <div class="dv-select-style">
+                                    <select ng-model=""
+                                            ng-options=""
+                                            class="form-control"
+                                             >
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3" style="margin-top:3rem;">
+                            <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;">
+                                <span>  GENERIEREN</span>
+                            </dv-loading-button>
+                        </div>
+                    </div>
+                </dv-accordion-tab>
+                <dv-accordion-tab title="GESUCHE NACH ZEITRAUM" tabid="1">
                     <div class="row">
                         <div class="col-xs-3">
                             <dv-input-container class="form-group secondColumn">
@@ -26,7 +55,7 @@
                                     <select ng-model=""
                                             ng-options=""
                                             class="form-control"
-                                             >
+                                    >
                                     </select>
                                 </div>
                             </div>
@@ -87,20 +116,6 @@
                                 <input type="text" class="form-control"  >
                             </dv-input-container>
                         </div>
-                        <div class="col-xs-3">
-                            <div class="form-group">
-                                <label class="md-no-float">
-                                    Periode
-                                </label>
-                                <div class="dv-select-style">
-                                    <select ng-model=""
-                                            ng-options=""
-                                            class="form-control"
-                                             >
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                         <div class="col-xs-3" style="margin-top:3rem;">
                             <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;">
                                 <span>  GENERIEREN</span>
@@ -121,20 +136,6 @@
                                 <label class="md-no-float">bis</label>
                                 <input type="text" class="form-control"  >
                             </dv-input-container>
-                        </div>
-                        <div class="col-xs-3">
-                            <div class="form-group">
-                                <label class="md-no-float">
-                                    Periode
-                                </label>
-                                <div class="dv-select-style">
-                                    <select ng-model=""
-                                            ng-options=""
-                                            class="form-control"
-                                             >
-                                    </select>
-                                </div>
-                            </div>
                         </div>
                         <div class="col-xs-3" style="margin-top:3rem;">
                             <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;">
