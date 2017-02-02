@@ -1,8 +1,5 @@
 import {IComponentOptions} from 'angular';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import {IStateService} from 'angular-ui-router';
 import MitteilungRS from '../../service/mitteilungRS.rest';
-import {TSSubmitEvent} from '../../events/TSSubmitEvent';
 import IRootScopeService = angular.IRootScopeService;
 let template = require('./dv-posteingang.html');
 
