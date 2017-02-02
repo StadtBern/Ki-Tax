@@ -107,5 +107,12 @@ export class ValueinputController {
         return numberString.split("'").join("").split(",").join("");
     }
 
+    public removeDot(): void {
+        let transformedInput = this.valueinput.split('.').join('');
+        if (this.valueinput != transformedInput) {
+            this.ngModelCtrl.$setViewValue(transformedInput);
+            this.ngModelCtrl.$render();
+        }
+    }
 
 }
