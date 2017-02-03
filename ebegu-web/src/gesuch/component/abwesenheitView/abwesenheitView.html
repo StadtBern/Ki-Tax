@@ -22,18 +22,18 @@
                                 <div class="form-group">
                                     <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot-{{$index}}">
                                     </label>
-                                    <!-- TODO (team) kann durch JA nicht korrigiert werden -->
                                     <div class="dv-select-style">
                                         <select name="betreuungsangebot-{{$index}}" id="betreuungsangebot-{{$index}}"
                                                 ng-model="abwesenheitInstance.kindBetreuung"
-                                                class="form-control"
+                                                class="input-element form-control"
                                                 ng-options="betreuungsangebot as vm.getTextForBetreuungDDL(betreuungsangebot) for betreuungsangebot in vm.getBetreuungList()"
                                                 ng-required="true"
-                                                ng-change="vm.changedAngebot('{{abwesenheitInstance.kindBetreuung.kind.id}}', '{{abwesenheitInstance.kindBetreuung.betreuung.id}}')">
+                                                ng-change="vm.changedAngebot('{{abwesenheitInstance.kindBetreuung.kind.id}}', '{{abwesenheitInstance.kindBetreuung.betreuung.id}}')"
+                                                ng-disabled="vm.isKorrekturModusJugendamt()">
                                         </select>
+                                        <dv-error-messages for="vm.form['betreuungsangebot-' + $index].$error"
+                                                           class="error"></dv-error-messages>
                                     </div>
-                                    <dv-error-messages for="vm.form['betreuungsangebot-' + $index].$error"
-                                                       class="error"></dv-error-messages>
                                 </div>
                             </div>
                         </div>
@@ -84,7 +84,8 @@
                             <div class="col-md-12 dv-input-container-medium">
                                 <dv-loading-button type="button"
                                                    button-click="vm.removeAbwesenheitConfirm(abwesenheitInstance)"
-                                                   button-class="dv-btn-operation">
+                                                   button-class="dv-btn-operation"
+                                                   button-disabled="vm.isKorrekturModusJugendamt()">
                                     <i class="fa fa-lg fa-trash-o"></i>
                                     <span data-translate="ABWESENHEIT_ENTFERNEN"></span>
                                 </dv-loading-button>
@@ -102,8 +103,10 @@
                      dv-show-expression="!vm.isGesuchReadonly()">
                     <div class="col-md-12">
                         <dv-loading-button type="button" button-click="vm.createAbwesenheit()"
-                                           button-class="dv-btn-operation" dv-enable-element
-                                           dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                                           button-class="dv-btn-operation"
+                                           dv-enable-element
+                                           dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                                           button-disabled="vm.isKorrekturModusJugendamt()">
                             <i class="fa fa-lg fa-plus-circle"></i>
                             <span data-translate="ABWESENHEIT_ERFASSEN"></span>
                         </dv-loading-button>
