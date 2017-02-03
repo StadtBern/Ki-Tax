@@ -28,9 +28,9 @@ export class DvPosteingangController {
             this.getAmountNewMitteilungen();
         });
 
-        this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
-            this.getAmountNewMitteilungen();
-        });
+        // this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
+        //     this.getAmountNewMitteilungen();
+        // });
     }
 
     private getAmountNewMitteilungen(): void {

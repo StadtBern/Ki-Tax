@@ -23,6 +23,11 @@ function getStates(): IState[] {
             }
         },
         {
+            name: 'testdaten',
+            template: '<dv-testdaten-view flex="auto" class="overflow-scroll"></dv-testdaten-view>',
+            url: '/testdaten'
+        },
+        {
             name: 'institution',
             template: '<dv-institution-view flex="auto" class="overflow-scroll" institutionen="$resolve.institutionen" ' +
                                            'traegerschaften="$resolve.traegerschaften" mandant="$resolve.mandant"></dv-institution-view>',

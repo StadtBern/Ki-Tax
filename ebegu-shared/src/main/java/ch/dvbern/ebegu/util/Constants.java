@@ -56,4 +56,6 @@ public interface Constants {
 	int FALLNUMMER_LENGTH = 6;
 	long MAX_LUCENE_QUERY_RUNTIME = 500L;
 	int MAX_LUCENE_QUICKSEARCH_RESULTS = 25; // hier gibt es ein Problem, wenn wir fuer keines der Resultate berechtigt sind wird unser resultset leer sein auf client
+
+	String DEFAULT_MANDANT_ID = "e3736eb8-6eef-40ef-9e52-96ab48d8f220";
 }

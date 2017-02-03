@@ -6,6 +6,11 @@
         </button>
 
         <md-menu-content class="user-menu">
+            <md-menu-item dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getSuperAdminRoles()">
+                <md-button ui-sref-active="active" ui-sref="testdaten" aria-label="{{'ADMIN' | translate}}">
+                    <a href="javascript:void(0)" data-translate="TESTDATEN"></a>
+                </md-button>
+            </md-menu-item>
             <md-menu-item dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorRoles()">
                 <md-button ui-sref-active="active" ui-sref="admin" aria-label="{{'ADMIN' | translate}}">
                     <a href="javascript:void(0)" data-translate="ADMIN"></a>
