@@ -80,7 +80,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-4 dv-input-container-medium">
-                                <span ng-bind="mitteilung.sender.getFullName()"></span>
+                                <span ng-bind="mitteilung.senderAsString"></span>
                             </div>
                             <div class="col-md-4 dv-input-container-medium"
                                  dv-show-element
@@ -99,6 +99,7 @@
                     </div>
                     <hr class="marginTop05 marginBottom10">
                     <div class="row message" ng-show="showDetails">
+                        <span class="betreuung" ng-bind="vm.betreuungAsString(mitteilung)" ng-click="vm.gotoBetreuung(mitteilung)" ng-show="mitteilung.betreuung"/></span>
                         <span ng-bind="mitteilung.message"></span>
                     </div>
                 </div>

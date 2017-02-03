@@ -1570,6 +1570,11 @@ public class JaxBConverter {
 		jaxBetreuung.setBetreuungNummer(betreuungFromServer.getBetreuungNummer());
 		if (betreuungFromServer.getKind() != null) {
 			jaxBetreuung.setKindFullname(betreuungFromServer.getKind().getKindJA().getFullName());
+			jaxBetreuung.setKindNummer(betreuungFromServer.getKind().getKindNummer());
+			if (betreuungFromServer.getKind().getGesuch() != null) {
+				jaxBetreuung.setGesuchId(betreuungFromServer.getKind().getGesuch().getId());
+				jaxBetreuung.setGesuchsperiode(gesuchsperiodeToJAX(betreuungFromServer.getKind().getGesuch().getGesuchsperiode()));
+			}
 		}
 		if (betreuungFromServer.getVerfuegung() != null) {
 			jaxBetreuung.setVerfuegung(verfuegungToJax(betreuungFromServer.getVerfuegung()));
