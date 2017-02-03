@@ -117,6 +117,8 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		Optional<Fall> fallToRemove = findFall(fall.getId());
 		Fall loadedFall = fallToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fall));
 		authorizer.checkWriteAuthorization(loadedFall);
+		// Remove all depending objects
+		mitteilungService.removeAllMitteilungenForFall(loadedFall);
 		// Alle Gesuche des Falls ebenfalls loeschen
 		final List<String> allGesucheForFall = gesuchService.getAllGesuchIDsForFall(loadedFall.getId());
 		allGesucheForFall
@@ -124,8 +126,6 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 				.ifPresent((gesuch) -> {
 					gesuchService.removeGesuch(gesuch.getId());
 				}));
-		// Remove all depending objects
-		mitteilungService.removeAllMitteilungenForFall(loadedFall);
 		//Finally remove the Fall when all other objects are really removed
 		persistence.remove(loadedFall);
 	}
