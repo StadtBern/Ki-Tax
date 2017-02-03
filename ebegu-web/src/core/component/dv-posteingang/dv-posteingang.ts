@@ -1,6 +1,7 @@
 import {IComponentOptions} from 'angular';
 import MitteilungRS from '../../service/mitteilungRS.rest';
 import IRootScopeService = angular.IRootScopeService;
+import {TSAuthEvent} from '../../../models/enums/TSAuthEvent';
 let template = require('./dv-posteingang.html');
 
 export class DvPosteingangComponentConfig implements IComponentOptions {
@@ -24,6 +25,10 @@ export class DvPosteingangController {
         setInterval(() => this.getAmountNewMitteilungen(), 300000);
 
         this.$rootScope.$on('POSTEINGANG_MAY_CHANGED', (event: any) => {
+            this.getAmountNewMitteilungen();
+        });
+
+        this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
             this.getAmountNewMitteilungen();
         });
     }
