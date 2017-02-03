@@ -104,12 +104,12 @@ export class ValueinputController {
     }
 
     private static formatFromNumberString(numberString: string): string {
-        return numberString.split("'").join("").split(",").join("");
+        return numberString.split("'").join('').split(',').join('');
     }
 
     public removeDot(): void {
         let transformedInput = this.valueinput.split('.').join('');
-        if (this.valueinput != transformedInput) {
+        if (this.valueinput !== transformedInput) {
             this.ngModelCtrl.$setViewValue(transformedInput);
             this.ngModelCtrl.$render();
         }

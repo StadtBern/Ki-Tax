@@ -43,7 +43,7 @@ export class DvQuicksearchboxController {
                 private $q: IQService, private searchIndexRS: SearchIndexRS, private CONSTANTS: any,
                 private $filter: IFilterService, private $translate: ITranslateService,
                 private $state: IStateService, private authServiceRS: AuthServiceRS, private $injector: IInjectorService) {
-                this.TSRoleUtil = TSRoleUtil;
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     //wird von angular aufgerufen
@@ -97,8 +97,8 @@ export class DvQuicksearchboxController {
         if (this.selectedItem && this.selectedItem.gesuchID) {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {
                 // Reload Gesuch in gesuchModelManager on Init in fallCreationView because  maybe it has been changed since last time
-                if(!this.gesuchModelManager){
-                    this.gesuchModelManager =  this.$injector.get<GesuchModelManager>('GesuchModelManager');
+                if (!this.gesuchModelManager) {
+                    this.gesuchModelManager = this.$injector.get<GesuchModelManager>('GesuchModelManager');
                 }
                 this.gesuchModelManager.clearGesuch();
                 if (isAnyStatusOfVerfuegt(this.selectedItem.antragDTO.status)) {
@@ -110,7 +110,7 @@ export class DvQuicksearchboxController {
             } else {
                 this.openGesuch(this.selectedItem.gesuchID, 'gesuch.fallcreation');
             }
-        } else if(this.selectedItem){
+        } else if (this.selectedItem) {
 
             this.$state.go('search', {searchString: this.searchString});
         }

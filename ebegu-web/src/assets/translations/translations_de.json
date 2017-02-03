@@ -491,7 +491,7 @@
     "MENU_MUTATION_VOM": "Mutation vom {{date}}",
     "MENU_MUTATION": "Erstellen einer Mutation",
     "MENU_ERSTGESUCH_PERIODE": "Erstgesuch der Periode {{periode}}",
-    "MENU_POSTEINGANG": "POSTEINGANG",
+    "MENU_POSTEINGANG": "POSTEINGANG ({{number}})",
     "ART_DER_MUTATION": "Erstellen einer Mutation",
     "MENU_VERFUEGEN": "Verfügen",
     "MENU_UMZUG": "Umzug",

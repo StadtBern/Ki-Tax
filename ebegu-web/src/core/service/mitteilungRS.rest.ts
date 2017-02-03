@@ -106,6 +106,12 @@ export default class MitteilungRS {
         });
     }
 
+    public getAmountMitteilungenForPosteingang(): IPromise<number> {
+        return this.http.get(this.serviceURL + '/posteingangamount').then((response: any) => {
+            return response.data;
+        });
+    }
+
     public removeEntwurf(mitteilung: TSMitteilung): IPromise<any> {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(mitteilung.id))
             .then((response) => {
