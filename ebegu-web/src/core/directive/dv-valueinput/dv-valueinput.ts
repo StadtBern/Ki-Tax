@@ -107,8 +107,8 @@ export class ValueinputController {
         return numberString.split("'").join('').split(',').join('');
     }
 
-    public removeDot(): void {
-        let transformedInput = this.valueinput.split('.').join('');
+    public removeNotDigits(): void {
+        let transformedInput = this.valueinput.replace(/\D+/g, ''); // removes all "not digit"
         if (this.valueinput !== transformedInput) {
             this.ngModelCtrl.$setViewValue(transformedInput);
             this.ngModelCtrl.$render();
