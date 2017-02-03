@@ -6,6 +6,8 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,11 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	private ApplicationPropertyService applicationPropertyService;
 
 	private final Logger LOG = LoggerFactory.getLogger(MitteilungServiceBean.class.getSimpleName());
+
+	private enum Mode {
+		COUNT,
+		SEARCH
+	}
 
 
 	@Override
@@ -104,7 +111,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				Optional<Benutzer> benutzer = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
 				if (benutzer.isPresent()) {
 					mitteilung.setEmpfaenger(benutzer.get());
-				} else{
+				} else {
 					LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen");
 				}
 			}
@@ -193,9 +200,25 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		// Bedingungen: Ich bin (persönlicher) Empfänger, oder die Nachricht hat keinen persönlichen Empfänger, entspricht aber meinem MitteilungTeilnehmerTyp
 		// Damit ist es später erweiterbar für andere Rollen, nicht nur Jugendamt
 
+		return getMitteilungenForPosteingang(Mode.SEARCH).getRight();
+	}
+
+	private Pair<Long, Collection<Mitteilung>> getMitteilungenForPosteingang(Mode mode) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
+
+		CriteriaQuery query;
+		switch (mode) {
+			case COUNT:
+				query = cb.createQuery(Long.class);
+				break;
+			case SEARCH:
+			default:
+				query = cb.createQuery(Mitteilung.class);
+				break;
+		}
+
 		Root<Mitteilung> root = query.from(Mitteilung.class);
+
 		List<Expression<Boolean>> predicates = new ArrayList<>();
 
 		// Keine Entwuerfe fuer Posteingang
@@ -207,13 +230,51 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Predicate predicateEmpfaengerTyp = cb.equal(root.get(Mitteilung_.empfaengerTyp), mitteilungTeilnehmerTyp);
 		predicates.add(predicateEmpfaengerTyp);
 
-		// Aber auf jeden Fall unerledigt
-		Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
-		predicates.add(predicateNichtErledigt);
 
-		query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
-		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-		return persistence.getCriteriaResults(query);
+		switch (mode) {
+			case COUNT:
+				// Nur die Neuen
+				Predicate predicateNeu = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.NEU);
+				predicates.add(predicateNeu);
+				break;
+			case SEARCH:
+			default:
+				// Aber auf jeden Fall unerledigt
+				Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
+				predicates.add(predicateNichtErledigt);
+				break;
+		}
+
+
+		Pair<Long, Collection<Mitteilung>> result = null;
+		switch (mode) {
+			case COUNT:
+				query.select(cb.countDistinct(root));
+				query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+				Long count = (Long) persistence.getCriteriaSingleResult(query);
+				result = new ImmutablePair<>(count, null);
+				break;
+			case SEARCH:
+			default:
+				query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
+				query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+				final List<Mitteilung> results = persistence.getCriteriaResults(query);
+				result = new ImmutablePair<>(null, results);
+				break;
+		}
+		return result;
+	}
+
+	@Nullable
+	@SuppressWarnings("LocalVariableNamingConvention")
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public Long countMitteilungenForPosteingang() {
+		// Bedingungen: JA-Rolle, Ich bin Empfänger, oder Empfäger ist unbekannt aber Empfänger-Typ ist Jugendamt
+		// Bedingungen: Ich bin (persönlicher) Empfänger, oder die Nachricht hat keinen persönlichen Empfänger, entspricht aber meinem MitteilungTeilnehmerTyp
+		// Damit ist es später erweiterbar für andere Rollen, nicht nur Jugendamt
+
+		return getMitteilungenForPosteingang(Mode.COUNT).getLeft();
 	}
 
 	@Override

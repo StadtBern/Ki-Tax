@@ -108,8 +108,6 @@ export class DownloadRS {
         let href: string = this.serviceURL + '/blobdata/' + name;
 
 
-
-
         if (attachment) {
             // add MatrixParam for to download file instead of inline
             this.download(href);

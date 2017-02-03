@@ -186,6 +186,18 @@ public class MitteilungResource {
 
 	@Nullable
 	@GET
+	@Path("/posteingangamount")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Integer getAmountMitteilungenForPosteingang(
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		return mitteilungService.countMitteilungenForPosteingang().intValue();
+	}
+
+	@Nullable
+	@GET
 	@Path("/entwurf/fall/{fallId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
