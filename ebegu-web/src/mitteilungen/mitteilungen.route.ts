@@ -20,11 +20,12 @@ function getStates(): IState[] {
 export class EbeguMitteilungenStateState implements IState {
     name = 'mitteilungen';
     template = '<mitteilungen-view flex="auto" class="overflow-scroll">';
-    url = '/mitteilungen/:fallId';
+    url = '/mitteilungen/:fallId/:betreuungId';
 }
 
 // PARAMS
 
 export class IMitteilungenStateParams implements IStateParamsService {
     fallId: string;
+    betreuungId: string;
 }

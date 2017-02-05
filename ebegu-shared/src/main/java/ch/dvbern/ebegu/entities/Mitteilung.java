@@ -30,6 +30,10 @@ public class Mitteilung extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_mitteilung_fall_id"))
 	private Fall fall;
 
+	@ManyToOne(optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_mitteilung_betreuung_id"))
+	private Betreuung betreuung;
+
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -77,6 +81,14 @@ public class Mitteilung extends AbstractEntity {
 
 	public void setFall(@NotNull Fall fall) {
 		this.fall = fall;
+	}
+
+	public Betreuung getBetreuung() {
+		return betreuung;
+	}
+
+	public void setBetreuung(Betreuung betreuung) {
+		this.betreuung = betreuung;
 	}
 
 	public MitteilungTeilnehmerTyp getSenderTyp() {

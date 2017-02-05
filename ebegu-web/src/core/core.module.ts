@@ -43,6 +43,8 @@ import DokumenteRS from '../gesuch/service/dokumenteRS.rest';
 import {DVDokumenteListConfig} from './component/dv-dokumente-list/dv-dokumente-list';
 import {DVLoading} from './directive/dv-loading/dv-loading';
 import {DVLoadingButton} from './directive/dv-loading-button/dv-loading-button';
+import {DvAccordionComponentConfig} from './component/dv-accordion/dv-accordion';
+import {DvAccordionTabComponentConfig} from './component/dv-accordion/dv-accordion-tab/dv-accordion-tab';
 import HttpResponseInterceptor from './service/HttpResponseInterceptor';
 import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
 import 'ng-file-upload';
@@ -57,6 +59,7 @@ import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
 import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensverschlechterungInfoRS.rest';
 import {DVNavigation} from './directive/dv-navigation/dv-navigation';
 import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
+import {DVPendenzenListConfig} from './component/dv-pendenzen-list/dv-pendenzen-list';
 import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 import {NavigationLogger} from './service/NavigationLogger';
 import GlobalCacheService from '../gesuch/service/globalCacheService';
@@ -69,6 +72,8 @@ import {SearchIndexRS} from './service/searchIndexRS.rest';
 import {DvSearchResultIconComponentConfig} from './component/dv-search/dv-search-result-icon/dv-search-result-icon';
 import {DvQuicksearchboxComponentConfig} from './component/dv-search/dv-quicksearchbox/dv-quicksearchbox';
 import MitteilungRS from './service/mitteilungRS.rest';
+import {DVMitteilungListConfig} from './component/dv-mitteilung-list/dv-mitteilung-list';
+
 let dynamicDependencies = function (): string[] {
 
     let dynDep: string [] = [];
@@ -183,7 +188,11 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())
+    .component('dvPendenzenList', new DVPendenzenListConfig())
     .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
     .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
+    .component('dvMitteilungList', new DVMitteilungListConfig())
+    .component('dvAccordion', new DvAccordionComponentConfig())
+    .component('dvAccordionTab', new DvAccordionTabComponentConfig())
     .service('MahnungRS', MahnungRS);
 
