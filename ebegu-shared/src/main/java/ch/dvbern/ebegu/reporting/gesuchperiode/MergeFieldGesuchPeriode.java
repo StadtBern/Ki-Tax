@@ -18,7 +18,7 @@ import static ch.dvbern.ebegu.reporting.lib.StandardConverters.*;
 
 public enum MergeFieldGesuchPeriode implements MergeField {
 
-	repeatGeuschStichtagRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
+	repeatGesuchPeriodeRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
 
 	bgNummer(STRING_CONVERTER, Type.SIMPLE),
 	institution(STRING_CONVERTER, Type.SIMPLE),

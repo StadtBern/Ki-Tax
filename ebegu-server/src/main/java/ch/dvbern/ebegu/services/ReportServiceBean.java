@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchperiode.GesuchPeriodeDataRow;
 import ch.dvbern.ebegu.reporting.gesuchperiode.GeuschPeriodeExcelConverter;
+import ch.dvbern.ebegu.reporting.gesuchperiode.MergeFieldGesuchPeriode;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;
@@ -143,7 +144,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		List<GesuchPeriodeDataRow> reportData = getReportDataGesuchPeriode(datetimeVon, datetimeBis, gesuchPeriodeID);
 		ExcelMergerDTO excelMergerDTO = geuschPeriodeExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
 
-		mergeData(sheet, excelMergerDTO, MergeFieldGesuchStichtag.values());
+		mergeData(sheet, excelMergerDTO, MergeFieldGesuchPeriode.values());
 		geuschPeriodeExcelConverter.applyAutoSize(sheet);
 
 		return createWorkbook(workbook);

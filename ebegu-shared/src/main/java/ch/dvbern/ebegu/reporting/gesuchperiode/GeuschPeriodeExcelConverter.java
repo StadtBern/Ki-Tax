@@ -40,7 +40,7 @@ public class GeuschPeriodeExcelConverter implements ExcelConverter {
 		ExcelMergerDTO sheet = new ExcelMergerDTO();
 
 		data.forEach(dataRow -> {
-				ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldGesuchPeriode.repeatGeuschStichtagRow);
+				ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldGesuchPeriode.repeatGesuchPeriodeRow);
 				excelRowGroup.addValue(MergeFieldGesuchPeriode.bgNummer, dataRow.getBgNummer());
 				excelRowGroup.addValue(MergeFieldGesuchPeriode.institution, dataRow.getInstitution());
 				excelRowGroup.addValue(MergeFieldGesuchPeriode.betreuungsTyp, dataRow.getBetreuungsTyp());
