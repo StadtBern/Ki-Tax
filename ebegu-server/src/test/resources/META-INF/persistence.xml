@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+			 version="2.1">
+	<persistence-unit name="TestDataModel" transaction-type="RESOURCE_LOCAL">
+		<properties>
+			<!--<property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.80.40.41:3305/ebegu" />-->
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/ebegu" />
+			<property name="javax.persistence.jdbc.user" value="ebegu" />
+			<property name="javax.persistence.jdbc.password" value="ebegu" />
+		</properties>
+	</persistence-unit>
+</persistence>
