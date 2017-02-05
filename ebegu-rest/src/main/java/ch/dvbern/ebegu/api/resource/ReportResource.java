@@ -40,7 +40,7 @@ public class ReportResource {
 
 	@Nonnull
 	@GET
-	@Path("/gesuchStichtag/excel/")
+	@Path("/gesuchStichtag/excel")
 	@Consumes(MediaType.WILDCARD)
 	@Produces("application/vnd.ms-excel")
 	public Response getGesuchStichtagReportExcel(
@@ -64,7 +64,7 @@ public class ReportResource {
 
 	@Nonnull
 	@GET
-	@Path("/gesuchStichtag/excel/")
+	@Path("/gesuchStichtag/excel")
 	@Consumes(MediaType.WILDCARD)
 	@Produces("application/vnd.ms-excel")
 	public Response getGesuchPeriodeReportExcel(

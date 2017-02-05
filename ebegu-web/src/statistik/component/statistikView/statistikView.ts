@@ -5,6 +5,7 @@ import TSStatistikParameter from '../../../models/TSStatistikParameter';
 import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {ReportRS} from '../../../core/service/reportRS.rest';
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
@@ -21,9 +22,10 @@ export class StatistikViewController {
     private _gesuchsperioden: Array<TSGesuchsperiode>;
 
 
-    static $inject: string[] = ['EbeguUtil', '$state', 'GesuchsperiodeRS'];
+    static $inject: string[] = ['EbeguUtil', '$state', 'GesuchsperiodeRS', 'ReportRS'];
 
-    constructor(private ebeguUtil: EbeguUtil, private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS) {
+    constructor(private ebeguUtil: EbeguUtil, private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS,
+        private reportRS: ReportRS) {
         this._statistikParameter = new TSStatistikParameter();
         this.initViewModel();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
