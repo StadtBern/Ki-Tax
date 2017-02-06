@@ -35,7 +35,6 @@ export default class AuthServiceRS {
         if (userCredentials) {
             return this.$http.post(this.CONSTANTS.REST_API + 'auth/login', this.ebeguRestUtil.userToRestObject({}, userCredentials))
                 .then((response: any) => {
-                    this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
                     // try to reload buffered requests
                     this.httpBuffer.retryAll((config: IRequestConfig) => {
                         return config;
@@ -43,6 +42,7 @@ export default class AuthServiceRS {
                     return this.$timeout((): any => { // Response cookies are not immediately accessible, so lets wait for a bit
                         try {
                             this.initWithCookie();
+                            this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
                             return this.principal;
                         } catch (e) {
                             return this.$q.reject();
