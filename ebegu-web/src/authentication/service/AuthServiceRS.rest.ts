@@ -35,7 +35,7 @@ export default class AuthServiceRS {
         if (userCredentials) {
             return this.$http.post(this.CONSTANTS.REST_API + 'auth/login', this.ebeguRestUtil.userToRestObject({}, userCredentials))
                 .then((response: any) => {
-                    this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
+
                     // try to reload buffered requests
                     this.httpBuffer.retryAll((config: IRequestConfig) => {
                         return config;
