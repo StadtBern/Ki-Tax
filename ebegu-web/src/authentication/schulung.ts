@@ -10,6 +10,7 @@ import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {TestFaelleRS} from '../admin/service/testFaelleRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
+import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 let template = require('./schulung.html');
 require('./schulung.less');
 
@@ -91,6 +92,7 @@ export class SchulungViewController {
     public logIn(user: TSUser): void {
         this.authServiceRS.loginRequest(user).then(() => {
             AuthenticationUtil.navigateToStartPageForRole(user, this.$state);
+            this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
         });
     }
 }
