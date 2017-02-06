@@ -157,7 +157,6 @@ describe('mitteilungenView', function () {
     });
 
 
-
     function compareCommonAttributes(currentUser: TSUser): void {
         expect(controller.getCurrentMitteilung()).toBeDefined();
         expect(controller.getCurrentMitteilung().fall).toBe(fall);
@@ -173,7 +172,7 @@ describe('mitteilungenView', function () {
         spyOn(mitteilungRS, 'getMitteilungenForCurrentRolleForFall').and.returnValue($q.when([{}]));
         spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
 
-        controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q);
+        controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q, null, $rootScope, undefined, undefined);
         $rootScope.$apply();
     }
 

@@ -107,12 +107,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@PermitAll
-	@Interceptors(UpdateStatusToInBearbeitungJAInterceptor.class)   //
+	@Interceptors(UpdateStatusToInBearbeitungJAInterceptor.class)
 	public Optional<Gesuch> findGesuch(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Gesuch a = persistence.find(Gesuch.class, key);
-		authorizer.checkReadAuthorization(a);
-		return Optional.ofNullable(a);
+		Gesuch gesuch = persistence.find(Gesuch.class, key);
+		authorizer.checkReadAuthorization(gesuch);
+		return Optional.ofNullable(gesuch);
 	}
 
 	@PermitAll
@@ -634,7 +634,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SCHULAMT, UserRoleName.GESUCHSTELLER})
 	public Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username) {
-		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
+		Optional<Gesuch> gesuchOptional = Optional.ofNullable(persistence.find(Gesuch.class, gesuchId)); //direkt ueber persistence da wir eigentlich noch nicht leseberechtigt sind)
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
 			Validate.isTrue(gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG)
@@ -657,7 +657,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			// Step Freigabe gruen
 			wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.FREIGABE);
 
-			// Step Verfügen gruen, falls NUR_SCHULAMT
+			// Step Verfuegen gruen, falls NUR_SCHULAMT
 			if (AntragStatus.NUR_SCHULAMT.equals(gesuch.getStatus())) {
 				wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
 			}
