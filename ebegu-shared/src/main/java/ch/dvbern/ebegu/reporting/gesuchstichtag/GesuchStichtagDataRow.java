@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.reporting.gesuchstichtag;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
  * <p>
@@ -31,6 +33,7 @@ public class GesuchStichtagDataRow {
 		this.beschwerde = beschwerde;
 	}
 
+	@SuppressFBWarnings("NM_CONFUSING")
 	public String getBgNummer() {
 		return bgNummer;
 	}

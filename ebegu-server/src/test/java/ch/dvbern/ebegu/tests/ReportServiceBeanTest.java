@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.reporting.gesuchperiode.GesuchPeriodeDataRow;
-import ch.dvbern.ebegu.reporting.gesuchperiode.GeuschPeriodeExcelConverter;
+import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
+import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
 import ch.dvbern.ebegu.services.ReportServiceBean;
@@ -51,7 +51,7 @@ public class ReportServiceBeanTest {
 	private GeuschStichtagExcelConverter geuschStichtagExcelConverter = new GeuschStichtagExcelConverter();
 
 	@InjectIntoMany
-	private GeuschPeriodeExcelConverter geuschPeriodeExcelConverter  = new GeuschPeriodeExcelConverter();
+	private GeuschZeitraumExcelConverter geuschZeitraumExcelConverter = new GeuschZeitraumExcelConverter();
 
 	@Before
 	public void setupTestData() {
@@ -83,9 +83,9 @@ public class ReportServiceBeanTest {
 	}
 
 	@Test
-	public void getReportDataGesuchPeriode() throws Exception {
+	public void getReportDataGesuchZeitraum() throws Exception {
 
-		List<GesuchPeriodeDataRow> reportData = reportService.getReportDataGesuchPeriode(
+		List<GesuchZeitraumDataRow> reportData = reportService.getReportDataGesuchZeitraum(
 			LocalDateTime.parse("2017-01-25 00:00:00", DateUtil.SQL_DATETIME_FORMAT),
 			LocalDateTime.parse("2017-01-26 23:59:59", DateUtil.SQL_DATETIME_FORMAT),
 			"0621fb5d-a187-5a91-abaf-8a813c4d263a");
@@ -95,16 +95,16 @@ public class ReportServiceBeanTest {
 	}
 
 	@Test
-	public void generateExcelReportGesuchPeriode() throws Exception {
+	public void generateExcelReportGesuchZeitraum() throws Exception {
 
-		byte[] bytes = reportService.generateExcelReportGesuchPeriode(
+		byte[] bytes = reportService.generateExcelReportGesuchZeitraum(
 			LocalDateTime.parse("2017-01-25 00:00:00", DateUtil.SQL_DATETIME_FORMAT),
 			LocalDateTime.parse("2017-01-26 23:59:59", DateUtil.SQL_DATETIME_FORMAT),
 			"0621fb5d-a187-5a91-abaf-8a813c4d263a");
 
 		assertNotNull(bytes);
 
-		unitTestTempfolder.writeToTempDir(bytes, "ExcelReportGesuchPeriode.xlsx");
+		unitTestTempfolder.writeToTempDir(bytes, "ExcelReportGesuchZeitraum.xlsx");
 
 	}
 

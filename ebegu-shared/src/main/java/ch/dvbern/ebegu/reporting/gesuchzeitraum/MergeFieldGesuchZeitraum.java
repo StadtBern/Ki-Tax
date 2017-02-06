@@ -7,7 +7,7 @@
  * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
  * Ansicht übergeben, ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
  */
-package ch.dvbern.ebegu.reporting.gesuchperiode;
+package ch.dvbern.ebegu.reporting.gesuchzeitraum;
 
 import ch.dvbern.ebegu.reporting.lib.Converter;
 import ch.dvbern.ebegu.reporting.lib.MergeField;
@@ -16,9 +16,9 @@ import javax.annotation.Nonnull;
 
 import static ch.dvbern.ebegu.reporting.lib.StandardConverters.*;
 
-public enum MergeFieldGesuchPeriode implements MergeField {
+public enum MergeFieldGesuchZeitraum implements MergeField {
 
-	repeatGesuchPeriodeRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
+	repeatGesuchZeitraumRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
 
 	bgNummer(STRING_CONVERTER, Type.SIMPLE),
 	institution(STRING_CONVERTER, Type.SIMPLE),
@@ -57,7 +57,7 @@ public enum MergeFieldGesuchPeriode implements MergeField {
 	@Nonnull
 	private final Type type;
 
-	MergeFieldGesuchPeriode(@Nonnull Converter converter, @Nonnull Type repeatCol) {
+	MergeFieldGesuchZeitraum(@Nonnull Converter converter, @Nonnull Type repeatCol) {
 		this.converter = converter;
 		this.type = repeatCol;
 	}

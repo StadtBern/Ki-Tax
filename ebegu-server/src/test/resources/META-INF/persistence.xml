@@ -5,8 +5,8 @@
 			 version="2.1">
 	<persistence-unit name="TestDataModel" transaction-type="RESOURCE_LOCAL">
 		<properties>
-			<!--<property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.80.40.41:3305/ebegu" />-->
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/ebegu" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.80.40.41:3305/ebegu" />
+			<!--<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/ebegu" />-->
 			<property name="javax.persistence.jdbc.user" value="ebegu" />
 			<property name="javax.persistence.jdbc.password" value="ebegu" />
 		</properties>

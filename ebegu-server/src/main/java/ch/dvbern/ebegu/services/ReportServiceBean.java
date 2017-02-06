@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.ebegu.reporting.gesuchperiode.GesuchPeriodeDataRow;
-import ch.dvbern.ebegu.reporting.gesuchperiode.GeuschPeriodeExcelConverter;
-import ch.dvbern.ebegu.reporting.gesuchperiode.MergeFieldGesuchPeriode;
+import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
+import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
+import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;
@@ -11,6 +11,7 @@ import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
 import ch.dvbern.ebegu.reporting.lib.ExcelMerger;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
 import ch.dvbern.ebegu.reporting.lib.DateUtil;
+import com.google.common.io.ByteStreams;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -24,10 +25,6 @@ import javax.persistence.Query;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -54,7 +51,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private GeuschStichtagExcelConverter geuschStichtagExcelConverter;
 
 	@Inject
-	private GeuschPeriodeExcelConverter geuschPeriodeExcelConverter;
+	private GeuschZeitraumExcelConverter geuschZeitraumExcelConverter;
 
 	@Override
 	public List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID) throws IOException, URISyntaxException {
@@ -65,11 +62,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Query gesuchStichtagQuery = null;
 		List<GesuchStichtagDataRow> results = null;
 
-		URL url = ReportServiceBean.class.getResource(NATIVESQL_REPORT_GESUCH_STICHTAG.getPath());
-
-		String sqlString = new String(Files.readAllBytes(
-			Paths.get(url.toURI()))
-			,StandardCharsets.UTF_8);
+		String sqlString = new String(
+			ByteStreams.toByteArray(
+				ReportServiceBean.class.getResourceAsStream(NATIVESQL_REPORT_GESUCH_STICHTAG.getPath())
+			)
+		);
 
 		if (em != null) {
 			gesuchStichtagQuery = em.createNativeQuery(sqlString, "GesuchStichtagDataRowMapping");
@@ -103,23 +100,23 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	public List<GesuchPeriodeDataRow> getReportDataGesuchPeriode(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID) throws IOException, URISyntaxException {
+	public List<GesuchZeitraumDataRow> getReportDataGesuchZeitraum(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID) throws IOException, URISyntaxException {
 
 		Objects.requireNonNull(datetimeVon, "Das Argument 'datetimeVon' darf nicht leer sein");
 		Objects.requireNonNull(datetimeBis, "Das Argument 'datetimeBis' darf nicht leer sein");
 
 		EntityManager em = createEntityManager();
 		Query gesuchPeriodeQuery = null;
-		List<GesuchPeriodeDataRow> results = null;
+		List<GesuchZeitraumDataRow> results = null;
 
-		URL url = ReportServiceBean.class.getResource(NATIVESQL_REPORT_GESUCH_PERIODE.getPath());
-
-		String sqlString = new String(Files.readAllBytes(
-			Paths.get(url.toURI()))
-			,StandardCharsets.UTF_8);
+		String sqlString = new String(
+			ByteStreams.toByteArray(
+				ReportServiceBean.class.getResourceAsStream(NATIVESQL_REPORT_GESUCH_ZEITRAUM.getPath())
+			)
+		);
 
 		if (em != null) {
-			gesuchPeriodeQuery = em.createNativeQuery(sqlString, "GesuchPeriodeDataRowMapping");
+			gesuchPeriodeQuery = em.createNativeQuery(sqlString, "GesuchZeitraumDataRowMapping");
 			gesuchPeriodeQuery.setParameter("fromDate", DateUtil.SQL_DATETIME_FORMAT.format(datetimeVon));
 			gesuchPeriodeQuery.setParameter("toDate", DateUtil.SQL_DATETIME_FORMAT.format(datetimeBis));
 			gesuchPeriodeQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
@@ -130,22 +127,22 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	public byte[] generateExcelReportGesuchPeriode(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+	public byte[] generateExcelReportGesuchZeitraum(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 
 		Objects.requireNonNull(datetimeVon, "Das Argument 'datetimeVon' darf nicht leer sein");
 		Objects.requireNonNull(datetimeBis, "Das Argument 'datetimeBis' darf nicht leer sein");
 
-		InputStream is = ReportServiceBean.class.getResourceAsStream(VORLAGE_REPORT_GESUCH_PERIODE.getPath());
-		Objects.requireNonNull(is, "Vorlage '" + VORLAGE_REPORT_GESUCH_PERIODE.getPath() + "' nicht gefunden");
+		InputStream is = ReportServiceBean.class.getResourceAsStream(VORLAGE_REPORT_GESUCH_ZEITRAUM.getPath());
+		Objects.requireNonNull(is, "Vorlage '" + VORLAGE_REPORT_GESUCH_ZEITRAUM.getPath() + "' nicht gefunden");
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet("Data");
 
-		List<GesuchPeriodeDataRow> reportData = getReportDataGesuchPeriode(datetimeVon, datetimeBis, gesuchPeriodeID);
-		ExcelMergerDTO excelMergerDTO = geuschPeriodeExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
+		List<GesuchZeitraumDataRow> reportData = getReportDataGesuchZeitraum(datetimeVon, datetimeBis, gesuchPeriodeID);
+		ExcelMergerDTO excelMergerDTO = geuschZeitraumExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
 
-		mergeData(sheet, excelMergerDTO, MergeFieldGesuchPeriode.values());
-		geuschPeriodeExcelConverter.applyAutoSize(sheet);
+		mergeData(sheet, excelMergerDTO, MergeFieldGesuchZeitraum.values());
+		geuschZeitraumExcelConverter.applyAutoSize(sheet);
 
 		return createWorkbook(workbook);
 
@@ -155,10 +152,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		// Gesuch Stichtag Report
 		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx"),
-		VORLAGE_REPORT_GESUCH_PERIODE("/reporting/GesuchPeriode.xlsx"),
+		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx"),
 
 		NATIVESQL_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtagNativeSQLQuery.sql"),
-		NATIVESQL_REPORT_GESUCH_PERIODE("/reporting/GesuchPeriodeNativeSQLQuery.sql");
+		NATIVESQL_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraumNativeSQLQuery.sql");
 
 		private String path;
 

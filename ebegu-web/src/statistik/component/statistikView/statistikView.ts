@@ -9,6 +9,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSRole} from '../../../models/enums/TSRole';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {ReportRS} from '../../../core/service/reportRS.rest';
+import IPromise = angular.IPromise;
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
@@ -26,9 +27,9 @@ export class StatistikViewController {
     TSRole: any;
     TSRoleUtil: any;
 
-    static $inject: string[] = ['$state', 'GesuchsperiodeRS', 'ErrorService'];
+    static $inject: string[] = ['$state', 'GesuchsperiodeRS', 'ErrorService', 'ReportRS'];
 
-    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private errorService: ErrorService) {
+    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private errorService: ErrorService, private reportRS: ReportRS) {
         this._statistikParameter = new TSStatistikParameter();
         this.initViewModel();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
@@ -46,10 +47,16 @@ export class StatistikViewController {
             let tmpType = (<any>TSStatistikParameterType)[type];
             tmpType ? console.log(tmpType) : console.log('default, Type not recognized');
             console.log(form.$name);
+
             switch (tmpType) {
                 case TSStatistikParameterType.GESUCH_STICHTAG:
+                    this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.toISOString(),
+                        this._statistikParameter.gesuchsperiode.id);
                     break;
                 case TSStatistikParameterType.GESUCH_ZEITRAUM:
+                    this.reportRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.toISOString(),
+                        this._statistikParameter.bis.toISOString(),
+                        this._statistikParameter.gesuchsperiode.id);
                     break;
                 case TSStatistikParameterType.KINDER:
                     break;

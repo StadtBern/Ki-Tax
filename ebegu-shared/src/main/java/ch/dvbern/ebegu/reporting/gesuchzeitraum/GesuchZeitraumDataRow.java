@@ -1,4 +1,6 @@
-package ch.dvbern.ebegu.reporting.gesuchperiode;
+package ch.dvbern.ebegu.reporting.gesuchzeitraum;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -11,7 +13,7 @@ package ch.dvbern.ebegu.reporting.gesuchperiode;
  * <p>
  * Created by medu on 31/01/2017.
  */
-public class GesuchPeriodeDataRow {
+public class GesuchZeitraumDataRow {
 
 	private String bgNummer;
 	private String institution;
@@ -44,7 +46,7 @@ public class GesuchPeriodeDataRow {
 	private Integer anzahlVerfuegungenNichtEintreten;
 
 
-	public GesuchPeriodeDataRow(String bgNummer, String institution, String betreuungsTyp, String periode, Integer anzahlGesuchOnline, Integer anzahlGesuchPapier, Integer anzahlMutationOnline, Integer anzahlMutationPapier, Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung, Integer anzahlMutationDokumente, Integer anzahlMutationEV, Integer anzahlMutationEwerbspensum, Integer anzahlMutationFamilienSitutation, Integer anzahlMutationFinanzielleSituation, Integer anzahlMutationFreigabe, Integer anzahlMutationGesuchErstellen, Integer anzahlMutationGesuchsteller, Integer anzahlMutationKinder, Integer anzahlMutationUmzug, Integer anzahlMutationVerfuegen, Integer anzahlMahnungen, Integer anzahlBeschwerde, Integer anzahlVerfuegungen, Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenMaxEinkommen, Integer anzahlVerfuegungenKeinPensum, Integer anzahlVerfuegungenZuschlagZumPensum, Integer anzahlVerfuegungenNichtEintreten) {
+	public GesuchZeitraumDataRow(String bgNummer, String institution, String betreuungsTyp, String periode, Integer anzahlGesuchOnline, Integer anzahlGesuchPapier, Integer anzahlMutationOnline, Integer anzahlMutationPapier, Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung, Integer anzahlMutationDokumente, Integer anzahlMutationEV, Integer anzahlMutationEwerbspensum, Integer anzahlMutationFamilienSitutation, Integer anzahlMutationFinanzielleSituation, Integer anzahlMutationFreigabe, Integer anzahlMutationGesuchErstellen, Integer anzahlMutationGesuchsteller, Integer anzahlMutationKinder, Integer anzahlMutationUmzug, Integer anzahlMutationVerfuegen, Integer anzahlMahnungen, Integer anzahlBeschwerde, Integer anzahlVerfuegungen, Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenMaxEinkommen, Integer anzahlVerfuegungenKeinPensum, Integer anzahlVerfuegungenZuschlagZumPensum, Integer anzahlVerfuegungenNichtEintreten) {
 		this.bgNummer = bgNummer;
 		this.institution = institution;
 		this.betreuungsTyp = betreuungsTyp;
@@ -76,6 +78,7 @@ public class GesuchPeriodeDataRow {
 		this.anzahlVerfuegungenNichtEintreten = anzahlVerfuegungenNichtEintreten;
 	}
 
+	@SuppressFBWarnings("NM_CONFUSING")
 	public String getBgNummer() {
 		return bgNummer;
 	}

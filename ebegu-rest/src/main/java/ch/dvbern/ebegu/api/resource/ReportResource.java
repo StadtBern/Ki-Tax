@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
 import ch.dvbern.ebegu.services.ReportService;
@@ -32,61 +33,67 @@ import java.time.LocalDateTime;
 @Api
 public class ReportResource {
 
+	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
+
 	@Inject
 	private ReportService reportService;
 
-	@Inject
-	private JaxBConverter converter;
-
 	@Nonnull
 	@GET
-	@Path("/gesuchStichtag/excel")
+	@Path("/excel/gesuchStichtag")
 	@Consumes(MediaType.WILDCARD)
-	@Produces("application/vnd.ms-excel")
+	@Produces(MIME_TYPE_EXCEL)
 	public Response getGesuchStichtagReportExcel(
-		@QueryParam("stichtagDateTime") @Nonnull String stringDateTimeParam,
+		@QueryParam("dateTimeStichtag") @Nonnull String dateTimeStichtag,
 		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
 	throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
 
-		Validate.notNull(stringDateTimeParam);
-		LocalDateTime dateTime = DateUtil.parseStringToDateTimeOrReturnNow(stringDateTimeParam);
+		Validate.notNull(dateTimeStichtag);
+		LocalDateTime dateTime = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeStichtag);
 
 		byte[] reportBytes = reportService.generateExcelReportGesuchStichtag(dateTime,
 			gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null);
 
-		Response.ResponseBuilder response = Response.ok(reportBytes);
-		response.header("Content-Disposition",
-			"attachment; filename=GesuchStichtagReport.xls");
-		return response.build();
+		return Response.ok(reportBytes)
+			.header("Content-Disposition", "attachment; filename=GesuchStichtagReport.xlsx")
+			.header("Content-Length", reportBytes.length)
+			.type(MediaType.valueOf(MIME_TYPE_EXCEL))
+			.build();
 
 	}
 
 	@Nonnull
 	@GET
-	@Path("/gesuchStichtag/excel")
+	@Path("/excel/gesuchPeriode")
 	@Consumes(MediaType.WILDCARD)
-	@Produces("application/vnd.ms-excel")
-	public Response getGesuchPeriodeReportExcel(
-		@QueryParam("dateTimeFrom") @Nonnull String stringDateTimeFromParam,
-		@QueryParam("dateTimeTo") @Nonnull String stringDateTimeToParam,
+	@Produces(MIME_TYPE_EXCEL)
+	public Response getGesuchZeitraumReportExcel(
+		@QueryParam("dateTimeFrom") @Nonnull String dateTimeFromParam,
+		@QueryParam("dateTimeTo") @Nonnull String dateTimeToParam,
 		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
 		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
 
-		Validate.notNull(stringDateTimeFromParam);
-		Validate.notNull(stringDateTimeToParam);
-		LocalDateTime dateTimeFrom = DateUtil.parseStringToDateTimeOrReturnNow(stringDateTimeFromParam);
-		LocalDateTime dateTimeTo = DateUtil.parseStringToDateTimeOrReturnNow(stringDateTimeFromParam);
+		Validate.notNull(dateTimeFromParam);
+		Validate.notNull(dateTimeToParam);
+		LocalDateTime dateTimeFrom = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeFromParam);
+		LocalDateTime dateTimeTo = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeToParam);
 
-		byte[] reportBytes = reportService.generateExcelReportGesuchPeriode(dateTimeFrom,
+		if (!dateTimeTo.isAfter(dateTimeFrom))
+		{
+			throw new EbeguRuntimeException("getGesuchZeitraumReportExcel", "Das von-Datum muss vor dem bis-Datum sein.");
+		}
+
+		byte[] reportBytes = reportService.generateExcelReportGesuchZeitraum(dateTimeFrom,
 			dateTimeTo,
 			gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null);
 
-		Response.ResponseBuilder response = Response.ok(reportBytes);
-		response.header("Content-Disposition",
-			"attachment; filename=GesuchPeriodeReport.xls");
-		return response.build();
+		return Response.ok(reportBytes)
+			.header("Content-Disposition", "attachment; filename=GesuchPeriodeReport.xlsx")
+			.header("Content-Length", reportBytes.length)
+			.type(MediaType.valueOf(MIME_TYPE_EXCEL))
+			.build();
 
 	}
 
