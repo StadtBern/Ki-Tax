@@ -48,9 +48,7 @@ export default class AuthServiceRS {
                             return this.$q.reject();
                         }
                     }, 100);
-
                 });
-
         }
         return undefined;
     };
