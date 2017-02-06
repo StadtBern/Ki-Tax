@@ -4,6 +4,10 @@ import TSStatistikParameter from '../../../models/TSStatistikParameter';
 import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import IFormController = angular.IFormController;
+import ErrorService from '../../../core/errors/service/ErrorService';
+import {TSRole} from '../../../models/enums/TSRole';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
@@ -18,48 +22,47 @@ export class StatistikViewComponentConfig implements IComponentOptions {
 export class StatistikViewController {
     private _statistikParameter: TSStatistikParameter;
     private _gesuchsperioden: Array<TSGesuchsperiode>;
+    TSRole: any;
+    TSRoleUtil: any;
 
+    static $inject: string[] = ['$state', 'GesuchsperiodeRS', 'ErrorService'];
 
-    static $inject: string[] = ['$state', 'GesuchsperiodeRS'];
-
-    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS) {
+    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private errorService: ErrorService) {
         this._statistikParameter = new TSStatistikParameter();
         this.initViewModel();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
             this._gesuchsperioden = response;
         });
+        this.TSRole = TSRole;
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private initViewModel() {
     }
 
-    public generateStatistik(type?: TSStatistikParameterType): void {
-     let tmpType = (<any>TSStatistikParameterType)[type];
-        console.log(this._statistikParameter.von);
-        console.log(this._statistikParameter.bis);
-        switch (tmpType) {
-            case TSStatistikParameterType.GESUCH_STICHTAG:
-                console.log(tmpType);
-                break;
-            case TSStatistikParameterType.GESUCH_ZEITRAUM:
-                console.log(tmpType);
-                break;
-            case TSStatistikParameterType.KINDER:
-                console.log(tmpType);
-                break;
-            case TSStatistikParameterType.GESUCHSTELLER:
-                console.log(tmpType);
-                break;
-            case TSStatistikParameterType.KANTON:
-                console.log(tmpType);
-                break;
-            case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
-                console.log(tmpType);
-                break;
-            default:
-                console.log('default, Type not recognized');
-                break;
+    public generateStatistik(form: IFormController, type?: TSStatistikParameterType): void {
+        if (form.$valid) {
+            let tmpType = (<any>TSStatistikParameterType)[type];
+            tmpType ? console.log(tmpType) : console.log('default, Type not recognized');
+            console.log(form.$name);
+            switch (tmpType) {
+                case TSStatistikParameterType.GESUCH_STICHTAG:
+                    break;
+                case TSStatistikParameterType.GESUCH_ZEITRAUM:
+                    break;
+                case TSStatistikParameterType.KINDER:
+                    break;
+                case TSStatistikParameterType.GESUCHSTELLER:
+                    break;
+                case TSStatistikParameterType.KANTON:
+                    break;
+                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
+                    break;
+                default:
+                    console.log('default, Type not recognized');
+                    break;
 
+            }
         }
     }
 
