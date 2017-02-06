@@ -1,5 +1,4 @@
 import {IComponentOptions} from 'angular';
-import EbeguUtil from '../../../utils/EbeguUtil';
 import {IStateService} from 'angular-ui-router';
 import TSStatistikParameter from '../../../models/TSStatistikParameter';
 import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
@@ -21,9 +20,9 @@ export class StatistikViewController {
     private _gesuchsperioden: Array<TSGesuchsperiode>;
 
 
-    static $inject: string[] = ['EbeguUtil', '$state', 'GesuchsperiodeRS'];
+    static $inject: string[] = ['$state', 'GesuchsperiodeRS'];
 
-    constructor(private ebeguUtil: EbeguUtil, private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS) {
+    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS) {
         this._statistikParameter = new TSStatistikParameter();
         this.initViewModel();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
@@ -34,26 +33,34 @@ export class StatistikViewController {
     private initViewModel() {
     }
 
-    public generateStatistik(type?: TSStatistikParameterType): TSStatistikParameter {
-        this._statistikParameter.type = (<any>TSStatistikParameterType)[type];
-        let tmpParameter = angular.copy(this._statistikParameter);
-        if (this._statistikParameter.type === TSStatistikParameterType.GESUCHSTELLER ||
-            this._statistikParameter.type === TSStatistikParameterType.KANTON
-            ) {
-            tmpParameter.gesuchsperiode = null;
+    public generateStatistik(type?: TSStatistikParameterType): void {
+     let tmpType = (<any>TSStatistikParameterType)[type];
+        console.log(this._statistikParameter.von);
+        console.log(this._statistikParameter.bis);
+        switch (tmpType) {
+            case TSStatistikParameterType.GESUCH_STICHTAG:
+                console.log(tmpType);
+                break;
+            case TSStatistikParameterType.GESUCH_ZEITRAUM:
+                console.log(tmpType);
+                break;
+            case TSStatistikParameterType.KINDER:
+                console.log(tmpType);
+                break;
+            case TSStatistikParameterType.GESUCHSTELLER:
+                console.log(tmpType);
+                break;
+            case TSStatistikParameterType.KANTON:
+                console.log(tmpType);
+                break;
+            case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
+                console.log(tmpType);
+                break;
+            default:
+                console.log('default, Type not recognized');
+                break;
+
         }
-        if (this._statistikParameter.type === TSStatistikParameterType.GESUCH_STICHTAG ||
-            this._statistikParameter.type === TSStatistikParameterType.GESUCHSTELLER
-            ) {
-            tmpParameter.von = null;
-            tmpParameter.bis = null;
-        }
-        if (this._statistikParameter.type !== TSStatistikParameterType.GESUCH_STICHTAG &&
-            this._statistikParameter.type !== TSStatistikParameterType.GESUCHSTELLER
-            ) {
-            tmpParameter.stichtag = null;
-        }
-        return tmpParameter;
     }
 
     get statistikParameter(): TSStatistikParameter {
