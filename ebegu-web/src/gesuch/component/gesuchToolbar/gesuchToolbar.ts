@@ -334,6 +334,10 @@ export class GesuchToolbarController {
     private getNewest(arrayTSAntragDTO: Array<TSAntragDTO>): TSAntragDTO {
         let newest: TSAntragDTO = arrayTSAntragDTO[0];
         for (let i = 0; i < arrayTSAntragDTO.length; i++) {
+            // Wenn eines noch gar kein Eingangsdatum hat ist es sicher das neueste
+            if (!arrayTSAntragDTO[i].eingangsdatum) {
+                return arrayTSAntragDTO[i];
+            }
             if (arrayTSAntragDTO[i].eingangsdatum.isAfter(newest.eingangsdatum)) {
                 newest = arrayTSAntragDTO[i];
             }

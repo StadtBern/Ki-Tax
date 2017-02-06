@@ -10,6 +10,7 @@ import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {TestFaelleRS} from '../admin/service/testFaelleRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
+import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 let template = require('./schulung.html');
 require('./schulung.less');
 
@@ -46,9 +47,9 @@ export class SchulungViewController {
                 this.usersList.push(new TSUser('Sandra', name, username, 'password1', 'sandra.' + name.toLocaleLowerCase() + '@mailinator.com', this.mandant, TSRole.GESUCHSTELLER));
             }
 
-            this.institutionsuserList.push(new TSUser('Fritz', 'Fisch', 'sch16', 'password1', 'fritz.fisch@mailinator.com',
+            this.institutionsuserList.push(new TSUser('Fritz', 'Fisch', 'sch20', 'password1', 'fritz.fisch@mailinator.com',
                 this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftFisch, undefined));
-            this.institutionsuserList.push(new TSUser('Franz', 'Forelle', 'sch17', 'password1', 'franz.forelle@mailinator.com',
+            this.institutionsuserList.push(new TSUser('Franz', 'Forelle', 'sch21', 'password1', 'franz.forelle@mailinator.com',
                 this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institutionForelle));
         });
     }
@@ -91,6 +92,7 @@ export class SchulungViewController {
     public logIn(user: TSUser): void {
         this.authServiceRS.loginRequest(user).then(() => {
             AuthenticationUtil.navigateToStartPageForRole(user, this.$state);
+            this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
         });
     }
 }

@@ -1,270 +1,308 @@
-<div class="statistikView">
+<div class="statistikView" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
     <div class="row marginTop50">
         <div class="col-md-10 col-md-offset-1">
-            <form name="statistikForm">
-            <!-- TODO: Remove Show-Off Inputs and replace with real ones-->
-            <pre>
-                {{vm.statistikParameter}}
-                {{vm.generateStatistik(vm.statistikParameter.type)}}
-                {{vm.gesuchsperioden[0].gesuchsperiodeString}}
-            </pre>
-            <dv-accordion onlyone="false">
-                <dv-accordion-tab tabid="1">
-                    <tab-title>
-                        GESUCHE NACH STICHTAG
-                    </tab-title>
-                    <tab-body>
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <dv-input-container class="form-group">
-                                <!--required-->
-                                <label class="md-no-float" for="stichtag_gesuch" data-translate="STICHTAG"></label>
-                                <dv-datepicker name="stichtag_gesuch" id="stichtag_gesuch"
-                                               ng-model="vm.statistikParameter.stichtag" ng-required="true"
-                                               class="input-element">
-                                </dv-datepicker>
-                                <dv-error-messages for="statistikForm.stichtag_gesuch.$error" class="error"></dv-error-messages>
-                            </dv-input-container>
-                        </div>
-                        <div class="col-xs-3">
-                            <div class="form-group">
-                                <!--optional-->
-                                <label class="md-no-float" for="periode_gesuch_stichtag" data-translate="GESUCHSPERIODEN"></label>
-                                <div class="dv-select-style">
-                                    <select name="periode_gesuch_stichtag" id="periode_gesuch_stichtag"
-                                            ng-model="vm.statistikParameter.gesuchsperiode"
-                                            ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
-                                            class="form-control">
-                                        <option value="">Keine</option>
-                                    </select>
-                                    <dv-error-messages for="statistikForm.periode_gesuch_stichtag.$error" class="error"></dv-error-messages>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-3 col-xs-offset-3 statistik-button">
-                            <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;" button-click="vm.generateStatistik('GESUCH_STICHTAG')">
-                                <span>GENERIEREN</span>
-                            </dv-loading-button>
-                        </div>
-                    </div>
-                    </tab-body>
-                </dv-accordion-tab>
-                <dv-accordion-tab tabid="2">
-                    <tab-title>
-                       GESUCHE NACH ZEITRAUM
-                    </tab-title>
-                    <tab-body>
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <dv-input-container class="form-group">
-                                    <!--required-->
-                                    <label class="md-no-float" for="von_gesuch" data-translate="VON"></label>
-                                    <dv-datepicker name="von_gesuch" id="von_gesuch"
-                                                   ng-model="vm.statistikParameter.von" ng-required="true"
-                                                   class="input-element">
-                                    </dv-datepicker>
-                                    <dv-error-messages for="statistikForm.von_gesuch.$error" class="error"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                            <div class="col-xs-3">
-                                <dv-input-container class="form-group">
-                                    <!--required-->
-                                    <label class="md-no-float" for="bis_gesuch" data-translate="BIS"></label>
-                                    <dv-datepicker name="bis_gesuch" id="bis_gesuch"
-                                                   ng-model="vm.statistikParameter.bis" ng-required="true"
-                                                   class="input-element">
-                                    </dv-datepicker>
-                                    <dv-error-messages for="statistikForm.bis_gesuch.$error" class="error"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                            <div class="col-xs-3">
-                                <div class="form-group">
-                                    <!--optional-->
-                                    <label class="md-no-float" for="periode_gesuch_zeitraum" data-translate="GESUCHSPERIODEN"></label>
-                                    <div class="dv-select-style">
-                                        <select name="periode_gesuch_zeitraum" id="periode_gesuch_zeitraum"
-                                                ng-model="vm.statistikParameter.gesuchsperiode"
-                                                ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
-                                                class="form-control">
-                                            <option value="">Keine</option>
-                                        </select>
-                                        <dv-error-messages for="statistikForm.periode_gesuch_zeitraum.$error" class="error"></dv-error-messages>
+            <dv-accordion multiple="false">
+                <div dv-show-element
+                     dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SCHULAMT']">
+                    <dv-accordion-tab tabid="gesuch_stichtag">
+                        <tab-title>
+                            GESUCHE NACH STICHTAG
+                        </tab-title>
+                        <tab-body>
+                            <form name="gesuch_stichtag"
+                                  ng-submit="vm.generateStatistik(gesuch_stichtag, 'GESUCH_STICHTAG')" novalidate>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="stichtag_gesuch"
+                                                   data-translate="STICHTAG"></label>
+                                            <dv-datepicker name="stichtag_gesuch" id="stichtag_gesuch"
+                                                           ng-model="vm.statistikParameter.stichtag" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="gesuch_stichtag.stichtag_gesuch.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <div class="form-group">
+                                            <label class="md-no-float" for="periode_gesuch_stichtag"
+                                                   data-translate="GESUCHSPERIODEN"></label>
+                                            <div class="dv-select-style">
+                                                <select name="periode_gesuch_stichtag" id="periode_gesuch_stichtag"
+                                                        ng-model="vm.statistikParameter.gesuchsperiode"
+                                                        ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
+                                                        class="form-control">
+                                                    <option value="">Keine</option>
+                                                </select>
+                                                <dv-error-messages for="gesuch_stichtag.periode_gesuch_stichtag.$error"
+                                                                   class="error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-3 col-xs-offset-3 statistik-button">
+                                        <dv-loading-button type="submit"
+                                                           style="margin-left:auto;margin-right:auto;width:13rem;">
+                                            <span>GENERIEREN</span>
+                                        </dv-loading-button>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xs-3 statistik-button">
-                                <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;" button-click="vm.generateStatistik('GESUCH_ZEITRAUM')">
-                                    <span>  GENERIEREN</span>
-                                </dv-loading-button>
-                            </div>
-                        </div>
-                    </tab-body>
-                </dv-accordion-tab>
-                <dv-accordion-tab tabid="3">
-                    <tab-title>
-                        KINDER
-                    </tab-title>
-                    <tab-body>
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <dv-input-container class="form-group">
-                                    <!--required-->
-                                    <label class="md-no-float" for="von_kinder" data-translate="VON"></label>
-                                    <dv-datepicker name="von_kinder" id="von_kinder"
-                                                   ng-model="vm.statistikParameter.von" ng-required="true"
-                                                   class="input-element">
-                                    </dv-datepicker>
-                                    <dv-error-messages for="statistikForm.von_kinder.$error" class="error"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                            <div class="col-xs-3">
-                                <dv-input-container class="form-group">
-                                    <!--required-->
-                                    <label class="md-no-float" for="bis_kinder" data-translate="BIS"></label>
-                                    <dv-datepicker name="bis_kinder" id="bis_kinder"
-                                                   ng-model="vm.statistikParameter.bis" ng-required="true"
-                                                   class="input-element">
-                                    </dv-datepicker>
-                                    <dv-error-messages for="statistikForm.bis_kinder.$error" class="error"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                            <div class="col-xs-3">
-                                <div class="form-group">
-                                    <!--optional-->
-                                    <label class="md-no-float" for="periode_kinder" data-translate="GESUCHSPERIODEN"></label>
-                                    <div class="dv-select-style">
-                                        <select name="periode_kinder" id="periode_kinder"
-                                                ng-model="vm.statistikParameter.gesuchsperiode"
-                                                ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
-                                                class="form-control">
-                                            <option value="">Keine</option>
-                                        </select>
-                                        <dv-error-messages for="statistikForm.periode_kinder.$error" class="error"></dv-error-messages>
+                            </form>
+                            </form></tab-body>
+                    </dv-accordion-tab>
+                </div>
+                <div dv-show-element
+                     dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SCHULAMT']">
+                    <dv-accordion-tab tabid="gesuch_zeitraum">
+                        <tab-title>
+                            GESUCHE NACH ZEITRAUM
+                        </tab-title>
+                        <tab-body>
+                            <form name="gesuch_zeitraum"
+                                  ng-submit="vm.generateStatistik(gesuch_zeitraum, 'GESUCH_ZEITRAUM')" novalidate>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="von_gesuch" data-translate="VON"></label>
+                                            <dv-datepicker name="von_gesuch" id="von_gesuch"
+                                                           ng-model="vm.statistikParameter.von" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="gesuch_zeitraum.von_gesuch.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="bis_gesuch" data-translate="BIS"></label>
+                                            <dv-datepicker name="bis_gesuch" id="bis_gesuch"
+                                                           ng-model="vm.statistikParameter.bis" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="gesuch_zeitraum.bis_gesuch.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <div class="form-group">
+                                            <label class="md-no-float" for="periode_gesuch_zeitraum"
+                                                   data-translate="GESUCHSPERIODEN"></label>
+                                            <div class="dv-select-style">
+                                                <select name="periode_gesuch_zeitraum" id="periode_gesuch_zeitraum"
+                                                        ng-model="vm.statistikParameter.gesuchsperiode"
+                                                        ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
+                                                        class="form-control">
+                                                    <option value="">Keine</option>
+                                                </select>
+                                                <dv-error-messages for="gesuch_zeitraum.periode_gesuch_zeitraum.$error"
+                                                                   class="error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-3 statistik-button">
+                                        <dv-loading-button type="submit"
+                                                           style="margin-left:auto;margin-right:auto;width:13rem;">
+                                            <span>  GENERIEREN</span>
+                                        </dv-loading-button>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xs-3 statistik-button">
-                                <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;" button-click="vm.generateStatistik('KINDER')">
-                                    <span>  GENERIEREN</span>
-                                </dv-loading-button>
-                            </div>
-                        </div>
-                    </tab-body>
-                </dv-accordion-tab>
-                <dv-accordion-tab tabid="4">
-                    <tab-title>
-                        GESUCHSTELLER
-                    </tab-title>
-                    <tab-body>
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <dv-input-container class="form-group">
-                                    <!--required-->
-                                    <label class="md-no-float" for="stichtag_gesuchsteller" data-translate="STICHTAG"></label>
-                                    <dv-datepicker name="stichtag_gesuchsteller" id="stichtag_gesuchsteller"
-                                                   ng-model="vm.statistikParameter.stichtag" ng-required="true"
-                                                   class="input-element">
-                                    </dv-datepicker>
-                                    <dv-error-messages for="statistikForm.stichtag_gesuchsteller.$error" class="error"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                            <div class="col-xs-3 col-xs-offset-6 statistik-button">
-                                <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;" button-click="vm.generateStatistik('GESUCHSTELLER')">
-                                    <span>  GENERIEREN</span>
-                                </dv-loading-button>
-                            </div>
-                        </div>
-                    </tab-body>
-                </dv-accordion-tab>
-                <dv-accordion-tab tabid="5">
-                    <tab-title>
-                        KANTON
-                    </tab-title>
-                    <tab-body>
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <dv-input-container class="form-group">
-                                    <!--required-->
-                                    <label class="md-no-float" for="von_kanton" data-translate="VON"></label>
-                                    <dv-datepicker name="von_kanton" id="von_kanton"
-                                                   ng-model="vm.statistikParameter.von" ng-required="true"
-                                                   class="input-element">
-                                    </dv-datepicker>
-                                    <dv-error-messages for="statistikForm.von_kanton.$error" class="error"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                            <div class="col-xs-3">
-                                <dv-input-container class="form-group">
-                                    <!--required-->
-                                    <label class="md-no-float" for="bis_kanton" data-translate="BIS"></label>
-                                    <dv-datepicker name="bis_kanton" id="bis_kanton"
-                                                   ng-model="vm.statistikParameter.bis" ng-required="true"
-                                                   class="input-element">
-                                    </dv-datepicker>
-                                    <dv-error-messages for="statistikForm.bis_kanton.$error" class="error"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                            <div class="col-xs-3 col-xs-offset-3 statistik-button">
-                                <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;" button-click="vm.generateStatistik('KANTON')">
-                                    <span>  GENERIEREN</span>
-                                </dv-loading-button>
-                            </div>
-                        </div>
-                    </tab-body>
-                </dv-accordion-tab>
-                <dv-accordion-tab tabid="6">
-                    <tab-title>
-                        GESUCHSTELLER-KINDER-BETREUUNG
-                    </tab-title>
-                    <tab-body>
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <dv-input-container class="form-group">
-                                    <!--required-->
-                                    <label class="md-no-float" for="von_betreuung" data-translate="VON"></label>
-                                    <dv-datepicker name="von_betreuung"
-                                                   ng-model="vm.statistikParameter.von" ng-required="true"
-                                                   class="input-element">
-                                    </dv-datepicker>
-                                    <dv-error-messages for="statistikForm.von_betreuung.$error" class="error"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                            <div class="col-xs-3">
-                                <dv-input-container class="form-group">
-                                    <!--required-->
-                                    <label class="md-no-float" for="bis_betreuung" data-translate="BIS"></label>
-                                    <dv-datepicker name="bis_betreuung" id="bis_betreuung"
-                                                   ng-model="vm.statistikParameter.bis" ng-required="true"
-                                                   class="input-element">
-                                    </dv-datepicker>
-                                    <dv-error-messages for="statistikForm.bis_betreuung.$error" class="error"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                            <div class="col-xs-3">
-                                <div class="form-group">
-                                    <!--optional-->
-                                    <label class="md-no-float" for="periode_betreuung" data-translate="GESUCHSPERIODEN"></label>
-                                    <div class="dv-select-style">
-                                        <select name="periode_betreuung" id="periode_betreuung"
-                                                ng-model="vm.statistikParameter.gesuchsperiode"
-                                                ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
-                                                class="form-control">
-                                            <option value="">Keine</option>
-                                        </select>
-                                        <dv-error-messages for="statistikForm.periode_betreuung.$error" class="error"></dv-error-messages>
+                            </form>
+                        </tab-body>
+                    </dv-accordion-tab>
+                </div>
+                <div dv-show-element
+                     dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SCHULAMT','SACHBEARBEITER_INSTITUTION','SACHBEARBEITER_TRAEGERSCHAFT']">
+                    <dv-accordion-tab tabid="kinder">
+                        <tab-title>
+                            KINDER
+                        </tab-title>
+                        <tab-body>
+                            <form name="kinder"
+                                  ng-submit="vm.generateStatistik(kinder, 'KINDER')" novalidate>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="von_kinder" data-translate="VON"></label>
+                                            <dv-datepicker name="von_kinder" id="von_kinder"
+                                                           ng-model="vm.statistikParameter.von" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="kinder.von_kinder.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="bis_kinder" data-translate="BIS"></label>
+                                            <dv-datepicker name="bis_kinder" id="bis_kinder"
+                                                           ng-model="vm.statistikParameter.bis" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="kinder.bis_kinder.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <div class="form-group">
+                                            <label class="md-no-float" for="periode_kinder"
+                                                   data-translate="GESUCHSPERIODEN"></label>
+                                            <div class="dv-select-style">
+                                                <select name="periode_kinder" id="periode_kinder"
+                                                        ng-model="vm.statistikParameter.gesuchsperiode"
+                                                        ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
+                                                        class="form-control">
+                                                    <option value="">Keine</option>
+                                                </select>
+                                                <dv-error-messages for="kinder.periode_kinder.$error"
+                                                                   class="error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-3 statistik-button">
+                                        <dv-loading-button type="submit"
+                                                           style="margin-left:auto;margin-right:auto;width:13rem;">
+                                            <span>  GENERIEREN</span>
+                                        </dv-loading-button>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xs-3 statistik-button">
-                                <dv-loading-button style="margin-left:auto;margin-right:auto;width:13rem;" button-click="vm.generateStatistik('GESUCHSTELLER_KINDER_BETREUUNG')">
-                                    <span>  GENERIEREN</span>
-                                </dv-loading-button>
-                            </div>
-                        </div>
-                    </tab-body>
-                </dv-accordion-tab>
+                            </form>
+                        </tab-body>
+                    </dv-accordion-tab>
+                </div>
+                <div dv-show-element
+                     dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SCHULAMT']">
+                    <dv-accordion-tab tabid="gesuchsteller">
+                        <tab-title>
+                            GESUCHSTELLER
+                        </tab-title>
+                        <tab-body>
+                            <form name="gesuchsteller"
+                                  ng-submit="vm.generateStatistik(gesuchsteller, 'GESUCHSTELLER')" novalidate>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="stichtag_gesuchsteller"
+                                                   data-translate="STICHTAG"></label>
+                                            <dv-datepicker name="stichtag_gesuchsteller" id="stichtag_gesuchsteller"
+                                                           ng-model="vm.statistikParameter.stichtag" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="gesuchsteller.stichtag_gesuchsteller.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3 col-xs-offset-6 statistik-button">
+                                        <dv-loading-button type="submit">
+                                            <span>  GENERIEREN</span>
+                                        </dv-loading-button>
+                                    </div>
+                                </div>
+                            </form>
+                        </tab-body>
+                    </dv-accordion-tab>
+                </div>
+                <div dv-show-element
+                     dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SACHBEARBEITER_INSTITUTION','SACHBEARBEITER_TRAEGERSCHAFT']">
+                    <dv-accordion-tab tabid="kanton">
+                        <tab-title>
+                            KANTON
+                        </tab-title>
+                        <tab-body>
+                            <form name="kanton"
+                                  ng-submit="vm.generateStatistik(kanton, 'KANTON')" novalidate>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="von_kanton" data-translate="VON"></label>
+                                            <dv-datepicker name="von_kanton" id="von_kanton"
+                                                           ng-model="vm.statistikParameter.von" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="kanton.von_kanton.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="bis_kanton" data-translate="BIS"></label>
+                                            <dv-datepicker name="bis_kanton" id="bis_kanton"
+                                                           ng-model="vm.statistikParameter.bis" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="kanton.bis_kanton.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3 col-xs-offset-3 statistik-button">
+                                        <dv-loading-button type="submit">
+                                            <span>  GENERIEREN</span>
+                                        </dv-loading-button>
+                                    </div>
+                                </div>
+                            </form>
+                        </tab-body>
+                    </dv-accordion-tab>
+                </div>
+                <div dv-show-element
+                     dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR']">
+                    <dv-accordion-tab tabid="betreuung">
+                        <tab-title>
+                            GESUCHSTELLER-KINDER-BETREUUNG
+                        </tab-title>
+                        <tab-body>
+                            <form name="betreuung"
+                                  ng-submit="vm.generateStatistik(betreuung, 'GESUCHSTELLER_KINDER_BETREUUNG')"
+                                  novalidate>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="von_betreuung" data-translate="VON"></label>
+                                            <dv-datepicker name="von_betreuung"
+                                                           ng-model="vm.statistikParameter.von" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="betreuung.von_betreuung.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="bis_betreuung" data-translate="BIS"></label>
+                                            <dv-datepicker name="bis_betreuung" id="bis_betreuung"
+                                                           ng-model="vm.statistikParameter.bis" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="betreuung.bis_betreuung.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <div class="form-group">
+                                            <label class="md-no-float" for="periode_betreuung"
+                                                   data-translate="GESUCHSPERIODEN"></label>
+                                            <div class="dv-select-style">
+                                                <select name="periode_betreuung" id="periode_betreuung"
+                                                        ng-model="vm.statistikParameter.gesuchsperiode"
+                                                        ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
+                                                        class="form-control">
+                                                    <option value="">Keine</option>
+                                                </select>
+                                                <dv-error-messages for="betreuung.periode_betreuung.$error"
+                                                                   class="error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-3 statistik-button">
+                                        <dv-loading-button type="submit">
+                                            <span>  GENERIEREN</span>
+                                        </dv-loading-button>
+                                    </div>
+                                </div>
+                            </form>
+                        </tab-body>
+                    </dv-accordion-tab>
+                </div>
             </dv-accordion>
-            </form>
         </div>
     </div>
 </div>

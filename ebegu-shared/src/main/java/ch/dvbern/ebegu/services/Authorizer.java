@@ -38,10 +38,6 @@ public interface Authorizer {
 	 */
 	void checkWriteAuthorization(@Nullable Fall fall);
 
-	/**
-	 * prueft ob der aktuell eingeloggte benutzer den Fall mit id schreibend bearbeiten darf
-	 */
-	void checkWriteAuthorizationFall(@Nonnull  String fallId);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer den fall lesen darf

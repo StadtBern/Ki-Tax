@@ -3,8 +3,13 @@
 
 .statistikView {
     padding-top: 5rem;
-    .statistik-button{
-        margin-top:3rem;
+    .statistik-button {
+        margin-top: 3rem;
+        & > * {
+            margin-left: auto;
+            margin-right: auto;
+            width: 13rem;
+        }
     }
     dv-accordion {
         overflow: hidden;

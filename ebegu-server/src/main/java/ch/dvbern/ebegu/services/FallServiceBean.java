@@ -12,6 +12,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -96,14 +97,10 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 
 	@Override
 	@Nonnull
-	public Optional<Fall> findFallByBesitzer(Benutzer benutzer) {
-		Optional<Benutzer> currentBenutzerOptional = benutzerService.getCurrentBenutzer();
-		if (currentBenutzerOptional.isPresent()) {
-			Optional<Fall> fallOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, benutzer, Fall_.besitzer);
-			fallOptional.ifPresent(fall -> authorizer.checkReadAuthorizationFall(fall));
-			return fallOptional;
-		}
-		return Optional.empty();
+	public Optional<Fall> findFallByBesitzer(@Nullable Benutzer benutzer) {
+		Optional<Fall> fallOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, benutzer, Fall_.besitzer);
+		fallOptional.ifPresent(fall -> authorizer.checkReadAuthorizationFall(fall));
+		return fallOptional;
 	}
 
 	@Nonnull
@@ -120,6 +117,8 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		Optional<Fall> fallToRemove = findFall(fall.getId());
 		Fall loadedFall = fallToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fall));
 		authorizer.checkWriteAuthorization(loadedFall);
+		// Remove all depending objects
+		mitteilungService.removeAllMitteilungenForFall(loadedFall);
 		// Alle Gesuche des Falls ebenfalls loeschen
 		final List<String> allGesucheForFall = gesuchService.getAllGesuchIDsForFall(loadedFall.getId());
 		allGesucheForFall
@@ -127,10 +126,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 				.ifPresent((gesuch) -> {
 					gesuchService.removeGesuch(gesuch.getId());
 				}));
-		// Remove all depending objects
-		mitteilungService.removeAllMitteilungenForFall(loadedFall);
-		//TODO (team) muessten die Gesuche hier auch geloescht werden?
-		//Finally remove the Gesuch when all other objects are really removed
+		//Finally remove the Fall when all other objects are really removed
 		persistence.remove(loadedFall);
 	}
 

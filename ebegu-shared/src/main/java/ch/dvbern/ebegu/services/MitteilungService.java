@@ -14,6 +14,7 @@ import java.util.Optional;
  */
 public interface MitteilungService {
 
+
 	@Nonnull
 	Mitteilung sendMitteilung(@Nonnull Mitteilung mitteilung);
 
@@ -37,6 +38,9 @@ public interface MitteilungService {
 
 	@Nonnull
 	Collection<Mitteilung> getMitteilungenForPosteingang();
+
+	@Nullable
+	Long countMitteilungenForPosteingang();
 
 	@Nullable
 	Mitteilung getEntwurfForCurrentRolle(@Nonnull Fall fall);

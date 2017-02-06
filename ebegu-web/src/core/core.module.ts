@@ -71,8 +71,10 @@ import {DvMobileNavigationToggleComponentConfig} from './component/dv-mobile-nav
 import {SearchIndexRS} from './service/searchIndexRS.rest';
 import {DvSearchResultIconComponentConfig} from './component/dv-search/dv-search-result-icon/dv-search-result-icon';
 import {DvQuicksearchboxComponentConfig} from './component/dv-search/dv-quicksearchbox/dv-quicksearchbox';
+import {DVValueinput} from './directive/dv-valueinput/dv-valueinput';
 import MitteilungRS from './service/mitteilungRS.rest';
 import {DVMitteilungListConfig} from './component/dv-mitteilung-list/dv-mitteilung-list';
+import {DvPosteingangComponentConfig} from './component/dv-posteingang/dv-posteingang';
 import {ReportRS} from './service/reportRS.rest';
 
 let dynamicDependencies = function (): string[] {
@@ -104,7 +106,6 @@ const dependencies: string[] = [
     'pascalprecht.translate',
     'angularMoment',
     'cfp.hotkeys',
-    'ui.utils.masks',
     'ngFileUpload',
     'unsavedChanges'
 ];
@@ -161,6 +162,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('GlobalCacheService', GlobalCacheService)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
+    .directive('dvValueinput', DVValueinput.factory())
     .directive('dvUserselect', DVUserselect.factory())
     .directive('dvNavigation', DVNavigation.factory())
     .directive('dvLoading', DVLoading.factory())
@@ -186,6 +188,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
     .component('dvMobileNavigationToggle', new DvMobileNavigationToggleComponentConfig())
     .component('dvHomeIcon', new DvHomeIconComponentConfig())
+    .component('dvPosteingang', new DvPosteingangComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())

@@ -8,13 +8,13 @@ export class DvAccordionComponentConfig implements IComponentOptions {
     controller = DvAccordionController;
     controllerAs = 'vma';
     bindings: any = {
-        onlyone: '<'
+        multiple: '<'
     };
 }
 
 export class DvAccordionController {
     accordion : string[] = [];
-    onlyone : boolean;
+    multiple : boolean;
     static $inject: any[] = [];
     /* @ngInject */
     constructor() {
@@ -23,7 +23,7 @@ export class DvAccordionController {
         if (this.isTagOpen(i)) {
             this.accordion.splice(this.accordion.indexOf(i), 1);
         } else {
-            if (this.onlyone) {this.accordion = []; }
+            if (!this.multiple) {this.accordion = []; }
             this.accordion.push(i);
         }
     }

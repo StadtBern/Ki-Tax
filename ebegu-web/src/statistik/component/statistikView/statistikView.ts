@@ -1,10 +1,13 @@
 import {IComponentOptions} from 'angular';
-import EbeguUtil from '../../../utils/EbeguUtil';
 import {IStateService} from 'angular-ui-router';
 import TSStatistikParameter from '../../../models/TSStatistikParameter';
 import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import IFormController = angular.IFormController;
+import ErrorService from '../../../core/errors/service/ErrorService';
+import {TSRole} from '../../../models/enums/TSRole';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {ReportRS} from '../../../core/service/reportRS.rest';
 
 let template = require('./statistikView.html');
@@ -20,42 +23,48 @@ export class StatistikViewComponentConfig implements IComponentOptions {
 export class StatistikViewController {
     private _statistikParameter: TSStatistikParameter;
     private _gesuchsperioden: Array<TSGesuchsperiode>;
+    TSRole: any;
+    TSRoleUtil: any;
 
+    static $inject: string[] = ['$state', 'GesuchsperiodeRS', 'ErrorService'];
 
-    static $inject: string[] = ['EbeguUtil', '$state', 'GesuchsperiodeRS', 'ReportRS'];
-
-    constructor(private ebeguUtil: EbeguUtil, private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS,
-        private reportRS: ReportRS) {
+    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private errorService: ErrorService) {
         this._statistikParameter = new TSStatistikParameter();
         this.initViewModel();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
             this._gesuchsperioden = response;
         });
+        this.TSRole = TSRole;
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private initViewModel() {
     }
 
-    public generateStatistik(type?: TSStatistikParameterType): TSStatistikParameter {
-        this._statistikParameter.type = (<any>TSStatistikParameterType)[type];
-        let tmpParameter = angular.copy(this._statistikParameter);
-        if (this._statistikParameter.type === TSStatistikParameterType.GESUCHSTELLER ||
-            this._statistikParameter.type === TSStatistikParameterType.KANTON
-            ) {
-            tmpParameter.gesuchsperiode = null;
+    public generateStatistik(form: IFormController, type?: TSStatistikParameterType): void {
+        if (form.$valid) {
+            let tmpType = (<any>TSStatistikParameterType)[type];
+            tmpType ? console.log(tmpType) : console.log('default, Type not recognized');
+            console.log(form.$name);
+            switch (tmpType) {
+                case TSStatistikParameterType.GESUCH_STICHTAG:
+                    break;
+                case TSStatistikParameterType.GESUCH_ZEITRAUM:
+                    break;
+                case TSStatistikParameterType.KINDER:
+                    break;
+                case TSStatistikParameterType.GESUCHSTELLER:
+                    break;
+                case TSStatistikParameterType.KANTON:
+                    break;
+                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
+                    break;
+                default:
+                    console.log('default, Type not recognized');
+                    break;
+
+            }
         }
-        if (this._statistikParameter.type === TSStatistikParameterType.GESUCH_STICHTAG ||
-            this._statistikParameter.type === TSStatistikParameterType.GESUCHSTELLER
-            ) {
-            tmpParameter.von = null;
-            tmpParameter.bis = null;
-        }
-        if (this._statistikParameter.type !== TSStatistikParameterType.GESUCH_STICHTAG &&
-            this._statistikParameter.type !== TSStatistikParameterType.GESUCHSTELLER
-            ) {
-            tmpParameter.stichtag = null;
-        }
-        return tmpParameter;
     }
 
     get statistikParameter(): TSStatistikParameter {

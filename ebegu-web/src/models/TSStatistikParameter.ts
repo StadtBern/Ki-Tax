@@ -1,32 +1,20 @@
 import TSAbstractEntity from './TSAbstractEntity';
-import {TSStatistikParameterType} from './enums/TSStatistikParameterType';
-import {TSDateRange} from './types/TSDateRange';
 import TSGesuchsperiode from './TSGesuchsperiode';
 
 
 export default class TSStatistikParameter extends TSAbstractEntity {
-    private _type: TSStatistikParameterType;
     private _gesuchsperiode: TSGesuchsperiode;
     private _stichtag: moment.Moment;
     private _von: moment.Moment;
     private _bis: moment.Moment;
 
-    constructor(type?: TSStatistikParameterType, gesuchsperiode?: TSGesuchsperiode, stichtag?: moment.Moment,
-                von?: moment.Moment, bis?: moment.Moment, statistikparameter?: TSStatistikParameter) {
+    constructor( gesuchsperiode?: TSGesuchsperiode, stichtag?: moment.Moment,
+                von?: moment.Moment, bis?: moment.Moment) {
         super();
-        this._type = type || null;
-        this._gesuchsperiode = gesuchsperiode || null;
-        this._stichtag = stichtag || null;
-        this._von = von || null;
-        this._bis = bis || null;
-    }
-
-    get type(): TSStatistikParameterType {
-        return this._type;
-    }
-
-    set type(value: TSStatistikParameterType) {
-        this._type = value;
+        this._gesuchsperiode = gesuchsperiode;
+        this._stichtag = stichtag;
+        this._von = von;
+        this._bis = bis;
     }
 
     get gesuchsperiode(): TSGesuchsperiode {
@@ -58,7 +46,7 @@ export default class TSStatistikParameter extends TSAbstractEntity {
     }
 
     set bis(value: moment.Moment) {
-        this._bis = value;
+        this._bis = (value !== undefined) ? value.add(1, 'days').subtract(1, 'seconds') : value;
     }
 
 }
