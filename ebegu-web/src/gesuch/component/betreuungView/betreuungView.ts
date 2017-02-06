@@ -21,6 +21,7 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import Moment = moment.Moment;
 import IScope = angular.IScope;
+import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 
@@ -40,15 +41,21 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     flagErrorVertrag: boolean;
     kindModel: TSKindContainer;
     betreuungNumber: number;
+    isMutationsmeldungStatus: boolean;
+    mutationsmeldungModel: TSBetreuung;
+
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
-        'AuthServiceRS', 'WizardStepManager', '$stateParams'];
+        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams) {
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams,
+                private mitteilungRS: MitteilungRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
 
+        this.mutationsmeldungModel = undefined;
+        this.isMutationsmeldungStatus = false;
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         if ($stateParams.betreuungNumber) {
             this.betreuungNumber = parseInt($stateParams.betreuungNumber);
@@ -123,6 +130,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public getBetreuungModel(): TSBetreuung {
+        if (this.isMutationsmeldungStatus && this.mutationsmeldungModel) {
+            return this.mutationsmeldungModel;
+        }
         return this.model;
     }
 
@@ -397,5 +407,23 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public showAngabeKorrigieren(): boolean {
         return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen())
             && !this.isGesuchReadonly() && this.isFromMutation();
+    }
+
+    public mutationsmeldungErstellen(): void {
+        //create dummy copy of model
+        this.mutationsmeldungModel = angular.copy(this.getBetreuungModel());
+        this.isMutationsmeldungStatus = true;
+    }
+
+    public mutationsmeldungSenden(): void {
+        // send mutationsmeldung (dummy copy)
+        if (this.mutationsmeldungModel) {
+            this.mitteilungRS.sendMutationsmeldung(this.gesuchModelManager.getGesuch().fall.id,
+                this.mutationsmeldungModel);
+        }
+        // reset values. is needed??????
+        this.isMutationsmeldungStatus = false;
+        this.mutationsmeldungModel = undefined;
+        this.$state.go('gesuch.betreuungen', { gesuchId: this.getGesuchId() });
     }
 }

@@ -2,6 +2,7 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 import TSMitteilung from '../../models/TSMitteilung';
+import TSBetreuung from '../../models/TSBetreuung';
 
 export default class MitteilungRS {
     serviceURL: string;
@@ -129,6 +130,13 @@ export default class MitteilungRS {
     public getAmountNewMitteilungenForCurrentRolle(fallId: string): IPromise<number> {
         return this.http.get(this.serviceURL + '/amountnew/' + fallId).then((response: any) => {
             return response.data;
+        });
+    }
+
+    public sendMutationsmeldung(fallId: string, betreuung: TSBetreuung): IPromise<TSMitteilung> {
+        return this.http.put(this.serviceURL + '/mutationsmeldung/' + fallId, betreuung).then((response: any) => {
+            this.log.debug('PARSING Mitteilung REST objects ', response.data);
+            return this.ebeguRestUtil.parseMitteilung(response.data, {});
         });
     }
 }
