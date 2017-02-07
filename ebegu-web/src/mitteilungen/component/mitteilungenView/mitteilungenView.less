@@ -1,39 +1,196 @@
 @import '../../../style/variables.less';
 @import "../../../style/mixins.less";
 
-.mitteilungenView {
-    padding: 3rem;
+.mitteilungenView, .betreuungMitteilungView {
+    padding: 5rem 2rem 5rem;
     background: @contrast-light;
-    min-height: 100%;
+    overflow-x: auto;
+    overflow-y: scroll;
+    .message-textarea {
+        height: 25rem;
+    }
+    .BGNummer{
+        .ebeguH3();
+        margin:0;
+    }
+    dv-accordion {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        dv-accordion-tab {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 2rem;
+            &.isSender {
+                margin-left: auto;
+            }
+            &.institution {
+                & > * {
+                    color: @secondary;
+                }
+                md-checkbox {
+                    .md-icon {
+                        border: 1px solid @secondary;
+                    }
+                    &.md-checked {
+                        .md-icon {
+                            background-color: @secondary;
+                        }
+                    }
+                }
+            }
+
+            &.gesuchsteller {
+                & > * {
+                    color: @contrast-darkest;
+                }
+            }
+
+            &.jugendamt {
+                & > * {
+                    color: @primary;
+                }
+            }
+            .dv-accordion-tab-title {
+                md-checkbox {
+                    margin: 0;
+                }
+                position: relative;
+                z-index: 1;
+                -webkit-touch-callout: none; /* iOS Safari */
+                -webkit-user-select: none; /* Safari*/
+                -khtml-user-select: none; /* Konqueror */
+                -moz-user-select: none; /* Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none;
+                &:focus {
+                    outline: none;
+                }
+                opacity: 1;
+                padding: 0 2rem 0;
+                width: 100%;
+                min-height: 8rem;
+                height: auto;
+                background: @contrast-lightest;
+                font-size: 1.2rem;
+                letter-spacing: 0.15rem;
+                margin: 0;
+                transition: all 0.5s ease;
+                & > * {
+                    display: flex;
+                    flex-direction: row;
+                }
+                & .message-header {
+                    flex: 1;
+                    padding: 2rem 0 0;
+                    display: flex;
+                    flex-direction: column;
+                }
+                & .arrow {
+                    color: black;
+                    min-height: 8rem;
+                    height: auto;
+                    width: auto;
+                    vertical-align: middle;
+                    text-align: center;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    i {
+                        font-size: 2.4rem;
+                        transition: all 0.5s ease;
+                    }
+                }
+                &:after {
+                    content: "";
+                    display: block;
+                    width: 0;
+                    height:1px;
+                    background:0;
+                    margin: 1rem auto 0;
+                    border-bottom: 1px solid @contrast;
+                    transition: all 0.5s ease;
+
+                }
+                &.tab-open {
+                    &:after {
+                        width: 100%;
+                    }
+                    & .arrow {
+                        color: black;
+                        i {
+                            transform: rotate(-180deg);
+                        }
+
+                    }
+                }
+            }
+            .dv-accordion-tab-content {
+                color: @contrast-darkest;
+                overflow: hidden;
+                overflow-y: auto;
+                opacity: 1;
+                display: block;
+                width: 100%;
+                height: auto;
+                max-height: 60rem;
+                background: @contrast-lightest;
+                padding: 0 2rem 0;
+                & > tab-body > * {
+                    margin: 2rem 0 3rem;
+                }
+                .message{
+                    display:flex;
+                    flex-direction:column;
+                    .betreuung{
+                        color:@secondary;
+                        margin-bottom:2rem;
+                    }
+                }
+                &.ng-hide-add {
+                    overflow: hidden;
+                    max-height: 60rem;
+                    transition: all 0.5s ease;
+                }
+                &.ng-hide-add.ng-hide-add-active {
+                    overflow: hidden;
+                    max-height: 0;
+                }
+                &.ng-hide-remove {
+                    overflow: hidden;
+                    transition: all 1s ease;
+                    max-height: 0;
+                }
+                &.ng-hide-remove.ng-hide-remove-active {
+                    overflow: hidden;
+                    max-height: 60rem;
+                }
+            }
+        }
+    }
+    .mitteilungenList {
+
+        .mitteilungItem {
+            background: transparent;
+        }
+
+        .subject {
+            .ebeguBold();
+            font-size: 2rem;
+        }
+
+        .message {
+            .formatted {
+                white-space: pre-line;
+            }
+
+        }
+
+        .betreuung {
+            .ebeguBold();
+        }
+    }
 }
 
-.mitteilungenList {
 
-    .mitteilungItem {
-        background: @white;
-    }
-
-    .subject {
-        .ebeguBold();
-    }
-
-    .message {
-        white-space: pre-line;
-    }
-
-    .institution {
-        color: @blue;
-    }
-
-    .gesuchsteller {
-        color: @black;
-    }
-
-    .jugendamt {
-        color: @red;
-    }
-
-    .betreuung {
-        .ebeguBold();
-    }
-}
