@@ -113,7 +113,13 @@
           ng-bind="vmgs.getAntragTyp()"></span>
 
     <span flex=""></span>
-
+    <div dv-show-element
+         dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()" class="gesuchsperioden-container">
+        <button ng-click="vmgs.closeSidenav('gesuch-toolbar-mobile');vmgs.openMitteilungen()"
+                aria-label="{{TOOLBAR_MITTEILUNGEN | translate}}" class="gesuchsperiode-button">
+            <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
+        </button>
+    </div>
     <!--Kontakt-->
     <div class="mobile-kontakt">
         <span>Jugendamt</span>

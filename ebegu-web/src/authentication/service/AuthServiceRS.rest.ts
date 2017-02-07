@@ -43,12 +43,15 @@ export default class AuthServiceRS {
                     return this.$timeout((): any => { // Response cookies are not immediately accessible, so lets wait for a bit
                         try {
                             this.initWithCookie();
+
                             return this.principal;
                         } catch (e) {
                             return this.$q.reject();
                         }
                     }, 100);
+
                 });
+
         }
         return undefined;
     };
@@ -59,6 +62,10 @@ export default class AuthServiceRS {
             try {
                 let authData = angular.fromJson(this.base64.decode(authIdbase64));
                 this.principal = new TSUser(authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.mandant, authData.role);
+                this.$timeout(() => {
+                    this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
+                }); //bei login muessen wir warten bis angular alle componenten erstellt hat bevor wir das event werfen
+
                 return true;
             } catch (e) {
                 console.log('cookie decoding failed');
@@ -71,6 +78,7 @@ export default class AuthServiceRS {
     public logoutRequest() {
         return this.$http.post(this.CONSTANTS.REST_API + 'auth/logout', null).then((res: any) => {
             this.principal = undefined;
+            this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], 'logged out');
             return res;
         });
     };

@@ -135,7 +135,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     public canBeFreigegeben(): boolean {
         return this.wizardStepManager.areAllStepsOK() &&
             this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
-            && !this.isGesuchReadonly();
+            && !this.isGesuchReadonly() && this.isGesuchInStatus(TSAntragStatus.IN_BEARBEITUNG_GS);
     }
 
     private getZustelladresse(): TSZustelladresse {
