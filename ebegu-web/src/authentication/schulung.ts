@@ -10,7 +10,6 @@ import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {TestFaelleRS} from '../admin/service/testFaelleRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
-import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 let template = require('./schulung.html');
 require('./schulung.less');
 
@@ -30,10 +29,10 @@ export class SchulungViewController {
     private institutionForelle: TSInstitution;
     private traegerschaftFisch: TSTraegerschaft;
 
-    static $inject: string[] = ['$state', 'AuthServiceRS', '$rootScope', '$timeout', 'TestFaelleRS'];
+    static $inject: string[] = ['$state', 'AuthServiceRS', '$timeout', 'TestFaelleRS'];
 
     constructor(private $state: IStateService, private authServiceRS: AuthServiceRS,
-                private $rootScope: IRootScopeService, private $timeout: ITimeoutService,
+                private $timeout: ITimeoutService,
                 private testFaelleRS: TestFaelleRS) {
 
         this.mandant = this.getMandant();
@@ -92,7 +91,6 @@ export class SchulungViewController {
     public logIn(user: TSUser): void {
         this.authServiceRS.loginRequest(user).then(() => {
             AuthenticationUtil.navigateToStartPageForRole(user, this.$state);
-            this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
         });
     }
 }
