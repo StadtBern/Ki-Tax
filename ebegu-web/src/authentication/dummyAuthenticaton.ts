@@ -10,7 +10,6 @@ import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
-import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 let template = require('./dummyAuthentication.html');
 require('./dummyAuthentication.less');
 
@@ -32,10 +31,10 @@ export class DummyAuthenticationListViewController {
     private traegerschaftSGF: TSTraegerschaft;
     private devMode: boolean;
 
-    static $inject: string[] = ['$state', 'AuthServiceRS', '$rootScope', '$timeout' , 'ApplicationPropertyRS'];
+    static $inject: string[] = ['$state', 'AuthServiceRS', '$timeout' , 'ApplicationPropertyRS'];
 
     constructor(private $state: IStateService, private authServiceRS: AuthServiceRS,
-                private $rootScope: IRootScopeService, private $timeout: ITimeoutService, private applicationPropertyRS: ApplicationPropertyRS) {
+              private $timeout: ITimeoutService, private applicationPropertyRS: ApplicationPropertyRS) {
         this.usersList = [];
         this.mandant = this.getMandant();
         this.traegerschaftStadtBern = this.getTraegerschaftStadtBern();
@@ -126,7 +125,6 @@ export class DummyAuthenticationListViewController {
     public logIn(user: TSUser): void {
         this.authServiceRS.loginRequest(user).then(() => {
             AuthenticationUtil.navigateToStartPageForRole(user, this.$state);
-            this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
 
         });
     }

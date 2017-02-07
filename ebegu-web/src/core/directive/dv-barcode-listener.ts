@@ -4,12 +4,12 @@ import {FreigabeController} from '../../gesuch/dialog/FreigabeController';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import ErrorService from '../errors/service/ErrorService';
+import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import Moment = moment.Moment;
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import IDocumentService = angular.IDocumentService;
 import ILogService = angular.ILogService;
-import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import IRootScopeService = angular.IRootScopeService;
 
 let FREIGEBEN_DIALOG_TEMPLATE = require('../../gesuch/dialog/freigabe.html');
@@ -43,21 +43,23 @@ export class DVBarcodeController {
     constructor(private $document: IDocumentService, private $timeout: ITimeoutService, private dVDialog: DvDialog, private authService: AuthServiceRS,
                 private errorService: ErrorService, private $log: ILogService, private $rootScope: IRootScopeService) {
 
+    }
+
+    $onInit() {
         let keypressEvent = (e: any) => {
             this.barcodeOnKeyPressed(e);
         };
 
-        $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
-            $document.unbind('keypress', keypressEvent);
+        this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
+            this.$document.unbind('keypress', keypressEvent);
             if (this.authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
-                $document.bind('keypress', keypressEvent);
+                this.$document.bind('keypress', keypressEvent);
             }
         });
 
-        $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
-            $document.unbind('keypress', keypressEvent);
+        this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
+            this.$document.unbind('keypress', keypressEvent);
         });
-
 
     }
 
