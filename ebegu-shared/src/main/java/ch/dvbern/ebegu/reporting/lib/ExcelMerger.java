@@ -328,7 +328,9 @@ public final class ExcelMerger {
 			final int anzRows = anzSrcRows * (anzGroups - 1);
 
 			// Wenns nach dem zu duplizierenden Bereich noch Zeilen hat: nach unten wegschieben
-			if (anzRows > 0 && startNeuerBereich <= ctx.getSheet().getLastRowNum()) {
+			//TODO: KitAadmin Version of ExcelMerger does not require <<ctx.getSheet().getLastRowNum() + 1>> as seen here
+			//ORIGINAL KITADMIN LINE: if (anzRows > 0 && startNeuerBereich <= ctx.getSheet().getLastRowNum()) {
+			if (anzRows > 0 && startNeuerBereich <= ctx.getSheet().getLastRowNum() + 1) {
 				PoiUtil.shiftRowsAndMergedRegions(ctx.getSheet(), startNeuerBereich, ctx.getSheet().getLastRowNum() + 1, anzRows);
 				PoiUtil.shiftNamedRanges(ctx.getSheet(), startRow.getRowNum(), ctx.getSheet().getLastRowNum() + 1, anzRows);
 			}

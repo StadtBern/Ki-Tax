@@ -6,11 +6,8 @@ import TSGesuchsperiode from "../../../models/TSGesuchsperiode";
 import GesuchsperiodeRS from "../../../core/service/gesuchsperiodeRS.rest";
 import {TSRole} from "../../../models/enums/TSRole";
 import {TSRoleUtil} from "../../../utils/TSRoleUtil";
+import {ReportRS} from "../../../core/service/reportRS.rest";
 import IFormController = angular.IFormController;
-import ErrorService from '../../../core/errors/service/ErrorService';
-import {TSRole} from '../../../models/enums/TSRole';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import {ReportRS} from '../../../core/service/reportRS.rest';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 
@@ -29,20 +26,20 @@ export class StatistikViewController {
     private _gesuchsperioden: Array<TSGesuchsperiode>;
     TSRole: any;
     TSRoleUtil: any;
+    private DATETIME_PARAM_FORMAT: string = 'YYYY-MM-DD HH:mm:ss';
 
     static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportRS'];
 
     constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService, private reportRS: ReportRS) {
+    }
+
+    $onInit(){
         this._statistikParameter = new TSStatistikParameter();
-        this.initViewModel();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
             this._gesuchsperioden = response;
         });
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
-    }
-
-    private initViewModel() {
     }
 
     public generateStatistik(form: IFormController, type?: TSStatistikParameterType): void {
@@ -52,13 +49,13 @@ export class StatistikViewController {
             this.$log.debug('Validated Form: ' + form.$name);
             switch (tmpType) {
                 case TSStatistikParameterType.GESUCH_STICHTAG:
-                    this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.toISOString(),
-                        this._statistikParameter.gesuchsperiode.id);
+                    this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATETIME_PARAM_FORMAT),
+                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null);
                     break;
                 case TSStatistikParameterType.GESUCH_ZEITRAUM:
-                    this.reportRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.toISOString(),
-                        this._statistikParameter.bis.toISOString(),
-                        this._statistikParameter.gesuchsperiode.id);
+                    this.reportRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATETIME_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATETIME_PARAM_FORMAT),
+                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null);
                     break;
                 case TSStatistikParameterType.KINDER:
                     break;

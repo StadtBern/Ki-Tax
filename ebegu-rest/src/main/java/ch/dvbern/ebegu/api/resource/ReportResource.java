@@ -65,7 +65,7 @@ public class ReportResource {
 
 	@Nonnull
 	@GET
-	@Path("/excel/gesuchPeriode")
+	@Path("/excel/gesuchZeitraum")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MIME_TYPE_EXCEL)
 	public Response getGesuchZeitraumReportExcel(
