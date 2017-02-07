@@ -3,6 +3,13 @@ import {IHttpService, IPromise, ILogService} from 'angular';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 import TSMitteilung from '../../models/TSMitteilung';
 import TSBetreuung from '../../models/TSBetreuung';
+import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
+import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
+import TSFall from '../../models/TSFall';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import TSBetreuungsmitteilung from '../../models/TSBetreuungsmitteilung';
+import TSBetreuungspensum from '../../models/TSBetreuungspensum';
+import ITranslateService = angular.translate.ITranslateService;
 
 export default class MitteilungRS {
     serviceURL: string;
@@ -10,10 +17,12 @@ export default class MitteilungRS {
     ebeguRestUtil: EbeguRestUtil;
     log: ILogService;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'WizardStepManager'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'WizardStepManager',
+        'AuthServiceRS', '$translate'];
     /* @ngInject */
     constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService,
-                private wizardStepManager: WizardStepManager) {
+                private wizardStepManager: WizardStepManager, private authServiceRS: AuthServiceRS,
+                private $translate: ITranslateService) {
         this.serviceURL = REST_API + 'mitteilungen';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -133,10 +142,63 @@ export default class MitteilungRS {
         });
     }
 
-    public sendMutationsmeldung(fallId: string, betreuung: TSBetreuung): IPromise<TSMitteilung> {
-        return this.http.put(this.serviceURL + '/mutationsmeldung/' + fallId, betreuung).then((response: any) => {
-            this.log.debug('PARSING Mitteilung REST objects ', response.data);
-            return this.ebeguRestUtil.parseMitteilung(response.data, {});
+    public sendbetreuungsmitteilung(fall: TSFall, betreuung: TSBetreuung): IPromise<TSBetreuungsmitteilung> {
+        let mutationsmeldung: TSBetreuungsmitteilung = this.createBetreuungsmitteilung(fall, betreuung);
+        let restMitteilung = this.ebeguRestUtil.betreuungsmitteilungToRestObject({}, mutationsmeldung);
+        return this.http.put(this.serviceURL + '/sendbetreuungsmitteilung', restMitteilung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.log.debug('PARSING mitteilung REST object ', response.data);
+            return this.ebeguRestUtil.parseBetreuungsmitteilung(new TSBetreuungsmitteilung(), response.data);
         });
+    }
+
+    private createBetreuungsmitteilung(fall: TSFall, betreuung: TSBetreuung): TSBetreuungsmitteilung {
+        let mutationsmeldung: TSBetreuungsmitteilung = new TSBetreuungsmitteilung();
+        mutationsmeldung.fall = fall;
+        mutationsmeldung.betreuung = betreuung;
+        mutationsmeldung.senderTyp = TSMitteilungTeilnehmerTyp.INSTITUTION;
+        mutationsmeldung.empfaengerTyp = TSMitteilungTeilnehmerTyp.JUGENDAMT;
+        mutationsmeldung.sender = this.authServiceRS.getPrincipal();
+        mutationsmeldung.empfaenger = fall.besitzer ? fall.besitzer : undefined;
+        mutationsmeldung.subject = this.$translate.instant('MUTATIONSMELDUNG_BETREFF');
+        mutationsmeldung.message = this.createNachrichtForMutationsmeldung(betreuung);
+        mutationsmeldung.mitteilungStatus = TSMitteilungStatus.ENTWURF;
+        mutationsmeldung.betreuungspensen = this.extractPensenFromBetreuung(betreuung);
+        return mutationsmeldung;
+    }
+
+    /**
+     * Erzeugt eine Nachricht mit einem Text mit allen Betreuungspensen der Betreuung.
+     */
+    private createNachrichtForMutationsmeldung(betreuung: TSBetreuung): string {
+        let message: string = '';
+        let i: number = 1;
+        betreuung.betreuungspensumContainers.forEach(betpenContainer => {
+            if (betpenContainer.betreuungspensumJA) {
+                // Pensum 1 vom 1.8.2017: 80%
+                if (i > 1) {
+                    message += '\n';
+                }
+                message += 'Pensum ' + i + ' vom ' + betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb
+                    + ': ' + betpenContainer.betreuungspensumJA.pensum + '%';
+            }
+            i++;
+        });
+        return message;
+    }
+
+    /**
+     * Kopiert alle Betreuungspensen der gegebenen Betreuung in einer neuen Liste und
+     * gibt diese zurueck. By default wird eine leere Liste zurueckgegeben
+     */
+    private extractPensenFromBetreuung(betreuung: TSBetreuung): Array<TSBetreuungspensum> {
+        let pensen: Array<TSBetreuungspensum> = [];
+        betreuung.betreuungspensumContainers.forEach(betpenContainer => {
+            pensen.push(angular.copy(betpenContainer.betreuungspensumJA));
+        });
+        return pensen;
     }
 }

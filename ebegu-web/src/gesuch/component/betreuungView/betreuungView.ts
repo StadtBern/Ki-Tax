@@ -418,7 +418,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public mutationsmeldungSenden(): void {
         // send mutationsmeldung (dummy copy)
         if (this.mutationsmeldungModel) {
-            this.mitteilungRS.sendMutationsmeldung(this.gesuchModelManager.getGesuch().fall.id,
+            this.mitteilungRS.sendbetreuungsmitteilung(this.gesuchModelManager.getGesuch().fall,
                 this.mutationsmeldungModel);
         }
         // reset values. is needed??????

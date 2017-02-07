@@ -36,4 +36,9 @@ describe('MitteilungRS', function () {
             expect(mitteilungRS.getServiceName()).toBe('MitteilungRS');
         });
     });
+    describe('sendbetreuungsmitteilung', function () {
+        it('should create the betreuungsmitteilung and send it', function () {
+            expect(false).toBe(true);
+        });
+    });
 });

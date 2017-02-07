@@ -326,6 +326,29 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return persistence.getCriteriaSingleResult(query);
 	}
 
+	@Override
+	@RolesAllowed({SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung) {
+		Objects.requireNonNull(betreuungsmitteilung);
+		if (!MitteilungTeilnehmerTyp.INSTITUTION.equals(betreuungsmitteilung.getSenderTyp())) {
+			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur bei einer Institution geschickt werden");
+		}
+		if (!MitteilungTeilnehmerTyp.JUGENDAMT.equals(betreuungsmitteilung.getEmpfaengerTyp())) {
+			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur an das Jugendamt geschickt werden");
+		}
+		betreuungsmitteilung.setMitteilungStatus(MitteilungStatus.NEU); // vorsichtshalber
+		betreuungsmitteilung.setSentDatum(LocalDateTime.now());
+		ensureEmpfaengerIsSet(betreuungsmitteilung);
+
+		Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
+		final Set<ConstraintViolation<Mitteilung>> validationErrors = validator.validate(betreuungsmitteilung);
+		if (!validationErrors.isEmpty()) {
+			throw new ConstraintViolationException(validationErrors);
+		}
+
+		return persistence.merge(betreuungsmitteilung);
+	}
+
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {
 		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getMitteilungenForCurrentRolle", "No User is logged in"));
 		//noinspection EnumSwitchStatementWhichMissesCases

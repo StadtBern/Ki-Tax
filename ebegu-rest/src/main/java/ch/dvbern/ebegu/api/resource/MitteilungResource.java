@@ -3,7 +3,9 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -67,6 +69,21 @@ public class MitteilungResource {
 		Mitteilung mitteilung = readAndConvertMitteilung(mitteilungJAXP);
 		Mitteilung persistedMitteilung = this.mitteilungService.sendMitteilung(mitteilung);
 		return converter.mitteilungToJAX(persistedMitteilung);
+	}
+
+	@Nullable
+	@PUT
+	@Path("/sendbetreuungsmitteilung")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuungsmitteilung sendBetreuungsmitteilung(
+		@Nonnull @NotNull @Valid JaxBetreuungsmitteilung mitteilungJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Betreuungsmitteilung betreuungsmitteilung = converter.betreuungsmitteilungToEntity(mitteilungJAXP, new Betreuungsmitteilung());
+		Betreuungsmitteilung persistedMitteilung = this.mitteilungService.sendBetreuungsmitteilung(betreuungsmitteilung);
+		return converter.betreuungsmitteilungToJAX(persistedMitteilung);
 	}
 
 	@Nullable
