@@ -57,7 +57,6 @@
     "angular-cookies": "~1.5.8",
     "angular-hotkeys": "~1.7.0",
     "angular-i18n": "~1.5.8",
-    "angular-input-masks": "~2.4.0",
     "angular-material": "~1.1.1",
     "angular-messages": "~1.5.8",
     "angular-moment": "~1.0.0-beta.5",
@@ -71,7 +70,7 @@
     "angular-unsavedchanges": "~0.2.5",
     "angular-utf8-base64": "0.0.5",
     "bootstrap": "~3.3",
-    "font-awesome": "~4.6.3",
+    "font-awesome": "~4.7.0",
     "jquery": "~3.1.0",
     "moment": "~2.14.1",
     "ng-file-upload": "~12.2.8"

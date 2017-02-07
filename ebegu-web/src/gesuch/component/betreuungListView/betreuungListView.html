@@ -29,6 +29,7 @@
                             <tr>
                                 <th data-translate="BETREUUNG"></th>
                                 <th data-translate="STATUS"></th>
+                                <th data-translate="MITTEILUNG" ng-if="vm.showMitteilung()"></th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -41,6 +42,12 @@
                                 <td class="betreuung-status ng-class:betreuung.betreuungsstatus;">
                                     <div ng-bind="betreuung.betreuungsstatus | translate"></div>
                                     <span class="betreuung-bar"></span>
+                                </td>
+                                <td ng-if="vm.showMitteilung()">
+                                    <dv-loading-button type="button" button-click="vm.gotoMitteilung(betreuung)"
+                                                       button-class="dv-btn-operation">
+                                        <i class="fa fa-lg fa-envelope-o"></i>
+                                    </dv-loading-button>
                                 </td>
                                 <td dv-show-element
                                     dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"

@@ -69,7 +69,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 
 	private Gesuchsperiode gesuchsperiode;
 	private List<InstitutionStammdaten> institutionStammdatenList;
-	private Benutzer benutzer;
+
 
 	@Before
 	public void init() {
@@ -83,7 +83,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	public void testfall_ASIV_01() {
 		// Erstgesuch erstellen
 		Testfall_ASIV_01 testfall = new Testfall_ASIV_01(gesuchsperiode, institutionStammdatenList, true);
-		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, benutzer);
+		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, null);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		Gesuch erstgesuch = verfuegungService.calculateVerfuegung(gesuch);
 
@@ -102,7 +102,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	public void testfall_ASIV_02() {
 		// Erstgesuch erstellen
 		Testfall_ASIV_02 testfall = new Testfall_ASIV_02(gesuchsperiode, institutionStammdatenList, true);
-		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, benutzer);
+		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, null);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		Gesuch erstgesuch = verfuegungService.calculateVerfuegung(gesuch);
 
@@ -121,7 +121,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	public void testfall_ASIV_03() {
 		// Erstgesuch erstellen
 		Testfall_ASIV_03 testfall = new Testfall_ASIV_03(gesuchsperiode, institutionStammdatenList, true);
-		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, benutzer);
+		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, null);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		Gesuch erstgesuch = verfuegungService.calculateVerfuegung(gesuch);
 
@@ -140,7 +140,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	public void testfall_ASIV_04() {
 		// Erstgesuch erstellen
 		Testfall_ASIV_04 testfall = new Testfall_ASIV_04(gesuchsperiode, institutionStammdatenList, true);
-		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, benutzer);
+		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, null);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		Gesuch erstgesuch = verfuegungService.calculateVerfuegung(gesuch);
 
@@ -159,7 +159,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	public void testfall_ASIV_05() {
 		// Erstgesuch erstellen
 		Testfall_ASIV_05 testfall = new Testfall_ASIV_05(gesuchsperiode, institutionStammdatenList, true);
-		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, benutzer);
+		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, null);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		Gesuch erstgesuch = verfuegungService.calculateVerfuegung(gesuch);
 
@@ -178,7 +178,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	public void testfall_ASIV_06() {
 		// Erstgesuch erstellen
 		Testfall_ASIV_06 testfall = new Testfall_ASIV_06(gesuchsperiode, institutionStammdatenList, true);
-		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, benutzer);
+		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, null);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		Gesuch erstgesuch = verfuegungService.calculateVerfuegung(gesuch);
 
@@ -197,7 +197,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	public void testfall_ASIV_07() {
 		// Erstgesuch erstellen
 		Testfall_ASIV_07 testfall = new Testfall_ASIV_07(gesuchsperiode, institutionStammdatenList, true);
-		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, benutzer);
+		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, null);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		Gesuch erstgesuch = verfuegungService.calculateVerfuegung(gesuch);
 
@@ -216,7 +216,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	public void testfall_ASIV_08() {
 		// Erstgesuch erstellen
 		Testfall_ASIV_08 testfall = new Testfall_ASIV_08(gesuchsperiode, institutionStammdatenList, true);
-		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, benutzer);
+		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, null);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		Gesuch erstgesuch = verfuegungService.calculateVerfuegung(gesuch);
 
@@ -235,7 +235,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	public void testfall_ASIV_09() {
 		// Erstgesuch erstellen
 		Testfall_ASIV_09 testfall = new Testfall_ASIV_09(gesuchsperiode, institutionStammdatenList, true);
-		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, benutzer);
+		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, null);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		Gesuch erstgesuch = verfuegungService.calculateVerfuegung(gesuch);
 
@@ -254,7 +254,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	public void testfall_ASIV_10() {
 		// Erstgesuch erstellen
 		Testfall_ASIV_10 testfall = new Testfall_ASIV_10(gesuchsperiode, institutionStammdatenList, true);
-		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, benutzer);
+		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, true, null);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		Gesuch erstgesuch = verfuegungService.calculateVerfuegung(gesuch);
 
@@ -311,7 +311,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 			ex.printStackTrace();
 		}
 		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
-		benutzer = persistence.persist(i);
+		persistence.persist(i);
 	}
 }
 

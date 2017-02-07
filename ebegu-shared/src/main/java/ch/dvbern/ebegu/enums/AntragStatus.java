@@ -56,7 +56,7 @@ public enum AntragStatus {
 
 
 
-    /**
+	/**
      * Implementierung eines Berechtigungskonzepts fuer die Antragssuche.
      *
      * @param userRole die Rolle
@@ -101,4 +101,31 @@ public enum AntragStatus {
 
 	public boolean inBearbeitung() { return inBearbeitung.contains(this); }
 
+	public boolean isAnyOfInBearbeitungGS(){
+		return this.equals(FREIGABEQUITTUNG) || this.equals(IN_BEARBEITUNG_GS);
+	}
+
+	public boolean isAnyOfSchulamtOnly(){
+		return this.equals(NUR_SCHULAMT) || this.equals(NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN);
+	}
+
+
+	/**
+	 *
+	 * @return true wenn das Jugendamt das Gesuch oeffnen darf (Unsichtbar sind also Gesuch die von Gesuchsteller noch
+	 * nicht eingereichte wurden und solche die NUR_SCHULAMT sind
+	 */
+	public boolean isReadableByJugendamtSteueramt() {
+		//Jugendamt darf keine Gesuche sehen die noch nicht Freigegeben sind, und keine die nur Schulamt sind
+		return !(this.isAnyOfInBearbeitungGS()) &&
+			!(isAnyOfSchulamtOnly());
+	}
+
+	/**
+	 * schulamt darf eigentlich alle Status lesen ausser denen die noch vom GS bearbeitet werden
+	 * @return
+	 */
+	public boolean isReadableBySchulamtSachbearbeiter() {
+		return !(this.isAnyOfInBearbeitungGS());
+	}
 }

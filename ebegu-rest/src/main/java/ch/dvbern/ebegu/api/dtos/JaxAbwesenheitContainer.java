@@ -15,17 +15,17 @@ public class JaxAbwesenheitContainer extends JaxAbstractDTO {
 	private static final long serialVersionUID = -8912537133244581785L;
 
 	@Valid
-	private JaxAbwesenheit abwensenheitGS;
+	private JaxAbwesenheit abwesenheitGS;
 
 	@Valid
 	private JaxAbwesenheit abwesenheitJA;
 
-	public JaxAbwesenheit getAbwensenheitGS() {
-		return abwensenheitGS;
+	public JaxAbwesenheit getAbwesenheitGS() {
+		return abwesenheitGS;
 	}
 
-	public void setAbwensenheitGS(JaxAbwesenheit abwensenheitGS) {
-		this.abwensenheitGS = abwensenheitGS;
+	public void setAbwesenheitGS(JaxAbwesenheit abwesenheitGS) {
+		this.abwesenheitGS = abwesenheitGS;
 	}
 
 	public JaxAbwesenheit getAbwesenheitJA() {

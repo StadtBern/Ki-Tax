@@ -129,4 +129,12 @@ export default class TestDataUtil {
         adresseCont.adresseJA = adresse;
         return adresseCont;
     }
+
+    public static createDummyForm(): any {
+        let form: any = {};
+        form.$valid = true;
+        form.$setPristine = () => {};
+        form.$setUntouched = () => {};
+        return form;
+    }
 }

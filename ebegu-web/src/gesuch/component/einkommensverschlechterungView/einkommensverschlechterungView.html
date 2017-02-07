@@ -56,7 +56,8 @@
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
                                 </dv-radio-container>
-                                <dv-error-messages for="vm.form.steuererklaerung.$error" class="error"></dv-error-messages>
+                                <dv-error-messages for="vm.form.steuererklaerung.$error"
+                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -68,9 +69,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_JANUARY"
                                        for="nettolohn_Jan"></label>
-                                <input id="nettolohn_Jan" type="text" name="nettolohn_Jan" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnJan"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Jan"
+                                               name="nettolohn_Jan"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnJan"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnJan"
                                     ja="vm.model.getEkvToWorkWith().nettolohnJan"></dv-bisher>
@@ -85,9 +88,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_FEBRUARY"
                                        for="nettolohn_Feb"></label>
-                                <input id="nettolohn_Feb" type="text" name="nettolohn_Feb" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnFeb"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Feb"
+                                               name="nettolohn_Feb"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnFeb"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnFeb"
                                     ja="vm.model.getEkvToWorkWith().nettolohnFeb"></dv-bisher>
@@ -102,9 +107,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_MARCH"
                                        for="nettolohn_Mrz"></label>
-                                <input id="nettolohn_Mrz" type="text" name="nettolohn_Mrz" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnMrz"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Mrz"
+                                               name="nettolohn_Mrz"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnMrz"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnMrz"
                                     ja="vm.model.getEkvToWorkWith().nettolohnMrz"></dv-bisher>
@@ -119,9 +126,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_APRIL"
                                        for="nettolohn_Apr"></label>
-                                <input id="nettolohn_Apr" type="text" name="nettolohn_Apr" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnApr"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Apr"
+                                               name="nettolohn_Apr"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnApr"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnApr"
                                     ja="vm.model.getEkvToWorkWith().nettolohnApr"></dv-bisher>
@@ -136,9 +145,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_MAY"
                                        for="nettolohn_Mai"></label>
-                                <input id="nettolohn_Mai" type="text" name="nettolohn_Mai" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnMai"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Mai"
+                                               name="nettolohn_Mai"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnMai"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnMai"
                                     ja="vm.model.getEkvToWorkWith().nettolohnMai"></dv-bisher>
@@ -153,9 +164,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_JUNE"
                                        for="nettolohn_Jun"></label>
-                                <input id="nettolohn_Jun" type="text" name="nettolohn_Jun" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnJun"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Jun"
+                                               name="nettolohn_Jun"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnJun"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnJun"
                                     ja="vm.model.getEkvToWorkWith().nettolohnJun"></dv-bisher>
@@ -170,9 +183,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_JULY"
                                        for="nettolohn_Jul"></label>
-                                <input id="nettolohn_Jul" type="text" name="nettolohn_Jul" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnJul"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Jul"
+                                               name="nettolohn_Jul"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnJul"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnJul"
                                     ja="vm.model.getEkvToWorkWith().nettolohnJul"></dv-bisher>
@@ -187,9 +202,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_AUGUST"
                                        for="nettolohn_Aug"></label>
-                                <input id="nettolohn_Aug" type="text" name="nettolohn_Aug" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnAug"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Aug"
+                                               name="nettolohn_Aug"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnAug"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnAug"
                                     ja="vm.model.getEkvToWorkWith().nettolohnAug"></dv-bisher>
@@ -204,9 +221,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_SEPTEMBER"
                                        for="nettolohn_Sep"></label>
-                                <input id="nettolohn_Sep" type="text" name="nettolohn_Sep" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnSep"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Sep"
+                                               name="nettolohn_Sep"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnSep"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnSep"
                                     ja="vm.model.getEkvToWorkWith().nettolohnSep"></dv-bisher>
@@ -222,9 +241,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_OCTOBER"
                                        for="nettolohn_Okt"></label>
-                                <input id="nettolohn_Okt" type="text" name="nettolohn_Okt" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnOkt"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Okt"
+                                               name="nettolohn_Okt"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnOkt"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnOkt"
                                     ja="vm.model.getEkvToWorkWith().nettolohnOkt"></dv-bisher>
@@ -240,9 +261,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_NOVEMBER"
                                        for="nettolohn_Nov"></label>
-                                <input id="nettolohn_Nov" type="text" name="nettolohn_Nov" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnNov"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Nov"
+                                               name="nettolohn_Nov"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnNov"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnNov"
                                     ja="vm.model.getEkvToWorkWith().nettolohnNov"></dv-bisher>
@@ -257,9 +280,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_DECEMBER"
                                        for="nettolohn_Dez"></label>
-                                <input id="nettolohn_Dez" type="text" name="nettolohn_Dez" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnDez"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Dez"
+                                               name="nettolohn_Dez"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnDez"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnDez"
                                     ja="vm.model.getEkvToWorkWith().nettolohnDez"></dv-bisher>
@@ -274,9 +299,11 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_NETTOLOHN_ZUS"
                                        for="nettolohn_Zus"></label>
-                                <input id="nettolohn_Zus" type="text" name="nettolohn_Zus" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().nettolohnZus"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="nettolohn_Zus"
+                                               name="nettolohn_Zus"
+                                               ng-model="vm.model.getEkvToWorkWith().nettolohnZus"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().nettolohnZus"
                                     ja="vm.model.getEkvToWorkWith().nettolohnZus"></dv-bisher>
@@ -291,11 +318,14 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="familienzulage">
                                     <span data-translate="FINANZIELLE_SITUATION_FAMILIENZULAGE"></span>
-                                    <dv-tooltip text="'EINKOMMENSVERSCHLECHTERUNG_FAMILIENZULAGE_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip
+                                        text="'EINKOMMENSVERSCHLECHTERUNG_FAMILIENZULAGE_HELP' | translate"></dv-tooltip>
                                 </label>
-                                <input id="familienzulage" type="text" name="familienzulage" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().familienzulage"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="familienzulage"
+                                               name="familienzulage"
+                                               ng-model="vm.model.getEkvToWorkWith().familienzulage"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().familienzulage"
                                     ja="vm.model.getEkvToWorkWith().familienzulage"></dv-bisher>
@@ -311,11 +341,14 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="ersatzeinkommen">
                                     <span data-translate="FINANZIELLE_SITUATION_ERSATZEINKOMMEN"></span>
-                                    <dv-tooltip text="'EINKOMMENSVERSCHLECHTERUNG_ERSATZEINKOMMEN_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip
+                                        text="'EINKOMMENSVERSCHLECHTERUNG_ERSATZEINKOMMEN_HELP' | translate"></dv-tooltip>
                                 </label>
-                                <input id="ersatzeinkommen" type="text" name="ersatzeinkommen" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().ersatzeinkommen"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="ersatzeinkommen"
+                                               name="ersatzeinkommen"
+                                               ng-model="vm.model.getEkvToWorkWith().ersatzeinkommen"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().ersatzeinkommen"
                                     ja="vm.model.getEkvToWorkWith().ersatzeinkommen"></dv-bisher>
@@ -331,11 +364,14 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="erhalteneAlimente">
                                     <span data-translate="FINANZIELLE_SITUATION_ERHALTENEALIMENTE"></span>
-                                    <dv-tooltip text="'EINKOMMENSVERSCHLECHTERUNG_ERHALTENEALIMENTE_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip
+                                        text="'EINKOMMENSVERSCHLECHTERUNG_ERHALTENEALIMENTE_HELP' | translate"></dv-tooltip>
                                 </label>
-                                <input id="erhalteneAlimente" type="text" name="erhalteneAlimente" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().erhalteneAlimente"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="erhalteneAlimente"
+                                               name="erhalteneAlimente"
+                                               ng-model="vm.model.getEkvToWorkWith().erhalteneAlimente"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().erhalteneAlimente"
                                     ja="vm.model.getEkvToWorkWith().erhalteneAlimente"></dv-bisher>
@@ -353,14 +389,15 @@
                                 <md-checkbox ng-model="vm.showSelbstaendig" name="showSelbstaendig"
                                              aria-label="{{FINANZIELLE_SITUATION_SELBSTAENDIGKEIT | translate}}"
                                              ng-change="vm.showSelbstaendigClicked()"
-                                             ng-disabled="evm.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig() || vm.isGesuchReadonly()">
+                                             ng-disabled="evm.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig() || vm.isGesuchReadonly()"
+                                style="margin-bottom:3rem;">
                                     <span data-translate="FINANZIELLE_SITUATION_SELBSTAENDIGKEIT"></span>
                                 </md-checkbox>
-                                <dv-tooltip text="'EINKOMMENSVERSCHLECHTERUNG_SELBSTAENDIGKEIT_HELP' | translate"></dv-tooltip>
+                                <dv-tooltip
+                                    text="'EINKOMMENSVERSCHLECHTERUNG_SELBSTAENDIGKEIT_HELP' | translate"></dv-tooltip>
                                 <dv-bisher gs="vm.showSelbstaendigGS" class="dv-bisher-break"
                                            ja="vm.showSelbstaendig"
                                            specific-bisher-text="vm.getTextSelbstaendigKorrektur()"></dv-bisher>
-                                <div class="dv-error-messages"></div>
                             </div>
                         </div>
                     </div>
@@ -374,11 +411,14 @@
                                            data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHR"
                                            for="geschaeftsgewinnBasisjahr"
                                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></label>
-                                    <input id="geschaeftsgewinnBasisjahr" type="text" name="geschaeftsgewinnBasisjahr"
-                                           ui-number-mask="0"
-                                           ng-model="vm.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr"
-                                           ng-blur="vm.calculate()"
-                                           dv-max-length max="999999999999" class="form-control" ui-negative-number>
+                                    <dv-valueinput input-id="geschaeftsgewinnBasisjahr"
+                                                   name="geschaeftsgewinnBasisjahr"
+                                                   ng-model="vm.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr"
+                                                   allow-negative=true
+                                                   dv-on-blur="vm.calculate()"
+                                                   class="input-element">
+                                    </dv-valueinput>
+
                                     <dv-bisher
                                         gs="vm.model.getEkvToWorkWith_GS().geschaeftsgewinnBasisjahr"
                                         ja="vm.model.getEkvToWorkWith().geschaeftsgewinnBasisjahr"
@@ -398,11 +438,13 @@
                                            data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS1"
                                            for="geschaeftsgewinnBasisjahrMinus1"
                                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith() - 1}}}"></label>
-                                    <input id="geschaeftsgewinnBasisjahrMinus1" type="text"
-                                           name="geschaeftsgewinnBasisjahrMinus1" ui-number-mask="0"
-                                           ng-model="vm.geschaeftsgewinnBasisjahrMinus1"
-                                           dv-max-length max="999999999999" class="form-control" disabled
-                                           ui-negative-number>
+                                    <dv-valueinput input-id="geschaeftsgewinnBasisjahrMinus1"
+                                                   name="geschaeftsgewinnBasisjahrMinus1"
+                                                   ng-model="vm.geschaeftsgewinnBasisjahrMinus1"
+                                                   allow-negative=true
+                                                   class="input-element"
+                                                   ng-disabled=true>
+                                    </dv-valueinput>
                                     <div class="dv-error-messages"></div>
                                 </dv-input-container>
                             </div>
@@ -416,11 +458,13 @@
                                            data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS1"
                                            for="geschaeftsgewinnBasisjahrMinus1"
                                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith() - 1}}}"></label>
-                                    <input id="geschaeftsgewinnBasisjahrMinus1" type="text" name="geschaeftsgewinnBasisjahrMinus1"
-                                           ui-number-mask="0"
-                                           ng-model="vm.model.getEkvToWorkWith().geschaeftsgewinnBasisjahrMinus1"
-                                           ng-blur="vm.calculate()"
-                                           dv-max-length max="999999999999" class="form-control" ui-negative-number>
+                                    <dv-valueinput input-id="geschaeftsgewinnBasisjahrMinus1"
+                                                   name="geschaeftsgewinnBasisjahrMinus1"
+                                                   ng-model="vm.model.getEkvToWorkWith().geschaeftsgewinnBasisjahrMinus1"
+                                                   allow-negative=true
+                                                   class="input-element"
+                                                   dv-on-blur="vm.calculate()">
+                                    </dv-valueinput>
                                     <dv-bisher
                                         gs="vm.geschaeftsgewinnBasisjahrMinus1GS"
                                         ja="vm.geschaeftsgewinnBasisjahrMinus1"
@@ -440,11 +484,13 @@
                                            data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS2"
                                            for="geschaeftsgewinnBasisjahrMinus2"
                                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()-2}}}"></label>
-                                    <input id="geschaeftsgewinnBasisjahrMinus2" type="text"
-                                           name="geschaeftsgewinnBasisjahrMinus2" ui-number-mask="0"
-                                           ng-model="vm.geschaeftsgewinnBasisjahrMinus2"
-                                           dv-max-length max="999999999999" class="form-control" disabled
-                                           ui-negative-number>
+                                    <dv-valueinput input-id="geschaeftsgewinnBasisjahrMinus2"
+                                                   name="geschaeftsgewinnBasisjahrMinus2"
+                                                   ng-model="vm.geschaeftsgewinnBasisjahrMinus2"
+                                                   allow-negative=true
+                                                   class="input-element"
+                                                   ng-disabled=true>
+                                    </dv-valueinput>
                                     <div class="dv-error-messages"></div>
                                 </dv-input-container>
                             </div>
@@ -458,10 +504,12 @@
                                     <label class="md-no-float"
                                            data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT"
                                            for="geschaeftsgewinnDurchschnittGS1"></label>
-                                    <input id="geschaeftsgewinnDurchschnittGS1" type="text"
-                                           name="geschaeftsgewinnDurchschnittGS1" ui-number-mask="0"
-                                           ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller1"
-                                           dv-max-length max="999999999999" class="form-control" disabled>
+                                    <dv-valueinput input-id="geschaeftsgewinnDurchschnittGS1"
+                                                   name="geschaeftsgewinnDurchschnittGS1"
+                                                   ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller1"
+                                                   class="input-element"
+                                                   ng-disabled=true>
+                                    </dv-valueinput>
                                     <div class="dv-error-messages"></div>
                                 </dv-input-container>
                                 <dv-input-container class="form-group"
@@ -469,10 +517,12 @@
                                     <label class="md-no-float"
                                            data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT"
                                            for="geschaeftsgewinnDurchschnittGS2"></label>
-                                    <input id="geschaeftsgewinnDurchschnittGS2" type="text"
-                                           name="geschaeftsgewinnDurchschnittGS2" ui-number-mask="0"
-                                           ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller2"
-                                           dv-max-length max="999999999999" class="form-control" disabled>
+                                    <dv-valueinput input-id="geschaeftsgewinnDurchschnittGS2"
+                                                   name="geschaeftsgewinnDurchschnittGS2"
+                                                   ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller2"
+                                                   class="input-element"
+                                                   ng-disabled=true>
+                                    </dv-valueinput>
                                     <div class="dv-error-messages"></div>
                                 </dv-input-container>
                             </div>
@@ -486,11 +536,14 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" for="geleisteteAlimente">
                                     <span data-translate="FINANZIELLE_SITUATION_GELEISTETEALIMENTE"></span>
-                                    <dv-tooltip text="'FINANZIELLE_SITUATION_GELEISTETEALIMENTE_HELP' | translate"></dv-tooltip>
+                                    <dv-tooltip
+                                        text="'FINANZIELLE_SITUATION_GELEISTETEALIMENTE_HELP' | translate"></dv-tooltip>
                                 </label>
-                                <input id="geleisteteAlimente" type="text" name="geleisteteAlimente" ui-number-mask="0"
-                                       ng-model="vm.model.getEkvToWorkWith().geleisteteAlimente"
-                                       dv-max-length max="999999999999" class="form-control">
+                                <dv-valueinput input-id="geleisteteAlimente"
+                                               name="geleisteteAlimente"
+                                               ng-model="vm.model.getEkvToWorkWith().geleisteteAlimente"
+                                               class="input-element">
+                                </dv-valueinput>
                                 <dv-bisher
                                     gs="vm.model.getEkvToWorkWith_GS().geleisteteAlimente"
                                     ja="vm.model.getEkvToWorkWith().geleisteteAlimente"></dv-bisher>

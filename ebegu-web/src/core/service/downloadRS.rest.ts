@@ -107,22 +107,18 @@ export class DownloadRS {
         let name: string = accessToken + '/' + dokumentName;
         let href: string = this.serviceURL + '/blobdata/' + name;
 
-        let warn: string = 'Popup-Blocker scheint eingeschaltet zu sein. Bitte erlauben Sie der Seite Pop-Ups öffnen zu dürfen, um das Dokument herunterladen zu können.';
-
 
         if (attachment) {
             // add MatrixParam for to download file instead of inline
-            href = href + ';attachment=true;';
-            let win = this.$window.open(href, '_blank');
-            if (!win) {
-                this.log.error(warn);
-                this.$window.alert(warn);
-                return false;
-            }
+            this.download(href);
         } else {
             let win = this.$window.open(href, '_blank');
             if (!win) {
+                let warn: string = 'Popup-Blocker scheint eingeschaltet zu sein. ' +
+                    'Dadurch kann das Dokument im Browser nicht angezeigt werden und wird heruntergeladen. ' +
+                    'Bitte erlauben Sie der Seite Pop-Ups öffnen zu dürfen, um das Dokument im Browser anzuzeigen.';
                 this.log.error(warn);
+                this.download(href);
                 this.$window.alert(warn);
                 return false;
             } else {
@@ -134,5 +130,11 @@ export class DownloadRS {
         //this.$window.open(href, name, 'toolbar=0,location=0,menubar=0');
         return true;
 
+    }
+
+    private download(href: string) {
+        href = href + ';attachment=true;';
+        this.$window.location.href = href;
+        return href;
     }
 }

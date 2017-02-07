@@ -1,0 +1,39 @@
+@import '../../../style/variables.less';
+@import "../../../style/mixins.less";
+
+.mitteilungenView {
+    padding: 3rem;
+    background: @contrast-light;
+    min-height: 100%;
+}
+
+.mitteilungenList {
+
+    .mitteilungItem {
+        background: @white;
+    }
+
+    .subject {
+        .ebeguBold();
+    }
+
+    .message {
+        white-space: pre-line;
+    }
+
+    .institution {
+        color: @blue;
+    }
+
+    .gesuchsteller {
+        color: @black;
+    }
+
+    .jugendamt {
+        color: @red;
+    }
+
+    .betreuung {
+        .ebeguBold();
+    }
+}

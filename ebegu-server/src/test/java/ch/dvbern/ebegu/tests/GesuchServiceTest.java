@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBException;
 import javax.inject.Inject;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
@@ -35,7 +37,6 @@ import java.time.Month;
 import java.util.*;
 
 import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuch;
-import static ch.dvbern.ebegu.tets.util.JBossLoginContextFactory.createLoginContext;
 
 /**
  * Arquillian Tests fuer die Klasse GesuchService
@@ -119,7 +120,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, allGenDok.size());
 
 
-		gesuchService.removeGesuch(gesuch);
+		gesuchService.removeGesuch(gesuch.getId());
 
 
 		//check all objects don't exist anymore
@@ -406,8 +407,43 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
 
+		loginAsSachbearbeiterJA();
 		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
+	}
+
+	@Test
+	public void testExceptionOnInvalidFreigabe() {
+		LocalDate now = LocalDate.now();
+		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_GS);
+
+		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
+
+		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
+		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
+
+		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
+
+		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
+
+		Benutzer gesuchsteller = loginAsGesuchsteller("gesuchst");
+		try {
+			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+			Assert.fail("No Besitzer is present. must fail for Role Gesuchsteller");
+		} catch (EJBAccessException e) {
+		//noop
+		}
+
+		gesuch.getFall().setBesitzer(gesuchsteller);
+		persistence.merge(gesuch.getFall());
+		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
+		try {
+			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+			Assert.fail("Gesuch is already freigegeben. Wrong state should be detected");
+		} catch (EJBException e){
+			Assert.assertTrue(e.getCausedByException() instanceof IllegalArgumentException);
+		}
 	}
 
 	@Test
@@ -679,65 +715,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuch.setFall(persistence.persist(gesuch.getFall()));
 		gesuchService.createGesuch(gesuch);
 		return gesuch;
-	}
-
-	private void loginAsSachbearbeiterJA() {
-		try {
-			createLoginContext("saja", "saja").login();
-		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt saja for tests");
-		}
-
-		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer saja = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
-		persistence.persist(saja);
-	}
-
-	private void loginAsAdmin() {
-		try {
-			createLoginContext("admin", "admin").login();
-		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt admin for tests");
-		}
-
-		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer admin = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
-		persistence.persist(admin);
-	}
-
-	private void loginAsSachbearbeiterInst(String username, Institution institutionToSet) {
-		Benutzer user = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, username, null, institutionToSet, institutionToSet.getMandant());
-		user = persistence.merge(user);
-		try {
-			createLoginContext(username, username).login();
-		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt {} for tests", username);
-		}
-		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
-	}
-
-	private void loginAsGesuchsteller(String username) {
-		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer user = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, username, null, null, mandant);
-		user = persistence.merge(user);
-		try {
-			createLoginContext(username, username).login();
-		} catch (LoginException e) {
-			LOG.error("could not login as gesuchsteller {} for tests", username);
-		}
-		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
-	}
-
-	private void loginAsSchulamt() {
-		try {
-			createLoginContext("schulamt", "schulamt").login();
-		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter schulamt for tests");
-		}
-
-		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer schulamt = TestDataUtil.createBenutzer(UserRole.SCHULAMT, "schulamt", null, null, mandant);
-		persistence.persist(schulamt);
 	}
 
 

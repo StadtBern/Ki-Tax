@@ -7,6 +7,8 @@ import EinkommensverschlechterungContainerRS from './einkommensverschlechterungC
 import TSDokumenteDTO from '../../models/dto/TSDokumenteDTO';
 import DokumenteRS from './dokumenteRS.rest';
 import TSFinanzModel from '../../models/TSFinanzModel';
+import IRootScopeService = angular.IRootScopeService;
+import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 
 
 export default class BerechnungsManager {
@@ -15,11 +17,19 @@ export default class BerechnungsManager {
     einkommensverschlechterungResultateBjP2: TSFinanzielleSituationResultateDTO;
     dokumente: TSDokumenteDTO;
 
-    static $inject = ['FinanzielleSituationRS', 'EbeguRestUtil', 'EinkommensverschlechterungContainerRS', 'DokumenteRS'];
+    static $inject = ['FinanzielleSituationRS', 'EbeguRestUtil', 'EinkommensverschlechterungContainerRS', 'DokumenteRS', '$rootScope'];
     /* @ngInject */
     constructor(private finanzielleSituationRS: FinanzielleSituationRS, private ebeguRestUtil: EbeguRestUtil,
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS,
-                private dokumenteRS: DokumenteRS) {
+                private dokumenteRS: DokumenteRS, private $rootScope: IRootScopeService) {
+        this.initValues();
+
+        $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
+            this.initValues();
+        });
+    }
+
+    private initValues() {
         this.finanzielleSituationResultate = new TSFinanzielleSituationResultateDTO();
         this.einkommensverschlechterungResultateBjP1 = new TSFinanzielleSituationResultateDTO();
         this.einkommensverschlechterungResultateBjP2 = new TSFinanzielleSituationResultateDTO();

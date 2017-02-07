@@ -59,6 +59,8 @@ import TSFamiliensituationContainer from '../../models/TSFamiliensituationContai
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../models/TSAdresseContainer';
 import IQService = angular.IQService;
+import IRootScopeService = angular.IRootScopeService;
+import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -74,7 +76,7 @@ export default class GesuchModelManager {
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
         'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS',
-        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS', '$q', 'CONSTANTS'];
+        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS', '$q', 'CONSTANTS', '$rootScope'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -83,7 +85,7 @@ export default class GesuchModelManager {
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService,
-                private adresseRS: AdresseRS, private $q: IQService, private CONSTANTS: any) {
+                private adresseRS: AdresseRS, private $q: IQService, private CONSTANTS: any, private $rootScope: IRootScopeService) {
 
         this.fachstellenList = [];
         this.activInstitutionenList = [];
@@ -91,6 +93,10 @@ export default class GesuchModelManager {
         this.updateFachstellenList();
         this.updateActiveInstitutionenList();
         this.updateActiveGesuchsperiodenList();
+
+        $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
+            this.setGesuch(undefined);
+        });
     }
 
 
@@ -127,25 +133,27 @@ export default class GesuchModelManager {
      * Oder ggf. aus der Liste entfernt
      */
     private setHiddenSteps(): void {
-        //Freigabe
-        if (this.gesuch.isOnlineGesuch()) {
-            this.wizardStepManager.unhideStep(TSWizardStepName.FREIGABE);
-        } else {
-            this.wizardStepManager.hideStep(TSWizardStepName.FREIGABE);
-        }
+        if (this.gesuch) {
+            //Freigabe
+            if (this.gesuch.isOnlineGesuch()) {
+                this.wizardStepManager.unhideStep(TSWizardStepName.FREIGABE);
+            } else {
+                this.wizardStepManager.hideStep(TSWizardStepName.FREIGABE);
+            }
 
-        //Abwesenheit
-        if (!this.gesuch.isMutation()) {
-            this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
-        } else {
-            this.wizardStepManager.unhideStep(TSWizardStepName.ABWESENHEIT);
-        }
+            //Abwesenheit
+            if (!this.gesuch.isMutation()) {
+                this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
+            } else {
+                this.wizardStepManager.unhideStep(TSWizardStepName.ABWESENHEIT);
+            }
 
-        //Umzug
-        if (!this.gesuch.isMutation() && !this.getGesuch().isThereAnyUmzug()) {
-            this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
-        } else {
-            this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
+            //Umzug
+            if (!this.gesuch.isMutation() && !this.getGesuch().isThereAnyUmzug()) {
+                this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
+            } else {
+                this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
+            }
         }
     }
 
@@ -156,7 +164,10 @@ export default class GesuchModelManager {
      */
     public setGesuch(gesuch: TSGesuch): void {
         this.gesuch = gesuch;
-        this.setHiddenSteps();
+        if (this.gesuch) {
+            this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
+            this.setHiddenSteps();
+        }
     }
 
     public getGesuch(): TSGesuch {

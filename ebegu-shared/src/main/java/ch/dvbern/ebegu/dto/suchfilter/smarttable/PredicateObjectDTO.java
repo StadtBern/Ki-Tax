@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.dto.suchfilter;
+package ch.dvbern.ebegu.dto.suchfilter.smarttable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -23,10 +23,19 @@ public class PredicateObjectDTO implements Serializable {
 	private String gesuchsperiodeString; //Gesuch.gesuchperiode.gueltigAb nach jahr
 	private String eingangsdatum;  //Gesuch.eingangsdatum
 	private String aenderungsdatum;  //Gesuch.antragStatusHistory
-	private String status;  	   //Gesuch.status
-	private String angebote;		//Gesuch.kindContainers.betreuungen.institutionStammdaten.betreuungsangebotTyp
+	private String status;       //Gesuch.status
+	private String angebote;        //Gesuch.kindContainers.betreuungen.institutionStammdaten.betreuungsangebotTyp
 	private String institutionen;   //Gesuch.kindContainers.betreuungen.institutionStammdaten.institution.name
 	private String verantwortlicher; //Fall.verwantwortlicher.name
+	private String kinder; //Gesuch.kindContainers.kindJa.vorname
+
+	public String getKinder() {
+		return kinder;
+	}
+
+	public void setKinder(String kinder) {
+		this.kinder = kinder;
+	}
 
 	public String getFallNummer() {
 		return fallNummer;
@@ -69,12 +78,12 @@ public class PredicateObjectDTO implements Serializable {
 	}
 
 	public String getAenderungsdatum() {
-			return aenderungsdatum;
-		}
+		return aenderungsdatum;
+	}
 
-		public void setAenderungsdatum(String aenderungsdatum) {
-			this.aenderungsdatum = aenderungsdatum;
-		}
+	public void setAenderungsdatum(String aenderungsdatum) {
+		this.aenderungsdatum = aenderungsdatum;
+	}
 
 	public String getStatus() {
 		return status;
@@ -121,11 +130,12 @@ public class PredicateObjectDTO implements Serializable {
 			.append("angebote", angebote)
 			.append("institutionen", institutionen)
 			.append("verantwortlicher", verantwortlicher)
+			.append("kinder", kinder)
 			.toString();
 	}
 
 	public int readFallNummerAsNumber() {
-		if(StringUtils.isNumeric(fallNummer)){
+		if (StringUtils.isNumeric(fallNummer)) {
 			return Integer.valueOf(fallNummer);
 		}
 		return -1;
@@ -135,4 +145,10 @@ public class PredicateObjectDTO implements Serializable {
 	public String getFamilienNameForLike() {
 		return StringUtils.isEmpty(familienName) ? null : familienName + '%';
 	}
+
+	public String getKindNameForLike() {
+		return StringUtils.isEmpty(kinder) ? null : '%' + kinder + '%';
+	}
+
+
 }

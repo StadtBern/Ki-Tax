@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.tets;
 
-import ch.dvbern.ebegu.dto.suchfilter.AntragSearchDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragSortDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSearchDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragSortDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
@@ -832,5 +832,19 @@ public final class TestDataUtil {
 		gesuch.setGesuchsperiode(periodeToUpdate);
 		gesuch.setStatus(status);
 		return gesuch;
+	}
+
+	public static Mitteilung createMitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp,
+											  Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
+		Mitteilung mitteilung = new Mitteilung();
+		mitteilung.setFall(fall);
+		mitteilung.setEmpfaenger(empfaenger);
+		mitteilung.setSender(sender);
+		mitteilung.setMitteilungStatus(MitteilungStatus.ENTWURF);
+		mitteilung.setSubject("Subject");
+		mitteilung.setEmpfaengerTyp(empfaengerTyp);
+		mitteilung.setSenderTyp(senderTyp);
+		mitteilung.setMessage("Message");
+		return mitteilung;
 	}
 }

@@ -29,7 +29,7 @@
                                                    ng-model="vm.getFamiliensituation().aenderungPer"
                                                    class="input-element"
                                                    dv-on-blur="vm.onDatumBlur()"
-                                                   ng-disabled="vm.isGesuchReadonly()">
+                                                   ng-disabled="vm.isGesuchReadonly() || (!vm.getFamiliensituation().aenderungPer && vm.isKorrekturModusJugendamt())">
                                     </dv-datepicker>
                                 </div>
                             </div>

@@ -3,17 +3,21 @@ import TSUser from '../../models/TSUser';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import HttpBuffer from './HttpBuffer';
 import {TSRole} from '../../models/enums/TSRole';
+import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import ICookiesService = angular.cookies.ICookiesService;
+import IScope = angular.IScope;
+import IRootScopeService = angular.IRootScopeService;
 
 export default class AuthServiceRS {
 
     private principal: TSUser;
 
 
-    static $inject = ['$http', 'CONSTANTS', '$q', '$timeout', '$cookies', 'base64', 'EbeguRestUtil', 'httpBuffer'];
+    static $inject = ['$http', 'CONSTANTS', '$q', '$timeout', '$cookies', 'base64', 'EbeguRestUtil', 'httpBuffer', '$rootScope'];
     /* @ngInject */
     constructor(private $http: IHttpService, private CONSTANTS: any, private $q: IQService, private $timeout: ITimeoutService,
-                private $cookies: ICookiesService, private base64: any, private ebeguRestUtil: EbeguRestUtil, private httpBuffer: HttpBuffer) {
+                private $cookies: ICookiesService, private base64: any, private ebeguRestUtil: EbeguRestUtil, private httpBuffer: HttpBuffer,
+                private $rootScope: IRootScopeService) {
     }
 
     public getPrincipal(): TSUser {
@@ -31,6 +35,7 @@ export default class AuthServiceRS {
         if (userCredentials) {
             return this.$http.post(this.CONSTANTS.REST_API + 'auth/login', this.ebeguRestUtil.userToRestObject({}, userCredentials))
                 .then((response: any) => {
+
                     // try to reload buffered requests
                     this.httpBuffer.retryAll((config: IRequestConfig) => {
                         return config;
@@ -38,12 +43,15 @@ export default class AuthServiceRS {
                     return this.$timeout((): any => { // Response cookies are not immediately accessible, so lets wait for a bit
                         try {
                             this.initWithCookie();
+
                             return this.principal;
                         } catch (e) {
                             return this.$q.reject();
                         }
                     }, 100);
+
                 });
+
         }
         return undefined;
     };
@@ -54,6 +62,10 @@ export default class AuthServiceRS {
             try {
                 let authData = angular.fromJson(this.base64.decode(authIdbase64));
                 this.principal = new TSUser(authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.mandant, authData.role);
+                this.$timeout(() => {
+                    this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
+                }); //bei login muessen wir warten bis angular alle componenten erstellt hat bevor wir das event werfen
+
                 return true;
             } catch (e) {
                 console.log('cookie decoding failed');
@@ -66,6 +78,7 @@ export default class AuthServiceRS {
     public logoutRequest() {
         return this.$http.post(this.CONSTANTS.REST_API + 'auth/logout', null).then((res: any) => {
             this.principal = undefined;
+            this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], 'logged out');
             return res;
         });
     };
@@ -97,8 +110,8 @@ export default class AuthServiceRS {
      */
     public isOneOfRoles(roles: Array<TSRole>): boolean {
         if (roles !== undefined && roles !== null && this.principal) {
-            for (var i = 0; i < roles.length; i++) {
-                var role = roles[i];
+            for (let i = 0; i < roles.length; i++) {
+                let role = roles[i];
                 if (role === this.principal.role) {
                     return true;
                 }

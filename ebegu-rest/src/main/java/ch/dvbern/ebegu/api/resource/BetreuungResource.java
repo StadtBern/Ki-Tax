@@ -136,6 +136,24 @@ public class BetreuungResource {
 	}
 
 	@Nullable
+	@GET
+	@Path("/{betreuungId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuung findBetreuung(
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungJAXPId) throws EbeguException {
+		Validate.notNull(betreuungJAXPId.getId());
+		String id = converter.toEntityId(betreuungJAXPId);
+		Optional<Betreuung> fallOptional = betreuungService.findBetreuung(id);
+
+		if (!fallOptional.isPresent()) {
+			return null;
+		}
+		Betreuung betreuungToReturn = fallOptional.get();
+		return converter.betreuungToJAX(betreuungToReturn);
+	}
+
+	@Nullable
 	@DELETE
 	@Path("/{betreuungId}")
 	@Consumes(MediaType.WILDCARD)

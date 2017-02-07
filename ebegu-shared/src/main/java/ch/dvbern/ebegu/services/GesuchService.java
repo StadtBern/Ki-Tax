@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -50,6 +50,14 @@ public interface GesuchService {
 	Optional<Gesuch> findGesuch(@Nonnull String key);
 
 	/**
+	 * Gibt alle Gesuche zurueck die in der Liste der gesuchIds auftauchen und fuer die der Benutzer berechtigt ist.
+	 * Gesuche fuer die der Benutzer nicht berechtigt ist werden uebersprungen
+	 * @param gesuchIds
+	 *
+	 */
+	List<Gesuch> findReadableGesuche(@Nullable Collection<String> gesuchIds);
+
+	/**
 	 * Gibt alle existierenden Gesuche zurueck.
 	 *
 	 * @return Liste aller Gesuche aus der DB
@@ -71,10 +79,14 @@ public interface GesuchService {
 	 * @param gesuch der Gesuch zu entfernen
 	 */
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-	void removeGesuch(@Nonnull Gesuch gesuch);
+	void removeGesuch(@Nonnull String gesuchId);
 
+	/**
+	 * Gibt eine Liste von Gesuchen zureck, deren Gesuchsteller 1 den angegebenen Namen und Vornamen hat.
+	 * Achtung, damit ist ein Gesuchsteller nicht eindeutig identifiziert!
+	 */
 	@Nonnull
-	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
+	List<Gesuch> findGesuchByGSName(String nachname, String vorname);
 
 	/**
 	 * Gibt alle Antraege des aktuell eingeloggten Benutzers
@@ -169,7 +181,7 @@ public interface GesuchService {
 
 	/**
 	 * Gibt das Gesuch frei für das Jugendamt: Anpassung des Status inkl Kopieren der Daten des GS aus den
-	 * JA-Containern in die GS-Containern
+	 * JA-Containern in die GS-Containern. Wird u.a. beim einlesen per Scanner aufgerufen
 	 */
 	@Nonnull
 	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username);

@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -61,6 +62,18 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate datumBestaetigung = null;
+
+	@Nullable
+	private String kindFullname;
+
+	@Nullable
+	private Integer kindNummer;
+
+	@Nullable
+	private String gesuchId;
+
+	@Nullable
+	private JaxGesuchsperiode gesuchsperiode;
 
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
@@ -153,6 +166,41 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setDatumBestaetigung(@Nullable LocalDate datumBestaetigung) {
 		this.datumBestaetigung = datumBestaetigung;
+	}
+
+	public String getKindFullname() {
+		return kindFullname;
+	}
+
+	public void setKindFullname(String kindFullname) {
+		this.kindFullname = kindFullname;
+	}
+
+	@Nullable
+	public Integer getKindNummer() {
+		return kindNummer;
+	}
+
+	public void setKindNummer(@Nullable Integer kindNummer) {
+		this.kindNummer = kindNummer;
+	}
+
+	@Nullable
+	public String getGesuchId() {
+		return gesuchId;
+	}
+
+	public void setGesuchId(@Nullable String gesuchId) {
+		this.gesuchId = gesuchId;
+	}
+
+	@Nullable
+	public JaxGesuchsperiode getGesuchsperiode() {
+		return gesuchsperiode;
+	}
+
+	public void setGesuchsperiode(@Nullable JaxGesuchsperiode gesuchsperiode) {
+		this.gesuchsperiode = gesuchsperiode;
 	}
 
 	@Override

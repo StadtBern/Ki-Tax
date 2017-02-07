@@ -63,4 +63,10 @@ public interface FallService {
 	 */
 	void removeFall(@Nonnull Fall fall);
 
+	/**
+	 * Erstellt einen neuen Fall fuer den aktuellen Benutzer und setzt diesen als Besitzer des Falles.
+	 * - Nur wenn der aktuellen Benutzer ein GESUCHSTELLER ist und noch keinen Fall zugeordnet hat
+	 * - In allen anderen Fällen ein Optional.empty() wird zurueckgegeben
+	 */
+	Optional<Fall> createFallForCurrentGesuchstellerAsBesitzer();
 }

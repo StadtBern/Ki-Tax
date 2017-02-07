@@ -58,6 +58,9 @@ import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../models/TSAdresseContainer';
 import TSEinkommensverschlechterungInfoContainer from '../models/TSEinkommensverschlechterungInfoContainer';
 import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer';
+import TSMitteilung from '../models/TSMitteilung';
+import TSQuickSearchResult from '../models/dto/TSQuickSearchResult';
+import TSSearchResultEntry from '../models/dto/TSSearchResultEntry';
 
 
 export default class EbeguRestUtil {
@@ -571,7 +574,7 @@ export default class EbeguRestUtil {
             restFall.fallNummer = fall.fallNummer;
             restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
             restFall.nextNumberKind = fall.nextNumberKind;
-            restFall.besitzerUsername = fall.besitzerUsername;
+            restFall.besitzer = this.userToRestObject({}, fall.besitzer);
             return restFall;
         }
         return undefined;
@@ -584,7 +587,7 @@ export default class EbeguRestUtil {
             fallTS.fallNummer = fallFromServer.fallNummer;
             fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
             fallTS.nextNumberKind = fallFromServer.nextNumberKind;
-            fallTS.besitzerUsername = fallFromServer.besitzerUsername;
+            fallTS.besitzer = this.parseUser(new TSUser(), fallFromServer.besitzer);
             return fallTS;
         }
         return undefined;
@@ -1083,6 +1086,10 @@ export default class EbeguRestUtil {
                 restBetreuung.abwesenheitContainers.push(this.abwesenheitContainerToRestObject({}, abwesenheitCont));
             });
         }
+        restBetreuung.kindFullname = betreuung.kindFullname;
+        restBetreuung.kindNummer = betreuung.kindNummer;
+        restBetreuung.gesuchId = betreuung.gesuchId;
+        restBetreuung.gesuchsperiode = this.gesuchsperiodeToRestObject({}, betreuung.gesuchsperiode);
         restBetreuung.betreuungNummer = betreuung.betreuungNummer;
         return restBetreuung;
     }
@@ -1146,6 +1153,10 @@ export default class EbeguRestUtil {
             betreuungTS.abwesenheitContainers = this.parseAbwesenheitContainers(betreuungFromServer.abwesenheitContainers);
             betreuungTS.betreuungNummer = betreuungFromServer.betreuungNummer;
             betreuungTS.verfuegung = this.parseVerfuegung(new TSVerfuegung(), betreuungFromServer.verfuegung);
+            betreuungTS.kindFullname = betreuungFromServer.kindFullname;
+            betreuungTS.kindNummer = betreuungFromServer.kindNummer;
+            betreuungTS.gesuchId = betreuungFromServer.gesuchId;
+            betreuungTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), betreuungFromServer.gesuchsperiode);
             return betreuungTS;
         }
         return undefined;
@@ -1276,6 +1287,7 @@ export default class EbeguRestUtil {
         restPendenz.gesuchsperiodeGueltigAb = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigAb);
         restPendenz.gesuchsperiodeGueltigBis = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigBis);
         restPendenz.institutionen = pendenz.institutionen;
+        restPendenz.kinder = pendenz.kinder;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
@@ -1291,6 +1303,7 @@ export default class EbeguRestUtil {
         antragTS.fallNummer = antragFromServer.fallNummer;
         antragTS.familienName = antragFromServer.familienName;
         antragTS.angebote = antragFromServer.angebote;
+        antragTS.kinder = antragFromServer.kinder;
         antragTS.antragTyp = antragFromServer.antragTyp;
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
         antragTS.aenderungsdatum = DateUtil.localDateTimeToMoment(antragFromServer.aenderungsdatum);
@@ -1317,6 +1330,34 @@ export default class EbeguRestUtil {
             pendenzen[0] = this.parseAntragDTO(new TSAntragDTO(), data);
         }
         return pendenzen;
+    }
+
+    public parseQuickSearchResult(dataFromServer: any): TSQuickSearchResult {
+        if (dataFromServer) {
+            let resultEntries: Array<TSSearchResultEntry> = this.parseSearchResultEntries(dataFromServer.resultEntities);
+            return new TSQuickSearchResult(resultEntries, dataFromServer.numberOfResults);
+        }
+        return undefined;
+    }
+
+    private parseSearchResultEntries(entries: Array<any>): Array<TSSearchResultEntry> {
+        let searchResultEntries: TSSearchResultEntry[] = [];
+        if (entries && Array.isArray(entries)) {
+            for (let i = 0; i < entries.length; i++) {
+                searchResultEntries[i] = this.parseSearchResultEntry(new TSSearchResultEntry(), entries[i]);
+            }
+        }
+        return searchResultEntries;
+    }
+
+    private parseSearchResultEntry(entry: TSSearchResultEntry, dataFromServer: any): TSSearchResultEntry {
+        entry.additionalInformation = dataFromServer.additionalInformation;
+        entry.gesuchID = dataFromServer.gesuchID;
+        entry.resultId = dataFromServer.resultId;
+        entry.text = dataFromServer.text;
+        entry.entity = dataFromServer.entity;
+        entry.antragDTO = this.parseAntragDTO(new TSAntragDTO(), dataFromServer.antragDTO);
+        return entry;
     }
 
     public pendenzInstitutionToRestObject(restPendenz: any, pendenz: TSPendenzInstitution): any {
@@ -1821,5 +1862,55 @@ export default class EbeguRestUtil {
             return adresseContainerTS;
         }
         return undefined;
+    }
+
+    public parseMitteilung(tsMitteilung: TSMitteilung, mitteilungFromServer: any): TSMitteilung {
+        if (mitteilungFromServer) {
+            this.parseAbstractEntity(tsMitteilung, mitteilungFromServer);
+            tsMitteilung.fall = this.parseFall(new TSFall(), mitteilungFromServer.fall);
+            if (mitteilungFromServer.betreuung) {
+                tsMitteilung.betreuung = this.parseBetreuung(new TSBetreuung(), mitteilungFromServer.betreuung);
+            }
+            tsMitteilung.senderTyp = mitteilungFromServer.senderTyp;
+            tsMitteilung.empfaengerTyp = mitteilungFromServer.empfaengerTyp;
+            tsMitteilung.sender = this.parseUser(new TSUser(), mitteilungFromServer.sender);
+            tsMitteilung.empfaenger = this.parseUser(new TSUser(), mitteilungFromServer.empfaenger);
+            tsMitteilung.subject = mitteilungFromServer.subject;
+            tsMitteilung.message = mitteilungFromServer.message;
+            tsMitteilung.mitteilungStatus = mitteilungFromServer.mitteilungStatus;
+            tsMitteilung.sentDatum = DateUtil.localDateTimeToMoment(mitteilungFromServer.sentDatum);
+            return tsMitteilung;
+        }
+        return undefined;
+    }
+
+    public mitteilungToRestObject(restMitteilung: any, tsMitteilung: TSMitteilung): any {
+        if (tsMitteilung) {
+            this.abstractEntityToRestObject(restMitteilung, tsMitteilung);
+            restMitteilung.fall = this.fallToRestObject({}, tsMitteilung.fall);
+            if (tsMitteilung.betreuung) {
+                restMitteilung.betreuung = this.betreuungToRestObject({}, tsMitteilung.betreuung);
+            }
+            restMitteilung.senderTyp = tsMitteilung.senderTyp;
+            restMitteilung.empfaengerTyp = tsMitteilung.empfaengerTyp;
+            restMitteilung.sender = this.userToRestObject({}, tsMitteilung.sender);
+            restMitteilung.empfaenger = this.userToRestObject({}, tsMitteilung.empfaenger);
+            restMitteilung.subject = tsMitteilung.subject;
+            restMitteilung.message = tsMitteilung.message;
+            restMitteilung.mitteilungStatus = tsMitteilung.mitteilungStatus;
+            restMitteilung.sentDatum = DateUtil.momentToLocalDateTime(tsMitteilung.sentDatum);
+            return restMitteilung;
+        }
+        return undefined;
+    }
+
+    public parseMitteilungen(mitteilungen: any): Array<TSMitteilung> {
+        let mitteilungenList: Array<TSMitteilung> = [];
+        if (mitteilungen) {
+            for (let i = 0; i < mitteilungen.length; i++) {
+                mitteilungenList.push(this.parseMitteilung(new TSMitteilung(), mitteilungen[i]));
+            }
+        }
+        return mitteilungenList;
     }
 }

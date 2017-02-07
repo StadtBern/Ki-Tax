@@ -20,6 +20,10 @@ export class TSRoleUtil {
         return result;
     }
 
+    public static getSuperAdminRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN];
+    }
+
     public static getAdministratorRoles(): Array<TSRole> {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN];
     }
