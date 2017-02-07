@@ -21,6 +21,7 @@ export class DvAccordionTabController {
     tabid: string;
     vma: DvAccordionController;
     static $inject: any[] = [];
+
     /* @ngInject */
     constructor() {
     }

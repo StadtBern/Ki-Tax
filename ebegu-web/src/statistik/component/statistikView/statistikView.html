@@ -1,13 +1,11 @@
 <div class="statistikView" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
     <div class="row marginTop50">
         <div class="col-md-10 col-md-offset-1">
-            <dv-accordion multiple="false">
+            <dv-accordion allowMultipleSections="false">
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SCHULAMT']">
                     <dv-accordion-tab tabid="gesuch_stichtag">
-                        <tab-title>
-                            GESUCHE NACH STICHTAG
-                        </tab-title>
+                        <tab-title data-translate="GESUCHE_NACH_STICHTAG"></tab-title>
                         <tab-body>
                             <form name="gesuch_stichtag"
                                   ng-submit="vm.generateStatistik(gesuch_stichtag, 'GESUCH_STICHTAG')" novalidate>
@@ -43,7 +41,7 @@
                                     <div class="col-xs-3 col-xs-offset-3 statistik-button">
                                         <dv-loading-button type="submit"
                                                            style="margin-left:auto;margin-right:auto;width:13rem;">
-                                            <span>GENERIEREN</span>
+                                            <span data-translate="GENERIEREN"></span>
                                         </dv-loading-button>
                                     </div>
                                 </div>
@@ -54,9 +52,7 @@
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SCHULAMT']">
                     <dv-accordion-tab tabid="gesuch_zeitraum">
-                        <tab-title>
-                            GESUCHE NACH ZEITRAUM
-                        </tab-title>
+                        <tab-title data-translate="GESUCHE_NACH_ZEITRAUM"></tab-title>
                         <tab-body>
                             <form name="gesuch_zeitraum"
                                   ng-submit="vm.generateStatistik(gesuch_zeitraum, 'GESUCH_ZEITRAUM')" novalidate>
@@ -102,7 +98,7 @@
                                     <div class="col-xs-3 statistik-button">
                                         <dv-loading-button type="submit"
                                                            style="margin-left:auto;margin-right:auto;width:13rem;">
-                                            <span>  GENERIEREN</span>
+                                            <span data-translate="GENERIEREN"></span>
                                         </dv-loading-button>
                                     </div>
                                 </div>
@@ -113,9 +109,7 @@
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SCHULAMT','SACHBEARBEITER_INSTITUTION','SACHBEARBEITER_TRAEGERSCHAFT']">
                     <dv-accordion-tab tabid="kinder">
-                        <tab-title>
-                            KINDER
-                        </tab-title>
+                        <tab-title data-translate="KINDER_UPPER"></tab-title>
                         <tab-body>
                             <form name="kinder"
                                   ng-submit="vm.generateStatistik(kinder, 'KINDER')" novalidate>
@@ -161,7 +155,7 @@
                                     <div class="col-xs-3 statistik-button">
                                         <dv-loading-button type="submit"
                                                            style="margin-left:auto;margin-right:auto;width:13rem;">
-                                            <span>  GENERIEREN</span>
+                                            <span data-translate="GENERIEREN"></span>
                                         </dv-loading-button>
                                     </div>
                                 </div>
@@ -172,9 +166,7 @@
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SCHULAMT']">
                     <dv-accordion-tab tabid="gesuchsteller">
-                        <tab-title>
-                            GESUCHSTELLER
-                        </tab-title>
+                        <tab-title data-translate="GESUCHSTELLER_UPPER"></tab-title>
                         <tab-body>
                             <form name="gesuchsteller"
                                   ng-submit="vm.generateStatistik(gesuchsteller, 'GESUCHSTELLER')" novalidate>
@@ -193,7 +185,7 @@
                                     </div>
                                     <div class="col-xs-3 col-xs-offset-6 statistik-button">
                                         <dv-loading-button type="submit">
-                                            <span>  GENERIEREN</span>
+                                            <span data-translate="GENERIEREN"></span>
                                         </dv-loading-button>
                                     </div>
                                 </div>
@@ -204,9 +196,7 @@
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SACHBEARBEITER_INSTITUTION','SACHBEARBEITER_TRAEGERSCHAFT']">
                     <dv-accordion-tab tabid="kanton">
-                        <tab-title>
-                            KANTON
-                        </tab-title>
+                        <tab-title data-translate="KANTON"></tab-title>
                         <tab-body>
                             <form name="kanton"
                                   ng-submit="vm.generateStatistik(kanton, 'KANTON')" novalidate>
@@ -235,7 +225,7 @@
                                     </div>
                                     <div class="col-xs-3 col-xs-offset-3 statistik-button">
                                         <dv-loading-button type="submit">
-                                            <span>  GENERIEREN</span>
+                                            <span data-translate="GENERIEREN"></span>
                                         </dv-loading-button>
                                     </div>
                                 </div>
@@ -246,9 +236,7 @@
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR']">
                     <dv-accordion-tab tabid="betreuung">
-                        <tab-title>
-                            GESUCHSTELLER-KINDER-BETREUUNG
-                        </tab-title>
+                        <tab-title data-translate="GESUCHSTELLER_KINDER_BETREUUNG"></tab-title>
                         <tab-body>
                             <form name="betreuung"
                                   ng-submit="vm.generateStatistik(betreuung, 'GESUCHSTELLER_KINDER_BETREUUNG')"
@@ -294,7 +282,7 @@
                                     </div>
                                     <div class="col-xs-3 statistik-button">
                                         <dv-loading-button type="submit">
-                                            <span>  GENERIEREN</span>
+                                            <span data-translate="GENERIEREN"></span>
                                         </dv-loading-button>
                                     </div>
                                 </div>
