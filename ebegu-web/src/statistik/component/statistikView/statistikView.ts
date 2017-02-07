@@ -1,15 +1,18 @@
-import {IComponentOptions} from 'angular';
-import {IStateService} from 'angular-ui-router';
-import TSStatistikParameter from '../../../models/TSStatistikParameter';
-import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {IComponentOptions} from "angular";
+import {IStateService} from "angular-ui-router";
+import TSStatistikParameter from "../../../models/TSStatistikParameter";
+import {TSStatistikParameterType} from "../../../models/enums/TSStatistikParameterType";
+import TSGesuchsperiode from "../../../models/TSGesuchsperiode";
+import GesuchsperiodeRS from "../../../core/service/gesuchsperiodeRS.rest";
+import {TSRole} from "../../../models/enums/TSRole";
+import {TSRoleUtil} from "../../../utils/TSRoleUtil";
 import IFormController = angular.IFormController;
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSRole} from '../../../models/enums/TSRole';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {ReportRS} from '../../../core/service/reportRS.rest';
 import IPromise = angular.IPromise;
+import ILogService = angular.ILogService;
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
@@ -27,9 +30,9 @@ export class StatistikViewController {
     TSRole: any;
     TSRoleUtil: any;
 
-    static $inject: string[] = ['$state', 'GesuchsperiodeRS', 'ErrorService', 'ReportRS'];
+    static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportRS'];
 
-    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private errorService: ErrorService, private reportRS: ReportRS) {
+    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService, private reportRS: ReportRS) {
         this._statistikParameter = new TSStatistikParameter();
         this.initViewModel();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
@@ -45,9 +48,8 @@ export class StatistikViewController {
     public generateStatistik(form: IFormController, type?: TSStatistikParameterType): void {
         if (form.$valid) {
             let tmpType = (<any>TSStatistikParameterType)[type];
-            tmpType ? console.log(tmpType) : console.log('default, Type not recognized');
-            console.log(form.$name);
-
+            tmpType ? this.$log.debug('Statistik Type: ' + tmpType) : this.$log.debug('default, Type not recognized');
+            this.$log.debug('Validated Form: ' + form.$name);
             switch (tmpType) {
                 case TSStatistikParameterType.GESUCH_STICHTAG:
                     this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.toISOString(),
@@ -67,9 +69,8 @@ export class StatistikViewController {
                 case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
                     break;
                 default:
-                    console.log('default, Type not recognized');
+                    this.$log.debug('default, Type not recognized');
                     break;
-
             }
         }
     }
