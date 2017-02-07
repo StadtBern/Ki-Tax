@@ -372,6 +372,7 @@
     "Land_ZW": "Simbabwe",
     "VON": "von",
     "BIS": "bis",
+    "STICHTAG": "Stichtag",
     "MAENNLICH": "männlich",
     "WEIBLICH": "weiblich",
     "ALLEINERZIEHEND": "alleinerziehend",
@@ -475,6 +476,7 @@
     "FALL_UPPER": "FALL",
     "KIND_UPPER": "KIND",
     "MENU_ALL_FAELLE": "ALLE FÄLLE",
+    "MENU_STATISTIK": "STATISTIKEN",
     "MENU_FAMSITUATION": "Familiensituation",
     "MENU_GESUCHSTELLER": "Gesuchsteller/in",
     "MENU_KINDER": "Kinder",
@@ -532,6 +534,8 @@
     "BETREUUNG_UPPER": "BETREUUNG",
     "STATUS": "Status",
     "MITTEILUNG": "Mitteilung",
+    "ALLE_MITTEILUNGEN": "Alle Mitteilungen",
+    "NEUE_MITTEILUNGEN": "Neue Mitteilungen",
     "AUSSTEHEND": "ausstehend",
     "WARTEN": "warten",
     "SCHULAMT": "nicht nötig",
@@ -879,5 +883,11 @@
     "POSTEINGANG_DATUM_UPPER": "DATUM",
     "POSTEINGANG_VERANTWORTLICH_UPPER": "VERANTWORTLICH",
     "MITTEILUNGEN_NOCH_KEINE": "Für diesen Fall wurden noch keine Mitteilungen gesendet",
-    "SEARCH_LIST": "Alle Suchresultate"
+    "SEARCH_LIST": "Alle Suchresultate",
+    "GENERIEREN": "GENERIEREN",
+    "GESUCHE_NACH_STICHTAG": "GESUCHE NACH STICHTAG",
+    "GESUCHE_NACH_ZEITRAUM": "GESUCHE NACH ZEITRAUM",
+    "GESUCHSTELLER_UPPER": "GESUCHSTELLER",
+    "KANTON": "KANTON",
+    "GESUCHSTELLER_KINDER_BETREUUNG": "GESUCHSTELLER-KINDER-BETREUUNG"
 }
