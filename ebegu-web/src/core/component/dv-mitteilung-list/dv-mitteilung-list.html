@@ -18,7 +18,7 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <dv-input-container class="form-group">
-                            <label class="md-no-float" data-translate="MITTEILUNG_SUBJECT" for="subject_ID"></label>
+                            <label class="md-no-float required" data-translate="MITTEILUNG_SUBJECT" for="subject_ID"></label>
                             <input id="subject_ID" type="text" name="subject"
                                    ng-model="vm.getCurrentMitteilung().subject"
                                    dv-max-length
@@ -33,7 +33,7 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <dv-input-container class="form-group">
-                            <label class="md-no-float" for="message"
+                            <label class="md-no-float required" for="message"
                                    data-translate="MITTEILUNG_MESSAGE"></label>
                             <textarea md-no-autogrow class="form-control message-textarea" rows="4" id="message"
                                       maxlength="4000"
