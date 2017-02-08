@@ -3,8 +3,11 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
@@ -28,7 +31,7 @@ import java.util.*;
 @Stateless
 @Local(ZahlungService.class)
 @RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
-@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "SpringAutowiredFieldsWarningInspection"})
 public class ZahlungServiceBean extends AbstractBaseService implements ZahlungService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ZahlungServiceBean.class.getSimpleName());
@@ -41,6 +44,12 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Inject
 	private VerfuegungService verfuegungService;
+
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
@@ -56,7 +65,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// 		jedoch seit Ende Monat des letzten Auftrags -> 1 oder mehrere ganze Monate
 		// - Zeitraum, welcher fuer die Berechnung der rueckwirkenden Korrekturen gilt: Letztes datumFaellig bis aktuelles DatumFaellig
 		// Den letzten Zahlungsauftrag lesen
-		LocalDateTime lastDatumFaellig = LocalDateTime.MIN; // Default, falls dies der erste Auftrag ist
+		LocalDateTime lastDatumFaellig = Constants.START_OF_DATETIME; // Default, falls dies der erste Auftrag ist
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
 		if (lastZahlungsauftrag.isPresent()) {
 			lastDatumFaellig = lastZahlungsauftrag.get().getDatumFaellig();
@@ -78,52 +87,51 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		for (VerfuegungZeitabschnitt zeitabschnitt : mutationsVerfuegungsZeitabschnitte) {
 			createZahlungspositionenKorrektur(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 		}
+		//TODO ISO-File generieren
+		zahlungsauftrag.setFilecontent("TODO das File");
 		return persistence.persist(zahlungsauftrag);
 	}
 
-
-
 	public Collection<VerfuegungZeitabschnitt> getGueltigeVerfuegungZeitabschnitte(LocalDate zeitabschnittVon, LocalDate zeitabschnittBis) {
-		//TODO implement
-
 		Objects.requireNonNull(zeitabschnittVon, "zeitabschnittVon muss gesetzt sein");
 		Objects.requireNonNull(zeitabschnittBis, "zeitabschnittBis muss gesetzt sein");
-
-		// Datum Von
-		// Datum Bis
-		// Gesuch-Id in ...
-		// Betreuungsangebot KITA
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = cb.createQuery(VerfuegungZeitabschnitt.class);
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
+		Join<Verfuegung, Betreuung> joinBetreuung = root.join(VerfuegungZeitabschnitt_.verfuegung).join(Verfuegung_.betreuung);
 
+		List<Expression<Boolean>> predicates = new ArrayList<>();
 
-		ParameterExpression<LocalDate> paramDatumVon = cb.parameter(LocalDate.class, "zeitabschnittVon");
-		ParameterExpression<LocalDate> paramDatumBis = cb.parameter(LocalDate.class, "zeitabschnittBis");
+		// Datum Von
+		Predicate predicateStart = cb.lessThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb), zeitabschnittBis);
+		predicates.add(predicateStart);
+		// Datum Bis
+		Predicate predicateEnd = cb.greaterThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis), zeitabschnittVon);
+		predicates.add(predicateEnd);
+		// Nur Angebot KITA
+		Predicate predicateAngebot = cb.equal(joinBetreuung.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.KITA);
+		predicates.add(predicateAngebot);
+		// Nur neueste Verfuegung jedes Falls beachten
+		Optional<Gesuchsperiode> gesuchsperiodeAm = gesuchsperiodeService.getGesuchsperiodeAm(zeitabschnittBis);
+		if (gesuchsperiodeAm.isPresent()) {
+			List<String> gesuchIdsOfAktuellerAntrag = gesuchService.findGesuchIdsOfAktuellerAntrag(gesuchsperiodeAm.get());
+			Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
+			predicates.add(predicateAktuellesGesuch);
+		} else {
+			throw new EbeguRuntimeException("getGueltigeVerfuegungZeitabschnitte", "Keine Gesuchsperiode gefunden fuer Stichtag " + Constants.DATE_FORMATTER.format(zeitabschnittBis));
+		}
 
-		ParameterExpression<LocalDate> paramAngebotTyp = cb.parameter(LocalDate.class, "zeitabschnittBis");
-
-//		Predicate predicateDatumVon = cb.equal(root.get(Betreuung_.betreuungsstatus), Betreuungsstatus.WARTEN);
-//
-////		root.fetch(Betreuung_.betreuungspensumContainers, JoinType.LEFT);
-////		root.fetch(Betreuung_.abwesenheitContainers, JoinType.LEFT);
-//		query.select(root);
-//		Predicate idPred = cb.equal(root.get(Betreuung_.id), key);
-//		query.where(idPred);
-//		Betreuung result = persistence.getCriteriaSingleResult(query);
-//		if (result != null) {
-//			authorizer.checkReadAuthorization(result);
-//		}
-//		return Optional.ofNullable(result);
-
-
-
-
-		return Collections.EMPTY_LIST;
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+		return persistence.getCriteriaResults(query);
 	}
 
 	private Collection<VerfuegungZeitabschnitt> getMutationsVerfuegungsZeitabschnitte(LocalDateTime datumVerfuegtVon, LocalDateTime datumVerfuegtBis, LocalDate zeitabschnittVon, LocalDate zeitabschnittBis) {
+		Objects.requireNonNull(datumVerfuegtVon, "datumVerfuegtVon muss gesetzt sein");
+		Objects.requireNonNull(datumVerfuegtBis, "datumVerfuegtBis muss gesetzt sein");
+		Objects.requireNonNull(zeitabschnittVon, "zeitabschnittVon muss gesetzt sein");
+		Objects.requireNonNull(zeitabschnittBis, "zeitabschnittBis muss gesetzt sein");
+
 		//TODO implement
 		return Collections.EMPTY_LIST;
 	}
@@ -271,7 +279,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
-	@RolesAllowed(value = {UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
 	public Zahlung zahlungBestaetigen(String zahlungId) {
 		Objects.requireNonNull(zahlungId, "zahlungId muss gesetzt sein");
 		Zahlung zahlung = persistence.find(Zahlung.class, zahlungId);
