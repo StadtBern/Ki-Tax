@@ -164,7 +164,10 @@ export default class GesuchModelManager {
      */
     public setGesuch(gesuch: TSGesuch): void {
         this.gesuch = gesuch;
-        this.setHiddenSteps();
+        if (this.gesuch) {
+            this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
+            this.setHiddenSteps();
+        }
     }
 
     public getGesuch(): TSGesuch {

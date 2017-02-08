@@ -9,6 +9,8 @@ import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
+import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
+import IRootScopeService = angular.IRootScopeService;
 
 export default class WizardStepManager {
 
@@ -20,10 +22,15 @@ export default class WizardStepManager {
     private wizardStepsSnapshot: Array<TSWizardStep> = [];
 
 
-    static $inject = ['AuthServiceRS', 'WizardStepRS', '$q'];
+    static $inject = ['AuthServiceRS', 'WizardStepRS', '$q', '$rootScope'];
     /* @ngInject */
-    constructor(private authServiceRS: AuthServiceRS, private wizardStepRS: WizardStepRS, private $q: IQService) {
+    constructor(private authServiceRS: AuthServiceRS, private wizardStepRS: WizardStepRS, private $q: IQService,
+                private $rootScope: IRootScopeService) {
         this.setAllowedStepsForRole(authServiceRS.getPrincipalRole());
+
+        $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
+            this.setAllowedStepsForRole(authServiceRS.getPrincipalRole());
+        });
     }
 
     public getCurrentStep(): TSWizardStep {

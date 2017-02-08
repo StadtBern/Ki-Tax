@@ -135,7 +135,7 @@ public class FreigabeCopyUtil {
 	}
 
 	private static void copyAbwesenheit(@Nonnull Abwesenheit abwesenheitGS, @Nonnull Abwesenheit abwesenheitJA) {
-		abwesenheitGS.setGueltigkeit(abwesenheitJA.getGueltigkeit());
+		abwesenheitGS.setGueltigkeit(new DateRange(abwesenheitJA.getGueltigkeit()));
 	}
 
 	private static void copyGesuchstellerContainer(@Nullable GesuchstellerContainer container) {

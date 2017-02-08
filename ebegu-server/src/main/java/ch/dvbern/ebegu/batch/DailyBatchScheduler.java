@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.batch;
 
+import ch.dvbern.ebegu.enums.UserRoleName;
 import ch.dvbern.ebegu.services.DailyBatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @Singleton
-@RunAs(value = "SUPER_ADMIN")
+@RunAs(value = UserRoleName.SUPER_ADMIN)
 public class DailyBatchScheduler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DailyBatchScheduler.class);

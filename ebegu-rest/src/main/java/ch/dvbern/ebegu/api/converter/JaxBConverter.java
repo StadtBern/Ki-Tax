@@ -1516,14 +1516,14 @@ public class JaxBConverter {
 		Validate.notNull(jaxAbwesenheitContainers);
 		Validate.notNull(abwesenheitContainer);
 		convertAbstractFieldsToEntity(jaxAbwesenheitContainers, abwesenheitContainer);
-		if (jaxAbwesenheitContainers.getAbwensenheitGS() != null) {
+		if (jaxAbwesenheitContainers.getAbwesenheitGS() != null) {
 			Abwesenheit abwesenheitGS = new Abwesenheit();
 			if (abwesenheitContainer.getAbwesenheitGS() != null) {
 				abwesenheitGS = abwesenheitContainer.getAbwesenheitGS();
 			}
 			// Das Setzen von alten IDs ist noetigt im Fall dass Betreuungsangebot fuer eine existierende Abwesenheit geaendert wird, da sonst doppelte Verknuepfungen gemacht werden
 			final String oldID = abwesenheitGS.getId();
-			final Abwesenheit convertedAbwesenheitGS = abwesenheitToEntity(jaxAbwesenheitContainers.getAbwensenheitGS(), abwesenheitGS);
+			final Abwesenheit convertedAbwesenheitGS = abwesenheitToEntity(jaxAbwesenheitContainers.getAbwesenheitGS(), abwesenheitGS);
 			convertedAbwesenheitGS.setId(oldID);
 			abwesenheitContainer.setAbwesenheitGS(convertedAbwesenheitGS);
 		}
@@ -1757,7 +1757,7 @@ public class JaxBConverter {
 			final JaxAbwesenheitContainer jaxAbwesenheitContainer = new JaxAbwesenheitContainer();
 			convertAbstractFieldsToJAX(abwesenheitContainer, jaxAbwesenheitContainer);
 			if (abwesenheitContainer.getAbwesenheitGS() != null) {
-				jaxAbwesenheitContainer.setAbwensenheitGS(abwesenheitToJax(abwesenheitContainer.getAbwesenheitGS()));
+				jaxAbwesenheitContainer.setAbwesenheitGS(abwesenheitToJax(abwesenheitContainer.getAbwesenheitGS()));
 			}
 			if (abwesenheitContainer.getAbwesenheitJA() != null) {
 				jaxAbwesenheitContainer.setAbwesenheitJA(abwesenheitToJax(abwesenheitContainer.getAbwesenheitJA()));

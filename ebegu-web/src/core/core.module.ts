@@ -43,6 +43,8 @@ import DokumenteRS from '../gesuch/service/dokumenteRS.rest';
 import {DVDokumenteListConfig} from './component/dv-dokumente-list/dv-dokumente-list';
 import {DVLoading} from './directive/dv-loading/dv-loading';
 import {DVLoadingButton} from './directive/dv-loading-button/dv-loading-button';
+import {DvAccordionComponentConfig} from './component/dv-accordion/dv-accordion';
+import {DvAccordionTabComponentConfig} from './component/dv-accordion/dv-accordion-tab/dv-accordion-tab';
 import HttpResponseInterceptor from './service/HttpResponseInterceptor';
 import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
 import 'ng-file-upload';
@@ -193,5 +195,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
     .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
     .component('dvMitteilungList', new DVMitteilungListConfig())
+    .component('dvAccordion', new DvAccordionComponentConfig())
+    .component('dvAccordionTab', new DvAccordionTabComponentConfig())
     .service('MahnungRS', MahnungRS);
 

@@ -29,7 +29,7 @@ import java.util.List;
 public class SchulungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	private int anzahlUserSchonVorhanden = 1;
-	private int anzahlGesuchsteller = 15;
+	private int anzahlGesuchsteller = 16;
 	private int anzahlInstitutionsBenutzer = 2;
 
 	@Inject

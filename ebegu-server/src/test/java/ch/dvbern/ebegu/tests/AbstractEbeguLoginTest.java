@@ -59,7 +59,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		return dummyAdmin;
 	}
 
-	protected void loginAsGesuchsteller(String username) {
+	protected Benutzer loginAsGesuchsteller(String username) {
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
 		Benutzer user = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, username, null, null, mandant);
 		user = persistence.merge(user);
@@ -68,6 +68,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		} catch (LoginException e) {
 			LOG.error("could not login as gesuchsteller {} for tests", username);
 		}
+		return user;
 		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
 	}
 
