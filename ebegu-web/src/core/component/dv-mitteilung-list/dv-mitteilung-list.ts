@@ -278,13 +278,13 @@ export class DVMitteilungListController {
     public betreuungAsString(mitteilung : TSMitteilung) : string {
         let betreuungAsString : string;
         if (mitteilung.betreuung) {
-            let bgNummer :string = this.ebeguUtil.calculateBetreuungsId(mitteilung.betreuung.gesuchsperiode, mitteilung.fall, mitteilung.betreuung.kindNummer, mitteilung.betreuung.betreuungNummer);
+            let bgNummer : string = this.ebeguUtil.calculateBetreuungsId(mitteilung.betreuung.gesuchsperiode, mitteilung.fall, mitteilung.betreuung.kindNummer, mitteilung.betreuung.betreuungNummer);
             betreuungAsString = mitteilung.betreuung.kindFullname + ', ' + bgNummer;
         }
         return betreuungAsString;
     }
 
-    public gotoBetreuung(mitteilung : TSMitteilung) :void {
+    public gotoBetreuung(mitteilung : TSMitteilung) : void {
         this.$state.go('gesuch.betreuung', {
             betreuungNumber: mitteilung.betreuung.betreuungNummer,
             kindNumber: mitteilung.betreuung.kindNummer,
