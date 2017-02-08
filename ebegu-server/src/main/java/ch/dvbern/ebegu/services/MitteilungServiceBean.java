@@ -98,14 +98,17 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	 */
 	private void ensureEmpfaengerIsSet(@Nonnull Mitteilung mitteilung) {
 
-		if (MitteilungTeilnehmerTyp.JUGENDAMT.equals(mitteilung.getEmpfaengerTyp()) && mitteilung.getEmpfaenger() == null) {
-			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
-			if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
-				Optional<Benutzer> benutzer = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
-				if (benutzer.isPresent()) {
-					mitteilung.setEmpfaenger(benutzer.get());
-				} else {
-					LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen");
+		if (MitteilungTeilnehmerTyp.JUGENDAMT.equals(mitteilung.getEmpfaengerTyp())) {
+			mitteilung.setEmpfaenger(mitteilung.getFall().getVerantwortlicher());
+			if (mitteilung.getEmpfaenger() == null) {
+				String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+				if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
+					Optional<Benutzer> benutzer = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
+					if (benutzer.isPresent()) {
+						mitteilung.setEmpfaenger(benutzer.get());
+					} else {
+						LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen");
+					}
 				}
 			}
 		}
