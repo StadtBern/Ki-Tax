@@ -10,6 +10,7 @@ import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import TSBetreuungsmitteilung from '../../models/TSBetreuungsmitteilung';
 import TSBetreuungspensum from '../../models/TSBetreuungspensum';
 import ITranslateService = angular.translate.ITranslateService;
+import DateUtil from '../../utils/DateUtil';
 
 export default class MitteilungRS {
     serviceURL: string;
@@ -182,7 +183,8 @@ export default class MitteilungRS {
                 if (i > 1) {
                     message += '\n';
                 }
-                message += 'Pensum ' + i + ' vom ' + betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb
+                message += 'Pensum ' + i + ' vom '
+                    + DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb, 'DD.MM.YYYY')
                     + ': ' + betpenContainer.betreuungspensumJA.pensum + '%';
             }
             i++;

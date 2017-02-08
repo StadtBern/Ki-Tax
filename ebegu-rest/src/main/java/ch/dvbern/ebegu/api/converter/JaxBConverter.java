@@ -2248,8 +2248,7 @@ public class JaxBConverter {
 		return mitteilung;
 	}
 
-	public JaxMitteilung mitteilungToJAX(Mitteilung persistedMitteilung) {
-		final JaxMitteilung jaxMitteilung = new JaxMitteilung();
+	public JaxMitteilung mitteilungToJAX(Mitteilung persistedMitteilung, JaxMitteilung jaxMitteilung) {
 		convertAbstractFieldsToJAX(persistedMitteilung, jaxMitteilung);
 		if (persistedMitteilung.getEmpfaenger() != null) {
 			jaxMitteilung.setEmpfaenger(benutzerToAuthLoginElement(persistedMitteilung.getEmpfaenger()));
@@ -2284,14 +2283,17 @@ public class JaxBConverter {
 		if (mitteilungJAXP.getBetreuungspensen() != null) {
 			betreuungsmitteilung.setBetreuungspensen(new HashSet<>());
 			for (JaxBetreuungsmitteilungPensum jaxBetreuungspensum : mitteilungJAXP.getBetreuungspensen()) {
-				betreuungsmitteilung.getBetreuungspensen().add(betreuungsmitteilungpensumToEntity(jaxBetreuungspensum, new BetreuungsmitteilungPensum()));
+				final BetreuungsmitteilungPensum pensum = betreuungsmitteilungpensumToEntity(jaxBetreuungspensum, new BetreuungsmitteilungPensum());
+				pensum.setBetreuungsmitteilung(betreuungsmitteilung);
+				betreuungsmitteilung.getBetreuungspensen().add(pensum);
 			}
 		}
 		return betreuungsmitteilung;
 	}
 
 	public JaxBetreuungsmitteilung betreuungsmitteilungToJAX(Betreuungsmitteilung persistedMitteilung) {
-		final JaxBetreuungsmitteilung jaxBetreuungsmitteilung = (JaxBetreuungsmitteilung) mitteilungToJAX(persistedMitteilung);
+		final JaxBetreuungsmitteilung jaxBetreuungsmitteilung = new JaxBetreuungsmitteilung();
+		mitteilungToJAX(persistedMitteilung, jaxBetreuungsmitteilung);
 		if (persistedMitteilung.getBetreuungspensen() != null) {
 			jaxBetreuungsmitteilung.setBetreuungspensen(new ArrayList<>());
 			for (BetreuungsmitteilungPensum betreuungspensum : persistedMitteilung.getBetreuungspensen()) {

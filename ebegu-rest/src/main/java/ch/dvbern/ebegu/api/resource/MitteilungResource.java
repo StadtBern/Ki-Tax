@@ -68,7 +68,7 @@ public class MitteilungResource {
 
 		Mitteilung mitteilung = readAndConvertMitteilung(mitteilungJAXP);
 		Mitteilung persistedMitteilung = this.mitteilungService.sendMitteilung(mitteilung);
-		return converter.mitteilungToJAX(persistedMitteilung);
+		return converter.mitteilungToJAX(persistedMitteilung, new JaxMitteilung());
 	}
 
 	@Nullable
@@ -98,7 +98,7 @@ public class MitteilungResource {
 
 		Mitteilung mitteilung = readAndConvertMitteilung(mitteilungJAXP);
 		Mitteilung persistedMitteilung = this.mitteilungService.saveEntwurf(mitteilung);
-		return converter.mitteilungToJAX(persistedMitteilung);
+		return converter.mitteilungToJAX(persistedMitteilung, new JaxMitteilung());
 	}
 
 	@Nullable
@@ -113,7 +113,7 @@ public class MitteilungResource {
 
 		final Mitteilung mitteilung = mitteilungService.setMitteilungGelesen(mitteilungId.getId());
 
-		return converter.mitteilungToJAX(mitteilung);
+		return converter.mitteilungToJAX(mitteilung, new JaxMitteilung());
 	}
 
 	@Nullable
@@ -128,7 +128,7 @@ public class MitteilungResource {
 
 		final Mitteilung mitteilung = mitteilungService.setMitteilungErledigt(mitteilungId.getId());
 
-		return converter.mitteilungToJAX(mitteilung);
+		return converter.mitteilungToJAX(mitteilung, new JaxMitteilung());
 	}
 
 	@Nullable
@@ -145,7 +145,7 @@ public class MitteilungResource {
 		String mitteilungID = converter.toEntityId(mitteilungId);
 		Optional<Mitteilung> optional = mitteilungService.findMitteilung(mitteilungID);
 
-		return optional.map(mitteilung -> converter.mitteilungToJAX(mitteilung)).orElse(null);
+		return optional.map(mitteilung -> converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).orElse(null);
 	}
 
 	@Nullable
@@ -163,7 +163,7 @@ public class MitteilungResource {
 		Optional<Fall> fall = fallService.findFall(convertedFallID);
 		if (fall.isPresent()) {
 			final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForCurrentRolle(fall.get());
-			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
+			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).collect(Collectors.toList());
 		}
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}
@@ -183,7 +183,7 @@ public class MitteilungResource {
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(id);
 		if (betreuung.isPresent()) {
 			final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForCurrentRolle(betreuung.get());
-			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
+			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).collect(Collectors.toList());
 		}
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolleForBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 	}
@@ -198,7 +198,7 @@ public class MitteilungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForPosteingang();
-		return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
+		return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).collect(Collectors.toList());
 	}
 
 	@Nullable
@@ -231,7 +231,7 @@ public class MitteilungResource {
 			if (mitteilung == null) {
 				return null;
 			}
-			return converter.mitteilungToJAX(mitteilung);
+			return converter.mitteilungToJAX(mitteilung, new JaxMitteilung());
 		}
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}
@@ -254,7 +254,7 @@ public class MitteilungResource {
 			if (mitteilung == null) {
 				return null;
 			}
-			return converter.mitteilungToJAX(mitteilung);
+			return converter.mitteilungToJAX(mitteilung, new JaxMitteilung());
 		}
 		throw new EbeguEntityNotFoundException("getEntwurfForCurrentRolleForBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungId invalid: " + betreuungId.getId());
 	}
@@ -291,7 +291,7 @@ public class MitteilungResource {
 		Optional<Fall> fall = fallService.findFall(convertedFallID);
 		if (fall.isPresent()) {
 			final Collection<Mitteilung> mitteilungen = mitteilungService.setAllNewMitteilungenOfFallGelesen(fall.get());
-			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
+			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).collect(Collectors.toList());
 		}
 		throw new EbeguEntityNotFoundException("setAllNewMitteilungenOfFallGelesen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}

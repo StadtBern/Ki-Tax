@@ -22,8 +22,11 @@ import {IBetreuungStateParams} from '../../gesuch.route';
 import Moment = moment.Moment;
 import IScope = angular.IScope;
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
+let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 
 export class BetreuungViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -46,12 +49,12 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
-        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS'];
+        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams,
-                private mitteilungRS: MitteilungRS) {
+                private mitteilungRS: MitteilungRS, private dvDialog: DvDialog) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
 
         this.mutationsmeldungModel = undefined;
@@ -418,12 +421,19 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public mutationsmeldungSenden(): void {
         // send mutationsmeldung (dummy copy)
         if (this.mutationsmeldungModel) {
-            this.mitteilungRS.sendbetreuungsmitteilung(this.gesuchModelManager.getGesuch().fall,
-                this.mutationsmeldungModel);
+            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: 'MUTATIONSMELDUNG_CONFIRMATION',
+                deleteText: 'MUTATIONSMELDUNG_BESCHREIBUNG'
+            }).then(() => {   //User confirmed removal
+                this.mitteilungRS.sendbetreuungsmitteilung(this.gesuchModelManager.getGesuch().fall,
+                    this.mutationsmeldungModel).then((response) => {
+
+                    // reset values. is needed??????
+                    this.isMutationsmeldungStatus = false;
+                    this.mutationsmeldungModel = undefined;
+                    this.$state.go('gesuch.betreuungen', {gesuchId: this.getGesuchId()});
+                });
+            });
         }
-        // reset values. is needed??????
-        this.isMutationsmeldungStatus = false;
-        this.mutationsmeldungModel = undefined;
-        this.$state.go('gesuch.betreuungen', { gesuchId: this.getGesuchId() });
     }
 }

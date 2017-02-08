@@ -300,4 +300,11 @@ export class DVMitteilungListController {
             gesuchId: mitteilung.betreuung.gesuchId
         });
     }
+
+    public isBetreuungsmitteilung(): boolean {
+        return false;
+    }
+
+    public applyBetreuungsmitteilung(): void {
+    }
 }

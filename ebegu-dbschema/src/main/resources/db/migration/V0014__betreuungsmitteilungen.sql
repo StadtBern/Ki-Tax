@@ -29,6 +29,9 @@ CREATE TABLE betreuungsmitteilung_pensum (
   PRIMARY KEY (id)
 );
 
+ALTER TABLE mitteilung ADD dtype varchar(31) not null;
+ALTER TABLE mitteilung_aud ADD dtype varchar(31);
+
 ALTER TABLE betreuungsmitteilung_pensum_aud
   ADD CONSTRAINT FK_betreuungsmitteilung_pensum_aud_revinfo
 FOREIGN KEY (rev)
