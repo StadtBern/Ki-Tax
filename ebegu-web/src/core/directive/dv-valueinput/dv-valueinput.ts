@@ -71,7 +71,7 @@ export class ValueinputController {
             }
             let value = modelValue || ValueinputController.stringToNumber(viewValue);
 
-            return !isNaN(Number(value)) && (Number(value) < 999999999999) && this.allowNegative ? true : Number(value) > 0;
+            return !isNaN(Number(value)) && (Number(value) < 999999999999) && this.allowNegative ? true : Number(value) >= 0;
         };
     }
 
@@ -108,7 +108,15 @@ export class ValueinputController {
     }
 
     public removeNotDigits(): void {
-        let transformedInput = this.valueinput.replace(/\D+/g, ''); // removes all "not digit"
+        let transformedInput = this.valueinput;
+        let sign: string = '';
+        if (this.allowNegative === true && this.valueinput && this.valueinput.indexOf('-') === 0) { // if negative allowed, get sign
+            sign = '-';
+            transformedInput.substr(1); // get just the number part
+        }
+        transformedInput = transformedInput.replace(/\D+/g, ''); // removes all "not digit"
+        transformedInput = sign + transformedInput; // add sign
+
         if (this.valueinput !== transformedInput) {
             this.ngModelCtrl.$setViewValue(transformedInput);
             this.ngModelCtrl.$render();
