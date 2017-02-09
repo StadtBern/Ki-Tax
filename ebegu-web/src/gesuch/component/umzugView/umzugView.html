@@ -36,14 +36,13 @@
                                     <label data-translate="BETROFFENE_WAEHLEN" for="betroffene">
                                     </label>
                                     <div class="dv-select-style">
-                                        <select name="betroffene" id="betroffene"
+                                        <select name="betroffene-{{$index}}" id="betroffene-{{$index}}"
                                                 ng-model="umzugAdresse.betroffene"
                                                 class="form-control"
                                                 ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
                                                 ng-required="true">
                                         </select>
-
-                                        <dv-error-messages for="vm.form.betroffene.$error"
+                                        <dv-error-messages for="vm.form['betroffene-' + $index].$error"
                                                            class="error"></dv-error-messages>
                                     </div>
                                 </div>
@@ -53,7 +52,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <dv-adresse adresse="umzugAdresse.adresse" show-nicht-in-gemeinde="true"
-                                            prefix="umzug"></dv-adresse>
+                                            prefix="umzug-{{$index}}"></dv-adresse>
                             </div>
                         </div>
                         <!-- Umzug loeschen-->
