@@ -57,6 +57,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     public gesuchEinreichen(): IPromise<void> {
         this.isFreigebenClicked = true;
         if (this.isGesuchValid() && this.bestaetigungFreigabequittung === true) {
+            this.form.$setPristine();
             return this.DvDialog.showDialog(dialogTemplate, RemoveDialogController, {
                 title: 'CONFIRM_GESUCH_FREIGEBEN',
                 deleteText: 'CONFIRM_GESUCH_FREIGEBEN_DESCRIPTION'
@@ -137,7 +138,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     public canBeFreigegeben(): boolean {
         return this.wizardStepManager.areAllStepsOK() &&
             this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
-            && !this.isGesuchReadonly();
+            && !this.isGesuchReadonly() && this.isGesuchInStatus(TSAntragStatus.IN_BEARBEITUNG_GS);
     }
 
     private getZustelladresse(): TSZustelladresse {

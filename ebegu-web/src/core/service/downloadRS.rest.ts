@@ -144,4 +144,10 @@ export class DownloadRS {
         return true;
 
     }
+
+    private download(href: string) {
+        href = href + ';attachment=true;';
+        this.$window.open(href, 'download-helper');
+        return href;
+    }
 }

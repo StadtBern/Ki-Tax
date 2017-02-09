@@ -177,7 +177,7 @@
                 </datasource>
                 <xa-datasource jndi-name="java:/jdbc/ebegu" pool-name="ebegu" use-ccm="true">
                     <xa-datasource-property name="url">
-                        jdbc:mysql://localhost/ebegu
+                        jdbc:mysql://localhost:3304/ebegu
                     </xa-datasource-property>
                     <xa-datasource-class>org.mariadb.jdbc.MariaDbDataSource</xa-datasource-class>
                     <driver>mariadbsql</driver>

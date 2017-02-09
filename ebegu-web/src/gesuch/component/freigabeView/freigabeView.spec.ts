@@ -65,6 +65,10 @@ describe('freigabeView', function () {
         spyOn(controller, 'isGesuchValid').and.callFake(function () {
             return controller.form.$valid;
         });
+
+        let form = TestDataUtil.createDummyForm();
+        // $rootScope.form = form;
+        controller.form = form;
     }));
     describe('canBeFreigegeben', function () {
         it('should return false when not all steps are true', function () {
@@ -90,6 +94,7 @@ describe('freigabeView', function () {
             spyOn(wizardStepManager, 'areAllStepsOK').and.returnValue(true);
             spyOn(wizardStepManager, 'hasStepGivenStatus').and.returnValue(true);
             spyOn(gesuchModelManager, 'isGesuchReadonly').and.returnValue(false);
+            spyOn(controller, 'isGesuchInStatus').and.returnValue(true);
             expect(controller.canBeFreigegeben()).toBe(true);
         });
     });
