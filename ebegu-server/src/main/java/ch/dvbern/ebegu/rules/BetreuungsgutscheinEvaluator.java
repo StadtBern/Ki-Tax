@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.rechner.AbstractBGRechner;
 import ch.dvbern.ebegu.rechner.BGRechnerFactory;
@@ -106,13 +107,20 @@ public class BetreuungsgutscheinEvaluator {
 			for (Betreuung betreuung : betreuungen) {
 
 				if (!betreuung.getBetreuungsangebotTyp().isSchulamt()) {
-
-					if (betreuung.getBetreuungsstatus() != null && betreuung.getBetreuungsstatus().isGeschlossen()) {
-						// Verfuegte Betreuungen duerfen nicht neu berechnet werden
-						LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
-						// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
-						restanspruchZeitabschnitte = getRestanspruchForVerfuegteBetreung(betreuung);
-						continue;
+					//initiale Restansprueche vorberechnen
+					if (betreuung.getBetreuungsstatus() != null) {
+						if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)
+							&& betreuung.getVerfuegungOrVorgaengerVerfuegung() == null) {
+							// es kann sein dass eine neue Betreuung in der Mutation abgelehnt wird, dann gibts keinen Vorgaenger und keine aktuelle
+							//verfuegung und wir muessen keinenr restanspruch berechnen (vergl EBEGU-890)
+							continue;
+						} else if (betreuung.getBetreuungsstatus().isGeschlossen()) {
+							// Verfuegte Betreuungen duerfen nicht neu berechnet werden
+							LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
+							// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
+							restanspruchZeitabschnitte = getRestanspruchForVerfuegteBetreung(betreuung);
+							continue;
+						}
 					}
 
 					// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
@@ -176,7 +184,8 @@ public class BetreuungsgutscheinEvaluator {
 		List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte;
 		Verfuegung verfuegungForRestanspruch = betreuung.getVerfuegungOrVorgaengerVerfuegung();
 		if (verfuegungForRestanspruch == null) {
-			throw new EbeguRuntimeException("getRestanspruchForVerfuegteBetreung", "Ungueltiger Zustand, geschlossene  Betreuung ohne Verfuegung oder vorgaengerverfuegung" + betreuung.getId(), betreuung.getId());
+			String message = "Ungueltiger Zustand, geschlossene  Betreuung ohne Verfuegung oder Vorgaengerverfuegung (" + betreuung.getId()+")";
+			throw new EbeguRuntimeException("getRestanspruchForVerfuegteBetreung", message, message);
 		}
 		restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(
 			verfuegungForRestanspruch.getBetreuung(), verfuegungForRestanspruch.getZeitabschnitte());
