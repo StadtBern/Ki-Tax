@@ -1,0 +1,82 @@
+<html>
+<head>
+    <!--INFO: This Pages purpose is to enable the user to download a file without being blocked by the browsers popup-blockers-->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600,400italic' rel='stylesheet'
+          type='text/css'>
+    <style>
+        html {
+            font-size: 10px;
+        }
+
+        body {
+            margin: 20px 50px;
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            font-size: 1.6rem;
+        }
+
+        h1 {
+            font-weight: 700;
+            font-style: normal;
+            font-size: 1.6rem;
+            letter-spacing: 0.1rem;
+            line-height: 2.0rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            /*width:  24rem;*/
+            /*height:  15rem;*/
+
+            font-weight: 400;
+            font-style: normal;
+            white-space: nowrap;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 0.2rem;
+            border: none;
+            background: #D50025;
+            color: #FFFFFF;
+            padding: 0 1.5rem 0;
+            height: 3rem;
+        }
+
+        .filedownload {
+            max-width: 60rem;
+        }
+
+        .btnContainer {
+            margin-top: 5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        #closeButton {
+            display: none;
+        }
+
+    </style>
+</head>
+<body style="margin: 50px;">
+<!--Anhand der id='spinnerCont' wird in downloadRS.rest.ts#hideSpinner der spinner versteckt-->
+
+
+<div class="filedownload">
+    <div>
+        <h1>Filedownload</h1>
+        <p>Das gew&uuml;nschte Dokument wird aufbereitet und angezeigt / heruntergeladen.</p>
+        <p>Sie k&ouml;nnen dieses Fenster nach dem Herunterladen schliessen</p>
+    </div>
+
+    <div class="btnContainer">
+        <button id="closeButton" type="button" onclick="window.close()">
+            <span>Fenster schliessen</span>
+        </button>
+        <div id="spinnerCont">
+            <img src="spinner.gif" alt="warten">
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

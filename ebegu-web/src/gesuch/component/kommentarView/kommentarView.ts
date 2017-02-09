@@ -21,7 +21,6 @@ import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
-import EbeguUtil from '../../../utils/EbeguUtil';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
@@ -97,7 +96,7 @@ export class KommentarViewController {
     }
 
     download() {
-        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
+        let win: Window = this.downloadRS.prepareDownloadWindow();
         this.getPapiergesuchFromServer().then((promiseValue: any) => {
             if (!this.hasPapiergesuch()) {
                 this.$log.error('Kein Papiergesuch für Download vorhanden!');

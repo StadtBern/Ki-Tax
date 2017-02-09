@@ -1,10 +1,11 @@
-import {IHttpService, ILogService, IPromise} from 'angular';
+import {IHttpService, ILogService, IPromise, IIntervalService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSDownloadFile from '../../models/TSDownloadFile';
 import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp';
 import TSMahnung from '../../models/TSMahnung';
 import {TSZustelladresse} from '../../models/enums/TSZustelladresse';
-import IWindowService = angular.IWindowService;
+import EbeguUtil from '../../utils/EbeguUtil';
+let downloadTemplate = require('../../downloadWindow/downloadWindow.html');
 
 
 export class DownloadRS {
@@ -13,9 +14,10 @@ export class DownloadRS {
     ebeguRestUtil: EbeguRestUtil;
     log: ILogService;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', '$window'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', '$window', '$interval'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService, private $window: ng.IWindowService) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService, private $window: ng.IWindowService,
+    private $interval: IIntervalService) {
         this.serviceURL = REST_API + 'blobs/temp';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -112,42 +114,58 @@ export class DownloadRS {
      * @param myWindow -> Das Window muss als Parameter mitgegeben werden, damit der Popup Blocker das Oeffnen dieses Fesnters nicht als Popup identifiziert.
      * @returns {boolean}
      */
-    public startDownload(accessToken: string, dokumentName: string, attachment: boolean, myWindow: IWindowService): boolean {
-        let name: string = accessToken + '/' + dokumentName;
-        let href: string = this.serviceURL + '/blobdata/' + name;
-
-        let warn: string = 'Popup-Blocker scheint eingeschaltet zu sein. Bitte erlauben Sie der Seite Pop-Ups öffnen zu dürfen, um das Dokument herunterladen zu können.';
-
-
-        if (attachment) {
-            // add MatrixParam for to download file instead of inline
-            href = href + ';attachment=true;';
-            if (!myWindow) {
-                this.log.error(warn);
-                this.$window.alert(warn);
-                return false;
-            }
-            myWindow.open(href, myWindow.name);
-        } else {
-            if (!myWindow) {
-                this.log.error(warn);
-                this.$window.alert(warn);
-                return false;
+    public startDownload(accessToken: string, dokumentName: string, attachment: boolean, myWindow: Window) {
+        if (myWindow) {
+            let name: string = accessToken + '/' + dokumentName;
+            let href: string = this.serviceURL + '/blobdata/' + name;
+            if (attachment) {
+                // add MatrixParam for to download file instead of opening it inline
+                href = href + ';attachment=true;';
             } else {
                 myWindow.focus();
-                myWindow.open(href, myWindow.name);
             }
+            //as soon as the window is ready send it to the download
+            this.redirectWindowToDownloadWhenReady(myWindow, href, name);
+
+            //This would be the way to open file in new window (for now it's better to open in new tab)
+            //this.$window.open(href, name, 'toolbar=0,location=0,menubar=0');
+        } else {
+            this.log.error("Download popup window was not initialized");
+
         }
-
-        //This would be the way to open file in new window (for now it's better to open in new tab)
-        //this.$window.open(href, name, 'toolbar=0,location=0,menubar=0');
-        return true;
-
     }
 
-    private download(href: string) {
-        href = href + ';attachment=true;';
-        this.$window.open(href, 'download-helper');
-        return href;
+    prepareDownloadWindow(): Window {
+        return  this.$window.open('../../downloadWindow/downloadWindow.html', EbeguUtil.generateRandomName(5));
+    }
+
+    private redirectWindowToDownloadWhenReady(win: Window, href: string, name: string) {
+        //wir pruefen den dokumentstatus alle 100ms, insgesamt maximal 300 mal
+        let readyTimer: IPromise<any> = this.$interval(() => {
+            if (win.document.readyState !== 'complete') {
+                return
+            }
+            this.$interval.cancel(readyTimer);
+            //do stuff
+            this.hideSpinner(win);
+            win.open(href, win.name);
+        }, 100, 300);
+    }
+
+    /**
+     * Es kann sein, dass das popup noch gar nicht fertig gerendert ist bevor wir den spinner schon wieder verstecken wollen
+     * in diesem fall warten wir noch bis das popup in den readyState 'conplete' wechselt und verstecken den spinner dann
+     */
+    public  hideSpinner(win: Window) {
+        this.log.debug("hiding spinner");
+        let element = win.document.getElementById("spinnerCont");
+        if (element) {
+            element.style.display = 'none';
+        }
+        let buttonElement = win.document.getElementById("closeButton");
+        if (buttonElement) {
+            buttonElement.style.display = 'block';
+        }
+
     }
 }

@@ -16,7 +16,6 @@ import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyR
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
-import EbeguUtil from '../../../utils/EbeguUtil';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -101,7 +100,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public openFreigabequittungPDF(forceCreation: boolean): IPromise<void> {
-        let win: Window = this.$window.open('../../../spinner/spinner.html', EbeguUtil.generateRandomName(5));
+        let win: Window = this.downloadRS.prepareDownloadWindow();
         return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation, this.getZustelladresse())
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
