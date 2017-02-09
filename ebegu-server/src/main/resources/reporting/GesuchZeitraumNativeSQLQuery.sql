@@ -115,5 +115,32 @@ left outer join(
 	from verfuegung
 	where timestamp_erstellt between :fromDate and :toDate
 ) Verfuegungen on Verfuegungen.id = betreuung.verfuegung_id
-where gesuchsperiode.id = :gesuchPeriodeID
-;
+where (gesuchsperiode.id = :gesuchPeriodeID or :gesuchPeriodeID is null)
+and (institution_stammdaten.betreuungsangebot_typ = 'TAGESSCHULE' or :onlySchulamt = 0)
+and (
+  IFNULL(EingegangeneGesuch.AnzahlGesuchOnline, 0) = 1
+  or IFNULL(EingegangeneGesuch.AnzahlGesuchPapier, 0) = 1
+  or IFNULL(EingegangeneGesuch.AnzahlMutationOnline, 0) = 1
+  or IFNULL(EingegangeneGesuch.AnzahlMutationPapier, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationAbwesenheit, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationBetreuung, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationDokumente, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationEV, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationEwerbspensum, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationFamilienSitutation, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationFinanzielleSituation, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationFreigabe, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationGesuchErstellen, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationGesuchsteller, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationKinder, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationUmzug, 0) = 1
+  or IFNULL(Mutationen.AnzahlMutationVerfuegen, 0) = 1
+  or IFNULL(Mahnungen.AnzahlMahnungen, 0) = 1
+  or IFNULL(Beschwerde.AnzahlBeschwerde, 0) = 1
+  or IFNULL(Verfuegungen.AnzahlVerfuegungen, 0) = 1
+  or IFNULL(Verfuegungen.kategorie_normal, 0) = 1
+  or IFNULL(Verfuegungen.kategorie_max_einkommen, 0) = 1
+  or IFNULL(Verfuegungen.kategorie_kein_pensum, 0) = 1
+  or IFNULL(Verfuegungen.kategorie_zuschlag_zum_erwerbspensum, 0) = 1
+  or IFNULL(Verfuegungen.kategorie_nicht_eintreten, 0) = 1
+)

@@ -58,4 +58,10 @@ left outer join (
   and (:stichTagDate <= timestamp_bis or timestamp_bis is null)
 ) Beschwerde on Beschwerde.gesuch_id = gesuch.id
 
-where gesuchsperiode.id = :gesuchPeriodeID
+where (gesuchsperiode.id = :gesuchPeriodeID or :gesuchPeriodeID is null)
+and (institution_stammdaten.betreuungsangebot_typ = 'TAGESSCHULE' or :onlySchulamt = 0)
+and (
+  IFNULL(NichtFreigegebeneGesuch.Anzahl, 0) = 1
+  or IFNULL(Mahnungen.Anzahl, 0) = 1
+  or IFNULL(Beschwerde.Anzahl, 0) = 1
+)

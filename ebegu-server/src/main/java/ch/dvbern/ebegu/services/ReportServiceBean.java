@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
@@ -55,6 +56,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	@Inject
 	private GeuschZeitraumExcelConverter geuschZeitraumExcelConverter;
 
+	@Inject
+	private PrincipalBean principalBean;
+
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
 	public List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID) throws IOException, URISyntaxException {
@@ -75,6 +79,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			gesuchStichtagQuery = em.createNativeQuery(sqlString, "GesuchStichtagDataRowMapping");
 			gesuchStichtagQuery.setParameter("stichTagDate", DateUtil.SQL_DATETIME_FORMAT.format(datetime));
 			gesuchStichtagQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
+			gesuchStichtagQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchStichtagQuery.getResultList();
 		}
 
@@ -125,6 +130,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			gesuchPeriodeQuery.setParameter("fromDate", DateUtil.SQL_DATETIME_FORMAT.format(datetimeVon));
 			gesuchPeriodeQuery.setParameter("toDate", DateUtil.SQL_DATETIME_FORMAT.format(datetimeBis));
 			gesuchPeriodeQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
+			gesuchPeriodeQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchPeriodeQuery.getResultList();
 		}
 
@@ -156,7 +162,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	public enum ReportResource {
 
-		// Gesuch Stichtag Report
 		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx"),
 		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx"),
 
