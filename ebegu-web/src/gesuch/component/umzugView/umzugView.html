@@ -38,6 +38,7 @@
                                         <select name="betroffene" id="betroffene"
                                                 ng-model="umzugAdresse.betroffene"
                                                 class="form-control"
+                                                ng-disabled="vm.isKorrekturModusJugendamt()"
                                                 ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
                                                 ng-required="true">
                                         </select>
