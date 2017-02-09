@@ -85,6 +85,7 @@ public class BetreuungsgutscheinEvaluator {
 		return verfuegung;
 	}
 
+	@SuppressWarnings({"OverlyComplexMethod", "OverlyNestedMethod", "PMD.NcssMethodCount"})
 	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
