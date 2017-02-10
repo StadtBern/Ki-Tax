@@ -58,9 +58,9 @@ import TSEinkommensverschlechterungInfoContainer from '../../models/TSEinkommens
 import TSFamiliensituationContainer from '../../models/TSFamiliensituationContainer';
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../models/TSAdresseContainer';
+import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import IQService = angular.IQService;
 import IRootScopeService = angular.IRootScopeService;
-import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -95,6 +95,9 @@ export default class GesuchModelManager {
         this.updateActiveGesuchsperiodenList();
 
         $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
+            this.setGesuch(undefined);
+        });
+        $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
             this.setGesuch(undefined);
         });
     }
