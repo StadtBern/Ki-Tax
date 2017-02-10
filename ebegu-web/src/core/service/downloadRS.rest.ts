@@ -129,8 +129,7 @@ export class DownloadRS {
             //This would be the way to open file in new window (for now it's better to open in new tab)
             //this.$window.open(href, name, 'toolbar=0,location=0,menubar=0');
         } else {
-            this.log.error("Download popup window was not initialized");
-
+            this.log.error('Download popup window was not initialized');
         }
     }
 
@@ -142,7 +141,7 @@ export class DownloadRS {
         //wir pruefen den dokumentstatus alle 100ms, insgesamt maximal 300 mal
         let readyTimer: IPromise<any> = this.$interval(() => {
             if (win.document.readyState !== 'complete') {
-                return
+                return;
             }
             this.$interval.cancel(readyTimer);
             //do stuff
@@ -156,12 +155,12 @@ export class DownloadRS {
      * in diesem fall warten wir noch bis das popup in den readyState 'conplete' wechselt und verstecken den spinner dann
      */
     public  hideSpinner(win: Window) {
-        this.log.debug("hiding spinner");
-        let element = win.document.getElementById("spinnerCont");
+        this.log.debug('hiding spinner');
+        let element = win.document.getElementById('spinnerCont');
         if (element) {
             element.style.display = 'none';
         }
-        let buttonElement = win.document.getElementById("closeButton");
+        let buttonElement = win.document.getElementById('closeButton');
         if (buttonElement) {
             buttonElement.style.display = 'block';
         }
