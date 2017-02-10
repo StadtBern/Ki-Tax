@@ -86,7 +86,7 @@ export class ValueinputController {
     };
 
     private static numberToString(num: number): string {
-        if (num) {
+        if (num || num === 0) {
             return ValueinputController.formatToNumberString(num.toString());
         }
         return '';
@@ -115,6 +115,9 @@ export class ValueinputController {
             transformedInput.substr(1); // get just the number part
         }
         transformedInput = transformedInput.replace(/\D+/g, ''); // removes all "not digit"
+        if (transformedInput) {
+            transformedInput = parseInt(transformedInput).toString(); // parse to int to remove not wanted digits like leading zeros and then back to string
+        }
         transformedInput = sign + transformedInput; // add sign
 
         if (this.valueinput !== transformedInput) {
