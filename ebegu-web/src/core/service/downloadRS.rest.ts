@@ -5,7 +5,6 @@ import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp'
 import TSMahnung from '../../models/TSMahnung';
 import {TSZustelladresse} from '../../models/enums/TSZustelladresse';
 import EbeguUtil from '../../utils/EbeguUtil';
-let downloadTemplate = require('../../downloadWindow/downloadWindow.html');
 
 
 export class DownloadRS {
@@ -136,7 +135,7 @@ export class DownloadRS {
     }
 
     prepareDownloadWindow(): Window {
-        return  this.$window.open('../../downloadWindow/downloadWindow.html', EbeguUtil.generateRandomName(5));
+        return  this.$window.open('../../assets/downloadWindow/downloadWindow.html', EbeguUtil.generateRandomName(5));
     }
 
     private redirectWindowToDownloadWhenReady(win: Window, href: string, name: string) {
