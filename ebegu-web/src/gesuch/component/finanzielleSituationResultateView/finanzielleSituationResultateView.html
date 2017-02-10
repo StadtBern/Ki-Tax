@@ -17,17 +17,15 @@
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-medium">
                             <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS"
-                                       for="einkommenBeiderGesuchsteller"
-                                       ng-if="vm.model.isGesuchsteller2Required()"></label>
-                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_EINKOMMEN_EIN_GS"
-                                       for="einkommenBeiderGesuchsteller"
-                                       ng-if="!vm.model.isGesuchsteller2Required()"></label>
+                                <label class="md-no-float" for="einkommenBeiderGesuchsteller">
+                                    <span ng-if="!vm.model.isGesuchsteller2Required()">{{'FINANZIELLE_SITUATION_EINKOMMEN_EIN_GS'|translate}}</span>
+                                    <span ng-if="vm.model.isGesuchsteller2Required()">{{'FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS'|translate}}</span>
+                                </label>
                                 <div class="dv-input-container-medium-label">
                                     <dv-valueinput input-id="einkommenBeiderGesuchsteller"
                                                    name="einkommenBeiderGesuchsteller"
                                                    ng-model="vm.getResultate().einkommenBeiderGesuchsteller"
-                                                   aria-label="{{FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS|translate}}"
+                                                   aria-label="{{vm.model.isGesuchsteller2Required() ? ('FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS'|translate) : ('FINANZIELLE_SITUATION_EINKOMMEN_EIN_GS' | translate)}}"
                                                    class="input-element" ng-disabled="true">
                                     </dv-valueinput>
                                     <div class="dv-error-messages"></div>
@@ -47,7 +45,7 @@
                                 </label>
                                 <div class="dv-input-container-medium-label">
                                     <dv-valueinput input-id="bruttovermoegen1" name="bruttovermoegen1"
-                                                   aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_1|translate}}"
+                                                   aria-label="{{'FINANZIELLE_SITUATION_VERMOEGEN_GS_1'|translate}}"
                                                    ng-model="vm.getFinanzielleSituationGS1().finanzielleSituationJA.bruttovermoegen"
                                                    class="input-element"
                                                    dv-on-blur="vm.calculate()">
@@ -73,7 +71,7 @@
                                 </label>
                                 <div class="dv-input-container-medium-label">
                                     <dv-valueinput input-id="bruttovermoegen2" name="bruttovermoegen2"
-                                                   aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_2|translate}}"
+                                                   aria-label="{{'FINANZIELLE_SITUATION_VERMOEGEN_GS_2'|translate}}"
                                                    ng-model="vm.getFinanzielleSituationGS2().finanzielleSituationJA.bruttovermoegen"
                                                    dv-on-blur="vm.calculate()"
                                                    class="input-element">
@@ -99,7 +97,7 @@
                                 </label>
                                 <div class="dv-input-container-medium-label">
                                     <dv-valueinput input-id="schulden1" name="schulden1"
-                                                   aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_1|translate}}"
+                                                   aria-label="{{'FINANZIELLE_SITUATION_SCHULDEN_GS_1'|translate}}"
                                                    ng-model="vm.getFinanzielleSituationGS1().finanzielleSituationJA.schulden"
                                                    dv-on-blur="vm.calculate()"
                                                    class="input-element">
@@ -123,7 +121,7 @@
                                 </label>
                                 <div class="dv-input-container-medium-label">
                                     <dv-valueinput input-id="schulden2" name="schulden2"
-                                                   aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
+                                                   aria-label="{{'FINANZIELLE_SITUATION_SCHULDEN_GS_2'|translate}}"
                                                    ng-model="vm.getFinanzielleSituationGS2().finanzielleSituationJA.schulden"
                                                    dv-on-blur="vm.calculate()"
                                                    class="input-element">
@@ -185,7 +183,7 @@
                                     <dv-valueinput input-id="abzuegeBeiderGesuchsteller"
                                                    name="abzuegeBeiderGesuchsteller"
                                                    ng-model="vm.getResultate().abzuegeBeiderGesuchsteller"
-                                                   aria-label="{{FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE|translate}}"
+                                                   aria-label="{{'FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE'|translate}}"
                                                    ng-disabled="true">
                                     </dv-valueinput>
                                     <div class="dv-error-messages"></div>
