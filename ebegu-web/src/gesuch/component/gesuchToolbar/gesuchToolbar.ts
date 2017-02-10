@@ -69,8 +69,8 @@ export class GesuchToolbarController {
                 private authServiceRS: AuthServiceRS,
                 private $mdSidenav: ng.material.ISidenavService) {
 
-
     }
+
     $onInit() {
         this.updateUserList();
         this.updateAntragDTOList();
@@ -79,6 +79,7 @@ export class GesuchToolbarController {
         this.TSRoleUtil = TSRoleUtil;
 
     }
+
     public toggleSidenav(componentId: string): void {
         this.$mdSidenav(componentId).toggle();
     }
