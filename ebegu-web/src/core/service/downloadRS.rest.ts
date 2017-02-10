@@ -6,7 +6,6 @@ import TSMahnung from '../../models/TSMahnung';
 import {TSZustelladresse} from '../../models/enums/TSZustelladresse';
 import EbeguUtil from '../../utils/EbeguUtil';
 
-
 export class DownloadRS {
     serviceURL: string;
     http: IHttpService;
@@ -135,7 +134,7 @@ export class DownloadRS {
     }
 
     prepareDownloadWindow(): Window {
-        return  this.$window.open('/src/assets/downloadWindow/downloadWindow.html', EbeguUtil.generateRandomName(5));
+        return  this.$window.open('./src/assets/downloadWindow/downloadWindow.html', EbeguUtil.generateRandomName(5));
     }
 
     private redirectWindowToDownloadWhenReady(win: Window, href: string, name: string) {
@@ -160,6 +159,8 @@ export class DownloadRS {
         let element = win.document.getElementById("spinnerCont");
         if (element) {
             element.style.display = 'none';
+        } else{
+            console.log("element not found, can not hide spinner")
         }
         let buttonElement = win.document.getElementById("closeButton");
         if (buttonElement) {
