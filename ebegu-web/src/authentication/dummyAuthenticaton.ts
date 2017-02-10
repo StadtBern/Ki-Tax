@@ -10,7 +10,6 @@ import AuthenticationUtil from '../utils/AuthenticationUtil';
 import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
-import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 let template = require('./dummyAuthentication.html');
 require('./dummyAuthentication.less');
 
@@ -32,10 +31,10 @@ export class DummyAuthenticationListViewController {
     private traegerschaftSGF: TSTraegerschaft;
     private devMode: boolean;
 
-    static $inject: string[] = ['$state', 'AuthServiceRS', '$rootScope', '$timeout' , 'ApplicationPropertyRS'];
+    static $inject: string[] = ['$state', 'AuthServiceRS', '$timeout' , 'ApplicationPropertyRS'];
 
     constructor(private $state: IStateService, private authServiceRS: AuthServiceRS,
-                private $rootScope: IRootScopeService, private $timeout: ITimeoutService, private applicationPropertyRS: ApplicationPropertyRS) {
+              private $timeout: ITimeoutService, private applicationPropertyRS: ApplicationPropertyRS) {
         this.usersList = [];
         this.mandant = this.getMandant();
         this.traegerschaftStadtBern = this.getTraegerschaftStadtBern();
@@ -56,7 +55,7 @@ export class DummyAuthenticationListViewController {
             this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftLeoLea));
         this.usersList.push(new TSUser('Simon', 'Gfeller', 'gfsi', 'password8', 'simon.gfeller@gugus.ch',
             this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftSGF));
-        this.usersList.push(new TSUser('Emma', 'Gerber', 'geem', 'password6', 'imanol.bernabeu@dvbern.ch', this.mandant, TSRole.GESUCHSTELLER));
+        this.usersList.push(new TSUser('Emma', 'Gerber', 'geem', 'password6', 'emma.gerber@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
         this.usersList.push(new TSUser('Heinrich', 'Mueller', 'muhe', 'password6', 'heinrich.mueller@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
         this.usersList.push(new TSUser('Michael', 'Berger', 'bemi', 'password6', 'michael.berger@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
         this.usersList.push(new TSUser('Hans', 'Zimmermann', 'ziha', 'password6', 'hans.zimmermann@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
@@ -126,7 +125,6 @@ export class DummyAuthenticationListViewController {
     public logIn(user: TSUser): void {
         this.authServiceRS.loginRequest(user).then(() => {
             AuthenticationUtil.navigateToStartPageForRole(user, this.$state);
-            this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], 'logged in');
 
         });
     }

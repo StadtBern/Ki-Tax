@@ -22,6 +22,8 @@
 			<!--fuer lokale tests ist es praktischer den indem im FS zu haben-->
 			<property name="hibernate.search.default.directory_provider"
 			          value="filesystem"/>
+			<!--nur ein prozess benutzt unseren index (?)-->
+			<property name="hibernate.search.default.exclusive_index_use" value="true"/>
 
 			<!--<property name="hibernate.search.default.indexBase"-->
 			          <!--value="/home/homa/java/JBoss/wildfly-10.1.0.Final-ebegu/standalone/data/lucene"/>-->

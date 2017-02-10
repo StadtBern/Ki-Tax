@@ -186,14 +186,14 @@ public class MitteilungResource {
 
 	@Nullable
 	@GET
-	@Path("/posteingangamount")
+	@Path("/amountnewforuser")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Integer getAmountMitteilungenForPosteingang(
+	public Integer getAmountNewMitteilungenForCurrentBenutzer(
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		return mitteilungService.countMitteilungenForPosteingang().intValue();
+		return mitteilungService.getAmountNewMitteilungenForCurrentBenutzer().intValue();
 	}
 
 	@Nullable
@@ -304,7 +304,7 @@ public class MitteilungResource {
 		String mitteilungID = converter.toEntityId(fallId);
 		Optional<Fall> fall = fallService.findFall(mitteilungID);
 		if (fall.isPresent()) {
-			return mitteilungService.getNewMitteilungenForCurrentRolle(fall.get()).size();
+			return mitteilungService.getNewMitteilungenForCurrentRolleAndFall(fall.get()).size();
 		}
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}

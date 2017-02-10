@@ -1118,7 +1118,9 @@ export default class EbeguRestUtil {
 
     public betreuungspensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungspensum): any {
         this.abstractPensumEntityToRestObject(restBetreuungspensum, betreuungspensum);
-        restBetreuungspensum.nichtEingetreten = betreuungspensum.nichtEingetreten;
+        if (betreuungspensum.nichtEingetreten !== null) { // wenn es null ist, wird es als null zum Server geschickt und der Server versucht, es zu validieren und wirft eine NPE
+            restBetreuungspensum.nichtEingetreten = betreuungspensum.nichtEingetreten;
+        }
         return restBetreuungspensum;
     }
 
