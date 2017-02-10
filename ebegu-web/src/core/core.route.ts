@@ -80,9 +80,9 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
 
 
     // Attempt to restore a user session upon startup
-    // if (authServiceRS.initWithCookie()) {
-    //     console.log('logged in from cookie');
-    // }
+    if (authServiceRS.initWithCookie()) {
+        $log.debug('logged in from cookie');
+    }
 
     if (ENV !== 'test') {
         //Hintergrundfarbe anpassen (testsystem kann zB andere Farbe haben)
