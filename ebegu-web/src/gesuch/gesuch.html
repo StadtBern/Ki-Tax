@@ -4,6 +4,7 @@
 </gesuch-toolbar>
 
 <gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller" gesuchid="{{vm.getGesuchId()}}"
+                              fallid="{{vm.getGesuch().fall.id}}"
                               dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()">
 </gesuch-toolbar-gesuchsteller>
 <!--Gesuchnavigation (Uebersicht)  fuer den Gesuchsteller (mobile)-->

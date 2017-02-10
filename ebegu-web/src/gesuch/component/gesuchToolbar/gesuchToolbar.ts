@@ -26,6 +26,8 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
     bindings: any = {
         gesuchid: '@',
         onVerantwortlicherChange: '&',
+        fallid: '@',
+        isDashboardScreen: '@',
     };
 
     template = templateX;
@@ -36,7 +38,9 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
 export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
-        gesuchid: '@'
+        gesuchid: '@',
+        fallid: '@',
+        isDashboardScreen: '@',
     };
     template = templateGS;
     controller = GesuchToolbarController;
@@ -49,6 +53,8 @@ export class GesuchToolbarController {
     userList: Array<TSUser>;
     antragList: Array<TSAntragDTO>;
     gesuchid: string;
+    fallid: string;
+    isDashboardScreen: boolean;
     TSRoleUtil: any;
 
     onVerantwortlicherChange: (attr: any) => void;
@@ -121,15 +127,34 @@ export class GesuchToolbarController {
                     }
                 });
             }
+            //watcher fuer fall id change
+            $scope.$watch(() => {
+                return this.fallid;
+            }, (newValue, oldValue) => {
+                if (newValue !== oldValue) {
+                    if (this.fallid) {
+                        this.updateAntragDTOList();
+                    } else {
+                        this.antragTypList = {};
+                        this.gesuchNavigationList = {};
+                        this.gesuchsperiodeList = {};
+                        this.antragList = [];
+                        this.antragMutierenPossible(); //neu berechnen ob mutieren moeglich ist
+                    }
+                }
+            });
         }
     }
 
     public showGesuchPeriodeNavigationMenu(): boolean {
-        return !angular.equals(this.gesuchsperiodeList, {});
+        return !this.isDashboardScreen && !angular.equals(this.gesuchsperiodeList, {});
     }
 
+    /**
+     * Die Liste wird nicht angezeigt wenn sie leer ist oder wenn der Benutzer sich auf dem Dashboard befindet
+     */
     public showAntragTypListNavigationMenu(): boolean {
-        return !angular.equals(this.antragTypList, {});
+        return !this.isDashboardScreen && !angular.equals(this.antragTypList, {});
     }
 
     public showKontaktMenu(): boolean {
@@ -160,6 +185,19 @@ export class GesuchToolbarController {
                 this.updateGesuchNavigationList();
                 this.updateAntragTypList();
                 this.antragMutierenPossible();
+            });
+        } else if (this.fallid) {
+            this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
+                this.antragList = angular.copy(response);
+                if (response && response.length > 0) {
+                    this.gesuchRS.findGesuch(this.getNewest(this.antragList).antragId).then((response) => {
+                        this.gesuchModelManager.setGesuch(angular.copy(response));
+                        this.updateGesuchperiodeList();
+                        this.updateGesuchNavigationList();
+                        this.updateAntragTypList();
+                        this.antragMutierenPossible();
+                    });
+                }
             });
         } else {
             this.gesuchsperiodeList = {};
@@ -203,6 +241,7 @@ export class GesuchToolbarController {
 
                 this.antragTypList[txt] = antrag;
             }
+
         }
     }
 
@@ -251,7 +290,6 @@ export class GesuchToolbarController {
         return undefined;
     }
 
-    //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
         return this.gesuchModelManager.getGesuchName();
     }
@@ -299,6 +337,10 @@ export class GesuchToolbarController {
     private getNewest(arrayTSAntragDTO: Array<TSAntragDTO>): TSAntragDTO {
         let newest: TSAntragDTO = arrayTSAntragDTO[0];
         for (let i = 0; i < arrayTSAntragDTO.length; i++) {
+            // Wenn eines noch gar kein Eingangsdatum hat ist es sicher das neueste
+            if (!arrayTSAntragDTO[i].eingangsdatum) {
+                return arrayTSAntragDTO[i];
+            }
             if (arrayTSAntragDTO[i].eingangsdatum.isAfter(newest.eingangsdatum)) {
                 newest = arrayTSAntragDTO[i];
             }
