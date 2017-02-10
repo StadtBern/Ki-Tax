@@ -1,4 +1,4 @@
-import {IComponentOptions, IPromise, ILogService} from 'angular';
+import {IComponentOptions, IPromise, ILogService, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -17,8 +17,6 @@ import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSBetreuung from '../../../models/TSBetreuung';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import IRootScopeService = angular.IRootScopeService;
-import IScope = angular.IScope;
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -75,8 +73,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
             this.setBemerkungen();
         }
 
-        if (!this.berechnungsManager.finanzielleSituationResultate) {
-            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch()); //.then(() => {});
+        //if finanzielleSituationResultate is undefined/empty (this may happen if user presses reloads this page) then we recalculate it
+        if (!this.berechnungsManager.finanzielleSituationResultate ||angular.equals(this.berechnungsManager.finanzielleSituationResultate, {})) {
+            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch());
         }
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
             && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1
