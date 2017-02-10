@@ -173,6 +173,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     public hasEmptyAenderungPer(): boolean {
         if (this.isMutation() && !this.getFamiliensituation().aenderungPer
+            && !this.isKorrekturModusJugendamt()
             && !this.getFamiliensituationErstgesuch().isSameFamiliensituation(this.getFamiliensituation())) {
             return true;
         }
@@ -199,5 +200,12 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         if (this.hasEmptyAenderungPer()) {
             this.resetFamsit();
         }
+    }
+
+    public gesuchstellerHasChangedZivilstand(): boolean {
+        if (this.model.familiensituationGS && this.model.familiensituationGS.aenderungPer) {
+            return true;
+        }
+        return false;
     }
 }
