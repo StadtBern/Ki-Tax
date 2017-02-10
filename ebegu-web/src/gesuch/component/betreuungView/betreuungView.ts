@@ -327,6 +327,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public isBetreuungsstatusNichtEingetreten(): boolean {
         return this.isBetreuungsstatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
     }
+
     public isGekuendigtVorAntritt(): boolean {
         return this.isBetreuungsstatus(TSBetreuungsstatus.GEKUENDIGT_VOR_EINTRITT);
     }

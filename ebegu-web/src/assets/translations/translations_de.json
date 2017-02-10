@@ -535,7 +535,7 @@
     "BESTAETIGT": "Bestätigt",
     "BETREUUNG_WARTEN_TEXT": "warten auf Platzbestätigung.",
     "BETREUUNG_BESTAETIGT_TEXT": "Dieses Betreuungsangebot wurde am {{date}} bestätigt.",
-    "BETREUUNG_GEKUENDINGT_VOR_ANTRITT_TEXT": "Dieses Betreuungsangebot wurde vor dem Antritt Gekündigt",
+    "BETREUUNG_GEKUENDINGT_VOR_ANTRITT_TEXT": "Dieses Betreuungsangebot wurde vor dem Antritt gekündigt",
     "BETREUUNG_NICHT_EINGETRETEN_TEXT": "Dieses Betreuungsangebot wurde am {{date}} mutiert zu \"nicht eingetreten\"",
     "BETREUUNG_ABGEWIESEN_TEXT": "Dieses Betreuungsangebot wurde am {{date}} abgewiesen.<p>{{grund}}<p>",
     "GRUND_ABLEHNUNG": "Grund der Ablehnung",
