@@ -118,7 +118,6 @@ export class ValueinputController {
         if (transformedInput) {
             transformedInput = parseInt(transformedInput).toString(); // parse to int to remove not wanted digits like leading zeros and then back to string
         }
-        // transformedInput = transformedInput.replace(/^(?!0$)0+/, '');
         transformedInput = sign + transformedInput; // add sign
 
         if (this.valueinput !== transformedInput) {
