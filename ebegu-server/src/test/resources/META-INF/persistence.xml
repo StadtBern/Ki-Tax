@@ -11,4 +11,76 @@
 			<property name="javax.persistence.jdbc.password" value="ebegu" />
 		</properties>
 	</persistence-unit>
+	<persistence-unit name="ebeguPersistenceUnit_TEST">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+		<class>ch.dvbern.ebegu.entities.ApplicationProperty</class>
+		<class>ch.dvbern.ebegu.entities.Adresse</class>
+		<class>ch.dvbern.ebegu.entities.GesuchstellerAdresse</class>
+		<class>ch.dvbern.ebegu.entities.Gesuchsteller</class>
+		<class>ch.dvbern.ebegu.entities.Kind</class>
+		<class>ch.dvbern.ebegu.entities.ErwerbspensumContainer</class>
+		<class>ch.dvbern.ebegu.entities.Erwerbspensum</class>
+		<class>ch.dvbern.ebegu.entities.KindContainer</class>
+		<class>ch.dvbern.ebegu.entities.Familiensituation</class>
+		<class>ch.dvbern.ebegu.entities.FamiliensituationContainer</class>
+		<class>ch.dvbern.ebegu.entities.Fachstelle</class>
+		<class>ch.dvbern.ebegu.entities.PensumFachstelle</class>
+		<class>ch.dvbern.ebegu.entities.Gesuchsperiode</class>
+		<class>ch.dvbern.ebegu.entities.Gesuch</class>
+		<class>ch.dvbern.ebegu.entities.Fall</class>
+		<class>ch.dvbern.ebegu.entities.FinanzielleSituationContainer</class>
+		<class>ch.dvbern.ebegu.entities.FinanzielleSituation</class>
+		<class>ch.dvbern.ebegu.entities.Mandant</class>
+		<class>ch.dvbern.ebegu.entities.Sequence</class>
+		<class>ch.dvbern.ebegu.entities.Traegerschaft</class>
+		<class>ch.dvbern.ebegu.entities.Institution</class>
+		<class>ch.dvbern.ebegu.entities.InstitutionStammdaten</class>
+		<class>ch.dvbern.ebegu.entities.Betreuung</class>
+		<class>ch.dvbern.ebegu.entities.Betreuungspensum</class>
+		<class>ch.dvbern.ebegu.entities.BetreuungspensumContainer</class>
+		<class>ch.dvbern.ebegu.entities.EbeguParameter</class>
+		<class>ch.dvbern.ebegu.entities.Benutzer</class>
+		<class>ch.dvbern.ebegu.entities.AuthorisierterBenutzer</class>
+		<class>ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo</class>
+		<class>ch.dvbern.ebegu.entities.EinkommensverschlechterungInfoContainer</class>
+		<class>ch.dvbern.ebegu.entities.Einkommensverschlechterung</class>
+		<class>ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer</class>
+		<class>ch.dvbern.ebegu.entities.Dokument</class>
+		<class>ch.dvbern.ebegu.entities.DokumentGrund</class>
+		<class>ch.dvbern.ebegu.entities.Verfuegung</class>
+		<class>ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt</class>
+		<class>ch.dvbern.ebegu.entities.DownloadFile</class>
+		<class>ch.dvbern.ebegu.entities.WizardStep</class>
+		<class>ch.dvbern.ebegu.entities.AntragStatusHistory</class>
+		<class>ch.dvbern.ebegu.entities.EbeguVorlage</class>
+		<class>ch.dvbern.ebegu.entities.Vorlage</class>
+		<class>ch.dvbern.ebegu.entities.GeneratedDokument</class>
+		<class>ch.dvbern.ebegu.entities.Abwesenheit</class>
+		<class>ch.dvbern.ebegu.entities.AbwesenheitContainer</class>
+		<class>ch.dvbern.ebegu.entities.Mahnung</class>
+		<class>ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer</class>
+		<class>ch.dvbern.ebegu.entities.GesuchstellerContainer</class>
+		<class>ch.dvbern.ebegu.entities.Mitteilung</class>
+
+		<!-- We use a different datasource for tests, so as to not overwrite
+           production data. This is an unmanaged data source, backed by H2, an in memory
+           database. Production applications should use a managed datasource. -->
+		<properties>
+			<property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:wildflyArqDemo-test;DB_CLOSE_DELAY=-1;MVCC=true" />
+			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+			<!-- Properties for Hibernate -->
+			<!-- Wenn wir nicht create-drop verwenden wollen muessten wir flyway schon im server als dependency anziehen-->
+			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
+			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.physical_naming_strategy" value="ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl"/>
+			<property name="hibernate.cache.use_second_level_cache" value="true" />
+
+			<!-- this property is automagically set when use_second_level_cache=true in wildfly -->
+			<property
+				name="hibernate.cache.region.factory_class"
+				value="org.hibernate.cache.infinispan.InfinispanRegionFactory" />
+		</properties>
+	</persistence-unit>
 </persistence>
