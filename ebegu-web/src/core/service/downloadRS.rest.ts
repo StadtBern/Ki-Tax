@@ -158,8 +158,8 @@ export class DownloadRS {
         let element = win.document.getElementById('spinnerCont');
         if (element) {
             element.style.display = 'none';
-        } else{
-            console.log("element not found, can not hide spinner")
+        } else {
+            console.log('element not found, can not hide spinner')
         }
         let buttonElement = win.document.getElementById('closeButton');
         if (buttonElement) {
