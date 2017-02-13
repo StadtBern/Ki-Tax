@@ -9,6 +9,6 @@ import java.util.Optional;
 /**
  * Service fuer die Verwaltung von Benutzern
  */
-public interface AuszahlungsService {
+public interface Pain001Service {
 
 }
