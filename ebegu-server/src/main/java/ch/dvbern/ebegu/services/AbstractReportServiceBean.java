@@ -8,10 +8,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -29,8 +25,7 @@ import static ch.dvbern.ebegu.util.MonitoringUtil.monitor;
  * Created by medu on 05/02/2017.
  */
 public abstract class AbstractReportServiceBean extends AbstractBaseService {
-	@PersistenceUnit(unitName = "ebeguPersistenceUnit")
-	private EntityManagerFactory entityManagerFactory;
+
 
 	protected byte[] createWorkbook(@Nonnull Workbook workbook){
 		byte[] bytes;
@@ -51,12 +46,5 @@ public abstract class AbstractReportServiceBean extends AbstractBaseService {
 			() -> ExcelMerger.mergeData(sheet, mergeFields, excelMergerDTO));
 	}
 
-	@Nullable
-	protected EntityManager createEntityManager() {
-		if (entityManagerFactory != null) {
-			return  entityManagerFactory.createEntityManager(); // creates a new EntityManager
-		}
-		return null;
-	}
 
 }

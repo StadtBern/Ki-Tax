@@ -1,18 +1,19 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
-import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
-import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;
+import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
+import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
+import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
+import ch.dvbern.ebegu.reporting.lib.DateUtil;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
 import ch.dvbern.ebegu.reporting.lib.ExcelMerger;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
-import ch.dvbern.ebegu.reporting.lib.DateUtil;
-import com.google.common.io.ByteStreams;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -33,7 +34,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
-import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.*;
+import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.VORLAGE_REPORT_GESUCH_STICHTAG;
+import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.VORLAGE_REPORT_GESUCH_ZEITRAUM;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -59,24 +61,28 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	@Inject
 	private PrincipalBean principalBean;
 
+	@Inject
+	private Persistence<Gesuch> persistence;
+
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID) throws IOException, URISyntaxException {
+	public List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID) {
 
 		Objects.requireNonNull(datetime, "Das Argument 'date' darf nicht leer sein");
 
-		EntityManager em = createEntityManager();
-		Query gesuchStichtagQuery = null;
+		EntityManager em = persistence.getEntityManager();
+
 		List<GesuchStichtagDataRow> results = null;
 
-		String sqlString = new String(
-			ByteStreams.toByteArray(
-				ReportServiceBean.class.getResourceAsStream(NATIVESQL_REPORT_GESUCH_STICHTAG.getPath())
-			)
-		);
+//		String sqlString = new String(
+//			ByteStreams.toByteArray(
+//				ReportServiceBean.class.getResourceAsStream(NATIVESQL_REPORT_GESUCH_STICHTAG.getPath())
+//			)
+//		);
 
 		if (em != null) {
-			gesuchStichtagQuery = em.createNativeQuery(sqlString, "GesuchStichtagDataRowMapping");
+
+			Query  gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery") ;//em.createNativeQuery(sqlString, "GesuchStichtagDataRowMapping");
 			gesuchStichtagQuery.setParameter("stichTagDate", DateUtil.SQL_DATETIME_FORMAT.format(datetime));
 			gesuchStichtagQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchStichtagQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
@@ -115,20 +121,22 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Objects.requireNonNull(datetimeVon, "Das Argument 'datetimeVon' darf nicht leer sein");
 		Objects.requireNonNull(datetimeBis, "Das Argument 'datetimeBis' darf nicht leer sein");
 
-		EntityManager em = createEntityManager();
-		Query gesuchPeriodeQuery = null;
-		List<GesuchZeitraumDataRow> results = null;
+		EntityManager em = persistence.getEntityManager();
 
-		String sqlString = new String(
-			ByteStreams.toByteArray(
-				ReportServiceBean.class.getResourceAsStream(NATIVESQL_REPORT_GESUCH_ZEITRAUM.getPath())
-			)
-		);
+		List<GesuchZeitraumDataRow> results = null;
+//
+//		String sqlString = new String(
+//			ByteStreams.toByteArray(
+//				ReportServiceBean.class.getResourceAsStream(NATIVESQL_REPORT_GESUCH_ZEITRAUM.getPath())
+//			)
+//		);
 
 		if (em != null) {
-			gesuchPeriodeQuery = em.createNativeQuery(sqlString, "GesuchZeitraumDataRowMapping");
-			gesuchPeriodeQuery.setParameter("fromDate", DateUtil.SQL_DATETIME_FORMAT.format(datetimeVon));
-			gesuchPeriodeQuery.setParameter("toDate", DateUtil.SQL_DATETIME_FORMAT.format(datetimeBis));
+			Query gesuchPeriodeQuery = em.createNamedQuery("GesuchZeitraumNativeSQLQuery");//em.createNativeQuery(sqlString, "GesuchZeitraumDataRowMapping");
+			gesuchPeriodeQuery.setParameter("fromDateTime", DateUtil.SQL_DATETIME_FORMAT.format(datetimeVon));
+			gesuchPeriodeQuery.setParameter("fromDate", DateUtil.SQL_DATE_FORMAT.format(datetimeVon));
+			gesuchPeriodeQuery.setParameter("toDateTime", DateUtil.SQL_DATETIME_FORMAT.format(datetimeBis));
+			gesuchPeriodeQuery.setParameter("toDate", DateUtil.SQL_DATE_FORMAT.format(datetimeBis));
 			gesuchPeriodeQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchPeriodeQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchPeriodeQuery.getResultList();

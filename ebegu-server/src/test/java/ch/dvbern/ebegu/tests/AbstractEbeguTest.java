@@ -64,6 +64,10 @@ public abstract class AbstractEbeguTest {
 			.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
 
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
+			.addAsResource("reporting/GesuchStichtag.xlsx", "reporting/GesuchStichtag.xlsx")
+			.addAsResource("reporting/GesuchStichtagNativeSQLQuery.sql", "reporting/GesuchStichtagNativeSQLQuery.sql")
+			.addAsResource("reporting/GesuchZeitraum.xlsx", "reporting/GesuchZeitraum.xlsx")
+			.addAsResource("reporting/GesuchZeitraumNativeSQLQuery.sql", "reporting/GesuchZeitraumNativeSQLQuery.sql")
 			.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_kita.docx")
 			.addAsResource("vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx", "vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx")
 			.addAsResource("vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx", "vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx")

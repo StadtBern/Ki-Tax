@@ -123,8 +123,8 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <scope>test</scope>
-        </dependency>
+              <scope>test</scope>
+           </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>
             <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
@@ -155,16 +155,7 @@
            <groupId>org.hibernate</groupId>
            <artifactId>hibernate-search-orm</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <version>${version.mysqldriver}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.192</version>
-        </dependency>
+
     </dependencies>
 
     <profiles>
@@ -186,13 +177,13 @@
         </profile>
 
         <profile>
-            <activation>
-                <property>
-                    <!-- hiermit wird getestet ob ein property disable-managed-wildfly existiert, wenn nicht lauft
-                    arquillian mit embedded container-->
-                    <name>!disable-managed-wildfly</name>
-                </property>
-            </activation>
+            <!--<activation>-->
+                <!--<property>-->
+                    <!--&lt;!&ndash; hiermit wird getestet ob ein property disable-managed-wildfly existiert, wenn nicht lauft-->
+                    <!--arquillian mit embedded container&ndash;&gt;-->
+                    <!--<name>!disable-managed-wildfly</name>-->
+                <!--</property>-->
+            <!--</activation>-->
             <id>test-wildfly-managed</id>
             <build>
                 <plugins>

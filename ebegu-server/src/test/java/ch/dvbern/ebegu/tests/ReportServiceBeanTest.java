@@ -6,27 +6,28 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
-import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
-import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
 import ch.dvbern.ebegu.reporting.lib.DateUtil;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
-import ch.dvbern.ebegu.services.ReportServiceBean;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.ReportService;
+import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import de.akquinet.jbosscc.needle.annotation.InjectIntoMany;
-import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
-import de.akquinet.jbosscc.needle.junit.DatabaseRule;
-import de.akquinet.jbosscc.needle.junit.NeedleRule;
-import org.junit.Assert;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.UsingDataSet;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -34,41 +35,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Copyright (c) 2016 DV Bern AG, Switzerland
- * <p>
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
- * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
- * <p>
- * Created by medu on 16/11/2016.
- */
-public class ReportServiceBeanTest {
+
+@RunWith(Arquillian.class)
+@UsingDataSet("datasets/empty.xml")
+@Transactional(TransactionMode.DISABLED)
+public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Rule
 	public UnitTestTempFolder unitTestTempfolder = new UnitTestTempFolder();
 
-	@Rule
-	public NeedleRule needleRule = new NeedleRule().withOuter(new DatabaseRule());
-
-	@ObjectUnderTest
-	private ReportServiceBean reportService;
+//	@Rule
+//	public NeedleRule needleRule = new NeedleRule().withOuter(new DatabaseRule());
 
 	@Inject
-	private EntityManagerFactory entityManagerFactory;
+	private ReportService reportService;
 
 	@Inject
-	private EntityManager entityManager;
+	private Persistence<Gesuch> persistence;
 
-	@InjectIntoMany
-	private GeuschStichtagExcelConverter geuschStichtagExcelConverter = new GeuschStichtagExcelConverter();
+	@Inject
+	private InstitutionService institutionService;
 
-	@InjectIntoMany
-	private GeuschZeitraumExcelConverter geuschZeitraumExcelConverter = new GeuschZeitraumExcelConverter();
+	@Inject
+	private GesuchService gesuchService;
+	@Inject
+	private WizardStepService wizardStepService;
+
 
 	private Gesuch gesuch_1GS;
 
@@ -98,27 +93,64 @@ public class ReportServiceBeanTest {
 		gesuch_1GS.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.NACHWEIS_AUSBILDUNG));
 		gesuch_1GS.addDokumentGrund(new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE, DokumentTyp.NACHWEIS_FAMILIENZULAGEN));
 
+
 	}
 
 	@Test
-	public void testGesuchStichtagQueryAssumptions()
-	{
-		Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA.name(), "IN_BEARBEITUNG_JA");
-		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG.name(), "FREIGABEQUITTUNG");
-		Assert.assertEquals(AntragStatus.BESCHWERDE_HAENGIG.name(), "BESCHWERDE_HAENGIG");
-		Assert.assertEquals(BetreuungsangebotTyp.TAGESSCHULE.name(), "TAGESSCHULE");
-	}
+	public void testGetReportDataGesuchStichtag() throws Exception {
 
-	@Test
-	public void getReportDataGesuchStichtag() throws Exception {
 
-		//entityManager.merge(gesuch_1GS);
+		Gesuch gesuch = TestDataUtil.createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+		gesuch.setEingangsart(Eingangsart.PAPIER);
+		wizardStepService.createWizardStepList(gesuch);
+		gesuch.getKindContainers().stream()
+			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.forEach((betreuung)
+				-> {
+				betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESSCHULE);
+				persistence.merge(betreuung.getInstitutionStammdaten());
+			});
+		gesuch = persistence.merge(gesuch);
+		gesuchService.updateGesuch(gesuch,true);
 
+		//review dieses querie faengt beim kind an, wenn kein keind da ist wird nix gefunden
 		List<GesuchStichtagDataRow> reportData = reportService.getReportDataGesuchStichtag(
-			LocalDateTime.parse("2016-12-12 00:00:00", DateUtil.SQL_DATETIME_FORMAT),
-			null);
+			LocalDateTime.now().plusDays(1),
+			gesuch.getGesuchsperiode().getId());
 
 		assertNotNull(reportData);
+		assertEquals(2, reportData.size());
+
+	}
+
+	@Test
+	@Ignore
+	public void testGetReportDataGesuchZeitraumTest() throws Exception {
+
+		//todo sinnvolle testdaten finden
+		Gesuch gesuch = TestDataUtil.createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+		gesuch.setEingangsart(Eingangsart.PAPIER);
+		wizardStepService.createWizardStepList(gesuch);
+		gesuch.getKindContainers().stream()
+			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.forEach((betreuung)
+				-> {
+				betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESSCHULE);
+				persistence.merge(betreuung.getInstitutionStammdaten());
+			});
+
+		gesuchService.updateGesuch(gesuch,true);
+//		Gesuch gesuch = TestDataUtil.createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+
+		List<GesuchZeitraumDataRow> reportData = reportService.getReportDataGesuchZeitraum(
+			LocalDateTime.parse("2015-12-12 00:00:00", DateUtil.SQL_DATETIME_FORMAT),
+			LocalDateTime.parse("2099-12-12 00:00:00", DateUtil.SQL_DATETIME_FORMAT),
+			gesuch.getGesuchsperiode().getId());
+
+		assertNotNull(reportData);
+		assertEquals(1, reportData.size());
 
 	}
 
@@ -135,32 +167,6 @@ public class ReportServiceBeanTest {
 
 	}
 
-	@Test
-	public void testGesuchZeitraumQueryAssumptions()
-	{
-		Assert.assertEquals(Eingangsart.ONLINE.name(), "ONLINE");
-		Assert.assertEquals(Eingangsart.PAPIER.name(), "PAPIER");
-		Assert.assertEquals(AntragTyp.GESUCH.name(), "GESUCH");
-		Assert.assertEquals(AntragTyp.MUTATION.name(), "MUTATION");
-
-		Assert.assertEquals(WizardStepName.ABWESENHEIT.name(), "ABWESENHEIT");
-		Assert.assertEquals(WizardStepName.BETREUUNG.name(), "BETREUUNG");
-		Assert.assertEquals(WizardStepName.DOKUMENTE.name(), "DOKUMENTE");
-		Assert.assertEquals(WizardStepName.EINKOMMENSVERSCHLECHTERUNG.name(), "EINKOMMENSVERSCHLECHTERUNG");
-		Assert.assertEquals(WizardStepName.ERWERBSPENSUM.name(), "ERWERBSPENSUM");
-		Assert.assertEquals(WizardStepName.FAMILIENSITUATION.name(), "FAMILIENSITUATION");
-		Assert.assertEquals(WizardStepName.FINANZIELLE_SITUATION.name(), "FINANZIELLE_SITUATION");
-		Assert.assertEquals(WizardStepName.FREIGABE.name(), "FREIGABE");
-		Assert.assertEquals(WizardStepName.GESUCH_ERSTELLEN.name(), "GESUCH_ERSTELLEN");
-		Assert.assertEquals(WizardStepName.GESUCHSTELLER.name(), "GESUCHSTELLER");
-		Assert.assertEquals(WizardStepName.KINDER.name(), "KINDER");
-		Assert.assertEquals(WizardStepName.UMZUG.name(), "UMZUG");
-		Assert.assertEquals(WizardStepName.VERFUEGEN.name(), "VERFUEGEN");
-		Assert.assertEquals(WizardStepStatus.MUTIERT.name(), "MUTIERT");
-
-		Assert.assertEquals(AntragStatus.BESCHWERDE_HAENGIG.name(), "BESCHWERDE_HAENGIG");
-		Assert.assertEquals(BetreuungsangebotTyp.TAGESSCHULE.name(), "TAGESSCHULE");
-	}
 
 	@Test
 	public void getReportDataGesuchZeitraum() throws Exception {
