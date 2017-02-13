@@ -396,9 +396,9 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	public void updateWizardStepDokumente() {
 		updateStatus(dokStep, WizardStepStatus.IN_BEARBEITUNG);
 
-		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG);
-		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.FINANZIELLESITUATION, DokumentTyp.STEUERVERANLAGUNG);
-		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_ERWERBSPENSUM);
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, "Angestellt 60%");
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.FINANZIELLESITUATION, DokumentTyp.STEUERVERANLAGUNG, "2015");
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_ERWERBSPENSUM, "Angestellt 60%");
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.DOKUMENTE);
 		Assert.assertEquals(11, wizardSteps.size());
@@ -411,7 +411,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatus(dokStep, WizardStepStatus.IN_BEARBEITUNG);
 
 		//nicht alle notwendige dokumente
-		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG);
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, "Angestellt 60%");
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.DOKUMENTE);
 		Assert.assertEquals(11, wizardSteps.size());
@@ -532,13 +532,14 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
 	// HELP METHODS
 
-	private void createAndPersistDokumentGrundWithDokument(DokumentGrundTyp dokGrundTyp, DokumentTyp dokTyp) {
+	private void createAndPersistDokumentGrundWithDokument(DokumentGrundTyp dokGrundTyp, DokumentTyp dokTyp, String tag) {
 		DokumentGrund dokGrund = new DokumentGrund();
 		dokGrund.setDokumentGrundTyp(dokGrundTyp);
 		dokGrund.setDokumentTyp(dokTyp);
 		dokGrund.setNeeded(true);
 		dokGrund.setGesuch(gesuch);
-		dokGrund.setFullName("name");
+		dokGrund.setFullName(gesuch.getGesuchsteller1().extractFullName());
+		dokGrund.setTag(tag);
 		persistence.persist(dokGrund);
 		Dokument dok1 = new Dokument();
 		dok1.setFilename("name");
