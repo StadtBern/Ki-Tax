@@ -301,13 +301,15 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     /**
-     * Returns true when the user is allowed to edit the content. This happens when the status is AUSSTEHEHND or SCHULAMT
+     * Returns true when the user is allowed to edit the content. This happens when the status is AUSSTEHEHND
+     * or SCHULAMT and we are not yet in the KorrekturmodusJugendamt
      * @returns {boolean}
      */
     public isEnabled(): boolean {
         if (this.getBetreuungModel()) {
             return this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
-                || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT);
+                || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
+                        && !this.isKorrekturModusJugendamt());
         }
         return false;
     }
