@@ -18,10 +18,11 @@ public interface EinkommensverschlechterungService {
 	 * Aktualisiert idn EinkommensverschlechterungContainer in der DB
 	 *
 	 * @param einkommensverschlechterungContainer die EinkommensverschlechterungContainer als DTO
+	 * @param gesuchId
 	 * @return Die aktualisierte EinkommensverschlechterungContainer
 	 */
 	@Nonnull
-	EinkommensverschlechterungContainer saveEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer);
+	EinkommensverschlechterungContainer saveEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer, String gesuchId);
 
 	/**
 	 * @param key PK (id) der EinkommensverschlechterungContainer

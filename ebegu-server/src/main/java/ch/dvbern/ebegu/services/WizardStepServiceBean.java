@@ -166,8 +166,10 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			updateAllStatusForKinder(wizardSteps);
 		} else if (WizardStepName.ERWERBSPENSUM.equals(stepName)) {
 			updateAllStatusForErwerbspensum(wizardSteps);
-		} else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(stepName) && newEntity instanceof EinkommensverschlechterungInfo) {
-			updateAllStatusForEinkommensverschlechterungInfo(wizardSteps, (EinkommensverschlechterungInfo) oldEntity, (EinkommensverschlechterungInfo) newEntity);
+		} else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(stepName) && newEntity instanceof EinkommensverschlechterungInfoContainer) {
+			updateAllStatusForEinkommensverschlechterungInfo(wizardSteps, (EinkommensverschlechterungInfoContainer) oldEntity, (EinkommensverschlechterungInfoContainer) newEntity);
+		} else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(stepName) && newEntity instanceof EinkommensverschlechterungContainer) {
+			updateAllStatusForEinkommensverschlechterung(wizardSteps);
 		} else if (WizardStepName.DOKUMENTE.equals(stepName)) {
 			updateAllStatusForDokumente(wizardSteps);
 		} else if (WizardStepName.VERFUEGEN.equals(stepName)) {
@@ -179,20 +181,33 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		}
 	}
 
-	private void updateAllStatusForEinkommensverschlechterungInfo(List<WizardStep> wizardSteps, EinkommensverschlechterungInfo oldEntity,
-																  EinkommensverschlechterungInfo newEntity) {
+	private void updateAllStatusForEinkommensverschlechterungInfo(List<WizardStep> wizardSteps, EinkommensverschlechterungInfoContainer oldEntity,
+																  EinkommensverschlechterungInfoContainer newEntity) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
+				&& !WizardStepStatus.NOK.equals(wizardStep.getWizardStepStatus())
 				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
-				if (!newEntity.getEinkommensverschlechterung()) {
+				if (!newEntity.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()) {
 					wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
-				} else if (oldEntity == null || !oldEntity.getEinkommensverschlechterung()
-					|| (!oldEntity.getEkvFuerBasisJahrPlus2() && newEntity.getEkvFuerBasisJahrPlus2())) {
+				} else if (oldEntity == null || !oldEntity.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()
+					|| (!oldEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2() && newEntity.getEinkommensverschlechterungInfoJA().getEkvFuerBasisJahrPlus2())) {
 					// beim Wechseln von KEIN_EV auf EV oder von KEIN_EV_FUER_BASISJAHR2 auf EV_FUER_BASISJAHR2
 					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 				} else if (wizardStep.getGesuch().isMutation()) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
 				}
+			}
+		}
+	}
+
+	private void updateAllStatusForEinkommensverschlechterung(List<WizardStep> wizardSteps) {
+		for (WizardStep wizardStep : wizardSteps) {
+			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
+				&& !WizardStepStatus.NOK.equals(wizardStep.getWizardStepStatus())
+				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())
+				&& wizardStep.getGesuch().isMutation()) {
+
+				wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
 			}
 		}
 	}
