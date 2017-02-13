@@ -81,7 +81,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
 
     // Attempt to restore a user session upon startup
     if (authServiceRS.initWithCookie()) {
-        console.log('logged in from cookie');
+        $log.debug('logged in from cookie');
     }
 
     if (ENV !== 'test') {

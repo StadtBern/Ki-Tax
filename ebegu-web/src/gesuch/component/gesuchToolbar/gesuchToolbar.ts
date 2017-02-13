@@ -74,11 +74,14 @@ export class GesuchToolbarController {
                 private gesuchModelManager: GesuchModelManager,
                 private authServiceRS: AuthServiceRS,
                 private $mdSidenav: ng.material.ISidenavService) {
+
+    }
+
+    $onInit() {
         this.updateUserList();
         this.updateAntragDTOList();
-
         //add watchers
-        this.addWatchers($scope);
+        this.addWatchers(this.$scope);
         this.TSRoleUtil = TSRoleUtil;
 
     }

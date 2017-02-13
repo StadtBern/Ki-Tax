@@ -164,8 +164,8 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
      * @returns {boolean}
      */
     public isGeschaeftsgewinnRequired(): boolean {
-        return !(this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr ||
-        this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 ||
-        this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2);
+        return (this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr === null || this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr === undefined)
+            && (this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 === null || this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 === undefined)
+            && (this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2 === null || this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2 === undefined);
     }
 }

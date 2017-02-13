@@ -40,9 +40,6 @@ public interface MitteilungService {
 	Collection<Mitteilung> getMitteilungenForPosteingang();
 
 	@Nullable
-	Long countMitteilungenForPosteingang();
-
-	@Nullable
 	Mitteilung getEntwurfForCurrentRolle(@Nonnull Fall fall);
 
 	@Nullable
@@ -60,5 +57,8 @@ public interface MitteilungService {
 	Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(@Nonnull Fall fall);
 
 	@Nonnull
-	Collection<Mitteilung> getNewMitteilungenForCurrentRolle(@Nonnull Fall fall);
+	Collection<Mitteilung> getNewMitteilungenForCurrentRolleAndFall(@Nonnull Fall fall);
+
+	@Nonnull
+	Long getAmountNewMitteilungenForCurrentBenutzer();
 }

@@ -1,4 +1,4 @@
-import {IComponentOptions, IPromise, ILogService} from 'angular';
+import {IComponentOptions, IPromise, ILogService, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -17,8 +17,6 @@ import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSBetreuung from '../../../models/TSBetreuung';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import IRootScopeService = angular.IRootScopeService;
-import IScope = angular.IScope;
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -37,14 +35,16 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log', '$stateParams'];
+        'DvDialog', 'DownloadRS', '$log', '$stateParams', '$window'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, $scope: IScope, wizardStepManager: WizardStepManager,
-                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IBetreuungStateParams) {
+                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IBetreuungStateParams,
+                private $window: ng.IWindowService) {
+
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
@@ -73,18 +73,19 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
             this.setBemerkungen();
         }
 
-        if (!this.berechnungsManager.finanzielleSituationResultate) {
-            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch()); //.then(() => {});
+        //if finanzielleSituationResultate is undefined/empty (this may happen if user presses reloads this page) then we recalculate it
+        if (angular.equals(this.berechnungsManager.finanzielleSituationResultate, {})) {
+            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch());
         }
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
             && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1
-            && !this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
+            && angular.equals(this.berechnungsManager.einkommensverschlechterungResultateBjP1, {})) {
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 1); //.then(() => {});
         }
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
             && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2
-            && !this.berechnungsManager.einkommensverschlechterungResultateBjP2) {
+            && angular.equals(this.berechnungsManager.einkommensverschlechterungResultateBjP2, {})) {
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
@@ -280,19 +281,21 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     public openVerfuegungPDF(): void {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
         this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
             this.getBetreuung().id, false, this.bemerkungen)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
 
     public openNichteintretenPDF(): void {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
         this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(this.getBetreuung().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
 

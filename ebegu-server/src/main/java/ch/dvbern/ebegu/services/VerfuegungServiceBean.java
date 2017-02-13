@@ -170,7 +170,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		BetreuungsgutscheinEvaluator bgEvaluator = new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);
 		BGRechnerParameterDTO calculatorParameters = loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());
 
-		// Finde und setze die letzte Verfügung für die Betreuung für den Merger und Vergleicher.
+		// Finde und setze die letzte Verfuegung für die Betreuung für den Merger und Vergleicher.
 		// Bei GESCHLOSSEN_OHNE_VERFUEGUNG wird solange ein Vorgänger gesucht, bis  dieser gefunden wird. (Rekursiv)
 		gesuch.getKindContainers()
 			.stream()

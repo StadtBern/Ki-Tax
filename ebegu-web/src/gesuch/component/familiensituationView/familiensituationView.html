@@ -28,20 +28,17 @@
                                     <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
                                                    ng-model="vm.getFamiliensituation().aenderungPer"
                                                    class="input-element"
+                                                   ng-required="vm.isKorrekturModusJugendamt() && vm.gesuchstellerHasChangedZivilstand()"
                                                    dv-on-blur="vm.onDatumBlur()"
-                                                   ng-disabled="vm.isGesuchReadonly() || (!vm.getFamiliensituation().aenderungPer && vm.isKorrekturModusJugendamt())">
+                                                   ng-disabled="vm.isGesuchReadonly() || (vm.isKorrekturModusJugendamt() && !vm.gesuchstellerHasChangedZivilstand())">
                                     </dv-datepicker>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12 error">
                                     <dv-bisher gs="vm.model.familiensituationGS.aenderungPer"
                                                ja="vm.model.familiensituationJA.aenderungPer"></dv-bisher>
                                     <dv-error-messages for="vm.form.aenderungPer.$error"
                                                        class="error"></dv-error-messages>
-
                                 </div>
                             </div>
+
 
                         </dv-input-container>
                     </div>

@@ -106,8 +106,8 @@ export default class MitteilungRS {
         });
     }
 
-    public getAmountMitteilungenForPosteingang(): IPromise<number> {
-        return this.http.get(this.serviceURL + '/posteingangamount').then((response: any) => {
+    public getAmountMitteilungenForCurrentBenutzer(): IPromise<number> {
+        return this.http.get(this.serviceURL + '/amountnewforuser').then((response: any) => {
             return response.data;
         });
     }
