@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 
 import javax.annotation.Nonnull;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -56,4 +57,9 @@ public interface GesuchsperiodeService {
 	@Nonnull
 	Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden();
 
+	/**
+	 * Gibt die Gesuchsperiode zurueck, welche am uebergebenen Stichtag aktuell war/ist
+	 */
+	@Nonnull
+	Optional<Gesuchsperiode> getGesuchsperiodeAm(@Nonnull LocalDate stichtag);
 }

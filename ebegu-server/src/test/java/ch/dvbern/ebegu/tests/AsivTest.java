@@ -1,12 +1,10 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.testfaelle.*;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -18,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -73,7 +70,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 
 	@Before
 	public void init() {
-		createGesuchsperiode(true);
+		gesuchsperiode = createGesuchsperiode(true);
 		final Mandant mandant = insertInstitutionen();
 		createBenutzer(mandant);
 		TestDataUtil.prepareParameters(gesuchsperiode.getGueltigkeit(), persistence);
@@ -92,7 +89,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		if (gesuchOptional.isPresent()) {
 			Gesuch mutation = testfall.createMutation(gesuchOptional.get());
 			TestDataUtil.calculateFinanzDaten(mutation);
-			mutation.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+			mutation.setGesuchsperiode(gesuchsperiode);
 			Gesuch mutationCalculated = verfuegungService.calculateVerfuegung(mutation);
 			AbstractBGRechnerTest.checkTestfall_ASIV_01(mutationCalculated);
 		}
@@ -111,7 +108,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		if (gesuchOptional.isPresent()) {
 			Gesuch mutation = testfall.createMutation(gesuchOptional.get());
 			TestDataUtil.calculateFinanzDaten(mutation);
-			mutation.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+			mutation.setGesuchsperiode(gesuchsperiode);
 			Gesuch mutationCalculated = verfuegungService.calculateVerfuegung(mutation);
 			AbstractBGRechnerTest.checkTestfall_ASIV_02(mutationCalculated);
 		}
@@ -130,7 +127,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		if (gesuchOptional.isPresent()) {
 			Gesuch mutation = testfall.createMutation(gesuchOptional.get());
 			TestDataUtil.calculateFinanzDaten(mutation);
-			mutation.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+			mutation.setGesuchsperiode(gesuchsperiode);
 			Gesuch mutationCalculated = verfuegungService.calculateVerfuegung(mutation);
 			AbstractBGRechnerTest.checkTestfall_ASIV_03(mutationCalculated);
 		}
@@ -149,7 +146,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		if (gesuchOptional.isPresent()) {
 			Gesuch mutation = testfall.createMutation(gesuchOptional.get());
 			TestDataUtil.calculateFinanzDaten(mutation);
-			mutation.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+			mutation.setGesuchsperiode(gesuchsperiode);
 			Gesuch mutationCalculated = verfuegungService.calculateVerfuegung(mutation);
 			AbstractBGRechnerTest.checkTestfall_ASIV_04(mutationCalculated);
 		}
@@ -168,7 +165,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		if (gesuchOptional.isPresent()) {
 			Gesuch mutation = testfall.createMutation(gesuchOptional.get());
 			TestDataUtil.calculateFinanzDaten(mutation);
-			mutation.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+			mutation.setGesuchsperiode(gesuchsperiode);
 			Gesuch mutationCalculated = verfuegungService.calculateVerfuegung(mutation);
 			AbstractBGRechnerTest.checkTestfall_ASIV_05(mutationCalculated);
 		}
@@ -187,7 +184,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		if (gesuchOptional.isPresent()) {
 			Gesuch mutation = testfall.createMutation(gesuchOptional.get());
 			TestDataUtil.calculateFinanzDaten(mutation);
-			mutation.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+			mutation.setGesuchsperiode(gesuchsperiode);
 			Gesuch mutationCalculated = verfuegungService.calculateVerfuegung(mutation);
 			AbstractBGRechnerTest.checkTestfall_ASIV_06(mutationCalculated);
 		}
@@ -206,7 +203,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		if (gesuchOptional.isPresent()) {
 			Gesuch mutation = testfall.createMutation(gesuchOptional.get());
 			TestDataUtil.calculateFinanzDaten(mutation);
-			mutation.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+			mutation.setGesuchsperiode(gesuchsperiode);
 			Gesuch mutationCalculated = verfuegungService.calculateVerfuegung(mutation);
 			AbstractBGRechnerTest.checkTestfall_ASIV_07(mutationCalculated);
 		}
@@ -225,7 +222,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		if (gesuchOptional.isPresent()) {
 			Gesuch mutation = testfall.createMutation(gesuchOptional.get());
 			TestDataUtil.calculateFinanzDaten(mutation);
-			mutation.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+			mutation.setGesuchsperiode(gesuchsperiode);
 			Gesuch mutationCalculated = verfuegungService.calculateVerfuegung(mutation);
 			AbstractBGRechnerTest.checkTestfall_ASIV_08(mutationCalculated);
 		}
@@ -244,7 +241,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		if (gesuchOptional.isPresent()) {
 			Gesuch mutation = testfall.createMutation(gesuchOptional.get());
 			TestDataUtil.calculateFinanzDaten(mutation);
-			mutation.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+			mutation.setGesuchsperiode(gesuchsperiode);
 			Gesuch mutationCalculated = verfuegungService.calculateVerfuegung(mutation);
 			AbstractBGRechnerTest.checkTestfall_ASIV_09(mutationCalculated);
 		}
@@ -263,7 +260,7 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		if (gesuchOptional.isPresent()) {
 			Gesuch mutation = testfall.createMutation(gesuchOptional.get());
 			TestDataUtil.calculateFinanzDaten(mutation);
-			mutation.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+			mutation.setGesuchsperiode(gesuchsperiode);
 			Gesuch mutationCalculated = verfuegungService.calculateVerfuegung(mutation);
 			AbstractBGRechnerTest.checkTestfall_ASIV_10(mutationCalculated);
 		}
@@ -272,16 +269,17 @@ public class AsivTest extends AbstractEbeguLoginTest {
 	/**
 	 * Helper für init. Speichert Gesuchsperiode in DB
 	 */
-	private void createGesuchsperiode(boolean active) {
-		gesuchsperiode = TestDataUtil.createGesuchsperiode1617();
+	protected Gesuchsperiode createGesuchsperiode(boolean active) {
+		gesuchsperiode = TestDataUtil.createCustomGesuchsperiode(2016, 2017);
 		gesuchsperiode.setActive(active);
 		gesuchsperiode = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
+		return gesuchsperiode;
 	}
 
 	/**
 	 * Helper für init. Speichert Traegerschaften, Mandant und Institution in DB
 	 */
-	private Mandant insertInstitutionen() {
+	protected Mandant insertInstitutionen() {
 		final InstitutionStammdaten institutionStammdatenKitaBruennen = TestDataUtil.createInstitutionStammdatenKitaBruennen();
 		Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
 		traegerschaftService.saveTraegerschaft(traegerschaft);
@@ -299,19 +297,6 @@ public class AsivTest extends AbstractEbeguLoginTest {
 		institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(institutionStammdaten);
 		return mandant;
-	}
-
-	/**
-	 * Helper für init. Speichert Benutzer in DB
-	 */
-	private void createBenutzer(Mandant mandant) {
-		try{
-			JBossLoginContextFactory.createLoginContext("admin", "admin").login();
-		} catch (LoginException ex) {
-			ex.printStackTrace();
-		}
-		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
-		persistence.persist(i);
 	}
 }
 
