@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
@@ -100,7 +101,7 @@ public class Erwerbspensum extends AbstractPensumEntity {
 	public String getName() {
 
 		if (bezeichnung == null || bezeichnung.isEmpty()) {
-			return taetigkeit + " " + getPensum() + "%";
+			return ServerMessageUtil.translateEnumValue(taetigkeit) + " " + getPensum() + "%";
 		} else {
 			return bezeichnung;
 		}
