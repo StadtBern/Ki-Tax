@@ -35,11 +35,11 @@ export default class DVSuppressFormSubmitOnEnter implements IDirective {
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, controllers: any) => {
             controllers['myCtrl'].mdRadioGroupCtrl = controllers.mdRadioGroupCtrl;
             element.off('keydown'); //alle keydown listener auf dem element abhaengen
-            element.bind("keydown", (event) => { //unseren eigenen listener definieren
-            controllers.myCtrl.keydownListener(event, element);
+            element.bind('keydown', (event) => { //unseren eigenen listener definieren
+                controllers.myCtrl.keydownListener(event, element);
 
             });
-        }
+        };
     }
 
     static factory(): IDirectiveFactory {
@@ -55,7 +55,7 @@ export class DVSuppressFormSubmitOnEnterController {
 
     mdRadioGroupCtrl: any; //see radioButton.js of angular material: mdRadioGroup
 
-    static $inject: string[] = ['$mdConstant', '$mdUtil',  '$log'];
+    static $inject: string[] = ['$mdConstant', '$mdUtil', '$log'];
     /* @ngInject */
     constructor(private $mdConstant: any, private $mdUtil: any, private $log: ILogService) {
 
@@ -101,10 +101,10 @@ export class DVSuppressFormSubmitOnEnterController {
         }
     }
 
-    private triggerNextButton(element: IAugmentedJQuery){
+    private triggerNextButton(element: IAugmentedJQuery) {
         let nextButtons: IAugmentedJQuery;
         let formElement: IAugmentedJQuery = angular.element(this.$mdUtil.getClosest(element[0], 'form'));
-        if(formElement) {
+        if (formElement) {
             nextButtons = formElement.children().find('input[type="submit"], button[type="submit"]');
             if (nextButtons) {
                 nextButtons.first().click();
