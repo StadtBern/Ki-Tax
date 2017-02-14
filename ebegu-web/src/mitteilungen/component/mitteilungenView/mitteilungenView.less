@@ -2,6 +2,9 @@
 @import "../../../style/mixins.less";
 
 .mitteilungenView, .betreuungMitteilungView {
+    h1 {
+        font-size: 2rem;
+    }
     padding: 5rem 2rem 5rem;
     background: @contrast-light;
     overflow-x: auto;
@@ -9,9 +12,9 @@
     .message-textarea {
         height: 25rem;
     }
-    .BGNummer{
+    .BGNummer {
         .ebeguH3();
-        margin:0;
+        margin: 0;
     }
     dv-accordion {
         overflow: hidden;
@@ -27,15 +30,15 @@
             }
             &.institution {
                 & > * {
-                    color: @secondary;
+                    color: @institution-color;
                 }
                 md-checkbox {
                     .md-icon {
-                        border: 1px solid @secondary;
+                        border: 1px solid @institution-color;
                     }
                     &.md-checked {
                         .md-icon {
-                            background-color: @secondary;
+                            background-color: @institution-color;
                         }
                     }
                 }
@@ -65,7 +68,7 @@
                 min-height: 8rem;
                 height: auto;
                 background: @contrast-lightest;
-                font-size: 1.2rem;
+                font-size: 1.3rem;
                 letter-spacing: 0.15rem;
                 margin: 0;
                 transition: all 0.5s ease;
@@ -75,7 +78,22 @@
                 }
                 & .message-header {
                     flex: 1;
-                    padding: 2rem 0 0;
+                    padding: 1rem 0 1rem;
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+
+                    .subject-container {
+                        align-self: stretch;
+                        flex: 0 1 100%;
+
+                    }
+                    div:nth-child(2) {
+                        margin-right: 1rem;
+                    }
+                }
+                .message-checkbox {
+                    margin: auto 0 auto auto;
                     display: flex;
                     flex-direction: column;
                 }
@@ -98,9 +116,9 @@
                     content: "";
                     display: block;
                     width: 0;
-                    height:1px;
-                    background:0;
-                    margin: 1rem auto 0;
+                    height: 0;
+                    background: 0;
+                    margin: 0 auto 0;
                     border-bottom: 1px solid @contrast;
                     transition: all 0.5s ease;
 
@@ -119,6 +137,7 @@
                 }
             }
             .dv-accordion-tab-content {
+                .ebeguP();
                 color: @contrast-darkest;
                 overflow: hidden;
                 overflow-y: auto;
@@ -132,12 +151,13 @@
                 & > tab-body > * {
                     margin: 2rem 0 3rem;
                 }
-                .message{
-                    display:flex;
-                    flex-direction:column;
-                    .betreuung{
-                        color:@secondary;
-                        margin-bottom:2rem;
+                .message {
+                    display: flex;
+                    flex-direction: column;
+                    .betreuung {
+                        color: @institution-color;
+                        margin-bottom: 2rem;
+                        text-decoration: underline;
                     }
                 }
                 &.ng-hide-add {

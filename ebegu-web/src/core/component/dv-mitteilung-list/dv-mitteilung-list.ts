@@ -274,23 +274,25 @@ export class DVMitteilungListController {
     public isStatusErledigtGelesen(mitteilung: TSMitteilung): boolean {
         return mitteilung && (mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT || mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN);
     }
-    public getBgNummer() : string {
-        let bgNummer : string = 'zxcv';
+
+    public getBgNummer(): string {
+        let bgNummer: string = '';
         if (this.betreuung) {
             bgNummer = this.ebeguUtil.calculateBetreuungsId(this.betreuung.gesuchsperiode, this.fall, this.betreuung.kindNummer, this.betreuung.betreuungNummer);
         }
         return bgNummer;
     }
+
     public betreuungAsString(mitteilung : TSMitteilung) : string {
         let betreuungAsString : string;
         if (mitteilung.betreuung) {
-            let bgNummer : string = this.ebeguUtil.calculateBetreuungsId(mitteilung.betreuung.gesuchsperiode, mitteilung.fall, mitteilung.betreuung.kindNummer, mitteilung.betreuung.betreuungNummer);
+            let bgNummer: string = this.ebeguUtil.calculateBetreuungsId(mitteilung.betreuung.gesuchsperiode, mitteilung.fall, mitteilung.betreuung.kindNummer, mitteilung.betreuung.betreuungNummer);
             betreuungAsString = mitteilung.betreuung.kindFullname + ', ' + bgNummer;
         }
         return betreuungAsString;
     }
 
-    public gotoBetreuung(mitteilung : TSMitteilung) : void {
+    public gotoBetreuung(mitteilung: TSMitteilung): void {
         this.$state.go('gesuch.betreuung', {
             betreuungNumber: mitteilung.betreuung.betreuungNummer,
             kindNumber: mitteilung.betreuung.kindNummer,
