@@ -1,10 +1,10 @@
-import {IDirective, IDirectiveFactory} from 'angular';
+import {IDirective, IDirectiveFactory, IScope, IAugmentedJQuery, IAttributes, IDirectiveLinkFn} from 'angular';
 import INgModelController = angular.INgModelController;
 let template = require('./dv-valueinput.html');
 
 export class DVValueinput implements IDirective {
     restrict = 'E';
-    require: any = {ngModelCtrl: 'ngModel'};
+    require: any = {ngModelCtrl: 'ngModel', dvValueInputCtrl: 'dvValueinput'};
     scope = {
         ngModel: '=',
         inputId: '@',
@@ -17,6 +17,16 @@ export class DVValueinput implements IDirective {
     controllerAs = 'vm';
     bindToController = true;
     template = template;
+    link: IDirectiveLinkFn;
+
+    constructor() {
+        //koennte auch mit ng-keydown gemacht werden im template, ich dachte so ist es vielleicht etwas direkter
+        this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrl: any) => {
+            element.on('keypress', (event: any) => {
+                ctrl.dvValueInputCtrl.checkForEnterKey(event)
+            })
+        };
+    }
 
     static factory(): IDirectiveFactory {
         const directive = () => new DVValueinput();
@@ -123,6 +133,17 @@ export class ValueinputController {
         if (this.valueinput !== transformedInput) {
             this.ngModelCtrl.$setViewValue(transformedInput);
             this.ngModelCtrl.$render();
+        }
+    }
+
+    /**
+     * Because clicking enter while the field has focus submits the form we must ensure that the logic that is normally
+     * done 'onBlur' is still triggered.
+     * This Handler should ensure that the model value is updated before submitting the form.
+     */
+    public checkForEnterKey(event: any) {
+        if (event && event.which === 13) {
+            this.updateModelValue();
         }
     }
 
