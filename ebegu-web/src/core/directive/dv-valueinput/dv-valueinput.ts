@@ -20,7 +20,7 @@ export class DVValueinput implements IDirective {
     link: IDirectiveLinkFn;
 
     constructor() {
-        //koennte auch mit ng-keydown gemacht werden im template, ich dachte so ist es vielleicht etwas directer
+        //koennte auch mit ng-keydown gemacht werden im template, ich dachte so ist es vielleicht etwas direkter
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrl: any) => {
             element.on('keypress', (event: any) => {
                 ctrl.dvValueInputCtrl.checkForEnterKey(event)
@@ -143,7 +143,7 @@ export class ValueinputController {
      */
     public checkForEnterKey(event: any) {
         if (event && event.which === 13) {
-            this.updateModelValue()
+            this.updateModelValue();
         }
     }
 
