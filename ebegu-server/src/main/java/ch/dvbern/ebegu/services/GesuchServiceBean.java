@@ -607,9 +607,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Optional<Gesuch> gesuchOptional = findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
-			Validate.isTrue(gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG)
-					|| gesuch.getStatus().equals(AntragStatus.IN_BEARBEITUNG_GS),
-				"Gesuch war im falschen Status: " + gesuch.getStatus() + " wir erwarten aber nur Freigabequittung oder In Bearbeitung GS");
+
+			if (!gesuch.getStatus().equals(AntragStatus.FREIGABEQUITTUNG) && !gesuch.getStatus().equals(AntragStatus.IN_BEARBEITUNG_GS)) {
+				throw new EbeguRuntimeException("antragFreigeben",
+					"Gesuch war im falschen Status: " + gesuch.getStatus() + " wir erwarten aber nur Freigabequittung oder In Bearbeitung GS",
+					"Das Gesuch wurde bereits freigegeben");
+			}
 
 			this.authorizer.checkWriteAuthorization(gesuch);
 
