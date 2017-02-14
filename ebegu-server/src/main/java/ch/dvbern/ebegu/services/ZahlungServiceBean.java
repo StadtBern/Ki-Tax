@@ -115,7 +115,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// Nur neueste Verfuegung jedes Falls beachten
 		Optional<Gesuchsperiode> gesuchsperiodeAm = gesuchsperiodeService.getGesuchsperiodeAm(zeitabschnittBis);
 		if (gesuchsperiodeAm.isPresent()) {
-			List<String> gesuchIdsOfAktuellerAntrag = gesuchService.findGesuchIdsOfAktuellerAntrag(gesuchsperiodeAm.get());
+			List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiodeAm.get());
 			Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
 			predicates.add(predicateAktuellesGesuch);
 		} else {

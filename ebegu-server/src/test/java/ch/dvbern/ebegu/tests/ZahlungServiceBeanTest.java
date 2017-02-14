@@ -26,6 +26,7 @@ import java.util.List;
 /**
  * Tests fuer den Zahlungsservice
  */
+@SuppressWarnings("LocalVariableNamingConvention")
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
@@ -74,7 +75,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Gesuch erstgesuchMitVerfuegterMutation = createGesuch(true);
 		Gesuch verfuegteMutation = createMutation(erstgesuchMitVerfuegterMutation, true);
 
-		List<String> gesuchIdsOfAktuellerAntrag = gesuchService.findGesuchIdsOfAktuellerAntrag(verfuegtesGesuch.getGesuchsperiode());
+		List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(verfuegtesGesuch.getGesuchsperiode());
 		Assert.assertNotNull(gesuchIdsOfAktuellerAntrag);
 
 		Assert.assertTrue(gesuchIdsOfAktuellerAntrag.contains(verfuegtesGesuch.getId()));
@@ -83,8 +84,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertTrue(gesuchIdsOfAktuellerAntrag.contains(erstgesuchMitMutation.getId()));
 		Assert.assertFalse(gesuchIdsOfAktuellerAntrag.contains(nichtVerfuegteMutation.getId()));
 
-		//TODO Dieser Test geht erst, wenn GesuchService.findGesuchIdsOfAktuellerAntrag richtig
-//TODO		Assert.assertFalse(gesuchIdsOfAktuellerAntrag.contains(erstgesuchMitVerfuegterMutation.getId()));
+		Assert.assertFalse(gesuchIdsOfAktuellerAntrag.contains(erstgesuchMitVerfuegterMutation.getId()));
 		Assert.assertTrue(gesuchIdsOfAktuellerAntrag.contains(verfuegteMutation.getId()));
 	}
 

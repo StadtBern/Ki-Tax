@@ -945,23 +945,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	public List<String> findGesuchIdsOfAktuellerAntrag(@Nonnull Gesuchsperiode gesuchsperiode) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<String> query = cb.createQuery(String.class);
-		Root<Gesuch> root = query.from(Gesuch.class);
-
-		query.select(root.get(Gesuch_.id));
-
-		// Gesuchsperiode
-		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
-		// Status
-		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
-		//TODO (Team) Hier fehlt die Einschränkung auf das letzt verfuegte Gesuch pro Fall
-		query.where(predicateGesuchsperiode, predicateStatus);
-
-		query.groupBy(root.get(Gesuch_.fall), root.get(Gesuch_.id));
-		query.orderBy(cb.desc(root.get(Gesuch_.fall)), cb.desc(root.get(Gesuch_.laufnummer)));
-		return persistence.getCriteriaResults(query);
+	public List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode) {
+		List<String> ids = new ArrayList<>();
+		Collection<Fall> allFaelle = fallService.getAllFalle();
+		for (Fall fall : allFaelle) {
+			Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode, fall);
+			neustesVerfuegtesGesuchFuerGesuch.ifPresent(gesuch -> ids.add(gesuch.getId()));
+		}
+		return ids;
 	}
 }
 
