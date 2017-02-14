@@ -4,6 +4,7 @@ import TSAbstractEntity from '../models/TSAbstractEntity';
 import TSFall from '../models/TSFall';
 import DateUtil from './DateUtil';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import TSBetreuungsnummerParts from '../models/dto/TSBetreuungsnummerParts';
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
 
@@ -113,6 +114,19 @@ export default class EbeguUtil {
                 + '.' + betreuungNumber;
         }
         return betreuungsId;
+    }
+
+    /**
+     * hilfsmethode um die betreuungsnummer in ihre einzelteile zu zerlegen. gibt ein objekt zurueck welches die werte einzeln enthaelt
+     * @param betreuungsnummer im format JJ.Fallnr.kindnr.betrnr
+     */
+    public splitBetreuungsnummer(betreuungsnummer: string): TSBetreuungsnummerParts{
+        let parts: Array<string> = betreuungsnummer.split(".");
+        if(!parts ||parts.length != 4){
+            console.log('splitBetreuungsnummer')
+            return undefined;
+        }
+        return new TSBetreuungsnummerParts(parts[0], parts[1], parts[2], parts[3]);
     }
 
     public handleSmarttablesUpdateBug(aList: any[]) {
