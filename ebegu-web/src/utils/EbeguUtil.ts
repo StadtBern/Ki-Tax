@@ -99,8 +99,8 @@ export default class EbeguUtil {
 
 
     public static getIndexOfElementwithID(entityToSearch: TSAbstractEntity, listToSearchIn: Array<any>): number {
-        var idToSearch = entityToSearch.id;
-        for (var i = 0; i < listToSearchIn.length; i++) {
+        let idToSearch = entityToSearch.id;
+        for (let i = 0; i < listToSearchIn.length; i++) {
             if (listToSearchIn[i].id === idToSearch) {
                 return i;
             }
@@ -125,6 +125,18 @@ export default class EbeguUtil {
         // Because of a bug in smarttables, the table will only be refreshed if the reverence or the first element
         // changes in table. To resolve this bug, we overwrite the first element by a copy of itself.
         aList[0] = angular.copy(aList[0]);
+    }
+
+    /**
+     * Erzeugt einen random String mit einer Laenge von numberOfCharacters
+     * @param numberOfCharacters von 0 bis 10
+     * @returns {string}
+     */
+    public static generateRandomName(numberOfCharacters: number): string {
+        if (numberOfCharacters === null || numberOfCharacters === undefined || numberOfCharacters > 10) {
+            numberOfCharacters = 10;
+        }
+        return Math.random().toString(36).slice(2, numberOfCharacters + 2);
     }
 
 }

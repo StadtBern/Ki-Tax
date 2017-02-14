@@ -141,7 +141,7 @@
                         <div class="checkbox">
                             <md-checkbox ng-model="vm.getGesuch().hasFSDokument"
                                          name="generateFinanziellenSituation"
-                                         aria-label="{{GENERATE_FINANZIELLEN_SITUATION | translate}}"
+                                         aria-label="{{'GENERATE_FINANZIELLEN_SITUATION' | translate}}"
                                          ng-change="vm.fsDokumentChanged()">
                                 <span data-translate="GENERATE_FINANZIELLEN_SITUATION"></span>
                             </md-checkbox>
@@ -157,56 +157,56 @@
             </dv-navigation>
             <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
                 <dv-loading-button type="button" button-click="vm.setGesuchStatusGeprueft()"
-                                   aria-label="{{GEPRUEFT_UPPER | translate}}" ng-if="vm.showGeprueft()">
+                                   aria-label="{{'GEPRUEFT_UPPER' | translate}}" ng-if="vm.showGeprueft()">
                     <span data-translate="GEPRUEFT_UPPER"></span>
                 </dv-loading-button>
                 <dv-loading-button button-click="vm.setGesuchStatusVerfuegen()"
-                                   aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}"
+                                   aria-label="{{'VERFUEGUNG_STARTEN_UPPER' | translate}}"
                                    ng-if="vm.showVerfuegenStarten()">
                     <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
                 </dv-loading-button>
                 <dv-loading-button button-click="vm.ersteMahnungErstellen()"
-                                   aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}"
+                                   aria-label="{{'ERSTE_MAHNUNG_UPPER' | translate}}"
                                    ng-if="vm.showErsteMahnungErstellen()">
                     <span data-translate="ERSTE_MAHNUNG_UPPER"></span>
                 </dv-loading-button>
                 <dv-loading-button type="submit" button-click="vm.saveMahnung()"
-                                   aria-label="{{ERSTE_MAHNUNG_AUSLOESEN_UPPER | translate}}"
+                                   aria-label="{{'ERSTE_MAHNUNG_AUSLOESEN_UPPER' | translate}}"
                                    ng-if="vm.showErsteMahnungAusloesen()">
                     <span data-translate="ERSTE_MAHNUNG_AUSLOESEN_UPPER"></span>
                 </dv-loading-button>
                 <dv-loading-button button-click="vm.zweiteMahnungErstellen()"
-                                   aria-label="{{ZWEITE_MAHNUNG_UPPER | translate}}"
+                                   aria-label="{{'ZWEITE_MAHNUNG_UPPER' | translate}}"
                                    ng-if="vm.showZweiteMahnungErstellen()">
                     <span data-translate="ZWEITE_MAHNUNG_UPPER"></span>
                 </dv-loading-button>
                 <dv-loading-button type="submit" button-click="vm.saveMahnung()"
-                                   aria-label="{{ZWEITE_MAHNUNG_AUSLOESEN_UPPER | translate}}"
+                                   aria-label="{{'ZWEITE_MAHNUNG_AUSLOESEN_UPPER' | translate}}"
                                    ng-if="vm.showZweiteMahnungAusloesen()">
                     <span data-translate="ZWEITE_MAHNUNG_AUSLOESEN_UPPER"></span>
                 </dv-loading-button>
                 <dv-loading-button button-click="vm.mahnlaufBeenden()"
-                                   aria-label="{{DOKUMENTE_KOMPLETT_UPPER | translate}}"
+                                   aria-label="{{'DOKUMENTE_KOMPLETT_UPPER' | translate}}"
                                    ng-if="vm.showMahnlaufBeenden()">
                     <span data-translate="MAHNLAUF_BEENDEN"></span>
                 </dv-loading-button>
                 <dv-loading-button button-click="vm.dokumenteNichtKomplett()"
-                                   aria-label="{{DOKUMENTE_NICHT_KOMPLETT_UPPER | translate}}"
+                                   aria-label="{{'DOKUMENTE_NICHT_KOMPLETT_UPPER' | translate}}"
                                    ng-if="vm.showDokumenteNichtKomplett()">
                     <span data-translate="DOKUMENTE_NICHT_KOMPLETT_UPPER"></span>
                 </dv-loading-button>
                 <dv-loading-button button-click="vm.zweiteMahnungNichtEingetreten()"
-                                   aria-label="{{ZWEITE_MAHNUNG_NCINT_EINGETRETEN | translate}}"
+                                   aria-label="{{'ZWEITE_MAHNUNG_NCINT_EINGETRETEN' | translate}}"
                                    ng-if="vm.showZweiteMahnungNichtEingetreten()">
                     <span data-translate="ZWEITE_MAHNUNG_NCINT_EINGETRETEN"></span>
                 </dv-loading-button>
                 <dv-loading-button type="button" button-click="vm.setGesuchStatusBeschwerdeHaengig()"
-                                   aria-label="{{BESCHWERDE_HAENGIG_UPPER | translate}}"
+                                   aria-label="{{'BESCHWERDE_HAENGIG_UPPER' | translate}}"
                                    ng-if="vm.showBeschwerdeHaengig()">
                     <span data-translate="BESCHWERDE_HAENGIG_UPPER"></span>
                 </dv-loading-button>
                 <dv-loading-button type="button" button-click="vm.setGesuchStatusBeschwerdeAbschliessen()"
-                                   aria-label="{{BESCHWERDE_ABSCHLIESSEN_UPPER | translate}}"
+                                   aria-label="{{'BESCHWERDE_ABSCHLIESSEN_UPPER' | translate}}"
                                    ng-if="vm.showBeschwerdeAbschliessen()">
                     <span data-translate="BESCHWERDE_ABSCHLIESSEN_UPPER"></span>
                 </dv-loading-button>

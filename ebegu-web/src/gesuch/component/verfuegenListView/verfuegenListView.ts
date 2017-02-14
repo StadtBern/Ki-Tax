@@ -1,4 +1,4 @@
-import {IComponentOptions, IPromise, ILogService} from 'angular';
+import {IComponentOptions, IPromise, ILogService, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -24,7 +24,6 @@ import DateUtil from '../../../utils/DateUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import GesuchRS from '../../service/gesuchRS.rest';
-import IScope = angular.IScope;
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -50,13 +49,15 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS'];
+        'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS', '$window'];
     /* @ngInject */
 
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService,
-                private authServiceRs: AuthServiceRS, $scope: IScope, private gesuchRS: GesuchRS) {
+                private authServiceRs: AuthServiceRS, $scope: IScope, private gesuchRS: GesuchRS,
+                private $window: ng.IWindowService) {
+
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
         this.initViewModel();
     }
@@ -148,7 +149,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     private isDetailAvailableForBetreuungstatus(betreuungsstatus: TSBetreuungsstatus): boolean {
         let isGesuchsteller: boolean = this.authServiceRs.isRole(TSRole.GESUCHSTELLER);
-        let allowedBetstatus: Array<TSBetreuungsstatus> = [TSBetreuungsstatus.VERFUEGT, TSBetreuungsstatus.NICHT_EINGETRETEN];
+        let allowedBetstatus: Array<TSBetreuungsstatus> = [TSBetreuungsstatus.VERFUEGT, TSBetreuungsstatus.NICHT_EINGETRETEN, TSBetreuungsstatus.GEKUENDIGT_VOR_EINTRITT];
         //Annahme: alle ausser Gesuchsteller duerfen bestaetigte betreuungen sehen wenn sie uberhaupt auf die Seite kommen
         if (!isGesuchsteller) {
             allowedBetstatus.push(TSBetreuungsstatus.BESTAETIGT);
@@ -367,29 +368,32 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public openFinanzielleSituationPDF(): void {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
         this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
 
     public openBegleitschreibenPDF(): void {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
         this.downloadRS.getBegleitschreibenDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
 
     public openMahnungPDF(mahnung: TSMahnung): void {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
         if (mahnung == null) {
             mahnung = this.mahnung;
         }
         this.downloadRS.getAccessTokenMahnungGeneratedDokument(mahnung, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
-                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
 

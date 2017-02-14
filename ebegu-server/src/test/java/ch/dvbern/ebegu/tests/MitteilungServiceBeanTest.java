@@ -121,7 +121,7 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		mitteilung2.setMitteilungStatus(MitteilungStatus.GELESEN);
 		persistence.persist(mitteilung2);
 
-		final Collection<Mitteilung> newMitteilungenCurrentRolle = mitteilungService.getNewMitteilungenForCurrentRolle(mitteilung1.getFall());
+		final Collection<Mitteilung> newMitteilungenCurrentRolle = mitteilungService.getNewMitteilungenForCurrentRolleAndFall(mitteilung1.getFall());
 
 		//AS SUPERADMIN
 		Assert.assertNotNull(newMitteilungenCurrentRolle);

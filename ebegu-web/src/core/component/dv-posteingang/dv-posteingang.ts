@@ -16,7 +16,7 @@ export class DvPosteingangComponentConfig implements IComponentOptions {
 
 export class DvPosteingangController {
 
-    amountMitteilungen: number;
+    amountMitteilungen: number = 0;
 
     static $inject: any[] = ['MitteilungRS', '$rootScope', 'AuthServiceRS'];
 
@@ -38,8 +38,11 @@ export class DvPosteingangController {
     }
 
     private getAmountNewMitteilungen(): void {
-        this.mitteilungRS.getAmountMitteilungenForPosteingang().then((response: number) => {
+        this.mitteilungRS.getAmountMitteilungenForCurrentBenutzer().then((response: number) => {
             console.log(response);
+            if (!response) {
+                response = 0;
+            }
             this.amountMitteilungen = response;
         });
     }

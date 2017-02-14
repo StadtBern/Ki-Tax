@@ -40,6 +40,8 @@ export default class AuthServiceRS {
                     this.httpBuffer.retryAll((config: IRequestConfig) => {
                         return config;
                     });
+                    //ensure that there is ALWAYS a logout-event before the login-event by throwing it right before login
+                    this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], 'logged out before logging in in');
                     return this.$timeout((): any => { // Response cookies are not immediately accessible, so lets wait for a bit
                         try {
                             this.initWithCookie();

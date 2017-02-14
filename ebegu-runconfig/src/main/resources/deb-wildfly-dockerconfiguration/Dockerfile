@@ -35,5 +35,5 @@ RUN rm -rf /opt/jboss/wildfly/standalone/configuration/standalone_xml_history
 EXPOSE 9990
 WORKDIR $JBOSS_HOME
 # properties beim serverstart mitgeben
-COPY ebegu-lokal.properties /opt/jboss/wildfly/standalone/configuration/ebegu.properties
+COPY ebegu-docker.properties /opt/jboss/wildfly/standalone/configuration/ebegu.properties
 CMD ["--properties=/opt/jboss/wildfly/standalone/configuration/ebegu.properties", "-bmanagement", "0.0.0.0"]
