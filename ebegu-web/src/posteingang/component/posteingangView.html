@@ -13,7 +13,7 @@
 
                 <table st-table="displayedCollection" st-set-filter="posteingangFilter" st-safe-src="vm.getMitteilungen()"
                        st-delay="20"
-                       class="table fixedtable">
+                       class="table fixedtable table-striped">
                     <thead>
                     <tr>
                         <!-- Von -->
@@ -47,7 +47,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single" ng-click="vm.gotoMitteilung(row)" ng-class="{'mitteilung_neu': ('NEU' === row.mitteilungStatus.toString())}">
+                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single" ng-click="vm.gotoMitteilung(row)" ng-class="{'mitteilung_neu': ('NEU' === row.mitteilungStatus.toString()),'mitteilung_alt': ('NEU' !== row.mitteilungStatus.toString())}">
                         <!-- Von -->
                         <td ellipsis-tooltip="{{row.sender.getFullName()}}"
                             ng-bind="row.sender.getFullName()"></td>
