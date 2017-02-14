@@ -215,13 +215,15 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     /**
-     * Nur wenn das Gesuch im Status VERFUEGEN und die Betreuung im Status BESTAETIGT sind, kann der Benutzer
-     * das Angebot verfuegen. Sonst ist dieses nicht erlaubt.
+     * Nur wenn das Gesuch im Status VERFUEGEN und die Betreuung im Status BESTAETIGT oder GEKUENDIGT_VOR_EINTRITT
+     * sind, kann der Benutzer das Angebot verfuegen. Sonst ist dieses nicht erlaubt.
+     * GEKUENDIGT_VOR_EINTRITT ist erlaubt weil die Kita verantwortlicher dafuer ist, die Betreuung in diesem Status zu setzen,
+     * d.h. die Betreuung hat bereits diesen Status wenn man auf den Step Verfuegung kommt
      * @returns {boolean}
      */
     public showVerfuegen(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGEN)
-            && (TSBetreuungsstatus.BESTAETIGT === this.getBetreuungsstatus());
+            && (TSBetreuungsstatus.BESTAETIGT === this.getBetreuungsstatus() || TSBetreuungsstatus.GEKUENDIGT_VOR_EINTRITT === this.getBetreuungsstatus());
     }
 
     public saveVerfuegung(): IPromise<TSVerfuegung> {
