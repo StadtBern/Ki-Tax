@@ -19,7 +19,7 @@ function getStates(): IState[] {
 
 export class EbeguMitteilungenStateState implements IState {
     name = 'mitteilungen';
-    template = '<mitteilungen-view flex="auto" class="overflow-scroll">';
+    template = '<mitteilungen-view flex="auto" class="overflow-hidden" layout="column">';
     url = '/mitteilungen/:fallId/:betreuungId';
 }
 
