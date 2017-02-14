@@ -69,20 +69,6 @@ public class VerfuegungPrintImpl extends BriefPrintImpl implements VerfuegungPri
 		return betreuung.getBGNummer();
 	}
 
-	@Override
-	public String getGesuchstellerNames() {
-		String gesuchstellerNames = "";
-
-		if(gesuch.getGesuchsteller1() != null) {
-			gesuchstellerNames = gesuch.getGesuchsteller1().extractFullName();
-		}
-		if(gesuch.getGesuchsteller2() != null) {
-			gesuchstellerNames += ", " + gesuch.getGesuchsteller2().extractFullName();
-		}
-
-		return gesuchstellerNames;
-	}
-
 	/**
 	 * @return Gesuchsteller-Verfuegungsdatum
 	 */
