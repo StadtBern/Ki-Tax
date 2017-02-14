@@ -60,7 +60,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.model = this.initEmptyBetreuung();
             this.initialBetreuung = angular.copy(this.model);
             this.betreuungNumber = this.gesuchModelManager.getKindToWorkWith().betreuungen ? this.gesuchModelManager.getKindToWorkWith().betreuungen.length + 1 : 1;
-            this.gesuchModelManager.setBetreuungNumber( this.betreuungNumber);
+            this.gesuchModelManager.setBetreuungNumber(this.betreuungNumber);
         }
 
         this.setBetreuungsangebotTypValues();
@@ -174,7 +174,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public cancel() {
         this.reset();
         this.form.$setPristine();
-        this.$state.go('gesuch.betreuungen', { gesuchId: this.getGesuchId() });
+        this.$state.go('gesuch.betreuungen', {gesuchId: this.getGesuchId()});
     }
 
     reset() {
@@ -251,7 +251,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public platzAnfordern(): void {
         if (this.isGesuchValid() && this.getBetreuungModel().vertrag === true) {
             this.flagErrorVertrag = false;
-            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen', { gesuchId: this.getGesuchId() });
+            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
         } else if (this.getBetreuungModel().vertrag !== true) {
             this.flagErrorVertrag = true;
         }
@@ -296,7 +296,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public saveSchulamt(): void {
         if (this.isGesuchValid()) {
-            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', { gesuchId: this.getGesuchId() });
+            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', {gesuchId: this.getGesuchId()});
         }
     }
 
@@ -307,9 +307,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      */
     public isEnabled(): boolean {
         if (this.getBetreuungModel()) {
-            return this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
-                || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
-                        && !this.isKorrekturModusJugendamt());
+
+            return !this.getBetreuungModel().hasVorgaenger() &&
+                (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT) && !this.isKorrekturModusJugendamt()));
         }
         return false;
     }
