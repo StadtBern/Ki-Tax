@@ -18,7 +18,7 @@ public interface EinkommensverschlechterungService {
 	 * Aktualisiert idn EinkommensverschlechterungContainer in der DB
 	 *
 	 * @param einkommensverschlechterungContainer die EinkommensverschlechterungContainer als DTO
-	 * @param gesuchId
+	 * @param gesuchId die ID des Gesuchs dessen Status modifiziert werden soll
 	 * @return Die aktualisierte EinkommensverschlechterungContainer
 	 */
 	@Nonnull

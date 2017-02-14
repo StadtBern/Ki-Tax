@@ -181,11 +181,13 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		}
 	}
 
+	/**
+	 * Wenn die Seite schon besucht ist dann soll der Status auf ok/mutiert oder notOK (bei wechsel ekv von nein auf ja) gesetzt werden
+	 */
 	private void updateAllStatusForEinkommensverschlechterungInfo(List<WizardStep> wizardSteps, EinkommensverschlechterungInfoContainer oldEntity,
 																  EinkommensverschlechterungInfoContainer newEntity) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
-				&& !WizardStepStatus.NOK.equals(wizardStep.getWizardStepStatus())
 				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
 				if (!newEntity.getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung()) {
 					wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
