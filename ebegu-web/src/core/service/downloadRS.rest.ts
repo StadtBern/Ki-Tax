@@ -15,7 +15,7 @@ export class DownloadRS {
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', '$window', '$interval'];
     /* @ngInject */
     constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService, private $window: ng.IWindowService,
-    private $interval: IIntervalService) {
+                private $interval: IIntervalService) {
         this.serviceURL = REST_API + 'blobs/temp';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -133,7 +133,7 @@ export class DownloadRS {
     }
 
     prepareDownloadWindow(): Window {
-        return  this.$window.open('./src/assets/downloadWindow/downloadWindow.html', EbeguUtil.generateRandomName(5));
+        return this.$window.open('./src/assets/downloadWindow/downloadWindow.html', EbeguUtil.generateRandomName(5));
     }
 
     private redirectWindowToDownloadWhenReady(win: Window, href: string, name: string) {
@@ -159,7 +159,7 @@ export class DownloadRS {
         if (element) {
             element.style.display = 'none';
         } else {
-            console.log('element not found, can not hide spinner')
+            console.log('element not found, can not hide spinner');
         }
         let buttonElement = win.document.getElementById('closeButton');
         if (buttonElement) {
