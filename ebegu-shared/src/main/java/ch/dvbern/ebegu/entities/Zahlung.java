@@ -28,7 +28,7 @@ public class Zahlung extends AbstractEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlung_institution_id"))
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlung_institutionStammdaten_id"))
 	private InstitutionStammdaten institutionStammdaten;
 
 	@NotNull
@@ -50,6 +50,13 @@ public class Zahlung extends AbstractEntity {
 		this.zahlungsauftrag = zahlungsauftrag;
 	}
 
+	public InstitutionStammdaten getInstitutionStammdaten() {
+		return institutionStammdaten;
+	}
+
+	public void setInstitutionStammdaten(InstitutionStammdaten institutionStammdaten) {
+		this.institutionStammdaten = institutionStammdaten;
+	}
 
 	public ZahlungStatus getStatus() {
 		return status;
@@ -71,16 +78,6 @@ public class Zahlung extends AbstractEntity {
 	public BigDecimal getTotal() {
 		//TODO: Total der Zahlungspositionen
 		return new BigDecimal(1234);
-	}
-
-	//FIXME
-	public InstitutionStammdaten getInstitutionStammdaten() {
-		return institutionStammdaten;
-	}
-
-	//FIXME
-	public void setInstitutionStammdaten(InstitutionStammdaten institutionStammdaten) {
-		this.institutionStammdaten = institutionStammdaten;
 	}
 
 	//FIXME

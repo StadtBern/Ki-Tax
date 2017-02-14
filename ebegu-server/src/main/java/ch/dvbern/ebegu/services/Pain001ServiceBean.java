@@ -160,7 +160,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		cTTI10CH.getCdtrAgt().setFinInstnId(objectFactory.createFinancialInstitutionIdentification7CH());
 
 		// data
-		cTTI10CH.getPmtId().setInstrId(Integer.valueOf(transaktion).toString()); // 2.29
+		cTTI10CH.getPmtId().setInstrId(String.valueOf(transaktion)); // 2.29
 //				cTTI10CH.getPmtId().setEndToEndId(Integer.valueOf(transaktion).toString() + " / " + builder.vnrNummer); // 2.30
 
 		// Wert
@@ -173,16 +173,21 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		cTTI10CH.getCdtrAgt().getFinInstnId().setBIC(zahlung.getInstitutionStammdaten().getBIC());
 
 		//IBAN
+		cTTI10CH.setCdtrAcct(objectFactory.createCashAccount16CHId());
+		cTTI10CH.getCdtrAcct().setId(objectFactory.createAccountIdentification4ChoiceCH()); // 2.80
 		cTTI10CH.getCdtrAcct().getId().setIBAN(zahlung.getInstitutionStammdaten().getIban().getIban()); // 2.80
 
 		// 1.1.1	ETAB 503.2: EZAG für PC- / IBAN-Auszahlung aufbereiten, 2. Teil
 		// Strukturierte Daten
+		cTTI10CH.setCdtr(objectFactory.createPartyIdentification32CHName());
 		cTTI10CH.getCdtr().setNm(zahlung.getInstitutionStammdaten().getInstitution().getName()); // 2.79
+		cTTI10CH.getCdtr().setPstlAdr(objectFactory.createPostalAddress6CH());
 		cTTI10CH.getCdtr().getPstlAdr().setStrtNm(zahlung.getInstitutionStammdaten().getAdresse().getHausnummer()); // 2.79
 		cTTI10CH.getCdtr().getPstlAdr().setPstCd(zahlung.getInstitutionStammdaten().getAdresse().getPlz());// 2.79
 		cTTI10CH.getCdtr().getPstlAdr().setTwnNm(zahlung.getInstitutionStammdaten().getAdresse().getOrt());// 2.79
 		cTTI10CH.getCdtr().getPstlAdr().setCtry(zahlung.getInstitutionStammdaten().getAdresse().getLand().toString());// 2.79
 
+		cTTI10CH.setRmtInf(objectFactory.createRemittanceInformation5CH());
 		cTTI10CH.getRmtInf().setUstrd(zahlung.getZahlungstext());    // 2.99
 		return cTTI10CH;
 	}

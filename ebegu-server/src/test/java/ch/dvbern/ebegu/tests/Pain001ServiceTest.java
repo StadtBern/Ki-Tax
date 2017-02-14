@@ -30,7 +30,7 @@ import java.util.Optional;
  * Tests fuer die Klasse PersonService
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 
@@ -38,10 +38,7 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 	private Pain001Service pain001Service;
 
 	@Inject
-	TestDataUtil testDataUtil;
-
-	@Inject
-	InstitutionStammdatenService institutionStammdatenService;
+	private InstitutionStammdatenService institutionStammdatenService;
 
 
 	@Inject
@@ -56,7 +53,7 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 	public void init() {
 		final Gesuchsperiode gesuchsperiode = createGesuchsperiode(true);
 		final Mandant mandant = insertInstitutionen();
-		createBenutzer(mandant);
+		//createBenutzer(mandant);
 		TestDataUtil.prepareApplicationProperties(persistence);
 
 		allInstitutionStammdaten = institutionStammdatenService.getAllInstitutionStammdaten();
@@ -64,7 +61,7 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void createPersonInstitutionStammdatenTest() {
+	public void getPainFileContentTest() {
 		Assert.assertNotNull(pain001Service);
 
 		Zahlung zahlung = new Zahlung();
@@ -77,7 +74,6 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 		Zahlungsauftrag zahlungsauftrag = new Zahlungsauftrag();
 		zahlungsauftrag.setDatumFaellig(LocalDateTime.now());
 		zahlungsauftrag.setZahlungen(zahlungList);
-
 
 		pain001Service.getPainFileContent(zahlungsauftrag);
 

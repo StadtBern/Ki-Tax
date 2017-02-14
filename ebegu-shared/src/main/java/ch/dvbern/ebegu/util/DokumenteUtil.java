@@ -49,10 +49,8 @@ public class DokumenteUtil {
 	private static Set<DokumentGrund> getPersistedForNeeded(Collection<DokumentGrund> persistedDokumentGrunds, DokumentGrund dokumentGrundNeeded) {
 		Set<DokumentGrund> persisted = new HashSet<>();
 		for (DokumentGrund persistedDokumentGrund : persistedDokumentGrunds) {
-			if (persistedDokumentGrund.equals(dokumentGrundNeeded)) {
-
-					persisted.add(persistedDokumentGrund);
-
+			if (persistedDokumentGrund.compareTo(dokumentGrundNeeded) == 0) {
+                persisted.add(persistedDokumentGrund);
 			}
 		}
 		return persisted;

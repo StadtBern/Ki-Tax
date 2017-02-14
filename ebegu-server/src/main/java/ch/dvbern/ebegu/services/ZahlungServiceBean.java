@@ -210,7 +210,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	private Zahlung findZahlungForInstitution(VerfuegungZeitabschnitt zeitabschnitt,  Zahlungsauftrag zahlungsauftrag, Map<String, Zahlung> zahlungProInstitution) {
-		Institution institution = zeitabschnitt.getVerfuegung().getBetreuung().getInstitutionStammdaten().getInstitution();
+		InstitutionStammdaten institution = zeitabschnitt.getVerfuegung().getBetreuung().getInstitutionStammdaten();
 		if (zahlungProInstitution.containsKey(institution.getId())) {
 			return zahlungProInstitution.get(institution.getId());
 		} else {
@@ -218,10 +218,10 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		}
 	}
 
-	private Zahlung createZahlung(Institution institution, Zahlungsauftrag zahlungsauftrag) {
+	private Zahlung createZahlung(InstitutionStammdaten institution, Zahlungsauftrag zahlungsauftrag) {
 		Zahlung zahlung = new Zahlung();
 		zahlung.setStatus(ZahlungStatus.AUSGELOEST);
-		//zahlung.setInstitution(institution);
+		zahlung.setInstitutionStammdaten(institution);
 		zahlung.setZahlungsauftrag(zahlungsauftrag);
 		zahlungsauftrag.getZahlungen().add(zahlung);
 		return zahlung;

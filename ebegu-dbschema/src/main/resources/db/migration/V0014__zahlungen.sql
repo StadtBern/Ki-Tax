@@ -1,29 +1,29 @@
 CREATE TABLE zahlung (
-  id                 VARCHAR(36)  NOT NULL,
-  timestamp_erstellt DATETIME     NOT NULL,
-  timestamp_mutiert  DATETIME     NOT NULL,
-  user_erstellt      VARCHAR(36)  NOT NULL,
-  user_mutiert       VARCHAR(36)  NOT NULL,
-  version            BIGINT       NOT NULL,
-  vorgaenger_id      VARCHAR(36),
-  status             VARCHAR(255) NOT NULL,
-  institution_id     VARCHAR(36)  NOT NULL,
-  zahlungsauftrag_id VARCHAR(36)  NOT NULL,
+  id                        VARCHAR(36)  NOT NULL,
+  timestamp_erstellt        DATETIME     NOT NULL,
+  timestamp_mutiert         DATETIME     NOT NULL,
+  user_erstellt             VARCHAR(36)  NOT NULL,
+  user_mutiert              VARCHAR(36)  NOT NULL,
+  version                   BIGINT       NOT NULL,
+  vorgaenger_id             VARCHAR(36),
+  status                    VARCHAR(255) NOT NULL,
+  institution_stammdaten_id VARCHAR(36)  NOT NULL,
+  zahlungsauftrag_id        VARCHAR(36)  NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE zahlung_aud (
-  id                 VARCHAR(36) NOT NULL,
-  rev                INTEGER     NOT NULL,
-  revtype            TINYINT,
-  timestamp_erstellt DATETIME,
-  timestamp_mutiert  DATETIME,
-  user_erstellt      VARCHAR(36),
-  user_mutiert       VARCHAR(36),
-  vorgaenger_id      VARCHAR(36),
-  status             VARCHAR(255),
-  institution_id     VARCHAR(36),
-  zahlungsauftrag_id VARCHAR(36),
+  id                        VARCHAR(36) NOT NULL,
+  rev                       INTEGER     NOT NULL,
+  revtype                   TINYINT,
+  timestamp_erstellt        DATETIME,
+  timestamp_mutiert         DATETIME,
+  user_erstellt             VARCHAR(36),
+  user_mutiert              VARCHAR(36),
+  vorgaenger_id             VARCHAR(36),
+  status                    VARCHAR(255),
+  institution_stammdaten_id VARCHAR(36),
+  zahlungsauftrag_id        VARCHAR(36),
   PRIMARY KEY (id, rev)
 );
 
@@ -94,9 +94,9 @@ CREATE TABLE zahlungsposition_aud (
 );
 
 ALTER TABLE zahlung
-  ADD CONSTRAINT FK_Zahlung_institution_id
-FOREIGN KEY (institution_id)
-REFERENCES institution (id);
+  ADD CONSTRAINT FK_Zahlung_institutionStammdaten_id
+FOREIGN KEY (institution_stammdaten_id)
+REFERENCES institution_stammdaten (id);
 
 ALTER TABLE zahlung
   ADD CONSTRAINT FK_Zahlung_zahlungsauftrag_id
