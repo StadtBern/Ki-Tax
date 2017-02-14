@@ -15,6 +15,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.vorlagen.BriefPrintImpl;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.List;
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die
  * Berechnungsvorlage fest.
  */
-public class BerechnungsgrundlagenInformationPrintImpl implements BerechnungsgrundlagenInformationPrint {
+public class BerechnungsgrundlagenInformationPrintImpl extends BriefPrintImpl implements BerechnungsgrundlagenInformationPrint {
 
 	private FinanzielleSituationPrint finanz;
 	private EinkommensverschlechterungPrint ev1;
@@ -38,6 +39,8 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	 * @param gesuch
 	 */
 	public BerechnungsgrundlagenInformationPrintImpl(Gesuch gesuch, Verfuegung famGroessenVerfuegung) {
+
+		super(gesuch);
 
 		this.gesuch = gesuch;
 		this.famGroessenVerfuegung = famGroessenVerfuegung;
