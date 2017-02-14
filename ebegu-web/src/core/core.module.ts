@@ -66,6 +66,7 @@ import {DVBarcodeListener} from './directive/dv-barcode-listener';
 import DVTrimEmpty from './directive/dv-trim-empty/dv-trim-empty';
 import {DvMobileNavigationToggleComponentConfig} from './component/dv-mobile-navigation-toggle/dv-mobile-navigation-toggle';
 import {DVValueinput} from './directive/dv-valueinput/dv-valueinput';
+import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
 
 let dynamicDependencies = function (): string[] {
 
@@ -161,6 +162,7 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvEnableElement', DVEnableElement.factory())
     .directive('dvBarcodeListener', DVBarcodeListener.factory())
     .directive('dvTrimEmpty', DVTrimEmpty.factory())
+    .directive('dvSuppressFormSubmitOnEnter', DVSupressFormSubmitOnEnter.factory())
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
     .service('HttpResponseInterceptor', HttpResponseInterceptor)
