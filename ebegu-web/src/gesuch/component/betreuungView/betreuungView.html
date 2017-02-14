@@ -82,7 +82,7 @@
                             <div class="form-group">
                                 <label class="md-no-float"
                                        for="betreuungsangebot">
-                                    <span data-translate="BETREUUNGSANGEBOT_WAEHLEN"></span>
+                                    <span data-translate="BETREUUNGSANGEBOT_WAEHLEN" class="required"></span>
                                     <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-select-style">
@@ -101,7 +101,7 @@
                     <!--Institutionen-->
                     <div class="row" ng-if="vm.isEnabled() && !vm.isTagesschule()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
-                            <label class="md-no-float" data-translate="INSTITUTION" for="institution">
+                            <label class="md-no-float" data-translate="INSTITUTION" for="institution" class="required">
                             </label>
                             <div class="dv-select-style">
                                 <select name="institution" id="institution" ng-model="vm.instStammId"
