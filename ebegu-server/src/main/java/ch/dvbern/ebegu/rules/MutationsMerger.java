@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +110,7 @@ public class MutationsMerger {
 	 */
 	@Nullable
 	private VerfuegungZeitabschnitt findZeitabschnittInVorgaenger(LocalDate stichtag, Verfuegung vorgaengerVerf) {
+		Validate.notNull(vorgaengerVerf, "Vorgaengerverfuegung darf nicht null sein");
 		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : vorgaengerVerf.getZeitabschnitte()) {
 			final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
 			if (gueltigkeit.contains(stichtag) || gueltigkeit.startsSameDay(stichtag)) {
