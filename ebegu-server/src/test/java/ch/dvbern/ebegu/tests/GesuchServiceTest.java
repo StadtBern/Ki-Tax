@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ejb.EJBAccessException;
-import javax.ejb.EJBException;
 import javax.inject.Inject;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
@@ -441,8 +440,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		try {
 			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 			Assert.fail("Gesuch is already freigegeben. Wrong state should be detected");
-		} catch (EJBException e){
-			Assert.assertTrue(e.getCausedByException() instanceof IllegalArgumentException);
+		} catch (EbeguRuntimeException e){
+			Assert.assertEquals("Das Gesuch wurde bereits freigegeben", e.getCustomMessage());
 		}
 	}
 
