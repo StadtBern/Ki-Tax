@@ -166,10 +166,11 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 	public int compareTo(DokumentGrund o) {
 		CompareToBuilder builder = new CompareToBuilder();
 		builder.append(this.getDokumentGrundTyp(), o.getDokumentGrundTyp());
-		if(this.getFullName() != null && o.getFullName() != null){
+		builder.append(this.getDokumentTyp(), o.getDokumentTyp());
+		if (this.getFullName() != null && o.getFullName() != null) {
 			builder.append(this.getFullName(), o.getFullName());
 		}
-		if(this.getTag() != null && o.getTag() != null){
+		if (this.getTag() != null && o.getTag() != null) {
 			builder.append(this.getTag(), o.getTag());
 		}
 		return builder.toComparison();

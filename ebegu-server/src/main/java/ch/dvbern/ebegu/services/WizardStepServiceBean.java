@@ -271,7 +271,6 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) ||
 						Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG.equals(betreuung.getBetreuungsstatus()) ||
 						Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus()) ||
-						Betreuungsstatus.GEKUENDIGT_VOR_EINTRITT.equals(betreuung.getBetreuungsstatus()) ||
 						Betreuungsstatus.SCHULAMT.equals(betreuung.getBetreuungsstatus()))) {
 
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
