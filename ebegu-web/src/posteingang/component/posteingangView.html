@@ -1,7 +1,7 @@
 <div class="posteingangView">
     <div class="col-md-12">
         <div class="row">
-            <div class="col-md-11">
+            <div class="col-md-9 col-md-offset-1">
                 <h3 data-translate="POSTEINGANG"></h3>
             </div>
             <div class="col-md-1 text-right">
@@ -9,11 +9,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12 table-responsive">
+            <div class="col-md-10 col-md-offset-1 table-responsive">
 
                 <table st-table="displayedCollection" st-set-filter="posteingangFilter" st-safe-src="vm.getMitteilungen()"
                        st-delay="20"
-                       class="table table-striped fixedtable">
+                       class="table fixedtable">
                     <thead>
                     <tr>
                         <!-- Von -->
@@ -70,7 +70,7 @@
                     </tbody>
                     <tfoot>
                     <tr>
-                        <td colspan="9" class="text-center">
+                        <td colspan="6" class="text-center">
                             <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
                         </td>
                     </tr>
