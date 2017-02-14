@@ -26,8 +26,8 @@ public class Zahlung extends AbstractEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlung_institution_id"))
-	private Institution institution;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlung_institutionStammdaten_id"))
+	private InstitutionStammdaten institutionStammdaten;
 
 	@NotNull
 	@Column(nullable = false)
@@ -48,12 +48,12 @@ public class Zahlung extends AbstractEntity {
 		this.zahlungsauftrag = zahlungsauftrag;
 	}
 
-	public Institution getInstitution() {
-		return institution;
+	public InstitutionStammdaten getInstitutionStammdaten() {
+		return institutionStammdaten;
 	}
 
-	public void setInstitution(Institution institution) {
-		this.institution = institution;
+	public void setInstitutionStammdaten(InstitutionStammdaten institutionStammdaten) {
+		this.institutionStammdaten = institutionStammdaten;
 	}
 
 	public ZahlungStatus getStatus() {
