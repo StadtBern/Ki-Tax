@@ -72,7 +72,11 @@ export class GesuchRouteController {
                 }
                 return 'fa-pencil black';
             } else if (status === TSWizardStepStatus.PLATZBESTAETIGUNG || status === TSWizardStepStatus.WARTEN) {
-                return 'fa-hourglass orange';
+                if (this.getGesuch().isMutation() && this.isWizardStepDisabled(step.wizardStepName)) { // in einer Mutation bekommt icon nur wenn es aktiviert ist
+                    return '';
+                } else {
+                    return 'fa-hourglass orange';
+                }
             } else if (status === TSWizardStepStatus.UNBESUCHT) {
                 return '';
             }

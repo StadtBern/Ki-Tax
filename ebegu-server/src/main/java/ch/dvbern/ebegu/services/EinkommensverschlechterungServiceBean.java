@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
@@ -34,12 +35,20 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 	@Inject
 	private FinanzielleSituationRechner finSitRechner;
 
+	@Inject
+	private WizardStepService wizardStepService;
+
 
 	@Override
 	@Nonnull
-	public EinkommensverschlechterungContainer saveEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer) {
+	public EinkommensverschlechterungContainer saveEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer,
+																					   String gesuchId) {
 		Objects.requireNonNull(einkommensverschlechterungContainer);
-		return persistence.merge(einkommensverschlechterungContainer);
+		final EinkommensverschlechterungContainer persistedEKV = persistence.merge(einkommensverschlechterungContainer);
+		if(gesuchId != null) {
+			wizardStepService.updateSteps(gesuchId, null, einkommensverschlechterungContainer, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+		}
+		return persistedEKV;
 	}
 
 	@Override
