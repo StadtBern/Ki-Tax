@@ -714,6 +714,20 @@ public final class TestDataUtil {
 
 	}
 
+	public static void prepareApplicationProperties( Persistence<?> persistence) {
+
+		saveParameter(ApplicationPropertyKey.DEBTOR_NAME, "Jugendamt Stadt Bern", persistence);
+		saveParameter(ApplicationPropertyKey.DEBTOR_IBAN, "CH4808704020071690000", persistence);
+		saveParameter(ApplicationPropertyKey.DEBTOR_BIC, "POFICHBEXXX", persistence);
+		saveParameter(ApplicationPropertyKey.DEBTOR_IBAN_GEBUEHREN, "CH4808704020071700000", persistence);
+	}
+
+	public static void saveParameter(ApplicationPropertyKey key, String value, Persistence<?> persistence) {
+		ApplicationProperty applicationProperty = new ApplicationProperty(key, value);
+		persistence.persist(applicationProperty);
+
+	}
+
 	public static Benutzer createBenutzer(UserRole role, String userName, Traegerschaft traegerschaft, Institution institution, Mandant mandant) {
 		final Benutzer benutzer = new Benutzer();
 		benutzer.setUsername(userName);

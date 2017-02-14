@@ -115,4 +115,9 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	public void setAdresse(Adresse adresse) {
 		this.adresse = adresse;
 	}
+
+	//FIXME
+	public String getBIC() {
+		return "RAIFCH22XXX";
+	}
 }

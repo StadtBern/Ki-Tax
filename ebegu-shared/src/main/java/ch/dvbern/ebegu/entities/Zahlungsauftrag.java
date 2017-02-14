@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,4 +88,5 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 	public void setZahlungen(@Nonnull List<Zahlung> zahlungen) {
 		this.zahlungen = zahlungen;
 	}
+
 }

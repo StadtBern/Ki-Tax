@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +25,11 @@ public class Zahlung extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlung_zahlungsauftrag_id"), nullable = false)
 	private Zahlungsauftrag zahlungsauftrag;
 
+
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlung_institution_id"))
-	private Institution institution;
+	private InstitutionStammdaten institutionStammdaten;
 
 	@NotNull
 	@Column(nullable = false)
@@ -48,13 +50,6 @@ public class Zahlung extends AbstractEntity {
 		this.zahlungsauftrag = zahlungsauftrag;
 	}
 
-	public Institution getInstitution() {
-		return institution;
-	}
-
-	public void setInstitution(Institution institution) {
-		this.institution = institution;
-	}
 
 	public ZahlungStatus getStatus() {
 		return status;
@@ -71,5 +66,25 @@ public class Zahlung extends AbstractEntity {
 
 	public void setZahlungspositionen(@Nonnull List<Zahlungsposition> zahlungspositionen) {
 		this.zahlungspositionen = zahlungspositionen;
+	}
+
+	public BigDecimal getTotal() {
+		//TODO: Total der Zahlungspositionen
+		return new BigDecimal(1234);
+	}
+
+	//FIXME
+	public InstitutionStammdaten getInstitutionStammdaten() {
+		return institutionStammdaten;
+	}
+
+	//FIXME
+	public void setInstitutionStammdaten(InstitutionStammdaten institutionStammdaten) {
+		this.institutionStammdaten = institutionStammdaten;
+	}
+
+	//FIXME
+	public String getZahlungstext() {
+		return getTotal() + " " + getInstitutionStammdaten().getInstitution().getName();
 	}
 }

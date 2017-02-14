@@ -1,0 +1,87 @@
+package ch.dvbern.ebegu.tests;
+
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ZahlungStatus;
+import ch.dvbern.ebegu.services.InstitutionStammdatenService;
+import ch.dvbern.ebegu.services.Pain001Service;
+import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.UsingDataSet;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Tests fuer die Klasse PersonService
+ */
+@RunWith(Arquillian.class)
+@UsingDataSet("datasets/empty.xml")
+@Transactional(TransactionMode.DISABLED)
+public class Pain001ServiceTest extends AbstractEbeguLoginTest {
+
+	@Inject
+	private Pain001Service pain001Service;
+
+	@Inject
+	TestDataUtil testDataUtil;
+
+	@Inject
+	InstitutionStammdatenService institutionStammdatenService;
+
+
+	@Inject
+	private Persistence<?> persistence;
+
+	Collection<InstitutionStammdaten> allInstitutionStammdaten;
+	InstitutionStammdaten institutionStammdaten;
+
+
+
+	@Before
+	public void init() {
+		final Gesuchsperiode gesuchsperiode = createGesuchsperiode(true);
+		final Mandant mandant = insertInstitutionen();
+		createBenutzer(mandant);
+		TestDataUtil.prepareApplicationProperties(persistence);
+
+		allInstitutionStammdaten = institutionStammdatenService.getAllInstitutionStammdaten();
+		institutionStammdaten = allInstitutionStammdaten.iterator().next();
+	}
+
+	@Test
+	public void createPersonInstitutionStammdatenTest() {
+		Assert.assertNotNull(pain001Service);
+
+		Zahlung zahlung = new Zahlung();
+		zahlung.setInstitutionStammdaten(allInstitutionStammdaten.iterator().next());
+		zahlung.setStatus(ZahlungStatus.AUSGELOEST);
+
+		List<Zahlung> zahlungList = new ArrayList<>();
+		zahlungList.add(zahlung);
+
+		Zahlungsauftrag zahlungsauftrag = new Zahlungsauftrag();
+		zahlungsauftrag.setDatumFaellig(LocalDateTime.now());
+		zahlungsauftrag.setZahlungen(zahlungList);
+
+
+		pain001Service.getPainFileContent(zahlungsauftrag);
+
+	}
+
+
+}
