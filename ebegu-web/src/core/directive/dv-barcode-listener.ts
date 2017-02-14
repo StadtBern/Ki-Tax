@@ -65,7 +65,6 @@ export class DVBarcodeController {
 
     public barcodeOnKeyPressed(e: any): void {
 
-        this.$log.debug('Barcode listener authenticated.');
         let keyPressChar: string = e.key ? e.key : String.fromCharCode(e.which);
 
         if (this.barcodeReading) {

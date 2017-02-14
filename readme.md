@@ -21,7 +21,9 @@ ebegu benoetigt ca Version 4.4 von Node. Kann mit nvm install v4.4.3 installiert
 
 ## Formularstruktur
 ### Inputelement-Gruppe
-Wir verwenden Bootstrap zum layouten der Seite und angular-material input komponenten. Es ist darauf zu achten, dass 
+Wir verwenden Bootstrap zum layouten der Seite und angular-material input komponenten. 
+
+WICHTIG: Es ist darauf zu achten, dass 
 Formularelemente (Typischerweise label element, input element, error message elment) in einem parent element mit der 
 Klasse *'form-group'* zusammengefasst werden (meistens entspricht dieser parent bei uns einer bootstrap-column.
 
@@ -35,3 +37,12 @@ Klasse *'form-group'* zusammengefasst werden (meistens entspricht dieser parent 
 
 Durch das vergeben der richtigen Styleclasses wird sichergestellt, dass die Funktion der Elemente anhand der Styleclass
 ermittelt werden kann. Dadurch kann zum Beispiel das Errorstyling leicht veraendert werden
+
+### RadioButtons Gottcha
+
+Wir verwenden zur Zeit angular-material im Hintergrund. Um die Verwendung von 
+Radiobuttons fuer den Normalfall etwas zu vereincahen sollte dv-radio-container benutzt werden.
+Muss aus einem Grund direkt md-radio-group verwendet werden so sollte darauf geachtet werden, dass
+die direktive dv-suppress-form-submit-on-enter als attribut hinzugefügt wird. Ansonsten
+wird bei radiobuttons ungewollt mit dem enter key das Formular submitted statt der erste
+type=submitt button geklickt
