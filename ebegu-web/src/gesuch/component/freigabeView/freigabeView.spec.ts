@@ -114,6 +114,21 @@ describe('freigabeView', function () {
 
             expect(returned).toBeUndefined();
         });
+        fit('should call showDialog when form is valid', function () {
+            TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+            controller.bestaetigungFreigabequittung = true;
+
+            controller.form.$valid = true;
+            spyOn(dialog, 'showDialog').and.returnValue($q.when({}));
+
+            let returned: IPromise<void> = controller.gesuchEinreichen();
+            $scope.$apply();
+
+            expect(dialog.showDialog).toHaveBeenCalled();
+            expect(returned).toBeDefined();
+        });
+    });
+    describe('confirmationCallback', function () {
         it('should return a Promise when the form is valid', function () {
             TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
             controller.bestaetigungFreigabequittung = true;
@@ -131,12 +146,11 @@ describe('freigabeView', function () {
             gesuch.id = '123';
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
-            let returned: IPromise<void> = controller.gesuchEinreichen();
+            controller.confirmationCallback();
             $scope.$apply();
 
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, true, TSZustelladresse.JUGENDAMT);
             expect(downloadRS.startDownload).toHaveBeenCalledWith(downloadFile.accessToken, downloadFile.filename, false, jasmine.any(Object));
-            expect(returned).toBeDefined();
         });
     });
     describe('openFreigabequittungPDF', function () {
