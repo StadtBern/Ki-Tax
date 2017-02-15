@@ -97,8 +97,6 @@ export class PendenzenInstitutionListViewController {
         }
     }
 
-    //TODO (team) Hier wird mit findBetreuungById die Kind-Id auf dem GMM gespeichert, spaeter soll diese als
-    // Parameter in die URL kommen. Dann kann in editPendenzInstitution() das openGesuch() entfernt werden
     private openBetreuung(pendenz: TSPendenzInstitution, isCtrlKeyPressed: boolean): void {
         let numberParts: TSBetreuungsnummerParts = this.ebeguUtil.splitBetreuungsnummer(pendenz.betreuungsNummer);
         if (numberParts && pendenz) {

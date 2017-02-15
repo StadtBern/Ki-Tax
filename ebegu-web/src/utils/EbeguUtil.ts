@@ -121,9 +121,8 @@ export default class EbeguUtil {
      * @param betreuungsnummer im format JJ.Fallnr.kindnr.betrnr
      */
     public splitBetreuungsnummer(betreuungsnummer: string): TSBetreuungsnummerParts{
-        let parts: Array<string> = betreuungsnummer.split(".");
-        if(!parts ||parts.length != 4){
-            console.log('splitBetreuungsnummer')
+        let parts: Array<string> = betreuungsnummer.split('.');
+        if (!parts ||parts.length != 4){
             return undefined;
         }
         return new TSBetreuungsnummerParts(parts[0], parts[1], parts[2], parts[3]);

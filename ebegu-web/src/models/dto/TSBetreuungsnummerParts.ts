@@ -46,5 +46,4 @@ export default class TSBetreuungsnummerParts {
     set betreuungsnummer(value: string) {
         this._betreuungsnummer = value;
     }
-
 }
