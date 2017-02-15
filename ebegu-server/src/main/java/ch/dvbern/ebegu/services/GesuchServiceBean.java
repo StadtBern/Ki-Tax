@@ -12,6 +12,7 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusToInBearbeitungJAInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.StringUtils;
@@ -31,8 +32,8 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -574,7 +575,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	public List<Gesuch> getAllGesucheForFallAndPeriod(@NotNull Fall fall, @NotNull Gesuchsperiode gesuchsperiode) {
+	public List<Gesuch> getAllGesucheForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		// TODO (team) hier muessen wir unbedingt auf alle Gesuche zugreifen duerfen
 		authorizer.checkReadAuthorizationFall(fall);
 
@@ -618,7 +619,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	public Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch, AntragStatus statusToChangeTo) {
+	public Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo) {
 		authorizer.checkWriteAuthorization(gesuch);
 
 		gesuch.setFreigabeDatum(LocalDate.now());
@@ -692,7 +693,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	public Gesuch setBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch) {
+	public Gesuch setBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
 		allGesucheForFall.iterator().forEachRemaining(gesuch1 -> {
 			if (gesuch.equals(gesuch1)) {
@@ -706,7 +707,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	public Gesuch removeBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch) {
+	public Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
 		allGesucheForFall.iterator().forEachRemaining(gesuch1 -> {
 			if (gesuch.equals(gesuch1) && AntragStatus.BESCHWERDE_HAENGIG.equals(gesuch1.getStatus())) {
@@ -950,6 +951,45 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		} else {
 			throw new EbeguRuntimeException("searchAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format yy oder yyyy sondern " + year);
 		}
+	}
+
+	@Override
+	@Nonnull
+	public List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode) {
+		List<String> ids = new ArrayList<>();
+		Collection<Fall> allFaelle = fallService.getAllFalle();
+		for (Fall fall : allFaelle) {
+			Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode, fall);
+			neustesVerfuegtesGesuchFuerGesuch.ifPresent(gesuch -> ids.add(gesuch.getId()));
+		}
+		return ids;
+	}
+
+	@Override
+	@Nonnull
+	public List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis) {
+		List<String> ids = new ArrayList<>();
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
+
+		// Status verfuegt
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
+		// Datum der Verfuegung muss nach (oder gleich) dem Anfang des Abfragezeitraums sein
+		final Predicate predicateDatumVon = cb.greaterThanOrEqualTo(join.get(AntragStatusHistory_.timestampVon), verfuegtVon);
+		// Datum der Verfuegung muss vor (oder gleich) dem Ende des Abfragezeitraums sein
+		final Predicate predicateDatumBis = cb.lessThanOrEqualTo(join.get(AntragStatusHistory_.timestampVon), verfuegtBis);
+
+		query.where(predicateStatus, predicateDatumVon, predicateDatumBis);
+		query.select(root);
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+
+		// Jetzt kann es immer noch zwei Verfuegungen zum gleichen Fall geben -> nur die letzte beachten
+		Map<String, Gesuch> stringGesuchMap = EbeguUtil.groupByFallAndSelectNewestAntrag(criteriaResults);
+		ids.addAll(stringGesuchMap.keySet());
+		return ids;
 	}
 }
 
