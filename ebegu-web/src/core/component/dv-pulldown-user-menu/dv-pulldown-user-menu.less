@@ -14,12 +14,15 @@
         color: @contrast-darkest;
         letter-spacing: normal;
         font-size: 1.4rem;
-        &:hover {
+        &:hover, &:focus {
             color: @contrast-darkest;
             text-decoration: none;
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
         }
     }
-    .md-button:not([disabled]):hover {
+    .md-button:not([disabled]):hover, &:focus {
         background: @contrast-light;
     }
     button {
@@ -40,6 +43,11 @@
         &:hover {
             color: @contrast-darkest;
             background: @contrast-light;
+        }
+        &:focus{
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
         }
     }
 }
