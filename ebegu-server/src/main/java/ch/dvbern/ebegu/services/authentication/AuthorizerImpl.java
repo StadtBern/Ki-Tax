@@ -312,6 +312,30 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	}
 
 	@Override
+	public void checkReadAuthorizationForFreigabe(Gesuch gesuch) {
+		if (gesuch != null) {
+			boolean freigebeReadPrivilege =  isReadAuthorizedFreigabe(gesuch);
+			if (!(freigebeReadPrivilege || isReadAuthorized(gesuch))) {
+				throwViolation(gesuch);
+			}
+		}
+	}
+
+	private boolean isReadAuthorizedFreigabe(Gesuch gesuch) {
+		if (AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus())) {
+			boolean schulamtOnly = gesuch.hasOnlyBetreuungenOfSchulamt();
+			if (principalBean.isCallerInRole(SCHULAMT)) {
+				if (schulamtOnly) {
+					return true; //schulamt dar nur solche lesen die nur_schulamt sind
+				}
+			} else if (!schulamtOnly) {
+				return true;     //nicht schulamtbenutzer duerfen keine lesen die exklusiv schulamt sind
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public void checkReadAuthorization(@Nonnull Collection<FinanzielleSituationContainer> finanzielleSituationen) {
 		finanzielleSituationen.forEach(this::checkReadAuthorization);
 	}
@@ -432,6 +456,10 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		Gesuch gesuch = gesuchSupplier.get();
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
 			return gesuch.getStatus().isReadableByJugendamtSteueramt() || AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus());
+		}
+
+		if (principalBean.isCallerInRole(SCHULAMT) && gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			return AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus()); //Schulamt darf Freigabequittung scannen
 		}
 
 		if (isGSOwner(() -> gesuch.getFall(), principalName)) {

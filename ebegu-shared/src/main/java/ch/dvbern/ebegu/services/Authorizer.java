@@ -105,4 +105,10 @@ public interface Authorizer {
 	void checkReadAuthorizationFinSit(@Nullable Gesuch gesuch);
 
 	void checkReadAuthorization(@Nullable WizardStep step);
+
+	/**
+	 * prueft ob der aktuelle Benutzer ein Gesuch fuer die Freigabe lesen darf
+	 */
+	void checkReadAuthorizationForFreigabe(Gesuch gesuch);
+
 }
