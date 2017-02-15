@@ -26,7 +26,20 @@ import java.util.*;
 
 
 /**
- * Service fuer Zahlungen
+ * Service fuer Zahlungen. Die Zahlungen werden folgendermassen generiert:
+ * Wenn ein neuer Zahlungsauftrag erstellt wird, muss nur ein Faelligkeitsdatum mitgegeben werden. Dieses wird *nur* fuer
+ * das Abfuellen des XML Files (ISO-20022) verwendet. Fuer die Ermittlung der einzuschliessenden Zahlungsdetail wird
+ * immer der aktuelle Timestamp verwendet. Dies, damit wir fuer den naechsten Zahlungsauftrag immer wissen, welche
+ * Zahlungen bereits beruecksichtigt wurden.
+ * Wir muessen mit 2 Zeitraeumen arbeiten:
+ * |      Jan      |      Feb       |
+ *        |                  |
+ *     letzter            aktueller
+ *     Zahlungslauf		Zahlungslauf
+ * Für die Ermittlung der "normalen" Zahlungen wird immer (mind.) ein ganzer Monat berücksichtigt, und zwar der aktuelle
+ * Monat des Zahlungslaufes plus fruehere Monate, falls in diesen kein Zahlungslauf stattfand.
+ * Für die Ermittlung der Korrektur-Zahlungen muessen alle Verfuegungen berücksichtigt werden, welche seit dem letzten
+ * Zahlungslauf bis heute dazugekommen sind.
  */
 @Stateless
 @Local(ZahlungService.class)
@@ -58,6 +71,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		zahlungsauftrag.setAusgeloest(Boolean.FALSE);
 		zahlungsauftrag.setBeschrieb(beschreibung);
 		zahlungsauftrag.setDatumFaellig(datumFaelligkeit);
+		zahlungsauftrag.setDatumGeneriert(LocalDateTime.now());
 
 		// Alle aktuellen (d.h. der letzte Antrag jedes Falles) Verfuegungen suchen, welche ein Kita-Angebot haben
 		// Wir brauchen folgende Daten:
@@ -69,22 +83,22 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		LocalDateTime lastZahlungErstellt = Constants.START_OF_DATETIME; // Default, falls dies der erste Auftrag ist
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
 		if (lastZahlungsauftrag.isPresent()) {
-			lastZahlungErstellt = lastZahlungsauftrag.get().getTimestampErstellt();
+			lastZahlungErstellt = lastZahlungsauftrag.get().getDatumGeneriert();
 		}
 
-		LocalDate datumVon = lastZahlungErstellt.plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate();
-		LocalDate datumBis = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
-		zahlungsauftrag.setGueltigkeit(new DateRange(datumVon, datumBis));
+		LocalDate zeitabschnittVon = lastZahlungErstellt.plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate();
+		LocalDate zeitabschnittBis = zahlungsauftrag.getDatumGeneriert().toLocalDate().with(TemporalAdjusters.lastDayOfMonth());
+		zahlungsauftrag.setGueltigkeit(new DateRange(zeitabschnittVon, zeitabschnittBis));
 
 		Map<String, Zahlung> zahlungProInstitution = new HashMap<>();
 
 		// "Normale" Zahlungen
-		Collection<VerfuegungZeitabschnitt> gueltigeVerfuegungZeitabschnitte = getGueltigeVerfuegungZeitabschnitte(datumVon, datumBis);
+		Collection<VerfuegungZeitabschnitt> gueltigeVerfuegungZeitabschnitte = getGueltigeVerfuegungZeitabschnitte(zeitabschnittVon, zeitabschnittBis);
 		for (VerfuegungZeitabschnitt zeitabschnitt : gueltigeVerfuegungZeitabschnitte) {
 			createZahlungsposition(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 		}
 		// Korrekturen
-		Collection<VerfuegungZeitabschnitt> mutationsVerfuegungsZeitabschnitte = getMutationsVerfuegungsZeitabschnitte(lastZahlungErstellt, LocalDateTime.now(), datumVon, datumBis);
+		Collection<VerfuegungZeitabschnitt> mutationsVerfuegungsZeitabschnitte = getMutationsVerfuegungsZeitabschnitte(lastZahlungErstellt, zahlungsauftrag.getDatumGeneriert(), zeitabschnittVon, zeitabschnittBis);
 		for (VerfuegungZeitabschnitt zeitabschnitt : mutationsVerfuegungsZeitabschnitte) {
 			createZahlungspositionenKorrektur(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 		}
