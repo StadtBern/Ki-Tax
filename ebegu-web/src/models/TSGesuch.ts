@@ -205,6 +205,6 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     }
 
     public canBeFreigegeben(): boolean {
-        return this.status == TSAntragStatus.FREIGABEQUITTUNG || this.status == TSAntragStatus.IN_BEARBEITUNG_GS;
+        return this.status == TSAntragStatus.FREIGABEQUITTUNG;
     }
 }
