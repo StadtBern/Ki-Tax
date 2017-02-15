@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.iso20022.V03CH02.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -11,9 +12,14 @@ import org.slf4j.LoggerFactory;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -39,13 +45,43 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 	private final Logger LOG = LoggerFactory.getLogger(Pain001ServiceBean.class.getSimpleName());
 
+	private JAXBContext jaxbContext;
+
 
 	@Override
 	public String getPainFileContent(Zahlungsauftrag zahlungsauftrag) {
 
 		final Document document = createDocument(zahlungsauftrag);
 
-		return null;
+		return getXMLStringFromDocument(document);
+	}
+
+
+	public String getXMLStringFromDocument(final Document document) {
+		final StringWriter documentXmlString = new StringWriter();
+		try {
+			if (jaxbContext == null) {
+				jaxbContext = JAXBContext.newInstance(Document.class);
+			}
+
+			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+			// output pretty printed
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+			jaxbMarshaller.setEventHandler(new ValidationEventHandler() {
+				@Override
+				public boolean handleEvent(final ValidationEvent event) {
+					throw new EbeguRuntimeException("Kaput",event.getMessage(), event.getLinkedException());
+				}
+			});
+
+			jaxbMarshaller.marshal(document, documentXmlString);
+
+		} catch (final Exception e) {
+			LOG.error("Failed to marshal Document", e.getMessage());
+			throw new EbeguRuntimeException("Kaput",e.getMessage());
+		}
+		return documentXmlString.toString();
 	}
 
 
