@@ -45,8 +45,6 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 	private Persistence<?> persistence;
 
 	Collection<InstitutionStammdaten> allInstitutionStammdaten;
-	InstitutionStammdaten institutionStammdaten;
-
 
 
 	@Before
@@ -57,19 +55,20 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 		TestDataUtil.prepareApplicationProperties(persistence);
 
 		allInstitutionStammdaten = institutionStammdatenService.getAllInstitutionStammdaten();
-		institutionStammdaten = allInstitutionStammdaten.iterator().next();
 	}
 
 	@Test
 	public void getPainFileContentTest() {
 		Assert.assertNotNull(pain001Service);
 
-		Zahlung zahlung = new Zahlung();
-		zahlung.setInstitutionStammdaten(allInstitutionStammdaten.iterator().next());
-		zahlung.setStatus(ZahlungStatus.AUSGELOEST);
-
 		List<Zahlung> zahlungList = new ArrayList<>();
-		zahlungList.add(zahlung);
+
+		for (InstitutionStammdaten stammdaten : allInstitutionStammdaten) {
+			Zahlung zahlung = new Zahlung();
+			zahlung.setInstitutionStammdaten(stammdaten);
+			zahlung.setStatus(ZahlungStatus.AUSGELOEST);
+			zahlungList.add(zahlung);
+		}
 
 		Zahlungsauftrag zahlungsauftrag = new Zahlungsauftrag();
 		zahlungsauftrag.setDatumFaellig(LocalDateTime.now());

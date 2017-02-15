@@ -3,45 +3,57 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.iso20022.V03CH02.*;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
+import javax.xml.XMLConstants;
+import javax.xml.bind.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.GregorianCalendar;
 
 /**
- * Service fuer FinanzielleSituation
+ * Service fuer Generierung des Zahlungsfile gemäss ISI200022
  */
 @Stateless
 @Local(Pain001Service.class)
 public class Pain001ServiceBean extends AbstractBaseService implements Pain001Service {
 
+
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
 
-	private static final String CtgyPurp_Cd = "YYYY";
+	public static final String DEF_DEBTOR_NAME = "Direktion für Bildung, Soziales und Sport der Stadt Bern";
+	public static final String DEF_DEBTOR_BIC = "POFICHBEXXX";
+	public static final String DEF_DEBTOR_IBAN = "CH330900000300008233";
+
+	private static final String CtgyPurp_Cd = "SSBE";
 	private static final String CCY = "CHF";
 	private static final String CtctDtls_Nm = "KITAX";
 	private static final String CtctDtls_Othr = "V01";
 	private static final PaymentMethod3Code PAYMENT_METHOD_3_CODE = PaymentMethod3Code.TRA;
 	private static final Boolean BtchBookg = true;
+
+	public static final String SCHEMA_NAME = "pain.001.001.03.ch.02.xsd";
+	public static final String SCHEMA_LOCATION_LOCAL = "ch.dvbern.ebegu.iso20022.V03CH02/" + SCHEMA_NAME;
+	public static final String SCHEMA_LOCATION = "http://www.six-interbank-clearing.com/de/" + SCHEMA_NAME;
 
 	private final Logger LOG = LoggerFactory.getLogger(Pain001ServiceBean.class.getSimpleName());
 
@@ -67,23 +79,41 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			// output pretty printed
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			jaxbMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, SCHEMA_LOCATION + " " + SCHEMA_NAME);
 
 			jaxbMarshaller.setEventHandler(new ValidationEventHandler() {
 				@Override
 				public boolean handleEvent(final ValidationEvent event) {
-					throw new EbeguRuntimeException("Kaput",event.getMessage(), event.getLinkedException());
+					throw new EbeguRuntimeException("Kaput", event.getMessage(), event.getLinkedException());
 				}
 			});
 
-			jaxbMarshaller.marshal(document, documentXmlString);
+			jaxbMarshaller.marshal(getElementToMarshall(document), documentXmlString); // ohne @XmlRootElement annotation
+
+			LOG.info("XML={}", documentXmlString);
 
 		} catch (final Exception e) {
 			LOG.error("Failed to marshal Document", e.getMessage());
-			throw new EbeguRuntimeException("Kaput",e.getMessage());
+			throw new EbeguRuntimeException("Kaput", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, e);
 		}
 		return documentXmlString.toString();
 	}
 
+	private JAXBElement getElementToMarshall(Object elemToMarshall) {
+		return new JAXBElement(new QName(SCHEMA_LOCATION, elemToMarshall.getClass().getSimpleName()), elemToMarshall.getClass(), elemToMarshall);
+	}
+
+	protected Schema getSchema() throws SAXException {
+		final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+		final URL resourceURL = Document.class.getClassLoader().getResource(SCHEMA_LOCATION_LOCAL);
+		if (resourceURL == null) {
+			throw new EbeguRuntimeException("Schema not found", SCHEMA_LOCATION_LOCAL);
+		}
+
+		final Schema schema = schemaFactory.newSchema(resourceURL);
+		return schema;
+	}
 
 	/**
 	 * Beispiel:
@@ -110,34 +140,41 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		String debtor_iban = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEBTOR_IBAN);
 		String debtor_iban_gebuehren = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEBTOR_IBAN_GEBUEHREN);
 
+		if (debtor_name == null) {
+			debtor_name = DEF_DEBTOR_NAME;
+		}
+		if (debtor_bic == null) {
+			debtor_bic = DEF_DEBTOR_BIC;
+		}
+		if (debtor_iban == null) {
+			debtor_iban = DEF_DEBTOR_IBAN;
+		}
+		if (debtor_iban_gebuehren == null) {
+			debtor_iban_gebuehren = debtor_iban;
+		}
+
+
 		Document document = null;
 
-		if (StringUtils.isNotEmpty(debtor_name) && StringUtils.isNotEmpty(debtor_bic) && StringUtils.isNotEmpty(debtor_iban) && StringUtils.isNotEmpty(debtor_iban_gebuehren)) {
+		// DocumentStruktur (A und B-Level) zum Validieren
+		ObjectFactory objectFactory = new ObjectFactory();
+		document = objectFactory.createDocument();
+		document.setCstmrCdtTrfInitn(objectFactory.createCustomerCreditTransferInitiationV03CH());
 
-			// DocumentStruktur (A und B-Level) zum Validieren
-			ObjectFactory objectFactory = new ObjectFactory();
-			document = objectFactory.createDocument();
-			document.setCstmrCdtTrfInitn(objectFactory.createCustomerCreditTransferInitiationV03CH());
+		PaymentInstructionInformation3CH paymentInstructionInformation3CH = createPaymentInstructionInformation3CH(zahlungsauftrag, objectFactory, debtor_name, debtor_iban, debtor_bic, debtor_iban_gebuehren);
+		document.getCstmrCdtTrfInitn().getPmtInf().add(paymentInstructionInformation3CH);
 
-			PaymentInstructionInformation3CH paymentInstructionInformation3CH = createPaymentInstructionInformation3CH(zahlungsauftrag, objectFactory, debtor_name, debtor_iban, debtor_bic, debtor_iban_gebuehren);
-			document.getCstmrCdtTrfInitn().getPmtInf().add(paymentInstructionInformation3CH);
+		document.getCstmrCdtTrfInitn().getPmtInf().get(0).getCdtTrfTxInf().clear();
 
-			document.getCstmrCdtTrfInitn().getPmtInf().get(0).getCdtTrfTxInf().clear();
-
-			int transaktion = 0;
-			BigDecimal ctrlSum = new BigDecimal(0);
-			for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
-				transaktion++;
-				ctrlSum = ctrlSum.add(zahlung.getTotal());
-				document.getCstmrCdtTrfInitn().getPmtInf().get(0).getCdtTrfTxInf().add(createCreditTransferTransactionInformation10CH(objectFactory, transaktion, zahlung));
-			}
-
-			document.getCstmrCdtTrfInitn().setGrpHdr(createGroupHeader(zahlungsauftrag, objectFactory, transaktion, ctrlSum, debtor_name));
-
-
-		} else {
-			LOG.warn("Es ist kein gueltiger DEBTOR IBAN, BIC etc Zahlungsfile gesetzt. Bitte Properties pruefen");
+		int transaktion = 0;
+		BigDecimal ctrlSum = new BigDecimal(0);
+		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
+			transaktion++;
+			ctrlSum = ctrlSum.add(zahlung.getTotal());
+			document.getCstmrCdtTrfInitn().getPmtInf().get(0).getCdtTrfTxInf().add(createCreditTransferTransactionInformation10CH(objectFactory, transaktion, zahlung));
 		}
+
+		document.getCstmrCdtTrfInitn().setGrpHdr(createGroupHeader(zahlungsauftrag, objectFactory, transaktion, ctrlSum, debtor_name));
 
 		return document;
 	}
@@ -157,7 +194,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 	 * 		< FinInstnId>
 	 * 			< BIC>RAIFCH22XXX< /BIC>
 	 * 		< /FinInstnId>
-	 * 		< /CdtrAgt>
+	 * 	< /CdtrAgt>
 	 * 	< Cdtr>
 	 * 		< Nm>Tester-Ncbijgep Tim< /Nm>
 	 * 		< PstlAdr>
@@ -197,7 +234,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 		// data
 		cTTI10CH.getPmtId().setInstrId(String.valueOf(transaktion)); // 2.29
-//				cTTI10CH.getPmtId().setEndToEndId(Integer.valueOf(transaktion).toString() + " / " + builder.vnrNummer); // 2.30
+		cTTI10CH.getPmtId().setEndToEndId(transaktion + " / " + zahlung.getInstitutionStammdaten().getInstitution().getName()); // 2.30
 
 		// Wert
 		cTTI10CH.getAmt().getInstdAmt().setCcy(CCY);// 2.43
@@ -211,7 +248,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		//IBAN
 		cTTI10CH.setCdtrAcct(objectFactory.createCashAccount16CHId());
 		cTTI10CH.getCdtrAcct().setId(objectFactory.createAccountIdentification4ChoiceCH()); // 2.80
-		cTTI10CH.getCdtrAcct().getId().setIBAN(zahlung.getInstitutionStammdaten().getIban().getIban()); // 2.80
+		cTTI10CH.getCdtrAcct().getId().setIBAN(zahlung.getInstitutionStammdaten().getIban().toString().replaceAll(" ", "")); // 2.80
 
 		// 1.1.1	ETAB 503.2: EZAG für PC- / IBAN-Auszahlung aufbereiten, 2. Teil
 		// Strukturierte Daten
@@ -319,7 +356,6 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 	 * 	< /InitgPty>
 	 * < /GrpHdr>
 	 * </pre>
-	 *
 	 */
 	private GroupHeader32CH createGroupHeader(Zahlungsauftrag zahlungsauftrag, ObjectFactory objectFactory, int transaktion, BigDecimal ctrlSum, String debtor_name) {
 		// GroupHeader
@@ -327,7 +363,6 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		GroupHeader32CH groupHeader32CH = objectFactory.createGroupHeader32CH();
 
 		groupHeader32CH.setInitgPty(objectFactory.createPartyIdentification32CHNameAndId());
-
 		groupHeader32CH.getInitgPty().setCtctDtls(objectFactory.createContactDetails2CH());
 
 		// data

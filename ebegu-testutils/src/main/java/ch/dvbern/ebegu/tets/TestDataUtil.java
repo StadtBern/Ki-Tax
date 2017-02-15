@@ -716,7 +716,7 @@ public final class TestDataUtil {
 
 	public static void prepareApplicationProperties( Persistence<?> persistence) {
 
-		saveParameter(ApplicationPropertyKey.DEBTOR_NAME, "Jugendamt Stadt Bern", persistence);
+		saveParameter(ApplicationPropertyKey.DEBTOR_NAME, "Direktion für Bildung, Soziales und Sport der Stadt Bern", persistence);
 		saveParameter(ApplicationPropertyKey.DEBTOR_IBAN, "CH4808704020071690000", persistence);
 		saveParameter(ApplicationPropertyKey.DEBTOR_BIC, "POFICHBEXXX", persistence);
 		saveParameter(ApplicationPropertyKey.DEBTOR_IBAN_GEBUEHREN, "CH4808704020071700000", persistence);
