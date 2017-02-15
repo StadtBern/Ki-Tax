@@ -7,12 +7,11 @@ import ch.dvbern.ebegu.dto.suchfilter.lucene.QuickSearchResultDTO;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchEntityType;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchFilter;
 import ch.dvbern.ebegu.dto.suchfilter.lucene.SearchResultEntryDTO;
-import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.*;
-import com.google.common.collect.ArrayListMultimap;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -118,7 +117,7 @@ public class SearchIndexResource {
 	 */
 	private QuickSearchResultDTO convertQuicksearchResultToDTO(QuickSearchResultDTO quickSearch) {
 		List<Gesuch> allowedGesuche = filterUnreadableGesuche(quickSearch); //nur erlaubte Gesuche
-		Map<String, Gesuch> gesucheToShow = groupByFallAndSelectNewestAntrag(allowedGesuche); //nur neustes gesuch
+		Map<String, Gesuch> gesucheToShow = EbeguUtil.groupByFallAndSelectNewestAntrag(allowedGesuche); //nur neustes gesuch
 		QuickSearchResultDTO filteredQuickSearch = mergeAllowedGesucheWithQuickSearchResult(quickSearch, gesucheToShow);//search result anpassen so dass nur noch sichtbare Antrage drin sind und Antragdtos gesetzt sind
 		return QuickSearchResultDTO.reduceToSingleEntyPerAntrag(filteredQuickSearch); // Gesuche die in mehreren Indizes gefunden wurden auslassen so dass jedes gesuch nur 1 mal drin ist
 
@@ -145,21 +144,6 @@ public class SearchIndexResource {
 		List<Gesuch> allGesuche = new ArrayList<>(readableGesuche);
 		allGesuche.addAll(gesucheFromGesuchstellermatch);
 		return allGesuche;
-	}
-
-	private Map<String, Gesuch> groupByFallAndSelectNewestAntrag(List<Gesuch> allGesuche) {
-		ArrayListMultimap<Fall, Gesuch> fallToAntragMultimap = ArrayListMultimap.create();
-		allGesuche.forEach(gesuch -> fallToAntragMultimap.put(gesuch.getFall(), gesuch));
-		// map erstellen in der nur noch das gesuch mit der hoechsten laufnummer drin ist
-		Map<String, Gesuch> gesuchMap = new HashMap<>();
-		for (Fall fall : fallToAntragMultimap.keySet()) {
-			List<Gesuch> antraege = fallToAntragMultimap.get(fall);
-			antraege.sort(Comparator.comparing(Gesuch::getLaufnummer).reversed());
-			gesuchMap.put(antraege.get(0).getId(), antraege.get(0)); //nur neusten Antrag zurueckgeben
-		}
-
-		return gesuchMap;
-
 	}
 
 	/**

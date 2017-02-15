@@ -40,6 +40,7 @@ CREATE TABLE zahlungsauftrag (
   ausgeloest         BIT           NOT NULL,
   beschrieb          VARCHAR(255)  NOT NULL,
   datum_faellig      DATETIME      NOT NULL,
+  datum_generiert    DATETIME      NOT NULL,
   filecontent        VARCHAR(4000) NOT NULL,
   PRIMARY KEY (id)
 );
@@ -58,6 +59,7 @@ CREATE TABLE zahlungsauftrag_aud (
   ausgeloest         BIT,
   beschrieb          VARCHAR(255),
   datum_faellig      DATETIME,
+  datum_generiert    DATETIME,
   filecontent        VARCHAR(4000),
   PRIMARY KEY (id, rev)
 );
