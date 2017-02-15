@@ -6,13 +6,16 @@ import EbeguUtil from '../../utils/EbeguUtil';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import IPromise = angular.IPromise;
 import IDialogService = angular.material.IDialogService;
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import ITranslateService = angular.translate.ITranslateService;
 
 /**
  * Controller fuer das Freigabe Popup
  */
 export class FreigabeController {
 
-    static $inject: string[] = ['docID', '$mdDialog', 'GesuchRS', 'UserRS', 'AuthServiceRS', 'EbeguUtil', 'CONSTANTS'];
+    static $inject: string[] = ['docID', '$mdDialog', 'GesuchRS', 'UserRS', 'AuthServiceRS',
+        'EbeguUtil', 'CONSTANTS', '$translate'];
 
     private gesuch: TSGesuch;
     private selectedUser: string;
@@ -22,16 +25,22 @@ export class FreigabeController {
     private errorMessage: string;
 
     constructor(private docID: string, private $mdDialog: IDialogService, private gesuchRS: GesuchRS,
-                private userRS: UserRS, private authService: AuthServiceRS, private ebeguUtil: EbeguUtil, CONSTANTS: any) {
+                private userRS: UserRS, private authService: AuthServiceRS, private ebeguUtil: EbeguUtil,
+                CONSTANTS: any, private $translate: ITranslateService) {
 
         gesuchRS.findGesuch(this.docID).then((response: TSGesuch) => {
+            this.errorMessage = undefined; // just for safety replace old value
             if (response) {
-                this.gesuch = response;
-                this.fallNummer = ebeguUtil.addZerosToNumber(response.fall.fallNummer, CONSTANTS.FALLNUMMER_LENGTH);
-                this.familie = this.familieText(response);
-                this.selectedUser = authService.getPrincipal().username;
+                if (response.canBeFreigegeben()) {
+                    this.gesuch = response;
+                    this.fallNummer = ebeguUtil.addZerosToNumber(response.fall.fallNummer, CONSTANTS.FALLNUMMER_LENGTH);
+                    this.familie = this.familieText(response);
+                    this.selectedUser = authService.getPrincipal().username;
+                } else {
+                    this.errorMessage = this.$translate.instant('FREIGABE_GESUCH_ALREADY_FREIGEGEBEN');
+                }
             } else {
-                this.errorMessage = 'Gesuch nicht gefunden!';
+                this.errorMessage = this.$translate.instant('FREIGABE_GESUCH_NOT_FOUND');
             }
         });
 
