@@ -80,7 +80,7 @@ public class Zahlung extends AbstractEntity {
 		return new BigDecimal(1234);
 	}
 
-	//FIXME
+	//TODO: Schlauer Zahlugstext finden
 	public String getZahlungstext() {
 		return getTotal() + " " + getInstitutionStammdaten().getInstitution().getName();
 	}

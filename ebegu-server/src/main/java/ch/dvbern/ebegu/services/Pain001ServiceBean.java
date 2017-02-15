@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.iso20022.V03CH02.*;
 import org.slf4j.Logger;
@@ -14,7 +13,9 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -40,9 +41,9 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
 
-	public static final String DEF_DEBTOR_NAME = "Direktion für Bildung, Soziales und Sport der Stadt Bern";
-	public static final String DEF_DEBTOR_BIC = "POFICHBEXXX";
-	public static final String DEF_DEBTOR_IBAN = "CH330900000300008233";
+	private static final String DEF_DEBTOR_NAME = "Direktion für Bildung, Soziales und Sport der Stadt Bern";
+	private static final String DEF_DEBTOR_BIC = "POFICHBEXXX";
+	private static final String DEF_DEBTOR_IBAN = "CH330900000300008233";
 
 	private static final String CtgyPurp_Cd = "SSBE";
 	private static final String CCY = "CHF";
@@ -51,9 +52,9 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 	private static final PaymentMethod3Code PAYMENT_METHOD_3_CODE = PaymentMethod3Code.TRA;
 	private static final Boolean BtchBookg = true;
 
-	public static final String SCHEMA_NAME = "pain.001.001.03.ch.02.xsd";
-	public static final String SCHEMA_LOCATION_LOCAL = "ch.dvbern.ebegu.iso20022.V03CH02/" + SCHEMA_NAME;
-	public static final String SCHEMA_LOCATION = "http://www.six-interbank-clearing.com/de/" + SCHEMA_NAME;
+	private static final String SCHEMA_NAME = "pain.001.001.03.ch.02.xsd";
+	private static final String SCHEMA_LOCATION_LOCAL = "ch.dvbern.ebegu.iso20022.V03CH02/" + SCHEMA_NAME;
+	private static final String SCHEMA_LOCATION = "http://www.six-interbank-clearing.com/de/" + SCHEMA_NAME;
 
 	private final Logger LOG = LoggerFactory.getLogger(Pain001ServiceBean.class.getSimpleName());
 
@@ -69,7 +70,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 	}
 
 
-	public String getXMLStringFromDocument(final Document document) {
+	private String getXMLStringFromDocument(final Document document) {
 		final StringWriter documentXmlString = new StringWriter();
 		try {
 			if (jaxbContext == null) {
@@ -81,11 +82,8 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			jaxbMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, SCHEMA_LOCATION + " " + SCHEMA_NAME);
 
-			jaxbMarshaller.setEventHandler(new ValidationEventHandler() {
-				@Override
-				public boolean handleEvent(final ValidationEvent event) {
-					throw new EbeguRuntimeException("Kaput", event.getMessage(), event.getLinkedException());
-				}
+			jaxbMarshaller.setEventHandler(event -> {
+				throw new EbeguRuntimeException("Unerwarteter Fehler beim generieren des Zahlungsfile", event.getMessage(), event.getLinkedException());
 			});
 
 			jaxbMarshaller.marshal(getElementToMarshall(document), documentXmlString); // ohne @XmlRootElement annotation
@@ -94,15 +92,18 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 		} catch (final Exception e) {
 			LOG.error("Failed to marshal Document", e.getMessage());
-			throw new EbeguRuntimeException("Kaput", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, e);
+			throw new EbeguRuntimeException("Unerwarteter Fehler beim generieren des Zahlungsfile", "Failed to marshal Document", e);
 		}
 		return documentXmlString.toString();
 	}
 
-	private JAXBElement getElementToMarshall(Object elemToMarshall) {
-		return new JAXBElement(new QName(SCHEMA_LOCATION, elemToMarshall.getClass().getSimpleName()), elemToMarshall.getClass(), elemToMarshall);
+	private JAXBElement<Document> getElementToMarshall(Document elemToMarshall) {
+		return new JAXBElement<>(new QName(SCHEMA_LOCATION, elemToMarshall.getClass().getSimpleName()), Document.class, elemToMarshall);
 	}
 
+	/**
+	 * Validation and Schema not used at the moment
+	 */
 	protected Schema getSchema() throws SAXException {
 		final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
@@ -111,8 +112,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 			throw new EbeguRuntimeException("Schema not found", SCHEMA_LOCATION_LOCAL);
 		}
 
-		final Schema schema = schemaFactory.newSchema(resourceURL);
-		return schema;
+		return schemaFactory.newSchema(resourceURL);
 	}
 
 	/**
@@ -153,12 +153,9 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 			debtor_iban_gebuehren = debtor_iban;
 		}
 
-
-		Document document = null;
-
 		// DocumentStruktur (A und B-Level) zum Validieren
 		ObjectFactory objectFactory = new ObjectFactory();
-		document = objectFactory.createDocument();
+		Document document = objectFactory.createDocument();
 		document.setCstmrCdtTrfInitn(objectFactory.createCustomerCreditTransferInitiationV03CH());
 
 		PaymentInstructionInformation3CH paymentInstructionInformation3CH = createPaymentInstructionInformation3CH(zahlungsauftrag, objectFactory, debtor_name, debtor_iban, debtor_bic, debtor_iban_gebuehren);
@@ -167,7 +164,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		document.getCstmrCdtTrfInitn().getPmtInf().get(0).getCdtTrfTxInf().clear();
 
 		int transaktion = 0;
-		BigDecimal ctrlSum = new BigDecimal(0);
+		BigDecimal ctrlSum = BigDecimal.ZERO;
 		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
 			transaktion++;
 			ctrlSum = ctrlSum.add(zahlung.getTotal());
@@ -387,11 +384,11 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		ZonedDateTime zdt = datum.atZone(zoneId);
 		GregorianCalendar gc = GregorianCalendar.from(zdt);
 
-		XMLGregorianCalendar aDateTime = null;
+		XMLGregorianCalendar aDateTime;
 		try {
 			aDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
 		} catch (DatatypeConfigurationException e) {
-			e.printStackTrace();
+			throw new EbeguRuntimeException("Unerwarteter Fehler beim generieren des Zahlungsfile", "getXmlGregorianCalendar", e);
 		}
 		return aDateTime;
 	}

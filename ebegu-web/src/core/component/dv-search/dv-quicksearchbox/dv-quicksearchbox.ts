@@ -37,7 +37,7 @@ export class DvQuicksearchboxController {
     gesuchModelManager: GesuchModelManager;
 
     static $inject: any[] = ['EbeguUtil', '$timeout', '$log', '$q', 'SearchIndexRS', 'CONSTANTS', '$filter', '$translate',
-        '$state', 'AuthServiceRS', 'GesuchModelManager'];
+        '$state', 'AuthServiceRS', '$injector'];
     /* @ngInject */
     constructor(private ebeguUtil: EbeguUtil, private $timeout: IFilterService, private $log: ILogService,
                 private $q: IQService, private searchIndexRS: SearchIndexRS, private CONSTANTS: any,

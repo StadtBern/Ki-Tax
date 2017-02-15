@@ -75,6 +75,20 @@ public class BriefPrintImpl implements BriefPrint {
 	}
 
 	@Override
+	public String getGesuchstellerNames() {
+		String gesuchstellerNames = "";
+
+		if(gesuch.getGesuchsteller1() != null) {
+			gesuchstellerNames = gesuch.getGesuchsteller1().extractFullName();
+		}
+		if(gesuch.getGesuchsteller2() != null) {
+			gesuchstellerNames += ", " + gesuch.getGesuchsteller2().extractFullName();
+		}
+
+		return gesuchstellerNames;
+	}
+
+	@Override
 	public String getGesuchEingangsDatum() {
 		return Constants.DATE_FORMATTER.format(gesuch.getEingangsdatum());
 	}

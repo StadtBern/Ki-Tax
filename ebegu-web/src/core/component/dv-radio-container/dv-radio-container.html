@@ -1,6 +1,6 @@
 <div class="dv-radio-container">
     <md-radio-group class="radio" ng-model="vm.modelToPassOn" ng-blur="vm.onBlur()" ng-change="vm.onChange()"
-                    ng-required="vm.ngRequired">
+                    ng-required="vm.ngRequired" dv-suppress-form-submit-on-enter>
         <md-radio-button ng-if="vm.items" ng-repeat="current in vm.items" ng-value="current"
                          aria-label="{{current | translate}}" class="element-{{$index}}"
                          ng-attr-dv-enable-element="{{vm.dvEnableAllowedRoles ? '' : undefined}}"
