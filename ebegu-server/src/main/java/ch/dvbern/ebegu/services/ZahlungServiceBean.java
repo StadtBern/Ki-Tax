@@ -26,7 +26,20 @@ import java.util.*;
 
 
 /**
- * Service fuer Zahlungen
+ * Service fuer Zahlungen. Die Zahlungen werden folgendermassen generiert:
+ * Wenn ein neuer Zahlungsauftrag erstellt wird, muss nur ein Faelligkeitsdatum mitgegeben werden. Dieses wird *nur* fuer
+ * das Abfuellen des XML Files (ISO-20022) verwendet. Fuer die Ermittlung der einzuschliessenden Zahlungsdetail wird
+ * immer der aktuelle Timestamp verwendet. Dies, damit wir fuer den naechsten Zahlungsauftrag immer wissen, welche
+ * Zahlungen bereits beruecksichtigt wurden.
+ * Wir muessen mit 2 Zeitraeumen arbeiten:
+ * |      Jan      |      Feb       |
+ *        |                  |
+ *     letzter            aktueller
+ *     Zahlungslauf		Zahlungslauf
+ * Für die Ermittlung der "normalen" Zahlungen wird immer (mind.) ein ganzer Monat berücksichtigt, und zwar der aktuelle
+ * Monat des Zahlungslaufes plus fruehere Monate, falls in diesen kein Zahlungslauf stattfand.
+ * Für die Ermittlung der Korrektur-Zahlungen muessen alle Verfuegungen berücksichtigt werden, welche seit dem letzten
+ * Zahlungslauf bis heute dazugekommen sind.
  */
 @Stateless
 @Local(ZahlungService.class)
@@ -58,32 +71,34 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		zahlungsauftrag.setAusgeloest(Boolean.FALSE);
 		zahlungsauftrag.setBeschrieb(beschreibung);
 		zahlungsauftrag.setDatumFaellig(datumFaelligkeit);
+		zahlungsauftrag.setDatumGeneriert(LocalDateTime.now());
 
 		// Alle aktuellen (d.h. der letzte Antrag jedes Falles) Verfuegungen suchen, welche ein Kita-Angebot haben
 		// Wir brauchen folgende Daten:
 		// - Zeitraum, welcher fuer die (normale) Auszahlung gilt: Immer ganzer Monat, mindestens der Monat des DatumFaellig,
 		// 		jedoch seit Ende Monat des letzten Auftrags -> 1 oder mehrere ganze Monate
-		// - Zeitraum, welcher fuer die Berechnung der rueckwirkenden Korrekturen gilt: Letztes datumFaellig bis aktuelles DatumFaellig
+		// - Zeitraum, welcher fuer die Berechnung der rueckwirkenden Korrekturen gilt: Zeitpunkt der letzten Zahlungserstellung bis aktueller Zeitpunkt
+		// 		(Achtung: Es ist *nicht* das Faelligkeitsdatum relevant, sondern das Erstellungsdatum des letzten Auftrags!)
 		// Den letzten Zahlungsauftrag lesen
-		LocalDateTime lastDatumFaellig = Constants.START_OF_DATETIME; // Default, falls dies der erste Auftrag ist
+		LocalDateTime lastZahlungErstellt = Constants.START_OF_DATETIME; // Default, falls dies der erste Auftrag ist
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
 		if (lastZahlungsauftrag.isPresent()) {
-			lastDatumFaellig = lastZahlungsauftrag.get().getDatumFaellig();
+			lastZahlungErstellt = lastZahlungsauftrag.get().getDatumGeneriert();
 		}
 
-		LocalDate datumVon = lastDatumFaellig.plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate();
-		LocalDate datumBis = datumFaelligkeit.with(TemporalAdjusters.lastDayOfMonth()).toLocalDate();
-		zahlungsauftrag.setGueltigkeit(new DateRange(datumVon, datumBis));
+		LocalDate zeitabschnittVon = lastZahlungErstellt.plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate();
+		LocalDate zeitabschnittBis = zahlungsauftrag.getDatumGeneriert().toLocalDate().with(TemporalAdjusters.lastDayOfMonth());
+		zahlungsauftrag.setGueltigkeit(new DateRange(zeitabschnittVon, zeitabschnittBis));
 
 		Map<String, Zahlung> zahlungProInstitution = new HashMap<>();
 
 		// "Normale" Zahlungen
-		Collection<VerfuegungZeitabschnitt> gueltigeVerfuegungZeitabschnitte = getGueltigeVerfuegungZeitabschnitte(datumVon, datumBis);
+		Collection<VerfuegungZeitabschnitt> gueltigeVerfuegungZeitabschnitte = getGueltigeVerfuegungZeitabschnitte(zeitabschnittVon, zeitabschnittBis);
 		for (VerfuegungZeitabschnitt zeitabschnitt : gueltigeVerfuegungZeitabschnitte) {
 			createZahlungsposition(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 		}
 		// Korrekturen
-		Collection<VerfuegungZeitabschnitt> mutationsVerfuegungsZeitabschnitte = getMutationsVerfuegungsZeitabschnitte(lastDatumFaellig, datumFaelligkeit, datumVon, datumBis);
+		Collection<VerfuegungZeitabschnitt> mutationsVerfuegungsZeitabschnitte = getMutationsVerfuegungsZeitabschnitte(lastZahlungErstellt, zahlungsauftrag.getDatumGeneriert(), zeitabschnittVon, zeitabschnittBis);
 		for (VerfuegungZeitabschnitt zeitabschnitt : mutationsVerfuegungsZeitabschnitte) {
 			createZahlungspositionenKorrektur(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 		}
@@ -92,7 +107,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		return persistence.persist(zahlungsauftrag);
 	}
 
-	public Collection<VerfuegungZeitabschnitt> getGueltigeVerfuegungZeitabschnitte(LocalDate zeitabschnittVon, LocalDate zeitabschnittBis) {
+	private Collection<VerfuegungZeitabschnitt> getGueltigeVerfuegungZeitabschnitte(LocalDate zeitabschnittVon, LocalDate zeitabschnittBis) {
 		Objects.requireNonNull(zeitabschnittVon, "zeitabschnittVon muss gesetzt sein");
 		Objects.requireNonNull(zeitabschnittBis, "zeitabschnittBis muss gesetzt sein");
 
@@ -115,7 +130,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// Nur neueste Verfuegung jedes Falls beachten
 		Optional<Gesuchsperiode> gesuchsperiodeAm = gesuchsperiodeService.getGesuchsperiodeAm(zeitabschnittBis);
 		if (gesuchsperiodeAm.isPresent()) {
-			List<String> gesuchIdsOfAktuellerAntrag = gesuchService.findGesuchIdsOfAktuellerAntrag(gesuchsperiodeAm.get());
+			List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiodeAm.get());
 			Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
 			predicates.add(predicateAktuellesGesuch);
 		} else {
@@ -132,8 +147,26 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Objects.requireNonNull(zeitabschnittVon, "zeitabschnittVon muss gesetzt sein");
 		Objects.requireNonNull(zeitabschnittBis, "zeitabschnittBis muss gesetzt sein");
 
-		//TODO implement
-		return Collections.EMPTY_LIST;
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<VerfuegungZeitabschnitt> query = cb.createQuery(VerfuegungZeitabschnitt.class);
+		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
+		Join<Verfuegung, Betreuung> joinBetreuung = root.join(VerfuegungZeitabschnitt_.verfuegung).join(Verfuegung_.betreuung);
+
+		List<Expression<Boolean>> predicates = new ArrayList<>();
+
+		// Datum Bis muss VOR dem regulaeren Auszahlungszeitraum sein (sonst ist es keine Korrektur und schon im obigen Statement enthalten)
+		Predicate predicateStart = cb.lessThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis), zeitabschnittVon.minusDays(1));
+		predicates.add(predicateStart);
+		// Nur Angebot KITA
+		Predicate predicateAngebot = cb.equal(joinBetreuung.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.KITA);
+		predicates.add(predicateAngebot);
+		// Gesuche, welche seit dem letzten Zahlungslauf verfuegt wurden. Nur neueste Verfuegung jedes Falls beachten
+		List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(datumVerfuegtVon, datumVerfuegtBis);
+		Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
+		predicates.add(predicateAktuellesGesuch);
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+		return persistence.getCriteriaResults(query);
 	}
 
 	private Zahlungsposition createZahlungsposition(VerfuegungZeitabschnitt zeitabschnitt, Zahlungsauftrag zahlungsauftrag, Map<String, Zahlung> zahlungProInstitution) {

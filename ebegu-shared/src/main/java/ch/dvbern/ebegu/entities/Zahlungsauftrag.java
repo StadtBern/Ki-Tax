@@ -26,7 +26,11 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 
 	@NotNull
 	@Column(nullable = false)
-	private LocalDateTime datumFaellig;
+	private LocalDateTime datumFaellig; // Nur benoetigt fuer die Information an Postfinance -> ISO File
+
+	@NotNull
+	@Column(nullable = false)
+	private LocalDateTime datumGeneriert; // Zeitpunkt, an welchem der Auftrag erstellt wurde, d.h. bis hierhin wurden Mutationen beruecksichtigt
 
 	@NotNull
 	@Column(nullable = false)
@@ -54,6 +58,14 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 
 	public void setDatumFaellig(LocalDateTime datumFaellig) {
 		this.datumFaellig = datumFaellig;
+	}
+
+	public LocalDateTime getDatumGeneriert() {
+		return datumGeneriert;
+	}
+
+	public void setDatumGeneriert(LocalDateTime datumGeneriert) {
+		this.datumGeneriert = datumGeneriert;
 	}
 
 	public Boolean getAusgeloest() {
