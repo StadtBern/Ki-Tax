@@ -402,8 +402,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 
 	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, SetJoin<KindContainer, Betreuung> betreuungen, Join<KindContainer, Kind> kinder) {
+		Expression<?> expression;
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
-			Expression<?> expression;
 			switch (antragTableFilterDto.getSort().getPredicate()) {
 				case "fallNummer":
 					expression = root.get(Gesuch_.fall).get(Fall_.fallNummer);
@@ -444,7 +444,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					break;
 			}
 			query.orderBy(antragTableFilterDto.getSort().getReverse() ? cb.asc(expression) : cb.desc(expression));
+		} else {
+			// Default sort when nothing is choosen
+			expression = root.get(Gesuch_.timestampMutiert);
+			query.orderBy(cb.desc(expression));
 		}
+
 	}
 
 	private enum Mode {
