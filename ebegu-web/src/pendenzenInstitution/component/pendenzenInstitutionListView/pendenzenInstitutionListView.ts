@@ -12,6 +12,7 @@ import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import PendenzInstitutionRS from '../../service/PendenzInstitutionRS.rest';
 import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
+import TSBetreuungsnummerParts from '../../../models/dto/TSBetreuungsnummerParts';
 import ITimeoutService = angular.ITimeoutService;
 let template = require('./pendenzenInstitutionListView.html');
 require('./pendenzenInstitutionListView.less');
@@ -91,19 +92,18 @@ export class PendenzenInstitutionListViewController {
 
     public editPendenzInstitution(pendenz: TSPendenzInstitution, event: any): void {
         if (pendenz) {
-            this.gesuchModelManager.openGesuch(pendenz.gesuchId).then(() => {
-                let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
-                this.openBetreuung(pendenz, isCtrlKeyPressed);
-            });
+            let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
+            this.openBetreuung(pendenz, isCtrlKeyPressed);
         }
     }
 
     //TODO (team) Hier wird mit findBetreuungById die Kind-Id auf dem GMM gespeichert, spaeter soll diese als
     // Parameter in die URL kommen. Dann kann in editPendenzInstitution() das openGesuch() entfernt werden
     private openBetreuung(pendenz: TSPendenzInstitution, isCtrlKeyPressed: boolean): void {
-        if (this.gesuchModelManager.getGesuch() && pendenz) {
-            let kindNumber: number = this.gesuchModelManager.findKindById(pendenz.kindId);
-            let betreuungNumber: number = this.gesuchModelManager.findBetreuungById(pendenz.betreuungsId);
+        let numberParts: TSBetreuungsnummerParts = this.ebeguUtil.splitBetreuungsnummer(pendenz.betreuungsNummer);
+        if (numberParts && pendenz) {
+            let kindNumber: number = parseInt(numberParts.kindnummer);
+            let betreuungNumber: number = parseInt(numberParts.betreuungsnummer);
             if (betreuungNumber > 0) {
                 this.berechnungsManager.clear(); // nur um sicher zu gehen, dass alle alte Werte geloescht sind
 
