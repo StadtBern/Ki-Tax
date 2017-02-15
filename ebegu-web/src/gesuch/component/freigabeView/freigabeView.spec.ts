@@ -114,7 +114,7 @@ describe('freigabeView', function () {
 
             expect(returned).toBeUndefined();
         });
-        fit('should call showDialog when form is valid', function () {
+        it('should call showDialog when form is valid', function () {
             TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
             controller.bestaetigungFreigabequittung = true;
 
