@@ -107,7 +107,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		return persistence.persist(zahlungsauftrag);
 	}
 
-	public Collection<VerfuegungZeitabschnitt> getGueltigeVerfuegungZeitabschnitte(LocalDate zeitabschnittVon, LocalDate zeitabschnittBis) {
+	private Collection<VerfuegungZeitabschnitt> getGueltigeVerfuegungZeitabschnitte(LocalDate zeitabschnittVon, LocalDate zeitabschnittBis) {
 		Objects.requireNonNull(zeitabschnittVon, "zeitabschnittVon muss gesetzt sein");
 		Objects.requireNonNull(zeitabschnittBis, "zeitabschnittBis muss gesetzt sein");
 
