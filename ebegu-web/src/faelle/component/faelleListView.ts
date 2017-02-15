@@ -27,7 +27,6 @@ export class FaelleListViewController {
 
     private antragList: Array<TSAntragDTO>;
     totalResultCount: string = '-';
-    private ignoreRequest: boolean = true; //we want to ignore the first filter request because the default sort triggers always a second one
 
 
     static $inject: string[] = ['$filter', 'GesuchRS', 'GesuchModelManager',
@@ -47,19 +46,13 @@ export class FaelleListViewController {
 
 
     public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
-        if (!this.ignoreRequest) {
-            this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
-            return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
-                this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : undefined;
-                this.antragList = response.antragDTOs;
-                return response;
-            });
-        } else {
-            this.ignoreRequest = false;
-            let deferred = this.$q.defer();
-            deferred.resolve(undefined);
-            return deferred.promise;
-        }
+        this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
+        return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
+            this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : undefined;
+            this.antragList = response.antragDTOs;
+            return response;
+        });
+
     };
 
 
