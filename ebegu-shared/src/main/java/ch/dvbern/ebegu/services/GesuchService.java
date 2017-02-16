@@ -50,6 +50,12 @@ public interface GesuchService {
 	Optional<Gesuch> findGesuch(@Nonnull String key);
 
 	/**
+	 * Spezialmethode fuer die Freigabe. Kann Gesuche lesen die im Status Freigabequittung oder hoeher sind
+	 */
+	@Nonnull
+	Optional<Gesuch> findGesuchForFreigabe(@Nonnull String gesuchId);
+
+	/**
 	 * Gibt alle Gesuche zurueck die in der Liste der gesuchIds auftauchen und fuer die der Benutzer berechtigt ist.
 	 * Gesuche fuer die der Benutzer nicht berechtigt ist werden uebersprungen
 	 * @param gesuchIds
