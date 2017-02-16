@@ -10,8 +10,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -170,14 +170,14 @@ public interface GesuchService {
 	 * @param gesuchsperiode
 	 */
 	@Nonnull
-	List<Gesuch> getAllGesucheForFallAndPeriod(@NotNull Fall fall, @NotNull Gesuchsperiode gesuchsperiode);
+	List<Gesuch> getAllGesucheForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Das gegebene Gesuch wird mit heutigem Datum freigegeben und den Step FREIGABE auf OK gesetzt
 	 * @param gesuch
 	 * @param statusToChangeTo
 	 */
-	Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch, AntragStatus statusToChangeTo);
+	Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo);
 
 	/**
 	 * Gibt das Gesuch frei für das Jugendamt: Anpassung des Status inkl Kopieren der Daten des GS aus den
@@ -192,7 +192,7 @@ public interface GesuchService {
 	 * @return Gibt das aktualisierte gegebene Gesuch zurueck
 	 */
 	@Nonnull
-	Gesuch setBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch);
+	Gesuch setBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
 
 	/**
 	 * Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag
@@ -200,5 +200,18 @@ public interface GesuchService {
 	 * @return Gibt das aktualisierte gegebene Gesuch zurueck
 	 */
 	@Nonnull
-	Gesuch removeBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch);
+	Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Gibt alle aktuellen Antrags-Ids zurueck, d.h. den letzten Antrag jedes Falles, fuer eine Gesuchsperiode
+	 */
+	@Nonnull
+	List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Gibt die Antrags-Ids aller Antraege zurueck, welche im uebergebenen Zeitraum verfuegt wurden.
+	 * Falls es mehrere fuer denselben Fall hat, wird nur der letzte (hoechste Laufnummer) zurueckgegeben
+	 */
+	@Nonnull
+	List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis);
 }

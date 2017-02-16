@@ -59,9 +59,7 @@ describe('faelleListView', function () {
                 faelleListViewController = new FaelleListViewController($filter, gesuchRS,
                     gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS, $q);
 
-                faelleListViewController.passFilterToServer({});
-                $scope.$apply();
-                expect(gesuchRS.searchAntraege).toHaveBeenCalledTimes(0); //erster request wird ignoriert
+
                 faelleListViewController.passFilterToServer({});
                 expect(gesuchRS.searchAntraege).toHaveBeenCalledTimes(1);
                 $scope.$apply();

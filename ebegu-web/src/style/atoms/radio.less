@@ -1,10 +1,18 @@
 @import '../variables.less';
 @import '../mixins.less';
 
-
 md-radio-group.radio, .radio {
 
     margin: 0;
+    &:focus {
+        outline: none;
+        .md-container {
+            .md-off {
+                -webkit-box-shadow: 0 0 4px 0 #858585;
+                box-shadow: 0 0 4px 0 #858585;
+            }
+        }
+    }
 }
 
 md-radio-button {
@@ -19,7 +27,7 @@ md-radio-button {
         margin-bottom: 0;
     }
     .md-container {
-        display:block!important;
+        display: block !important;
         top: 50%;
         transform: translateY(-50%);
         height: 1.5rem;
