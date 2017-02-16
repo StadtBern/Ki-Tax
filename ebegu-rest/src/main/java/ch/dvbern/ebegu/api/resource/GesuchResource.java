@@ -139,6 +139,33 @@ public class GesuchResource {
 	}
 
 	/**
+	 * Da beim Einscannen Gesuche eingelesen werden die noch im Status Freigabequittung sind brauchen
+	 * wir hier eine separate Methode um das Lesen der noetigen Informationen dieser Gesuche zuzulassen
+	 * Wenn kein Gesuch gefunden wird wird null zurueckgegeben.
+	 * @param gesuchJAXPId gesuchID des Gesuchs im Status Freigabequittung oder hoeher
+	 * @return DTO mit den relevanten Informationen zum Gesuch
+	 */
+	@Nullable
+	@GET
+	@Path("/freigabe/{gesuchId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxAntragDTO findGesuchForFreigabe(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
+		Validate.notNull(gesuchJAXPId.getId());
+		String gesuchID = converter.toEntityId(gesuchJAXPId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuchForFreigabe(gesuchID);
+
+		if (!gesuchOptional.isPresent()) {
+			return null;
+		}
+		Gesuch gesuchToReturn = gesuchOptional.get();
+		JaxAntragDTO jaxAntragDTO = converter.gesuchToAntragDTO(gesuchToReturn);
+		jaxAntragDTO.setFamilienName(gesuchToReturn.extractFullnamesString()); //hier volle Namen beider GS
+		return jaxAntragDTO;
+	}
+
+	/**
 	 * Methode findGesuch fuer Benutzer mit Rolle SACHBEARBEITER_INSTITUTION oder SACHBEARBEITER_TRAEGERSCHAFT. Das ganze Gesuch wird gefilter
 	 * sodass nur die relevanten Daten zum Client geschickt werden.
 	 *

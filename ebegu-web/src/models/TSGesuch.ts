@@ -200,6 +200,6 @@ export default class TSGesuch extends TSAbstractAntragEntity {
             return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA;
         }
         return undefined;
-
     }
+
 }
