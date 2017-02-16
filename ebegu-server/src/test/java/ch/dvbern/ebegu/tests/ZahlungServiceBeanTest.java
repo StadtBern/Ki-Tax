@@ -96,7 +96,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void zahlungsauftragErstellenNormal() throws Exception {
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 
 		Assert.assertNotNull(zahlungsauftrag);
 		Assert.assertNotNull(zahlungsauftrag.getZahlungen());
@@ -111,7 +111,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void zahlungsauftragAusloesen() throws Exception {
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 
 		Assert.assertFalse(zahlungService.findZahlungsauftrag(zahlungsauftrag.getId()).get().getAusgeloest());
 		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
@@ -121,7 +121,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void findZahlungsauftrag() throws Exception {
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 
 		Assert.assertTrue(zahlungService.findZahlungsauftrag(zahlungsauftrag.getId()).isPresent());
 		Assert.assertFalse(zahlungService.findZahlungsauftrag("ungueltigeId").isPresent());
@@ -130,7 +130,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void deleteZahlungsauftrag() throws Exception {
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 
 		Assert.assertTrue(zahlungService.findZahlungsauftrag(zahlungsauftrag.getId()).isPresent());
 		zahlungService.deleteZahlungsauftrag(zahlungsauftrag.getId());
@@ -142,7 +142,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertTrue(zahlungService.getAllZahlungsauftraege().isEmpty());
 
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 		Assert.assertFalse(zahlungService.getAllZahlungsauftraege().isEmpty());
 	}
 
@@ -154,7 +154,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void zahlungBestaetigen() throws Exception {
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 
 		Assert.assertNotNull(zahlungsauftrag);
 		// Anzahl Zahlungen: Anzahl Monate seit Periodenbeginn, inkl. dem aktuellen

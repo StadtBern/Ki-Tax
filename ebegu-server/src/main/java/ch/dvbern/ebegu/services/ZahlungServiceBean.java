@@ -67,11 +67,17 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragErstellen(LocalDateTime datumFaelligkeit, String beschreibung) {
+		return zahlungsauftragErstellen(datumFaelligkeit, beschreibung, LocalDateTime.now());
+	}
+
+	@Override
+	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
+	public Zahlungsauftrag zahlungsauftragErstellen(LocalDateTime datumFaelligkeit, String beschreibung, LocalDateTime datumGeneriert) {
 		Zahlungsauftrag zahlungsauftrag = new Zahlungsauftrag();
 		zahlungsauftrag.setAusgeloest(Boolean.FALSE);
 		zahlungsauftrag.setBeschrieb(beschreibung);
 		zahlungsauftrag.setDatumFaellig(datumFaelligkeit);
-		zahlungsauftrag.setDatumGeneriert(LocalDateTime.now());
+		zahlungsauftrag.setDatumGeneriert(datumGeneriert);
 
 		// Alle aktuellen (d.h. der letzte Antrag jedes Falles) Verfuegungen suchen, welche ein Kita-Angebot haben
 		// Wir brauchen folgende Daten:

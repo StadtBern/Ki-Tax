@@ -39,6 +39,10 @@
                        data-translate="MENU_FALL_EROEFFNEN"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
+                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA']">
+                    <dv-zahlung></dv-zahlung>
+                </li>
+                <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT']">
                     <a ui-sref="faelle" data-translate="MENU_ALL_FAELLE"></a>
                 </li>

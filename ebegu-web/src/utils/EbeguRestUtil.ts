@@ -61,6 +61,8 @@ import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer
 import TSMitteilung from '../models/TSMitteilung';
 import TSQuickSearchResult from '../models/dto/TSQuickSearchResult';
 import TSSearchResultEntry from '../models/dto/TSSearchResultEntry';
+import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
+import TSZahlung from '../models/TSZahlung';
 
 
 export default class EbeguRestUtil {
@@ -1914,5 +1916,55 @@ export default class EbeguRestUtil {
             }
         }
         return mitteilungenList;
+    }
+
+    public parseZahlungsauftragList(data: any): TSZahlungsauftrag[] {
+        let zahlungsauftrag: TSZahlungsauftrag[] = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                zahlungsauftrag[i] = this.parseZahlungsauftrag(new TSZahlungsauftrag(), data[i]);
+            }
+        }
+        return zahlungsauftrag;
+    }
+
+
+    public parseZahlungsauftrag(tsZahlungsauftrag: TSZahlungsauftrag, zahlungsauftragFromServer: any): TSZahlungsauftrag {
+        if (zahlungsauftragFromServer) {
+            this.parseDateRangeEntity(tsZahlungsauftrag, zahlungsauftragFromServer);
+
+            tsZahlungsauftrag.ausgeloest = zahlungsauftragFromServer.ausgeloest;
+            tsZahlungsauftrag.beschrieb = zahlungsauftragFromServer.beschrieb;
+            tsZahlungsauftrag.datumFaellig = DateUtil.localDateTimeToMoment(zahlungsauftragFromServer.datumFaellig);
+            tsZahlungsauftrag.datumGeneriert = DateUtil.localDateTimeToMoment(zahlungsauftragFromServer.datumGeneriert);
+            tsZahlungsauftrag.betragTotalAuftrag = zahlungsauftragFromServer.betragTotalAuftrag;
+            tsZahlungsauftrag.zahlungen = this.parseZahlungen(zahlungsauftragFromServer.zahlungen);
+
+            return tsZahlungsauftrag;
+        }
+        return undefined;
+    }
+
+    public parseZahlungen(data: any): TSZahlung[] {
+        let zahlungen: TSZahlung[] = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                zahlungen[i] = this.parseZahlung(new TSZahlung(), data[i]);
+            }
+        }
+        return zahlungen;
+    }
+
+    public parseZahlung(tsZahlung: TSZahlung, zahlungFromServer: any): TSZahlung {
+        if (zahlungFromServer) {
+            this.parseAbstractEntity(tsZahlung, zahlungFromServer);
+
+            tsZahlung.betragTotalZahlung = zahlungFromServer.betragTotalZahlung;
+            tsZahlung.institutionsName = zahlungFromServer.institutionsName;
+            tsZahlung.status = zahlungFromServer.status;
+
+            return tsZahlung;
+        }
+        return undefined;
     }
 }

@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,5 +72,9 @@ public class Zahlung extends AbstractEntity {
 
 	public void setZahlungspositionen(@Nonnull List<Zahlungsposition> zahlungspositionen) {
 		this.zahlungspositionen = zahlungspositionen;
+	}
+
+	public BigDecimal getBetragTotalZahlung() {
+		return new BigDecimal(1234);
 	}
 }

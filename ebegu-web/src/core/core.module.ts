@@ -76,6 +76,8 @@ import MitteilungRS from './service/mitteilungRS.rest';
 import {DVMitteilungListConfig} from './component/dv-mitteilung-list/dv-mitteilung-list';
 import {DvPosteingangComponentConfig} from './component/dv-posteingang/dv-posteingang';
 import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
+import {DvZahlungComponentConfig} from './component/dv-zahlung/dv-zahlung';
+import ZahlungRS from './service/zahlungRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -159,6 +161,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('WizardStepRS', WizardStepRS)
     .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
     .service('MitteilungRS', MitteilungRS)
+    .service('ZahlungRS', ZahlungRS)
     .service('GlobalCacheService', GlobalCacheService)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
@@ -190,6 +193,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvMobileNavigationToggle', new DvMobileNavigationToggleComponentConfig())
     .component('dvHomeIcon', new DvHomeIconComponentConfig())
     .component('dvPosteingang', new DvPosteingangComponentConfig())
+    .component('dvZahlung', new DvZahlungComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())

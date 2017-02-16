@@ -12,12 +12,21 @@ import java.util.Optional;
  */
 public interface ZahlungService {
 
+
+	/**
+	 * Ermittelt alle im aktuellen Monat gueltigen Verfuegungen, sowie aller seit dem letzten Auftrag eingeganegenen
+	 * Mutationen.
+	 * Der Zahlungsauftrag hat den initialen Status ENTWURF
+	 * Als datumGeneriert wird "Jetzt" verwendet
+	 */
+	Zahlungsauftrag zahlungsauftragErstellen(LocalDateTime datumFaelligkeit, String beschreibung);
+
 	/**
 	 * Ermittelt alle im aktuellen Monat gueltigen Verfuegungen, sowie aller seit dem letzten Auftrag eingeganegenen
 	 * Mutationen.
 	 * Der Zahlungsauftrag hat den initialen Status ENTWURF
 	 */
-	Zahlungsauftrag zahlungsauftragErstellen(LocalDateTime datumFaelligkeit, String beschreibung);
+	Zahlungsauftrag zahlungsauftragErstellen(LocalDateTime datumFaelligkeit, String beschreibung, LocalDateTime datumGeneriert);
 
 	/**
 	 * Nachdem alle Daten kontrolliert wurden, wird der Zahlungsauftrag ausgeloest. Danach kann er nicht mehr
