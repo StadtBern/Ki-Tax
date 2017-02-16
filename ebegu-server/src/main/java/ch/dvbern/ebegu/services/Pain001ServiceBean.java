@@ -81,12 +81,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 			jaxbMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, SCHEMA_LOCATION + " " + SCHEMA_NAME);
 
 			//noinspection Convert2Lambda: Hier bitte nicht lambda verwenden, es gibt teilweise Fehler mit Java-Version
-			jaxbMarshaller.setEventHandler(new ValidationEventHandler() {
-				@Override
-				public boolean handleEvent(ValidationEvent event) {
-					throw new EbeguRuntimeException("Unerwarteter Fehler beim generieren des Zahlungsfile", event.getMessage(), event.getLinkedException());
-				}
-			});
+			jaxbMarshaller.setEventHandler(new PainValidationEventHandler());
 
 			jaxbMarshaller.marshal(getElementToMarshall(document), documentXmlString); // ohne @XmlRootElement annotation
 
@@ -397,5 +392,12 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 	private String getMsgId(Zahlungsauftrag zahlungsauftrag) {
 		return zahlungsauftrag.getDatumFaellig().getYear() + "-" + zahlungsauftrag.getDatumFaellig().getMonthValue();
+	}
+
+	private static class PainValidationEventHandler implements ValidationEventHandler {
+		@Override
+        public boolean handleEvent(ValidationEvent event) {
+            throw new EbeguRuntimeException("Unerwarteter Fehler beim generieren des Zahlungsfile", event.getMessage(), event.getLinkedException());
+        }
 	}
 }
