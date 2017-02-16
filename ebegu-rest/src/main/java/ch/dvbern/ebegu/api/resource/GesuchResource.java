@@ -141,7 +141,7 @@ public class GesuchResource {
 	/**
 	 * Da beim Einscannen Gesuche eingelesen werden die noch im Status Freigabequittung sind brauchen
 	 * wir hier eine separate Methode um das Lesen der noetigen Informationen dieser Gesuche zuzulassen
-	 * Wenn ken Gesuch gefunden wird wird null zurueckgegeben.
+	 * Wenn kein Gesuch gefunden wird wird null zurueckgegeben.
 	 * @param gesuchJAXPId gesuchID des Gesuchs im Status Freigabequittung oder hoeher
 	 * @return DTO mit den relevanten Informationen zum Gesuch
 	 */
