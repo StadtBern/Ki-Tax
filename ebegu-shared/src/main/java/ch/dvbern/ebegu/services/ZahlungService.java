@@ -43,11 +43,6 @@ public interface ZahlungService {
 	Collection<Zahlungsauftrag> getAllZahlungsauftraege();
 
 	/**
-	 * Erstellt ein ISO-20022-File mit den Zahlunspositionen des gewaehlten Auftrags.
-	 */
-	void createIsoFile(String auftragId);
-
-	/**
 	 * Eine Kita kann/muss den Zahlungseingang bestaetigen
 	 */
 	Zahlung zahlungBestaetigen(String zahlungId);

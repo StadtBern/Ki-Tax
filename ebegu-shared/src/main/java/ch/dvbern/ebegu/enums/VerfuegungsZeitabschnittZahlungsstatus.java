@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.enums;
 /**
  * Zahlungsstatus fuer VerfuegungsZeitabschnitte
  */
-public enum VerfuegungsZeitabschnittStatus {
+public enum VerfuegungsZeitabschnittZahlungsstatus {
 
 	NEU,
 	VERRECHNET,
@@ -11,5 +11,9 @@ public enum VerfuegungsZeitabschnittStatus {
 
 	public boolean isNeu() {
 		return NEU.equals(this);
+	}
+
+	public boolean isVerrechnet() {
+		return VERRECHNET.equals(this);
 	}
 }

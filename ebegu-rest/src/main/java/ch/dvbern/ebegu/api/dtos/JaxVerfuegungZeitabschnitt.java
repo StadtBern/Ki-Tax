@@ -1,8 +1,11 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 
-import javax.persistence.Transient;
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -58,15 +61,6 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
 	private Integer einkommensjahr;
 
-
-	public int getBgPensum() {
-		return bgPensum;
-	}
-
-	public void setBgPensum(int bgPensum) {
-		this.bgPensum = bgPensum;
-	}
-
 	private BigDecimal betreuungsstunden;
 
 	private BigDecimal vollkosten = BigDecimal.ZERO;
@@ -82,8 +76,8 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen ;
 
-	@Transient
-	private String status;
+	@NotNull
+	private VerfuegungsZeitabschnittZahlungsstatus zahlungsstatus = VerfuegungsZeitabschnittZahlungsstatus.NEU;
 
 	private boolean kategorieMaxEinkommen = false;
 
@@ -187,12 +181,12 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 		this.bemerkungen = bemerkungen;
 	}
 
-	public String getStatus() {
-		return status;
+	public VerfuegungsZeitabschnittZahlungsstatus getZahlungsstatus() {
+		return zahlungsstatus;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus zahlungsstatus) {
+		this.zahlungsstatus = zahlungsstatus;
 	}
 
 	public BigDecimal getFamGroesse() {
@@ -241,5 +235,13 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
 	public void setZuSpaetEingereicht(boolean zuSpaetEingereicht) {
 		this.zuSpaetEingereicht = zuSpaetEingereicht;
+	}
+
+	public int getBgPensum() {
+		return bgPensum;
+	}
+
+	public void setBgPensum(int bgPensum) {
+		this.bgPensum = bgPensum;
 	}
 }

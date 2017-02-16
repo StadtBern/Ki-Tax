@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.dto.VerfuegungsBemerkung;
 import ch.dvbern.ebegu.enums.MsgKey;
-import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittStatus;
+import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.rules.RuleKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
@@ -152,8 +152,15 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private VerfuegungsZeitabschnittStatus status = VerfuegungsZeitabschnittStatus.NEU;
+	@Column(nullable = false) //TODO (hefr) evt. wieder entfernen, siehe unten
+	private VerfuegungsZeitabschnittZahlungsstatus zahlungsstatus = VerfuegungsZeitabschnittZahlungsstatus.NEU;
+
+	@NotNull
+	@OneToMany (mappedBy = "verfuegungZeitabschnitt")
+	private List<Zahlungsposition> zahlungsposition = new ArrayList<>();
+
+	//TODO (hefr) Eher bidirektionale Verknüpfung, anstatt Status? Wegen Löschen
+	//TODO Das ginge schon (siehe oben), aber wir verlieren den Status "IDENTISCHE DATEN", würden also u.U. solche Zeitabschnitte immer wieder überprüfen
 
 
 	public VerfuegungZeitabschnitt() {
@@ -198,7 +205,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.kategorieMaxEinkommen = toCopy.kategorieMaxEinkommen;
 		this.kategorieKeinPensum = toCopy.kategorieKeinPensum;
 		this.kategorieZuschlagZumErwerbspensum = toCopy.kategorieZuschlagZumErwerbspensum;
-		this.status = toCopy.status;
+		this.zahlungsstatus = toCopy.zahlungsstatus;
 	}
 
 	/**
@@ -470,12 +477,20 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
 	}
 
-	public VerfuegungsZeitabschnittStatus getStatus() {
-		return status;
+	public VerfuegungsZeitabschnittZahlungsstatus getZahlungsstatus() {
+		return zahlungsstatus;
 	}
 
-	public void setStatus(VerfuegungsZeitabschnittStatus status) {
-		this.status = status;
+	public void setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus zahlungsstatus) {
+		this.zahlungsstatus = zahlungsstatus;
+	}
+
+	public List<Zahlungsposition> getZahlungsposition() {
+		return zahlungsposition;
+	}
+
+	public void setZahlungsposition(List<Zahlungsposition> zahlungsposition) {
+		this.zahlungsposition = zahlungsposition;
 	}
 
 	/**
@@ -688,7 +703,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			this.ekv2Alleine == that.ekv2Alleine &&
 			this.ekv2ZuZweit == that.ekv2ZuZweit &&
 			this.ekv1NotExisting == that.ekv1NotExisting &&
-			Objects.equals(this.status, that.status);
+			Objects.equals(this.zahlungsstatus, that.zahlungsstatus);
 	}
 
 	public boolean isSameSichtbareDaten(VerfuegungZeitabschnitt that) {
@@ -727,7 +742,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
 			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0 &&
 			Objects.equals(this.einkommensjahr, that.einkommensjahr) &&
-			Objects.equals(this.status, that.status);
+			Objects.equals(this.zahlungsstatus, that.zahlungsstatus);
 	}
 
 	/**

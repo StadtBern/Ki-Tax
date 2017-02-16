@@ -23,7 +23,7 @@ public class Zahlungsposition extends AbstractEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlungsposition_verfuegungZeitabschnitt_id"))
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlungsposition_verfuegungZeitabschnitt_id"), nullable = false)
 	private VerfuegungZeitabschnitt verfuegungZeitabschnitt;
 
 	@NotNull

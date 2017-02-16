@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittStatus;
+import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.enums.ZahlungStatus;
 import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -174,7 +174,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertNotNull(zahlungsposition);
 		Assert.assertEquals(status, zahlungsposition.getStatus());
 		Assert.assertEquals(MathUtil.DEFAULT.from(betrag), zahlungsposition.getBetrag());
-		Assert.assertEquals(VerfuegungsZeitabschnittStatus.VERRECHNET, zahlungsposition.getVerfuegungZeitabschnitt().getStatus());
+		Assert.assertEquals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET, zahlungsposition.getVerfuegungZeitabschnitt().getZahlungsstatus());
 	}
 
 	@Test
@@ -213,11 +213,6 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		createGesuch(true);
 		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
 		Assert.assertFalse(zahlungService.getAllZahlungsauftraege().isEmpty());
-	}
-
-	@Test
-	public void createIsoFile() throws Exception {
-		//TODO (team) Test
 	}
 
 	@Test
