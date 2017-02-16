@@ -13,9 +13,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
+import javax.xml.bind.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -82,8 +80,12 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			jaxbMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, SCHEMA_LOCATION + " " + SCHEMA_NAME);
 
-			jaxbMarshaller.setEventHandler(event -> {
-				throw new EbeguRuntimeException("Unerwarteter Fehler beim generieren des Zahlungsfile", event.getMessage(), event.getLinkedException());
+			//noinspection Convert2Lambda: Hier bitte nicht lambda verwenden, es gibt teilweise Fehler mit Java-Version
+			jaxbMarshaller.setEventHandler(new ValidationEventHandler() {
+				@Override
+				public boolean handleEvent(ValidationEvent event) {
+					throw new EbeguRuntimeException("Unerwarteter Fehler beim generieren des Zahlungsfile", event.getMessage(), event.getLinkedException());
+				}
 			});
 
 			jaxbMarshaller.marshal(getElementToMarshall(document), documentXmlString); // ohne @XmlRootElement annotation
