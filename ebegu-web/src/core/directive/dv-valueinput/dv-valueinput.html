@@ -3,7 +3,8 @@
        ng-model="vm.valueinput"
        class="form-control dvDatepicker"
        ng-change="vm.removeNotDigits()"
-       ng-blur="vm.updateModelValue()"
+       ng-blur="vm.updateModelValueBlur()"
+       ng-focus="vm.handleFocus($event)"
        ng-required="vm.valueRequired"
        ng-trim="false"
        ng-disabled="vm.ngDisabled"/>
