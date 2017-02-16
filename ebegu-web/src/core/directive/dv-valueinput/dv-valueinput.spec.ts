@@ -9,7 +9,8 @@ describe('dvValueinput', function () {
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
-        controller = new ValueinputController();
+
+        controller = new ValueinputController($injector.get('$timeout'));
         controller.ngModelCtrl = <any> {
             $modelValue: undefined,
             // renderCalled: false,
@@ -27,45 +28,38 @@ describe('dvValueinput', function () {
             controller.valueinput = '1234';
             controller.ngModelCtrl.$setViewValue('1234');
             controller.removeNotDigits();
-            expect(controller.ngModelCtrl.$modelValue).toBe('1234');
+            expect(controller.ngModelCtrl.$modelValue).toBe("1'234");
         });
         it('should return a number removing leading zeros', function () {
             controller.valueinput = '00123400';
             controller.ngModelCtrl.$setViewValue('00123400');
             controller.removeNotDigits();
-            expect(controller.ngModelCtrl.$modelValue).toBe('123400');
+            expect(controller.ngModelCtrl.$modelValue).toBe("123'400");
         });
         it('should return a number removing text', function () {
             controller.valueinput = '1r2f3,4.5';
             controller.ngModelCtrl.$setViewValue('1r2f3,4.5');
             controller.removeNotDigits();
-            expect(controller.ngModelCtrl.$modelValue).toBe('12345');
+            expect(controller.ngModelCtrl.$modelValue).toBe("12'345");
         });
         it('should return a number removing whitespaces', function () {
             controller.valueinput = '  1234';
             controller.ngModelCtrl.$setViewValue('  1234');
             controller.removeNotDigits();
-            expect(controller.ngModelCtrl.$modelValue).toBe('1234');
+            expect(controller.ngModelCtrl.$modelValue).toBe("1'234");
         });
         it('should return a negative number when negative allowed', function () {
             controller.valueinput = '-1234';
             controller.ngModelCtrl.$setViewValue('-1234');
             controller.allowNegative = true;
             controller.removeNotDigits();
-            expect(controller.ngModelCtrl.$modelValue).toBe('-1234');
-        });
-        it('should return a negative number when negative allowed but minus character repeated', function () {
-            controller.valueinput = '-12-34';
-            controller.ngModelCtrl.$setViewValue('-12-34');
-            controller.allowNegative = true;
-            controller.removeNotDigits();
-            expect(controller.ngModelCtrl.$modelValue).toBe('-1234');
+            expect(controller.ngModelCtrl.$modelValue).toBe("-1'234");
         });
         it('should return a positive number when negative not allowed', function () {
             controller.valueinput = '-1234';
             controller.ngModelCtrl.$setViewValue('-1234');
             controller.removeNotDigits();
-            expect(controller.ngModelCtrl.$modelValue).toBe('1234');
+            expect(controller.ngModelCtrl.$modelValue).toBe("1'234");
         });
     });
 
