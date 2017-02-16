@@ -218,4 +218,18 @@ export default class TSAntragDTO {
     set kinder(value: Array<string>) {
         this._kinder = value;
     }
+
+    public canBeFreigegeben(): boolean {
+        return this.status == TSAntragStatus.FREIGABEQUITTUNG;
+    }
+
+    public hasOnlySchulamtAngebote(): boolean {
+        for (let angebot of this.angebote) {
+            if (TSBetreuungsangebotTyp.TAGESSCHULE !== angebot) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

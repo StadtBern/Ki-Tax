@@ -9,7 +9,6 @@ import TSFamiliensituationContainer from './TSFamiliensituationContainer';
 import {TSEingangsart} from './enums/TSEingangsart';
 import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
-import {TSAntragStatus} from './enums/TSAntragStatus';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -201,10 +200,6 @@ export default class TSGesuch extends TSAbstractAntragEntity {
             return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA;
         }
         return undefined;
-
     }
 
-    public canBeFreigegeben(): boolean {
-        return this.status == TSAntragStatus.FREIGABEQUITTUNG;
-    }
 }
