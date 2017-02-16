@@ -47,7 +47,7 @@ import java.util.*;
 @SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "SpringAutowiredFieldsWarningInspection"})
 public class ZahlungServiceBean extends AbstractBaseService implements ZahlungService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ZahlungServiceBean.class.getSimpleName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ZahlungServiceBean.class.getSimpleName());
 
 	@Inject
 	private Persistence<Zahlungsauftrag> persistence;
@@ -67,6 +67,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragErstellen(LocalDateTime datumFaelligkeit, String beschreibung) {
+		LOGGER.info("Erstelle Zahlungsauftrag mit Faelligkeit: " + Constants.DATE_FORMATTER.format(datumFaelligkeit));
 		Zahlungsauftrag zahlungsauftrag = new Zahlungsauftrag();
 		zahlungsauftrag.setAusgeloest(Boolean.FALSE);
 		zahlungsauftrag.setBeschrieb(beschreibung);
@@ -81,32 +82,66 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// 		(Achtung: Es ist *nicht* das Faelligkeitsdatum relevant, sondern das Erstellungsdatum des letzten Auftrags!)
 		// Den letzten Zahlungsauftrag lesen
 		LocalDateTime lastZahlungErstellt = Constants.START_OF_DATETIME; // Default, falls dies der erste Auftrag ist
+		// Falls es eine Wiederholung des Auftrags ist, muessen nur noch die Korrekturen beruecksichtigt werden, welche
+		// seit dem letzten Auftrag erstellt wurden
+		boolean isRepetition = false;
+		// Falls fuer denselben Zeitraum (oder den letzten Teil davon) schon ein Auftrag vorhanden ist, kann das DatumVon nicht
+		// einfach an den letzten Auftrag anschliessen
+		LocalDate zeitabschnittVon = null;
+		LocalDate zeitabschnittBis = zahlungsauftrag.getDatumGeneriert().toLocalDate().with(TemporalAdjusters.lastDayOfMonth());
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
 		if (lastZahlungsauftrag.isPresent()) {
 			lastZahlungErstellt = lastZahlungsauftrag.get().getDatumGeneriert();
+			if (zahlungsauftrag.getDatumGeneriert().toLocalDate().isAfter(lastZahlungsauftrag.get().getGueltigkeit().getGueltigBis())) {
+				// Wir beginnen am Anfang des Folgemonats des letzten Auftrags
+				zeitabschnittVon = lastZahlungErstellt.plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate();
+			} else {
+				// Repetition, dh.der Monat ist schon ausgeloest. Wir nehmen den Anfang des aktuellen Monats
+				zeitabschnittVon = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+				isRepetition = true;
+			}
+		} else {
+			zeitabschnittVon = lastZahlungErstellt.toLocalDate();
 		}
 
-		LocalDate zeitabschnittVon = lastZahlungErstellt.plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate();
-		LocalDate zeitabschnittBis = zahlungsauftrag.getDatumGeneriert().toLocalDate().with(TemporalAdjusters.lastDayOfMonth());
 		zahlungsauftrag.setGueltigkeit(new DateRange(zeitabschnittVon, zeitabschnittBis));
 
 		Map<String, Zahlung> zahlungProInstitution = new HashMap<>();
 
 		// "Normale" Zahlungen
-		Collection<VerfuegungZeitabschnitt> gueltigeVerfuegungZeitabschnitte = getGueltigeVerfuegungZeitabschnitte(zeitabschnittVon, zeitabschnittBis);
-		for (VerfuegungZeitabschnitt zeitabschnitt : gueltigeVerfuegungZeitabschnitte) {
-			createZahlungsposition(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
+		if (!isRepetition) {
+			LOGGER.info("Ermittle normale Zahlungen im Zeitraum " + zahlungsauftrag.getGueltigkeit().toRangeString());
+			Collection<VerfuegungZeitabschnitt> gueltigeVerfuegungZeitabschnitte = getGueltigeVerfuegungZeitabschnitte(zeitabschnittVon, zeitabschnittBis);
+			for (VerfuegungZeitabschnitt zeitabschnitt : gueltigeVerfuegungZeitabschnitte) {
+				if (zeitabschnitt.getStatus().isNeu()) {
+					createZahlungsposition(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
+				}
+			}
 		}
 		// Korrekturen
-		Collection<VerfuegungZeitabschnitt> mutationsVerfuegungsZeitabschnitte = getMutationsVerfuegungsZeitabschnitte(lastZahlungErstellt, zahlungsauftrag.getDatumGeneriert(), zeitabschnittVon, zeitabschnittBis);
+		// Stichtag: Falls es eine Wiederholung des Auftrags ist, wurde der aktuelle Monat bereits ausbezahlt.
+		LocalDate stichtagKorrekturen = isRepetition ? zeitabschnittVon.plusMonths(1) : zeitabschnittVon;
+		Collection<VerfuegungZeitabschnitt> mutationsVerfuegungsZeitabschnitte = getMutationsVerfuegungsZeitabschnitte(lastZahlungErstellt, zahlungsauftrag.getDatumGeneriert(), stichtagKorrekturen);
 		for (VerfuegungZeitabschnitt zeitabschnitt : mutationsVerfuegungsZeitabschnitte) {
-			createZahlungspositionenKorrektur(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
+			if (zeitabschnitt.getStatus().isNeu()) {
+				createZahlungspositionenKorrektur(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
+			}
 		}
 		//TODO ISO-File generieren
 		zahlungsauftrag.setFilecontent("TODO das File");
-		return persistence.persist(zahlungsauftrag);
+		StringBuilder sb = new StringBuilder();
+		sb.append("Zahlungsauftrag generiert: ").append(zahlungsauftrag.getGueltigkeit().toRangeString());
+		if (isRepetition) {
+			sb.append(" [Repetition]");
+		}
+		LOGGER.info(sb.toString());
+		zahlungsauftrag.setBeschrieb(sb.toString() + ": " + beschreibung);
+		return persistence.merge(zahlungsauftrag);
 	}
 
+	/**
+	 * Ermittelt die aktuell gueltigen Verfuegungszeitabschnitte fuer die normale monatliche Zahlung (keine Korrekturen).
+	 */
 	private Collection<VerfuegungZeitabschnitt> getGueltigeVerfuegungZeitabschnitte(LocalDate zeitabschnittVon, LocalDate zeitabschnittBis) {
 		Objects.requireNonNull(zeitabschnittVon, "zeitabschnittVon muss gesetzt sein");
 		Objects.requireNonNull(zeitabschnittBis, "zeitabschnittBis muss gesetzt sein");
@@ -141,11 +176,17 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		return persistence.getCriteriaResults(query);
 	}
 
-	private Collection<VerfuegungZeitabschnitt> getMutationsVerfuegungsZeitabschnitte(LocalDateTime datumVerfuegtVon, LocalDateTime datumVerfuegtBis, LocalDate zeitabschnittVon, LocalDate zeitabschnittBis) {
+	/**
+	 * Ermittelt alle Zeitabschnitte, welche zu Antraegen gehoeren, die seit dem letzten Zahlungslauf verfuegt wurden.
+	 */
+	private Collection<VerfuegungZeitabschnitt> getMutationsVerfuegungsZeitabschnitte(LocalDateTime datumVerfuegtVon, LocalDateTime datumVerfuegtBis, LocalDate zeitabschnittVon) {
 		Objects.requireNonNull(datumVerfuegtVon, "datumVerfuegtVon muss gesetzt sein");
 		Objects.requireNonNull(datumVerfuegtBis, "datumVerfuegtBis muss gesetzt sein");
 		Objects.requireNonNull(zeitabschnittVon, "zeitabschnittVon muss gesetzt sein");
-		Objects.requireNonNull(zeitabschnittBis, "zeitabschnittBis muss gesetzt sein");
+
+		LOGGER.info("Ermittle Korrekturzahlungen:");
+		LOGGER.info("Zeitabschnitt endet vor: " + Constants.DATE_FORMATTER.format(zeitabschnittVon.minusDays(1)));
+		LOGGER.info("Gesuch verfuegt zwischen: " + Constants.DATE_FORMATTER.format(datumVerfuegtVon) + " - " + Constants.DATE_FORMATTER.format(datumVerfuegtBis));
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = cb.createQuery(VerfuegungZeitabschnitt.class);
@@ -169,61 +210,88 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		return persistence.getCriteriaResults(query);
 	}
 
+	/**
+	 * Erstellt eine Zahlungsposition fuer den uebergebenen Zeitabschnitt. Normalfall bei "Erstbuchung"
+	 */
 	private Zahlungsposition createZahlungsposition(VerfuegungZeitabschnitt zeitabschnitt, Zahlungsauftrag zahlungsauftrag, Map<String, Zahlung> zahlungProInstitution) {
 		Zahlungsposition zahlungsposition = new Zahlungsposition();
 		zahlungsposition.setVerfuegungZeitabschnitt(zeitabschnitt);
-		zahlungsposition.setBetrag(zeitabschnitt.getVollkosten());
+		zahlungsposition.setBetrag(zeitabschnitt.getVerguenstigung());
 		zahlungsposition.setStatus(ZahlungspositionStatus.NORMAL);
 		Zahlung zahlung = findZahlungForInstitution(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 		zahlungsposition.setZahlung(zahlung);
 		zahlung.getZahlungspositionen().add(zahlungsposition);
+		zeitabschnitt.setStatus(VerfuegungsZeitabschnittStatus.VERRECHNET);
 		return zahlungsposition;
 	}
 
-	private Zahlungsposition createZahlungspositionenKorrektur(VerfuegungZeitabschnitt zeitabschnitt, Zahlungsauftrag zahlungsauftrag, Map<String, Zahlung> zahlungProInstitution) {
+	/**
+	 * Erstellt alle notwendigen Zahlungspositionen fuer die Korrektur des uebergebenen Zeitabschnitts.
+	 * Bisherige Positionen werden in Abzug gebracht und die neuen hinzugefuegt
+	 */
+	private void createZahlungspositionenKorrektur(VerfuegungZeitabschnitt zeitabschnittNeu, Zahlungsauftrag zahlungsauftrag, Map<String, Zahlung> zahlungProInstitution) {
 		// Ermitteln, ob die Vollkosten geaendert haben
-		Optional<Verfuegung> vorgaengerVerfuegung = verfuegungService.findVorgaengerVerfuegung(zeitabschnitt.getVerfuegung().getBetreuung());
+		Optional<Verfuegung> vorgaengerVerfuegung = verfuegungService.findVorgaengerVerfuegung(zeitabschnittNeu.getVerfuegung().getBetreuung());
 		if (vorgaengerVerfuegung.isPresent()) {
-			List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = findZeitabschnittOnVorgaengerVerfuegung(zeitabschnitt.getGueltigkeit(), vorgaengerVerfuegung.get());
+			List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = findZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu.getGueltigkeit(), vorgaengerVerfuegung.get());
 			BigDecimal vollkostenVorgaenger = BigDecimal.ZERO;
 			BigDecimal elternbeitragVorgaenger = BigDecimal.ZERO;
 			// Eventuell gab es fuer diesen Zeitabschnitt in der Vorgaengerverfuegung mehrere Abschnitte:
 			// Total der Vollkosten bzw. Elternbeitraege zusammenzaehlen
-			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnittOnVorgaengerVerfuegung) {
-				MathUtil.DEFAULT.add(vollkostenVorgaenger, verfuegungZeitabschnitt.getVollkosten());
-				MathUtil.DEFAULT.add(elternbeitragVorgaenger, verfuegungZeitabschnitt.getElternbeitrag());
+			for (VerfuegungZeitabschnitt zeitabschnittBisher : zeitabschnittOnVorgaengerVerfuegung) {
+				vollkostenVorgaenger = MathUtil.DEFAULT.add(vollkostenVorgaenger, zeitabschnittBisher.getVollkosten());
+				elternbeitragVorgaenger = MathUtil.DEFAULT.add(elternbeitragVorgaenger, zeitabschnittBisher.getElternbeitrag());
 			}
 			// Und ermitteln, ob es sich im Vergleich nur neuen Verfuegung geaendert hat
 			// Falls keine Aenderung -> Keine KorrekturZahlung notwendig!
-			boolean vollkostenChanged = vollkostenVorgaenger.compareTo(zeitabschnitt.getVollkosten()) > 0;
-			boolean elternbeitragChanged = elternbeitragVorgaenger.compareTo(zeitabschnitt.getElternbeitrag()) > 0;
+			boolean vollkostenChanged = vollkostenVorgaenger.compareTo(zeitabschnittNeu.getVollkosten()) != 0;
+			boolean elternbeitragChanged = elternbeitragVorgaenger.compareTo(zeitabschnittNeu.getElternbeitrag()) != 0;
 			if (!vollkostenChanged && !elternbeitragChanged) {
-				return null;
+				zeitabschnittNeu.setStatus(VerfuegungsZeitabschnittStatus.IDENTISCH);
+			} else {
+				// Irgendetwas hat geaendert, wir brauchen eine Korrekturzahlung
+				Zahlung zahlung = findZahlungForInstitution(zeitabschnittNeu, zahlungsauftrag, zahlungProInstitution);
+				createZahlungspositionKorrekturNeuerWert(zeitabschnittNeu, zahlung, vollkostenChanged);
+				for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnittOnVorgaengerVerfuegung) {
+					// Fuer die "alten" Verfuegungszeitabschnitte muessen Korrekturbuchungen erstellt werden
+					createZahlungspositionKorrekturAlterWert(verfuegungZeitabschnitt, zahlung, vollkostenChanged);
+				}
 			}
-			// Irgendetwas hat geaendert, wir brauchen eine Korrekturzahlung
-			Zahlungsposition zahlungsposition = new Zahlungsposition();
-			zahlungsposition.setVerfuegungZeitabschnitt(zeitabschnitt);
-			zahlungsposition.setBetrag(zeitabschnitt.getVollkosten());
-			Zahlung zahlung = findZahlungForInstitution(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
-			zahlungsposition.setZahlung(zahlung);
-			zahlung.getZahlungspositionen().add(zahlungsposition);
-			if (vollkostenChanged) {
-				zahlungsposition.setStatus(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN);
-			}
-			else {
-				zahlungsposition.setStatus(ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG);
-			}
-			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnittOnVorgaengerVerfuegung) {
-				// Fuer die "alten" Verfuegungszeitabschnitte muessen Korrekturbuchungen erstellt werden
-				Zahlungsposition korrekturPosition = new Zahlungsposition();
-				korrekturPosition.setVerfuegungZeitabschnitt(verfuegungZeitabschnitt);
-				korrekturPosition.setBetrag(verfuegungZeitabschnitt.getVollkosten().negate());
-				korrekturPosition.setZahlung(zahlung);
-				zahlung.getZahlungspositionen().add(korrekturPosition);
-			}
-			return zahlungsposition;
 		}
-		return null;
+	}
+
+	/**
+	 * Erstellt eine Zahlungsposition fuer eine Korrekturzahlung mit dem *neu gueltigen* Wert
+	 */
+	private void createZahlungspositionKorrekturNeuerWert(VerfuegungZeitabschnitt zeitabschnitt, Zahlung zahlung, boolean vollkostenChanged) {
+		Zahlungsposition zahlungsposition = new Zahlungsposition();
+		zahlungsposition.setVerfuegungZeitabschnitt(zeitabschnitt);
+		zahlungsposition.setBetrag(zeitabschnitt.getVerguenstigung());
+		zahlungsposition.setZahlung(zahlung);
+		zahlung.getZahlungspositionen().add(zahlungsposition);
+		if (vollkostenChanged) {
+			zahlungsposition.setStatus(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN);
+			zeitabschnitt.setStatus(VerfuegungsZeitabschnittStatus.VERRECHNET);
+		} else {
+			zahlungsposition.setStatus(ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG);
+			zeitabschnitt.setStatus(VerfuegungsZeitabschnittStatus.VERRECHNET);
+		}
+	}
+
+	/**
+	 * Erstellt eine Zahlungsposition fuer eine Korrekturzahlung mit der Korrektur des *alten Wertes* (negiert)
+	 */
+	private void createZahlungspositionKorrekturAlterWert(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Zahlung zahlung, boolean vollkostenChanged) {
+		Zahlungsposition korrekturPosition = new Zahlungsposition();
+		korrekturPosition.setVerfuegungZeitabschnitt(verfuegungZeitabschnitt);
+		korrekturPosition.setBetrag(verfuegungZeitabschnitt.getVerguenstigung().negate());
+		korrekturPosition.setZahlung(zahlung);
+		if (vollkostenChanged) {
+			korrekturPosition.setStatus(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN);
+		} else {
+			korrekturPosition.setStatus(ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG);
+		}
+		zahlung.getZahlungspositionen().add(korrekturPosition);
 	}
 
 	/**
@@ -242,15 +310,24 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		return lastVerfuegungsZeitabschnitte;
 	}
 
+	/**
+	 * Ermittelt das Zahlungsobjekt fuer die Institution des uebergebenen Zeitabschnitts. Falls im uebergebenen Auftrag schon eine Zahlung
+	 * fuer diese Institution vorhanden ist, wird diese zurueckgegeben, ansonsten eine neue erstellt.
+	 */
 	private Zahlung findZahlungForInstitution(VerfuegungZeitabschnitt zeitabschnitt,  Zahlungsauftrag zahlungsauftrag, Map<String, Zahlung> zahlungProInstitution) {
 		InstitutionStammdaten institution = zeitabschnitt.getVerfuegung().getBetreuung().getInstitutionStammdaten();
 		if (zahlungProInstitution.containsKey(institution.getId())) {
 			return zahlungProInstitution.get(institution.getId());
 		} else {
-			return createZahlung(institution, zahlungsauftrag);
+			Zahlung zahlung = createZahlung(institution, zahlungsauftrag);
+			zahlungProInstitution.put(institution.getId(), zahlung);
+			return zahlung;
 		}
 	}
 
+	/**
+	 * Erstellt eine Zahlung fuer eine bestimmte Institution, welche zum uebergebenen Auftrag gehoert
+	 */
 	private Zahlung createZahlung(InstitutionStammdaten institution, Zahlungsauftrag zahlungsauftrag) {
 		Zahlung zahlung = new Zahlung();
 		zahlung.setStatus(ZahlungStatus.AUSGELOEST);
@@ -260,11 +337,14 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		return zahlung;
 	}
 
+	/**
+	 * Ermittelt den zuletzt durchgefuehrten Zahlungsauftrag
+	 */
 	private Optional<Zahlungsauftrag> findLastZahlungsauftrag() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Zahlungsauftrag> query = cb.createQuery(Zahlungsauftrag.class);
 		Root<Zahlungsauftrag> root = query.from(Zahlungsauftrag.class);
-		query.orderBy(cb.desc(root.get(Zahlungsauftrag_.datumFaellig)));
+		query.orderBy(cb.desc(root.get(Zahlungsauftrag_.datumGeneriert)));
 		List<Zahlungsauftrag> criteriaResults = persistence.getCriteriaResults(query, 1);
 		if (!criteriaResults.isEmpty()) {
 			return Optional.of(criteriaResults.get(0));
@@ -308,7 +388,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public void createIsoFile(String auftragId) {
 		//TODO implement
-		LOG.info("Creation of ISO File ...");
+		LOGGER.info("Creation of ISO File ...");
 	}
 
 	@Override

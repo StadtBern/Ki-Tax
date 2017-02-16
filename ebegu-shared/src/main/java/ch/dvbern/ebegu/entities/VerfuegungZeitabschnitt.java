@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.dto.VerfuegungsBemerkung;
 import ch.dvbern.ebegu.enums.MsgKey;
+import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittStatus;
 import ch.dvbern.ebegu.rules.RuleKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
@@ -149,6 +150,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Column(nullable = false)
 	private boolean zuSpaetEingereicht;
 
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private VerfuegungsZeitabschnittStatus status = VerfuegungsZeitabschnittStatus.NEU;
+
 
 	public VerfuegungZeitabschnitt() {
 	}
@@ -192,6 +198,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.kategorieMaxEinkommen = toCopy.kategorieMaxEinkommen;
 		this.kategorieKeinPensum = toCopy.kategorieKeinPensum;
 		this.kategorieZuschlagZumErwerbspensum = toCopy.kategorieZuschlagZumErwerbspensum;
+		this.status = toCopy.status;
 	}
 
 	/**
@@ -463,6 +470,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
 	}
 
+	public VerfuegungsZeitabschnittStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(VerfuegungsZeitabschnittStatus status) {
+		this.status = status;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -672,7 +687,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			this.ekv1ZuZweit == that.ekv1ZuZweit &&
 			this.ekv2Alleine == that.ekv2Alleine &&
 			this.ekv2ZuZweit == that.ekv2ZuZweit &&
-			this.ekv1NotExisting == that.ekv1NotExisting;
+			this.ekv1NotExisting == that.ekv1NotExisting &&
+			Objects.equals(this.status, that.status);
 	}
 
 	public boolean isSameSichtbareDaten(VerfuegungZeitabschnitt that) {
@@ -710,7 +726,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(famGroesse.compareTo(that.famGroesse) == 0) &&
 			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
 			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0 &&
-			Objects.equals(this.einkommensjahr, that.einkommensjahr);
+			Objects.equals(this.einkommensjahr, that.einkommensjahr) &&
+			Objects.equals(this.status, that.status);
 	}
 
 	/**
