@@ -861,5 +861,7 @@
     "BETREUUNG_IN_STATUS_WARTEN" : "Die Platzbestätigung ist bei der Institution hängig. Sie werden per E-Mail benachrichtigt, sobald diese eingetroffen ist.",
     "SCHULUNG": "Schulung",
     "SCHULUNG_CREATE_DATA": "Schulungsdaten erstellen",
-    "SCHULUNG_DELETE_DATA": "Schulungsdaten löschen"
+    "SCHULUNG_DELETE_DATA": "Schulungsdaten löschen",
+    "FREIGABE_GESUCH_NOT_FOUND": "Das Gesuch wurde nicht gefunden",
+    "FREIGABE_GESUCH_ALREADY_FREIGEGEBEN": "Das Gesuch wurde bereits freigegeben. Eine erneute Freigabe ist nicht möglich."
 }
