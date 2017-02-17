@@ -464,6 +464,12 @@
             <version>1.0.0.Alpha6</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-persistence-integration-tests</artifactId>
+            <version>1.0.0.Alpha7</version>
+            <scope>test</scope>
+        </dependency>
         <!--Um Tests mit arquillian in einem deployment laufen zu lassen-->
         <dependency>
             <groupId>org.eu.ingwar.tools</groupId>

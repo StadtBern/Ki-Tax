@@ -74,15 +74,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		List<GesuchStichtagDataRow> results = null;
 
-//		String sqlString = new String(
-//			ByteStreams.toByteArray(
-//				ReportServiceBean.class.getResourceAsStream(NATIVESQL_REPORT_GESUCH_STICHTAG.getPath())
-//			)
-//		);
-
 		if (em != null) {
 
-			Query  gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery") ;//em.createNativeQuery(sqlString, "GesuchStichtagDataRowMapping");
+			Query  gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery");
 			gesuchStichtagQuery.setParameter("stichTagDate", DateUtil.SQL_DATETIME_FORMAT.format(datetime));
 			gesuchStichtagQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchStichtagQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
@@ -124,15 +118,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		EntityManager em = persistence.getEntityManager();
 
 		List<GesuchZeitraumDataRow> results = null;
-//
-//		String sqlString = new String(
-//			ByteStreams.toByteArray(
-//				ReportServiceBean.class.getResourceAsStream(NATIVESQL_REPORT_GESUCH_ZEITRAUM.getPath())
-//			)
-//		);
 
 		if (em != null) {
-			Query gesuchPeriodeQuery = em.createNamedQuery("GesuchZeitraumNativeSQLQuery");//em.createNativeQuery(sqlString, "GesuchZeitraumDataRowMapping");
+			Query gesuchPeriodeQuery = em.createNamedQuery("GesuchZeitraumNativeSQLQuery");
 			gesuchPeriodeQuery.setParameter("fromDateTime", DateUtil.SQL_DATETIME_FORMAT.format(datetimeVon));
 			gesuchPeriodeQuery.setParameter("fromDate", DateUtil.SQL_DATE_FORMAT.format(datetimeVon));
 			gesuchPeriodeQuery.setParameter("toDateTime", DateUtil.SQL_DATETIME_FORMAT.format(datetimeBis));
@@ -171,10 +159,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	public enum ReportResource {
 
 		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx"),
-		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx"),
-
-		NATIVESQL_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtagNativeSQLQuery.sql"),
-		NATIVESQL_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraumNativeSQLQuery.sql");
+		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx");
 
 		private String path;
 
