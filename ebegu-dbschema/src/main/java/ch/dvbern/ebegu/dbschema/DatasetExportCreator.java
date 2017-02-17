@@ -23,7 +23,7 @@ import java.sql.Connection;
 @Startup
 @Singleton
 @SuppressWarnings("PMD")
-public class DatabaseExportCreator {
+public class DatasetExportCreator {
 
 	private static final String DATASOURCE_NAME = "jdbc/ebegu";
 
