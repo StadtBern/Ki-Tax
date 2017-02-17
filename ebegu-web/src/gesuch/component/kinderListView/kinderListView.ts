@@ -74,7 +74,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
             .then(() => {   //User confirmed removal
                 let kindNumber: number = this.gesuchModelManager.findKind(kind);
                 if (kindNumber > 0) {
-                    this.gesuchModelManager.setKindNumber(kindNumber);
+                    this.gesuchModelManager.setKindIndex(kindNumber);
                     this.gesuchModelManager.removeKind();
                 }
             });

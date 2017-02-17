@@ -49,13 +49,13 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
             let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber));
             if (kindIndex >= 0) {
                 this.model = angular.copy(this.gesuchModelManager.getGesuch().kindContainers[kindIndex]);
-                this.gesuchModelManager.setKindNumber(kindIndex);
+                this.gesuchModelManager.setKindIndex(kindIndex);
             }
         } else {
             //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
             this.model = this.initEmptyKind(undefined);
             let kindIndex : number = this.gesuchModelManager.getGesuch().kindContainers ? this.gesuchModelManager.getGesuch().kindContainers.length : 0;
-            this.gesuchModelManager.setKindNumber(kindIndex);
+            this.gesuchModelManager.setKindIndex(kindIndex);
         }
         this.initViewModel();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();

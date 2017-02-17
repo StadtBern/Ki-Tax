@@ -65,7 +65,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
 
     public createBetreuung(kind: TSKindContainer): void {
         let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
-        this.gesuchModelManager.setKindNumber(kindIndex);
+        this.gesuchModelManager.setKindIndex(kindIndex);
         this.openBetreuungView(undefined, kind.kindNummer);
     }
 
@@ -82,7 +82,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             this.errorService.clearAll();
             let betreuungIndex: number = this.gesuchModelManager.findBetreuung(betreuung);
             if (betreuungIndex >= 0) {
-                this.gesuchModelManager.setBetreuungNumber(betreuungIndex);
+                this.gesuchModelManager.setBetreuungIndex(betreuungIndex);
                 this.gesuchModelManager.removeBetreuung();
             }
         });

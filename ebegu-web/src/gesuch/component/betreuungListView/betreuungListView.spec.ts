@@ -45,7 +45,7 @@ describe('betreuungListViewTest', function () {
 
                 betreuungListView.createBetreuung(tsKindContainer);
 
-                expect(gesuchModelManager.getKindNumber()).toBe(0);
+                expect(gesuchModelManager.getKindIndex()).toBe(0);
 
                 expect($state.go).toHaveBeenCalledWith('gesuch.betreuung', { betreuungNumber: undefined, kindNumber: 1, gesuchId: ''});
             });

@@ -51,18 +51,18 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
         let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
         if (kindIndex >= 0) {
-            this.gesuchModelManager.setKindNumber(kindIndex);
+            this.gesuchModelManager.setKindIndex(kindIndex);
             if ($stateParams.betreuungNumber) {
                 this.betreuungIndex = this.gesuchModelManager.convertBetreuungNumberToBetreuungIndex(parseInt($stateParams.betreuungNumber));
                 this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungIndex]);
                 this.initialBetreuung = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungIndex]);
-                this.gesuchModelManager.setBetreuungNumber(this.betreuungIndex);
+                this.gesuchModelManager.setBetreuungIndex(this.betreuungIndex);
             } else {
                 //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
                 this.model = this.initEmptyBetreuung(undefined);
                 this.initialBetreuung = angular.copy(this.model);
                 this.betreuungIndex = this.gesuchModelManager.getKindToWorkWith().betreuungen ? this.gesuchModelManager.getKindToWorkWith().betreuungen.length : 0;
-                this.gesuchModelManager.setBetreuungNumber(this.betreuungIndex);
+                this.gesuchModelManager.setBetreuungIndex(this.betreuungIndex);
             }
 
             this.setBetreuungsangebotTypValues();

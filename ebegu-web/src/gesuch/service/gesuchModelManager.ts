@@ -355,7 +355,7 @@ export default class GesuchModelManager {
      * Setzt den Kind Index.
      * @param kindIndex
      */
-    public setKindNumber(kindIndex: number) { // TODO rename
+    public setKindIndex(kindIndex: number) {
         if (kindIndex >= 0) {
             this.kindIndex = kindIndex;
         } else {
@@ -367,7 +367,7 @@ export default class GesuchModelManager {
      * Setzt den BetreuungsIndex.
      * @param betreuungIndex
      */
-    public setBetreuungNumber(betreuungIndex: number) { // TODO rename
+    public setBetreuungIndex(betreuungIndex: number) {
         if (betreuungIndex >= 0) {
             this.betreuungIndex = betreuungIndex;
         } else {
@@ -741,7 +741,7 @@ export default class GesuchModelManager {
      */
     public removeKindFromList() {
         this.gesuch.kindContainers.splice(this.kindIndex, 1);
-        this.setKindNumber(undefined); //by default auf undefined setzen
+        this.setKindIndex(undefined); //by default auf undefined setzen
     }
 
     /**
@@ -749,14 +749,14 @@ export default class GesuchModelManager {
      */
     public removeBetreuungFromKind() {
         this.getKindToWorkWith().betreuungen.splice(this.betreuungIndex, 1);
-        this.setBetreuungNumber(undefined); //by default auf undefined setzen
+        this.setBetreuungIndex(undefined); //by default auf undefined setzen
     }
 
-    public getKindNumber(): number { //TODO (hefr) rename
+    public getKindIndex(): number {
         return this.kindIndex;
     }
 
-    public getBetreuungNumber(): number { //TODO (hefr) rename
+    public getBetreuungIndex(): number {
         return this.betreuungIndex;
     }
 
