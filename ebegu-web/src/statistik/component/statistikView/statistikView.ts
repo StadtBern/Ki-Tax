@@ -1,11 +1,11 @@
-import {IComponentOptions} from "angular";
-import {IStateService} from "angular-ui-router";
-import TSStatistikParameter from "../../../models/TSStatistikParameter";
-import {TSStatistikParameterType} from "../../../models/enums/TSStatistikParameterType";
-import TSGesuchsperiode from "../../../models/TSGesuchsperiode";
-import GesuchsperiodeRS from "../../../core/service/gesuchsperiodeRS.rest";
-import {TSRole} from "../../../models/enums/TSRole";
-import {TSRoleUtil} from "../../../utils/TSRoleUtil";
+import {IComponentOptions} from 'angular';
+import {IStateService} from 'angular-ui-router';
+import TSStatistikParameter from '../../../models/TSStatistikParameter';
+import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {ReportRS} from "../../../core/service/reportRS.rest";
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
@@ -35,6 +35,7 @@ export class StatistikViewController {
 
     $onInit(){
         this._statistikParameter = new TSStatistikParameter();
+        this.initViewModel();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
             this._gesuchsperioden = response;
         });

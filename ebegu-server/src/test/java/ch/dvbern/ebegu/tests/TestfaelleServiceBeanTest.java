@@ -1,13 +1,13 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Mandant;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.services.*;
-import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.data.VerfuegungZeitabschnittData;
 import ch.dvbern.ebegu.tets.data.VerfuegungszeitabschnitteData;
-import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -306,62 +305,11 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	/**
 	 * Helper für init. Speichert Gesuchsperiode in DB
 	 */
-	private Gesuchsperiode createGesuchsperiode(boolean active) {
-		Gesuchsperiode gesuchsperiode = TestDataUtil.createGesuchsperiode1617();
+	protected Gesuchsperiode createGesuchsperiode(boolean active) {
+		Gesuchsperiode gesuchsperiode = TestDataUtil.createCustomGesuchsperiode(2016, 2017);
 		gesuchsperiode.setActive(active);
 		gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 		return gesuchsperiode;
 	}
-
-	/**
-	 * Helper für init. Speichert Traegerschaften, Mandant und Institution in DB
-	 */
-	private Mandant insertInstitutionen() {
-
-		final InstitutionStammdaten institutionStammdatenKitaAaregg = TestDataUtil.createInstitutionStammdatenKitaWeissenstein();
-		final InstitutionStammdaten institutionStammdatenKitaBruennen = TestDataUtil.createInstitutionStammdatenKitaBruennen();
-		final InstitutionStammdaten institutionStammdatenTagiAaregg = TestDataUtil.createInstitutionStammdatenTagiWeissenstein();
-
-		Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
-		traegerschaftService.saveTraegerschaft(traegerschaft);
-		institutionStammdatenKitaAaregg.getInstitution().setTraegerschaft(traegerschaft);
-		institutionStammdatenKitaBruennen.getInstitution().setTraegerschaft(traegerschaft);
-		institutionStammdatenTagiAaregg.getInstitution().setTraegerschaft(traegerschaft);
-
-		Mandant mandant = TestDataUtil.createDefaultMandant();
-		persistence.persist(mandant);
-		institutionStammdatenKitaAaregg.getInstitution().setMandant(mandant);
-		institutionStammdatenKitaBruennen.getInstitution().setMandant(mandant);
-		institutionStammdatenTagiAaregg.getInstitution().setMandant(mandant);
-
-		institutionService.createInstitution(institutionStammdatenKitaAaregg.getInstitution());
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaAaregg);
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenTagiAaregg);
-
-		institutionService.createInstitution(institutionStammdatenKitaBruennen.getInstitution());
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaBruennen);
-
-		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA));
-		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA));
-		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_TAGI));
-
-		return mandant;
-	}
-
-	/**
-	 * Helper für init. Speichert Benutzer in DB
-	 */
-	private void createBenutzer(Mandant mandant) {
-		try{
-			JBossLoginContextFactory.createLoginContext("admin", "admin").login();
-		} catch (LoginException ex){
-			LOG.error("could not login as admin user for test");
-		}
-
-		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
-		persistence.persist(i);
-	}
-
-
 }
 

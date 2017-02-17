@@ -51,5 +51,8 @@
 	<entity class="ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.GesuchstellerContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Mitteilung"/>
+	<entity class="ch.dvbern.ebegu.entities.Zahlungsauftrag"/>
+	<entity class="ch.dvbern.ebegu.entities.Zahlung"/>
+	<entity class="ch.dvbern.ebegu.entities.Zahlungsposition"/>
 
 </entity-mappings>

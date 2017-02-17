@@ -82,7 +82,7 @@
                             <div class="form-group">
                                 <label class="md-no-float"
                                        for="betreuungsangebot">
-                                    <span data-translate="BETREUUNGSANGEBOT_WAEHLEN"></span>
+                                    <span data-translate="BETREUUNGSANGEBOT_WAEHLEN" class="required"></span>
                                     <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-select-style">
@@ -101,7 +101,7 @@
                     <!--Institutionen-->
                     <div class="row" ng-if="vm.isEnabled() && !vm.isTagesschule()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
-                            <label class="md-no-float" data-translate="INSTITUTION" for="institution">
+                            <label class="md-no-float required" data-translate="INSTITUTION" for="institution">
                             </label>
                             <div class="dv-select-style">
                                 <select name="institution" id="institution" ng-model="vm.instStammId"
@@ -114,7 +114,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" ng-if="!vm.isEnabled()">
+                    <!-- Institiutionen wenn readonly als Textfeld anzeigen-->
+                    <div class="row" ng-if="!vm.isEnabled() && !vm.isTagesschule()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                             </label>
@@ -226,7 +227,8 @@
                                     <div class="col-md-12">
                                         <dv-loading-button type="button"
                                                            button-click="vm.removeBetreuungspensum(betpen)"
-                                                           button-class="dv-btn-operation">
+                                                           button-class="dv-btn-operation"
+                                                           button-disabled="!(vm.isBetreuungsstatusWarten() && !vm.isSavingData)">
                                             <i class="fa fa-lg fa-trash-o"></i>
                                             <span data-translate="BETREUUNGSPENSUM_ENTFERNEN_INDEX"
                                                   data-translate-value-betreuungspensumnumber="{{$index + 1}}"></span>

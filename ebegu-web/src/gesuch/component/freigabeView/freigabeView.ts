@@ -6,13 +6,13 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import {isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import DateUtil from '../../../utils/DateUtil';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
+import {FreigabeDialogController} from '../../dialog/FreigabeDialogController';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
@@ -57,19 +57,19 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         this.isFreigebenClicked = true;
         if (this.isGesuchValid() && this.bestaetigungFreigabequittung === true) {
             this.form.$setPristine();
-            return this.DvDialog.showDialog(dialogTemplate, RemoveDialogController, {
-                title: 'CONFIRM_GESUCH_FREIGEBEN',
-                deleteText: 'CONFIRM_GESUCH_FREIGEBEN_DESCRIPTION'
-            }).then(() => {
-                if (this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
-                    return this.openFreigabequittungPDF(true);
-                } else {
-                    return this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
-                }
-
+            return this.DvDialog.showDialog(dialogTemplate, FreigabeDialogController, {
+                parentController: this
             });
         }
         return undefined;
+    }
+
+    public confirmationCallback(): void {
+        if (this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
+            this.openFreigabequittungPDF(true);
+        } else {
+            this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
+        }
     }
 
     public gesuchFreigeben(): void {

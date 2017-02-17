@@ -19,13 +19,9 @@ import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculate;
  */
 public class MindestalterRuleTest {
 
-	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
-	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
-
-
 	@Test
 	public void testKindGenugAlt() {
-		Betreuung betreuung = createTestData(LocalDate.of(2015, Month.MAY, 15), START_PERIODE, ENDE_PERIODE);
+		Betreuung betreuung = createTestData(LocalDate.of(2015, Month.MAY, 15), TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE);
 		final Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		List<VerfuegungZeitabschnitt> zeitabschnittList = calculate(betreuung);
@@ -40,7 +36,7 @@ public class MindestalterRuleTest {
 
 	@Test
 	public void testKindAnfangsZuJung() {
-		Betreuung betreuung = createTestData(LocalDate.of(2016, Month.JULY, 15), START_PERIODE, ENDE_PERIODE);
+		Betreuung betreuung = createTestData(LocalDate.of(TestDataUtil.PERIODE_JAHR_1, Month.JULY, 15), TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE);
 		final Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		List<VerfuegungZeitabschnitt> zeitabschnittList = calculate(betreuung);
@@ -60,7 +56,7 @@ public class MindestalterRuleTest {
 	private Betreuung createTestData(LocalDate geburtsdatum, LocalDate betreuungVon, LocalDate betreuungBis) {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(betreuungVon, betreuungBis,  BetreuungsangebotTyp.KITA, 100);
 		betreuung.getKind().getKindJA().setGeburtsdatum(geburtsdatum);
-		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
+		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 100, 0));
 		return betreuung;
 	}
 }
