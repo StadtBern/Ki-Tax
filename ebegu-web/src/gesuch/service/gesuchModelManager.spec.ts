@@ -59,7 +59,7 @@ describe('gesuchModelManager', function () {
         antragStatusHistoryRS = $injector.get('AntragStatusHistoryRS');
     }));
 
-    describe('API Usage', function () {
+    fdescribe('API Usage', function () {
         describe('removeBetreuungFromKind', () => {
             it('should remove the current Betreuung from the list of the current Kind', () => {
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
@@ -82,8 +82,10 @@ describe('gesuchModelManager', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 let kindToWorkWith: TSKindContainer = gesuchModelManager.getKindToWorkWith();
                 kindToWorkWith.nextNumberBetreuung = 5;
+                // kindToWorkWith.kindNummer = 1;
                 spyOn(kindRS, 'findKind').and.returnValue($q.when(kindToWorkWith));
                 spyOn(betreuungRS, 'saveBetreuung').and.returnValue($q.when(betreuung));
+
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
 
                 gesuchModelManager.saveBetreuung(gesuchModelManager.getKindToWorkWith().betreuungen[0], false);
@@ -518,8 +520,8 @@ describe('gesuchModelManager', function () {
     function createKind(): void {
         let tsKindContainer = new TSKindContainer(undefined, new TSKind());
         gesuchModelManager.getGesuch().kindContainers.push(tsKindContainer);
-        gesuchModelManager.setKindNumber(gesuchModelManager.getGesuch().kindContainers.length);
-        tsKindContainer.kindNummer = gesuchModelManager.getKindNumber();
+        gesuchModelManager.setKindIndex(gesuchModelManager.getGesuch().kindContainers.length-1);
+        tsKindContainer.kindNummer = gesuchModelManager.getKindIndex()+1;
     }
 
 
@@ -539,10 +541,10 @@ describe('gesuchModelManager', function () {
         gesuchModelManager.getKindToWorkWith().initBetreuungList();
         let tsBetreuung: TSBetreuung = new TSBetreuung();
         tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
-        tsBetreuung.betreuungNummer = gesuchModelManager.getKindToWorkWith().betreuungen.length;
+        tsBetreuung.betreuungNummer = 1;
         tsBetreuung.id = '2afc9d9a-957e-4550-9a22-97624a000feb';
         gesuchModelManager.getKindToWorkWith().betreuungen.push(tsBetreuung);
-        gesuchModelManager.setBetreuungNumber(1);
+        gesuchModelManager.setBetreuungIndex(gesuchModelManager.getKindToWorkWith().betreuungen.length - 1);
         return tsBetreuung;
     }
 

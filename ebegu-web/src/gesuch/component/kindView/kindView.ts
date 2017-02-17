@@ -37,8 +37,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
     showFachstelleGS: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
     allowedRoles: Array<TSRole>;
-    kindNumber: number;
-    // private initialModel: TSKindContainer; brauchts hier nicht da das kind glaub ich erst im then eingefuegt wird
+    kindIndex : number;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
         'ErrorService', 'WizardStepManager', '$q', '$translate'];
@@ -48,14 +47,16 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
                 wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER);
         if ($stateParams.kindNumber) {
-            this.kindNumber = parseInt($stateParams.kindNumber);
-            this.model = angular.copy(this.gesuchModelManager.getGesuch().kindContainers[this.kindNumber - 1]);
-            this.gesuchModelManager.setKindNumber(this.kindNumber);
+            this.kindIndex = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber));
+            if (this.kindIndex >= 0) {
+                this.model = angular.copy(this.gesuchModelManager.getGesuch().kindContainers[this.kindIndex]);
+                this.gesuchModelManager.setKindIndex(this.kindIndex);
+            }
         } else {
             //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
             this.model = this.initEmptyKind(undefined);
-            this.kindNumber = this.gesuchModelManager.getGesuch().kindContainers ? this.gesuchModelManager.getGesuch().kindContainers.length + 1 : 1;
-            this.gesuchModelManager.setKindNumber(this.kindNumber);
+            this.kindIndex  = this.gesuchModelManager.getGesuch().kindContainers ? this.gesuchModelManager.getGesuch().kindContainers.length : 0;
+            this.gesuchModelManager.setKindIndex(this.kindIndex);
         }
         this.initViewModel();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();

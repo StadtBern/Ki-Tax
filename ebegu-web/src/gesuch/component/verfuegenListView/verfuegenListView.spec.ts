@@ -31,6 +31,7 @@ describe('verfuegenListViewTest', function () {
         $rootScope = $injector.get('$rootScope');
         $httpBackend = $injector.get('$httpBackend');
         tsKindContainer = new TSKindContainer();
+        tsKindContainer.kindNummer = 1;
         let wizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([tsKindContainer]);
@@ -74,49 +75,48 @@ describe('verfuegenListViewTest', function () {
                 expect(gesuchModelManager.findKind).not.toHaveBeenCalled();
             });
             it('does not find the Kind, so it stops loading and does not move to the next page', function () {
-                spyOn(gesuchModelManager, 'findKind').and.returnValue(-1);
-                spyOn(gesuchModelManager, 'setKindNumber');
+                spyOn(gesuchModelManager, 'convertKindNumberToKindIndex').and.returnValue(-1);
+                spyOn(gesuchModelManager, 'setKindIndex');
                 spyOn($state, 'go');
                 let betreuung: TSBetreuung = new TSBetreuung();
                 betreuung.betreuungsstatus = TSBetreuungsstatus.BESTAETIGT;
 
                 verfuegenListView.openVerfuegung(tsKindContainer, betreuung);
 
-                expect(gesuchModelManager.findKind).toHaveBeenCalledWith(tsKindContainer);
-                expect(gesuchModelManager.setKindNumber).not.toHaveBeenCalled();
+                expect(gesuchModelManager.convertKindNumberToKindIndex).toHaveBeenCalledWith(tsKindContainer.kindNummer);
+                expect(gesuchModelManager.setKindIndex).not.toHaveBeenCalled();
                 expect($state.go).not.toHaveBeenCalledWith('gesuch.verfuegenView', { gesuchId: ''});
             });
             it('does find the Kind but does not find the Betreuung, so it stops loading and does not move to the next page', function () {
-                spyOn(gesuchModelManager, 'findKind').and.returnValue(1);
-                spyOn(gesuchModelManager, 'findBetreuung').and.returnValue(-1);
-                spyOn(gesuchModelManager, 'setKindNumber');
-                spyOn(gesuchModelManager, 'setBetreuungNumber');
+                spyOn(gesuchModelManager, 'convertKindNumberToKindIndex').and.returnValue(0);
+                spyOn(gesuchModelManager, 'convertBetreuungNumberToBetreuungIndex').and.returnValue(-1);
+                spyOn(gesuchModelManager, 'setKindIndex');
+                spyOn(gesuchModelManager, 'setBetreuungIndex');
                 spyOn($state, 'go');
                 let betreuung: TSBetreuung = new TSBetreuung();
                 betreuung.betreuungsstatus = TSBetreuungsstatus.BESTAETIGT;
 
                 verfuegenListView.openVerfuegung(tsKindContainer, betreuung);
 
-                expect(gesuchModelManager.findKind).toHaveBeenCalledWith(tsKindContainer);
-                expect(gesuchModelManager.setKindNumber).toHaveBeenCalledWith(1);
-                expect(gesuchModelManager.findBetreuung).toHaveBeenCalledWith(betreuung);
-                expect(gesuchModelManager.setBetreuungNumber).not.toHaveBeenCalled();
+                expect(gesuchModelManager.convertKindNumberToKindIndex).toHaveBeenCalledWith(tsKindContainer.kindNummer);
+                expect(gesuchModelManager.setKindIndex).toHaveBeenCalledWith(0);
+                expect(gesuchModelManager.setBetreuungIndex).not.toHaveBeenCalled();
                 expect($state.go).not.toHaveBeenCalledWith('gesuch.verfuegenView', {gesuchId: ''});
             });
             it('does find the Kind but does not find the Betreuung, so it stops loading and does not move to the next page', function () {
-                spyOn(gesuchModelManager, 'findKind').and.returnValue(1);
-                spyOn(gesuchModelManager, 'findBetreuung').and.returnValue(2);
-                spyOn(gesuchModelManager, 'setKindNumber');
-                spyOn(gesuchModelManager, 'setBetreuungNumber');
+                spyOn(gesuchModelManager, 'convertKindNumberToKindIndex').and.returnValue(0);
+                spyOn(gesuchModelManager, 'convertBetreuungNumberToBetreuungIndex').and.returnValue(1);
+                spyOn(gesuchModelManager, 'setKindIndex');
+                spyOn(gesuchModelManager, 'setBetreuungIndex');
                 spyOn($state, 'go');
                 let betreuung: TSBetreuung = new TSBetreuung();
                 betreuung.betreuungsstatus = TSBetreuungsstatus.BESTAETIGT;
+                betreuung.betreuungNummer = 2;
 
                 verfuegenListView.openVerfuegung(tsKindContainer, betreuung);
 
-                expect(gesuchModelManager.findKind).toHaveBeenCalledWith(tsKindContainer);
-                expect(gesuchModelManager.setKindNumber).toHaveBeenCalledWith(1);
-                expect(gesuchModelManager.findBetreuung).toHaveBeenCalledWith(betreuung);
+                expect(gesuchModelManager.convertKindNumberToKindIndex).toHaveBeenCalledWith(tsKindContainer.kindNummer);
+                expect(gesuchModelManager.setKindIndex).toHaveBeenCalledWith(0);
                 expect($state.go).toHaveBeenCalledWith('gesuch.verfuegenView', {betreuungNumber: 2, kindNumber: 1, gesuchId: ''});
             });
         });

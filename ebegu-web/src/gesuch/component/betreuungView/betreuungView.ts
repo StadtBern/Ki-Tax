@@ -39,7 +39,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     initialBetreuung: TSBetreuung;
     flagErrorVertrag: boolean;
     kindModel: TSKindContainer;
-    betreuungNumber: number;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams'];
@@ -49,36 +48,39 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
 
-        this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
-        if ($stateParams.betreuungNumber) {
-            this.betreuungNumber = parseInt($stateParams.betreuungNumber);
-            this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungNumber - 1]);
-            this.initialBetreuung = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungNumber - 1]);
-            this.gesuchModelManager.setBetreuungNumber(this.betreuungNumber);
-        } else {
-            //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
-            this.model = this.initEmptyBetreuung();
-            this.initialBetreuung = angular.copy(this.model);
-            this.betreuungNumber = this.gesuchModelManager.getKindToWorkWith().betreuungen ? this.gesuchModelManager.getKindToWorkWith().betreuungen.length + 1 : 1;
-            this.gesuchModelManager.setBetreuungNumber(this.betreuungNumber);
+        let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
+        if (kindIndex >= 0) {
+            this.gesuchModelManager.setKindIndex(kindIndex);
+            if ($stateParams.betreuungNumber) {
+                let betreuungIndex : number = this.gesuchModelManager.convertBetreuungNumberToBetreuungIndex(parseInt($stateParams.betreuungNumber));
+                this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[betreuungIndex]);
+                this.initialBetreuung = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[betreuungIndex]);
+                this.gesuchModelManager.setBetreuungIndex(betreuungIndex);
+            } else {
+                //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
+                this.model = this.initEmptyBetreuung(undefined);
+                this.initialBetreuung = angular.copy(this.model);
+                let betreuungIndex : number = this.gesuchModelManager.getKindToWorkWith().betreuungen ? this.gesuchModelManager.getKindToWorkWith().betreuungen.length : 0;
+                this.gesuchModelManager.setBetreuungIndex(betreuungIndex);
+            }
+
+            this.setBetreuungsangebotTypValues();
+            this.betreuungsangebot = undefined;
+            this.initViewModel();
+
+            // just to read!
+            this.kindModel = this.gesuchModelManager.getKindToWorkWith();
         }
-
-        this.setBetreuungsangebotTypValues();
-        this.betreuungsangebot = undefined;
-        this.initViewModel();
-
-        // just to read!
-        this.kindModel = this.gesuchModelManager.getKindToWorkWith();
     }
 
     /**
      * Creates a Betreuung for the kind given by the kindNumber attribute of the class.
      * Thus the kindnumber must be set before this method is called.
      */
-    public initEmptyBetreuung(): TSBetreuung {
+    public initEmptyBetreuung(betreunngNumber : number): TSBetreuung {
         let tsBetreuung: TSBetreuung = new TSBetreuung();
         tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
-        tsBetreuung.betreuungNummer = this.betreuungNumber;
+        tsBetreuung.betreuungNummer = betreunngNumber;
         return tsBetreuung;
     }
 
@@ -225,7 +227,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (this.getBetreuungModel() && (this.getBetreuungspensen() === undefined || this.getBetreuungspensen() === null)) {
             this.getBetreuungModel().betreuungspensumContainers = [];
         }
-        //todo kann entfernt werden sobald f5 auf dieser seite funktioniert
         if (!this.getBetreuungModel()) {
             this.errorService.addMesageAsError('Betreuungsmodel ist nicht korrekt initialisiert. Die Seite unterstuetzt noch keine direktnavigation');
         }

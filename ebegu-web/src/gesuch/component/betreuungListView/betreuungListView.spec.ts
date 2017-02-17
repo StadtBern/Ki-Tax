@@ -18,6 +18,7 @@ describe('betreuungListViewTest', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         let wizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
+        spyOn(gesuchModelManager, 'convertKindNumberToKindIndex').and.returnValue(0);
         $state = $injector.get('$state');
         let mddialog = $injector.get('$mdDialog');
         let dialog = $injector.get('DvDialog');
@@ -38,13 +39,13 @@ describe('betreuungListViewTest', function () {
             it('should create a Betreuung', () => {
                 let tsKindContainer = new TSKindContainer();
                 tsKindContainer.betreuungen = [];
+                tsKindContainer.kindNummer = 1;
                 spyOn($state, 'go');
-                spyOn(gesuchModelManager, 'findKind').and.returnValue(1);
+                spyOn(gesuchModelManager, 'findKind').and.returnValue(0);
 
                 betreuungListView.createBetreuung(tsKindContainer);
 
-                expect(gesuchModelManager.findKind).toHaveBeenCalledWith(tsKindContainer);
-                expect(gesuchModelManager.getKindNumber()).toBe(1);
+                expect(gesuchModelManager.getKindIndex()).toBe(0);
 
                 expect($state.go).toHaveBeenCalledWith('gesuch.betreuung', { betreuungNumber: undefined, kindNumber: 1, gesuchId: ''});
             });
