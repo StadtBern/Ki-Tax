@@ -19,6 +19,7 @@ import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
 import {IStateService} from 'angular-ui-router';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 
@@ -301,8 +302,8 @@ export class DVMitteilungListController {
         });
     }
 
-    public isBetreuungsmitteilung(): boolean {
-        return false;
+    public isBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
+        return mitteilung instanceof TSBetreuungsmitteilung;
     }
 
     public applyBetreuungsmitteilung(): void {

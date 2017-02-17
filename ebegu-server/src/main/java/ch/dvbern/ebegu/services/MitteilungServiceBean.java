@@ -346,7 +346,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			throw new ConstraintViolationException(validationErrors);
 		}
 
-		return persistence.merge(betreuungsmitteilung);
+		return persistence.persist(betreuungsmitteilung); // A Betreuungsmitteilung is created and sent, therefore persist and not merge
 	}
 
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {

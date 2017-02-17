@@ -281,7 +281,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * Wenn ein Betreuungsangebot abgewiesen wird, muss man die neu eingegebenen Betreuungspensen zuruecksetzen, da sie nicht relevant sind.
      * Allerdings muessen der Grund und das Datum der Ablehnung doch gespeichert werden.
      * In diesem Fall machen wir keine Validierung weil die Daten die eingegeben werden muessen, direkt auf dem Server gecheckt werden
-     * @param form
      */
     public platzAbweisen(): void {
         //copy values modified by the Institution in initialBetreuung
@@ -428,6 +427,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 this.mitteilungRS.sendbetreuungsmitteilung(this.gesuchModelManager.getGesuch().fall,
                     this.mutationsmeldungModel).then((response) => {
 
+                    this.form.$setUntouched();
+                    this.form.$setPristine();
                     // reset values. is needed??????
                     this.isMutationsmeldungStatus = false;
                     this.mutationsmeldungModel = undefined;

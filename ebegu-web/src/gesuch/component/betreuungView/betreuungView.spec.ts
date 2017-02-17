@@ -59,12 +59,10 @@ describe('betreuungView', function () {
         wizardStepManager = $injector.get('WizardStepManager');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
             $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS,
-            wizardStepManager, $stateParams, $injector.get('MitteilungRS'));
+            wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'));
         betreuungView.model = betreuung;
 
-        let form = TestDataUtil.createDummyForm();
-        // $rootScope.form = form;
-        betreuungView.form = form;
+        betreuungView.form = TestDataUtil.createDummyForm();
     }));
 
     describe('Public API', function () {
@@ -77,7 +75,7 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined);
+                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined, undefined);
                 myBetreuungView.model = betreuung;
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(0);
@@ -210,6 +208,7 @@ describe('betreuungView', function () {
      * eine Exception (reject) ist, muss der $state nicht geaendert werden und daher wird die Methode $state.go()  nicht aufgerufen.
      * Ansonsten wird sie mit  dem naechsten state 'gesuch.betreuungen' aufgerufen
      * @param promiseResponse
+     * @param moveToNextStep
      */
     function testSubmit(promiseResponse: any, moveToNextStep: boolean) {
         betreuungView.model.vertrag = true;

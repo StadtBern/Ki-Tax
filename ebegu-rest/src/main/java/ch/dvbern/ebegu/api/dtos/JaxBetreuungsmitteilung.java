@@ -3,12 +3,14 @@ package ch.dvbern.ebegu.api.dtos;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * DTO fuer Stammdaten der Betreuungsmitteilung
  */
+@XmlRootElement(name = "betreuungsmitteilung")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxBetreuungsmitteilung extends JaxMitteilung {
 

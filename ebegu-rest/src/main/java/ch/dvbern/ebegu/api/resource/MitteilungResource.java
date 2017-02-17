@@ -29,6 +29,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -162,8 +163,17 @@ public class MitteilungResource {
 		String convertedFallID = converter.toEntityId(fallId);
 		Optional<Fall> fall = fallService.findFall(convertedFallID);
 		if (fall.isPresent()) {
+			final Collection<JaxMitteilung> convertedMitteilungen = new ArrayList<>();
 			final Collection<Mitteilung> mitteilungen = mitteilungService.getMitteilungenForCurrentRolle(fall.get());
-			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung, new JaxMitteilung())).collect(Collectors.toList());
+			mitteilungen.forEach(mitteilung -> {
+				if (mitteilung instanceof Betreuungsmitteilung) {
+					convertedMitteilungen.add(converter.betreuungsmitteilungToJAX((Betreuungsmitteilung) mitteilung));
+				}
+				else {
+					convertedMitteilungen.add(converter.mitteilungToJAX(mitteilung, new JaxMitteilung()));
+				}
+			});
+			return convertedMitteilungen;
 		}
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}

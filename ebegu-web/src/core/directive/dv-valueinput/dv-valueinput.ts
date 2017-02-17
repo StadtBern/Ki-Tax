@@ -83,7 +83,7 @@ export class ValueinputController {
     /**
      * on blur setzen wir den formatierten "string" ins feld
      */
-    public updateModelValueBlur(){
+    public updateModelValueBlur() {
         this.updateModelValue();
         this.ngModelCtrl.$setTouched();
     }
@@ -95,7 +95,7 @@ export class ValueinputController {
     public handleFocus(event: any) {
 
         this.valueinput = this.sanitizeInputString();
-        if(event) {
+        if (event) {
             let angEle: IAugmentedJQuery = angular.element(event.target); //read raw html element
 
             let element: any = angEle[0];
@@ -104,8 +104,7 @@ export class ValueinputController {
                 if (element.setSelectionRange) {
                     // ... then use it
                     element.setSelectionRange(999999, 999999);
-                }
-                else {
+                } else {
                     // ... otherwise replace the contents with itself
                     // (Doesn't work in Google Chrome)
                     element.val(element.val());
@@ -155,8 +154,8 @@ export class ValueinputController {
             this.ngModelCtrl.$setViewValue(ValueinputController.formatToNumberString(transformedInput)); //setting the new raw number into the invisible parentmodel
             this.ngModelCtrl.$render();
         }
-        if (this.valueinput !== transformedInput){
-            this.valueinput = transformedInput
+        if (this.valueinput !== transformedInput) {
+            this.valueinput = transformedInput;
         }
     }
 

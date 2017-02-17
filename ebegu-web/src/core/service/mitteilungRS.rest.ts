@@ -145,7 +145,7 @@ export default class MitteilungRS {
 
     public sendbetreuungsmitteilung(fall: TSFall, betreuung: TSBetreuung): IPromise<TSBetreuungsmitteilung> {
         let mutationsmeldung: TSBetreuungsmitteilung = this.createBetreuungsmitteilung(fall, betreuung);
-        let restMitteilung = this.ebeguRestUtil.betreuungsmitteilungToRestObject({}, mutationsmeldung);
+        let restMitteilung: any = this.ebeguRestUtil.betreuungsmitteilungToRestObject({}, mutationsmeldung);
         return this.http.put(this.serviceURL + '/sendbetreuungsmitteilung', restMitteilung, {
             headers: {
                 'Content-Type': 'application/json'
@@ -199,7 +199,9 @@ export default class MitteilungRS {
     private extractPensenFromBetreuung(betreuung: TSBetreuung): Array<TSBetreuungspensum> {
         let pensen: Array<TSBetreuungspensum> = [];
         betreuung.betreuungspensumContainers.forEach(betpenContainer => {
-            pensen.push(angular.copy(betpenContainer.betreuungspensumJA));
+            let pensumJA = angular.copy(betpenContainer.betreuungspensumJA);
+            pensumJA.id = undefined; // the id must be set to undefined in order no to duplicate it
+            pensen.push(pensumJA);
         });
         return pensen;
     }
