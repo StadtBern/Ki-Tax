@@ -55,12 +55,9 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     }
 
     editKind(kind: any): void {
-        let kindNumber: number = this.gesuchModelManager.findKind(kind);
-        if (kindNumber > 0) {
+        if (kind) {
             kind.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
-            this.openKindView(kindNumber);
-        } else {
-            console.error('kind not found in list');
+            this.openKindView(kind.kindNummer);
         }
     }
 

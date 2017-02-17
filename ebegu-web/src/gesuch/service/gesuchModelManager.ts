@@ -66,8 +66,8 @@ export default class GesuchModelManager {
     private gesuch: TSGesuch;
     gesuchstellerNumber: number = 1;
     basisJahrPlusNumber: number = 1;
-    private kindNumber: number;
-    private betreuungNumber: number;
+    private kindIndex: number;
+    private betreuungIndex: number;
     private fachstellenList: Array<TSFachstelle>;
     private activInstitutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
@@ -352,27 +352,47 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Kind nummer geht von 1 bis unendlich. Fuer 0 oder negative Nummer wird kindNumber als 1 gesetzt.
-     * @param kindNumber
+     * Setzt den Kind Index.
+     * @param kindIndex
      */
-    public setKindNumber(kindNumber: number) {
-        if (kindNumber > 0) {
-            this.kindNumber = kindNumber;
+    public setKindNumber(kindIndex: number) { // TODO rename
+        if (kindIndex >= 0) {
+            this.kindIndex = kindIndex;
         } else {
-            this.kindNumber = 1;
+            this.kindIndex = 0;
         }
     }
 
     /**
-     * Betreuung nummer geht von 1 bis unendlich. Fuer 0 oder negative Nummer wird betreuungNumber als 1 gesetzt.
-     * @param betreuungNumber
+     * Setzt den BetreuungsIndex.
+     * @param betreuungIndex
      */
-    public setBetreuungNumber(betreuungNumber: number) {
-        if (betreuungNumber > 0) {
-            this.betreuungNumber = betreuungNumber;
+    public setBetreuungNumber(betreuungIndex: number) { // TODO rename
+        if (betreuungIndex >= 0) {
+            this.betreuungIndex = betreuungIndex;
         } else {
-            this.betreuungNumber = 1;
+            this.kindIndex = 0;
         }
+    }
+
+    public convertKindNumberToKindIndex(kindNumber : number) : number {
+        for (let i = 0; i < this.getGesuch().kindContainers.length; i++) {
+            if (this.getGesuch().kindContainers[i].kindNummer === kindNumber) {
+                this.kindIndex = i;
+                return this.kindIndex;
+            }
+        }
+        return -1;
+    }
+
+    public convertBetreuungNumberToBetreuungIndex(betreuungNumber : number) : number {
+        for (let i = 0; i < this.getKindToWorkWith().betreuungen.length; i++) {
+            if (this.getKindToWorkWith().betreuungen[i].betreuungNummer === betreuungNumber) {
+                this.betreuungIndex = i;
+                return this.betreuungIndex
+            }
+        }
+        return -1;
     }
 
     public getFachstellenList(): Array<TSFachstelle> {
@@ -631,11 +651,11 @@ export default class GesuchModelManager {
             let i: number = EbeguUtil.getIndexOfElementwithID(storedBetreuung, this.getKindToWorkWith().betreuungen);
             if (i >= 0) {
                 this.getKindToWorkWith().betreuungen[i] = storedBetreuung;
-                this.betreuungNumber = i;
+                this.betreuungIndex = i;
             }
         } else {
             this.getKindToWorkWith().betreuungen.push(storedBetreuung);  //neues kind anfuegen
-            this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
+            this.betreuungIndex = this.getKindToWorkWith().betreuungen.length - 1;
         }
         return storedBetreuung;
     }
@@ -678,67 +698,66 @@ export default class GesuchModelManager {
     }
 
     public getKindToWorkWith(): TSKindContainer {
-        if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindNumber) {
-            return this.gesuch.kindContainers[this.kindNumber - 1]; //kindNumber faengt mit 1 an
+        if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindIndex) {
+            return this.gesuch.kindContainers[this.kindIndex];
         }
         return undefined;
     }
 
     /**
-     * Sucht im ausgewaehlten Kind (kindNumber) nach der aktuellen Betreuung. Deshalb muessen sowohl
-     * kindNumber als auch betreuungNumber bereits gesetzt sein.
+     * Sucht im ausgewaehlten Kind (kindIndex) nach der aktuellen Betreuung. Deshalb muessen sowohl
+     * kindIndex als auch betreuungNumber bereits gesetzt sein.
      * @returns {any}
      */
     public getBetreuungToWorkWith(): TSBetreuung {
-        if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen.length >= this.betreuungNumber) {
-            return this.getKindToWorkWith().betreuungen[this.betreuungNumber - 1];
+        if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen.length >= this.betreuungIndex) {
+            return this.getKindToWorkWith().betreuungen[this.betreuungIndex];
         }
         return undefined;
     }
 
     /**
-     * Ersetzt das Kind in der aktuelle Position "kindNumber" durch das gegebene Kind. Aus diesem Grund muss diese Methode
-     * nur aufgerufen werden, wenn die Position "kindNumber" schon richtig gesetzt wurde.
+     * Ersetzt das Kind in der aktuelle Position "kindIndex" durch das gegebene Kind. Aus diesem Grund muss diese Methode
+     * nur aufgerufen werden, wenn die Position "kindIndex" schon richtig gesetzt wurde.
      * @param kind
      * @returns {TSKindContainer}
      */
     public setKindToWorkWith(kind: TSKindContainer): TSKindContainer {
-        return this.gesuch.kindContainers[this.kindNumber - 1] = kind;
+        return this.gesuch.kindContainers[this.kindIndex] = kind;
     }
 
     /**
-     * Ersetzt die Betreuung in der aktuelle Position "betreuungNumber" durch die gegebene Betreuung. Aus diesem Grund muss diese Methode
-     * nur aufgerufen werden, wenn die Position "betreuungNumber" schon richtig gesetzt wurde.
+     * Ersetzt die Betreuung in der aktuelle Position "betreuungIndex" durch die gegebene Betreuung. Aus diesem Grund muss diese Methode
+     * nur aufgerufen werden, wenn die Position "betreuungIndex" schon richtig gesetzt wurde.
      * @param betreuung
      * @returns {TSBetreuung}
      */
     public setBetreuungToWorkWith(betreuung: TSBetreuung): TSBetreuung {
-        return this.getKindToWorkWith().betreuungen[this.betreuungNumber - 1] = betreuung;
+        return this.getKindToWorkWith().betreuungen[this.betreuungIndex] = betreuung;
     }
 
     /**
      * Entfernt das aktuelle Kind von der Liste aber nicht von der DB.
      */
     public removeKindFromList() {
-        this.gesuch.kindContainers.splice(this.kindNumber - 1, 1);
+        this.gesuch.kindContainers.splice(this.kindIndex, 1);
         this.setKindNumber(undefined); //by default auf undefined setzen
-        //todo beim Auch KindRS.removeKind aufrufen???????
     }
 
     /**
      * Entfernt die aktuelle Betreuung des aktuellen Kindes von der Liste aber nicht von der DB.
      */
     public removeBetreuungFromKind() {
-        this.getKindToWorkWith().betreuungen.splice(this.betreuungNumber - 1, 1);
+        this.getKindToWorkWith().betreuungen.splice(this.betreuungIndex, 1);
         this.setBetreuungNumber(undefined); //by default auf undefined setzen
     }
 
-    public getKindNumber(): number {
-        return this.kindNumber;
+    public getKindNumber(): number { //TODO (hefr) rename
+        return this.kindIndex;
     }
 
-    public getBetreuungNumber(): number {
-        return this.betreuungNumber;
+    public getBetreuungNumber(): number { //TODO (hefr) rename
+        return this.betreuungIndex;
     }
 
     public getGesuchstellerNumber(): number {
@@ -765,13 +784,14 @@ export default class GesuchModelManager {
      */
     public findKind(kind: TSKindContainer): number {
         if (this.gesuch.kindContainers.indexOf(kind) >= 0) {
-            return this.kindNumber = this.gesuch.kindContainers.indexOf(kind) + 1;
+            this.kindIndex = this.gesuch.kindContainers.indexOf(kind);
+            return this.kindIndex;
         }
         return -1;
     }
 
     /**
-     * Sucht das Kind mit der eingegebenen KindID in allen KindContainers des Gesuchs. kindNumber wird gesetzt und zurueckgegeben
+     * Sucht das Kind mit der eingegebenen KindID in allen KindContainers des Gesuchs. kindIndex wird gesetzt und zurueckgegeben
      * @param kindID
      * @returns {number}
      */
@@ -779,8 +799,8 @@ export default class GesuchModelManager {
         if (this.gesuch.kindContainers) {
             for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
                 if (this.gesuch.kindContainers[i].id === kindID) {
-                    this.kindNumber = i + 1;
-                    return this.kindNumber;
+                    this.kindIndex = i;
+                    return this.kindIndex;
                 }
             }
         }
@@ -796,7 +816,8 @@ export default class GesuchModelManager {
 
     public findBetreuung(betreuung: TSBetreuung): number {
         if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen) {
-            return this.betreuungNumber = this.getKindToWorkWith().betreuungen.indexOf(betreuung) + 1;
+            this.betreuungIndex = this.getKindToWorkWith().betreuungen.indexOf(betreuung);
+            return this.betreuungIndex;
         }
         return -1;
     }
@@ -810,7 +831,7 @@ export default class GesuchModelManager {
         if (this.getKindToWorkWith()) {
             for (let i = 0; i < this.getKindToWorkWith().betreuungen.length; i++) {
                 if (this.getKindToWorkWith().betreuungen[i].id === betreuungID) {
-                    return this.betreuungNumber = i + 1;
+                    return this.betreuungIndex = i;
                 }
             }
         }

@@ -45,11 +45,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
     }
 
     public editBetreuung(kind: TSKindContainer, betreuung: any): void {
-        let kindNummer: number = this.gesuchModelManager.findKind(kind);
-        let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
-        if (betreuungNumber > 0) {
+        if (kind && betreuung) {
             betreuung.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
-            this.openBetreuungView(betreuungNumber, kindNummer);
+            this.openBetreuungView(betreuung.betreuungNummer, kind.kindNummer);
         }
     }
 
@@ -66,11 +64,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
 
 
     public createBetreuung(kind: TSKindContainer): void {
-        let kindNumber: number = this.gesuchModelManager.findKind(kind);
-        if (kindNumber > 0) {
-            this.gesuchModelManager.setKindNumber(kindNumber);
-            this.openBetreuungView(undefined, kindNumber);
-        }
+        let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
+        this.gesuchModelManager.setKindNumber(kindIndex);
+        this.openBetreuungView(undefined, kind.kindNummer);
     }
 
     public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung): void {
@@ -84,9 +80,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG'
         }).then(() => {   //User confirmed removal
             this.errorService.clearAll();
-            let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
-            if (betreuungNumber > 0) {
-                this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
+            let betreuungIndex: number = this.gesuchModelManager.findBetreuung(betreuung);
+            if (betreuungIndex >= 0) {
+                this.gesuchModelManager.setBetreuungNumber(betreuungIndex);
                 this.gesuchModelManager.removeBetreuung();
             }
         });

@@ -46,8 +46,11 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
                 private $window: ng.IWindowService) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
-        this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
-        this.gesuchModelManager.setBetreuungNumber(parseInt($stateParams.betreuungNumber, 10));
+
+        let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
+        this.gesuchModelManager.setKindNumber(kindIndex);
+        let betreuungIndex : number = this.gesuchModelManager.convertBetreuungNumberToBetreuungIndex(parseInt($stateParams.betreuungNumber, 10));
+        this.gesuchModelManager.setBetreuungNumber(betreuungIndex);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
 
         this.initView();

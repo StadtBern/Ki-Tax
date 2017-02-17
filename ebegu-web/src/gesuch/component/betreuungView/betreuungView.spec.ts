@@ -47,6 +47,7 @@ describe('betreuungView', function () {
         kind = new TSKindContainer();
         $stateParams = $injector.get('$stateParams');
         spyOn(gesuchModelManager, 'getKindToWorkWith').and.returnValue(kind);
+        spyOn(gesuchModelManager, 'convertKindNumberToKindIndex').and.returnValue(0);
         // model = betreuung;
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.callFake(() => {
              // wenn betreuung view ihr model schon kopiert hat geben wir das zurueck, sonst sind wir noch im constructor der view und geben betreuung zurueck
