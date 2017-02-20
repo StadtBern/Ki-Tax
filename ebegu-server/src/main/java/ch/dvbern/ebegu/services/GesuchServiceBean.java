@@ -116,6 +116,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.ofNullable(gesuch);
 	}
 
+	@Override
+	@Nonnull
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SCHULAMT})
+	public Optional<Gesuch> findGesuchForFreigabe(@Nonnull String gesuchId) {
+		Objects.requireNonNull(gesuchId, "gesuchId muss gesetzt sein");
+		Gesuch gesuch = persistence.find(Gesuch.class, gesuchId);
+		if (gesuch != null) {
+			authorizer.checkReadAuthorizationForFreigabe(gesuch);
+			return Optional.of(gesuch);
+		}
+		return Optional.empty();
+	}
+
 	@PermitAll
 	@Override
 	public List<Gesuch> findReadableGesuche(@Nullable Collection<String> gesuchIds) {

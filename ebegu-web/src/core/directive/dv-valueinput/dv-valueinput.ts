@@ -1,5 +1,5 @@
-import {IDirective, IDirectiveFactory, IScope, IAugmentedJQuery, IAttributes, IDirectiveLinkFn} from 'angular';
-import INgModelController = angular.INgModelController;
+import {IDirective, IDirectiveFactory, IAugmentedJQuery, IDirectiveLinkFn, INgModelController} from 'angular';
+import ITimeoutService = angular.ITimeoutService;
 let template = require('./dv-valueinput.html');
 
 export class DVValueinput implements IDirective {
@@ -20,12 +20,7 @@ export class DVValueinput implements IDirective {
     link: IDirectiveLinkFn;
 
     constructor() {
-        //koennte auch mit ng-keydown gemacht werden im template, ich dachte so ist es vielleicht etwas direkter
-        this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrl: any) => {
-            element.on('keypress', (event: any) => {
-                ctrl.dvValueInputCtrl.checkForEnterKey(event)
-            })
-        };
+
     }
 
     static factory(): IDirectiveFactory {
@@ -35,7 +30,6 @@ export class DVValueinput implements IDirective {
     }
 }
 export class ValueinputController {
-    static $inject: string[] = [];
     valueinput: string;
     ngModelCtrl: INgModelController;
     valueRequired: boolean;
@@ -43,7 +37,8 @@ export class ValueinputController {
     allowNegative: boolean;
     dvOnBlur: () => void;
 
-    constructor() {
+    static $inject: string[] = ['$timeout'];
+    constructor(private $timeout: ITimeoutService) {
     }
 
     // beispiel wie man auf changes eines attributes von aussen reagieren kann
@@ -85,14 +80,49 @@ export class ValueinputController {
         };
     }
 
-    updateModelValue() {
-        this.ngModelCtrl.$setViewValue(this.valueinput);
-        this.valueinput = ValueinputController.formatToNumberString(ValueinputController.formatFromNumberString(this.valueinput));
+    /**
+     * on blur setzen wir den formatierten "string" ins feld
+     */
+    public updateModelValueBlur(){
+        this.updateModelValue();
         this.ngModelCtrl.$setTouched();
+    }
 
+    /**
+     * onFocus schreiben wir den string als zahl ins feld und setzen den cursor ans ende des inputs
+     * @param event
+     */
+    public handleFocus(event: any) {
+
+        this.valueinput = this.sanitizeInputString();
+        if(event) {
+            let angEle: IAugmentedJQuery = angular.element(event.target); //read raw html element
+
+            let element: any = angEle[0];
+            this.$timeout(() => {
+                // If this function exists...
+                if (element.setSelectionRange) {
+                    // ... then use it
+                    element.setSelectionRange(999999, 999999);
+                }
+                else {
+                    // ... otherwise replace the contents with itself
+                    // (Doesn't work in Google Chrome)
+                    element.val(element.val());
+                }
+            });
+        }
+
+    }
+
+    updateModelValue() {
+        //set the number as formatted string to the model
+        this.valueinput = ValueinputController.formatToNumberString(ValueinputController.formatFromNumberString(this.valueinput));
+        this.ngModelCtrl.$setViewValue(this.valueinput);
         if (this.dvOnBlur) { // userdefined onBlur event
             this.dvOnBlur();
         }
+
     };
 
     private static numberToString(num: number): string {
@@ -118,6 +148,19 @@ export class ValueinputController {
     }
 
     public removeNotDigits(): void {
+        let transformedInput = this.sanitizeInputString();
+
+        //neuen wert ins model schreiben
+        if (transformedInput !== this.ngModelCtrl.$viewValue) {
+            this.ngModelCtrl.$setViewValue(ValueinputController.formatToNumberString(transformedInput)); //setting the new raw number into the invisible parentmodel
+            this.ngModelCtrl.$render();
+        }
+        if (this.valueinput !== transformedInput){
+            this.valueinput = transformedInput
+        }
+    }
+
+    private sanitizeInputString() {
         let transformedInput = this.valueinput;
         let sign: string = '';
         if (this.allowNegative === true && this.valueinput && this.valueinput.indexOf('-') === 0) { // if negative allowed, get sign
@@ -128,23 +171,8 @@ export class ValueinputController {
         if (transformedInput) {
             transformedInput = parseInt(transformedInput).toString(); // parse to int to remove not wanted digits like leading zeros and then back to string
         }
-        transformedInput = sign + transformedInput; // add sign
-
-        if (this.valueinput !== transformedInput) {
-            this.ngModelCtrl.$setViewValue(transformedInput);
-            this.ngModelCtrl.$render();
-        }
-    }
-
-    /**
-     * Because clicking enter while the field has focus submits the form we must ensure that the logic that is normally
-     * done 'onBlur' is still triggered.
-     * This Handler should ensure that the model value is updated before submitting the form.
-     */
-    public checkForEnterKey(event: any) {
-        if (event && event.which === 13) {
-            this.updateModelValue();
-        }
+        transformedInput = sign + transformedInput; // add sign to raw number
+        return transformedInput;
     }
 
 }

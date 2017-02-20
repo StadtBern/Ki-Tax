@@ -396,6 +396,13 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	}
 
 	@Transient
+	public String extractFullnamesString() {
+		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().extractFullName() : "");
+		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().extractFullName() : "";
+		return bothFamiliennamen;
+	}
+
+	@Transient
 	public boolean isMutation() {
 		return this.typ == AntragTyp.MUTATION;
 	}

@@ -2,6 +2,15 @@
 @import '../../../style/mixins.less';
 dv-tooltip {
     font-size: 1.6rem;
+    i:focus{
+        outline:0;
+        color:@primary;
+    }
+    &:hover{
+        i{
+            color:@primary;
+        }
+    }
 }
 
 md-dialog.md-dialog-fullscreen.dv-tooltip-dialog {

@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungStatus;
+import ch.dvbern.ebegu.util.MathUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -24,6 +25,7 @@ public class Zahlung extends AbstractEntity {
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlung_zahlungsauftrag_id"), nullable = false)
 	private Zahlungsauftrag zahlungsauftrag;
+
 
 	@NotNull
 	@ManyToOne(optional = false)
@@ -75,6 +77,17 @@ public class Zahlung extends AbstractEntity {
 	}
 
 	public BigDecimal getBetragTotalZahlung() {
-		return new BigDecimal(1234);
+		BigDecimal total = BigDecimal.ZERO;
+		for (Zahlungsposition zahlungsposition : zahlungspositionen) {
+			if (zahlungsposition.getStatus().isAuszuzahlen()) {
+				total = MathUtil.DEFAULT.add(total, zahlungsposition.getBetrag());
+			}
+		}
+		return total;
+	}
+
+	//TODO: Schlauer Zahlugstext finden
+	public String getZahlungstext() {
+		return getBetragTotalZahlung() + " " + getInstitutionStammdaten().getInstitution().getName();
 	}
 }
