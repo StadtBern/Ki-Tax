@@ -106,14 +106,14 @@ export default class MitteilungRS {
     public getMitteilungenForCurrentRolleForBetreuung(betreuungId: string): IPromise<Array<TSMitteilung>> {
         return this.http.get(this.serviceURL + '/forrole/betreuung/' + betreuungId).then((response: any) => {
             this.log.debug('PARSING mitteilung REST object ', response.data);
-            return this.ebeguRestUtil.parseMitteilungen(response.data);
+            return this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungen); // The response is a wrapper
         });
     }
 
     public getMitteilungenForPosteingang(): IPromise<Array<TSMitteilung>> {
         return this.http.get(this.serviceURL + '/posteingang').then((response: any) => {
             this.log.debug('PARSING mitteilung REST object ', response.data);
-            return this.ebeguRestUtil.parseMitteilungen(response.data);
+            return this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungen); // The response is a wrapper
         });
     }
 
@@ -133,7 +133,7 @@ export default class MitteilungRS {
     public setAllNewMitteilungenOfFallGelesen(fallId: string): IPromise<Array<TSMitteilung>> {
         return this.http.put(this.serviceURL + '/setallgelesen/' + fallId, null).then((response: any) => {
             this.log.debug('PARSING mitteilungen REST objects ', response.data);
-            return this.ebeguRestUtil.parseMitteilungen(response.data);
+            return this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungen); // The response is a wrapper
         });
     }
 
