@@ -13,6 +13,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -44,7 +45,7 @@ import java.util.*;
 @Stateless
 @Local(ZahlungService.class)
 @RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
-@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "SpringAutowiredFieldsWarningInspection"})
+@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "SpringAutowiredFieldsWarningInspection", "InstanceMethodNamingConvention"})
 public class ZahlungServiceBean extends AbstractBaseService implements ZahlungService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZahlungServiceBean.class.getSimpleName());
@@ -69,10 +70,10 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
-	public Zahlungsauftrag zahlungsauftragErstellen(LocalDateTime datumFaelligkeit, String beschreibung) {
+	public Zahlungsauftrag zahlungsauftragErstellen(LocalDate datumFaelligkeit, String beschreibung) {
 		LOGGER.info("Erstelle Zahlungsauftrag mit Faelligkeit: " + Constants.DATE_FORMATTER.format(datumFaelligkeit));
 		Zahlungsauftrag zahlungsauftrag = new Zahlungsauftrag();
-		zahlungsauftrag.setAusgeloest(Boolean.FALSE);
+		zahlungsauftrag.setStatus(ZahlungauftragStatus.ENTWURF);
 		zahlungsauftrag.setBeschrieb(beschreibung);
 		zahlungsauftrag.setDatumFaellig(datumFaelligkeit);
 		zahlungsauftrag.setDatumGeneriert(LocalDateTime.now());
@@ -138,7 +139,6 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 			sb.append(" [Repetition]");
 		}
 		LOGGER.info(sb.toString());
-		zahlungsauftrag.setBeschrieb(sb.toString() + ": " + beschreibung);
 		return persistence.merge(zahlungsauftrag);
 	}
 
@@ -270,14 +270,13 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		zahlungsposition.setVerfuegungZeitabschnitt(zeitabschnitt);
 		zahlungsposition.setBetrag(zeitabschnitt.getVerguenstigung());
 		zahlungsposition.setZahlung(zahlung);
-		zahlung.getZahlungspositionen().add(zahlungsposition);
-		if (vollkostenChanged) {
-			zahlungsposition.setStatus(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN);
-			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
-		} else {
-			zahlungsposition.setStatus(ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG);
+		zahlungsposition.setIgnoriert(zeitabschnitt.getZahlungsstatus().isIgnoriert());
+		ZahlungspositionStatus status = vollkostenChanged ? ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN : ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG;
+		zahlungsposition.setStatus(status);
+		if (!zeitabschnitt.getZahlungsstatus().isIgnoriert()) { // Den Status nur ueberschreiben, wenn nicht ignoriert
 			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
 		}
+		zahlung.getZahlungspositionen().add(zahlungsposition);
 	}
 
 	/**
@@ -288,11 +287,9 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		korrekturPosition.setVerfuegungZeitabschnitt(verfuegungZeitabschnitt);
 		korrekturPosition.setBetrag(verfuegungZeitabschnitt.getVerguenstigung().negate());
 		korrekturPosition.setZahlung(zahlung);
-		if (vollkostenChanged) {
-			korrekturPosition.setStatus(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN);
-		} else {
-			korrekturPosition.setStatus(ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG);
-		}
+		korrekturPosition.setIgnoriert(verfuegungZeitabschnitt.getZahlungsstatus().isIgnoriert());
+		ZahlungspositionStatus status = vollkostenChanged ? ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN : ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG;
+		korrekturPosition.setStatus(status);
 		zahlung.getZahlungspositionen().add(korrekturPosition);
 	}
 
@@ -376,11 +373,34 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
+	public Zahlungsauftrag zahlungsauftragAktualisieren(@Nonnull String auftragId, @Nonnull LocalDate datumFaelligkeit, @Nonnull String beschreibung) {
+		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
+		Objects.requireNonNull(datumFaelligkeit, "datumFaelligkeit muss gesetzt sein");
+		Objects.requireNonNull(beschreibung, "beschreibung muss gesetzt sein");
+
+		Optional<Zahlungsauftrag> auftragOptional = findZahlungsauftrag(auftragId);
+		if (auftragOptional.isPresent()) {
+			Zahlungsauftrag auftrag = auftragOptional.get();
+			// Auftrag kann nur im Status ENTWURF veraendert werden
+			if (auftrag.getStatus().isEntwurf()) {
+				auftrag.setBeschrieb(beschreibung);
+				auftrag.setDatumFaellig(datumFaelligkeit);
+				return persistence.merge(auftrag);
+			} else {
+				throw new IllegalStateException("Auftrag kann nicht mehr veraendert werden: " + auftragId);
+			}
+		} else {
+			throw new EbeguEntityNotFoundException("zahlungsauftragAktualisieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId);
+		}
+	}
+
+	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragAusloesen(String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
-		zahlungsauftrag.setAusgeloest(Boolean.TRUE);
+		zahlungsauftrag.setStatus(ZahlungauftragStatus.AUSGELOEST);
+		zahlungsauftrag.setFilecontent(createIsoFile(auftragId));
 		return persistence.merge(zahlungsauftrag);
 	}
 
@@ -397,6 +417,19 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	public void deleteZahlungsauftrag(String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Optional<Zahlungsauftrag> auftragOptional = findZahlungsauftrag(auftragId);
+		if (auftragOptional.isPresent()) {
+			// Alle verknuepften Zeitabschnitte wieder auf "unbezahlt" setzen
+			Zahlungsauftrag auftrag = auftragOptional.get();
+			for (Zahlung zahlung : auftrag.getZahlungen()) {
+				for (Zahlungsposition zahlungsposition : zahlung.getZahlungspositionen()) {
+					if (zahlungsposition.getVerfuegungZeitabschnitt().getZahlungsstatus().isVerrechnet()) {
+						zahlungsposition.getVerfuegungZeitabschnitt().setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+						persistence.merge(zahlungsposition.getVerfuegungZeitabschnitt());
+					}
+				}
+			}
+		}
+		// Dann erst den Auftrag loeschen
 		Zahlungsauftrag auftragToRemove = auftragOptional.orElseThrow(() -> new EbeguEntityNotFoundException("deleteZahlungsauftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
 		persistence.remove(auftragToRemove);
 	}
@@ -405,6 +438,24 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
 	public Collection<Zahlungsauftrag> getAllZahlungsauftraege() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Zahlungsauftrag.class));
+	}
+
+	@Override
+	public String createIsoFile(String auftragId) {
+		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
+		Optional<Zahlungsauftrag> auftragOptional = findZahlungsauftrag(auftragId);
+		if (auftragOptional.isPresent()) {
+			Zahlungsauftrag zahlungsauftrag = auftragOptional.get();
+			// Falls der Auftrag schon freigegeben ist, wird das gespeicherte File zurueckgegeben
+			if (zahlungsauftrag.getStatus().isEntwurf()) {
+				String pain = pain001Service.getPainFileContent(zahlungsauftrag);
+				zahlungsauftrag.setFilecontent(pain);
+				persistence.merge(zahlungsauftrag);
+			}
+			return zahlungsauftrag.getFilecontent();
+		} else {
+			throw new EbeguEntityNotFoundException("createIsoFile", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId);
+		}
 	}
 
 	@Override

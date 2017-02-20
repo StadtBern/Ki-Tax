@@ -35,6 +35,10 @@ public class Zahlungsposition extends AbstractEntity {
 	@Column(nullable = false)
 	private BigDecimal betrag;
 
+	@NotNull
+	@Column(nullable = false)
+	private Boolean ignoriert;
+
 	public Zahlung getZahlung() {
 		return zahlung;
 	}
@@ -69,5 +73,13 @@ public class Zahlungsposition extends AbstractEntity {
 
 	public Kind getKind() {
 		return verfuegungZeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindJA();
+	}
+
+	public Boolean getIgnoriert() {
+		return ignoriert;
+	}
+
+	public void setIgnoriert(Boolean ignoriert) {
+		this.ignoriert = ignoriert;
 	}
 }

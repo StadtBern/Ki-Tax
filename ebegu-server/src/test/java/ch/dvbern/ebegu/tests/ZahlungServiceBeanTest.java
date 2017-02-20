@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.enums.ZahlungStatus;
+import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.GesuchService;
@@ -22,7 +23,6 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -58,7 +58,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	private Gesuchsperiode gesuchsperiode;
 	private int JAHR_1, JAHR_2;
-	private LocalDateTime DATUM_FAELLIG = LocalDateTime.now().plusDays(3);
+	private LocalDate DATUM_FAELLIG = LocalDate.now().plusDays(3);
 
 
 	@Before
@@ -182,9 +182,9 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		createGesuch(true);
 		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
 
-		Assert.assertFalse(zahlungService.findZahlungsauftrag(zahlungsauftrag.getId()).get().getAusgeloest());
+		Assert.assertEquals(ZahlungauftragStatus.ENTWURF, zahlungService.findZahlungsauftrag(zahlungsauftrag.getId()).get().getStatus());
 		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
-		Assert.assertTrue(zahlungService.findZahlungsauftrag(zahlungsauftrag.getId()).get().getAusgeloest());
+		Assert.assertEquals(ZahlungauftragStatus.AUSGELOEST, zahlungService.findZahlungsauftrag(zahlungsauftrag.getId()).get().getStatus());
 	}
 
 	@Test
