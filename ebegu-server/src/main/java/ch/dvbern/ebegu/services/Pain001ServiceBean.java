@@ -164,7 +164,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		BigDecimal ctrlSum = BigDecimal.ZERO;
 		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
 			transaktion++;
-			ctrlSum = ctrlSum.add(zahlung.getTotal());
+			ctrlSum = ctrlSum.add(zahlung.getBetragTotalZahlung());
 			document.getCstmrCdtTrfInitn().getPmtInf().get(0).getCdtTrfTxInf().add(createCreditTransferTransactionInformation10CH(objectFactory, transaktion, zahlung));
 		}
 
@@ -232,7 +232,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 		// Wert
 		cTTI10CH.getAmt().getInstdAmt().setCcy(CCY);// 2.43
-		cTTI10CH.getAmt().getInstdAmt().setValue(zahlung.getTotal());// 2.43
+		cTTI10CH.getAmt().getInstdAmt().setValue(zahlung.getBetragTotalZahlung());// 2.43
 
 		//BIC
 		cTTI10CH.setCdtrAgt(objectFactory.createBranchAndFinancialInstitutionIdentification4CH());

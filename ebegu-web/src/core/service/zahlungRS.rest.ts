@@ -1,7 +1,7 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
-import TSZahlung from '../../models/TSZahlung';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
+import DateUtil from '../../utils/DateUtil';
 
 export default class ZahlungRS {
     serviceURL: string;
@@ -23,21 +23,51 @@ export default class ZahlungRS {
     }
 
     public getAllZahlungsauftraege(): IPromise<TSZahlungsauftrag[]> {
-        return this.http.get(this.serviceURL+ '/all').then((response: any) => {
+        return this.http.get(this.serviceURL + '/all').then((response: any) => {
             this.$log.debug('PARSING user REST array object', response.data);
             return this.ebeguRestUtil.parseZahlungsauftragList(response.data);
         });
     }
 
-    public createZahlung(): IPromise<TSZahlungsauftrag> {
-        return this.http.post(this.serviceURL+ '/create', {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then((httpresponse: any) => {
+    public getZahlungsauftrag(zahlungsauftragId: string): IPromise<TSZahlungsauftrag> {
+        return this.http.get(this.serviceURL + '/zahlungsauftrag' + '/' + encodeURIComponent(zahlungsauftragId)).then((response: any) => {
+            this.$log.debug('PARSING user REST array object', response.data);
+            return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), response.data);
+        });
+    }
+
+    public createZahlungsauftrag(beschrieb: string, faelligkeitsdatum: moment.Moment, datumGeneriert: moment.Moment): IPromise<TSZahlungsauftrag> {
+        return this.http.get(this.serviceURL + '/create',
+            {
+                params: {
+                    faelligkeitsdatum: DateUtil.momentToLocalDate(faelligkeitsdatum),
+                    beschrieb: beschrieb,
+                    datumGeneriert: DateUtil.momentToLocalDate(datumGeneriert)
+                }
+            }).then((httpresponse: any) => {
             this.log.debug('PARSING Zahlungsauftrag REST object ', httpresponse.data);
             return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), httpresponse.data);
         });
     }
+
+    public updateZahlungsauftrag(beschrieb: string, faelligkeitsdatum: moment.Moment, id: string): IPromise<TSZahlungsauftrag> {
+        return this.http.get(this.serviceURL + '/update',
+            {
+                params: {
+                    beschrieb: beschrieb,
+                    faelligkeitsdatum: DateUtil.momentToLocalDate(faelligkeitsdatum),
+                    id: id
+                }
+            }).then((httpresponse: any) => {
+            this.log.debug('PARSING Zahlungsauftrag REST object ', httpresponse.data);
+            return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), httpresponse.data);
+        });
+    }
+
+    /*    return this.http.get(this.serviceURL + '/date', {params: {date: DateUtil.momentToLocalDate(dateParam)}})
+     .then((response: any) => {
+     this.log.debug('PARSING institutionStammdaten REST array object', response.data);
+     return this.ebeguRestUtil.parseInstitutionStammdatenArray(response.data);
+     });*/
 
 }

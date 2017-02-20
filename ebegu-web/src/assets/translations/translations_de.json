@@ -869,7 +869,7 @@
     "GESPERRT_WEGEN_BESCHWERDE": "gesperrt wegen Beschwerde",
     "FILE_ZU_GROSS": "Datei zu gross. Maximale Dateigrösse ist 10MB",
     "ANTRAG_NOCH_KEINE": "Es wurde noch kein Betreuungsgutschein beantragt",
-    "BETREUUNG_IN_STATUS_WARTEN" : "Die Platzbestätigung ist bei der Institution hängig. Sie werden per E-Mail benachrichtigt, sobald diese eingetroffen ist.",
+    "BETREUUNG_IN_STATUS_WARTEN": "Die Platzbestätigung ist bei der Institution hängig. Sie werden per E-Mail benachrichtigt, sobald diese eingetroffen ist.",
     "MITTEILUNG_SUBJECT": "Betreff",
     "MITTEILUNG_MESSAGE": "Nachricht",
     "MITTEILUNG_SENDEN": "Senden",
@@ -898,8 +898,13 @@
     "ZAHLUNG_TOTAL_UPPER": "BETRAG",
     "ZAHLUNG_BESCHRIEB_UPPER": "BESCHRIEB",
     "ZAHLUNG_PAIN001_UPPER": "PAIN001",
-    "ZAHLUNGSAUFTRAEGE_UPPER":"ZAHLUNGEN PRO MONAT"
-
-
-
+    "ZAHLUNGSAUFTRAEGE_UPPER": "ZAHLUNGEN PRO MONAT",
+    "ZAHLUNG_INSTITUION_UPPER": "INSTITUION",
+    "ZAHLUNG_BETRAG_UPPER": "BETRAG",
+    "ZAHLUNG_STATUS_UPPER": "STATUS",
+    "ZAHLUNG_FAELLIGKEITSDATUM": "Fälligkeitsdatum",
+    "ZAHLUNG_GENERIERT": "Generiert",
+    "ZAHLUNG_GENERIERT_UPPER": "GENERIERT",
+    "ZAHLUNG_BESCHRIEB": "Beschrieb",
+    "ZAHLUNG_DETAILPOSITIONEN_UPPER": "DETAILPOSITIONEN"
 }

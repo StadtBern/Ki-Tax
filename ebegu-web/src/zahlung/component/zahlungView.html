@@ -9,51 +9,33 @@
             </div>
         </div>
 
-        <button ng-click="vm.createZahlung()"
-                aria-label="{{ZAHLUNG_ERSTELLEN | translate}}" style="text-align: center;">
-            <span data-translate="ZAHLUNG_ERSTELLEN"></span>
-        </button>
-
         <div class="row">
             <div class="col-md-10 col-md-offset-1 table-responsive">
 
-                <table st-table="displayedCollection" st-safe-src="vm.getZahlungen()"
+                <table st-table="displayedCollection" st-safe-src="vm.getZahlungsauftrag().zahlungen"
                        st-delay="20"
                        class="table fixedtable table-striped">
                     <thead>
                     <tr>
-                        <!-- datumFaellig -->
-                        <th st-sort="datumFaellig" class="sortable row-datumFaellig"
-                            data-translate="ZAHLUNG_FAELLIGKEIT_UPPER"></th>
-                        <th data-translate="ZAHLUNG_PAIN001_UPPER"></th>
-                        <!-- betragTotalAuftrag -->
-                        <th st-sort="betragTotalAuftrag" class="sortable row-betragTotalAuftrag"
-                            data-translate="ZAHLUNG_TOTAL_UPPER"></th>
-                        <!-- beschrieb -->
-                        <th st-sort="beschrieb" class="sortable row-beschrieb"
-                            data-translate="ZAHLUNG_BESCHRIEB_UPPER"></th>
+                        <th st-sort="institutionsName" class="sortable row-institutionsName" data-translate="ZAHLUNG_INSTITUION_UPPER"></th>
+                        <th data-translate="ZAHLUNG_DETAILPOSITIONEN_UPPER"></th>
+                        <th data-translate="ZAHLUNG_BETRAG_UPPER"></th>
+                        <th st-sort="status" class="sortable row-status" data-translate="ZAHLUNG_STATUS_UPPER"></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-click="vm.gotoMitteilung(row)">
-                        <!-- datumFaellig -->
-                        <td ellipsis-tooltip="{{row.datumFaellig | amDateFormat : 'DD.MM.YYYY'}}"
-                            ng-bind="row.datumFaellig | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td width="5%" class="symbol" ng-click="$event.stopPropagation()">
-                            <a ng-click="vm.downloadPain(row)" class="fa fa-file" aria-hidden="true"></a>
+                    <tr ng-repeat="row in displayedCollection">
+                        <td class="ellipsis" ellipsis-tooltip="{{row.institutionsName}}"  ng-bind="row.institutionsName"></td>
+                        <td class="symbol" ng-click="vm.downloadDetails(row)">
+                            <div ng-click="vm.downloadDetails(row)" class="fa fa-file-excel-o" aria-hidden="true"></div>
                         </td>
-                        <!-- BetragTotalAuftrag -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.betragTotalAuftrag}}"
-                            ng-bind="row.betragTotalAuftrag"></td>
-                        <!-- beschrieb -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.beschrieb}}"
-                            ng-bind="row.beschrieb"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.betragTotalZahlung}}" ng-bind="row.betragTotalZahlung"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.status}}" ng-bind="row.status"></td>
                     </tr>
                     </tbody>
                     <tfoot>
                     <tr>
-                        <td colspan="4" class="text-center">
+                        <td colspan="3" class="text-center">
                             <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
                         </td>
                     </tr>

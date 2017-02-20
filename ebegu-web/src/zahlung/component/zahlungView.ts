@@ -7,6 +7,8 @@ import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;
 import IStateService = angular.ui.IStateService;
+import {IZahlungsauftragStateParams} from '../zahlung.route';
+import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 let template = require('./zahlungView.html');
 require('./zahlungView.less');
 
@@ -19,35 +21,32 @@ export class ZahlungViewComponentConfig implements IComponentOptions {
 
 export class ZahlungViewController {
 
-    private zahlungen: Array<TSZahlung>;
+    private zahlungsauftrag: TSZahlungsauftrag;
 
     itemsByPage: number = 20;
     numberOfPages: number = 1;
 
-    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$state'];
+    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$stateParams'];
 
-    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $state: IStateService) {
+    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $stateParams: IZahlungsauftragStateParams) {
         this.initViewModel();
     }
 
-    public getZahlungen() {
-        return this.zahlungen;
-    }
-
-    public addZerosToFallNummer(fallnummer: number): string {
-        return this.ebeguUtil.addZerosToNumber(fallnummer, this.CONSTANTS.FALLNUMMER_LENGTH);
-    }
-
     private initViewModel() {
-        this.updateZahlung();
+        if (this.$stateParams.zahlungsauftrag) {
+            this.zahlungsauftrag = this.$stateParams.zahlungsauftrag;
+        } else if (this.$stateParams.zahlungsauftragId) {
+            this.zahlungRS.getZahlungsauftrag(this.$stateParams.zahlungsauftragId).then((response) => {
+                this.zahlungsauftrag = response;
+            });
+        }
     }
 
-    private updateZahlung() {
-        this.zahlungRS.getAllZahlungsauftraege().then((response: any) => {
-            this.zahlungen = angular.copy(response);
-            this.numberOfPages = this.zahlungen.length / this.itemsByPage;
-        });
+    public getZahlungsauftrag() : TSZahlungsauftrag{
+        return this.zahlungsauftrag;
     }
+
+
 
     private gotoZahlung(zahlung: TSZahlung) {
         /*        this.$state.go('zahlungen', {
@@ -55,9 +54,4 @@ export class ZahlungViewController {
          });*/
     }
 
-    private createZahlung() {
-        this.zahlungRS.createZahlung().then((response: any) => {
-
-        });
-    }
 }
