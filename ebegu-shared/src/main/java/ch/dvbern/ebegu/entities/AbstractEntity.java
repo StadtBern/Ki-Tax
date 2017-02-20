@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
+import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.util.AbstractEntityListener;
 import ch.dvbern.ebegu.util.Constants;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -21,6 +23,55 @@ import java.util.UUID;
 @MappedSuperclass
 @Audited
 @EntityListeners(AbstractEntityListener.class)
+//Mappings for the native quries used by the report
+@SqlResultSetMappings({
+	@SqlResultSetMapping(name = "GesuchStichtagDataRowMapping", classes = {
+		@ConstructorResult(targetClass = GesuchStichtagDataRow.class,
+			columns = {
+				@ColumnResult(name = "bgNummer", type = String.class),
+				@ColumnResult(name = "institution", type = String.class),
+				@ColumnResult(name = "betreuungsTyp", type = String.class),
+				@ColumnResult(name = "periode", type = String.class),
+				@ColumnResult(name = "nichtFreigegeben", type = Integer.class),
+				@ColumnResult(name = "mahnungen", type = Integer.class),
+				@ColumnResult(name = "beschwerde", type = Integer.class)}
+		)}
+	),
+	@SqlResultSetMapping(name = "GesuchZeitraumDataRowMapping", classes = {
+		@ConstructorResult(targetClass = GesuchZeitraumDataRow.class,
+			columns = {
+				@ColumnResult(name = "bgNummer", type = String.class),
+				@ColumnResult(name = "institution", type = String.class),
+				@ColumnResult(name = "betreuungsTyp", type = String.class),
+				@ColumnResult(name = "periode", type = String.class),
+				@ColumnResult(name = "anzahlGesuchOnline", type = Integer.class),
+				@ColumnResult(name = "anzahlGesuchPapier", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationOnline", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationPapier", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationAbwesenheit", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationBetreuung", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationDokumente", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationEV", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationEwerbspensum", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationFamilienSitutation", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationFinanzielleSituation", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationFreigabe", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationGesuchErstellen", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationGesuchsteller", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationKinder", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationUmzug", type = Integer.class),
+				@ColumnResult(name = "anzahlMutationVerfuegen", type = Integer.class),
+				@ColumnResult(name = "anzahlMahnungen", type = Integer.class),
+				@ColumnResult(name = "anzahlBeschwerde", type = Integer.class),
+				@ColumnResult(name = "anzahlVerfuegungen", type = Integer.class),
+				@ColumnResult(name = "anzahlVerfuegungenNormal", type = Integer.class),
+				@ColumnResult(name = "anzahlVerfuegungenMaxEinkommen", type = Integer.class),
+				@ColumnResult(name = "anzahlVerfuegungenKeinPensum", type = Integer.class),
+				@ColumnResult(name = "anzahlVerfuegungenZuschlagZumPensum", type = Integer.class),
+				@ColumnResult(name = "anzahlVerfuegungenNichtEintreten", type = Integer.class)}
+		)}
+	)
+})
 public abstract class AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = -979317154050183445L;
@@ -153,7 +204,8 @@ public abstract class AbstractEntity implements Serializable {
 		return timestampErstellt == null;
 	}
 
-	/** //todo team probably delete this
+	/**
+	 * //todo team probably delete this
 	 * Hilfsmethode fuer toString(): Wenn beim Debugging eine JPA-Referenz schon detached ist,
 	 * kann nicht mehr auf den Wert zugegriffen werden und es kommt eine Exception.
 	 * Diese Methode faengt die Exception ab und gibt einen fixen Text zurueck.

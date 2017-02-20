@@ -10,6 +10,7 @@ import ch.dvbern.ebegu.validators.CheckAbwesenheitDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
@@ -267,6 +268,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	 * Erstellt die BG-Nummer als zusammengesetzten String aus Jahr, FallId, KindId und BetreuungsNummer
 	 */
 	@Transient
+	@SuppressFBWarnings("NM_CONFUSING")
 	public String getBGNummer() {
 		if (getKind().getGesuch() != null) {
 			String kind = "" + getKind().getKindNummer();

@@ -75,6 +75,7 @@ import {DVValueinput} from './directive/dv-valueinput/dv-valueinput';
 import MitteilungRS from './service/mitteilungRS.rest';
 import {DVMitteilungListConfig} from './component/dv-mitteilung-list/dv-mitteilung-list';
 import {DvPosteingangComponentConfig} from './component/dv-posteingang/dv-posteingang';
+import {ReportRS} from './service/reportRS.rest';
 import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
 
 let dynamicDependencies = function (): string[] {
@@ -199,5 +200,6 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvMitteilungList', new DVMitteilungListConfig())
     .component('dvAccordion', new DvAccordionComponentConfig())
     .component('dvAccordionTab', new DvAccordionTabComponentConfig())
-    .service('MahnungRS', MahnungRS);
+    .service('MahnungRS', MahnungRS)
+    .service('ReportRS', ReportRS);
 
