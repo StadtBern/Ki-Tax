@@ -37,7 +37,7 @@ public class Zahlungsposition extends AbstractEntity {
 
 	@NotNull
 	@Column(nullable = false)
-	private Boolean ignoriert;
+	private boolean ignoriert;
 
 	public Zahlung getZahlung() {
 		return zahlung;
@@ -75,11 +75,11 @@ public class Zahlungsposition extends AbstractEntity {
 		return verfuegungZeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindJA();
 	}
 
-	public Boolean getIgnoriert() {
+	public boolean isIgnoriert() {
 		return ignoriert;
 	}
 
-	public void setIgnoriert(Boolean ignoriert) {
+	public void setIgnoriert(boolean ignoriert) {
 		this.ignoriert = ignoriert;
 	}
 }

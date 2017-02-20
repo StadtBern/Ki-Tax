@@ -152,15 +152,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false) //TODO (hefr) evt. wieder entfernen, siehe unten
+	@Column(nullable = false)
 	private VerfuegungsZeitabschnittZahlungsstatus zahlungsstatus = VerfuegungsZeitabschnittZahlungsstatus.NEU;
 
 	@NotNull
 	@OneToMany (mappedBy = "verfuegungZeitabschnitt")
 	private List<Zahlungsposition> zahlungsposition = new ArrayList<>();
-
-	//TODO (hefr) Eher bidirektionale Verknüpfung, anstatt Status? Wegen Löschen
-	//TODO Das ginge schon (siehe oben), aber wir verlieren den Status "IDENTISCHE DATEN", würden also u.U. solche Zeitabschnitte immer wieder überprüfen
 
 
 	public VerfuegungZeitabschnitt() {

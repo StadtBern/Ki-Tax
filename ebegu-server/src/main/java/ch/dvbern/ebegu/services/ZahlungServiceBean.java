@@ -71,6 +71,12 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragErstellen(LocalDate datumFaelligkeit, String beschreibung) {
+		// Es darf immer nur ein Zahlungsauftrag im Status ENTWURF sein
+		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
+		if (lastZahlungsauftrag.isPresent() && lastZahlungsauftrag.get().getStatus().isEntwurf()) {
+			throw new IllegalStateException("Es darf kein neuer Entwurf erstellt werden, bevor der letzte Auftrag freigegeben wurde");
+		}
+
 		LOGGER.info("Erstelle Zahlungsauftrag mit Faelligkeit: " + Constants.DATE_FORMATTER.format(datumFaelligkeit));
 		Zahlungsauftrag zahlungsauftrag = new Zahlungsauftrag();
 		zahlungsauftrag.setStatus(ZahlungauftragStatus.ENTWURF);
@@ -93,7 +99,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// einfach an den letzten Auftrag anschliessen
 		LocalDate zeitabschnittVon = null;
 		LocalDate zeitabschnittBis = zahlungsauftrag.getDatumGeneriert().toLocalDate().with(TemporalAdjusters.lastDayOfMonth());
-		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
+
 		if (lastZahlungsauftrag.isPresent()) {
 			lastZahlungErstellt = lastZahlungsauftrag.get().getDatumGeneriert();
 			if (zahlungsauftrag.getDatumGeneriert().toLocalDate().isAfter(lastZahlungsauftrag.get().getGueltigkeit().getGueltigBis())) {
@@ -246,8 +252,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 			}
 			// Und ermitteln, ob es sich im Vergleich nur neuen Verfuegung geaendert hat
 			// Falls keine Aenderung -> Keine KorrekturZahlung notwendig!
-			boolean vollkostenChanged = vollkostenVorgaenger.compareTo(zeitabschnittNeu.getVollkosten()) != 0;
-			boolean elternbeitragChanged = elternbeitragVorgaenger.compareTo(zeitabschnittNeu.getElternbeitrag()) != 0;
+			boolean vollkostenChanged = vollkostenVorgaenger != null && vollkostenVorgaenger.compareTo(zeitabschnittNeu.getVollkosten()) != 0;
+			boolean elternbeitragChanged = elternbeitragVorgaenger != null && elternbeitragVorgaenger.compareTo(zeitabschnittNeu.getElternbeitrag()) != 0;
 			if (!vollkostenChanged && !elternbeitragChanged) {
 				zeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IDENTISCH);
 			} else {

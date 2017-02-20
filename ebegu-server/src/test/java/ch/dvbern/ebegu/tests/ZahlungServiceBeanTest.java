@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ejb.EJBException;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
@@ -69,11 +70,6 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		TestDataUtil.prepareParameters(gesuchsperiode.getGueltigkeit(), persistence);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-
-	}
-
 	@Test
 	public void findGesuchIdsOfAktuellerAntrag() throws Exception {
 		Gesuch verfuegtesGesuch = createGesuch(true);
@@ -108,6 +104,13 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(zahlungsauftrag.getZahlungen().isEmpty());
 	}
 
+	@Test(expected = EJBException.class)
+	public void zahlungsauftragErstellenZweiEntwuerfe() {
+		zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Entwurf 1");
+		// Es darf kein zweiter Auftrag erstellt werden, solange der erste nicht freigegeben ist
+		zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Entwurf 2");
+	}
+
 	@Test
 	public void zahlungsauftragErstellenMitKorrektur() throws Exception {
 		Gesuch erstgesuch = createGesuch(true);
@@ -122,9 +125,12 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		for (int i = 0; i < countMonate; i++) {
 			assertZahlungsdetail(zahlung.getZahlungspositionen().get(i), ZahlungspositionStatus.NORMAL, 1289.30);
 		}
+		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
+
 		// Jetzt sollten keine offenen mehr vorhanden sein:
 		zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Normaler Auftrag wiederholt");
 		assertZahlungsauftrag(zahlungsauftrag, 0);
+		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
 
 		// Eine (verfuegte) Mutation erstellen, welche rueckwirkende Auswirkungen hat auf Vollkosten
 		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), true);
@@ -138,6 +144,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position), ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, 1074.40);
 			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position+1), ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, -1289.30d);
 		}
+		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
 
 		// Eine weitere (verfuegte) Mutation, welche den Elternbeitrag erhoeht:
 		createMutationEinkommen(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), true);
@@ -151,6 +158,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position), ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG, 923.40);
 			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position+1), ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG, -1074.40d);
 		}
+		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
 
 		// Eine (NICHT verfuegte) Mutation erstellen -> Keine Auswirkungen!
 		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), false);
