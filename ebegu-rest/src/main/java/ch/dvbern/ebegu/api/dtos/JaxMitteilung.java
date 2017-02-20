@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxMitteilung extends JaxAbstractDTO {
 
-	private static final long serialVersionUID = -1297021341674137397L;
+	private static final long serialVersionUID = -1297771341674137397L;
 
 	@Nullable
 	private JaxFall fall;

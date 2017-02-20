@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
+import ch.dvbern.ebegu.api.dtos.JaxMitteilungen;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
 import ch.dvbern.ebegu.entities.Fall;
@@ -25,10 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -154,7 +152,7 @@ public class MitteilungResource {
 	@Path("/forrole/fall/{fallId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<JaxMitteilung> getMitteilungenForCurrentRolleForFall(
+	public JaxMitteilungen getMitteilungenForCurrentRolleForFall(
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -173,7 +171,7 @@ public class MitteilungResource {
 					convertedMitteilungen.add(converter.mitteilungToJAX(mitteilung, new JaxMitteilung()));
 				}
 			});
-			return convertedMitteilungen;
+			return new JaxMitteilungen(convertedMitteilungen); // We wrap the list to avoid loosing subtypes attributes
 		}
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}

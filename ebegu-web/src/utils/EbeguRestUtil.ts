@@ -1925,7 +1925,12 @@ export default class EbeguRestUtil {
         let mitteilungenList: Array<TSMitteilung> = [];
         if (mitteilungen) {
             for (let i = 0; i < mitteilungen.length; i++) {
-                mitteilungenList.push(this.parseMitteilung(new TSMitteilung(), mitteilungen[i]));
+                if (this.isBetreuungsmitteilung(mitteilungen[i])) {
+                    mitteilungenList.push(this.parseBetreuungsmitteilung(new TSBetreuungsmitteilung(), mitteilungen[i]));
+
+                } else { // by default normal Mitteilung
+                    mitteilungenList.push(this.parseMitteilung(new TSMitteilung(), mitteilungen[i]));
+                }
             }
         }
         return mitteilungenList;
@@ -1959,5 +1964,9 @@ export default class EbeguRestUtil {
             }
         }
         return tsBetreuungsmitteilung;
+    }
+
+    private isBetreuungsmitteilung(mitteilung: any): boolean {
+        return mitteilung.betreuungspensen !== undefined;
     }
 }

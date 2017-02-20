@@ -99,7 +99,7 @@ export default class MitteilungRS {
     public getMitteilungenForCurrentRolleForFall(fallId: string): IPromise<Array<TSMitteilung>> {
         return this.http.get(this.serviceURL + '/forrole/fall/' + fallId).then((response: any) => {
             this.log.debug('PARSING mitteilung REST object ', response.data);
-            return this.ebeguRestUtil.parseMitteilungen(response.data);
+            return this.ebeguRestUtil.parseMitteilungen(response.data.mitteilungen); // The response is a wrapper
         });
     }
 

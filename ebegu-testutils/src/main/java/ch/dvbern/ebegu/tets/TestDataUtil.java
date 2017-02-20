@@ -854,9 +854,33 @@ public final class TestDataUtil {
 		return gesuch;
 	}
 
+	@SuppressWarnings("MagicNumber")
+	public static Betreuungsmitteilung createBetreuungmitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp,
+													   Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
+		final Betreuungsmitteilung mitteilung = new Betreuungsmitteilung();
+		fillOutMitteilung(fall, empfaenger, empfaengerTyp, sender, senderTyp, mitteilung);
+
+		Set<BetreuungsmitteilungPensum> betPensen = new HashSet<>();
+
+		BetreuungsmitteilungPensum pensum = new BetreuungsmitteilungPensum();
+		pensum.setBetreuungsmitteilung(mitteilung);
+		pensum.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		pensum.setPensum(30);
+
+		betPensen.add(pensum);
+		mitteilung.setBetreuungspensen(betPensen);
+
+		return mitteilung;
+	}
+
 	public static Mitteilung createMitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp,
 											  Benutzer sender, MitteilungTeilnehmerTyp senderTyp) {
 		Mitteilung mitteilung = new Mitteilung();
+		fillOutMitteilung(fall, empfaenger, empfaengerTyp, sender, senderTyp, mitteilung);
+		return mitteilung;
+	}
+
+	private static void fillOutMitteilung(Fall fall, Benutzer empfaenger, MitteilungTeilnehmerTyp empfaengerTyp, Benutzer sender, MitteilungTeilnehmerTyp senderTyp, Mitteilung mitteilung) {
 		mitteilung.setFall(fall);
 		mitteilung.setEmpfaenger(empfaenger);
 		mitteilung.setSender(sender);
@@ -865,6 +889,5 @@ public final class TestDataUtil {
 		mitteilung.setEmpfaengerTyp(empfaengerTyp);
 		mitteilung.setSenderTyp(senderTyp);
 		mitteilung.setMessage("Message");
-		return mitteilung;
 	}
 }
