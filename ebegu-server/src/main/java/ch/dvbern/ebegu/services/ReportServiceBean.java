@@ -77,12 +77,12 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		if (em != null) {
 
 			Query  gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery");
-			gesuchStichtagQuery.setParameter("stichTagDate", DateUtil.SQL_DATETIME_FORMAT.format(datetime));
+			// Wir rechnen zum Stichtag einen Tag dazu, damit es bis 24.00 des Vorabends gilt.
+			gesuchStichtagQuery.setParameter("stichTagDate", DateUtil.SQL_DATETIME_FORMAT.format(datetime.plusDays(1)));
 			gesuchStichtagQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchStichtagQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchStichtagQuery.getResultList();
 		}
-
 		return results;
 	}
 
@@ -105,7 +105,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		geuschStichtagExcelConverter.applyAutoSize(sheet);
 
 		return createWorkbook(workbook);
-
 	}
 
 	@Override
@@ -129,7 +128,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			gesuchPeriodeQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchPeriodeQuery.getResultList();
 		}
-
 		return results;
 	}
 
@@ -153,7 +151,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		geuschZeitraumExcelConverter.applyAutoSize(sheet);
 
 		return createWorkbook(workbook);
-
 	}
 
 	public enum ReportResource {
@@ -171,5 +168,4 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			return path;
 		}
 	}
-
 }

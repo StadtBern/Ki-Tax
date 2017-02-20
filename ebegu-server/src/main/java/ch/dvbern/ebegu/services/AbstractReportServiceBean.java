@@ -45,6 +45,4 @@ public abstract class AbstractReportServiceBean extends AbstractBaseService {
 		monitor(ReportServiceBean.class, String.format("mergeData (sheet=%s)", sheet.getSheetName()),
 			() -> ExcelMerger.mergeData(sheet, mergeFields, excelMergerDTO));
 	}
-
-
 }

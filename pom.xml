@@ -401,6 +401,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.5.3</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>annotations</artifactId>
         </dependency>
@@ -464,12 +470,13 @@
             <version>1.0.0.Alpha6</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-persistence-integration-tests</artifactId>
-            <version>1.0.0.Alpha7</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- TODO hefr wozu gebraucht? -->
+        <!--<dependency>-->
+            <!--<groupId>org.jboss.arquillian.extension</groupId>-->
+            <!--<artifactId>arquillian-persistence-integration-tests</artifactId>-->
+            <!--<version>1.0.0.Alpha7</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
         <!--Um Tests mit arquillian in einem deployment laufen zu lassen-->
         <dependency>
             <groupId>org.eu.ingwar.tools</groupId>
@@ -579,13 +586,14 @@
 
 
         <profile>
-            <!--<activation>-->
-                <!--<property>-->
-                    <!--&lt;!&ndash; hiermit wird getestet ob ein property disable-managed-wildfly existiert, wenn nicht lauft-->
-                    <!--arquillian mit embedded container&ndash;&gt;-->
-                    <!--<name>!disable-managed-wildfly</name>-->
-                <!--</property>-->
-            <!--</activation>-->
+            <!-- TODO hefr war auskommentiert -->
+            <activation>
+                <property>
+                    <!-- hiermit wird getestet ob ein property disable-managed-wildfly existiert, wenn nicht lauft
+                    arquillian mit embedded container-->
+                    <name>!disable-managed-wildfly</name>
+                </property>
+            </activation>
 
             <id>test-wildfly-managed</id>
             <properties>

@@ -46,7 +46,7 @@ public class ReportResource {
 		@QueryParam("dateTimeStichtag") @Nonnull String dateTimeStichtag,
 		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-	throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
+	    throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
 
 		Validate.notNull(dateTimeStichtag);
 		LocalDateTime dateTime = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeStichtag);
@@ -59,7 +59,6 @@ public class ReportResource {
 			.header("Content-Length", reportBytes.length)
 			.type(MediaType.valueOf(MIME_TYPE_EXCEL))
 			.build();
-
 	}
 
 	@Nonnull
@@ -79,8 +78,7 @@ public class ReportResource {
 		LocalDateTime dateTimeFrom = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeFromParam);
 		LocalDateTime dateTimeTo = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeToParam);
 
-		if (!dateTimeTo.isAfter(dateTimeFrom))
-		{
+		if (!dateTimeTo.isAfter(dateTimeFrom)) {
 			throw new EbeguRuntimeException("getGesuchZeitraumReportExcel", "Das von-Datum muss vor dem bis-Datum sein.");
 		}
 
@@ -93,7 +91,5 @@ public class ReportResource {
 			.header("Content-Length", reportBytes.length)
 			.type(MediaType.valueOf(MIME_TYPE_EXCEL))
 			.build();
-
 	}
-
 }

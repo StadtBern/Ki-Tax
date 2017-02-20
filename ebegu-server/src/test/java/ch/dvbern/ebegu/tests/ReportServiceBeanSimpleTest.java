@@ -7,7 +7,6 @@ import org.junit.Test;
 
 public class ReportServiceBeanSimpleTest {
 
-
 	@Test
 	public void testGesuchStichtagQueryAssumptions() {
 		Assert.assertEquals("IN_BEARBEITUNG_JA", AntragStatus.IN_BEARBEITUNG_JA.name());
@@ -15,7 +14,6 @@ public class ReportServiceBeanSimpleTest {
 		Assert.assertEquals("BESCHWERDE_HAENGIG", AntragStatus.BESCHWERDE_HAENGIG.name());
 		Assert.assertEquals("TAGESSCHULE", BetreuungsangebotTyp.TAGESSCHULE.name());
 	}
-
 
 	@Test
 	public void testGesuchZeitraumQueryAssumptions() {
@@ -42,6 +40,4 @@ public class ReportServiceBeanSimpleTest {
 		Assert.assertEquals("BESCHWERDE_HAENGIG", AntragStatus.BESCHWERDE_HAENGIG.name());
 		Assert.assertEquals("TAGESSCHULE", BetreuungsangebotTyp.TAGESSCHULE.name());
 	}
-
-
 }
