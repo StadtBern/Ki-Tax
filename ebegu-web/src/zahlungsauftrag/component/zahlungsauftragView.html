@@ -1,23 +1,25 @@
-<div class="zahlungView">
+<div class="zahlungsauftragView">
     <div class="col-md-12">
-        <div class="row">
-            <div class="col-md-9 col-md-offset-1">
-                <h3 data-translate="ZAHLUNG"></h3>
-            </div>
-            <div class="col-md-1 text-right">
-                <h3 ng-bind="vm.getZahlungen() ? vm.getZahlungen().length : 0"></h3>
-            </div>
-        </div>
 
-        <button ng-click="vm.createZahlung()"
+
+        <button ng-click="vm.createZahlungsauftrag()"
                 aria-label="{{ZAHLUNG_ERSTELLEN | translate}}" style="text-align: center;">
             <span data-translate="ZAHLUNG_ERSTELLEN"></span>
         </button>
 
         <div class="row">
+            <div class="col-md-9 col-md-offset-1">
+                <h3 data-translate="ZAHLUNGSAUFTRAEGE_UPPER"></h3>
+            </div>
+            <div class="col-md-1 text-right">
+                <h3 ng-bind="vm.getZahlungsauftragen() ? vm.getZahlungsauftragen().length : 0"></h3>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-md-10 col-md-offset-1 table-responsive">
 
-                <table st-table="displayedCollection" st-safe-src="vm.getZahlungen()"
+                <table st-table="displayedCollection" st-safe-src="vm.getZahlungsauftragen()"
                        st-delay="20"
                        class="table fixedtable table-striped">
                     <thead>
@@ -36,7 +38,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-click="vm.gotoMitteilung(row)">
+                        ng-click="vm.gotoZahlung(row)">
                         <!-- datumFaellig -->
                         <td ellipsis-tooltip="{{row.datumFaellig | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.datumFaellig | amDateFormat : 'DD.MM.YYYY'"></td>

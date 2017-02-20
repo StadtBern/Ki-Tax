@@ -1,0 +1,100 @@
+import GesuchRS from '../../gesuch/service/gesuchRS.rest';
+import {IScope, IQService, IFilterService, IHttpBackendService} from 'angular';
+import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
+import BerechnungsManager from '../../gesuch/service/berechnungsManager';
+import {IStateService} from 'angular-ui-router';
+import {EbeguWebZahlungsauftrag} from '../zahlungsauftrag.module';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import TestDataUtil from '../../utils/TestDataUtil';
+import {ZahlungsauftragViewController} from './zahlungsauftragView';
+import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import TSMitteilung from '../../models/TSMitteilung';
+import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
+import TSGesuch from '../../models/TSGesuch';
+import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import TSFall from '../../models/TSFall';
+import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
+import TSUser from '../../models/TSUser';
+import {TSRole} from '../../models/enums/TSRole';
+import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
+import MitteilungRS from '../../core/service/mitteilungRS.rest';
+import EbeguUtil from '../../utils/EbeguUtil';
+
+
+describe('zahlungsauftragView', function () {
+
+    let authServiceRS: AuthServiceRS;
+    let gesuchRS: GesuchRS;
+    let ebeguUtil: EbeguUtil;
+    let mitteilungRS: MitteilungRS;
+    let zahlungsauftragViewController: ZahlungsauftragViewController;
+    let $q: IQService;
+    let $scope: IScope;
+    let $filter: IFilterService;
+    let $httpBackend: IHttpBackendService;
+    let gesuchModelManager: GesuchModelManager;
+    let berechnungsManager: BerechnungsManager;
+    let $state: IStateService;
+    let $log: any;
+    let CONSTANTS: any;
+    let wizardStepManager: WizardStepManager;
+    let mockMitteilung: TSMitteilung;
+
+
+    beforeEach(angular.mock.module(EbeguWebZahlungsauftrag.name));
+
+    beforeEach(angular.mock.inject(function ($injector: any) {
+        authServiceRS = $injector.get('AuthServiceRS');
+        mitteilungRS = $injector.get('MitteilungRS');
+        gesuchRS = $injector.get('GesuchRS');
+        $q = $injector.get('$q');
+        $scope = $injector.get('$rootScope');
+        $filter = $injector.get('$filter');
+        $httpBackend = $injector.get('$httpBackend');
+        gesuchModelManager = $injector.get('GesuchModelManager');
+        berechnungsManager = $injector.get('BerechnungsManager');
+        $state = $injector.get('$state');
+        $log = $injector.get('$log');
+        CONSTANTS = $injector.get('CONSTANTS');
+        wizardStepManager = $injector.get('WizardStepManager');
+        mockMitteilung = mockGetMitteilung();
+    }));
+
+    describe('API Usage', function () {
+        describe('getMitteilungen', function () {
+            it('should return the list of Mitteilungen', function () {
+                mockRestCalls();
+                zahlungsauftragViewController = new ZahlungsauftragViewController(mitteilungRS, ebeguUtil, CONSTANTS, undefined);
+                $scope.$apply();
+                expect(mitteilungRS.getMitteilungenForZahlungsauftrag).toHaveBeenCalled();
+                let list: Array<TSMitteilung> = zahlungsauftragViewController.getMitteilungen();
+                expect(list).toBeDefined();
+                expect(list.length).toBe(1);
+                expect(list[0]).toEqual(mockMitteilung);
+            });
+        });
+    });
+
+    function mockGetMitteilung(): TSMitteilung {
+        let mockFall: TSFall = new TSFall();
+        mockFall.fallNummer = 123;
+        let gesuchsteller: TSUser = new TSUser();
+        gesuchsteller.role = TSRole.GESUCHSTELLER;
+        let mockMitteilung: TSMitteilung = new TSMitteilung(mockFall, undefined, TSMitteilungTeilnehmerTyp.GESUCHSTELLER, TSMitteilungTeilnehmerTyp.JUGENDAMT,
+            gesuchsteller, undefined, 'Frage', 'Warum ist die Banane krumm?', TSMitteilungStatus.NEU, undefined);
+        let dtoList: Array<TSMitteilung> = [mockMitteilung];
+        let totalSize: number = 1;
+        spyOn(mitteilungRS, 'getMitteilungenForZahlungsauftrag').and.returnValue($q.when(dtoList));
+        return mockMitteilung;
+    }
+
+    function mockRestCalls(): void {
+        TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+        $httpBackend.when('GET', '/ebegu/api/v1/institutionen').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/benutzer').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
+    }
+});
+

@@ -1,10 +1,13 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
+
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,9 +23,11 @@ public class JaxZahlungsauftrag extends JaxAbstractDateRangedDTO {
 	private static final long serialVersionUID = 5908117979039694339L;
 
 	@NotNull
+	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime datumFaellig;
 
 	@NotNull
+	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime datumGeneriert;
 
 	@NotNull

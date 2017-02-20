@@ -1,16 +1,16 @@
 import {IComponentOptions} from 'angular';
 import IRootScopeService = angular.IRootScopeService;
-let template = require('./dv-zahlung.html');
+let template = require('./dv-zahlungsauftrag.html');
 
-export class DvZahlungComponentConfig implements IComponentOptions {
+export class DvZahlungsauftragComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {};
     template = template;
-    controller = DvZahlungController;
+    controller = DvZahlungsauftragController;
     controllerAs = 'vm';
 }
 
-export class DvZahlungController {
+export class DvZahlungsauftragController {
 
     static $inject: any[] = [];
 
