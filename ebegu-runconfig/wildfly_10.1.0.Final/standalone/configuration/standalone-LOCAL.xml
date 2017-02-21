@@ -45,6 +45,8 @@
 		<property name="ebegu.mail.smtp.host" value="mailext.dvbern.ch"/>
 		<property name="ebegu.mail.smtp.port" value="25"/>
 		<property name="ebegu.hostname" value="app.ebegu.ch:3000/#"/>
+
+		<property name="ebegu.dump.dbunit.xml" value="true"/>
     </system-properties>
 
 

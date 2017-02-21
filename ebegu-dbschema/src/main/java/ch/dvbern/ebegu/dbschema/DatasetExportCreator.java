@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.dbschema;
 
+import ch.dvbern.ebegu.config.EbeguConfigurationImpl;
 import org.apache.commons.lang.StringUtils;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -41,9 +42,20 @@ public class DatasetExportCreator {
 	@PersistenceContext(unitName = "ebeguPersistenceUnit")
 	EntityManager em;
 
+
+
 	@SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
 	@PostConstruct
 	public void exportForDBUnit() {
+
+		// Datenbank als DBUnit-File exportieren beim Startup.
+		// Nur wenn das entsprechende Property gesetzt ist
+		String paramExport = System.getProperty(EbeguConfigurationImpl.EBEGU_DUMP_DBUNIT_XML, "false");
+		boolean doExport = Boolean.parseBoolean(paramExport);
+		if (!doExport) {
+			return;
+		}
+
 		try {
 			final DataSource dataSource = InitialContext.doLookup(DATASOURCE_NAME);
 			Connection jdbcConnection = dataSource.getConnection();
