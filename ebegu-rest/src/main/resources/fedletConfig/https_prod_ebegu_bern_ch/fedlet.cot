@@ -1,0 +1,6 @@
+#Wed Sep 14 10:28:41 CEST 2016
+sun-fm-saml2-writerservice-url=
+sun-fm-cot-status=Active
+cot-name=FED
+sun-fm-trusted-providers=https\://elogin.bern.ch/am,https\://ebegu.bern.ch/ebegu
+sun-fm-saml2-readerservice-url=
