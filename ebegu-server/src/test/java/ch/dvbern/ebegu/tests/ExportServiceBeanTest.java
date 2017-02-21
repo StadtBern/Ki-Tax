@@ -4,11 +4,8 @@ import ch.dvbern.ebegu.dto.dataexport.v1.VerfuegungExportDTO;
 import ch.dvbern.ebegu.dto.dataexport.v1.VerfuegungenExportDTO;
 import ch.dvbern.ebegu.dto.dataexport.v1.ZeitabschnittExportDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.*;
-import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -23,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -74,7 +70,7 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 	@Before
 	public void init() {
 		final Gesuchsperiode gesuchsperiode = createGesuchsperiode(true);
-		final Mandant mandant = insertInstitutionenSupp();
+		final Mandant mandant = insertInstitutionen();
 		createBenutzer(mandant);
 		TestDataUtil.prepareParameters(gesuchsperiode.getGueltigkeit(), persistence);
 	}
@@ -143,62 +139,4 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 			Assert.assertEquals(verfZeitabschn.getAnspruchberechtigtesPensum(), matchingZeitAbschn.getAnspruchPct());
 		}
 	}
-
-	//todo homa delete all the following for dev because it is defined on AbstractEbeguTest, this was just inserted for support
-	/**
-	 * Helper für init. Speichert Gesuchsperiode in DB
-	 */
-	protected Gesuchsperiode createGesuchsperiodeCurrent(boolean active) {
-		Gesuchsperiode gesuchsperiode = TestDataUtil.createCurrentGesuchsperiode();
-		gesuchsperiode.setActive(active);
-		return gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
-	}
-
-	/**
-	 * Helper für init. Speichert Traegerschaften, Mandant und Institution in DB
-	 */
-	protected Mandant insertInstitutionenSupp() {
-
-		final InstitutionStammdaten institutionStammdatenKitaAaregg = TestDataUtil.createInstitutionStammdatenKitaWeissenstein();
-		final InstitutionStammdaten institutionStammdatenKitaBruennen = TestDataUtil.createInstitutionStammdatenKitaBruennen();
-		final InstitutionStammdaten institutionStammdatenTagiAaregg = TestDataUtil.createInstitutionStammdatenTagiWeissenstein();
-
-		Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
-		traegerschaftService.saveTraegerschaft(traegerschaft);
-		institutionStammdatenKitaAaregg.getInstitution().setTraegerschaft(traegerschaft);
-		institutionStammdatenKitaBruennen.getInstitution().setTraegerschaft(traegerschaft);
-		institutionStammdatenTagiAaregg.getInstitution().setTraegerschaft(traegerschaft);
-
-		Mandant mandant = TestDataUtil.createDefaultMandant();
-		persistence.persist(mandant);
-		institutionStammdatenKitaAaregg.getInstitution().setMandant(mandant);
-		institutionStammdatenKitaBruennen.getInstitution().setMandant(mandant);
-		institutionStammdatenTagiAaregg.getInstitution().setMandant(mandant);
-
-		institutionService.createInstitution(institutionStammdatenKitaAaregg.getInstitution());
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaAaregg);
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenTagiAaregg);
-
-		institutionService.createInstitution(institutionStammdatenKitaBruennen.getInstitution());
-		institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenKitaBruennen);
-
-		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_KITA));
-		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_BRUENNEN_KITA));
-		Assert.assertNotNull(institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_STAMMDATEN_WEISSENSTEIN_TAGI));
-		return mandant;
-	}
-
-	/**
-	 * Helper für init. Speichert Benutzer in DB
-	 */
-	protected void createBenutzer(Mandant mandant) {
-		try{
-			JBossLoginContextFactory.createLoginContext("admin", "admin").login();
-		} catch (LoginException ex){
-			LOG.error("could not login as admin user for test");
-		}
-		Benutzer i = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
-		persistence.persist(i);
-	}
-
 }
