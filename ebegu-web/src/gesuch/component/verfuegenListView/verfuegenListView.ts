@@ -117,14 +117,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public openVerfuegung(kind: TSKindContainer, betreuung: TSBetreuung): void {
         if (this.kannVerfuegungOeffnen(betreuung)) {
-            let kindNumber: number = this.gesuchModelManager.findKind(kind);
-            if (kindNumber > 0) {
-                this.gesuchModelManager.setKindNumber(kindNumber);
-                let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
-                if (betreuungNumber > 0) {
+            if (kind && betreuung) {
+                let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
+                if (kindIndex >= 0) {
+                    this.gesuchModelManager.setKindIndex(kindIndex);     //betreuungsnummer > 1 wird nicht mehr geprueft
                     this.$state.go('gesuch.verfuegenView', {
-                        betreuungNumber: betreuungNumber,
-                        kindNumber: kindNumber,
+                        betreuungNumber: betreuung.betreuungNummer,
+                        kindNumber: kind.kindNummer,
                         gesuchId: this.getGesuchId()
                     });
                 }
