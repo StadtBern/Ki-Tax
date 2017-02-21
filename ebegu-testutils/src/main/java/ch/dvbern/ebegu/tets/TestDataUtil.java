@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
@@ -889,5 +890,30 @@ public final class TestDataUtil {
 		mitteilung.setEmpfaengerTyp(empfaengerTyp);
 		mitteilung.setSenderTyp(senderTyp);
 		mitteilung.setMessage("Message");
+	}
+
+	public static Betreuung persistBetreuung(BetreuungService betreuungService, Persistence<Gesuch> persistence) {
+		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
+		for (BetreuungspensumContainer container : betreuung.getBetreuungspensumContainers()) {
+			persistence.persist(container);
+		}
+		for (AbwesenheitContainer abwesenheit : betreuung.getAbwesenheitContainers()) {
+			persistence.persist(abwesenheit);
+		}
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
+		persistence.persist(betreuung.getInstitutionStammdaten());
+		persistence.persist(betreuung.getKind().getKindGS().getPensumFachstelle().getFachstelle());
+		persistence.persist(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
+
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		betreuung.getKind().setGesuch(gesuch);
+		persistence.persist(betreuung.getKind());
+
+		betreuungService.saveBetreuung(betreuung, false);
+
+		return betreuung;
+
 	}
 }

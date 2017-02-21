@@ -11,6 +11,7 @@ import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,7 +44,10 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 	private MitteilungResource mitteilungResource;
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
+	private Persistence<Gesuch> persistence;
+
+	@Inject
+	private BetreuungService betreuungService;
 
 
 	@Test
@@ -96,6 +100,8 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 
 		final Betreuungsmitteilung betreuungMitteilung = TestDataUtil.createBetreuungmitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT, sender, MitteilungTeilnehmerTyp.INSTITUTION);
 		betreuungMitteilung.setMitteilungStatus(MitteilungStatus.NEU);
+		final Betreuung betreuung = TestDataUtil.persistBetreuung(betreuungService, persistence);
+		betreuungMitteilung.setBetreuung(betreuung);
 		persistence.persist(betreuungMitteilung);
 
 		final JaxMitteilungen mitteilungen = mitteilungResource.getMitteilungenForCurrentRolleForFall(new JaxId(fall.getId()), null, null);

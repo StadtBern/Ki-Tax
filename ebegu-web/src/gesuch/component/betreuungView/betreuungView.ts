@@ -238,7 +238,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (this.getBetreuungModel() && (this.getBetreuungspensen() === undefined || this.getBetreuungspensen() === null)) {
             this.getBetreuungModel().betreuungspensumContainers = [];
         }
-        //todo kann entfernt werden sobald f5 auf dieser seite funktioniert
+        //Sollte nie vorkommen. Trotzdem wird der Benutzer informiert wenn es passieren wuerde
         if (!this.getBetreuungModel()) {
             this.errorService.addMesageAsError('Betreuungsmodel ist nicht korrekt initialisiert. Die Seite unterstuetzt noch keine direktnavigation');
         }
@@ -419,7 +419,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     public mutationsmeldungSenden(): void {
         // send mutationsmeldung (dummy copy)
-        if (this.mutationsmeldungModel) {
+        if (this.isGesuchValid() && this.mutationsmeldungModel) {
             this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                 title: 'MUTATIONSMELDUNG_CONFIRMATION',
                 deleteText: 'MUTATIONSMELDUNG_BESCHREIBUNG'

@@ -19,6 +19,8 @@ import java.util.TreeSet;
 @Entity
 public class Betreuungsmitteilung extends Mitteilung {
 
+	private static final long serialVersionUID = 489324250868016126L;
+
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuungsmitteilung")
 	private Set<BetreuungsmitteilungPensum> betreuungspensen = new TreeSet<>();
 
