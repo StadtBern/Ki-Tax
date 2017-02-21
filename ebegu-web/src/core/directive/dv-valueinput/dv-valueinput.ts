@@ -38,6 +38,7 @@ export class ValueinputController {
     dvOnBlur: () => void;
 
     static $inject: string[] = ['$timeout'];
+
     constructor(private $timeout: ITimeoutService) {
     }
 

@@ -82,10 +82,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * Creates a Betreuung for the kind given by the kindNumber attribute of the class.
      * Thus the kindnumber must be set before this method is called.
      */
-    public initEmptyBetreuung(betreuungNr : number): TSBetreuung {
+    public initEmptyBetreuung(betreunngNumber : number): TSBetreuung {
         let tsBetreuung: TSBetreuung = new TSBetreuung();
         tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
-        tsBetreuung.betreuungNummer = betreuungNr;
+        tsBetreuung.betreuungNummer = betreunngNumber;
         return tsBetreuung;
     }
 

@@ -827,7 +827,7 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Sucht die Betreuung mit der eingegebenen betreuungID in allen Betreuungen des aktuellen Kind. betreuungNumber wird gesetzt und zurueckgegeben
+     * Sucht die Betreuung mit der eingegebenen betreuungID in allen Betreuungen des aktuellen Kind. betreuungIndex wird gesetzt und zurueckgegeben
      * @param betreuungID
      * @returns {number}
      */

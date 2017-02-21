@@ -59,7 +59,7 @@ describe('gesuchModelManager', function () {
         antragStatusHistoryRS = $injector.get('AntragStatusHistoryRS');
     }));
 
-    describe('API Usage', function () {
+    fdescribe('API Usage', function () {
         describe('removeBetreuungFromKind', () => {
             it('should remove the current Betreuung from the list of the current Kind', () => {
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
@@ -82,8 +82,10 @@ describe('gesuchModelManager', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 let kindToWorkWith: TSKindContainer = gesuchModelManager.getKindToWorkWith();
                 kindToWorkWith.nextNumberBetreuung = 5;
+                // kindToWorkWith.kindNummer = 1;
                 spyOn(kindRS, 'findKind').and.returnValue($q.when(kindToWorkWith));
                 spyOn(betreuungRS, 'saveBetreuung').and.returnValue($q.when(betreuung));
+
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
 
                 gesuchModelManager.saveBetreuung(gesuchModelManager.getKindToWorkWith().betreuungen[0], false);
