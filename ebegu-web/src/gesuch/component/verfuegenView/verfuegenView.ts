@@ -17,6 +17,7 @@ import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSBetreuung from '../../../models/TSBetreuung';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import ExportRS from '../../service/exportRS.rest';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -35,7 +36,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log', '$stateParams', '$window'];
+        'DvDialog', 'DownloadRS', '$log', '$stateParams', '$window' , 'ExportRS'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
@@ -43,7 +44,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, $scope: IScope, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IBetreuungStateParams,
-                private $window: ng.IWindowService) {
+                private $window: ng.IWindowService, private exportRS: ExportRS) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
 
@@ -301,6 +302,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
             });
     }
 
+    public openExport(): void {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
+        this.downloadRS.getDokumentAccessTokenVerfuegungExport(this.getBetreuung().id)  .then((downloadFile: TSDownloadFile) => {
+            this.$log.debug('accessToken for export: ' + downloadFile.accessToken);
+            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, true, win);
+        });
+    }
+
     public openNichteintretenPDF(): void {
         let win: Window = this.downloadRS.prepareDownloadWindow();
         this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(this.getBetreuung().id, false)
@@ -322,6 +331,10 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     public showVerfuegungPdfLink(): boolean {
+        return !this.isBetreuungInStatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
+    }
+
+    public showExportLink(): boolean {
         return !this.isBetreuungInStatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
     }
 

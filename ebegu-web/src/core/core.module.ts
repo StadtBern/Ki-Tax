@@ -67,6 +67,7 @@ import DVTrimEmpty from './directive/dv-trim-empty/dv-trim-empty';
 import {DvMobileNavigationToggleComponentConfig} from './component/dv-mobile-navigation-toggle/dv-mobile-navigation-toggle';
 import {DVValueinput} from './directive/dv-valueinput/dv-valueinput';
 import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
+import ExportRS from '../gesuch/service/exportRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -150,6 +151,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('WizardStepRS', WizardStepRS)
     .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
     .service('GlobalCacheService', GlobalCacheService)
+    .service('ExportRS', ExportRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvValueinput', DVValueinput.factory())
