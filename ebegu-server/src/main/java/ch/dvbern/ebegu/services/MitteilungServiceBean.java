@@ -278,7 +278,6 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			if (MitteilungStatus.NEU.equals(mitteilung.getMitteilungStatus())) {
 				setMitteilungsStatusIfBerechtigt(mitteilung, MitteilungStatus.GELESEN, MitteilungStatus.NEU);
 			}
-			persistence.merge(mitteilung);
 		}
 		return mitteilungen;
 	}
@@ -339,12 +338,6 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		betreuungsmitteilung.setMitteilungStatus(MitteilungStatus.NEU); // vorsichtshalber
 		betreuungsmitteilung.setSentDatum(LocalDateTime.now());
 		ensureEmpfaengerIsSet(betreuungsmitteilung);
-
-		Validator validator = Validation.byDefaultProvider().configure().buildValidatorFactory().getValidator();
-		final Set<ConstraintViolation<Mitteilung>> validationErrors = validator.validate(betreuungsmitteilung);
-		if (!validationErrors.isEmpty()) {
-			throw new ConstraintViolationException(validationErrors);
-		}
 
 		return persistence.persist(betreuungsmitteilung); // A Betreuungsmitteilung is created and sent, therefore persist and not merge
 	}

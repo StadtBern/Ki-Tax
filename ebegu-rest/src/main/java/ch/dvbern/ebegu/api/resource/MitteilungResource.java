@@ -306,7 +306,6 @@ public class MitteilungResource {
 				convertedMitteilungen.add(converter.mitteilungToJAX(iterator.next(), new JaxMitteilung()));
 			}
 			return new JaxMitteilungen(convertedMitteilungen);
-//			return mitteilungen.stream().map(mitteilung -> converter.mitteilungToJAX(mitteilung)).collect(Collectors.toList());
 		}
 		throw new EbeguEntityNotFoundException("setAllNewMitteilungenOfFallGelesen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + fallId.getId());
 	}

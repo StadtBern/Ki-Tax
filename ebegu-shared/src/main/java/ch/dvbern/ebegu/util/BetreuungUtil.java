@@ -15,12 +15,6 @@ import java.util.Optional;
  */
 public class BetreuungUtil {
 
-
-	public static int getMinValueFromBetreuungsangebotTyp(LocalDate stichtag, BetreuungsangebotTyp betreuungsangebotTyp,
-														  EbeguParameterService ebeguParameterService) {
-		return getMinValueFromBetreuungsangebotTyp(stichtag, betreuungsangebotTyp, ebeguParameterService, null);
-	}
-
 	/**
 	 * Returns the corresponding minimum value for the given betreuungsangebotTyp.
 	 *
@@ -46,13 +40,7 @@ public class BetreuungUtil {
 			key = EbeguParameterKey.PARAM_PENSUM_TAGESELTERN_MIN;
 		}
 		if (key != null) {
-			Optional<EbeguParameter> parameter;
-			if (em != null) {
-				parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag, em);
-			}
-			else {
-				parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag);
-			}
+			Optional<EbeguParameter> parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag, em);
 			if (parameter.isPresent()) {
 				return parameter.get().getValueAsInteger();
 			} else{

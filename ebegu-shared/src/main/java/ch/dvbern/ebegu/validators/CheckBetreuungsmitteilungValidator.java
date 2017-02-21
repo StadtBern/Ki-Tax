@@ -10,6 +10,9 @@ import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.util.BetreuungUtil;
 
 import javax.enterprise.inject.spi.CDI;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.text.MessageFormat;
@@ -25,6 +28,12 @@ public class CheckBetreuungsmitteilungValidator implements ConstraintValidator<C
 
 	private EbeguParameterService ebeguParameterService;
 	private BetreuungService betreuungService;
+
+	// We need to pass to EbeguParameterService a new EntityManager to avoid errors like ConcurrentModificatinoException. So we create it here
+	// and pass it to the methods of EbeguParameterService we need to call.
+	//http://stackoverflow.com/questions/18267269/correct-way-to-do-an-entitymanager-query-during-hibernate-validation
+	@PersistenceUnit(unitName = "ebeguPersistenceUnit")
+	private EntityManagerFactory entityManagerFactory;
 
 
 	public CheckBetreuungsmitteilungValidator() {
@@ -54,9 +63,23 @@ public class CheckBetreuungsmitteilungValidator implements ConstraintValidator<C
 		return ebeguParameterService;
 	}
 
+	private EntityManager createEntityManager() {
+		if (entityManagerFactory != null) {
+			return  entityManagerFactory.createEntityManager(); // creates a new EntityManager
+		}
+		return null;
+	}
+
+	private void closeEntityManager(EntityManager em) {
+		if (em != null) {
+			em.close();
+		}
+	}
+
 	@Override
 	public boolean isValid(Betreuungsmitteilung mitteilung, ConstraintValidatorContext context) {
 
+		final EntityManager em = createEntityManager();
 		getBetreuungService();
 		getEbeguParameterService();
 		final Optional<Betreuung> betreuung = this.betreuungService.findBetreuung(mitteilung.getBetreuung().getId());
@@ -71,13 +94,15 @@ public class CheckBetreuungsmitteilungValidator implements ConstraintValidator<C
 			//Wir laden  die Parameter von Start-Gesuchsperiode falls Betreuung schon laenger als Gesuchsperiode besteht
 			LocalDate stichtagParameter = betreuungAb.isAfter(gesuchsperiodeStart) ? betreuungAb : gesuchsperiodeStart;
 			int betreuungsangebotTypMinValue = BetreuungUtil.getMinValueFromBetreuungsangebotTyp(
-				stichtagParameter, mitteilung.getBetreuung().getBetreuungsangebotTyp(), ebeguParameterService);
+				stichtagParameter, mitteilung.getBetreuung().getBetreuungsangebotTyp(), ebeguParameterService, em);
 
 			if (!validateBetreuungspensum(betPen, betreuungsangebotTypMinValue, index, context)) {
+				closeEntityManager(em);
 				return false;
 			}
 			index++;
 		}
+		closeEntityManager(em);
 		return true;
 	}
 
