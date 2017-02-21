@@ -16,8 +16,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
@@ -31,14 +29,6 @@ import java.util.List;
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
 public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
-
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractEbeguTest.class);
-
-
-
-	@Inject
-	private InstitutionService institutionService;
-
 
 	@Inject
 	private ExportService exportService;
