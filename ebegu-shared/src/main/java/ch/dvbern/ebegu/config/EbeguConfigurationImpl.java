@@ -116,7 +116,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	@Override
 	public String getEmailOfSuperUser() {
-		return getString(EBEGU_SUPERUSER_MAIL, null);
+		return getString(EBEGU_SUPERUSER_MAIL, "eberhard.gugler@dvbern.ch");
 	}
 
 	@Override

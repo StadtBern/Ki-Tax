@@ -109,7 +109,7 @@
                         <td class="ellipsis" ellipsis-tooltip="{{vm.translateBetreuungsangebotTypList(row.angebote)}}"
                             ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)">
                         </td>
-                        <td class="ellipsis" ellipsis-tooltip="{{row.institutionen}}" ng-bind="row.institutionen"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.institutionen.join(', ')}}" ng-list ng-bind="row.institutionen.join(', ')"></td>
                         <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
                             ng-bind="row.verantwortlicher"></td>
                     </tr>
