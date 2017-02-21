@@ -37,6 +37,8 @@ import static ch.dvbern.ebegu.api.EbeguApplicationV1.API_ROOT_PATH;
 public final class RestUtil {
 
 	private static final Pattern MATCH_QUOTE = Pattern.compile("\"");
+	private static final String BLOB_DOWNLOAD_PATH = "/blobs/temp/blobdata/";
+	private static final String REPORT_DOWNLOAD_PATH = "/reporting/excel/";
 
 	/**
 	 * Parst den Content-Disposition Header
@@ -62,8 +64,10 @@ public final class RestUtil {
 
 	public static boolean isFileDownloadRequest(@Nonnull HttpServletRequest request) {
 		String context = request.getContextPath() + API_ROOT_PATH;
-		final String blobdataPath = context + "/blobs/temp/blobdata/";
-		return request.getRequestURI().startsWith(blobdataPath);
+		final String blobdataPath = context + BLOB_DOWNLOAD_PATH;
+		final String reportingPath = context + REPORT_DOWNLOAD_PATH;
+		return request.getRequestURI().startsWith(blobdataPath) ||
+			request.getRequestURI().startsWith(reportingPath);
 	}
 
 	public static Response buildDownloadResponse(File file, boolean attachment) throws IOException {
