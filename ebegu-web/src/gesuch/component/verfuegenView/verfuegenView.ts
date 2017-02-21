@@ -48,8 +48,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
 
         let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
+        if (kindIndex === -1) {
+            this.$log.error('Kind konnte nicht gefunden werden');
+        }
         this.gesuchModelManager.setKindIndex(kindIndex);
-        let betreuungIndex : number = this.gesuchModelManager.convertBetreuungNumberToBetreuungIndex(parseInt($stateParams.betreuungNumber, 10));
+        let betreuungIndex: number = this.gesuchModelManager.convertBetreuungNumberToBetreuungIndex(parseInt($stateParams.betreuungNumber, 10));
+        if (betreuungIndex === -1) {
+            this.$log.error('Betreuung konnte nicht gefunden werden');
+        }
         this.gesuchModelManager.setBetreuungIndex(betreuungIndex);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
 

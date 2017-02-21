@@ -55,7 +55,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     }
 
     editKind(kind: any): void {
-        if (kind) {
+        if (kind) {         //check entfernt
             kind.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
             this.openKindView(kind.kindNummer);
         }

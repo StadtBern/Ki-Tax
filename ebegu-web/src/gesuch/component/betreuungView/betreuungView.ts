@@ -21,6 +21,7 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import Moment = moment.Moment;
 import IScope = angular.IScope;
+import ILogService = angular.ILogService;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 
@@ -42,11 +43,12 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     betreuungIndex: number;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
-        'AuthServiceRS', 'WizardStepManager', '$stateParams'];
+        'AuthServiceRS', 'WizardStepManager', '$stateParams', '$log'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams) {
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams,
+                private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
 
         let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
@@ -71,6 +73,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
             // just to read!
             this.kindModel = this.gesuchModelManager.getKindToWorkWith();
+        } else{
+            this.$log.error('There is no kind available with kind-number:' + $stateParams.kindNumber);
         }
     }
 
@@ -78,10 +82,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * Creates a Betreuung for the kind given by the kindNumber attribute of the class.
      * Thus the kindnumber must be set before this method is called.
      */
-    public initEmptyBetreuung(betreunngNumber : number): TSBetreuung {
+    public initEmptyBetreuung(betreuungNr : number): TSBetreuung {
         let tsBetreuung: TSBetreuung = new TSBetreuung();
         tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
-        tsBetreuung.betreuungNummer = betreunngNumber;
+        tsBetreuung.betreuungNummer = betreuungNr;
         return tsBetreuung;
     }
 
@@ -229,7 +233,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.getBetreuungModel().betreuungspensumContainers = [];
         }
         if (!this.getBetreuungModel()) {
-            this.errorService.addMesageAsError('Betreuungsmodel ist nicht korrekt initialisiert. Die Seite unterstuetzt noch keine direktnavigation');
+            this.errorService.addMesageAsError('Betreuungsmodel ist nicht initialisiert.');
         }
         this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(false, undefined, new TSDateRange())));
     }

@@ -352,7 +352,7 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Setzt den Kind Index.
+     * Setzt den Kind Index. Dies ist der Index des aktuellen Kindes in der Liste der Kinder
      * @param kindIndex
      */
     public setKindIndex(kindIndex: number) {
@@ -378,8 +378,7 @@ export default class GesuchModelManager {
     public convertKindNumberToKindIndex(kindNumber : number) : number {
         for (let i = 0; i < this.getGesuch().kindContainers.length; i++) {
             if (this.getGesuch().kindContainers[i].kindNummer === kindNumber) {
-                this.kindIndex = i;
-                return this.kindIndex;
+                return i;
             }
         }
         return -1;
@@ -388,8 +387,7 @@ export default class GesuchModelManager {
     public convertBetreuungNumberToBetreuungIndex(betreuungNumber : number) : number {
         for (let i = 0; i < this.getKindToWorkWith().betreuungen.length; i++) {
             if (this.getKindToWorkWith().betreuungen[i].betreuungNummer === betreuungNumber) {
-                this.betreuungIndex = i;
-                return this.betreuungIndex
+                return i;
             }
         }
         return -1;
@@ -698,8 +696,10 @@ export default class GesuchModelManager {
     }
 
     public getKindToWorkWith(): TSKindContainer {
-        if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindIndex) {
+        if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length > this.kindIndex) {
             return this.gesuch.kindContainers[this.kindIndex];
+        } else{
+            this.log.error('kindContainers is not set or kindIndex is out of bounds ' + this.kindIndex)
         }
         return undefined;
     }
@@ -710,8 +710,10 @@ export default class GesuchModelManager {
      * @returns {any}
      */
     public getBetreuungToWorkWith(): TSBetreuung {
-        if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen.length >= this.betreuungIndex) {
+        if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen.length > this.betreuungIndex) {
             return this.getKindToWorkWith().betreuungen[this.betreuungIndex];
+        } else{
+            this.log.error('kindToWorkWith is not set or index of betreuung is out of bounds ' + this.betreuungIndex)
         }
         return undefined;
     }
