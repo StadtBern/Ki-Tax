@@ -54,5 +54,6 @@
 	<entity class="ch.dvbern.ebegu.entities.Zahlungsauftrag"/>
 	<entity class="ch.dvbern.ebegu.entities.Zahlung"/>
 	<entity class="ch.dvbern.ebegu.entities.Zahlungsposition"/>
+	<entity class="ch.dvbern.ebegu.entities.Pain001Dokument"/>
 
 </entity-mappings>

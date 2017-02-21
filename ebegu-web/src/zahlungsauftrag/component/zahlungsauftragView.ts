@@ -2,6 +2,8 @@ import {IComponentOptions} from 'angular';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import EbeguUtil from '../../utils/EbeguUtil';
 import ZahlungRS from '../../core/service/zahlungRS.rest';
+import {DownloadRS} from '../../core/service/downloadRS.rest';
+import TSDownloadFile from '../../models/TSDownloadFile';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
@@ -31,9 +33,10 @@ export class ZahlungsauftragViewController {
     itemsByPage: number = 20;
     numberOfPages: number = 1;
 
-    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$state'];
+    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'DownloadRS'];
 
-    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $state: IStateService) {
+    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
+                private $state: IStateService, private downloadRS: DownloadRS) {
         this.initViewModel();
     }
 
@@ -75,6 +78,11 @@ export class ZahlungsauftragViewController {
 
     public downloadPain(zahlungsauftrag: TSZahlungsauftrag) {
         console.log('downloadPain' + zahlungsauftrag.id);
+        let win: Window = this.downloadRS.prepareDownloadWindow();
+        return this.downloadRS.getPain001AccessTokenGeneratedDokument(zahlungsauftrag.id)
+            .then((downloadFile: TSDownloadFile) => {
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, true, win);
+            });
     }
 
     public downloadAllDetails(zahlungsauftrag: TSZahlungsauftrag) {
@@ -86,12 +94,10 @@ export class ZahlungsauftragViewController {
     }
 
     public edit(zahlungsauftrag: TSZahlungsauftrag) {
-        console.log('edit' + zahlungsauftrag.id);
         this.zahlungsauftragToEdit = zahlungsauftrag;
     }
 
     public save(zahlungsauftrag: TSZahlungsauftrag) {
-        console.log('edit' + zahlungsauftrag.id);
         if (this.isEditValid()) {
             this.zahlungRS.updateZahlungsauftrag(
                 this.zahlungsauftragToEdit.beschrieb, this.zahlungsauftragToEdit.datumFaellig, this.zahlungsauftragToEdit.id).then((response: TSZahlungsauftrag) => {
@@ -99,6 +105,7 @@ export class ZahlungsauftragViewController {
                 if (index > -1) {
                     this.zahlungsauftragen[index] = response;
                 }
+                this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                 this.resetEditZahlungsauftrag();
             });
 
@@ -106,7 +113,6 @@ export class ZahlungsauftragViewController {
     }
 
     public isEditMode(zahlungsauftragId: string): boolean {
-        console.log('isEditMode' + zahlungsauftragId);
         if (this.zahlungsauftragToEdit && this.zahlungsauftragToEdit.id == zahlungsauftragId) {
             return true;
         }
@@ -114,7 +120,6 @@ export class ZahlungsauftragViewController {
     }
 
     public isEditValid(): boolean {
-        console.log('isEditValid');
         if (this.zahlungsauftragToEdit) {
             return this.zahlungsauftragToEdit.beschrieb && this.zahlungsauftragToEdit.beschrieb.length > 0 &&
                 this.zahlungsauftragToEdit.datumFaellig != null && this.zahlungsauftragToEdit.datumFaellig != undefined;

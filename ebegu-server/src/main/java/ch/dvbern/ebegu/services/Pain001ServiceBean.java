@@ -23,6 +23,8 @@ import javax.xml.validation.SchemaFactory;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -41,14 +43,14 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 	private static final String DEF_DEBTOR_NAME = "Direktion für Bildung, Soziales und Sport der Stadt Bern";
 	private static final String DEF_DEBTOR_BIC = "POFICHBEXXX";
-	private static final String DEF_DEBTOR_IBAN = "CH330900000300008233";
+	private static final String DEF_DEBTOR_IBAN =  "CH3309000000300008233";
 
-	private static final String CtgyPurp_Cd = "SSBE";
 	private static final String CCY = "CHF";
 	private static final String CtctDtls_Nm = "KITAX";
 	private static final String CtctDtls_Othr = "V01";
 	private static final PaymentMethod3Code PAYMENT_METHOD_3_CODE = PaymentMethod3Code.TRA;
 	private static final Boolean BtchBookg = true;
+	private static final String CLRSYS_CD = "CHBCC";
 
 	private static final String SCHEMA_NAME = "pain.001.001.03.ch.02.xsd";
 	private static final String SCHEMA_LOCATION_LOCAL = "ch.dvbern.ebegu.iso20022.V03CH02/" + SCHEMA_NAME;
@@ -60,11 +62,11 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 
 	@Override
-	public String getPainFileContent(Zahlungsauftrag zahlungsauftrag) {
+	public byte[] getPainFileContent(Zahlungsauftrag zahlungsauftrag) {
 
 		final Document document = createDocument(zahlungsauftrag);
 
-		return getXMLStringFromDocument(document);
+		return getXMLStringFromDocument(document).getBytes(StandardCharsets.UTF_8);
 	}
 
 
@@ -186,7 +188,12 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 	 * 	< /Amt>
 	 * 	< CdtrAgt>
 	 * 		< FinInstnId>
-	 * 			< BIC>RAIFCH22XXX< /BIC>
+	 * 			<ClrSysMmbId>
+	 * 				<ClrSysId>
+	 * 					<Cd>CHBCC</Cd>
+	 * 				</ClrSysId>
+	 * 				<MmbId>9000</MmbId>
+	 * 			</ClrSysMmbId>
 	 * 		< /FinInstnId>
 	 * 	< /CdtrAgt>
 	 * 	< Cdtr>
@@ -225,19 +232,22 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 		cTTI10CH.setCdtrAgt(objectFactory.createBranchAndFinancialInstitutionIdentification4CH());
 		cTTI10CH.getCdtrAgt().setFinInstnId(objectFactory.createFinancialInstitutionIdentification7CH());
+		cTTI10CH.getCdtrAgt().getFinInstnId().setClrSysMmbId(objectFactory.createClearingSystemMemberIdentification2());
+		cTTI10CH.getCdtrAgt().getFinInstnId().getClrSysMmbId().setClrSysId(objectFactory.createClearingSystemIdentification2Choice());
 
 		// data
 		cTTI10CH.getPmtId().setInstrId(String.valueOf(transaktion)); // 2.29
-		cTTI10CH.getPmtId().setEndToEndId(transaktion + " / " + zahlung.getInstitutionStammdaten().getInstitution().getName()); // 2.30
+		cTTI10CH.getPmtId().setEndToEndId(transaktion + " / " +
+			Normalizer.normalize(zahlung.getInstitutionStammdaten().getInstitution().getName(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")); // 2.30
+
 
 		// Wert
 		cTTI10CH.getAmt().getInstdAmt().setCcy(CCY);// 2.43
 		cTTI10CH.getAmt().getInstdAmt().setValue(zahlung.getBetragTotalZahlung());// 2.43
 
-		//BIC
-		cTTI10CH.setCdtrAgt(objectFactory.createBranchAndFinancialInstitutionIdentification4CH());
-		cTTI10CH.getCdtrAgt().setFinInstnId(objectFactory.createFinancialInstitutionIdentification7CH());
-		cTTI10CH.getCdtrAgt().getFinInstnId().setBIC(zahlung.getInstitutionStammdaten().getBIC());
+		//ClrSysMmbId
+		cTTI10CH.getCdtrAgt().getFinInstnId().getClrSysMmbId().getClrSysId().setCd(CLRSYS_CD);
+		cTTI10CH.getCdtrAgt().getFinInstnId().getClrSysMmbId().setMmbId(zahlung.getInstitutionStammdaten().getIban().extractClearingNumberWithoutLeadingZeros());
 
 		//IBAN
 		cTTI10CH.setCdtrAcct(objectFactory.createCashAccount16CHId());
@@ -249,7 +259,8 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		cTTI10CH.setCdtr(objectFactory.createPartyIdentification32CHName());
 		cTTI10CH.getCdtr().setNm(zahlung.getInstitutionStammdaten().getInstitution().getName()); // 2.79
 		cTTI10CH.getCdtr().setPstlAdr(objectFactory.createPostalAddress6CH());
-		cTTI10CH.getCdtr().getPstlAdr().setStrtNm(zahlung.getInstitutionStammdaten().getAdresse().getHausnummer()); // 2.79
+		cTTI10CH.getCdtr().getPstlAdr().setStrtNm(zahlung.getInstitutionStammdaten().getAdresse().getStrasse()); // 2.79
+		cTTI10CH.getCdtr().getPstlAdr().setBldgNb(zahlung.getInstitutionStammdaten().getAdresse().getHausnummer()); // 2.79
 		cTTI10CH.getCdtr().getPstlAdr().setPstCd(zahlung.getInstitutionStammdaten().getAdresse().getPlz());// 2.79
 		cTTI10CH.getCdtr().getPstlAdr().setTwnNm(zahlung.getInstitutionStammdaten().getAdresse().getOrt());// 2.79
 		cTTI10CH.getCdtr().getPstlAdr().setCtry(zahlung.getInstitutionStammdaten().getAdresse().getLand().toString());// 2.79
@@ -305,8 +316,6 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		paymentInstructionInformation3CH.setBtchBookg(BtchBookg);
 
 		paymentInstructionInformation3CH.setPmtTpInf(objectFactory.createPaymentTypeInformation19CH());
-		paymentInstructionInformation3CH.getPmtTpInf().setCtgyPurp(objectFactory.createCategoryPurpose1CHCode());
-		paymentInstructionInformation3CH.getPmtTpInf().getCtgyPurp().setCd(CtgyPurp_Cd);
 
 		paymentInstructionInformation3CH.setReqdExctnDt(getXmlGregorianCalendar(zahlungsauftrag.getDatumFaellig()));
 
@@ -396,8 +405,8 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 	private static class PainValidationEventHandler implements ValidationEventHandler {
 		@Override
-        public boolean handleEvent(ValidationEvent event) {
-            throw new EbeguRuntimeException("Unerwarteter Fehler beim generieren des Zahlungsfile", event.getMessage(), event.getLinkedException());
-        }
+		public boolean handleEvent(ValidationEvent event) {
+			throw new EbeguRuntimeException("Unerwarteter Fehler beim generieren des Zahlungsfile", event.getMessage(), event.getLinkedException());
+		}
 	}
 }

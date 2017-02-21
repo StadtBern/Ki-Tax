@@ -56,6 +56,9 @@ public class DownloadResource {
 	private GesuchService gesuchService;
 
 	@Inject
+	private ZahlungService zahlungService;
+
+	@Inject
 	private BetreuungService betreuungService;
 
 	@Inject
@@ -317,6 +320,34 @@ public class DownloadResource {
 
 		return getFileDownloadResponse(uriInfo, ip, persistedDokument);
 
+	}
+
+	@Nonnull
+	@GET
+	@Path("/{zahlungsauftragId}/PAIN001/generated")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getPain001AccessTokenGeneratedDokument(
+		@Nonnull @Valid @PathParam("zahlungsauftragId") JaxId jaxId,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
+
+		Validate.notNull(jaxId.getId());
+		String ip = getIP(request);
+
+		final Optional<Zahlungsauftrag> zahlungsauftrag = zahlungService.findZahlungsauftrag(converter.toEntityId(jaxId));
+		if (zahlungsauftrag.isPresent()) {
+
+			Pain001Dokument persistedDokument = generatedDokumentService
+				.getPain001DokumentAccessTokenGeneratedDokument(zahlungsauftrag.get(), false);
+			if (persistedDokument == null) {
+				return Response.noContent().build();
+
+			}
+			return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+
+		}
+		throw new EbeguEntityNotFoundException("getPain001AccessTokenGeneratedDokument",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "ZahlungsauftragId invalid: " + jaxId.getId());
 	}
 
 	private Response getFileDownloadResponse(UriInfo uriInfo, String ip, File file) {

@@ -7,6 +7,6 @@ import ch.dvbern.ebegu.entities.Zahlungsauftrag;
  */
 public interface Pain001Service {
 
-	String getPainFileContent(Zahlungsauftrag zahlungsauftrag);
+	byte[] getPainFileContent(Zahlungsauftrag zahlungsauftrag);
 
 }

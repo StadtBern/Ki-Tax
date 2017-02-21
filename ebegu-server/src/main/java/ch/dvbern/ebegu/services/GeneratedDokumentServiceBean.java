@@ -90,10 +90,13 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+	@Inject
+	private Pain001Service pain001Service;
+
 
 	@Override
 	@Nonnull
-	public GeneratedDokument saveGeneratedDokument(@Nonnull GeneratedDokument dokument) {
+	public WriteProtectedDokument saveDokument(@Nonnull WriteProtectedDokument dokument) {
 		Objects.requireNonNull(dokument);
 		return persistence.merge(dokument);
 	}
@@ -114,44 +117,74 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		query.where(predGesuch, predFileName, predPath);
 		return persistence.getCriteriaSingleResult(query);
+	}
 
+	@Override
+	@Nullable
+	public Pain001Dokument findPain001Dokument(String zahlungsauftragId, String filename, String path) {
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Pain001Dokument> query = cb.createQuery(Pain001Dokument.class);
+		Root<Pain001Dokument> root = query.from(Pain001Dokument.class);
+
+		path = path.replace("\\", "\\\\"); //dirty fix fuer windows pfad mit backslash
+
+		Predicate predZahlungsauftrag = cb.equal(root.get(Pain001Dokument_.zahlungsauftrag).get(Zahlungsauftrag_.id), zahlungsauftragId);
+		Predicate predFileName = cb.equal(root.get(Pain001Dokument_.filename), filename);
+		Predicate predPath = cb.like(root.get(Pain001Dokument_.filepfad), path + "%");
+
+		query.where(predZahlungsauftrag, predFileName, predPath);
+		return persistence.getCriteriaSingleResult(query);
 	}
 
 	/**
 	 * Sucht ein GeneratedDokument mit demselben Namen und Pfad und vom selben Gesuch. Wen das Dokument existiert, wird dieses gelöscht
 	 * und mit dem Neuen ersetzt. Wenn es nicht existiert, ein neues wird erstellt.
 	 *
-	 * @param dokumentTyp
-	 * @param gesuch
-	 * @param fileName
-	 * @return
 	 */
 	@Nonnull
 	@Override
-	public GeneratedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName, boolean writeProtected) throws MimeTypeParseException {
+	public WriteProtectedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, AbstractEntity entity, String fileName, boolean writeProtected) throws MimeTypeParseException {
 
-		GeneratedDokument generatedDokument = this.findGeneratedDokument(gesuch.getId(),
-			fileName, ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+		WriteProtectedDokument writeProtectedDokument;
+		String filePathToRemove = null;
+		if(entity instanceof Gesuch) {
+			writeProtectedDokument = this.findGeneratedDokument(entity.getId(),
+				fileName, ebeguConfiguration.getDocumentFilePath() + "/" + entity.getId());
+			if (writeProtectedDokument == null) {
+				writeProtectedDokument = new GeneratedDokument();
+			} else {
+				//Die Datei wird am Ende geloscht, um unvollstaenige Daten zu vermeiden falls was kaputt geht
+				filePathToRemove = writeProtectedDokument.getFilepfad();
+			}
+			((GeneratedDokument)writeProtectedDokument).setGesuch((Gesuch) entity);
+		}else{
+			writeProtectedDokument = this.findPain001Dokument(entity.getId(),
+				fileName, ebeguConfiguration.getDocumentFilePath() + "/" + entity.getId());
+			if (writeProtectedDokument == null) {
+				writeProtectedDokument = new Pain001Dokument();
+			} else {
+				//Die Datei wird am Ende geloscht, um unvollstaenige Daten zu vermeiden falls was kaputt geht
+				filePathToRemove = writeProtectedDokument.getFilepfad();
+			}
+			((Pain001Dokument)writeProtectedDokument).setZahlungsauftrag((Zahlungsauftrag) entity);
+		}
 
 		final UploadFileInfo savedDokument = fileSaverService.save(data,
-			fileName, gesuch.getId());
+			fileName, entity.getId());
 
-		String filePathToRemove = null;
 
-		if (generatedDokument == null) {
-			generatedDokument = new GeneratedDokument();
-		} else {
-			//Die Datei wird am Ende geloscht, um unvollstaenige Daten zu vermeiden falls was kaputt geht
-			filePathToRemove = generatedDokument.getFilepfad();
-		}
-		generatedDokument.setFilename(savedDokument.getFilename());
-		generatedDokument.setFilepfad(savedDokument.getPath());
-		generatedDokument.setFilesize(savedDokument.getSizeString());
-		generatedDokument.setTyp(dokumentTyp);
-		generatedDokument.setGesuch(gesuch);
-		generatedDokument.setWriteProtected(writeProtected);
+		writeProtectedDokument.setFilename(savedDokument.getFilename());
+		writeProtectedDokument.setFilepfad(savedDokument.getPath());
+		writeProtectedDokument.setFilesize(savedDokument.getSizeString());
+		writeProtectedDokument.setTyp(dokumentTyp);
 
-		GeneratedDokument returnDocument = this.saveGeneratedDokument(generatedDokument);
+		writeProtectedDokument.setWriteProtected(writeProtected);
+
+
+		WriteProtectedDokument returnDocument = this.saveDokument(writeProtectedDokument);
+
+
 
 		if (filePathToRemove != null) {
 			fileSaverService.remove(filePathToRemove);
@@ -168,7 +201,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch.getJahrAndFallnummer());
 		GeneratedDokument persistedDokument = null;
 		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
-			persistedDokument = getGeneratedDokument(gesuch, GeneratedDokumentTyp.FINANZIELLE_SITUATION, fileNameForGeneratedDokumentTyp);
+			persistedDokument = (GeneratedDokument) getWriteProtectedDokument(gesuch.getId(), GeneratedDokumentTyp.FINANZIELLE_SITUATION, fileNameForGeneratedDokumentTyp);
 		}
 		if (!gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen() || persistedDokument == null) {
 			//  persistedDokument == null:  Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
@@ -180,7 +213,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			boolean writeProtectPDF = gesuch.getStatus().isAnyStatusOfVerfuegt() || gesuch.getStatus().equals(AntragStatus.VERFUEGEN);
 			byte[] data = pdfService.generateFinanzielleSituation(gesuch, famGroessenVerfuegung, writeProtectPDF);
 			// FINANZIELLE_SITUATION in einem Zustand isAnyStatusOfVerfuegt oder Verfügen, soll das Dokument schreibgeschützt sein!
-			persistedDokument = saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch,
+			persistedDokument = (GeneratedDokument) saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.FINANZIELLE_SITUATION, gesuch,
 				fileNameForGeneratedDokumentTyp,
 				writeProtectPDF);
 
@@ -196,7 +229,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer());
 		GeneratedDokument persistedDokument = null;
 		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
-			persistedDokument = getGeneratedDokument(gesuch, GeneratedDokumentTyp.BEGLEITSCHREIBEN, fileNameForGeneratedDokumentTyp);
+			persistedDokument = (GeneratedDokument) getWriteProtectedDokument(gesuch.getId(), GeneratedDokumentTyp.BEGLEITSCHREIBEN, fileNameForGeneratedDokumentTyp);
 		}
 		if (!gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen() || persistedDokument == null) {
 			//  persistedDokument == null:  Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
@@ -204,7 +237,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			boolean writeProtectPDF = gesuch.getStatus().isAnyStatusOfVerfuegt();
 			byte[] data = pdfService.generateBegleitschreiben(gesuch, writeProtectPDF);
 			// BEGLEITSCHREIBEN in einem Zustand isAnyStatusOfVerfuegt oder Verfügen, soll das Dokument schreibgeschützt sein!
-			persistedDokument = saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
+			persistedDokument = (GeneratedDokument) saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
 				fileNameForGeneratedDokumentTyp, writeProtectPDF);
 
 		}
@@ -221,7 +254,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		GeneratedDokument persistedDokument = null;
 
 		if (!forceCreation) {
-			persistedDokument = getGeneratedDokument(gesuch, GeneratedDokumentTyp.FREIGABEQUITTUNG, fileNameForGeneratedDokumentTyp);
+			persistedDokument = (GeneratedDokument) getWriteProtectedDokument(gesuch.getId(), GeneratedDokumentTyp.FREIGABEQUITTUNG, fileNameForGeneratedDokumentTyp);
 		}
 
 		if (persistedDokument == null || forceCreation) {
@@ -236,7 +269,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			byte[] data = pdfService.generateFreigabequittung(gesuch, zustelladresse, true);
 
 			// Freigabequittung soll wird nur einmal produziert und soll deswegen immer schreibgeschützt sein!
-			persistedDokument = saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch,
+			persistedDokument = (GeneratedDokument) saveGeneratedDokumentInDB(data, GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch,
 				fileNameForGeneratedDokumentTyp, true);
 		}
 
@@ -244,6 +277,27 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	@Nullable
+	private WriteProtectedDokument getWriteProtectedDokument(String id, GeneratedDokumentTyp dokumentTyp, String fileNameForGeneratedDokumentTyp) {
+
+		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + id;
+
+		final WriteProtectedDokument persistedDokument = findGeneratedDokument(id, fileNameForGeneratedDokumentTyp,
+			expectedFilepath);
+
+		if (persistedDokument == null) {
+			LOG.error("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
+				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, expectedFilepath);
+		}
+
+		if (persistedDokument != null && !Files.exists(Paths.get(persistedDokument.getFilepfad()))) {
+			LOG.error("Die Datei {} könnte nicht gefunden werdern!", persistedDokument.getFilepfad());
+			return null;
+		}
+
+		return persistedDokument;
+	}
+
+/*	@Nullable
 	private GeneratedDokument getGeneratedDokument(Gesuch gesuch, GeneratedDokumentTyp dokumentTyp, String fileNameForGeneratedDokumentTyp) {
 
 		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
@@ -262,7 +316,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 
 		return persistedDokument;
-	}
+	}*/
 
 	@Nonnull
 	public BetreuungsgutscheinEvaluator initEvaluator(@Nonnull Gesuch gesuch) {
@@ -331,7 +385,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 					matchedBetreuung.getBGNummer());
 
 				// Wenn die Betreuung im Zustand Verfügt ist, soll das Dokument als schreibgeschützt gespeichert werden.
-				persistedDokument = saveGeneratedDokumentInDB(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
+				persistedDokument = (GeneratedDokument) saveGeneratedDokumentInDB(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
 					gesuch, fileNameForDocTyp, writeProtectPDF);
 			} else {
 				throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
@@ -377,7 +431,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			byte[] data = pdfService.generateMahnung(mahnung, vorgaengerMahnung, writeProtectPDF);
 
-			persistedDokument = saveGeneratedDokumentInDB(data, dokumentTyp, gesuch,
+			persistedDokument = (GeneratedDokument) saveGeneratedDokumentInDB(data, dokumentTyp, gesuch,
 				fileNameForGeneratedDokumentTyp, writeProtectPDF);
 		}
 		return persistedDokument;
@@ -395,7 +449,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		GeneratedDokument persistedDokument = null;
 
 		if (!forceCreation && Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus())) {
-			persistedDokument = getGeneratedDokument(gesuch, dokumentTyp, fileNameForGeneratedDokumentTyp);
+			persistedDokument = (GeneratedDokument) getWriteProtectedDokument(gesuch.getId(), dokumentTyp, fileNameForGeneratedDokumentTyp);
 		}
 
 		if (!Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus()) || persistedDokument == null) {
@@ -406,7 +460,37 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			byte[] data = pdfService.generateNichteintreten(betreuung, writeProtectPDF);
 
 			// Wenn in einem Zustand isAnyStatusOfVerfuegt, soll das Dokument schreibgeschützt sein!
-			persistedDokument = saveGeneratedDokumentInDB(data, dokumentTyp, gesuch,
+			persistedDokument = (GeneratedDokument) saveGeneratedDokumentInDB(data, dokumentTyp, gesuch,
+				fileNameForGeneratedDokumentTyp, writeProtectPDF);
+		}
+		return persistedDokument;
+
+	}
+
+	@Override
+	public Pain001Dokument getPain001DokumentAccessTokenGeneratedDokument(Zahlungsauftrag zahlungsauftrag, Boolean forceCreation) throws MimeTypeParseException {
+
+
+		Pain001Dokument persistedDokument = null;
+
+		GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.PAIN001;
+
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, zahlungsauftrag.getBeschrieb());
+
+		if (!forceCreation /*&& Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus())*/) {
+			persistedDokument = (Pain001Dokument) getWriteProtectedDokument(zahlungsauftrag.getId(), dokumentTyp, fileNameForGeneratedDokumentTyp);
+		}
+
+		if (/*!Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus()) || */persistedDokument == null) {
+
+			// persistedDokument == null:  Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+
+			boolean writeProtectPDF = forceCreation /*|| gesuch.getStatus().isAnyStatusOfVerfuegt()*/;
+
+			byte[] data = pain001Service.getPainFileContent(zahlungsauftrag);
+
+			// Wenn in einem Zustand isAnyStatusOfVerfuegt, soll das Dokument schreibgeschützt sein!
+			persistedDokument = (Pain001Dokument) saveGeneratedDokumentInDB(data, dokumentTyp, zahlungsauftrag,
 				fileNameForGeneratedDokumentTyp, writeProtectPDF);
 		}
 		return persistedDokument;

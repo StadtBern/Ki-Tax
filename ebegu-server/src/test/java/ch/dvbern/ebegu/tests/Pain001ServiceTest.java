@@ -74,7 +74,7 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 		zahlungsauftrag.setDatumFaellig(LocalDateTime.now());
 		zahlungsauftrag.setZahlungen(zahlungList);
 
-		final String painFileContent = pain001Service.getPainFileContent(zahlungsauftrag);
+		final byte[] painFileContent = pain001Service.getPainFileContent(zahlungsauftrag);
 
 		Assert.assertNotNull(painFileContent);
 

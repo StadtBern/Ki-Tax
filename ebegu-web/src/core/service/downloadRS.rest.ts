@@ -99,6 +99,15 @@ export class DownloadRS {
             });
     }
 
+    public getPain001AccessTokenGeneratedDokument(zahlungsauftragId: string): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(zahlungsauftragId) + '/'
+            + encodeURIComponent(TSGeneratedDokumentTyp[TSGeneratedDokumentTyp.PAIN001]) + '/generated')
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
 
     public getServiceName(): string {
         return 'DownloadRS';
