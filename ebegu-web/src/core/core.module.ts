@@ -77,6 +77,7 @@ import {DVMitteilungListConfig} from './component/dv-mitteilung-list/dv-mitteilu
 import {DvPosteingangComponentConfig} from './component/dv-posteingang/dv-posteingang';
 import {ReportRS} from './service/reportRS.rest';
 import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
+import ExportRS from '../gesuch/service/exportRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -161,6 +162,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
     .service('MitteilungRS', MitteilungRS)
     .service('GlobalCacheService', GlobalCacheService)
+    .service('ExportRS', ExportRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvValueinput', DVValueinput.factory())

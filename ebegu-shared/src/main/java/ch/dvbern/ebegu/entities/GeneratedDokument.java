@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -15,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Audited
 @Entity
 @EntityListeners({GeneratedDokumentListener.class})
-public class GeneratedDokument extends File {
+public class GeneratedDokument extends FileMetadata {
 
 	private static final long serialVersionUID = -895840426576485097L;
 
