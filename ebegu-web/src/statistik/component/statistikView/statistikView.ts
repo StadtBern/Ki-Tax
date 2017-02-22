@@ -35,7 +35,6 @@ export class StatistikViewController {
 
     $onInit(){
         this._statistikParameter = new TSStatistikParameter();
-        this.initViewModel();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
             this._gesuchsperioden = response;
         });

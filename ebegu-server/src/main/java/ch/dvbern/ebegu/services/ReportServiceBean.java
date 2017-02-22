@@ -2,6 +2,11 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Zahlung;
+import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
@@ -13,6 +18,7 @@ import ch.dvbern.ebegu.reporting.lib.DateUtil;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
 import ch.dvbern.ebegu.reporting.lib.ExcelMerger;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
+import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragExcelConverter;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -29,13 +35,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
-import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.VORLAGE_REPORT_GESUCH_STICHTAG;
-import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.VORLAGE_REPORT_GESUCH_ZEITRAUM;
+import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.*;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -59,10 +62,16 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private GeuschZeitraumExcelConverter geuschZeitraumExcelConverter;
 
 	@Inject
+	private ZahlungAuftragExcelConverter zahlungAuftragExcelConverter;
+
+	@Inject
 	private PrincipalBean principalBean;
 
 	@Inject
 	private Persistence<Gesuch> persistence;
+
+	@Inject
+	private ZahlungService zahlungService;
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
@@ -153,10 +162,38 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		return createWorkbook(workbook);
 	}
 
+	@Override
+	public byte[] generateExcelReportZahlungAuftrag(String auftragId, Optional<InstitutionStammdaten> institution) throws ExcelMergeException {
+
+		List<Zahlung> reportData;
+		if (institution.isPresent()) {
+			Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
+				.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
+			reportData = zahlungsauftrag.getZahlungen();
+		} else {
+			//TODO: get data filtered by Institution, zahlungService method to do this?
+			reportData = new ArrayList<>();
+		}
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(VORLAGE_REPORT_ZAHLUNG_AUFTRAG.getPath());
+		Objects.requireNonNull(is, "Vorlage '" + VORLAGE_REPORT_ZAHLUNG_AUFTRAG.getPath() + "' nicht gefunden");
+
+		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
+		Sheet sheet = workbook.getSheet("Data");
+
+		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
+
+		mergeData(sheet, excelMergerDTO, MergeFieldGesuchZeitraum.values());
+		zahlungAuftragExcelConverter.applyAutoSize(sheet);
+
+		return createWorkbook(workbook);
+	}
+
 	public enum ReportResource {
 
 		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx"),
-		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx");
+		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx"),
+		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx");
 
 		private String path;
 

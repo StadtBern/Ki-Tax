@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -158,5 +159,13 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		assertNotNull(bytes);
 		unitTestTempfolder.writeToTempDir(bytes, "ExcelReportGesuchZeitraum.xlsx");
+	}
+
+	@Test
+	public void generateExcelReportZahlungAuftrag() throws Exception {
+		byte[] bytes = reportService.generateExcelReportZahlungAuftrag("", Optional.empty());
+
+		assertNotNull(bytes);
+		unitTestTempfolder.writeToTempDir(bytes, "ExcelReportZahlungAuftrag.xlsx");
 	}
 }
