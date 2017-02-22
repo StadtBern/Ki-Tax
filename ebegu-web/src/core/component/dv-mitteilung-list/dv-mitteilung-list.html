@@ -18,7 +18,8 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <dv-input-container class="form-group">
-                            <label class="md-no-float required" data-translate="MITTEILUNG_SUBJECT" for="subject_ID"></label>
+                            <label class="md-no-float required" data-translate="MITTEILUNG_SUBJECT"
+                                   for="subject_ID"></label>
                             <input id="subject_ID" type="text" name="subject"
                                    ng-model="vm.getCurrentMitteilung().subject"
                                    dv-max-length
@@ -92,32 +93,38 @@
                                         <span class="subject" ng-bind="mitteilung.subject"></span>
                                     </div>
                                     <div>
-                                        <span
-                                            ng-bind="mitteilung.sentDatum | amDateFormat : 'DD.MM.YYYY / HH:mm'"></span>
+                        <span
+                            ng-bind="mitteilung.sentDatum | amDateFormat : 'DD.MM.YYYY / HH:mm'"></span>
                                     </div>
                                     <div>
                                         <span> Von: </span><span ng-bind="mitteilung.senderAsString"></span>
                                     </div>
-
                                 </div>
                                 <div
                                     dv-show-element
                                     dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
-                                    dv-show-expression="!vm.isCurrentUserTypTheSenderTyp(mitteilung) && vm.isStatusErledigtGelesen(mitteilung)" class="message-checkbox">
+                                    dv-show-expression="!vm.isCurrentUserTypTheSenderTyp(mitteilung) && vm.isStatusErledigtGelesen(mitteilung)"
+                                    class="message-checkbox">
                                     <md-checkbox name="erledigt-{{$index}}" aria-label="erledigt"
                                                  ng-checked="mitteilung.mitteilungStatus === 'ERLEDIGT'"
                                                  ng-click="vm.setErledigt(mitteilung); $event.stopPropagation()">
                                         <span data-translate="MITTEILUNGEN_ERLEDIGT"></span>
                                     </md-checkbox>
                                 </div>
-                                <div class="arrow"><i class="fa fa-angle-down"></i></div>
+                                <div class="arrow"><i class="fa fa-angle-down"></i>
+                                </div>
                             </tab-title>
                             <tab-body>
-                                <div class="message">
+                                <div class=" message">
                                     <span class="betreuung" ng-bind="vm.betreuungAsString(mitteilung)"
                                           ng-click="vm.gotoBetreuung(mitteilung)"
-                                          ng-show="mitteilung.betreuung"/></span>
+                                          ng-show="mitteilung.betreuung"></span>
                                     <span class="formatted" ng-bind="mitteilung.message"></span>
+                                    <dv-loading-button button-click="vm.applyBetreuungsmitteilung()" type="button"
+                                                       button-class="dv-btn-mutation-hinzufuegen"
+                                                       ng-if="vm.isBetreuungsmitteilung(mitteilung)">
+                                        <span data-translate="MUTATIONSMELDUNG_APPLY"></span>
+                                    </dv-loading-button>
                                 </div>
                             </tab-body>
                         </dv-accordion-tab>

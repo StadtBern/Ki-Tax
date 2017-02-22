@@ -61,6 +61,8 @@ import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer
 import TSMitteilung from '../models/TSMitteilung';
 import TSQuickSearchResult from '../models/dto/TSQuickSearchResult';
 import TSSearchResultEntry from '../models/dto/TSSearchResultEntry';
+import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
+import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
 import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
 import TSZahlung from '../models/TSZahlung';
 
@@ -1126,6 +1128,11 @@ export default class EbeguRestUtil {
         return restBetreuungspensum;
     }
 
+    public betreuungsmitteilungPensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungsmitteilungPensum): any {
+        this.abstractPensumEntityToRestObject(restBetreuungspensum, betreuungspensum);
+        return restBetreuungspensum;
+    }
+
     public abwesenheitToRestObject(restAbwesenheit: any, abwesenheit: TSAbwesenheit): any {
         this.abstractDateRangeEntityToRestObject(restAbwesenheit, abwesenheit);
         return restAbwesenheit;
@@ -1222,6 +1229,14 @@ export default class EbeguRestUtil {
         if (betreuungspensumFromServer) {
             this.parseAbstractPensumEntity(betreuungspensumTS, betreuungspensumFromServer);
             betreuungspensumTS.nichtEingetreten = betreuungspensumFromServer.nichtEingetreten;
+            return betreuungspensumTS;
+        }
+        return undefined;
+    }
+
+    public parseBetreuungsmitteilungPensum(betreuungspensumTS: TSBetreuungsmitteilungPensum, betreuungspensumFromServer: any): TSBetreuungsmitteilungPensum {
+        if (betreuungspensumFromServer) {
+            this.parseAbstractPensumEntity(betreuungspensumTS, betreuungspensumFromServer);
             return betreuungspensumTS;
         }
         return undefined;
@@ -1912,10 +1927,49 @@ export default class EbeguRestUtil {
         let mitteilungenList: Array<TSMitteilung> = [];
         if (mitteilungen) {
             for (let i = 0; i < mitteilungen.length; i++) {
-                mitteilungenList.push(this.parseMitteilung(new TSMitteilung(), mitteilungen[i]));
+                if (this.isBetreuungsmitteilung(mitteilungen[i])) {
+                    mitteilungenList.push(this.parseBetreuungsmitteilung(new TSBetreuungsmitteilung(), mitteilungen[i]));
+
+                } else { // by default normal Mitteilung
+                    mitteilungenList.push(this.parseMitteilung(new TSMitteilung(), mitteilungen[i]));
+                }
             }
         }
         return mitteilungenList;
+    }
+
+    public betreuungsmitteilungToRestObject(restBetreuungsmitteilung: any, tsBetreuungsmitteilung: TSBetreuungsmitteilung): any {
+        if (tsBetreuungsmitteilung) {
+            this.mitteilungToRestObject(restBetreuungsmitteilung, tsBetreuungsmitteilung);
+            if (tsBetreuungsmitteilung.betreuungspensen) {
+                restBetreuungsmitteilung.betreuungspensen = [];
+                tsBetreuungsmitteilung.betreuungspensen.forEach(betreuungspensum => {
+                    restBetreuungsmitteilung.betreuungspensen.push(
+                        this.betreuungsmitteilungPensumToRestObject({}, betreuungspensum));
+                });
+
+            }
+        }
+        return restBetreuungsmitteilung;
+    }
+
+    public parseBetreuungsmitteilung(tsBetreuungsmitteilung: TSBetreuungsmitteilung, betreuungsmitteilungFromServer: any): TSBetreuungsmitteilung {
+        if (betreuungsmitteilungFromServer) {
+            this.parseMitteilung(tsBetreuungsmitteilung, betreuungsmitteilungFromServer);
+            if (betreuungsmitteilungFromServer.betreuungspensen) {
+                tsBetreuungsmitteilung.betreuungspensen = [];
+                for (let i = 0; i < betreuungsmitteilungFromServer.betreuungspensen.length; i++) {
+                    tsBetreuungsmitteilung.betreuungspensen.push(
+                        this.parseBetreuungsmitteilungPensum(new TSBetreuungsmitteilungPensum(), betreuungsmitteilungFromServer.betreuungspensen[i]));
+                }
+
+            }
+        }
+        return tsBetreuungsmitteilung;
+    }
+
+    private isBetreuungsmitteilung(mitteilung: any): boolean {
+        return mitteilung.betreuungspensen !== undefined;
     }
 
     public parseZahlungsauftragList(data: any): TSZahlungsauftrag[] {

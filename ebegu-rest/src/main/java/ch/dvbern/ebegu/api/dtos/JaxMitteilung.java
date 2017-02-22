@@ -10,16 +10,18 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDateTime;
 
 /**
  * DTO fuer Stammdaten der Mitteilungen
  */
+@XmlRootElement(name = "mitteilung")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxMitteilung extends JaxAbstractDTO {
 
-	private static final long serialVersionUID = -1297021341674137397L;
+	private static final long serialVersionUID = -1297771341674137397L;
 
 	@Nullable
 	private JaxFall fall;
@@ -111,7 +113,7 @@ public class JaxMitteilung extends JaxAbstractDTO {
 		return subject;
 	}
 
-	public void setSubject(String subject) {
+	public void setSubject(@Nullable String subject) {
 		this.subject = subject;
 	}
 
@@ -120,7 +122,7 @@ public class JaxMitteilung extends JaxAbstractDTO {
 		return message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(@Nullable String message) {
 		this.message = message;
 	}
 

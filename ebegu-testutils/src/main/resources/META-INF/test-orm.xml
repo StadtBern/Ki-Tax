@@ -295,6 +295,8 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
 	<entity class="ch.dvbern.ebegu.entities.Zahlungsauftrag"/>
 	<entity class="ch.dvbern.ebegu.entities.Zahlung"/>
 	<entity class="ch.dvbern.ebegu.entities.Zahlungsposition"/>
+	<entity class="ch.dvbern.ebegu.entities.Betreuungsmitteilung"/>
+	<entity class="ch.dvbern.ebegu.entities.BetreuungsmitteilungPensum"/>
 	<entity class="ch.dvbern.ebegu.entities.Pain001Dokument"/>
 
 </entity-mappings>
