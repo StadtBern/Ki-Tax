@@ -60,7 +60,7 @@ describe('betreuungView', function () {
         wizardStepManager = $injector.get('WizardStepManager');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
             $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS,
-            wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'));
+            wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), undefined);
         betreuungView.model = betreuung;
 
         betreuungView.form = TestDataUtil.createDummyForm();
@@ -76,7 +76,7 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined, undefined);
+                    $rootScope, null, null, authServiceRS, wizardStepManager, $stateParams, undefined, undefined, undefined);
                 myBetreuungView.model = betreuung;
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(0);
