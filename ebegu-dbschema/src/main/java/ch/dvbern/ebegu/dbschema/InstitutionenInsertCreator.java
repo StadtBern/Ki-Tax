@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -157,7 +158,7 @@ public class InstitutionenInsertCreator {
 	private String readString(Row row, int columnIndex) {
 		Cell cell = row.getCell(columnIndex);
 		if (cell != null) {
-			cell.setCellType(Cell.CELL_TYPE_STRING);
+			cell.setCellType(CellType.STRING);
 			return cell.getStringCellValue();
 		} else {
 			return null;
@@ -167,7 +168,7 @@ public class InstitutionenInsertCreator {
 	private String readDouble(Row row, int columnIndex) {
 		Cell cell = row.getCell(columnIndex);
 		if (cell != null) {
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			cell.setCellType(CellType.NUMERIC);
 			return Double.toString(cell.getNumericCellValue());
 		} else {
 			return null;
