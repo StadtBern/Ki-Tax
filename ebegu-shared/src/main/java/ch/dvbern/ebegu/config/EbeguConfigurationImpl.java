@@ -39,6 +39,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_DUMMY_LOGIN_ENABLED = "ebegu.dummy.login.enabled";
 	public static final String EBEGU_SUPERUSER_MAIL = "ebegu.superuser.mail";
 	private static final String EBEGU_BACKGROUND_COLOR = "ebegu.background.color";
+	public static final String EBEGU_DUMP_DBUNIT_XML = "ebegu.dump.dbunit.xml";
 
 	public EbeguConfigurationImpl() {
 
@@ -116,7 +117,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 	@Override
 	public String getEmailOfSuperUser() {
-		return getString(EBEGU_SUPERUSER_MAIL, null);
+		return getString(EBEGU_SUPERUSER_MAIL, "eberhard.gugler@dvbern.ch");
 	}
 
 	@Override

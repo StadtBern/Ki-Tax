@@ -45,6 +45,8 @@
 		<property name="ebegu.mail.smtp.host" value="mailext.dvbern.ch"/>
 		<property name="ebegu.mail.smtp.port" value="25"/>
 		<property name="ebegu.hostname" value="app.ebegu.ch:3000/#"/>
+
+		<property name="ebegu.dump.dbunit.xml" value="true"/>
     </system-properties>
 
 
@@ -177,7 +179,7 @@
                 </datasource>
                 <xa-datasource jndi-name="java:/jdbc/ebegu" pool-name="ebegu" use-ccm="true">
                     <xa-datasource-property name="url">
-                        jdbc:mysql://localhost:3304/ebegu
+                        jdbc:mysql://localhost:3306/ebegu
                     </xa-datasource-property>
                     <xa-datasource-class>org.mariadb.jdbc.MariaDbDataSource</xa-datasource-class>
                     <driver>mariadbsql</driver>

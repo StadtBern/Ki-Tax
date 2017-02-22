@@ -1980,10 +1980,10 @@ public class JaxBConverter {
 		return jaxVorlage;
 	}
 
-	private JaxFile convertFileToJax(File file, JaxFile jaxFile) {
-		jaxFile.setFilename(file.getFilename());
-		jaxFile.setFilepfad(file.getFilepfad());
-		jaxFile.setFilesize(file.getFilesize());
+	private JaxFile convertFileToJax(FileMetadata fileMetadata, JaxFile jaxFile) {
+		jaxFile.setFilename(fileMetadata.getFilename());
+		jaxFile.setFilepfad(fileMetadata.getFilepfad());
+		jaxFile.setFilesize(fileMetadata.getFilesize());
 		return jaxFile;
 	}
 
@@ -2012,13 +2012,13 @@ public class JaxBConverter {
 		return vorlage;
 	}
 
-	private File convertFileToEnity(JaxFile jaxFile, File file) {
-		Validate.notNull(file);
+	private FileMetadata convertFileToEnity(JaxFile jaxFile, FileMetadata fileMetadata) {
+		Validate.notNull(fileMetadata);
 		Validate.notNull(jaxFile);
-		file.setFilename(jaxFile.getFilename());
-		file.setFilepfad(jaxFile.getFilepfad());
-		file.setFilesize(jaxFile.getFilesize());
-		return file;
+		fileMetadata.setFilename(jaxFile.getFilename());
+		fileMetadata.setFilepfad(jaxFile.getFilepfad());
+		fileMetadata.setFilesize(jaxFile.getFilesize());
+		return fileMetadata;
 	}
 
 
