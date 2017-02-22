@@ -39,11 +39,11 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	@Override
 	public void sendInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch) throws MailException {
 		Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
-		Optional<String> mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId());
-		if (gesuchsteller != null && mailaddress.isPresent() && StringUtils.isNotEmpty(mailaddress.get())) {
-			String message = mailTemplateConfig.getInfoBetreuungenBestaetigt(gesuch, gesuchsteller);
-			sendMessageWithTemplate(message, mailaddress.get());
-			LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress.get());
+		String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+		if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+			String message = mailTemplateConfig.getInfoBetreuungenBestaetigt(gesuch, gesuchsteller, mailaddress);
+			sendMessageWithTemplate(message, mailaddress);
+			LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress);
 		} else {
 			LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 or mailaddr is null");
 		}
@@ -54,7 +54,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 		Gesuchsteller gesuchsteller = extractGesuchsteller1(betreuung.extractGesuch());
 		String mailaddress = fallService.getCurrentEmailAddress(betreuung.extractGesuch().getFall().getId()).orElse(null);
 		if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
-			String message = mailTemplateConfig.getInfoBetreuungAbgelehnt(betreuung, gesuchsteller);
+			String message = mailTemplateConfig.getInfoBetreuungAbgelehnt(betreuung, gesuchsteller, mailaddress);
 			sendMessageWithTemplate(message, mailaddress);
 			LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress);
 		} else {
@@ -66,7 +66,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	public void sendInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung) throws MailException {
 		String mailaddress = fallService.getCurrentEmailAddress(mitteilung.getFall().getId()).orElse(null);
 		if (StringUtils.isNotEmpty(mailaddress)) {
-			String message = mailTemplateConfig.getInfoMitteilungErhalten(mitteilung);
+			String message = mailTemplateConfig.getInfoMitteilungErhalten(mitteilung, mailaddress);
 			sendMessageWithTemplate(message, mailaddress);
 			LOG.debug("Email fuer InfoMitteilungErhalten wurde versendet an" + mailaddress);
 		} else {

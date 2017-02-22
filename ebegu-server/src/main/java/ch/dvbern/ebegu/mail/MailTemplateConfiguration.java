@@ -41,8 +41,8 @@ public class MailTemplateConfiguration {
 		this.freeMarkerConfiguration = ourFreeMarkerConfig;
 	}
 
-	public String getInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung, @Nonnull Gesuchsteller gesuchsteller) {
-		return processInfoBetreuungAbgelehntTemplate("InfoBetreuungAbgelehnt.ftl", betreuung, gesuchsteller);
+	public String getInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung, @Nonnull Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processInfoBetreuungAbgelehntTemplate("InfoBetreuungAbgelehnt.ftl", betreuung, gesuchsteller, toArgumentPair("empfaengerMail", empfaengerMail));
 	}
 
 	private String processInfoBetreuungAbgelehntTemplate(@Nonnull String nameOfTemplate, @Nonnull Betreuung betreuung, @Nonnull Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
@@ -52,8 +52,8 @@ public class MailTemplateConfiguration {
 		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
-	public String getInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller) {
-		return processInfoBetreuungenBestaetigtTemplate("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller);
+	public String getInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processInfoBetreuungenBestaetigtTemplate("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller, toArgumentPair("empfaengerMail", empfaengerMail));
 	}
 
 	private String processInfoBetreuungenBestaetigtTemplate(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
@@ -63,8 +63,8 @@ public class MailTemplateConfiguration {
 		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
-	public String getInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung) {
-		return processInfoMitteilungErhaltenTemplate("InfoMitteilungErhalten.ftl", mitteilung);
+	public String getInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung, @Nonnull String empfaengerMail) {
+		return processInfoMitteilungErhaltenTemplate("InfoMitteilungErhalten.ftl", mitteilung, toArgumentPair("empfaengerMail", empfaengerMail));
 	}
 
 	private String processInfoMitteilungErhaltenTemplate(@Nonnull String nameOfTemplate, @Nonnull Mitteilung mitteilung, Object[]... extraValuePairs) {
@@ -73,8 +73,7 @@ public class MailTemplateConfiguration {
 		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
-	private String processtemplate(final String name, @Nonnull Locale loc, final Object[]... extraValuePairs) {
-		assert name != null;
+	private String processtemplate(@Nonnull final String name, @Nonnull Locale loc, final Object[]... extraValuePairs) {
 		try {
 			final Map<Object, Object> rootMap = new HashMap<>();
 			rootMap.put("configuration", ebeguConfiguration);
@@ -99,6 +98,13 @@ public class MailTemplateConfiguration {
 		} catch (final TemplateException e) {
 			throw new EbeguRuntimeException("processtemplate()", String.format("Failed to process template %s.", name), e);
 		}
+	}
+
+	private Object[] toArgumentPair(String key, Object value) {
+		Object[] args = new Object[2];
+		args[0] = key;
+		args[1] = value;
+		return args;
 	}
 
 	public String getMailCss() {
