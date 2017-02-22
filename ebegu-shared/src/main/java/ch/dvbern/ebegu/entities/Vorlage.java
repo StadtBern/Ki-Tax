@@ -9,7 +9,7 @@ import javax.persistence.Entity;
  */
 @Audited
 @Entity
-public class Vorlage extends File {
+public class Vorlage extends FileMetadata {
 
 	private static final long serialVersionUID = -895840426585785097L;
 

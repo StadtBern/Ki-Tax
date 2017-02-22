@@ -6,7 +6,7 @@ import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import {ReportRS} from "../../../core/service/reportRS.rest";
+import {ReportRS} from '../../../core/service/reportRS.rest';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;

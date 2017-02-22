@@ -24,6 +24,7 @@ import IScope = angular.IScope;
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import ILogService = angular.ILogService;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -43,42 +44,46 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     initialBetreuung: TSBetreuung;
     flagErrorVertrag: boolean;
     kindModel: TSKindContainer;
-    betreuungNumber: number;
+    betreuungIndex: number;
     isMutationsmeldungStatus: boolean;
     mutationsmeldungModel: TSBetreuung;
 
-
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
-        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog'];
+        'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams,
-                private mitteilungRS: MitteilungRS, private dvDialog: DvDialog) {
+                private mitteilungRS: MitteilungRS, private dvDialog: DvDialog, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
 
         this.mutationsmeldungModel = undefined;
         this.isMutationsmeldungStatus = false;
-        this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
-        if ($stateParams.betreuungNumber) {
-            this.betreuungNumber = parseInt($stateParams.betreuungNumber);
-            this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungNumber - 1]);
-            this.initialBetreuung = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungNumber - 1]);
-            this.gesuchModelManager.setBetreuungNumber(this.betreuungNumber);
-        } else {
-            //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
-            this.model = this.initEmptyBetreuung();
-            this.initialBetreuung = angular.copy(this.model);
-            this.betreuungNumber = this.gesuchModelManager.getKindToWorkWith().betreuungen ? this.gesuchModelManager.getKindToWorkWith().betreuungen.length + 1 : 1;
-            this.gesuchModelManager.setBetreuungNumber(this.betreuungNumber);
+        let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
+        if (kindIndex >= 0) {
+            this.gesuchModelManager.setKindIndex(kindIndex);
+            if ($stateParams.betreuungNumber) {
+                this.betreuungIndex = this.gesuchModelManager.convertBetreuungNumberToBetreuungIndex(parseInt($stateParams.betreuungNumber));
+                this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungIndex]);
+                this.initialBetreuung = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungIndex]);
+                this.gesuchModelManager.setBetreuungIndex(this.betreuungIndex);
+            } else {
+                //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
+                this.model = this.initEmptyBetreuung();
+                this.initialBetreuung = angular.copy(this.model);
+                this.betreuungIndex = this.gesuchModelManager.getKindToWorkWith().betreuungen ? this.gesuchModelManager.getKindToWorkWith().betreuungen.length : 0;
+                this.gesuchModelManager.setBetreuungIndex(this.betreuungIndex);
+            }
+
+            this.setBetreuungsangebotTypValues();
+            this.betreuungsangebot = undefined;
+            this.initViewModel();
+
+            // just to read!
+            this.kindModel = this.gesuchModelManager.getKindToWorkWith();
+        } else{
+            this.$log.error('There is no kind available with kind-number:' + $stateParams.kindNumber);
         }
-
-        this.setBetreuungsangebotTypValues();
-        this.betreuungsangebot = undefined;
-        this.initViewModel();
-
-        // just to read!
-        this.kindModel = this.gesuchModelManager.getKindToWorkWith();
     }
 
     /**
@@ -88,7 +93,6 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public initEmptyBetreuung(): TSBetreuung {
         let tsBetreuung: TSBetreuung = new TSBetreuung();
         tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
-        tsBetreuung.betreuungNummer = this.betreuungNumber;
         return tsBetreuung;
     }
 
@@ -238,9 +242,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (this.getBetreuungModel() && (this.getBetreuungspensen() === undefined || this.getBetreuungspensen() === null)) {
             this.getBetreuungModel().betreuungspensumContainers = [];
         }
-        //Sollte nie vorkommen. Trotzdem wird der Benutzer informiert wenn es passieren wuerde
         if (!this.getBetreuungModel()) {
-            this.errorService.addMesageAsError('Betreuungsmodel ist nicht korrekt initialisiert. Die Seite unterstuetzt noch keine direktnavigation');
+            this.errorService.addMesageAsError('Betreuungsmodel ist nicht initialisiert.');
         }
         this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(false, undefined, new TSDateRange())));
     }
