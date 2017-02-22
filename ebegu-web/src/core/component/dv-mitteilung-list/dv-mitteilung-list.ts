@@ -20,8 +20,11 @@ import IRootScopeService = angular.IRootScopeService;
 import {IStateService} from 'angular-ui-router';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
+import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
+let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 
 export class DVMitteilungListConfig implements IComponentOptions {
     transclude = false;
@@ -50,12 +53,12 @@ export class DVMitteilungListController {
     ebeguUtil: EbeguUtil;
 
 
-    static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS',
-        'FallRS', 'BetreuungRS', '$q', '$window', '$rootScope', '$state', 'EbeguUtil'];
+    static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS',
+        'BetreuungRS', '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog'];
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS, private authServiceRS: AuthServiceRS,
-                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window: IWindowService, private $rootScope: IRootScopeService,
-                private $state: IStateService, ebeguUtil: EbeguUtil) {
+                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window: IWindowService,
+                private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil, private DvDialog: DvDialog) {
 
         this.initViewModel();
         this.TSRole = TSRole;
@@ -306,7 +309,18 @@ export class DVMitteilungListController {
         return mitteilung instanceof TSBetreuungsmitteilung;
     }
 
-    public applyBetreuungsmitteilung(): void {
-        window.alert('Not yet implemented');
+    public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {
+        if (mitteilung instanceof TSBetreuungsmitteilung) {
+            this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: 'MUTATIONSMELDUNG_UEBERNEHMEN',
+                deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG'
+            }).then(() => {   //User confirmed removal
+                let betreuungsmitteilung: TSBetreuungsmitteilung = <TSBetreuungsmitteilung>mitteilung;
+                this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: any) => {
+                    // todo beim muss man was machen?????
+                });
+            });
+
+        }
     }
 }

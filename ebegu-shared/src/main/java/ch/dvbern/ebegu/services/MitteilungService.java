@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.entities.Mitteilung;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -30,6 +31,9 @@ public interface MitteilungService {
 
 	@Nonnull
 	Optional<Mitteilung> findMitteilung(@Nonnull String key);
+
+	@Nonnull
+	Optional<Betreuungsmitteilung> findBetreuungsmitteilung(@Nonnull String key);
 
 	@Nonnull
 	Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall);
@@ -64,4 +68,6 @@ public interface MitteilungService {
 	Long getAmountNewMitteilungenForCurrentBenutzer();
 
 	Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung);
+
+	Betreuungsmitteilung applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung);
 }

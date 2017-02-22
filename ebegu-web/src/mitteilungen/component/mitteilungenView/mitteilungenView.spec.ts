@@ -172,7 +172,8 @@ describe('mitteilungenView', function () {
         spyOn(mitteilungRS, 'getMitteilungenForCurrentRolleForFall').and.returnValue($q.when([{}]));
         spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
 
-        controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q, null, $rootScope, undefined, undefined);
+        controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q, null,
+            $rootScope, undefined, undefined, undefined);
         $rootScope.$apply();
     }
 

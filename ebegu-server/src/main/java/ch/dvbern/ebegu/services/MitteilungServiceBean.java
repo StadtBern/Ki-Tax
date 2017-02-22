@@ -22,6 +22,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -52,6 +54,12 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
+
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private BetreuungService betreuungService;
 
 	private final Logger LOG = LoggerFactory.getLogger(MitteilungServiceBean.class.getSimpleName());
 
@@ -145,6 +153,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	public Optional<Mitteilung> findMitteilung(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Mitteilung mitteilung = persistence.find(Mitteilung.class, key);
+		return Optional.ofNullable(mitteilung);
+	}
+
+	@Override
+	@Nonnull
+	public Optional<Betreuungsmitteilung> findBetreuungsmitteilung(@Nonnull String key) {
+		Objects.requireNonNull(key, "id muss gesetzt sein");
+		Betreuungsmitteilung mitteilung = persistence.find(Betreuungsmitteilung.class, key);
 		return Optional.ofNullable(mitteilung);
 	}
 
@@ -340,6 +356,51 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		ensureEmpfaengerIsSet(betreuungsmitteilung);
 
 		return persistence.persist(betreuungsmitteilung); // A Betreuungsmitteilung is created and sent, therefore persist and not merge
+	}
+
+	@Override
+	public Betreuungsmitteilung applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung) {
+		final Gesuch gesuch = mitteilung.getBetreuung().extractGesuch();
+		final Optional<Gesuch> neustesGesuchOpt = gesuchService.getNeustesGesuchFuerGesuch(gesuch);
+		if (neustesGesuchOpt.isPresent()) {
+			final Gesuch neustesGesuch = neustesGesuchOpt.get();
+			if (!AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus()) && neustesGesuch.isMutation()) {
+				//betreuungsaenderungen der bestehenden Mutation hinzufuegen
+				applyBetreuungsmitteilungToMutation(neustesGesuch, mitteilung);
+			}
+			else if (AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus())) {
+				// create Mutation
+				final Optional<Gesuch> mutationOpt = this.gesuchService.antragMutieren(gesuch.getFall().getFallNummer(), gesuch.getGesuchsperiode().getId(), LocalDate.now());
+				if (mutationOpt.isPresent()) {
+					Gesuch persistedMutation = gesuchService.createGesuch(mutationOpt.get());
+					applyBetreuungsmitteilungToMutation(persistedMutation, mitteilung);
+				}
+			}
+			else {
+				// todo beim Pruefen dass dies wirklich so ist
+				throw new EbeguRuntimeException("applyBetreuungsmitteilung", "Fehler beim Erstellen einer Mutation", "Es gibt bereits eine offene Mutation für dieses Gesuch, die Sie nicht bearbeiten duerfen");
+			}
+		}
+		return mitteilung;
+	}
+
+	private void applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
+		final Betreuung betreuungToChange = gesuch.extractBetreuungsnachfolger(mitteilung.getBetreuung().getId());
+		if (betreuungToChange != null) {
+			betreuungToChange.getBetreuungspensumContainers().clear();
+			for (final BetreuungsmitteilungPensum betPensum : mitteilung.getBetreuungspensen()) {
+				BetreuungspensumContainer betPenCont = new BetreuungspensumContainer();
+				betPenCont.setBetreuung(betreuungToChange);
+				Betreuungspensum betPensumJA = new Betreuungspensum();
+				betPensumJA.setGueltigkeit(betPensum.getGueltigkeit());
+				betPensumJA.setPensum(betPensum.getPensum());
+				betPensumJA.setNichtEingetreten(false);
+				betPenCont.setBetreuungspensumJA(betPensumJA);
+				// todo beim Muss man das vorgaengerID setzen? Ist dies ueberhaupt relevant?
+				betreuungToChange.getBetreuungspensumContainers().add(betPenCont);
+				betreuungService.saveBetreuung(betreuungToChange, false);
+			}
+		}
 	}
 
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {
