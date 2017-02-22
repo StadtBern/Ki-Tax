@@ -2,8 +2,9 @@
 <#-- @ftlvariable name="gesuchsteller" type="ch.dvbern.ebegu.entities.Gesuchsteller" -->
 <#-- @ftlvariable name="templateConfiguration" type="ch.dvbern.ebegu.mail.MailTemplateConfiguration" -->
 <#-- @ftlvariable name="configuration" type="ch.dvbern.ebegu.config.EbeguConfiguration" -->
+<#-- @ftlvariable name="empfaengerMail" type="java.lang.String" -->
 From: ${configuration.senderAddress}
-To: " ${gesuchsteller.fullName} <${gesuchsteller.mail}>
+To: ${gesuchsteller.fullName} <${empfaengerMail}>
 Subject: <@base64Header>Betreuungsplatz abgelehnt</@base64Header>
 Content-Type: text/html;charset=utf-8
 
