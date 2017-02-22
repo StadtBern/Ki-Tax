@@ -17,7 +17,7 @@
                         <md-button ng-click="vmgs.setGesuchsperiode(gesuchsperiodeString)"
                                    aria-label="{{gesuchsperiodeString}}">
                                 <span>
-                                    <a href="javascript:void(0)">{{gesuchsperiodeString}}</a>
+                                    <a href="javascript:void(0)" aria-hidden>{{gesuchsperiodeString}}</a>
                                 </span>
                         </md-button>
                     </md-menu-item>
@@ -40,7 +40,7 @@
                         <md-button ng-click="vmgs.setAntragTypDatum(antragTypDatum)"
                                    aria-label="{{antragTypDatum}}">
                                 <span>
-                                    <a href="javascript:void(0)">{{antragTypDatum}}</a>
+                                    <a href="javascript:void(0)" aria-hidden>{{antragTypDatum}}</a>
                                 </span>
                         </md-button>
                     </md-menu-item>
@@ -54,7 +54,7 @@
 
             <!--Kontakt-->
             <md-menu>
-                <button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
+                <button ng-click="$mdOpenMenu()" aria-label="{{'ARIA_KONTAKT_MENU' | translate}}">
                     <i class="ellipsis-icon fa fa-envelope"></i>
                     <span data-translate="TOOLBAR_KONTAKT"></span>
                 </button>

@@ -8,7 +8,7 @@
             </h1>
             <hr class="header"/>
             <p ng-if="vm.isMutation()" data-translate="MUTATION_FAMSITUATION_HINT"></p>
-            <p ng-if="vm.showError()" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></p>
+            <p ng-if="vm.showError()" role="alert" data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION" class="dv-error-messages"></p>
         </div>
     </div>
     <div class="row">
@@ -48,14 +48,15 @@
                 <div class="row">
                     <div class="col-xs-12 dv-input-container-question">
                         <div class="form-group">
-                            <h1 class="required"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span></h1>
+                            <h1 class="required" id="frage1"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span></h1>
                             <dv-radio-container name="familienstatus"
                                                 ng-model="vm.getFamiliensituation().familienstatus"
                                                 ng-required="true"
                                                 class="input-element sp" items="vm.familienstatusValues"
                                                 dv-enable-element
                                                 dv-enable-allowed-roles="vm.allowedRoles"
-                                                dv-enable-expression="vm.isEnabled()">
+                                                dv-enable-expression="vm.isEnabled()"
+                            aria-described-by="frage1">
                             </dv-radio-container>
                             <dv-error-messages for="vm.form.familienstatus.$error"
                                                class="error"></dv-error-messages>
