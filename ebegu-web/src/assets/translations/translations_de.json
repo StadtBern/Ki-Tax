@@ -20,6 +20,8 @@
     "ADRESSE_GEMEINDE": "Gemeinde",
     "ADRESSE_GUELTIGAB": "gültig ab",
     "ADRESSE_GUELTIGBIS": "gültig bis",
+    "DOWNLOAD_EXPORT_FILE": "Verfügung exportieren",
+    "DOWNLOAD_EXPORT_FILE_LINK": "(kompatible Programme)",
     "ERROR_REQUIRED": "Feld wird benötigt",
     "ERROR_REQUIRED_ONE_OF_THEM": "Eines der Felder wird benötigt",
     "ERROR_VERTRAG_REQUIRED": "Um eine Platzbestätigung anzufordern, müssen Sie einen Vertrag mit der betreffenden Institution abgeschlossen haben.",

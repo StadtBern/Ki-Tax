@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.api.util;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
-import ch.dvbern.ebegu.entities.File;
+import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -66,9 +66,9 @@ public final class RestUtil {
 		return request.getRequestURI().startsWith(blobdataPath);
 	}
 
-	public static Response buildDownloadResponse(File file, boolean attachment) throws IOException {
+	public static Response buildDownloadResponse(FileMetadata fileMetadata, boolean attachment) throws IOException {
 
-		Path filePath = Paths.get(file.getFilepfad());
+		Path filePath = Paths.get(fileMetadata.getFilepfad());
 		//if no guess can be made assume application/octet-stream
 		String contentType = Files.probeContentType(filePath);
 		if (contentType == null) {
@@ -76,7 +76,7 @@ public final class RestUtil {
 		}
 		final byte[] bytes = Files.readAllBytes(filePath);
 
-		String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + file.getFilename() + '"';
+		String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + fileMetadata.getFilename() + '"';
 
 		return Response.ok(bytes)
 			.header("Content-Disposition", disposition)

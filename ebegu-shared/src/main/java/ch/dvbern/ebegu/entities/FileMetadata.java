@@ -13,7 +13,8 @@ import javax.validation.constraints.Size;
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 /**
- * Gemeinsame Basisklasse für speichern von Files
+ * Gemeinsame Basisklasse für speichern von Files. Der Content wird dabei nicht gespeichert sondern
+ * nur die Metainformationen.
  *
  * @author gapa
  * @version 1.0
@@ -21,18 +22,18 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 @Audited
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class File extends AbstractEntity {
+public abstract class FileMetadata extends AbstractEntity {
 
 	private static final long serialVersionUID = -4502262818759522627L;
 
 	// copy
-	public File(File file) {
-		this.filename = file.filename;
-		this.filepfad = file.filepfad;
-		this.filesize = file.filesize;
+	public FileMetadata(FileMetadata fileMetadata) {
+		this.filename = fileMetadata.filename;
+		this.filepfad = fileMetadata.filepfad;
+		this.filesize = fileMetadata.filesize;
 	}
 
-	public File() {
+	public FileMetadata() {
 	}
 
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
@@ -83,7 +84,7 @@ public abstract class File extends AbstractEntity {
 			.toString();
 	}
 
-	public File copyForMutation(File mutation) {
+	public FileMetadata copyForMutation(FileMetadata mutation) {
 		super.copyForMutation(mutation);
 		mutation.setFilename(this.filename);
 		mutation.setFilepfad(this.filepfad);

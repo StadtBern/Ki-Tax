@@ -16,6 +16,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
+import ILogService = angular.ILogService;
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -34,22 +35,20 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
 export class BetreuungListViewController extends AbstractGesuchViewController<any> {
 
     static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
-        'ErrorService', 'WizardStepManager', '$scope'];
+        'ErrorService', 'WizardStepManager', '$scope', '$log'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
-                private errorService: ErrorService, wizardStepManager: WizardStepManager, $scope: IScope) {
+                private errorService: ErrorService, wizardStepManager: WizardStepManager, $scope: IScope, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 
     }
 
     public editBetreuung(kind: TSKindContainer, betreuung: any): void {
-        let kindNummer: number = this.gesuchModelManager.findKind(kind);
-        let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
-        if (betreuungNumber > 0) {
+        if (kind && betreuung) {
             betreuung.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
-            this.openBetreuungView(betreuungNumber, kindNummer);
+            this.openBetreuungView(betreuung.betreuungNummer, kind.kindNummer);
         }
     }
 
@@ -66,10 +65,12 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
 
 
     public createBetreuung(kind: TSKindContainer): void {
-        let kindNumber: number = this.gesuchModelManager.findKind(kind);
-        if (kindNumber > 0) {
-            this.gesuchModelManager.setKindNumber(kindNumber);
-            this.openBetreuungView(undefined, kindNumber);
+        let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
+        if (kindIndex >= 0) {
+            this.gesuchModelManager.setKindIndex(kindIndex);
+            this.openBetreuungView(undefined, kind.kindNummer);
+        } else{
+            this.$log.error('kind nicht gefunden ', kind);
         }
     }
 
@@ -84,10 +85,12 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG'
         }).then(() => {   //User confirmed removal
             this.errorService.clearAll();
-            let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
-            if (betreuungNumber > 0) {
-                this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
+            let betreuungIndex: number = this.gesuchModelManager.findBetreuung(betreuung);
+            if (betreuungIndex >= 0) {
+                this.gesuchModelManager.setBetreuungIndex(betreuungIndex);
                 this.gesuchModelManager.removeBetreuung();
+            } else{
+                this.$log.error('betreuung nicht gefunden ', betreuung);
             }
         });
     }
