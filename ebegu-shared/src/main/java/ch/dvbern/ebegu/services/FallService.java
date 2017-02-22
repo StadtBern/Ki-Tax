@@ -73,7 +73,7 @@ public interface FallService {
 
 	/**
 	 * Gibt die GS1-Emailadresse des neusten Gesuchs fuer diesen Fall zurueck, wenn noch kein Gesuch vorhanden ist, wird
-	 * die E-Mail zurueckgegeben die beim besitzer des Falls eingegeben wurde (aus IAM importiert)
+	 * die E-Mail zurueckgegeben die beim Besitzer des Falls eingegeben wurde (aus IAM importiert)
 	 */
-	Optional<String> getEmailAddressForFall(String fallID);
+	Optional<String> getCurrentEmailAddress(String fallID);
 }

@@ -3,7 +3,7 @@
 <#-- @ftlvariable name="templateConfiguration" type="ch.dvbern.ebegu.mail.MailTemplateConfiguration" -->
 <#-- @ftlvariable name="configuration" type="ch.dvbern.ebegu.config.EbeguConfiguration" -->
 From: ${configuration.senderAddress}
-To: " ${gesuchsteller.fullName} <${gesuchsteller.mail}>
+To: ${gesuchsteller.fullName} <${gesuchsteller.mail}>
 Subject: <@base64Header>Gesuch kann freigegeben werden</@base64Header>
 Content-Type: text/html;charset=utf-8
 

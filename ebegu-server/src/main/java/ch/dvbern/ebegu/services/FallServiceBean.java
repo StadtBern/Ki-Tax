@@ -145,7 +145,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 
 
 	@Override
-	public Optional<String> getEmailAddressForFall(String fallID){
+	public Optional<String> getCurrentEmailAddress(String fallID){
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 
 		final CriteriaQuery<String> query = cb.createQuery(String.class);
@@ -158,7 +158,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		Path<String> gsEmail = gesDataJoin.get(Gesuchsteller_.mail);
 		query.select(gsEmail);
 		query.where(gesuchOfFall);
-		query.orderBy(cb.desc(fallJoin.get(Gesuch_.timestampErstellt))); // Das mit dem neuesten Verfuegungsdatum
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt))); // Das mit dem neuesten Verfuegungsdatum
 		TypedQuery<String> typedQuery = persistence.getEntityManager().createQuery(query);
 		typedQuery.setParameter(fallIdParam, fallID);
 		typedQuery.setMaxResults(1);
