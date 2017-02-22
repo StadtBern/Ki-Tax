@@ -1,4 +1,4 @@
-import {IHttpParamSerializer, ILogService, IPromise} from "angular";
+import {IHttpParamSerializer, ILogService} from 'angular';
 
 export class ReportRS {
     serviceURL: string;

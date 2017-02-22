@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
-public class Dokument extends File {
+public class Dokument extends FileMetadata {
 
 	private static final long serialVersionUID = -895840426585785097L;
 

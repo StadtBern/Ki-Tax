@@ -23,7 +23,7 @@ public class Zahlungsposition extends AbstractEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlungsposition_verfuegungZeitabschnitt_id"))
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_Zahlungsposition_verfuegungZeitabschnitt_id"), nullable = false)
 	private VerfuegungZeitabschnitt verfuegungZeitabschnitt;
 
 	@NotNull
@@ -34,6 +34,10 @@ public class Zahlungsposition extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	private BigDecimal betrag;
+
+	@NotNull
+	@Column(nullable = false)
+	private boolean ignoriert;
 
 	public Zahlung getZahlung() {
 		return zahlung;
@@ -69,5 +73,13 @@ public class Zahlungsposition extends AbstractEntity {
 
 	public Kind getKind() {
 		return verfuegungZeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindJA();
+	}
+
+	public boolean isIgnoriert() {
+		return ignoriert;
+	}
+
+	public void setIgnoriert(boolean ignoriert) {
+		this.ignoriert = ignoriert;
 	}
 }

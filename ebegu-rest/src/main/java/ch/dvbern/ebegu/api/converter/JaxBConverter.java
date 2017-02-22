@@ -1685,6 +1685,7 @@ public class JaxBConverter {
 			jaxZeitabschn.setKategorieMaxEinkommen(zeitabschnitt.isKategorieMaxEinkommen());
 			jaxZeitabschn.setKategorieZuschlagZumErwerbspensum(zeitabschnitt.isKategorieZuschlagZumErwerbspensum());
 			jaxZeitabschn.setZuSpaetEingereicht(zeitabschnitt.isZuSpaetEingereicht());
+			jaxZeitabschn.setZahlungsstatus(zeitabschnitt.getZahlungsstatus());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1700,7 +1701,6 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setBetreuungspensum(jaxVerfuegungZeitabschnitt.getBetreuungspensum());
 		verfuegungZeitabschnitt.setFachstellenpensum(jaxVerfuegungZeitabschnitt.getFachstellenpensum());
 		verfuegungZeitabschnitt.setAnspruchspensumRest(jaxVerfuegungZeitabschnitt.getAnspruchspensumRest());
-//		verfuegungZeitabschnitt.setBgPensum(jaxVerfuegungZeitabschnitt.getBgPensum());
 		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(jaxVerfuegungZeitabschnitt.getAnspruchberechtigtesPensum());
 		verfuegungZeitabschnitt.setBetreuungsstunden(jaxVerfuegungZeitabschnitt.getBetreuungsstunden());
 		verfuegungZeitabschnitt.setVollkosten(jaxVerfuegungZeitabschnitt.getVollkosten());
@@ -1714,6 +1714,7 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setKategorieKeinPensum(jaxVerfuegungZeitabschnitt.isKategorieKeinPensum());
 		verfuegungZeitabschnitt.setKategorieZuschlagZumErwerbspensum(jaxVerfuegungZeitabschnitt.isKategorieZuschlagZumErwerbspensum());
 		verfuegungZeitabschnitt.setZuSpaetEingereicht(jaxVerfuegungZeitabschnitt.isZuSpaetEingereicht());
+		verfuegungZeitabschnitt.setZahlungsstatus(jaxVerfuegungZeitabschnitt.getZahlungsstatus());
 		return verfuegungZeitabschnitt;
 	}
 
@@ -1979,10 +1980,10 @@ public class JaxBConverter {
 		return jaxVorlage;
 	}
 
-	private JaxFile convertFileToJax(File file, JaxFile jaxFile) {
-		jaxFile.setFilename(file.getFilename());
-		jaxFile.setFilepfad(file.getFilepfad());
-		jaxFile.setFilesize(file.getFilesize());
+	private JaxFile convertFileToJax(FileMetadata fileMetadata, JaxFile jaxFile) {
+		jaxFile.setFilename(fileMetadata.getFilename());
+		jaxFile.setFilepfad(fileMetadata.getFilepfad());
+		jaxFile.setFilesize(fileMetadata.getFilesize());
 		return jaxFile;
 	}
 
@@ -2011,13 +2012,13 @@ public class JaxBConverter {
 		return vorlage;
 	}
 
-	private File convertFileToEnity(JaxFile jaxFile, File file) {
-		Validate.notNull(file);
+	private FileMetadata convertFileToEnity(JaxFile jaxFile, FileMetadata fileMetadata) {
+		Validate.notNull(fileMetadata);
 		Validate.notNull(jaxFile);
-		file.setFilename(jaxFile.getFilename());
-		file.setFilepfad(jaxFile.getFilepfad());
-		file.setFilesize(jaxFile.getFilesize());
-		return file;
+		fileMetadata.setFilename(jaxFile.getFilename());
+		fileMetadata.setFilepfad(jaxFile.getFilepfad());
+		fileMetadata.setFilesize(jaxFile.getFilesize());
+		return fileMetadata;
 	}
 
 
