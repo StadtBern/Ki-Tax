@@ -1615,7 +1615,7 @@ export default class EbeguRestUtil {
             zeitabschnitt.fachstellenpensum = zeitabschnittTS.fachstellenpensum;
             zeitabschnitt.massgebendesEinkommenVorAbzugFamgr = zeitabschnittTS.massgebendesEinkommenVorAbzugFamgr;
             zeitabschnitt.famGroesse = zeitabschnittTS.famGroesse;
-            zeitabschnitt.status = zeitabschnittTS.status;
+            zeitabschnitt.zahlungsstatus = zeitabschnittTS.zahlungsstatus;
             zeitabschnitt.vollkosten = zeitabschnittTS.vollkosten;
             zeitabschnitt.einkommensjahr = zeitabschnittTS.einkommensjahr;
             zeitabschnitt.kategorieZuschlagZumErwerbspensum = zeitabschnittTS.kategorieZuschlagZumErwerbspensum;
@@ -1643,7 +1643,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.fachstellenpensum = zeitabschnittFromServer.fachstellenpensum;
             verfuegungZeitabschnittTS.massgebendesEinkommenVorAbzugFamgr = zeitabschnittFromServer.massgebendesEinkommenVorAbzugFamgr;
             verfuegungZeitabschnittTS.famGroesse = zeitabschnittFromServer.famGroesse;
-            verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
+            verfuegungZeitabschnittTS.zahlungsstatus = zeitabschnittFromServer.zahlungsstatus;
             verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
             verfuegungZeitabschnittTS.einkommensjahr = zeitabschnittFromServer.einkommensjahr;
             verfuegungZeitabschnittTS.kategorieZuschlagZumErwerbspensum = zeitabschnittFromServer.kategorieZuschlagZumErwerbspensum;
