@@ -10,6 +10,8 @@ import ILogService = angular.ILogService;
 import IQService = angular.IQService;
 import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
+import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
+import {TSZahlungsauftragsstatus} from '../../models/enums/TSZahlungsauftragstatus';
 let template = require('./zahlungsauftragView.html');
 require('./zahlungsauftragView.less');
 
@@ -30,13 +32,13 @@ export class ZahlungsauftragViewController {
     faelligkeitsdatum: moment.Moment;
     datumGeneriert: moment.Moment;
 
-    itemsByPage: number = 20;
-    numberOfPages: number = 1;
+    itemsByPage: number = 12;
+    devMode: boolean = false;
 
-    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'DownloadRS'];
+    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS'];
 
     constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
-                private $state: IStateService, private downloadRS: DownloadRS) {
+                private $state: IStateService, private downloadRS: DownloadRS, private applicationPropertyRS: ApplicationPropertyRS) {
         this.initViewModel();
     }
 
@@ -50,17 +52,18 @@ export class ZahlungsauftragViewController {
 
     private initViewModel() {
         this.updateZahlungsauftrag();
+        this.applicationPropertyRS.isDevMode().then((response: any) => {
+            this.devMode = response;
+        });
     }
 
     private updateZahlungsauftrag() {
         this.zahlungRS.getAllZahlungsauftraege().then((response: any) => {
             this.zahlungsauftragen = angular.copy(response);
-            this.numberOfPages = this.zahlungsauftragen.length / this.itemsByPage;
         });
     }
 
     public gotoZahlung(zahlungsauftrag: TSZahlungsauftrag) {
-        //stateparams übergeben
         this.$state.go('zahlung', {
             zahlungsauftrag: zahlungsauftrag,
             zahlungsauftragId: zahlungsauftrag.id
@@ -77,7 +80,6 @@ export class ZahlungsauftragViewController {
     }
 
     public downloadPain(zahlungsauftrag: TSZahlungsauftrag) {
-        console.log('downloadPain' + zahlungsauftrag.id);
         let win: Window = this.downloadRS.prepareDownloadWindow();
         return this.downloadRS.getPain001AccessTokenGeneratedDokument(zahlungsauftrag.id)
             .then((downloadFile: TSDownloadFile) => {
@@ -86,11 +88,16 @@ export class ZahlungsauftragViewController {
     }
 
     public downloadAllDetails(zahlungsauftrag: TSZahlungsauftrag) {
-        console.log('downloadAllDetails' + zahlungsauftrag.id);
+        console.log('downloadAllDetails not yet impl' + zahlungsauftrag.id);
     }
 
-    public ausloesen(zahlungsauftrag: TSZahlungsauftrag) {
-        console.log('ausloesen' + zahlungsauftrag.id);
+    public ausloesen(zahlungsauftragId: string) {
+        this.zahlungRS.zahlungsauftragAusloesen(zahlungsauftragId).then((response: TSZahlungsauftrag) => {
+            let index = EbeguUtil.getIndexOfElementwithID(response, this.zahlungsauftragen);
+            if (index > -1) {
+                this.zahlungsauftragen[index] = response;
+            }
+        });
     }
 
     public edit(zahlungsauftrag: TSZahlungsauftrag) {
@@ -110,6 +117,13 @@ export class ZahlungsauftragViewController {
             });
 
         }
+    }
+
+    public isEditable(status: TSZahlungsauftragsstatus): boolean {
+        if (status === TSZahlungsauftragsstatus.ENTWURF) {
+            return true;
+        }
+        return false;
     }
 
     public isEditMode(zahlungsauftragId: string): boolean {
@@ -138,4 +152,5 @@ export class ZahlungsauftragViewController {
         }
         return "";
     }
+
 }

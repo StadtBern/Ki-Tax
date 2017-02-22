@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.MathUtil;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -93,6 +94,10 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 
 	//TODO: get Zahhlungsauftrag Total
 	public BigDecimal getBetragTotalAuftrag() {
-		return new BigDecimal(9876);
+		BigDecimal total = BigDecimal.ZERO;
+		for (Zahlung zahlung : zahlungen) {
+				total = MathUtil.DEFAULT.add(total, zahlung.getBetragTotalZahlung());
+		}
+		return total;
 	}
 }

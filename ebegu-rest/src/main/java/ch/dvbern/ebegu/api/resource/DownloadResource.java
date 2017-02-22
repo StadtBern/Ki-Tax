@@ -352,7 +352,6 @@ public class DownloadResource {
 		downloadFileInfo.setFilesize(uploadFileInfo.getSizeString());
 
 		return this.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
-
 	}
 
 	@Nonnull

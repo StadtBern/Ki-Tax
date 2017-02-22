@@ -36,6 +36,13 @@ export default class ZahlungRS {
         });
     }
 
+    public zahlungsauftragAusloesen(zahlungsauftragId: string): IPromise<TSZahlungsauftrag> {
+        return this.http.put(this.serviceURL + '/ausloesen' + '/' + encodeURIComponent(zahlungsauftragId), null).then((response: any) => {
+            this.$log.debug('PARSING user REST array object', response.data);
+            return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), response.data);
+        });
+    }
+
     public createZahlungsauftrag(beschrieb: string, faelligkeitsdatum: moment.Moment, datumGeneriert: moment.Moment): IPromise<TSZahlungsauftrag> {
         return this.http.get(this.serviceURL + '/create',
             {

@@ -2,13 +2,13 @@ import {IComponentOptions} from 'angular';
 import TSZahlung from '../../models/TSZahlung';
 import ZahlungRS from '../../core/service/zahlungRS.rest';
 import EbeguUtil from '../../utils/EbeguUtil';
+import {IZahlungsauftragStateParams} from '../zahlung.route';
+import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;
 import IStateService = angular.ui.IStateService;
-import {IZahlungsauftragStateParams} from '../zahlung.route';
-import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 let template = require('./zahlungView.html');
 require('./zahlungView.less');
 
@@ -24,11 +24,10 @@ export class ZahlungViewController {
     private zahlungsauftrag: TSZahlungsauftrag;
 
     itemsByPage: number = 20;
-    numberOfPages: number = 1;
 
-    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$stateParams'];
+    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$stateParams', '$state'];
 
-    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $stateParams: IZahlungsauftragStateParams) {
+    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $stateParams: IZahlungsauftragStateParams, private $state: IStateService) {
         this.initViewModel();
     }
 
@@ -42,16 +41,16 @@ export class ZahlungViewController {
         }
     }
 
-    public getZahlungsauftrag() : TSZahlungsauftrag{
+    public getZahlungsauftrag(): TSZahlungsauftrag {
         return this.zahlungsauftrag;
     }
 
+    private downloadDetails(zahlung: TSZahlung) {
+        console.log('downloadAllDetails not yet impl ' + zahlung.id);
+    }
 
-
-    private gotoZahlung(zahlung: TSZahlung) {
-        /*        this.$state.go('zahlungen', {
-         fallId: zahlung.fall.id
-         });*/
+    private gotToUebersicht(): void {
+        this.$state.go('zahlungsauftrag');
     }
 
 }

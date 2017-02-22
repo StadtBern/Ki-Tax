@@ -87,7 +87,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 			jaxbMarshaller.marshal(getElementToMarshall(document), documentXmlString); // ohne @XmlRootElement annotation
 
-			LOG.info("XML={}", documentXmlString);
+			LOG.debug("XML={}", documentXmlString);
 
 		} catch (final Exception e) {
 			LOG.error("Failed to marshal Document", e.getMessage());

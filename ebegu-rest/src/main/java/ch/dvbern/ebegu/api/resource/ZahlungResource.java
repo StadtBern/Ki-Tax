@@ -6,21 +6,20 @@ import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.services.GeneratedDokumentService;
 import ch.dvbern.ebegu.services.ZahlungService;
 import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,6 +40,9 @@ public class ZahlungResource {
 
 	@Inject
 	private JaxBConverter converter;
+
+	@Inject
+	private GeneratedDokumentService generatedDokumentService;
 
 
 	@Nullable
@@ -73,6 +75,25 @@ public class ZahlungResource {
 		return converter.zahlungsauftragToJAX(optional.get());
 	}
 
+	@Nullable
+	@PUT
+	@Path("/ausloesen/{zahlungsauftragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxZahlungsauftrag zahlungsauftragAusloesen(
+		@Nonnull @NotNull @PathParam("zahlungsauftragId") JaxId zahlungsauftragJAXPId) throws EbeguException, MimeTypeParseException {
+
+		Validate.notNull(zahlungsauftragJAXPId.getId());
+		String zahlungsauftragId = converter.toEntityId(zahlungsauftragJAXPId);
+
+		final Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragAusloesen(zahlungsauftragId);
+
+		//Force creation and saving of ZahlungsFile Pain001
+		generatedDokumentService.getPain001DokumentAccessTokenGeneratedDokument(zahlungsauftrag, true);
+
+		return converter.zahlungsauftragToJAX(zahlungsauftrag);
+	}
+
 
 	@Nullable
 	@GET
@@ -86,9 +107,9 @@ public class ZahlungResource {
 
 		LocalDate faelligkeitsdatum = DateUtil.parseStringToDateOrReturnNow(stringFaelligkeitsdatum);
 		LocalDateTime datumGeneriert;
-		if(stringDatumGeneriert!=null) {
+		if (stringDatumGeneriert != null) {
 			datumGeneriert = DateUtil.parseStringToDateOrReturnNow(stringDatumGeneriert).atStartOfDay();
-		}else{
+		} else {
 			datumGeneriert = LocalDateTime.now();
 		}
 

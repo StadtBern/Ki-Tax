@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.types.DateRange_;
@@ -13,6 +14,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -34,9 +36,9 @@ import java.util.*;
  * Zahlungen bereits beruecksichtigt wurden.
  * Wir muessen mit 2 Zeitraeumen arbeiten:
  * |      Jan      |      Feb       |
- *        |                  |
- *     letzter            aktueller
- *     Zahlungslauf		Zahlungslauf
+ * |                  |
+ * letzter            aktueller
+ * Zahlungslauf		Zahlungslauf
  * Für die Ermittlung der "normalen" Zahlungen wird immer (mind.) ein ganzer Monat berücksichtigt, und zwar der aktuelle
  * Monat des Zahlungslaufes plus fruehere Monate, falls in diesen kein Zahlungslauf stattfand.
  * Für die Ermittlung der Korrektur-Zahlungen muessen alle Verfuegungen berücksichtigt werden, welche seit dem letzten
@@ -80,7 +82,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// Es darf immer nur ein Zahlungsauftrag im Status ENTWURF sein
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
 		if (lastZahlungsauftrag.isPresent() && lastZahlungsauftrag.get().getStatus().isEntwurf()) {
-			throw new IllegalStateException("Es darf kein neuer Entwurf erstellt werden, bevor der letzte Auftrag freigegeben wurde");
+			throw new EbeguRuntimeException("zahlungsauftragErstellen", ErrorCodeEnum.ERROR_ZAHLUNG_ERSTELLEN, "Es darf kein neuer Entwurf erstellt werden, bevor der letzte Auftrag freigegeben wurde");
 		}
 
 		LOGGER.info("Erstelle Zahlungsauftrag mit Faelligkeit: " + Constants.DATE_FORMATTER.format(datumFaelligkeit));
@@ -345,7 +347,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	 * Ermittelt das Zahlungsobjekt fuer die Institution des uebergebenen Zeitabschnitts. Falls im uebergebenen Auftrag schon eine Zahlung
 	 * fuer diese Institution vorhanden ist, wird diese zurueckgegeben, ansonsten eine neue erstellt.
 	 */
-	private Zahlung findZahlungForInstitution(VerfuegungZeitabschnitt zeitabschnitt,  Zahlungsauftrag zahlungsauftrag, Map<String, Zahlung> zahlungProInstitution) {
+	private Zahlung findZahlungForInstitution(VerfuegungZeitabschnitt zeitabschnitt, Zahlungsauftrag zahlungsauftrag, Map<String, Zahlung> zahlungProInstitution) {
 		InstitutionStammdaten institution = zeitabschnitt.getVerfuegung().getBetreuung().getInstitutionStammdaten();
 		if (zahlungProInstitution.containsKey(institution.getId())) {
 			return zahlungProInstitution.get(institution.getId());
@@ -411,7 +413,6 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
 		zahlungsauftrag.setStatus(ZahlungauftragStatus.AUSGELOEST);
-		//TODO: Speichern vom ISO20022 File
 		return persistence.merge(zahlungsauftrag);
 	}
 

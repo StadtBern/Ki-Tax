@@ -196,7 +196,6 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvMobileNavigationToggle', new DvMobileNavigationToggleComponentConfig())
     .component('dvHomeIcon', new DvHomeIconComponentConfig())
     .component('dvPosteingang', new DvPosteingangComponentConfig())
-    .component('dvZahlungauftrag', new DvZahlungsauftragComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())
