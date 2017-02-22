@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.DownloadFile_;
-import ch.dvbern.ebegu.entities.File;
+import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -36,11 +36,11 @@ public class DownloadFileServiceBean implements DownloadFileService {
 
 
 	@Override
-	public DownloadFile create(@Nonnull File file, String ip) {
-		Objects.requireNonNull(file);
+	public DownloadFile create(@Nonnull FileMetadata fileMetadata, String ip) {
+		Objects.requireNonNull(fileMetadata);
 		Objects.requireNonNull(ip);
 
-		return persistence.persist(new DownloadFile(file, ip));
+		return persistence.persist(new DownloadFile(fileMetadata, ip));
 	}
 
 	@Nullable
