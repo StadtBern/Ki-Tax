@@ -5,9 +5,6 @@ import ch.dvbern.ebegu.enums.ZahlungStatus;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.services.Pain001Service;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -20,11 +17,9 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Tests fuer die Klasse Pain001Service
@@ -71,14 +66,11 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 		}
 
 		Zahlungsauftrag zahlungsauftrag = new Zahlungsauftrag();
-		zahlungsauftrag.setDatumFaellig(LocalDateTime.now());
+		zahlungsauftrag.setDatumFaellig(LocalDate.now());
 		zahlungsauftrag.setZahlungen(zahlungList);
 
 		final byte[] painFileContent = pain001Service.getPainFileContent(zahlungsauftrag);
 
 		Assert.assertNotNull(painFileContent);
-
 	}
-
-
 }

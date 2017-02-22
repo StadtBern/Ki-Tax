@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
@@ -19,14 +20,20 @@ public interface ZahlungService {
 	 * Der Zahlungsauftrag hat den initialen Status ENTWURF
 	 * Als datumGeneriert wird "Jetzt" verwendet
 	 */
-	Zahlungsauftrag zahlungsauftragErstellen(LocalDateTime datumFaelligkeit, String beschreibung);
+	Zahlungsauftrag zahlungsauftragErstellen(LocalDate datumFaelligkeit, String beschreibung);
+
+	/**
+	 * Aktualisiert das Fälligkeitsdatum und die Beschreibung im übergebenen Auftrag. Die Zahlungspositionen werden
+	 * *nicht* neu generiert
+	 */
+	Zahlungsauftrag zahlungsauftragAktualisieren(String auftragId, LocalDate datumFaelligkeit, String beschreibung);
 
 	/**
 	 * Ermittelt alle im aktuellen Monat gueltigen Verfuegungen, sowie aller seit dem letzten Auftrag eingeganegenen
 	 * Mutationen.
 	 * Der Zahlungsauftrag hat den initialen Status ENTWURF
 	 */
-	Zahlungsauftrag zahlungsauftragErstellen(LocalDateTime datumFaelligkeit, String beschreibung, LocalDateTime datumGeneriert);
+	Zahlungsauftrag zahlungsauftragErstellen(LocalDate datumFaelligkeit, String beschreibung, LocalDateTime datumGeneriert);
 
 	/**
 	 * Nachdem alle Daten kontrolliert wurden, wird der Zahlungsauftrag ausgeloest. Danach kann er nicht mehr
@@ -50,11 +57,6 @@ public interface ZahlungService {
 	 * TODO (team) im JaxBConverter aufgrund Berechtigung des Benutzers Zahlungen entfernen!
 	 */
 	Collection<Zahlungsauftrag> getAllZahlungsauftraege();
-
-	/**
-	 * Erstellt ein ISO-20022-File mit den Zahlunspositionen des gewaehlten Auftrags.
-	 */
-	void createIsoFile(String auftragId);
 
 	/**
 	 * Eine Kita kann/muss den Zahlungseingang bestaetigen

@@ -11,8 +11,10 @@ import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.activation.MimeTypeParseException;
@@ -57,6 +59,9 @@ public class DownloadResource {
 
 	@Inject
 	private ZahlungService zahlungService;
+
+	@Inject
+	private ExportService exportService;
 
 	@Inject
 	private BetreuungService betreuungService;
@@ -112,7 +117,7 @@ public class DownloadResource {
 		Validate.notNull(jaxId.getId());
 		String id = converter.toEntityId(jaxId);
 
-		final File dokument = dokumentService.findDokument(id)
+		final FileMetadata dokument = dokumentService.findDokument(id)
 			.orElseThrow(() -> new EbeguEntityNotFoundException("getDokumentAccessTokenDokument", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
 
 
@@ -133,7 +138,7 @@ public class DownloadResource {
 		Validate.notNull(jaxId.getId());
 		String id = converter.toEntityId(jaxId);
 
-		final File dokument = vorlageService.findVorlage(id)
+		final FileMetadata dokument = vorlageService.findVorlage(id)
 			.orElseThrow(() -> new EbeguEntityNotFoundException("getDokumentAccessTokenVorlage", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
 
 
@@ -319,6 +324,34 @@ public class DownloadResource {
 			.getNichteintretenDokumentAccessTokenGeneratedDokument(betreuung.get(), forceCreation);
 
 		return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+	}
+
+	/**
+	 * Diese Methode generiert eine Textdatei mit einem JSON String darin welche heruntergeladen werden kann.
+	 * Dazu wird das File fuer die entsprechende Betreuung generiert und auf dem Server fuer eine gewisse Zeit
+	 * zum download bereitgestellt.
+	 */
+	@Nonnull
+	@ApiOperation(value = "Generate Exportfile and return Token a token to download the generated file",
+		response = JaxDownloadFile.class)
+	@GET
+	@Path("/{betreuungId}/EXPORT")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getDokumentAccessTokenVerfuegungExport(
+		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException,
+		IOException, MimeTypeParseException, MergeDocException {
+		Validate.notNull(jaxBetreuungId);
+		String ip = getIP(request);
+
+		UploadFileInfo uploadFileInfo = exportService.exportVerfuegungOfBetreuungAsFile(converter.toEntityId(jaxBetreuungId));
+		DownloadFile downloadFileInfo = new DownloadFile();
+		downloadFileInfo.setFilename(uploadFileInfo.getFilename());
+		downloadFileInfo.setFilepfad(uploadFileInfo.getPath());
+		downloadFileInfo.setFilesize(uploadFileInfo.getSizeString());
+
+		return this.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 
 	}
 
@@ -350,8 +383,8 @@ public class DownloadResource {
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "ZahlungsauftragId invalid: " + jaxId.getId());
 	}
 
-	private Response getFileDownloadResponse(UriInfo uriInfo, String ip, File file) {
-		final DownloadFile downloadFile = downloadFileService.create(file, ip);
+	private Response getFileDownloadResponse(UriInfo uriInfo, String ip, FileMetadata fileMetadata) {
+		final DownloadFile downloadFile = downloadFileService.create(fileMetadata, ip);
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(DownloadResource.class)

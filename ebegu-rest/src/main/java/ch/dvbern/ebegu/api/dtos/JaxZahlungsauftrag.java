@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
@@ -9,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +26,15 @@ public class JaxZahlungsauftrag extends JaxAbstractDateRangedDTO {
 	private static final long serialVersionUID = 5908117979039694339L;
 
 	@NotNull
-	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
-	private LocalDateTime datumFaellig;
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumFaellig;
 
 	@NotNull
 	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime datumGeneriert;
 
 	@NotNull
-	private Boolean ausgeloest = false;
+	private ZahlungauftragStatus status;
 
 	@NotNull
 	private String beschrieb;
@@ -42,11 +45,11 @@ public class JaxZahlungsauftrag extends JaxAbstractDateRangedDTO {
 	@Nonnull
 	private List<JaxZahlung> zahlungen = new ArrayList<>();
 
-	public LocalDateTime getDatumFaellig() {
+	public LocalDate getDatumFaellig() {
 		return datumFaellig;
 	}
 
-	public void setDatumFaellig(LocalDateTime datumFaellig) {
+	public void setDatumFaellig(LocalDate datumFaellig) {
 		this.datumFaellig = datumFaellig;
 	}
 
@@ -58,13 +61,14 @@ public class JaxZahlungsauftrag extends JaxAbstractDateRangedDTO {
 		this.datumGeneriert = datumGeneriert;
 	}
 
-	public Boolean getAusgeloest() {
-		return ausgeloest;
+	public ZahlungauftragStatus getStatus() {
+		return status;
 	}
 
-	public void setAusgeloest(Boolean ausgeloest) {
-		this.ausgeloest = ausgeloest;
+	public void setStatus(ZahlungauftragStatus status) {
+		this.status = status;
 	}
+
 
 	public String getBeschrieb() {
 		return beschrieb;

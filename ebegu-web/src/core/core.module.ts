@@ -75,7 +75,9 @@ import {DVValueinput} from './directive/dv-valueinput/dv-valueinput';
 import MitteilungRS from './service/mitteilungRS.rest';
 import {DVMitteilungListConfig} from './component/dv-mitteilung-list/dv-mitteilung-list';
 import {DvPosteingangComponentConfig} from './component/dv-posteingang/dv-posteingang';
+import {ReportRS} from './service/reportRS.rest';
 import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
+import ExportRS from '../gesuch/service/exportRS.rest';
 import ZahlungRS from './service/zahlungRS.rest';
 import {DvZahlungsauftragComponentConfig} from './component/dv-zahlungauftrag/dv-zahlungsauftrag';
 
@@ -163,6 +165,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('MitteilungRS', MitteilungRS)
     .service('ZahlungRS', ZahlungRS)
     .service('GlobalCacheService', GlobalCacheService)
+    .service('ExportRS', ExportRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvValueinput', DVValueinput.factory())
@@ -203,5 +206,6 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvMitteilungList', new DVMitteilungListConfig())
     .component('dvAccordion', new DvAccordionComponentConfig())
     .component('dvAccordionTab', new DvAccordionTabComponentConfig())
-    .service('MahnungRS', MahnungRS);
+    .service('MahnungRS', MahnungRS)
+    .service('ReportRS', ReportRS);
 

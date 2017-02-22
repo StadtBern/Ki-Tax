@@ -42,3 +42,7 @@ ALTER TABLE pain001dokument
   ADD CONSTRAINT FK_pain001dokument_zahlungsauftrag_id
 FOREIGN KEY (zahlungsauftrag_id)
 REFERENCES zahlungsauftrag (id);
+
+ALTER TABLE zahlungsauftrag DROP COLUMN filecontent;
+ALTER TABLE zahlungsauftrag_aud DROP COLUMN filecontent;
+

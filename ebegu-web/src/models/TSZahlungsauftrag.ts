@@ -1,24 +1,25 @@
 import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import {TSDateRange} from './types/TSDateRange';
 import TSZahlung from './TSZahlung';
+import {TSZahlungsauftragsstatus} from './enums/TSZahlungsauftragstatus';
 
 export default class TSZahlungsauftrag extends TSAbstractDateRangedEntity {
 
 
     private _datumGeneriert: moment.Moment;
     private _datumFaellig: moment.Moment;
-    private _ausgeloest: boolean;
+    private _status: TSZahlungsauftragsstatus;
     private _beschrieb: string;
     private _betragTotalAuftrag: number;
     private _zahlungen: Array<TSZahlung>;
 
 
     constructor(gueltigkeit?: TSDateRange, datumGeneriert?: moment.Moment, datumFaellig?: moment.Moment,
-                ausgeloest?: boolean, beschrieb?: string, betragTotalAuftrag?: number, zahlungen?: Array<TSZahlung>) {
+                status?: TSZahlungsauftragsstatus, beschrieb?: string, betragTotalAuftrag?: number, zahlungen?: Array<TSZahlung>) {
         super(gueltigkeit);
         this._datumGeneriert = datumGeneriert;
         this._datumFaellig = datumFaellig;
-        this._ausgeloest = ausgeloest;
+        this._status = status;
         this._beschrieb = beschrieb;
         this._betragTotalAuftrag = betragTotalAuftrag;
         this._zahlungen = zahlungen;
@@ -38,14 +39,6 @@ export default class TSZahlungsauftrag extends TSAbstractDateRangedEntity {
 
     set datumFaellig(value: moment.Moment) {
         this._datumFaellig = value;
-    }
-
-    get ausgeloest(): boolean {
-        return this._ausgeloest;
-    }
-
-    set ausgeloest(value: boolean) {
-        this._ausgeloest = value;
     }
 
     get beschrieb(): string {
@@ -70,6 +63,14 @@ export default class TSZahlungsauftrag extends TSAbstractDateRangedEntity {
 
     set zahlungen(value: Array<TSZahlung>) {
         this._zahlungen = value;
+    }
+
+    get status(): TSZahlungsauftragsstatus {
+        return this._status;
+    }
+
+    set status(value: TSZahlungsauftragsstatus) {
+        this._status = value;
     }
 }
 

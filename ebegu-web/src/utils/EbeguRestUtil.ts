@@ -1617,7 +1617,7 @@ export default class EbeguRestUtil {
             zeitabschnitt.fachstellenpensum = zeitabschnittTS.fachstellenpensum;
             zeitabschnitt.massgebendesEinkommenVorAbzugFamgr = zeitabschnittTS.massgebendesEinkommenVorAbzugFamgr;
             zeitabschnitt.famGroesse = zeitabschnittTS.famGroesse;
-            zeitabschnitt.status = zeitabschnittTS.status;
+            zeitabschnitt.zahlungsstatus = zeitabschnittTS.zahlungsstatus;
             zeitabschnitt.vollkosten = zeitabschnittTS.vollkosten;
             zeitabschnitt.einkommensjahr = zeitabschnittTS.einkommensjahr;
             zeitabschnitt.kategorieZuschlagZumErwerbspensum = zeitabschnittTS.kategorieZuschlagZumErwerbspensum;
@@ -1645,7 +1645,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.fachstellenpensum = zeitabschnittFromServer.fachstellenpensum;
             verfuegungZeitabschnittTS.massgebendesEinkommenVorAbzugFamgr = zeitabschnittFromServer.massgebendesEinkommenVorAbzugFamgr;
             verfuegungZeitabschnittTS.famGroesse = zeitabschnittFromServer.famGroesse;
-            verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
+            verfuegungZeitabschnittTS.zahlungsstatus = zeitabschnittFromServer.zahlungsstatus;
             verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
             verfuegungZeitabschnittTS.einkommensjahr = zeitabschnittFromServer.einkommensjahr;
             verfuegungZeitabschnittTS.kategorieZuschlagZumErwerbspensum = zeitabschnittFromServer.kategorieZuschlagZumErwerbspensum;
@@ -1933,9 +1933,9 @@ export default class EbeguRestUtil {
         if (zahlungsauftragFromServer) {
             this.parseDateRangeEntity(tsZahlungsauftrag, zahlungsauftragFromServer);
 
-            tsZahlungsauftrag.ausgeloest = zahlungsauftragFromServer.ausgeloest;
+            tsZahlungsauftrag.status = zahlungsauftragFromServer.status;
             tsZahlungsauftrag.beschrieb = zahlungsauftragFromServer.beschrieb;
-            tsZahlungsauftrag.datumFaellig = DateUtil.localDateTimeToMoment(zahlungsauftragFromServer.datumFaellig);
+            tsZahlungsauftrag.datumFaellig = DateUtil.localDateToMoment(zahlungsauftragFromServer.datumFaellig);
             tsZahlungsauftrag.datumGeneriert = DateUtil.localDateTimeToMoment(zahlungsauftragFromServer.datumGeneriert);
             tsZahlungsauftrag.betragTotalAuftrag = zahlungsauftragFromServer.betragTotalAuftrag;
             tsZahlungsauftrag.zahlungen = this.parseZahlungen(zahlungsauftragFromServer.zahlungen);

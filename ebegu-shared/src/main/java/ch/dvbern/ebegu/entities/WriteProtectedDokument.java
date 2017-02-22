@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Audited
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class WriteProtectedDokument extends File {
+public class WriteProtectedDokument extends FileMetadata {
 
 	private static final long serialVersionUID = 1119768378567437676L;
 

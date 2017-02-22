@@ -92,7 +92,7 @@ public class ZahlungResource {
 			datumGeneriert = LocalDateTime.now();
 		}
 
-		final Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(faelligkeitsdatum.atStartOfDay(), beschrieb, datumGeneriert);
+		final Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(faelligkeitsdatum, beschrieb, datumGeneriert);
 
 		return converter.zahlungsauftragToJAX(zahlungsauftrag);
 	}
@@ -115,7 +115,7 @@ public class ZahlungResource {
 		return converter.zahlungsauftragToJAX(zahlungsauftrag);*/
 
 		final Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(id).get();
-		zahlungsauftrag.setDatumFaellig(faelligkeitsdatum.atStartOfDay());
+		zahlungsauftrag.setDatumFaellig(faelligkeitsdatum);
 		zahlungsauftrag.setBeschrieb(beschrieb);
 		return converter.zahlungsauftragToJAX(zahlungsauftrag);
 	}

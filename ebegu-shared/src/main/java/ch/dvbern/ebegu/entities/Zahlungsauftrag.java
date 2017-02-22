@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
@@ -9,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,7 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 
 	@NotNull
 	@Column(nullable = false)
-	private LocalDateTime datumFaellig; // Nur benoetigt fuer die Information an Postfinance -> ISO File
+	private LocalDate datumFaellig; // Nur benoetigt fuer die Information an Postfinance -> ISO File
 
 	@NotNull
 	@Column(nullable = false)
@@ -34,17 +36,13 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 
 	@NotNull
 	@Column(nullable = false)
-	private Boolean ausgeloest = false;
+	@Enumerated(EnumType.STRING)
+	private ZahlungauftragStatus status = ZahlungauftragStatus.ENTWURF;
 
 	@NotNull
 	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = false, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String beschrieb;
-
-	@NotNull
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Column(nullable = false, length = Constants.DB_TEXTAREA_LENGTH)
-	private String filecontent; // TODO (team) im EntityListener sicherstellen, dass nach auslösung nicht mehr verändert
 
 	@Nonnull
 	@Valid
@@ -52,11 +50,11 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 	private List<Zahlung> zahlungen = new ArrayList<>();
 
 
-	public LocalDateTime getDatumFaellig() {
+	public LocalDate getDatumFaellig() {
 		return datumFaellig;
 	}
 
-	public void setDatumFaellig(LocalDateTime datumFaellig) {
+	public void setDatumFaellig(LocalDate datumFaellig) {
 		this.datumFaellig = datumFaellig;
 	}
 
@@ -68,12 +66,12 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 		this.datumGeneriert = datumGeneriert;
 	}
 
-	public Boolean getAusgeloest() {
-		return ausgeloest;
+	public ZahlungauftragStatus getStatus() {
+		return status;
 	}
 
-	public void setAusgeloest(Boolean ausgeloest) {
-		this.ausgeloest = ausgeloest;
+	public void setStatus(ZahlungauftragStatus status) {
+		this.status = status;
 	}
 
 	public String getBeschrieb() {
@@ -82,14 +80,6 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 
 	public void setBeschrieb(String beschrieb) {
 		this.beschrieb = beschrieb;
-	}
-
-	public String getFilecontent() {
-		return filecontent;
-	}
-
-	public void setFilecontent(String filecontent) {
-		this.filecontent = filecontent;
 	}
 
 	@Nonnull
