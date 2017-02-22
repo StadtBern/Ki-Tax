@@ -220,7 +220,7 @@ export default class TSAntragDTO {
     }
 
     public canBeFreigegeben(): boolean {
-        return this.status == TSAntragStatus.FREIGABEQUITTUNG;
+        return this.status === TSAntragStatus.FREIGABEQUITTUNG;
     }
 
     public hasOnlySchulamtAngebote(): boolean {
