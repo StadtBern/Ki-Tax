@@ -137,6 +137,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 				createZahlungspositionenKorrektur(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 			}
 		}
+
+		//TODO: Not needed here. Remove filecontent from Zahlungsauftrag
 		String pain = pain001Service.getPainFileContent(zahlungsauftrag);
 		zahlungsauftrag.setFilecontent(pain);
 		StringBuilder sb = new StringBuilder();
@@ -446,6 +448,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		return new ArrayList<>(criteriaQueryHelper.getAll(Zahlungsauftrag.class));
 	}
 
+	//TODO: File ist nicht mehr im Zahlungsauftrag. Muss angepasst werden
 	@Override
 	public String createIsoFile(String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
