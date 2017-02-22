@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
-import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

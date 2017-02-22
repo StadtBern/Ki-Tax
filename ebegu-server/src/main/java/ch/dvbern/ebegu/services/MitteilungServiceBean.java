@@ -278,7 +278,6 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			if (MitteilungStatus.NEU.equals(mitteilung.getMitteilungStatus())) {
 				setMitteilungsStatusIfBerechtigt(mitteilung, MitteilungStatus.GELESEN, MitteilungStatus.NEU);
 			}
-			persistence.merge(mitteilung);
 		}
 		return mitteilungen;
 	}
@@ -324,6 +323,23 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		query.select(cb.countDistinct(root));
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaSingleResult(query);
+	}
+
+	@Override
+	@RolesAllowed({SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung) {
+		Objects.requireNonNull(betreuungsmitteilung);
+		if (!MitteilungTeilnehmerTyp.INSTITUTION.equals(betreuungsmitteilung.getSenderTyp())) {
+			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur bei einer Institution geschickt werden");
+		}
+		if (!MitteilungTeilnehmerTyp.JUGENDAMT.equals(betreuungsmitteilung.getEmpfaengerTyp())) {
+			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur an das Jugendamt geschickt werden");
+		}
+		betreuungsmitteilung.setMitteilungStatus(MitteilungStatus.NEU); // vorsichtshalber
+		betreuungsmitteilung.setSentDatum(LocalDateTime.now());
+		ensureEmpfaengerIsSet(betreuungsmitteilung);
+
+		return persistence.persist(betreuungsmitteilung); // A Betreuungsmitteilung is created and sent, therefore persist and not merge
 	}
 
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {

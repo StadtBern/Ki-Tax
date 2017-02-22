@@ -41,7 +41,7 @@ export class FreigabeController {
             } else {
                 this.errorMessage = this.$translate.instant('FREIGABE_GESUCH_NOT_FOUND');
             }
-        }).catch(() =>{
+        }).catch(() => {
             this.cancel(); // close popup
         });
 

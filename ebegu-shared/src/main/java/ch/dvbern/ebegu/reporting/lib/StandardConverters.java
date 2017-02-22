@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.reporting.lib;
 
-import ch.dvbern.ebegu.reporting.lib.DateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
