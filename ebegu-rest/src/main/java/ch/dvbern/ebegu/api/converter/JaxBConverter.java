@@ -1555,6 +1555,17 @@ public class JaxBConverter {
 		return jaxBetreuungen;
 	}
 
+	private BetreuungsmitteilungPensum betreuungsmitteilungpensumToEntity(final JaxBetreuungsmitteilungPensum jaxBetreuungspensum, final BetreuungsmitteilungPensum betreuungspensum) {
+		convertAbstractPensumFieldsToEntity(jaxBetreuungspensum, betreuungspensum);
+		return betreuungspensum;
+	}
+
+	private JaxBetreuungsmitteilungPensum betreuungsmitteilungPensumToJax(final BetreuungsmitteilungPensum betreuungspensum) {
+		final JaxBetreuungsmitteilungPensum jaxBetreuungspensum = new JaxBetreuungsmitteilungPensum();
+		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
+		return jaxBetreuungspensum;
+	}
+
 	public JaxBetreuung betreuungToJAX(final Betreuung betreuungFromServer) {
 		final JaxBetreuung jaxBetreuung = new JaxBetreuung();
 		convertAbstractFieldsToJAX(betreuungFromServer, jaxBetreuung);
@@ -2238,8 +2249,7 @@ public class JaxBConverter {
 		return mitteilung;
 	}
 
-	public JaxMitteilung mitteilungToJAX(Mitteilung persistedMitteilung) {
-		final JaxMitteilung jaxMitteilung = new JaxMitteilung();
+	public JaxMitteilung mitteilungToJAX(Mitteilung persistedMitteilung, JaxMitteilung jaxMitteilung) {
 		convertAbstractFieldsToJAX(persistedMitteilung, jaxMitteilung);
 		if (persistedMitteilung.getEmpfaenger() != null) {
 			jaxMitteilung.setEmpfaenger(benutzerToAuthLoginElement(persistedMitteilung.getEmpfaenger()));
@@ -2260,5 +2270,37 @@ public class JaxBConverter {
 		jaxMitteilung.setSubject(persistedMitteilung.getSubject());
 		jaxMitteilung.setSentDatum(persistedMitteilung.getSentDatum());
 		return jaxMitteilung;
+	}
+
+	/**
+	 * Creates the Betreuungsmitteilung without taking into accoutn if it already exists or not
+	 */
+	public Betreuungsmitteilung betreuungsmitteilungToEntity(JaxBetreuungsmitteilung mitteilungJAXP, Betreuungsmitteilung betreuungsmitteilung) {
+		Validate.notNull(mitteilungJAXP);
+		Validate.notNull(betreuungsmitteilung);
+
+		mitteilungToEntity(mitteilungJAXP, betreuungsmitteilung);
+
+		if (mitteilungJAXP.getBetreuungspensen() != null) {
+			betreuungsmitteilung.setBetreuungspensen(new HashSet<>());
+			for (JaxBetreuungsmitteilungPensum jaxBetreuungspensum : mitteilungJAXP.getBetreuungspensen()) {
+				final BetreuungsmitteilungPensum pensum = betreuungsmitteilungpensumToEntity(jaxBetreuungspensum, new BetreuungsmitteilungPensum());
+				pensum.setBetreuungsmitteilung(betreuungsmitteilung);
+				betreuungsmitteilung.getBetreuungspensen().add(pensum);
+			}
+		}
+		return betreuungsmitteilung;
+	}
+
+	public JaxBetreuungsmitteilung betreuungsmitteilungToJAX(Betreuungsmitteilung persistedMitteilung) {
+		final JaxBetreuungsmitteilung jaxBetreuungsmitteilung = new JaxBetreuungsmitteilung();
+		mitteilungToJAX(persistedMitteilung, jaxBetreuungsmitteilung);
+		if (persistedMitteilung.getBetreuungspensen() != null) {
+			jaxBetreuungsmitteilung.setBetreuungspensen(new ArrayList<>());
+			for (BetreuungsmitteilungPensum betreuungspensum : persistedMitteilung.getBetreuungspensen()) {
+				jaxBetreuungsmitteilung.getBetreuungspensen().add(betreuungsmitteilungPensumToJax(betreuungspensum));
+			}
+		}
+		return jaxBetreuungsmitteilung;
 	}
 }

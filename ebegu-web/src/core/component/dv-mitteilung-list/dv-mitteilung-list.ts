@@ -19,6 +19,7 @@ import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
 import {IStateService} from 'angular-ui-router';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 
@@ -283,10 +284,11 @@ export class DVMitteilungListController {
         return bgNummer;
     }
 
-    public betreuungAsString(mitteilung : TSMitteilung) : string {
-        let betreuungAsString : string;
+    public betreuungAsString(mitteilung: TSMitteilung): string {
+        let betreuungAsString: string;
         if (mitteilung.betreuung) {
-            let bgNummer: string = this.ebeguUtil.calculateBetreuungsId(mitteilung.betreuung.gesuchsperiode, mitteilung.fall, mitteilung.betreuung.kindNummer, mitteilung.betreuung.betreuungNummer);
+            let bgNummer: string = this.ebeguUtil.calculateBetreuungsId(mitteilung.betreuung.gesuchsperiode, mitteilung.fall,
+                mitteilung.betreuung.kindNummer, mitteilung.betreuung.betreuungNummer);
             betreuungAsString = mitteilung.betreuung.kindFullname + ', ' + bgNummer;
         }
         return betreuungAsString;
@@ -298,5 +300,13 @@ export class DVMitteilungListController {
             kindNumber: mitteilung.betreuung.kindNummer,
             gesuchId: mitteilung.betreuung.gesuchId
         });
+    }
+
+    public isBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
+        return mitteilung instanceof TSBetreuungsmitteilung;
+    }
+
+    public applyBetreuungsmitteilung(): void {
+        window.alert('Not yet implemented');
     }
 }

@@ -77,7 +77,7 @@
                     </div>
 
                     <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
-                    <div class="row marginTop20">
+                    <div class="row marginTop20" ng-disabled="!vm.isEnabled()">
                         <div class="col-sm-12 dv-input-container-medium">
                             <div class="form-group">
                                 <label class="md-no-float"
@@ -99,7 +99,8 @@
                         </div>
                     </div>
                     <!--Institutionen-->
-                    <div class="row" ng-if="vm.isEnabled() && !vm.isTagesschule()">
+                    <div class="row" ng-if="vm.isEnabled() && !vm.isTagesschule()"
+                         ng-disabled="!vm.isEnabled()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float required" data-translate="INSTITUTION" for="institution">
                             </label>
@@ -153,7 +154,7 @@
                     <!--Nur Institutionen duerfen neue Pensen eintragen. Bei anderen Rollen werden nur die existierenden Pensen angezeigt-->
                     <div ng-if="!vm.isTagesschule()">
                         <fieldset dv-enable-element
-                                  dv-enable-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData"
+                                  dv-enable-expression="(vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus"
                                   dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
                             <!--Betreuungspensen-->
                             <div ng-repeat="betpen in vm.getBetreuungspensen()">
@@ -228,7 +229,7 @@
                                         <dv-loading-button type="button"
                                                            button-click="vm.removeBetreuungspensum(betpen)"
                                                            button-class="dv-btn-operation"
-                                                           button-disabled="!(vm.isBetreuungsstatusWarten() && !vm.isSavingData)">
+                                                           button-disabled="!((vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus)">
                                             <i class="fa fa-lg fa-trash-o"></i>
                                             <span data-translate="BETREUUNGSPENSUM_ENTFERNEN_INDEX"
                                                   data-translate-value-betreuungspensumnumber="{{$index + 1}}"></span>
@@ -241,7 +242,7 @@
                             <!--Neues Betreuungspensum hinzufuegen-->
                             <div class="row" dv-show-element
                                  dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                                 dv-show-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
+                                 dv-show-expression="(vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus">
                                 <div class="col-md-12">
                                     <dv-loading-button type="button" button-click="vm.createBetreuungspensum()"
                                                        dv-enable-element
@@ -277,7 +278,7 @@
                                                      name="erweiterteBeduerfnisse"
                                                      aria-label="erweiterteBeduerfnisse" dv-enable-element
                                                      dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                                                     dv-enable-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
+                                                     dv-enable-expression="(vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus">
                                             <span data-translate="ERWEITERTE_BEDUERFNISSE"></span>
                                         </md-checkbox>
                                         <dv-error-messages
@@ -387,6 +388,22 @@
 
 
                     <!--Institution Buttons-->
+                    <div dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                         dv-show-expression="vm.isFromMutation()">
+
+                        <dv-loading-button button-click="vm.mutationsmeldungErstellen()"
+                                           ng-if="!vm.isMutationsmeldungStatus"
+                                           aria-label="{{MUTATIONSMELDUNG_ERSTELLEN_UPPER | translate}}">
+                            <span data-translate="MUTATIONSMELDUNG_ERSTELLEN_UPPER"></span>
+                        </dv-loading-button>
+                        <dv-loading-button button-click="vm.mutationsmeldungSenden()"
+                                           ng-if="vm.isMutationsmeldungStatus"
+                                           aria-label="{{MUTATIONSMELDUNG_SENDEN_UPPER | translate}}">
+                            <span data-translate="MUTATIONSMELDUNG_SENDEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
+
                     <div dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
                          dv-show-expression="vm.isBetreuungsstatusWarten()">

@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.AbwesenheitContainer;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
-import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -40,7 +37,7 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void createAndUpdateBetreuungTest() {
 		Assert.assertNotNull(betreuungService);
-		Betreuung persitedBetreuung = persistBetreuung();
+		Betreuung persitedBetreuung = TestDataUtil.persistBetreuung(betreuungService, persistence);
 		Optional<Betreuung> betreuungOpt = betreuungService.findBetreuungWithBetreuungsPensen(persitedBetreuung.getId());
 		Assert.assertTrue(betreuungOpt.isPresent());
 		Betreuung betreuung = betreuungOpt.get();
@@ -57,39 +54,12 @@ public class BetreuungServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void removeBetreuungTest() {
 		Assert.assertNotNull(betreuungService);
-		Betreuung persitedBetreuung = persistBetreuung();
+		Betreuung persitedBetreuung = TestDataUtil.persistBetreuung(betreuungService, persistence);
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertTrue(betreuung.isPresent());
 		betreuungService.removeBetreuung(betreuung.get().getId());
 		Optional<Betreuung> betreuungAfterRemove = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertFalse(betreuungAfterRemove.isPresent());
-	}
-
-	// HELP
-
-	private Betreuung persistBetreuung() {
-		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
-		for (BetreuungspensumContainer container : betreuung.getBetreuungspensumContainers()) {
-			persistence.persist(container);
-		}
-		for (AbwesenheitContainer abwesenheit : betreuung.getAbwesenheitContainers()) {
-			persistence.persist(abwesenheit);
-		}
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
-		persistence.persist(betreuung.getInstitutionStammdaten());
-		persistence.persist(betreuung.getKind().getKindGS().getPensumFachstelle().getFachstelle());
-		persistence.persist(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
-
-		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
-		betreuung.getKind().setGesuch(gesuch);
-		persistence.persist(betreuung.getKind());
-
-		betreuungService.saveBetreuung(betreuung, false);
-
-		return betreuung;
-
 	}
 
 }
