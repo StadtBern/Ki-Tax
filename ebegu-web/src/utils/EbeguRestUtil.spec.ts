@@ -37,6 +37,7 @@ import TSFamiliensituationContainer from '../models/TSFamiliensituationContainer
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import Moment = moment.Moment;
+import {TSVerfuegungZeitabschnittZahlungsstatus} from '../models/enums/TSVerfuegungZeitabschnittZahlungsstatus';
 
 describe('EbeguRestUtil', function () {
 
@@ -424,7 +425,7 @@ describe('EbeguRestUtil', function () {
                 restVerfuegungZeitabschnitt.massgebendesEinkommenVorAbzugFamgr = 11;
                 restVerfuegungZeitabschnitt.vollkosten = 12;
                 restVerfuegungZeitabschnitt.bemerkungen = 'bemerkung1';
-                restVerfuegungZeitabschnitt.status = 'status1';
+                restVerfuegungZeitabschnitt.zahlungsstatus = TSVerfuegungZeitabschnittZahlungsstatus.NEU;
 
                 let verfuegungTS = ebeguRestUtil.parseVerfuegungZeitabschnitt(new TSVerfuegungZeitabschnitt(), restVerfuegungZeitabschnitt);
 
@@ -441,7 +442,7 @@ describe('EbeguRestUtil', function () {
                 expect(verfuegungTS.massgebendesEinkommenVorAbzugFamgr).toEqual(restVerfuegungZeitabschnitt.massgebendesEinkommenVorAbzugFamgr);
                 expect(verfuegungTS.vollkosten).toEqual(restVerfuegungZeitabschnitt.vollkosten);
                 expect(verfuegungTS.bemerkungen).toEqual(restVerfuegungZeitabschnitt.bemerkungen);
-                expect(verfuegungTS.status).toEqual(restVerfuegungZeitabschnitt.status);
+                expect(verfuegungTS.zahlungsstatus).toEqual(restVerfuegungZeitabschnitt.zahlungsstatus);
             });
         });
     });
