@@ -183,7 +183,7 @@ export default class MitteilungRS {
                 if (i > 1) {
                     message += '\n';
                 }
-                message += 'Pensum ' + i + ' vom '
+                message += this.$translate.instant('MUTATIONSMELDUNG_PENSUM') + i + this.$translate.instant('MUTATIONSMELDUNG_VOM')
                     + DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb, 'DD.MM.YYYY')
                     + ': ' + betpenContainer.betreuungspensumJA.pensum + '%';
             }

@@ -132,9 +132,7 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertTrue(stringSecond.toString().contains("betreuungspensen"));
 		final String s2 = o.writeValueAsString(second);
 		Assert.assertTrue(s2.contains("betreuungspensen"));
-
 	}
-
 
 	// HELP METHODS
 
@@ -153,5 +151,4 @@ public class MitteilungResourceTest extends AbstractEbeguRestLoginTest {
 		persistence.persist(senderINST);
 		return senderINST;
 	}
-
 }

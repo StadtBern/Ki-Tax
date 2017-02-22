@@ -307,5 +307,6 @@ export class DVMitteilungListController {
     }
 
     public applyBetreuungsmitteilung(): void {
+        window.alert('Not yet implemented');
     }
 }

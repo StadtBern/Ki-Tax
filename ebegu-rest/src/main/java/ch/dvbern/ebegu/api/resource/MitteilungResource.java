@@ -164,8 +164,7 @@ public class MitteilungResource {
 			mitteilungen.forEach(mitteilung -> {
 				if (mitteilung instanceof Betreuungsmitteilung) {
 					convertedMitteilungen.add(converter.betreuungsmitteilungToJAX((Betreuungsmitteilung) mitteilung));
-				}
-				else {
+				} else {
 					convertedMitteilungen.add(converter.mitteilungToJAX(mitteilung, new JaxMitteilung()));
 				}
 			});

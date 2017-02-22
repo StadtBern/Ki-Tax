@@ -20,7 +20,6 @@ public class BetreuungsmitteilungPensum extends AbstractPensumEntity implements 
 	private Betreuungsmitteilung betreuungsmitteilung;
 
 
-
 	public Betreuungsmitteilung getBetreuungsmitteilung() {
 		return betreuungsmitteilung;
 	}

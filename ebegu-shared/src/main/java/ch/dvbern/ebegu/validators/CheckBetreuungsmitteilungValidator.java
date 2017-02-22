@@ -106,8 +106,6 @@ public class CheckBetreuungsmitteilungValidator implements ConstraintValidator<C
 		return true;
 	}
 
-
-
 	/**
 	 * With the given the pensumMin it checks if the introduced pensum is in the permitted range. Case not a ConstraintValidator will be created
 	 * with a message and a path indicating which object threw the error. False will be returned in the explained case. In case the value for pensum
@@ -119,7 +117,7 @@ public class CheckBetreuungsmitteilungValidator implements ConstraintValidator<C
 	 * @return true if the value resides inside the permitted range. False otherwise
 	 */
 	private boolean validateBetreuungspensum(BetreuungsmitteilungPensum betreuungspensum, int pensumMin, int index, ConstraintValidatorContext context) {
-		if(betreuungspensum != null && betreuungspensum.getPensum() < pensumMin) {
+		if (betreuungspensum != null && betreuungspensum.getPensum() < pensumMin) {
 			ResourceBundle rb = ResourceBundle.getBundle("ValidationMessages");
 			String message = rb.getString("invalid_betreuungspensum");
 			message = MessageFormat.format(message, betreuungspensum.getPensum(), pensumMin);
