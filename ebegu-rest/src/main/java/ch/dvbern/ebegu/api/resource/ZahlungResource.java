@@ -130,14 +130,8 @@ public class ZahlungResource {
 
 		LocalDate faelligkeitsdatum = DateUtil.parseStringToDateOrReturnNow(stringFaelligkeitsdatum);
 
+		final Zahlungsauftrag zahlungsauftragUpdated = zahlungService.zahlungsauftragAktualisieren(id, faelligkeitsdatum, beschrieb);
 
-		//TODO: Update no yet implemented!!!!!
-		/*final Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(faelligkeitsdatum.atStartOfDay(), beschrieb, datumGeneriert);
-		return converter.zahlungsauftragToJAX(zahlungsauftrag);*/
-
-		final Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(id).get();
-		zahlungsauftrag.setDatumFaellig(faelligkeitsdatum);
-		zahlungsauftrag.setBeschrieb(beschrieb);
-		return converter.zahlungsauftragToJAX(zahlungsauftrag);
+		return converter.zahlungsauftragToJAX(zahlungsauftragUpdated);
 	}
 }

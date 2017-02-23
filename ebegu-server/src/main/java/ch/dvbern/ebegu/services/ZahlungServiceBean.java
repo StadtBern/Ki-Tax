@@ -4,7 +4,6 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.types.DateRange_;
@@ -14,7 +13,6 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -67,8 +65,6 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
-	@Inject
-	private Pain001Service pain001Service;
 
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})

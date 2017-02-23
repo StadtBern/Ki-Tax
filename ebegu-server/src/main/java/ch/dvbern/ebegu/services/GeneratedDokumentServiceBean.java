@@ -138,7 +138,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	/**
-	 * Sucht ein GeneratedDokument mit demselben Namen und Pfad und vom selben Gesuch. Wen das Dokument existiert, wird dieses gelöscht
+	 * Sucht ein WriteProtectedDokument mit demselben Namen und Pfad und vom selben Gesuch. Wen das Dokument existiert, wird dieses gelöscht
 	 * und mit dem Neuen ersetzt. Wenn es nicht existiert, ein neues wird erstellt.
 	 */
 	@Nonnull
@@ -294,27 +294,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		return persistedDokument;
 	}
-
-/*	@Nullable
-	private GeneratedDokument getGeneratedDokument(Gesuch gesuch, GeneratedDokumentTyp dokumentTyp, String fileNameForGeneratedDokumentTyp) {
-
-		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId();
-
-		final GeneratedDokument persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
-			expectedFilepath);
-
-		if (persistedDokument == null) {
-			LOG.error("Das Dokument vom Typ: {} fuer Antragnummer {} konnte unter dem Pfad {} " +
-				"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", dokumentTyp, gesuch.getJahrAndFallnummer(), expectedFilepath);
-		}
-
-		if (persistedDokument != null && !Files.exists(Paths.get(persistedDokument.getFilepfad()))) {
-			LOG.error("Die Datei {} könnte nicht gefunden werdern!", persistedDokument.getFilepfad());
-			return null;
-		}
-
-		return persistedDokument;
-	}*/
 
 	@Nonnull
 	public BetreuungsgutscheinEvaluator initEvaluator(@Nonnull Gesuch gesuch) {

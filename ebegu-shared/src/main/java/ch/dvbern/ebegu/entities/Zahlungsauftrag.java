@@ -92,7 +92,6 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 		this.zahlungen = zahlungen;
 	}
 
-	//TODO: get Zahhlungsauftrag Total
 	public BigDecimal getBetragTotalAuftrag() {
 		BigDecimal total = BigDecimal.ZERO;
 		for (Zahlung zahlung : zahlungen) {
