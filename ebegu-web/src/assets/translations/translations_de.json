@@ -900,6 +900,7 @@
     "MUTATIONSMELDUNG_SENDEN_UPPER": "MUTATIONSMELDUNG AN JUGENDAMT",
     "MUTATIONSMELDUNG_BETREFF": "Mutationsmeldung",
     "MUTATIONSMELDUNG_APPLY": "ZUR MUTATION HINZUFÜGEN",
+    "MUTATIONSMELDUNG_APPLIED": "Diese Mitteilung wurde bereits einer Mutation hinzugefügt",
     "MUTATIONSMELDUNG_CONFIRMATION": "Möchten Sie wirklich die eingegeben Mutation mitteilen?",
     "MUTATIONSMELDUNG_BESCHREIBUNG": "Die eingegebenen Daten werden an das Jugendamt gesendet",
     "MUTATIONSMELDUNG_PENSUM": "Pensum ",

@@ -305,8 +305,12 @@ export class DVMitteilungListController {
         });
     }
 
-    public isBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
-        return mitteilung instanceof TSBetreuungsmitteilung;
+    public isBetreuungsmitteilungApplied(mitteilung: TSMitteilung): boolean {
+        return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied === true;
+    }
+
+    public isBetreuungsmitteilungNotApplied(mitteilung: TSMitteilung): boolean {
+        return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied !== true;
     }
 
     public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {
@@ -317,7 +321,7 @@ export class DVMitteilungListController {
             }).then(() => {   //User confirmed removal
                 let betreuungsmitteilung: TSBetreuungsmitteilung = <TSBetreuungsmitteilung>mitteilung;
                 this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: any) => {
-                    // todo beim muss man was machen?????
+                    this.loadAllMitteilungen();
                 });
             });
 

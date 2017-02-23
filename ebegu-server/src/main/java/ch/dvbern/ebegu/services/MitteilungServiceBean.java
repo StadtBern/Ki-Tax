@@ -366,14 +366,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			final Gesuch neustesGesuch = neustesGesuchOpt.get();
 			if (!AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus()) && neustesGesuch.isMutation()) {
 				//betreuungsaenderungen der bestehenden Mutation hinzufuegen
-				applyBetreuungsmitteilungToMutation(neustesGesuch, mitteilung);
+				return applyBetreuungsmitteilungToMutation(neustesGesuch, mitteilung);
 			}
 			else if (AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus())) {
 				// create Mutation
 				final Optional<Gesuch> mutationOpt = this.gesuchService.antragMutieren(gesuch.getFall().getFallNummer(), gesuch.getGesuchsperiode().getId(), LocalDate.now());
 				if (mutationOpt.isPresent()) {
 					Gesuch persistedMutation = gesuchService.createGesuch(mutationOpt.get());
-					applyBetreuungsmitteilungToMutation(persistedMutation, mitteilung);
+					return applyBetreuungsmitteilungToMutation(persistedMutation, mitteilung);
 				}
 			}
 			else {
@@ -384,7 +384,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return mitteilung;
 	}
 
-	private void applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
+	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
 		final Betreuung betreuungToChange = gesuch.extractBetreuungsnachfolger(mitteilung.getBetreuung().getId());
 		if (betreuungToChange != null) {
 			betreuungToChange.getBetreuungspensumContainers().clear();
@@ -400,7 +400,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				betreuungToChange.getBetreuungspensumContainers().add(betPenCont);
 				betreuungService.saveBetreuung(betreuungToChange, false);
 			}
+			mitteilung.setApplied(true);
+			return persistence.merge(mitteilung);
 		}
+		return mitteilung;
 	}
 
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {
