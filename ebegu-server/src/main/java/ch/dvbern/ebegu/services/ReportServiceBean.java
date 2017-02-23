@@ -18,6 +18,7 @@ import ch.dvbern.ebegu.reporting.lib.DateUtil;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
 import ch.dvbern.ebegu.reporting.lib.ExcelMerger;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
+import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftrag;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragExcelConverter;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -163,16 +164,17 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public byte[] generateExcelReportZahlungAuftrag(String auftragId, Optional<InstitutionStammdaten> institution) throws ExcelMergeException {
 
 		List<Zahlung> reportData;
 		if (institution.isPresent()) {
+			//TODO: get data filtered by Institution, zahlungService method to do this?
+			reportData = new ArrayList<>();
+		} else {
 			Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
 				.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
 			reportData = zahlungsauftrag.getZahlungen();
-		} else {
-			//TODO: get data filtered by Institution, zahlungService method to do this?
-			reportData = new ArrayList<>();
 		}
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(VORLAGE_REPORT_ZAHLUNG_AUFTRAG.getPath());
@@ -183,7 +185,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
 
-		mergeData(sheet, excelMergerDTO, MergeFieldGesuchZeitraum.values());
+		mergeData(sheet, excelMergerDTO, MergeFieldZahlungAuftrag.values());
 		zahlungAuftragExcelConverter.applyAutoSize(sheet);
 
 		return createWorkbook(workbook);

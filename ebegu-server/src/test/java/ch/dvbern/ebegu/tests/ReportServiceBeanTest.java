@@ -7,10 +7,7 @@ import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.ReportService;
-import ch.dvbern.ebegu.services.WizardStepService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -43,7 +40,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	private ReportService reportService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence<?> persistence;
 
 	@Inject
 	private InstitutionService institutionService;
@@ -53,6 +50,9 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private WizardStepService wizardStepService;
+
+	@Inject
+	private ZahlungService zahlungService;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -163,7 +163,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void generateExcelReportZahlungAuftrag() throws Exception {
-		byte[] bytes = reportService.generateExcelReportZahlungAuftrag("", Optional.empty());
+		byte[] bytes = reportService.generateExcelReportZahlungAuftrag("8d2805ed-d123-4632-bcbb-931dd7a936ae", Optional.empty());
 
 		assertNotNull(bytes);
 		unitTestTempfolder.writeToTempDir(bytes, "ExcelReportZahlungAuftrag.xlsx");

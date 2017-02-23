@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,20 +44,6 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 
 		ExcelMergerDTO sheet = new ExcelMergerDTO();
 
-		//TODO: delete this if we end up using the Entities
-		/*data.forEach(dataRow -> {
-				ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldZahlungAuftrag.repeatZahlungAuftragRow);
-				excelRowGroup.addValue(MergeFieldZahlungAuftrag.institution, dataRow.getInstitution());
-				excelRowGroup.addValue(MergeFieldZahlungAuftrag.name, dataRow.getName());
-				excelRowGroup.addValue(MergeFieldZahlungAuftrag.vorname, dataRow.getVorname());
-				excelRowGroup.addValue(MergeFieldZahlungAuftrag.gebDatum, dataRow.getGebDatum());
-				excelRowGroup.addValue(MergeFieldZahlungAuftrag.verfuegung, dataRow.getVerfuegung());
-				excelRowGroup.addValue(MergeFieldZahlungAuftrag.vonDatum, dataRow.getVonDatum());
-				excelRowGroup.addValue(MergeFieldZahlungAuftrag.bisDatum, dataRow.getBisDatum());
-				excelRowGroup.addValue(MergeFieldZahlungAuftrag.bgPensum, dataRow.getBgPensum());
-				excelRowGroup.addValue(MergeFieldZahlungAuftrag.betragCHF, BigDecimal.valueOf(dataRow.getBetragCHF()));
-			});*/
-
 		data.forEach(zahlung -> {
 			zahlung.getZahlungspositionen().forEach(zahlungsposition -> {
 				ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldZahlungAuftrag.repeatZahlungAuftragRow);
@@ -67,7 +54,8 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 				excelRowGroup.addValue(MergeFieldZahlungAuftrag.verfuegung, zahlungsposition.getVerfuegungZeitabschnitt().getVerfuegung().getBetreuung().getBGNummer());
 				excelRowGroup.addValue(MergeFieldZahlungAuftrag.vonDatum, zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
 				excelRowGroup.addValue(MergeFieldZahlungAuftrag.bisDatum, zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigBis());
-				excelRowGroup.addValue(MergeFieldZahlungAuftrag.bgPensum, zahlungsposition.getVerfuegungZeitabschnitt().getBgPensum());
+				excelRowGroup.addValue(MergeFieldZahlungAuftrag.bgPensum, BigDecimal.valueOf(zahlungsposition.getVerfuegungZeitabschnitt().getBgPensum())
+					.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
 				excelRowGroup.addValue(MergeFieldZahlungAuftrag.betragCHF, zahlungsposition.getBetrag());
 			});
 		});
