@@ -79,7 +79,6 @@ import {ReportRS} from './service/reportRS.rest';
 import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
 import ExportRS from '../gesuch/service/exportRS.rest';
 import ZahlungRS from './service/zahlungRS.rest';
-import {DvZahlungsauftragComponentConfig} from './component/dv-zahlungauftrag/dv-zahlungsauftrag';
 
 let dynamicDependencies = function (): string[] {
 

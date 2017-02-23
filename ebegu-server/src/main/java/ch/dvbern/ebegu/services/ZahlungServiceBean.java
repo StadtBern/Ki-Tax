@@ -178,8 +178,12 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Optional<Gesuchsperiode> gesuchsperiodeAm = gesuchsperiodeService.getGesuchsperiodeAm(zeitabschnittBis);
 		if (gesuchsperiodeAm.isPresent()) {
 			List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiodeAm.get());
-			Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
-			predicates.add(predicateAktuellesGesuch);
+			if (!gesuchIdsOfAktuellerAntrag.isEmpty()) {
+				Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
+				predicates.add(predicateAktuellesGesuch);
+			} else {
+				return Collections.emptyList();
+			}
 		} else {
 			throw new EbeguRuntimeException("getGueltigeVerfuegungZeitabschnitte", "Keine Gesuchsperiode gefunden fuer Stichtag " + Constants.DATE_FORMATTER.format(zeitabschnittBis));
 		}
@@ -215,8 +219,12 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		predicates.add(predicateAngebot);
 		// Gesuche, welche seit dem letzten Zahlungslauf verfuegt wurden. Nur neueste Verfuegung jedes Falls beachten
 		List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(datumVerfuegtVon, datumVerfuegtBis);
-		Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
-		predicates.add(predicateAktuellesGesuch);
+		if (!gesuchIdsOfAktuellerAntrag.isEmpty()) {
+			Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
+			predicates.add(predicateAktuellesGesuch);
+		} else {
+			return Collections.emptyList();
+		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
