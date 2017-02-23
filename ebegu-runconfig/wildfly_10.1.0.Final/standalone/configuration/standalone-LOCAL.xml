@@ -45,6 +45,9 @@
 		<property name="ebegu.mail.smtp.host" value="mailext.dvbern.ch"/>
 		<property name="ebegu.mail.smtp.port" value="25"/>
 		<property name="ebegu.hostname" value="app.ebegu.ch:3000/#"/>
+		<!--OpenIDM-->
+		<property name="ebegu.openidm.loginwithtoken.enabled" value="true"/>
+		<property name="ebegu.openam.url" value="https://elogin-test.bern.ch"/>
     </system-properties>
 
 
