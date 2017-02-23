@@ -52,10 +52,6 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 	private static final Boolean BtchBookg = true;
 	private static final String CLRSYS_CD = "CHBCC";
 
-	private static final String SCHEMA_NAME = "pain.001.001.03.ch.02.xsd";
-	private static final String SCHEMA_LOCATION_LOCAL = "ch.dvbern.ebegu.iso20022.V03CH02/" + SCHEMA_NAME;
-	private static final String SCHEMA_LOCATION = "http://www.six-interbank-clearing.com/de/" + SCHEMA_NAME;
-
 	private final Logger LOG = LoggerFactory.getLogger(Pain001ServiceBean.class.getSimpleName());
 
 	private JAXBContext jaxbContext;
