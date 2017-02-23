@@ -12,14 +12,6 @@ public interface IOpenIdmRESTProxClient {
 
 
 	@GET
-	@Path("/openidm/info/login")
-	@Consumes(MediaType.APPLICATION_JSON)
-	Response login(
-		@HeaderParam("X-OpenIDM-Username") String username,
-		@HeaderParam("X-OpenIDM-Password") String password,
-		@HeaderParam("X-OpenIDM-NoSession") boolean noSession);
-
-	@GET
 	@Path("/openidm/managed/institution")
 	@Consumes(MediaType.APPLICATION_JSON)
 	Response getAllInstitutions(
@@ -29,12 +21,28 @@ public interface IOpenIdmRESTProxClient {
 		@QueryParam("_queryFilter") boolean queryFilter);
 
 	@GET
+	@Path("/openidm/managed/institution")
+	@Consumes(MediaType.APPLICATION_JSON)
+	Response getAllInstitutionsWithToken(
+		@HeaderParam("egovBernChCookie") String tokenId,
+		@HeaderParam("X-Requested-With") String XMLHttpRequest,
+		@QueryParam("_queryFilter") boolean queryFilter);
+
+	@GET
 	@Path("/openidm/managed/institution/{uid}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	Response getInstitutionbyUid(
 		@HeaderParam("X-OpenIDM-Username") String username,
 		@HeaderParam("X-OpenIDM-Password") String password,
 		@HeaderParam("X-OpenIDM-NoSession") boolean noSession,
+		@PathParam("uid") String uid);
+
+	@GET
+	@Path("/openidm/managed/institution/{uid}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	Response getInstitutionbyUidWithToken(
+		@HeaderParam("egovBernChCookie") String tokenId,
+		@HeaderParam("X-Requested-With") String XMLHttpRequest,
 		@PathParam("uid") String uid);
 
 	@PUT
@@ -47,6 +55,16 @@ public interface IOpenIdmRESTProxClient {
 		@PathParam("uid") String uid,
 		JaxInstitutionOpenIdm jaxInstitutionOpenIdm);
 
+	@PUT
+	@Path("/openidm/managed/institution/{uid}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Response createWithToken(
+		@HeaderParam("egovBernChCookie") String tokenId,
+		@HeaderParam("X-Requested-With") String XMLHttpRequest,
+		@PathParam("uid") String uid,
+		JaxInstitutionOpenIdm jaxInstitutionOpenIdm);
+
 	@DELETE
 	@Path("/openidm/managed/institution/{uid}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -54,6 +72,15 @@ public interface IOpenIdmRESTProxClient {
 	Response delete(
 		@HeaderParam("X-OpenIDM-Username") String username,
 		@HeaderParam("X-OpenIDM-Password") String password,
+		@PathParam("uid") String uid);
+
+	@DELETE
+	@Path("/openidm/managed/institution/{uid}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Response deleteWithToken(
+		@HeaderParam("egovBernChCookie") String tokenId,
+		@HeaderParam("X-Requested-With") String XMLHttpRequest,
 		@PathParam("uid") String uid);
 }
 

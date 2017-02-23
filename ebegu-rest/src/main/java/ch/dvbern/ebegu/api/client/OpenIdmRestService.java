@@ -35,18 +35,20 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  * Implementierung des REST Services zum synchronisieren mit OpenIdm, erzeugt einen Proxy fuer <link>IOpenIdmRESTProxService</link>
  */
 @Stateless
-@RolesAllowed(value ={ADMIN, SUPER_ADMIN})
+@RolesAllowed(value = {ADMIN, SUPER_ADMIN})
 public class OpenIdmRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OpenIdmRestService.class.getSimpleName());
 
 	public static final String INSTITUTION = "institution";
 	public static final String TRAEGERSCHAFT = "sponsor";
+	public static final String XML_HTTP_REQUEST = "XMLHttpRequest";
 
 	@Inject
 	private EbeguConfiguration configuration;
 
 	private IOpenIdmRESTProxClient openIdmRESTProxClient;
+	private IOpenAmRESTProxClient openAmRESTProxClient;
 
 
 	public Optional<JaxOpenIdmResponse> getAll() {
@@ -55,17 +57,26 @@ public class OpenIdmRestService {
 
 	public Optional<JaxOpenIdmResponse> getAll(boolean force) {
 		if (configuration.getOpenIdmEnabled() || force) {
-			String user = configuration.getOpenIdmUser();
-			String pass = configuration.getOpenIdmPassword();
 
-			Response response = getOpenIdmRESTProxClient().getAllInstitutions(user, pass, true, true);
+
+			Response response;
+			if (!configuration.getLoginWithToken()) {
+
+				String user = configuration.getOpenIdmUser();
+				String pass = configuration.getOpenIdmPassword();
+
+				response = getOpenIdmRESTProxClient().getAllInstitutions(user, pass, true, true);
+			} else {
+				final String token = login();
+				response = getOpenIdmRESTProxClient().getAllInstitutionsWithToken(token, XML_HTTP_REQUEST, true);
+			}
 			if (checkSucess(response, "getAll")) {
 				JaxOpenIdmResponse jaxOpenIdmResponse = response.readEntity(JaxOpenIdmResponse.class);
 				return Optional.of(jaxOpenIdmResponse);
 			} else {
 				//im error fall muss trotzdem die response ausgelesen werden sonst gibt es spaeter exceptions
 				String errorContent = response.readEntity(String.class);
-				LOG.error("ErrorContent: " +errorContent);
+				LOG.error("ErrorContent: " + errorContent);
 			}
 		}
 		return Optional.empty();
@@ -89,17 +100,26 @@ public class OpenIdmRestService {
 
 	private Optional<JaxOpenIdmResult> getById(boolean force, String openIdmTraegerschaftUID) {
 		if (configuration.getOpenIdmEnabled() || force) {
-			String user = configuration.getOpenIdmUser();
-			String pass = configuration.getOpenIdmPassword();
 
-			Response response = getOpenIdmRESTProxClient().getInstitutionbyUid(user, pass, false, openIdmTraegerschaftUID);
+			Response response;
+			if (!configuration.getLoginWithToken()) {
+
+				String user = configuration.getOpenIdmUser();
+				String pass = configuration.getOpenIdmPassword();
+
+				response = getOpenIdmRESTProxClient().getInstitutionbyUid(user, pass, false, openIdmTraegerschaftUID);
+			} else {
+				final String token = login();
+				response = getOpenIdmRESTProxClient().getInstitutionbyUidWithToken(token, XML_HTTP_REQUEST, openIdmTraegerschaftUID);
+			}
+
 			if (checkSucess(response, "getByUid")) {
 				JaxOpenIdmResult jaxOpenIdmResult = response.readEntity(JaxOpenIdmResult.class);
 				return Optional.of(jaxOpenIdmResult);
 			} else {
 				//im error fall muss trotzdem die response ausgelesen werden sonst gibt es spaeter exceptions
 				String errorContent = response.readEntity(String.class);
-				LOG.error("ErrorContent: " +errorContent);
+				LOG.error("ErrorContent: " + errorContent);
 			}
 		}
 		return Optional.empty();
@@ -140,28 +160,60 @@ public class OpenIdmRestService {
 		return create(force, traegerschaft.getName(), TRAEGERSCHAFT, convertToOpenIdmTraegerschaftUID(traegerschaft.getId()), traegerschaft.getMail());
 	}
 
+
+	private String login() {
+
+		String user = configuration.getOpenIdmUser();
+		String pass = configuration.getOpenIdmPassword();
+
+		Response response = getOpenAmRESTProxClient().login(user, pass);
+
+		if (response == null) {
+			LOG.error("No response from OpenAm Server ");
+			return "";
+		}
+
+		JaxOpenAmResponse jaxOpenAmResponse = response.readEntity(JaxOpenAmResponse.class);
+
+		if (jaxOpenAmResponse == null || jaxOpenAmResponse.getTokenId() == null) {
+			LOG.error("No token received from OpenAm Server: " + jaxOpenAmResponse);
+			return "";
+		}
+
+		return jaxOpenAmResponse.getTokenId();
+	}
+
 	/**
 	 * creates the passed element in openIDM and returns the result entity or nothing if there is no openidm configured
 	 */
 	private Optional<JaxOpenIdmResult> create(boolean force, String name, String type, String openIdmUID, String mail) {
 		if (configuration.getOpenIdmEnabled() || force) {
-			String user = configuration.getOpenIdmUser();
-			String pass = configuration.getOpenIdmPassword();
 
 			JaxInstitutionOpenIdm jaxInstitutionOpenIdm = new JaxInstitutionOpenIdm();
 			jaxInstitutionOpenIdm.setName(name);
 			jaxInstitutionOpenIdm.setType(type);
 			jaxInstitutionOpenIdm.setMail(mail);
 
-			Response response = getOpenIdmRESTProxClient().create(user, pass, openIdmUID, jaxInstitutionOpenIdm);
+			Response response;
+			if (!configuration.getLoginWithToken()) {
+
+				String user = configuration.getOpenIdmUser();
+				String pass = configuration.getOpenIdmPassword();
+
+				response = getOpenIdmRESTProxClient().create(user, pass, openIdmUID, jaxInstitutionOpenIdm);
+
+			} else {
+				final String token = login();
+				response = getOpenIdmRESTProxClient().createWithToken(token, XML_HTTP_REQUEST, openIdmUID, jaxInstitutionOpenIdm);
+			}
 
 			if (checkSucess(response, "Create")) {
 				JaxOpenIdmResult jaxOpenIdmResult = response.readEntity(JaxOpenIdmResult.class);
 				return Optional.of(jaxOpenIdmResult);
-			} else{
+			} else {
 				//im error fall muss trotzdem die response ausgelesen werden sonst gibt es spaeter exceptions
 				String errorContent = response.readEntity(String.class);
-				LOG.error("ErrorContent: " +errorContent);
+				LOG.error("ErrorContent: " + errorContent);
 			}
 		}
 		return Optional.empty();
@@ -213,10 +265,20 @@ public class OpenIdmRestService {
 
 	public boolean deleteByOpenIdmUid(String uid, boolean force) {
 		if (configuration.getOpenIdmEnabled() || force) {
-			String user = configuration.getOpenIdmUser();
-			String pass = configuration.getOpenIdmPassword();
 
-			Response response = getOpenIdmRESTProxClient().delete(user, pass, uid);
+			Response response;
+			if (!configuration.getLoginWithToken()) {
+
+				String user = configuration.getOpenIdmUser();
+				String pass = configuration.getOpenIdmPassword();
+
+				response = getOpenIdmRESTProxClient().delete(user, pass, uid);
+			}
+			else {
+				final String token = login();
+				response = getOpenIdmRESTProxClient().deleteWithToken(token, XML_HTTP_REQUEST, uid);
+			}
+
 			response.readEntity(String.class);
 
 			return checkSucess(response, "delete");
@@ -247,12 +309,25 @@ public class OpenIdmRestService {
 	}
 
 	/**
+	 * lazy init den REST proxy fuer die Kommunikation mit OpenAm
+	 */
+	private IOpenAmRESTProxClient getOpenAmRESTProxClient() {
+		if (openAmRESTProxClient == null) {
+			String baseURL = configuration.getOpenamURL();
+			ResteasyClient client = buildClient();
+			ResteasyWebTarget target = client.target(baseURL);
+			this.openAmRESTProxClient = target.proxy(IOpenAmRESTProxClient.class);
+		}
+		return openAmRESTProxClient;
+	}
+
+	/**
 	 * erstellt einen neuen ResteasyClient
 	 */
 	private ResteasyClient buildClient() {
 		ResteasyClientBuilder builder = new ResteasyClientBuilder().establishConnectionTimeout(10, TimeUnit.SECONDS);
 
-		if (configuration.getIsDevmode() || LOG.isDebugEnabled() ) { //wenn debug oder dev mode dann loggen wir den request
+		if (configuration.getIsDevmode() || LOG.isDebugEnabled()) { //wenn debug oder dev mode dann loggen wir den request
 			builder.register(new ClientRequestLogger());
 			builder.register(new ClientResponseLogger());
 		}
