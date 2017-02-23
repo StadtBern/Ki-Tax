@@ -385,7 +385,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
-		final Betreuung betreuungToChange = gesuch.extractBetreuungsnachfolger(mitteilung.getBetreuung().getId());
+		final Betreuung betreuungToChange = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getBetreuungNummer());
 		if (betreuungToChange != null) {
 			betreuungToChange.getBetreuungspensumContainers().clear();
 			for (final BetreuungsmitteilungPensum betPensum : mitteilung.getBetreuungspensen()) {
@@ -396,11 +396,11 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				betPensumJA.setPensum(betPensum.getPensum());
 				betPensumJA.setNichtEingetreten(false);
 				betPenCont.setBetreuungspensumJA(betPensumJA);
-				// todo beim Muss man das vorgaengerID setzen? Ist dies ueberhaupt relevant?
 				betreuungToChange.getBetreuungspensumContainers().add(betPenCont);
 				betreuungService.saveBetreuung(betreuungToChange, false);
 			}
 			mitteilung.setApplied(true);
+			mitteilung.setMitteilungStatus(MitteilungStatus.ERLEDIGT);
 			return persistence.merge(mitteilung);
 		}
 		return mitteilung;

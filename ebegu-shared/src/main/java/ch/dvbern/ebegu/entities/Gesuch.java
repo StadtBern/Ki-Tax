@@ -531,10 +531,10 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	}
 
 	@Nullable
-	public Betreuung extractBetreuungsnachfolger(@NotNull String betreuungId) {
+	public Betreuung extractBetreuungsFromBetreuungNummer(@NotNull Integer betreuungNummer) {
 		final List<Betreuung> allBetreuungen = extractAllBetreuungen();
 		for (final Betreuung betreuung: allBetreuungen) {
-			if (betreuung.getId() != null && betreuung.getId().equals(betreuungId)) {
+			if (betreuung.getId() != null && betreuung.getBetreuungNummer().equals(betreuungNummer)) {
 				return betreuung;
 			}
 		}

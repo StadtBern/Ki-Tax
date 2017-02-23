@@ -47,6 +47,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     betreuungIndex: number;
     isMutationsmeldungStatus: boolean;
     mutationsmeldungModel: TSBetreuung;
+    isNewestGesuch: boolean;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log'];
@@ -84,6 +85,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         } else {
             this.$log.error('There is no kind available with kind-number:' + $stateParams.kindNumber);
         }
+        this.gesuchModelManager.isNeuestesGesuch().then((response: boolean) => {
+            this.isNewestGesuch = response;
+        });
     }
 
     /**
@@ -322,9 +326,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      */
     public isEnabled(): boolean {
         if (this.getBetreuungModel()) {
-
-            return !this.getBetreuungModel().hasVorgaenger() &&
-                (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT) && !this.isKorrekturModusJugendamt()));
+            return !this.getBetreuungModel().hasVorgaenger()
+                && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
+                && !this.isKorrekturModusJugendamt()));
         }
         return false;
     }
@@ -418,6 +422,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         //create dummy copy of model
         this.mutationsmeldungModel = angular.copy(this.getBetreuungModel());
         this.isMutationsmeldungStatus = true;
+    }
+
+    public isMutationsmeldungAllowed(): boolean {
+        return this.isFromMutation() && this.isNewestGesuch;
     }
 
     public mutationsmeldungSenden(): void {
