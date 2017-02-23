@@ -12,6 +12,7 @@ import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.ReportService;
 import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
+import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -141,22 +142,23 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void generateExcelReportGesuchStichtag() throws Exception {
-		byte[] bytes = reportService.generateExcelReportGesuchStichtag(
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchStichtag(
 			LocalDateTime.now(),
 			null);
 
-		assertNotNull(bytes);
-		unitTestTempfolder.writeToTempDir(bytes, "ExcelReportGesuchStichtag.xlsx");
+		assertNotNull(uploadFileInfo.getBytes());
+
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchStichtag.xlsx");
 	}
 
 	@Test
 	public void generateExcelReportGesuchZeitraum() throws Exception {
-		byte[] bytes = reportService.generateExcelReportGesuchZeitraum(
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchZeitraum(
 			LocalDateTime.now().minusDays(1),
 			LocalDateTime.now().plusDays(1),
 			null);
 
-		assertNotNull(bytes);
-		unitTestTempfolder.writeToTempDir(bytes, "ExcelReportGesuchZeitraum.xlsx");
+		assertNotNull(uploadFileInfo.getBytes());
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchZeitraum.xlsx");
 	}
 }

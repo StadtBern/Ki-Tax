@@ -1,29 +1,42 @@
 import {IHttpParamSerializer, ILogService} from 'angular';
+import IPromise = angular.IPromise;
+import TSDownloadFile from "../../models/TSDownloadFile";
+import EbeguRestUtil from "../../utils/EbeguRestUtil";
+import IHttpService = angular.IHttpService;
 
 export class ReportRS {
     serviceURL: string;
     httpParamSerializer: IHttpParamSerializer;
     log: ILogService;
+    ebeguRestUtil: EbeguRestUtil;
+    http: IHttpService;
 
-    static $inject = ['$httpParamSerializer', 'REST_API', '$log', '$window'];
+    static $inject = ['$httpParamSerializer', 'REST_API', '$log', '$window', 'EbeguRestUtil', '$http'];
     /* @ngInject */
-    constructor($httpParamSerializer: IHttpParamSerializer, REST_API: string, $log: ILogService, private $window: ng.IWindowService) {
+    constructor($httpParamSerializer: IHttpParamSerializer, REST_API: string, $log: ILogService, private $window: ng.IWindowService, ebeguRestUtil: EbeguRestUtil, $http: IHttpService) {
         this.serviceURL = REST_API + 'reporting';
         this.httpParamSerializer = $httpParamSerializer;
         this.log = $log;
+        this.ebeguRestUtil = ebeguRestUtil;
+        this.http = $http;
     }
 
-    public getGesuchStichtagReportExcel(dateTimeStichtag: string, gesuchPeriodeID: string): void {
+    public getGesuchStichtagReportExcel(dateTimeStichtag: string, gesuchPeriodeID: string): IPromise<TSDownloadFile> {
 
         let reportParams: string = this.httpParamSerializer({
             dateTimeStichtag: dateTimeStichtag,
             gesuchPeriodeID: gesuchPeriodeID
         });
 
-        this.startDownload(this.serviceURL + '/excel/gesuchStichtag?' + reportParams, false);
+        return this.http.get(this.serviceURL + '/excel/gesuchStichtag?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+
     }
 
-    public getGesuchZeitraumReportExcel(dateTimeFrom: string, dateTimeTo: string, gesuchPeriodeID: string): void {
+    public getGesuchZeitraumReportExcel(dateTimeFrom: string, dateTimeTo: string, gesuchPeriodeID: string): IPromise<TSDownloadFile> {
 
         let reportParams: string = this.httpParamSerializer({
             dateTimeFrom: dateTimeFrom,
@@ -31,39 +44,11 @@ export class ReportRS {
             gesuchPeriodeID: gesuchPeriodeID
         });
 
-        this.startDownload(this.serviceURL + '/excel/gesuchZeitraum?' + reportParams, false);
-    }
-
-    private startDownload(href: string, attachment: boolean): boolean {
-
-        if (attachment) {
-            // add MatrixParam for to download file instead of inline
-            this.download(href);
-        } else {
-            let win =this.$window.open(href, '_blank');
-            if (!win) {
-                let warn: string = 'Popup-Blocker scheint eingeschaltet zu sein. ' +
-                    'Dadurch kann das Dokument im Browser nicht angezeigt werden und wird heruntergeladen. '+
-                    'Bitte erlauben Sie der Seite Pop-Ups öffnen zu dürfen, um das Dokument im Browser anzuzeigen.';
-                this.log.error(warn);
-                this.download(href);
-                this.$window.alert(warn);
-                return false;
-            } else {
-                win.focus();
-            }
-        }
-
-        //This would be the way to open file in new window (for now it's better to open in new tab)
-        //this.$window.open(href, name, 'toolbar=0,location=0,menubar=0');
-        return true;
-
-    }
-
-    private download(href: string) {
-        href = href + ';attachment=true;';
-        this.$window.location.href = href;
-        return href;
+        return this.http.get(this.serviceURL + '/excel/gesuchZeitraum?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
     }
 
     public getServiceName(): string {

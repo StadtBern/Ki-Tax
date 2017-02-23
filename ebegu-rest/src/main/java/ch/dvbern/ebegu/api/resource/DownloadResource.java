@@ -353,7 +353,7 @@ public class DownloadResource {
 	}
 
 
-	private Response getFileDownloadResponse(UriInfo uriInfo, String ip, FileMetadata fileMetadata) {
+	public Response getFileDownloadResponse(UriInfo uriInfo, String ip, FileMetadata fileMetadata) {
 		final DownloadFile downloadFile = downloadFileService.create(fileMetadata, ip);
 
 		URI uri = uriInfo.getBaseUriBuilder()
@@ -366,7 +366,7 @@ public class DownloadResource {
 		return Response.created(uri).entity(jaxDownloadFile).build();
 	}
 
-	private String getIP(HttpServletRequest request) {
+	public String getIP(HttpServletRequest request) {
 		String ipAddress = request.getHeader("X-FORWARDED-FOR");
 		if (ipAddress == null) {
 			ipAddress = request.getRemoteAddr();
