@@ -43,6 +43,7 @@ public class OpenIdmRestService {
 	public static final String INSTITUTION = "institution";
 	public static final String TRAEGERSCHAFT = "sponsor";
 	public static final String XML_HTTP_REQUEST = "XMLHttpRequest";
+	public static final String CONTENT_TYPE = "application/json";
 
 	@Inject
 	private EbeguConfiguration configuration;
@@ -68,7 +69,7 @@ public class OpenIdmRestService {
 				response = getOpenIdmRESTProxClient().getAllInstitutions(user, pass, true, true);
 			} else {
 				final String token = login();
-				response = getOpenIdmRESTProxClient().getAllInstitutionsWithToken(token, XML_HTTP_REQUEST, true);
+				response = getOpenIdmRESTProxClient().getAllInstitutionsWithToken(token, XML_HTTP_REQUEST, CONTENT_TYPE, true);
 			}
 			if (checkSucess(response, "getAll")) {
 				JaxOpenIdmResponse jaxOpenIdmResponse = response.readEntity(JaxOpenIdmResponse.class);
@@ -110,7 +111,7 @@ public class OpenIdmRestService {
 				response = getOpenIdmRESTProxClient().getInstitutionbyUid(user, pass, false, openIdmTraegerschaftUID);
 			} else {
 				final String token = login();
-				response = getOpenIdmRESTProxClient().getInstitutionbyUidWithToken(token, XML_HTTP_REQUEST, openIdmTraegerschaftUID);
+				response = getOpenIdmRESTProxClient().getInstitutionbyUidWithToken(token, XML_HTTP_REQUEST, CONTENT_TYPE, openIdmTraegerschaftUID);
 			}
 
 			if (checkSucess(response, "getByUid")) {
@@ -166,7 +167,7 @@ public class OpenIdmRestService {
 		String user = configuration.getOpenIdmUser();
 		String pass = configuration.getOpenIdmPassword();
 
-		Response response = getOpenAmRESTProxClient().login(user, pass);
+		Response response = getOpenAmRESTProxClient().login(user, pass, CONTENT_TYPE);
 
 		if (response == null) {
 			LOG.error("No response from OpenAm Server ");
@@ -204,7 +205,7 @@ public class OpenIdmRestService {
 
 			} else {
 				final String token = login();
-				response = getOpenIdmRESTProxClient().createWithToken(token, XML_HTTP_REQUEST, openIdmUID, jaxInstitutionOpenIdm);
+				response = getOpenIdmRESTProxClient().createWithToken(token, XML_HTTP_REQUEST, CONTENT_TYPE, openIdmUID, jaxInstitutionOpenIdm);
 			}
 
 			if (checkSucess(response, "Create")) {
@@ -273,10 +274,9 @@ public class OpenIdmRestService {
 				String pass = configuration.getOpenIdmPassword();
 
 				response = getOpenIdmRESTProxClient().delete(user, pass, uid);
-			}
-			else {
+			} else {
 				final String token = login();
-				response = getOpenIdmRESTProxClient().deleteWithToken(token, XML_HTTP_REQUEST, uid);
+				response = getOpenIdmRESTProxClient().deleteWithToken(token, XML_HTTP_REQUEST, CONTENT_TYPE, uid);
 			}
 
 			response.readEntity(String.class);

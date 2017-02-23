@@ -26,6 +26,7 @@ public interface IOpenIdmRESTProxClient {
 	Response getAllInstitutionsWithToken(
 		@HeaderParam("egovBernChCookie") String tokenId,
 		@HeaderParam("X-Requested-With") String XMLHttpRequest,
+		@HeaderParam("Content-Type") String contentType,
 		@QueryParam("_queryFilter") boolean queryFilter);
 
 	@GET
@@ -43,6 +44,7 @@ public interface IOpenIdmRESTProxClient {
 	Response getInstitutionbyUidWithToken(
 		@HeaderParam("egovBernChCookie") String tokenId,
 		@HeaderParam("X-Requested-With") String XMLHttpRequest,
+		@HeaderParam("Content-Type") String contentType,
 		@PathParam("uid") String uid);
 
 	@PUT
@@ -62,6 +64,7 @@ public interface IOpenIdmRESTProxClient {
 	Response createWithToken(
 		@HeaderParam("egovBernChCookie") String tokenId,
 		@HeaderParam("X-Requested-With") String XMLHttpRequest,
+		@HeaderParam("Content-Type") String contentType,
 		@PathParam("uid") String uid,
 		JaxInstitutionOpenIdm jaxInstitutionOpenIdm);
 
@@ -81,6 +84,7 @@ public interface IOpenIdmRESTProxClient {
 	Response deleteWithToken(
 		@HeaderParam("egovBernChCookie") String tokenId,
 		@HeaderParam("X-Requested-With") String XMLHttpRequest,
+		@HeaderParam("Content-Type") String contentType,
 		@PathParam("uid") String uid);
 }
 

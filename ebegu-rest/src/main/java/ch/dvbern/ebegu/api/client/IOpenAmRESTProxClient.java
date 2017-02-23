@@ -16,7 +16,8 @@ public interface IOpenAmRESTProxClient {
 	@Produces(MediaType.APPLICATION_JSON)
 	Response login(
 		@HeaderParam("X-OpenAM-Username") String username,
-		@HeaderParam("X-OpenAM-Password") String password);
+		@HeaderParam("X-OpenAM-Password") String password,
+		@HeaderParam("Content-Type") String contentType);
 
 }
 
