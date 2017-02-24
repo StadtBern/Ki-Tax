@@ -518,8 +518,8 @@ describe('gesuchModelManager', function () {
     function createKind(): void {
         let tsKindContainer = new TSKindContainer(undefined, new TSKind());
         gesuchModelManager.getGesuch().kindContainers.push(tsKindContainer);
-        gesuchModelManager.setKindIndex(gesuchModelManager.getGesuch().kindContainers.length-1);
-        tsKindContainer.kindNummer = gesuchModelManager.getKindIndex()+1;
+        gesuchModelManager.setKindIndex(gesuchModelManager.getGesuch().kindContainers.length - 1);
+        tsKindContainer.kindNummer = gesuchModelManager.getKindIndex() + 1;
     }
 
 

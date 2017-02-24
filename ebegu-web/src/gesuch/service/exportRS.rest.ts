@@ -15,7 +15,7 @@ export default class ExportRS {
     }
 
     public exportVerfuegungenOfAntrag(gesuchID: string): IPromise<any> {
-        return this.http.get(this.serviceURL +'/gesuch/' +  encodeURIComponent(gesuchID), {
+        return this.http.get(this.serviceURL + '/gesuch/' +  encodeURIComponent(gesuchID), {
         }).then((response: any) => {
             return this.$log.debug('PARSING fall REST object ', response.data);
         });

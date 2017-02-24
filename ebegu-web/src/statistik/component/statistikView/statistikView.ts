@@ -7,6 +7,8 @@ import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {ReportRS} from '../../../core/service/reportRS.rest';
+import TSDownloadFile from '../../../models/TSDownloadFile';
+import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
@@ -28,9 +30,9 @@ export class StatistikViewController {
     TSRoleUtil: any;
     private DATETIME_PARAM_FORMAT: string = 'YYYY-MM-DD HH:mm:ss';
 
-    static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportRS'];
+    static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportRS', 'DownloadRS'];
 
-    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService, private reportRS: ReportRS) {
+    constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService, private reportRS: ReportRS, private downloadRS: DownloadRS) {
     }
 
     $onInit(){
@@ -47,16 +49,31 @@ export class StatistikViewController {
             let tmpType = (<any>TSStatistikParameterType)[type];
             tmpType ? this.$log.debug('Statistik Type: ' + tmpType) : this.$log.debug('default, Type not recognized');
             this.$log.debug('Validated Form: ' + form.$name);
+
             switch (tmpType) {
-                case TSStatistikParameterType.GESUCH_STICHTAG:
+                case TSStatistikParameterType.GESUCH_STICHTAG: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
                     this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATETIME_PARAM_FORMAT),
-                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null);
+                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                        .then((downloadFile: TSDownloadFile) => {
+
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
                     break;
-                case TSStatistikParameterType.GESUCH_ZEITRAUM:
+                }
+                case TSStatistikParameterType.GESUCH_ZEITRAUM: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
                     this.reportRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATETIME_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATETIME_PARAM_FORMAT),
-                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null);
+                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                        .then((downloadFile: TSDownloadFile) => {
+
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
                     break;
+                }
                 case TSStatistikParameterType.KINDER:
                     break;
                 case TSStatistikParameterType.GESUCHSTELLER:

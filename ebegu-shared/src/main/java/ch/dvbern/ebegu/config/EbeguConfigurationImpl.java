@@ -28,9 +28,11 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_FEDLET_CONFIG_PATH = "ebegu.fedlet.config.path";
 	private static final String EBEGU_CLIENT_USING_HTTPS = "ebegu.client.using.https";
 	private static final String EBEGU_OPENIDM_URL = "ebegu.openidm.url";
+	private static final String EBEGU_OPENAM_URL = "ebegu.openam.url";
 	private static final String EBEGU_OPENIDM_USER = "ebegu.openidm.user";
 	private static final String EBEGU_OPENIDM_PASSWD = "ebegu.openidm.passwd";
 	private static final String EBEGU_OPENIDM_ENABLED = "ebegu.openidm.enabled";
+	private static final String EBEGU_OPENIDM_LOGINWITHTOKEN_ENABLED = "ebegu.openidm.loginwithtoken.enabled";
 	private static final String EBEGU_MAIL_DISABLED = "ebegu.mail.disabled";
 	private static final String EBEGU_MAIL_SMTP_FROM = "ebegu.mail.smtp.from";
 	private static final String EBEGU_MAIL_SMTP_HOST = "ebegu.mail.smtp.host";
@@ -71,6 +73,11 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	}
 
 	@Override
+	public String getOpenamURL() {
+		return getString(EBEGU_OPENAM_URL, "https://elogin.bern.ch");
+	}
+
+	@Override
 	public String getOpenIdmUser() {
 		return getString(EBEGU_OPENIDM_USER, "SRVC_eBEGU");
 	}
@@ -83,6 +90,11 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	@Override
 	public boolean getOpenIdmEnabled() {
 		return getBoolean(EBEGU_OPENIDM_ENABLED, false);
+	}
+
+	@Override
+	public boolean getLoginWithToken() {
+		return getBoolean(EBEGU_OPENIDM_LOGINWITHTOKEN_ENABLED, true);
 	}
 
 	@Override

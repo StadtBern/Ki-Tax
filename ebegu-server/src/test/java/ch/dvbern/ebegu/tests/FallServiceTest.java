@@ -2,7 +2,9 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -14,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +35,10 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 	private FallService fallService;
 
 	@Inject
-	private Persistence<Fall> persistence;
+	private Persistence<Gesuch> persistence;
+
+	@Inject
+	private InstitutionService institutionService;
 
 
 	@Test
@@ -121,6 +127,37 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 		final Optional<Fall> fall2 = fallService.createFallForCurrentGesuchstellerAsBesitzer();
 		Assert.assertTrue(fall2.isPresent()); // if a fall already exists for this GS it is not created again
 		Assert.assertEquals("gesuchst2", fall2.get().getBesitzer().getUsername());
+	}
+
+
+	@Test
+	public void testGetEmailAddressForFallFromFall() {
+		loginAsGesuchsteller("gesuchst");
+		final Optional<Fall> fallOpt = fallService.createFallForCurrentGesuchstellerAsBesitzer();
+		Assert.assertTrue(fallOpt.isPresent());
+		Fall fall = fallOpt.get();
+		Assert.assertEquals("e@e",fall.getBesitzer().getEmail());
+		Assert.assertEquals("gesuchst", fall.getBesitzer().getUsername());
+		Optional<String> emailAddressForFall = fallService.getCurrentEmailAddress(fall.getId());
+		Assert.assertTrue(emailAddressForFall.isPresent());
+		String email = emailAddressForFall.get();
+		Assert.assertEquals( "e@e",email);
+	}
+
+	@Test
+	public void testGetEmailAddressForFallFromGS() {
+		loginAsGesuchsteller("gesuchst");
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.now());
+
+		Assert.assertNotNull(gesuch.getGesuchsteller1().getGesuchstellerJA().getMail());
+		Assert.assertNotNull(gesuch.getFall().getBesitzer());
+		Assert.assertFalse(gesuch.getFall().getBesitzer().getEmail().equals(gesuch.getGesuchsteller1().getGesuchstellerJA().getMail()));
+
+		Optional<String> emailAddressForFall = fallService.getCurrentEmailAddress(gesuch.getFall().getId());
+		Assert.assertTrue(emailAddressForFall.isPresent());
+		String email = emailAddressForFall.get();
+		Assert.assertEquals( "test@email.com",email);
+
 	}
 
 }
