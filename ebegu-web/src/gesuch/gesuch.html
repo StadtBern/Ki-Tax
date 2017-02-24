@@ -52,17 +52,17 @@
                     ui-sref-active="active" class="row"
                     ng-class="{'active-element': vm.isElementActive('GESUCH_ERSTELLEN')}">
                     <!--this button is added twice because it should do nothing if the gesuch is not saved yet-->
-                    <button  ng-if="!vm.getGesuch().isNew()" type="button" class="col-xs-10  btn-link"
+                    <button ng-if="!vm.getGesuch().isNew()" type="button" class="col-xs-10  btn-link"
                             ui-sref="gesuch.fallcreation({createNew: false, gesuchId: vm.getGesuchId()})"
                             ng-disabled="vm.isWizardStepDisabled('GESUCH_ERSTELLEN')"
                             ng-click="vm.closeSidenav('sidenav')">
                         <span ng-bind="vm.getGesuchErstellenStepTitle()"></span>
                     </button>
-                    <button   ng-if="vm.getGesuch().isNew()" type="button" class="col-xs-10  btn-link"
-                             ng-disabled="vm.isWizardStepDisabled('GESUCH_ERSTELLEN')"
-                             ng-click="vm.closeSidenav('sidenav')">
-                         <span ng-bind="vm.getGesuchErstellenStepTitle()"></span>
-                     </button>
+                    <button ng-if="vm.getGesuch().isNew()" type="button" class="col-xs-10  btn-link"
+                            ng-disabled="vm.isWizardStepDisabled('GESUCH_ERSTELLEN')"
+                            ng-click="vm.closeSidenav('sidenav')">
+                        <span ng-bind="vm.getGesuchErstellenStepTitle()"></span>
+                    </button>
                     <span class="col-xs-2 fa  ng-class:vm.getIcon('GESUCH_ERSTELLEN')" aria-hidden="true"></span>
                 </li>
 

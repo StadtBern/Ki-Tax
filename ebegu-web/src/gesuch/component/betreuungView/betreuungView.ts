@@ -73,7 +73,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
             // just to read!
             this.kindModel = this.gesuchModelManager.getKindToWorkWith();
-        } else{
+        } else {
             this.$log.error('There is no kind available with kind-number:' + $stateParams.kindNumber);
         }
     }

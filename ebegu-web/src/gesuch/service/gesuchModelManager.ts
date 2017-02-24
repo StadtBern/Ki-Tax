@@ -94,7 +94,7 @@ export default class GesuchModelManager {
 
         $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
             this.setGesuch(undefined);
-            this.log.debug('Cleared gesuch on logout')
+            this.log.debug('Cleared gesuch on logout');
         });
     }
 
@@ -490,21 +490,17 @@ export default class GesuchModelManager {
             });
         }
 
-        let setStatusProm: angular.IPromise<void>;
         if (forced) {
-            let deferredStatus: IDeferred<TSAntragStatus> = this.$q.defer();
             if (TSEingangsart.ONLINE === eingangsart) {
-                deferredStatus.resolve(TSAntragStatus.IN_BEARBEITUNG_GS);
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
             } else {
-                deferredStatus.resolve(TSAntragStatus.IN_BEARBEITUNG_JA);
+                this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
             }
-            //Status setzten
-            setStatusProm = deferredStatus.promise.then((stateToSet: TSAntragStatus) => {this.gesuch.status  = stateToSet });
         }
 
-        //this creates a list of promises and resolves them all. once all promises are resolved thee .then function is triggered
-        return this.$q.all([setGesuchsperiodeProm, setFallProm, setStatusProm]).then(() => {
-            this.log.debug("initialized new gesuch ", this.gesuch);
+        // this creates a list of promises and resolves them all. once all promises are resolved the .then function is triggered
+        return this.$q.all([setGesuchsperiodeProm, setFallProm]).then(() => {
+            this.log.debug('initialized new gesuch ', this.gesuch);
             return this.gesuch;
 
         });
@@ -711,8 +707,8 @@ export default class GesuchModelManager {
     public getKindToWorkWith(): TSKindContainer {
         if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length > this.kindIndex) {
             return this.gesuch.kindContainers[this.kindIndex];
-        } else{
-            this.log.error('kindContainers is not set or kindIndex is out of bounds ' + this.kindIndex)
+        } else {
+            this.log.error('kindContainers is not set or kindIndex is out of bounds ' + this.kindIndex);
         }
         return undefined;
     }
@@ -725,8 +721,8 @@ export default class GesuchModelManager {
     public getBetreuungToWorkWith(): TSBetreuung {
         if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen.length > this.betreuungIndex) {
             return this.getKindToWorkWith().betreuungen[this.betreuungIndex];
-        } else{
-            this.log.error('kindToWorkWith is not set or index of betreuung is out of bounds ' + this.betreuungIndex)
+        } else {
+            this.log.error('kindToWorkWith is not set or index of betreuung is out of bounds ' + this.betreuungIndex);
         }
         return undefined;
     }

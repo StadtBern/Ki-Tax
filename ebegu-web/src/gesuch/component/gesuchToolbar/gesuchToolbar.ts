@@ -192,8 +192,8 @@ export class GesuchToolbarController {
                 this.antragList = angular.copy(response);
                 if (response && response.length > 0) {
                     this.gesuchRS.findGesuch(this.getNewest(this.antragList).antragId).then((response) => {
-                        if(!response){
-                            this.$log.warn("Could not find gesuch for id " +this.getNewest(this.antragList).antragId)
+                        if (!response) {
+                            this.$log.warn('Could not find gesuch for id ' + this.getNewest(this.antragList).antragId);
                         }
                         this.gesuchModelManager.setGesuch(angular.copy(response));
                         this.updateGesuchperiodeList();
