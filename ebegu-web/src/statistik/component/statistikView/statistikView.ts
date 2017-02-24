@@ -7,11 +7,11 @@ import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {ReportRS} from '../../../core/service/reportRS.rest';
+import TSDownloadFile from '../../../models/TSDownloadFile';
+import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
-import TSDownloadFile from "../../../models/TSDownloadFile";
-import {DownloadRS} from "../../../core/service/downloadRS.rest";
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
@@ -51,25 +51,29 @@ export class StatistikViewController {
             this.$log.debug('Validated Form: ' + form.$name);
 
             switch (tmpType) {
-                case TSStatistikParameterType.GESUCH_STICHTAG:
+                case TSStatistikParameterType.GESUCH_STICHTAG: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
                     this.reportRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATETIME_PARAM_FORMAT),
                         this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                         .then((downloadFile: TSDownloadFile) => {
-                            let win: Window = this.downloadRS.prepareDownloadWindow();
+
                             this.$log.debug('accessToken: ' + downloadFile.accessToken);
                             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
                         });
                     break;
-                case TSStatistikParameterType.GESUCH_ZEITRAUM:
+                }
+                case TSStatistikParameterType.GESUCH_ZEITRAUM: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
                     this.reportRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATETIME_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATETIME_PARAM_FORMAT),
                         this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                         .then((downloadFile: TSDownloadFile) => {
-                            let win: Window = this.downloadRS.prepareDownloadWindow();
+
                             this.$log.debug('accessToken: ' + downloadFile.accessToken);
                             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
                         });
                     break;
+                }
                 case TSStatistikParameterType.KINDER:
                     break;
                 case TSStatistikParameterType.GESUCHSTELLER:

@@ -44,7 +44,7 @@ public class ReportResource {
 	@GET
 	@Path("/excel/gesuchStichtag")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getGesuchStichtagReportExcel(
 		@QueryParam("dateTimeStichtag") @Nonnull String dateTimeStichtag,
 		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
@@ -58,10 +58,7 @@ public class ReportResource {
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchStichtag(dateTime,
 			gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null);
-		DownloadFile downloadFileInfo = new DownloadFile();
-		downloadFileInfo.setFilename(uploadFileInfo.getFilename());
-		downloadFileInfo.setFilepfad(uploadFileInfo.getPath());
-		downloadFileInfo.setFilesize(uploadFileInfo.getSizeString());
+		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
@@ -70,7 +67,7 @@ public class ReportResource {
 	@GET
 	@Path("/excel/gesuchZeitraum")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getGesuchZeitraumReportExcel(
 		@QueryParam("dateTimeFrom") @Nonnull String dateTimeFromParam,
 		@QueryParam("dateTimeTo") @Nonnull String dateTimeToParam,
@@ -85,18 +82,16 @@ public class ReportResource {
 		LocalDateTime dateTimeFrom = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeFromParam);
 		LocalDateTime dateTimeTo = DateUtil.parseStringToDateTimeOrReturnNow(dateTimeToParam);
 
-		if (!dateTimeTo.isAfter(dateTimeFrom))
+		if (!dateTimeTo.isAfter(dateTimeFrom)) {
 			throw new EbeguRuntimeException("getGesuchZeitraumReportExcel", "Fehler beim erstellen Report Gesuch Zeitraum"
 				, "Das von-Datum muss vor dem bis-Datum sein.");
+		}
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchZeitraum(dateTimeFrom,
 			dateTimeTo,
 			gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null);
 
-		DownloadFile downloadFileInfo = new DownloadFile();
-		downloadFileInfo.setFilename(uploadFileInfo.getFilename());
-		downloadFileInfo.setFilepfad(uploadFileInfo.getPath());
-		downloadFileInfo.setFilesize(uploadFileInfo.getSizeString());
+		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}

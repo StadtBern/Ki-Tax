@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.UploadFileInfo;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
 
@@ -34,6 +35,12 @@ public abstract class FileMetadata extends AbstractEntity {
 	}
 
 	public FileMetadata() {
+	}
+
+	public FileMetadata(UploadFileInfo uploadFileInfo) {
+		this.filename = uploadFileInfo.getFilename();
+		this.filepfad = uploadFileInfo.getPath();
+		this.filesize = uploadFileInfo.getSizeString();
 	}
 
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
