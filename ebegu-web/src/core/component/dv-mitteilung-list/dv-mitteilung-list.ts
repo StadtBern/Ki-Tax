@@ -22,6 +22,7 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -53,12 +54,13 @@ export class DVMitteilungListController {
     ebeguUtil: EbeguUtil;
 
 
-    static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS',
-        'BetreuungRS', '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog'];
+    static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS', 'BetreuungRS',
+        '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager'];
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS, private authServiceRS: AuthServiceRS,
                 private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window: IWindowService,
-                private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil, private DvDialog: DvDialog) {
+                private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil, private DvDialog: DvDialog,
+                private gesuchModelManager: GesuchModelManager) {
 
         this.initViewModel();
         this.TSRole = TSRole;
@@ -301,7 +303,7 @@ export class DVMitteilungListController {
         this.$state.go('gesuch.betreuung', {
             betreuungNumber: mitteilung.betreuung.betreuungNummer,
             kindNumber: mitteilung.betreuung.kindNummer,
-            gesuchId: mitteilung.betreuung.gesuchId
+            gesuchId: mitteilung.betreuung.gesuchId // todo beim Hier muss das richtige Gesuch uebergeben werden. Es ist nicht unbedingt das von der Betreuung
         });
     }
 
@@ -320,8 +322,13 @@ export class DVMitteilungListController {
                 deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG'
             }).then(() => {   //User confirmed removal
                 let betreuungsmitteilung: TSBetreuungsmitteilung = <TSBetreuungsmitteilung>mitteilung;
-                this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: any) => {
+                this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: TSBetreuungsmitteilung) => {
                     this.loadAllMitteilungen();
+                    if (response.betreuung.gesuchId === this.gesuchModelManager.getGesuch().id) {
+                        // Dies wird gebraucht wenn das Gesuch der Mitteilung schon geladen ist, weil die Daten der Betreuung geaendert
+                        // wurden und deshalb neugeladen werden müssen. reloadGesuch ist einfacher als die entsprechende Betreuung neu zu laden
+                        this.gesuchModelManager.reloadGesuch();
+                    }
                 });
             });
 
