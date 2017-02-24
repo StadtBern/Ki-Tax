@@ -237,13 +237,16 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void testApplyBetreuungsmitteilungMutation() {
+		prepareDependentObjects();
+
 		// Wir erstellen ein Erstgesuch und mutieren es
 		final Gesuch gesuch1 = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
 		gesuch1.setStatus(AntragStatus.VERFUEGT);
 		gesuchService.updateGesuch(gesuch1, true);
 		final Optional<Gesuch> mutationOpt = gesuchService.antragMutieren(gesuch1.getId(), LocalDate.now());
 		final Gesuch mutation = gesuchService.createGesuch(mutationOpt.get());
-		final Betreuungsmitteilung mitteilung = new Betreuungsmitteilung();
+		final Betreuungsmitteilung mitteilung = TestDataUtil.createBetreuungmitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.INSTITUTION);
 
 		final Set<BetreuungsmitteilungPensum> betPensen = new HashSet<>();
 		BetreuungsmitteilungPensum betPens = new BetreuungsmitteilungPensum();
