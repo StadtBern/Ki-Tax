@@ -582,25 +582,28 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
     return deferred.promise;
 }
 
-reloadGesuchModelManager.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', '$stateParams', '$q'];
+reloadGesuchModelManager.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', '$stateParams', '$q', '$log'];
 /* @ngInject */
 export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                                         wizardStepManager: WizardStepManager, $stateParams: INewFallStateParams, $q: any): IPromise<TSGesuch> {
+                                         wizardStepManager: WizardStepManager, $stateParams: INewFallStateParams, $q: any,
+                                         $log: ILogService): IPromise<TSGesuch> {
     if ($stateParams) {
-        let gesuchIdParams = $stateParams.gesuchId;
-        if (gesuchIdParams) {
-            if ($stateParams.createNew !== 'true') {
-                berechnungsManager.clear();
-                return gesuchModelManager.openGesuch(gesuchIdParams);
-            } else {
-                let eingangsart = $stateParams.eingangsart;
-                let gesuchsperiodeId = $stateParams.gesuchsperiodeId;
-                let fallId = $stateParams.fallId;
-                gesuchModelManager.initGesuchWithEingangsart(true, eingangsart, gesuchsperiodeId, fallId);
-                return gesuchModelManager.openGesuch(gesuchIdParams);
+        if ($stateParams.createNew !== 'true') {
+            let gesuchIdParam = $stateParams.gesuchId;
+            if (!gesuchIdParam) {
+                $log.error('opened fallCreation without gesuchId parameter in edit mode', $stateParams);
             }
+            berechnungsManager.clear();
+            return gesuchModelManager.openGesuch(gesuchIdParam);
+        } else {
+            let eingangsart = $stateParams.eingangsart;
+            let gesuchsperiodeId = $stateParams.gesuchsperiodeId;
+            let fallId = $stateParams.fallId;
+            //initialize gesuch
+            return gesuchModelManager.initGesuchWithEingangsart(true, eingangsart, gesuchsperiodeId, fallId);
         }
     }
+    $log.warn('no state params available fo page fallCreation, this is probably a bug');
     return $q.defer(gesuchModelManager.getGesuch());
 }
 

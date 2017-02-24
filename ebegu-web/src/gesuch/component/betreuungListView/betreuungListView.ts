@@ -74,7 +74,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
             this.openBetreuungView(undefined, kind.kindNummer);
-        } else{
+        } else {
             this.$log.error('kind nicht gefunden ', kind);
         }
     }
@@ -94,7 +94,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
             if (betreuungIndex >= 0) {
                 this.gesuchModelManager.setBetreuungIndex(betreuungIndex);
                 this.gesuchModelManager.removeBetreuung();
-            } else{
+            } else {
                 this.$log.error('betreuung nicht gefunden ', betreuung);
             }
         });
