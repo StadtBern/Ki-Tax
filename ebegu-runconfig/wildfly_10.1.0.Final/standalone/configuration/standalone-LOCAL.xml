@@ -47,6 +47,9 @@
 		<property name="ebegu.hostname" value="app.ebegu.ch:3000/#"/>
 
 		<property name="ebegu.dump.dbunit.xml" value="true"/>
+		<!--OpenIDM-->
+		<property name="ebegu.openidm.loginwithtoken.enabled" value="true"/>
+		<property name="ebegu.openam.url" value="https://elogin-test.bern.ch"/>
     </system-properties>
 
 
