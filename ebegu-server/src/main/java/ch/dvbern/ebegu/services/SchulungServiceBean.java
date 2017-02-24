@@ -20,6 +20,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.criteria.*;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -47,6 +48,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 	private static final String KITA_FORELLE_ID = "33333333-1111-1111-1111-111111111111";
 	private static final String TAGESELTERN_FORELLE_ID = "33333333-1111-1111-2222-111111111111";
 	private static final String KITA_HECHT_ID = "33333333-1111-1111-1111-222222222222";
+	private static final String KITA_BRUENNEN_STAMMDATEN_ID = "9a0eb656-b6b7-4613-8f55-4e0e4720455e";
 
 	private static final String GESUCH_ID = "44444444-1111-1111-1111-1111111111XX";
 
@@ -129,6 +131,16 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 			removeGesucheFallAndBenutzer(i + 1);
 		}
 
+		// Bevor die Testinstitutionen geloescht werden, muss sichergestellt sein, dass diese von keinen "normalen"
+		// Testfaellen verwendet werden -> auf Kita Brünnen umbiegen
+		Optional<InstitutionStammdaten> institutionStammdatenOptional = institutionStammdatenService.findInstitutionStammdaten(KITA_BRUENNEN_STAMMDATEN_ID);
+		if (institutionStammdatenOptional.isPresent()) {
+			InstitutionStammdaten institutionStammdaten = institutionStammdatenOptional.get();
+			assertInstitutionNotUsedInNormalenGesuchen(KITA_FORELLE_ID, institutionStammdaten);
+			assertInstitutionNotUsedInNormalenGesuchen(TAGESELTERN_FORELLE_ID, institutionStammdaten);
+			assertInstitutionNotUsedInNormalenGesuchen(KITA_HECHT_ID, institutionStammdaten);
+		}
+
 		removeBenutzer(BENUTZER_FISCH_USERNAME);
 		removeBenutzer(BENUTZER_FORELLE_USERNAME);
 
@@ -148,7 +160,6 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		if (institutionService.findInstitution(INSTITUTION_HECHT_ID).isPresent()) {
 			institutionService.deleteInstitution(INSTITUTION_HECHT_ID);
 		}
-
 		if (traegerschaftService.findTraegerschaft(TRAEGERSCHAFT_FISCH_ID).isPresent()) {
 			traegerschaftService.removeTraegerschaft(TRAEGERSCHAFT_FISCH_ID);
 		}
@@ -395,6 +406,22 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 					fallService.removeFall(fall.get());
 				}
 			}
+		}
+	}
+
+	private void assertInstitutionNotUsedInNormalenGesuchen(String institutionId, InstitutionStammdaten toReplace) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+		Root<Betreuung> root = query.from(Betreuung.class);
+		Join<Betreuung, InstitutionStammdaten> join = root.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
+
+		query.select(root);
+		Predicate idPred = cb.equal(join.get(InstitutionStammdaten_.id), institutionId);
+		query.where(idPred);
+		List<Betreuung> criteriaResults = persistence.getCriteriaResults(query);
+		for (Betreuung betreuung : criteriaResults) {
+			betreuung.setInstitutionStammdaten(toReplace);
+			persistence.merge(betreuung);
 		}
 	}
 }
