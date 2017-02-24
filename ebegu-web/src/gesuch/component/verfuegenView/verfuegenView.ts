@@ -335,7 +335,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     }
 
     public showExportLink(): boolean {
-        return !this.isBetreuungInStatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
+        return this.isBetreuungInStatus(TSBetreuungsstatus.VERFUEGT);
     }
 
     public showNichtEintretenPdfLink(): boolean {
