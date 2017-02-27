@@ -16,7 +16,7 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group">
-                                <h1 class="required"
+                                <h1 class="required" aria-hidden="true"
                                     data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"
                                     data-translate-values="{{vm.basisJahrUndPeriode}}"></h1>
                                 <dv-radio-container name="einkommensverschlechterung"
@@ -24,7 +24,8 @@
                                                     ng-required="true" class="radio input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                    aria-label="{{ 'EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN' |translate}}">
                                 </dv-radio-container>
                                 <dv-error-messages for="vm.form.einkommensverschlechterung.$error"
                                                    class="error"></dv-error-messages>

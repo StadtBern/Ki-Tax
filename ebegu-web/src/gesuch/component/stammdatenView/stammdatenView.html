@@ -19,12 +19,14 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-small">
                             <div class="form-group">
-                                <label class="md-no-float required" data-translate="GESCHLECHT"></label>
+                                <label class="md-no-float required" id="geschlecht" data-translate="GESCHLECHT"></label>
                                 <dv-radio-container name="geschlecht" class="input-element"
                                                     ng-required="true" items="vm.geschlechter"
                                                     ng-model="vm.getModelJA().geschlecht" dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchReadonly()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly()"
+                                                    aria-described-by="geschlecht"
+                                                    aria-label="{{ 'GESCHLECHT' |translate}}">
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.geschlecht"
                                            ja="vm.getModel().gesuchstellerJA.geschlecht"></dv-bisher>

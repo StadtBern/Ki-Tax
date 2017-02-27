@@ -18,13 +18,15 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-small">
                             <div class="form-group">
-                                <label class="md-no-float required" data-translate="GESCHLECHT"></label>
+                                <label class="md-no-float required" id="geschlecht" data-translate="GESCHLECHT"></label>
                                 <dv-radio-container name="geschlecht" class="input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly()"
                                                     ng-required="true" items="vm.geschlechter"
-                                                    ng-model="vm.getModel().geschlecht">
+                                                    ng-model="vm.getModel().geschlecht"
+                                                    aria-described-by="geschlecht"
+                                                    aria-label="{{ 'GESCHLECHT' |translate}}">
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getContainer().kindGS.geschlecht"
                                            ja="vm.getContainer().kindJA.geschlecht"></dv-bisher>
@@ -82,7 +84,7 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <dv-input-container class="form-group">
-                                <h1 class="required">
+                                <h1 class="required" aria-hidden="true">
                                     <span data-translate="KINDERABZUG"></span>
                                     <dv-tooltip text="'KINDERABZUG_HELP' | translate"></dv-tooltip>
                                 </h1>
@@ -91,7 +93,8 @@
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly()"
-                                                    class="input-element" items="vm.kinderabzugValues">
+                                                    class="input-element" items="vm.kinderabzugValues"
+                                                    aria-label="{{ 'KINDERABZUG' |translate}}">
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getContainer().kindGS.kinderabzug"
                                            ja="vm.getContainer().kindJA.kinderabzug"></dv-bisher>
@@ -105,7 +108,7 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group">
-                                <h1 class="required">
+                                <h1 class="required" aria-hidden="true">
                                     <span data-translate="FAM_ERGAENZENDE_BETREUUNG"></span>
                                     <dv-tooltip text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate"></dv-tooltip>
                                 </h1>
@@ -116,7 +119,8 @@
                                                     dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
                                                     ng-required="true"
                                                     ng-model="vm.getModel().familienErgaenzendeBetreuung"
-                                                    ng-change="vm.familienErgaenzendeBetreuungClicked()">
+                                                    ng-change="vm.familienErgaenzendeBetreuungClicked()"
+                                                    aria-label="{{ 'FAM_ERGAENZENDE_BETREUUNG' |translate}}">
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getContainer().kindGS.familienErgaenzendeBetreuung"
                                            ja="vm.getContainer().kindJA.familienErgaenzendeBetreuung"></dv-bisher>
@@ -130,7 +134,7 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
-                                <h1 class="required"><span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
+                                <h1 class="required" aria-hidden="true"><span data-translate="MUTTERSPRACHE_DEUTSCH"></span>
                                     <dv-tooltip
                                         text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
                                 </h1>
@@ -140,7 +144,8 @@
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly()"
                                                     ng-required="vm.getModel().familienErgaenzendeBetreuung"
-                                                    ng-model="vm.getModel().mutterspracheDeutsch">
+                                                    ng-model="vm.getModel().mutterspracheDeutsch"
+                                                    aria-label="{{ 'MUTTERSPRACHE_DEUTSCH' |translate}}">
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getContainer().kindGS.mutterspracheDeutsch"
                                            ja="vm.getContainer().kindJA.mutterspracheDeutsch"></dv-bisher>
@@ -154,7 +159,7 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
-                                <h1 class="required">
+                                <h1 class="required" aria-hidden="true">
                                     <span data-translate="EINSCHULUNG"
                                           data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}"> </span>
                                     <dv-tooltip text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
@@ -164,7 +169,8 @@
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly()"
                                                     ng-required="vm.getModel().familienErgaenzendeBetreuung"
-                                                    ng-model="vm.getModel().einschulung">
+                                                    ng-model="vm.getModel().einschulung"
+                                                    aria-described-by="einschulung">
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getContainer().kindGS.einschulung"
                                            ja="vm.getContainer().kindJA.einschulung"></dv-bisher>

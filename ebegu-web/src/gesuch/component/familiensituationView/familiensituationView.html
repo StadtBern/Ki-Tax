@@ -48,7 +48,7 @@
                 <div class="row">
                     <div class="col-xs-12 dv-input-container-question">
                         <div class="form-group">
-                            <h1 class="required" id="frage1"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span></h1>
+                            <h1 class="required" aria-h><span data-translate="FAMILIENSITUATION_FRAGE_1"></span></h1>
                             <dv-radio-container name="familienstatus"
                                                 ng-model="vm.getFamiliensituation().familienstatus"
                                                 ng-required="true"
@@ -56,7 +56,7 @@
                                                 dv-enable-element
                                                 dv-enable-allowed-roles="vm.allowedRoles"
                                                 dv-enable-expression="vm.isEnabled()"
-                            aria-described-by="frage1">
+                            aria-label="{{ 'FAMILIENSITUATION_FRAGE_1' |translate}}">
                             </dv-radio-container>
                             <dv-error-messages for="vm.form.familienstatus.$error"
                                                class="error"></dv-error-messages>
@@ -78,7 +78,8 @@
                                                 class="input-element" items="vm.gesuchstellerKardinalitaetValues"
                                                 dv-enable-element
                                                 dv-enable-allowed-roles="vm.allowedRoles"
-                                                dv-enable-expression="vm.isEnabled()">
+                                                dv-enable-expression="vm.isEnabled()"
+                                                aria-label="{{ 'FAMILIENSITUATION_FRAGE_2' |translate}}">
                             </dv-radio-container>
                             <dv-error-messages for="vm.form.gesuchstellerKardinalitaet.$error"
                                                class="error"></dv-error-messages>
