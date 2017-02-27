@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.resource;
 
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -39,6 +40,9 @@ public class ReportResource {
 
 	@Inject
 	private DownloadResource downloadResource;
+
+	@Inject
+	private JaxBConverter converter;
 
 	@Nonnull
 	@GET
@@ -90,6 +94,29 @@ public class ReportResource {
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchZeitraum(dateTimeFrom,
 			dateTimeTo,
 			gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null);
+
+		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
+
+		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
+	}
+
+	@Nonnull
+	@GET
+	@Path("/excel/zahlungsauftrag")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getZahlungsauftragReportExcel(
+		@QueryParam("zahlungsauftragID") @Nullable @Valid JaxId jaxId,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo)
+		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+
+		String ip = downloadResource.getIP(request);
+		String id = null;
+		if(jaxId!= null) {
+			id = converter.toEntityId(jaxId);
+		}
+
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag(id, null);
 
 		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 

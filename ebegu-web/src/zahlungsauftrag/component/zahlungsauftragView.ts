@@ -12,6 +12,7 @@ import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
 import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
 import {TSZahlungsauftragsstatus} from '../../models/enums/TSZahlungsauftragstatus';
+import {ReportRS} from '../../core/service/reportRS.rest';
 let template = require('./zahlungsauftragView.html');
 require('./zahlungsauftragView.less');
 
@@ -35,10 +36,11 @@ export class ZahlungsauftragViewController {
     itemsByPage: number = 12;
     devMode: boolean = false;
 
-    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS'];
+    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS', 'ReportRS'];
 
     constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
-                private $state: IStateService, private downloadRS: DownloadRS, private applicationPropertyRS: ApplicationPropertyRS) {
+                private $state: IStateService, private downloadRS: DownloadRS, private applicationPropertyRS: ApplicationPropertyRS,
+                private reportRS: ReportRS) {
         this.initViewModel();
     }
 
@@ -88,6 +90,13 @@ export class ZahlungsauftragViewController {
     }
 
     public downloadAllDetails(zahlungsauftrag: TSZahlungsauftrag) {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
+        this.reportRS.getZahlungsauftragReportExcel(zahlungsauftrag.id)
+            .then((downloadFile: TSDownloadFile) => {
+
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            });
+
         console.log('downloadAllDetails not yet impl' + zahlungsauftrag.id);
     }
 
