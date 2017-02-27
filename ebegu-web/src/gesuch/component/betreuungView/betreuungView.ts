@@ -19,11 +19,12 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {IBetreuungStateParams} from '../../gesuch.route';
-import Moment = moment.Moment;
-import IScope = angular.IScope;
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import Moment = moment.Moment;
+import IScope = angular.IScope;
 import ILogService = angular.ILogService;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
@@ -424,8 +425,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         this.isMutationsmeldungStatus = true;
     }
 
+    /**
+     * Mutationsmeldungen werden nur bei Mutationen oder bei Gesuchen in Status VERFUEGT erlaubt. Ausserdem muss es
+     * sich um letztes bzw. neuestes Gesuch handeln
+     */
     public isMutationsmeldungAllowed(): boolean {
-        return this.isFromMutation() && this.isNewestGesuch;
+        return (this.isMutation() || (this.gesuchModelManager.getGesuch().status === TSAntragStatus.VERFUEGT))
+            && this.isNewestGesuch;
     }
 
     public mutationsmeldungSenden(): void {
