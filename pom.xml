@@ -10,7 +10,7 @@
 
     <groupId>ch.dvbern.ebegu</groupId>
     <artifactId>ebegu</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.0.7-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>eBEGU - Multimodule Project</name>
@@ -470,13 +470,6 @@
             <version>1.0.0.Alpha6</version>
             <scope>test</scope>
         </dependency>
-        <!-- TODO hefr wozu gebraucht? -->
-        <!--<dependency>-->
-            <!--<groupId>org.jboss.arquillian.extension</groupId>-->
-            <!--<artifactId>arquillian-persistence-integration-tests</artifactId>-->
-            <!--<version>1.0.0.Alpha7</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
         <!--Um Tests mit arquillian in einem deployment laufen zu lassen-->
         <dependency>
             <groupId>org.eu.ingwar.tools</groupId>
@@ -586,7 +579,6 @@
 
 
         <profile>
-            <!-- TODO hefr war auskommentiert -->
             <activation>
                 <property>
                     <!-- hiermit wird getestet ob ein property disable-managed-wildfly existiert, wenn nicht lauft

@@ -73,4 +73,6 @@ public interface TestfaelleService {
 	List<InstitutionStammdaten> getInstitutionsstammdatenForTestfaelle();
 
 	Gesuch createAndSaveGesuch(AbstractTestfall fromTestfall, boolean verfuegen, @Nullable Benutzer besitzer);
+
+	void gesuchVerfuegenUndSpeichern(boolean verfuegen, Gesuch gesuch, boolean mutation);
 }

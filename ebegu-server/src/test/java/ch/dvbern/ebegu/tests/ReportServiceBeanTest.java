@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
+import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -142,30 +143,31 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void generateExcelReportGesuchStichtag() throws Exception {
-		byte[] bytes = reportService.generateExcelReportGesuchStichtag(
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchStichtag(
 			LocalDateTime.now(),
 			null);
 
-		assertNotNull(bytes);
-		unitTestTempfolder.writeToTempDir(bytes, "ExcelReportGesuchStichtag.xlsx");
+		assertNotNull(uploadFileInfo.getBytes());
+
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchStichtag.xlsx");
 	}
 
 	@Test
 	public void generateExcelReportGesuchZeitraum() throws Exception {
-		byte[] bytes = reportService.generateExcelReportGesuchZeitraum(
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchZeitraum(
 			LocalDateTime.now().minusDays(1),
 			LocalDateTime.now().plusDays(1),
 			null);
 
-		assertNotNull(bytes);
-		unitTestTempfolder.writeToTempDir(bytes, "ExcelReportGesuchZeitraum.xlsx");
+		assertNotNull(uploadFileInfo.getBytes());
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchZeitraum.xlsx");
 	}
 
 	@Test
 	public void generateExcelReportZahlungAuftrag() throws Exception {
-		byte[] bytes = reportService.generateExcelReportZahlungAuftrag("8d2805ed-d123-4632-bcbb-931dd7a936ae", Optional.empty());
+		UploadFileInfo uploadFileInfo  = reportService.generateExcelReportZahlungAuftrag("8d2805ed-d123-4632-bcbb-931dd7a936ae", null);
 
-		assertNotNull(bytes);
-		unitTestTempfolder.writeToTempDir(bytes, "ExcelReportZahlungAuftrag.xlsx");
+		assertNotNull(uploadFileInfo);
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportZahlungAuftrag.xlsx");
 	}
 }

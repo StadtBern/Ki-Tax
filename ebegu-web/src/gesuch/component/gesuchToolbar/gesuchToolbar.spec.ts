@@ -52,7 +52,7 @@ describe('gesuchToolbar', function () {
         $stateParams.gesuchId = '123456789';
         gesuchToolbarController = new GesuchToolbarController(userRS, ebeguUtil,
             CONSTANTS, gesuchRS, $state, $stateParams, $scope, gesuchModelManager,
-            authServiceRS, $mdSidenav);
+            authServiceRS, $mdSidenav, undefined);
     }));
 
     describe('getVerantwortlicherFullName', () => {

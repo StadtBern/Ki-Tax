@@ -308,7 +308,8 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		paymentInstructionInformation3CH.getPmtTpInf().setCtgyPurp(objectFactory.createCategoryPurpose1CHCode());
 		paymentInstructionInformation3CH.getPmtTpInf().getCtgyPurp().setCd(CtgyPurp_Cd);
 
-		paymentInstructionInformation3CH.setReqdExctnDt(getXmlGregorianCalendar(zahlungsauftrag.getDatumFaellig()));
+		//TODO (pascal) Stimmt das so? atStartOfDay?
+		paymentInstructionInformation3CH.setReqdExctnDt(getXmlGregorianCalendar(zahlungsauftrag.getDatumFaellig().atStartOfDay()));
 
 		// Debtor name
 		paymentInstructionInformation3CH.setDbtr(objectFactory.createPartyIdentification32CH());

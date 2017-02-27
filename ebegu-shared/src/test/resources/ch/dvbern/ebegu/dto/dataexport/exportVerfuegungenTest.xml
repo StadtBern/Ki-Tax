@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<verfuegungenExport>
+    <schemaVersion>1.0</schemaVersion>
+    <verfuegungen>
+        <refnr>16.0000001.1.1</refnr>
+        <von>2017-07-31</von>
+        <version>1</version>
+        <verfuegtAm>2016-06-01T00:00:00</verfuegtAm>
+        <kind>
+            <vorname>Henk</vorname>
+            <nachname>Honolulu</nachname>
+            <geburtsdatum>2016-06-12</geburtsdatum>
+        </kind>
+        <gesuchsteller>
+            <vorname>George</vorname>
+            <nachname>Honolulu</nachname>
+            <email>somebody@somewhere.org</email>
+        </gesuchsteller>
+        <betreuung>
+            <betreuungsArt>KITA</betreuungsArt>
+            <institution>
+                <id>545b8d2d-da72-4232-b562-0ff64706feea</id>
+                <name>Brürnnen</name>
+                <traegerschaft>LeoLea</traegerschaft>
+                <adresse>
+                    <strasse>Nussbaumstrasse</strasse>
+                    <hausnummer>21</hausnummer>
+                    <ort>Bern</ort>
+                    <plz>3006</plz>
+                    <land>CH</land>
+                </adresse>
+            </institution>
+        </betreuung>
+        <zeitabschnitte>
+            <von>2017-01-01</von>
+            <bis>2017-01-31</bis>
+            <effektiveBetreuungPct>80</effektiveBetreuungPct>
+            <anspruchPct>60</anspruchPct>
+            <verguenstigtPct>60</verguenstigtPct>
+            <vollkosten>1370.05</vollkosten>
+            <verguenstigung>690.45</verguenstigung>
+        </zeitabschnitte>
+    </verfuegungen>
+</verfuegungenExport>

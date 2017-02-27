@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.testfaelle.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -420,7 +421,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 	}
 
-	private void gesuchVerfuegenUndSpeichern(boolean verfuegen, Gesuch gesuch, boolean mutation) {
+	@Override
+	public void gesuchVerfuegenUndSpeichern(boolean verfuegen, Gesuch gesuch, boolean mutation) {
 		final List<WizardStep> wizardStepsFromGesuch = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
 
 		if (!mutation) {
@@ -438,6 +440,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 
 		if (verfuegen) {
+			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			verfuegungService.calculateVerfuegung(gesuch);
 			gesuch.getKindContainers().stream().forEach(kindContainer -> {
 				kindContainer.getBetreuungen().stream().forEach(betreuung -> {

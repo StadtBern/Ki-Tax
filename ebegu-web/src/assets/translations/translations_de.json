@@ -21,6 +21,8 @@
     "ADRESSE_GEMEINDE": "Gemeinde",
     "ADRESSE_GUELTIGAB": "gültig ab",
     "ADRESSE_GUELTIGBIS": "gültig bis",
+    "DOWNLOAD_EXPORT_FILE": "Verfügung exportieren",
+    "DOWNLOAD_EXPORT_FILE_LINK": "(kompatible Programme)",
     "ERROR_REQUIRED": "Feld wird benötigt",
     "ERROR_REQUIRED_ONE_OF_THEM": "Eines der Felder wird benötigt",
     "ERROR_VERTRAG_REQUIRED": "Um eine Platzbestätigung anzufordern, müssen Sie einen Vertrag mit der betreffenden Institution abgeschlossen haben.",
@@ -893,5 +895,13 @@
     "GESUCHE_NACH_ZEITRAUM": "GESUCHE NACH ZEITRAUM",
     "GESUCHSTELLER_UPPER": "GESUCHSTELLER",
     "KANTON": "KANTON",
-    "GESUCHSTELLER_KINDER_BETREUUNG": "GESUCHSTELLER-KINDER-BETREUUNG"
+    "GESUCHSTELLER_KINDER_BETREUUNG": "GESUCHSTELLER-KINDER-BETREUUNG",
+    "MUTATIONSMELDUNG_ERSTELLEN_UPPER": "MUTATIONSMELDUNG ERSTELLEN",
+    "MUTATIONSMELDUNG_SENDEN_UPPER": "MUTATIONSMELDUNG AN JUGENDAMT",
+    "MUTATIONSMELDUNG_BETREFF": "Mutationsmeldung",
+    "MUTATIONSMELDUNG_APPLY": "ZUR MUTATION HINZUFÜGEN",
+    "MUTATIONSMELDUNG_CONFIRMATION": "Möchten Sie wirklich die eingegeben Mutation mitteilen?",
+    "MUTATIONSMELDUNG_BESCHREIBUNG": "Die eingegebenen Daten werden an das Jugendamt gesendet",
+    "MUTATIONSMELDUNG_PENSUM": "Pensum ",
+    "MUTATIONSMELDUNG_VOM": " vom "
 }

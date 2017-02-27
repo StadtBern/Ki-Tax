@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
@@ -14,16 +15,16 @@ import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
-import ch.dvbern.ebegu.reporting.lib.DateUtil;
-import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
-import ch.dvbern.ebegu.reporting.lib.ExcelMerger;
-import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
+import ch.dvbern.ebegu.reporting.lib.*;
+import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftrag;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragExcelConverter;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
@@ -74,6 +75,12 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	@Inject
 	private ZahlungService zahlungService;
 
+	@Inject
+	private FileSaverService fileSaverService;
+
+	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
+	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
+
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
 	public List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID) {
@@ -98,23 +105,30 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public byte[] generateExcelReportGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+	public UploadFileInfo generateExcelReportGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 
 		Objects.requireNonNull(datetime, "Das Argument 'date' darf nicht leer sein");
 
-		InputStream is = ReportServiceBean.class.getResourceAsStream(VORLAGE_REPORT_GESUCH_STICHTAG.getPath());
-		Objects.requireNonNull(is, "Vorlage '" + VORLAGE_REPORT_GESUCH_STICHTAG.getPath() + "' nicht gefunden");
+		final ReportResource reportResource = VORLAGE_REPORT_GESUCH_STICHTAG;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
+		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
-		Sheet sheet = workbook.getSheet("Data");
+		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
 
 		List<GesuchStichtagDataRow> reportData = getReportDataGesuchStichtag(datetime, gesuchPeriodeID);
 		ExcelMergerDTO excelMergerDTO = geuschStichtagExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
 
-		mergeData(sheet, excelMergerDTO, MergeFieldGesuchStichtag.values());
+		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
 		geuschStichtagExcelConverter.applyAutoSize(sheet);
 
-		return createWorkbook(workbook);
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportResource.getDefaultExportFilename(),
+			TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
 	}
 
 	@Override
@@ -143,32 +157,49 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
-	public byte[] generateExcelReportGesuchZeitraum(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+	public UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 
 		Objects.requireNonNull(datetimeVon, "Das Argument 'datetimeVon' darf nicht leer sein");
 		Objects.requireNonNull(datetimeBis, "Das Argument 'datetimeBis' darf nicht leer sein");
 
-		InputStream is = ReportServiceBean.class.getResourceAsStream(VORLAGE_REPORT_GESUCH_ZEITRAUM.getPath());
-		Objects.requireNonNull(is, "Vorlage '" + VORLAGE_REPORT_GESUCH_ZEITRAUM.getPath() + "' nicht gefunden");
+		final ReportResource reportResource = VORLAGE_REPORT_GESUCH_ZEITRAUM;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
+		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
-		Sheet sheet = workbook.getSheet("Data");
+		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
 
 		List<GesuchZeitraumDataRow> reportData = getReportDataGesuchZeitraum(datetimeVon, datetimeBis, gesuchPeriodeID);
 		ExcelMergerDTO excelMergerDTO = geuschZeitraumExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
 
-		mergeData(sheet, excelMergerDTO, MergeFieldGesuchZeitraum.values());
+		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
 		geuschZeitraumExcelConverter.applyAutoSize(sheet);
 
-		return createWorkbook(workbook);
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportResource.getDefaultExportFilename(),
+			TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
+	}
+
+	@Nonnull
+	private MimeType getContentTypeForExport() {
+		try {
+			return new MimeType(MIME_TYPE_EXCEL);
+		} catch (MimeTypeParseException e) {
+			throw new EbeguRuntimeException("getContentTypeForExport", "could not parse mime type", e, MIME_TYPE_EXCEL);
+
+		}
 	}
 
 	@Override
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
-	public byte[] generateExcelReportZahlungAuftrag(String auftragId, Optional<InstitutionStammdaten> institution) throws ExcelMergeException {
+	public UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId, InstitutionStammdaten institution) throws ExcelMergeException {
 
 		List<Zahlung> reportData;
-		if (institution.isPresent()) {
+		if (institution != null) {
 			//TODO: get data filtered by Institution, zahlungService method to do this?
 			reportData = new ArrayList<>();
 		} else {
@@ -177,34 +208,72 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			reportData = zahlungsauftrag.getZahlungen();
 		}
 
-		InputStream is = ReportServiceBean.class.getResourceAsStream(VORLAGE_REPORT_ZAHLUNG_AUFTRAG.getPath());
-		Objects.requireNonNull(is, "Vorlage '" + VORLAGE_REPORT_ZAHLUNG_AUFTRAG.getPath() + "' nicht gefunden");
+		final ReportResource reportResource = VORLAGE_REPORT_ZAHLUNG_AUFTRAG;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
+		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet("Data");
 
 		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
 
-		mergeData(sheet, excelMergerDTO, MergeFieldZahlungAuftrag.values());
+		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
 		zahlungAuftragExcelConverter.applyAutoSize(sheet);
 
-		return createWorkbook(workbook);
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportResource.getDefaultExportFilename(),
+			TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
+
 	}
 
 	public enum ReportResource {
 
-		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx"),
-		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx"),
-		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx");
+		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx", "GesuchStichtag.xlsx", "Data",
+			MergeFieldGesuchStichtag.class),
+		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "GesuchZeitraum.xlsx", "Data",
+			MergeFieldGesuchZeitraum.class),
+		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/Zahlungsauftrag.xlsx", "Zahlungsauftrag.xlsx", "Data",
+		MergeFieldZahlungAuftrag.class);
 
-		private String path;
+		@Nonnull
+		private final String templatePath;
+		@Nonnull
+		private final String defaultExportFilename;
+		@Nonnull
+		private final Class<? extends MergeField> mergeFields;
+		@Nonnull
+		private final String dataSheetName;
 
-		ReportResource(String path) {
-			this.path = path;
+		ReportResource(@Nonnull String templatePath, @Nonnull String defaultExportFilename,
+					   @Nonnull String dataSheetName, @Nonnull Class<? extends MergeField> mergeFields) {
+			this.templatePath = templatePath;
+			this.defaultExportFilename = defaultExportFilename;
+			this.mergeFields = mergeFields;
+			this.dataSheetName = dataSheetName;
 		}
 
-		public String getPath() {
-			return path;
+		@Nonnull
+		public String getTemplatePath() {
+			return templatePath;
+		}
+
+		@Nonnull
+		public String getDefaultExportFilename() {
+			return defaultExportFilename;
+		}
+
+		@Nonnull
+		public MergeField[] getMergeFields() {
+			return mergeFields.getEnumConstants();
+		}
+
+		@Nonnull
+		public String getDataSheetName(){
+			return dataSheetName;
 		}
 	}
 }
