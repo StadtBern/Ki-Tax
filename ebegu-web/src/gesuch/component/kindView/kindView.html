@@ -2,7 +2,7 @@
     <div class="row viewTitle">
         <div class="col-md-12">
             <h1>
-                <span data-translate="KIND"></span> {{vm.gesuchModelManager.getKindToWorkWith().kindNummer}}
+                <span data-translate="KIND"></span> {{vm.getContainer() ? vm.getContainer().kindNummer : ''}}
             </h1>
             <hr class="header"/>
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
@@ -252,7 +252,7 @@
                                 <dv-input-container class="form-group">
                                     <label class="md-no-float" data-translate="BETREUUNGSPENSUM_FACHSTELLE"
                                            for="betreuungspensumFachstelle"></label>
-                                    <input id="betreuungspensumFachstelle" type="text" name="betreuungspensumFachstelle"
+                                    <input id="betreuungspensumFachstelle" type="number" name="betreuungspensumFachstelle"
                                            ng-model="vm.getPensumFachstelle().pensum" max="100"
                                            dv-max-length class="form-control"
                                            ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
