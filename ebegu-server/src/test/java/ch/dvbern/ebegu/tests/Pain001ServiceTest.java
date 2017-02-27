@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import javax.xml.bind.*;
 import javax.xml.namespace.QName;
+import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.StringWriter;
@@ -56,8 +57,8 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 
 	@Before
 	public void init() {
-		final Gesuchsperiode gesuchsperiode = createGesuchsperiode(true);
-		final Mandant mandant = insertInstitutionen();
+		createGesuchsperiode(true);
+		insertInstitutionen();
 		//createBenutzer(mandant);
 		TestDataUtil.prepareApplicationProperties(persistence);
 
@@ -65,7 +66,7 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void getPainFileContentTest() {
+	public void getPainFileContentTest() throws JAXBException {
 		Assert.assertNotNull(pain001Service);
 
 		List<Zahlung> zahlungList = new ArrayList<>();
@@ -89,40 +90,22 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 		final Document document = getDocumentFromInputStream(bis);
 		Assert.assertNotNull(document);
 
+		Assert.assertNotNull(document.getCstmrCdtTrfInitn().getGrpHdr());
+		Assert.assertNotNull(document.getCstmrCdtTrfInitn().getPmtInf());
+
 
 	}
 
 
-	private Document getDocumentFromInputStream(ByteArrayInputStream bis) {
-		try {
+	private Document getDocumentFromInputStream(ByteArrayInputStream bis) throws JAXBException {
 
 			JAXBContext jaxbContext = JAXBContext.newInstance(Document.class);
 
 
 			final Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-			// output pretty printed
-			jaxbUnmarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			jaxbUnmarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, SCHEMA_LOCATION + " " + SCHEMA_NAME);
 
-			//noinspection Convert2Lambda: Hier bitte nicht lambda verwenden, es gibt teilweise Fehler mit Java-Version
-			jaxbUnmarshaller.setEventHandler(new Pain001ServiceTest.PainValidationEventHandler());
+			JAXBElement<Document> documentJAXBElement = (JAXBElement<Document>) jaxbUnmarshaller.unmarshal(new StreamSource(bis),Document.class);
+			return documentJAXBElement.getValue();
 
-			return (Document) jaxbUnmarshaller.unmarshal(bis);
-
-		} catch (final Exception e) {
-			Assert.assertTrue("Failed to marshal Document",true);
-		}
-		return null;
-	}
-
-	private static class PainValidationEventHandler implements ValidationEventHandler {
-		@Override
-		public boolean handleEvent(ValidationEvent event) {
-			throw new EbeguRuntimeException("Unerwarteter Fehler beim generieren des Zahlungsfile", event.getMessage(), event.getLinkedException());
-		}
-	}
-
-	private JAXBElement<Document> getElementToMarshall(Document elemToMarshall) {
-		return new JAXBElement<>(new QName(SCHEMA_LOCATION, elemToMarshall.getClass().getSimpleName()), Document.class, elemToMarshall);
 	}
 }

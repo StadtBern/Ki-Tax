@@ -13,6 +13,7 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,6 +144,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	 */
 	@Nonnull
 	@Override
+	@SuppressFBWarnings("BC_UNCONFIRMED_CAST")
 	public WriteProtectedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, AbstractEntity entity, String fileName, boolean writeProtected) throws MimeTypeParseException {
 
 		WriteProtectedDokument writeProtectedDokument;
@@ -166,7 +168,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				//Die Datei wird am Ende geloscht, um unvollstaenige Daten zu vermeiden falls was kaputt geht
 				filePathToRemove = writeProtectedDokument.getFilepfad();
 			}
-			((Pain001Dokument) writeProtectedDokument).setZahlungsauftrag((Zahlungsauftrag) entity);
+			Pain001Dokument.class.cast(writeProtectedDokument).setZahlungsauftrag((Zahlungsauftrag) entity);
 		}
 
 		final UploadFileInfo savedDokument = fileSaverService.save(data,

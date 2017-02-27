@@ -46,15 +46,19 @@
                 <span class="gesperrt" ng-if="vm.isGesuchGesperrt()"
                       data-translate="GESPERRT_WEGEN_BESCHWERDE"></span>
             </div>
-
             <ul class="sidenav gesuchMenu">
 
                 <li ng-if="vm.isStepVisible('GESUCH_ERSTELLEN')"
                     ui-sref-active="active" class="row"
                     ng-class="{'active-element': vm.isElementActive('GESUCH_ERSTELLEN')}">
-
-                    <button type="button" class="col-xs-10  btn-link"
+                    <!--this button is added twice because it should do nothing if the gesuch is not saved yet-->
+                    <button ng-if="!vm.getGesuch().isNew()" type="button" class="col-xs-10  btn-link"
                             ui-sref="gesuch.fallcreation({createNew: false, gesuchId: vm.getGesuchId()})"
+                            ng-disabled="vm.isWizardStepDisabled('GESUCH_ERSTELLEN')"
+                            ng-click="vm.closeSidenav('sidenav')">
+                        <span ng-bind="vm.getGesuchErstellenStepTitle()"></span>
+                    </button>
+                    <button ng-if="vm.getGesuch().isNew()" type="button" class="col-xs-10  btn-link"
                             ng-disabled="vm.isWizardStepDisabled('GESUCH_ERSTELLEN')"
                             ng-click="vm.closeSidenav('sidenav')">
                         <span ng-bind="vm.getGesuchErstellenStepTitle()"></span>

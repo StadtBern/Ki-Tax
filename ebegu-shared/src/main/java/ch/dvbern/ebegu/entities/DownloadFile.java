@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.UploadFileInfo;
+
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +31,12 @@ public class DownloadFile extends FileMetadata {
 		this.accessToken = UUID.randomUUID().toString();
 		this.ip = ip;
 
+	}
+
+	public DownloadFile(UploadFileInfo uploadFileInfo,  @Nonnull String ip) {
+		super(uploadFileInfo);
+		this.accessToken = UUID.randomUUID().toString();
+		this.ip = ip;
 	}
 
 	public String getAccessToken() {

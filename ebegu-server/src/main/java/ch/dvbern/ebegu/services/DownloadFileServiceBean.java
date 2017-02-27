@@ -80,6 +80,9 @@ public class DownloadFileServiceBean implements DownloadFileService {
 
 	}
 
+	/**
+	 * Access Token fuer Download ist nur fuer eine bestimmte Zeitspanne (3Min) gueltig
+	 */
 	private boolean isFileDownloadExpired(@Nonnull DownloadFile tempBlob) {
 		LocalDateTime timestampMutiert = checkNotNull(tempBlob.getTimestampMutiert());
 		return timestampMutiert.isBefore(LocalDateTime.now().minus(Constants.MAX_TEMP_DOWNLOAD_AGE_MINUTES, ChronoUnit.MINUTES));

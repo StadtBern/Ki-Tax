@@ -38,7 +38,6 @@ public final class RestUtil {
 
 	private static final Pattern MATCH_QUOTE = Pattern.compile("\"");
 	private static final String BLOB_DOWNLOAD_PATH = "/blobs/temp/blobdata/";
-	private static final String REPORT_DOWNLOAD_PATH = "/reporting/excel/";
 
 	/**
 	 * Parst den Content-Disposition Header
@@ -65,9 +64,7 @@ public final class RestUtil {
 	public static boolean isFileDownloadRequest(@Nonnull HttpServletRequest request) {
 		String context = request.getContextPath() + API_ROOT_PATH;
 		final String blobdataPath = context + BLOB_DOWNLOAD_PATH;
-		final String reportingPath = context + REPORT_DOWNLOAD_PATH;
-		return request.getRequestURI().startsWith(blobdataPath) ||
-			request.getRequestURI().startsWith(reportingPath);
+		return request.getRequestURI().startsWith(blobdataPath);
 	}
 
 	public static Response buildDownloadResponse(FileMetadata fileMetadata, boolean attachment) throws IOException {

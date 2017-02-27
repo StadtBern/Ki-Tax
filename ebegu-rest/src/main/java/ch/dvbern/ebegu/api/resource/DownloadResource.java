@@ -107,7 +107,7 @@ public class DownloadResource {
 	@GET
 	@Path("/{dokumentId}/dokument")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDokumentAccessTokenDokument(
 		@Nonnull @Valid @PathParam("dokumentId") JaxId jaxId,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException {
@@ -128,7 +128,7 @@ public class DownloadResource {
 	@GET
 	@Path("/{dokumentId}/vorlage")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDokumentAccessTokenVorlage(
 		@Nonnull @Valid @PathParam("dokumentId") JaxId jaxId,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException {
@@ -160,7 +160,7 @@ public class DownloadResource {
 	@GET
 	@Path("/{gesuchid}/FINANZIELLE_SITUATION/{forceCreation}/generated")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFinSitDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
@@ -196,7 +196,7 @@ public class DownloadResource {
 	@GET
 	@Path("/{gesuchid}/BEGLEITSCHREIBEN/{forceCreation}/generated")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getBegleitschreibenDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
@@ -225,7 +225,7 @@ public class DownloadResource {
 	@GET
 	@Path("/{gesuchid}/FREIGABEQUITTUNG/{forceCreation}/generated")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFreigabequittungAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
@@ -252,7 +252,7 @@ public class DownloadResource {
 	@POST
 	@Path("/{gesuchid}/{betreuungId}/VERFUEGUNG/{forceCreation}/generated")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVerfuegungDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
@@ -285,7 +285,7 @@ public class DownloadResource {
 	@PUT
 	@Path("/MAHNUNG/{forceCreation}/generated")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getMahnungDokumentAccessTokenGeneratedDokument(
 		@Nonnull @NotNull @Valid JaxMahnung jaxMahnung,
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
@@ -308,7 +308,7 @@ public class DownloadResource {
 	@GET
 	@Path("/{betreuungId}/NICHTEINTRETEN/{forceCreation}/generated")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getNichteintretenDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
@@ -337,7 +337,7 @@ public class DownloadResource {
 	@GET
 	@Path("/{betreuungId}/EXPORT")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDokumentAccessTokenVerfuegungExport(
 		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException,
@@ -346,10 +346,7 @@ public class DownloadResource {
 		String ip = getIP(request);
 
 		UploadFileInfo uploadFileInfo = exportService.exportVerfuegungOfBetreuungAsFile(converter.toEntityId(jaxBetreuungId));
-		DownloadFile downloadFileInfo = new DownloadFile();
-		downloadFileInfo.setFilename(uploadFileInfo.getFilename());
-		downloadFileInfo.setFilepfad(uploadFileInfo.getPath());
-		downloadFileInfo.setFilesize(uploadFileInfo.getSizeString());
+		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 
 		return this.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
@@ -382,7 +379,7 @@ public class DownloadResource {
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "ZahlungsauftragId invalid: " + jaxId.getId());
 	}
 
-	private Response getFileDownloadResponse(UriInfo uriInfo, String ip, FileMetadata fileMetadata) {
+	public Response getFileDownloadResponse(UriInfo uriInfo, String ip, FileMetadata fileMetadata) {
 		final DownloadFile downloadFile = downloadFileService.create(fileMetadata, ip);
 
 		URI uri = uriInfo.getBaseUriBuilder()
@@ -395,7 +392,7 @@ public class DownloadResource {
 		return Response.created(uri).entity(jaxDownloadFile).build();
 	}
 
-	private String getIP(HttpServletRequest request) {
+	public String getIP(HttpServletRequest request) {
 		String ipAddress = request.getHeader("X-FORWARDED-FOR");
 		if (ipAddress == null) {
 			ipAddress = request.getRemoteAddr();

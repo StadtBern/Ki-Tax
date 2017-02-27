@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.enums.ZahlungStatus;
 import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
@@ -105,7 +106,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertFalse(zahlungsauftrag.getZahlungen().isEmpty());
 	}
 
-	@Test(expected = EJBException.class)
+	@Test(expected = EbeguRuntimeException.class)
 	public void zahlungsauftragErstellenZweiEntwuerfe() {
 		zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Entwurf 1");
 		// Es darf kein zweiter Auftrag erstellt werden, solange der erste nicht freigegeben ist
