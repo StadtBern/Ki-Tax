@@ -17,6 +17,7 @@ import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IFormController = angular.IFormController;
+import IWindowService = angular.IWindowService;
 
 describe('freigabeView', function () {
 
@@ -29,6 +30,7 @@ describe('freigabeView', function () {
     let gesuchModelManager: GesuchModelManager;
     let $httpBackend: IHttpBackendService;
     let applicationPropertyRS: any;
+    let $window: IWindowService;
 
     let gesuch: TSGesuch;
 
@@ -51,12 +53,13 @@ describe('freigabeView', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $httpBackend = $injector.get('$httpBackend');
         applicationPropertyRS = $injector.get('ApplicationPropertyRS');
+        $window = $injector.get('$window');
 
         spyOn(applicationPropertyRS , 'isDevMode').and.returnValue($q.when(false));
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS);
+            wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS, $window);
         controller.form = <IFormController>{};
 
         spyOn(controller, 'isGesuchValid').and.callFake(function () {
@@ -111,6 +114,21 @@ describe('freigabeView', function () {
 
             expect(returned).toBeUndefined();
         });
+        it('should call showDialog when form is valid', function () {
+            TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+            controller.bestaetigungFreigabequittung = true;
+
+            controller.form.$valid = true;
+            spyOn(dialog, 'showDialog').and.returnValue($q.when({}));
+
+            let returned: IPromise<void> = controller.gesuchEinreichen();
+            $scope.$apply();
+
+            expect(dialog.showDialog).toHaveBeenCalled();
+            expect(returned).toBeDefined();
+        });
+    });
+    describe('confirmationCallback', function () {
         it('should return a Promise when the form is valid', function () {
             TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
             controller.bestaetigungFreigabequittung = true;
@@ -128,12 +146,11 @@ describe('freigabeView', function () {
             gesuch.id = '123';
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
-            let returned: IPromise<void> = controller.gesuchEinreichen();
+            controller.confirmationCallback();
             $scope.$apply();
 
             expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, true, TSZustelladresse.JUGENDAMT);
-            expect(downloadRS.startDownload).toHaveBeenCalledWith(downloadFile.accessToken, downloadFile.filename, false);
-            expect(returned).toBeDefined();
+            expect(downloadRS.startDownload).toHaveBeenCalledWith(downloadFile.accessToken, downloadFile.filename, false, jasmine.any(Object));
         });
     });
     describe('openFreigabequittungPDF', function () {

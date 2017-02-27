@@ -1,0 +1,139 @@
+<html>
+<head>
+    <!--INFO: This Pages purpose is to enable the user to download a file without being blocked by the browsers popup-blockers-->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600,400italic' rel='stylesheet'
+          type='text/css'>
+    <style>
+        html {
+            font-size: 10px;
+        }
+
+        body {
+            margin: 20px 50px;
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            font-size: 1.6rem;
+        }
+
+        h1 {
+            font-weight: 700;
+            font-style: normal;
+            font-size: 1.6rem;
+            letter-spacing: 0.1rem;
+            line-height: 2.0rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            font-weight: 400;
+            font-style: normal;
+            white-space: nowrap;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 0.2rem;
+            border: none;
+            background: #D50025;
+            color: #FFFFFF;
+            padding: 0 1.5rem 0;
+            height: 3rem;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: auto;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 1.4rem;
+            letter-spacing: 0.135rem;
+            line-height: 2.8rem;
+            text-align: left;
+        }
+
+        .filedownload {
+            max-width: 100%;
+            vertical-align: text-top;
+        }
+
+        .btnContainer {
+            margin-top: 5rem;
+            display: flex;
+        }
+
+        .textContainer {
+            display:inline-block;
+        }
+
+        #closeButton {
+            display: none;
+        }
+
+        .loader,
+        .loader:after {
+            border-radius: 50%;
+            width: 2em;
+            height: 2em;
+        }
+        .loader {
+            vertical-align: top;
+            margin: 1.4em 1em auto 1em;
+            font-size: 10px;
+            position: relative;
+            text-indent: -9999em;
+            border: 0.5em solid #F1C3CB;
+            border-left-color: #D50025;
+            -webkit-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            transform: translateZ(0);
+            -webkit-animation: load8 1.1s infinite linear;
+            animation: load8 1.1s infinite linear;
+            display:inline-block;
+        }
+        @-webkit-keyframes load8 {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes load8 {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+
+    </style>
+</head>
+<body style="margin: 50px;">
+<!--Anhand der id='spinnerCont' wird in downloadRS.rest.ts#hideSpinner der spinner versteckt-->
+
+
+<div class="filedownload">
+    <h1>Filedownload</h1>
+    <hr/>
+    <div style="vertical-align: top; margin-top: 37px">
+        <div id="spinnerCont" class="loader">
+        </div>
+        <div class="textContainer">
+            <p>Das gew&uuml;nschte Dokument wird aufbereitet und angezeigt / heruntergeladen.</p>
+            <p>Sie k&ouml;nnen dieses Fenster nach dem Herunterladen schliessen</p>
+        </div>
+    </div>
+
+    <div class="btnContainer">
+        <button id="closeButton" type="button" onclick="window.close()">
+            <span>Fenster schliessen</span>
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

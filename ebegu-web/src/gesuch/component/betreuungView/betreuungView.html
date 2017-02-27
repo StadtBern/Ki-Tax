@@ -4,7 +4,7 @@
             <h1>
                     <span data-translate="BETREUUNGSANGEBOT_NUMBER"
                           data-translate-value-kindname="{{vm.getKindModel().kindJA.getFullName()}}"
-                          data-translate-value-betreuungnumber="{{vm.gesuchModelManager.betreuungNumber}}"></span>
+                          data-translate-value-betreuungnumber="{{vm.gesuchModelManager.getBetreuungToWorkWith().betreuungNummer}}"></span>
             </h1>
             <hr class="header"/>
         </div>
@@ -77,12 +77,12 @@
                     </div>
 
                     <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
-                    <div class="row marginTop20">
+                    <div class="row marginTop20" ng-disabled="!vm.isEnabled()">
                         <div class="col-sm-12 dv-input-container-medium">
                             <div class="form-group">
                                 <label class="md-no-float"
                                        for="betreuungsangebot">
-                                    <span data-translate="BETREUUNGSANGEBOT_WAEHLEN"></span>
+                                    <span data-translate="BETREUUNGSANGEBOT_WAEHLEN" class="required"></span>
                                     <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 </label>
                                 <div class="dv-select-style">
@@ -99,9 +99,10 @@
                         </div>
                     </div>
                     <!--Institutionen-->
-                    <div class="row" ng-if="vm.isEnabled() && !vm.isTagesschule()">
+                    <div class="row" ng-if="vm.isEnabled() && !vm.isTagesschule()"
+                         ng-disabled="!vm.isEnabled()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
-                            <label class="md-no-float" data-translate="INSTITUTION" for="institution">
+                            <label class="md-no-float required" data-translate="INSTITUTION" for="institution">
                             </label>
                             <div class="dv-select-style">
                                 <select name="institution" id="institution" ng-model="vm.instStammId"
@@ -114,7 +115,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" ng-if="!vm.isEnabled()">
+                    <!-- Institiutionen wenn readonly als Textfeld anzeigen-->
+                    <div class="row" ng-if="!vm.isEnabled() && !vm.isTagesschule()">
                         <div class="col-sm-12 dv-input-container-medium form-group">
                             <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                             </label>
@@ -152,7 +154,7 @@
                     <!--Nur Institutionen duerfen neue Pensen eintragen. Bei anderen Rollen werden nur die existierenden Pensen angezeigt-->
                     <div ng-if="!vm.isTagesschule()">
                         <fieldset dv-enable-element
-                                  dv-enable-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData"
+                                  dv-enable-expression="(vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus"
                                   dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
                             <!--Betreuungspensen-->
                             <div ng-repeat="betpen in vm.getBetreuungspensen()">
@@ -226,7 +228,8 @@
                                     <div class="col-md-12">
                                         <dv-loading-button type="button"
                                                            button-click="vm.removeBetreuungspensum(betpen)"
-                                                           button-class="dv-btn-operation">
+                                                           button-class="dv-btn-operation"
+                                                           button-disabled="!((vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus)">
                                             <i class="fa fa-lg fa-trash-o"></i>
                                             <span data-translate="BETREUUNGSPENSUM_ENTFERNEN_INDEX"
                                                   data-translate-value-betreuungspensumnumber="{{$index + 1}}"></span>
@@ -239,7 +242,7 @@
                             <!--Neues Betreuungspensum hinzufuegen-->
                             <div class="row" dv-show-element
                                  dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                                 dv-show-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
+                                 dv-show-expression="(vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus">
                                 <div class="col-md-12">
                                     <dv-loading-button type="button" button-click="vm.createBetreuungspensum()"
                                                        dv-enable-element
@@ -275,7 +278,7 @@
                                                      name="erweiterteBeduerfnisse"
                                                      aria-label="erweiterteBeduerfnisse" dv-enable-element
                                                      dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                                                     dv-enable-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
+                                                     dv-enable-expression="(vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus">
                                             <span data-translate="ERWEITERTE_BEDUERFNISSE"></span>
                                         </md-checkbox>
                                         <dv-error-messages
@@ -329,6 +332,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12"
+                                 ng-if="vm.isGekuendigtVorAntritt() && !vm.isSavingData">
+                                <div class="well well-status-bestaetigt">
+                                    <i class="fa fa-exclamation " aria-hidden="true"></i>
+                                    <span data-translate="BETREUUNG_GEKUENDINGT_VOR_ANTRITT_TEXT"></span>
+                                </div>
+                            </div>
+                        </div>
 
 
                         <!--falsche Angaben-->
@@ -373,29 +385,46 @@
                             <span data-translate="SPEICHERN_UPPER"></span>
                         </dv-loading-button>
                     </div>
-                    <!--Institution Buttons-->
 
+
+                    <!--Institution Buttons-->
+                    <div dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                         dv-show-expression="vm.isFromMutation()">
+
+                        <dv-loading-button button-click="vm.mutationsmeldungErstellen()"
+                                           ng-if="!vm.isMutationsmeldungStatus"
+                                           aria-label="{{MUTATIONSMELDUNG_ERSTELLEN_UPPER | translate}}">
+                            <span data-translate="MUTATIONSMELDUNG_ERSTELLEN_UPPER"></span>
+                        </dv-loading-button>
+                        <dv-loading-button button-click="vm.mutationsmeldungSenden()"
+                                           ng-if="vm.isMutationsmeldungStatus"
+                                           aria-label="{{MUTATIONSMELDUNG_SENDEN_UPPER | translate}}">
+                            <span data-translate="MUTATIONSMELDUNG_SENDEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
 
                     <div dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
                          dv-show-expression="vm.isBetreuungsstatusWarten()">
 
                         <div ng-if="vm.isFromMutation()">
-                            <dv-loading-button button-click="vm.platzNichtEingetreten()"
-                                               ng-if="vm.isFromMutation()"
-                                               aria-label="{{NICHT_EINGETRETEN_UPPER | translate}}">
-                                <span data-translate="NICHT_EINGETRETEN_UPPER"></span>
+                            <dv-loading-button button-click="vm.gekuendigtVorEintritt()"
+                                               aria-label="{{'GEKUENDIGT_VOR_EINTRITT_UPPER' | translate}}">
+                                <span data-translate="GEKUENDIGT_VOR_EINTRITT_UPPER"></span>
                             </dv-loading-button>
                         </div>
 
-                        <dv-loading-button button-click="vm.platzBestaetigen()" type="submit"
-                                           aria-label="{{BESTAETIGEN_UPPER | translate}}">
-                            <span data-translate="BESTAETIGEN_UPPER"></span>
-                        </dv-loading-button>
+                        <div>
+                            <dv-loading-button button-click="vm.platzBestaetigen()" type="submit"
+                                               aria-label="{{'BESTAETIGEN_UPPER' | translate}}">
+                                <span data-translate="BESTAETIGEN_UPPER"></span>
+                            </dv-loading-button>
+                        </div>
 
                         <div ng-if="!vm.isFromMutation()">
                             <dv-loading-button button-click="vm.platzAbweisen()"
-                                               aria-label="{{ABWEISEN_UPPER | translate}}">
+                                               aria-label="{{'ABWEISEN_UPPER' | translate}}">
                                 <span data-translate="ABWEISEN_UPPER"></span>
                             </dv-loading-button>
                         </div>

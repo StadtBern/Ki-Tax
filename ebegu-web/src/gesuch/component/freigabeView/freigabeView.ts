@@ -6,13 +6,13 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import {isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import DateUtil from '../../../utils/DateUtil';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
+import {FreigabeDialogController} from '../../dialog/FreigabeDialogController';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
@@ -37,11 +37,12 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     private showGesuchFreigebenSimulationButton: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS'];
+        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS', '$window'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS, $scope: IScope, private applicationPropertyRS: ApplicationPropertyRS) {
+                private downloadRS: DownloadRS, $scope: IScope, private applicationPropertyRS: ApplicationPropertyRS,
+                private $window: ng.IWindowService) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE);
         this.initViewModel();
@@ -56,19 +57,19 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         this.isFreigebenClicked = true;
         if (this.isGesuchValid() && this.bestaetigungFreigabequittung === true) {
             this.form.$setPristine();
-            return this.DvDialog.showDialog(dialogTemplate, RemoveDialogController, {
-                title: 'CONFIRM_GESUCH_FREIGEBEN',
-                deleteText: 'CONFIRM_GESUCH_FREIGEBEN_DESCRIPTION'
-            }).then(() => {
-                if (this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
-                    return this.openFreigabequittungPDF(true);
-                } else {
-                    return this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
-                }
-
+            return this.DvDialog.showDialog(dialogTemplate, FreigabeDialogController, {
+                parentController: this
             });
         }
         return undefined;
+    }
+
+    public confirmationCallback(): void {
+        if (this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
+            this.openFreigabequittungPDF(true);
+        } else {
+            this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
+        }
     }
 
     public gesuchFreigeben(): void {
@@ -99,11 +100,12 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public openFreigabequittungPDF(forceCreation: boolean): IPromise<void> {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
         return this.downloadRS.getFreigabequittungAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, forceCreation, this.getZustelladresse())
             .then((downloadFile: TSDownloadFile) => {
                 // wir laden das Gesuch neu, da die Erstellung des Dokumentes auch Aenderungen im Gesuch verursacht
                 this.gesuchModelManager.openGesuch(this.gesuchModelManager.getGesuch().id).then(() => {
-                    this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+                    this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
                 });
             });
     }

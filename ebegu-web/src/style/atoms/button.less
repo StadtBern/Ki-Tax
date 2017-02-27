@@ -22,6 +22,14 @@
     }
 }
 
+.dv-btn-mutation-hinzufuegen {
+    margin-top: 2rem;
+    background: @dgrey;
+    &:hover {
+        background: @contrast-dark;
+    }
+}
+
 md-dialog-actions {
     padding: 0 2rem 0;
     button {
@@ -60,8 +68,12 @@ dv-navigation {
     span {
         line-height: normal;
     }
-    &[disabled], &[disabled]:hover {
+    &[disabled], &[disabled]:hover, &:focus {
+
         background: none;
+        outline: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
     }
 }
 
@@ -95,10 +107,15 @@ dv-navigation {
         color: @contrast-darkest;
 
     }
-    &:hover {
+    &:hover, &:focus {
+        outline: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
         .fa {
+            outline: 0;
             color: @primary;
         }
+
         background: transparent;
         color: @contrast-darkest;
     }
@@ -107,13 +124,15 @@ dv-navigation {
         outline: none !important;
         text-decoration: none !important;
     }
-    &:focus {
-        //TODO: Insert outline or smth
-    }
+
     &[disabled], &[disabled]:hover {
+        .fa {
+            color: @contrast-dark;
+        }
         color: @contrast-dark;
         background: transparent;
     }
+
 }
 
 a.dv-btn {
@@ -158,7 +177,9 @@ button, .dv-btn {
         text-decoration: none !important;
     }
     &:focus {
-        //TODO: Insert outline or smth
+        outline: 1px solid #000000;
+        outline-offset: 0;
+
     }
     &[disabled], &[disabled]:hover {
         color: @contrast-lightest;

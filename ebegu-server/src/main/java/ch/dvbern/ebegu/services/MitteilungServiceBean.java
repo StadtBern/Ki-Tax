@@ -6,8 +6,6 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +55,6 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	private final Logger LOG = LoggerFactory.getLogger(MitteilungServiceBean.class.getSimpleName());
 
-	private enum Mode {
-		COUNT,
-		SEARCH
-	}
-
 
 	@Override
 	@Nonnull
@@ -105,14 +98,17 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	 */
 	private void ensureEmpfaengerIsSet(@Nonnull Mitteilung mitteilung) {
 
-		if (MitteilungTeilnehmerTyp.JUGENDAMT.equals(mitteilung.getEmpfaengerTyp()) && mitteilung.getEmpfaenger() == null) {
-			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
-			if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
-				Optional<Benutzer> benutzer = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
-				if (benutzer.isPresent()) {
-					mitteilung.setEmpfaenger(benutzer.get());
-				} else {
-					LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen");
+		if (MitteilungTeilnehmerTyp.JUGENDAMT.equals(mitteilung.getEmpfaengerTyp())) {
+			mitteilung.setEmpfaenger(mitteilung.getFall().getVerantwortlicher());
+			if (mitteilung.getEmpfaenger() == null) {
+				String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEFAULT_VERANTWORTLICHER);
+				if (StringUtils.isNotEmpty(propertyDefaultVerantwortlicher)) {
+					Optional<Benutzer> benutzer = benutzerService.findBenutzer(propertyDefaultVerantwortlicher);
+					if (benutzer.isPresent()) {
+						mitteilung.setEmpfaenger(benutzer.get());
+					} else {
+						LOG.warn("Es ist kein gueltiger DEFAULT Verantwortlicher fuer Mitteilungen gesetzt. Bitte Propertys pruefen");
+					}
 				}
 			}
 		}
@@ -196,27 +192,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Collection<Mitteilung> getMitteilungenForPosteingang() {
-		// Bedingungen: JA-Rolle, Ich bin Empfänger, oder Empfäger ist unbekannt aber Empfänger-Typ ist Jugendamt
-		// Bedingungen: Ich bin (persönlicher) Empfänger, oder die Nachricht hat keinen persönlichen Empfänger, entspricht aber meinem MitteilungTeilnehmerTyp
-		// Damit ist es später erweiterbar für andere Rollen, nicht nur Jugendamt
-
-		return getMitteilungenForPosteingang(Mode.SEARCH).getRight();
-	}
-
-	private Pair<Long, Collection<Mitteilung>> getMitteilungenForPosteingang(Mode mode) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 
-		CriteriaQuery query;
-		switch (mode) {
-			case COUNT:
-				query = cb.createQuery(Long.class);
-				break;
-			case SEARCH:
-			default:
-				query = cb.createQuery(Mitteilung.class);
-				break;
-		}
-
+		CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
 
 		List<Expression<Boolean>> predicates = new ArrayList<>();
@@ -230,51 +208,15 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Predicate predicateEmpfaengerTyp = cb.equal(root.get(Mitteilung_.empfaengerTyp), mitteilungTeilnehmerTyp);
 		predicates.add(predicateEmpfaengerTyp);
 
-
-		switch (mode) {
-			case COUNT:
-				// Nur die Neuen
-				Predicate predicateNeu = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.NEU);
-				predicates.add(predicateNeu);
-				break;
-			case SEARCH:
-			default:
-				// Aber auf jeden Fall unerledigt
-				Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
-				predicates.add(predicateNichtErledigt);
-				break;
-		}
+		// Aber auf jeden Fall unerledigt
+		Predicate predicateNichtErledigt = cb.notEqual(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.ERLEDIGT);
+		predicates.add(predicateNichtErledigt);
 
 
-		Pair<Long, Collection<Mitteilung>> result = null;
-		switch (mode) {
-			case COUNT:
-				query.select(cb.countDistinct(root));
-				query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-				Long count = (Long) persistence.getCriteriaSingleResult(query);
-				result = new ImmutablePair<>(count, null);
-				break;
-			case SEARCH:
-			default:
-				query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
-				query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-				final List<Mitteilung> results = persistence.getCriteriaResults(query);
-				result = new ImmutablePair<>(null, results);
-				break;
-		}
-		return result;
-	}
+		query.orderBy(cb.desc(root.get(Mitteilung_.sentDatum)));
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+		return persistence.getCriteriaResults(query);
 
-	@Nullable
-	@SuppressWarnings("LocalVariableNamingConvention")
-	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
-	public Long countMitteilungenForPosteingang() {
-		// Bedingungen: JA-Rolle, Ich bin Empfänger, oder Empfäger ist unbekannt aber Empfänger-Typ ist Jugendamt
-		// Bedingungen: Ich bin (persönlicher) Empfänger, oder die Nachricht hat keinen persönlichen Empfänger, entspricht aber meinem MitteilungTeilnehmerTyp
-		// Damit ist es später erweiterbar für andere Rollen, nicht nur Jugendamt
-
-		return getMitteilungenForPosteingang(Mode.COUNT).getLeft();
 	}
 
 	@Override
@@ -336,13 +278,12 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			if (MitteilungStatus.NEU.equals(mitteilung.getMitteilungStatus())) {
 				setMitteilungsStatusIfBerechtigt(mitteilung, MitteilungStatus.GELESEN, MitteilungStatus.NEU);
 			}
-			persistence.merge(mitteilung);
 		}
 		return mitteilungen;
 	}
 
 	@Override
-	public Collection<Mitteilung> getNewMitteilungenForCurrentRolle(Fall fall) {
+	public Collection<Mitteilung> getNewMitteilungenForCurrentRolleAndFall(Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -362,6 +303,43 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
+	}
+
+	@Override
+	@Nonnull
+	public Long getAmountNewMitteilungenForCurrentBenutzer() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Long> query = cb.createQuery(Long.class);
+		Root<Mitteilung> root = query.from(Mitteilung.class);
+		List<Expression<Boolean>> predicates = new ArrayList<>();
+
+		Predicate predicateNew = cb.equal(root.get(Mitteilung_.mitteilungStatus), MitteilungStatus.NEU);
+		predicates.add(predicateNew);
+
+		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getAmountNewMitteilungenForCurrentBenutzer", "No User is logged in"));
+		Predicate predicateEmpfaenger = cb.equal(root.get(Mitteilung_.empfaenger), loggedInBenutzer);
+		predicates.add(predicateEmpfaenger);
+
+		query.select(cb.countDistinct(root));
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+		return persistence.getCriteriaSingleResult(query);
+	}
+
+	@Override
+	@RolesAllowed({SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung) {
+		Objects.requireNonNull(betreuungsmitteilung);
+		if (!MitteilungTeilnehmerTyp.INSTITUTION.equals(betreuungsmitteilung.getSenderTyp())) {
+			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur bei einer Institution geschickt werden");
+		}
+		if (!MitteilungTeilnehmerTyp.JUGENDAMT.equals(betreuungsmitteilung.getEmpfaengerTyp())) {
+			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur an das Jugendamt geschickt werden");
+		}
+		betreuungsmitteilung.setMitteilungStatus(MitteilungStatus.NEU); // vorsichtshalber
+		betreuungsmitteilung.setSentDatum(LocalDateTime.now());
+		ensureEmpfaengerIsSet(betreuungsmitteilung);
+
+		return persistence.persist(betreuungsmitteilung); // A Betreuungsmitteilung is created and sent, therefore persist and not merge
 	}
 
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {

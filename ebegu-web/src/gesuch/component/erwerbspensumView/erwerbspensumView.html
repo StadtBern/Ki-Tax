@@ -116,7 +116,7 @@
                                 <md-checkbox ng-model="vm.model.erwerbspensumJA.zuschlagZuErwerbspensum"
                                              name="zuschlag"
                                              ng-disabled="vm.isGesuchReadonly() || vm.erwerbspensumDisabled() || !vm.viewZuschlag()"
-                                             aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
+                                             aria-label="{{'ZUSCHLAG_ZU_ERWERBSPENSUM' | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
                                 </md-checkbox>
                                 <dv-tooltip text="vm.getZuschlagHelpText()"></dv-tooltip>

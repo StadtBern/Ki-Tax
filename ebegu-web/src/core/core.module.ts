@@ -75,6 +75,9 @@ import {DVValueinput} from './directive/dv-valueinput/dv-valueinput';
 import MitteilungRS from './service/mitteilungRS.rest';
 import {DVMitteilungListConfig} from './component/dv-mitteilung-list/dv-mitteilung-list';
 import {DvPosteingangComponentConfig} from './component/dv-posteingang/dv-posteingang';
+import {ReportRS} from './service/reportRS.rest';
+import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
+import ExportRS from '../gesuch/service/exportRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -159,6 +162,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
     .service('MitteilungRS', MitteilungRS)
     .service('GlobalCacheService', GlobalCacheService)
+    .service('ExportRS', ExportRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvValueinput', DVValueinput.factory())
@@ -171,6 +175,7 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvEnableElement', DVEnableElement.factory())
     .directive('dvBarcodeListener', DVBarcodeListener.factory())
     .directive('dvTrimEmpty', DVTrimEmpty.factory())
+    .directive('dvSuppressFormSubmitOnEnter', DVSupressFormSubmitOnEnter.factory())
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
     .service('HttpResponseInterceptor', HttpResponseInterceptor)
@@ -197,5 +202,6 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvMitteilungList', new DVMitteilungListConfig())
     .component('dvAccordion', new DvAccordionComponentConfig())
     .component('dvAccordionTab', new DvAccordionTabComponentConfig())
-    .service('MahnungRS', MahnungRS);
+    .service('MahnungRS', MahnungRS)
+    .service('ReportRS', ReportRS);
 

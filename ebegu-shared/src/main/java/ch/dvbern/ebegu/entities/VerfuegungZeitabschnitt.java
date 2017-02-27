@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.dto.VerfuegungsBemerkung;
 import ch.dvbern.ebegu.enums.MsgKey;
+import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.rules.RuleKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
@@ -149,6 +150,15 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Column(nullable = false)
 	private boolean zuSpaetEingereicht;
 
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private VerfuegungsZeitabschnittZahlungsstatus zahlungsstatus = VerfuegungsZeitabschnittZahlungsstatus.NEU;
+
+	@NotNull
+	@OneToMany (mappedBy = "verfuegungZeitabschnitt")
+	private List<Zahlungsposition> zahlungsposition = new ArrayList<>();
+
 
 	public VerfuegungZeitabschnitt() {
 	}
@@ -192,6 +202,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.kategorieMaxEinkommen = toCopy.kategorieMaxEinkommen;
 		this.kategorieKeinPensum = toCopy.kategorieKeinPensum;
 		this.kategorieZuschlagZumErwerbspensum = toCopy.kategorieZuschlagZumErwerbspensum;
+		this.zahlungsstatus = toCopy.zahlungsstatus;
 	}
 
 	/**
@@ -463,6 +474,22 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
 	}
 
+	public VerfuegungsZeitabschnittZahlungsstatus getZahlungsstatus() {
+		return zahlungsstatus;
+	}
+
+	public void setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus zahlungsstatus) {
+		this.zahlungsstatus = zahlungsstatus;
+	}
+
+	public List<Zahlungsposition> getZahlungsposition() {
+		return zahlungsposition;
+	}
+
+	public void setZahlungsposition(List<Zahlungsposition> zahlungsposition) {
+		this.zahlungsposition = zahlungsposition;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -672,7 +699,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			this.ekv1ZuZweit == that.ekv1ZuZweit &&
 			this.ekv2Alleine == that.ekv2Alleine &&
 			this.ekv2ZuZweit == that.ekv2ZuZweit &&
-			this.ekv1NotExisting == that.ekv1NotExisting;
+			this.ekv1NotExisting == that.ekv1NotExisting &&
+			Objects.equals(this.zahlungsstatus, that.zahlungsstatus);
 	}
 
 	public boolean isSameSichtbareDaten(VerfuegungZeitabschnitt that) {
@@ -710,7 +738,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(famGroesse.compareTo(that.famGroesse) == 0) &&
 			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
 			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0 &&
-			Objects.equals(this.einkommensjahr, that.einkommensjahr);
+			Objects.equals(this.einkommensjahr, that.einkommensjahr) &&
+			Objects.equals(this.zahlungsstatus, that.zahlungsstatus);
 	}
 
 	/**

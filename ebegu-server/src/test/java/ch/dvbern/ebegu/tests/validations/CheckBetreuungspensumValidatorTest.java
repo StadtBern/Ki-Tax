@@ -149,7 +149,7 @@ public class CheckBetreuungspensumValidatorTest {
 	@Nonnull
 	private Betreuung createBetreuung(BetreuungsangebotTyp betreuungsangebotTyp, int pensumGS, int pensumJA) {
 		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
-		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
 		betreuung.getKind().setGesuch(gesuch); // Aktuell nur in 1 Richtung verknuepft
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(betreuungsangebotTyp);

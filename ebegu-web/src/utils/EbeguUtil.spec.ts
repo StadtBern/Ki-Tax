@@ -93,4 +93,18 @@ describe('EbeguUtil', function () {
             expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(gesuchsperiode)).toBe('01.08.2016');
         });
     });
+    describe('generateRandomName', () => {
+        it ('it returns a string with 5 characters', () => {
+            expect(EbeguUtil.generateRandomName(5).length).toBe(5);
+        });
+        it ('it returns a string with 0 characters', () => {
+            expect(EbeguUtil.generateRandomName(0).length).toBe(0);
+        });
+        it ('it returns a string with 11 characters', () => {
+            expect(EbeguUtil.generateRandomName(10).length).toBe(10);
+        });
+        it ('it returns a string with the maximun 11 characters', () => {
+            expect(EbeguUtil.generateRandomName(1000).length).toBe(10);
+        });
+    });
 });

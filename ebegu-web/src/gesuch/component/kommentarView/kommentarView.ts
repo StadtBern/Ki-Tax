@@ -40,12 +40,12 @@ export class KommentarViewController {
     dokumentePapiergesuch: TSDokumentGrund;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
-        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate'];
+        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window'];
     /* @ngInject */
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
                 private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
                 private uploadRS: UploadRS, private wizardStepManager: WizardStepManager, private globalCacheService: GlobalCacheService,
-                private dvDialog: DvDialog, private $translate: ITranslateService) {
+                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService) {
 
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
@@ -96,6 +96,7 @@ export class KommentarViewController {
     }
 
     download() {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
         this.getPapiergesuchFromServer().then((promiseValue: any) => {
             if (!this.hasPapiergesuch()) {
                 this.$log.error('Kein Papiergesuch für Download vorhanden!');
@@ -103,7 +104,7 @@ export class KommentarViewController {
                 let newest: TSDokument = this.getNewest(this.dokumentePapiergesuch.dokumente);
                 this.downloadRS.getAccessTokenDokument(newest.id).then((response) => {
                     let tempDokument: TSDownloadFile = angular.copy(response);
-                    this.downloadRS.startDownload(tempDokument.accessToken, newest.filename, false);
+                    this.downloadRS.startDownload(tempDokument.accessToken, newest.filename, false, win);
                 });
             }
         });
@@ -111,7 +112,7 @@ export class KommentarViewController {
 
     private getNewest(dokumente: Array<TSDokument>): TSDokument {
         let newest: TSDokument = dokumente[0];
-        for (var i = 0; i < dokumente.length; i++) {
+        for (let i = 0; i < dokumente.length; i++) {
             if (dokumente[i].timestampErstellt.isAfter(newest.timestampErstellt)) {
                 newest = dokumente[i];
             }

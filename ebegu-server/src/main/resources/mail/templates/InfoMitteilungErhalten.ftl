@@ -1,8 +1,9 @@
 <#-- @ftlvariable name="mitteilung" type="ch.dvbern.ebegu.entities.Mitteilung" -->
 <#-- @ftlvariable name="templateConfiguration" type="ch.dvbern.ebegu.mail.MailTemplateConfiguration" -->
 <#-- @ftlvariable name="configuration" type="ch.dvbern.ebegu.config.EbeguConfiguration" -->
+<#-- @ftlvariable name="empfaengerMail" type="java.lang.String" -->
 From: ${configuration.senderAddress}
-To: " ${mitteilung.empfaenger.fullName} <${mitteilung.empfaenger.email}>
+To: ${mitteilung.empfaenger.fullName} <${empfaengerMail}>
 Subject: <@base64Header>Neue Nachricht vom Jugendamt</@base64Header>
 Content-Type: text/html;charset=utf-8
 

@@ -57,7 +57,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 	public void doTestEvaluation(){
 		Gesuch testgesuch = createGesuch();
 		testgesuch.setEingangsdatum(LocalDate.of(2016, 7, 1));
-		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
 		evaluator.evaluate(testgesuch, getParameter());
 		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
@@ -69,7 +69,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 	@Test
 	public void doTestEvaluationGeneratedBemerkungen(){
 		Gesuch testgesuch = createGesuch();
-		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
 		testgesuch.getFinanzDatenDTO().setMassgebendesEinkBjVorAbzFamGr(new BigDecimal("500000")); //zu hoch -> Comment wird erzeugt
 
 		evaluator.evaluate(testgesuch, getParameter());
@@ -85,7 +85,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 	@Test
 	public void doTestEvaluationForFamiliensituation() {
 		Gesuch testgesuch = createGesuch();
-		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
 		Verfuegung verfuegung = evaluator.evaluateFamiliensituation(testgesuch);
 
 		Assert.assertNotNull(verfuegung);
@@ -103,7 +103,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		final Fall fall = TestDataUtil.createDefaultFall();
 		fall.setFallNummer(2);
 		gesuch.setFall(fall);
-		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.initFamiliensituationContainer();
 		gesuch.extractFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);

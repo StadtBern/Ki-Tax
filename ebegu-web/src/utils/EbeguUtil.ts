@@ -4,6 +4,7 @@ import TSAbstractEntity from '../models/TSAbstractEntity';
 import TSFall from '../models/TSFall';
 import DateUtil from './DateUtil';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import TSBetreuungsnummerParts from '../models/dto/TSBetreuungsnummerParts';
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
 
@@ -99,8 +100,8 @@ export default class EbeguUtil {
 
 
     public static getIndexOfElementwithID(entityToSearch: TSAbstractEntity, listToSearchIn: Array<any>): number {
-        var idToSearch = entityToSearch.id;
-        for (var i = 0; i < listToSearchIn.length; i++) {
+        let idToSearch = entityToSearch.id;
+        for (let i = 0; i < listToSearchIn.length; i++) {
             if (listToSearchIn[i].id === idToSearch) {
                 return i;
             }
@@ -120,11 +121,35 @@ export default class EbeguUtil {
         return betreuungsId;
     }
 
+    /**
+     * hilfsmethode um die betreuungsnummer in ihre einzelteile zu zerlegen. gibt ein objekt zurueck welches die werte einzeln enthaelt
+     * @param betreuungsnummer im format JJ.Fallnr.kindnr.betrnr
+     */
+    public splitBetreuungsnummer(betreuungsnummer: string): TSBetreuungsnummerParts {
+        let parts: Array<string> = betreuungsnummer.split('.');
+        if (!parts || parts.length !== 4) {
+            return undefined;
+        }
+        return new TSBetreuungsnummerParts(parts[0], parts[1], parts[2], parts[3]);
+    }
+
     public handleSmarttablesUpdateBug(aList: any[]) {
         // Ugly Fix:
         // Because of a bug in smarttables, the table will only be refreshed if the reverence or the first element
         // changes in table. To resolve this bug, we overwrite the first element by a copy of itself.
         aList[0] = angular.copy(aList[0]);
+    }
+
+    /**
+     * Erzeugt einen random String mit einer Laenge von numberOfCharacters
+     * @param numberOfCharacters von 0 bis 10
+     * @returns {string}
+     */
+    public static generateRandomName(numberOfCharacters: number): string {
+        if (numberOfCharacters === null || numberOfCharacters === undefined || numberOfCharacters > 10) {
+            numberOfCharacters = 10;
+        }
+        return Math.random().toString(36).slice(2, numberOfCharacters + 2);
     }
 
 }

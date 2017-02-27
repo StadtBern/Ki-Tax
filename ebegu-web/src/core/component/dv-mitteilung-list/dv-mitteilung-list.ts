@@ -19,6 +19,7 @@ import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
 import {IStateService} from 'angular-ui-router';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 
@@ -275,20 +276,37 @@ export class DVMitteilungListController {
         return mitteilung && (mitteilung.mitteilungStatus === TSMitteilungStatus.ERLEDIGT || mitteilung.mitteilungStatus === TSMitteilungStatus.GELESEN);
     }
 
-    public betreuungAsString(mitteilung : TSMitteilung) : string {
-        let betreuungAsString : string;
+    public getBgNummer(): string {
+        let bgNummer: string = '';
+        if (this.betreuung) {
+            bgNummer = this.ebeguUtil.calculateBetreuungsId(this.betreuung.gesuchsperiode, this.fall, this.betreuung.kindNummer, this.betreuung.betreuungNummer);
+        }
+        return bgNummer;
+    }
+
+    public betreuungAsString(mitteilung: TSMitteilung): string {
+        let betreuungAsString: string;
         if (mitteilung.betreuung) {
-            let bgNummer :string = this.ebeguUtil.calculateBetreuungsId(mitteilung.betreuung.gesuchsperiode, mitteilung.fall, mitteilung.betreuung.kindNummer, mitteilung.betreuung.betreuungNummer);
+            let bgNummer: string = this.ebeguUtil.calculateBetreuungsId(mitteilung.betreuung.gesuchsperiode, mitteilung.fall,
+                mitteilung.betreuung.kindNummer, mitteilung.betreuung.betreuungNummer);
             betreuungAsString = mitteilung.betreuung.kindFullname + ', ' + bgNummer;
         }
         return betreuungAsString;
     }
 
-    public gotoBetreuung(mitteilung : TSMitteilung) :void {
+    public gotoBetreuung(mitteilung: TSMitteilung): void {
         this.$state.go('gesuch.betreuung', {
             betreuungNumber: mitteilung.betreuung.betreuungNummer,
             kindNumber: mitteilung.betreuung.kindNummer,
             gesuchId: mitteilung.betreuung.gesuchId
         });
+    }
+
+    public isBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
+        return mitteilung instanceof TSBetreuungsmitteilung;
+    }
+
+    public applyBetreuungsmitteilung(): void {
+        window.alert('Not yet implemented');
     }
 }

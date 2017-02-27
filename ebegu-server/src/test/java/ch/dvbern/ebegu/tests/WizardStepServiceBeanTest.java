@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -20,6 +21,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -364,13 +366,18 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void updateWizardStepEinkommensverschlechterungNOK() {
 		updateStatus(einkVerStep, WizardStepStatus.IN_BEARBEITUNG);
+		EinkommensverschlechterungInfoContainer oldDataCont = new EinkommensverschlechterungInfoContainer();
 		EinkommensverschlechterungInfo oldData = new EinkommensverschlechterungInfo();
 		oldData.setEinkommensverschlechterung(false);
+		oldDataCont.setEinkommensverschlechterungInfoJA(oldData);
+
+		EinkommensverschlechterungInfoContainer newDataCont = new EinkommensverschlechterungInfoContainer();
 		EinkommensverschlechterungInfo newData = new EinkommensverschlechterungInfo();
 		newData.setEinkommensverschlechterung(true);
+		newDataCont.setEinkommensverschlechterungInfoJA(newData);
 
-		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldData,
-			newData, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldDataCont,
+			newDataCont, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 		Assert.assertEquals(11, wizardSteps.size());
 
 		//status is NOK weil die Daten noch nicht eingetragen sind
@@ -381,24 +388,29 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	public void updateWizardStepEinkommensverschlechterungNOKNull() {
 		updateStatus(einkVerStep, WizardStepStatus.IN_BEARBEITUNG);
 		EinkommensverschlechterungInfo oldData = null;
+		EinkommensverschlechterungInfoContainer newDataCont = new EinkommensverschlechterungInfoContainer();
 		EinkommensverschlechterungInfo newData = new EinkommensverschlechterungInfo();
 		newData.setEinkommensverschlechterung(true);
+		newDataCont.setEinkommensverschlechterungInfoJA(newData);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), oldData,
-			newData, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+			newDataCont, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 		Assert.assertEquals(11, wizardSteps.size());
 
 		//status is NOK weil die Daten noch nicht eingetragen sind
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getWizardStepStatus());
 	}
 
+	@Inject
+	private DokumentGrundService dokumentGrundService;
+
 	@Test
 	public void updateWizardStepDokumente() {
 		updateStatus(dokStep, WizardStepStatus.IN_BEARBEITUNG);
 
-		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG);
-		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.FINANZIELLESITUATION, DokumentTyp.STEUERVERANLAGUNG);
-		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_ERWERBSPENSUM);
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, "Angestellt 60%");
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.FINANZIELLESITUATION, DokumentTyp.STEUERVERANLAGUNG, "2016");
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_ERWERBSPENSUM, "Angestellt 60%");
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.DOKUMENTE);
 		Assert.assertEquals(11, wizardSteps.size());
@@ -411,7 +423,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		updateStatus(dokStep, WizardStepStatus.IN_BEARBEITUNG);
 
 		//nicht alle notwendige dokumente
-		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG);
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, "Angestellt 60%");
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.DOKUMENTE);
 		Assert.assertEquals(11, wizardSteps.size());
@@ -493,14 +505,18 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 	public void updateWizardStepEkvMutiert() {
 		updateStatusMutiert(einkVerStep, WizardStepStatus.OK);
 
+		EinkommensverschlechterungInfoContainer oldDataCont = new EinkommensverschlechterungInfoContainer();
 		EinkommensverschlechterungInfo oldData = new EinkommensverschlechterungInfo();
 		oldData.setEinkommensverschlechterung(true);
+		oldDataCont.setEinkommensverschlechterungInfoJA(oldData);
 
+		EinkommensverschlechterungInfoContainer newDataCont = new EinkommensverschlechterungInfoContainer();
 		EinkommensverschlechterungInfo newData = new EinkommensverschlechterungInfo();
 		newData.setEinkommensverschlechterung(false);
+		newDataCont.setEinkommensverschlechterungInfoJA(newData);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(),
-			oldData, newData, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+			oldDataCont, newDataCont, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 		Assert.assertEquals(11, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.MUTIERT, findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getWizardStepStatus());
@@ -532,13 +548,14 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 
 	// HELP METHODS
 
-	private void createAndPersistDokumentGrundWithDokument(DokumentGrundTyp dokGrundTyp, DokumentTyp dokTyp) {
+	private void createAndPersistDokumentGrundWithDokument(DokumentGrundTyp dokGrundTyp, DokumentTyp dokTyp, String tag) {
 		DokumentGrund dokGrund = new DokumentGrund();
 		dokGrund.setDokumentGrundTyp(dokGrundTyp);
 		dokGrund.setDokumentTyp(dokTyp);
 		dokGrund.setNeeded(true);
 		dokGrund.setGesuch(gesuch);
-		dokGrund.setFullName("name");
+		dokGrund.setFullName(gesuch.getGesuchsteller1().extractFullName());
+		dokGrund.setTag(tag);
 		persistence.persist(dokGrund);
 		Dokument dok1 = new Dokument();
 		dok1.setFilename("name");

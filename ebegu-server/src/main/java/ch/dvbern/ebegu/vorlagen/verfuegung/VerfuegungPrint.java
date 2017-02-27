@@ -28,8 +28,6 @@ public interface VerfuegungPrint {
 
 	String getReferenznummer();
 
-	String getGesuchstellerNames();
-
 	String getVerfuegungsdatum();
 
 	String getKindNameVorname();

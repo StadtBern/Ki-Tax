@@ -115,4 +115,10 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	public void setAdresse(Adresse adresse) {
 		this.adresse = adresse;
 	}
+
+	//TODO: es muss ev noch die BIC auf den Stammdaten gespeichert werden!
+	@Transient
+	public String getBIC() {
+		return "RAIFCH22XXX";
+	}
 }
