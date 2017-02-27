@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.File;
+import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.Validate;
@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -63,7 +64,14 @@ public class FileSaverServiceBean implements FileSaverService {
 
 	@Override
 	public UploadFileInfo save(byte[] bytes, String fileName, String folderName) throws MimeTypeParseException {
-		final UploadFileInfo uploadFileInfo = new UploadFileInfo(fileName, new MimeType("application/pdf"));
+		MimeType contentType = new MimeType("application/pdf");
+		return save(bytes, fileName, folderName, contentType);
+	}
+
+	@Nullable
+	@Override
+	public UploadFileInfo save(byte[] bytes, String fileName, String folderName, MimeType contentType) {
+		final UploadFileInfo uploadFileInfo = new UploadFileInfo(fileName, contentType);
 		uploadFileInfo.setBytes(bytes);
 		if (save(uploadFileInfo, folderName)){
 			return uploadFileInfo;
@@ -72,7 +80,7 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	@Override
-	public boolean copy(File fileToCopy, String folderName) {
+	public boolean copy(FileMetadata fileToCopy, String folderName) {
 		Validate.notNull(fileToCopy);
 		Validate.notNull(folderName);
 

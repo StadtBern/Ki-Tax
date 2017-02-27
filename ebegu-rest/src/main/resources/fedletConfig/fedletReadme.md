@@ -6,10 +6,11 @@
 Damit die Verbindung richtig klappt muessen die Metadaten (insbesondere des Serviceproviders, also sp.xml und sp-extended.xml)
 richtig eingelesen werden. Fuer jede Installation des Systems gibt es einen eigenen Konfigurationsordner
 
-- http_app_ebegu_ch
-- https_act_ebegu_bern_ch
-- https_app_ebegu_ch
-- https_test_ebegu_dvbern_ch
+- http_app_ebegu_ch: Entwicklung lokal mit http
+- https_act_ebegu_bern_ch: StadtBern Testumgebung mit https
+- https_app_ebegu_ch: Entwicklung lokal mit https
+- https_prod_ebegu_bern_ch: Produktion bei Stadt Bern
+- https_test_ebegu_dvbern_ch: Testumgebung bei DV Bern
 
 Darin werden die Metadaten und der PublicKey des IAM fuer die Signierung gespeichert. Um einzustellen welche Konfiguration
 gelesen wird muss das Property `ebegu.fedlet.config.path` gesetzt sein. Der Konfigurationsordner wird dann in 

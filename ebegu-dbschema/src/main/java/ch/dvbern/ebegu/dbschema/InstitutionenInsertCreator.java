@@ -157,17 +157,18 @@ public class InstitutionenInsertCreator {
 	private String readString(Row row, int columnIndex) {
 		Cell cell = row.getCell(columnIndex);
 		if (cell != null) {
-			switch (cell.getCellType()) {
-				case Cell.CELL_TYPE_STRING:
-					return cell.getStringCellValue();
-				case Cell.CELL_TYPE_NUMERIC:
-					return Double.toString(cell.getNumericCellValue());
-				case Cell.CELL_TYPE_BLANK:
-					return null;
-				default:
-					LOG.warn("Typ nicht definiert: " + cell.getCellType() + " " + row.getRowNum() + "/" + columnIndex);
-					return null;
-			}
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+			return cell.getStringCellValue();
+		} else {
+			return null;
+		}
+	}
+
+	private String readDouble(Row row, int columnIndex) {
+		Cell cell = row.getCell(columnIndex);
+		if (cell != null) {
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			return Double.toString(cell.getNumericCellValue());
 		} else {
 			return null;
 		}
@@ -300,8 +301,8 @@ public class InstitutionenInsertCreator {
 		// INSERT INTO institution_stammdaten (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, gueltig_ab, gueltig_bis, betreuungsangebot_typ, iban, oeffnungsstunden, oeffnungstage, institution_id, adresse_id) VALUES ('11111111-1111-1111-1111-111111111101', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0, '1000-01-01', '9999-12-31', 'KITA', null, 11.50, 240.00, '11111111-1111-1111-1111-111111111101', '11111111-1111-1111-1111-111111111101');
 		String id = UUID.randomUUID().toString();
 		String iban = readString(row, COL_IBAN);
-		String stunden = readString(row, COL_OEFFNUNGSSTUNDEN);
-		String tage = readString(row, COL_OEFFNUNGSTAGE);
+		String stunden = readDouble(row, COL_OEFFNUNGSSTUNDEN);
+		String tage = readDouble(row, COL_OEFFNUNGSTAGE);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("INSERT INTO institution_stammdaten ");

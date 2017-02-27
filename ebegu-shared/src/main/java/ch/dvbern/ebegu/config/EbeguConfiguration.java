@@ -40,6 +40,12 @@ public interface EbeguConfiguration {
 	 */
 	String getOpenIdmURL();
 
+
+	/**
+	 * Gibt die URL der IDM Rest Schnittstelle zureuck
+	 */
+	String getOpenamURL();
+
 	/**
 	 * Gibt den Benutzer fuer die IDM Rest Schnittstelle zurueck
 	 */
@@ -55,6 +61,11 @@ public interface EbeguConfiguration {
 	 * Gibt zurueck ob die synchronisierung mit der IDM Rest Schnittstelle fuer Inst und Traegerschaft aktiviert ist
 	 */
 	boolean getOpenIdmEnabled();
+
+	/**
+	 * Set false on standaloneFile to use old communication with password and username for Testserver
+	 */
+	boolean getLoginWithToken();
 
 	/**
 	 * Gibt zurueck, ob E-Mails versendet werden sollen. Falls nicht, wird der entsprechende Text auf der Console ausgegeben

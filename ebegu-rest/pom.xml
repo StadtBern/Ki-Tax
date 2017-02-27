@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>1.0.3-SNAPSHOT</version>
+        <version>1.0.6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -462,11 +462,6 @@
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-multipart-provider</artifactId>
             <version>3.0.6.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.6.1</version>
         </dependency>
 
         <dependency>
