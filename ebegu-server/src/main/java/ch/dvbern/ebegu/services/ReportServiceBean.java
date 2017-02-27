@@ -236,7 +236,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			MergeFieldGesuchStichtag.class),
 		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "GesuchZeitraum.xlsx", "Data",
 			MergeFieldGesuchZeitraum.class),
-		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/Zahlungsauftrag.xlsx", "Zahlungsauftrag.xlsx", "Data",
+		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", "Data",
 		MergeFieldZahlungAuftrag.class);
 
 		@Nonnull
