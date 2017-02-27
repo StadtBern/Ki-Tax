@@ -91,7 +91,7 @@
                         <div class="col-xs-12 dv-input-container-question">
                             <div class=" checkbox">
                                 <md-checkbox ng-model="vm.getModelJA().diplomatenstatus" name="diplomatenstatus"
-                                             aria-label="diplomatenstatus"
+                                             aria-label="{{'GESUCHSTELLER_DIPLOMATENSTATUS'|translate}}"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchReadonly()">
@@ -109,7 +109,7 @@
                     <div class="row" ng-if="!vm.isMutation()">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class="checkbox">
-                                <md-checkbox ng-model="vm.getModel().showUmzug" name="umzug" aria-label="umzug"
+                                <md-checkbox ng-model="vm.getModel().showUmzug" name="umzug" aria-label="{{'UMZUG'|translate}}"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchReadonly() && !vm.isThereAnyUmzug() && !vm.isKorrekturModusJugendamt()">
@@ -126,7 +126,7 @@
                         <div class="col-xs-12 dv-input-container-question">
                             <div class=" checkbox">
                                 <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr"
-                                             aria-label="korrespondenzAdr" ng-change="vm.korrespondenzAdrClicked()"
+                                             aria-label="{{'KORRESPONDENZADR'|translate}}" ng-change="vm.korrespondenzAdrClicked()"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchReadonly()">
