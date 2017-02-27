@@ -109,6 +109,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@Column(nullable = true)
 	private LocalDate datumBestaetigung;
 
+	@Nullable
+	@Column(nullable = true)
+	private Boolean betreuungMutiert;
+
+	@Nullable
+	@Column(nullable = true)
+	private Boolean abwesenheitMutiert;
+
 
 	public Betreuung() {
 	}
@@ -213,8 +221,25 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		this.datumBestaetigung = datumBestaetigung;
 	}
 
+	@Nullable
+	public Boolean getBetreuungMutiert() {
+		return betreuungMutiert;
+	}
 
-	public boolean isSame(Betreuung otherBetreuung) {
+	public void setBetreuungMutiert(@Nullable Boolean betreuungMutiert) {
+		this.betreuungMutiert = betreuungMutiert;
+	}
+
+	@Nullable
+	public Boolean getAbwesenheitMutiert() {
+		return abwesenheitMutiert;
+	}
+
+	public void setAbwesenheitMutiert(@Nullable Boolean abwesenheitMutiert) {
+		this.abwesenheitMutiert = abwesenheitMutiert;
+	}
+
+	public boolean isSame(Betreuung otherBetreuung, boolean inklAbwesenheiten, boolean inklStatus) {
 		if (this == otherBetreuung) {
 			return true;
 		}
@@ -225,10 +250,15 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		boolean pensenSame = this.getBetreuungspensumContainers().stream().allMatch(
 			(pensCont) -> otherBetreuung.getBetreuungspensumContainers().stream().anyMatch(otherPensenCont -> otherPensenCont.isSame(pensCont)));
 
-		boolean abwesenheitenSame = this.getAbwesenheitContainers().stream().allMatch(
-			(abwesenheitCont) -> otherBetreuung.getAbwesenheitContainers().stream().anyMatch(otherAbwesenheitCont -> otherAbwesenheitCont.isSame(abwesenheitCont)));
-
-		boolean statusSame = Objects.equals(this.getBetreuungsstatus(), otherBetreuung.getBetreuungsstatus());
+		boolean abwesenheitenSame = true;
+		if (inklAbwesenheiten) {
+			abwesenheitenSame = this.getAbwesenheitContainers().stream().allMatch(
+				(abwesenheitCont) -> otherBetreuung.getAbwesenheitContainers().stream().anyMatch(otherAbwesenheitCont -> otherAbwesenheitCont.isSame(abwesenheitCont)));
+		}
+		boolean statusSame = true;
+		if (inklStatus) {
+			statusSame = Objects.equals(this.getBetreuungsstatus(), otherBetreuung.getBetreuungsstatus());
+		}
 		boolean stammdatenSame = this.getInstitutionStammdaten().isSame(otherBetreuung.getInstitutionStammdaten());
 		return pensenSame && abwesenheitenSame && statusSame && stammdatenSame;
 	}
@@ -330,6 +360,8 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		mutation.setErweiterteBeduerfnisse(this.getErweiterteBeduerfnisse());
 		mutation.setDatumAblehnung(this.getDatumAblehnung());
 		mutation.setDatumBestaetigung(this.getDatumBestaetigung());
+		mutation.setBetreuungMutiert(false);
+		mutation.setAbwesenheitMutiert(false);
 		return mutation;
 	}
 

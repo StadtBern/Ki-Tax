@@ -14,6 +14,7 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -97,5 +98,18 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		mutation.setNachname(this.getNachname());
 		mutation.setGeburtsdatum(this.getGeburtsdatum());
 		return mutation;
+	}
+
+	public boolean isSame(AbstractPersonEntity otherPerson) {
+		if (this == otherPerson) {
+			return true;
+		}
+		if (otherPerson == null || getClass() != otherPerson.getClass()) {
+			return false;
+		}
+		return	getGeschlecht() == otherPerson.getGeschlecht() &&
+			Objects.equals(getVorname(), otherPerson.getVorname()) &&
+			Objects.equals(getNachname(), otherPerson.getNachname()) &&
+			Objects.equals(getGeburtsdatum(), otherPerson.getGeburtsdatum());
 	}
 }

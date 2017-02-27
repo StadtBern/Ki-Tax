@@ -1,9 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
@@ -216,5 +214,45 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		authorizer.checkWriteAuthorization(persistedBetreuung);
 		wizardStepService.updateSteps(persistedBetreuung.extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedBetreuung;
+	}
+
+	@Override
+	@Nonnull
+	public List<Betreuung> getAllBetreuungenWithMissingStatistics() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+
+		Root<Betreuung> root = query.from(Betreuung.class);
+		Join<Betreuung, KindContainer> joinKindContainer = root.join(Betreuung_.kind, JoinType.LEFT);
+		Join<KindContainer, Gesuch> joinGesuch = joinKindContainer.join(KindContainer_.gesuch, JoinType.LEFT);
+
+		Predicate predicateMutation = cb.equal(joinGesuch.get(Gesuch_.typ), AntragTyp.MUTATION);
+		Predicate predicateFlag = cb.isNull(root.get(Betreuung_.betreuungMutiert));
+		Predicate predicateStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
+
+		query.where(predicateMutation, predicateFlag, predicateStatus);
+		query.orderBy(cb.desc(joinGesuch.get(Gesuch_.laufnummer)));
+		return persistence.getCriteriaResults(query);
+	}
+
+	@Override
+	@Nonnull
+	public List<Abwesenheit> getAllAbwesenheitenWithMissingStatistics() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Abwesenheit> query = cb.createQuery(Abwesenheit.class);
+
+		Root<Abwesenheit> root = query.from(Abwesenheit.class);
+		Join<Abwesenheit, AbwesenheitContainer> joinAbwesenheitContainer = root.join(Abwesenheit_.abwesenheitContainer, JoinType.LEFT);
+		Join<AbwesenheitContainer, Betreuung> joinBetreuung = joinAbwesenheitContainer.join(AbwesenheitContainer_.betreuung, JoinType.LEFT);
+		Join<Betreuung, KindContainer> joinKindContainer = joinBetreuung.join(Betreuung_.kind, JoinType.LEFT);
+		Join<KindContainer, Gesuch> joinGesuch = joinKindContainer.join(KindContainer_.gesuch, JoinType.LEFT);
+
+		Predicate predicateMutation = cb.equal(joinGesuch.get(Gesuch_.typ), AntragTyp.MUTATION);
+		Predicate predicateFlag = cb.isNull(joinBetreuung.get(Betreuung_.abwesenheitMutiert));
+		Predicate predicateStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
+
+		query.where(predicateMutation, predicateFlag, predicateStatus);
+		query.orderBy(cb.desc(joinGesuch.get(Gesuch_.laufnummer)));
+		return persistence.getCriteriaResults(query);
 	}
 }

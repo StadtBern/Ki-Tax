@@ -69,6 +69,10 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "kind")
 	private Set<Betreuung> betreuungen = new TreeSet<>();
 
+	@Column(nullable = true)
+	@Nullable
+	private Boolean kindMutiert;
+
 
 	public KindContainer() {
 	}
@@ -122,6 +126,15 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 		this.betreuungen = betreuungen;
 	}
 
+	@Nullable
+	public Boolean getKindMutiert() {
+		return kindMutiert;
+	}
+
+	public void setKindMutiert(@Nullable Boolean kindMutiert) {
+		this.kindMutiert = kindMutiert;
+	}
+
 	@Override
 	public int compareTo(KindContainer other) {
 		CompareToBuilder compareToBuilder = new CompareToBuilder();
@@ -143,6 +156,7 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 				mutation.getBetreuungen().add(betreuung.copyForMutation(new Betreuung(), mutation));
 			}
 		}
+		mutation.setKindMutiert(false);
 		return mutation;
 	}
 

@@ -977,6 +977,7 @@ export default class EbeguRestUtil {
         restKindContainer.betreuungen = this.betreuungListToRestObject(kindContainer.betreuungen);
         restKindContainer.kindNummer = kindContainer.kindNummer;
         restKindContainer.nextNumberBetreuung = kindContainer.nextNumberBetreuung;
+        restKindContainer.kindMutiert = kindContainer.kindMutiert;
         return restKindContainer;
     }
 
@@ -1013,6 +1014,7 @@ export default class EbeguRestUtil {
             kindContainerTS.betreuungen = this.parseBetreuungList(kindContainerFromServer.betreuungen);
             kindContainerTS.kindNummer = kindContainerFromServer.kindNummer;
             kindContainerTS.nextNumberBetreuung = kindContainerFromServer.nextNumberBetreuung;
+            kindContainerTS.kindMutiert = kindContainerFromServer.kindMutiert;
             return kindContainerTS;
         }
         return undefined;
@@ -1093,6 +1095,8 @@ export default class EbeguRestUtil {
         restBetreuung.gesuchId = betreuung.gesuchId;
         restBetreuung.gesuchsperiode = this.gesuchsperiodeToRestObject({}, betreuung.gesuchsperiode);
         restBetreuung.betreuungNummer = betreuung.betreuungNummer;
+        restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
+        restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         return restBetreuung;
     }
 
@@ -1166,6 +1170,8 @@ export default class EbeguRestUtil {
             betreuungTS.kindNummer = betreuungFromServer.kindNummer;
             betreuungTS.gesuchId = betreuungFromServer.gesuchId;
             betreuungTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), betreuungFromServer.gesuchsperiode);
+            betreuungTS.betreuungMutiert = betreuungFromServer.betreuungMutiert;
+            betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
             return betreuungTS;
         }
         return undefined;
