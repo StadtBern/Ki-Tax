@@ -55,6 +55,18 @@ public class MailTemplateConfiguration {
 		return processInfoBetreuungenBestaetigtTemplate("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller);
 	}
 
+	public String getInfoVerfuegtGesuch(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
+		return processInfoBetreuungenBestaetigtTemplate("InfoVerfuegtGesuch.ftl", gesuch, gesuchsteller);
+	}
+
+	public String getInfoVerfuegtMutaion(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
+		return processInfoBetreuungenBestaetigtTemplate("InfoVerfuegtMutation.ftl", gesuch, gesuchsteller);
+	}
+
+	public String getInfoMahnung(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
+		return processInfoBetreuungenBestaetigtTemplate("InfoMahnung.ftl", gesuch, gesuchsteller);
+	}
+
 	private String processInfoBetreuungenBestaetigtTemplate(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "gesuch", gesuch };

@@ -25,4 +25,19 @@ public interface MailService {
 	 * Sendet eine Email mit der Information, dass ein Betreuungsplatz abgelehnt wurde.
 	 */
 	void sendInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
+	 */
+	void sendInfoVerfuegtGesuch(@Nonnull Gesuch gesuch) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass eine Mutation Verfügt wurde.
+	 */
+	void sendInfoVerfuegtMutation(@Nonnull Gesuch gesuch) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass eine Mahnung versendet wurde.
+	 */
+	void sendInfoMahnung(@Nonnull Gesuch gesuch) throws MailException;
 }

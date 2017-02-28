@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.mail.MailTemplateConfiguration;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.ebegu.mail.MailTemplateConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,30 +31,82 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	@Inject
 	private MailTemplateConfiguration mailTemplateConfig;
 
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
+
 
 	@Override
 	public void sendInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch) throws MailException {
-		Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
-		if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
-			String mailaddress = gesuchsteller.getMail();
-			String message = mailTemplateConfig.getInfoBetreuungenBestaetigt(gesuch, gesuchsteller);
-			sendMessageWithTemplate(message, mailaddress);
-			LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress);
-		} else {
-			LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 is null");
+		if (!ebeguConfiguration.isSendingOfMailsDisabled()) {
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
+				String mailaddress = gesuchsteller.getMail();
+				String message = mailTemplateConfig.getInfoBetreuungenBestaetigt(gesuch, gesuchsteller);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 is null");
+			}
 		}
 	}
 
 	@Override
 	public void sendInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung) throws MailException {
-		Gesuchsteller gesuchsteller = extractGesuchsteller1(betreuung.extractGesuch());
-		if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
-			String mailaddress = gesuchsteller.getMail();
-			String message = mailTemplateConfig.getInfoBetreuungAbgelehnt(betreuung, gesuchsteller);
-			sendMessageWithTemplate(message, mailaddress);
-			LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress);
-		} else {
-			LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 is null");
+		if (!ebeguConfiguration.isSendingOfMailsDisabled()) {
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(betreuung.extractGesuch());
+			if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
+				String mailaddress = gesuchsteller.getMail();
+				String message = mailTemplateConfig.getInfoBetreuungAbgelehnt(betreuung, gesuchsteller);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
+	@Override
+	public void sendInfoVerfuegtGesuch(@Nonnull Gesuch gesuch) throws MailException {
+		if (!ebeguConfiguration.isSendingOfMailsDisabled()) {
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
+				String mailaddress = gesuchsteller.getMail();
+				String message = mailTemplateConfig.getInfoVerfuegtGesuch(gesuch, gesuchsteller);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoVerfuegtGesuch wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoVerfuegtGesuch because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
+	@Override
+	public void sendInfoVerfuegtMutation(@Nonnull Gesuch gesuch) throws MailException {
+		if(!ebeguConfiguration.isSendingOfMailsDisabled()) {
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
+				String mailaddress = gesuchsteller.getMail();
+				String message = mailTemplateConfig.getInfoVerfuegtMutaion(gesuch, gesuchsteller);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoVerfuegtMutation wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoVerfuegtMutation because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
+	@Override
+	public void sendInfoMahnung(@Nonnull Gesuch gesuch) throws MailException {
+		if(!ebeguConfiguration.isSendingOfMailsDisabled()) {
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
+				String mailaddress = gesuchsteller.getMail();
+				String message = mailTemplateConfig.getInfoMahnung(gesuch, gesuchsteller);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoMahnung wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoMahnung because Gesuchsteller 1 is null");
+			}
 		}
 	}
 
