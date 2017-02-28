@@ -38,6 +38,7 @@
     "ERSTGESUCH_WILLKOMMEN_TEXT_3": "Sollten Sie zu einer Angabe weitere Informationen benötigen klicken Sie auf das Infofeld",
     "TAETIGKEIT": "Tätigkeit",
     "ERROR_MAX": "Maximaler Wert überschritten",
+    "ERROR_NUMBER": "Falsches Zahlenformat",
     "ERROR_VALUE": "Wert zu gross oder falsch formatiert",
     "ERROR_UNEXPECTED": "Es ist ein unerwarteter Fehler aufgetreten",
     "ERROR_UNEXPECTED_EBEGU_RUNTIME": "Es ist ein Fehler aufgetreten",
