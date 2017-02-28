@@ -43,7 +43,7 @@ export class TraegerschaftViewController {
     removeTraegerschaft(traegerschaft: any): void {
         this.newTraegerschaft = undefined;
         this.traegerschaftRS.removeTraegerschaft(traegerschaft.id).then((response) => {
-            var index = EbeguUtil.getIndexOfElementwithID(traegerschaft, this.traegerschaften);
+            let index = EbeguUtil.getIndexOfElementwithID(traegerschaft, this.traegerschaften);
             if (index > -1) {
                 this.traegerschaften.splice(index, 1);
             }

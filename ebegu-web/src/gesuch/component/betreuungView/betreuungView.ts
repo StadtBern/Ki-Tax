@@ -19,11 +19,12 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {IBetreuungStateParams} from '../../gesuch.route';
-import Moment = moment.Moment;
-import IScope = angular.IScope;
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import Moment = moment.Moment;
+import IScope = angular.IScope;
 import ILogService = angular.ILogService;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
@@ -47,6 +48,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     betreuungIndex: number;
     isMutationsmeldungStatus: boolean;
     mutationsmeldungModel: TSBetreuung;
+    isNewestGesuch: boolean;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log'];
@@ -84,6 +86,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         } else {
             this.$log.error('There is no kind available with kind-number:' + $stateParams.kindNumber);
         }
+        this.gesuchModelManager.isNeuestesGesuch().then((response: boolean) => {
+            this.isNewestGesuch = response;
+        });
     }
 
     /**
@@ -322,9 +327,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      */
     public isEnabled(): boolean {
         if (this.getBetreuungModel()) {
-
-            return !this.getBetreuungModel().hasVorgaenger() &&
-                (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT) && !this.isKorrekturModusJugendamt()));
+            return !this.getBetreuungModel().hasVorgaenger()
+                && (this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND) || (this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT)
+                && !this.isKorrekturModusJugendamt()));
         }
         return false;
     }
@@ -418,6 +423,16 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         //create dummy copy of model
         this.mutationsmeldungModel = angular.copy(this.getBetreuungModel());
         this.isMutationsmeldungStatus = true;
+    }
+
+    /**
+     * Mutationsmeldungen werden nur bei Mutationen oder bei Gesuchen in Status VERFUEGT erlaubt. Ausserdem muss es
+     * sich um letztes bzw. neuestes Gesuch handeln
+     */
+    public isMutationsmeldungAllowed(): boolean {
+        return (this.isMutation() || (this.gesuchModelManager.getGesuch().status === TSAntragStatus.VERFUEGT))
+            && this.isNewestGesuch
+            && this.getBetreuungModel().betreuungsstatus !== TSBetreuungsstatus.WARTEN;
     }
 
     public mutationsmeldungSenden(): void {

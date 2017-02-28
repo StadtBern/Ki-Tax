@@ -151,7 +151,18 @@ export default class MitteilungRS {
                 'Content-Type': 'application/json'
             }
         }).then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
+            this.log.debug('PARSING Betreuungsmitteilung REST object ', response.data);
+            return this.ebeguRestUtil.parseBetreuungsmitteilung(new TSBetreuungsmitteilung(), response.data);
+        });
+    }
+
+    public applyBetreuungsmitteilung(betreuungsmitteilungId: string): IPromise<TSBetreuungsmitteilung> {
+        return this.http.put(this.serviceURL + '/applybetreuungsmitteilung/' + betreuungsmitteilungId, null, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.log.debug('PARSING Betreuungsmitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseBetreuungsmitteilung(new TSBetreuungsmitteilung(), response.data);
         });
     }

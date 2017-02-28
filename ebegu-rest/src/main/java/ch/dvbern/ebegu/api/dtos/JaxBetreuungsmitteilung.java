@@ -19,11 +19,22 @@ public class JaxBetreuungsmitteilung extends JaxMitteilung {
 	@NotNull
 	private List<JaxBetreuungsmitteilungPensum> betreuungspensen = new ArrayList<>();
 
+	@NotNull
+	private Boolean applied = false;
+
 	public List<JaxBetreuungsmitteilungPensum> getBetreuungspensen() {
 		return betreuungspensen;
 	}
 
 	public void setBetreuungspensen(List<JaxBetreuungsmitteilungPensum> betreuungspensen) {
 		this.betreuungspensen = betreuungspensen;
+	}
+
+	public Boolean getApplied() {
+		return applied;
+	}
+
+	public void setApplied(Boolean applied) {
+		this.applied = applied;
 	}
 }
