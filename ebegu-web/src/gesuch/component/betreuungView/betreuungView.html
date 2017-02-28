@@ -2,9 +2,10 @@
     <div class="row viewTitle">
         <div class="col-md-12">
             <h1>
+                <!--eventuell nummer noch anders lesen per methode-->
                     <span data-translate="BETREUUNGSANGEBOT_NUMBER"
                           data-translate-value-kindname="{{vm.getKindModel().kindJA.getFullName()}}"
-                          data-translate-value-betreuungnumber="{{vm.gesuchModelManager.getBetreuungToWorkWith().betreuungNummer}}"></span>
+                          data-translate-value-betreuungnumber="{{vm.model.betreuungNummer}}"></span>
             </h1>
             <hr class="header"/>
         </div>
@@ -169,7 +170,7 @@
                                             <label class="md-no-float" data-translate="BETREUUNGSPENSUM"
                                                    data-translate-value-betreuungspensumnumber="{{$index + 1}}"
                                                    for="betreuungspensum-{{$index}}"></label>
-                                            <input id="betreuungspensum-{{$index}}" type="text"
+                                            <input id="betreuungspensum-{{$index}}" type="number"
                                                    name="betreuungspensum-{{$index}}"
                                                    ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"
                                                    dv-max-length class="form-control"

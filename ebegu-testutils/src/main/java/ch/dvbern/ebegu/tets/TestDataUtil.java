@@ -43,7 +43,9 @@ public final class TestDataUtil {
 	public static final LocalDate ENDE_PERIODE = LocalDate.of(PERIODE_JAHR_2, Month.JULY, 31);
 
 	public static final LocalDate STICHTAG_EKV_1 = LocalDate.of(PERIODE_JAHR_1, Month.SEPTEMBER, 1);
+	public static final LocalDate STICHTAG_EKV_1_GUELTIG = STICHTAG_EKV_1.plusMonths(1);
 	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(PERIODE_JAHR_2, Month.APRIL, 1);
+	public static final LocalDate STICHTAG_EKV_2_GUELTIG =STICHTAG_EKV_2.plusMonths(1);
 
 	private TestDataUtil() {
 	}

@@ -352,9 +352,16 @@ export class GesuchToolbarController {
         return newest;
     }
 
+    /**
+     * Institutionen werden zum Screen Betreuungen geleitet, waehrend alle anderen Benutzer zu fallCreation gehen
+     */
     private goToOpenGesuch(gesuchId: string): void {
         if (gesuchId) {
-            this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
+            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+                this.$state.go('gesuch.betreuungen', {gesuchId: gesuchId});
+            } else {
+                this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
+            }
         }
     }
 

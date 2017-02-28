@@ -72,9 +72,9 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
             deleteText: 'KIND_LOESCHEN_BESCHREIBUNG'
         })
             .then(() => {   //User confirmed removal
-                let kindNumber: number = this.gesuchModelManager.findKind(kind);
-                if (kindNumber > 0) {
-                    this.gesuchModelManager.setKindIndex(kindNumber);
+                let kindIndex: number = this.gesuchModelManager.findKind(kind);
+                if (kindIndex >= 0) {
+                    this.gesuchModelManager.setKindIndex(kindIndex);
                     this.gesuchModelManager.removeKind();
                 }
             });
