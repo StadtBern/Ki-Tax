@@ -12,17 +12,17 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import BetreuungRS from '../../service/betreuungRS.rest';
 import FallRS from '../../../gesuch/service/fallRS.rest';
 import TSUser from '../../../models/TSUser';
-import Moment = moment.Moment;
-import IFormController = angular.IFormController;
-import IQService = angular.IQService;
-import IWindowService = angular.IWindowService;
-import IRootScopeService = angular.IRootScopeService;
 import {IStateService} from 'angular-ui-router';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
+import Moment = moment.Moment;
+import IFormController = angular.IFormController;
+import IQService = angular.IQService;
+import IWindowService = angular.IWindowService;
+import IRootScopeService = angular.IRootScopeService;
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -303,7 +303,7 @@ export class DVMitteilungListController {
         this.$state.go('gesuch.betreuung', {
             betreuungNumber: mitteilung.betreuung.betreuungNummer,
             kindNumber: mitteilung.betreuung.kindNummer,
-            gesuchId: mitteilung.betreuung.gesuchId // todo beim Hier muss das richtige Gesuch uebergeben werden. Es ist nicht unbedingt das von der Betreuung
+            gesuchId: mitteilung.betreuung.gesuchId
         });
     }
 
@@ -320,7 +320,7 @@ export class DVMitteilungListController {
             this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                 title: 'MUTATIONSMELDUNG_UEBERNEHMEN',
                 deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG'
-            }).then(() => {   //User confirmed removal
+            }).then(() => {   //User confirmed message
                 let betreuungsmitteilung: TSBetreuungsmitteilung = <TSBetreuungsmitteilung>mitteilung;
                 this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: TSBetreuungsmitteilung) => {
                     this.loadAllMitteilungen();

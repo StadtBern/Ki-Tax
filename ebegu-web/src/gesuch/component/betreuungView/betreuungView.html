@@ -75,7 +75,6 @@
                         </div>
                     </div>
 
-
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
@@ -177,8 +176,8 @@
                                                    ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
                                                    ng-required="true"
                                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
-                                            <dv-bisher gs="vm.getBetreuungspensum($index).betreuungspensumGS.pensum"
-                                                       ja="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"></dv-bisher>
+                                            <!--<dv-bisher gs="vm.getBetreuungspensum($index).betreuungspensumGS.pensum"-->
+                                                       <!--ja="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"></dv-bisher>-->
                                             <dv-error-messages
                                                 for="vm.form['betreuungspensum-' + $index].$error"></dv-error-messages>
 
@@ -199,9 +198,9 @@
                                                            ng-required="true"
                                                            ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                             </dv-datepicker>
-                                            <dv-bisher
-                                                gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigAb"
-                                                ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"></dv-bisher>
+                                            <!--<dv-bisher-->
+                                                <!--gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigAb"-->
+                                                <!--ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"></dv-bisher>-->
                                             <dv-error-messages
                                                 for="vm.form['datumAb-' + $index].$error"></dv-error-messages>
                                         </dv-input-container>
@@ -217,9 +216,9 @@
                                                            ng-required="false"
                                                            ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                             </dv-datepicker>
-                                            <dv-bisher
-                                                gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigBis"
-                                                ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"></dv-bisher>
+                                            <!--<dv-bisher-->
+                                                <!--gs="vm.getBetreuungspensum($index).betreuungspensumGS.gueltigkeit.gueltigBis"-->
+                                                <!--ja="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"></dv-bisher>-->
                                             <dv-error-messages
                                                 for="vm.form['datumBis-' + $index].$error"></dv-error-messages>
                                         </dv-input-container>

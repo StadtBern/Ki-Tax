@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -359,17 +361,29 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Betreuungsmitteilung applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung) {
 		final Gesuch gesuch = mitteilung.getBetreuung().extractGesuch();
-		final Optional<Gesuch> neustesGesuchOpt = gesuchService.getNeustesGesuchFuerGesuch(gesuch);
+		// neustes Gesuch lesen
+		final Optional<Gesuch> neustesGesuchOpt;
+		try {
+			neustesGesuchOpt = gesuchService.getNeustesGesuchFuerGesuch(gesuch);
+		} catch (EJBTransactionRolledbackException exception) {
+			//Wenn der Sachbearbeiter den neusten Antrag nicht lesen darf ist es ein noch nicht freigegebener ONLINE Antrag
+			if(exception.getCause().getClass().equals(EJBAccessException.class)) {
+				throw new EbeguRuntimeException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, exception);
+			}
+			throw exception;
+		}
+
 		if (neustesGesuchOpt.isPresent()) {
 			final Gesuch neustesGesuch = neustesGesuchOpt.get();
 			if (!AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus()) && neustesGesuch.isMutation()) {
-				//betreuungsaenderungen der bestehenden Mutation hinzufuegen
+				//betreuungsaenderungen der bestehenden, offenen Mutation hinzufuegen (wenn wir hier sind muss es sich um ein PAPIER) Antrag handeln
 				return applyBetreuungsmitteilungToMutation(neustesGesuch, mitteilung);
 			}
 			else if (AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus())) {
-				// create Mutation
+				// create Mutation if there is currently no Mutation
 				final Optional<Gesuch> mutationOpt = this.gesuchService.antragMutieren(gesuch.getFall().getFallNummer(), gesuch.getGesuchsperiode().getId(), LocalDate.now());
 				if (mutationOpt.isPresent()) {
 					Gesuch persistedMutation = gesuchService.createGesuch(mutationOpt.get());
@@ -377,27 +391,25 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				}
 			}
 			else {
-				// todo beim Pruefen dass dies wirklich so ist
-				throw new EbeguRuntimeException("applyBetreuungsmitteilung", "Fehler beim Erstellen einer Mutation", "Es gibt bereits eine offene Mutation für dieses Gesuch, die Sie nicht bearbeiten duerfen");
+				throw new EbeguRuntimeException("applyBetreuungsmitteilung", "Fehler beim Erstellen einer Mutation", "Das Erstgesuch ist noch nicht Freigegeben");
 			}
 		}
 		return mitteilung;
 	}
 
 	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
-		final Betreuung betreuungToChange = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getBetreuungNummer());
-		if (betreuungToChange != null) {
-			betreuungToChange.getBetreuungspensumContainers().clear();
-			for (final BetreuungsmitteilungPensum betPensum : mitteilung.getBetreuungspensen()) {
+		final Optional<Betreuung> betreuungToChangeOpt = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getBetreuungNummer());
+		if (betreuungToChangeOpt.isPresent()) {
+			Betreuung existingBetreuung = betreuungToChangeOpt.get();
+			existingBetreuung.getBetreuungspensumContainers().clear();//delete all current Betreuungspensen before we add the modified list
+			for (final BetreuungsmitteilungPensum betPensumMitteilung : mitteilung.getBetreuungspensen()) {
 				BetreuungspensumContainer betPenCont = new BetreuungspensumContainer();
-				betPenCont.setBetreuung(betreuungToChange);
-				Betreuungspensum betPensumJA = new Betreuungspensum();
-				betPensumJA.setGueltigkeit(betPensum.getGueltigkeit());
-				betPensumJA.setPensum(betPensum.getPensum());
-				betPensumJA.setNichtEingetreten(false);
+				betPenCont.setBetreuung(existingBetreuung);
+				Betreuungspensum betPensumJA = new Betreuungspensum(betPensumMitteilung);
+				//gs container muss nicht mikopiert werden
 				betPenCont.setBetreuungspensumJA(betPensumJA);
-				betreuungToChange.getBetreuungspensumContainers().add(betPenCont);
-				betreuungService.saveBetreuung(betreuungToChange, false);
+				existingBetreuung.getBetreuungspensumContainers().add(betPenCont);
+				betreuungService.saveBetreuung(existingBetreuung, false);
 			}
 			mitteilung.setApplied(true);
 			mitteilung.setMitteilungStatus(MitteilungStatus.ERLEDIGT);

@@ -69,5 +69,9 @@ public interface MitteilungService {
 
 	Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung);
 
+	/**
+	 * Applies all passed Betreuungspensen from the Betreuungsmitteilung to the existing Betreuung
+	 * with the same number
+	 */
 	Betreuungsmitteilung applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung);
 }

@@ -431,7 +431,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      */
     public isMutationsmeldungAllowed(): boolean {
         return (this.isMutation() || (this.gesuchModelManager.getGesuch().status === TSAntragStatus.VERFUEGT))
-            && this.isNewestGesuch;
+            && this.isNewestGesuch
+            && this.getBetreuungModel().betreuungsstatus !== TSBetreuungsstatus.WARTEN;
     }
 
     public mutationsmeldungSenden(): void {
