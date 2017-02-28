@@ -120,9 +120,9 @@ export default class EbeguUtil {
      * hilfsmethode um die betreuungsnummer in ihre einzelteile zu zerlegen. gibt ein objekt zurueck welches die werte einzeln enthaelt
      * @param betreuungsnummer im format JJ.Fallnr.kindnr.betrnr
      */
-    public splitBetreuungsnummer(betreuungsnummer: string): TSBetreuungsnummerParts{
+    public splitBetreuungsnummer(betreuungsnummer: string): TSBetreuungsnummerParts {
         let parts: Array<string> = betreuungsnummer.split('.');
-        if (!parts ||parts.length != 4){
+        if (!parts || parts.length !== 4) {
             return undefined;
         }
         return new TSBetreuungsnummerParts(parts[0], parts[1], parts[2], parts[3]);

@@ -8,7 +8,7 @@ import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
-import {IPromise, ILogService} from 'angular';
+import {IPromise, IDeferred, ILogService, IQService, IRootScopeService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
 import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensverschlechterungContainer';
@@ -59,8 +59,6 @@ import TSFamiliensituationContainer from '../../models/TSFamiliensituationContai
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../models/TSAdresseContainer';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
-import IQService = angular.IQService;
-import IRootScopeService = angular.IRootScopeService;
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -94,11 +92,9 @@ export default class GesuchModelManager {
         this.updateActiveInstitutionenList();
         this.updateActiveGesuchsperiodenList();
 
-        $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
-            this.setGesuch(undefined);
-        });
         $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
             this.setGesuch(undefined);
+            this.log.debug('Cleared gesuch on logout');
         });
     }
 
@@ -460,7 +456,7 @@ export default class GesuchModelManager {
 
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
-     * Wenn force werden Gesuch und Fall immer erstellt. Das erstellte Gesuch ist ein PAPIER Gesuch
+     * Wenn force werden Gesuch und Fall immer erstellt.
      */
     public initGesuch(forced: boolean, eingangsart: TSEingangsart) {
         if (forced || (!forced && !this.gesuch)) {
@@ -470,24 +466,30 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Erstellt ein Gesuch mit der angegebenen Eingangsart und Gesuchsperiode
+     * Erstellt ein neues Gesuch mit der angegebenen Eingangsart und Gesuchsperiode. Damit dies im resolve des
+     * routing gemacht werden kann, wird das ganze als promise gehandhabt
      * @param forced
      * @param eingangsart
      * @param gesuchsperiodeId
      * @param fallId
+     * @return a void promise that is resolved once all subpromises are done
      */
-    public initGesuchWithEingangsart(forced: boolean, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
+    public initGesuchWithEingangsart(forced: boolean, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string): IPromise<TSGesuch> {
         this.initGesuch(forced, eingangsart);
+        let setGesuchsperiodeProm: IPromise<void>;
         if (gesuchsperiodeId) {
-            this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
+            setGesuchsperiodeProm = this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
                 this.gesuch.gesuchsperiode = periode;
             });
         }
+
+        let setFallProm: angular.IPromise<void>;
         if (fallId) {
-            this.fallRS.findFall(fallId).then(foundFall => {
+            setFallProm = this.fallRS.findFall(fallId).then(foundFall => {
                 this.gesuch.fall = foundFall;
             });
         }
+
         if (forced) {
             if (TSEingangsart.ONLINE === eingangsart) {
                 this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
@@ -495,6 +497,13 @@ export default class GesuchModelManager {
                 this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
             }
         }
+
+        // this creates a list of promises and resolves them all. once all promises are resolved the .then function is triggered
+        return this.$q.all([setGesuchsperiodeProm, setFallProm]).then(() => {
+            this.log.debug('initialized new gesuch ', this.gesuch);
+            return this.gesuch;
+
+        });
     }
 
     /**
@@ -698,8 +707,8 @@ export default class GesuchModelManager {
     public getKindToWorkWith(): TSKindContainer {
         if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length > this.kindIndex) {
             return this.gesuch.kindContainers[this.kindIndex];
-        } else{
-            this.log.error('kindContainers is not set or kindIndex is out of bounds ' + this.kindIndex)
+        } else {
+            this.log.error('kindContainers is not set or kindIndex is out of bounds ' + this.kindIndex);
         }
         return undefined;
     }
@@ -712,8 +721,8 @@ export default class GesuchModelManager {
     public getBetreuungToWorkWith(): TSBetreuung {
         if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen.length > this.betreuungIndex) {
             return this.getKindToWorkWith().betreuungen[this.betreuungIndex];
-        } else{
-            this.log.error('kindToWorkWith is not set or index of betreuung is out of bounds ' + this.betreuungIndex)
+        } else {
+            this.log.error('kindToWorkWith is not set or index of betreuung is out of bounds ' + this.betreuungIndex);
         }
         return undefined;
     }

@@ -1,4 +1,4 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, ILogService} from 'angular';
 import UserRS from '../../../core/service/userRS.rest';
 import TSUser from '../../../models/TSUser';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -66,14 +66,15 @@ export class GesuchToolbarController {
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
-        '$mdSidenav'];
+        '$mdSidenav', '$log'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
                 private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope,
                 private gesuchModelManager: GesuchModelManager,
                 private authServiceRS: AuthServiceRS,
-                private $mdSidenav: ng.material.ISidenavService) {
+                private $mdSidenav: ng.material.ISidenavService,
+                private $log: ILogService) {
 
     }
 
@@ -191,6 +192,9 @@ export class GesuchToolbarController {
                 this.antragList = angular.copy(response);
                 if (response && response.length > 0) {
                     this.gesuchRS.findGesuch(this.getNewest(this.antragList).antragId).then((response) => {
+                        if (!response) {
+                            this.$log.warn('Could not find gesuch for id ' + this.getNewest(this.antragList).antragId);
+                        }
                         this.gesuchModelManager.setGesuch(angular.copy(response));
                         this.updateGesuchperiodeList();
                         this.updateGesuchNavigationList();
