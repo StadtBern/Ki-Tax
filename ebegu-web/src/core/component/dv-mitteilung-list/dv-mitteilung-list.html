@@ -120,11 +120,14 @@
                                           ng-click="vm.gotoBetreuung(mitteilung)"
                                           ng-show="mitteilung.betreuung"></span>
                                     <span class="formatted" ng-bind="mitteilung.message"></span>
-                                    <dv-loading-button button-click="vm.applyBetreuungsmitteilung()" type="button"
+                                    <dv-loading-button button-click="vm.applyBetreuungsmitteilung(mitteilung)" type="button"
                                                        button-class="dv-btn-mutation-hinzufuegen"
-                                                       ng-if="vm.isBetreuungsmitteilung(mitteilung)">
+                                                       ng-if="vm.isBetreuungsmitteilungNotApplied(mitteilung)">
                                         <span data-translate="MUTATIONSMELDUNG_APPLY"></span>
                                     </dv-loading-button>
+                                    <span ng-if="vm.isBetreuungsmitteilungApplied(mitteilung)"
+                                          class="inlineHint applied"
+                                          data-translate="MUTATIONSMELDUNG_APPLIED"></span>
                                 </div>
                             </tab-body>
                         </dv-accordion-tab>

@@ -38,6 +38,7 @@
     "ERSTGESUCH_WILLKOMMEN_TEXT_3": "Sollten Sie zu einer Angabe weitere Informationen benötigen klicken Sie auf das Infofeld",
     "TAETIGKEIT": "Tätigkeit",
     "ERROR_MAX": "Maximaler Wert überschritten",
+    "ERROR_NUMBER": "Falsches Zahlenformat",
     "ERROR_VALUE": "Wert zu gross oder falsch formatiert",
     "ERROR_UNEXPECTED": "Es ist ein unerwarteter Fehler aufgetreten",
     "ERROR_UNEXPECTED_EBEGU_RUNTIME": "Es ist ein Fehler aufgetreten",
@@ -900,8 +901,11 @@
     "MUTATIONSMELDUNG_SENDEN_UPPER": "MUTATIONSMELDUNG AN JUGENDAMT",
     "MUTATIONSMELDUNG_BETREFF": "Mutationsmeldung",
     "MUTATIONSMELDUNG_APPLY": "ZUR MUTATION HINZUFÜGEN",
+    "MUTATIONSMELDUNG_APPLIED": "Diese Mitteilung wurde bereits einer Mutation hinzugefügt",
     "MUTATIONSMELDUNG_CONFIRMATION": "Möchten Sie wirklich die eingegeben Mutation mitteilen?",
     "MUTATIONSMELDUNG_BESCHREIBUNG": "Die eingegebenen Daten werden an das Jugendamt gesendet",
     "MUTATIONSMELDUNG_PENSUM": "Pensum ",
-    "MUTATIONSMELDUNG_VOM": " vom "
+    "MUTATIONSMELDUNG_VOM": " vom ",
+    "MUTATIONSMELDUNG_UEBERNEHMEN": "Möchten Sie wirklich die Änderungen zur Mutation hinzufügen?",
+    "MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG": "Die eingegebenen Daten werden der bestehenden Mutation bzw. einer neuen Mutation hinzugefügt"
 }

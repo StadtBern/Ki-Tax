@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -22,6 +24,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -52,6 +56,12 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
+
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private BetreuungService betreuungService;
 
 	private final Logger LOG = LoggerFactory.getLogger(MitteilungServiceBean.class.getSimpleName());
 
@@ -145,6 +155,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	public Optional<Mitteilung> findMitteilung(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Mitteilung mitteilung = persistence.find(Mitteilung.class, key);
+		return Optional.ofNullable(mitteilung);
+	}
+
+	@Override
+	@Nonnull
+	public Optional<Betreuungsmitteilung> findBetreuungsmitteilung(@Nonnull String key) {
+		Objects.requireNonNull(key, "id muss gesetzt sein");
+		Betreuungsmitteilung mitteilung = persistence.find(Betreuungsmitteilung.class, key);
 		return Optional.ofNullable(mitteilung);
 	}
 
@@ -340,6 +358,64 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		ensureEmpfaengerIsSet(betreuungsmitteilung);
 
 		return persistence.persist(betreuungsmitteilung); // A Betreuungsmitteilung is created and sent, therefore persist and not merge
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	public Betreuungsmitteilung applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung) {
+		final Gesuch gesuch = mitteilung.getBetreuung().extractGesuch();
+		// neustes Gesuch lesen
+		final Optional<Gesuch> neustesGesuchOpt;
+		try {
+			neustesGesuchOpt = gesuchService.getNeustesGesuchFuerGesuch(gesuch);
+		} catch (EJBTransactionRolledbackException exception) {
+			//Wenn der Sachbearbeiter den neusten Antrag nicht lesen darf ist es ein noch nicht freigegebener ONLINE Antrag
+			if(exception.getCause().getClass().equals(EJBAccessException.class)) {
+				throw new EbeguRuntimeException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, exception);
+			}
+			throw exception;
+		}
+
+		if (neustesGesuchOpt.isPresent()) {
+			final Gesuch neustesGesuch = neustesGesuchOpt.get();
+			if (!AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus()) && neustesGesuch.isMutation()) {
+				//betreuungsaenderungen der bestehenden, offenen Mutation hinzufuegen (wenn wir hier sind muss es sich um ein PAPIER) Antrag handeln
+				return applyBetreuungsmitteilungToMutation(neustesGesuch, mitteilung);
+			}
+			else if (AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus())) {
+				// create Mutation if there is currently no Mutation
+				final Optional<Gesuch> mutationOpt = this.gesuchService.antragMutieren(gesuch.getFall().getFallNummer(), gesuch.getGesuchsperiode().getId(), LocalDate.now());
+				if (mutationOpt.isPresent()) {
+					Gesuch persistedMutation = gesuchService.createGesuch(mutationOpt.get());
+					return applyBetreuungsmitteilungToMutation(persistedMutation, mitteilung);
+				}
+			}
+			else {
+				throw new EbeguRuntimeException("applyBetreuungsmitteilung", "Fehler beim Erstellen einer Mutation", "Das Erstgesuch ist noch nicht Freigegeben");
+			}
+		}
+		return mitteilung;
+	}
+
+	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
+		final Optional<Betreuung> betreuungToChangeOpt = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getBetreuungNummer());
+		if (betreuungToChangeOpt.isPresent()) {
+			Betreuung existingBetreuung = betreuungToChangeOpt.get();
+			existingBetreuung.getBetreuungspensumContainers().clear();//delete all current Betreuungspensen before we add the modified list
+			for (final BetreuungsmitteilungPensum betPensumMitteilung : mitteilung.getBetreuungspensen()) {
+				BetreuungspensumContainer betPenCont = new BetreuungspensumContainer();
+				betPenCont.setBetreuung(existingBetreuung);
+				Betreuungspensum betPensumJA = new Betreuungspensum(betPensumMitteilung);
+				//gs container muss nicht mikopiert werden
+				betPenCont.setBetreuungspensumJA(betPensumJA);
+				existingBetreuung.getBetreuungspensumContainers().add(betPenCont);
+				betreuungService.saveBetreuung(existingBetreuung, false);
+			}
+			mitteilung.setApplied(true);
+			mitteilung.setMitteilungStatus(MitteilungStatus.ERLEDIGT);
+			return persistence.merge(mitteilung);
+		}
+		return mitteilung;
 	}
 
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {
