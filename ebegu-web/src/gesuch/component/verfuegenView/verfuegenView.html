@@ -173,16 +173,27 @@
                         </button>
                     </div>
 
+                    <!--export for external programs-->
                     <div class="col-xs-12"  dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
                          dv-show-expression="vm.showExportLink()">
-                        <button type="button" class="btn-link link-underline" ng-click="vm.openExport()">
+                        <a type="button" class="btn-link link-underline" ng-click="vm.openExport()"  href="">
                             <i class="fa fa-file-text-o"></i>
                             <span data-translate="DOWNLOAD_EXPORT_FILE"></span>
-                        </button>
+                        </a>
 
-                        <a href="https://www.kitadmin.ch/" class="btn-link link-underline" target="_blank">
+                        <a href="https://www.kitadmin.ch/" class="btn-link link-underline marginLeft10" target="_blank">
                             <span data-translate="DOWNLOAD_EXPORT_FILE_LINK"></span>
                         </a>
+
+
+                    </div>
+                    <!--schemalinks-->
+                    <div class="col-xs-12 marginTop10" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
+                         dv-show-expression="vm.showSchemas && vm.showExportLink()">
+                        <span class="marginRight10"> Schemas:</span>
+                        <a ng-click="vm.exportJsonSchema()"  href="" class="btn-link link-underline"><span>json</span></a>
+                        <a ng-click="vm.exportXmlSchema()"  href=""  title="to show please disable popupblocker" class="btn-link link-underline"><span>xml</span></a>
                     </div>
 
 

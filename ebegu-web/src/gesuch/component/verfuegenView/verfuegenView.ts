@@ -18,6 +18,7 @@ import TSBetreuung from '../../../models/TSBetreuung';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import ExportRS from '../../service/exportRS.rest';
+import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -36,15 +37,16 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log', '$stateParams', '$window' , 'ExportRS'];
+        'DvDialog', 'DownloadRS', '$log', '$stateParams', '$window' , 'ExportRS', 'ApplicationPropertyRS'];
 
     private verfuegungen: TSVerfuegung[] = [];
+    private showSchemas: boolean;
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, $scope: IScope, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IBetreuungStateParams,
-                private $window: ng.IWindowService, private exportRS: ExportRS) {
+                private $window: ng.IWindowService, private exportRS: ExportRS, private applicationPropertyRS: ApplicationPropertyRS) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
 
@@ -99,6 +101,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
+        this.initDevModeParameter();
+    }
+
+    private initDevModeParameter() {
+        this.applicationPropertyRS.isDevMode().then((response: boolean) => {
+            // Schemas are only visible in devmode
+            this.showSchemas = response
+        });
     }
 
     cancel(): void {
@@ -337,6 +347,20 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public showExportLink(): boolean {
         return this.isBetreuungInStatus(TSBetreuungsstatus.VERFUEGT);
     }
+    public exportJsonSchema() {
+
+        let win: Window = this.$window.open('', EbeguUtil.generateRandomName(5));
+        this.exportRS.getJsonSchemaString().then((result)=>{
+            win.document.write('<body><pre>' +result+ '</pre></body>');
+        });
+    }
+    public exportXmlSchema() {
+        this.exportRS.getXmlSchemaString().then((result)=>{
+            this.$window.open("data:text/xml;charset=utf-8,"+result, "", "_blank")
+        });
+    }
+
+
 
     public showNichtEintretenPdfLink(): boolean {
         let nichtVerfuegt = !this.isBetreuungInStatus(TSBetreuungsstatus.VERFUEGT);
