@@ -486,4 +486,8 @@ public class Gesuch extends AbstractEntity {
 		}
 		return mutation;
 	}
+
+	public String getEingangsdatumFormated(){
+		return Constants.DATE_FORMATTER.format(eingangsdatum);
+	}
 }

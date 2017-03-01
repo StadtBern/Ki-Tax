@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.errors.MailException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -58,6 +59,7 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 		}
 	}
 
+	@SuppressFBWarnings("REC_CATCH_EXCEPTION")
 	private void doSendMessage(@Nonnull String messageBody, @Nonnull String mailadress) throws MailException {
 		final SMTPClient client = new SMTPClient("UTF-8");
 		try {
@@ -76,7 +78,7 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 			writer.close();
 			assertPositiveIntermediate(client);
 			client.quit();
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			LOG.error("Error while sending Mail to: '" + mailadress + "'", e);
 			throw new MailException("Error while sending Mail to: '" + mailadress + "'", e);
 		} finally {

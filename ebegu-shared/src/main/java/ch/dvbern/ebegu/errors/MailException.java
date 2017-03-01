@@ -15,7 +15,7 @@ import javax.ejb.ApplicationException;
 /**
  *   Exception that gets thrown if the transmission of an email fails
  */
-@ApplicationException(rollback = true)
+@ApplicationException(rollback = false)
 public class MailException extends Exception {
 
 
