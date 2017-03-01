@@ -14,14 +14,14 @@ public class EbeguSchemaOutputResolver extends SchemaOutputResolver {
 	private StringWriter stringWriter = new StringWriter();
 
 	@Override
-    public Result createOutput(String namespaceUri, String suggestedFileName) throws IOException {
+	public Result createOutput(String namespaceUri, String suggestedFileName) throws IOException {
 		StreamResult result = new StreamResult(stringWriter);
-     result.setSystemId(suggestedFileName);
-     return result;
-    }
+		result.setSystemId(suggestedFileName);
+		return result;
+	}
 
 	public String getSchema() {
-     return stringWriter.toString();
- }
+		return stringWriter.toString();
+	}
 
 }

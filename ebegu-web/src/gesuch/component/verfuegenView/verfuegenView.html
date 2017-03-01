@@ -174,9 +174,10 @@
                     </div>
 
                     <!--export for external programs-->
-                    <div class="col-xs-12"  dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
+                    <div class="col-xs-12" dv-show-element
+                         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
                          dv-show-expression="vm.showExportLink()">
-                        <a type="button" class="btn-link link-underline" ng-click="vm.openExport()"  href="">
+                        <a type="button" class="btn-link link-underline" ng-click="vm.openExport()" href="">
                             <i class="fa fa-file-text-o"></i>
                             <span data-translate="DOWNLOAD_EXPORT_FILE"></span>
                         </a>
@@ -192,8 +193,10 @@
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
                          dv-show-expression="vm.showSchemas && vm.showExportLink()">
                         <span class="marginRight10"> Schemas:</span>
-                        <a ng-click="vm.exportJsonSchema()"  href="" class="btn-link link-underline"><span>json</span></a>
-                        <a ng-click="vm.exportXmlSchema()"  href=""  title="to show please disable popupblocker" class="btn-link link-underline"><span>xml</span></a>
+                        <a ng-click="vm.exportJsonSchema()" href=""
+                           class="btn-link link-underline"><span>json</span></a>
+                        <a ng-click="vm.exportXmlSchema()" href="" title="to show please disable popupblocker"
+                           class="btn-link link-underline"><span>xml</span></a>
                     </div>
 
 
