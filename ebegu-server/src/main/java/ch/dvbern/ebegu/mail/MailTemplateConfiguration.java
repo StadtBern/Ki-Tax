@@ -41,35 +41,35 @@ public class MailTemplateConfiguration {
 	}
 
 	public String getInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung, Gesuchsteller gesuchsteller) {
-		return processInfoBetreuungAbgelehntTemplate("InfoBetreuungAbgelehnt.ftl", betreuung, gesuchsteller);
+		return processTemplate("InfoBetreuungAbgelehnt.ftl", betreuung, gesuchsteller);
 	}
 
-	private String processInfoBetreuungAbgelehntTemplate(@Nonnull String nameOfTemplate, @Nonnull Betreuung betreuung, Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
+	public String getInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
+		return processTemplate("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller);
+	}
+
+	public String getInfoVerfuegtGesuch(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
+		return processTemplate("InfoVerfuegtGesuch.ftl", gesuch, gesuchsteller);
+	}
+
+	public String getInfoVerfuegtMutaion(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
+		return processTemplate("InfoVerfuegtMutation.ftl", gesuch, gesuchsteller);
+	}
+
+	public String getInfoMahnung(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
+		return processTemplate("InfoMahnung.ftl", gesuch, gesuchsteller);
+	}
+
+	private String processTemplate(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
-		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };
+		paramsToPass[paramsToPass.length - 1] = new Object[] { "gesuch", gesuch };
 		paramsToPass[paramsToPass.length - 2] = new Object[] { "gesuchsteller", gesuchsteller };
 		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
-	public String getInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
-		return processInfoBetreuungenBestaetigtTemplate("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller);
-	}
-
-	public String getInfoVerfuegtGesuch(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
-		return processInfoBetreuungenBestaetigtTemplate("InfoVerfuegtGesuch.ftl", gesuch, gesuchsteller);
-	}
-
-	public String getInfoVerfuegtMutaion(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
-		return processInfoBetreuungenBestaetigtTemplate("InfoVerfuegtMutation.ftl", gesuch, gesuchsteller);
-	}
-
-	public String getInfoMahnung(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
-		return processInfoBetreuungenBestaetigtTemplate("InfoMahnung.ftl", gesuch, gesuchsteller);
-	}
-
-	private String processInfoBetreuungenBestaetigtTemplate(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
+	private String processTemplate(@Nonnull String nameOfTemplate, @Nonnull Betreuung betreuung, Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
-		paramsToPass[paramsToPass.length - 1] = new Object[] { "gesuch", gesuch };
+		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };
 		paramsToPass[paramsToPass.length - 2] = new Object[] { "gesuchsteller", gesuchsteller };
 		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}

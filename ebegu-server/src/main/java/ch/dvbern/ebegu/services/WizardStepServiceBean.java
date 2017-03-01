@@ -288,7 +288,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					}
 
 					try {
-						if (wizardStep.getGesuch().getEingangsart().isOnlineGesuch()) {
+						if (wizardStep.getGesuch().getFall().getBesitzer() != null) {
 							//nur bei Online-Antrag
 							if (!wizardStep.getGesuch().isMutation()) {
 								// Erstgesuch

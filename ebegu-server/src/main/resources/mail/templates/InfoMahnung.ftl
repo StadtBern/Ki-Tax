@@ -26,7 +26,7 @@ ${templateConfiguration.mailCss}
         Am ${gesuch.getEingangsdatumFormated()} haben Sie ein Gesuch via Ki-Tax eingereicht.
         Leider sind die eingereichten Unterlagen gemäss einer ersten Vorprüfung unvollständig, daher wurden die
         fehlenden Dokumente heute erneut angefordert. Unser Schreiben finden Sie
-        <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/freigabe/${gesuch.id}">hier</a>.
+        <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/verfuegen/${gesuch.id}">hier</a>.
     </p>
     <p>
         Freundliche Grüsse <br/>

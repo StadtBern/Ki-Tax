@@ -8,11 +8,8 @@ import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.MahnungService;
-import ch.dvbern.ebegu.services.MailService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,11 +43,6 @@ public class MahnungResource {
 	@Inject
 	private JaxBConverter converter;
 
-	@Inject
-	private MailService mailService;
-
-	private final Logger LOG = LoggerFactory.getLogger(MahnungResource.class.getSimpleName());
-
 
 	@Nullable
 	@POST
@@ -65,12 +57,6 @@ public class MahnungResource {
 		Mahnung mahnung = converter.mahnungToEntity(mahnungJAXP, new Mahnung());
 		Mahnung persistedMahnung = mahnungService.createMahnung(mahnung);
 
-		Gesuch gesuch = persistedMahnung.getGesuch();
-		try {
-			mailService.sendInfoMahnung(gesuch);
-		} catch (Exception e) {
-			LOG.error("Mail InfoMahnung konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
-		}
 
 		return converter.mahnungToJAX(persistedMahnung);
 	}

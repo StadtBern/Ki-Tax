@@ -24,7 +24,7 @@ ${templateConfiguration.mailCss}
     </p>
     <p>
         Die Prüfung und Berechnung Ihres Ki-Tax-Gesuchs wurde bearbeitet. Sie können die Ergebnisse
-        <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/freigabe/${gesuch.id}">hier</a>
+        <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/verfuegen/${gesuch.id}">hier</a>
         einsehen.
     </p>
     <p>

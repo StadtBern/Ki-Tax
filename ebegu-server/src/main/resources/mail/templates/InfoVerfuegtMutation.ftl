@@ -25,7 +25,7 @@ ${templateConfiguration.mailCss}
     <p>
         Am ${gesuch.getEingangsdatumFormated()} haben Sie via Ki-Tax eine Mutation eingereicht.
         Wir haben die Mutation bearbeitet und Sie können das Ergebnis
-        <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/freigabe/${gesuch.id}">hier</a>
+        <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/verfuegen/${gesuch.id}">hier</a>
         prüfen.
     </p>
     <p>
