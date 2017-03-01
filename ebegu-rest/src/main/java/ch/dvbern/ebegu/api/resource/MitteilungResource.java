@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
-import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilungen;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -26,8 +26,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.util.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -80,6 +86,25 @@ public class MitteilungResource {
 
 		Betreuungsmitteilung betreuungsmitteilung = converter.betreuungsmitteilungToEntity(mitteilungJAXP, new Betreuungsmitteilung());
 		Betreuungsmitteilung persistedMitteilung = this.mitteilungService.sendBetreuungsmitteilung(betreuungsmitteilung);
+		return converter.betreuungsmitteilungToJAX(persistedMitteilung);
+	}
+
+	@Nullable
+	@PUT
+	@Path("/applybetreuungsmitteilung/{betreuungsmitteilungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxBetreuungsmitteilung applyBetreuungsmitteilung(
+		@Nonnull @NotNull @PathParam("betreuungsmitteilungId") JaxId betreuungsmitteilungId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		final Optional<Betreuungsmitteilung> mitteilung = mitteilungService.findBetreuungsmitteilung(betreuungsmitteilungId.getId());
+		if (!mitteilung.isPresent()) {
+			throw new EbeguEntityNotFoundException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
+				"BetreuungsmitteilungID invalid: " + betreuungsmitteilungId.getId());
+		}
+		Betreuungsmitteilung persistedMitteilung = this.mitteilungService.applyBetreuungsmitteilung(mitteilung.get());
 		return converter.betreuungsmitteilungToJAX(persistedMitteilung);
 	}
 

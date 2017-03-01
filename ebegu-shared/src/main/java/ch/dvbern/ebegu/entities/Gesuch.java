@@ -529,4 +529,15 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	public String getOwningGesuchId() {
 		return getId();
 	}
+
+	@Nonnull
+	public Optional<Betreuung> extractBetreuungsFromBetreuungNummer(@NotNull Integer betreuungNummer) {
+		final List<Betreuung> allBetreuungen = extractAllBetreuungen();
+		for (final Betreuung betreuung: allBetreuungen) {
+			if (betreuung.getId() != null && betreuung.getBetreuungNummer().equals(betreuungNummer)) {
+				return Optional.of(betreuung);
+			}
+		}
+		return Optional.empty();
+	}
 }

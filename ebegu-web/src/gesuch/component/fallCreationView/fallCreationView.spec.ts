@@ -62,21 +62,21 @@ describe('fallCreationView', function () {
         });
     });
     describe('getTitle', () => {
-        it('should return Art der Mutation', () => {
+        it('should return Änderung Ihrer Daten', () => {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
-            expect(fallCreationview.getTitle()).toBe('Erstellen einer Mutation');
+            expect(fallCreationview.getTitle()).toBe('Änderung Ihrer Daten');
         });
-        it('should return Erstgesuch der Periode', () => {
+        it('should return Ki-Tax – Erstgesuch der Periode', () => {
             let gesuchsperiode: TSGesuchsperiode = TestDataUtil.createGesuchsperiode20162017();
             spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuchsperiode);
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(true);
-            expect(fallCreationview.getTitle()).toBe('Erstgesuch der Periode 2016/17');
+            expect(fallCreationview.getTitle()).toBe('Ki-Tax – Erstgesuch der Periode 2016/17');
         });
-        it('should return Erstgesuch', () => {
+        it('should return Ki-Tax – Erstgesuch', () => {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(false);
-            expect(fallCreationview.getTitle()).toBe('Erstgesuch');
+            expect(fallCreationview.getTitle()).toBe('Ki-Tax – Erstgesuch');
         });
     });
 });

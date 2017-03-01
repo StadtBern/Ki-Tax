@@ -220,4 +220,6 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis);
+
+	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 }
