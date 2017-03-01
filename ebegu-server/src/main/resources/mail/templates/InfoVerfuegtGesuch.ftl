@@ -4,7 +4,7 @@
 <#-- @ftlvariable name="configuration" type="ch.dvbern.ebegu.config.EbeguConfiguration" -->
 From: ${configuration.senderAddress}
 To: " ${gesuchsteller.fullName} <${gesuchsteller.mail}>
-Subject: <@base64Header>Ki-Tax - Gesuch kann freigegeben werden</@base64Header>
+Subject: <@base64Header>Ki-Tax - Ihr Gesuch wurde bearbeitet</@base64Header>
 Content-Type: text/html;charset=utf-8
 
 <html>
@@ -12,7 +12,7 @@ Content-Type: text/html;charset=utf-8
 ${templateConfiguration.mailCss}
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Ki-Tax - Gesuch kann freigegeben werden</title>
+    <title>Ki-Tax - Ihr Gesuch wurde bearbeitet</title>
 
 </head>
 
@@ -23,14 +23,14 @@ ${templateConfiguration.mailCss}
         Sehr geehrte Familie
     </p>
     <p>
-        Sämtliche Betreuungsangebote wurden bestätigt. Das Ki-Tax-Gesuch kann
-        <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/freigabe/${gesuch.id}">hier</a>
-        freigegeben werden.
+        Die Prüfung und Berechnung Ihres Ki-Tax-Gesuchs wurde bearbeitet. Sie können die Ergebnisse
+        <a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/gesuch/verfuegen/${gesuch.id}">hier</a>
+        einsehen.
+    </p>
     <p>
         Freundliche Grüsse <br/>
         Jugendamt der Stadt Bern
     </p>
-
     <p>
         Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
     </p>
