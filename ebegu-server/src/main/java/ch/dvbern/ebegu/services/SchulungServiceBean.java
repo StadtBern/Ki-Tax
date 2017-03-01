@@ -351,10 +351,6 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		return gesuchService.updateGesuch(gesuch, false);
 	}
 
-	private Gesuch createFallForSuche(AbstractTestfall testfall, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung, boolean verfuegen) {
-		return createFallForSuche(testfall, nachname, vorname, institutionenForSchulung, verfuegen, false);
-	}
-
 	@Inject
 	private WizardStepService wizardStepService;
 
