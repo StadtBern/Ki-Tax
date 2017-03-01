@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
@@ -72,6 +73,45 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 		} else {
 			LOG.warn("skipping sendInfoMitteilungErhalten because Mitteilungsempfaenger is null");
 		}
+	}
+
+	@Override
+	public void sendInfoVerfuegtGesuch(@Nonnull Gesuch gesuch) throws MailException {
+        Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+        if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
+            String mailaddress = gesuchsteller.getMail();
+            String message = mailTemplateConfig.getInfoVerfuegtGesuch(gesuch, gesuchsteller);
+            sendMessageWithTemplate(message, mailaddress);
+            LOG.debug("Email fuer InfoVerfuegtGesuch wurde versendet an" + mailaddress);
+        } else {
+            LOG.warn("skipping sendInfoVerfuegtGesuch because Gesuchsteller 1 is null");
+        }
+	}
+
+	@Override
+	public void sendInfoVerfuegtMutation(@Nonnull Gesuch gesuch) throws MailException {
+        Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+        if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
+            String mailaddress = gesuchsteller.getMail();
+            String message = mailTemplateConfig.getInfoVerfuegtMutaion(gesuch, gesuchsteller);
+            sendMessageWithTemplate(message, mailaddress);
+            LOG.debug("Email fuer InfoVerfuegtMutation wurde versendet an" + mailaddress);
+        } else {
+            LOG.warn("skipping sendInfoVerfuegtMutation because Gesuchsteller 1 is null");
+        }
+	}
+
+	@Override
+	public void sendInfoMahnung(@Nonnull Gesuch gesuch) throws MailException {
+        Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+        if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
+            String mailaddress = gesuchsteller.getMail();
+            String message = mailTemplateConfig.getInfoMahnung(gesuch, gesuchsteller);
+            sendMessageWithTemplate(message, mailaddress);
+            LOG.debug("Email fuer InfoMahnung wurde versendet an" + mailaddress);
+        } else {
+            LOG.warn("skipping sendInfoMahnung because Gesuchsteller 1 is null");
+        }
 	}
 
 	private Gesuchsteller extractGesuchsteller1(@Nonnull Gesuch gesuch) {

@@ -31,4 +31,19 @@ public interface MailService {
 	 * Sendet eine Email mit der Benachrichtigung, dass eine In-System Nachricht erhalten wurde.
 	 */
 	void sendInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
+	 */
+	void sendInfoVerfuegtGesuch(@Nonnull Gesuch gesuch) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass eine Mutation Verfügt wurde.
+	 */
+	void sendInfoVerfuegtMutation(@Nonnull Gesuch gesuch) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass eine Mahnung versendet wurde.
+	 */
+	void sendInfoMahnung(@Nonnull Gesuch gesuch) throws MailException;
 }
