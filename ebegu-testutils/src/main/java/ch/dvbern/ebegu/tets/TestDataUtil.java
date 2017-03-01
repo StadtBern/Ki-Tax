@@ -36,7 +36,9 @@ public final class TestDataUtil {
 	private static final String iban = "CH39 0900 0000 3066 3817 2";
 
 	public static final LocalDate STICHTAG_EKV_1 = LocalDate.of(2016, Month.SEPTEMBER, 1);
+	public static final LocalDate STICHTAG_EKV_1_GUELTIG = STICHTAG_EKV_1.plusMonths(1);
 	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(2017, Month.APRIL, 1);
+	public static final LocalDate STICHTAG_EKV_2_GUELTIG =STICHTAG_EKV_2.plusMonths(1);
 
 	private TestDataUtil() {
 	}
