@@ -98,8 +98,11 @@ public abstract class AbstractEbeguRule implements Rule {
 		// Die Zeitabschnitte (jetzt ohne Überschneidungen) normalisieren:
 		// - Muss innerhalb Gesuchsperiode sein
 		// - Müssen sich unterscheiden (d.h. 20+20 vs 40 soll nur einen Schnitz geben)
-		Gesuchsperiode gesuchsperiode = betreuung.extractGesuchsperiode();
-		List<VerfuegungZeitabschnitt> normalizedZeitabschn = normalizeZeitabschnitte(mergedZeitabschnitte, gesuchsperiode);
+		List<VerfuegungZeitabschnitt> normalizedZeitabschn = mergedZeitabschnitte;
+		if (ruleKey != RuleKey.WOHNSITZ) { // die Regel WOHNSITZ darf nicht normalisiert werden, da auch wohnsitze ausserhalb der Gesuchsperiode beruecksichtigt werden muessen
+			Gesuchsperiode gesuchsperiode = betreuung.extractGesuchsperiode();
+			normalizedZeitabschn = normalizeZeitabschnitte(mergedZeitabschnitte, gesuchsperiode);
+		}
 
 		// Die eigentliche Rule anwenden
 		for (VerfuegungZeitabschnitt zeitabschnitt : normalizedZeitabschn) {
