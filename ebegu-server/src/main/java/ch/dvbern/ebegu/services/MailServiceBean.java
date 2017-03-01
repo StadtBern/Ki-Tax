@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
@@ -16,7 +15,6 @@ import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.Optional;
 
 
 /**
@@ -77,10 +75,10 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoVerfuegtGesuch(@Nonnull Gesuch gesuch) throws MailException {
+		String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
         Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
-        if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
-            String mailaddress = gesuchsteller.getMail();
-            String message = mailTemplateConfig.getInfoVerfuegtGesuch(gesuch, gesuchsteller);
+		if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+            String message = mailTemplateConfig.getInfoVerfuegtGesuch(gesuch, gesuchsteller, mailaddress);
             sendMessageWithTemplate(message, mailaddress);
             LOG.debug("Email fuer InfoVerfuegtGesuch wurde versendet an" + mailaddress);
         } else {
@@ -90,10 +88,10 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoVerfuegtMutation(@Nonnull Gesuch gesuch) throws MailException {
+		String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
         Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
-        if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
-            String mailaddress = gesuchsteller.getMail();
-            String message = mailTemplateConfig.getInfoVerfuegtMutaion(gesuch, gesuchsteller);
+		if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+            String message = mailTemplateConfig.getInfoVerfuegtMutaion(gesuch, gesuchsteller, mailaddress);
             sendMessageWithTemplate(message, mailaddress);
             LOG.debug("Email fuer InfoVerfuegtMutation wurde versendet an" + mailaddress);
         } else {
@@ -103,10 +101,10 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoMahnung(@Nonnull Gesuch gesuch) throws MailException {
+		String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
         Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
-        if (gesuchsteller != null && StringUtils.isNotEmpty(gesuchsteller.getMail())) {
-            String mailaddress = gesuchsteller.getMail();
-            String message = mailTemplateConfig.getInfoMahnung(gesuch, gesuchsteller);
+		if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+            String message = mailTemplateConfig.getInfoMahnung(gesuch, gesuchsteller, mailaddress);
             sendMessageWithTemplate(message, mailaddress);
             LOG.debug("Email fuer InfoMahnung wurde versendet an" + mailaddress);
         } else {
