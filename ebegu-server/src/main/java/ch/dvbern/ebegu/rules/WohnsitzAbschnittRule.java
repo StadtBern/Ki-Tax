@@ -35,20 +35,19 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 		if (gesuch.getGesuchsteller1() != null) {
 			List<VerfuegungZeitabschnitt> adressenAbschnitte = new ArrayList<>();
 			adressenAbschnitte.addAll(getAdresseAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller1(), true));
-			analysedAbschnitte.addAll(analyseAdressAbschnitte(betreuung, adressenAbschnitte));
+			analysedAbschnitte.addAll(analyseAdressAbschnitte(adressenAbschnitte));
 		}
 		if (gesuch.getGesuchsteller2() != null) {
 			List<VerfuegungZeitabschnitt> adressenAbschnitte = new ArrayList<>();
 			adressenAbschnitte.addAll(getAdresseAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller2(), false));
-			analysedAbschnitte.addAll(analyseAdressAbschnitte(betreuung, adressenAbschnitte));
+			analysedAbschnitte.addAll(analyseAdressAbschnitte(adressenAbschnitte));
 		}
 		return analysedAbschnitte;
 	}
 
-	private List<VerfuegungZeitabschnitt> analyseAdressAbschnitte(Betreuung betreuung, List<VerfuegungZeitabschnitt> adressenAbschnitte) {
+	private List<VerfuegungZeitabschnitt> analyseAdressAbschnitte(List<VerfuegungZeitabschnitt> adressenAbschnitte) {
 		List<VerfuegungZeitabschnitt> result = new ArrayList<>();
 		List<VerfuegungZeitabschnitt> zeitabschnittList = mergeZeitabschnitte(adressenAbschnitte);
-		zeitabschnittList = normalizeZeitabschnitte(zeitabschnittList, betreuung.extractGesuchsperiode());
 		VerfuegungZeitabschnitt lastZeitAbschnitt = null;
 		boolean isFirstAbschnitt = true;
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
