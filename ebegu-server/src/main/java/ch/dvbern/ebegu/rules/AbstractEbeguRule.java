@@ -99,7 +99,7 @@ public abstract class AbstractEbeguRule implements Rule {
 		// - Muss innerhalb Gesuchsperiode sein
 		// - Müssen sich unterscheiden (d.h. 20+20 vs 40 soll nur einen Schnitz geben)
 		Gesuchsperiode gesuchsperiode = betreuung.extractGesuchsperiode();
-		List<VerfuegungZeitabschnitt> normalizedZeitabschn = normalizeZeitabschnitte(mergedZeitabschnitte, gesuchsperiode);
+		List<VerfuegungZeitabschnitt> normalizedZeitabschn =normalizeZeitabschnitte(mergedZeitabschnitte, gesuchsperiode);
 
 		// Die eigentliche Rule anwenden
 		for (VerfuegungZeitabschnitt zeitabschnitt : normalizedZeitabschn) {
@@ -123,7 +123,8 @@ public abstract class AbstractEbeguRule implements Rule {
 			boolean endsAfter = zeitabschnitt.getGueltigkeit().endsAfter(gesuchsperiode.getGueltigkeit());
 			if (startsBefore || endsAfter) {
 				boolean zeitabschnittInPeriode = false;
-				if (startsBefore && zeitabschnitt.getGueltigkeit().getGueltigBis().isAfter(gesuchsperiode.getGueltigkeit().getGueltigAb())) {
+				if (startsBefore && zeitabschnitt.getGueltigkeit().getGueltigBis().isAfter(gesuchsperiode.getGueltigkeit().getGueltigAb())
+					&& !RuleKey.WOHNSITZ.equals(ruleKey)) { // die Regel WOHNSITZ darf nicht normalisiert werden, da auch wohnsitze ausserhalb der Gesuchsperiode beruecksichtigt werden muessen
 					// Datum Von liegt vor der Periode
 					// Falls Datum Bis ebenfalls vor der Periode liegt, kann der Abschnitt gelöscht werden, ansonsten muss er verkürzt werden
 					zeitabschnitt.getGueltigkeit().setGueltigAb(gesuchsperiode.getGueltigkeit().getGueltigAb());
