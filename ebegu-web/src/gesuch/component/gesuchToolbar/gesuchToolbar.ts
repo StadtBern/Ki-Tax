@@ -28,6 +28,7 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
         onVerantwortlicherChange: '&',
         fallid: '@',
         isDashboardScreen: '@',
+        hideMutationButton: '@'
     };
 
     template = templateX;
@@ -41,6 +42,7 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
         gesuchid: '@',
         fallid: '@',
         isDashboardScreen: '@',
+        hideMutationButton: '@'
     };
     template = templateGS;
     controller = GesuchToolbarController;
@@ -55,6 +57,7 @@ export class GesuchToolbarController {
     gesuchid: string;
     fallid: string;
     isDashboardScreen: boolean;
+    hideMutationButton: boolean;
     TSRoleUtil: any;
 
     onVerantwortlicherChange: (attr: any) => void;
