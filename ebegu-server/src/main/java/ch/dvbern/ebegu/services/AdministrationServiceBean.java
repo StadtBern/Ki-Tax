@@ -36,6 +36,7 @@ import java.util.*;
 @Stateless
 @Local(AdministrationService.class)
 @RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class AdministrationServiceBean extends AbstractBaseService implements AdministrationService {
 
 
@@ -51,14 +52,11 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 	@Inject
 	private InstitutionStammdatenService institutionStammdatenService;
 
-	@Inject
-	private AdresseService adresseService;
-
 	private static final Logger LOG = LoggerFactory.getLogger(AdministrationServiceBean.class);
 
 	private PrintWriter printWriter;
 	private String inputFile = "/institutionen/Institutionen_2017.03.01.xlsx";
-	private String outoutFile = "insertInstitutionen.sql";
+	private String outputFile = "insertInstitutionen.sql";
 	private int anzahlZeilen = 87;
 
 	private List<String> traegerschaftenMap = new LinkedList<>();
@@ -108,11 +106,9 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		}
 		// Traegerschaften
 		String traegerschaftId = readString(row, AdministrationService.COL_TRAEGERSCHAFT_ID);
-		if (StringUtils.isNotEmpty(traegerschaftId)) {
-			if (!traegerschaftenMap.contains(traegerschaftId)) {
-				writeTraegerschaft(row, traegerschaftId);
-				traegerschaftenMap.add(traegerschaftId);
-			}
+		if (StringUtils.isNotEmpty(traegerschaftId) && !traegerschaftenMap.contains(traegerschaftId)) {
+			writeTraegerschaft(row, traegerschaftId);
+			traegerschaftenMap.add(traegerschaftId);
 		}
 		// Institutionen
 		String institutionsId = readString(row, AdministrationService.COL_INSTITUTION_ID);
@@ -122,13 +118,13 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		}
 		// Stammdaten und Adressen
 		String stammdatenId = readString(row, AdministrationService.COL_STAMMDATEN_ID);
-		writeInstitutionStammdaten(row, stammdatenId, institutionsId, traegerschaftId);
+		writeInstitutionStammdaten(row, stammdatenId, institutionsId);
 	}
 
 	private String writeTraegerschaft(Row row, String traegerschaftId) {
 		String traegerschaftsname = readString(row, AdministrationService.COL_TRAEGERSCHAFT_NAME);
 		String traegerschaftEmail = readString(row, AdministrationService.COL_TRAEGERSCHAFT_MAIL);
-		if (StringUtils.isNotEmpty(traegerschaftsname) || StringUtils.isNotEmpty(traegerschaftEmail)) {
+		if (StringUtils.isNotEmpty(traegerschaftsname) && StringUtils.isNotEmpty(traegerschaftEmail)) {
 			// Es gibt eine Traegerschaft
 			if (StringUtils.isNotEmpty(traegerschaftId)) {
 				Optional<Traegerschaft> traegerschaftOptional = traegerschaftService.findTraegerschaft(traegerschaftId);
@@ -140,10 +136,13 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 					throw new IllegalStateException("Traegerschaft nicht gefunden!");
 				}
 			} else {
+				// dies ist unmoeglich <- wenn ein traegerschaft ohne ID kommt wird einfach nichts gemacht
 				// Traegerschaft ist neu
 				traegerschaftId = UUID.randomUUID().toString();
 				listTraegerschaften.add(insertTraegerschaft(traegerschaftId, traegerschaftsname, traegerschaftEmail));
 			}
+		} else {
+			throw new IllegalStateException("Traegerschaftdaten fehlen");
 		}
 		return traegerschaftId;
 	}
@@ -237,9 +236,9 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		return sb.toString();
 	}
 
-	private String writeInstitutionStammdaten(Row row, String stammdatenId, String institutionsId, String traegerschaftId) {
+	private String writeInstitutionStammdaten(Row row, String stammdatenId, String institutionsId) {
 		String angebot = readString(row, AdministrationService.COL_ANGEBOT);
-		if (angebot == null) {
+		if (StringUtils.isEmpty(angebot)) {
 			throw new IllegalStateException("Angebotstyp fehlen");
 		}
 		BetreuungsangebotTyp typ = BetreuungsangebotTyp.valueOf(angebot);
@@ -256,9 +255,8 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 			throw new IllegalStateException("Adressangaben fehlen");
 		}
 
-		if (institutionsId == null) {
-			LOG.error("institutionsId is null: " + row.getRowNum());
-			return null;
+		if (StringUtils.isEmpty(institutionsId)) {
+			throw new IllegalStateException("institutionsId is null: " + row.getRowNum());
 		}
 
 		if (StringUtils.isNotEmpty(stammdatenId)) {
@@ -408,7 +406,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 	private PrintWriter getPrintWriter() {
 		if (printWriter == null) {
 			try {
-				File output = new File(outoutFile);
+				File output = new File(outputFile);
 				FileOutputStream fos = new FileOutputStream(output.getAbsolutePath());
 				printWriter = new PrintWriter(fos);
 				LOG.info("File generiert: " + output.getAbsolutePath());
@@ -431,7 +429,7 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 		try {
 			File fos = new File("Institutionen_" + formatter.format(LocalDate.now()) + ".csv");
 			PrintWriter pw = new PrintWriter(fos);
-			System.out.println("Writing File to: " + fos.getAbsolutePath());
+			LOG.info("Writing File to: " + fos.getAbsolutePath());
 
 			pw.println("TrägerschaftId,Trägerschaft,Trägerschaft E-Mail,InstitutionId,Name,Strasse,Hausnummer,Plz,Ort,Zusatzzeile,E-Mail,StammdatenId,Angebot,IBAN,Öffnungsstunden,Öffnungstage");
 
@@ -471,14 +469,14 @@ public class AdministrationServiceBean extends AbstractBaseService implements Ad
 					append(sb, stammdaten.getOeffnungsstunden());
 					append(sb, stammdaten.getOeffnungstage());
 
-					pw.println(sb.toString());
+					pw.println(sb);
 				}
 			}
 			pw.flush();
 			pw.close();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.debug(e.getMessage());
 		}
 	}
 
