@@ -60,6 +60,8 @@ import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.*;
 @Local(ReportService.class)
 public class ReportServiceBean extends AbstractReportServiceBean implements ReportService {
 
+	public static final String DATA = "Data";
+
 	@Inject
 	private GeuschStichtagExcelConverter geuschStichtagExcelConverter;
 
@@ -205,6 +207,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Zahlungsauftrag zahlungsauftrag = null;
 		if (institution != null) {
 			//TODO: get data filtered by Institution, zahlungService method to do this?
+			zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
+				.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
 			reportData = new ArrayList<>();
 		} else {
 			zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
@@ -239,7 +243,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
-		Sheet sheet = workbook.getSheet("Data");
+		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
 
 		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
 
@@ -256,11 +260,13 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	public enum ReportResource {
 
-		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx", "GesuchStichtag.xlsx", "Data",
+		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx", "GesuchStichtag.xlsx", DATA,
 			MergeFieldGesuchStichtag.class),
-		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "GesuchZeitraum.xlsx", "Data",
+		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "GesuchZeitraum.xlsx", DATA,
 			MergeFieldGesuchZeitraum.class),
-		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", "Data",
+
+		//TODO: Achtung mit Filename, da mehrere Dokumente mit gleichem Namen aber unterschiedlichem Inhalt gespeichert werden
+		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", DATA,
 			MergeFieldZahlungAuftrag.class);
 
 		@Nonnull

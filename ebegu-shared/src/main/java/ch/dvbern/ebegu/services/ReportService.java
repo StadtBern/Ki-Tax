@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Copyright (c) 2016 DV Bern AG, Switzerland

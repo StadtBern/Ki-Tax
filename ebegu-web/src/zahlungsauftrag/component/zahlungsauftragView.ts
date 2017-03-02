@@ -36,9 +36,9 @@ export class ZahlungsauftragViewController {
     itemsByPage: number = 12;
     devMode: boolean = false;
 
-    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS', 'ReportRS'];
+    static $inject: string[] = ['ZahlungRS', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS', 'ReportRS'];
 
-    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
+    constructor(private zahlungRS: ZahlungRS, private CONSTANTS: any,
                 private $state: IStateService, private downloadRS: DownloadRS, private applicationPropertyRS: ApplicationPropertyRS,
                 private reportRS: ReportRS) {
         this.initViewModel();

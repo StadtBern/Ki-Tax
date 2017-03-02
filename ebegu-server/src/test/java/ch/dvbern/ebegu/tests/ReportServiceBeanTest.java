@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -75,7 +74,8 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	@Ignore //TODO (medu): Test laeuft im Moment nicht durch, da Mutationen Betreuung und Abwesenheit immer fuer alle Betreuungen des Gesuchs gezaehlt werden!
+	@Ignore
+	//TODO (medu): Test laeuft im Moment nicht durch, da Mutationen Betreuung und Abwesenheit immer fuer alle Betreuungen des Gesuchs gezaehlt werden!
 	public void testGetReportDataGesuchStichtag() throws Exception {
 		List<GesuchStichtagDataRow> reportData = reportService.getReportDataGesuchStichtag(LocalDateTime.now(), null);
 
@@ -92,7 +92,8 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	@Ignore //TODO (medu): Test laeuft im Moment nicht durch, da Mutationen Betreuung und Abwesenheit immer fuer alle Betreuungen des Gesuchs gezaehlt werden!
+	@Ignore
+	//TODO (medu): Test laeuft im Moment nicht durch, da Mutationen Betreuung und Abwesenheit immer fuer alle Betreuungen des Gesuchs gezaehlt werden!
 	public void testGetReportDataGesuchZeitraumTest() throws Exception {
 		List<GesuchZeitraumDataRow> reportData = reportService.getReportDataGesuchZeitraum(
 			LocalDateTime.now().minusDays(1),
@@ -165,7 +166,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void generateExcelReportZahlungAuftrag() throws Exception {
-		UploadFileInfo uploadFileInfo  = reportService.generateExcelReportZahlungAuftrag("8d2805ed-d123-4632-bcbb-931dd7a936ae", null);
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag("8d2805ed-d123-4632-bcbb-931dd7a936ae", null);
 
 		assertNotNull(uploadFileInfo);
 		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportZahlungAuftrag.xlsx");

@@ -1,17 +1,16 @@
 import {IComponentOptions} from 'angular';
 import TSZahlung from '../../models/TSZahlung';
 import ZahlungRS from '../../core/service/zahlungRS.rest';
-import EbeguUtil from '../../utils/EbeguUtil';
 import {IZahlungsauftragStateParams} from '../zahlung.route';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
+import {DownloadRS} from '../../core/service/downloadRS.rest';
+import {ReportRS} from '../../core/service/reportRS.rest';
+import TSDownloadFile from '../../models/TSDownloadFile';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;
 import IStateService = angular.ui.IStateService;
-import {DownloadRS} from '../../core/service/downloadRS.rest';
-import {ReportRS} from '../../core/service/reportRS.rest';
-import TSDownloadFile from '../../models/TSDownloadFile';
 let template = require('./zahlungView.html');
 require('./zahlungView.less');
 
@@ -28,9 +27,9 @@ export class ZahlungViewController {
 
     itemsByPage: number = 20;
 
-    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$stateParams', '$state', 'DownloadRS', 'ReportRS'];
+    static $inject: string[] = ['ZahlungRS', 'CONSTANTS', '$stateParams', '$state', 'DownloadRS', 'ReportRS'];
 
-    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
+    constructor(private zahlungRS: ZahlungRS, private CONSTANTS: any,
                 private $stateParams: IZahlungsauftragStateParams, private $state: IStateService,
                 private downloadRS: DownloadRS, private reportRS: ReportRS) {
         this.initViewModel();

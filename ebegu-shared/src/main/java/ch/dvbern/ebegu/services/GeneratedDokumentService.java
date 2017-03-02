@@ -8,8 +8,6 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import java.io.IOException;
 import java.util.Collection;
 
