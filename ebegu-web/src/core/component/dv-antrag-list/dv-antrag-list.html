@@ -71,7 +71,7 @@
                         <div class="dv-select-style">
                             <select st-input-event="change" name="institutionen" id="institutionen"
                                     st-search="institutionen" class="form-control"
-                                    ng-options="institution.name for institution in vm.institutionenList track by institution.name"
+                                    ng-options="institution.name for institution in vm.institutionenList | orderBy: 'name' track by institution.name  "
                                     ng-model="vm.selectedInstitution">
                                 <option value="">{{"ALLE" | translate}}</option>
                             </select>
