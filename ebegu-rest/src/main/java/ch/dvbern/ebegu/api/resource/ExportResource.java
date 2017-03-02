@@ -31,7 +31,7 @@ import java.io.IOException;
  */
 @Path("export")
 @Stateless
-@Api("This service provides methods to download verfuegungen in an export format for use by external applications")
+@Api(description = "This service provides methods to download verfuegungen in an export format for use by external applications")
 public class ExportResource {
 
 	@Inject
