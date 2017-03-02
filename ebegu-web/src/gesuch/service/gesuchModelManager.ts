@@ -530,6 +530,7 @@ export default class GesuchModelManager {
         } else {
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
         }
+        this.gesuch.emptyMutation = true;
     }
 
     private initAntrag(antragTyp: TSAntragTyp, eingangsart: TSEingangsart): void {
