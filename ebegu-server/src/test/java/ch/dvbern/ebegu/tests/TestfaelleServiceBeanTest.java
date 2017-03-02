@@ -133,6 +133,12 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
+	public void testVerfuegung_UmzugVorGesuchsperiode() {
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.UmzugVorGesuchsperiode, true, true);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
+	}
+
+	@Test
 	public void testVerfuegung_Abwesenheit() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.Abwesenheit, true, true);
 		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);

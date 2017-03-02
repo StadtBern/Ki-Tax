@@ -174,7 +174,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		InstitutionStammdaten kitaForelle = createInstitutionStammdaten(KITA_FORELLE_ID, institutionForelle, BetreuungsangebotTyp.KITA);
 		InstitutionStammdaten tageselternForelle = createInstitutionStammdaten(TAGESELTERN_FORELLE_ID, institutionForelle, BetreuungsangebotTyp.TAGESELTERN_KLEINKIND);
 		InstitutionStammdaten kitaHecht = createInstitutionStammdaten(KITA_HECHT_ID, institutionHecht, BetreuungsangebotTyp.KITA);
-		List<InstitutionStammdaten> institutionenForSchulung = new ArrayList<>();
+		List<InstitutionStammdaten> institutionenForSchulung = new LinkedList<>();
 		institutionenForSchulung.add(kitaForelle);
 		institutionenForSchulung.add(tageselternForelle);
 		institutionenForSchulung.add(kitaHecht);
@@ -292,7 +292,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.getAllActiveGesuchsperioden().iterator().next();
 		List<InstitutionStammdaten> institutionenForTestfall = testfaelleService.getInstitutionsstammdatenForTestfaelle();
 
-		createFall(Testfall01_WaeltiDagmar.class, gesuchsperiode, institutionenForTestfall, "01", null, null, institutionenForSchulung);
+		createFall(Testfall01_WaeltiDagmar.class, gesuchsperiode, institutionenForTestfall, "01", null, null, institutionenForSchulung, true);
 		createFall(Testfall02_FeutzYvonne.class, gesuchsperiode, institutionenForTestfall, "02",null, null, institutionenForSchulung);
 		createFall(Testfall03_PerreiraMarcia.class, gesuchsperiode, institutionenForTestfall, "03",null, null, institutionenForSchulung);
 		createFall(Testfall04_WaltherLaura.class, gesuchsperiode, institutionenForTestfall, "04", null, null, institutionenForSchulung);
@@ -323,18 +323,25 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 
 	}
 
-	private void createFall(Class<? extends AbstractTestfall> classTestfall, Gesuchsperiode gesuchsperiode, List<InstitutionStammdaten> institutionenForTestfall, String id, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+	private void createFall(Class<? extends AbstractTestfall> classTestfall, Gesuchsperiode gesuchsperiode, List<InstitutionStammdaten> institutionenForTestfall, String id, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung, boolean noRandom) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 		boolean verfuegen = RANDOM.nextBoolean() && RANDOM.nextBoolean(); // Damit VERFUEGT nicht zu haeufig...
+		if (noRandom) {
+			verfuegen = true;
+		}
 		AbstractTestfall testfall = classTestfall.getConstructor(Gesuchsperiode.class, Collection.class, Boolean.TYPE).newInstance(gesuchsperiode, institutionenForTestfall, verfuegen);
 		testfall.setFixId(GESUCH_ID.replaceAll("XX", id));
-		Gesuch gesuch = createFallForSuche(testfall, nachname, vorname, institutionenForSchulung, verfuegen);
+		Gesuch gesuch = createFallForSuche(testfall, nachname, vorname, institutionenForSchulung, verfuegen, noRandom);
 		FreigabeCopyUtil.copyForFreigabe(gesuch);
 		gesuchService.updateGesuch(gesuch, false);
 	}
 
+	private void createFall(Class<? extends AbstractTestfall> classTestfall, Gesuchsperiode gesuchsperiode, List<InstitutionStammdaten> institutionenForTestfall, String id, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+		createFall(classTestfall, gesuchsperiode, institutionenForTestfall, id, nachname, vorname, institutionenForSchulung, false);
+	}
+
 	@SuppressWarnings("ConstantConditions")
-	private Gesuch createFallForSuche(AbstractTestfall testfall, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung, boolean verfuegen) {
-		Gesuch gesuch = createFallForSuche(testfall, institutionenForSchulung, verfuegen);
+	private Gesuch createFallForSuche(AbstractTestfall testfall, String nachname, String vorname, List<InstitutionStammdaten> institutionenForSchulung, boolean verfuegen, boolean noRandom) {
+		Gesuch gesuch = createFallForSuche(testfall, institutionenForSchulung, verfuegen, noRandom);
 		if (StringUtils.isNotEmpty(nachname)) {
 			gesuch.getGesuchsteller1().getGesuchstellerJA().setNachname(nachname);
 		}
@@ -347,7 +354,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 	@Inject
 	private WizardStepService wizardStepService;
 
-	private Gesuch createFallForSuche(AbstractTestfall testfall, List<InstitutionStammdaten> institutionenForSchulung, boolean verfuegen) {
+	private Gesuch createFallForSuche(AbstractTestfall testfall, List<InstitutionStammdaten> institutionenForSchulung, boolean verfuegen, boolean noRandom) {
 		@SuppressWarnings("DuplicateBooleanBranch")
 
 		Gesuch gesuch = testfaelleService.createAndSaveGesuch(testfall, verfuegen, null);
@@ -361,18 +368,28 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		// Institutionen anpassen
 		List<Betreuung> betreuungList = gesuch.extractAllBetreuungen();
 		for (Betreuung betreuung : betreuungList) {
-			InstitutionStammdaten institutionStammdaten = institutionenForSchulung.get(RANDOM.nextInt(institutionenForSchulung.size()));
-			betreuung.setInstitutionStammdaten(institutionStammdaten);
-			if (verfuegen) {
+			if (noRandom) {
+				if (betreuung.getBetreuungNummer() == 1) {
+					InstitutionStammdaten institutionStammdaten = institutionenForSchulung.get(2);
+					betreuung.setInstitutionStammdaten(institutionStammdaten);
+				} else {
+					InstitutionStammdaten institutionStammdaten = institutionenForSchulung.get(0);
+					betreuung.setInstitutionStammdaten(institutionStammdaten);
+				}
 				betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
-
 			} else {
-				// Etwas haeufiger WARTEN als BESTAETIGT/ABGELEHNT
-				Betreuungsstatus[] statussis = new Betreuungsstatus[]{Betreuungsstatus.WARTEN, Betreuungsstatus.WARTEN,Betreuungsstatus.WARTEN,Betreuungsstatus.BESTAETIGT, Betreuungsstatus.ABGEWIESEN};
-				Betreuungsstatus status = Collections.unmodifiableList(Arrays.asList(statussis)).get(RANDOM.nextInt(statussis.length));
-				betreuung.setBetreuungsstatus(status);
-				if (Betreuungsstatus.ABGEWIESEN.equals(status)) {
-					betreuung.setGrundAblehnung("Abgelehnt");
+				InstitutionStammdaten institutionStammdaten = institutionenForSchulung.get(RANDOM.nextInt(institutionenForSchulung.size()));
+				betreuung.setInstitutionStammdaten(institutionStammdaten);
+				if (verfuegen) {
+					betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
+				} else {
+					// Etwas haeufiger WARTEN als BESTAETIGT/ABGELEHNT
+					Betreuungsstatus[] statussis = new Betreuungsstatus[]{Betreuungsstatus.WARTEN, Betreuungsstatus.WARTEN,Betreuungsstatus.WARTEN,Betreuungsstatus.BESTAETIGT, Betreuungsstatus.ABGEWIESEN};
+					Betreuungsstatus status = Collections.unmodifiableList(Arrays.asList(statussis)).get(RANDOM.nextInt(statussis.length));
+					betreuung.setBetreuungsstatus(status);
+					if (Betreuungsstatus.ABGEWIESEN.equals(status)) {
+						betreuung.setGrundAblehnung("Abgelehnt");
+					}
 				}
 			}
 		}

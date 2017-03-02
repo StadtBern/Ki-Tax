@@ -24,6 +24,7 @@ public interface TestfaelleService {
 	String MeierMeret = "7";
 	String UmzugAusInAusBern = "8";
 	String Abwesenheit = "9";
+	String UmzugVorGesuchsperiode = "10";
 	String ASIV1 = "ASIV1";
 	String ASIV2 = "ASIV2";
 	String ASIV3 = "ASIV3";

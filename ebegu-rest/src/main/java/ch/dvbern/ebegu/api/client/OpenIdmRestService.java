@@ -191,7 +191,7 @@ public class OpenIdmRestService {
 		if (configuration.getOpenIdmEnabled() || force) {
 
 			JaxInstitutionOpenIdm jaxInstitutionOpenIdm = new JaxInstitutionOpenIdm();
-			jaxInstitutionOpenIdm.setName(name);
+			jaxInstitutionOpenIdm.setName(name + " (" + mail + ")"); //to avoid unique name conflicts in iam we concatenate the email
 			jaxInstitutionOpenIdm.setType(type);
 			jaxInstitutionOpenIdm.setMail(mail);
 
