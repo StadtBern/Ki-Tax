@@ -236,7 +236,7 @@ public class PDFServiceBeanTest {
 
 		PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(pdfRreader);
 		assertTrue("Second page should begin with this text.",
-			pdfTextExtractor.getTextFromPage(2).startsWith("Wenn Sie die geforderten Angaben"));
+			pdfTextExtractor.getTextFromPage(2).startsWith("Wenn Sie die geforderten Unterlagen"));
 
 		pdfRreader.close();
 	}

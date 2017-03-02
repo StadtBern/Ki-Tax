@@ -7,6 +7,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -64,7 +65,7 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	@Column(nullable = true)
 	private LocalDate stichtagFuerBasisJahrPlus2;
 
-	public EinkommensverschlechterungInfo(){
+	public EinkommensverschlechterungInfo() {
 	}
 
 
@@ -159,5 +160,23 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 		mutation.setStichtagFuerBasisJahrPlus1(this.getStichtagFuerBasisJahrPlus1());
 		mutation.setStichtagFuerBasisJahrPlus2(this.getStichtagFuerBasisJahrPlus2());
 		return mutation;
+	}
+
+	@Transient
+	@Nullable
+	public LocalDate getStichtagGueltigFuerBasisJahrPlus1() {
+		if (stichtagFuerBasisJahrPlus1 != null) {
+			return stichtagFuerBasisJahrPlus1.plusMonths(1);
+		}
+		return null;
+	}
+
+	@Transient
+	@Nullable
+	public LocalDate getStichtagGueltigFuerBasisJahrPlus2() {
+		if (stichtagFuerBasisJahrPlus2 != null) {
+			return stichtagFuerBasisJahrPlus2.plusMonths(1);
+		}
+		return null;
 	}
 }

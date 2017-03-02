@@ -39,6 +39,10 @@
                        data-translate="MENU_FALL_EROEFFNEN"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
+                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA']">
+                    <a ui-sref="zahlungsauftrag" data-translate="MENU_ZAHLUNG"></a>
+                </li>
+                <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT']">
                     <a ui-sref="faelle" data-translate="MENU_ALL_FAELLE"></a>
                 </li>
@@ -48,7 +52,7 @@
                 </li>
                 <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA']">
-                    <dv-posteingang></dv-posteingang>
+                    <dv-posteingang ui-sref="posteingang"></dv-posteingang>
                 </li>
             </ul>
         </div> <!--/.nav-collapse -->

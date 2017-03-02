@@ -11,7 +11,9 @@ import {EbeguWebGesuchstellerDashboard} from './gesuchstellerDashboard/gesuchste
 import {EbeguWebMitteilungen} from './mitteilungen/mitteilungen.module';
 import {EbeguWebPosteingang} from './posteingang/posteingang.module';
 import {EbeguWebSearch} from './searchResult/search.module';
+import {EbeguWebZahlung} from './zahlung/zahlung.module';
+import {EbeguWebZahlungsauftrag} from './zahlungsauftrag/zahlungsauftrag.module';
 
 export default angular.module('ebeguWeb', [EbeguWebCore.name, EbeguWebAdmin.name, EbeguWebGesuch.name, EbeguWebPendenzen.name,
     EbeguWebPendenzenInstitution.name, EbeguWebFaelle.name, EbeguWebGesuchstellerDashboard.name, EbeguWebMitteilungen.name,
-    EbeguWebPosteingang.name, EbeguWebSearch.name,  EbeguWebStatistik.name]);
+    EbeguWebPosteingang.name, EbeguWebSearch.name,  EbeguWebStatistik.name, EbeguWebZahlung.name, EbeguWebZahlungsauftrag.name]);

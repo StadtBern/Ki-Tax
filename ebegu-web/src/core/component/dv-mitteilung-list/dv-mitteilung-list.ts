@@ -12,16 +12,20 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import BetreuungRS from '../../service/betreuungRS.rest';
 import FallRS from '../../../gesuch/service/fallRS.rest';
 import TSUser from '../../../models/TSUser';
+import {IStateService} from 'angular-ui-router';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
+import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import Moment = moment.Moment;
 import IFormController = angular.IFormController;
 import IQService = angular.IQService;
 import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
-import {IStateService} from 'angular-ui-router';
-import EbeguUtil from '../../../utils/EbeguUtil';
-import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
+let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 
 export class DVMitteilungListConfig implements IComponentOptions {
     transclude = false;
@@ -50,12 +54,13 @@ export class DVMitteilungListController {
     ebeguUtil: EbeguUtil;
 
 
-    static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS',
-        'FallRS', 'BetreuungRS', '$q', '$window', '$rootScope', '$state', 'EbeguUtil'];
+    static $inject: any[] = ['$stateParams', 'MitteilungRS', 'AuthServiceRS', 'FallRS', 'BetreuungRS',
+        '$q', '$window', '$rootScope', '$state', 'EbeguUtil', 'DvDialog', 'GesuchModelManager'];
     /* @ngInject */
     constructor(private $stateParams: IMitteilungenStateParams, private mitteilungRS: MitteilungRS, private authServiceRS: AuthServiceRS,
-                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window: IWindowService, private $rootScope: IRootScopeService,
-                private $state: IStateService, ebeguUtil: EbeguUtil) {
+                private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window: IWindowService,
+                private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil, private DvDialog: DvDialog,
+                private gesuchModelManager: GesuchModelManager) {
 
         this.initViewModel();
         this.TSRole = TSRole;
@@ -302,11 +307,31 @@ export class DVMitteilungListController {
         });
     }
 
-    public isBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
-        return mitteilung instanceof TSBetreuungsmitteilung;
+    public isBetreuungsmitteilungApplied(mitteilung: TSMitteilung): boolean {
+        return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied === true;
     }
 
-    public applyBetreuungsmitteilung(): void {
-        window.alert('Not yet implemented');
+    public isBetreuungsmitteilungNotApplied(mitteilung: TSMitteilung): boolean {
+        return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied !== true;
+    }
+
+    public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {
+        if (mitteilung instanceof TSBetreuungsmitteilung) {
+            this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: 'MUTATIONSMELDUNG_UEBERNEHMEN',
+                deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG'
+            }).then(() => {   //User confirmed message
+                let betreuungsmitteilung: TSBetreuungsmitteilung = <TSBetreuungsmitteilung>mitteilung;
+                this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: TSBetreuungsmitteilung) => {
+                    this.loadAllMitteilungen();
+                    if (response.betreuung.gesuchId === this.gesuchModelManager.getGesuch().id) {
+                        // Dies wird gebraucht wenn das Gesuch der Mitteilung schon geladen ist, weil die Daten der Betreuung geaendert
+                        // wurden und deshalb neugeladen werden müssen. reloadGesuch ist einfacher als die entsprechende Betreuung neu zu laden
+                        this.gesuchModelManager.reloadGesuch();
+                    }
+                });
+            });
+
+        }
     }
 }

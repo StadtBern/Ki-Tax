@@ -2153,7 +2153,7 @@ public class JaxBConverter {
 	private Set<String> createKinderList(Set<KindContainer> kindContainers) {
 		Set<String> resultSet = new HashSet<>();
 		kindContainers.forEach(kindContainer -> {
-				resultSet.add(kindContainer.getKindJA().getVorname());
+			resultSet.add(kindContainer.getKindJA().getVorname());
 		});
 		return resultSet;
 	}
@@ -2173,7 +2173,7 @@ public class JaxBConverter {
 
 		Set<String> resultSet = new HashSet<>();
 		jaxKindContainers.forEach(kindContainer -> {
-				resultSet.add(kindContainer.getKindJA().getVorname());
+			resultSet.add(kindContainer.getKindJA().getVorname());
 		});
 		return resultSet;
 	}
@@ -2285,6 +2285,7 @@ public class JaxBConverter {
 
 		mitteilungToEntity(mitteilungJAXP, betreuungsmitteilung);
 
+		betreuungsmitteilung.setApplied(mitteilungJAXP.getApplied());
 		if (mitteilungJAXP.getBetreuungspensen() != null) {
 			betreuungsmitteilung.setBetreuungspensen(new HashSet<>());
 			for (JaxBetreuungsmitteilungPensum jaxBetreuungspensum : mitteilungJAXP.getBetreuungspensen()) {
@@ -2299,6 +2300,8 @@ public class JaxBConverter {
 	public JaxBetreuungsmitteilung betreuungsmitteilungToJAX(Betreuungsmitteilung persistedMitteilung) {
 		final JaxBetreuungsmitteilung jaxBetreuungsmitteilung = new JaxBetreuungsmitteilung();
 		mitteilungToJAX(persistedMitteilung, jaxBetreuungsmitteilung);
+
+		jaxBetreuungsmitteilung.setApplied(persistedMitteilung.isApplied());
 		if (persistedMitteilung.getBetreuungspensen() != null) {
 			jaxBetreuungsmitteilung.setBetreuungspensen(new ArrayList<>());
 			for (BetreuungsmitteilungPensum betreuungspensum : persistedMitteilung.getBetreuungspensen()) {
@@ -2306,5 +2309,35 @@ public class JaxBConverter {
 			}
 		}
 		return jaxBetreuungsmitteilung;
+	}
+
+	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag) {
+		final JaxZahlungsauftrag jaxZahlungsauftrag = new JaxZahlungsauftrag();
+		convertAbstractDateRangedFieldsToJAX(persistedZahlungsauftrag, jaxZahlungsauftrag);
+		jaxZahlungsauftrag.setStatus(persistedZahlungsauftrag.getStatus());
+		jaxZahlungsauftrag.setBeschrieb(persistedZahlungsauftrag.getBeschrieb());
+		jaxZahlungsauftrag.setBetragTotalAuftrag(persistedZahlungsauftrag.getBetragTotalAuftrag());
+		jaxZahlungsauftrag.setDatumFaellig(persistedZahlungsauftrag.getDatumFaellig());
+		jaxZahlungsauftrag.setDatumGeneriert(persistedZahlungsauftrag.getDatumGeneriert());
+
+		jaxZahlungsauftrag.getZahlungen().addAll(
+			persistedZahlungsauftrag.getZahlungen()
+				.stream()
+				.map(this::zahlungToJAX)
+				.collect(Collectors.toList()));
+
+
+		return jaxZahlungsauftrag;
+	}
+
+	public JaxZahlung zahlungToJAX(final Zahlung persistedZahlung) {
+		final JaxZahlung jaxZahlungs = new JaxZahlung();
+
+		jaxZahlungs.setStatus(persistedZahlung.getStatus());
+		jaxZahlungs.setBetragTotalZahlung(persistedZahlung.getBetragTotalZahlung());
+		jaxZahlungs.setInstitutionsName(persistedZahlung.getInstitutionStammdaten().getInstitution().getName());
+
+		return jaxZahlungs;
+
 	}
 }

@@ -63,6 +63,8 @@ import TSQuickSearchResult from '../models/dto/TSQuickSearchResult';
 import TSSearchResultEntry from '../models/dto/TSSearchResultEntry';
 import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
 import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
+import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
+import TSZahlung from '../models/TSZahlung';
 
 
 export default class EbeguRestUtil {
@@ -1945,6 +1947,7 @@ export default class EbeguRestUtil {
     public betreuungsmitteilungToRestObject(restBetreuungsmitteilung: any, tsBetreuungsmitteilung: TSBetreuungsmitteilung): any {
         if (tsBetreuungsmitteilung) {
             this.mitteilungToRestObject(restBetreuungsmitteilung, tsBetreuungsmitteilung);
+            restBetreuungsmitteilung.applied = tsBetreuungsmitteilung.applied;
             if (tsBetreuungsmitteilung.betreuungspensen) {
                 restBetreuungsmitteilung.betreuungspensen = [];
                 tsBetreuungsmitteilung.betreuungspensen.forEach(betreuungspensum => {
@@ -1960,6 +1963,7 @@ export default class EbeguRestUtil {
     public parseBetreuungsmitteilung(tsBetreuungsmitteilung: TSBetreuungsmitteilung, betreuungsmitteilungFromServer: any): TSBetreuungsmitteilung {
         if (betreuungsmitteilungFromServer) {
             this.parseMitteilung(tsBetreuungsmitteilung, betreuungsmitteilungFromServer);
+            tsBetreuungsmitteilung.applied = betreuungsmitteilungFromServer.applied;
             if (betreuungsmitteilungFromServer.betreuungspensen) {
                 tsBetreuungsmitteilung.betreuungspensen = [];
                 for (let i = 0; i < betreuungsmitteilungFromServer.betreuungspensen.length; i++) {
@@ -1974,5 +1978,55 @@ export default class EbeguRestUtil {
 
     private isBetreuungsmitteilung(mitteilung: any): boolean {
         return mitteilung.betreuungspensen !== undefined;
+    }
+
+    public parseZahlungsauftragList(data: any): TSZahlungsauftrag[] {
+        let zahlungsauftrag: TSZahlungsauftrag[] = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                zahlungsauftrag[i] = this.parseZahlungsauftrag(new TSZahlungsauftrag(), data[i]);
+            }
+        }
+        return zahlungsauftrag;
+    }
+
+
+    public parseZahlungsauftrag(tsZahlungsauftrag: TSZahlungsauftrag, zahlungsauftragFromServer: any): TSZahlungsauftrag {
+        if (zahlungsauftragFromServer) {
+            this.parseDateRangeEntity(tsZahlungsauftrag, zahlungsauftragFromServer);
+
+            tsZahlungsauftrag.status = zahlungsauftragFromServer.status;
+            tsZahlungsauftrag.beschrieb = zahlungsauftragFromServer.beschrieb;
+            tsZahlungsauftrag.datumFaellig = DateUtil.localDateToMoment(zahlungsauftragFromServer.datumFaellig);
+            tsZahlungsauftrag.datumGeneriert = DateUtil.localDateTimeToMoment(zahlungsauftragFromServer.datumGeneriert);
+            tsZahlungsauftrag.betragTotalAuftrag = zahlungsauftragFromServer.betragTotalAuftrag;
+            tsZahlungsauftrag.zahlungen = this.parseZahlungen(zahlungsauftragFromServer.zahlungen);
+
+            return tsZahlungsauftrag;
+        }
+        return undefined;
+    }
+
+    public parseZahlungen(data: any): TSZahlung[] {
+        let zahlungen: TSZahlung[] = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                zahlungen[i] = this.parseZahlung(new TSZahlung(), data[i]);
+            }
+        }
+        return zahlungen;
+    }
+
+    public parseZahlung(tsZahlung: TSZahlung, zahlungFromServer: any): TSZahlung {
+        if (zahlungFromServer) {
+            this.parseAbstractEntity(tsZahlung, zahlungFromServer);
+
+            tsZahlung.betragTotalZahlung = zahlungFromServer.betragTotalZahlung;
+            tsZahlung.institutionsName = zahlungFromServer.institutionsName;
+            tsZahlung.status = zahlungFromServer.status;
+
+            return tsZahlung;
+        }
+        return undefined;
     }
 }

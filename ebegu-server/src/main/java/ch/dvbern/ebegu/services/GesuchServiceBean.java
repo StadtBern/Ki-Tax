@@ -132,7 +132,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@PermitAll
 	@Override
 	public List<Gesuch> findReadableGesuche(@Nullable Collection<String> gesuchIds) {
-		if(gesuchIds == null || gesuchIds.isEmpty()){
+		if (gesuchIds == null || gesuchIds.isEmpty()) {
 			return Collections.emptyList();
 		}
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -756,12 +756,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.get());
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
+			} else {
+				throw new EbeguRuntimeException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION);
 			}
-			else {
-				throw new EbeguRuntimeException("antragMutieren", "Fehler beim Erstellen einer Mutation", "Es gibt bereits eine offene Mutation für dieses Gesuch");
-			}
-		}
-		else {
+		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen " + antragId, antragId);
 		}
 
@@ -773,7 +771,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
 										   @Nonnull LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
-
 		final Optional<Fall> fall = fallService.findFallByNumber(fallNummer);
 		final Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
 
@@ -782,9 +779,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode.get(), fall.get());
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer Fallnummer " + fallNummer));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
-			}
-			else{
-				throw new EbeguRuntimeException("antragMutieren", "Fehler beim Erstellen einer Mutation", "Es gibt bereits eine offene Mutation für dieses Gesuch");
+			} else {
+				throw new EbeguRuntimeException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION);
 			}
 		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "fall oder gesuchsperiode konnte nicht geladen werden  fallNr:" + fallNummer + "gsPerID" + gesuchsperiodeId);
@@ -879,6 +875,33 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.of(gesuch);
 	}
 
+
+	@Nonnull
+	private Optional<String> getNeustesVerfuegtesGesuchIdFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<String> query = cb.createQuery(String.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
+
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateAntragStatus = join.get(AntragStatusHistory_.status).in(AntragStatus.getAllVerfuegtStates());
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
+
+		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
+		query.select(root.get(Gesuch_.id));
+		query.orderBy(cb.desc(join.get(AntragStatusHistory_.timestampVon))); // Das mit dem neuesten Verfuegungsdatum
+		List<String> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		String gesuchId = criteriaResults.get(0);
+
+		return Optional.of(gesuchId);
+	}
+
 	@Override
 	@Nonnull
 	@PermitAll
@@ -887,8 +910,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return getNeustesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
 	}
 
-	@Nonnull
+	@Override
+	@PermitAll
+	public boolean isNeustesGesuch(@Nonnull Gesuch gesuch) {
+		final Optional<Gesuch> neustesGesuchFuerGesuch = getNeustesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), false);
+		return neustesGesuchFuerGesuch.isPresent() && Objects.equals(neustesGesuchFuerGesuch.get().getId(), gesuch.getId());
+	}
+
 	private Optional<Gesuch> getNeustesGesuchFuerGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall) {
+		return getNeustesGesuchFuerGesuch(gesuchsperiode, fall, true);
+	}
+
+	/**
+	 * Da es eine private Methode ist, ist es sicher, als Parameter zu fragen, ob man nach ReadAuthorization pruefen muss.
+	 * Das Interface sollte aber diese Moeglichkeit nur versteckt durch bestimmte Methoden anbieten.
+	 */
+	@Nonnull
+	private Optional<Gesuch> getNeustesGesuchFuerGesuch(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Fall fall, boolean checkReadAuthorization) {
 		authorizer.checkReadAuthorizationFall(fall);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -905,7 +943,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			return Optional.empty();
 		}
 		Gesuch gesuch = criteriaResults.get(0);
-		authorizer.checkReadAuthorization(gesuch);
+		if (checkReadAuthorization) {
+			authorizer.checkReadAuthorization(gesuch);
+		}
 		return Optional.of(gesuch);
 	}
 
@@ -972,8 +1012,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		List<String> ids = new ArrayList<>();
 		Collection<Fall> allFaelle = fallService.getAllFalle();
 		for (Fall fall : allFaelle) {
-			Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode, fall);
-			neustesVerfuegtesGesuchFuerGesuch.ifPresent(gesuch -> ids.add(gesuch.getId()));
+			Optional<String> idsFuerGesuch = getNeustesVerfuegtesGesuchIdFuerGesuch(gesuchsperiode, fall);
+			idsFuerGesuch.ifPresent(ids::add);
 		}
 		return ids;
 	}

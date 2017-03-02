@@ -1,0 +1,63 @@
+<div class="zahlungView">
+    <div class="col-md-12">
+
+        <div class="row">
+            <div class="col-md-9 col-md-offset-1">
+                <dv-loading-button type="button" button-click="vm.gotToUebersicht()"
+                                   button-class="dv-btn-operation">
+                    <i class="fa fa-lg fa-chevron-left"></i>
+                    <span data-translate="ZAHLUNG_UEBERSICHT"></span>
+                </dv-loading-button>
+            </div>
+
+            <div class="col-md-9 col-md-offset-1">
+                <h3 data-translate="ZAHLUNG"></h3>
+            </div>
+            <div class="col-md-1 text-right">
+                <h3 ng-bind="vm.getZahlungsauftrag().zahlungen ? vm.getZahlungsauftrag().zahlungen.length : 0"></h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1 table-responsive">
+
+                <table st-table="displayedCollection" st-safe-src="vm.getZahlungsauftrag().zahlungen"
+                       st-delay="20"
+                       class="table fixedtable table-striped">
+                    <thead>
+                    <tr>
+                        <th st-sort="institutionsName" class="sortable row-institutionsName"
+                            data-translate="ZAHLUNG_INSTITUION_UPPER"></th>
+                        <th data-translate="ZAHLUNG_DETAILPOSITIONEN_UPPER"></th>
+                        <th data-translate="ZAHLUNG_BETRAG_UPPER"></th>
+                        <th st-sort="status" class="sortable row-status" data-translate="ZAHLUNG_STATUS_UPPER"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in displayedCollection">
+                        <td class="ellipsis" ellipsis-tooltip="{{row.institutionsName}}"
+                            ng-bind="row.institutionsName"></td>
+                        <td class="symbol" ng-click="vm.downloadDetails(row)">
+                            <dv-loading-button type="button" button-click="vm.downloadDetails(row)"
+                                               button-class="dv-btn-operation">
+                                <i class="fa fa-lg fa-file-excel-o"></i>
+                            </dv-loading-button>
+                        </td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.betragTotalZahlung}}"
+                            ng-bind="row.betragTotalZahlung"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.status}}" ng-bind="row.status"></td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-center">
+                            <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>

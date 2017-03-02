@@ -35,7 +35,7 @@ export class StatistikViewController {
     constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService, private reportRS: ReportRS, private downloadRS: DownloadRS) {
     }
 
-    $onInit(){
+    $onInit() {
         this._statistikParameter = new TSStatistikParameter();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
             this._gesuchsperioden = response;
