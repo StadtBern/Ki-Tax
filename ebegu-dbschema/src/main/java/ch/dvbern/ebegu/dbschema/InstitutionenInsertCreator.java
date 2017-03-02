@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.dbschema;
 
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.services.AdministrationService;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -26,24 +27,6 @@ public class InstitutionenInsertCreator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(InstitutionenInsertCreator.class);
 
-	public static final String MANDANT_ID_BERN = "e3736eb8-6eef-40ef-9e52-96ab48d8f220";
-
-	public static final int COL_TRAEGERSCHAFT_ID = 0;
-	public static final int COL_TRAEGERSCHAFT_NAME = 1;
-	public static final int COL_TRAEGERSCHAFT_MAIL = 2;
-	public static final int COL_INSTITUTION_ID = 3;
-	public static final int COL_INSTITUTION_NAME = 4;
-	public static final int COL_STRASSE = 5;
-	public static final int COL_HAUSNUMMER = 6;
-	public static final int COL_PLZ = 7;
-	public static final int COL_ORT = 8;
-	public static final int COL_ZUSATZZEILE = 9;
-	public static final int COL_INSTITUTION_MAIL = 10;
-	public static final int COL_ANGEBOT = 11;
-	public static final int COL_IBAN = 12;
-	public static final int COL_OEFFNUNGSSTUNDEN = 13;
-	public static final int COL_OEFFNUNGSTAGE = 14;
-
 	private Map<String, String> traegerschaftenMap = new HashMap<>();
 	private Map<String, String> institutionenMap = new HashMap<>();
 
@@ -53,7 +36,7 @@ public class InstitutionenInsertCreator {
 	private List<String> insertInstitutionsStammdaten = new LinkedList<>();
 
 	private PrintWriter printWriter;
-	private String inputFile = "/institutionen/Institutionen_2017.01.13.xlsx";
+	private String inputFile = "/institutionen/institutionen-24.02.2017.xlsx";
 	private int anzahlZeilen = 87;
 	private String outoutFile = "insertInstitutionen.sql";
 
@@ -99,7 +82,7 @@ public class InstitutionenInsertCreator {
 			return;
 		}
 		// Traegerschaften
-		String traegerschaftKey = readString(row, COL_TRAEGERSCHAFT_ID);
+		String traegerschaftKey = readString(row, AdministrationService.COL_TRAEGERSCHAFT_ID);
 		String traegerschaftsId = null;
 		if (StringUtils.isNotEmpty(traegerschaftKey)) {
 			if (traegerschaftenMap.containsKey(traegerschaftKey)) {
@@ -116,7 +99,7 @@ public class InstitutionenInsertCreator {
 		}
 
 		// Institutionen
-		String institutionsKey = readString(row, COL_INSTITUTION_ID);
+		String institutionsKey = readString(row, AdministrationService.COL_INSTITUTION_ID);
 		String institutionsId;
 		if (StringUtils.isNotEmpty(institutionsKey) && institutionenMap.containsKey(institutionsKey)) {
 			institutionsId = institutionenMap.get(institutionsKey);
@@ -135,7 +118,7 @@ public class InstitutionenInsertCreator {
 			return;
 		}
 		// Institutionsstammdaten
-		String angebot = readString(row, COL_ANGEBOT);
+		String angebot = readString(row, AdministrationService.COL_ANGEBOT);
 		if (angebot == null) {
 			LOG.error("angebot is null: " + row.getRowNum());
 			return;
@@ -176,11 +159,11 @@ public class InstitutionenInsertCreator {
 
 	private String writeAdresse(Row row) {
 		String id = UUID.randomUUID().toString();
-		String strasse = readString(row, COL_STRASSE);
-		String hausnummer = readString(row, COL_HAUSNUMMER);
-		String plz = readString(row, COL_PLZ);
-		String ort = readString(row, COL_ORT);
-		String zusatzzeile = readString(row, COL_ZUSATZZEILE);
+		String strasse = readString(row, AdministrationService.COL_STRASSE);
+		String hausnummer = readString(row, AdministrationService.COL_HAUSNUMMER);
+		String plz = readString(row, AdministrationService.COL_PLZ);
+		String ort = readString(row, AdministrationService.COL_ORT);
+		String zusatzzeile = readString(row, AdministrationService.COL_ZUSATZZEILE);
 
 		if (strasse == null) {
 			LOG.error("strasse is null: " + row.getRowNum());
@@ -222,8 +205,8 @@ public class InstitutionenInsertCreator {
 
 	private String writeTraegerschaft(Row row) {
 		String id = UUID.randomUUID().toString();
-		String traegerschaftsname = readString(row, COL_TRAEGERSCHAFT_NAME);
-		String traegerschaftEmail = readString(row, COL_TRAEGERSCHAFT_MAIL);
+		String traegerschaftsname = readString(row, AdministrationService.COL_TRAEGERSCHAFT_NAME);
+		String traegerschaftEmail = readString(row, AdministrationService.COL_TRAEGERSCHAFT_MAIL);
 
 		if (traegerschaftsname == null) {
 			LOG.error("institutionsname is null: " + row.getRowNum());
@@ -255,8 +238,8 @@ public class InstitutionenInsertCreator {
 
 	private String writeInstitution(Row row, String traegerschaftId) {
 		String id = UUID.randomUUID().toString();
-		String institutionsname = readString(row, COL_INSTITUTION_NAME);
-		String institutionsEmail = readString(row, COL_INSTITUTION_MAIL);
+		String institutionsname = readString(row, AdministrationService.COL_INSTITUTION_NAME);
+		String institutionsEmail = readString(row, AdministrationService.COL_INSTITUTION_MAIL);
 
 		if (institutionsname == null) {
 			LOG.error("institutionsname is null: " + row.getRowNum());
@@ -278,7 +261,7 @@ public class InstitutionenInsertCreator {
 		sb.append("'flyway', "); 					// user_mutiert
 		sb.append("0, ");					        // version,
 		sb.append(toStringOrNull(institutionsname)).append(", "); // name
-		sb.append("'").append(MANDANT_ID_BERN).append("', ");    // mandant_id,
+		sb.append("'").append(AdministrationService.MANDANT_ID_BERN).append("', ");    // mandant_id,
 		sb.append(toStringOrNull(traegerschaftId)).append(", "); // name
 		sb.append("true, "); // active
 		sb.append(toStringOrNull(institutionsEmail)); // mail
@@ -300,9 +283,9 @@ public class InstitutionenInsertCreator {
 
 		// INSERT INTO institution_stammdaten (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, gueltig_ab, gueltig_bis, betreuungsangebot_typ, iban, oeffnungsstunden, oeffnungstage, institution_id, adresse_id) VALUES ('11111111-1111-1111-1111-111111111101', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0, '1000-01-01', '9999-12-31', 'KITA', null, 11.50, 240.00, '11111111-1111-1111-1111-111111111101', '11111111-1111-1111-1111-111111111101');
 		String id = UUID.randomUUID().toString();
-		String iban = readString(row, COL_IBAN);
-		String stunden = readDouble(row, COL_OEFFNUNGSSTUNDEN);
-		String tage = readDouble(row, COL_OEFFNUNGSTAGE);
+		String iban = readString(row, AdministrationService.COL_IBAN);
+		String stunden = readDouble(row, AdministrationService.COL_OEFFNUNGSSTUNDEN);
+		String tage = readDouble(row, AdministrationService.COL_OEFFNUNGSTAGE);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("INSERT INTO institution_stammdaten ");
