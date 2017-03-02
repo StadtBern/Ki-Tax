@@ -43,9 +43,9 @@
                                     <div ng-bind="betreuung.betreuungsstatus | translate"></div>
                                     <span class="betreuung-bar"></span>
                                 </td>
-                                <td ng-if="vm.showMitteilung()">
+                                <td ng-if="vm.showMitteilung()" width="5%">
                                     <dv-loading-button type="button" button-click="vm.gotoMitteilung(betreuung)"
-                                                       button-class="dv-btn-operation">
+                                                       button-class="dv-btn-operation centered-btn">
                                         <i class="fa fa-lg fa-envelope-o"></i>
                                     </dv-loading-button>
                                 </td>

@@ -56,6 +56,8 @@ public class MahnungResource {
 		Validate.notNull(mahnungJAXP);
 		Mahnung mahnung = converter.mahnungToEntity(mahnungJAXP, new Mahnung());
 		Mahnung persistedMahnung = mahnungService.createMahnung(mahnung);
+
+
 		return converter.mahnungToJAX(persistedMahnung);
 	}
 

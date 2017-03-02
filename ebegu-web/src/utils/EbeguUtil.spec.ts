@@ -100,11 +100,11 @@ describe('EbeguUtil', function () {
         it ('it returns a string with 0 characters', () => {
             expect(EbeguUtil.generateRandomName(0).length).toBe(0);
         });
-        it ('it returns a string with 11 characters', () => {
-            expect(EbeguUtil.generateRandomName(10).length).toBe(10);
+        it ('it returns a string with 52 characters', () => {
+            expect(EbeguUtil.generateRandomName(52).length).toBe(52);
         });
-        it ('it returns a string with the maximun 11 characters', () => {
-            expect(EbeguUtil.generateRandomName(1000).length).toBe(10);
+        it ('it returns a string with 0 characters', () => {
+            expect(EbeguUtil.generateRandomName(-1).length).toBe(0);
         });
     });
 });

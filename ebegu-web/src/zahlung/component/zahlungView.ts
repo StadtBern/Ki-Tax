@@ -9,6 +9,9 @@ import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;
 import IStateService = angular.ui.IStateService;
+import {DownloadRS} from '../../core/service/downloadRS.rest';
+import {ReportRS} from '../../core/service/reportRS.rest';
+import TSDownloadFile from '../../models/TSDownloadFile';
 let template = require('./zahlungView.html');
 require('./zahlungView.less');
 
@@ -25,9 +28,11 @@ export class ZahlungViewController {
 
     itemsByPage: number = 20;
 
-    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$stateParams', '$state'];
+    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$stateParams', '$state', 'DownloadRS', 'ReportRS'];
 
-    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any, private $stateParams: IZahlungsauftragStateParams, private $state: IStateService) {
+    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
+                private $stateParams: IZahlungsauftragStateParams, private $state: IStateService,
+                private downloadRS: DownloadRS, private reportRS: ReportRS) {
         this.initViewModel();
     }
 
@@ -45,12 +50,17 @@ export class ZahlungViewController {
         return this.zahlungsauftrag;
     }
 
-    private downloadDetails(zahlung: TSZahlung) {
-        console.log('downloadAllDetails not yet impl ' + zahlung.id);
-    }
-
     private gotToUebersicht(): void {
         this.$state.go('zahlungsauftrag');
+    }
+
+    public downloadDetails(zahlung: TSZahlung) {
+        let win: Window = this.downloadRS.prepareDownloadWindow();
+        this.reportRS.getZahlungReportExcel(zahlung.id)
+            .then((downloadFile: TSDownloadFile) => {
+
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            });
     }
 
 }

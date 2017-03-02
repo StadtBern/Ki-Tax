@@ -16,6 +16,8 @@ import {FreigabeDialogController} from '../../dialog/FreigabeDialogController';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -35,14 +37,15 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     bestaetigungFreigabequittung: boolean = false;
     isFreigebenClicked: boolean = false;
     private showGesuchFreigebenSimulationButton: boolean = false;
+    TSRoleUtil: any;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS', '$window'];
+        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS', '$window', 'AuthServiceRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, $scope: IScope, private applicationPropertyRS: ApplicationPropertyRS,
-                private $window: ng.IWindowService) {
+                private $window: ng.IWindowService,  private authServiceRS: AuthServiceRS) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE);
         this.initViewModel();
@@ -51,6 +54,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     private initViewModel(): void {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.initDevModeParameter();
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     public gesuchEinreichen(): IPromise<void> {
@@ -79,8 +83,10 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
     private initDevModeParameter() {
         this.applicationPropertyRS.isDevMode().then((response: boolean) => {
+            // Simulation nur fuer SuperAdmin freischalten
+            let isSuperadmin : boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorRoles());
             // Die Simulation ist nur im Dev-Mode moeglich und nur, wenn das Gesuch im Status FREIGABEQUITTUNG ist
-            this.showGesuchFreigebenSimulationButton = (response && this.isGesuchInStatus(TSAntragStatus.FREIGABEQUITTUNG));
+            this.showGesuchFreigebenSimulationButton = (response && this.isGesuchInStatus(TSAntragStatus.FREIGABEQUITTUNG) && isSuperadmin);
         });
     }
 

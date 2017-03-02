@@ -142,14 +142,17 @@ export default class EbeguUtil {
 
     /**
      * Erzeugt einen random String mit einer Laenge von numberOfCharacters
-     * @param numberOfCharacters von 0 bis 10
+     * @param numberOfCharacters
      * @returns {string}
      */
     public static generateRandomName(numberOfCharacters: number): string {
-        if (numberOfCharacters === null || numberOfCharacters === undefined || numberOfCharacters > 10) {
-            numberOfCharacters = 10;
+        let text = '';
+        let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+        for (let i = 0; i < numberOfCharacters; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-        return Math.random().toString(36).slice(2, numberOfCharacters + 2);
+        return text;
     }
 
 }

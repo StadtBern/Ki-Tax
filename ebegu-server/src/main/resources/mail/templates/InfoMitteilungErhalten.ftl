@@ -12,7 +12,7 @@ Content-Type: text/html;charset=utf-8
 ${templateConfiguration.mailCss}
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<title>Neue Nachricht vom Jugendamt</title>
+	<title>Ki-Tax: Neue Nachricht</title>
 
 </head>
 
@@ -20,22 +20,20 @@ ${templateConfiguration.mailCss}
 
 <div>
 	<p>
-		Sehr geehrte Familie,
+		Sehr geehrte Familie
 	</p>
 	<p>
         Das Jugendamt hat Ihnen eine
 		<a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/mitteilungen/${mitteilung.fall.id}">Nachricht</a>
         geschrieben.
 	</p>
-	<p>
-		Freundliche Grüsse
+    <p>
+        Freundliche Grüsse <br/>
+        Jugendamt der Stadt Bern
     </p>
     <p>
-        Jugendamt, Stadt Bern
-	</p>
-	<p>
-		Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
-	</p>
+        Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.
+    </p>
 </div>
 
 </body>
