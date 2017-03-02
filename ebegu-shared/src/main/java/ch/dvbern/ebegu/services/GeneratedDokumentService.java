@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.GeneratedDokument;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.MergeDocException;
@@ -11,8 +8,6 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -28,13 +23,15 @@ public interface GeneratedDokumentService {
 	 * @return
 	 */
 	@Nonnull
-	GeneratedDokument saveGeneratedDokument(@Nonnull GeneratedDokument dokument);
+	WriteProtectedDokument saveDokument(@Nonnull WriteProtectedDokument dokument);
 
 	@Nullable
 	GeneratedDokument findGeneratedDokument(String gesuchId, String filename, String path);
 
+	Pain001Dokument findPain001Dokument(String zahlungsauftragId, String filename, String path);
+
 	@Nonnull
-	GeneratedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName, boolean writeProtected) throws MimeTypeParseException;
+	WriteProtectedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, AbstractEntity entity, String fileName, boolean writeProtected) throws MimeTypeParseException;
 
 	GeneratedDokument getFinSitDokumentAccessTokenGeneratedDokument(Gesuch gesuch,
 																	Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
@@ -53,6 +50,8 @@ public interface GeneratedDokumentService {
 
 	GeneratedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung,
 																			Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
+
+	Pain001Dokument getPain001DokumentAccessTokenGeneratedDokument(Zahlungsauftrag zahlungsauftrag, Boolean forceCreation) throws MimeTypeParseException;
 
 	void removeAllGeneratedDokumenteFromGesuch(Gesuch gesuch);
 
