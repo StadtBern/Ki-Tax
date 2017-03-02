@@ -42,4 +42,6 @@ public interface ReportService {
 
 	UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId, InstitutionStammdaten institution) throws ExcelMergeException;
 
+	UploadFileInfo generateExcelReportZahlung(String zahlungId) throws ExcelMergeException;
+
 }

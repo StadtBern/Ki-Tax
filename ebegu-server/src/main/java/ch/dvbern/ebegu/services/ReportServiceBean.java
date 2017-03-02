@@ -16,9 +16,9 @@ import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
 import ch.dvbern.ebegu.reporting.lib.*;
-import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftrag;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragExcelConverter;
+import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -37,7 +37,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
 import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.*;
@@ -93,7 +96,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		if (em != null) {
 
-			Query  gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery");
+			Query gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery");
 			// Wir rechnen zum Stichtag einen Tag dazu, damit es bis 24.00 des Vorabends gilt.
 			gesuchStichtagQuery.setParameter("stichTagDate", DateUtil.SQL_DATETIME_FORMAT.format(datetime.plusDays(1)));
 			gesuchStichtagQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
@@ -199,15 +202,37 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	public UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId, InstitutionStammdaten institution) throws ExcelMergeException {
 
 		List<Zahlung> reportData;
+		Zahlungsauftrag zahlungsauftrag = null;
 		if (institution != null) {
 			//TODO: get data filtered by Institution, zahlungService method to do this?
 			reportData = new ArrayList<>();
 		} else {
-			Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
+			zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
 				.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
 			reportData = zahlungsauftrag.getZahlungen();
 		}
 
+		return getUploadFileInfoZahlung(reportData, zahlungsauftrag.getBeschrieb() + ".xlsx");
+
+	}
+
+
+	@Override
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public UploadFileInfo generateExcelReportZahlung(String zahlungId) throws ExcelMergeException {
+
+		List<Zahlung> reportData = new ArrayList<>();
+
+		Zahlung zahlung = zahlungService.findZahlung(zahlungId)
+			.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, zahlungId));
+
+		reportData.add(zahlung);
+
+		return getUploadFileInfoZahlung(reportData, "Zahlungen_" + zahlung.getInstitutionStammdaten().getInstitution().getName() + ".xlsx");
+
+	}
+
+	private UploadFileInfo getUploadFileInfoZahlung(List<Zahlung> reportData, String excelFileName) throws ExcelMergeException {
 		final ReportResource reportResource = VORLAGE_REPORT_ZAHLUNG_AUFTRAG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
@@ -224,10 +249,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		byte[] bytes = createWorkbook(workbook);
 
 		return fileSaverService.save(bytes,
-			reportResource.getDefaultExportFilename(),
+			excelFileName,
 			TEMP_REPORT_FOLDERNAME,
 			getContentTypeForExport());
-
 	}
 
 	public enum ReportResource {
@@ -237,7 +261,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "GesuchZeitraum.xlsx", "Data",
 			MergeFieldGesuchZeitraum.class),
 		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", "Data",
-		MergeFieldZahlungAuftrag.class);
+			MergeFieldZahlungAuftrag.class);
 
 		@Nonnull
 		private final String templatePath;
@@ -272,7 +296,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 
 		@Nonnull
-		public String getDataSheetName(){
+		public String getDataSheetName() {
 			return dataSheetName;
 		}
 	}

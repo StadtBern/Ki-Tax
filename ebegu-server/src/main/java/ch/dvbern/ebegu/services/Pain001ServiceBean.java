@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.iso20022.V03CH02.*;
+import ch.dvbern.ebegu.reporting.lib.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -43,7 +45,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 	private static final String DEF_DEBTOR_NAME = "Direktion für Bildung, Soziales und Sport der Stadt Bern";
 	private static final String DEF_DEBTOR_BIC = "POFICHBEXXX";
-	private static final String DEF_DEBTOR_IBAN =  "CH3309000000300008233";
+	private static final String DEF_DEBTOR_IBAN = "CH3309000000300008233";
 
 	private static final String CCY = "CHF";
 	private static final String CtctDtls_Nm = "KITAX";
@@ -163,7 +165,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
 			transaktion++;
 			ctrlSum = ctrlSum.add(zahlung.getBetragTotalZahlung());
-			document.getCstmrCdtTrfInitn().getPmtInf().get(0).getCdtTrfTxInf().add(createCreditTransferTransactionInformation10CH(objectFactory, transaktion, zahlung));
+			document.getCstmrCdtTrfInitn().getPmtInf().get(0).getCdtTrfTxInf().add(createCreditTransferTransactionInformation10CH(objectFactory, transaktion, zahlung, zahlungsauftrag.getDatumFaellig()));
 		}
 
 		document.getCstmrCdtTrfInitn().setGrpHdr(createGroupHeader(zahlungsauftrag, objectFactory, transaktion, ctrlSum, debtor_name));
@@ -212,7 +214,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 	 * < /CdtTrfTxInf>
 	 * </pre>
 	 */
-	private CreditTransferTransactionInformation10CH createCreditTransferTransactionInformation10CH(ObjectFactory objectFactory, int transaktion, Zahlung zahlung) {
+	private CreditTransferTransactionInformation10CH createCreditTransferTransactionInformation10CH(ObjectFactory objectFactory, int transaktion, Zahlung zahlung, LocalDate date) {
 		CreditTransferTransactionInformation10CH cTTI10CH = objectFactory.createCreditTransferTransactionInformation10CH();
 
 		// struktur
@@ -233,9 +235,13 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 		// data
 		cTTI10CH.getPmtId().setInstrId(String.valueOf(transaktion)); // 2.29
-		cTTI10CH.getPmtId().setEndToEndId(transaktion + " / " +
-			Normalizer.normalize(zahlung.getInstitutionStammdaten().getInstitution().getName(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")); // 2.30
 
+		// "{id}/{Monat Nummer}/{KitaName normalisiert ohne öäü} => "1/2/Brunnen
+		final String endToEndId = transaktion + "/" +
+			date.getMonthValue() + "/" +
+			Normalizer.normalize(zahlung.getInstitutionStammdaten().getInstitution().getName(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+		cTTI10CH.getPmtId().setEndToEndId(
+			endToEndId.substring(0, Math.min(endToEndId.length(), 35))); // 2.30 max 35 signs
 
 		// Wert
 		cTTI10CH.getAmt().getInstdAmt().setCcy(CCY);// 2.43
@@ -262,7 +268,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		cTTI10CH.getCdtr().getPstlAdr().setCtry(zahlung.getInstitutionStammdaten().getAdresse().getLand().toString());// 2.79
 
 		cTTI10CH.setRmtInf(objectFactory.createRemittanceInformation5CH());
-		cTTI10CH.getRmtInf().setUstrd(zahlung.getZahlungstext());    // 2.99
+		cTTI10CH.getRmtInf().setUstrd(zahlung.getInstitutionStammdaten().getInstitution().getName() + " " + DateUtil.DEFAULT_DATE_FORMAT.format(date));    // 2.99
 		return cTTI10CH;
 	}
 

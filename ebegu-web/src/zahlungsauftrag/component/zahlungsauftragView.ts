@@ -4,15 +4,15 @@ import EbeguUtil from '../../utils/EbeguUtil';
 import ZahlungRS from '../../core/service/zahlungRS.rest';
 import {DownloadRS} from '../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../models/TSDownloadFile';
+import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
+import {TSZahlungsauftragsstatus} from '../../models/enums/TSZahlungsauftragstatus';
+import {ReportRS} from '../../core/service/reportRS.rest';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;
 import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
-import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
-import {TSZahlungsauftragsstatus} from '../../models/enums/TSZahlungsauftragstatus';
-import {ReportRS} from '../../core/service/reportRS.rest';
 let template = require('./zahlungsauftragView.html');
 require('./zahlungsauftragView.less');
 
@@ -96,8 +96,6 @@ export class ZahlungsauftragViewController {
 
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
-
-        console.log('downloadAllDetails not yet impl' + zahlungsauftrag.id);
     }
 
     public ausloesen(zahlungsauftragId: string) {
