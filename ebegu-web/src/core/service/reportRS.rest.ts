@@ -1,7 +1,7 @@
 import {IHttpParamSerializer, ILogService} from 'angular';
 import IPromise = angular.IPromise;
-import TSDownloadFile from "../../models/TSDownloadFile";
-import EbeguRestUtil from "../../utils/EbeguRestUtil";
+import TSDownloadFile from '../../models/TSDownloadFile';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import IHttpService = angular.IHttpService;
 
 export class ReportRS {

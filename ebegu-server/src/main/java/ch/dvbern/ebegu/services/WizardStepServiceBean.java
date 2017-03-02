@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
@@ -56,7 +57,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private PrincipalBean principalBean;
 	@Inject
 	private GeneratedDokumentService generatedDokumentService;
-
+	@Inject
+	private MailService mailService;
 
 	@Override
 	@Nonnull
@@ -277,10 +279,27 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
+
+					// Hier wird das Gesuch oder die Mutation effektiv verfügt. Daher müssen hier noch andere Services gerufen werden!
 					try {
 						generatedDokumentService.getBegleitschreibenDokument(wizardStep.getGesuch(), true);
 					} catch (MimeTypeParseException | MergeDocException e) {
 						LOG.error("Error updating Deckblatt Dokument", e);
+					}
+
+					try {
+						if (wizardStep.getGesuch().getFall().getBesitzer() != null) {
+							//nur bei Online-Antrag
+							if (!wizardStep.getGesuch().isMutation()) {
+								// Erstgesuch
+								mailService.sendInfoVerfuegtGesuch(wizardStep.getGesuch());
+							} else {
+								// Mutation
+								mailService.sendInfoVerfuegtMutation(wizardStep.getGesuch());
+							}
+						}
+					} catch (MailException e) {
+						LOG.error("Error sending Mail zu gesuchsteller", e);
 					}
 
 					antragStatusHistoryService.saveStatusChange(wizardStep.getGesuch());

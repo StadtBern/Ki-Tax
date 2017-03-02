@@ -1941,6 +1941,7 @@ export default class EbeguRestUtil {
     public betreuungsmitteilungToRestObject(restBetreuungsmitteilung: any, tsBetreuungsmitteilung: TSBetreuungsmitteilung): any {
         if (tsBetreuungsmitteilung) {
             this.mitteilungToRestObject(restBetreuungsmitteilung, tsBetreuungsmitteilung);
+            restBetreuungsmitteilung.applied = tsBetreuungsmitteilung.applied;
             if (tsBetreuungsmitteilung.betreuungspensen) {
                 restBetreuungsmitteilung.betreuungspensen = [];
                 tsBetreuungsmitteilung.betreuungspensen.forEach(betreuungspensum => {
@@ -1956,6 +1957,7 @@ export default class EbeguRestUtil {
     public parseBetreuungsmitteilung(tsBetreuungsmitteilung: TSBetreuungsmitteilung, betreuungsmitteilungFromServer: any): TSBetreuungsmitteilung {
         if (betreuungsmitteilungFromServer) {
             this.parseMitteilung(tsBetreuungsmitteilung, betreuungsmitteilungFromServer);
+            tsBetreuungsmitteilung.applied = betreuungsmitteilungFromServer.applied;
             if (betreuungsmitteilungFromServer.betreuungspensen) {
                 tsBetreuungsmitteilung.betreuungspensen = [];
                 for (let i = 0; i < betreuungsmitteilungFromServer.betreuungspensen.length; i++) {

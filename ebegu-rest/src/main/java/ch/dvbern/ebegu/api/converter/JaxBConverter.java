@@ -2281,6 +2281,7 @@ public class JaxBConverter {
 
 		mitteilungToEntity(mitteilungJAXP, betreuungsmitteilung);
 
+		betreuungsmitteilung.setApplied(mitteilungJAXP.getApplied());
 		if (mitteilungJAXP.getBetreuungspensen() != null) {
 			betreuungsmitteilung.setBetreuungspensen(new HashSet<>());
 			for (JaxBetreuungsmitteilungPensum jaxBetreuungspensum : mitteilungJAXP.getBetreuungspensen()) {
@@ -2295,6 +2296,8 @@ public class JaxBConverter {
 	public JaxBetreuungsmitteilung betreuungsmitteilungToJAX(Betreuungsmitteilung persistedMitteilung) {
 		final JaxBetreuungsmitteilung jaxBetreuungsmitteilung = new JaxBetreuungsmitteilung();
 		mitteilungToJAX(persistedMitteilung, jaxBetreuungsmitteilung);
+
+		jaxBetreuungsmitteilung.setApplied(persistedMitteilung.isApplied());
 		if (persistedMitteilung.getBetreuungspensen() != null) {
 			jaxBetreuungsmitteilung.setBetreuungspensen(new ArrayList<>());
 			for (BetreuungsmitteilungPensum betreuungspensum : persistedMitteilung.getBetreuungspensen()) {

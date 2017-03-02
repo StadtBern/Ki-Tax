@@ -10,12 +10,14 @@
 
 package ch.dvbern.ebegu.config;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Alternative;
 
 /**
  * Konfiguration fuer Testing
  */
 @Alternative
+@Dependent
 public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 
 	private static final long serialVersionUID = 7880484074016308515L;
@@ -68,5 +70,45 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 	@Override
 	public String getSenderAddress() {
 		return "hallo@dvbern.ch";
+	}
+
+	@Override
+	public String getOpenamURL() {
+		return null;
+	}
+
+	@Override
+	public boolean getLoginWithToken() {
+		return false;
+	}
+
+	@Override
+	public String getSMTPHost() {
+		return null;
+	}
+
+	@Override
+	public int getSMTPPort() {
+		return 0;
+	}
+
+	@Override
+	public String getHostname() {
+		return "localhost";
+	}
+
+	@Override
+	public boolean isDummyLoginEnabled() {
+		return false;
+	}
+
+	@Override
+	public String getEmailOfSuperUser() {
+		return "hallo@dvbern.ch";
+	}
+
+	@Override
+	public String getBackgroundColor() {
+		return null;
 	}
 }

@@ -264,7 +264,8 @@ export default class GesuchModelManager {
 
     public reloadGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
-            return this.gesuch = gesuchResponse;
+            this.setGesuch(gesuchResponse);
+            return this.gesuch;
         });
     }
 
@@ -532,6 +533,7 @@ export default class GesuchModelManager {
         } else {
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
         }
+        this.gesuch.emptyMutation = true;
     }
 
     private initAntrag(antragTyp: TSAntragTyp, eingangsart: TSEingangsart): void {
@@ -945,7 +947,6 @@ export default class GesuchModelManager {
             let error: TSExceptionReport = new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, msg, kinderWithVerfuegungen);
             this.errorService.addDvbError(error);
         }
-        //todo beim fragen warum nicht einfach die ganze liste austauschen? Wegen der Reihenfolge?
         let numOfAssigned = 0;
         for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
             for (let j = 0; j < kinderWithVerfuegungen.length; j++) {

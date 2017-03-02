@@ -1,11 +1,18 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.MitteilungStatus;
 import ch.dvbern.ebegu.enums.MitteilungTeilnehmerTyp;
 import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.services.BetreuungService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.MitteilungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -17,8 +24,8 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import javax.security.auth.login.LoginException;
-import java.util.Collection;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Tests fuer die Klasse MitteilungService
@@ -33,7 +40,16 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 	private MitteilungService mitteilungService;
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
+	private InstitutionService instService;
+
+	@Inject
+	private BetreuungService betreuungService;
+
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private Persistence<Gesuch> persistence;
 
 	private Mandant mandant;
 	private Fall fall;
@@ -199,6 +215,61 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		final Optional<Mitteilung> mitFromJAToGSUpdated2 = mitteilungService.findMitteilung(mitFromJAToGS.getId());
 		Assert.assertTrue(mitFromJAToGSUpdated2.isPresent());
 		Assert.assertEquals(MitteilungStatus.GELESEN, mitFromJAToGSUpdated2.get().getMitteilungStatus());
+	}
+
+	@Test
+	public void testApplyBetreuungsmitteilungErstgesuch() {
+		// Momentan ist es nicht erlaubt, eine Betreuungsmitteilung aus einem Erstgesuch zu machen
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
+
+		final Betreuungsmitteilung mitteilung = new Betreuungsmitteilung();
+		final Betreuung betreuung_1_1 = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		mitteilung.setBetreuung(betreuung_1_1);
+
+		try {
+			mitteilungService.applyBetreuungsmitteilung(mitteilung);
+			Assert.fail("Keine Betreuungsmittielung darf aus einem Erstgesuch erstellt werden. Es sollte eine Exception werfen");
+		}
+		catch (EbeguRuntimeException e) {
+			//nop
+		}
+	}
+
+	@Test
+	public void testApplyBetreuungsmitteilungMutation() {
+		prepareDependentObjects();
+
+		// Wir erstellen ein Erstgesuch und mutieren es
+		final Gesuch gesuch1 = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
+		gesuch1.setStatus(AntragStatus.VERFUEGT);
+		gesuchService.updateGesuch(gesuch1, true);
+		final Optional<Gesuch> mutationOpt = gesuchService.antragMutieren(gesuch1.getId(), LocalDate.now());
+		final Gesuch mutation = gesuchService.createGesuch(mutationOpt.get());
+		final Betreuungsmitteilung mitteilung = TestDataUtil.createBetreuungmitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.INSTITUTION);
+
+		final Set<BetreuungsmitteilungPensum> betPensen = new HashSet<>();
+		BetreuungsmitteilungPensum betPens = new BetreuungsmitteilungPensum();
+		betPens.setBetreuungsmitteilung(mitteilung);
+		betPens.setPensum(33);
+		final DateRange gueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
+		betPens.setGueltigkeit(gueltigkeit);
+		betPensen.add(betPens);
+		mitteilung.setBetreuungspensen(betPensen);
+
+		final KindContainer kind1 = mutation.getKindContainers().iterator().next();
+		final Betreuung betreuung_1_1 = kind1.getBetreuungen().iterator().next();
+		mitteilung.setBetreuung(betreuung_1_1);
+
+		mitteilungService.applyBetreuungsmitteilung(mitteilung);
+
+		final Optional<Betreuung> persistedBetreuung = betreuungService.findBetreuungWithBetreuungsPensen(betreuung_1_1.getId());
+
+		Assert.assertTrue(persistedBetreuung.isPresent());
+		Assert.assertEquals(1, persistedBetreuung.get().getBetreuungspensumContainers().size());
+		final BetreuungspensumContainer nextBetPensum = persistedBetreuung.get().getBetreuungspensumContainers().iterator().next();
+		Assert.assertEquals(new Integer(33), nextBetPensum.getBetreuungspensumJA().getPensum());
+		Assert.assertEquals(gueltigkeit, nextBetPensum.getBetreuungspensumJA().getGueltigkeit());
 	}
 
 
