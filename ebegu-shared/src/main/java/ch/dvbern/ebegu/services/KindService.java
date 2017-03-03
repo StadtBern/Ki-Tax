@@ -45,7 +45,6 @@ public interface KindService {
 	 */
 	void removeKind(@Nonnull KindContainer kind);
 
-
 	/**
 	 * Gibt alle Kinder zurueck, welche Mutationen betreffen, die verfügt sind und deren
 	 * kindMutiert-Flag noch nicht gesetzt sind
