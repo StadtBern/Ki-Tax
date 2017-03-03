@@ -429,6 +429,14 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
+	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
+	public Optional<Zahlung> findZahlung(String zahlungId) {
+		Objects.requireNonNull(zahlungId, "zahlungId muss gesetzt sein");
+		Zahlung zahlung = persistence.find(Zahlung.class, zahlungId);
+		return Optional.ofNullable(zahlung);
+	}
+
+	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public void deleteZahlungsauftrag(String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");

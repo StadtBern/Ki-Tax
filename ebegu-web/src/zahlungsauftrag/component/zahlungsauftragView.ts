@@ -4,14 +4,15 @@ import EbeguUtil from '../../utils/EbeguUtil';
 import ZahlungRS from '../../core/service/zahlungRS.rest';
 import {DownloadRS} from '../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../models/TSDownloadFile';
+import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
+import {TSZahlungsauftragsstatus} from '../../models/enums/TSZahlungsauftragstatus';
+import {ReportRS} from '../../core/service/reportRS.rest';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;
 import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
-import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
-import {TSZahlungsauftragsstatus} from '../../models/enums/TSZahlungsauftragstatus';
 let template = require('./zahlungsauftragView.html');
 require('./zahlungsauftragView.less');
 
@@ -35,19 +36,16 @@ export class ZahlungsauftragViewController {
     itemsByPage: number = 12;
     devMode: boolean = false;
 
-    static $inject: string[] = ['ZahlungRS', 'EbeguUtil', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS'];
+    static $inject: string[] = ['ZahlungRS', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS', 'ReportRS'];
 
-    constructor(private zahlungRS: ZahlungRS, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
-                private $state: IStateService, private downloadRS: DownloadRS, private applicationPropertyRS: ApplicationPropertyRS) {
+    constructor(private zahlungRS: ZahlungRS, private CONSTANTS: any,
+                private $state: IStateService, private downloadRS: DownloadRS, private applicationPropertyRS: ApplicationPropertyRS,
+                private reportRS: ReportRS) {
         this.initViewModel();
     }
 
     public getZahlungsauftragen() {
         return this.zahlungsauftragen;
-    }
-
-    public addZerosToFallNummer(fallnummer: number): string {
-        return this.ebeguUtil.addZerosToNumber(fallnummer, this.CONSTANTS.FALLNUMMER_LENGTH);
     }
 
     private initViewModel() {
@@ -88,7 +86,12 @@ export class ZahlungsauftragViewController {
     }
 
     public downloadAllDetails(zahlungsauftrag: TSZahlungsauftrag) {
-        console.log('downloadAllDetails not yet impl' + zahlungsauftrag.id);
+        let win: Window = this.downloadRS.prepareDownloadWindow();
+        this.reportRS.getZahlungsauftragReportExcel(zahlungsauftrag.id)
+            .then((downloadFile: TSDownloadFile) => {
+
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+            });
     }
 
     public ausloesen(zahlungsauftragId: string) {
