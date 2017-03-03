@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.iso20022.V03CH02.*;
-import ch.dvbern.ebegu.reporting.lib.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -26,13 +25,11 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -274,7 +271,7 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		cTTI10CH.setRmtInf(objectFactory.createRemittanceInformation5CH());
 
 		String monat = date.format(DateTimeFormatter.ofPattern("MMM", new Locale("de")));
-		cTTI10CH.getRmtInf().setUstrd(zahlung.getInstitutionStammdaten().getInstitution().getName() + ", Monat " + monat+"."+date.getYear());    // 2.99
+		cTTI10CH.getRmtInf().setUstrd(zahlung.getInstitutionStammdaten().getInstitution().getName() + ", Monat " + monat + "." + date.getYear());    // 2.99
 		return cTTI10CH;
 	}
 
