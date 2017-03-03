@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -12,10 +13,12 @@ import java.util.Optional;
  */
 public interface ZahlungService {
 
+
 	/**
 	 * Ermittelt alle im aktuellen Monat gueltigen Verfuegungen, sowie aller seit dem letzten Auftrag eingeganegenen
 	 * Mutationen.
 	 * Der Zahlungsauftrag hat den initialen Status ENTWURF
+	 * Als datumGeneriert wird "Jetzt" verwendet
 	 */
 	Zahlungsauftrag zahlungsauftragErstellen(LocalDate datumFaelligkeit, String beschreibung);
 
@@ -24,6 +27,13 @@ public interface ZahlungService {
 	 * *nicht* neu generiert
 	 */
 	Zahlungsauftrag zahlungsauftragAktualisieren(String auftragId, LocalDate datumFaelligkeit, String beschreibung);
+
+	/**
+	 * Ermittelt alle im aktuellen Monat gueltigen Verfuegungen, sowie aller seit dem letzten Auftrag eingeganegenen
+	 * Mutationen.
+	 * Der Zahlungsauftrag hat den initialen Status ENTWURF
+	 */
+	Zahlungsauftrag zahlungsauftragErstellen(LocalDate datumFaelligkeit, String beschreibung, LocalDateTime datumGeneriert);
 
 	/**
 	 * Nachdem alle Daten kontrolliert wurden, wird der Zahlungsauftrag ausgeloest. Danach kann er nicht mehr
@@ -37,6 +47,8 @@ public interface ZahlungService {
 	 */
 	Optional<Zahlungsauftrag> findZahlungsauftrag(String auftragId);
 
+	Optional<Zahlung> findZahlung(String zahlungId);
+
 	/**
 	 * Loescht einen Zahlungsauftrag (nur im Status ENTWURF moeglich)
 	 */
@@ -47,11 +59,6 @@ public interface ZahlungService {
 	 * TODO (team) im JaxBConverter aufgrund Berechtigung des Benutzers Zahlungen entfernen!
 	 */
 	Collection<Zahlungsauftrag> getAllZahlungsauftraege();
-
-	/**
-	 * Erstellt ein ISO-20022-File mit den Zahlunspositionen des gewaehlten Auftrags.
-	 */
-	String createIsoFile(String auftragId);
 
 	/**
 	 * Eine Kita kann/muss den Zahlungseingang bestaetigen

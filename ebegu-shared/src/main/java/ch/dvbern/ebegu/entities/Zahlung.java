@@ -76,7 +76,7 @@ public class Zahlung extends AbstractEntity {
 		this.zahlungspositionen = zahlungspositionen;
 	}
 
-	public BigDecimal getTotal() {
+	public BigDecimal getBetragTotalZahlung() {
 		BigDecimal total = BigDecimal.ZERO;
 		for (Zahlungsposition zahlungsposition : zahlungspositionen) {
 			if (zahlungsposition.getStatus().isAuszuzahlen()) {
@@ -84,10 +84,5 @@ public class Zahlung extends AbstractEntity {
 			}
 		}
 		return total;
-	}
-
-	//TODO: Schlauer Zahlugstext finden
-	public String getZahlungstext() {
-		return getTotal() + " " + getInstitutionStammdaten().getInstitution().getName();
 	}
 }

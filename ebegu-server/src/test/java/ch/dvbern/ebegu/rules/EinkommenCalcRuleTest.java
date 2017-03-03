@@ -102,9 +102,9 @@ public class EinkommenCalcRuleTest {
 		Assert.assertEquals(3, result.size());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 		Assert.assertEquals(new BigDecimal(50000), result.get(0).getMassgebendesEinkommen());
-		Assert.assertEquals("EINKOMMEN: neues Massgebendes Einkommen aufgrund Einkommensverschlechterung " + TestDataUtil.PERIODE_JAHR_1, result.get(1).getBemerkungen());
+		Assert.assertEquals("EINKOMMEN: Ihr massgebendes Einkommen des Jahres 2016 ist gegenüber der Vergleichsperiode um mehr als 20% gesunken. Die Bemessung erfolgt auf dem provisorischen Einkommen des Jahres " + TestDataUtil.PERIODE_JAHR_1 + ".", result.get(1).getBemerkungen());
 		Assert.assertEquals(new BigDecimal(25000), result.get(1).getMassgebendesEinkommen());
-		Assert.assertEquals("EINKOMMEN: neues Massgebendes Einkommen aufgrund Einkommensverschlechterung " + TestDataUtil.PERIODE_JAHR_2, result.get(2).getBemerkungen());
+		Assert.assertEquals("EINKOMMEN: Ihr massgebendes Einkommen des Jahres 2017 ist gegenüber der Vergleichsperiode um mehr als 20% gesunken. Die Bemessung erfolgt auf dem provisorischen Einkommen des Jahres " + TestDataUtil.PERIODE_JAHR_2 + ".", result.get(2).getBemerkungen());
 		Assert.assertEquals(new BigDecimal(20000), result.get(2).getMassgebendesEinkommen());
 	}
 

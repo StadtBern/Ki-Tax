@@ -1,7 +1,10 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Zahlung;
+import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.ZahlungStatus;
+import ch.dvbern.ebegu.iso20022.V03CH02.Document;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.services.Pain001Service;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -16,6 +19,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,8 +53,8 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 
 	@Before
 	public void init() {
-		final Gesuchsperiode gesuchsperiode = createGesuchsperiode(true);
-		final Mandant mandant = insertInstitutionen();
+		createGesuchsperiode(true);
+		insertInstitutionen();
 		//createBenutzer(mandant);
 		TestDataUtil.prepareApplicationProperties(persistence);
 
@@ -53,7 +62,7 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void getPainFileContentTest() {
+	public void getPainFileContentTest() throws JAXBException {
 		Assert.assertNotNull(pain001Service);
 
 		List<Zahlung> zahlungList = new ArrayList<>();
@@ -69,8 +78,30 @@ public class Pain001ServiceTest extends AbstractEbeguLoginTest {
 		zahlungsauftrag.setDatumFaellig(LocalDate.now());
 		zahlungsauftrag.setZahlungen(zahlungList);
 
-		final String painFileContent = pain001Service.getPainFileContent(zahlungsauftrag);
+		final byte[] painFileContent = pain001Service.getPainFileContent(zahlungsauftrag);
 
 		Assert.assertNotNull(painFileContent);
+
+		ByteArrayInputStream bis = new ByteArrayInputStream(painFileContent);
+		final Document document = getDocumentFromInputStream(bis);
+		Assert.assertNotNull(document);
+
+		Assert.assertNotNull(document.getCstmrCdtTrfInitn().getGrpHdr());
+		Assert.assertNotNull(document.getCstmrCdtTrfInitn().getPmtInf());
+
+
+	}
+
+
+	private Document getDocumentFromInputStream(ByteArrayInputStream bis) throws JAXBException {
+
+			JAXBContext jaxbContext = JAXBContext.newInstance(Document.class);
+
+
+			final Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+			JAXBElement<Document> documentJAXBElement = (JAXBElement<Document>) jaxbUnmarshaller.unmarshal(new StreamSource(bis),Document.class);
+			return documentJAXBElement.getValue();
+
 	}
 }

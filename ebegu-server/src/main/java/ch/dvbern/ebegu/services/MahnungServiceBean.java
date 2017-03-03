@@ -11,6 +11,8 @@ import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -32,6 +34,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 /**
  * Service fuer Mahnungen
  */
+@SuppressWarnings("OverlyBroadCatchBlock")
 @Stateless
 @Local(MahnungService.class)
 @PermitAll
@@ -52,6 +55,11 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Inject
 	private Authorizer authorizer;
 
+	@Inject
+	private MailService mailService;
+
+	private final Logger LOG = LoggerFactory.getLogger(MahnungServiceBean.class.getSimpleName());
+
 
 	@Override
 	@Nonnull
@@ -66,7 +74,14 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 				throw new EbeguRuntimeException("createMahnung", "Zweitmahnung erstellt ohne aktive Erstmahnung! " + mahnung.getId(), mahnung.getId());
 			}
 		}
-		return persistence.persist(mahnung);
+		Mahnung persistedMahnung = persistence.persist(mahnung);
+		Gesuch gesuch = persistedMahnung.getGesuch();
+		try {
+			mailService.sendInfoMahnung(gesuch);
+		} catch (Exception e) {
+			LOG.error("Mail InfoMahnung konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+		}
+		return persistedMahnung;
 	}
 
 	@Override
