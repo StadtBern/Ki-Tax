@@ -7,17 +7,12 @@ import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 
 /**
  * Testet die BetreuungsangebotTyp Regel
  */
 public class BetreuungsangebotTypCalcRuleTest {
-
-	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
-	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
 
 	@Test
 	public void testAngebotKita() {
@@ -74,7 +69,7 @@ public class BetreuungsangebotTypCalcRuleTest {
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(betreuungsangebotTyp);
-		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE, 60, 0));
 		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();
 		betreuungspensumContainer.setBetreuungspensumJA(new Betreuungspensum());
 		betreuungspensumContainer.getBetreuungspensumJA().setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);

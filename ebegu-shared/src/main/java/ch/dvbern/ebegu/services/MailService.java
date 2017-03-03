@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.errors.MailException;
 
 import javax.annotation.Nonnull;
@@ -25,4 +26,24 @@ public interface MailService {
 	 * Sendet eine Email mit der Information, dass ein Betreuungsplatz abgelehnt wurde.
 	 */
 	void sendInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Benachrichtigung, dass eine In-System Nachricht erhalten wurde.
+	 */
+	void sendInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
+	 */
+	void sendInfoVerfuegtGesuch(@Nonnull Gesuch gesuch) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass eine Mutation Verfügt wurde.
+	 */
+	void sendInfoVerfuegtMutation(@Nonnull Gesuch gesuch) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass eine Mahnung versendet wurde.
+	 */
+	void sendInfoMahnung(@Nonnull Gesuch gesuch) throws MailException;
 }

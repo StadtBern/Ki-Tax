@@ -151,9 +151,9 @@ public class FinanzielleSituationRechner {
 			BigDecimal massgebendesEinkommenBasisjahr_zuZweit = finanzielleSituationResultateDTO_zuZweit.getMassgebendesEinkVorAbzFamGr();
 			if (gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() != null && gesuch.extractEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
 				// In der EKV 1 vergleichen wir immer mit dem Basisjahr
-				handleEKV1(finanzDatenDTO_alleine, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus1(), resultateEKV1_alleine.getMassgebendesEinkVorAbzFamGr(),
+				handleEKV1(finanzDatenDTO_alleine, einkommensverschlechterungInfo.getStichtagGueltigFuerBasisJahrPlus1(), resultateEKV1_alleine.getMassgebendesEinkVorAbzFamGr(),
 					massgebendesEinkommenBasisjahr_alleine, minimumEKV);
-				handleEKV1(finanzDatenDTO_zuZweit, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus1(), resultateEKV1_zuZweit.getMassgebendesEinkVorAbzFamGr(),
+				handleEKV1(finanzDatenDTO_zuZweit, einkommensverschlechterungInfo.getStichtagGueltigFuerBasisJahrPlus1(), resultateEKV1_zuZweit.getMassgebendesEinkVorAbzFamGr(),
 					massgebendesEinkommenBasisjahr_zuZweit, minimumEKV);
 			}
 
@@ -176,10 +176,10 @@ public class FinanzielleSituationRechner {
 				FinanzielleSituationResultateDTO resultateEKV2_alleine = calculateResultateEinkommensverschlechterung(gesuch, 2, false);
 				FinanzielleSituationResultateDTO resultateEKV2_zuZweit = calculateResultateEinkommensverschlechterung(gesuch, 2, true);
 				// In der EKV 2 vergleichen wir immer mit dem EKV 1, egal ob diese akzeptiert war
-				handleEKV2(finanzDatenDTO_alleine, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus2(),
+				handleEKV2(finanzDatenDTO_alleine, einkommensverschlechterungInfo.getStichtagGueltigFuerBasisJahrPlus2(),
 					resultateEKV2_alleine.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenVorjahr_alleine,
 					massgebendesEinkommenBasisjahr_alleine, minimumEKV);
-				handleEKV2(finanzDatenDTO_zuZweit, einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus2(),
+				handleEKV2(finanzDatenDTO_zuZweit, einkommensverschlechterungInfo.getStichtagGueltigFuerBasisJahrPlus2(),
 					resultateEKV2_zuZweit.getMassgebendesEinkVorAbzFamGr(), massgebendesEinkommenVorjahr_zuZweit,
 					massgebendesEinkommenBasisjahr_zuZweit, minimumEKV);
 			} else {

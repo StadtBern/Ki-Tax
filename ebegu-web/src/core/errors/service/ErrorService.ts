@@ -73,7 +73,7 @@ export default class ErrorService {
                 this.$rootScope.$broadcast(TSMessageEvent[udateEvent], this.errors);
             }
         } else {
-            console.log('could not display received TSExceptionReport ' +  dvbError);
+            console.log('could not display received TSExceptionReport ' + dvbError);
         }
     }
 

@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -26,6 +27,7 @@ import java.util.Map;
 public class MailTemplateConfiguration {
 
 	private static final Locale DEFAULT_LOCALE = new Locale("de", "CH");
+	public static final String EMPFAENGER_MAIL = "empfaengerMail";
 
 	private final Configuration freeMarkerConfiguration;
 
@@ -40,30 +42,51 @@ public class MailTemplateConfiguration {
 		this.freeMarkerConfiguration = ourFreeMarkerConfig;
 	}
 
-	public String getInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung, Gesuchsteller gesuchsteller) {
-		return processInfoBetreuungAbgelehntTemplate("InfoBetreuungAbgelehnt.ftl", betreuung, gesuchsteller);
+	public String getInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung, @Nonnull Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processTemplateBetreuung("InfoBetreuungAbgelehnt.ftl", betreuung, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
 
-	private String processInfoBetreuungAbgelehntTemplate(@Nonnull String nameOfTemplate, @Nonnull Betreuung betreuung, Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
-		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
-		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };
-		paramsToPass[paramsToPass.length - 2] = new Object[] { "gesuchsteller", gesuchsteller };
-		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
+	public String getInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processTemplateGesuch("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
 
-	public String getInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller) {
-		return processInfoBetreuungenBestaetigtTemplate("InfoBetreuungenBestaetigt.ftl", gesuch, gesuchsteller);
+	public String getInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung, @Nonnull String empfaengerMail) {
+		return processTemplateMitteilung("InfoMitteilungErhalten.ftl", mitteilung, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
 
-	private String processInfoBetreuungenBestaetigtTemplate(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, Object[]... extraValuePairs) {
+	public String getInfoVerfuegtGesuch(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processTemplateGesuch("InfoVerfuegtGesuch.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	}
+
+	public String getInfoVerfuegtMutaion(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processTemplateGesuch("InfoVerfuegtMutation.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	}
+
+	public String getInfoMahnung(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processTemplateGesuch("InfoMahnung.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	}
+
+	private String processTemplateGesuch(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, @Nonnull Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "gesuch", gesuch };
 		paramsToPass[paramsToPass.length - 2] = new Object[] { "gesuchsteller", gesuchsteller };
 		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
-	private String processtemplate(final String name, @Nonnull Locale loc, final Object[]... extraValuePairs) {
-		assert name != null;
+	private String processTemplateBetreuung(@Nonnull String nameOfTemplate, @Nonnull Betreuung betreuung, @Nonnull Gesuchsteller gesuchsteller, @Nonnull Object[]... extraValuePairs) {
+		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
+		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };
+		paramsToPass[paramsToPass.length - 2] = new Object[] { "gesuchsteller", gesuchsteller };
+		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
+	}
+
+	private String processTemplateMitteilung(@Nonnull String nameOfTemplate, @Nonnull Mitteilung mitteilung, @Nonnull Object[]... extraValuePairs) {
+		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 1);
+		paramsToPass[paramsToPass.length - 1] = new Object[] { "mitteilung", mitteilung };
+		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
+	}
+
+	private String processtemplate(@Nonnull final String name, @Nonnull Locale loc, final Object[]... extraValuePairs) {
 		try {
 			final Map<Object, Object> rootMap = new HashMap<>();
 			rootMap.put("configuration", ebeguConfiguration);
@@ -88,6 +111,13 @@ public class MailTemplateConfiguration {
 		} catch (final TemplateException e) {
 			throw new EbeguRuntimeException("processtemplate()", String.format("Failed to process template %s.", name), e);
 		}
+	}
+
+	private Object[] toArgumentPair(String key, Object value) {
+		Object[] args = new Object[2];
+		args[0] = key;
+		args[1] = value;
+		return args;
 	}
 
 	public String getMailCss() {

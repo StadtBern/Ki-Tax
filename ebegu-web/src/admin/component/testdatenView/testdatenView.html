@@ -1,0 +1,272 @@
+<div class="testdatenView testdatenModul">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+
+            <div class="viewTitle marginTop10">
+                <h1 data-translate="TESTFAELLE_EINFUEGEN"></h1>
+            </div>
+
+            <!--selecton fuer parameter die bestimmen wie die testfaelle erzeugt werden-->
+            <div class="row marginTop10">
+                <div class="col-sm-6 ">
+                    <md-radio-group ng-model="vm.creationType" dv-suppress-form-submit-on-enter>
+                        <md-radio-button value="warten">Betreuungen mit Zustand &#034;warten&#034;</md-radio-button>
+                        <md-radio-button value="bestaetigt">Betreuungen mit Zustand &#034;bestätigt&#034;</md-radio-button>
+                        <md-radio-button value="verfuegt">Verfügte Erstgesuche</md-radio-button>
+                    </md-radio-group>
+                </div>
+                <div class="col-sm-4 ">
+                    <dv-input-container class="form-group">
+                        <label class="md-no-float" for="besitzer">
+                            Gesuchsteller wenn gewuenscht
+                        </label>
+                        <div class="dv-select-style">
+                            <select name="besitzer" id="besitzer"
+                                    ng-model="vm.selectedBesitzer"
+                                    class="form-control"
+                                    ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList"
+                                    style="background:#F0F0F0;">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </dv-input-container>
+                </div>
+            </div>
+
+            <!--Liste der Faelle-->
+            <div class="row marginTop30">
+                <ul>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('1')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Dagmar Wälti"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('2')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Yvonne Feutz"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('3')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Marcia Perreira"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('4')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Laura Walther"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('5')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Lueti"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('6')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Nora Becker"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('7')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Meier"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('8')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="AusInAusBern"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('ASIV1')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 1"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('ASIV2')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 2"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('ASIV3')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 3"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('ASIV4')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 4"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('ASIV5')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 5"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('ASIV6')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 6"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('ASIV7')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 7"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('ASIV8')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 8"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('ASIV9')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 9"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn-link btn-testfall"
+                                ng-click="vm.createTestFallType('ASIV10')">
+                            <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="ASIV Testfall 10"></span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!--Gesuche eines GS loeschen-->
+            <h2 class="marginTop20">
+                <span data-translate="Gesuchstellerfaelle loeschen"></span>
+            </h2>
+            <div class="row marginTop30">
+                <div class="col-sm-7 ">
+                    <dv-input-container class="form-group ">
+                        <label class="md-no-float" for="gesuchsteller">
+                            Gesuchsteller dessen Faelle Geloescht werden solllen
+                        </label>
+                        <div class="dv-select-style">
+                            <select name="gesuchsteller" id="gesuchsteller"
+                                    ng-model="vm.selectedBesitzer"
+                                    class="form-control dv-input-container-small"
+                                    ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList"
+                                    style="background:#F0F0F0;">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </dv-input-container>
+                </div>
+                <div class="col-sm-4 ">
+                    <dv-loading-button button-class="" button-click="vm.removeGesucheGS()" type="button">
+                        <span data-translate="DELETE"></span>
+                    </dv-loading-button>
+                </div>
+            </div>
+
+            <!-- Mutieren -->
+            <h2 class="marginTop20">
+                <span data-translate="Mutiere"></span>
+            </h2>
+            <div class="row">
+                <div class="col-md-12 dv-input-container-small">
+                    <dv-input-container class="form-group">
+                        <label class="md-no-float" data-translate="FALL_UPPER" for="fallid">
+                        </label>
+                        <input id="fallid" type="text" name="fallid" ng-model="vm.fallId"
+                               dv-max-length class="form-control" style="background: #F0F0F0;">
+                    </dv-input-container>
+                </div>
+            </div>
+            <div class="row marginTop10">
+                <div class="col-md-12 dv-input-container-small">
+                    <dv-input-container class="form-group">
+                        <label class="md-no-float" data-translate="EINGANGSDATUM" for="mutationsdatum">
+                        </label>
+                        <dv-datepicker input-id="mutationsdatum" name="mutationsdatum" placeholder=""
+                                       ng-model="vm.mutationsdatum" ng-required="true"
+                                       class="input-element"
+                                       ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                        </dv-datepicker>
+                    </dv-input-container>
+                </div>
+            </div>
+
+            <div class="row marginTop10">
+                <div class="col-md-12 form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="" data-translate="AENDERUNG_PER" for="aenderungper">
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <dv-datepicker input-id="aenderungper" name="aenderungper" placeholder=""
+                                           ng-model="vm.aenderungperHeirat" ng-required="true"
+                                           class="input-element"
+                                           ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                            </dv-datepicker>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class=" btn-testfall"
+                                    ng-click="vm.mutiereFallHeirat()">
+                                <span data-translate="FALL_MUTIEREN_HEIRAT"></span>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row marginTop10">
+                <div class="col-md-12 form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="" data-translate="AENDERUNG_PER" for="aenderungper">
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <dv-datepicker input-id="aenderungper" name="aenderungper" placeholder=""
+                                           ng-model="vm.aenderungperScheidung" ng-required="true"
+                                           class="input-element"
+                                           ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                            </dv-datepicker>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class=" btn-testfall"
+                                    ng-click="vm.mutiereFallScheidung()">
+                                <span data-translate="FALL_MUTIEREN_SCHEIDUNG"></span>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schulungsdaten -->
+            <div class="row marginTop10">
+                <div class="viewTitle marginTop10">
+                    <h1 data-translate="SCHULUNG"></h1>
+                </div>
+                <button type="button" class=" btn-testfall"
+                        ng-click="vm.resetSchulungsdaten()">
+                    <span data-translate="SCHULUNG_CREATE_DATA"></span>
+                </button>
+                <button type="button" class=" btn-testfall"
+                        ng-click="vm.deleteSchulungsdaten()">
+                    <span data-translate="SCHULUNG_DELETE_DATA"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

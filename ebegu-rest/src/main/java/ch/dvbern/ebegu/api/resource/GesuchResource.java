@@ -7,8 +7,8 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -136,6 +136,33 @@ public class GesuchResource {
 		}
 		Gesuch gesuchToReturn = gesuchOptional.get();
 		return converter.gesuchToJAX(gesuchToReturn);
+	}
+
+	/**
+	 * Da beim Einscannen Gesuche eingelesen werden die noch im Status Freigabequittung sind brauchen
+	 * wir hier eine separate Methode um das Lesen der noetigen Informationen dieser Gesuche zuzulassen
+	 * Wenn kein Gesuch gefunden wird wird null zurueckgegeben.
+	 * @param gesuchJAXPId gesuchID des Gesuchs im Status Freigabequittung oder hoeher
+	 * @return DTO mit den relevanten Informationen zum Gesuch
+	 */
+	@Nullable
+	@GET
+	@Path("/freigabe/{gesuchId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxAntragDTO findGesuchForFreigabe(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
+		Validate.notNull(gesuchJAXPId.getId());
+		String gesuchID = converter.toEntityId(gesuchJAXPId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuchForFreigabe(gesuchID);
+
+		if (!gesuchOptional.isPresent()) {
+			return null;
+		}
+		Gesuch gesuchToReturn = gesuchOptional.get();
+		JaxAntragDTO jaxAntragDTO = converter.gesuchToAntragDTO(gesuchToReturn);
+		jaxAntragDTO.setFamilienName(gesuchToReturn.extractFullnamesString()); //hier volle Namen beider GS
+		return jaxAntragDTO;
 	}
 
 	/**
@@ -402,7 +429,6 @@ public class GesuchResource {
 		throw new EbeguEntityNotFoundException("removeBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
 	}
 
-	@Nullable
 	@GET
 	@Path("/neuestesgesuch/{gesuchId}")
 	@Consumes(MediaType.WILDCARD)
@@ -412,12 +438,6 @@ public class GesuchResource {
 		Validate.notNull(gesuchJAXPId.getId());
 		String gesuchID = converter.toEntityId(gesuchJAXPId);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
-		if (!gesuchOptional.isPresent()) {
-			return false;
-		}
-
-		Optional<Gesuch> neustesGesuchOptional = gesuchService.getNeustesGesuchFuerGesuch(gesuchOptional.get());
-		return neustesGesuchOptional.map(gesuch -> gesuchJAXPId.getId().equals(gesuch.getId())).orElse(false);
-
+		return gesuchOptional.map(gesuch -> gesuchService.isNeustesGesuch(gesuch)).orElse(false);
 	}
 }

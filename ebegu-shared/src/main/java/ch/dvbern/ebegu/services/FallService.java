@@ -63,4 +63,17 @@ public interface FallService {
 	 */
 	void removeFall(@Nonnull Fall fall);
 
+	/**
+	 * Erstellt einen neuen Fall fuer den aktuellen Benutzer und setzt diesen als Besitzer des Falles.
+	 * - Nur wenn der aktuellen Benutzer ein GESUCHSTELLER ist und noch keinen Fall zugeordnet hat
+	 * - In allen anderen Fällen ein Optional.empty() wird zurueckgegeben
+	 */
+	Optional<Fall> createFallForCurrentGesuchstellerAsBesitzer();
+
+
+	/**
+	 * Gibt die GS1-Emailadresse des neusten Gesuchs fuer diesen Fall zurueck, wenn noch kein Gesuch vorhanden ist, wird
+	 * die E-Mail zurueckgegeben die beim Besitzer des Falls eingegeben wurde (aus IAM importiert)
+	 */
+	Optional<String> getCurrentEmailAddress(String fallID);
 }

@@ -1,5 +1,8 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.dto.suchfilter.lucene.BGNummerBridge;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.EBEGUGermanAnalyzer;
+import ch.dvbern.ebegu.dto.suchfilter.lucene.Searchable;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
@@ -7,8 +10,13 @@ import ch.dvbern.ebegu.validators.CheckAbwesenheitDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.ClassBridge;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,7 +45,10 @@ import java.util.TreeSet;
 		@UniqueConstraint(columnNames = {"verfuegung_id"}, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
 	}
 )
-public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
+@Indexed()
+@Analyzer(impl = EBEGUGermanAnalyzer.class)
+@ClassBridge(name = "bGNummer", impl = BGNummerBridge.class, analyze = Analyze.NO)
+public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, Searchable {
 
 	private static final long serialVersionUID = -6776987863150835840L;
 
@@ -257,11 +268,12 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 	 * Erstellt die BG-Nummer als zusammengesetzten String aus Jahr, FallId, KindId und BetreuungsNummer
 	 */
 	@Transient
+	@SuppressFBWarnings("NM_CONFUSING")
 	public String getBGNummer() {
 		if (getKind().getGesuch() != null) {
 			String kind = "" + getKind().getKindNummer();
 			String betreuung = "" + getBetreuungNummer();
-			return getKind().getGesuch().getAntragNummer() + "." + kind + "." + betreuung;
+			return getKind().getGesuch().getJahrAndFallnummer() + "." + kind + "." + betreuung;
 		}
 		return "";
 	}
@@ -319,5 +331,29 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		mutation.setDatumAblehnung(this.getDatumAblehnung());
 		mutation.setDatumBestaetigung(this.getDatumBestaetigung());
 		return mutation;
+	}
+
+
+	@Nonnull
+	@Override
+	public String getSearchResultId() {
+		return getId();
+	}
+
+	@Nonnull
+	@Override
+	public String getSearchResultSummary() {
+		return getKind().getSearchResultSummary() + " " + getBGNummer();
+	}
+
+	@Nullable
+	@Override
+	public String getSearchResultAdditionalInformation() {
+		return toString();
+	}
+
+	@Override
+	public String getOwningGesuchId() {
+		return extractGesuch().getId();
 	}
 }

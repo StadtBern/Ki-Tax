@@ -50,6 +50,7 @@ export class DvBisher {
 
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, private $translate: ITranslateService, private $log: ILogService) {
+        //todo team important! this is broken in angular 1.6 check bindins in onInit they are undefined before there
         if (this.showIfBisherNone === undefined) {//wenn nicht von aussen gesetzt auf true
             this.showIfBisherNone = true;
         }

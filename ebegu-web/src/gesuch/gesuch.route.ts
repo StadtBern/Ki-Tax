@@ -45,7 +45,8 @@ function getStates(): IState[] {
         new EbeguEinkommensverschlechterungState(),
         new EbeguEinkommensverschlechterungResultateState(),
         new EbeguDokumenteState(),
-        new EbeguFreigabeState()
+        new EbeguFreigabeState(),
+        new EbeguBetreuungMitteilungState()
     ];
 }
 
@@ -476,6 +477,24 @@ export class EbeguFreigabeState implements IState {
     };
 }
 
+export class EbeguBetreuungMitteilungState implements IState {
+    name = 'gesuch.mitteilung';
+    url = '/mitteilung/:fallId/:betreuungId';
+
+    views: {[name: string]: IState} = {
+        'gesuchViewPort': {
+            template: '<betreuung-mitteilung-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
+}
+
 //PARAMS
 
 export class IGesuchStateParams implements IStateParamsService {
@@ -545,8 +564,10 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
     if ($stateParams) {
         let gesuchIdParam = $stateParams.gesuchId;
         if (gesuchIdParam) {
-            if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParam) {
+            if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParam
+                || gesuchModelManager.getGesuch().emptyMutation) {
                 // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId ueberreinstimmt wird das gesuch neu geladen
+                // Ebenfalls soll das Gesuch immer neu geladen werden, wenn es sich beim Gesuch im Gesuchmodelmanager um eine leere Mutation handelt
                 berechnungsManager.clear();
                 return gesuchModelManager.openGesuch(gesuchIdParam);
             } else {

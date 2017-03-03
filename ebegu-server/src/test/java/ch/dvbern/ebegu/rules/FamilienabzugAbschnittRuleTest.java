@@ -93,7 +93,7 @@ public class FamilienabzugAbschnittRuleTest {
 		gesuch.setKindContainers(new HashSet<>());
 		final KindContainer defaultKindContainer1 = TestDataUtil.createDefaultKindContainer();
 		final KindContainer defaultKindContainer2 = TestDataUtil.createDefaultKindContainer();
-		final LocalDate geburtsdatum = LocalDate.of(2017, 1, 10);
+		final LocalDate geburtsdatum = LocalDate.of(TestDataUtil.PERIODE_JAHR_2, 1, 10);
 		defaultKindContainer2.getKindJA().setGeburtsdatum(geburtsdatum);
 
 		gesuch.getKindContainers().add(defaultKindContainer1);
@@ -122,7 +122,7 @@ public class FamilienabzugAbschnittRuleTest {
 		gesuch.setKindContainers(new HashSet<>());
 		final KindContainer defaultKindContainer1 = TestDataUtil.createDefaultKindContainer();
 		final KindContainer defaultKindContainer2 = TestDataUtil.createDefaultKindContainer();
-		final LocalDate geburtsdatum = LocalDate.of(2017, 1, 10);
+		final LocalDate geburtsdatum = LocalDate.of(TestDataUtil.PERIODE_JAHR_2, 1, 10);
 		defaultKindContainer2.getKindJA().setGeburtsdatum(geburtsdatum);
 
 		final KindContainer defaultKindContainer3 = TestDataUtil.createDefaultKindContainer();
@@ -297,7 +297,7 @@ public class FamilienabzugAbschnittRuleTest {
 	public void testFamiliensituationMutiert1GSTo2GS() throws Exception {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
 		Gesuch gesuch = betreuung.extractGesuch();
-		final LocalDate date = LocalDate.of(2017, Month.MARCH, 25); // gesuchsperiode ist 2016/2017
+		final LocalDate date = LocalDate.of(TestDataUtil.PERIODE_JAHR_2, Month.MARCH, 25); // gesuchsperiode ist 2017/2018
 		gesuch.extractFamiliensituation().setAenderungPer(date);
 
 		Familiensituation famSitErstgesuch = new Familiensituation();

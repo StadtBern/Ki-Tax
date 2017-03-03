@@ -23,6 +23,9 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _hasFSDokument: boolean = true;
     private _gesperrtWegenBeschwerde: boolean = false;
 
+    // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutationskopie (Wichitg für laden des Gesuchs bei Navigation)
+    private _emptyMutation: boolean = false;
+
 
     public get gesuchsteller1(): TSGesuchstellerContainer {
         return this._gesuchsteller1;
@@ -102,6 +105,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     public isOnlineGesuch(): boolean {
         return TSEingangsart.ONLINE === this.eingangsart;
+    }
+
+    get emptyMutation(): boolean {
+        return this._emptyMutation;
+    }
+
+    set emptyMutation(value: boolean) {
+        this._emptyMutation = value;
     }
 
     /**
@@ -201,7 +212,6 @@ export default class TSGesuch extends TSAbstractAntragEntity {
             return this.einkommensverschlechterungInfoContainer.einkommensverschlechterungInfoJA;
         }
         return undefined;
-
     }
 
     public canBeFreigegeben(): boolean {

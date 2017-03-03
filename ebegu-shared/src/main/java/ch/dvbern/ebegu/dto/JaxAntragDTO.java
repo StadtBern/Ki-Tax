@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -19,7 +20,7 @@ import java.util.Set;
  */
 @XmlRootElement(name = "pendenz")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxAntragDTO {
+public class JaxAntragDTO implements Serializable {
 
 	private static final long serialVersionUID = -1277026654764135397L;
 
@@ -90,6 +91,9 @@ public class JaxAntragDTO {
 
 	@NotNull
 	private Set<BetreuungsangebotTyp> angebote;
+	
+	@NotNull
+	private Set<String> kinder;
 
 	@NotNull
 	private Set<String> institutionen;
@@ -246,5 +250,13 @@ public class JaxAntragDTO {
 
 	public void setBesitzerUsername(@Nullable String besitzerUsername) {
 		this.besitzerUsername = besitzerUsername;
+	}
+
+	public Set<String> getKinder() {
+		return kinder;
+	}
+
+	public void setKinder(Set<String> kinder) {
+		this.kinder = kinder;
 	}
 }

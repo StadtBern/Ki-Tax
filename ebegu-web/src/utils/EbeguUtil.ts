@@ -76,13 +76,18 @@ export default class EbeguUtil {
         return listResult;
     }
 
+    public  addZerosToNumber(number: number, length: number): string {
+        return EbeguUtil.addZerosToNumber(number, length);
+    }
+
+
     /**
      * Die Methode fuegt 0s (links) hinzu bis die gegebene Nummer, die gegebene Laenge hat und dann gibt die nummer als string zurueck
      * @param number
      * @param length
      * @returns {any}
      */
-    public addZerosToNumber(number: number, length: number): string {
+    public static addZerosToNumber(number: number, length: number): string {
         if (number != null) {
             let fallnummerString = '' + number;
             while (fallnummerString.length < length) {
@@ -137,14 +142,17 @@ export default class EbeguUtil {
 
     /**
      * Erzeugt einen random String mit einer Laenge von numberOfCharacters
-     * @param numberOfCharacters von 0 bis 10
+     * @param numberOfCharacters
      * @returns {string}
      */
     public static generateRandomName(numberOfCharacters: number): string {
-        if (numberOfCharacters === null || numberOfCharacters === undefined || numberOfCharacters > 10) {
-            numberOfCharacters = 10;
+        let text = '';
+        let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+        for (let i = 0; i < numberOfCharacters; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-        return Math.random().toString(36).slice(2, numberOfCharacters + 2);
+        return text;
     }
 
 }

@@ -24,7 +24,32 @@ public enum ApplicationPropertyKey {
 	/**
 	 * Damit wir Test/Produktion leichter unterscheiden koennen kann man die Hintergrundfarbe einstellen
 	 */
-	BACKGROUND_COLOR
+	BACKGROUND_COLOR,
 
+	/**
+	 * Wenn eine Nachricht zu einem Fall eintrifft, welcher noch keinen Verantwortlichen hat, so soll diese an den
+	 * Default-Verantwortlichen geschickt werden.
+	 */
+	DEFAULT_VERANTWORTLICHER,
+
+	/**
+	 * <Dbtr><Nm> Name des Zahlungspflichtigen
+	 */
+	DEBTOR_NAME,
+
+	/**
+	 * <IBAN> IBAN des Zahlungspflichtigen?
+	 */
+	DEBTOR_IBAN,
+
+	/**
+	 * <BIC> BIC des Zahlungspflichtigen?
+	 */
+	DEBTOR_BIC,
+
+	/**
+	 * <ChrgsAcct> <IBAN> IBAN Belastungskonto Gebühren?
+	 */
+	DEBTOR_IBAN_GEBUEHREN,
 
 }

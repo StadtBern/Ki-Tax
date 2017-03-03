@@ -73,7 +73,19 @@
                 </div>
 
                 <br>
+                <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                    <div class="col-xs-12 dv-input-container-question" ng-show="vm.showVerfuegenStarten()">
+                        <div class="checkbox">
+                            <md-checkbox ng-model="vm.getGesuch().hasFSDokument"
+                                         name="generateFinanziellenSituation"
+                                         aria-label="{{'GENERATE_FINANZIELLEN_SITUATION' | translate}}"
+                                         ng-change="vm.fsDokumentChanged()">
+                                <span data-translate="GENERATE_FINANZIELLEN_SITUATION"></span>
+                            </md-checkbox>
+                        </div>
+                    </div>
 
+                </div>
                 <!-- Liste der bisherige Mahnungen -->
                 <div class="row text-left" ng-if="vm.getMahnungList().length > 0">
                     <div class="col-md-12">
@@ -134,20 +146,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
-                    <div class="col-xs-12 dv-input-container-question" ng-show="vm.showVerfuegenStarten()">
-                        <div class="checkbox">
-                            <md-checkbox ng-model="vm.getGesuch().hasFSDokument"
-                                         name="generateFinanziellenSituation"
-                                         aria-label="{{'GENERATE_FINANZIELLEN_SITUATION' | translate}}"
-                                         ng-change="vm.fsDokumentChanged()">
-                                <span data-translate="GENERATE_FINANZIELLEN_SITUATION"></span>
-                            </md-checkbox>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>

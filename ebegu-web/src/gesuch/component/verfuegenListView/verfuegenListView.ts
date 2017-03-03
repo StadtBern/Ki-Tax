@@ -120,7 +120,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             if (kind && betreuung) {
                 let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
                 if (kindIndex >= 0) {
-                    this.gesuchModelManager.setKindIndex(kindIndex);     //betreuungsnummer > 1 wird nicht mehr geprueft
+                    this.gesuchModelManager.setKindIndex(kindIndex);
                     this.$state.go('gesuch.verfuegenView', {
                         betreuungNumber: betreuung.betreuungNummer,
                         kindNumber: kind.kindNummer,

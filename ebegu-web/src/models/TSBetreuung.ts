@@ -4,6 +4,7 @@ import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 import TSBetreuungspensumContainer from './TSBetreuungspensumContainer';
 import TSVerfuegung from './TSVerfuegung';
 import TSAbwesenheitContainer from './TSAbwesenheitContainer';
+import TSGesuchsperiode from './TSGesuchsperiode';
 
 export default class TSBetreuung extends TSAbstractEntity {
 
@@ -18,12 +19,17 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _erweiterteBeduerfnisse: boolean;
     private _datumAblehnung: moment.Moment;
     private _datumBestaetigung: moment.Moment;
+    private _kindFullname: string;
+    private _kindNummer: number;
+    private _gesuchId: string;
+    private _gesuchsperiode: TSGesuchsperiode;
 
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,
-                grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment) {
+                grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment, kindFullname?: string,
+                kindNummer?: number, gesuchId?: string, gesuchsperiode?: TSGesuchsperiode) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -36,6 +42,10 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._erweiterteBeduerfnisse = erweiterteBeduerfnisse ? true : false;
         this._datumAblehnung = datumAblehnung;
         this._datumBestaetigung = datumBestaetigung;
+        this._kindFullname = kindFullname;
+        this._kindNummer = kindNummer;
+        this._gesuchId = gesuchId;
+        this._gesuchsperiode = gesuchsperiode;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -124,5 +134,37 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     set datumBestaetigung(value: moment.Moment) {
         this._datumBestaetigung = value;
+    }
+
+    get kindFullname(): string {
+        return this._kindFullname;
+    }
+
+    set kindFullname(value: string) {
+        this._kindFullname = value;
+    }
+
+    get kindNummer(): number {
+        return this._kindNummer;
+    }
+
+    set kindNummer(value: number) {
+        this._kindNummer = value;
+    }
+
+    get gesuchId(): string {
+        return this._gesuchId;
+    }
+
+    set gesuchId(value: string) {
+        this._gesuchId = value;
+    }
+
+    get gesuchsperiode(): TSGesuchsperiode {
+        return this._gesuchsperiode;
+    }
+
+    set gesuchsperiode(value: TSGesuchsperiode) {
+        this._gesuchsperiode = value;
     }
 }

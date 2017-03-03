@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -20,6 +21,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -399,12 +401,15 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getWizardStepStatus());
 	}
 
+	@Inject
+	private DokumentGrundService dokumentGrundService;
+
 	@Test
 	public void updateWizardStepDokumente() {
 		updateStatus(dokStep, WizardStepStatus.IN_BEARBEITUNG);
 
 		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, "Angestellt 60%");
-		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.FINANZIELLESITUATION, DokumentTyp.STEUERVERANLAGUNG, "2015");
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.FINANZIELLESITUATION, DokumentTyp.STEUERVERANLAGUNG, "2016");
 		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_ERWERBSPENSUM, "Angestellt 60%");
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.DOKUMENTE);

@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.testfaelle.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -108,6 +109,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			} else if (UmzugAusInAusBern.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Umzug Aus-In-Aus Bern Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
+			} else if (UmzugVorGesuchsperiode.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall10_UmzugVorGesuchsperiode(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
+				responseString.append("Fall Umzug Vor Gesuchsperiode Fallnummer: '").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
 			} else if (Abwesenheit.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, besitzer);
 				responseString.append("Fall Abwesenheit Fallnummer: ").append(gesuch.getFall().getFallNummer()).append("', AntragID: ").append(gesuch.getId());
@@ -217,6 +221,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 		if (Abwesenheit.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall09_Abwesenheit(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
+		}
+		if (UmzugVorGesuchsperiode.equals(fallid)) {
+			return createAndSaveGesuch(new Testfall10_UmzugVorGesuchsperiode(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen, null);
 		}
 		if (ASIV1.equals(fallid)) {
 			return createAndSaveAsivGesuch(new Testfall_ASIV_01(gesuchsperiode, institutionStammdatenList, true), verfuegen, null);
@@ -420,7 +427,8 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 	}
 
-	private void gesuchVerfuegenUndSpeichern(boolean verfuegen, Gesuch gesuch, boolean mutation) {
+	@Override
+	public void gesuchVerfuegenUndSpeichern(boolean verfuegen, Gesuch gesuch, boolean mutation) {
 		final List<WizardStep> wizardStepsFromGesuch = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
 
 		if (!mutation) {
@@ -438,6 +446,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 
 		if (verfuegen) {
+			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			verfuegungService.calculateVerfuegung(gesuch);
 			gesuch.getKindContainers().stream().forEach(kindContainer -> {
 				kindContainer.getBetreuungen().stream().forEach(betreuung -> {
@@ -445,7 +454,6 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 				});
 			});
 		}
-
 		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
 	}
 
