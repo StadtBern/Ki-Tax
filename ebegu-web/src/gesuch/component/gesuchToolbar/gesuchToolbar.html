@@ -64,10 +64,9 @@
             </div>
 
             <!-- Mutieren -->
-
             <div dv-show-element
                  dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtRoles()"
-                 dv-show-expression="vmx.mutierenPossibleForCurrentAntrag">
+                 dv-show-expression="vmx.mutierenPossibleForCurrentAntrag && !vmx.hideMutationButton">
                 <button ng-click="vmx.antragMutieren()"
                         aria-label="{{'TOOLBAR_MUTIEREN' | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_MUTIEREN"></span>
