@@ -85,9 +85,4 @@ public class Zahlung extends AbstractEntity {
 		}
 		return total;
 	}
-
-	//TODO: Schlauer Zahlugstext finden
-	public String getZahlungstext() {
-		return getBetragTotalZahlung() + " " + getInstitutionStammdaten().getInstitution().getName();
-	}
 }
