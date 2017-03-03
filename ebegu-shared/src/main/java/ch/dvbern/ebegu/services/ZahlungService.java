@@ -47,6 +47,8 @@ public interface ZahlungService {
 	 */
 	Optional<Zahlungsauftrag> findZahlungsauftrag(String auftragId);
 
+	Optional<Zahlung> findZahlung(String zahlungId);
+
 	/**
 	 * Loescht einen Zahlungsauftrag (nur im Status ENTWURF moeglich)
 	 */

@@ -2332,7 +2332,7 @@ public class JaxBConverter {
 
 	public JaxZahlung zahlungToJAX(final Zahlung persistedZahlung) {
 		final JaxZahlung jaxZahlungs = new JaxZahlung();
-
+		convertAbstractFieldsToJAX(persistedZahlung, jaxZahlungs);
 		jaxZahlungs.setStatus(persistedZahlung.getStatus());
 		jaxZahlungs.setBetragTotalZahlung(persistedZahlung.getBetragTotalZahlung());
 		jaxZahlungs.setInstitutionsName(persistedZahlung.getInstitutionStammdaten().getInstitution().getName());
