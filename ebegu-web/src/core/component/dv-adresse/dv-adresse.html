@@ -149,7 +149,7 @@
             <div class="col-xs-12 dv-input-container-question">
                 <div class="checkbox">
                     <md-checkbox ng-model="vm.getModel().adresseJA.nichtInGemeinde" name="nichtInGemeinde"
-                                 aria-label="nichtInGemeinde"
+                                 aria-label="{{'NICHT_IN_BERN_WOHNHAFT'|translate}}"
                                  dv-enable-element
                                  dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
                                  dv-enable-expression="!vm.isGesuchReadonly() && !vm.disableWohnadresseFor2GS()">

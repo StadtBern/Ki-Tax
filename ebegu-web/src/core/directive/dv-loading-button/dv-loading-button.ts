@@ -27,6 +27,7 @@ export class DVLoadingButton implements IDirective {
         buttonClass: '@',
         forceWaitService: '@',
         buttonDisabled: '<',
+        ariaLabel: '@',
         buttonClick: '&'
 
     };
