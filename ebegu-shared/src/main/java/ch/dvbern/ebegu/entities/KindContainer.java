@@ -156,7 +156,7 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 				mutation.getBetreuungen().add(betreuung.copyForMutation(new Betreuung(), mutation));
 			}
 		}
-		mutation.setKindMutiert(false);
+		mutation.setKindMutiert(null);
 		return mutation;
 	}
 

@@ -28,36 +28,6 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 	}
 
 	@Override
-	public String getDocumentFilePath() {
-		return "jboss.server.data.dir";
-	}
-
-	@Override
-	public String getFedletConfigPath() {
-		return "fedletConfig/http_app_ebegu_ch";
-	}
-
-	@Override
-	public boolean isClientUsingHTTPS() {
-		return false;
-	}
-
-	@Override
-	public String getOpenIdmURL() {
-		return "https://eaccount-test.bern.ch";
-	}
-
-	@Override
-	public String getOpenIdmUser() {
-		return "SRVC_eBEGU";
-	}
-
-	@Override
-	public String getOpenIdmPassword() {
-		return "EBEGUADMINTZZ0";
-	}
-
-	@Override
 	public boolean getOpenIdmEnabled() {
 		return false;
 	}

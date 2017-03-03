@@ -360,8 +360,8 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		mutation.setErweiterteBeduerfnisse(this.getErweiterteBeduerfnisse());
 		mutation.setDatumAblehnung(this.getDatumAblehnung());
 		mutation.setDatumBestaetigung(this.getDatumBestaetigung());
-		mutation.setBetreuungMutiert(false);
-		mutation.setAbwesenheitMutiert(false);
+		mutation.setBetreuungMutiert(null);
+		mutation.setAbwesenheitMutiert(null);
 		return mutation;
 	}
 
