@@ -141,7 +141,7 @@
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
                                              required
-                                             aria-label="vertrag" ng-disabled="!vm.isEnabled()"
+                                             aria-label="{{'VERTRAG'|translate}}" ng-disabled="!vm.isEnabled()"
                                              ng-class="{true:'checkbox-error', false:''}[vm.flagErrorVertrag]">
                                     <span data-translate="VERTRAG"></span>
                                 </md-checkbox>
@@ -281,7 +281,7 @@
                                     <div class="checkbox">
                                         <md-checkbox ng-model="vm.getBetreuungModel().erweiterteBeduerfnisse"
                                                      name="erweiterteBeduerfnisse"
-                                                     aria-label="erweiterteBeduerfnisse" dv-enable-element
+                                                     aria-label="{{'ERWEITERTE_BEDUERFNISSE'|translate}}" dv-enable-element
                                                      dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
                                                      dv-enable-expression="(vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus">
                                             <span data-translate="ERWEITERTE_BEDUERFNISSE"></span>

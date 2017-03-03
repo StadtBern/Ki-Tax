@@ -1,5 +1,6 @@
 <gesuch-toolbar flex="nogrow" fallid="{{vm.fall.id}}"
                 on-verantwortlicher-change="vm.setVerantwortlicher(user)"
+                hide-mutation-button="{{true}}"
                 dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
 </gesuch-toolbar>
 
@@ -7,7 +8,7 @@
                               dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()">
 </gesuch-toolbar-gesuchsteller>
 
-<div class="mitteilungenView" flex="auto" class="overflow-scroll">
+<div class="mitteilungenView overflow-scroll" flex="auto">
     <div class="row">
         <div class="col-md-12">
             <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
