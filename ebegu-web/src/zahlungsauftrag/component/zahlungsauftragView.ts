@@ -48,10 +48,6 @@ export class ZahlungsauftragViewController {
         return this.zahlungsauftragen;
     }
 
-    public addZerosToFallNummer(fallnummer: number): string {
-        return this.ebeguUtil.addZerosToNumber(fallnummer, this.CONSTANTS.FALLNUMMER_LENGTH);
-    }
-
     private initViewModel() {
         this.updateZahlungsauftrag();
         this.applicationPropertyRS.isDevMode().then((response: any) => {

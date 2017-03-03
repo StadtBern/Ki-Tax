@@ -26,11 +26,15 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * Service fuer Generierung des Zahlungsfile gemäss ISI200022
@@ -268,7 +272,9 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 		cTTI10CH.getCdtr().getPstlAdr().setCtry(zahlung.getInstitutionStammdaten().getAdresse().getLand().toString());// 2.79
 
 		cTTI10CH.setRmtInf(objectFactory.createRemittanceInformation5CH());
-		cTTI10CH.getRmtInf().setUstrd(zahlung.getInstitutionStammdaten().getInstitution().getName() + " " + DateUtil.DEFAULT_DATE_FORMAT.format(date));    // 2.99
+
+		String monat = date.format(DateTimeFormatter.ofPattern("MMM", new Locale("de")));
+		cTTI10CH.getRmtInf().setUstrd(zahlung.getInstitutionStammdaten().getInstitution().getName() + ", Monat " + monat+"."+date.getYear());    // 2.99
 		return cTTI10CH;
 	}
 
