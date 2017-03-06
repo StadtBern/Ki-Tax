@@ -1,10 +1,11 @@
-<div class="zahlungsauftragView row">
+<div class="zahlungsauftragView row" dv-show-element
+     dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN' , 'SACHBEARBEITER_JA','SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
     <div class="col-md-12">
 
         <form role="form" name="vm.form" class="" unsaved-warning-form="" novalidate>
 
             <br/>
-            <div class="row">
+            <div class="row" dv-show-element dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
                 <div class="col-md-2 col-md-offset-2">
                     <div class="form-group">
                         <label class="md-no-float" for="faelligkeitsdatum"
@@ -65,17 +66,19 @@
                         <tr>
                             <th st-sort="datumFaellig" class="sortable row-datumFaellig"
                                 data-translate="ZAHLUNG_FAELLIGKEIT_UPPER"></th>
-                            <th st-sort="datumGeneriert" class="sortable row-datumGeneriert"
+                            <th st-sort-default="reverse" st-sort="datumGeneriert" class="sortable row-datumGeneriert"
                                 data-translate="ZAHLUNG_GENERIERT_UPPER"></th>
-                            <th data-translate="ZAHLUNG_PAIN001_UPPER"></th>
+                            <th data-translate="ZAHLUNG_PAIN001_UPPER" dv-show-element
+                                dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
                             <th data-translate="ZAHLUNG_DETAILPOSITIONEN_UPPER"></th>
                             <th st-sort="betragTotalAuftrag" class="sortable row-betragTotalAuftrag"
                                 data-translate="ZAHLUNG_TOTAL_UPPER"></th>
                             <th st-sort="beschrieb" class="sortable row-beschrieb"
                                 data-translate="ZAHLUNG_BESCHRIEB_UPPER"></th>
                             <th st-sort="status" class="sortable row-status" data-translate="ZAHLUNG_STATUS_UPPER"></th>
-                            <th class="row-edit"></th>
-                            <th class="row-ausloesen"></th>
+                            <th class="row-edit" dv-show-element dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
+                            <th class="row-ausloesen" dv-show-element
+                                dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -100,7 +103,8 @@
                             <td ellipsis-tooltip="{{row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'}}"
                                 ng-bind="row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'"></td>
                             <!-- downloadPain -->
-                            <td class="symbol" ng-click="$event.stopPropagation()">
+                            <td class="symbol" ng-click="$event.stopPropagation()" dv-show-element
+                                dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
                                 <dv-loading-button type="button" button-click="vm.downloadPain(row)"
                                                    button-class="dv-btn-operation">
                                     <i class="fa fa-lg fa-file-code-o"></i>
@@ -129,9 +133,12 @@
                                 </div>
                             </td>
                             <!-- status -->
-                            <td class="ellipsis" ellipsis-tooltip="{{row.status}}" ng-bind="row.status"></td>
+                            <td class="ellipsis" ellipsis-tooltip="{{row.status}}">
+                                <span ng-bind="row.status | translate"></span>
+                            </td>
                             <!-- edit / save button -->
-                            <td class="symbol text-center" ng-click="$event.stopPropagation()">
+                            <td class="symbol text-center" ng-click="$event.stopPropagation()" dv-show-element
+                                dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
                                 <dv-loading-button ng-if="vm.isEditable(row.status) && !vm.isEditMode(row.id)"
                                                    type="button" button-click="vm.edit(row)"
                                                    button-class="dv-btn-operation">
@@ -144,7 +151,8 @@
                                 </dv-loading-button>
                             </td>
                             <!-- ausloesen button -->
-                            <td class="symbol text-center" ng-click="$event.stopPropagation()">
+                            <td class="symbol text-center" ng-click="$event.stopPropagation()" dv-show-element
+                                dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
                                 <dv-loading-button ng-if="vm.isEditable(row.status)"
                                                    type="button" button-click="vm.ausloesen(row.id)"
                                                    button-class="dv-btn-operation">
@@ -155,7 +163,7 @@
                         </tbody>
                         <tfoot>
                         <tr>
-                            <td colspan="9" class="text-center">
+                            <td colspan="6" class="text-center">
                                 <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
                             </td>
                         </tr>

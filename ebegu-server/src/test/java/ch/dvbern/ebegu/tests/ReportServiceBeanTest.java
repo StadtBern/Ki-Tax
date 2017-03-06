@@ -166,7 +166,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void generateExcelReportZahlungAuftrag() throws Exception {
-		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag("8d2805ed-d123-4632-bcbb-931dd7a936ae", null);
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag("8d2805ed-d123-4632-bcbb-931dd7a936ae");
 
 		assertNotNull(uploadFileInfo);
 		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportZahlungAuftrag.xlsx");

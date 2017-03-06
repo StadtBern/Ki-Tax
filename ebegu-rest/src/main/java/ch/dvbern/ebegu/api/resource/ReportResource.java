@@ -116,7 +116,7 @@ public class ReportResource {
 			id = converter.toEntityId(jaxId);
 		}
 
-		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag(id, null);
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag(id);
 
 		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 
