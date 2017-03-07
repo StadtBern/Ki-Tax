@@ -11,6 +11,7 @@
                 <tr>
                     <th st-sort="fallNummer" class="sortable row-fallnr" data-translate="FALL_UPPER"></th>
                     <th st-sort="familienName" class="sortable row-name" data-translate="FAMILIE_UPPER"></th>
+                    <th st-sort="kinder" class="sortable row-name" data-translate="KINDER_UPPER"></th>
                     <th st-sort="antragTyp" class="sortable row-antrag" data-translate="TYP_UPPER"></th>
                     <th st-sort="gesuchsperiodeString" class="sortable row-periode" data-translate="PERIODE_UPPER"></th>
                     <th st-sort="aenderungsdatum" class="sortable row-geandert"
@@ -26,6 +27,7 @@
                 <tr>
                     <th><input st-search="fallNummer" class="form-control" type="text" max="999999"/></th>
                     <th><input st-search="familienName" class="form-control" type="text"/></th>
+                    <th><input st-search="kinder" class="form-control" type="text"/></th>
                     <th>
                         <div class="dv-select-style">
                             <select st-input-event="change" name="antragTyp" id="antragTyp" st-search="antragTyp"
@@ -90,6 +92,7 @@
                     <td class="ellipsis" ellipsis-tooltip="{{vm.addZerosToFallnummer(row.fallNummer)}}"
                         ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.familienName}}" ng-bind="row.familienName"></td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.kinder}}" ng-bind="row.kinder"></td>
                     <td class="ellipsis" title="{{row.antragTyp | translate}}">
                         <i class="fa fa-desktop margin-ri" aria-hidden="true" ng-show="row.hasBesitzer()"></i>
                         <i class="fa fa-file-text-o" aria-hidden="true" ng-show="!row.hasBesitzer()"></i>
@@ -120,7 +123,7 @@
                 </tr>
                 <tr>
                 <tr ng-if="vm.displayedCollection.length === 0">
-                    <td colspan="9" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
+                    <td colspan="10" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
                 </tr>
                 </tbody>
                 <tfoot>

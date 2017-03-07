@@ -28,6 +28,7 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
         onVerantwortlicherChange: '&',
         fallid: '@',
         isDashboardScreen: '@',
+        hideMutationButton: '@'
     };
 
     template = templateX;
@@ -41,6 +42,7 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
         gesuchid: '@',
         fallid: '@',
         isDashboardScreen: '@',
+        hideMutationButton: '@'
     };
     template = templateGS;
     controller = GesuchToolbarController;
@@ -55,6 +57,7 @@ export class GesuchToolbarController {
     gesuchid: string;
     fallid: string;
     isDashboardScreen: boolean;
+    hideMutationButton: boolean;
     TSRoleUtil: any;
 
     onVerantwortlicherChange: (attr: any) => void;
@@ -352,9 +355,16 @@ export class GesuchToolbarController {
         return newest;
     }
 
+    /**
+     * Institutionen werden zum Screen Betreuungen geleitet, waehrend alle anderen Benutzer zu fallCreation gehen
+     */
     private goToOpenGesuch(gesuchId: string): void {
         if (gesuchId) {
-            this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
+            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+                this.$state.go('gesuch.betreuungen', {gesuchId: gesuchId});
+            } else {
+                this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
+            }
         }
     }
 
@@ -408,8 +418,21 @@ export class GesuchToolbarController {
 
     private hasBesitzer(): boolean {
         if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall) {
-            return this.getGesuch().fall.besitzerUsername !== undefined && this.getGesuch().fall.besitzerUsername !== null;
+            return this.getGesuch().fall.besitzer !== undefined && this.getGesuch().fall.besitzer !== null;
         }
         return false;
+    }
+
+    private getBesitzer(): string {
+        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall) {
+            return this.getGesuch().fall.besitzer !== undefined && this.getGesuch().fall.besitzer.getFullName();
+        }
+        return '';
+    }
+
+    public openMitteilungen(): void {
+        this.$state.go('mitteilungen', {
+            fallId: this.fallid
+        });
     }
 }

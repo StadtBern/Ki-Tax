@@ -15,6 +15,7 @@ import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import ITranslateService = angular.translate.ITranslateService;
+import MitteilungRS from '../../core/service/mitteilungRS.rest';
 let template = require('./gesuchstellerDashboardView.html');
 require('./gesuchstellerDashboardView.less');
 
@@ -29,31 +30,50 @@ export class GesuchstellerDashboardListViewController {
 
     private antragList: Array<TSAntragDTO> = [];
     private _activeGesuchsperiodenList: Array<TSGesuchsperiode>;
-    private fallId: string;
+    fallId: string;
     totalResultCount: string = '-';
+    amountNewMitteilungen: number;
 
 
-    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS', 'EbeguUtil', 'GesuchsperiodeRS', 'FallRS', '$translate'];
+    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS', 'EbeguUtil', 'GesuchsperiodeRS',
+        'FallRS', '$translate', 'MitteilungRS'];
 
     constructor(private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
-                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private fallRS: FallRS, private $translate: ITranslateService) {
+                private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil,
+                private gesuchsperiodeRS: GesuchsperiodeRS, private fallRS: FallRS, private $translate: ITranslateService,
+                private mitteilungRS: MitteilungRS) {
         this.initViewModel();
     }
 
     private initViewModel() {
-        this.updateAntragList();
+        this.updateAntragList().then(() => {
+            this.getAmountNewMitteilungen();
+        });
         this.updateActiveGesuchsperiodenList();
     }
 
-    private updateAntragList() {
-        this.fallRS.findFallByCurrentBenutzerAsBesitzer().then((existingFall: TSFall) => {
+    private updateAntragList(): IPromise<any> {
+        return this.fallRS.findFallByCurrentBenutzerAsBesitzer().then((existingFall: TSFall) => {
             if (existingFall) {
                 this.fallId = existingFall.id;
-                this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
+                return this.pendenzRS.getAntraegeGesuchstellerList().then((response: any) => {
                     this.antragList = angular.copy(response);
+                    return this.antragList;
+                });
+            } else { //fall es fuer den GS noch keine Fall gibt, erstellen wir einen
+                return this.fallRS.createFallForCurrentBenutzerAsBesitzer().then((createdFall: TSFall) => {
+                    if (createdFall) {
+                        this.fallId = createdFall.id;
+                    }
+                    return this.antragList;
                 });
             }
+        });
+    }
+
+    private getAmountNewMitteilungen(): void {
+        this.mitteilungRS.getAmountNewMitteilungenForCurrentRolle(this.fallId).then((response: number) => {
+            this.amountNewMitteilungen = response;
         });
     }
 
@@ -68,7 +88,9 @@ export class GesuchstellerDashboardListViewController {
     }
 
     public goToMitteilungenOeffen() {
-        this.$log.warn('Not yet impl');
+        this.$state.go('mitteilungen', {
+            fallId: this.fallId
+        });
     }
 
     public getAntragList(): Array<TSAntragDTO> {
@@ -76,7 +98,7 @@ export class GesuchstellerDashboardListViewController {
     }
 
     public getNumberMitteilungen(): number {
-        return 12;
+        return this.amountNewMitteilungen;
     }
 
     public openAntrag(periode: TSGesuchsperiode): void {

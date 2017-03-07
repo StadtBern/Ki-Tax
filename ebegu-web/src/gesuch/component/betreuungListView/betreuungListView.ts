@@ -16,6 +16,9 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
+import TSMitteilung from '../../../models/TSMitteilung';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import ILogService = angular.ILogService;
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
@@ -34,12 +37,14 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
  */
 export class BetreuungListViewController extends AbstractGesuchViewController<any> {
 
+    TSRoleUtil = TSRoleUtil;
+
     static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
-        'ErrorService', 'WizardStepManager', '$scope', '$log'];
+        'ErrorService', 'WizardStepManager', 'AuthServiceRS', '$scope', '$log'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
-                private errorService: ErrorService, wizardStepManager: WizardStepManager, $scope: IScope, private $log: ILogService) {
+                private errorService: ErrorService, wizardStepManager: WizardStepManager, private authServiceRS: AuthServiceRS, $scope: IScope, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 
@@ -120,4 +125,15 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         return !this.isGesuchReadonly() && !betreuung.vorgaengerId;
     }
 
+    private showMitteilung() : boolean {
+        return this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
+    }
+
+    private gotoMitteilung(betreuung : TSBetreuung) {
+        let entwurf : TSMitteilung = new TSMitteilung();
+        this.$state.go('gesuch.mitteilung', {
+            fallId: this.gesuchModelManager.getGesuch().fall.id,
+            betreuungId: betreuung.id
+        });
+    }
 }

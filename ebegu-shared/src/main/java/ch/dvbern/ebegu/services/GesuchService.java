@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -10,8 +10,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +48,20 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	Optional<Gesuch> findGesuch(@Nonnull String key);
+
+	/**
+	 * Spezialmethode fuer die Freigabe. Kann Gesuche lesen die im Status Freigabequittung oder hoeher sind
+	 */
+	@Nonnull
+	Optional<Gesuch> findGesuchForFreigabe(@Nonnull String gesuchId);
+
+	/**
+	 * Gibt alle Gesuche zurueck die in der Liste der gesuchIds auftauchen und fuer die der Benutzer berechtigt ist.
+	 * Gesuche fuer die der Benutzer nicht berechtigt ist werden uebersprungen
+	 * @param gesuchIds
+	 *
+	 */
+	List<Gesuch> findReadableGesuche(@Nullable Collection<String> gesuchIds);
 
 	/**
 	 * Gibt alle existierenden Gesuche zurueck.
@@ -162,18 +176,18 @@ public interface GesuchService {
 	 * @param gesuchsperiode
 	 */
 	@Nonnull
-	List<Gesuch> getAllGesucheForFallAndPeriod(@NotNull Fall fall, @NotNull Gesuchsperiode gesuchsperiode);
+	List<Gesuch> getAllGesucheForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Das gegebene Gesuch wird mit heutigem Datum freigegeben und den Step FREIGABE auf OK gesetzt
 	 * @param gesuch
 	 * @param statusToChangeTo
 	 */
-	Gesuch antragFreigabequittungErstellen(@NotNull Gesuch gesuch, AntragStatus statusToChangeTo);
+	Gesuch antragFreigabequittungErstellen(@Nonnull Gesuch gesuch, AntragStatus statusToChangeTo);
 
 	/**
 	 * Gibt das Gesuch frei für das Jugendamt: Anpassung des Status inkl Kopieren der Daten des GS aus den
-	 * JA-Containern in die GS-Containern
+	 * JA-Containern in die GS-Containern. Wird u.a. beim einlesen per Scanner aufgerufen
 	 */
 	@Nonnull
 	Gesuch antragFreigeben(@Nonnull String gesuchId, @Nullable String username);
@@ -184,7 +198,7 @@ public interface GesuchService {
 	 * @return Gibt das aktualisierte gegebene Gesuch zurueck
 	 */
 	@Nonnull
-	Gesuch setBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch);
+	Gesuch setBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
 
 	/**
 	 * Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag
@@ -192,5 +206,20 @@ public interface GesuchService {
 	 * @return Gibt das aktualisierte gegebene Gesuch zurueck
 	 */
 	@Nonnull
-	Gesuch removeBeschwerdeHaengigForPeriode(@NotNull Gesuch gesuch);
+	Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Gibt alle aktuellen Antrags-Ids zurueck, d.h. den letzten Antrag jedes Falles, fuer eine Gesuchsperiode
+	 */
+	@Nonnull
+	List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Gibt die Antrags-Ids aller Antraege zurueck, welche im uebergebenen Zeitraum verfuegt wurden.
+	 * Falls es mehrere fuer denselben Fall hat, wird nur der letzte (hoechste Laufnummer) zurueckgegeben
+	 */
+	@Nonnull
+	List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis);
+
+	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 }

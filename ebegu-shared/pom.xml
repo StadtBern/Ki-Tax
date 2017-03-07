@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>1.0.8-SNAPSHOT</version>
+        <version>1.1.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -102,6 +102,34 @@
             <artifactId>jboss-annotations-api_1.2_spec</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <dependency>
+           <groupId>org.hibernate</groupId>
+           <artifactId>hibernate-search-orm</artifactId>
+            <!--<scope>provided</scope> eigentlich ware das in jboss vorhanden, gibt aber ein problem bei einzeltests in ide-->
+        </dependency>
+        <!--<dependency>-->
+           <!--<groupId>org.infinispan</groupId>-->
+           <!--<artifactId>infinispan-directory-provider</artifactId>-->
+        <!--</dependency>-->
+
+        <dependency>
+           <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-engine</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!--json object generation-->
         <dependency>
@@ -110,6 +138,7 @@
             <version>2.6.1</version>
         </dependency>
     </dependencies>
+
     <build>
     </build>
 

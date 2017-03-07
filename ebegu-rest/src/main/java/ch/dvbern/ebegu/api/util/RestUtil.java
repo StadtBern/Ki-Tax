@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.api.util;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
 import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
@@ -37,6 +38,7 @@ import static ch.dvbern.ebegu.api.EbeguApplicationV1.API_ROOT_PATH;
 public final class RestUtil {
 
 	private static final Pattern MATCH_QUOTE = Pattern.compile("\"");
+	private static final String BLOB_DOWNLOAD_PATH = "/blobs/temp/blobdata/";
 
 	/**
 	 * Parst den Content-Disposition Header
@@ -62,7 +64,7 @@ public final class RestUtil {
 
 	public static boolean isFileDownloadRequest(@Nonnull HttpServletRequest request) {
 		String context = request.getContextPath() + API_ROOT_PATH;
-		final String blobdataPath = context + "/blobs/temp/blobdata/";
+		final String blobdataPath = context + BLOB_DOWNLOAD_PATH;
 		return request.getRequestURI().startsWith(blobdataPath);
 	}
 
@@ -128,4 +130,13 @@ public final class RestUtil {
 		return Response.status(Response.Status.FORBIDDEN).build();
 	}
 
+	public static void purgeZahlungenOfInstitutionen(JaxZahlungsauftrag jaxZahlungsauftrag, Collection<Institution> allowedInst) {
+		if (!allowedInst.isEmpty()) {
+			jaxZahlungsauftrag.getZahlungen().removeIf(zahlung ->
+				allowedInst.stream().noneMatch(institution ->
+					institution.getId().equals(zahlung.getInstitutionsId())
+				)
+			);
+		}
+	}
 }

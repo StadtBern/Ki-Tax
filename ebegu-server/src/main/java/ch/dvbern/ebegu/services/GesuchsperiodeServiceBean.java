@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.types.DateRange_;
@@ -110,4 +111,19 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		return q.getResultList();
 	}
 
+	@Override
+	@Nonnull
+	@PermitAll
+	public Optional<Gesuchsperiode> getGesuchsperiodeAm(@Nonnull LocalDate stichtag) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);
+		Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
+
+		Predicate predicateStart = cb.lessThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb), stichtag);
+		Predicate predicateEnd = cb.greaterThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis), stichtag);
+
+		query.where(predicateStart, predicateEnd);
+		Gesuchsperiode criteriaSingleResult = persistence.getCriteriaSingleResult(query);
+		return Optional.ofNullable(criteriaSingleResult);
+	}
 }

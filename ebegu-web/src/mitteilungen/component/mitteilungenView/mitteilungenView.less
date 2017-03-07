@@ -1,0 +1,212 @@
+@import '../../../style/variables.less';
+@import "../../../style/mixins.less";
+
+.mitteilungenView, .betreuungMitteilungView {
+    h1 {
+        font-size: 2rem;
+    }
+    padding: 5rem 2rem 5rem;
+    background: @contrast-light;
+    overflow-x: auto;
+    overflow-y: scroll;
+    .message-textarea {
+        height: 25rem;
+    }
+    .BGNummer {
+        .ebeguH3();
+        margin: 0;
+    }
+    dv-accordion {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        dv-accordion-tab {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 2rem;
+            &.isSender {
+                margin-left: auto;
+            }
+            &.institution {
+                & > * {
+                    color: @institution-color;
+                }
+                md-checkbox {
+                    .md-icon {
+                        border: 1px solid @institution-color;
+                    }
+                    &.md-checked {
+                        .md-icon {
+                            background-color: @institution-color;
+                        }
+                    }
+                }
+            }
+
+            &.gesuchsteller {
+                & > * {
+                    color: @contrast-darkest;
+                }
+            }
+
+            &.jugendamt {
+                & > * {
+                    color: @primary;
+                }
+            }
+            .dv-accordion-tab-title {
+                md-checkbox {
+                    margin: 0;
+                }
+                &:focus {
+                    outline: none;
+                }
+                opacity: 1;
+                padding: 0 2rem 0;
+                width: 100%;
+                min-height: 8rem;
+                height: auto;
+                background: @contrast-lightest;
+                font-size: 1.3rem;
+                letter-spacing: 0.15rem;
+                margin: 0;
+                transition: all 0.5s ease;
+                & > * {
+                    display: flex;
+                    flex-direction: row;
+                }
+                & .message-header {
+                    flex: 1;
+                    padding: 1rem 0 1rem;
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+
+                    .subject-container {
+                        align-self: stretch;
+                        flex: 0 1 100%;
+
+                    }
+                    div:nth-child(2) {
+                        margin-right: 1rem;
+                    }
+                }
+                .message-checkbox {
+                    margin: auto 0 auto auto;
+                    display: flex;
+                    flex-direction: column;
+                }
+                & .arrow {
+                    color: black;
+                    min-height: 8rem;
+                    height: auto;
+                    width: auto;
+                    vertical-align: middle;
+                    text-align: center;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    i {
+                        font-size: 2.4rem;
+                        transition: all 0.5s ease;
+                    }
+                }
+                &:after {
+                    content: "";
+                    display: block;
+                    width: 0;
+                    height: 0;
+                    background: 0;
+                    margin: 0 auto 0;
+                    border-bottom: 1px solid @contrast;
+                    transition: all 0.5s ease;
+
+                }
+                &.tab-open {
+                    &:after {
+                        width: 100%;
+                    }
+                    & .arrow {
+                        color: black;
+                        i {
+                            transform: rotate(-180deg);
+                        }
+
+                    }
+                }
+            }
+            .dv-accordion-tab-content {
+                .ebeguP();
+                color: @contrast-darkest;
+                overflow: hidden;
+                overflow-y: auto;
+                opacity: 1;
+                display: block;
+                width: 100%;
+                height: auto;
+                max-height: 60rem;
+                background: @contrast-lightest;
+                padding: 0 2rem 0;
+                & > tab-body > * {
+                    margin: 2rem 0 3rem;
+                }
+                .message {
+                    display: flex;
+                    flex-direction: column;
+                    .betreuung {
+                        color: @institution-color;
+                        margin-bottom: 2rem;
+                        text-decoration: underline;
+                    }
+                }
+                &.ng-hide-add {
+                    overflow: hidden;
+                    max-height: 60rem;
+                    transition: all 0.5s ease;
+                }
+                &.ng-hide-add.ng-hide-add-active {
+                    overflow: hidden;
+                    max-height: 0;
+                }
+                &.ng-hide-remove {
+                    overflow: hidden;
+                    transition: all 1s ease;
+                    max-height: 0;
+                }
+                &.ng-hide-remove.ng-hide-remove-active {
+                    overflow: hidden;
+                    max-height: 60rem;
+                }
+            }
+        }
+    }
+    .mitteilungenList {
+
+        .mitteilungItem {
+            background: transparent;
+        }
+
+        .subject {
+            .ebeguBold();
+            font-size: 2rem;
+        }
+
+        .message {
+            .formatted {
+                white-space: pre-line;
+            }
+
+        }
+
+        .betreuung {
+            .ebeguBold();
+        }
+
+        .applied {
+            margin-top: 1em;
+        }
+    }
+}
+
+

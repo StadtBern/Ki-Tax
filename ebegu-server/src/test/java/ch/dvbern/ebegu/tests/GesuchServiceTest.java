@@ -1,13 +1,12 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
-import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtilsBean;
@@ -23,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.ejb.EJBAccessException;
 import javax.inject.Inject;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
@@ -35,7 +35,6 @@ import java.time.Month;
 import java.util.*;
 
 import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuch;
-import static ch.dvbern.ebegu.tets.util.JBossLoginContextFactory.createLoginContext;
 
 /**
  * Arquillian Tests fuer die Klasse GesuchService
@@ -252,10 +251,9 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
-		Gesuchsperiode periode = TestDataUtil.createGesuchsperiode1617();
+		Gesuchsperiode periode = TestDataUtil.createCustomGesuchsperiode(TestDataUtil.PERIODE_JAHR_1, TestDataUtil.PERIODE_JAHR_2);
 
-		Gesuchsperiode nextPeriode = TestDataUtil.createGesuchsperiode1617();
-		nextPeriode.setGueltigkeit(new DateRange(periode.getGueltigkeit().getGueltigAb().plusYears(1), periode.getGueltigkeit().getGueltigBis().plusYears(1)));
+		Gesuchsperiode nextPeriode = TestDataUtil.createCustomGesuchsperiode(TestDataUtil.PERIODE_JAHR_1+1, TestDataUtil.PERIODE_JAHR_2+1);
 		nextPeriode = persistence.merge(nextPeriode);
 		gesuch.setGesuchsperiode(nextPeriode);
 		gesuch = persistence.merge(gesuch);
@@ -263,13 +261,13 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuchService.findGesuch(gesuch.getId());
 
 		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
-		Assert.assertEquals("2016/2017", periode.getGesuchsperiodeString());
+		Assert.assertEquals(TestDataUtil.PERIODE_JAHR_1+"/"+TestDataUtil.PERIODE_JAHR_2, periode.getGesuchsperiodeString());
 		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString(periode.getGesuchsperiodeString());
 
 		Pair<Long, List<Gesuch>> firstResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(2), firstResult.getLeft());
 
-		Assert.assertEquals("2017/2018", nextPeriode.getGesuchsperiodeString());
+		Assert.assertEquals((TestDataUtil.PERIODE_JAHR_1+1)+"/"+(TestDataUtil.PERIODE_JAHR_2+1), nextPeriode.getGesuchsperiodeString());
 		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString(nextPeriode.getGesuchsperiodeString());
 
 		Pair<Long, List<Gesuch>> result = gesuchService.searchAntraege(filterDTO);
@@ -277,7 +275,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(gesuch.getId(), result.getRight().get(0).getId());
 
 		//search nach kurzem string
-		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString("2017/18");
+		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString((TestDataUtil.PERIODE_JAHR_1+1)+"/"+(TestDataUtil.PERIODE_JAHR_2-2000+1));
 		Pair<Long, List<Gesuch>> thirdResult = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(1), thirdResult.getLeft());
 		Assert.assertEquals(gesuch.getId(), thirdResult.getRight().get(0).getId());
@@ -406,8 +404,43 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
 
+		loginAsSachbearbeiterJA();
 		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
 		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
+	}
+
+	@Test
+	public void testExceptionOnInvalidFreigabe() {
+		LocalDate now = LocalDate.now();
+		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_GS);
+
+		final Gesuch eingereichtesGesuch = gesuchService.antragFreigabequittungErstellen(gesuch, AntragStatus.FREIGABEQUITTUNG);
+
+		Assert.assertEquals(AntragStatus.FREIGABEQUITTUNG, eingereichtesGesuch.getStatus());
+		Assert.assertFalse(now.isAfter(eingereichtesGesuch.getFreigabeDatum())); // beste Art um Datum zu testen die direkt in der Methode erzeugt werden
+
+		final WizardStep wizardStepFromGesuch = wizardStepService.findWizardStepFromGesuch(gesuch.getId(), WizardStepName.FREIGABE);
+
+		Assert.assertEquals(WizardStepStatus.OK, wizardStepFromGesuch.getWizardStepStatus());
+
+		Benutzer gesuchsteller = loginAsGesuchsteller("gesuchst");
+		try {
+			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+			Assert.fail("No Besitzer is present. must fail for Role Gesuchsteller");
+		} catch (EJBAccessException e) {
+		//noop
+		}
+
+		gesuch.getFall().setBesitzer(gesuchsteller);
+		persistence.merge(gesuch.getFall());
+		Gesuch eingelesenesGesuch = gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+		Assert.assertEquals(AntragStatus.FREIGEGEBEN, eingelesenesGesuch.getStatus());
+		try {
+			gesuchService.antragFreigeben(eingereichtesGesuch.getId(), null);
+			Assert.fail("Gesuch is already freigegeben. Wrong state should be detected");
+		} catch (EbeguRuntimeException e){
+			Assert.assertEquals("Das Gesuch wurde bereits freigegeben", e.getCustomMessage());
+		}
 	}
 
 	@Test
@@ -679,65 +712,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuch.setFall(persistence.persist(gesuch.getFall()));
 		gesuchService.createGesuch(gesuch);
 		return gesuch;
-	}
-
-	private void loginAsSachbearbeiterJA() {
-		try {
-			createLoginContext("saja", "saja").login();
-		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt saja for tests");
-		}
-
-		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer saja = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, "saja", null, null, mandant);
-		persistence.persist(saja);
-	}
-
-	private void loginAsAdmin() {
-		try {
-			createLoginContext("admin", "admin").login();
-		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt admin for tests");
-		}
-
-		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer admin = TestDataUtil.createBenutzer(UserRole.ADMIN, "admin", null, null, mandant);
-		persistence.persist(admin);
-	}
-
-	private void loginAsSachbearbeiterInst(String username, Institution institutionToSet) {
-		Benutzer user = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, username, null, institutionToSet, institutionToSet.getMandant());
-		user = persistence.merge(user);
-		try {
-			createLoginContext(username, username).login();
-		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt {} for tests", username);
-		}
-		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
-	}
-
-	private void loginAsGesuchsteller(String username) {
-		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer user = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, username, null, null, mandant);
-		user = persistence.merge(user);
-		try {
-			createLoginContext(username, username).login();
-		} catch (LoginException e) {
-			LOG.error("could not login as gesuchsteller {} for tests", username);
-		}
-		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
-	}
-
-	private void loginAsSchulamt() {
-		try {
-			createLoginContext("schulamt", "schulamt").login();
-		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter schulamt for tests");
-		}
-
-		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
-		Benutzer schulamt = TestDataUtil.createBenutzer(UserRole.SCHULAMT, "schulamt", null, null, mandant);
-		persistence.persist(schulamt);
 	}
 
 

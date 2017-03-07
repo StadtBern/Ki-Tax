@@ -112,7 +112,7 @@ public class ExportServiceBean implements ExportService {
 		try {
 			return new MimeType(MediaType.TEXT_PLAIN);
 		} catch (MimeTypeParseException e) {
-			throw new EbeguRuntimeException("getContentTypeForExport", "could not parse mime type", e,MediaType.TEXT_PLAIN);
+			throw new EbeguRuntimeException("getContentTypeForExport", "could not parse mime type", e, MediaType.TEXT_PLAIN);
 
 		}
 	}

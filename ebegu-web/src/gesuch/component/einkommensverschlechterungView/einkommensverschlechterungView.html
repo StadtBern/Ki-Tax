@@ -26,7 +26,7 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question" ng-if="vm.showSteuerveranlagung()">
                             <div class="form-group">
-                                <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                <h1 class="required" aria-hidden="true" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                                     translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h1>
                                 <dv-radio-container name="steuerveranlagung"
                                                     ng-model="vm.model.getEkvToWorkWith().steuerveranlagungErhalten"
@@ -34,7 +34,8 @@
                                                     ng-change="vm.steuerveranlagungClicked()"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                    aria-label="{{ 'FINANZIELLE_SITUATION_STEUERVERANLAGUNG' |translate}}">
                                 </dv-radio-container>
                                 <dv-error-messages for="vm.form.steuerveranlagung.$error"
                                                    class="error"></dv-error-messages>
@@ -47,14 +48,15 @@
                         <div class="col-xs-12 dv-input-container-question"
                              ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
                             <div class="form-group">
-                                <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                <h1 class="required" aria-hidden="true" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
                                     translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h1>
                                 <dv-radio-container name="steuererklaerung"
                                                     ng-model="vm.model.getEkvToWorkWith().steuererklaerungAusgefuellt"
                                                     ng-required="true" class="radio input-element"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                    aria-label="{{ 'FINANZIELLE_SITUATION_STEUERERKLAERUNG' |translate}}">
                                 </dv-radio-container>
                                 <dv-error-messages for="vm.form.steuererklaerung.$error"
                                                    class="error"></dv-error-messages>
@@ -389,7 +391,8 @@
                                 <md-checkbox ng-model="vm.showSelbstaendig" name="showSelbstaendig"
                                              aria-label="{{'FINANZIELLE_SITUATION_SELBSTAENDIGKEIT' | translate}}"
                                              ng-change="vm.showSelbstaendigClicked()"
-                                             ng-disabled="evm.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig() || vm.isGesuchReadonly()">
+                                             ng-disabled="evm.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig() || vm.isGesuchReadonly()"
+                                style="margin-bottom:3rem;">
                                     <span data-translate="FINANZIELLE_SITUATION_SELBSTAENDIGKEIT"></span>
                                 </md-checkbox>
                                 <dv-tooltip
@@ -397,7 +400,6 @@
                                 <dv-bisher gs="vm.showSelbstaendigGS" class="dv-bisher-break"
                                            ja="vm.showSelbstaendig"
                                            specific-bisher-text="vm.getTextSelbstaendigKorrektur()"></dv-bisher>
-                                <div class="dv-error-messages"></div>
                             </div>
                         </div>
                     </div>

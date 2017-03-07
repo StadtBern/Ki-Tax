@@ -50,7 +50,7 @@ public class CheckBetreuungspensumDatesOverlappingValidatorTest {
 	@Nonnull
 	private Betreuung createBetreuungWithOverlappedDates(boolean overlapping) {
 		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
-		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1718());
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
 		betreuung.getKind().setGesuch(gesuch); // Aktuell nur in 1 Richtung verknuepft
 		Set<BetreuungspensumContainer> containerSet = new HashSet<>();

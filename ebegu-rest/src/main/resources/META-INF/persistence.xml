@@ -18,6 +18,19 @@
 			<property name="hibernate.show_sql" value="false"/>
 			<!--<property name="hibernate.hbm2ddl.auto" value="validate"/>-->
 
+			<property name="hibernate.search.lucene_version" value="LUCENE_CURRENT"/> <!-- Default-Value, verhindert aber eine Warning im Logfile -->
+			<!--fuer lokale tests ist es praktischer den indem im FS zu haben-->
+			<property name="hibernate.search.default.directory_provider"
+			          value="filesystem"/>
+			<!--nur ein prozess benutzt unseren index (?)-->
+			<property name="hibernate.search.default.exclusive_index_use" value="true"/>
+
+			<!--<property name="hibernate.search.default.indexBase"-->
+			          <!--value="/home/homa/java/JBoss/wildfly-10.1.0.Final-ebegu/standalone/data/lucene"/>-->
+
+			<!--<property name="hibernate.search.default.directory_provider" value="infinispan"/>-->
+			<!--todo homa erstellen-->
+			<!--<property name="hibernate.search.infinispan.configuration_resourcename" value="ebegu-hibernatesearch-infinispan.xml"/>-->
 		</properties>
 	</persistence-unit>
 </persistence>

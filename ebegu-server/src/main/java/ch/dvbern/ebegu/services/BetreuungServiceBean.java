@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
-import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Inject
 	private MailService mailService;
 
-	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
+	private final Logger LOG = LoggerFactory.getLogger(BetreuungServiceBean.class.getSimpleName());
 
 
 	@Override
