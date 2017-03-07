@@ -19,7 +19,7 @@
                         <md-button ng-click="vmx.setGesuchsperiode(gesuchsperiodeString)"
                                    aria-label="{{gesuchsperiodeString}}">
                                 <span>
-                                    <a href="javascript:void(0)">{{gesuchsperiodeString}}</a>
+                                    <a href="javascript:void(0)" aria-hidden>{{gesuchsperiodeString}}</a>
                                 </span>
                         </md-button>
                     </md-menu-item>
@@ -42,7 +42,7 @@
                         <md-button class="menu-item-link" ng-click="vmx.setAntragTypDatum(antragTypDatum)"
                                    aria-label="{{antragTypDatum}}">
                                 <span>
-                                    <a href="javascript:void(0)">{{antragTypDatum}}</a>
+                                    <a href="javascript:void(0)" aria-hidden>{{antragTypDatum}}</a>
                                 </span>
                         </md-button>
                     </md-menu-item>
@@ -117,7 +117,7 @@
                         <md-button ng-click="vmx.setVerantwortlicher(user)" aria-label="{{user.username}}"
                                    style="position: relative;">
                                 <span>
-                                    <a href="javascript:void(0)">{{user.getFullName()}}</a>
+                                    <a href="javascript:void(0)" aria-hidden>{{user.getFullName()}}</a>
                                     <i ng-if="vmx.isCurrentVerantwortlicher(user)" class="fa fa-user" aria-hidden="true"
                                        style="line-height: 4rem; position:absolute; right:2rem;"></i>
 
