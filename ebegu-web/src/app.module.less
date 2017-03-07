@@ -115,7 +115,7 @@ body {
 }
 
 dv-home-icon, dv-countdown {
-    &:first-child{
+    &:first-child {
         margin-left: auto;
     }
     display: flex;
@@ -135,7 +135,12 @@ dv-pulldown-user-menu {
     background-position: left 0.7rem center;
 }
 
-.logo-house, .dv-countdown-countdown{
+.logo-house, .dv-countdown-countdown {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -o-user-select: none;
     vertical-align: middle;
     padding: 0;
     height: @navbar-height;
@@ -144,6 +149,11 @@ dv-pulldown-user-menu {
     &:hover {
         background-color: @contrast-light;
     }
+}
+
+.dv-countdown-countdown:hover {
+    background-color: transparent;
+    cursor: default;
 }
 
 .logo-text {
