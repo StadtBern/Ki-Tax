@@ -58,15 +58,13 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 	private Gesuchsperiode gesuchsperiode;
-	private int JAHR_1, JAHR_2;
 	private LocalDate DATUM_FAELLIG = LocalDate.now().plusDays(3);
 
 
 	@Before
 	public void init() {
 		gesuchsperiode = createGesuchsperiode(true);
-		Mandant mandant = insertInstitutionen();
-		createBenutzer(mandant);
+		insertInstitutionen();
 		TestDataUtil.prepareParameters(gesuchsperiode.getGueltigkeit(), persistence);
 	}
 
@@ -245,8 +243,6 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	protected Gesuchsperiode createGesuchsperiode(boolean active) {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createCurrentGesuchsperiode();
-		JAHR_1 = gesuchsperiode.getBasisJahrPlus1();
-		JAHR_2 = gesuchsperiode.getBasisJahrPlus2();
 		gesuchsperiode.setActive(active);
 		return gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 	}

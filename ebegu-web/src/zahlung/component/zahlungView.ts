@@ -87,7 +87,7 @@ export class ZahlungViewController {
     }
 
     public bestaetigen(zahlung: TSZahlung) {
-        console.log("bestaetigen");
+        console.log('bestaetigen');
         this.zahlungRS.zahlungBestaetigen(zahlung.id).then((response: TSZahlung) => {
             let index = EbeguUtil.getIndexOfElementwithID(response, this.zahlungsauftrag.zahlungen);
             if (index > -1) {
