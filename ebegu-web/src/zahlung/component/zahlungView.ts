@@ -66,7 +66,6 @@ export class ZahlungViewController {
                 default:
                     break;
             }
-
         }
     }
 
@@ -101,5 +100,4 @@ export class ZahlungViewController {
     public isBestaetigt(zahlungstatus: TSZahlungsstatus): boolean {
         return zahlungstatus === TSZahlungsstatus.BESTAETIGT;
     }
-
 }

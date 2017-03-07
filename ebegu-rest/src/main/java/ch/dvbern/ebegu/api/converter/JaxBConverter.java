@@ -2311,7 +2311,6 @@ public class JaxBConverter {
 
 	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag) {
 		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag);
-
 		return jaxZahlungsauftrag;
 	}
 
@@ -2348,7 +2347,6 @@ public class JaxBConverter {
 		jaxZahlungsauftrag.setBetragTotalAuftrag(total);
 
 		return jaxZahlungsauftrag;
-
 	}
 
 	public JaxZahlung zahlungToJAX(final Zahlung persistedZahlung) {
@@ -2360,6 +2358,5 @@ public class JaxBConverter {
 		jaxZahlungs.setInstitutionsId(persistedZahlung.getInstitutionStammdaten().getInstitution().getId());
 
 		return jaxZahlungs;
-
 	}
 }
