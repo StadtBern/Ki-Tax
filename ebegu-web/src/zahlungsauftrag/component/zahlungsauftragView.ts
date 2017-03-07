@@ -79,9 +79,7 @@ export class ZahlungsauftragViewController {
             }
             default:
                 break;
-
         }
-
     }
 
     public gotoZahlung(zahlungsauftrag: TSZahlungsauftrag) {
