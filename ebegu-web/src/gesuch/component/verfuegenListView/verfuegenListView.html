@@ -14,13 +14,13 @@
                     <div class="col-md-12 table-responsive">
 
                         <table st-table="displayedCollection" st-safe-src="vm.getKinderWithBetreuungList()"
-                               class="table table-hover" st-delay="20">
+                               class="table table-fixed table-hover" st-delay="20">
                             <thead>
                             <tr>
-                                <th data-translate="KIND"></th>
-                                <th data-translate="BETREUUNG"></th>
-                                <th data-translate="ID"></th>
-                                <th data-translate="STATUS"></th>
+                                <th data-translate="KIND" width="35%"></th>
+                                <th data-translate="BETREUUNG"width="25%"></th>
+                                <th data-translate="ID" width="20%"></th>
+                                <th data-translate="STATUS" width="20%"></th>
                             </tr>
                             </thead>
                             <tbody ng-repeat="kindContainer in displayedCollection">
