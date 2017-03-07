@@ -2,11 +2,16 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxZahlung;
 import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.GeneratedDokumentService;
+import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.ZahlungService;
 import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
@@ -22,9 +27,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static ch.dvbern.ebegu.enums.UserRole.*;
 
 /**
  * resource fuer Zahlungen
@@ -44,6 +53,12 @@ public class ZahlungResource {
 	@Inject
 	private GeneratedDokumentService generatedDokumentService;
 
+	@Inject
+	private InstitutionService institutionService;
+
+	@Inject
+	private PrincipalBean principalBean;
+
 
 	@Nullable
 	@GET
@@ -51,8 +66,25 @@ public class ZahlungResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxZahlungsauftrag> getAllZahlungsauftraege() {
+		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA)) {
+			return zahlungService.getAllZahlungsauftraege().stream()
+				.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag))
+				.collect(Collectors.toList());
+		}
+		return Collections.emptyList();
+	}
+
+	@Nullable
+	@GET
+	@Path("/institution")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxZahlungsauftrag> getAllZahlungsauftraegeInstitution() {
+
+		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+
 		return zahlungService.getAllZahlungsauftraege().stream()
-			.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag))
+			.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag, principalBean.discoverMostPrivilegedRole(), allowedInst))
 			.collect(Collectors.toList());
 	}
 
@@ -65,6 +97,30 @@ public class ZahlungResource {
 	public JaxZahlungsauftrag findZahlungsauftrag(
 		@Nonnull @NotNull @PathParam("zahlungsauftragId") JaxId zahlungsauftragJAXPId) throws EbeguException {
 
+		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA)) {
+			Validate.notNull(zahlungsauftragJAXPId.getId());
+			String zahlungsauftragId = converter.toEntityId(zahlungsauftragJAXPId);
+			Optional<Zahlungsauftrag> optional = zahlungService.findZahlungsauftrag(zahlungsauftragId);
+
+			if (!optional.isPresent()) {
+				return null;
+			}
+			return converter.zahlungsauftragToJAX(optional.get());
+		}
+		return new JaxZahlungsauftrag();
+
+
+	}
+
+
+	@Nullable
+	@GET
+	@Path("/zahlungsauftraginstitution/{zahlungsauftragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxZahlungsauftrag findZahlungsauftraginstitution(
+		@Nonnull @NotNull @PathParam("zahlungsauftragId") JaxId zahlungsauftragJAXPId) throws EbeguException {
+
 		Validate.notNull(zahlungsauftragJAXPId.getId());
 		String zahlungsauftragId = converter.toEntityId(zahlungsauftragJAXPId);
 		Optional<Zahlungsauftrag> optional = zahlungService.findZahlungsauftrag(zahlungsauftragId);
@@ -72,8 +128,11 @@ public class ZahlungResource {
 		if (!optional.isPresent()) {
 			return null;
 		}
-		return converter.zahlungsauftragToJAX(optional.get());
+		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+
+		return converter.zahlungsauftragToJAX(optional.get(), principalBean.discoverMostPrivilegedRole(), allowedInst);
 	}
+
 
 	@Nullable
 	@PUT
@@ -133,5 +192,23 @@ public class ZahlungResource {
 		final Zahlungsauftrag zahlungsauftragUpdated = zahlungService.zahlungsauftragAktualisieren(id, faelligkeitsdatum, beschrieb);
 
 		return converter.zahlungsauftragToJAX(zahlungsauftragUpdated);
+	}
+
+	@Nullable
+	@PUT
+	@Path("/bestaetigen/{zahlungId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxZahlung zahlungBestaetigen(
+		@Nonnull @NotNull @PathParam("zahlungId") JaxId zahlungJAXPId) throws EbeguException, MimeTypeParseException {
+
+		Validate.notNull(zahlungJAXPId.getId());
+		String zahlungId = converter.toEntityId(zahlungJAXPId);
+
+		final Zahlung zahlung = zahlungService.zahlungBestaetigen(zahlungId);
+
+		//TODO: Es muss überprüft werden, ob alle Zahlungen bestätigt sind und gegebenenfalls den Zahlungsauftrag-Status auf Bestätigt gewechselt werden!
+
+		return converter.zahlungToJAX(zahlung);
 	}
 }
