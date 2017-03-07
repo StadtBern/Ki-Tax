@@ -208,9 +208,6 @@ public class ZahlungResource {
 		String zahlungId = converter.toEntityId(zahlungJAXPId);
 
 		final Zahlung zahlung = zahlungService.zahlungBestaetigen(zahlungId);
-
-		zahlungService.zahlungauftragBestaetigen(zahlung.getZahlungsauftrag());
-
 		return converter.zahlungToJAX(zahlung);
 	}
 }

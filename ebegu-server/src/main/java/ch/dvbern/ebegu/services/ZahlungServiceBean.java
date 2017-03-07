@@ -471,12 +471,12 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Objects.requireNonNull(zahlungId, "zahlungId muss gesetzt sein");
 		Zahlung zahlung = persistence.find(Zahlung.class, zahlungId);
 		zahlung.setStatus(ZahlungStatus.BESTAETIGT);
-		return persistence.merge(zahlung);
+		Zahlung persistedZahlung = persistence.merge(zahlung);
+		zahlungauftragBestaetigenIfAllZahlungenBestaetigt(zahlung.getZahlungsauftrag());
+		return persistedZahlung;
 	}
 
-	@Override
-	@RolesAllowed(value = {UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
-	public Zahlungsauftrag zahlungauftragBestaetigen(Zahlungsauftrag zahlungsauftrag) {
+	private Zahlungsauftrag zahlungauftragBestaetigenIfAllZahlungenBestaetigt(Zahlungsauftrag zahlungsauftrag) {
 		Objects.requireNonNull(zahlungsauftrag, "zahlungsauftrag darf nicht null sein");
 
 		if (zahlungsauftrag.getZahlungen().stream().allMatch(zahlung -> zahlung.getStatus().equals(ZahlungStatus.BESTAETIGT))) {
@@ -485,8 +485,6 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		}
 		return zahlungsauftrag;
 	}
-
-
 }
 
 

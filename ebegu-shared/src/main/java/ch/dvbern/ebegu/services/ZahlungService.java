@@ -43,10 +43,12 @@ public interface ZahlungService {
 
 	/**
 	 * Sucht einen einzelnen Zahlungsauftrag.
-	 * TODO (team) im JaxBConverter aufgrund Berechtigung des Benutzers Zahlungen entfernen!
 	 */
 	Optional<Zahlungsauftrag> findZahlungsauftrag(String auftragId);
 
+	/**
+	 * Gibt die Zahlung mit der uebergebenen Id zurueck.
+	 */
 	Optional<Zahlung> findZahlung(String zahlungId);
 
 	/**
@@ -55,8 +57,7 @@ public interface ZahlungService {
 	void deleteZahlungsauftrag(String auftragId);
 
 	/**
-	 * Gibt alle Zahlungsauftraege zurueck TODO (team) evt. muessen wir dann hier einschraenken, sonst waechst die liste unendlich...
-	 * TODO (team) im JaxBConverter aufgrund Berechtigung des Benutzers Zahlungen entfernen!
+	 * Gibt alle Zahlungsauftraege zurueck
 	 */
 	Collection<Zahlungsauftrag> getAllZahlungsauftraege();
 
@@ -64,7 +65,4 @@ public interface ZahlungService {
 	 * Eine Kita kann/muss den Zahlungseingang bestaetigen
 	 */
 	Zahlung zahlungBestaetigen(String zahlungId);
-
-
-	Zahlungsauftrag zahlungauftragBestaetigen(Zahlungsauftrag zahlungsauftrag);
 }

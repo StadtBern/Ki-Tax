@@ -151,7 +151,7 @@ export class ZahlungsauftragViewController {
     }
 
     public isEditMode(zahlungsauftragId: string): boolean {
-        if (this.zahlungsauftragToEdit && this.zahlungsauftragToEdit.id == zahlungsauftragId) {
+        if (this.zahlungsauftragToEdit && this.zahlungsauftragToEdit.id === zahlungsauftragId) {
             return true;
         }
         return false;
@@ -160,7 +160,7 @@ export class ZahlungsauftragViewController {
     public isEditValid(): boolean {
         if (this.zahlungsauftragToEdit) {
             return this.zahlungsauftragToEdit.beschrieb && this.zahlungsauftragToEdit.beschrieb.length > 0 &&
-                this.zahlungsauftragToEdit.datumFaellig != null && this.zahlungsauftragToEdit.datumFaellig != undefined;
+                this.zahlungsauftragToEdit.datumFaellig !== null && this.zahlungsauftragToEdit.datumFaellig !== undefined;
         }
         return false;
     }
@@ -172,9 +172,9 @@ export class ZahlungsauftragViewController {
 
     public rowClass(zahlungsauftragId: string) {
         if (this.isEditMode(zahlungsauftragId) && !this.isEditValid()) {
-            return "errorrow";
+            return 'errorrow';
         }
-        return "";
+        return '';
     }
 
 }
