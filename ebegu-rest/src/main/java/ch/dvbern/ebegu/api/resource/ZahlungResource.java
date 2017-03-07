@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.GeneratedDokumentService;
@@ -84,6 +85,7 @@ public class ZahlungResource {
 		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 
 		return zahlungService.getAllZahlungsauftraege().stream()
+			.filter(zahlungsauftrag -> !zahlungsauftrag.getStatus().equals(ZahlungauftragStatus.ENTWURF))
 			.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag, principalBean.discoverMostPrivilegedRole(), allowedInst))
 			.collect(Collectors.toList());
 	}
@@ -207,7 +209,7 @@ public class ZahlungResource {
 
 		final Zahlung zahlung = zahlungService.zahlungBestaetigen(zahlungId);
 
-		//TODO: Es muss überprüft werden, ob alle Zahlungen bestätigt sind und gegebenenfalls den Zahlungsauftrag-Status auf Bestätigt gewechselt werden!
+		zahlungService.zahlungauftragBestaetigen(zahlung.getZahlungsauftrag());
 
 		return converter.zahlungToJAX(zahlung);
 	}

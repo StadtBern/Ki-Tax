@@ -66,4 +66,5 @@ public interface ZahlungService {
 	Zahlung zahlungBestaetigen(String zahlungId);
 
 
+	Zahlungsauftrag zahlungauftragBestaetigen(Zahlungsauftrag zahlungsauftrag);
 }
