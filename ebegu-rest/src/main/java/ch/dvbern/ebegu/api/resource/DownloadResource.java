@@ -380,7 +380,7 @@ public class DownloadResource {
 	}
 
 	@Nonnull
-	Response getFileDownloadResponse(UriInfo uriInfo, String ip, FileMetadata fileMetadata) {
+	public Response getFileDownloadResponse(UriInfo uriInfo, String ip, FileMetadata fileMetadata) {
 		final DownloadFile downloadFile = downloadFileService.create(fileMetadata, ip);
 
 		URI uri = uriInfo.getBaseUriBuilder()

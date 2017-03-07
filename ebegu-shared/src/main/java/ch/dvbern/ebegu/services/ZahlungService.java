@@ -60,8 +60,6 @@ public interface ZahlungService {
 	 */
 	Collection<Zahlungsauftrag> getAllZahlungsauftraege();
 
-	/*Collection<Zahlungsauftrag> getAllZahlungsauftraegeInstitution();*/
-
 	/**
 	 * Eine Kita kann/muss den Zahlungseingang bestaetigen
 	 */

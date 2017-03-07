@@ -65,10 +65,6 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
-	@Inject
-	private InstitutionService institutionService;
-
-
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragErstellen(LocalDate datumFaelligkeit, String beschreibung) {

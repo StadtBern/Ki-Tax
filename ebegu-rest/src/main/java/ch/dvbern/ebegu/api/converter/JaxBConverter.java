@@ -2335,15 +2335,16 @@ public class JaxBConverter {
 	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag, UserRole userRole, Collection<Institution> allowedInst) {
 		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag);
 
+		// nur die Zahlungen welche inst sehen darf
 		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
 			RestUtil.purgeZahlungenOfInstitutionen(jaxZahlungsauftrag, allowedInst);
 		}
 
+		// es muss nochmal das Auftragstotal berechnet werden. Diesmal nur mit den erlaubten Zahlungen
 		BigDecimal total = BigDecimal.ZERO;
 		for (JaxZahlung zahlung : jaxZahlungsauftrag.getZahlungen()) {
 			total = MathUtil.DEFAULT.add(total, zahlung.getBetragTotalZahlung());
 		}
-
 		jaxZahlungsauftrag.setBetragTotalAuftrag(total);
 
 		return jaxZahlungsauftrag;

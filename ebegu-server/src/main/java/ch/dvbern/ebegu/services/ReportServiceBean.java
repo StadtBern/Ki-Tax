@@ -208,7 +208,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getBeschrieb() + ".xlsx");
 	}
-	
+
 	@Override
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public UploadFileInfo generateExcelReportZahlung(String zahlungId) throws ExcelMergeException {

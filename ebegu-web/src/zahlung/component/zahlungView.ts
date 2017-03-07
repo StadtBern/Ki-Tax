@@ -65,7 +65,6 @@ export class ZahlungViewController {
                 }
                 default:
                     break;
-
             }
 
         }

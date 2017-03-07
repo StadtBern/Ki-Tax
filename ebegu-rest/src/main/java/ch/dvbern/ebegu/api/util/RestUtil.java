@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.api.util;
 
-import ch.dvbern.ebegu.api.dtos.*;
+import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
+import ch.dvbern.ebegu.api.dtos.JaxInstitution;
+import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
 import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
@@ -21,9 +24,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static ch.dvbern.ebegu.api.EbeguApplicationV1.API_ROOT_PATH;
 
@@ -126,15 +131,12 @@ public final class RestUtil {
 	}
 
 	public static void purgeZahlungenOfInstitutionen(JaxZahlungsauftrag jaxZahlungsauftrag, Collection<Institution> allowedInst) {
-
-
 		if (!allowedInst.isEmpty()) {
 			jaxZahlungsauftrag.getZahlungen().removeIf(zahlung ->
 				allowedInst.stream().noneMatch(institution ->
 					institution.getId().equals(zahlung.getInstitutionsId())
 				)
 			);
-
 		}
 	}
 
