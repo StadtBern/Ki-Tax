@@ -19,3 +19,4 @@ ebegu-runconfig/wildfly_10.0.0.Final/build.properties
 /ebegu-rest/ch.dvbern.ebegu.entities.*/write.lock
 /ebegu-server/ch.dvbern.ebegu.entities.*/segments_*
 /ebegu-server/ch.dvbern.ebegu.entities.*/write.lock
+/ebegu-server/jboss.server.data.dir/*

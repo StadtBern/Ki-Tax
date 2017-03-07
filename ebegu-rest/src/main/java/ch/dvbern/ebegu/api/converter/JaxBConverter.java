@@ -11,6 +11,7 @@ import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.date.DateConvertUtils;
@@ -24,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -2308,6 +2310,12 @@ public class JaxBConverter {
 	}
 
 	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag) {
+		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag);
+
+		return jaxZahlungsauftrag;
+	}
+
+	private JaxZahlungsauftrag getJaxZahlungsauftrag(Zahlungsauftrag persistedZahlungsauftrag) {
 		final JaxZahlungsauftrag jaxZahlungsauftrag = new JaxZahlungsauftrag();
 		convertAbstractDateRangedFieldsToJAX(persistedZahlungsauftrag, jaxZahlungsauftrag);
 		jaxZahlungsauftrag.setStatus(persistedZahlungsauftrag.getStatus());
@@ -2321,9 +2329,26 @@ public class JaxBConverter {
 				.stream()
 				.map(this::zahlungToJAX)
 				.collect(Collectors.toList()));
+		return jaxZahlungsauftrag;
+	}
 
+	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag, UserRole userRole, Collection<Institution> allowedInst) {
+		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag);
+
+		// nur die Zahlungen welche inst sehen darf
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
+			RestUtil.purgeZahlungenOfInstitutionen(jaxZahlungsauftrag, allowedInst);
+		}
+
+		// es muss nochmal das Auftragstotal berechnet werden. Diesmal nur mit den erlaubten Zahlungen
+		BigDecimal total = BigDecimal.ZERO;
+		for (JaxZahlung zahlung : jaxZahlungsauftrag.getZahlungen()) {
+			total = MathUtil.DEFAULT.add(total, zahlung.getBetragTotalZahlung());
+		}
+		jaxZahlungsauftrag.setBetragTotalAuftrag(total);
 
 		return jaxZahlungsauftrag;
+
 	}
 
 	public JaxZahlung zahlungToJAX(final Zahlung persistedZahlung) {
@@ -2332,6 +2357,7 @@ public class JaxBConverter {
 		jaxZahlungs.setStatus(persistedZahlung.getStatus());
 		jaxZahlungs.setBetragTotalZahlung(persistedZahlung.getBetragTotalZahlung());
 		jaxZahlungs.setInstitutionsName(persistedZahlung.getInstitutionStammdaten().getInstitution().getName());
+		jaxZahlungs.setInstitutionsId(persistedZahlung.getInstitutionStammdaten().getInstitution().getId());
 
 		return jaxZahlungs;
 

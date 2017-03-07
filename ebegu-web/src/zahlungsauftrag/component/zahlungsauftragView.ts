@@ -7,6 +7,8 @@ import TSDownloadFile from '../../models/TSDownloadFile';
 import {ApplicationPropertyRS} from '../../admin/service/applicationPropertyRS.rest';
 import {TSZahlungsauftragsstatus} from '../../models/enums/TSZahlungsauftragstatus';
 import {ReportRS} from '../../core/service/reportRS.rest';
+import {TSRole} from '../../models/enums/TSRole';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
@@ -36,11 +38,12 @@ export class ZahlungsauftragViewController {
     itemsByPage: number = 12;
     devMode: boolean = false;
 
-    static $inject: string[] = ['ZahlungRS', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS', 'ReportRS'];
+    static $inject: string[] = ['ZahlungRS', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS', 'ReportRS',
+        'AuthServiceRS', 'EbeguUtil'];
 
     constructor(private zahlungRS: ZahlungRS, private CONSTANTS: any,
                 private $state: IStateService, private downloadRS: DownloadRS, private applicationPropertyRS: ApplicationPropertyRS,
-                private reportRS: ReportRS) {
+                private reportRS: ReportRS, private authServiceRS: AuthServiceRS, private ebeguUtil: EbeguUtil) {
         this.initViewModel();
     }
 
@@ -56,9 +59,29 @@ export class ZahlungsauftragViewController {
     }
 
     private updateZahlungsauftrag() {
-        this.zahlungRS.getAllZahlungsauftraege().then((response: any) => {
-            this.zahlungsauftragen = angular.copy(response);
-        });
+
+        switch (this.authServiceRS.getPrincipal().role) {
+
+            case TSRole.SACHBEARBEITER_INSTITUTION:
+            case TSRole.SACHBEARBEITER_TRAEGERSCHAFT: {
+                this.zahlungRS.getAllZahlungsauftraegeInstitution().then((response: any) => {
+                    this.zahlungsauftragen = angular.copy(response);
+                });
+                break;
+            }
+            case TSRole.SUPER_ADMIN:
+            case TSRole.ADMIN:
+            case TSRole.SACHBEARBEITER_JA: {
+                this.zahlungRS.getAllZahlungsauftraege().then((response: any) => {
+                    this.zahlungsauftragen = angular.copy(response);
+                });
+                break;
+            }
+            default:
+                break;
+
+        }
+
     }
 
     public gotoZahlung(zahlungsauftrag: TSZahlungsauftrag) {
@@ -89,7 +112,6 @@ export class ZahlungsauftragViewController {
         let win: Window = this.downloadRS.prepareDownloadWindow();
         this.reportRS.getZahlungsauftragReportExcel(zahlungsauftrag.id)
             .then((downloadFile: TSDownloadFile) => {
-
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
     }
@@ -100,6 +122,7 @@ export class ZahlungsauftragViewController {
             if (index > -1) {
                 this.zahlungsauftragen[index] = response;
             }
+            this.ebeguUtil.handleSmarttablesUpdateBug(this.zahlungsauftragen);
         });
     }
 

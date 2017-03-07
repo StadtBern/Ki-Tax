@@ -546,6 +546,8 @@
     "SCHULAMT": "Nicht nötig",
     "ABGEWIESEN": "Abgewiesen",
     "BESTAETIGT": "Bestätigt",
+    "AUSGELOEST": "Ausgelöst",
+    "ENTWURF": "Entwurf",
     "BETREUUNG_WARTEN_TEXT": "warten auf Platzbestätigung.",
     "BETREUUNG_BESTAETIGT_TEXT": "Dieses Betreuungsangebot wurde am {{date}} bestätigt.",
     "BETREUUNG_GEKUENDINGT_VOR_ANTRITT_TEXT": "Dieses Betreuungsangebot wurde vor dem Antritt gekündigt",

@@ -21,6 +21,9 @@ public class JaxZahlung extends JaxAbstractDTO {
 	private String institutionsName;
 
 	@NotNull
+	private String institutionsId;
+
+	@NotNull
 	private ZahlungStatus status;
 
 	@NotNull
@@ -48,5 +51,13 @@ public class JaxZahlung extends JaxAbstractDTO {
 
 	public void setBetragTotalZahlung(BigDecimal betragTotalZahlung) {
 		this.betragTotalZahlung = betragTotalZahlung;
+	}
+
+	public String getInstitutionsId() {
+		return institutionsId;
+	}
+
+	public void setInstitutionsId(String institutionsId) {
+		this.institutionsId = institutionsId;
 	}
 }
