@@ -84,7 +84,7 @@ export class DVAntragListController {
         }
         //clear selected
         if (this.antraege) {
-            for (var i = 0; i < this.antraege.length; i++) {
+            for (let i = 0; i < this.antraege.length; i++) {
                 let obj: any = this.antraege[i];
                 obj.isSelected = false;
 

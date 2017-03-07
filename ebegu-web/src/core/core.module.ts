@@ -79,6 +79,7 @@ import {ReportRS} from './service/reportRS.rest';
 import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
 import ExportRS from '../gesuch/service/exportRS.rest';
 import {DvCountdownComponentConfig} from './component/dv-countdown/dv-countdown';
+import ZahlungRS from './service/zahlungRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -162,6 +163,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('WizardStepRS', WizardStepRS)
     .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
     .service('MitteilungRS', MitteilungRS)
+    .service('ZahlungRS', ZahlungRS)
     .service('GlobalCacheService', GlobalCacheService)
     .service('ExportRS', ExportRS)
     .directive('dvMaxLength', DVMaxLength.factory())

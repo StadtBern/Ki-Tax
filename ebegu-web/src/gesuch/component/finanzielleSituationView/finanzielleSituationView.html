@@ -18,7 +18,7 @@
                     <div class="row">
                         <div class="col-xs-12 dv-input-container-question" ng-if="vm.showSteuerveranlagung()">
                             <div class="form-group">
-                                <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                <h1 class="required" aria-hidden="true" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                                     translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h1>
                                 <dv-radio-container name="steuerveranlagung" class="input-element"
                                                     ng-model="vm.getModel().finanzielleSituationJA.steuerveranlagungErhalten"
@@ -26,7 +26,8 @@
                                                     ng-change="vm.steuerveranlagungClicked()"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                    aria-label="{{ 'FINANZIELLE_SITUATION_STEUERVERANLAGUNG' |translate}}">
                                 </dv-radio-container>
                                 <dv-error-messages for="vm.form.steuerveranlagung.$error"
                                                    class="error"></dv-error-messages>
@@ -39,14 +40,15 @@
                         <div class="col-xs-12 dv-input-container-question"
                              ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
                             <div class="form-group">
-                                <h1 class="required" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                <h1 class="required" aria-hidden="true" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
                                     translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h1>
                                 <dv-radio-container name="steuererklaerung" class="input-element"
                                                     ng-model="vm.getModel().finanzielleSituationJA.steuererklaerungAusgefuellt"
                                                     ng-required="true" class="radio"
                                                     dv-enable-element
                                                     dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()">
+                                                    dv-enable-expression="!vm.isGesuchReadonly() && !vm.isKorrekturModusJugendamt()"
+                                                    aria-label="{{ 'FINANZIELLE_SITUATION_STEUERERKLAERUNG' |translate}}">
                                 </dv-radio-container>
                                 <dv-error-messages for="vm.form.steuererklaerung.$error"
                                                    class="error"></dv-error-messages>
@@ -178,10 +180,10 @@
                                                    class="input-element">
                                     </dv-valueinput>
                                     <div class="dv-error-messages">
-                                        <div ng-messages="vm.form.geschaeftsgewinnBasisjahr.$error" role="alert"
+                                        <div ng-messages="vm.form.geschaeftsgewinnBasisjahr.$error"
                                              class="error">
                                             <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                                 for="vm.form.geschaeftsgewinnBasisjahr.$error"></div>
+                                                 for="vm.form.geschaeftsgewinnBasisjahr.$error" role="alert"></div>
                                         </div>
                                     </div>
                                     <dv-bisher gs="vm.getModel().finanzielleSituationGS.geschaeftsgewinnBasisjahr"
@@ -210,10 +212,9 @@
                                     </dv-valueinput>
                                     <div class="dv-error-messages">
                                         <div ng-messages="vm.form.geschaeftsgewinnBasisjahrMinus1.$error"
-                                             role="alert"
                                              class="error">
                                             <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                                 for="vm.form.geschaeftsgewinnBasisjahrMinus1.$error"></div>
+                                                 for="vm.form.geschaeftsgewinnBasisjahrMinus1.$error"  role="alert"></div>
                                         </div>
                                     </div>
                                     <dv-bisher
@@ -243,10 +244,10 @@
                                     </dv-valueinput>
                                     <div class="dv-error-messages">
                                         <div ng-messages="vm.form.geschaeftsgewinnBasisjahrMinus2.$error"
-                                             role="alert"
+
                                              class="error">
                                             <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
-                                                 for="vm.form.geschaeftsgewinnBasisjahrMinus2.$error"></div>
+                                                 for="vm.form.geschaeftsgewinnBasisjahrMinus2.$error" role="alert"></div>
                                         </div>
                                     </div>
                                     <dv-bisher

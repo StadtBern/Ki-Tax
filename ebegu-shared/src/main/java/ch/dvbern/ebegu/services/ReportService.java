@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
@@ -37,5 +38,9 @@ public interface ReportService {
 
 	UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
+
+	UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId, InstitutionStammdaten institution) throws ExcelMergeException;
+
+	UploadFileInfo generateExcelReportZahlung(String zahlungId) throws ExcelMergeException;
 
 }
