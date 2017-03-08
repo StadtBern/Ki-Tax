@@ -62,6 +62,12 @@ public interface ZahlungService {
 	Collection<Zahlungsauftrag> getAllZahlungsauftraege();
 
 	/**
+	 * Gibt alle Zahlungsauftraege zurueck TODO (team) evt. muessen wir dann hier einschraenken, sonst waechst die liste unendlich...
+	 * TODO (team) im JaxBConverter aufgrund Berechtigung des Benutzers Zahlungen entfernen!
+	 */
+	Optional<Zahlungsauftrag> findLastZahlungsauftrag();
+
+	/**
 	 * Eine Kita kann/muss den Zahlungseingang bestaetigen
 	 */
 	Zahlung zahlungBestaetigen(String zahlungId);

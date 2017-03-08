@@ -79,7 +79,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// Es darf immer nur ein Zahlungsauftrag im Status ENTWURF sein
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
 		if (lastZahlungsauftrag.isPresent() && lastZahlungsauftrag.get().getStatus().isEntwurf()) {
-			throw new EbeguRuntimeException("zahlungsauftragErstellen", ErrorCodeEnum.ERROR_ZAHLUNG_ERSTELLEN, "Es darf kein neuer Entwurf erstellt werden, bevor der letzte Auftrag freigegeben wurde");
+			throw new EbeguRuntimeException("zahlungsauftragErstellen", ErrorCodeEnum.ERROR_ZAHLUNG_ERSTELLEN);
 		}
 
 		LOGGER.info("Erstelle Zahlungsauftrag mit Faelligkeit: " + Constants.DATE_FORMATTER.format(datumFaelligkeit));
@@ -392,7 +392,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	 * Ermittelt den zuletzt durchgefuehrten Zahlungsauftrag
 	 */
 	@Nonnull
-	private Optional<Zahlungsauftrag> findLastZahlungsauftrag() {
+	public Optional<Zahlungsauftrag> findLastZahlungsauftrag() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Zahlungsauftrag> query = cb.createQuery(Zahlungsauftrag.class);
 		Root<Zahlungsauftrag> root = query.from(Zahlungsauftrag.class);

@@ -19,9 +19,11 @@ import {IBetreuungStateParams} from '../../gesuch.route';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import ExportRS from '../../service/exportRS.rest';
 import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
+import {ThreeButtonsDialogController} from '../../dialog/ThreeButtonsDialogController';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
+let threeButtonsDialogTempl = require('../../dialog/threeButtonsDialog.html');
 
 
 export class VerfuegenViewComponentConfig implements IComponentOptions {
@@ -111,25 +113,35 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         });
     }
 
-    cancel(): void {
+    public cancel(): void {
         this.form.$setPristine();
     }
 
 
-    save(): void {
+    public save(): void {
         if (this.isGesuchValid()) {
-            this.saveVerfuegung().then(() => {
-                this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
-                    this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
-                    this.$state.go('gesuch.verfuegen', {
-                        gesuchId: this.getGesuchId()
-                    });
+            if (this.isSameVerfuegungdaten() || !this.isMutation()) { // wenn Erstgesuch oder die neue Verfuegung dieselben Daten hat, wird sie nur gespeichert
+                this.saveVerfuegung().then(() => {
+                    this.generateVerfuegungDokument();
                 });
-            });
+            } else { // wenn Mutation und die Verfuegung neue Daten hat, kann sie ignoriert oder uebernommen werden
+                this.saveMutierteVerfuegung().then(() => {
+                    this.generateVerfuegungDokument();
+                });
+            }
         }
     }
 
-    schliessenOhneVerfuegen() {
+    private generateVerfuegungDokument() {
+        this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
+            this.getBetreuung().id, true, null).then(() => {
+            this.$state.go('gesuch.verfuegen', {
+                gesuchId: this.getGesuchId()
+            });
+        });
+    }
+
+    public schliessenOhneVerfuegen() {
         if (this.isGesuchValid()) {
             this.verfuegungSchliessenOhenVerfuegen().then(() => {
                 this.$state.go('gesuch.verfuegen', {
@@ -139,7 +151,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         }
     }
 
-    nichtEintreten() {
+    public nichtEintreten() {
         if (this.isGesuchValid()) {
             this.verfuegungNichtEintreten().then(() => {
                 this.downloadRS.getAccessTokenNichteintretenGeneratedDokument(
@@ -253,19 +265,31 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         })
             .then(() => {
                 this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
-                return this.gesuchModelManager.saveVerfuegung();
+                return this.gesuchModelManager.saveVerfuegung(false);
             });
+    }
+
+    public saveMutierteVerfuegung(): IPromise<TSVerfuegung> {
+        return this.DvDialog.showDialog(threeButtonsDialogTempl, ThreeButtonsDialogController, {
+            title: 'CONFIRM_SAVE_MUTIERTE_VERFUEGUNG',
+            confirmationText: 'BESCHREIBUNG_SAVE_VERFUEGUNG',
+            cancelText: 'LABEL_NEIN',
+            firstOkText: 'CONFIRM_MUTIERTE_VERFUEGUNG_UEBERNEHMEN',
+            secondOkText: 'CONFIRM_MUTIERTE_VERFUEGUNG_IGNORIEREN'
+        }).then((response) => {
+            this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
+            return this.gesuchModelManager.saveVerfuegung(response === 2);
+        });
     }
 
     public verfuegungSchliessenOhenVerfuegen(): IPromise<void> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN',
             deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN'
-        })
-            .then(() => {
-                this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
-                this.gesuchModelManager.verfuegungSchliessenOhenVerfuegen();
-            });
+        }).then(() => {
+            this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
+            this.gesuchModelManager.verfuegungSchliessenOhenVerfuegen();
+        });
     }
 
     public verfuegungNichtEintreten(): IPromise<TSVerfuegung> {
@@ -358,7 +382,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public exportXmlSchema() {
         // ACHTUNG popup blocker muss deaktiviert sein
         this.exportRS.getXmlSchemaString().then((result) => {
-            this.$window.open("data:text/xml;charset=utf-8," + result, "", "_blank");
+            this.$window.open('data:text/xml;charset=utf-8,' + result, '', '_blank');
         });
     }
 

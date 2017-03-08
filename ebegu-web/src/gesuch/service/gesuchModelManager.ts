@@ -8,7 +8,7 @@ import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
-import {IPromise, IDeferred, ILogService, IQService, IRootScopeService} from 'angular';
+import {IPromise, ILogService, IQService, IRootScopeService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
 import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensverschlechterungContainer';
@@ -975,8 +975,9 @@ export default class GesuchModelManager {
 
     }
 
-    public saveVerfuegung(): IPromise<TSVerfuegung> {
-        return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response: TSVerfuegung) => {
+    public saveVerfuegung(ignorieren: boolean): IPromise<TSVerfuegung> {
+        return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id, ignorieren)
+            .then((response: TSVerfuegung) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
             this.calculateGesuchStatus();

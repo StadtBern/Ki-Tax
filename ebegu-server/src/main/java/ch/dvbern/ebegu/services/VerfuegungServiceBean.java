@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.Rule;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA;
@@ -61,14 +63,40 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Inject
 	private Authorizer authorizer;
 
+	@Inject
+	private ZahlungService zahlungService;
+
 
 	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
-	public Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId) {
+	public Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren) {
+		setZahlungsstatus(verfuegung, ignorieren);
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.VERFUEGT);
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedVerfuegung;
+	}
+
+	private void setZahlungsstatus(Verfuegung verfuegung, boolean ignorieren) {
+		LocalDate dateLastZahlungsauftrag = Constants.START_OF_TIME;
+		final Optional<Zahlungsauftrag> lastZahlungsauftrag = zahlungService.findLastZahlungsauftrag();
+		if (lastZahlungsauftrag.isPresent()) {
+			dateLastZahlungsauftrag = LocalDate.from(lastZahlungsauftrag.get().getDatumGeneriert().with(TemporalAdjusters.lastDayOfMonth()));
+		}
+		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegung.getZeitabschnitte()) {
+			if (!verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb().isAfter(dateLastZahlungsauftrag)) {
+				// dies wurde schon ausbezahlt. Mann muss es dementsprechend ignorieren oder als neu setzen
+				if (ignorieren) {
+					verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
+				} else {
+					verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+				}
+			}
+			else {
+				// es wurde noch nicht bezahlt. Muss noch bezahlt werden
+				verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+			}
+		}
 	}
 
 	private void setVerfuegungsKategorien(Verfuegung verfuegung) {
@@ -109,6 +137,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		return persistedVerfuegung;
 	}
 
+	@Override
 	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Verfuegung persistVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, @Nonnull Betreuungsstatus betreuungsstatus) {
