@@ -223,6 +223,7 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 
 	}
 
+	//das ist eigentlich der nettovermoegensabzug
 	@Override
 	@Nonnull
 	public final BigDecimal getNettovermoegen() {

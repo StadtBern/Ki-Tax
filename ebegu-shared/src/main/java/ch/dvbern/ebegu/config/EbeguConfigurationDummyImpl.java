@@ -22,4 +22,19 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 
 	private static final long serialVersionUID = 7880484074016308515L;
 
+	@Override
+	public boolean getOpenIdmEnabled() {
+		return false;
+	}
+
+	@Override
+	public boolean isSendingOfMailsDisabled() {
+		return true;
+	}
+
+	@Override
+	public String getSenderAddress() {
+		return "hallo@dvbern.ch";
+	}
+
 }

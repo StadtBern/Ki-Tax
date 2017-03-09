@@ -34,7 +34,7 @@
 
         <version.flyway>3.2.1</version.flyway>
         <version.slf4j>1.7.10</version.slf4j>
-        <version.wildfly-arquillian-containers>1.1.0.Final</version.wildfly-arquillian-containers>
+        <version.wildfly-arquillian-containers>2.0.2.Final</version.wildfly-arquillian-containers>
         <version.wildfly.container>10.0.0.Final</version.wildfly.container>
 
     </properties>
@@ -402,7 +402,7 @@
                     <!--</exclusion>-->
                 <!--</exclusions>-->
             </dependency>
-
+            <!--um dependency konflikte zu vermeiden fixen wir die versionen von 2 mal angezogenen libs im dep management-->
             <dependency>
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
@@ -690,7 +690,7 @@
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-embedded</artifactId>
-                    <version>2.0.2.Final</version>
+                    <version>${version.wildfly-arquillian-containers}</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
