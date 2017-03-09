@@ -42,6 +42,7 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	public static final String EBEGU_SUPERUSER_MAIL = "ebegu.superuser.mail";
 	private static final String EBEGU_BACKGROUND_COLOR = "ebegu.background.color";
 	public static final String EBEGU_DUMP_DBUNIT_XML = "ebegu.dump.dbunit.xml";
+	private static final String EBEGU_ZAHLUNGEN_TEST_MODE = "ebegu.zahlungen.test.mode";
 
 	public EbeguConfigurationImpl() {
 
@@ -135,5 +136,10 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	@Override
 	public String getBackgroundColor() {
 		return getString(EBEGU_BACKGROUND_COLOR, "#FFFFFF");
+	}
+
+	@Override
+	public boolean getIsZahlungenTestMode() {
+		return getBoolean(EBEGU_ZAHLUNGEN_TEST_MODE, false) && getIsDevmode();
 	}
 }

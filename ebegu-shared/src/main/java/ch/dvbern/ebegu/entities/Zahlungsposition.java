@@ -1,8 +1,10 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -12,7 +14,7 @@ import java.math.BigDecimal;
  */
 @Audited
 @Entity
-public class Zahlungsposition extends AbstractEntity {
+public class Zahlungsposition extends AbstractEntity implements Comparable<Zahlungsposition> {
 
 	private static final long serialVersionUID = -8403487439884700618L;
 
@@ -81,5 +83,13 @@ public class Zahlungsposition extends AbstractEntity {
 
 	public void setIgnoriert(boolean ignoriert) {
 		this.ignoriert = ignoriert;
+	}
+
+	@Override
+	public int compareTo(@Nonnull Zahlungsposition o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb(), o.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
+		builder.append(this.getBetrag(), o.getBetrag());
+		return builder.toComparison();
 	}
 }
