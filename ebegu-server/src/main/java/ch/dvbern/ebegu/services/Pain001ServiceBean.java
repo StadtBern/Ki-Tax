@@ -322,7 +322,6 @@ public class Pain001ServiceBean extends AbstractBaseService implements Pain001Se
 
 		paymentInstructionInformation3CH.setPmtTpInf(objectFactory.createPaymentTypeInformation19CH());
 
-		//TODO (pascal) Stimmt das so? atStartOfDay?
 		paymentInstructionInformation3CH.setReqdExctnDt(getXmlGregorianCalendar(zahlungsauftrag.getDatumFaellig().atStartOfDay()));
 
 		// Debtor name

@@ -59,7 +59,7 @@ public class Fall extends AbstractEntity implements HasMandant {
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_mandant_id"))
-	private Mandant mandant; //TODO (Team) Die Abfrage-Skripts muessten noch den Mandanten beruecksichtigen!
+	private Mandant mandant;
 
 
 	public long getFallNummer() {

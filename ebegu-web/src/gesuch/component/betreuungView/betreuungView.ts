@@ -177,9 +177,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.form.$setPristine();
             this.$state.go(nextStep, params);
         }).catch((exception) => {
-            //todo team Fehler anzeigen
             // starting over
-            console.log('there was an error saving the betreuung ', this.model);
+            this.$log.error('there was an error saving the betreuung ', this.model);
             this.isSavingData = false;
             this.model.betreuungsstatus = oldStatus;
             this.startEmptyListOfBetreuungspensen();

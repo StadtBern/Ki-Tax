@@ -187,7 +187,7 @@ describe('EbeguRestUtil', function () {
                 myGesuch.familiensituationContainer.familiensituationJA = familiensituation;
                 TestDataUtil.setAbstractFieldsUndefined(myGesuch.familiensituationContainer);
                 myGesuch.kindContainers = [undefined];
-                myGesuch.einkommensverschlechterungInfoContainer = undefined;  //todo createEinkommensverschlechterungInfo
+                myGesuch.einkommensverschlechterungInfoContainer = undefined;
                 myGesuch.bemerkungen = undefined;
                 myGesuch.typ = undefined;
 

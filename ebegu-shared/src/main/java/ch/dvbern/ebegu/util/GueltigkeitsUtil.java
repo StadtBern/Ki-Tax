@@ -114,46 +114,6 @@ public final class GueltigkeitsUtil {
 		return later.get(0).getGueltigkeit().getGueltigAb().minusDays(1);
 	}
 
-	/**
-	 * Entfernt {@code entityToRemove} aus {@code existingEntities}.
-	 * @param precedingDateRange falls gesetzt auf EXTEND_TO_DELETED, so wird die Gueltigkeit eines Entities, welches direkt vor {@code entityToRemove} gueltig ist, verlaengert.
-	 * @return alle verbleibenden entities
-	 */
-	@Nonnull
-	public static <T extends Gueltigkeit> Collection<T> removeFromCollection(@Nonnull final Collection<T> existingEntities, @Nonnull T entityToRemove, @Nonnull PreceedingDateRange precedingDateRange) { // TODO unit test
-		if (precedingDateRange == PreceedingDateRange.EXTEND_TO_DELETED) {
-			Optional<T> preceding = findPreceding(existingEntities, entityToRemove);
-			if (preceding.isPresent()) {
-				preceding.get().getGueltigkeit().setGueltigBis(entityToRemove.getGueltigkeit().getGueltigBis());
-			}
-		}
-
-		existingEntities.remove(entityToRemove);
-		return existingEntities;
-	}
-
-	/**
-	 * Beendet ein zum {@code bisEinschliesslich} gueltiges entity und loescht alle nachfolgenden entities.
-	 * Vorsicht, macht keine Validierung!
-	 * @return alle Entities, die geloescht wurden
-	 */
-	@Nonnull
-	public static <T extends Gueltigkeit> List<T> removeEntitiesAb(@Nonnull final Collection<T> existingEntities, @Nonnull LocalDate bisEinschliesslich) { // TODO unit test
-		// ggf. entity am Zeitpunkt verkuerzen
-		existingEntities.stream()
-			.filter(k -> k.getGueltigkeit().contains(bisEinschliesslich))
-			.findAny() // an einem Stichtag ist nur eine einziger KV gueltig, deshalb ist findAny ausreichend.
-			.ifPresent(k -> k.getGueltigkeit().setGueltigBis(bisEinschliesslich));
-
-		// Zukuenftige entities loeschen
-		List<T> removed = new ArrayList<>(existingEntities.size());
-		existingEntities.stream()
-			.filter(k -> k.getGueltigkeit().isAfter(bisEinschliesslich))
-			.forEach(removed::add);
-		existingEntities.removeAll(removed);
-
-		return removed;
-	}
 
 	/**
 	 * @return letzt gueltiges Entity in der Collection. Falls die Collection leer ist, wird ein Optional.empty zurueck gegeben.
