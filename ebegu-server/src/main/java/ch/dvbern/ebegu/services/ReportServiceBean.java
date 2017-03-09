@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
@@ -24,7 +25,6 @@ import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -92,6 +92,12 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private FileSaverService fileSaverService;
+
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
 
 	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
@@ -199,18 +205,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			getContentTypeForExport());
 	}
 
-	@Inject
-	private GesuchService gesuchService;
-
-	@Inject
-	private GesuchsperiodeService gesuchsperiodeService;
-
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
 	public List<KantonDataRow> getReportDataKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis) throws IOException, URISyntaxException {
 		Validate.notNull(datumVon, "Das Argument 'datumVon' darf nicht leer sein");
 		Validate.notNull(datumBis, "Das Argument 'datumBis' darf nicht leer sein");
-
 
 		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
 		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
@@ -237,6 +236,14 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			}
 		} else {
 			return Collections.emptyList();
+		}
+
+		// Sichtbarkeit nach eingeloggtem Benutzer
+		boolean isInstitutionsbenutzer = principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_INSTITUTION, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
+		if (isInstitutionsbenutzer) {
+			Collection<Institution> allowedInstitutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+			Predicate predicateAllowedInstitutionen = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(allowedInstitutionen);
+			predicatesToUse.add(predicateAllowedInstitutionen);
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
