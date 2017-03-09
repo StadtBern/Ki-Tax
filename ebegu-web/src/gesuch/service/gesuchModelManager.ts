@@ -395,8 +395,8 @@ export default class GesuchModelManager {
     }
 
     public getActiveInstitutionenList(): Array<TSInstitutionStammdaten> {
-        if(this.activInstitutionenList) {
-            this.activInstitutionenList = [];/
+        if(this.activInstitutionenList === undefined) {
+            this.activInstitutionenList = [];
             this.updateActiveInstitutionenList();
         }
         return this.activInstitutionenList;

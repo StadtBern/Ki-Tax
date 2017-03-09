@@ -20,7 +20,7 @@ describe('fallCreationView', function () {
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
-        TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($injector.get('$httpBackend'));
+        TestDataUtil.mockLazyGesuchModelManagerHttpCalls($injector.get('$httpBackend'));
         $state = $injector.get('$state');
         $q = $injector.get('$q');
         $rootScope = $injector.get('$rootScope');
