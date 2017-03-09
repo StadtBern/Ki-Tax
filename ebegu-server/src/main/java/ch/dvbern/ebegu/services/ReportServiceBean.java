@@ -58,6 +58,8 @@ import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.*;
 public class ReportServiceBean extends AbstractReportServiceBean implements ReportService {
 
 	public static final String DATA = "Data";
+	public static final String NICHT_GEFUNDEN = "' nicht gefunden";
+	public static final String VORLAGE = "Vorlage '";
 
 	@Inject
 	private GeuschStichtagExcelConverter geuschStichtagExcelConverter;
@@ -123,7 +125,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportResource reportResource = VORLAGE_REPORT_GESUCH_STICHTAG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+		Objects.requireNonNull(is, VORLAGE+ reportResource.getTemplatePath() + NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
@@ -176,7 +178,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportResource reportResource = VORLAGE_REPORT_GESUCH_ZEITRAUM;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+		Objects.requireNonNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
@@ -233,7 +235,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportResource reportResource = VORLAGE_REPORT_ZAHLUNG_AUFTRAG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+		Objects.requireNonNull(is, VORLAGE + reportResource.getTemplatePath() +NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
@@ -265,7 +267,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportResource reportResource = VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+		Objects.requireNonNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
