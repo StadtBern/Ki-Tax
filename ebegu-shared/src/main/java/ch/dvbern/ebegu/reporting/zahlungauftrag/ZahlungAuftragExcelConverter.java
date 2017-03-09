@@ -11,6 +11,7 @@ package ch.dvbern.ebegu.reporting.zahlungauftrag;
 
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Zahlung;
+import ch.dvbern.ebegu.entities.Zahlungsposition;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.reporting.lib.ExcelConverter;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
@@ -20,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,7 +57,9 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 					allowedInst.stream().anyMatch(institution -> institution.getId().equals(zahlung.getInstitutionStammdaten().getInstitution().getId()));
 			})
 			.forEach(zahlung -> {
-				zahlung.getZahlungspositionen().forEach(zahlungsposition -> {
+				zahlung.getZahlungspositionen().stream()
+					.sorted()
+					.forEach(zahlungsposition -> {
 					ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldZahlungAuftrag.repeatZahlungAuftragRow);
 					excelRowGroup.addValue(MergeFieldZahlungAuftrag.institution, zahlung.getInstitutionStammdaten().getInstitution().getName());
 					excelRowGroup.addValue(MergeFieldZahlungAuftrag.name, zahlungsposition.getKind().getNachname());
