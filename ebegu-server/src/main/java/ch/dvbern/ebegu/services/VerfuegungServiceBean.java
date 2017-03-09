@@ -7,7 +7,8 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.Rule;
-import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.VerfuegungUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -20,7 +21,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA;
@@ -78,26 +78,59 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	}
 
 	private void setZahlungsstatus(Verfuegung verfuegung, boolean ignorieren) {
-		LocalDate dateLastZahlungsauftrag = Constants.START_OF_TIME;
-		final Optional<Zahlungsauftrag> lastZahlungsauftrag = zahlungService.findLastZahlungsauftrag();
-		if (lastZahlungsauftrag.isPresent()) {
-			dateLastZahlungsauftrag = LocalDate.from(lastZahlungsauftrag.get().getDatumGeneriert().with(TemporalAdjusters.lastDayOfMonth()));
-		}
 		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegung.getZeitabschnitte()) {
-			if (!verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb().isAfter(dateLastZahlungsauftrag)) {
-				// dies wurde schon ausbezahlt. Mann muss es dementsprechend ignorieren oder als neu setzen
+			List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung = findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(verfuegungZeitabschnitt,
+				verfuegungZeitabschnitt.getVerfuegung().getBetreuung());
+			// if zeitabschnitteOnVorgaengerVerfuegung is empty the status of the new Zeitabschnitt must still be NEU
+
+			final BigDecimal totalVerrechneteVerguenstigung = VerfuegungUtil.getVerguenstigungZeitInterval(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnitt.getGueltigkeit());
+//			final BigDecimal newVerrechneteVerguenstigung = ;
+			if (verfuegungZeitabschnitt.getVerguenstigung().compareTo(totalVerrechneteVerguenstigung) != 0) {
 				if (ignorieren) {
 					verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
 				} else {
 					verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
 				}
 			}
-			else {
-				// es wurde noch nicht bezahlt. Muss noch bezahlt werden
-				verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
-			}
 		}
+
+//		LocalDate dateLastZahlungsauftrag = Constants.START_OF_TIME;
+//		final Optional<Zahlungsauftrag> lastZahlungsauftrag = zahlungService.findLastZahlungsauftrag();
+//		if (lastZahlungsauftrag.isPresent()) {
+//			dateLastZahlungsauftrag = LocalDate.from(lastZahlungsauftrag.get().getDatumGeneriert().with(TemporalAdjusters.lastDayOfMonth()));
+//		}
+//		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegung.getZeitabschnitte()) {
+//			if (!verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb().isAfter(dateLastZahlungsauftrag)) {
+//				// dies wurde schon ausbezahlt. Mann muss es dementsprechend ignorieren oder als neu setzen
+//				if (ignorieren) {
+//					verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
+//				} else {
+//					if (haveZeitabschnittValuesChanged(verfuegung, verfuegungZeitabschnitt)) {
+//						verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+//					} else {
+//						verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
+//					}
+//				}
+//			}
+//			else {
+//				// es wurde noch nicht bezahlt. Muss noch bezahlt werden
+//				verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+//			}
+//		}
 	}
+
+//	private boolean haveZeitabschnittValuesChanged(Verfuegung verfuegung, VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+//		if (verfuegung.hasVorgaenger()) { // man kann nicht nach dem Vorgaenger des Zeitabschnitts fragen, da es nicht richtig gesetzt wird
+//			final Optional<Verfuegung> previousVerfuegung = findVorgaengerVerfuegung(verfuegung.getBetreuung());
+//			if (!previousVerfuegung.isPresent()) {
+//				throw new EbeguEntityNotFoundException("haveZeitabschnittValuesChanged", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, verfuegung.getVorgaengerId());
+//			}
+//			final BigDecimal oldVerguenstigungForInterval = VerfuegungUtil.getVerguenstigungZeitInterval(previousVerfuegung.get().getZeitabschnitte(), verfuegungZeitabschnitt.getGueltigkeit());
+//			// unterschiedliche Verguenstigungen fuehren zu unterschiedlichen Bezahlungen
+//			return verfuegungZeitabschnitt.getVerguenstigung().compareTo(oldVerguenstigungForInterval) != 0;
+//		}
+//		return true;
+//	}
 
 	private void setVerfuegungsKategorien(Verfuegung verfuegung) {
 		if (!verfuegung.isKategorieNichtEintreten()) {
@@ -277,5 +310,37 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		return result.get().getValueAsBigDecimal();
 	}
 
+	@Nonnull
+	public List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Betreuung betreuungNeu) {
+		Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuungNeu);
+		if (vorgaengerVerfuegung.isPresent()) {
+			List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung = findZeitabschnitteOnVorgaengerVerfuegung(zeitabschnittNeu.getGueltigkeit(), vorgaengerVerfuegung.get());
+			Betreuung vorgaengerBetreuung = null;
+			for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitteOnVorgaengerVerfuegung) {
+				vorgaengerBetreuung = zeitabschnitt.getVerfuegung().getBetreuung();
+				if (zeitabschnitt.getZahlungsstatus().isVerrechnet()) {
+					return zeitabschnitteOnVorgaengerVerfuegung;
+				}
+			}
+			// Es gab keine bereits Verrechneten Zeitabschnitte auf dieser Verfuegung -> eins weiter zurueckgehen
+			return findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, vorgaengerBetreuung);
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Findet das anspruchberechtigtes Pensum zum Zeitpunkt des neuen Zeitabschnitt-Start
+	 */
+	@Nonnull
+	private List<VerfuegungZeitabschnitt> findZeitabschnitteOnVorgaengerVerfuegung(@Nonnull DateRange newVerfuegungGueltigkeit, @Nonnull Verfuegung lastVerfuegung) {
+		List<VerfuegungZeitabschnitt> lastVerfuegungsZeitabschnitte = new ArrayList<>();
+		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : lastVerfuegung.getZeitabschnitte()) {
+			final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
+			if (gueltigkeit.contains(newVerfuegungGueltigkeit.getGueltigAb()) || gueltigkeit.contains(newVerfuegungGueltigkeit.getGueltigBis())) {
+				lastVerfuegungsZeitabschnitte.add(verfuegungZeitabschnitt);
+			}
+		}
+		return lastVerfuegungsZeitabschnitte;
+	}
 
 }
