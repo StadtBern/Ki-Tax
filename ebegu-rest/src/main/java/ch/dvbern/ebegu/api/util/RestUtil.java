@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.api.util;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
 import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
@@ -129,4 +130,13 @@ public final class RestUtil {
 		return Response.status(Response.Status.FORBIDDEN).build();
 	}
 
+	public static void purgeZahlungenOfInstitutionen(JaxZahlungsauftrag jaxZahlungsauftrag, Collection<Institution> allowedInst) {
+		if (!allowedInst.isEmpty()) {
+			jaxZahlungsauftrag.getZahlungen().removeIf(zahlung ->
+				allowedInst.stream().noneMatch(institution ->
+					institution.getId().equals(zahlung.getInstitutionsId())
+				)
+			);
+		}
+	}
 }

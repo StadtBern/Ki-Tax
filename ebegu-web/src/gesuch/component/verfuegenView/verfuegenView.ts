@@ -107,7 +107,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     private initDevModeParameter() {
         this.applicationPropertyRS.isDevMode().then((response: boolean) => {
             // Schemas are only visible in devmode
-            this.showSchemas = response
+            this.showSchemas = response;
         });
     }
 
@@ -350,15 +350,15 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
     public exportJsonSchema() {
         let win: Window = this.$window.open('', EbeguUtil.generateRandomName(5));
-        this.exportRS.getJsonSchemaString().then((result)=>{
-            win.document.write('<body><pre>' +result+ '</pre></body>');
+        this.exportRS.getJsonSchemaString().then((result) => {
+            win.document.write('<body><pre>' + result + '</pre></body>');
         });
     }
 
     public exportXmlSchema() {
         // ACHTUNG popup blocker muss deaktiviert sein
-        this.exportRS.getXmlSchemaString().then((result)=>{
-            this.$window.open("data:text/xml;charset=utf-8,"+result, "", "_blank")
+        this.exportRS.getXmlSchemaString().then((result) => {
+            this.$window.open("data:text/xml;charset=utf-8," + result, "", "_blank");
         });
     }
 

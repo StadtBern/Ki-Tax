@@ -39,7 +39,7 @@ public interface ReportService {
 	UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
-	UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId, InstitutionStammdaten institution) throws ExcelMergeException;
+	UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId) throws ExcelMergeException;
 
 	UploadFileInfo generateExcelReportZahlung(String zahlungId) throws ExcelMergeException;
 

@@ -2,6 +2,7 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import DateUtil from '../../utils/DateUtil';
+import TSZahlung from '../../models/TSZahlung';
 
 export default class ZahlungRS {
     serviceURL: string;
@@ -29,8 +30,22 @@ export default class ZahlungRS {
         });
     }
 
+    public getAllZahlungsauftraegeInstitution(): IPromise<TSZahlungsauftrag[]> {
+        return this.http.get(this.serviceURL + '/institution').then((response: any) => {
+            this.$log.debug('PARSING user REST array object', response.data);
+            return this.ebeguRestUtil.parseZahlungsauftragList(response.data);
+        });
+    }
+
     public getZahlungsauftrag(zahlungsauftragId: string): IPromise<TSZahlungsauftrag> {
         return this.http.get(this.serviceURL + '/zahlungsauftrag' + '/' + encodeURIComponent(zahlungsauftragId)).then((response: any) => {
+            this.$log.debug('PARSING user REST array object', response.data);
+            return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), response.data);
+        });
+    }
+
+    public getZahlungsauftragInstitution(zahlungsauftragId: string): IPromise<TSZahlungsauftrag> {
+        return this.http.get(this.serviceURL + '/zahlungsauftraginstitution' + '/' + encodeURIComponent(zahlungsauftragId)).then((response: any) => {
             this.$log.debug('PARSING user REST array object', response.data);
             return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), response.data);
         });
@@ -40,6 +55,13 @@ export default class ZahlungRS {
         return this.http.put(this.serviceURL + '/ausloesen' + '/' + encodeURIComponent(zahlungsauftragId), null).then((response: any) => {
             this.$log.debug('PARSING user REST array object', response.data);
             return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), response.data);
+        });
+    }
+
+    public zahlungBestaetigen(zahlungId: string): IPromise<TSZahlung> {
+        return this.http.put(this.serviceURL + '/bestaetigen' + '/' + encodeURIComponent(zahlungId), null).then((response: any) => {
+            this.$log.debug('PARSING user REST array object', response.data);
+            return this.ebeguRestUtil.parseZahlung(new TSZahlung(), response.data);
         });
     }
 
@@ -70,11 +92,5 @@ export default class ZahlungRS {
             return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), httpresponse.data);
         });
     }
-
-    /*    return this.http.get(this.serviceURL + '/date', {params: {date: DateUtil.momentToLocalDate(dateParam)}})
-     .then((response: any) => {
-     this.log.debug('PARSING institutionStammdaten REST array object', response.data);
-     return this.ebeguRestUtil.parseInstitutionStammdatenArray(response.data);
-     });*/
 
 }

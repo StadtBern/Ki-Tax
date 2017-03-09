@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -37,10 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
 import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.*;
@@ -73,6 +70,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private PrincipalBean principalBean;
+
+	@Inject
+	private InstitutionService institutionService;
 
 	@Inject
 	private Persistence<Gesuch> persistence;
@@ -201,25 +201,13 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
-	public UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId, InstitutionStammdaten institution) throws ExcelMergeException {
+	public UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId) throws ExcelMergeException {
 
-		List<Zahlung> reportData;
-		Zahlungsauftrag zahlungsauftrag = null;
-		if (institution != null) {
-			//TODO: get data filtered by Institution, zahlungService method to do this?
-			zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
-				.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
-			reportData = new ArrayList<>();
-		} else {
-			zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
-				.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
-			reportData = zahlungsauftrag.getZahlungen();
-		}
+		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
+			.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
 
-		return getUploadFileInfoZahlung(reportData, zahlungsauftrag.getBeschrieb() + ".xlsx");
-
+		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getBeschrieb() + ".xlsx");
 	}
-
 
 	@Override
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
@@ -233,7 +221,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		reportData.add(zahlung);
 
 		return getUploadFileInfoZahlung(reportData, "Zahlungen_" + zahlung.getInstitutionStammdaten().getInstitution().getName() + ".xlsx");
-
 	}
 
 	private UploadFileInfo getUploadFileInfoZahlung(List<Zahlung> reportData, String excelFileName) throws ExcelMergeException {
@@ -245,7 +232,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
 
-		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
+		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+
+		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), principalBean.discoverMostPrivilegedRole(), allowedInst);
 
 		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
 		zahlungAuftragExcelConverter.applyAutoSize(sheet);
