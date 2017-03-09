@@ -136,7 +136,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// Korrekturen
 		// Stichtag: Falls es eine Wiederholung des Auftrags ist, wurde der aktuelle Monat bereits ausbezahlt.
 		LocalDate stichtagKorrekturen = isRepetition ? zeitabschnittBis : zeitabschnittBis.minusMonths(1);
-		// Die Korrekturzahlungen werden seit dem letzten Zahlungsauftrag beruecksichtigt. Falls wir im DEV-Mode sind
+		// Die Korrekturzahlungen werden seit dem letzten Zahlungsauftrag beruecksichtigt. Falls wir im TEST-Mode sind
 		// und ein fiktives "DatumGeneriert" gewaehlt haben, nehmen wir als Datum des letzten Auftrags das timestampErstellt
 		// und nicht das (eventuell ebenfalls fiktive) datumGeneriert.
 		boolean isTestMode = datumGeneriert.isAfter(LocalDateTime.now());
