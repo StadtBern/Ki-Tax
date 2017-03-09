@@ -66,5 +66,10 @@ export class ApplicationPropertyRS {
         );
     }
 
+    isZahlungenTestMode(): IPromise<boolean> {
+        return this.http.get(this.serviceURL + '/public/zahlungentestmode',  {cache: true }).then((response) => {
+            return response.data;
+        });
+    }
 }
 
