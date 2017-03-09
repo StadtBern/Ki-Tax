@@ -106,6 +106,42 @@
                         </tab-body>
                     </dv-accordion-tab>
                 </div>
+
+                <div dv-show-element
+                     dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR']">
+                    <dv-accordion-tab tabid="zahlungen_periode">
+                        <tab-title data-translate="ZAHLUNGEN_NACH_PERIODE"></tab-title>
+                        <tab-body>
+                            <form name="zahlungen_periode"
+                                  ng-submit="vm.generateStatistik(zahlungen_periode, 'ZAHLUNGEN_PERIODE')" novalidate>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <div class="form-group">
+                                            <label class="md-no-float" for="periode_zahlungen_periode"
+                                                   data-translate="GESUCHSPERIODEN"></label>
+                                            <div class="dv-select-style">
+                                                <select name="periode_zahlungen_periode" id="periode_zahlungen_periode"
+                                                        ng-model="vm.statistikParameter.gesuchsperiode"
+                                                        ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
+                                                        class="form-control" ng-required="true">
+                                                </select>
+                                                <dv-error-messages for="zahlungen_periode.periode_zahlungen_periode.$error"
+                                                                   class="error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-3 statistik-button">
+                                        <dv-loading-button type="submit"
+                                                           style="margin-left:auto;margin-right:auto;width:13rem;">
+                                            <span data-translate="GENERIEREN"></span>
+                                        </dv-loading-button>
+                                    </div>
+                                </div>
+                            </form>
+                        </tab-body>
+                    </dv-accordion-tab>
+                </div>
+
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SCHULAMT','SACHBEARBEITER_INSTITUTION','SACHBEARBEITER_TRAEGERSCHAFT']">
                     <dv-accordion-tab tabid="kinder">
