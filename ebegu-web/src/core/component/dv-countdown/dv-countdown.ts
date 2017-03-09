@@ -6,9 +6,11 @@ import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
+import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import IPromise = angular.IPromise;
 import Moment = moment.Moment;
 import IRootScopeService = angular.IRootScopeService;
+import IScope = angular.IScope;
 let template = require('./dv-countdown.html');
 let dialogTemplate = require('../../../gesuch/dialog/okDialogTemplate.html');
 
@@ -26,19 +28,27 @@ export class DvCountdownController {
     timer: moment.Duration;
     timerInterval: IPromise<any>;
 
-    static $inject: any[] = ['AuthServiceRS', '$state', '$interval', '$rootScope', 'DvDialog'];
+    static $inject: any[] = ['AuthServiceRS', '$state', '$interval', '$rootScope', 'DvDialog', 'GesuchModelManager'];
 
-    constructor(private authServiceRS: AuthServiceRS, private $state: IStateService, private $interval: IIntervalService, private $rootScope: IRootScopeService, private DvDialog: DvDialog) {
+    constructor(private authServiceRS: AuthServiceRS, private $state: IStateService, private $interval: IIntervalService, private $rootScope: IRootScopeService, private DvDialog: DvDialog,
+                private gesuchModelManager: GesuchModelManager) {
+    }
+
+    $onInit() {
         this.TSRoleUtil = TSRoleUtil;
         this.$rootScope.$on(TSHTTPEvent[TSHTTPEvent.REQUEST_FINISHED], () => {
-            if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
-                if (this.timerInterval === undefined) {
-                    this.startTimer();
+            try {
+                if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER) && this.isThereGesuch()  && this.isOnGesuchView()) {
+                    if (this.timerInterval === undefined) {
+                        this.startTimer();
+                    } else {
+                        this.resetTimer();
+                    }
                 } else {
-                    this.resetTimer();
-                }
-            } else {
                     this.cancelInterval();
+                }
+            } catch (e) {
+                console.log(e);
             }
         });
 
@@ -56,7 +66,8 @@ export class DvCountdownController {
     public decrease() {
         this.timer.asMilliseconds() <= 0 ? this.stopTimer() : this.timer = moment.duration(this.timer.asSeconds() - 1, 'seconds');
     }
-    //Fuer Testzwecke hier auf 5 setzen, ab dann erscheint der Countdown naemlich
+
+    //Fuer Testzwecke hier auf 5 setzen, ab dann erscheint der Countdown
     public resetTimer(): void {
         this.timer = moment.duration(10, 'minutes');
     }
@@ -80,5 +91,15 @@ export class DvCountdownController {
         this.resetTimer();
         //Fuer Testzwecke hier auf 10 oder 100 setzen
         this.timerInterval = this.$interval(this.decrease.bind(this), 1000);
+    }
+
+    public isOnGesuchView(): boolean {
+        return (this.$state.current && this.$state.current.name.substring(0, 7) === 'gesuch.');
+    }
+    public isThereGesuch(): boolean {
+        if (this.gesuchModelManager.getGesuch() !== undefined) {
+            return !this.gesuchModelManager.isGesuchReadonly();
+        }
+        return false;
     }
 }
