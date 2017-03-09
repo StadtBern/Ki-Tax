@@ -97,7 +97,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Inject
 	private Pain001Service pain001Service;
 
-	private static final String DEF_DEBTOR_NAME = "Direktion für Bildung, Soziales und Sport der Stadt Bern";
+	private static final String DEF_DEBTOR_NAME = "Direktion fuer Bildung, Soziales und Sport der Stadt Bern";
 	private static final String DEF_DEBTOR_BIC = "POFICHBEXXX";
 	private static final String DEF_DEBTOR_IBAN = "CH3309000000300008233";
 
