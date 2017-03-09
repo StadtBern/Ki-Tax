@@ -321,6 +321,16 @@
                 <version>1.7</version>
             </dependency>
             <dependency>
+                <groupId>ch.dvbern.lib</groupId>
+                <artifactId>dvbern-lib-iso20022-intf</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.lib</groupId>
+                <artifactId>dvbern-lib-iso20022-impl</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
                  <groupId>commons-logging</groupId>
                  <artifactId>commons-logging</artifactId>
                  <version>1.2</version>
