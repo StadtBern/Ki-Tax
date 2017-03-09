@@ -37,7 +37,6 @@ export class DvCountdownController {
     $onInit() {
         this.TSRoleUtil = TSRoleUtil;
         this.$rootScope.$on(TSHTTPEvent[TSHTTPEvent.REQUEST_FINISHED], () => {
-            try {
                 if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER) && this.isThereGesuch()  && this.isOnGesuchView()) {
                     if (this.timerInterval === undefined) {
                         this.startTimer();
@@ -47,9 +46,7 @@ export class DvCountdownController {
                 } else {
                     this.cancelInterval();
                 }
-            } catch (e) {
-                console.log(e);
-            }
+
         });
 
     }
