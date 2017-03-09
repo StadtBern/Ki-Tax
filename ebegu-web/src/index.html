@@ -13,7 +13,7 @@
 <body class="ebegu" md-no-ink ng-class="{loaded:true}" style="opacity: 0;" dv-barcode-listener>
 
 <div id="Intro" class="logo-bern">
-    <dv-countdown></dv-countdown>
+    <dv-countdown  dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-countdown>
     <dv-home-icon></dv-home-icon>
     <dv-quicksearchbox      dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT']"></dv-quicksearchbox>
     <dv-pulldown-user-menu  dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT']"></dv-pulldown-user-menu>
