@@ -501,20 +501,22 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		pain001DTO.setSoftwareName("Ki-Tax");
 
 		pain001DTO.setAuszahlungen(new ArrayList<>());
-		zahlungsauftrag.getZahlungen().forEach(zahlung -> {
-			AuszahlungDTO auszahlungDTO = new AuszahlungDTO();
-			auszahlungDTO.setBetragTotalZahlung(zahlung.getBetragTotalZahlung());
-			auszahlungDTO.setZahlungsempfaegerName(zahlung.getInstitutionStammdaten().getInstitution().getName());
-			auszahlungDTO.setZahlungsempfaegerStrasse(zahlung.getInstitutionStammdaten().getAdresse().getStrasse());
-			auszahlungDTO.setZahlungsempfaegerHausnummer(zahlung.getInstitutionStammdaten().getAdresse().getHausnummer());
-			auszahlungDTO.setZahlungsempfaegerPlz(zahlung.getInstitutionStammdaten().getAdresse().getPlz());
-			auszahlungDTO.setZahlungsempfaegerOrt(zahlung.getInstitutionStammdaten().getAdresse().getOrt());
-			auszahlungDTO.setZahlungsempfaegerLand(zahlung.getInstitutionStammdaten().getAdresse().getLand().toString());
-			auszahlungDTO.setZahlungsempfaegerIBAN(zahlung.getInstitutionStammdaten().getIban().toString());
-			auszahlungDTO.setZahlungsempfaegerBankClearingNumber(zahlung.getInstitutionStammdaten().getIban().extractClearingNumberWithoutLeadingZeros());
+		zahlungsauftrag.getZahlungen().stream()
+			.filter(zahlung -> zahlung.getBetragTotalZahlung().signum() == 1)
+			.forEach(zahlung -> {
+				AuszahlungDTO auszahlungDTO = new AuszahlungDTO();
+				auszahlungDTO.setBetragTotalZahlung(zahlung.getBetragTotalZahlung());
+				auszahlungDTO.setZahlungsempfaegerName(zahlung.getInstitutionStammdaten().getInstitution().getName());
+				auszahlungDTO.setZahlungsempfaegerStrasse(zahlung.getInstitutionStammdaten().getAdresse().getStrasse());
+				auszahlungDTO.setZahlungsempfaegerHausnummer(zahlung.getInstitutionStammdaten().getAdresse().getHausnummer());
+				auszahlungDTO.setZahlungsempfaegerPlz(zahlung.getInstitutionStammdaten().getAdresse().getPlz());
+				auszahlungDTO.setZahlungsempfaegerOrt(zahlung.getInstitutionStammdaten().getAdresse().getOrt());
+				auszahlungDTO.setZahlungsempfaegerLand(zahlung.getInstitutionStammdaten().getAdresse().getLand().toString());
+				auszahlungDTO.setZahlungsempfaegerIBAN(zahlung.getInstitutionStammdaten().getIban().toString());
+				auszahlungDTO.setZahlungsempfaegerBankClearingNumber(zahlung.getInstitutionStammdaten().getIban().extractClearingNumberWithoutLeadingZeros());
 
-			pain001DTO.getAuszahlungen().add(auszahlungDTO);
-		});
+				pain001DTO.getAuszahlungen().add(auszahlungDTO);
+			});
 
 
 		return pain001DTO;
