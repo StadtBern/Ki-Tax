@@ -97,6 +97,7 @@ public abstract class AbstractEbeguTest {
 			.addAsResource("reporting/GesuchStichtag.xlsx", "reporting/GesuchStichtag.xlsx")
 			.addAsResource("reporting/GesuchZeitraum.xlsx", "reporting/GesuchZeitraum.xlsx")
 			.addAsResource("reporting/ZahlungAuftrag.xlsx", "reporting/ZahlungAuftrag.xlsx")
+			.addAsResource("reporting/Kanton.xlsx", "reporting/Kanton.xlsx")
 			.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_kita.docx")
 			.addAsResource("vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx", "vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx")
 			.addAsResource("vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx", "vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx")

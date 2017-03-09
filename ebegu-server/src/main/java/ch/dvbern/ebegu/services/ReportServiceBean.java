@@ -1,25 +1,30 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Zahlung;
-import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
+import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
+import ch.dvbern.ebegu.reporting.kanton.KantonExcelConverter;
+import ch.dvbern.ebegu.reporting.kanton.MergeFieldKanton;
 import ch.dvbern.ebegu.reporting.lib.*;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftrag;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragExcelConverter;
+import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.Validate;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -33,9 +38,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -64,6 +71,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private GeuschZeitraumExcelConverter geuschZeitraumExcelConverter;
+
+	@Inject
+	private KantonExcelConverter kantonExcelConverter;
 
 	@Inject
 	private ZahlungAuftragExcelConverter zahlungAuftragExcelConverter;
@@ -189,6 +199,98 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			getContentTypeForExport());
 	}
 
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
+	public List<KantonDataRow> getReportDataKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis) throws IOException, URISyntaxException {
+		Validate.notNull(datumVon, "Das Argument 'datumVon' darf nicht leer sein");
+		Validate.notNull(datumBis, "Das Argument 'datumBis' darf nicht leer sein");
+
+
+		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
+		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
+		final CriteriaQuery<VerfuegungZeitabschnitt> query = builder.createQuery(VerfuegungZeitabschnitt.class);
+		query.distinct(true);
+		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
+		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+
+		// startAbschnitt <= datumBis && endeAbschnitt >= datumVon
+		Predicate predicateStart = builder.lessThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb), datumBis);
+		predicatesToUse.add(predicateStart);
+		Predicate predicateEnd = builder.greaterThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis), datumVon);
+		predicatesToUse.add(predicateEnd);
+
+		// nur das neuest verfuegte Gesuch
+		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.getGesuchsperiodeAm(datumVon);
+		if (gesuchsperiode.isPresent()) {
+			List<String> neuesteVerfuegteAntraege = gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiode.get());
+			if (!neuesteVerfuegteAntraege.isEmpty()) {
+				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(neuesteVerfuegteAntraege);
+				predicatesToUse.add(predicateAktuellesGesuch);
+			} else {
+				return Collections.emptyList();
+			}
+		} else {
+			return Collections.emptyList();
+		}
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
+		List<VerfuegungZeitabschnitt> criteriaResults = persistence.getCriteriaResults(query);
+
+		List<KantonDataRow> kantonDataRowList = new ArrayList<>();
+		for (VerfuegungZeitabschnitt zeitabschnitt : criteriaResults) {
+			KantonDataRow row = new KantonDataRow();
+			row.setBgNummer(zeitabschnitt.getVerfuegung().getBetreuung().getBGNummer());
+			row.setGesuchId(zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch().getId());
+			row.setName(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindJA().getNachname());
+			row.setVorname(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindJA().getVorname());
+			row.setGeburtsdatum(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindJA().getGeburtsdatum());
+			row.setZeitabschnittVon(zeitabschnitt.getGueltigkeit().getGueltigAb());
+			row.setZeitabschnittBis(zeitabschnitt.getGueltigkeit().getGueltigBis());
+			row.setBgPensum(MathUtil.DEFAULT.from(zeitabschnitt.getBgPensum()));
+			row.setElternbeitrag(zeitabschnitt.getElternbeitrag());
+			row.setVerguenstigung(zeitabschnitt.getVerguenstigung());
+			row.setInstitution(zeitabschnitt.getVerfuegung().getBetreuung().getInstitutionStammdaten().getInstitution().getName());
+			row.setBetreuungsTyp(zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungsangebotTyp().name());
+			row.setOeffnungstage(zeitabschnitt.getVerfuegung().getBetreuung().getInstitutionStammdaten().getOeffnungstage());
+			kantonDataRowList.add(row);
+		}
+		return kantonDataRowList;
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
+	public UploadFileInfo generateExcelReportKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+		Validate.notNull(datumVon, "Das Argument 'datumVon' darf nicht leer sein");
+		Validate.notNull(datumBis, "Das Argument 'datumBis' darf nicht leer sein");
+
+		final ReportResource reportResource = VORLAGE_REPORT_KANTON;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
+		Validate.notNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+
+		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
+		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
+
+		List<KantonDataRow> reportData = getReportDataKanton(datumVon, datumBis);
+		ExcelMergerDTO excelMergerDTO = kantonExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), datumVon, datumBis);
+
+		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
+		kantonExcelConverter.applyAutoSize(sheet);
+
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportResource.getDefaultExportFilename(),
+			TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
+	}
+
 	@Nonnull
 	private MimeType getContentTypeForExport() {
 		try {
@@ -253,6 +355,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			MergeFieldGesuchStichtag.class),
 		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "GesuchZeitraum.xlsx", DATA,
 			MergeFieldGesuchZeitraum.class),
+		VORLAGE_REPORT_KANTON("/reporting/Kanton.xlsx", "Kanton.xlsx", DATA,
+			MergeFieldKanton.class),
 
 		//TODO: Achtung mit Filename, da mehrere Dokumente mit gleichem Namen aber unterschiedlichem Inhalt gespeichert werden
 		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", DATA,
