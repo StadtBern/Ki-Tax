@@ -45,7 +45,7 @@ public class BetreuungResource {
 	private JaxBConverter converter;
 
 
-	//TODO (team) Dieser Service wird immer nur fuer Betreuungen verwendet, nie fuer Abwesenheiten
+	//TODO (hefr) Dieser Service wird immer nur fuer Betreuungen verwendet, nie fuer Abwesenheiten
 	@Nonnull
 	@PUT
 	@Path("/betreuung/{kindId}/{abwesenheit}")
@@ -69,7 +69,7 @@ public class BetreuungResource {
 		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
 	}
 
-	//TODO (team) dieser service wird immer nur fuer Abwesenheiten verwendet
+	//TODO (hefr) dieser service wird immer nur fuer Abwesenheiten verwendet
 	@Nonnull
 	@PUT
 	@Path("/all/{abwesenheit}")

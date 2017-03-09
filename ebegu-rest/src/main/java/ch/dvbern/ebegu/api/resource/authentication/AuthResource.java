@@ -199,9 +199,6 @@ public class AuthResource {
 
 	}
 
-	/**
-	 * TODO testen, bisher konnte dies nicht getestet werden
-	 */
 	private boolean isCookieSecure() {
 		return request.isSecure();
 	}
@@ -211,20 +208,22 @@ public class AuthResource {
 	@PermitAll
 	public Response logout(@CookieParam(AuthDataUtil.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
 		try {
-			String authToken = Objects.requireNonNull(authTokenCookie.getValue());
-			boolean cookieSecure = isCookieSecure();
+			if (authTokenCookie != null) {
+				String authToken = Objects.requireNonNull(authTokenCookie.getValue());
+				boolean cookieSecure = isCookieSecure();
 
-			if (authService.logout(authToken)) {
-				// Respond with expired cookies
-				NewCookie authCookie = expireCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, cookieSecure, true);
-				NewCookie xsrfCookie = expireCookie(AuthDataUtil.COOKIE_XSRF_TOKEN, cookieSecure, false);
-				NewCookie principalCookie = expireCookie(AuthDataUtil.COOKIE_PRINCIPAL, cookieSecure, false);
-				return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
+				if (authService.logout(authToken)) {
+					// Respond with expired cookies
+					NewCookie authCookie = expireCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, cookieSecure, true);
+					NewCookie xsrfCookie = expireCookie(AuthDataUtil.COOKIE_XSRF_TOKEN, cookieSecure, false);
+					NewCookie principalCookie = expireCookie(AuthDataUtil.COOKIE_PRINCIPAL, cookieSecure, false);
+					return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
+				}
 			}
-			return Response.ok().build(); // TODO team Maybe notify the client? Seems not important for a logout request though.
+			return Response.ok().build();
 		} catch (NoSuchElementException e) {
 			LOG.info("Token Decoding from Cookies failed", e);
-			return Response.ok().build(); // TODO team Maybe notify the client? Seems not important for a logout request though.
+			return Response.ok().build();
 		}
 	}
 

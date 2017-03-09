@@ -51,6 +51,7 @@
 		<!--OpenIDM-->
 		<property name="ebegu.openidm.loginwithtoken.enabled" value="true"/>
 		<property name="ebegu.openam.url" value="https://elogin-test.bern.ch"/>
+		<property name="hibernate.search.default.indexBase" value="${jboss.server.data.dir}/lucene-index"/>
     </system-properties>
 
 
