@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -97,6 +98,33 @@ public class ReportResource {
 
 		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 
+		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
+	}
+
+	@Nonnull
+	@GET
+	@Path("/excel/kanton")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getKantonReportExcel(
+		@QueryParam("auswertungVon") @Nonnull String auswertungVon,
+		@QueryParam("auswertungBis") @Nonnull String auswertungBis,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo)
+		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+
+		String ip = downloadResource.getIP(request);
+
+		Validate.notNull(auswertungVon);
+		Validate.notNull(auswertungBis);
+		LocalDate dateAuswertungVon = DateUtil.parseStringToDateOrReturnNow(auswertungVon);
+		LocalDate dateAuswertungBis = DateUtil.parseStringToDateOrReturnNow(auswertungBis);
+
+		if (!dateAuswertungBis.isAfter(dateAuswertungVon)) {
+			throw new EbeguRuntimeException("getKantonReportExcel", "Fehler beim erstellen Report Kanton", "Das von-Datum muss vor dem bis-Datum sein.");
+		}
+
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportKanton(dateAuswertungVon, dateAuswertungBis);
+		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 
