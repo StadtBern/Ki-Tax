@@ -387,7 +387,7 @@ export default class GesuchModelManager {
     }
 
     public getFachstellenList(): Array<TSFachstelle> {
-        if(this.fachstellenList == undefined) {
+        if (this.fachstellenList === undefined) {
             this.fachstellenList = []; // init empty while we wait for promise
             this.updateFachstellenList()
         }
@@ -395,7 +395,7 @@ export default class GesuchModelManager {
     }
 
     public getActiveInstitutionenList(): Array<TSInstitutionStammdaten> {
-        if(this.activInstitutionenList === undefined) {
+        if (this.activInstitutionenList === undefined) {
             this.activInstitutionenList = []; // init empty while we wait for promise
             this.updateActiveInstitutionenList();
         }
@@ -403,7 +403,7 @@ export default class GesuchModelManager {
     }
 
     public getAllActiveGesuchsperioden(): Array<TSGesuchsperiode> {
-        if(this.activeGesuchsperiodenList === undefined) {
+        if (this.activeGesuchsperiodenList === undefined) {
             this.activeGesuchsperiodenList = []; // init empty while we wait for promise
             this.updateActiveGesuchsperiodenList();
         }

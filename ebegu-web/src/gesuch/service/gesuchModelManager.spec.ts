@@ -369,7 +369,6 @@ describe('gesuchModelManager', function () {
         });
         describe('updateBetreuungen', function () {
             it('should return empty Promise for undefined betreuung list', function() {
-                // TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(undefined, true);
                 expect(promise).toBeDefined();
                 let promiseExecuted: Array<TSBetreuung> =null;
@@ -380,7 +379,6 @@ describe('gesuchModelManager', function () {
                 expect(promiseExecuted).toBe(undefined);
             });
             it('should return empty Promise for empty betreuung list', function() {
-                // TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen([], true);
                 expect(promise).toBeDefined();
                 let promiseExecuted: boolean = false;
@@ -416,7 +414,6 @@ describe('gesuchModelManager', function () {
                     promiseExecuted = response;
                 });
 
-                // $httpBackend.flush();
                 scope.$apply();
                 expect(betreuungRS.saveBetreuungen).toHaveBeenCalledWith(betreuungen, myGesuch.id, true);
                 expect(promiseExecuted.length).toBe(1);
