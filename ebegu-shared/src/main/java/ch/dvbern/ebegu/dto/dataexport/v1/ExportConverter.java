@@ -7,7 +7,6 @@ import org.apache.commons.lang.Validate;
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,14 +41,18 @@ public class ExportConverter {
 		GesuchstellerContainer gs1 = verfuegung.getBetreuung().extractGesuch().getGesuchsteller1();
 		verfuegungDTO.setGesuchsteller(createGesuchstellerExportDTOFromGesuchsteller(gs1));
 		verfuegungDTO.setBetreuung(createBetreuungExportDTOFromBetreuung(verfuegung.getBetreuung()));
+		// Verrechnete Zeitabschnitte
 		List<ZeitabschnittExportDTO> zeitabschnitte = verfuegung.getZeitabschnitte().stream()
+			.filter(abschnitt -> !abschnitt.getZahlungsstatus().isIgnoriert())
 			.map(this::createZeitabschnittExportDTOFromZeitabschnitt)
 			.collect(Collectors.toList());
 		verfuegungDTO.setZeitabschnitte(zeitabschnitte);
-		//todo ignorierte Zaitabschn fuellen sobald flag existiert
-		//zeitabschnitte.get(0).getIgnoriert() oder sowas
-		verfuegungDTO.setIgnorierteZeitabschnitte(new ArrayList<>());
-
+		// Ignorierte Zeitabschnitte
+		List<ZeitabschnittExportDTO> zeitabschnitteIgnoriert = verfuegung.getZeitabschnitte().stream()
+			.filter(abschnitt -> abschnitt.getZahlungsstatus().isIgnoriert())
+			.map(this::createZeitabschnittExportDTOFromZeitabschnitt)
+			.collect(Collectors.toList());
+		verfuegungDTO.setIgnorierteZeitabschnitte(zeitabschnitteIgnoriert);
 		return verfuegungDTO;
 	}
 

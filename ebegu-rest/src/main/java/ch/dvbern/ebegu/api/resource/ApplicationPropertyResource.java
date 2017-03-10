@@ -151,13 +151,18 @@ public class ApplicationPropertyResource {
 	@DELETE
 	@Path("/{key}")
 	@Consumes(MediaType.WILDCARD)
-	public Response remove(
-		@Nonnull @PathParam("key") String keyParam,
-		@Context HttpServletResponse response) {
-
+	public Response remove(@Nonnull @PathParam("key") String keyParam, @Context HttpServletResponse response) {
 		applicationPropertyService.removeApplicationProperty(Enum.valueOf(ApplicationPropertyKey.class, keyParam));
 		return Response.ok().build();
 	}
 
-
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+	@ApiOperation(value = "Are we in Testmode for Zahlungen?", response = Boolean.class)
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	@Path("/public/zahlungentestmode")
+	public Response isZahlungenTestMode(@Context HttpServletResponse response) {
+		return Response.ok(ebeguConfiguration.getIsZahlungenTestMode()).build();
+	}
 }

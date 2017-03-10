@@ -804,7 +804,6 @@ export default class EbeguRestUtil {
         if (containerFromServer) {
             this.parseAbstractEntity(containerTS, containerFromServer);
             containerTS.jahr = containerFromServer.jahr;
-            //todo hefr nur initialisieren wenn noetig?
             containerTS.finanzielleSituationGS = this.parseFinanzielleSituation(containerTS.finanzielleSituationGS || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationGS);
             containerTS.finanzielleSituationJA = this.parseFinanzielleSituation(containerTS.finanzielleSituationJA || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationJA);
             return containerTS;

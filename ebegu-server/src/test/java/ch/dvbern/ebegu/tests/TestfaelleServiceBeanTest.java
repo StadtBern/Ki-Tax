@@ -73,7 +73,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	/**
 	 * Wenn true werden die Testergebnisse neu in die Testfiles geschrieben. Muss für testen immer false sein!
 	 */
-	private final static boolean writeToFile = false;
+	private static final boolean writeToFile = false;
 
 	@Before
 	public void init() {

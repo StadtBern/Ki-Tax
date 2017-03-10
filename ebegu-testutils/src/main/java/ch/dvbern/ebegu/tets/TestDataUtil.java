@@ -227,7 +227,7 @@ public final class TestDataUtil {
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
 		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_WEISSENSTEIN);
-		instStammdaten.getInstitution().setName("Kita Aaregg"); //todo eventuell umbennen Weissenstein
+		instStammdaten.getInstitution().setName("Kita Aaregg");
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}

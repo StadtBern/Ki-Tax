@@ -8,7 +8,7 @@ import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
-import {IPromise, IDeferred, ILogService, IQService, IRootScopeService} from 'angular';
+import {IPromise, ILogService, IQService, IRootScopeService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
 import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensverschlechterungContainer';
@@ -85,12 +85,6 @@ export default class GesuchModelManager {
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService,
                 private adresseRS: AdresseRS, private $q: IQService, private CONSTANTS: any, private $rootScope: IRootScopeService) {
 
-        this.fachstellenList = [];
-        this.activInstitutionenList = [];
-        this.activeGesuchsperiodenList = [];
-        this.updateFachstellenList();
-        this.updateActiveInstitutionenList();
-        this.updateActiveGesuchsperiodenList();
 
         $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
             this.setGesuch(undefined);
@@ -301,7 +295,6 @@ export default class GesuchModelManager {
             .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    //todo reviewer frage team: muessen wir hier das gesuch wirklich separat speichern? wir brauchen die antwort gar nicht
                     this.getStammdatenToWorkWith().showUmzug = tempShowUmzug;
                     return this.getStammdatenToWorkWith();
                 });
@@ -393,14 +386,26 @@ export default class GesuchModelManager {
     }
 
     public getFachstellenList(): Array<TSFachstelle> {
+        if (this.fachstellenList === undefined) {
+            this.fachstellenList = []; // init empty while we wait for promise
+            this.updateFachstellenList()
+        }
         return this.fachstellenList;
     }
 
     public getActiveInstitutionenList(): Array<TSInstitutionStammdaten> {
+        if (this.activInstitutionenList === undefined) {
+            this.activInstitutionenList = []; // init empty while we wait for promise
+            this.updateActiveInstitutionenList();
+        }
         return this.activInstitutionenList;
     }
 
     public getAllActiveGesuchsperioden(): Array<TSGesuchsperiode> {
+        if (this.activeGesuchsperiodenList === undefined) {
+            this.activeGesuchsperiodenList = []; // init empty while we wait for promise
+            this.updateActiveGesuchsperiodenList();
+        }
         return this.activeGesuchsperiodenList;
     }
 
@@ -1281,7 +1286,6 @@ export default class GesuchModelManager {
         return jaAngeboteFound;
     }
 
-    //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
         if (this.getGesuch()) {
             let text = '';

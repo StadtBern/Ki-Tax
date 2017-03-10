@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 @Audited
 @Entity
-public class Zahlungsauftrag extends AbstractDateRangedEntity {
+public class Zahlungsauftrag extends AbstractDateRangedEntity implements Comparable<Zahlungsauftrag>{
 
 
 	private static final long serialVersionUID = 5758088668232796741L;
@@ -98,5 +99,12 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 				total = MathUtil.DEFAULT.add(total, zahlung.getBetragTotalZahlung());
 		}
 		return total;
+	}
+
+	@Override
+	public int compareTo(@Nonnull Zahlungsauftrag o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getDatumFaellig(), o.getDatumFaellig());
+		return builder.toComparison();
 	}
 }

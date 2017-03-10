@@ -117,4 +117,9 @@ public interface EbeguConfiguration {
 	 * @return
 	 */
 	String getBackgroundColor();
+
+	/**
+	 * @return true wenn sich die Applikation im Testmodus fuer Zahlungen befindet, false sonst
+	 */
+	boolean getIsZahlungenTestMode();
 }
