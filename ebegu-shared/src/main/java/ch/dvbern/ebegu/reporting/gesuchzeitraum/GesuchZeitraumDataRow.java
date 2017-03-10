@@ -16,6 +16,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class GesuchZeitraumDataRow {
 
 	private String bgNummer;
+	private String gesuchId;
 	private String institution;
 	private String betreuungsTyp;
 	private String periode;
@@ -46,8 +47,9 @@ public class GesuchZeitraumDataRow {
 	private Integer anzahlVerfuegungenNichtEintreten;
 
 
-	public GesuchZeitraumDataRow(String bgNummer, String institution, String betreuungsTyp, String periode, Integer anzahlGesuchOnline, Integer anzahlGesuchPapier, Integer anzahlMutationOnline, Integer anzahlMutationPapier, Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung, Integer anzahlMutationDokumente, Integer anzahlMutationEV, Integer anzahlMutationEwerbspensum, Integer anzahlMutationFamilienSitutation, Integer anzahlMutationFinanzielleSituation, Integer anzahlMutationFreigabe, Integer anzahlMutationGesuchErstellen, Integer anzahlMutationGesuchsteller, Integer anzahlMutationKinder, Integer anzahlMutationUmzug, Integer anzahlMutationVerfuegen, Integer anzahlMahnungen, Integer anzahlBeschwerde, Integer anzahlVerfuegungen, Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenMaxEinkommen, Integer anzahlVerfuegungenKeinPensum, Integer anzahlVerfuegungenZuschlagZumPensum, Integer anzahlVerfuegungenNichtEintreten) {
+	public GesuchZeitraumDataRow(String bgNummer, String gesuchId, String institution, String betreuungsTyp, String periode, Integer anzahlGesuchOnline, Integer anzahlGesuchPapier, Integer anzahlMutationOnline, Integer anzahlMutationPapier, Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung, Integer anzahlMutationDokumente, Integer anzahlMutationEV, Integer anzahlMutationEwerbspensum, Integer anzahlMutationFamilienSitutation, Integer anzahlMutationFinanzielleSituation, Integer anzahlMutationFreigabe, Integer anzahlMutationGesuchErstellen, Integer anzahlMutationGesuchsteller, Integer anzahlMutationKinder, Integer anzahlMutationUmzug, Integer anzahlMutationVerfuegen, Integer anzahlMahnungen, Integer anzahlBeschwerde, Integer anzahlVerfuegungen, Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenMaxEinkommen, Integer anzahlVerfuegungenKeinPensum, Integer anzahlVerfuegungenZuschlagZumPensum, Integer anzahlVerfuegungenNichtEintreten) {
 		this.bgNummer = bgNummer;
+		this.gesuchId = gesuchId;
 		this.institution = institution;
 		this.betreuungsTyp = betreuungsTyp;
 		this.periode = periode;
@@ -85,6 +87,14 @@ public class GesuchZeitraumDataRow {
 
 	public void setBgNummer(String bgNummer) {
 		this.bgNummer = bgNummer;
+	}
+
+	public String getGesuchId() {
+		return gesuchId;
+	}
+
+	public void setGesuchId(String gesuchId) {
+		this.gesuchId = gesuchId;
 	}
 
 	public String getInstitution() {

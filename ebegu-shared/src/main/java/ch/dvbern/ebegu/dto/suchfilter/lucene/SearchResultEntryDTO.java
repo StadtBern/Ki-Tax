@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.dto.suchfilter.lucene;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -64,10 +65,12 @@ public class SearchResultEntryDTO implements Serializable {
 		return additionalInformation;
 	}
 
+	@SuppressFBWarnings("NM_CONFUSING")
 	public String getGesuchID() {
 		return gesuchID;
 	}
 
+	@SuppressFBWarnings("NM_CONFUSING")
 	public void setGesuchID(@Nullable String gesuchID) {
 		this.gesuchID = gesuchID;
 	}

@@ -29,6 +29,7 @@ import java.util.UUID;
 		@ConstructorResult(targetClass = GesuchStichtagDataRow.class,
 			columns = {
 				@ColumnResult(name = "bgNummer", type = String.class),
+				@ColumnResult(name = "gesuchId", type = String.class),
 				@ColumnResult(name = "institution", type = String.class),
 				@ColumnResult(name = "betreuungsTyp", type = String.class),
 				@ColumnResult(name = "periode", type = String.class),
@@ -41,6 +42,7 @@ import java.util.UUID;
 		@ConstructorResult(targetClass = GesuchZeitraumDataRow.class,
 			columns = {
 				@ColumnResult(name = "bgNummer", type = String.class),
+				@ColumnResult(name = "gesuchId", type = String.class),
 				@ColumnResult(name = "institution", type = String.class),
 				@ColumnResult(name = "betreuungsTyp", type = String.class),
 				@ColumnResult(name = "periode", type = String.class),

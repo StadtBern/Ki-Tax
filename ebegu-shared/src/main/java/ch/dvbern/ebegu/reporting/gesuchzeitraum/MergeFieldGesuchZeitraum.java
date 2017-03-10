@@ -21,6 +21,7 @@ public enum MergeFieldGesuchZeitraum implements MergeField {
 	repeatGesuchZeitraumRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
 
 	bgNummer(STRING_CONVERTER, Type.SIMPLE),
+	gesuchId(STRING_CONVERTER, Type.SIMPLE),
 	institution(STRING_CONVERTER, Type.SIMPLE),
 	betreuungsTyp(STRING_CONVERTER, Type.SIMPLE),
 	periode(STRING_CONVERTER, Type.SIMPLE),
