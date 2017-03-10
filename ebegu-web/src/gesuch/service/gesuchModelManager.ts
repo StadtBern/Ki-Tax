@@ -396,7 +396,7 @@ export default class GesuchModelManager {
 
     public getActiveInstitutionenList(): Array<TSInstitutionStammdaten> {
         if(this.activInstitutionenList === undefined) {
-            this.activInstitutionenList = [];
+            this.activInstitutionenList = []; // init empty while we wait for promise
             this.updateActiveInstitutionenList();
         }
         return this.activInstitutionenList;
@@ -404,7 +404,7 @@ export default class GesuchModelManager {
 
     public getAllActiveGesuchsperioden(): Array<TSGesuchsperiode> {
         if(this.activeGesuchsperiodenList === undefined) {
-            this.activeGesuchsperiodenList = [];
+            this.activeGesuchsperiodenList = []; // init empty while we wait for promise
             this.updateActiveGesuchsperiodenList();
         }
         return this.activeGesuchsperiodenList;
