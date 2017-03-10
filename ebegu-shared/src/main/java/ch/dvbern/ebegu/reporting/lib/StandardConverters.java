@@ -143,7 +143,7 @@ public enum StandardConverters implements Converter {
 					cell.setCellValue("");
 				}
 			} else {
-				cell.setCellValue(cell.getStringCellValue().replace(pattern, String.valueOf(bdVal) + "%"));
+				cell.setCellValue(cell.getStringCellValue().replace(pattern, bdVal + "%"));
 			}
 		}
 	},

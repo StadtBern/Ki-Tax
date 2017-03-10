@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.reporting.kanton;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -31,10 +33,12 @@ public class KantonDataRow {
 		this.bgNummer = bgNummer;
 	}
 
+	@SuppressFBWarnings("NM_CONFUSING")
 	public String getGesuchId() {
 		return gesuchId;
 	}
 
+	@SuppressFBWarnings("NM_CONFUSING")
 	public void setGesuchId(String gesuchId) {
 		this.gesuchId = gesuchId;
 	}
