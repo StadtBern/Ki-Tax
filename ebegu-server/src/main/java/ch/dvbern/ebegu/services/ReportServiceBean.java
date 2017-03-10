@@ -213,6 +213,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			getContentTypeForExport());
 	}
 
+	@SuppressWarnings("PMD.NcssMethodCount")
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
 	public List<KantonDataRow> getReportDataKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis) throws IOException, URISyntaxException {
@@ -233,11 +234,14 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		predicatesToUse.add(predicateEnd);
 
 		// nur das neuest verfuegte Gesuch
-		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.getGesuchsperiodeAm(datumVon);
-		if (gesuchsperiode.isPresent()) {
-			List<String> neuesteVerfuegteAntraege = gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiode.get());
-			if (!neuesteVerfuegteAntraege.isEmpty()) {
-				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(neuesteVerfuegteAntraege);
+		Collection<Gesuchsperiode> relevanteGesuchsperioden = gesuchsperiodeService.getGesuchsperiodenBetween(datumVon, datumBis);
+		if (!relevanteGesuchsperioden.isEmpty()) {
+			List<String> idsOfLetztVerfuegteAntraege = new ArrayList<>();
+			for (Gesuchsperiode gesuchsperiode : relevanteGesuchsperioden) {
+				idsOfLetztVerfuegteAntraege.addAll(gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiode));
+			}
+			if (!idsOfLetztVerfuegteAntraege.isEmpty()) {
+				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
 				predicatesToUse.add(predicateAktuellesGesuch);
 			} else {
 				return Collections.emptyList();
@@ -255,10 +259,13 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
-		List<VerfuegungZeitabschnitt> criteriaResults = persistence.getCriteriaResults(query);
+		List<VerfuegungZeitabschnitt> zeitabschnittList = persistence.getCriteriaResults(query);
+		return convertToKantonDataRow(zeitabschnittList);
+	}
 
+	private List<KantonDataRow> convertToKantonDataRow(List<VerfuegungZeitabschnitt> zeitabschnittList) {
 		List<KantonDataRow> kantonDataRowList = new ArrayList<>();
-		for (VerfuegungZeitabschnitt zeitabschnitt : criteriaResults) {
+		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
 			KantonDataRow row = new KantonDataRow();
 			row.setBgNummer(zeitabschnitt.getVerfuegung().getBetreuung().getBGNummer());
 			row.setGesuchId(zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch().getId());
