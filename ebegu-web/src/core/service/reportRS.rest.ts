@@ -1,7 +1,7 @@
 import {IHttpParamSerializer, ILogService} from 'angular';
-import IPromise = angular.IPromise;
 import TSDownloadFile from '../../models/TSDownloadFile';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import IPromise = angular.IPromise;
 import IHttpService = angular.IHttpService;
 
 export class ReportRS {
@@ -95,4 +95,16 @@ export class ReportRS {
         return 'ReportRS';
     }
 
+    public getZahlungPeriodeReportExcel(gesuchsperiode: string): IPromise<TSDownloadFile> {
+        let reportParams: string = this.httpParamSerializer({
+            gesuchsperiodeID: gesuchsperiode
+        });
+
+        return this.http.get(this.serviceURL + '/excel/zahlungperiode?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+
+    }
 }

@@ -189,7 +189,7 @@
         <dependency>
             <groupId>org.forgerock.commons</groupId>
             <artifactId>forgerock-util</artifactId>
-            <version>20.1.0</version>
+            <version>3.0.2</version>
         </dependency>
 
         <dependency>
@@ -452,7 +452,6 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
-            <version>3.0.12.Final</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -179,8 +179,6 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             this.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2 = undefined;
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = undefined;
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = undefined;
-
-            //TODO: Muss hier die einkommensverschlechterung auch noch gelöscht werden oder reicht es so?
         }
 
         return this.einkommensverschlechterungInfoRS.saveEinkommensverschlechterungInfo(

@@ -177,7 +177,7 @@ public abstract class AbstractEbeguTest {
 	 */
 	protected void createBenutzer(Mandant mandant) {
 		try{
-			JBossLoginContextFactory.createLoginContext("admin", "admin").login();
+			JBossLoginContextFactory.createLoginContext("superadmin", "superadmin").login();
 		} catch (LoginException ex){
 			LOG.error("could not login as admin user for test");
 		}

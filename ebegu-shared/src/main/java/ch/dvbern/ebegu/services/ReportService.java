@@ -59,4 +59,6 @@ public interface ReportService {
 
 	UploadFileInfo generateExcelReportZahlung(String zahlungId) throws ExcelMergeException;
 
+	UploadFileInfo generateExcelReportZahlungPeriode(String gesuchsperiodeId) throws ExcelMergeException;
+
 }

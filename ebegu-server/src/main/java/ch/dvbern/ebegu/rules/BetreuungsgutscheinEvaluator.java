@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class BetreuungsgutscheinEvaluator {
 
-	private boolean isDebug = true; // TODO (team) ApplicationProperty machen!
+	private boolean isDebug = true;
 
 	private List<Rule> rules = new LinkedList<>();
 
