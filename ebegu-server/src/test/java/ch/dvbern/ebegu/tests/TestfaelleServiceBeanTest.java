@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -145,28 +144,25 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void testVerfuegung_WaeltiDagmar_mutationHeirat() throws LoginException {
+	public void testVerfuegung_WaeltiDagmar_mutationHeirat() {
 		//waelti dagmar arbeitet 60% und hat 20% zuschlag zum ewp
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.WaeltiDagmar, true, true);
-		loginAsSuperadmin();
 		final Gesuch mutieren = testfaelleService.mutierenHeirat(gesuch.getFall().getFallNummer(),
 			gesuch.getGesuchsperiode().getId(), LocalDate.of(2016, Month.DECEMBER, 15), LocalDate.of(2017, Month.JANUARY, 15), true);
 		ueberpruefeVerfuegungszeitabschnitte(mutieren, "MutationHeirat");
 	}
 
 	@Test
-	public void testVerfuegung_BeckerNora_mutationHeirat() throws LoginException {
+	public void testVerfuegung_BeckerNora_mutationHeirat() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.BeckerNora, true, true);
-		loginAsSuperadmin();
 		final Gesuch mutieren = testfaelleService.mutierenHeirat(gesuch.getFall().getFallNummer(),
 			gesuch.getGesuchsperiode().getId(), LocalDate.of(2017, Month.FEBRUARY, 15), LocalDate.of(2017, Month.FEBRUARY, 15), true);
 		ueberpruefeVerfuegungszeitabschnitte(mutieren, "MutationHeirat");
 	}
 
 	@Test
-	public void testVerfuegung_PerreiraMarcia_mutationScheidung() throws LoginException {
+	public void testVerfuegung_PerreiraMarcia_mutationScheidung() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.PerreiraMarcia, true, true);
-		loginAsSuperadmin();
 		final Gesuch mutieren = testfaelleService.mutierenScheidung(gesuch.getFall().getFallNummer(),
 			gesuch.getGesuchsperiode().getId(), LocalDate.of(2016, Month.SEPTEMBER, 30), LocalDate.of(2016, Month.OCTOBER, 15), true);
 		ueberpruefeVerfuegungszeitabschnitte(mutieren, "MutationScheidung");
@@ -176,9 +172,8 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	 * Diese Scheidung wurde zu spät eingereicht!
 	 */
 	@Test
-	public void testVerfuegung_MeierMeret_mutationScheidung() throws LoginException {
+	public void testVerfuegung_MeierMeret_mutationScheidung() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.MeierMeret, true, true);
-		loginAsSuperadmin();
 		final Gesuch mutieren = testfaelleService.mutierenScheidung(gesuch.getFall().getFallNummer(),
 			gesuch.getGesuchsperiode().getId(), LocalDate.of(2016, Month.NOVEMBER, 15), LocalDate.of(2016, Month.OCTOBER, 15), true);
 		ueberpruefeVerfuegungszeitabschnitte(mutieren, "MutationScheidung");

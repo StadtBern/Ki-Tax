@@ -217,6 +217,7 @@ describe('betreuungView', function () {
         spyOn($state, 'go');
         spyOn(gesuchModelManager, 'saveBetreuung').and.returnValue(promiseResponse);
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+        TestDataUtil.mockLazyGesuchModelManagerHttpCalls($httpBackend);
         betreuungView.platzAnfordern();
         $rootScope.$apply();
         expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();
