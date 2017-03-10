@@ -63,7 +63,6 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
 
     getErwerbspensenListGS1(): Array<TSErwerbspensumContainer> {
         if (this.erwerbspensenGS1 === undefined) {
-            //todo team, hier die daten vielleicht reingeben statt sie zu lesen
             if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1 &&
                 this.gesuchModelManager.getGesuch().gesuchsteller1.erwerbspensenContainer) {
                 let gesuchsteller1: TSGesuchstellerContainer = this.gesuchModelManager.getGesuch().gesuchsteller1;
@@ -78,7 +77,6 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
 
     getErwerbspensenListGS2(): Array<TSErwerbspensumContainer> {
         if (this.erwerbspensenGS2 === undefined) {
-            //todo team, hier die daten vielleicht reingeben statt sie zu lesen
             if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2 &&
                 this.gesuchModelManager.getGesuch().gesuchsteller2.erwerbspensenContainer) {
                 let gesuchsteller2: TSGesuchstellerContainer = this.gesuchModelManager.getGesuch().gesuchsteller2;

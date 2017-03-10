@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.Zahlung;
-import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.entities.*;
@@ -18,7 +15,9 @@ import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
 import ch.dvbern.ebegu.reporting.lib.*;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftrag;
+import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftragPeriode;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragExcelConverter;
+import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragPeriodeExcelConverter;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -40,10 +39,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
 import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.*;
@@ -66,6 +63,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportServiceBean.class);
 
 	public static final String DATA = "Data";
+	public static final String NICHT_GEFUNDEN = "' nicht gefunden";
+	public static final String VORLAGE = "Vorlage '";
 
 	@Inject
 	private GeuschStichtagExcelConverter geuschStichtagExcelConverter;
@@ -77,7 +76,13 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private ZahlungAuftragExcelConverter zahlungAuftragExcelConverter;
 
 	@Inject
+	private ZahlungAuftragPeriodeExcelConverter zahlungAuftragPeriodeExcelConverter;
+
+	@Inject
 	private PrincipalBean principalBean;
+
+	@Inject
+	private InstitutionService institutionService;
 
 	@Inject
 	private Persistence<Gesuch> persistence;
@@ -93,6 +98,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private KindService kindService;
+
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
 
 	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
@@ -128,7 +136,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportResource reportResource = VORLAGE_REPORT_GESUCH_STICHTAG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+		Objects.requireNonNull(is, VORLAGE+ reportResource.getTemplatePath() + NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
@@ -186,7 +194,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportResource reportResource = VORLAGE_REPORT_GESUCH_ZEITRAUM;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+		Objects.requireNonNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
@@ -217,25 +225,13 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Override
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
-	public UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId, InstitutionStammdaten institution) throws ExcelMergeException {
+	public UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId) throws ExcelMergeException {
 
-		List<Zahlung> reportData;
-		Zahlungsauftrag zahlungsauftrag = null;
-		if (institution != null) {
-			//TODO: get data filtered by Institution, zahlungService method to do this?
-			zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
-				.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
-			reportData = new ArrayList<>();
-		} else {
-			zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
-				.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
-			reportData = zahlungsauftrag.getZahlungen();
-		}
+		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
+			.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
 
-		return getUploadFileInfoZahlung(reportData, zahlungsauftrag.getBeschrieb() + ".xlsx");
-
+		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getBeschrieb() + ".xlsx");
 	}
-
 
 	@Override
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
@@ -249,19 +245,20 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		reportData.add(zahlung);
 
 		return getUploadFileInfoZahlung(reportData, "Zahlungen_" + zahlung.getInstitutionStammdaten().getInstitution().getName() + ".xlsx");
-
 	}
 
 	private UploadFileInfo getUploadFileInfoZahlung(List<Zahlung> reportData, String excelFileName) throws ExcelMergeException {
 		final ReportResource reportResource = VORLAGE_REPORT_ZAHLUNG_AUFTRAG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+		Objects.requireNonNull(is, VORLAGE + reportResource.getTemplatePath() +NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
 
-		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
+		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+
+		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), principalBean.discoverMostPrivilegedRole(), allowedInst);
 
 		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
 		zahlungAuftragExcelConverter.applyAutoSize(sheet);
@@ -274,16 +271,51 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			getContentTypeForExport());
 	}
 
+	@Override
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public UploadFileInfo generateExcelReportZahlungPeriode(@Nonnull String gesuchsperiodeId) throws ExcelMergeException {
+
+		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId)
+			.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungPeriode", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeId));
+
+		final Collection<Zahlungsauftrag> zahlungsauftraegeInPeriode = zahlungService.getZahlungsauftraegeInPeriode(gesuchsperiode.getGueltigkeit().getGueltigAb(), gesuchsperiode.getGueltigkeit().getGueltigBis());
+
+		final ReportResource reportResource = VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
+		Objects.requireNonNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
+
+		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
+		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
+
+		final List<Zahlung> allZahlungen = zahlungsauftraegeInPeriode.stream()
+			.flatMap(zahlungsauftrag -> zahlungsauftrag.getZahlungen().stream())
+			.collect(Collectors.toList());
+
+		ExcelMergerDTO excelMergerDTO = zahlungAuftragPeriodeExcelConverter.toExcelMergerDTO(allZahlungen, gesuchsperiode.getGesuchsperiodeString(), Locale.getDefault());
+
+		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
+		zahlungAuftragPeriodeExcelConverter.applyAutoSize(sheet);
+
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportResource.getDefaultExportFilename(),
+			TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
+	}
+
 	public enum ReportResource {
 
+		// TODO Achtung mit Filename, da mehrere Dokumente mit gleichem Namen aber unterschiedlichem Inhalt gespeichert werden. Falls der Name geaendert wuerde, muesste das File wieder geloescht werden.
 		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx", "GesuchStichtag.xlsx", DATA,
 			MergeFieldGesuchStichtag.class),
 		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "GesuchZeitraum.xlsx", DATA,
 			MergeFieldGesuchZeitraum.class),
-
-		//TODO: Achtung mit Filename, da mehrere Dokumente mit gleichem Namen aber unterschiedlichem Inhalt gespeichert werden
 		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", DATA,
-			MergeFieldZahlungAuftrag.class);
+			MergeFieldZahlungAuftrag.class),
+		VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE("/reporting/ZahlungAuftragPeriode.xlsx", "ZahlungAuftragPeriode.xlsx", DATA,
+			MergeFieldZahlungAuftragPeriode.class);
 
 		@Nonnull
 		private final String templatePath;

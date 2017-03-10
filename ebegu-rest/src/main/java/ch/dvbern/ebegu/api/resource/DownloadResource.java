@@ -379,6 +379,7 @@ public class DownloadResource {
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "ZahlungsauftragId invalid: " + jaxId.getId());
 	}
 
+	@Nonnull
 	public Response getFileDownloadResponse(UriInfo uriInfo, String ip, FileMetadata fileMetadata) {
 		final DownloadFile downloadFile = downloadFileService.create(fileMetadata, ip);
 

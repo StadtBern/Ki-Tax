@@ -51,7 +51,6 @@ export default class TSFamiliensituation extends TSAbstractEntity {
         this._aenderungPer = value;
     }
 
-// todo team Dieser Code is gleich wie auf dem Server...
     public hasSecondGesuchsteller(): boolean {
         switch (this.familienstatus) {
             case TSFamilienstatus.ALLEINERZIEHEND:

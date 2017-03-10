@@ -36,6 +36,7 @@
 		<property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION" value="on"/>
 		<property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION_MIME_TYPES" value="text/javascript,text/css,text/html"/>
 		<property name="ebegu.development.mode" value="true"/>
+		<property name="ebegu.zahlungen.test.mode" value="true"/>
 		<property name="ebegu.dummy.login.enabled" value="true"/>
 		<property name="ebegu.superuser.mail" value="ebeguadmin@dvbern.ch"/>
         <property name="ebegu.client.using.https" value="false"/>
@@ -50,6 +51,7 @@
 		<!--OpenIDM-->
 		<property name="ebegu.openidm.loginwithtoken.enabled" value="true"/>
 		<property name="ebegu.openam.url" value="https://elogin-test.bern.ch"/>
+		<property name="hibernate.search.default.indexBase" value="${jboss.server.data.dir}/lucene-index"/>
     </system-properties>
 
 

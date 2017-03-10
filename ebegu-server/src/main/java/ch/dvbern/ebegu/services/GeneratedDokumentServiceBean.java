@@ -13,6 +13,9 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import ch.dvbern.lib.iso20022.AuszahlungDTO;
+import ch.dvbern.lib.iso20022.Pain001DTO;
+import ch.dvbern.lib.iso20022.Pain001Service;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +96,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Inject
 	private Pain001Service pain001Service;
+
+	private static final String DEF_DEBTOR_NAME = "Direktion fuer Bildung, Soziales und Sport der Stadt Bern";
+	private static final String DEF_DEBTOR_BIC = "POFICHBEXXX";
+	private static final String DEF_DEBTOR_IBAN = "CH3309000000300008233";
 
 
 	@Override
@@ -278,9 +285,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + id;
 
 		final WriteProtectedDokument persistedDokument;
-		if(!dokumentTyp.equals(GeneratedDokumentTyp.PAIN001)) {
+		if (!dokumentTyp.equals(GeneratedDokumentTyp.PAIN001)) {
 			persistedDokument = findGeneratedDokument(id, fileNameForGeneratedDokumentTyp, expectedFilepath);
-		}else{
+		} else {
 			persistedDokument = findPain001Dokument(id, fileNameForGeneratedDokumentTyp, expectedFilepath);
 		}
 
@@ -466,7 +473,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			boolean writeProtectPDF = forceCreation || !ZahlungauftragStatus.ENTWURF.equals(zahlungsauftrag.getStatus());
 
-			byte[] data = pain001Service.getPainFileContent(zahlungsauftrag);
+			byte[] data = pain001Service.getPainFileContent(wrapZahlungsauftrag(zahlungsauftrag));
 
 			// Wenn nicht Entwurf, soll das Dokument schreibgeschützt sein!
 			persistedDokument = (Pain001Dokument) saveGeneratedDokumentInDB(data, dokumentTyp, zahlungsauftrag,
@@ -474,6 +481,45 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 		return persistedDokument;
 
+	}
+
+	private Pain001DTO wrapZahlungsauftrag(Zahlungsauftrag zahlungsauftrag) {
+		Pain001DTO pain001DTO = new Pain001DTO();
+
+		pain001DTO.setAuszahlungsDatum(zahlungsauftrag.getDatumFaellig());
+		pain001DTO.setAuszahlungsDatum(LocalDate.now());
+
+		String debtor_name = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEBTOR_NAME);
+		String debtor_bic = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEBTOR_BIC);
+		String debtor_iban = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEBTOR_IBAN);
+		String debtor_iban_gebuehren = applicationPropertyService.findApplicationPropertyAsString(ApplicationPropertyKey.DEBTOR_IBAN_GEBUEHREN);
+
+		pain001DTO.setSchuldnerName(debtor_name == null ? DEF_DEBTOR_NAME : debtor_name);
+		pain001DTO.setSchuldnerIBAN(debtor_iban == null ? DEF_DEBTOR_IBAN : debtor_iban);
+		pain001DTO.setSchuldnerBIC(debtor_bic == null ? DEF_DEBTOR_BIC : debtor_bic);
+		pain001DTO.setSchuldnerIBAN_gebuehren(debtor_iban_gebuehren == null ? pain001DTO.getSchuldnerIBAN() : debtor_iban_gebuehren);
+		pain001DTO.setSoftwareName("Ki-Tax");
+
+		pain001DTO.setAuszahlungen(new ArrayList<>());
+		zahlungsauftrag.getZahlungen().stream()
+			.filter(zahlung -> zahlung.getBetragTotalZahlung().signum() == 1)
+			.forEach(zahlung -> {
+				AuszahlungDTO auszahlungDTO = new AuszahlungDTO();
+				auszahlungDTO.setBetragTotalZahlung(zahlung.getBetragTotalZahlung());
+				auszahlungDTO.setZahlungsempfaegerName(zahlung.getInstitutionStammdaten().getInstitution().getName());
+				auszahlungDTO.setZahlungsempfaegerStrasse(zahlung.getInstitutionStammdaten().getAdresse().getStrasse());
+				auszahlungDTO.setZahlungsempfaegerHausnummer(zahlung.getInstitutionStammdaten().getAdresse().getHausnummer());
+				auszahlungDTO.setZahlungsempfaegerPlz(zahlung.getInstitutionStammdaten().getAdresse().getPlz());
+				auszahlungDTO.setZahlungsempfaegerOrt(zahlung.getInstitutionStammdaten().getAdresse().getOrt());
+				auszahlungDTO.setZahlungsempfaegerLand(zahlung.getInstitutionStammdaten().getAdresse().getLand().toString());
+				auszahlungDTO.setZahlungsempfaegerIBAN(zahlung.getInstitutionStammdaten().getIban().toString());
+				auszahlungDTO.setZahlungsempfaegerBankClearingNumber(zahlung.getInstitutionStammdaten().getIban().extractClearingNumberWithoutLeadingZeros());
+
+				pain001DTO.getAuszahlungen().add(auszahlungDTO);
+			});
+
+
+		return pain001DTO;
 	}
 
 	@Override

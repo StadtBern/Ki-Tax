@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
-import ch.dvbern.ebegu.authentication.BenutzerCredentials;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 
 import javax.annotation.Nonnull;
@@ -21,15 +20,6 @@ public interface AuthService {
 	 */
 	@Nonnull
 	Optional<AuthAccessElement> login(@Nonnull AuthLoginElement loginElement);
-
-	/**
-	 * @param authToken Authentifizierungs Token Identifikation
-	 * @return BenutzerCredentials mit der angegebenen Identifikation falls vorhanden
-	 * @deprecated  sieht aus als ob das nicht mehr benutzt wird, evtl entfernen
-	 */
-	@Nonnull
-	@Deprecated()
-	Optional<BenutzerCredentials> getCredentialsForAuthorizedToken(@Nonnull final String authToken);
 
 	/**
 	 * @param authToken Authentifizierungs Token Identifikation

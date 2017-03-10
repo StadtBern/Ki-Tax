@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.services.authentication;
 
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
-import ch.dvbern.ebegu.authentication.BenutzerCredentials;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -72,34 +71,6 @@ public class AuthServiceBean implements AuthService {
 			loginElement.getVorname(),
 			loginElement.getEmail(),
 			loginElement.getRole()));
-	}
-
-	@Override
-	@Nonnull
-	public Optional<BenutzerCredentials> getCredentialsForAuthorizedToken(@Nonnull String authToken) {
-		if (StringUtils.isEmpty(authToken)) {
-			return Optional.empty();
-		}
-
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		ParameterExpression<String> authTokenParam = cb.parameter(String.class, "authToken");
-
-		CriteriaQuery<String> query = cb.createQuery(String.class);
-		Root<AuthorisierterBenutzer> root = query.from(AuthorisierterBenutzer.class);
-
-		Predicate authTokenPredicate = cb.equal(root.get(AuthorisierterBenutzer_.authToken), authTokenParam);
-		query.where(authTokenPredicate);
-		query.select(root.get(AuthorisierterBenutzer_.username));
-
-		try {
-			TypedQuery<String> typedQuery = entityManager.createQuery(query)
-				.setParameter(authTokenParam, authToken);
-			String username = typedQuery.getSingleResult();
-			BenutzerCredentials credentials = new BenutzerCredentials(username,  authToken);
-			return Optional.of(credentials);
-		} catch (NoResultException ignored) {
-			return Optional.empty();
-		}
 	}
 
 	@Override

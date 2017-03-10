@@ -23,11 +23,6 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 	private static final long serialVersionUID = 7880484074016308515L;
 
 	@Override
-	public boolean getIsDevmode() {
-		return true;
-	}
-
-	@Override
 	public boolean getOpenIdmEnabled() {
 		return false;
 	}
@@ -42,43 +37,4 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 		return "hallo@dvbern.ch";
 	}
 
-	@Override
-	public String getOpenamURL() {
-		return null;
-	}
-
-	@Override
-	public boolean getLoginWithToken() {
-		return false;
-	}
-
-	@Override
-	public String getSMTPHost() {
-		return null;
-	}
-
-	@Override
-	public int getSMTPPort() {
-		return 0;
-	}
-
-	@Override
-	public String getHostname() {
-		return "localhost";
-	}
-
-	@Override
-	public boolean isDummyLoginEnabled() {
-		return false;
-	}
-
-	@Override
-	public String getEmailOfSuperUser() {
-		return "hallo@dvbern.ch";
-	}
-
-	@Override
-	public String getBackgroundColor() {
-		return null;
-	}
 }
