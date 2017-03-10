@@ -20,8 +20,6 @@ import java.util.Set;
  * - Für die Angebote Tageseltern–Schulkinder und Tagesstätten entspricht der Anspruch dem gewünschten Pensum.
  * 		Ihnen wird für den Monat August aber der Volltarif verrechnet.
  * 	Verweis 16.11 Gesuch zu Speat
- *
- * 	TODO: Diese Regel soll nur beim Erstgesuch gelten jedoch nicht bei Mutationen! Xaver fragen ob dies so richtig ist!
  */
 public class EinreichungsfristAbschnittRule extends AbstractAbschnittRule {
 

@@ -23,41 +23,6 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 	private static final long serialVersionUID = 7880484074016308515L;
 
 	@Override
-	public boolean getIsDevmode() {
-		return true;
-	}
-
-	@Override
-	public String getDocumentFilePath() {
-		return "jboss.server.data.dir";
-	}
-
-	@Override
-	public String getFedletConfigPath() {
-		return "fedletConfig/http_app_ebegu_ch";
-	}
-
-	@Override
-	public boolean isClientUsingHTTPS() {
-		return false;
-	}
-
-	@Override
-	public String getOpenIdmURL() {
-		return "https://eaccount-test.bern.ch";
-	}
-
-	@Override
-	public String getOpenIdmUser() {
-		return "SRVC_eBEGU";
-	}
-
-	@Override
-	public String getOpenIdmPassword() {
-		return "EBEGUADMINTZZ0";
-	}
-
-	@Override
 	public boolean getOpenIdmEnabled() {
 		return false;
 	}
@@ -72,43 +37,4 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 		return "hallo@dvbern.ch";
 	}
 
-	@Override
-	public String getOpenamURL() {
-		return null;
-	}
-
-	@Override
-	public boolean getLoginWithToken() {
-		return false;
-	}
-
-	@Override
-	public String getSMTPHost() {
-		return null;
-	}
-
-	@Override
-	public int getSMTPPort() {
-		return 0;
-	}
-
-	@Override
-	public String getHostname() {
-		return "localhost";
-	}
-
-	@Override
-	public boolean isDummyLoginEnabled() {
-		return false;
-	}
-
-	@Override
-	public String getEmailOfSuperUser() {
-		return "hallo@dvbern.ch";
-	}
-
-	@Override
-	public String getBackgroundColor() {
-		return null;
-	}
 }
