@@ -13,13 +13,13 @@ import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import TSVerfuegung from '../models/TSVerfuegung';
 import * as moment from 'moment';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
-import Moment = moment.Moment;
 import TSAntragDTO from '../models/TSAntragDTO';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import TSGesuchsteller from '../models/TSGesuchsteller';
 import TSAdresse from '../models/TSAdresse';
 import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../models/TSAdresseContainer';
+import Moment = moment.Moment;
 
 export default class TestDataUtil {
 
@@ -67,12 +67,16 @@ export default class TestDataUtil {
 
 
     static mockDefaultGesuchModelManagerHttpCalls($httpBackend: IHttpBackendService) {
-        $httpBackend.when('GET', '/ebegu/api/v1/fachstellen').respond({});
+
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/0621fb5d-a187-5a91-abaf-8a813c4d263a').respond({});
-        $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date/active?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
-        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/wizard-steps').respond({});
         $httpBackend.when('POST', '/ebegu/api/v1/wizard-steps').respond({});
+    }
+
+    public static mockLazyGesuchModelManagerHttpCalls($httpBackend: IHttpBackendService) {
+        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/fachstellen').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date/active?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
     }
 
     public static createWizardStep(gesuchId: string): TSWizardStep {
