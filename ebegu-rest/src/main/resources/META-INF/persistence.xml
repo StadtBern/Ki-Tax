@@ -29,7 +29,6 @@
 			          <!--value="/home/homa/java/JBoss/wildfly-10.1.0.Final-ebegu/standalone/data/lucene"/>-->
 
 			<!--<property name="hibernate.search.default.directory_provider" value="infinispan"/>-->
-			<!--todo homa erstellen-->
 			<!--<property name="hibernate.search.infinispan.configuration_resourcename" value="ebegu-hibernatesearch-infinispan.xml"/>-->
 		</properties>
 	</persistence-unit>

@@ -204,32 +204,6 @@ public abstract class AbstractEntity implements Serializable {
 		return timestampErstellt == null;
 	}
 
-	/**
-	 * //todo team probably delete this
-	 * Hilfsmethode fuer toString(): Wenn beim Debugging eine JPA-Referenz schon detached ist,
-	 * kann nicht mehr auf den Wert zugegriffen werden und es kommt eine Exception.
-	 * Diese Methode faengt die Exception ab und gibt einen fixen Text zurueck.
-	 * <pre>
-	 * {@code
-	 * 	public String toString() {
-	 * 		return MoreObjects.toStringHelper(this)
-	 * 			.add("id", getId())
-	 * 			.add("kontaktperson", getSilent(() -> kontaktperson))
-	 * 			.add("kind", getSilent(() -> kind))
-	 * 			.toString();
-	 * 	}
-	 * }
-	 * </pre>
-	 */
-/*	protected <T extends Serializable> String getSilent(Supplier<T> supplier) {
-		try {
-			return String.valueOf(supplier.get());
-		} catch (RuntimeException ignored) {
-			return "<unknown>";
-		}
-	}*/
-
-
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)

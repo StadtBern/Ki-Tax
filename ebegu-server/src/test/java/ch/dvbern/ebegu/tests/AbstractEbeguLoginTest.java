@@ -37,11 +37,15 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 	public  void performLogin() {
 		dummyAdmin = TestDataUtil.createDummySuperAdmin(persistence);
 		try {
-			loginContext = JBossLoginContextFactory.createLoginContext("superadmin", "superadmin");
-			loginContext.login();
+			loginAsSuperadmin();
 		} catch (LoginException ex) {
 			LOG.error("Konnte dummy login nicht vornehmen fuer ArquillianTests ", ex);
 		}
+	}
+
+	protected void loginAsSuperadmin() throws LoginException {
+		loginContext = JBossLoginContextFactory.createLoginContext("superadmin", "superadmin");
+		loginContext.login();
 	}
 
 	@After

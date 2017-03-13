@@ -75,6 +75,12 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@Nullable
 	private JaxGesuchsperiode gesuchsperiode;
 
+	@Nullable
+	private Boolean betreuungMutiert;
+
+	@Nullable
+	private Boolean abwesenheitMutiert;
+
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
 		return institutionStammdaten;
@@ -201,6 +207,22 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setGesuchsperiode(@Nullable JaxGesuchsperiode gesuchsperiode) {
 		this.gesuchsperiode = gesuchsperiode;
+	}
+
+	public Boolean getBetreuungMutiert() {
+		return betreuungMutiert;
+	}
+
+	public void setBetreuungMutiert(Boolean betreuungMutiert) {
+		this.betreuungMutiert = betreuungMutiert;
+	}
+
+	public Boolean getAbwesenheitMutiert() {
+		return abwesenheitMutiert;
+	}
+
+	public void setAbwesenheitMutiert(Boolean abwesenheitMutiert) {
+		this.abwesenheitMutiert = abwesenheitMutiert;
 	}
 
 	@Override

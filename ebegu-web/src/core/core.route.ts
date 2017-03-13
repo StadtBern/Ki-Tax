@@ -9,6 +9,7 @@ import {TSRoleUtil} from '../utils/TSRoleUtil';
 import ErrorService from './errors/service/ErrorService';
 import {ApplicationPropertyRS} from '../admin/service/applicationPropertyRS.rest';
 import TSApplicationProperty from '../models/TSApplicationProperty';
+import GesuchModelManager from '../gesuch/service/gesuchModelManager';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
 import ILocationService = angular.ILocationService;
@@ -16,13 +17,13 @@ import ILogService = angular.ILogService;
 import IInjectorService = angular.auto.IInjectorService;
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$injector', '$rootScope', 'hotkeys',
-    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log' , 'ErrorService'];
+    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log' , 'ErrorService', 'GesuchModelManager'];
 
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $injector: IInjectorService, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
                        authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService,
-                       $log: ILogService, errorService: ErrorService) {
+                       $log: ILogService, errorService: ErrorService, gesuchModelManager: GesuchModelManager) {
     // navigationLogger.toggle();
 
     // Fehler beim Navigieren ueber ui-route ins Log schreiben
@@ -56,6 +57,10 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
             listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
             mandantRS.getFirst();
         }
+        //since we will need these lists anyway we already load on login
+        gesuchModelManager.updateActiveGesuchsperiodenList();
+        gesuchModelManager.updateFachstellenList();
+        gesuchModelManager.updateActiveInstitutionenList();
     });
 
 

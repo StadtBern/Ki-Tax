@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 
+import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -65,4 +66,8 @@ public interface ZahlungService {
 	 * Eine Kita kann/muss den Zahlungseingang bestaetigen
 	 */
 	Zahlung zahlungBestaetigen(String zahlungId);
+
+
+	Collection<Zahlungsauftrag> getZahlungsauftraegeInPeriode(LocalDate von, @Nonnull LocalDate bis);
+
 }

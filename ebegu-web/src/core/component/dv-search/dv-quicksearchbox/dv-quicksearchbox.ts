@@ -92,7 +92,7 @@ export class DvQuicksearchboxController {
     }
 
 
-    //TODO: ähnlicher code wie bei faelleListView.  Ausserdem waere es wohl besser den gesuchModelManager lazy zu injecten
+    //TODO (hefr) ähnlicher code wie bei faelleListView. z.B. NavigationUtil o.ae.
     private navigateToFall() {
         if (this.selectedItem && this.selectedItem.gesuchID) {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles()) && this.selectedItem.antragDTO) {

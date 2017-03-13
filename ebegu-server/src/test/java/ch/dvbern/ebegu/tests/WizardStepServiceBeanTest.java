@@ -170,7 +170,6 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertTrue(findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getVerfuegbar());
 	}
 
-	//TODO: TEST failed, aber warum? Keine Aenderungen in diesen Files....
 	@Test
 	public void updateWizardStepKinder() {
 		updateStatus(kinderStep, WizardStepStatus.IN_BEARBEITUNG);

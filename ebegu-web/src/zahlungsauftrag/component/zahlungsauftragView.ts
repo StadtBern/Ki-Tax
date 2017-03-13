@@ -36,7 +36,7 @@ export class ZahlungsauftragViewController {
     datumGeneriert: moment.Moment;
 
     itemsByPage: number = 12;
-    devMode: boolean = false;
+    testMode: boolean = false;
 
     static $inject: string[] = ['ZahlungRS', 'CONSTANTS', '$state', 'DownloadRS', 'ApplicationPropertyRS', 'ReportRS',
         'AuthServiceRS', 'EbeguUtil'];
@@ -53,8 +53,8 @@ export class ZahlungsauftragViewController {
 
     private initViewModel() {
         this.updateZahlungsauftrag();
-        this.applicationPropertyRS.isDevMode().then((response: any) => {
-            this.devMode = response;
+        this.applicationPropertyRS.isZahlungenTestMode().then((response: any) => {
+            this.testMode = response;
         });
     }
 

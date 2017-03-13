@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * Erwerbspensum eines Gesuchstellers  todo homa erbe von pensum
+ * Erwerbspensum eines Gesuchstellers
  */
 @Entity
 @Audited
@@ -49,9 +49,6 @@ public class Erwerbspensum extends AbstractPensumEntity {
 	@Column(nullable = true)
 	@Nullable
 	private String bezeichnung;
-
-
-	//todo homa Prozent kann wohl aus Pensum geerbt werden
 
 
 	public Erwerbspensum() {

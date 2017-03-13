@@ -39,7 +39,7 @@ export class AdminViewController {
 
     submit(): void {
         //testen ob aktuelles property schon gespeichert ist
-        if (this.applicationProperty.timestampErstellt) {
+        if (this.applicationProperty.isNew()) {
             this.applicationPropertyRS.update(this.applicationProperty.name, this.applicationProperty.value)
                 .then((response: any) => {
                     let index = this.getIndexOfElementwithID(response.data);
@@ -54,17 +54,14 @@ export class AdminViewController {
                 .then((response: any) => {
                     let items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
                     if (items != null && items.length > 0) {
-                        //todo pruefen ob das item schon existiert hat wie oben
                         this.applicationProperties = this.applicationProperties.concat(items[0]);
-                        //this.applicationProperties.push(items[0]);
                     }
                 });
         }
         this.resetForm();
-        //todo team fehlerhandling
     }
 
-    removeRow(row: any): void { // todo team add type (muessen warten bis es eine DefinitelyTyped fuer smarttable gibt)
+    removeRow(row: TSApplicationProperty): void {
         this.applicationPropertyRS.remove(row.name).then((reponse: IHttpPromiseCallbackArg<any>) => {
             let index = this.applicationProperties.indexOf(row);
             if (index !== -1) {
@@ -78,7 +75,7 @@ export class AdminViewController {
         this.applicationProperty = new TSApplicationProperty('', '');
     }
 
-    editRow(row: any): void { // todo team add type (muessen warten bis es eine DefinitelyTyped fuer smarttable gibt)
+    editRow(row: TSApplicationProperty): void {
         this.applicationProperty = row;
     }
 

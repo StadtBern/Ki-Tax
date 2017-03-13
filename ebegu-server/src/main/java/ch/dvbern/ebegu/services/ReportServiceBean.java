@@ -1,12 +1,10 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Zahlung;
-import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
@@ -17,11 +15,15 @@ import ch.dvbern.ebegu.reporting.gesuchzeitraum.GeuschZeitraumExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
 import ch.dvbern.ebegu.reporting.lib.*;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftrag;
+import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftragPeriode;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragExcelConverter;
+import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragPeriodeExcelConverter;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -38,6 +40,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
 import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.*;
@@ -57,7 +60,11 @@ import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.*;
 @Local(ReportService.class)
 public class ReportServiceBean extends AbstractReportServiceBean implements ReportService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReportServiceBean.class);
+
 	public static final String DATA = "Data";
+	public static final String NICHT_GEFUNDEN = "' nicht gefunden";
+	public static final String VORLAGE = "Vorlage '";
 
 	@Inject
 	private GeuschStichtagExcelConverter geuschStichtagExcelConverter;
@@ -67,6 +74,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private ZahlungAuftragExcelConverter zahlungAuftragExcelConverter;
+
+	@Inject
+	private ZahlungAuftragPeriodeExcelConverter zahlungAuftragPeriodeExcelConverter;
 
 	@Inject
 	private PrincipalBean principalBean;
@@ -82,6 +92,15 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private FileSaverService fileSaverService;
+
+	@Inject
+	private BetreuungService betreuungService;
+
+	@Inject
+	private KindService kindService;
+
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
 
 	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
@@ -117,7 +136,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportResource reportResource = VORLAGE_REPORT_GESUCH_STICHTAG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+		Objects.requireNonNull(is, VORLAGE+ reportResource.getTemplatePath() + NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
@@ -142,6 +161,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		Objects.requireNonNull(datetimeVon, "Das Argument 'datetimeVon' darf nicht leer sein");
 		Objects.requireNonNull(datetimeBis, "Das Argument 'datetimeBis' darf nicht leer sein");
+
+		// Bevor wir die Statistik starten, muessen gewissen Werte nachgefuehrt werden
+		runStatisticsBetreuung();
+		runStatisticsAbwesenheiten();
+		runStatisticsKinder();
 
 		EntityManager em = persistence.getEntityManager();
 
@@ -170,7 +194,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportResource reportResource = VORLAGE_REPORT_GESUCH_ZEITRAUM;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+		Objects.requireNonNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
@@ -227,7 +251,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportResource reportResource = VORLAGE_REPORT_ZAHLUNG_AUFTRAG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Objects.requireNonNull(is, "Vorlage '" + reportResource.getTemplatePath() + "' nicht gefunden");
+		Objects.requireNonNull(is, VORLAGE + reportResource.getTemplatePath() +NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
@@ -247,16 +271,51 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			getContentTypeForExport());
 	}
 
+	@Override
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	public UploadFileInfo generateExcelReportZahlungPeriode(@Nonnull String gesuchsperiodeId) throws ExcelMergeException {
+
+		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId)
+			.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungPeriode", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeId));
+
+		final Collection<Zahlungsauftrag> zahlungsauftraegeInPeriode = zahlungService.getZahlungsauftraegeInPeriode(gesuchsperiode.getGueltigkeit().getGueltigAb(), gesuchsperiode.getGueltigkeit().getGueltigBis());
+
+		final ReportResource reportResource = VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
+		Objects.requireNonNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
+
+		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
+		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
+
+		final List<Zahlung> allZahlungen = zahlungsauftraegeInPeriode.stream()
+			.flatMap(zahlungsauftrag -> zahlungsauftrag.getZahlungen().stream())
+			.collect(Collectors.toList());
+
+		ExcelMergerDTO excelMergerDTO = zahlungAuftragPeriodeExcelConverter.toExcelMergerDTO(allZahlungen, gesuchsperiode.getGesuchsperiodeString(), Locale.getDefault());
+
+		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
+		zahlungAuftragPeriodeExcelConverter.applyAutoSize(sheet);
+
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportResource.getDefaultExportFilename(),
+			TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
+	}
+
 	public enum ReportResource {
 
+		// TODO Achtung mit Filename, da mehrere Dokumente mit gleichem Namen aber unterschiedlichem Inhalt gespeichert werden. Falls der Name geaendert wuerde, muesste das File wieder geloescht werden.
 		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx", "GesuchStichtag.xlsx", DATA,
 			MergeFieldGesuchStichtag.class),
 		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "GesuchZeitraum.xlsx", DATA,
 			MergeFieldGesuchZeitraum.class),
-
-		//TODO: Achtung mit Filename, da mehrere Dokumente mit gleichem Namen aber unterschiedlichem Inhalt gespeichert werden
 		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", DATA,
-			MergeFieldZahlungAuftrag.class);
+			MergeFieldZahlungAuftrag.class),
+		VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE("/reporting/ZahlungAuftragPeriode.xlsx", "ZahlungAuftragPeriode.xlsx", DATA,
+			MergeFieldZahlungAuftragPeriode.class);
 
 		@Nonnull
 		private final String templatePath;
@@ -293,6 +352,68 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		@Nonnull
 		public String getDataSheetName() {
 			return dataSheetName;
+		}
+	}
+
+	private void runStatisticsBetreuung() {
+		List<Betreuung> allBetreuungen = betreuungService.getAllBetreuungenWithMissingStatistics();
+		for (Betreuung betreuung : allBetreuungen) {
+			if (betreuung.hasVorgaenger()) {
+				Betreuung vorgaengerBetreuung = persistence.find(Betreuung.class, betreuung.getVorgaengerId());
+				if (!betreuung.isSame(vorgaengerBetreuung, false, false)) {
+					betreuung.setBetreuungMutiert(Boolean.TRUE);
+					LOGGER.info("Betreuung hat geändert: " + betreuung.getId());
+				} else {
+					betreuung.setBetreuungMutiert(Boolean.FALSE);
+					LOGGER.info("Betreuung hat nicht geändert: " + betreuung.getId());
+				}
+			} else {
+				// Betreuung war auf dieser Mutation neu
+				LOGGER.info("Betreuung ist neu: " + betreuung.getId());
+				betreuung.setBetreuungMutiert(Boolean.TRUE);
+			}
+		}
+	}
+
+	private void runStatisticsAbwesenheiten() {
+		List<Abwesenheit> allAbwesenheiten = betreuungService.getAllAbwesenheitenWithMissingStatistics();
+		for (Abwesenheit abwesenheit : allAbwesenheiten) {
+			Betreuung betreuung = abwesenheit.getAbwesenheitContainer().getBetreuung();
+			if (abwesenheit.hasVorgaenger()) {
+				Abwesenheit vorgaengerAbwesenheit = persistence.find(Abwesenheit.class, abwesenheit.getVorgaengerId());
+				if (!abwesenheit.isSame(vorgaengerAbwesenheit)) {
+					betreuung.setAbwesenheitMutiert(Boolean.TRUE);
+					LOGGER.info("Abwesenheit hat geändert: " + abwesenheit.getId());
+				} else {
+					betreuung.setAbwesenheitMutiert(Boolean.FALSE);
+					LOGGER.info("Abwesenheit hat nicht geändert: " + abwesenheit.getId());
+				}
+			} else {
+				// Abwesenheit war auf dieser Mutation neu
+				LOGGER.info("Abwesenheit ist neu: " + abwesenheit.getId());
+				betreuung.setAbwesenheitMutiert(Boolean.TRUE);
+			}
+		}
+	}
+
+	private void runStatisticsKinder() {
+		List<KindContainer> allKindContainer = kindService.getAllKinderWithMissingStatistics();
+		for (KindContainer kindContainer : allKindContainer) {
+			Kind kind = kindContainer.getKindJA();
+			if (kind.hasVorgaenger()) {
+				Kind vorgaengerKind = persistence.find(Kind.class, kind.getVorgaengerId());
+				if (!kind.isSame(vorgaengerKind)) {
+					kindContainer.setKindMutiert(Boolean.TRUE);
+					LOGGER.info("Kind hat geändert: " + kindContainer.getId());
+				} else {
+					kindContainer.setKindMutiert(Boolean.FALSE);
+					LOGGER.info("Kind hat nicht geändert: " + kindContainer.getId());
+				}
+			} else {
+				// Kind war auf dieser Mutation neu
+				LOGGER.info("Kind ist neu: " + kindContainer.getId());
+				kindContainer.setKindMutiert(Boolean.TRUE);
+			}
 		}
 	}
 }

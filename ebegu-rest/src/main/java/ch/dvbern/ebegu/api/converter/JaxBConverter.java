@@ -89,8 +89,7 @@ public class JaxBConverter {
 
 	@Nonnull
 	public String toEntityId(@Nonnull final JaxId resourceId) {
-		// TODO wahrscheinlich besser manuell auf NULL pruefen und gegebenenfalls eine IllegalArgumentException werfen
-		return Objects.requireNonNull(resourceId.getId());
+		return Validate.notNull(resourceId.getId());
 	}
 
 	@Nonnull
@@ -888,12 +887,10 @@ public class JaxBConverter {
 			}
 
 		} else {
-			//todo homa ebegu 82 review wie reagieren wir hier
 			throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
-//			institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), new Mandant()));
 		}
 
-//		Institution ist nicht required!
+		// Institution ist nicht required!
 		if (institutionJAXP.getTraegerschaft() != null) {
 			if (institutionJAXP.getTraegerschaft().getId() != null) {
 				final Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(institutionJAXP.getTraegerschaft().getId());
@@ -1404,6 +1401,8 @@ public class JaxBConverter {
 			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
 		}
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
+		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
+		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
@@ -1592,6 +1591,8 @@ public class JaxBConverter {
 		if (betreuungFromServer.getVerfuegung() != null) {
 			jaxBetreuung.setVerfuegung(verfuegungToJax(betreuungFromServer.getVerfuegung()));
 		}
+		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
+		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
 		return jaxBetreuung;
 	}
 
@@ -2086,7 +2087,6 @@ public class JaxBConverter {
 		antrag.setFallNummer(gesuch.getFall().getFallNummer());
 		antrag.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().extractNachname() : "");
 		antrag.setEingangsdatum(gesuch.getEingangsdatum());
-		//todo team, hier das datum des letzten statusuebergangs verwenden?
 		antrag.setAenderungsdatum(gesuch.getTimestampMutiert());
 		antrag.setAntragTyp(gesuch.getTyp());
 		antrag.setStatus(AntragStatusConverterUtil.convertStatusToDTO(gesuch, gesuch.getStatus()));

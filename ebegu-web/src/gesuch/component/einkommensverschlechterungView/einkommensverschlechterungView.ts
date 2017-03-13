@@ -145,8 +145,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     public initGeschaeftsgewinnFromFS(): void {
         if (!this.model.getFiSiConToWorkWith()
             || !this.model.getFiSiConToWorkWith().finanzielleSituationJA) {
-            // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
-            this.$log.debug('Fehler: FinSit muss existieren');
+            this.$log.error('Fehler: FinSit muss existieren');
             return;
         }
 

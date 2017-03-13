@@ -78,6 +78,7 @@ import {DvPosteingangComponentConfig} from './component/dv-posteingang/dv-postei
 import {ReportRS} from './service/reportRS.rest';
 import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-enter/dv-suppress-form-submit-on-enter';
 import ExportRS from '../gesuch/service/exportRS.rest';
+import {DvCountdownComponentConfig} from './component/dv-countdown/dv-countdown';
 import ZahlungRS from './service/zahlungRS.rest';
 
 let dynamicDependencies = function (): string[] {
@@ -126,7 +127,7 @@ export const EbeguWebCore: angular.IModule = angular
         MAX_LENGTH: 255,
         FALLNUMMER_LENGTH: 6,
         PATTERN_BETRAG: '([0-9]{0,12})',
-        PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$',    //todo team kann nach mergen des tasks ueber inputmaske gemact werden
+        PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$',
         PATTERN_PHONE: '(0|\\+41|0041)\\s?([\\d]{2})\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})',
         PATTERN_MOBILE: '(0|\\+41|0041)\\s?(74|75|76|77|78|79)\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})',
         PATTERN_EMAIL: '[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}',
@@ -194,6 +195,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
     .component('dvMobileNavigationToggle', new DvMobileNavigationToggleComponentConfig())
     .component('dvHomeIcon', new DvHomeIconComponentConfig())
+    .component('dvCountdown', new DvCountdownComponentConfig())
     .component('dvPosteingang', new DvPosteingangComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())

@@ -82,6 +82,20 @@ export class StatistikViewController {
                     break;
                 case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
                     break;
+                case TSStatistikParameterType.ZAHLUNGEN_PERIODE:
+                    if (this._statistikParameter.gesuchsperiode) {
+                        let win: Window = this.downloadRS.prepareDownloadWindow();
+                        this.reportRS.getZahlungPeriodeReportExcel(
+                            this._statistikParameter.gesuchsperiode)
+                            .then((downloadFile: TSDownloadFile) => {
+
+                                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                            });
+                    } else {
+                        this.$log.warn('gesuchsperiode muss gewählt sein');
+                    }
+                    break;
                 default:
                     this.$log.debug('default, Type not recognized');
                     break;
