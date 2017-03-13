@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
@@ -21,6 +22,8 @@ import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -57,6 +60,8 @@ import static ch.dvbern.ebegu.services.ReportServiceBean.ReportResource.*;
 @Local(ReportService.class)
 public class ReportServiceBean extends AbstractReportServiceBean implements ReportService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReportServiceBean.class);
+
 	public static final String DATA = "Data";
 	public static final String NICHT_GEFUNDEN = "' nicht gefunden";
 	public static final String VORLAGE = "Vorlage '";
@@ -87,6 +92,12 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private FileSaverService fileSaverService;
+
+	@Inject
+	private BetreuungService betreuungService;
+
+	@Inject
+	private KindService kindService;
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
@@ -150,6 +161,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		Objects.requireNonNull(datetimeVon, "Das Argument 'datetimeVon' darf nicht leer sein");
 		Objects.requireNonNull(datetimeBis, "Das Argument 'datetimeBis' darf nicht leer sein");
+
+		// Bevor wir die Statistik starten, muessen gewissen Werte nachgefuehrt werden
+		runStatisticsBetreuung();
+		runStatisticsAbwesenheiten();
+		runStatisticsKinder();
 
 		EntityManager em = persistence.getEntityManager();
 
@@ -336,6 +352,68 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		@Nonnull
 		public String getDataSheetName() {
 			return dataSheetName;
+		}
+	}
+
+	private void runStatisticsBetreuung() {
+		List<Betreuung> allBetreuungen = betreuungService.getAllBetreuungenWithMissingStatistics();
+		for (Betreuung betreuung : allBetreuungen) {
+			if (betreuung.hasVorgaenger()) {
+				Betreuung vorgaengerBetreuung = persistence.find(Betreuung.class, betreuung.getVorgaengerId());
+				if (!betreuung.isSame(vorgaengerBetreuung, false, false)) {
+					betreuung.setBetreuungMutiert(Boolean.TRUE);
+					LOGGER.info("Betreuung hat geändert: " + betreuung.getId());
+				} else {
+					betreuung.setBetreuungMutiert(Boolean.FALSE);
+					LOGGER.info("Betreuung hat nicht geändert: " + betreuung.getId());
+				}
+			} else {
+				// Betreuung war auf dieser Mutation neu
+				LOGGER.info("Betreuung ist neu: " + betreuung.getId());
+				betreuung.setBetreuungMutiert(Boolean.TRUE);
+			}
+		}
+	}
+
+	private void runStatisticsAbwesenheiten() {
+		List<Abwesenheit> allAbwesenheiten = betreuungService.getAllAbwesenheitenWithMissingStatistics();
+		for (Abwesenheit abwesenheit : allAbwesenheiten) {
+			Betreuung betreuung = abwesenheit.getAbwesenheitContainer().getBetreuung();
+			if (abwesenheit.hasVorgaenger()) {
+				Abwesenheit vorgaengerAbwesenheit = persistence.find(Abwesenheit.class, abwesenheit.getVorgaengerId());
+				if (!abwesenheit.isSame(vorgaengerAbwesenheit)) {
+					betreuung.setAbwesenheitMutiert(Boolean.TRUE);
+					LOGGER.info("Abwesenheit hat geändert: " + abwesenheit.getId());
+				} else {
+					betreuung.setAbwesenheitMutiert(Boolean.FALSE);
+					LOGGER.info("Abwesenheit hat nicht geändert: " + abwesenheit.getId());
+				}
+			} else {
+				// Abwesenheit war auf dieser Mutation neu
+				LOGGER.info("Abwesenheit ist neu: " + abwesenheit.getId());
+				betreuung.setAbwesenheitMutiert(Boolean.TRUE);
+			}
+		}
+	}
+
+	private void runStatisticsKinder() {
+		List<KindContainer> allKindContainer = kindService.getAllKinderWithMissingStatistics();
+		for (KindContainer kindContainer : allKindContainer) {
+			Kind kind = kindContainer.getKindJA();
+			if (kind.hasVorgaenger()) {
+				Kind vorgaengerKind = persistence.find(Kind.class, kind.getVorgaengerId());
+				if (!kind.isSame(vorgaengerKind)) {
+					kindContainer.setKindMutiert(Boolean.TRUE);
+					LOGGER.info("Kind hat geändert: " + kindContainer.getId());
+				} else {
+					kindContainer.setKindMutiert(Boolean.FALSE);
+					LOGGER.info("Kind hat nicht geändert: " + kindContainer.getId());
+				}
+			} else {
+				// Kind war auf dieser Mutation neu
+				LOGGER.info("Kind ist neu: " + kindContainer.getId());
+				kindContainer.setKindMutiert(Boolean.TRUE);
+			}
 		}
 	}
 }
