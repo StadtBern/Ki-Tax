@@ -79,6 +79,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
                 this.berechnungsManager.clear();
                 return this.gesuchModelManager.saveMutation();
             } else {
+                console.log('saveGesuchAndFall : asdf1234');
                 return this.gesuchModelManager.saveGesuchAndFall();
             }
         }
