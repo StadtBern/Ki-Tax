@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * Entity fuer Kinder.
@@ -103,6 +104,7 @@ public class Kind extends AbstractPersonEntity{
 		this.einschulung = einschulung;
 	}
 
+
 	public Kind copyForMutation(Kind mutation) {
 		super.copyForMutation(mutation);
 		mutation.setWohnhaftImGleichenHaushalt(this.getWohnhaftImGleichenHaushalt());
@@ -114,5 +116,23 @@ public class Kind extends AbstractPersonEntity{
 			mutation.setPensumFachstelle(this.getPensumFachstelle().copyForMutation(new PensumFachstelle()));
 		}
 		return mutation;
+	}
+
+	public boolean isSame(Kind otherKind) {
+		if (this == otherKind) {
+			return true;
+		}
+		if (otherKind == null || getClass() != otherKind.getClass()) {
+			return false;
+		}
+		if (!super.isSame(otherKind)) {
+			return false;
+		}
+		return Objects.equals(getWohnhaftImGleichenHaushalt(), otherKind.getWohnhaftImGleichenHaushalt()) &&
+			getKinderabzug() == otherKind.getKinderabzug() &&
+			Objects.equals(getFamilienErgaenzendeBetreuung(), otherKind.getFamilienErgaenzendeBetreuung()) &&
+			Objects.equals(getMutterspracheDeutsch(), otherKind.getMutterspracheDeutsch()) &&
+			Objects.equals(getEinschulung(), otherKind.getEinschulung()) &&
+			Objects.equals(getPensumFachstelle(), otherKind.getPensumFachstelle());
 	}
 }
