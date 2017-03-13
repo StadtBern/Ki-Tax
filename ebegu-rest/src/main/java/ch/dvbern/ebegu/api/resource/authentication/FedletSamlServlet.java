@@ -168,7 +168,7 @@ public class FedletSamlServlet extends HttpServlet {
 	 * Wir haben per proeprty eine email definiert dem wir immer Super-User zuweisen
 	 */
 	private void checkForSuperuserMail(Benutzer benutzer) {
-		if (benutzer.getEmail().equals(superUserEmail)) {
+		if (benutzer.getEmail().equalsIgnoreCase(superUserEmail)) {
 			benutzer.setRole(UserRole.SUPER_ADMIN);
 		}
 	}
