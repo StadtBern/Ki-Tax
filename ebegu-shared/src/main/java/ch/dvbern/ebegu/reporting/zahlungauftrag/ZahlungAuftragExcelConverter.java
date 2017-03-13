@@ -11,7 +11,6 @@ package ch.dvbern.ebegu.reporting.zahlungauftrag;
 
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Zahlung;
-import ch.dvbern.ebegu.entities.Zahlungsposition;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.reporting.lib.ExcelConverter;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
@@ -21,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,20 +56,21 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 			})
 			.forEach(zahlung -> {
 				zahlung.getZahlungspositionen().stream()
+					.filter(zahlungsposition -> zahlungsposition.getVerfuegungZeitabschnitt().getBgPensum() > 0)
 					.sorted()
 					.forEach(zahlungsposition -> {
-					ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldZahlungAuftrag.repeatZahlungAuftragRow);
-					excelRowGroup.addValue(MergeFieldZahlungAuftrag.institution, zahlung.getInstitutionStammdaten().getInstitution().getName());
-					excelRowGroup.addValue(MergeFieldZahlungAuftrag.name, zahlungsposition.getKind().getNachname());
-					excelRowGroup.addValue(MergeFieldZahlungAuftrag.vorname, zahlungsposition.getKind().getVorname());
-					excelRowGroup.addValue(MergeFieldZahlungAuftrag.gebDatum, zahlungsposition.getKind().getGeburtsdatum());
-					excelRowGroup.addValue(MergeFieldZahlungAuftrag.verfuegung, zahlungsposition.getVerfuegungZeitabschnitt().getVerfuegung().getBetreuung().getBGNummer());
-					excelRowGroup.addValue(MergeFieldZahlungAuftrag.vonDatum, zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
-					excelRowGroup.addValue(MergeFieldZahlungAuftrag.bisDatum, zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigBis());
-					excelRowGroup.addValue(MergeFieldZahlungAuftrag.bgPensum, BigDecimal.valueOf(zahlungsposition.getVerfuegungZeitabschnitt().getBgPensum())
-						.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
-					excelRowGroup.addValue(MergeFieldZahlungAuftrag.betragCHF, zahlungsposition.getBetrag());
-				});
+						ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldZahlungAuftrag.repeatZahlungAuftragRow);
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.institution, zahlung.getInstitutionStammdaten().getInstitution().getName());
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.name, zahlungsposition.getKind().getNachname());
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.vorname, zahlungsposition.getKind().getVorname());
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.gebDatum, zahlungsposition.getKind().getGeburtsdatum());
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.verfuegung, zahlungsposition.getVerfuegungZeitabschnitt().getVerfuegung().getBetreuung().getBGNummer());
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.vonDatum, zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.bisDatum, zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigBis());
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.bgPensum, BigDecimal.valueOf(zahlungsposition.getVerfuegungZeitabschnitt().getBgPensum())
+							.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.betragCHF, zahlungsposition.getBetrag());
+					});
 			});
 
 		return sheet;
