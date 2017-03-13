@@ -682,7 +682,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		return sb.toString();
 	}
 
-	//TODO: Ist hier Objects.equals() richtig??
 	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject"})
 	public boolean isSame(VerfuegungZeitabschnitt that) {
 		if (this == that) {

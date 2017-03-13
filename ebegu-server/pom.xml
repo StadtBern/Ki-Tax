@@ -29,19 +29,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--todo team ich kommentiere das mal aus weil ich glaube das es im shared schon drin ist-->
-        <!--<dependency>-->
-        <!--<groupId>org.hibernate</groupId>-->
-        <!--<artifactId>hibernate-envers</artifactId>-->
-        <!--<version>${version.hibernate}</version>-->
-        <!--<exclusions>-->
-        <!--<exclusion>-->
-        <!--&lt;!&ndash; mit dom4j kann orm.xml nicht geparst werden &ndash;&gt;-->
-        <!--<groupId>dom4j</groupId>-->
-        <!--<artifactId>dom4j</artifactId>-->
-        <!--</exclusion>-->
-        <!--</exclusions>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>

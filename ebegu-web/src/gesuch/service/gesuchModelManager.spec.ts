@@ -369,25 +369,23 @@ describe('gesuchModelManager', function () {
         });
         describe('updateBetreuungen', function () {
             it('should return empty Promise for undefined betreuung list', function() {
-                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(undefined, true);
                 expect(promise).toBeDefined();
-                let promiseExecuted: boolean = false;
-                promise.then(() => {
-                    promiseExecuted = true;
+                let promiseExecuted: Array<TSBetreuung> =null;
+                promise.then((response) => {
+                    promiseExecuted = response;
                 });
-                $httpBackend.flush();
-                expect(promiseExecuted).toBe(true);
+                scope.$apply();
+                expect(promiseExecuted).toBe(undefined);
             });
             it('should return empty Promise for empty betreuung list', function() {
-                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen([], true);
                 expect(promise).toBeDefined();
                 let promiseExecuted: boolean = false;
-                promise.then(() => {
+                promise.then((response) => {
                     promiseExecuted = true;
                 });
-                $httpBackend.flush();
+                scope.$apply();
                 expect(promiseExecuted).toBe(true);
             });
             it('should return a Promise with the Betreuung that was updated', function() {
@@ -416,8 +414,7 @@ describe('gesuchModelManager', function () {
                     promiseExecuted = response;
                 });
 
-                $httpBackend.flush();
-
+                scope.$apply();
                 expect(betreuungRS.saveBetreuungen).toHaveBeenCalledWith(betreuungen, myGesuch.id, true);
                 expect(promiseExecuted.length).toBe(1);
                 expect(promiseExecuted[0]).toEqual(betreuung);

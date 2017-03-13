@@ -95,12 +95,12 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	 * @param betreuungspensum the betreuungspensum to check
 	 * @param pensumMin the minimum permitted value for pensum
 	 * @param index the index of the Betreuungspensum inside the betreuungspensum container
-	 * @param objectType JA or GS
+	 * @param containerPostfix JA or GS
 	 * @param context the context
 	 * @return true if the value resides inside the permitted range. False otherwise
 	 */
-	private boolean validateBetreuungspensum(Betreuungspensum betreuungspensum, int pensumMin, int index, String objectType, ConstraintValidatorContext context) {
-		// todo homa in Review. Es waere moeglich, die Messages mit der Klasse HibernateConstraintValidatorContext zu erzeugen. Das waere aber Hibernate-abhaengig. wuerde es Sinn machen??
+	private boolean validateBetreuungspensum(Betreuungspensum betreuungspensum, int pensumMin, int index, String containerPostfix, ConstraintValidatorContext context) {
+		// Es waere moeglich, die Messages mit der Klasse HibernateConstraintValidatorContext zu erzeugen. Das waere aber Hibernate-abhaengig. wuerde es Sinn machen??
 		if(betreuungspensum != null && !betreuungspensum.getNichtEingetreten() && betreuungspensum.getPensum() < pensumMin) {
 			ResourceBundle rb = ResourceBundle.getBundle("ValidationMessages");
 			String message = rb.getString("invalid_betreuungspensum");
@@ -108,7 +108,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 
 			context.disableDefaultConstraintViolation();
 			context.buildConstraintViolationWithTemplate(message)
-				.addPropertyNode("betreuungspensumContainers[" + Integer.toString(index) + "].betreuungspensum" + objectType + ".pensum")
+				.addPropertyNode("betreuungspensumContainers[" + Integer.toString(index) + "].betreuungspensum" + containerPostfix + ".pensum")
 				.addConstraintViolation();
 
 			return false;

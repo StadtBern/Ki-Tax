@@ -101,7 +101,7 @@ export class DVBarcodeController {
                     this.dVDialog.showDialogFullscreen(FREIGEBEN_DIALOG_TEMPLATE, FreigabeController, {
                         docID: barcodeDocID
                     }).then(() => {
-                        //TODO: (medu) update view, for example when gesuch is visible in pending table
+                        //TODO (beim) update view, for example when gesuch is visible in pendenzen table
                     });
                 } else {
                     this.errorService.addMesageAsError('Barcode hat falsches Format: ' + barcodeRead);

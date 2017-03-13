@@ -61,7 +61,7 @@ describe('betreuungView', function () {
         wizardStepManager = $injector.get('WizardStepManager');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
             $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS,
-            wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), undefined);
+            wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), $injector.get('$log'));
         betreuungView.model = betreuung;
 
         betreuungView.form = TestDataUtil.createDummyForm();
@@ -217,6 +217,7 @@ describe('betreuungView', function () {
         spyOn($state, 'go');
         spyOn(gesuchModelManager, 'saveBetreuung').and.returnValue(promiseResponse);
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+        TestDataUtil.mockLazyGesuchModelManagerHttpCalls($httpBackend);
         betreuungView.platzAnfordern();
         $rootScope.$apply();
         expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();

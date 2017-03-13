@@ -28,7 +28,7 @@ export class DvCountdownController {
     timer: moment.Duration;
     timerInterval: IPromise<any>;
 
-    static $inject: any[] = ['AuthServiceRS', '$state', '$interval', '$rootScope', 'DvDialog'];
+    static $inject: any[] = ['AuthServiceRS', '$state', '$interval', '$rootScope', 'DvDialog', 'GesuchModelManager'];
 
     constructor(private authServiceRS: AuthServiceRS, private $state: IStateService, private $interval: IIntervalService, private $rootScope: IRootScopeService, private DvDialog: DvDialog,
                 private gesuchModelManager: GesuchModelManager) {
@@ -37,7 +37,7 @@ export class DvCountdownController {
     $onInit() {
         this.TSRoleUtil = TSRoleUtil;
         this.$rootScope.$on(TSHTTPEvent[TSHTTPEvent.REQUEST_FINISHED], () => {
-                if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER) && this.isThereGesuch()  && this.isOnGesuchView()) {
+                if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER) && this.isGesuchAvailableAndWritable()  && this.isOnGesuchView()) {
                     if (this.timerInterval === undefined) {
                         this.startTimer();
                     } else {
@@ -93,11 +93,12 @@ export class DvCountdownController {
     public isOnGesuchView(): boolean {
         return (this.$state.current && this.$state.current.name.substring(0, 7) === 'gesuch.');
     }
-    public isThereGesuch(): boolean {
-        //verursacht login problem wenn man nicht schon eingelogged ist (gesuch model manager versucht services aufzurufen)
-        // if (this.gesuchModelManager.getGesuch() !== undefined) {
-        //     return !this.gesuchModelManager.isGesuchReadonly();
-        // }
+
+    public isGesuchAvailableAndWritable(): boolean {
+        // verursacht login problem wenn man nicht schon eingelogged ist (gesuch model manager versucht services aufzurufen)
+        if (this.gesuchModelManager.getGesuch()) {
+            return !this.gesuchModelManager.isGesuchReadonly();
+        }
         return false;
     }
 }

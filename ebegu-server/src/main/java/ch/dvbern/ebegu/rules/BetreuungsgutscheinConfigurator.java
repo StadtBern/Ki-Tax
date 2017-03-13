@@ -23,13 +23,11 @@ public class BetreuungsgutscheinConfigurator {
 	private List<Rule> rules = new LinkedList<>();
 
 	public List<Rule> configureRulesForMandant(@Nullable Mandant mandant, @Nonnull Map<EbeguParameterKey, EbeguParameter> ebeguRuleParameter) {
-		// TODO (team) Mandant abfragen, sobald es mehrere hat!
 		useBernerRules(ebeguRuleParameter);
 		return rules;
 	}
 
 	public Set<EbeguParameterKey> getRequiredParametersForMandant(@Nullable Mandant mandant) {
-		// TODO (team) Mandant abfragen, sobald es mehrere hat!
 		return requiredBernerParameters();
 	}
 

@@ -22,6 +22,7 @@ import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
@@ -461,6 +462,20 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		return persistedZahlung;
 	}
 
+	@Override
+	public Collection<Zahlungsauftrag> getZahlungsauftraegeInPeriode(LocalDate von, @Nonnull LocalDate bis) {
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Zahlungsauftrag> query = cb.createQuery(Zahlungsauftrag.class);
+
+		Root<Zahlungsauftrag> root = query.from(Zahlungsauftrag.class);
+		Predicate predicates = cb.between(root.get(Zahlungsauftrag_.datumGeneriert), cb.literal(von.atStartOfDay()), cb.literal(bis.atTime(LocalTime.MAX)));
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+		return persistence.getCriteriaResults(query);
+
+	}
+
 	@Nonnull
 	private Zahlungsauftrag zahlungauftragBestaetigenIfAllZahlungenBestaetigt(@Nonnull Zahlungsauftrag zahlungsauftrag) {
 		Objects.requireNonNull(zahlungsauftrag, "zahlungsauftrag darf nicht null sein");
@@ -470,6 +485,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		}
 		return zahlungsauftrag;
 	}
+
 }
 
 
