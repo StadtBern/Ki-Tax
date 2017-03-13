@@ -63,74 +63,36 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Inject
 	private Authorizer authorizer;
 
-	@Inject
-	private ZahlungService zahlungService;
-
 
 	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren) {
-		setZahlungsstatus(verfuegung, ignorieren);
+		setZahlungsstatus(verfuegung, betreuungId, ignorieren);
 		final Verfuegung persistedVerfuegung = persistVerfuegung(verfuegung, betreuungId, Betreuungsstatus.VERFUEGT);
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedVerfuegung;
 	}
 
-	private void setZahlungsstatus(Verfuegung verfuegung, boolean ignorieren) {
+	@SuppressWarnings("LocalVariableNamingConvention")
+	private void setZahlungsstatus(Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren) {
 		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegung.getZeitabschnitte()) {
-			List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung = findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(verfuegungZeitabschnitt,
-				verfuegungZeitabschnitt.getVerfuegung().getBetreuung());
-			// if zeitabschnitteOnVorgaengerVerfuegung is empty the status of the new Zeitabschnitt must still be NEU
+			Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
+			List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung =
+				findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(verfuegungZeitabschnitt, betreuung);
 
-			final BigDecimal totalVerrechneteVerguenstigung = VerfuegungUtil.getVerguenstigungZeitInterval(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnitt.getGueltigkeit());
-//			final BigDecimal newVerrechneteVerguenstigung = ;
-			if (verfuegungZeitabschnitt.getVerguenstigung().compareTo(totalVerrechneteVerguenstigung) != 0) {
-				if (ignorieren) {
-					verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
-				} else {
-					verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+			if (!zeitabschnitteOnVorgaengerVerfuegung.isEmpty()) { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise NEU
+				final BigDecimal totalVerrechneteVerguenstigung = VerfuegungUtil.getVerguenstigungZeitInterval(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnitt.getGueltigkeit());
+				if (verfuegungZeitabschnitt.getVerguenstigung().compareTo(totalVerrechneteVerguenstigung) != 0) {
+					if (ignorieren) {
+						verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
+					} else {
+						verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+					}
 				}
 			}
 		}
-
-//		LocalDate dateLastZahlungsauftrag = Constants.START_OF_TIME;
-//		final Optional<Zahlungsauftrag> lastZahlungsauftrag = zahlungService.findLastZahlungsauftrag();
-//		if (lastZahlungsauftrag.isPresent()) {
-//			dateLastZahlungsauftrag = LocalDate.from(lastZahlungsauftrag.get().getDatumGeneriert().with(TemporalAdjusters.lastDayOfMonth()));
-//		}
-//		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegung.getZeitabschnitte()) {
-//			if (!verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb().isAfter(dateLastZahlungsauftrag)) {
-//				// dies wurde schon ausbezahlt. Mann muss es dementsprechend ignorieren oder als neu setzen
-//				if (ignorieren) {
-//					verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
-//				} else {
-//					if (haveZeitabschnittValuesChanged(verfuegung, verfuegungZeitabschnitt)) {
-//						verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
-//					} else {
-//						verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
-//					}
-//				}
-//			}
-//			else {
-//				// es wurde noch nicht bezahlt. Muss noch bezahlt werden
-//				verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
-//			}
-//		}
 	}
-
-//	private boolean haveZeitabschnittValuesChanged(Verfuegung verfuegung, VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-//		if (verfuegung.hasVorgaenger()) { // man kann nicht nach dem Vorgaenger des Zeitabschnitts fragen, da es nicht richtig gesetzt wird
-//			final Optional<Verfuegung> previousVerfuegung = findVorgaengerVerfuegung(verfuegung.getBetreuung());
-//			if (!previousVerfuegung.isPresent()) {
-//				throw new EbeguEntityNotFoundException("haveZeitabschnittValuesChanged", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, verfuegung.getVorgaengerId());
-//			}
-//			final BigDecimal oldVerguenstigungForInterval = VerfuegungUtil.getVerguenstigungZeitInterval(previousVerfuegung.get().getZeitabschnitte(), verfuegungZeitabschnitt.getGueltigkeit());
-//			// unterschiedliche Verguenstigungen fuehren zu unterschiedlichen Bezahlungen
-//			return verfuegungZeitabschnitt.getVerguenstigung().compareTo(oldVerguenstigungForInterval) != 0;
-//		}
-//		return true;
-//	}
 
 	private void setVerfuegungsKategorien(Verfuegung verfuegung) {
 		if (!verfuegung.isKategorieNichtEintreten()) {
@@ -310,6 +272,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		return result.get().getValueAsBigDecimal();
 	}
 
+	@Override
 	@Nonnull
 	public List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Betreuung betreuungNeu) {
 		Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuungNeu);
