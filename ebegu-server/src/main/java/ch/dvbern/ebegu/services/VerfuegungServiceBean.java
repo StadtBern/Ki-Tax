@@ -81,7 +81,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		if (gesuch.isMutation() && betreuung.isAngebotKita()) { // Zahlungsstatus muss nur bei Mutationen und Angebote der Art KITA aktualisiert werden
 			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegung.getZeitabschnitte()) {
 				List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung =
-					findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(verfuegungZeitabschnitt, betreuung);
+					findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(verfuegungZeitabschnitt, betreuung, true);
 
 				if (!zeitabschnitteOnVorgaengerVerfuegung.isEmpty()) { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise NEU
 					final BigDecimal totalVerrechneteVerguenstigung = VerfuegungUtil.getVerguenstigungZeitInterval(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnitt.getGueltigkeit());
@@ -277,19 +277,20 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Override
 	@Nonnull
-	public List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Betreuung betreuungNeu) {
+	public List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu,
+																							 @Nonnull Betreuung betreuungNeu, boolean includeIgnored) {
 		Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuungNeu);
 		if (vorgaengerVerfuegung.isPresent()) {
 			List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung = findZeitabschnitteOnVorgaengerVerfuegung(zeitabschnittNeu.getGueltigkeit(), vorgaengerVerfuegung.get());
 			Betreuung vorgaengerBetreuung = null;
 			for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitteOnVorgaengerVerfuegung) {
 				vorgaengerBetreuung = zeitabschnitt.getVerfuegung().getBetreuung();
-				if (zeitabschnitt.getZahlungsstatus().isVerrechnet()) {
+				if (zeitabschnitt.getZahlungsstatus().isVerrechnet() || (includeIgnored && zeitabschnitt.getZahlungsstatus().isIgnoriert())) {
 					return zeitabschnitteOnVorgaengerVerfuegung;
 				}
 			}
 			// Es gab keine bereits Verrechneten Zeitabschnitte auf dieser Verfuegung -> eins weiter zurueckgehen
-			return findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, vorgaengerBetreuung);
+			return findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, vorgaengerBetreuung, includeIgnored);
 		}
 		return Collections.emptyList();
 	}

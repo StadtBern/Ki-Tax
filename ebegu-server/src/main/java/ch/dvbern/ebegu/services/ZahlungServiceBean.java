@@ -264,7 +264,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	private void createZahlungspositionenKorrektur(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Zahlungsauftrag zahlungsauftrag, @Nonnull Map<String, Zahlung> zahlungProInstitution) {
 		// Ermitteln, ob die Vollkosten geaendert haben, seit der letzten Verfuegung, die auch verrechnet wurde!
 		List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = verfuegungService
-			.findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, zeitabschnittNeu.getVerfuegung().getBetreuung());
+			.findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, zeitabschnittNeu.getVerfuegung().getBetreuung(), false);
 		if (!zeitabschnittOnVorgaengerVerfuegung.isEmpty()) {
 			BigDecimal vollkostenVorgaenger = BigDecimal.ZERO;
 			BigDecimal elternbeitragVorgaenger = BigDecimal.ZERO;

@@ -84,6 +84,7 @@ public interface VerfuegungService {
 	Optional<LocalDate> findVorgaengerVerfuegungDate(@Nonnull Betreuung betreuung);
 
 	@Nonnull
-	List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Betreuung betreuungNeu);
+	List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu,
+																					  @Nonnull Betreuung betreuungNeu, boolean includeIgnored);
 
 }

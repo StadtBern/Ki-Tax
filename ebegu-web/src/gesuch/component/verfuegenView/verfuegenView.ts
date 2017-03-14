@@ -152,8 +152,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
     public save(): void {
         if (this.isGesuchValid()) {
-            // wenn Erstgesuch, KITA oder die neue Verfuegung dieselben Daten hat, wird sie nur gespeichert
-            if (this.getBetreuung().isAngebotKITA() || this.isSameVerrechneteVerfuegungdaten() || !this.isMutation()) {
+            // wenn Erstgesuch, not KITA oder die neue Verfuegung dieselben Daten hat, wird sie nur gespeichert
+            if (!this.getBetreuung().isAngebotKITA() || this.isSameVerrechneteVerfuegungdaten() || !this.isMutation()) {
                 this.saveVerfuegung().then(() => {
                     this.generateVerfuegungDokument();
                 });

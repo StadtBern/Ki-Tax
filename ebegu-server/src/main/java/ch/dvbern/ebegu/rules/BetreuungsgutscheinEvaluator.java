@@ -10,6 +10,7 @@ import ch.dvbern.ebegu.rules.initalizer.RestanspruchInitializer;
 import ch.dvbern.ebegu.rules.util.BemerkungsMerger;
 import ch.dvbern.ebegu.util.BetreuungComparator;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.VerfuegungUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,10 +170,10 @@ public class BetreuungsgutscheinEvaluator {
 					betreuung.getVerfuegung().setGeneratedBemerkungen(bemerkungenToShow);
 
 					// Ueberpruefen, ob sich die Verfuegungsdaten veraendert haben
-					betreuung.getVerfuegung().setIsSameVerfuegungsdaten();
+					VerfuegungUtil.setIsSameVerfuegungsdaten(betreuung.getVerfuegung());
 
 					// Zahlungsstatus aus vorgaenger uebernehmen
-					betreuung.getVerfuegung().setZahlungsstatus();
+					VerfuegungUtil.setZahlungsstatus(betreuung.getVerfuegung());
 				}
 			}
 		}

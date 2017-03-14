@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.util;
 
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
@@ -37,5 +39,61 @@ public class VerfuegungUtil {
 			}
 		}
 		return totalVerguenstigung.setScale(2, RoundingMode.HALF_UP);
+	}
+
+	public static void setIsSameVerfuegungsdaten(@Nonnull Verfuegung verfuegung) {
+		final Verfuegung verfuegungOnGesuchForMutation = verfuegung.getBetreuung().getVorgaengerVerfuegung();
+		if (verfuegungOnGesuchForMutation != null) {
+			final List<VerfuegungZeitabschnitt> newZeitabschnitte = verfuegung.getZeitabschnitte();
+			final List<VerfuegungZeitabschnitt> zeitabschnitteGSM = verfuegungOnGesuchForMutation.getZeitabschnitte();
+
+			for (VerfuegungZeitabschnitt newZeitabschnitt : newZeitabschnitte) {
+				// todo imanol Dies sollte auch subzeitabschnitte vergleichen
+				Optional<VerfuegungZeitabschnitt> oldSameZeitabschnitt = findZeitabschnittSameGueltigkeit(zeitabschnitteGSM, newZeitabschnitt);
+				if (oldSameZeitabschnitt.isPresent()) {
+					newZeitabschnitt.setSameVerfuegungsdaten(newZeitabschnitt.isSamePersistedValues(oldSameZeitabschnitt.get()));
+				}
+				else { // no Zeitabschnitt with the same Gueltigkeit has been found, so it must be different
+					newZeitabschnitt.setSameVerfuegungsdaten(false);
+				}
+			}
+		}
+	}
+
+	private static Optional<VerfuegungZeitabschnitt> findZeitabschnittSameGueltigkeit(List<VerfuegungZeitabschnitt> zeitabschnitteGSM, VerfuegungZeitabschnitt newZeitabschnitt) {
+		for (VerfuegungZeitabschnitt zeitabschnittGSM : zeitabschnitteGSM) {
+			if (zeitabschnittGSM.getGueltigkeit().equals(newZeitabschnitt.getGueltigkeit())) {
+				return Optional.of(zeitabschnittGSM);
+			}
+		}
+		return Optional.empty();
+	}
+
+	public static void setZahlungsstatus(@Nonnull Verfuegung verfuegung) {
+		final Verfuegung verfuegungOnGesuchForMutation = verfuegung.getBetreuung().getVorgaengerVerfuegung();
+		if (verfuegungOnGesuchForMutation != null) {
+			final List<VerfuegungZeitabschnitt> newZeitabschnitte = verfuegung.getZeitabschnitte();
+			final List<VerfuegungZeitabschnitt> zeitabschnitteGSM = verfuegungOnGesuchForMutation.getZeitabschnitte();
+
+			for (VerfuegungZeitabschnitt newZeitabschnitt : newZeitabschnitte) {
+				VerfuegungsZeitabschnittZahlungsstatus oldStatusZeitabschnitt = findStatusOldZeitabschnitt(zeitabschnitteGSM, newZeitabschnitt);
+				newZeitabschnitt.setZahlungsstatus(oldStatusZeitabschnitt);
+			}
+		}
+	}
+
+	private static VerfuegungsZeitabschnittZahlungsstatus findStatusOldZeitabschnitt(List<VerfuegungZeitabschnitt> zeitabschnitteGSM, VerfuegungZeitabschnitt newZeitabschnitt) {
+		for (VerfuegungZeitabschnitt zeitabschnittGSM : zeitabschnitteGSM) {
+			if (zeitabschnittGSM.getGueltigkeit().getOverlap(newZeitabschnitt.getGueltigkeit()).isPresent()) {
+				// wir gehen davon aus, dass Zahlung immer fuer einen ganzen Monat gemacht werden, deswegen reicht es wenn ein Zeitabschnitt VERRECHNET bzw. IGNORIERT ist
+				if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET)) {
+					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET;
+				}
+				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT)) {
+					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT;
+				}
+			}
+		}
+		return VerfuegungsZeitabschnittZahlungsstatus.NEU;
 	}
 }
