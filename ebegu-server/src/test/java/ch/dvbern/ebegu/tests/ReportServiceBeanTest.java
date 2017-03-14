@@ -85,7 +85,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		List<GesuchStichtagDataRow> rowsSorted = reportData
 			.stream()
-			.sorted(Comparator.comparing(GesuchStichtagDataRow::getBgNummer).thenComparing(GesuchStichtagDataRow::getGesuchId))
+			.sorted(Comparator.comparing(GesuchStichtagDataRow::getBgNummer).thenComparing(GesuchStichtagDataRow::getGesuchLaufNr))
 			.collect(Collectors.toList());
 
 		assertNotNull(rowsSorted);
@@ -106,7 +106,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		List<GesuchZeitraumDataRow> rowsSorted = reportData
 			.stream()
-			.sorted(Comparator.comparing(GesuchZeitraumDataRow::getBgNummer).thenComparing(GesuchZeitraumDataRow::getGesuchId))
+			.sorted(Comparator.comparing(GesuchZeitraumDataRow::getBgNummer).thenComparing(GesuchZeitraumDataRow::getGesuchLaufNr))
 			.collect(Collectors.toList());
 
 		assertNotNull(rowsSorted);
@@ -208,7 +208,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void generateExcelReportZahlungAuftrag() throws Exception {
-		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag("5a1fde7d-991a-4aef-8de2-43387db4f87d", null);
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag("5a1fde7d-991a-4aef-8de2-43387db4f87d");
 
 		assertNotNull(uploadFileInfo);
 		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportZahlungAuftrag.xlsx");

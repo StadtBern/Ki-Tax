@@ -21,7 +21,7 @@ public enum MergeFieldGesuchStichtag implements MergeField {
 	repeatGesuchStichtagRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
 
 	bgNummer(STRING_CONVERTER, Type.SIMPLE),
-	gesuchId(STRING_CONVERTER, Type.SIMPLE),
+	gesuchLaufNr(INTEGER_CONVERTER, Type.SIMPLE),
 	institution(STRING_CONVERTER, Type.SIMPLE),
 	betreuungsTyp(STRING_CONVERTER, Type.SIMPLE),
 	periode(STRING_CONVERTER, Type.SIMPLE),

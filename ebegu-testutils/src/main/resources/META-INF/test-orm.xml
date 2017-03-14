@@ -26,7 +26,7 @@ SELECT
   , kind_container.kind_nummer
   , betreuung.betreuung_nummer
   )                                                                       AS BGNummer,
-  gesuch.laufnummer 													  AS gesuchId,
+  gesuch.laufnummer 													  AS gesuchLaufNr,
   CONCAT(IFNULL(CONCAT(traegerschaft.name, ' - '), ''), institution.name) AS Institution,
   institution_stammdaten.betreuungsangebot_typ                            AS BetreuungsTyp,
   CONCAT_WS('/', CAST(YEAR(gesuchsperiode.gueltig_ab) AS CHAR(4))
@@ -98,7 +98,7 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
   , kind_container.kind_nummer
   , betreuung.betreuung_nummer
   )                                                                       AS BGNummer,
-  gesuch.laufnummer 													  AS gesuchId,
+  gesuch.laufnummer 													  AS gesuchLaufNr,
   CONCAT(IFNULL(CONCAT(traegerschaft.name, ' - '), ''), institution.name) AS Institution,
   institution_stammdaten.betreuungsangebot_typ                            AS BetreuungsTyp,
   CONCAT_WS('/', CAST(YEAR(gesuchsperiode.gueltig_ab) AS CHAR(4))

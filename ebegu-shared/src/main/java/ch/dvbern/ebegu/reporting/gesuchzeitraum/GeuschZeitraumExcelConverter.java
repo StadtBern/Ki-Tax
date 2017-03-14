@@ -40,7 +40,7 @@ public class GeuschZeitraumExcelConverter implements ExcelConverter {
 		data.forEach(dataRow -> {
 				ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldGesuchZeitraum.repeatGesuchZeitraumRow);
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.bgNummer, dataRow.getBgNummer());
-				excelRowGroup.addValue(MergeFieldGesuchZeitraum.gesuchId, dataRow.getGesuchId());
+				excelRowGroup.addValue(MergeFieldGesuchZeitraum.gesuchLaufNr, dataRow.getGesuchLaufNr());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.institution, dataRow.getInstitution());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.betreuungsTyp, dataRow.getBetreuungsTyp());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.periode, dataRow.getPeriode());
