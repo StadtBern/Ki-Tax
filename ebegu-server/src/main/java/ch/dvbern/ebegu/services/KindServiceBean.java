@@ -1,8 +1,11 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuch_;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -12,10 +15,7 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,4 +78,22 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.KINDER);
 	}
 
+	@Override
+	@Nonnull
+	public List<KindContainer> getAllKinderWithMissingStatistics() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<KindContainer> query = cb.createQuery(KindContainer.class);
+
+		Root<KindContainer> root = query.from(KindContainer.class);
+		Join<KindContainer, Gesuch> joinGesuch = root.join(KindContainer_.gesuch, JoinType.LEFT);
+
+
+		Predicate predicateMutation = cb.equal(joinGesuch.get(Gesuch_.typ), AntragTyp.MUTATION);
+		Predicate predicateFlag = cb.isNull(root.get(KindContainer_.kindMutiert));
+		Predicate predicateStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
+
+		query.where(predicateMutation, predicateFlag, predicateStatus);
+		query.orderBy(cb.desc(joinGesuch.get(Gesuch_.laufnummer)));
+		return persistence.getCriteriaResults(query);
+	}
 }
