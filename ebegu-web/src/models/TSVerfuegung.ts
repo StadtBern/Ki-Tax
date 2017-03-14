@@ -104,11 +104,14 @@ export default class TSVerfuegung extends TSAbstractEntity {
     }
 
     /**
-     * Checks whether all Zeitabschnitte that have been paid have the same data as the previous (vorgaenger) Verfuegung.
+     * Checks whether all Zeitabschnitte that have been paid (verrechnet or ignored)
+     * have the same data as the previous (vorgaenger) Verfuegung.
      */
     public isSameVerrechneteVerfuegungdaten(): boolean {
         for (let i = 0; i < this._zeitabschnitte.length; i++) {
-            if (this._zeitabschnitte[i].sameVerfuegungsdaten !== true && this._zeitabschnitte[i].zahlungsstatus === TSVerfuegungZeitabschnittZahlungsstatus.VERRECHNET) {
+            if (this._zeitabschnitte[i].sameVerfuegungsdaten !== true
+                && (this._zeitabschnitte[i].zahlungsstatus === TSVerfuegungZeitabschnittZahlungsstatus.VERRECHNET
+                    || this._zeitabschnitte[i].zahlungsstatus === TSVerfuegungZeitabschnittZahlungsstatus.IGNORIERT)) {
                 return false;
             }
         }

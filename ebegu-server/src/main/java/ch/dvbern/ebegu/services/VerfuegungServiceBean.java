@@ -78,7 +78,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	private void setZahlungsstatus(Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren) {
 		Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
 		final Gesuch gesuch = betreuung.extractGesuch();
-		if (gesuch.isMutation()) { // Zahlungsstatus muss nur bei Mutationen aktualisiert werden
+		if (gesuch.isMutation() && betreuung.isAngebotKita()) { // Zahlungsstatus muss nur bei Mutationen und Angebote der Art KITA aktualisiert werden
 			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegung.getZeitabschnitte()) {
 				List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung =
 					findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(verfuegungZeitabschnitt, betreuung);

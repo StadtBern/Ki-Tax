@@ -1614,13 +1614,11 @@ public class JaxBConverter {
 			jaxVerfuegung.setKategorieNichtEintreten(verfuegung.isKategorieNichtEintreten());
 			jaxVerfuegung.setKategorieNormal(verfuegung.isKategorieNormal());
 
-			if (verfuegung.getZeitabschnitte() != null) {
-				jaxVerfuegung.getZeitabschnitte().addAll(
-					verfuegung.getZeitabschnitte()
-						.stream()
-						.map(this::verfuegungZeitabschnittToJax)
-						.collect(Collectors.toList()));
-			}
+			jaxVerfuegung.getZeitabschnitte().addAll(
+				verfuegung.getZeitabschnitte()
+					.stream()
+					.map(this::verfuegungZeitabschnittToJax)
+					.collect(Collectors.toList()));
 
 			return jaxVerfuegung;
 		}
