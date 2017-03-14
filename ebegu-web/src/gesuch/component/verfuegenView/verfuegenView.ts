@@ -43,6 +43,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
     private verfuegungen: TSVerfuegung[] = [];
     private showSchemas: boolean;
+    private sameVerfuegungsdaten: boolean;
+    private sameVerrechneteVerfuegungdaten: boolean;
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
@@ -104,6 +106,11 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
         this.initDevModeParameter();
+
+        // folgende Methoden werden hier aufgerufen, weil die Daten sich nicht aendern werden, waehrend man auf der Seite ist.
+        // Somit verbessern wir die Performance indem wir diese Daten ganz am Anfang berechnen und in einer Variable speichern
+        this.setSameVerfuegungsdaten();
+        this.setSameVerrechneteVerfuegungdaten();
     }
 
     private initDevModeParameter() {
@@ -117,10 +124,35 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         this.form.$setPristine();
     }
 
+    private setSameVerfuegungsdaten(): void {
+        this.sameVerfuegungsdaten = false; // by default
+        if (this.getVerfuegenToWorkWith()) {
+            this.sameVerfuegungsdaten = this.getVerfuegenToWorkWith().areSameVerfuegungsdaten();
+        }
+    }
+
+    /**
+     * Checks whether all Abschnitte that are already paid, have the same value of the new abschnitte from
+     * the new verfuegung. Returns true if they are the same
+     */
+    private setSameVerrechneteVerfuegungdaten(): void {
+        this.sameVerrechneteVerfuegungdaten = false; // by default
+        if (this.getVerfuegenToWorkWith()) {
+            this.sameVerrechneteVerfuegungdaten = this.getVerfuegenToWorkWith().isSameVerrechneteVerfuegungdaten();
+        }
+    }
+
+    public isSameVerfuegungsdaten(): boolean {
+        return this.sameVerfuegungsdaten;
+    }
+
+    private isSameVerrechneteVerfuegungdaten(): boolean {
+        return this.sameVerrechneteVerfuegungdaten;
+    }
 
     public save(): void {
         if (this.isGesuchValid()) {
-            if (this.isSameVerfuegungdaten() || !this.isMutation()) { // wenn Erstgesuch oder die neue Verfuegung dieselben Daten hat, wird sie nur gespeichert
+            if (this.isSameVerrechneteVerfuegungdaten() || !this.isMutation()) { // wenn Erstgesuch oder die neue Verfuegung dieselben Daten hat, wird sie nur gespeichert
                 this.saveVerfuegung().then(() => {
                     this.generateVerfuegungDokument();
                 });
@@ -351,13 +383,6 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });
-    }
-
-    public isSameVerfuegungdaten(): boolean {
-        if (this.getVerfuegenToWorkWith()) {
-            return this.getVerfuegenToWorkWith().sameVerfuegungsdaten;
-        }
-        return undefined;
     }
 
     public showVerfuegungsDetails(): boolean {

@@ -32,7 +32,6 @@ public class BetreuungsgutscheinEvaluator {
 	private RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
 	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
 	private MutationsMerger mutationsMerger = new MutationsMerger();
-	private VerfuegungsVergleicher verfuegungsVergleicher = new VerfuegungsVergleicher();
 	private AbschlussNormalizer abschlussNormalizer = new AbschlussNormalizer();
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
@@ -170,7 +169,10 @@ public class BetreuungsgutscheinEvaluator {
 					betreuung.getVerfuegung().setGeneratedBemerkungen(bemerkungenToShow);
 
 					// Ueberpruefen, ob sich die Verfuegungsdaten veraendert haben
-					betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung));
+					betreuung.getVerfuegung().setIsSameVerfuegungsdaten();
+
+					// Zahlungsstatus aus vorgaenger uebernehmen
+					betreuung.getVerfuegung().setZahlungsstatus();
 				}
 			}
 		}
@@ -215,6 +217,7 @@ public class BetreuungsgutscheinEvaluator {
 		return restanspruchZeitabschnitte;
 	}
 
+	@SuppressWarnings("LoopStatementThatDoesntLoop")
 	private Betreuung getFirstBetreuungOfGesuch(Gesuch gesuch) {
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {

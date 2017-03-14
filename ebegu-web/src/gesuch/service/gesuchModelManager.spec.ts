@@ -371,7 +371,7 @@ describe('gesuchModelManager', function () {
             it('should return empty Promise for undefined betreuung list', function() {
                 let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(undefined, true);
                 expect(promise).toBeDefined();
-                let promiseExecuted: Array<TSBetreuung> =null;
+                let promiseExecuted: Array<TSBetreuung> = null;
                 promise.then((response) => {
                     promiseExecuted = response;
                 });

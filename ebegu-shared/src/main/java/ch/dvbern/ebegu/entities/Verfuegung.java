@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Verfuegung fuer eine einzelne Betreuung
@@ -21,9 +23,6 @@ public class Verfuegung extends AbstractEntity{
 
 	private static final long serialVersionUID = -6682874795746487562L;
 
-
-	@Transient
-	private boolean sameVerfuegungsdaten;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -66,27 +65,30 @@ public class Verfuegung extends AbstractEntity{
 	private boolean kategorieNichtEintreten = false;
 
 
+	@Nullable
 	public String getGeneratedBemerkungen() {
 		return generatedBemerkungen;
 	}
 
-	public void setGeneratedBemerkungen(String automatischeInitialisiertteBemerkungen) {
-		this.generatedBemerkungen = automatischeInitialisiertteBemerkungen;
+	public void setGeneratedBemerkungen(@Nullable String autoInitialisierteBemerkungen) {
+		this.generatedBemerkungen = autoInitialisierteBemerkungen;
 	}
 
+	@Nullable
 	public String getManuelleBemerkungen() {
 		return manuelleBemerkungen;
 	}
 
-	public void setManuelleBemerkungen(String manuelleBemerkungen) {
+	public void setManuelleBemerkungen(@Nullable String manuelleBemerkungen) {
 		this.manuelleBemerkungen = manuelleBemerkungen;
 	}
 
+	@Nonnull
 	public List<VerfuegungZeitabschnitt> getZeitabschnitte() {
 		return zeitabschnitte;
 	}
 
-	public void setZeitabschnitte(List<VerfuegungZeitabschnitt> zeitabschnitte) {
+	public void setZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		this.zeitabschnitte = zeitabschnitte;
 		for (VerfuegungZeitabschnitt zeitabschnitt : this.zeitabschnitte) {
 			zeitabschnitt.setVerfuegung(this);
@@ -164,11 +166,61 @@ public class Verfuegung extends AbstractEntity{
 		return sb.toString();
 	}
 
-	public boolean isSameVerfuegungsdaten() {
-		return sameVerfuegungsdaten;
+	// todo imanol -> move method to a utils????
+	public void setIsSameVerfuegungsdaten() {
+		final Verfuegung verfuegungOnGesuchForMutation = betreuung.getVorgaengerVerfuegung();
+		if (verfuegungOnGesuchForMutation != null) {
+			final List<VerfuegungZeitabschnitt> newZeitabschnitte = this.getZeitabschnitte();
+			final List<VerfuegungZeitabschnitt> zeitabschnitteGSM = verfuegungOnGesuchForMutation.getZeitabschnitte();
+
+			for (VerfuegungZeitabschnitt newZeitabschnitt : newZeitabschnitte) {
+				// todo imanol Dies sollte auch subzeitabschnitte vergleichen
+				Optional<VerfuegungZeitabschnitt> oldSameZeitabschnitt = findZeitabschnittSameGueltigkeit(zeitabschnitteGSM, newZeitabschnitt);
+				if (oldSameZeitabschnitt.isPresent()) {
+					newZeitabschnitt.setSameVerfuegungsdaten(newZeitabschnitt.isSamePersistedValues(oldSameZeitabschnitt.get()));
+				}
+				else { // no Zeitabschnitt with the same Gueltigkeit has been found, so it must be different
+					newZeitabschnitt.setSameVerfuegungsdaten(false);
+				}
+			}
+		}
 	}
 
-	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
-		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
+	private Optional<VerfuegungZeitabschnitt> findZeitabschnittSameGueltigkeit(List<VerfuegungZeitabschnitt> zeitabschnitteGSM, VerfuegungZeitabschnitt newZeitabschnitt) {
+		for (VerfuegungZeitabschnitt zeitabschnittGSM : zeitabschnitteGSM) {
+			if (zeitabschnittGSM.getGueltigkeit().equals(newZeitabschnitt.getGueltigkeit())) {
+				return Optional.of(zeitabschnittGSM);
+			}
+		}
+		return Optional.empty();
+	}
+
+	// todo imanol -> move method to a utils????
+	public void setZahlungsstatus() {
+		final Verfuegung verfuegungOnGesuchForMutation = betreuung.getVorgaengerVerfuegung();
+		if (verfuegungOnGesuchForMutation != null) {
+			final List<VerfuegungZeitabschnitt> newZeitabschnitte = this.getZeitabschnitte();
+			final List<VerfuegungZeitabschnitt> zeitabschnitteGSM = verfuegungOnGesuchForMutation.getZeitabschnitte();
+
+			for (VerfuegungZeitabschnitt newZeitabschnitt : newZeitabschnitte) {
+				VerfuegungsZeitabschnittZahlungsstatus oldStatusZeitabschnitt = findStatusOldZeitabschnitt(zeitabschnitteGSM, newZeitabschnitt);
+				newZeitabschnitt.setZahlungsstatus(oldStatusZeitabschnitt);
+			}
+		}
+	}
+
+	private VerfuegungsZeitabschnittZahlungsstatus findStatusOldZeitabschnitt(List<VerfuegungZeitabschnitt> zeitabschnitteGSM, VerfuegungZeitabschnitt newZeitabschnitt) {
+		for (VerfuegungZeitabschnitt zeitabschnittGSM : zeitabschnitteGSM) {
+			if (zeitabschnittGSM.getGueltigkeit().getOverlap(newZeitabschnitt.getGueltigkeit()).isPresent()) {
+				// wir gehen davon aus, dass Zahlung immer fuer einen ganzen Monat gemacht werden, deswegen reicht es wenn ein Zeitabschnitt VERRECHNET bzw. IGNORIERT ist
+				if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET)) {
+					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET;
+				}
+				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT)) {
+					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT;
+				}
+			}
+		}
+		return VerfuegungsZeitabschnittZahlungsstatus.NEU;
 	}
 }

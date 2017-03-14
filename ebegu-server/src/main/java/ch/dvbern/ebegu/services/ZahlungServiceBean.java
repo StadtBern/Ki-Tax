@@ -278,9 +278,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 			// Falls keine Aenderung -> Keine KorrekturZahlung notwendig!
 			boolean vollkostenChanged = vollkostenVorgaenger != null && vollkostenVorgaenger.compareTo(zeitabschnittNeu.getVollkosten()) != 0;
 			boolean elternbeitragChanged = elternbeitragVorgaenger != null && elternbeitragVorgaenger.compareTo(zeitabschnittNeu.getElternbeitrag()) != 0;
-			if (!vollkostenChanged && !elternbeitragChanged) {
-				zeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IDENTISCH);
-			} else {
+			if (vollkostenChanged || elternbeitragChanged) {
 				// Irgendetwas hat geaendert, wir brauchen eine Korrekturzahlung
 				Zahlung zahlung = findZahlungForInstitution(zeitabschnittNeu, zahlungsauftrag, zahlungProInstitution);
 				createZahlungspositionKorrekturNeuerWert(zeitabschnittNeu, zahlung, vollkostenChanged);

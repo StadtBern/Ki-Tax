@@ -41,6 +41,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	// Zwischenresulate aus DATA-Rules ("Abschnitt")
 
 	@Transient
+	private boolean sameVerfuegungsdaten;
+
+	@Transient
 	private Integer erwerbspensumGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
 	@Transient
@@ -748,8 +751,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(famGroesse.compareTo(that.famGroesse) == 0) &&
 			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
 			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0 &&
-			Objects.equals(this.einkommensjahr, that.einkommensjahr) &&
-			Objects.equals(this.zahlungsstatus, that.zahlungsstatus);
+			Objects.equals(this.einkommensjahr, that.einkommensjahr);
 	}
 
 	/**
@@ -769,5 +771,13 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		compareToBuilder.append(this.getGueltigkeit(), other.getGueltigkeit());
 		compareToBuilder.append(this.getId(), other.getId());  // wenn ids nicht gleich sind wollen wir auch compare to nicht gleich
 		return compareToBuilder.toComparison();
+	}
+
+	public boolean isSameVerfuegungsdaten() {
+		return sameVerfuegungsdaten;
+	}
+
+	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
+		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
 	}
 }

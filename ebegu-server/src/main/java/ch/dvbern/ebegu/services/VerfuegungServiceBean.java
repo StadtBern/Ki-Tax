@@ -76,18 +76,21 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@SuppressWarnings("LocalVariableNamingConvention")
 	private void setZahlungsstatus(Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren) {
-		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegung.getZeitabschnitte()) {
-			Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
-			List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung =
-				findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(verfuegungZeitabschnitt, betreuung);
+		Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
+		final Gesuch gesuch = betreuung.extractGesuch();
+		if (gesuch.isMutation()) { // Zahlungsstatus muss nur bei Mutationen aktualisiert werden
+			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegung.getZeitabschnitte()) {
+				List<VerfuegungZeitabschnitt> zeitabschnitteOnVorgaengerVerfuegung =
+					findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(verfuegungZeitabschnitt, betreuung);
 
-			if (!zeitabschnitteOnVorgaengerVerfuegung.isEmpty()) { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise NEU
-				final BigDecimal totalVerrechneteVerguenstigung = VerfuegungUtil.getVerguenstigungZeitInterval(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnitt.getGueltigkeit());
-				if (verfuegungZeitabschnitt.getVerguenstigung().compareTo(totalVerrechneteVerguenstigung) != 0) {
-					if (ignorieren) {
-						verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
-					} else {
-						verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+				if (!zeitabschnitteOnVorgaengerVerfuegung.isEmpty()) { // we only check the status if there has been any verrechnete zeitabschnitt. Otherwise NEU
+					final BigDecimal totalVerrechneteVerguenstigung = VerfuegungUtil.getVerguenstigungZeitInterval(zeitabschnitteOnVorgaengerVerfuegung, verfuegungZeitabschnitt.getGueltigkeit());
+					if (verfuegungZeitabschnitt.getVerguenstigung().compareTo(totalVerrechneteVerguenstigung) != 0) {
+						if (ignorieren) {
+							verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
+						} else {
+							verfuegungZeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.NEU);
+						}
 					}
 				}
 			}

@@ -24,13 +24,14 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
     private _kategorieKeinPensum: boolean;
     private _kategorieZuschlagZumErwerbspensum: boolean;
     private _zuSpaetEingereicht: boolean;
+    private _sameVerfuegungsdaten: boolean;
 
 
     constructor(erwerbspensumGS1?: number, erwerbspensumGS2?: number, betreuungspensum?: number, fachstellenpensum?: number,
                 anspruchspensumRest?: number, anspruchberechtigtesPensum?: number, bgPensum?: number, betreuungsstunden?: number, vollkosten?: number,
                 elternbeitrag?: number, abzugFamGroesse?: number, massgebendesEinkommen?: number, bemerkungen?: string,
                 zahlungsstatus?: TSVerfuegungZeitabschnittZahlungsstatus, gueltigkeit?: TSDateRange, famGroesse?: number, einkommensjahr?: number, kategorieMaxEinkommen?: boolean,
-                kategorieKeinPensum?: boolean, kategorieZuschlagZumErwerbspensum?: boolean) {
+                kategorieKeinPensum?: boolean, kategorieZuschlagZumErwerbspensum?: boolean, sameVerfuegungsdaten?: boolean) {
         super(gueltigkeit);
         this._erwerbspensumGS1 = erwerbspensumGS1;
         this._erwerbspensumGS2 = erwerbspensumGS2;
@@ -51,6 +52,7 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._kategorieMaxEinkommen = kategorieMaxEinkommen;
         this._kategorieKeinPensum = kategorieKeinPensum;
         this._kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
+        this._sameVerfuegungsdaten = sameVerfuegungsdaten;
     }
 
     get erwerbspensumGS1(): number {
@@ -211,5 +213,13 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
 
     set zuSpaetEingereicht(value: boolean) {
         this._zuSpaetEingereicht = value;
+    }
+
+    get sameVerfuegungsdaten(): boolean {
+        return this._sameVerfuegungsdaten;
+    }
+
+    set sameVerfuegungsdaten(value: boolean) {
+        this._sameVerfuegungsdaten = value;
     }
 }
