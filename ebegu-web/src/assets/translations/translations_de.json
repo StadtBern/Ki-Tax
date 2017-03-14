@@ -547,6 +547,7 @@
     "ABGEWIESEN": "Abgewiesen",
     "BESTAETIGT": "Bestätigt",
     "AUSGELOEST": "Ausgelöst",
+    "ZAHLUNG_ERHALTEN": "Zahlung erhalten",
     "ENTWURF": "Entwurf",
     "BETREUUNG_WARTEN_TEXT": "warten auf Platzbestätigung.",
     "BETREUUNG_BESTAETIGT_TEXT": "Dieses Betreuungsangebot wurde am {{date}} bestätigt.",
@@ -921,6 +922,7 @@
     "ZAHLUNG_BESCHRIEB_UPPER": "BESCHRIEB",
     "ZAHLUNG_PAIN001_UPPER": "PAIN001",
     "ZAHLUNGSAUFTRAEGE_UPPER": "ZAHLUNGSAUFTRÄGE",
+    "ZAHLUNGSAUFTRAEGE": "Zahlungsaufträge",
     "ZAHLUNG_INSTITUION_UPPER": "INSTITUION",
     "ZAHLUNG_BETRAG_UPPER": "BETRAG",
     "ZAHLUNG_STATUS_UPPER": "STATUS",
@@ -931,6 +933,7 @@
     "ZAHLUNG_DETAILPOSITIONEN_UPPER": "DETAILPOSITIONEN",
     "ZAHLUNG_ERSTELLEN": "ZAHLUNG ERSTELLEN",
     "ZAHLUNG_UEBERSICHT": "ÜBERSICHT",
+    "ZAHLUNG": "Zahlung",
     "ARIA_REMOVE_ERWERBSPENSUM" : "Das Erwerbspensum dieser Zeile entfernen",
     "ARIA_ADD_ERWERBSPENSUM" : "Ein neues Erwerbspensum erfassen",
     "ARIA_KONTAKT_MENU" : "Kontakt des Jugendamtes"
