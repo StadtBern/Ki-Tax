@@ -26,6 +26,7 @@ SELECT
   , kind_container.kind_nummer
   , betreuung.betreuung_nummer
   )                                                                       AS BGNummer,
+  gesuch.laufnummer 													  AS gesuchLaufNr,
   CONCAT(IFNULL(CONCAT(traegerschaft.name, ' - '), ''), institution.name) AS Institution,
   institution_stammdaten.betreuungsangebot_typ                            AS BetreuungsTyp,
   CONCAT_WS('/', CAST(YEAR(gesuchsperiode.gueltig_ab) AS CHAR(4))
@@ -97,6 +98,7 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
   , kind_container.kind_nummer
   , betreuung.betreuung_nummer
   )                                                                       AS BGNummer,
+  gesuch.laufnummer 													  AS gesuchLaufNr,
   CONCAT(IFNULL(CONCAT(traegerschaft.name, ' - '), ''), institution.name) AS Institution,
   institution_stammdaten.betreuungsangebot_typ                            AS BetreuungsTyp,
   CONCAT_WS('/', CAST(YEAR(gesuchsperiode.gueltig_ab) AS CHAR(4))
@@ -107,8 +109,8 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
   IFNULL(EingegangeneGesuch.AnzahlGesuchPapier, 0)                           AnzahlGesuchPapier,
   IFNULL(EingegangeneGesuch.AnzahlMutationOnline, 0)                         AnzahlMutationOnline,
   IFNULL(EingegangeneGesuch.AnzahlMutationPapier, 0)                         AnzahlMutationPapier,
-  IFNULL(Mutationen.AnzahlMutationAbwesenheit, 0)                            AnzahlMutationAbwesenheit,
-  IFNULL(Mutationen.AnzahlMutationBetreuung, 0)                              AnzahlMutationBetreuung,
+  IFNULL(betreuung.abwesenheit_mutiert, 0)                                   AnzahlMutationAbwesenheit,
+  IFNULL(betreuung.betreuung_mutiert, 0)                                     AnzahlMutationBetreuung,
   IFNULL(Mutationen.AnzahlMutationDokumente, 0)                              AnzahlMutationDokumente,
   IFNULL(Mutationen.AnzahlMutationEV, 0)                                     AnzahlMutationEV,
   IFNULL(Mutationen.AnzahlMutationEwerbspensum, 0)                           AnzahlMutationEwerbspensum,
@@ -117,7 +119,7 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
   IFNULL(Mutationen.AnzahlMutationFreigabe, 0)                               AnzahlMutationFreigabe,
   IFNULL(Mutationen.AnzahlMutationGesuchErstellen, 0)                        AnzahlMutationGesuchErstellen,
   IFNULL(Mutationen.AnzahlMutationGesuchsteller, 0)                          AnzahlMutationGesuchsteller,
-  IFNULL(Mutationen.AnzahlMutationKinder, 0)                                 AnzahlMutationKinder,
+  IFNULL(kind_container.kind_mutiert, 0)                                     AnzahlMutationKinder,
   IFNULL(Mutationen.AnzahlMutationUmzug, 0)                                  AnzahlMutationUmzug,
   IFNULL(Mutationen.AnzahlMutationVerfuegen, 0)                              AnzahlMutationVerfuegen,
   IFNULL(Mahnungen.AnzahlMahnungen, 0)                                       AnzahlMahnungen,
@@ -158,10 +160,6 @@ FROM kind_container
   (
     SELECT
       gesuch_id,
-      CASE WHEN wizard_step_name = 'ABWESENHEIT'
-        THEN 1 END AnzahlMutationAbwesenheit,
-      CASE WHEN wizard_step_name = 'BETREUUNG'
-        THEN 1 END AnzahlMutationBetreuung,
       CASE WHEN wizard_step_name = 'DOKUMENTE'
         THEN 1 END AnzahlMutationDokumente,
       CASE WHEN wizard_step_name = 'EINKOMMENSVERSCHLECHTERUNG'
@@ -178,14 +176,13 @@ FROM kind_container
         THEN 1 END AnzahlMutationGesuchErstellen,
       CASE WHEN wizard_step_name = 'GESUCHSTELLER'
         THEN 1 END AnzahlMutationGesuchsteller,
-      CASE WHEN wizard_step_name = 'KINDER'
-        THEN 1 END AnzahlMutationKinder,
       CASE WHEN wizard_step_name = 'UMZUG'
         THEN 1 END AnzahlMutationUmzug,
       CASE WHEN wizard_step_name = 'VERFUEGEN'
         THEN 1 END AnzahlMutationVerfuegen
     FROM wizard_step
     WHERE wizard_step_status = 'MUTIERT'
+    AND wizard_step_name NOT IN ('ABWESENHEIT','BETREUUNG','KINDER')
   ) Mutationen ON Mutationen.gesuch_id = gesuch.id
 
   LEFT OUTER JOIN (
@@ -233,8 +230,8 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
         OR IFNULL(EingegangeneGesuch.AnzahlGesuchPapier, 0) = 1
         OR IFNULL(EingegangeneGesuch.AnzahlMutationOnline, 0) = 1
         OR IFNULL(EingegangeneGesuch.AnzahlMutationPapier, 0) = 1
-        OR IFNULL(Mutationen.AnzahlMutationAbwesenheit, 0) = 1
-        OR IFNULL(Mutationen.AnzahlMutationBetreuung, 0) = 1
+        OR IFNULL(betreuung.abwesenheit_mutiert, 0) = 1
+        OR IFNULL(betreuung.betreuung_mutiert, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationDokumente, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationEV, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationEwerbspensum, 0) = 1
@@ -243,7 +240,7 @@ WHERE (gesuchsperiode.id = :gesuchPeriodeID OR :gesuchPeriodeID IS NULL)
         OR IFNULL(Mutationen.AnzahlMutationFreigabe, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationGesuchErstellen, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationGesuchsteller, 0) = 1
-        OR IFNULL(Mutationen.AnzahlMutationKinder, 0) = 1
+        OR IFNULL(kind_container.kind_mutiert, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationUmzug, 0) = 1
         OR IFNULL(Mutationen.AnzahlMutationVerfuegen, 0) = 1
         OR IFNULL(Mahnungen.AnzahlMahnungen, 0) = 1
