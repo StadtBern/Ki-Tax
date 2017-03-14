@@ -54,7 +54,7 @@
                             dv-show-allowed-roles="['SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
                             <a type="button" class="btn-link link-underline" ng-click="vm.bestaetigen(row)" href=""
                                ng-if="!vm.isBestaetigt(row.status)">
-                                <span ng-bind="row.status | translate" style="color: #D50025"></span>
+                                <span ng-bind=" 'ZAHLUNG_ERHALTEN'| translate" style="color: #D50025"></span>
                             </a>
                             <span ng-bind="row.status | translate" ng-if="vm.isBestaetigt(row.status)"></span>
                         </td>

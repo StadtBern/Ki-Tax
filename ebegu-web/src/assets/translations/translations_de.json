@@ -547,6 +547,7 @@
     "ABGEWIESEN": "Abgewiesen",
     "BESTAETIGT": "Bestätigt",
     "AUSGELOEST": "Ausgelöst",
+    "ZAHLUNG_ERHALTEN": "Zahlung erhalten",
     "ENTWURF": "Entwurf",
     "BETREUUNG_WARTEN_TEXT": "warten auf Platzbestätigung.",
     "BETREUUNG_BESTAETIGT_TEXT": "Dieses Betreuungsangebot wurde am {{date}} bestätigt.",
