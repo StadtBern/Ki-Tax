@@ -1401,6 +1401,8 @@ public class JaxBConverter {
 			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
 		}
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
+		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
+		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
@@ -1589,6 +1591,8 @@ public class JaxBConverter {
 		if (betreuungFromServer.getVerfuegung() != null) {
 			jaxBetreuung.setVerfuegung(verfuegungToJax(betreuungFromServer.getVerfuegung()));
 		}
+		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
+		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
 		return jaxBetreuung;
 	}
 
