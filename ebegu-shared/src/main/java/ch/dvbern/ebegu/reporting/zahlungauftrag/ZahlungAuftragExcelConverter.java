@@ -12,8 +12,8 @@ package ch.dvbern.ebegu.reporting.zahlungauftrag;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.reporting.lib.ExcelConverter;
-import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
+import ch.dvbern.lib.excelmerger.ExcelConverter;
+import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import javax.annotation.Nonnull;
