@@ -61,11 +61,12 @@ export class DVMitteilungListController {
                 private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window: IWindowService,
                 private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil, private DvDialog: DvDialog,
                 private gesuchModelManager: GesuchModelManager) {
-
-        this.initViewModel();
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
         this.ebeguUtil = ebeguUtil;
+    }
+    $onInit() {
+        this.initViewModel();
     }
 
     private initViewModel() {
