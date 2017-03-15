@@ -9,8 +9,8 @@
  */
 package ch.dvbern.ebegu.reporting.kanton;
 
-import ch.dvbern.ebegu.reporting.lib.ExcelConverter;
-import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
+import ch.dvbern.lib.excelmerger.ExcelConverter;
+import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import javax.annotation.Nonnull;
@@ -29,7 +29,7 @@ public class KantonExcelConverter implements ExcelConverter {
 	}
 
 	@Nonnull
-	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<KantonDataRow> data, @Nonnull Locale lang, LocalDate datumVon, LocalDate datumBis) {
+	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<KantonDataRow> data, @Nonnull Locale lang,  @Nonnull LocalDate datumVon,  @Nonnull LocalDate datumBis) {
 		checkNotNull(data);
 
 		ExcelMergerDTO sheet = new ExcelMergerDTO();
