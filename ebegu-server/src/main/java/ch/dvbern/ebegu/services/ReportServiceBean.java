@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -236,6 +235,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Validate.notNull(datumVon, "Das Argument 'datumVon' darf nicht leer sein");
 		Validate.notNull(datumBis, "Das Argument 'datumBis' darf nicht leer sein");
 
+		Collection<Gesuchsperiode> relevanteGesuchsperioden = gesuchsperiodeService.getGesuchsperiodenBetween(datumVon, datumBis);
+		if (relevanteGesuchsperioden.isEmpty()) {
+			return Collections.emptyList();
+		}
 		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
 		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = builder.createQuery(VerfuegungZeitabschnitt.class);
@@ -250,21 +253,16 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		predicatesToUse.add(predicateEnd);
 
 		// nur das neuest verfuegte Gesuch
-		Collection<Gesuchsperiode> relevanteGesuchsperioden = gesuchsperiodeService.getGesuchsperiodenBetween(datumVon, datumBis);
-		if (!relevanteGesuchsperioden.isEmpty()) {
-			List<String> idsOfLetztVerfuegteAntraege = new ArrayList<>();
-			for (Gesuchsperiode gesuchsperiode : relevanteGesuchsperioden) {
-				idsOfLetztVerfuegteAntraege.addAll(gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiode));
-			}
-			if (!idsOfLetztVerfuegteAntraege.isEmpty()) {
-				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
-				predicatesToUse.add(predicateAktuellesGesuch);
-			} else {
-				return Collections.emptyList();
-			}
-		} else {
-			return Collections.emptyList();
-		}
+        List<String> idsOfLetztVerfuegteAntraege = new ArrayList<>();
+        for (Gesuchsperiode gesuchsperiode : relevanteGesuchsperioden) {
+            idsOfLetztVerfuegteAntraege.addAll(gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiode));
+        }
+        if (!idsOfLetztVerfuegteAntraege.isEmpty()) {
+            Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
+            predicatesToUse.add(predicateAktuellesGesuch);
+        } else {
+            return Collections.emptyList();
+        }
 
 		// Sichtbarkeit nach eingeloggtem Benutzer
 		boolean isInstitutionsbenutzer = principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_INSTITUTION, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);

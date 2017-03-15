@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 
 import javax.annotation.Nonnull;
-import javax.annotation.security.PermitAll;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;

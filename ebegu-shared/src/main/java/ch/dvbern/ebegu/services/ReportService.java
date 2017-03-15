@@ -6,7 +6,6 @@ import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
 import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
 import ch.dvbern.ebegu.util.UploadFileInfo;
-import org.apache.poi.ss.formula.functions.T;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
