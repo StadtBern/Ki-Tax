@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collection;
@@ -226,5 +227,16 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		assertNotNull(uploadFileInfo.getBytes());
 		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportKanton.xlsx");
+	}
+
+	@Test
+	public void generateExcelReportGesuchstellerKinderBetreuung() throws Exception {
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchstellerKinderBetreuung(
+			LocalDate.of(2016, Month.JANUARY, 1),
+			LocalDate.of(2018, Month.DECEMBER, 31),
+			null);
+
+		assertNotNull(uploadFileInfo.getBytes());
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchstellerKinderBetreuung.xlsx");
 	}
 }

@@ -151,7 +151,7 @@ public enum StandardConverters implements Converter {
 		@Override
 		public void setCellValueImpl(@Nonnull Cell cell, @Nonnull String pattern, @Nullable Object o) {
 			Boolean boolVal = (Boolean) o;
-			if (pattern.equals(cell.getStringCellValue())) {
+			if (boolVal != null && pattern.equals(cell.getStringCellValue())) {
 				cell.setCellValue(boolVal);
 			} else {
 				//TODO: schoene Formatierung
