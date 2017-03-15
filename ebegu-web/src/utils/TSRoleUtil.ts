@@ -12,7 +12,7 @@ export class TSRoleUtil {
 
     public static getAllRoles(): Array<string> {
         let result: Array<string> = [];
-        for (var prop in TSRole) {
+        for (let prop in TSRole) {
             if ((isNaN(parseInt(prop)))) {
                 result.push(prop);
             }
