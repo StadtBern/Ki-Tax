@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,8 +67,10 @@ public interface MitteilungService {
 	Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung);
 
 	/**
-	 * Applies all passed Betreuungspensen from the Betreuungsmitteilung to the existing Betreuung
-	 * with the same number
+	 * Applies all passed Betreuungspensen from the Betreuungsmitteilung to the existing Betreuung with the same number.
+	 * If the newest Antrag is verfuegt, it will create a new Mutation out of it and apply the changes in this new Antrag.
+	 * Returns the Antrag, in which the mitteilung was applied, which is much more useful than the mitteilung itself
+	 * since normally you only need to know where the mitteilung was applied.
 	 */
-	Betreuungsmitteilung applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung);
+	Gesuch applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung);
 }

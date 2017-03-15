@@ -5,8 +5,8 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
+import ch.dvbern.lib.excelmerger.ExcelMergeException;
 import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
-import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 
 import javax.annotation.Nonnull;

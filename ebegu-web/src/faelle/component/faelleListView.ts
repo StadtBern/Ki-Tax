@@ -72,8 +72,8 @@ export class FaelleListViewController {
      */
     public editFall(antrag: TSAntragDTO, event: any): void {
         if (antrag) {
-            let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
-            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+            let isCtrlKeyPressed : boolean = (event && event.ctrlKey);
+            if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
                 // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
                 this.gesuchModelManager.clearGesuch();
                 if (isAnyStatusOfVerfuegt(antrag.status)) {
