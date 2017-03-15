@@ -295,11 +295,10 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_SAVE_VERFUEGUNG',
             deleteText: 'BESCHREIBUNG_SAVE_VERFUEGUNG'
-        })
-            .then(() => {
-                this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
-                return this.gesuchModelManager.saveVerfuegung(false);
-            });
+        }).then(() => {
+            this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
+            return this.gesuchModelManager.saveVerfuegung(false);
+        });
     }
 
     public saveMutierteVerfuegung(): IPromise<TSVerfuegung> {

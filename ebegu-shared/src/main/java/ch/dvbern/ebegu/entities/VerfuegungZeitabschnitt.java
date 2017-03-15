@@ -504,6 +504,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.zahlungsposition = zahlungsposition;
 	}
 
+	public boolean isSameVerfuegungsdaten() {
+		return sameVerfuegungsdaten;
+	}
+
+	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
+		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -771,13 +779,5 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		compareToBuilder.append(this.getGueltigkeit(), other.getGueltigkeit());
 		compareToBuilder.append(this.getId(), other.getId());  // wenn ids nicht gleich sind wollen wir auch compare to nicht gleich
 		return compareToBuilder.toComparison();
-	}
-
-	public boolean isSameVerfuegungsdaten() {
-		return sameVerfuegungsdaten;
-	}
-
-	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
-		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
 	}
 }

@@ -83,8 +83,11 @@ public interface VerfuegungService {
 	 */
 	Optional<LocalDate> findVorgaengerVerfuegungDate(@Nonnull Betreuung betreuung);
 
+	/**
+	 * Sucht den Zeitabschnitt / die Zeitabschnitte mit demselben Zeitraum auf der Vorgängerverfügung,
+	 * und die verrechnet oder ignoriert sind (letzteres aufgrund mitgegebenem Flag)
+	 */
 	@Nonnull
 	List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu,
 																					  @Nonnull Betreuung betreuungNeu, boolean includeIgnored);
-
 }

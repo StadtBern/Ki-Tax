@@ -63,8 +63,7 @@ public interface ZahlungService {
 	Collection<Zahlungsauftrag> getAllZahlungsauftraege();
 
 	/**
-	 * Gibt alle Zahlungsauftraege zurueck TODO (team) evt. muessen wir dann hier einschraenken, sonst waechst die liste unendlich...
-	 * TODO (team) im JaxBConverter aufgrund Berechtigung des Benutzers Zahlungen entfernen!
+	 * Gibt alle Zahlungsauftraege zurueck
 	 */
 	Optional<Zahlungsauftrag> findLastZahlungsauftrag();
 
