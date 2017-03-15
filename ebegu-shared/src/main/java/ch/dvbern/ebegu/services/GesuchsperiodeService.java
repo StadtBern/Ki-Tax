@@ -62,4 +62,10 @@ public interface GesuchsperiodeService {
 	 */
 	@Nonnull
 	Optional<Gesuchsperiode> getGesuchsperiodeAm(@Nonnull LocalDate stichtag);
+
+	/**
+	 * Gibt alle Gesuchsperioden zurueck, welche im angegebenen Zeitraum liegen (nicht zwingend vollständig)
+	 */
+	@Nonnull
+	Collection<Gesuchsperiode> getGesuchsperiodenBetween(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis);
 }

@@ -131,6 +131,22 @@ public enum StandardConverters implements Converter {
 			}
 		}
 	},
+	PERCENT_CONVERTER() {
+		@Override
+		public void setCellValueImpl(@Nonnull Cell cell, @Nonnull String pattern, @Nullable Object o) {
+			BigDecimal bdVal = (BigDecimal) o;
+			if (pattern.equals(cell.getStringCellValue())) {
+				if (bdVal != null) {
+					bdVal = bdVal.divide(new BigDecimal("100"), BigDecimal.ROUND_HALF_UP);
+					cell.setCellValue(bdVal.doubleValue());
+				} else {
+					cell.setCellValue("");
+				}
+			} else {
+				cell.setCellValue(cell.getStringCellValue().replace(pattern, bdVal + "%"));
+			}
+		}
+	},
 	BOOLEAN_CONVERTER() {
 		@Override
 		public void setCellValueImpl(@Nonnull Cell cell, @Nonnull String pattern, @Nullable Object o) {
@@ -161,6 +177,7 @@ public enum StandardConverters implements Converter {
 			}
 		}
 	};
+
 
 	public static final String BOOLEAN_VALUE = "X";
 }

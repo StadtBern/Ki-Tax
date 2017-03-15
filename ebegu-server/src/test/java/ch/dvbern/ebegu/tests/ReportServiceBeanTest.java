@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
+import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -191,7 +192,6 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 			null);
 
 		assertNotNull(uploadFileInfo.getBytes());
-
 		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchStichtag.xlsx");
 	}
 
@@ -212,5 +212,19 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		assertNotNull(uploadFileInfo);
 		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportZahlungAuftrag.xlsx");
+	}
+
+	@Test
+	public void generateExcelReportKanton() throws Exception {
+		Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
+		for (Gesuch gesuch : allGesuche) {
+			if (gesuch.getStatus().isAnyStatusOfVerfuegt()) {
+				System.out.println("verfuegtes Gesuch: " + gesuch.getId());
+			}
+		}
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportKanton(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE);
+
+		assertNotNull(uploadFileInfo.getBytes());
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportKanton.xlsx");
 	}
 }
