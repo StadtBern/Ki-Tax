@@ -98,7 +98,7 @@ export default class GesuchModelManager {
      * Fuer Institutionen z.B. wird das Gesuch nur mit den relevanten Daten geholt
      */
     public openGesuch(gesuchId: string): IPromise<TSGesuch> {
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) { // Superadmin muss als "normale" Benutzer betrachtet werden
             return this.gesuchRS.findGesuchForInstitution(gesuchId)
                 .then((response: TSGesuch) => {
                     return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(bla => {
