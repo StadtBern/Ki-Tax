@@ -388,7 +388,7 @@ export default class GesuchModelManager {
     public getFachstellenList(): Array<TSFachstelle> {
         if (this.fachstellenList === undefined) {
             this.fachstellenList = []; // init empty while we wait for promise
-            this.updateFachstellenList()
+            this.updateFachstellenList();
         }
         return this.fachstellenList;
     }
