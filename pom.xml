@@ -333,7 +333,7 @@
             <dependency>
                 <groupId>ch.dvbern.lib</groupId>
                 <artifactId>dvbern-lib-excelmerger-impl</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0-SNAPSHOT</version> <!-- TODO achtung, snapshot! -->
             </dependency>
             <dependency>
                  <groupId>commons-logging</groupId>
