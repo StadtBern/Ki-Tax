@@ -16,6 +16,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class GesuchStichtagDataRow {
 
 	private String bgNummer;
+	private Integer gesuchLaufNr;
 	private String institution;
 	private String betreuungsTyp;
 	private String periode;
@@ -23,8 +24,9 @@ public class GesuchStichtagDataRow {
 	private Integer mahnungen;
 	private Integer beschwerde;
 
-	public GesuchStichtagDataRow(String bgNummer, String institution, String betreuungsTyp, String periode, Integer nichtFreigegeben, Integer mahnungen, Integer beschwerde) {
+	public GesuchStichtagDataRow(String bgNummer, Integer gesuchLaufNr, String institution, String betreuungsTyp, String periode, Integer nichtFreigegeben, Integer mahnungen, Integer beschwerde) {
 		this.bgNummer = bgNummer;
+		this.gesuchLaufNr = gesuchLaufNr;
 		this.institution = institution;
 		this.betreuungsTyp = betreuungsTyp;
 		this.periode = periode;
@@ -40,6 +42,14 @@ public class GesuchStichtagDataRow {
 
 	public void setBgNummer(String bgNummer) {
 		this.bgNummer = bgNummer;
+	}
+
+	public Integer getGesuchLaufNr() {
+		return gesuchLaufNr;
+	}
+
+	public void setGesuchLaufnummer(Integer gesuchLaufNr) {
+		this.gesuchLaufNr = gesuchLaufNr;
 	}
 
 	public String getInstitution() {

@@ -1,16 +1,17 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.lib.excelmerger.ExcelMergeException;
+import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,17 +28,31 @@ import java.util.List;
  */
 public interface ReportService {
 
+	// Gesuch Stichtag
+
 	List<GesuchStichtagDataRow> getReportDataGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID)
 		throws IOException, URISyntaxException;
 
 	UploadFileInfo generateExcelReportGesuchStichtag(@Nonnull LocalDateTime datetime, @Nullable String gesuchPeriodeID)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
+	// Gesuch Zeitraum
+
 	List<GesuchZeitraumDataRow> getReportDataGesuchZeitraum(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID)
 		throws IOException, URISyntaxException;
 
 	UploadFileInfo generateExcelReportGesuchZeitraum(@Nonnull LocalDateTime datetimeVon, @Nonnull LocalDateTime datetimeBis, @Nullable String gesuchPeriodeID)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
+
+	// Kanton
+
+	List<KantonDataRow> getReportDataKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
+		throws IOException, URISyntaxException;
+
+	UploadFileInfo generateExcelReportKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
+		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
+
+	// Zahlungen
 
 	UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId) throws ExcelMergeException;
 
