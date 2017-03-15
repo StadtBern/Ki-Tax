@@ -1571,7 +1571,6 @@ export default class EbeguRestUtil {
             verfuegungTS.generatedBemerkungen = verfuegungFromServer.generatedBemerkungen;
             verfuegungTS.manuelleBemerkungen = verfuegungFromServer.manuelleBemerkungen;
             verfuegungTS.zeitabschnitte = this.parseVerfuegungZeitabschnitte(verfuegungFromServer.zeitabschnitte);
-            verfuegungTS.sameVerfuegungsdaten = verfuegungFromServer.sameVerfuegungsdaten;
             verfuegungTS.kategorieKeinPensum = verfuegungFromServer.kategorieKeinPensum;
             verfuegungTS.kategorieMaxEinkommen = verfuegungFromServer.kategorieMaxEinkommen;
             verfuegungTS.kategorieNichtEintreten = verfuegungFromServer.kategorieNichtEintreten;
@@ -1588,7 +1587,6 @@ export default class EbeguRestUtil {
             verfuegung.generatedBemerkungen = verfuegungTS.generatedBemerkungen;
             verfuegung.manuelleBemerkungen = verfuegungTS.manuelleBemerkungen;
             verfuegung.zeitabschnitte = this.zeitabschnittListToRestObject(verfuegungTS.zeitabschnitte);
-            verfuegung.sameVerfuegungsdaten = verfuegungTS.sameVerfuegungsdaten;
             verfuegung.kategorieKeinPensum = verfuegungTS.kategorieKeinPensum;
             verfuegung.kategorieMaxEinkommen = verfuegungTS.kategorieMaxEinkommen;
             verfuegung.kategorieNichtEintreten = verfuegungTS.kategorieNichtEintreten;
@@ -1644,6 +1642,7 @@ export default class EbeguRestUtil {
             zeitabschnitt.kategorieMaxEinkommen = zeitabschnittTS.kategorieMaxEinkommen;
             zeitabschnitt.kategorieKeinPensum = zeitabschnittTS.kategorieKeinPensum;
             zeitabschnitt.zuSpaetEingereicht = zeitabschnittTS.zuSpaetEingereicht;
+            zeitabschnitt.sameVerfuegungsdaten = zeitabschnittTS.sameVerfuegungsdaten;
             return zeitabschnitt;
         }
         return undefined;
@@ -1672,6 +1671,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.kategorieMaxEinkommen = zeitabschnittFromServer.kategorieMaxEinkommen;
             verfuegungZeitabschnittTS.kategorieKeinPensum = zeitabschnittFromServer.kategorieKeinPensum;
             verfuegungZeitabschnittTS.zuSpaetEingereicht = zeitabschnittFromServer.zuSpaetEingereicht;
+            verfuegungZeitabschnittTS.sameVerfuegungsdaten = zeitabschnittFromServer.sameVerfuegungsdaten;
             return verfuegungZeitabschnittTS;
         }
         return undefined;

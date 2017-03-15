@@ -7,7 +7,6 @@ public enum VerfuegungsZeitabschnittZahlungsstatus {
 
 	NEU,
 	VERRECHNET,
-	IDENTISCH,
 	IGNORIERT;
 
 	public boolean isNeu() {

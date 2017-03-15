@@ -31,8 +31,6 @@ public class JaxVerfuegung extends JaxAbstractDTO {
 	@Nonnull
 	private List<JaxVerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
 
-	private boolean sameVerfuegungsdaten;
-
 	private boolean kategorieNormal = false;
 
 	private boolean kategorieMaxEinkommen = false;
@@ -71,56 +69,43 @@ public class JaxVerfuegung extends JaxAbstractDTO {
 		this.zeitabschnitte = zeitabschnitte;
 	}
 
-	public boolean isSameVerfuegungsdaten() {
-		return sameVerfuegungsdaten;
-	}
-
-	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
-		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
-	}
-
-	@Nonnull
 	public boolean isKategorieNormal() {
 		return kategorieNormal;
 	}
 
-	public void setKategorieNormal(@Nonnull boolean kategorieNormal) {
+	public void setKategorieNormal(boolean kategorieNormal) {
 		this.kategorieNormal = kategorieNormal;
 	}
 
-	@Nonnull
 	public boolean isKategorieMaxEinkommen() {
 		return kategorieMaxEinkommen;
 	}
 
-	public void setKategorieMaxEinkommen(@Nonnull boolean kategorieMaxEinkommen) {
+	public void setKategorieMaxEinkommen(boolean kategorieMaxEinkommen) {
 		this.kategorieMaxEinkommen = kategorieMaxEinkommen;
 	}
 
-	@Nonnull
 	public boolean isKategorieKeinPensum() {
 		return kategorieKeinPensum;
 	}
 
-	public void setKategorieKeinPensum(@Nonnull boolean kategorieKeinPensum) {
+	public void setKategorieKeinPensum(boolean kategorieKeinPensum) {
 		this.kategorieKeinPensum = kategorieKeinPensum;
 	}
 
-	@Nonnull
 	public boolean isKategorieZuschlagZumErwerbspensum() {
 		return kategorieZuschlagZumErwerbspensum;
 	}
 
-	public void setKategorieZuschlagZumErwerbspensum(@Nonnull boolean kategorieZuschlagZumErwerbspensum) {
+	public void setKategorieZuschlagZumErwerbspensum(boolean kategorieZuschlagZumErwerbspensum) {
 		this.kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
 	}
 
-	@Nonnull
 	public boolean isKategorieNichtEintreten() {
 		return kategorieNichtEintreten;
 	}
 
-	public void setKategorieNichtEintreten(@Nonnull boolean kategorieNichtEintreten) {
+	public void setKategorieNichtEintreten(boolean kategorieNichtEintreten) {
 		this.kategorieNichtEintreten = kategorieNichtEintreten;
 	}
 }
