@@ -17,6 +17,7 @@ import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
+import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
@@ -122,9 +123,9 @@ export class GesuchToolbarController {
                 }
             });
             //watcher fuer status change
-            if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            if (this.gesuchModelManager && this.getGesuch()) {
                 $scope.$watch(() => {
-                    return this.gesuchModelManager.getGesuch().status;
+                    return this.getGesuch().status;
                 }, (newValue, oldValue) => {
                     if ((newValue !== oldValue) && (isAnyStatusOfVerfuegt(newValue))) {
                         this.updateAntragDTOList();
@@ -146,6 +147,11 @@ export class GesuchToolbarController {
                         this.antragMutierenPossible(); //neu berechnen ob mutieren moeglich ist
                     }
                 }
+            });
+            // Wenn eine Mutationsmitteilung uebernommen wird und deshalb eine neue Mutation erstellt wird, muss
+            // die toolbar aktualisisert werden, damit diese Mutation auf der Liste erscheint
+            $scope.$on(TSMitteilungEvent[TSMitteilungEvent.MUTATIONSMITTEILUNG_NEUE_MUTATION], () => {
+                this.updateAntragDTOList();
             });
         }
     }

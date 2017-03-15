@@ -362,7 +362,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
-	public Betreuungsmitteilung applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung) {
+	public Gesuch applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung) {
 		final Gesuch gesuch = mitteilung.getBetreuung().extractGesuch();
 		// neustes Gesuch lesen
 		final Optional<Gesuch> neustesGesuchOpt;
@@ -380,21 +380,23 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			final Gesuch neustesGesuch = neustesGesuchOpt.get();
 			if (!AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus()) && neustesGesuch.isMutation()) {
 				//betreuungsaenderungen der bestehenden, offenen Mutation hinzufuegen (wenn wir hier sind muss es sich um ein PAPIER) Antrag handeln
-				return applyBetreuungsmitteilungToMutation(neustesGesuch, mitteilung);
+				applyBetreuungsmitteilungToMutation(neustesGesuch, mitteilung);
+				return neustesGesuch;
 			}
 			else if (AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus())) {
 				// create Mutation if there is currently no Mutation
 				final Optional<Gesuch> mutationOpt = this.gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
 				if (mutationOpt.isPresent()) {
 					Gesuch persistedMutation = gesuchService.createGesuch(mutationOpt.get());
-					return applyBetreuungsmitteilungToMutation(persistedMutation, mitteilung);
+					applyBetreuungsmitteilungToMutation(persistedMutation, mitteilung);
+					return persistedMutation;
 				}
 			}
 			else {
 				throw new EbeguRuntimeException("applyBetreuungsmitteilung", "Fehler beim Erstellen einer Mutation", "Das Erstgesuch ist noch nicht Freigegeben");
 			}
 		}
-		return mitteilung;
+		return gesuch;
 	}
 
 	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {

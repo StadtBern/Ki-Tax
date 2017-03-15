@@ -358,7 +358,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     public exportXmlSchema() {
         // ACHTUNG popup blocker muss deaktiviert sein
         this.exportRS.getXmlSchemaString().then((result) => {
-            this.$window.open("data:text/xml;charset=utf-8," + result, "", "_blank");
+            this.$window.open('data:text/xml;charset=utf-8,' + result, '', '_blank');
         });
     }
 

@@ -74,15 +74,15 @@ describe('MitteilungRS', function () {
             mitteilung.id = '987654321';
 
             spyOn(ebeguRestUtil, 'parseBetreuungsmitteilung').and.returnValue(betreuung);
-            $httpBackend.expectPUT(mitteilungRS.serviceURL + '/applybetreuungsmitteilung/' + mitteilung.id, null).respond($q.when({}));
+            $httpBackend.expectPUT(mitteilungRS.serviceURL + '/applybetreuungsmitteilung/' + mitteilung.id, null).respond($q.when({id: '123456'}));
 
-            let result: IPromise<TSBetreuungsmitteilung> = mitteilungRS.applyBetreuungsmitteilung(mitteilung.id);
+            let result: IPromise<any> = mitteilungRS.applyBetreuungsmitteilung(mitteilung.id);
             $httpBackend.flush();
             $rootScope.$apply();
 
             expect(result).toBeDefined();
             result.then(response => {
-                expect(response).toBe(betreuung);
+                expect(response).toEqual({id: '123456'});
             });
             $rootScope.$apply();
 
