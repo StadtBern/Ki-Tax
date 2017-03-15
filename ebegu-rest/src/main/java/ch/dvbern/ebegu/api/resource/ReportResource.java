@@ -5,7 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
+import ch.dvbern.lib.excelmerger.ExcelMergeException;
 import ch.dvbern.ebegu.services.ReportService;
 import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
