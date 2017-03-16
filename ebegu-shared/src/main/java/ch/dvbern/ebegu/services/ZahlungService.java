@@ -63,6 +63,11 @@ public interface ZahlungService {
 	Collection<Zahlungsauftrag> getAllZahlungsauftraege();
 
 	/**
+	 * Gibt alle Zahlungsauftraege zurueck
+	 */
+	Optional<Zahlungsauftrag> findLastZahlungsauftrag();
+
+	/**
 	 * Eine Kita kann/muss den Zahlungseingang bestaetigen
 	 */
 	Zahlung zahlungBestaetigen(String zahlungId);

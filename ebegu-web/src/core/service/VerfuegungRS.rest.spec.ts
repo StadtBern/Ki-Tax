@@ -68,11 +68,11 @@ describe('VerfuegungRS', function () {
         describe('saveVerfuegung', () => {
             it('should save the given Verfuegung', () => {
                 let verfuegung: TSVerfuegung = TestDataUtil.createVerfuegung();
-                $httpBackend.expectPUT(verfuegungRS.serviceURL + '/' + gesuchId + '/' + betreuungId).respond(ebeguRestUtil.verfuegungToRestObject({}, verfuegung));
+                $httpBackend.expectPUT(verfuegungRS.serviceURL + '/' + gesuchId + '/' + betreuungId + '/false').respond(ebeguRestUtil.verfuegungToRestObject({}, verfuegung));
                 $httpBackend.expectGET('/ebegu/api/v1/wizard-steps/' + gesuchId).respond({});
 
                 let savedVerfuegung: TSVerfuegung;
-                verfuegungRS.saveVerfuegung(verfuegung, gesuchId, betreuungId).then((result) => {
+                verfuegungRS.saveVerfuegung(verfuegung, gesuchId, betreuungId, false).then((result) => {
                     savedVerfuegung = result;
                 });
                 $httpBackend.flush();

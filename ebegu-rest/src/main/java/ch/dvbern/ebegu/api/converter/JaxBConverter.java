@@ -1608,20 +1608,17 @@ public class JaxBConverter {
 			convertAbstractFieldsToJAX(verfuegung, jaxVerfuegung);
 			jaxVerfuegung.setGeneratedBemerkungen(verfuegung.getGeneratedBemerkungen());
 			jaxVerfuegung.setManuelleBemerkungen(verfuegung.getManuelleBemerkungen());
-			jaxVerfuegung.setSameVerfuegungsdaten(verfuegung.isSameVerfuegungsdaten());
 			jaxVerfuegung.setKategorieZuschlagZumErwerbspensum(verfuegung.isKategorieZuschlagZumErwerbspensum());
 			jaxVerfuegung.setKategorieKeinPensum(verfuegung.isKategorieKeinPensum());
 			jaxVerfuegung.setKategorieMaxEinkommen(verfuegung.isKategorieMaxEinkommen());
 			jaxVerfuegung.setKategorieNichtEintreten(verfuegung.isKategorieNichtEintreten());
 			jaxVerfuegung.setKategorieNormal(verfuegung.isKategorieNormal());
 
-			if (verfuegung.getZeitabschnitte() != null) {
-				jaxVerfuegung.getZeitabschnitte().addAll(
-					verfuegung.getZeitabschnitte()
-						.stream()
-						.map(this::verfuegungZeitabschnittToJax)
-						.collect(Collectors.toList()));
-			}
+			jaxVerfuegung.getZeitabschnitte().addAll(
+				verfuegung.getZeitabschnitte()
+					.stream()
+					.map(this::verfuegungZeitabschnittToJax)
+					.collect(Collectors.toList()));
 
 			return jaxVerfuegung;
 		}
@@ -1640,7 +1637,6 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(jaxVerfuegung, verfuegung);
 		verfuegung.setGeneratedBemerkungen(jaxVerfuegung.getGeneratedBemerkungen());
 		verfuegung.setManuelleBemerkungen(jaxVerfuegung.getManuelleBemerkungen());
-		verfuegung.setSameVerfuegungsdaten(jaxVerfuegung.isSameVerfuegungsdaten());
 		verfuegung.setKategorieZuschlagZumErwerbspensum(jaxVerfuegung.isKategorieZuschlagZumErwerbspensum());
 		verfuegung.setKategorieKeinPensum(jaxVerfuegung.isKategorieKeinPensum());
 		verfuegung.setKategorieMaxEinkommen(jaxVerfuegung.isKategorieMaxEinkommen());
@@ -1700,6 +1696,7 @@ public class JaxBConverter {
 			jaxZeitabschn.setKategorieZuschlagZumErwerbspensum(zeitabschnitt.isKategorieZuschlagZumErwerbspensum());
 			jaxZeitabschn.setZuSpaetEingereicht(zeitabschnitt.isZuSpaetEingereicht());
 			jaxZeitabschn.setZahlungsstatus(zeitabschnitt.getZahlungsstatus());
+			jaxZeitabschn.setSameVerfuegungsdaten(zeitabschnitt.isSameVerfuegungsdaten());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1729,6 +1726,7 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setKategorieZuschlagZumErwerbspensum(jaxVerfuegungZeitabschnitt.isKategorieZuschlagZumErwerbspensum());
 		verfuegungZeitabschnitt.setZuSpaetEingereicht(jaxVerfuegungZeitabschnitt.isZuSpaetEingereicht());
 		verfuegungZeitabschnitt.setZahlungsstatus(jaxVerfuegungZeitabschnitt.getZahlungsstatus());
+		verfuegungZeitabschnitt.setSameVerfuegungsdaten(jaxVerfuegungZeitabschnitt.isSameVerfuegungsdaten());
 		return verfuegungZeitabschnitt;
 	}
 

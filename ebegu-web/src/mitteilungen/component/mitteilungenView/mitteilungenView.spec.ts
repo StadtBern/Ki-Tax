@@ -62,7 +62,6 @@ describe('mitteilungenView', function () {
             spyOn(authServiceRS, 'isRole').and.returnValue(true);
 
             createMitteilungForUser(gesuchsteller);
-
             compareCommonAttributes(gesuchsteller);
             expect(controller.getCurrentMitteilung().empfaenger).toBe(verantwortlicher);
             expect(controller.getCurrentMitteilung().senderTyp).toBe(TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
@@ -172,6 +171,7 @@ describe('mitteilungenView', function () {
         spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
         controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q, null,
             $rootScope, undefined, undefined, undefined, undefined);
+        controller.$onInit();   // hack, muesste wohl eher so gehen   http://stackoverflow.com/questions/38631204/how-to-trigger-oninit-or-onchanges-implictly-in-unit-testing-angular-component
         $rootScope.$apply();
     }
 

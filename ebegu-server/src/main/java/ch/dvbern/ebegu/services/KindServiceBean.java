@@ -66,9 +66,9 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	@Override
 	public void removeKind(@Nonnull String kindId) {
 		Objects.requireNonNull(kindId);
-		Optional<KindContainer> kindToRemove = findKind(kindId);
-		kindToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, kindId));
-		removeKind(kindToRemove.get());
+		Optional<KindContainer> kindToRemoveOpt = findKind(kindId);
+		final KindContainer kindToRemove = kindToRemoveOpt.orElseThrow(() -> new EbeguEntityNotFoundException("removeKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, kindId));
+		removeKind(kindToRemove);
 	}
 
 	@Override

@@ -80,7 +80,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		// Es darf immer nur ein Zahlungsauftrag im Status ENTWURF sein
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
 		if (lastZahlungsauftrag.isPresent() && lastZahlungsauftrag.get().getStatus().isEntwurf()) {
-			throw new EbeguRuntimeException("zahlungsauftragErstellen", ErrorCodeEnum.ERROR_ZAHLUNG_ERSTELLEN, "Es darf kein neuer Entwurf erstellt werden, bevor der letzte Auftrag freigegeben wurde");
+			throw new EbeguRuntimeException("zahlungsauftragErstellen", ErrorCodeEnum.ERROR_ZAHLUNG_ERSTELLEN);
 		}
 
 		LOGGER.info("Erstelle Zahlungsauftrag mit Faelligkeit: " + Constants.DATE_FORMATTER.format(datumFaelligkeit));
@@ -103,7 +103,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		boolean isRepetition = false;
 		// Falls fuer denselben Zeitraum (oder den letzten Teil davon) schon ein Auftrag vorhanden ist, kann das DatumVon nicht
 		// einfach an den letzten Auftrag anschliessen
-		LocalDate zeitabschnittVon = null;
+		LocalDate zeitabschnittVon;
 		LocalDate zeitabschnittBis = zahlungsauftrag.getDatumGeneriert().toLocalDate().with(TemporalAdjusters.lastDayOfMonth());
 
 		if (lastZahlungsauftrag.isPresent()) {
@@ -144,10 +144,10 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		if (isTestMode) {
 			lastZahlungErstellt = Constants.START_OF_DATETIME;
 		}
-		Collection<VerfuegungZeitabschnitt> mutationsVerfuegungsZeitabschnitte = getMutationsVerfuegungsZeitabschnitte(lastZahlungErstellt, zahlungsauftrag.getDatumGeneriert(), stichtagKorrekturen);
-		for (VerfuegungZeitabschnitt zeitabschnitt : mutationsVerfuegungsZeitabschnitte) {
+		Collection<VerfuegungZeitabschnitt> verfuegungsZeitabschnitte = getVerfuegungsZeitabschnitteNachVerfuegungDatum(lastZahlungErstellt, zahlungsauftrag.getDatumGeneriert(), stichtagKorrekturen);
+		for (VerfuegungZeitabschnitt zeitabschnitt : verfuegungsZeitabschnitte) {
 			if (zeitabschnitt.getZahlungsstatus().isNeu()) {
-				createZahlungspositionenKorrektur(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
+				createZahlungspositionenKorrekturUndNachzahlung(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 			}
 		}
 
@@ -206,7 +206,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	 * Ermittelt alle Zeitabschnitte, welche zu Antraegen gehoeren, die seit dem letzten Zahlungslauf verfuegt wurden.
 	 */
 	@Nonnull
-	private Collection<VerfuegungZeitabschnitt> getMutationsVerfuegungsZeitabschnitte(@Nonnull LocalDateTime datumVerfuegtVon, @Nonnull LocalDateTime datumVerfuegtBis, @Nonnull LocalDate zeitabschnittBis) {
+	private Collection<VerfuegungZeitabschnitt> getVerfuegungsZeitabschnitteNachVerfuegungDatum(@Nonnull LocalDateTime datumVerfuegtVon, @Nonnull LocalDateTime datumVerfuegtBis, @Nonnull LocalDate zeitabschnittBis) {
 		Objects.requireNonNull(datumVerfuegtVon, "datumVerfuegtVon muss gesetzt sein");
 		Objects.requireNonNull(datumVerfuegtBis, "datumVerfuegtBis muss gesetzt sein");
 		Objects.requireNonNull(zeitabschnittBis, "zeitabschnittBis muss gesetzt sein");
@@ -261,10 +261,11 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	 * Erstellt alle notwendigen Zahlungspositionen fuer die Korrektur des uebergebenen Zeitabschnitts.
 	 * Bisherige Positionen werden in Abzug gebracht und die neuen hinzugefuegt
 	 */
-	private void createZahlungspositionenKorrektur(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Zahlungsauftrag zahlungsauftrag, @Nonnull Map<String, Zahlung> zahlungProInstitution) {
+	private void createZahlungspositionenKorrekturUndNachzahlung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Zahlungsauftrag zahlungsauftrag, @Nonnull Map<String, Zahlung> zahlungProInstitution) {
 		// Ermitteln, ob die Vollkosten geaendert haben, seit der letzten Verfuegung, die auch verrechnet wurde!
-		List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu);
-		if (!zeitabschnittOnVorgaengerVerfuegung.isEmpty()) {
+		List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = verfuegungService
+			.findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, zeitabschnittNeu.getVerfuegung().getBetreuung(), false);
+		if (!zeitabschnittOnVorgaengerVerfuegung.isEmpty()) { // Korrekturen
 			BigDecimal vollkostenVorgaenger = BigDecimal.ZERO;
 			BigDecimal elternbeitragVorgaenger = BigDecimal.ZERO;
 			// Eventuell gab es fuer diesen Zeitabschnitt in der Vorgaengerverfuegung mehrere Abschnitte:
@@ -277,9 +278,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 			// Falls keine Aenderung -> Keine KorrekturZahlung notwendig!
 			boolean vollkostenChanged = vollkostenVorgaenger != null && vollkostenVorgaenger.compareTo(zeitabschnittNeu.getVollkosten()) != 0;
 			boolean elternbeitragChanged = elternbeitragVorgaenger != null && elternbeitragVorgaenger.compareTo(zeitabschnittNeu.getElternbeitrag()) != 0;
-			if (!vollkostenChanged && !elternbeitragChanged) {
-				zeitabschnittNeu.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IDENTISCH);
-			} else {
+			if (vollkostenChanged || elternbeitragChanged) {
 				// Irgendetwas hat geaendert, wir brauchen eine Korrekturzahlung
 				Zahlung zahlung = findZahlungForInstitution(zeitabschnittNeu, zahlungsauftrag, zahlungProInstitution);
 				createZahlungspositionKorrekturNeuerWert(zeitabschnittNeu, zahlung, vollkostenChanged);
@@ -288,6 +287,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 					createZahlungspositionKorrekturAlterWert(verfuegungZeitabschnitt, zahlung, vollkostenChanged);
 				}
 			}
+		} else { // Nachzahlungen bzw. Erstgesuche die rueckwirkend ausbezahlt werden muessen
+			createZahlungsposition(zeitabschnittNeu, zahlungsauftrag, zahlungProInstitution);
 		}
 	}
 
@@ -322,44 +323,6 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		zahlung.getZahlungspositionen().add(korrekturPosition);
 	}
 
-	@Nonnull
-	private List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu) {
-		return findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, zeitabschnittNeu.getVerfuegung().getBetreuung());
-	}
-
-	@Nonnull
-	private List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu, @Nonnull Betreuung betreuungNeu) {
-		Optional<Verfuegung> vorgaengerVerfuegung = verfuegungService.findVorgaengerVerfuegung(betreuungNeu);
-		if (vorgaengerVerfuegung.isPresent()) {
-			List<VerfuegungZeitabschnitt> zeitabschnittOnVorgaengerVerfuegung = findZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu.getGueltigkeit(), vorgaengerVerfuegung.get());
-			Betreuung vorgaengerBetreuung = null;
-			for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittOnVorgaengerVerfuegung) {
-				vorgaengerBetreuung = zeitabschnitt.getVerfuegung().getBetreuung();
-				if (zeitabschnitt.getZahlungsstatus().isVerrechnet()) {
-					return zeitabschnittOnVorgaengerVerfuegung;
-				}
-			}
-			// Es gab keine bereits Verrechneten Zeitabschnitte auf dieser Verfuegung -> eins weiter zurueckgehen
-			return findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(zeitabschnittNeu, vorgaengerBetreuung);
-		}
-		return Collections.emptyList();
-	}
-
-	/**
-	 * Findet das anspruchberechtigtes Pensum zum Zeitpunkt des neuen Zeitabschnitt-Start
-	 */
-	@Nonnull
-	private List<VerfuegungZeitabschnitt> findZeitabschnittOnVorgaengerVerfuegung(@Nonnull DateRange newVerfuegungGueltigkeit, @Nonnull Verfuegung lastVerfuegung) {
-		List<VerfuegungZeitabschnitt> lastVerfuegungsZeitabschnitte = new ArrayList<>();
-		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : lastVerfuegung.getZeitabschnitte()) {
-			final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
-			if (gueltigkeit.contains(newVerfuegungGueltigkeit.getGueltigAb()) || gueltigkeit.contains(newVerfuegungGueltigkeit.getGueltigBis())) {
-				lastVerfuegungsZeitabschnitte.add(verfuegungZeitabschnitt);
-			}
-		}
-		return lastVerfuegungsZeitabschnitte;
-	}
-
 	/**
 	 * Ermittelt das Zahlungsobjekt fuer die Institution des uebergebenen Zeitabschnitts. Falls im uebergebenen Auftrag schon eine Zahlung
 	 * fuer diese Institution vorhanden ist, wird diese zurueckgegeben, ansonsten eine neue erstellt.
@@ -392,8 +355,9 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	/**
 	 * Ermittelt den zuletzt durchgefuehrten Zahlungsauftrag
 	 */
+	@Override
 	@Nonnull
-	private Optional<Zahlungsauftrag> findLastZahlungsauftrag() {
+	public Optional<Zahlungsauftrag> findLastZahlungsauftrag() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Zahlungsauftrag> query = cb.createQuery(Zahlungsauftrag.class);
 		Root<Zahlungsauftrag> root = query.from(Zahlungsauftrag.class);
@@ -457,7 +421,6 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
-	@Nonnull
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public void deleteZahlungsauftrag(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");

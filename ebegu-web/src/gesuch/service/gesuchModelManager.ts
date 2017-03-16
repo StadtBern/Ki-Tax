@@ -98,7 +98,7 @@ export default class GesuchModelManager {
      * Fuer Institutionen z.B. wird das Gesuch nur mit den relevanten Daten geholt
      */
     public openGesuch(gesuchId: string): IPromise<TSGesuch> {
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) { // Superadmin muss als "normale" Benutzer betrachtet werden
             return this.gesuchRS.findGesuchForInstitution(gesuchId)
                 .then((response: TSGesuch) => {
                     return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(bla => {
@@ -388,7 +388,7 @@ export default class GesuchModelManager {
     public getFachstellenList(): Array<TSFachstelle> {
         if (this.fachstellenList === undefined) {
             this.fachstellenList = []; // init empty while we wait for promise
-            this.updateFachstellenList()
+            this.updateFachstellenList();
         }
         return this.fachstellenList;
     }
@@ -980,8 +980,9 @@ export default class GesuchModelManager {
 
     }
 
-    public saveVerfuegung(): IPromise<TSVerfuegung> {
-        return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response: TSVerfuegung) => {
+    public saveVerfuegung(ignorieren: boolean): IPromise<TSVerfuegung> {
+        return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id, ignorieren)
+            .then((response: TSVerfuegung) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
             this.calculateGesuchStatus();

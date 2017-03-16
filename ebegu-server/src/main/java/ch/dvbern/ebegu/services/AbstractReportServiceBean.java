@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.reporting.lib.ExcelMergeException;
-import ch.dvbern.ebegu.reporting.lib.ExcelMerger;
-import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
-import ch.dvbern.ebegu.reporting.lib.MergeField;
+import ch.dvbern.lib.excelmerger.ExcelMergeException;
+import ch.dvbern.lib.excelmerger.ExcelMerger;
+import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
+import ch.dvbern.lib.excelmerger.MergeField;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 

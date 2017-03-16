@@ -9,12 +9,13 @@
  */
 package ch.dvbern.ebegu.reporting.kanton;
 
-import ch.dvbern.ebegu.reporting.lib.Converter;
-import ch.dvbern.ebegu.reporting.lib.MergeField;
+
+import ch.dvbern.lib.excelmerger.Converter;
+import ch.dvbern.lib.excelmerger.MergeField;
 
 import javax.annotation.Nonnull;
 
-import static ch.dvbern.ebegu.reporting.lib.StandardConverters.*;
+import static ch.dvbern.lib.excelmerger.StandardConverters.*;
 
 public enum MergeFieldKanton implements MergeField {
 

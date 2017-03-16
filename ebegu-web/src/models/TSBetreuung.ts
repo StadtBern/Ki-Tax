@@ -5,6 +5,7 @@ import TSBetreuungspensumContainer from './TSBetreuungspensumContainer';
 import TSVerfuegung from './TSVerfuegung';
 import TSAbwesenheitContainer from './TSAbwesenheitContainer';
 import TSGesuchsperiode from './TSGesuchsperiode';
+import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 
 export default class TSBetreuung extends TSAbstractEntity {
 
@@ -187,5 +188,12 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     set abwesenheitMutiert(value: boolean) {
         this._abwesenheitMutiert = value;
+    }
+
+    public isAngebotKITA(): boolean {
+        if (this.institutionStammdaten && this.institutionStammdaten.betreuungsangebotTyp) {
+            return this.institutionStammdaten.betreuungsangebotTyp === TSBetreuungsangebotTyp.KITA;
+        }
+        return false;
     }
 }

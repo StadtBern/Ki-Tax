@@ -23,6 +23,7 @@ import IFormController = angular.IFormController;
 import IQService = angular.IQService;
 import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
+import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -61,11 +62,12 @@ export class DVMitteilungListController {
                 private fallRS: FallRS, private betreuungRS: BetreuungRS, private $q: IQService, private $window: IWindowService,
                 private $rootScope: IRootScopeService, private $state: IStateService, ebeguUtil: EbeguUtil, private DvDialog: DvDialog,
                 private gesuchModelManager: GesuchModelManager) {
-
-        this.initViewModel();
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
         this.ebeguUtil = ebeguUtil;
+    }
+    $onInit() {
+        this.initViewModel();
     }
 
     private initViewModel() {
@@ -322,12 +324,15 @@ export class DVMitteilungListController {
                 deleteText: 'MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG'
             }).then(() => {   //User confirmed message
                 let betreuungsmitteilung: TSBetreuungsmitteilung = <TSBetreuungsmitteilung>mitteilung;
-                this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: TSBetreuungsmitteilung) => {
+                this.mitteilungRS.applyBetreuungsmitteilung(betreuungsmitteilung.id).then((response: any) => { // JaxID kommt als response
                     this.loadAllMitteilungen();
-                    if (response.betreuung.gesuchId === this.gesuchModelManager.getGesuch().id) {
+                    if (response.id === this.gesuchModelManager.getGesuch().id) {
                         // Dies wird gebraucht wenn das Gesuch der Mitteilung schon geladen ist, weil die Daten der Betreuung geaendert
                         // wurden und deshalb neugeladen werden müssen. reloadGesuch ist einfacher als die entsprechende Betreuung neu zu laden
                         this.gesuchModelManager.reloadGesuch();
+                    } else if (response.id) { // eine neue Mutation wurde aus der Muttationsmitteilung erstellt
+                        // informieren, dass eine neue Mutation erstellt wurde
+                        this.$rootScope.$broadcast(TSMitteilungEvent[TSMitteilungEvent.MUTATIONSMITTEILUNG_NEUE_MUTATION], 'Mutationsmitteilung einer neuen Mutation hinzugefuegt');
                     }
                 });
             });
