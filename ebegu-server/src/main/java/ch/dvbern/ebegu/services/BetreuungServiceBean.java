@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -68,10 +67,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	public Betreuung betreuungPlatzAbweisen(@Valid @Nonnull Betreuung betreuung) {
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		try {
-			if (betreuung.extractGesuch().getEingangsart().isOnlineGesuch()) {
-				// Bei Ablehnung einer Betreuung muss eine E-Mail geschickt werden
-				mailService.sendInfoBetreuungAbgelehnt(persistedBetreuung);
-			}
+			// Bei Ablehnung einer Betreuung muss eine E-Mail geschickt werden
+			mailService.sendInfoBetreuungAbgelehnt(persistedBetreuung);
 		} catch (MailException e) {
 			LOG.error("Mail InfoBetreuungAbgelehnt konnte nicht verschickt werden fuer Betreuung " + betreuung.getId(), e);
 		}
@@ -85,7 +82,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		try {
 			Gesuch gesuch = betreuung.extractGesuch();
-			if (gesuch.getEingangsart().isOnlineGesuch() && gesuch.areAllBetreuungenBestaetigt()) {
+			if (gesuch.areAllBetreuungenBestaetigt()) {
 				// Sobald alle Betreuungen bestaetigt sind, eine Mail schreiben
 				mailService.sendInfoBetreuungenBestaetigt(gesuch);
 			}
