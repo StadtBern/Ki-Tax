@@ -10,8 +10,8 @@
 package ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung;
 
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.reporting.lib.ExcelConverter;
-import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
+import ch.dvbern.lib.excelmerger.ExcelConverter;
+import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import javax.annotation.Nonnull;
@@ -109,6 +109,7 @@ public class GesuchstellerKinderBetreuungExcelConverter implements ExcelConverte
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.kindFachstelle, dataRow.getKindFachstelle());
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.kindErwBeduerfnisse, dataRow.getKindErwBeduerfnisse());
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.kindDeutsch, dataRow.getKindDeutsch());
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.eingeschult, dataRow.getKindEingeschult());
 
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.zeitabschnittVon, dataRow.getZeitabschnittVon());
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.zeitabschnittBis, dataRow.getZeitabschnittBis());

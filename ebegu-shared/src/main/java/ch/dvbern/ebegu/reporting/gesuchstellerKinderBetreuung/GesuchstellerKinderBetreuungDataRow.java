@@ -79,6 +79,7 @@ public class GesuchstellerKinderBetreuungDataRow {
 	private Boolean kindFachstelle;
 	private Boolean kindErwBeduerfnisse;
 	private Boolean kindDeutsch;
+	private Boolean kindEingeschult;
 
 	private LocalDate zeitabschnittVon;
 	private LocalDate zeitabschnittBis;
@@ -516,6 +517,14 @@ public class GesuchstellerKinderBetreuungDataRow {
 
 	public void setKindDeutsch(Boolean kindDeutsch) {
 		this.kindDeutsch = kindDeutsch;
+	}
+
+	public Boolean getKindEingeschult() {
+		return kindEingeschult;
+	}
+
+	public void setKindEingeschult(Boolean kindEingeschult) {
+		this.kindEingeschult = kindEingeschult;
 	}
 
 	public LocalDate getZeitabschnittVon() {

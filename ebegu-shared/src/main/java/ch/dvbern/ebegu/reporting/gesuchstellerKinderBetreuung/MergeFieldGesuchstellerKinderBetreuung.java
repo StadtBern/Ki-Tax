@@ -9,12 +9,12 @@
  */
 package ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung;
 
-import ch.dvbern.ebegu.reporting.lib.Converter;
-import ch.dvbern.ebegu.reporting.lib.MergeField;
+import ch.dvbern.lib.excelmerger.Converter;
+import ch.dvbern.lib.excelmerger.MergeField;
 
 import javax.annotation.Nonnull;
 
-import static ch.dvbern.ebegu.reporting.lib.StandardConverters.*;
+import static ch.dvbern.lib.excelmerger.StandardConverters.*;
 
 public enum MergeFieldGesuchstellerKinderBetreuung implements MergeField {
 
@@ -83,6 +83,7 @@ public enum MergeFieldGesuchstellerKinderBetreuung implements MergeField {
 	kindFachstelle(BOOLEAN_CONVERTER, Type.SIMPLE),
 	kindErwBeduerfnisse(BOOLEAN_CONVERTER, Type.SIMPLE),
 	kindDeutsch(BOOLEAN_CONVERTER, Type.SIMPLE),
+	eingeschult(BOOLEAN_CONVERTER, Type.SIMPLE),
 
 	zeitabschnittVon(DATE_CONVERTER, Type.SIMPLE),
 	zeitabschnittBis(DATE_CONVERTER, Type.SIMPLE),
