@@ -98,7 +98,7 @@ module.exports = {
             // See: https://github.com/s-panferov/awesome-typescript-loader
             {
                 test: /\.ts$/,
-                loader: 'awesome-typescript-loader',
+                loader: 'ts-loader',
                 query: {
                     "compilerOptions": {
 

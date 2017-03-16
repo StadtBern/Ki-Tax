@@ -11,11 +11,12 @@ import IInjectorService = angular.auto.IInjectorService;
 import IThemingProvider = angular.material.IThemingProvider;
 import IHttpProvider = angular.IHttpProvider;
 import ILogProvider = angular.ILogProvider;
+import ILocationProvider = angular.ILocationProvider;
 
-configure.$inject = ['$translateProvider', '$injector', '$httpProvider', '$mdThemingProvider', 'hotkeysProvider', '$logProvider'];
+configure.$inject = ['$translateProvider', '$injector', '$httpProvider', '$mdThemingProvider', 'hotkeysProvider', '$logProvider', '$locationProvider'];
 /* @ngInject */
 export function configure($translateProvider: ITranslateProvider, $injector: IInjectorService, $httpProvider: IHttpProvider,
-                          $mdThemingProvider: IThemingProvider, hotkeysProvider: any, $logProvider: ILogProvider) {
+                          $mdThemingProvider: IThemingProvider, hotkeysProvider: any, $logProvider: ILogProvider, $locationProvider: ILocationProvider) {
     //Translation Provider configuration
     let translProp = require('../assets/translations/translations_de.json');
 
@@ -48,6 +49,8 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
     $httpProvider.interceptors.push('HttpErrorInterceptor');
     $httpProvider.interceptors.push('HttpAuthInterceptor');
     $httpProvider.interceptors.push('HttpResponseInterceptor');
+
+    $locationProvider.hashPrefix('');
 
 
     // disable debug log messages in production
