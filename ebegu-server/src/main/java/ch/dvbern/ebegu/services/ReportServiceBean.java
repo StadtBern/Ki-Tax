@@ -515,9 +515,21 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setFallId(Integer.parseInt(""+gesuch.getFall().getFallNummer()));
 			row.setBgNummer(zeitabschnitt.getVerfuegung().getBetreuung().getBGNummer());
 
-			// Gesuchsteller 1
+			// Gesuchsteller 1: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
+			row.setGs1EwpAngestellt(0);
+			row.setGs1EwpAusbildung(0);
+			row.setGs1EwpSelbstaendig(0);
+			row.setGs1EwpRav(0);
+			row.setGs1EwpGesundhtl(0);
+			row.setGs1EwpZuschlag(0);
 			addGesuchsteller1ToGesuchstellerKinderBetreuungDataRow(row, gesuch.getGesuchsteller1());
-			// Gesuchsteller 2
+			// Gesuchsteller 2: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
+			row.setGs2EwpAngestellt(0);
+			row.setGs2EwpAusbildung(0);
+			row.setGs2EwpSelbstaendig(0);
+			row.setGs2EwpRav(0);
+			row.setGs2EwpGesundhtl(0);
+			row.setGs2EwpZuschlag(0);
 			if (gesuch.getGesuchsteller2() != null) {
 				addGesuchsteller2ToGesuchstellerKinderBetreuungDataRow(row, gesuch.getGesuchsteller2());
 			}
@@ -557,26 +569,27 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		row.setGs1EwkId(gs1.getZpvNumber());
 		row.setGs1Diplomatenstatus(gs1.isDiplomatenstatus());
 		// EWP Gesuchsteller 1
+
 		Set<ErwerbspensumContainer> erwerbspensenGS1 = containerGS1.getErwerbspensenContainersNotEmpty();
 		for (ErwerbspensumContainer erwerbspensumContainer : erwerbspensenGS1) {
 			Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
 			if (Taetigkeit.ANGESTELLT.equals(erwerbspensumJA.getTaetigkeit())) {
-				row.setGs1EwpAngestellt(row.getGs1EwpAngestellt() != null ? row.getGs1EwpAngestellt() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs1EwpAngestellt(row.getGs1EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
 			if (Taetigkeit.AUSBILDUNG.equals(erwerbspensumJA.getTaetigkeit())) {
-				row.setGs1EwpAusbildung(row.getGs1EwpAusbildung() != null ? row.getGs1EwpAusbildung() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs1EwpAusbildung(row.getGs1EwpAusbildung() + erwerbspensumJA.getPensum());
 			}
 			if (Taetigkeit.SELBSTAENDIG.equals(erwerbspensumJA.getTaetigkeit())) {
-				row.setGs1EwpSelbstaendig(row.getGs1EwpSelbstaendig() != null ? row.getGs1EwpSelbstaendig() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs1EwpSelbstaendig(row.getGs1EwpSelbstaendig() + erwerbspensumJA.getPensum());
 			}
 			if (Taetigkeit.RAV.equals(erwerbspensumJA.getTaetigkeit())) {
-				row.setGs1EwpRav(row.getGs1EwpRav() != null ? row.getGs1EwpRav() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs1EwpRav(row.getGs1EwpRav() + erwerbspensumJA.getPensum());
 			}
 			if (Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN.equals(erwerbspensumJA.getTaetigkeit())) {
-				row.setGs1EwpGesundhtl(row.getGs1EwpGesundhtl() != null ? row.getGs1EwpGesundhtl() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs1EwpGesundhtl(row.getGs1EwpGesundhtl() + erwerbspensumJA.getPensum());
 			}
 			if (erwerbspensumJA.getZuschlagZuErwerbspensum()) {
-				row.setGs1EwpZuschlag(row.getGs1EwpZuschlag() != null ? row.getGs1EwpZuschlag() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs1EwpZuschlag(row.getGs1EwpZuschlag() + erwerbspensumJA.getPensum());
 			}
 		}
 	}
@@ -594,26 +607,27 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		row.setGs2EwkId(gs2.getZpvNumber());
 		row.setGs2Diplomatenstatus(gs2.isDiplomatenstatus());
 		// EWP Gesuchsteller 2
+
 		Set<ErwerbspensumContainer> erwerbspensenGS2 = containerGS2.getErwerbspensenContainersNotEmpty();
 		for (ErwerbspensumContainer erwerbspensumContainer : erwerbspensenGS2) {
 			Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
 			if (Taetigkeit.ANGESTELLT.equals(erwerbspensumJA.getTaetigkeit())) {
-				row.setGs2EwpAngestellt(row.getGs2EwpAngestellt() != null ? row.getGs2EwpAngestellt() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs2EwpAngestellt(row.getGs2EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
 			if (Taetigkeit.AUSBILDUNG.equals(erwerbspensumJA.getTaetigkeit())) {
-				row.setGs2EwpAusbildung(row.getGs2EwpAusbildung() != null ? row.getGs2EwpAusbildung() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs2EwpAusbildung(row.getGs2EwpAusbildung() + erwerbspensumJA.getPensum());
 			}
 			if (Taetigkeit.SELBSTAENDIG.equals(erwerbspensumJA.getTaetigkeit())) {
-				row.setGs2EwpSelbstaendig(row.getGs2EwpSelbstaendig() != null ? row.getGs2EwpSelbstaendig() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs2EwpSelbstaendig(row.getGs2EwpSelbstaendig() + erwerbspensumJA.getPensum());
 			}
 			if (Taetigkeit.RAV.equals(erwerbspensumJA.getTaetigkeit())) {
-				row.setGs2EwpRav(row.getGs2EwpRav() != null ? row.getGs2EwpRav() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs2EwpRav(row.getGs2EwpRav() + erwerbspensumJA.getPensum());
 			}
 			if (Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN.equals(erwerbspensumJA.getTaetigkeit())) {
-				row.setGs2EwpGesundhtl(row.getGs2EwpGesundhtl() != null ? row.getGs2EwpGesundhtl() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs2EwpGesundhtl(row.getGs2EwpGesundhtl() + erwerbspensumJA.getPensum());
 			}
 			if (erwerbspensumJA.getZuschlagZuErwerbspensum()) {
-				row.setGs2EwpZuschlag(row.getGs2EwpZuschlag() != null ? row.getGs2EwpZuschlag() + erwerbspensumJA.getPensum() : erwerbspensumJA.getPensum());
+				row.setGs2EwpZuschlag(row.getGs2EwpZuschlag() + erwerbspensumJA.getPensum());
 			}
 		}
 	}

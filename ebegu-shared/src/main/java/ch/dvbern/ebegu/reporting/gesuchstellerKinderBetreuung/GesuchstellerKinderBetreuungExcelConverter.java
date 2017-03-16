@@ -10,6 +10,7 @@
 package ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung;
 
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.excelmerger.ExcelConverter;
 import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -66,12 +67,12 @@ public class GesuchstellerKinderBetreuungExcelConverter implements ExcelConverte
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1Ort, dataRow.getGs1Ort());
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwkId, dataRow.getGs1EwkId());
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1Diplomatenstatus, dataRow.getGs1Diplomatenstatus());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpAngestellt, dataRow.getGs1EwpAngestellt());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpAusbildung, dataRow.getGs1EwpAusbildung());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpSelbstaendig, dataRow.getGs1EwpSelbstaendig());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpRav, dataRow.getGs1EwpRav());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpZuschlag, dataRow.getGs1EwpZuschlag());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpGesundhtl, dataRow.getGs1EwpGesundhtl());
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpAngestellt, MathUtil.GANZZAHL.from(dataRow.getGs1EwpAngestellt()));
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpAusbildung, MathUtil.GANZZAHL.from(dataRow.getGs1EwpAusbildung()));
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpSelbstaendig, MathUtil.GANZZAHL.from(dataRow.getGs1EwpSelbstaendig()));
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpRav, MathUtil.GANZZAHL.from(dataRow.getGs1EwpRav()));
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpZuschlag, MathUtil.GANZZAHL.from(dataRow.getGs1EwpZuschlag()));
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs1EwpGesundhtl, MathUtil.GANZZAHL.from(dataRow.getGs1EwpGesundhtl()));
 
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2Name, dataRow.getGs2Name());
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2Vorname, dataRow.getGs2Vorname());
@@ -82,12 +83,12 @@ public class GesuchstellerKinderBetreuungExcelConverter implements ExcelConverte
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2Ort, dataRow.getGs2Ort());
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwkId, dataRow.getGs2EwkId());
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2Diplomatenstatus, dataRow.getGs2Diplomatenstatus());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpAngestellt, dataRow.getGs2EwpAngestellt());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpAusbildung, dataRow.getGs2EwpAusbildung());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpSelbstaendig, dataRow.getGs2EwpSelbstaendig());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpRav, dataRow.getGs2EwpRav());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpZuschlag, dataRow.getGs2EwpZuschlag());
-				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpGesundhtl, dataRow.getGs2EwpGesundhtl());
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpAngestellt, MathUtil.GANZZAHL.from(dataRow.getGs2EwpAngestellt()));
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpAusbildung, MathUtil.GANZZAHL.from(dataRow.getGs2EwpAusbildung()));
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpSelbstaendig, MathUtil.GANZZAHL.from(dataRow.getGs2EwpSelbstaendig()));
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpRav, MathUtil.GANZZAHL.from(dataRow.getGs2EwpRav()));
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpZuschlag, MathUtil.GANZZAHL.from(dataRow.getGs2EwpZuschlag()));
+				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.gs2EwpGesundhtl, MathUtil.GANZZAHL.from(dataRow.getGs2EwpGesundhtl()));
 
 				String familiensituation = dataRow.getFamiliensituation() != null ? dataRow.getFamiliensituation().name() : "";
 				excelRowGroup.addValue(MergeFieldGesuchstellerKinderBetreuung.familiensituation, familiensituation);
