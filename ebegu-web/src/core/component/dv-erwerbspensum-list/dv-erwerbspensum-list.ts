@@ -42,10 +42,10 @@ export class DVErwerbspensumListController {
     static $inject: any[] = ['AuthServiceRS'];
     /* @ngInject */
     constructor(private authServiceRS: AuthServiceRS) {
-        this.removeButtonTitle = 'Eintrag entfernen';
     }
 
     $onInit() {
+        this.removeButtonTitle = 'Eintrag entfernen';
         if (!this.addButtonText) {
             this.addButtonText = 'add item';
         }

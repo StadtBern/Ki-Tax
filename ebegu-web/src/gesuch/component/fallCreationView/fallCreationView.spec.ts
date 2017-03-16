@@ -39,11 +39,15 @@ describe('fallCreationView', function () {
     describe('nextStep', () => {
         it('submitted but rejected -> it does not go to the next step', () => {
             spyOn($state, 'go');
-            spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.reject({}));
+            let reject = $q.reject({}).catch( () => {
+                //need to catch rejected promise
+            });
+            spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue(reject);
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
             fallCreationview.save();
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
+            expect($state.go).not.toHaveBeenCalled();
         });
         it('should submit the form and go to the next page', () => {
             spyOn($state, 'go');
