@@ -207,5 +207,10 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvAccordion', new DvAccordionComponentConfig())
     .component('dvAccordionTab', new DvAccordionTabComponentConfig())
     .service('MahnungRS', MahnungRS)
-    .service('ReportRS', ReportRS);
+    .service('ReportRS', ReportRS)
+    .filter('arrayToString', () => {
+        return function (input: Array<string>) {
+            return input.join(', ');
+        };
+    });
 
