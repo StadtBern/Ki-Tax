@@ -1717,7 +1717,17 @@ export default class EbeguRestUtil {
         }
         return wizardSteps;
     }
-
+    public parseAntragStatusHistoryCollection (antragStatusHistoryCollection: Array<any>): TSAntragStatusHistory[] {
+        let resultList: TSAntragStatusHistory[] = [];
+        if (antragStatusHistoryCollection && Array.isArray(antragStatusHistoryCollection)) {
+            for (let i = 0; i < antragStatusHistoryCollection.length; i++) {
+                resultList[i] = this.parseAntragStatusHistory(new TSAntragStatusHistory(), antragStatusHistoryCollection[i]);
+            }
+        } else {
+            resultList[0] = this.parseAntragStatusHistory(new TSAntragStatusHistory(), antragStatusHistoryCollection);
+        }
+        return resultList;
+    }
     public parseAntragStatusHistory(antragStatusHistoryTS: TSAntragStatusHistory, antragStatusHistoryFromServer: any): TSAntragStatusHistory {
         this.parseAbstractEntity(antragStatusHistoryTS, antragStatusHistoryFromServer);
         antragStatusHistoryTS.gesuchId = antragStatusHistoryFromServer.gesuchId;

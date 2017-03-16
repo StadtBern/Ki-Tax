@@ -1,27 +1,29 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.PreDestroy;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
@@ -108,6 +110,28 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 		authorizer.checkReadAuthorization(gesuch);
 		Objects.requireNonNull(gesuch);
 		return criteriaQueryHelper.getEntitiesByAttribute(AntragStatusHistory.class, gesuch, AntragStatusHistory_.gesuch);
+	}
+	@Override
+	@Nonnull
+	public Collection<AntragStatusHistory> findAllAntragStatusHistoryByGPFall(@Nonnull Gesuchsperiode gesuchsperiode, Fall fall) {
+		Objects.requireNonNull(gesuchsperiode);
+		Objects.requireNonNull(fall);
+		authorizer.checkReadAuthorizationFall(fall);
+
+		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("searchAntraege", "No User is logged in"));
+		UserRole role = user.getRole();
+
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<AntragStatusHistory> query = cb.createQuery(AntragStatusHistory.class);
+		Set<AntragStatus> antragStatuses = AntragStatus.allowedforRole(role);
+
+		Root<AntragStatusHistory> root = query.from(AntragStatusHistory.class);
+		Predicate fallPredicate = cb.equal(root.get(AntragStatusHistory_.gesuch).get(Gesuch_.fall), fall);
+		Predicate gesuchsperiodePredicate = cb.equal(root.get(AntragStatusHistory_.gesuch).get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate rolePredicate = root.get(AntragStatusHistory_.gesuch).get(Gesuch_.status).in(antragStatuses);
+		query.where(fallPredicate, gesuchsperiodePredicate, rolePredicate).orderBy(cb.desc(root.get(AntragStatusHistory_.timestampErstellt)));
+		return persistence.getCriteriaResults(query);
 	}
 
 }
