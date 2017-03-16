@@ -240,13 +240,11 @@ export default class GesuchModelManager {
         } else { //create
             if (this.gesuch.fall && this.gesuch.fall.timestampErstellt) {
                 // Fall ist schon vorhanden
-                console.log('fall vorhanden : asdf1234');
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
                     this.gesuch = gesuchResponse;
                     return this.gesuch;
                 });
             } else {
-                console.log('fall nicht vorhanden : asdf1234');
                 return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: TSFall) => {
                     this.gesuch.fall = angular.copy(fallResponse);
                     return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {

@@ -50,7 +50,9 @@ export class DvBisher {
 
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, private $translate: ITranslateService, private $log: ILogService) {
+
     }
+
     $onInit() {
         if (this.showIfBisherNone === undefined) {//wenn nicht von aussen gesetzt auf true
             this.showIfBisherNone = true;
