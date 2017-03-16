@@ -154,7 +154,7 @@
                      dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
                      dv-show-expression="vm.showVerfuegungsDetails()">
                     <div class="col-md-12 form-group">
-                        <label class="md-no-float" class="inlineHint" for="manuelle_notes"
+                        <label class="md-no-float inlineHint" for="manuelle_notes"
                                data-translate="BEMERKUNGEN"></label>
                         <textarea md-no-autogrow class="form-control" rows="6" id="manuelle_notes"
                                   ng-model="vm.bemerkungen" ng-disabled="vm.isBemerkungenDisabled()"
@@ -210,7 +210,7 @@
                 </div>
 
 
-                <div class="row marginTop20" ng-show="vm.isSameVerfuegungdaten()">
+                <div class="row marginTop20" ng-show="vm.isSameVerfuegungsdaten()">
                     <div class="col-md-12">
                         <div class="well well-status-warten">
                             <span data-translate="IDENTISCHE_BERECHNUNG"></span>
@@ -223,19 +223,19 @@
                     <dv-navigation dv-cancel="vm.cancel()" dv-next="false" dv-sub-step="2">
                     </dv-navigation>
                     <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
-                        <div ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen()">
+                        <div ng-show="!vm.isSameVerfuegungsdaten() && vm.showVerfuegen()">
                             <dv-loading-button type="submit" button-click="vm.save()">
                                 <span data-translate="VERFUEGEN_UPPER"></span>
                             </dv-loading-button>
                         </div>
                         <div
-                            ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen() && vm.gesuchModelManager.isErstgesuch()">
+                            ng-show="!vm.isSameVerfuegungsdaten() && vm.showVerfuegen() && vm.gesuchModelManager.isErstgesuch()">
                             <dv-loading-button type="submit"
                                                button-click="vm.nichtEintreten()">
                                 <span data-translate="VERFUEGEN_NICHT_EINTRETEN_UPPER"></span>
                             </dv-loading-button>
                         </div>
-                        <div ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen() && !vm.gesuchModelManager.isErstgesuch()">
+                        <div ng-show="!vm.isSameVerfuegungsdaten() && vm.showVerfuegen() && !vm.gesuchModelManager.isErstgesuch()">
                             <!--Mutation wird nicht akzeptiert -> schliessen ohne Verfuegung. Der Status ist passt meiner Meinung
                             nach nicht 100% aber im Moment passt der am besten. (siehe auch EBEGU-890) -->
                             <dv-loading-button type="submit"
@@ -243,13 +243,13 @@
                                 <span data-translate="VERFUEGEN_ABLEHNEN_UPPER"></span>
                             </dv-loading-button>
                         </div>
-                        <div ng-show="vm.showVerfuegen() && vm.isSameVerfuegungdaten()">
+                        <div ng-show="vm.showVerfuegen() && vm.isSameVerfuegungsdaten()">
                             <dv-loading-button type="submit"
                                                button-click="vm.schliessenOhneVerfuegen()">
                                 <span data-translate="VERFUEGEN_VERZICHTEN_UPPER"></span>
                             </dv-loading-button>
                         </div>
-                        <div ng-show="vm.showVerfuegen() && vm.isSameVerfuegungdaten()">
+                        <div ng-show="vm.showVerfuegen() && vm.isSameVerfuegungsdaten()">
                             <dv-loading-button type="submit" button-click="vm.save()">
                                 <span data-translate="TROTZDEM_VERFUEGEN_UPPER"></span>
                             </dv-loading-button>

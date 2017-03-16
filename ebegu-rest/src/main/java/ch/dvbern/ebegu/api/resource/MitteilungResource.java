@@ -5,10 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxBetreuungsmitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilung;
 import ch.dvbern.ebegu.api.dtos.JaxMitteilungen;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -94,7 +91,7 @@ public class MitteilungResource {
 	@Path("/applybetreuungsmitteilung/{betreuungsmitteilungId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxBetreuungsmitteilung applyBetreuungsmitteilung(
+	public JaxId applyBetreuungsmitteilung(
 		@Nonnull @NotNull @PathParam("betreuungsmitteilungId") JaxId betreuungsmitteilungId,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -104,8 +101,8 @@ public class MitteilungResource {
 			throw new EbeguEntityNotFoundException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND,
 				"BetreuungsmitteilungID invalid: " + betreuungsmitteilungId.getId());
 		}
-		Betreuungsmitteilung persistedMitteilung = this.mitteilungService.applyBetreuungsmitteilung(mitteilung.get());
-		return converter.betreuungsmitteilungToJAX(persistedMitteilung);
+		final Gesuch mutierteGesuch = this.mitteilungService.applyBetreuungsmitteilung(mitteilung.get());
+		return converter.toJaxId(mutierteGesuch);
 	}
 
 	@Nullable

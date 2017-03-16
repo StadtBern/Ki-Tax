@@ -2,7 +2,7 @@
     <div class="col-md-12">
 
         <div class="row">
-            <div class="col-md-9 col-md-offset-1">
+            <div class="col-md-12">
                 <dv-loading-button type="button" button-click="vm.gotToUebersicht()"
                                    button-class="dv-btn-operation">
                     <i class="fa fa-lg fa-chevron-left"></i>
@@ -10,7 +10,7 @@
                 </dv-loading-button>
             </div>
 
-            <div class="col-md-9 col-md-offset-1">
+            <div class="col-md-11">
                 <h3 data-translate="ZAHLUNG"></h3>
             </div>
             <div class="col-md-1 text-right">
@@ -19,7 +19,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-10 col-md-offset-1 table-responsive">
+            <div class="col-md-12 table-responsive">
 
                 <table st-table="displayedCollection" st-safe-src="vm.getZahlungsauftrag().zahlungen"
                        st-delay="20"
@@ -54,7 +54,7 @@
                             dv-show-allowed-roles="['SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
                             <a type="button" class="btn-link link-underline" ng-click="vm.bestaetigen(row)" href=""
                                ng-if="!vm.isBestaetigt(row.status)">
-                                <span ng-bind="row.status | translate" style="color: #D50025"></span>
+                                <span ng-bind=" 'ZAHLUNG_ERHALTEN'| translate" style="color: #D50025"></span>
                             </a>
                             <span ng-bind="row.status | translate" ng-if="vm.isBestaetigt(row.status)"></span>
                         </td>

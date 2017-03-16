@@ -22,9 +22,6 @@ public class Verfuegung extends AbstractEntity{
 	private static final long serialVersionUID = -6682874795746487562L;
 
 
-	@Transient
-	private boolean sameVerfuegungsdaten;
-
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
@@ -66,27 +63,30 @@ public class Verfuegung extends AbstractEntity{
 	private boolean kategorieNichtEintreten = false;
 
 
+	@Nullable
 	public String getGeneratedBemerkungen() {
 		return generatedBemerkungen;
 	}
 
-	public void setGeneratedBemerkungen(String automatischeInitialisiertteBemerkungen) {
-		this.generatedBemerkungen = automatischeInitialisiertteBemerkungen;
+	public void setGeneratedBemerkungen(@Nullable String autoInitialisierteBemerkungen) {
+		this.generatedBemerkungen = autoInitialisierteBemerkungen;
 	}
 
+	@Nullable
 	public String getManuelleBemerkungen() {
 		return manuelleBemerkungen;
 	}
 
-	public void setManuelleBemerkungen(String manuelleBemerkungen) {
+	public void setManuelleBemerkungen(@Nullable String manuelleBemerkungen) {
 		this.manuelleBemerkungen = manuelleBemerkungen;
 	}
 
+	@Nonnull
 	public List<VerfuegungZeitabschnitt> getZeitabschnitte() {
 		return zeitabschnitte;
 	}
 
-	public void setZeitabschnitte(List<VerfuegungZeitabschnitt> zeitabschnitte) {
+	public void setZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		this.zeitabschnitte = zeitabschnitte;
 		for (VerfuegungZeitabschnitt zeitabschnitt : this.zeitabschnitte) {
 			zeitabschnitt.setVerfuegung(this);
@@ -164,11 +164,5 @@ public class Verfuegung extends AbstractEntity{
 		return sb.toString();
 	}
 
-	public boolean isSameVerfuegungsdaten() {
-		return sameVerfuegungsdaten;
-	}
 
-	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
-		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
-	}
 }

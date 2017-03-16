@@ -3,11 +3,13 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,9 +22,10 @@ public interface VerfuegungService {
 	 * Die Betreuung erhaelt den Status VERFUEGT
 	 * @param verfuegung Die Verfuegung als DTO
 	 * @param betreuungId Id der Betreuung auf die die verfuegung gespeichet werden soll
+	 * @param ignorieren true wenn die ausbezahlten Zeitabschnitte nicht neu berechnet werden muessen
 	 */
 	@Nonnull
-	Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId);
+	Verfuegung verfuegen(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId, boolean ignorieren);
 
 	/**
 	 * Speichert die Verfuegung neu in der DB falls der Key noch nicht existiert.
@@ -80,4 +83,11 @@ public interface VerfuegungService {
 	 */
 	Optional<LocalDate> findVorgaengerVerfuegungDate(@Nonnull Betreuung betreuung);
 
+	/**
+	 * Sucht den Zeitabschnitt / die Zeitabschnitte mit demselben Zeitraum auf der Vorgängerverfügung,
+	 * und die verrechnet oder ignoriert sind (letzteres aufgrund mitgegebenem Flag)
+	 */
+	@Nonnull
+	List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu,
+																					  @Nonnull Betreuung betreuungNeu, boolean includeIgnored);
 }

@@ -41,6 +41,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	// Zwischenresulate aus DATA-Rules ("Abschnitt")
 
 	@Transient
+	private boolean sameVerfuegungsdaten;
+
+	@Transient
 	private Integer erwerbspensumGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
 	@Transient
@@ -168,7 +171,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 */
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public VerfuegungZeitabschnitt(VerfuegungZeitabschnitt toCopy) {
-		this.setVorgaengerId(toCopy.getId());
 		this.setGueltigkeit(new DateRange(toCopy.getGueltigkeit()));
 		this.erwerbspensumGS1 = toCopy.erwerbspensumGS1;
 		this.erwerbspensumGS2 = toCopy.erwerbspensumGS2;
@@ -210,6 +212,18 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 */
 	public VerfuegungZeitabschnitt(DateRange gueltigkeit) {
 		this.setGueltigkeit(new DateRange(gueltigkeit));
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	@Override
+	public void setVorgaengerId(String vorgaengerId) {
+		// nop -> Diese Methode darf eingentlich nicht verwendet werden, da ein VerfuegungZeitabschnitt keinen Vorgaenger hat
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	@Override
+	public String getVorgaengerId() {
+		return null; // Diese Methode darf eingentlich nicht verwendet werden, da ein VerfuegungZeitabschnitt keinen Vorgaenger hat
 	}
 
 	public Integer getErwerbspensumGS1() {
@@ -490,6 +504,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.zahlungsposition = zahlungsposition;
 	}
 
+	public boolean isSameVerfuegungsdaten() {
+		return sameVerfuegungsdaten;
+	}
+
+	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
+		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -726,7 +748,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 */
 	@SuppressWarnings({"OverlyComplexBooleanExpression", "AccessingNonPublicFieldOfAnotherObject", "QuestionableName"})
 	public boolean isSamePersistedValues(VerfuegungZeitabschnitt that) {
-		// zuSpaetEingereicht ist hier nicht aufgefuehrt, weil;
+		// zuSpaetEingereicht und zahlungsstatus sind hier nicht aufgefuehrt, weil;
 		// Es sollen die Resultate der Verfuegung verglichen werden und nicht der Weg, wie wir zu diesem Resultat gelangt sind
 		return betreuungspensum == that.betreuungspensum &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
@@ -737,8 +759,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(famGroesse.compareTo(that.famGroesse) == 0) &&
 			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
 			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0 &&
-			Objects.equals(this.einkommensjahr, that.einkommensjahr) &&
-			Objects.equals(this.zahlungsstatus, that.zahlungsstatus);
+			Objects.equals(this.einkommensjahr, that.einkommensjahr);
 	}
 
 	/**

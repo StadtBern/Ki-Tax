@@ -28,7 +28,8 @@ export class StatistikViewController {
     private _gesuchsperioden: Array<TSGesuchsperiode>;
     TSRole: any;
     TSRoleUtil: any;
-    private DATETIME_PARAM_FORMAT: string = 'YYYY-MM-DD HH:mm:ss';
+    private DATETIME_PARAM_FORMAT: string = 'YYYY-MM-DD HH:mm:ss'; //TODO (team) wieso hier DateTime???
+    private DATE_PARAM_FORMAT: string = 'YYYY-MM-DD';
 
     static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportRS', 'DownloadRS'];
 
@@ -79,6 +80,14 @@ export class StatistikViewController {
                 case TSStatistikParameterType.GESUCHSTELLER:
                     break;
                 case TSStatistikParameterType.KANTON:
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
+                        .then((downloadFile: TSDownloadFile) => {
+
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
                     break;
                 case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
                     break;

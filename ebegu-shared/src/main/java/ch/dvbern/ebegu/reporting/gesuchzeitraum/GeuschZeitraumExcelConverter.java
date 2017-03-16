@@ -9,8 +9,8 @@
  */
 package ch.dvbern.ebegu.reporting.gesuchzeitraum;
 
-import ch.dvbern.ebegu.reporting.lib.ExcelConverter;
-import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
+import ch.dvbern.lib.excelmerger.ExcelConverter;
+import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import javax.annotation.Nonnull;
@@ -40,6 +40,7 @@ public class GeuschZeitraumExcelConverter implements ExcelConverter {
 		data.forEach(dataRow -> {
 				ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldGesuchZeitraum.repeatGesuchZeitraumRow);
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.bgNummer, dataRow.getBgNummer());
+				excelRowGroup.addValue(MergeFieldGesuchZeitraum.gesuchLaufNr, dataRow.getGesuchLaufNr());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.institution, dataRow.getInstitution());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.betreuungsTyp, dataRow.getBetreuungsTyp());
 				excelRowGroup.addValue(MergeFieldGesuchZeitraum.periode, dataRow.getPeriode());

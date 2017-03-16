@@ -9,18 +9,19 @@
  */
 package ch.dvbern.ebegu.reporting.gesuchzeitraum;
 
-import ch.dvbern.ebegu.reporting.lib.Converter;
-import ch.dvbern.ebegu.reporting.lib.MergeField;
+import ch.dvbern.lib.excelmerger.Converter;
+import ch.dvbern.lib.excelmerger.MergeField;
 
 import javax.annotation.Nonnull;
 
-import static ch.dvbern.ebegu.reporting.lib.StandardConverters.*;
+import static ch.dvbern.lib.excelmerger.StandardConverters.*;
 
 public enum MergeFieldGesuchZeitraum implements MergeField {
 
 	repeatGesuchZeitraumRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
 
 	bgNummer(STRING_CONVERTER, Type.SIMPLE),
+	gesuchLaufNr(INTEGER_CONVERTER, Type.SIMPLE),
 	institution(STRING_CONVERTER, Type.SIMPLE),
 	betreuungsTyp(STRING_CONVERTER, Type.SIMPLE),
 	periode(STRING_CONVERTER, Type.SIMPLE),
