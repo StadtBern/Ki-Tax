@@ -75,8 +75,19 @@ export class StatistikViewController {
                         });
                     break;
                 }
-                case TSStatistikParameterType.KINDER:
+                case TSStatistikParameterType.KINDER: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getKinderReportExcel(
+                        this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                        .then((downloadFile: TSDownloadFile) => {
+
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
                     break;
+                }
                 case TSStatistikParameterType.GESUCHSTELLER:
                     break;
                 case TSStatistikParameterType.KANTON: {

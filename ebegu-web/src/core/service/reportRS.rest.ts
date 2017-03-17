@@ -115,7 +115,19 @@ export class ReportRS {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
             });
+    }
 
+    public getKinderReportExcel(auswertungVon: string, auswertungBis: string, gesuchPeriodeID: string): IPromise<TSDownloadFile> {
+        let reportParams: string = this.httpParamSerializer({
+            auswertungVon: auswertungVon,
+            auswertungBis: auswertungBis,
+            gesuchPeriodeID: gesuchPeriodeID
+        });
+        return this.http.get(this.serviceURL + '/excel/kinder?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
     }
 
     public getServiceName(): string {

@@ -36,6 +36,8 @@ import java.time.LocalDateTime;
 @Api
 public class ReportResource {
 
+	private static final String VALIDATION_MSG = "Das von-Datum muss vor dem bis-Datum sein.";
+
 	@Inject
 	private ReportService reportService;
 
@@ -89,7 +91,7 @@ public class ReportResource {
 
 		if (!dateTimeTo.isAfter(dateTimeFrom)) {
 			throw new EbeguRuntimeException("getGesuchZeitraumReportExcel", "Fehler beim erstellen Report Gesuch Zeitraum"
-				, "Das von-Datum muss vor dem bis-Datum sein.");
+				, VALIDATION_MSG);
 		}
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchZeitraum(dateTimeFrom,
@@ -120,7 +122,7 @@ public class ReportResource {
 		LocalDate dateAuswertungBis = DateUtil.parseStringToDateOrReturnNow(auswertungBis);
 
 		if (!dateAuswertungBis.isAfter(dateAuswertungVon)) {
-			throw new EbeguRuntimeException("getKantonReportExcel", "Fehler beim erstellen Report Kanton", "Das von-Datum muss vor dem bis-Datum sein.");
+			throw new EbeguRuntimeException("getKantonReportExcel", "Fehler beim erstellen Report Kanton", VALIDATION_MSG);
 		}
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportKanton(dateAuswertungVon, dateAuswertungBis);
@@ -219,7 +221,7 @@ public class ReportResource {
 
 		if (!dateTo.isAfter(dateFrom)) {
 			throw new EbeguRuntimeException("getGesuchstellerKinderBetreuungReportExcel", "Fehler beim erstellen Report Gesuchsteller-Kinder-Betreuung"
-				, "Das von-Datum muss vor dem bis-Datum sein.");
+				, VALIDATION_MSG);
 		}
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchstellerKinderBetreuung(dateFrom, dateTo,
@@ -228,6 +230,37 @@ public class ReportResource {
 		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
+	}
 
+	@Nonnull
+	@GET
+	@Path("/excel/kinder")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getKinderReportExcel(
+		@QueryParam("auswertungVon") @Nonnull String auswertungVon,
+		@QueryParam("auswertungBis") @Nonnull String auswertungBis,
+		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo)
+		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+
+		String ip = downloadResource.getIP(request);
+
+		Validate.notNull(auswertungVon);
+		Validate.notNull(auswertungBis);
+		LocalDate dateFrom = DateUtil.parseStringToDateOrReturnNow(auswertungVon);
+		LocalDate dateTo = DateUtil.parseStringToDateOrReturnNow(auswertungBis);
+
+		if (!dateTo.isAfter(dateFrom)) {
+			throw new EbeguRuntimeException("getKinderReportExcel", "Fehler beim erstellen Report Kinder"
+				, VALIDATION_MSG);
+		}
+
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportKinder(dateFrom, dateTo,
+			gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null);
+
+		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
+
+		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 }
