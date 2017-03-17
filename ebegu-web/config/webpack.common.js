@@ -21,7 +21,7 @@ var currentTime = new Date();
  */
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
+// var ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 /**
  * Webpack Constants
@@ -139,7 +139,8 @@ module.exports = {
         // Description: Do type checking in a separate process, so webpack don't need to wait.
         //
         // See: https://github.com/s-panferov/awesome-typescript-loader#forkchecker-boolean-defaultfalse
-        new ForkCheckerPlugin(),
+        //new ForkCheckerPlugin(),
+        // Is now native, and is not required to be called
 
         // Plugin: OccurenceOrderPlugin
         // Description: Varies the distribution of the ids to get the smallest id length

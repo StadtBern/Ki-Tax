@@ -54,6 +54,8 @@ export class DVPendenzenListController {
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
                 private $state: IStateService, private CONSTANTS: any) {
+    }
+    $onInit() {
         this.initViewModel();
     }
 
