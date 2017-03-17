@@ -147,7 +147,7 @@ public class ReportResource {
 		LocalDate dateAuswertungBis = DateUtil.parseStringToDateOrReturnNow(auswertungBis);
 
 		if (!dateAuswertungBis.isAfter(dateAuswertungVon)) {
-			throw new EbeguRuntimeException("getKantonReportExcel", "Fehler beim erstellen Report Kanton", "Das von-Datum muss vor dem bis-Datum sein.");
+			throw new EbeguRuntimeException("getMitarbeiterinnenReportExcel", "Fehler beim erstellen Report Mitarbeiterinnen", "Das von-Datum muss vor dem bis-Datum sein.");
 		}
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportMitarbeiterinnen(dateAuswertungVon, dateAuswertungBis);
