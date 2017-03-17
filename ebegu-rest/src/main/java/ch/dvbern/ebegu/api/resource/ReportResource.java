@@ -263,4 +263,25 @@ public class ReportResource {
 
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
+
+	@Nonnull
+	@GET
+	@Path("/excel/gesuchsteller")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getGesuchstellerReportExcel(
+		@QueryParam("stichtag") @Nonnull String stichtag,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo)
+		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
+
+		String ip = downloadResource.getIP(request);
+
+		Validate.notNull(stichtag);
+		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stichtag);
+
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchsteller(date);
+		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
+
+		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
+	}
 }

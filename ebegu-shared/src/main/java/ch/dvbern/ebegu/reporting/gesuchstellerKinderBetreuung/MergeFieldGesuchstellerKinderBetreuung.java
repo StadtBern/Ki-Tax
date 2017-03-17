@@ -18,6 +18,7 @@ import static ch.dvbern.lib.excelmerger.StandardConverters.*;
 
 public enum MergeFieldGesuchstellerKinderBetreuung implements MergeField {
 
+	stichtag(DATE_CONVERTER, Type.SIMPLE),
 	auswertungVon(DATE_CONVERTER, Type.SIMPLE),
 	auswertungBis(DATE_CONVERTER, Type.SIMPLE),
 	auswertungPeriode(STRING_CONVERTER, Type.SIMPLE),
