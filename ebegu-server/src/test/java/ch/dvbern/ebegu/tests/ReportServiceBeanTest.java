@@ -256,19 +256,13 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(BigDecimal.ZERO, reportMitarbeiterinnen.get(1).getVerantwortlicheGesuche());
 		Assert.assertEquals(BigDecimal.ONE, reportMitarbeiterinnen.get(1).getVerfuegungenAusgestellt());
 
-		//case with no Gesuche at all
-//		Assert.assertEquals("Gracia", reportMitarbeiterinnen.get(1).getName());
-//		Assert.assertEquals(BigDecimal.ZERO, reportMitarbeiterinnen.get(1).getVerantwortlicheGesuche());
-//		Assert.assertEquals(BigDecimal.ZERO, reportMitarbeiterinnen.get(1).getVerfuegungenAusgestellt());
-
 		//case with both verfuegte Gesuche und Gesuche als Verantwortlicher
 		Assert.assertEquals("Superuser", reportMitarbeiterinnen.get(2).getName());
 		Assert.assertEquals(BigDecimal.valueOf(7), reportMitarbeiterinnen.get(2).getVerantwortlicheGesuche());
 		Assert.assertEquals(BigDecimal.valueOf(9), reportMitarbeiterinnen.get(2).getVerfuegungenAusgestellt()); // 8 VERFUEGT 1 BESCHWERDE_HAENGIG
 
+		// case with no Gesuche at all are not shown
+
 		// Der Benutzer System kommt nicht auf der Liste weil er SUPERADMIN ist
-//		Assert.assertEquals("System", reportMitarbeiterinnen.get(2).getName());
-//		Assert.assertEquals(BigDecimal.ONE, reportMitarbeiterinnen.get(2).getVerantwortlicheGesuche());
-//		Assert.assertEquals(BigDecimal.valueOf(5), reportMitarbeiterinnen.get(2).getVerfuegungenAusgestellt());
 	}
 }
