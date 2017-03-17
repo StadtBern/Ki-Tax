@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -17,6 +18,9 @@ import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
 import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
 import ch.dvbern.ebegu.reporting.kanton.KantonExcelConverter;
 import ch.dvbern.ebegu.reporting.kanton.MergeFieldKanton;
+import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MergeFieldMitarbeiterinnen;
+import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
+import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenExcelConverter;
 import ch.dvbern.ebegu.reporting.lib.DateUtil;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftrag;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.MergeFieldZahlungAuftragPeriode;
@@ -46,9 +50,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -87,6 +93,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private KantonExcelConverter kantonExcelConverter;
+
+	@Inject
+	private MitarbeiterinnenExcelConverter mitarbeiterinnenExcelConverter;
 
 	@Inject
 	private ZahlungAuftragExcelConverter zahlungAuftragExcelConverter;
@@ -312,7 +321,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportResource reportResource = VORLAGE_REPORT_KANTON;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + "' nicht gefunden");
+		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
@@ -322,6 +331,169 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
 		kantonExcelConverter.applyAutoSize(sheet);
+
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportResource.getDefaultExportFilename(),
+			TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
+	}
+
+	// MitarbeterInnen
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR})
+	public List<MitarbeiterinnenDataRow> getReportMitarbeiterinnen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis) throws IOException, URISyntaxException {
+		Validate.notNull(datumVon, "Das Argument 'datumVon' darf nicht leer sein");
+		Validate.notNull(datumBis, "Das Argument 'datumBis' darf nicht leer sein");
+
+//		// java way
+//		List<MitarbeiterinnenDataRow> result = new ArrayList<>();
+//		//retrieve all Benutzer of role SACHBEARBEITER_JA or ADMIN
+//		final Collection<Benutzer> benutzerJAorAdmin = benutzerService.getBenutzerJAorAdmin();
+//		benutzerJAorAdmin.forEach(benutzer -> {
+//			MitarbeiterinnenDataRow row = new MitarbeiterinnenDataRow();
+//			row.setName(benutzer.getNachname());
+//			row.setVorname(benutzer.getVorname());
+//			BigDecimal verantwortlicheGesuche = getAllGesucheAsVerantwortliche(benutzer, datumVon, datumBis);
+//			row.setVerantwortlicheGesuche(verantwortlicheGesuche);
+//			BigDecimal verfuegungenAusgestellt = getAllVerfuegteGesucheFromBenutzer(benutzer, datumVon, datumBis);
+//			row.setVerfuegungenAusgestellt(verfuegungenAusgestellt);
+//			result.add(row);
+//		});
+//		return result;
+
+		List<Tuple> numberVerantwortlicheGesuche = getAllVerantwortlicheGesuche();
+		List<Tuple> numberVerfuegteGesuche = getAllVerfuegteGesuche(datumVon, datumBis);
+
+		return convertToMitarbeiterinnenDataRow(numberVerantwortlicheGesuche, numberVerfuegteGesuche);
+	}
+
+	/**
+	 * Gibt eine tuple zurueck mit dem ID, dem Nachnamen und Vornamen des Benutzers und die Anzahl Gesuche
+	 * bei denen er verantwortlich ist. Group by Verantwortlicher und oder by Verantwortlicher-nachname
+	 */
+	private List<Tuple> getAllVerantwortlicheGesuche() {
+		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Tuple> query = builder.createTupleQuery();
+		query.distinct(true);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		final Join<Gesuch, Fall> fallJoin = root.join(Gesuch_.fall, JoinType.INNER);
+		final Join<Fall, Benutzer> verantwortlicherJoin = fallJoin.join(Fall_.verantwortlicher, JoinType.LEFT);
+
+		query.multiselect(root.get(Gesuch_.fall).get(Fall_.verantwortlicher).get(Benutzer_.id).alias(Benutzer_.id.getName()),
+			root.get(Gesuch_.fall).get(Fall_.verantwortlicher).get(Benutzer_.nachname).alias(Benutzer_.nachname.getName()),
+			root.get(Gesuch_.fall).get(Fall_.verantwortlicher).get(Benutzer_.vorname).alias(Benutzer_.vorname.getName()),
+			builder.count(root).alias("allVerantwortlicheGesuche"));
+
+		query.groupBy(verantwortlicherJoin);
+		query.orderBy(builder.asc(root.get(Gesuch_.fall).get(Fall_.verantwortlicher).get(Benutzer_.nachname)));
+
+		Predicate isAdmin = builder.equal(verantwortlicherJoin.get(Benutzer_.role), UserRole.ADMIN);
+		Predicate isSachbearbeiterJA = builder.equal(verantwortlicherJoin.get(Benutzer_.role), UserRole.SACHBEARBEITER_JA);
+		Predicate orRoles = builder.or(isAdmin, isSachbearbeiterJA);
+
+		query.where(orRoles);
+
+		return persistence.getCriteriaResults(query);
+	}
+
+	/**
+	 * Gibt eine tuple zurueck mit dem ID, dem Nachnamen und Vornamen des Benutzers und die Anzahl Gesuche
+	 * die er im gegebenen Zeitraum verfuegt hat. Group by Verantwortlicher und oder by Verantwortlicher-nachname
+	 */
+	private List<Tuple> getAllVerfuegteGesuche(LocalDate datumVon, LocalDate datumBis) {
+		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Tuple> query = builder.createTupleQuery();
+		query.distinct(true);
+
+		Root<AntragStatusHistory> root = query.from(AntragStatusHistory.class);
+		final Join<AntragStatusHistory, Benutzer> benutzerJoin = root.join(AntragStatusHistory_.benutzer, JoinType.INNER);
+
+		query.multiselect(
+			root.get(AntragStatusHistory_.benutzer).get(Benutzer_.id).alias(Benutzer_.id.getName()),
+			root.get(AntragStatusHistory_.benutzer).get(Benutzer_.nachname).alias(Benutzer_.nachname.getName()),
+			root.get(AntragStatusHistory_.benutzer).get(Benutzer_.vorname).alias(Benutzer_.vorname.getName()),
+			builder.count(root).alias("allVerfuegteGesuche"));
+
+		// Status ist verfuegt
+		Predicate predicateStatus = root.get(AntragStatusHistory_.status).in(AntragStatus.getAllVerfuegtStates());
+		// Datum der Verfuegung muss nach (oder gleich) dem Anfang des Abfragezeitraums sein
+		final Predicate predicateDatumVon = builder.greaterThanOrEqualTo(root.get(AntragStatusHistory_.timestampVon), datumVon.atStartOfDay());
+		// Datum der Verfuegung muss vor (oder gleich) dem Ende des Abfragezeitraums sein
+		final Predicate predicateDatumBis = builder.lessThanOrEqualTo(root.get(AntragStatusHistory_.timestampVon), datumBis.atStartOfDay());
+
+		Predicate isAdmin = builder.equal(benutzerJoin.get(Benutzer_.role), UserRole.ADMIN);
+		Predicate isSachbearbeiterJA = builder.equal(benutzerJoin.get(Benutzer_.role), UserRole.SACHBEARBEITER_JA);
+		Predicate predOrRoles = builder.or(isAdmin, isSachbearbeiterJA);
+
+		query.where(predicateStatus, predicateDatumVon, predicateDatumBis, predOrRoles);
+
+		query.groupBy(benutzerJoin);
+		query.orderBy(builder.asc(root.get(AntragStatusHistory_.benutzer).get(Benutzer_.nachname)));
+
+		return persistence.getCriteriaResults(query);
+	}
+
+	private List<MitarbeiterinnenDataRow> convertToMitarbeiterinnenDataRow(List<Tuple> numberVerantwortlicheGesuche, List<Tuple> numberVerfuegteGesuche) {
+		final Map<String, MitarbeiterinnenDataRow> result = new HashMap<>();
+		for (Tuple tupleVerant : numberVerantwortlicheGesuche) {
+			MitarbeiterinnenDataRow row = createMitarbeiterinnenDataRow(tupleVerant,
+				new BigDecimal((Long) tupleVerant.get("allVerantwortlicheGesuche")), BigDecimal.ZERO);
+			result.put((String) tupleVerant.get(Benutzer_.id.getName()), row);
+		}
+		for (Tuple tupleVerfuegte : numberVerfuegteGesuche) {
+			final BigDecimal numberVerfuegte = new BigDecimal((Long) tupleVerfuegte.get("allVerfuegteGesuche"));
+			final MitarbeiterinnenDataRow existingRow = result.get((String) tupleVerfuegte.get(Benutzer_.id.getName()));
+			if (existingRow != null) {
+				existingRow.setVerfuegungenAusgestellt(numberVerfuegte);
+			} else {
+				MitarbeiterinnenDataRow row = createMitarbeiterinnenDataRow(tupleVerfuegte, BigDecimal.ZERO, numberVerfuegte);
+				result.put((String) tupleVerfuegte.get(Benutzer_.id.getName()), row);
+			}
+		}
+		return new ArrayList<>(result.values());
+	}
+
+	@Nonnull
+	private MitarbeiterinnenDataRow createMitarbeiterinnenDataRow(Tuple tuple, BigDecimal numberVerant, BigDecimal numberVerfuegte) {
+		MitarbeiterinnenDataRow row = new MitarbeiterinnenDataRow();
+		row.setName((String) tuple.get(Benutzer_.nachname.getName()));
+		row.setVorname((String) tuple.get(Benutzer_.vorname.getName()));
+		row.setVerantwortlicheGesuche(numberVerant);
+		row.setVerfuegungenAusgestellt(numberVerfuegte);
+		return row;
+	}
+
+//	private BigDecimal getAllVerfuegteGesucheFromBenutzer(Benutzer benutzer, LocalDate datumVon, LocalDate datumBis) {
+//		return null;
+//	}
+//
+//	private BigDecimal getAllGesucheAsVerantwortliche(Benutzer benutzer, LocalDate datumVon, LocalDate datumBis) {
+//		return null;
+//	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR})
+	public UploadFileInfo generateExcelReportMitarbeiterinnen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+		Validate.notNull(datumVon, "Das Argument 'datumVon' darf nicht leer sein");
+		Validate.notNull(datumBis, "Das Argument 'datumBis' darf nicht leer sein");
+
+		final ReportResource reportResource = VORLAGE_REPORT_MITARBEITERINNEN;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
+		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
+
+		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
+		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
+
+		List<MitarbeiterinnenDataRow> reportData = getReportMitarbeiterinnen(datumVon, datumBis);
+		ExcelMergerDTO excelMergerDTO = mitarbeiterinnenExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), datumVon, datumBis);
+
+		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
+		mitarbeiterinnenExcelConverter.applyAutoSize(sheet);
 
 		byte[] bytes = createWorkbook(workbook);
 
@@ -432,6 +604,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			MergeFieldGesuchZeitraum.class),
 		VORLAGE_REPORT_KANTON("/reporting/Kanton.xlsx", "Kanton.xlsx", DATA,
 			MergeFieldKanton.class),
+		VORLAGE_REPORT_MITARBEITERINNEN("/reporting/Mitarbeiterinnen.xlsx", "Mitarbeiterinnen.xlsx", DATA,
+			MergeFieldMitarbeiterinnen.class),
 		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", DATA,
 			MergeFieldZahlungAuftrag.class),
 		VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE("/reporting/ZahlungAuftragPeriode.xlsx", "ZahlungAuftragPeriode.xlsx", DATA,
