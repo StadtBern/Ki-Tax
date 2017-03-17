@@ -271,6 +271,46 @@
                 </div>
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR']">
+                    <dv-accordion-tab tabid="mitarbeiterinnen">
+                        <tab-title data-translate="MITARBEITERINNEN"></tab-title>
+                        <tab-body>
+                            <form name="mitarbeiterinnen"
+                                  ng-submit="vm.generateStatistik(mitarbeiterinnen, 'MITARBEITERINNEN')" novalidate>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="von_mitarbeiterinnen" data-translate="VON"></label>
+                                            <dv-datepicker name="von_mitarbeiterinnen" id="von_mitarbeiterinnen"
+                                                           ng-model="vm.statistikParameter.von" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="mitarbeiterinnen.von_mitarbeiterinnen.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="bis_mitarbeiterinnen" data-translate="BIS"></label>
+                                            <dv-datepicker name="bis_mitarbeiterinnen" id="bis_mitarbeiterinnen"
+                                                           ng-model="vm.statistikParameter.bis" ng-required="true"
+                                                           class="input-element">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="mitarbeiterinnen.bis_mitarbeiterinnen.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3 col-xs-offset-3 statistik-button">
+                                        <dv-loading-button type="submit">
+                                            <span data-translate="GENERIEREN"></span>
+                                        </dv-loading-button>
+                                    </div>
+                                </div>
+                            </form>
+                        </tab-body>
+                    </dv-accordion-tab>
+                </div>
+                <div dv-show-element
+                     dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR']">
                     <dv-accordion-tab tabid="betreuung">
                         <tab-title data-translate="GESUCHSTELLER_KINDER_BETREUUNG"></tab-title>
                         <tab-body>

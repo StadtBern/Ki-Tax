@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
+import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -23,6 +24,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collection;
@@ -226,5 +229,40 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		assertNotNull(uploadFileInfo.getBytes());
 		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportKanton.xlsx");
+	}
+
+	@Test
+	public void testGenerateExcelReportMitarbeiterinnen() throws Exception {
+		gesuchService.getAllGesuche();
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportMitarbeiterinnen(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE);
+
+		assertNotNull(uploadFileInfo.getBytes());
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportMitarbeiterinnen.xlsx");
+	}
+
+	@Test
+	public void testGetReportMitarbeiterinnen() throws Exception {
+		final List<MitarbeiterinnenDataRow> reportMitarbeiterinnen = reportService.getReportMitarbeiterinnen(LocalDate.of(1000, 1, 1), TestDataUtil.ENDE_PERIODE);
+		Assert.assertNotNull(reportMitarbeiterinnen);
+		Assert.assertEquals(3, reportMitarbeiterinnen.size());
+
+		//case with only Gesuche als Verantwortlicher
+		Assert.assertEquals("Blaser", reportMitarbeiterinnen.get(0).getName());
+		Assert.assertEquals(BigDecimal.valueOf(2), reportMitarbeiterinnen.get(0).getVerantwortlicheGesuche());
+		Assert.assertEquals(BigDecimal.ZERO, reportMitarbeiterinnen.get(0).getVerfuegungenAusgestellt());
+
+		//case with only verfuegte Gesuche
+		Assert.assertEquals("Bogabante", reportMitarbeiterinnen.get(1).getName());
+		Assert.assertEquals(BigDecimal.ZERO, reportMitarbeiterinnen.get(1).getVerantwortlicheGesuche());
+		Assert.assertEquals(BigDecimal.ONE, reportMitarbeiterinnen.get(1).getVerfuegungenAusgestellt());
+
+		//case with both verfuegte Gesuche und Gesuche als Verantwortlicher
+		Assert.assertEquals("Superuser", reportMitarbeiterinnen.get(2).getName());
+		Assert.assertEquals(BigDecimal.valueOf(7), reportMitarbeiterinnen.get(2).getVerantwortlicheGesuche());
+		Assert.assertEquals(BigDecimal.valueOf(9), reportMitarbeiterinnen.get(2).getVerfuegungenAusgestellt()); // 8 VERFUEGT 1 BESCHWERDE_HAENGIG
+
+		// case with no Gesuche at all are not shown
+
+		// Der Benutzer System kommt nicht auf der Liste weil er SUPERADMIN ist
 	}
 }

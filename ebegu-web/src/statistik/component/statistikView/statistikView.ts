@@ -79,7 +79,7 @@ export class StatistikViewController {
                     break;
                 case TSStatistikParameterType.GESUCHSTELLER:
                     break;
-                case TSStatistikParameterType.KANTON:
+                case TSStatistikParameterType.KANTON: {
                     let win: Window = this.downloadRS.prepareDownloadWindow();
                     this.reportRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
@@ -89,6 +89,17 @@ export class StatistikViewController {
                             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
                         });
                     break;
+                }
+                case TSStatistikParameterType.MITARBEITERINNEN: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getMitarbeiterinnenReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
+                        .then((downloadFile: TSDownloadFile) => {
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
+                    break;
+                }
                 case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
                     break;
                 case TSStatistikParameterType.ZAHLUNGEN_PERIODE:
