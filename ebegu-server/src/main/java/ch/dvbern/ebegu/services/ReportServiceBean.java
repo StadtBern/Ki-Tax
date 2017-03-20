@@ -581,8 +581,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@SuppressWarnings("PMD.NcssMethodCount")
 	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
-		Validate.notNull(datumVon, VALIDIERUNG_DATUM_VON);
-		Validate.notNull(datumBis, VALIDIERUNG_DATUM_BIS);
+		validateDateParams(datumVon, datumBis);
 
 		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
 		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
