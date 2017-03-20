@@ -2,10 +2,6 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.ReportVorlage;
-import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -13,7 +9,6 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungExcelConverter;
-import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.MergeFieldGesuchstellerKinderBetreuung;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
@@ -765,7 +760,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Validate.notNull(datumVon, VALIDIERUNG_DATUM_VON);
 		Validate.notNull(datumBis, VALIDIERUNG_DATUM_BIS);
 
-		final ReportResource reportResource = VORLAGE_REPORT_GESUCHSTELLER_KINDER_BETREUUNG;
+		final ReportVorlage reportResource = ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER_KINDER_BETREUUNG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
 		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
@@ -854,7 +849,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Validate.notNull(datumVon, VALIDIERUNG_DATUM_VON);
 		Validate.notNull(datumBis, VALIDIERUNG_DATUM_BIS);
 
-		final ReportResource reportResource = VORLAGE_REPORT_KINDER;
+		final ReportVorlage reportResource = ReportVorlage.VORLAGE_REPORT_KINDER;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
 		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
@@ -914,62 +909,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		// Betreuung
 		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
 		return row;
-	}
-
-	public enum ReportResource {
-
-		// TODO Achtung mit Filename, da mehrere Dokumente mit gleichem Namen aber unterschiedlichem Inhalt gespeichert werden. Falls der Name geaendert wuerde, muesste das File wieder geloescht werden.
-		VORLAGE_REPORT_GESUCH_STICHTAG("/reporting/GesuchStichtag.xlsx", "GesuchStichtag.xlsx", DATA,
-			MergeFieldGesuchStichtag.class),
-		VORLAGE_REPORT_GESUCH_ZEITRAUM("/reporting/GesuchZeitraum.xlsx", "GesuchZeitraum.xlsx", DATA,
-			MergeFieldGesuchZeitraum.class),
-		VORLAGE_REPORT_KANTON("/reporting/Kanton.xlsx", "Kanton.xlsx", DATA,
-			MergeFieldKanton.class),
-		VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", DATA,
-			MergeFieldZahlungAuftrag.class),
-		VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE("/reporting/ZahlungAuftragPeriode.xlsx", "ZahlungAuftragPeriode.xlsx", DATA,
-			MergeFieldZahlungAuftragPeriode.class),
-		VORLAGE_REPORT_GESUCHSTELLER_KINDER_BETREUUNG("/reporting/GesuchstellerKinderBetreuung.xlsx", "GesuchstellerKinderBetreuung.xlsx", DATA,
-			MergeFieldGesuchstellerKinderBetreuung.class),
-		VORLAGE_REPORT_KINDER("/reporting/Kinder.xlsx", "Kinder.xlsx", DATA,
-			MergeFieldGesuchstellerKinderBetreuung.class);
-
-		@Nonnull
-		private final String templatePath;
-		@Nonnull
-		private final String defaultExportFilename;
-		@Nonnull
-		private final Class<? extends MergeField> mergeFields;
-		@Nonnull
-		private final String dataSheetName;
-
-		ReportResource(@Nonnull String templatePath, @Nonnull String defaultExportFilename,
-					   @Nonnull String dataSheetName, @Nonnull Class<? extends MergeField> mergeFields) {
-			this.templatePath = templatePath;
-			this.defaultExportFilename = defaultExportFilename;
-			this.mergeFields = mergeFields;
-			this.dataSheetName = dataSheetName;
-		}
-
-		@Nonnull
-		public String getTemplatePath() {
-			return templatePath;
-		}
-
-		@Nonnull
-		public String getDefaultExportFilename() {
-			return defaultExportFilename;
-		}
-
-		@Nonnull
-		public MergeField[] getMergeFields() {
-			return mergeFields.getEnumConstants();
-		}
-
-		@Nonnull
-		public String getDataSheetName() {
-			return dataSheetName;
-		}
 	}
 
 	private void runStatisticsBetreuung() {
