@@ -2,17 +2,13 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.ReportVorlage;
-import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungExcelConverter;
-import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.MergeFieldGesuchstellerKinderBetreuung;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GeuschStichtagExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
@@ -824,7 +820,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Validate.notNull(datumVon, VALIDIERUNG_DATUM_VON);
 		Validate.notNull(datumBis, VALIDIERUNG_DATUM_BIS);
 
-		final ReportResource reportResource = VORLAGE_REPORT_GESUCHSTELLER_KINDER_BETREUUNG;
+		final ReportVorlage reportResource = ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER_KINDER_BETREUUNG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
 		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
@@ -913,7 +909,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Validate.notNull(datumVon, VALIDIERUNG_DATUM_VON);
 		Validate.notNull(datumBis, VALIDIERUNG_DATUM_BIS);
 
-		final ReportResource reportResource = VORLAGE_REPORT_KINDER;
+		final ReportVorlage reportResource = ReportVorlage.VORLAGE_REPORT_KINDER;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
 		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
@@ -980,7 +976,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	public UploadFileInfo generateExcelReportGesuchsteller(@Nonnull LocalDate stichtag) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 		Validate.notNull(stichtag, VALIDIERUNG_STICHTAG);
 
-		final ReportResource reportResource = VORLAGE_REPORT_GESUCHSTELLER;
+		final ReportVorlage reportResource = ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
 		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
