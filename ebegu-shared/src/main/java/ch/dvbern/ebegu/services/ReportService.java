@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
+import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
 import ch.dvbern.lib.excelmerger.ExcelMergeException;
 import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
 import ch.dvbern.ebegu.util.UploadFileInfo;
@@ -52,6 +53,13 @@ public interface ReportService {
 		throws IOException, URISyntaxException;
 
 	UploadFileInfo generateExcelReportKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
+		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
+
+	// MitarbeterInnen
+	List<MitarbeiterinnenDataRow> getReportMitarbeiterinnen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
+		throws IOException, URISyntaxException;
+
+	UploadFileInfo generateExcelReportMitarbeiterinnen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
 	// Zahlungen
