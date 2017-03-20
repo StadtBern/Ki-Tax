@@ -108,6 +108,16 @@ export class StatistikViewController {
                         });
                     break;
                 }
+                case TSStatistikParameterType.MITARBEITERINNEN: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getMitarbeiterinnenReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
+                        .then((downloadFile: TSDownloadFile) => {
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
+                    break;
+                }
                 case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG: {
                     let win: Window = this.downloadRS.prepareDownloadWindow();
                     this.reportRS.getGesuchstellerKinderBetreuungReportExcel(

@@ -1,0 +1,1 @@
+update ebegu_parameter set value = 108.27 where name = 'PARAM_ABGELTUNG_PRO_TAG_KANTON';

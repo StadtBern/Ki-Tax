@@ -1,6 +1,6 @@
 import '../../bootstrap.ts';
 import 'angular-mocks';
-import GesuchstellerRS from './gesuchstellerRS.rest.ts';
+import GesuchstellerRS from './gesuchstellerRS.rest';
 import {EbeguWebCore} from '../core.module';
 import TSGesuchsteller from '../../models/TSGesuchsteller';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
