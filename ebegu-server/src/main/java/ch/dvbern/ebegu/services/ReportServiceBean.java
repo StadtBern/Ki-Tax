@@ -17,10 +17,10 @@ import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
 import ch.dvbern.ebegu.reporting.kanton.KantonExcelConverter;
 import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
 import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenExcelConverter;
-import ch.dvbern.ebegu.reporting.lib.DateUtil;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragExcelConverter;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragPeriodeExcelConverter;
 import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -146,7 +146,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 			Query gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery");
 			// Wir rechnen zum Stichtag einen Tag dazu, damit es bis 24.00 des Vorabends gilt.
-			gesuchStichtagQuery.setParameter("stichTagDate", DateUtil.SQL_DATETIME_FORMAT.format(datetime.plusDays(1)));
+			gesuchStichtagQuery.setParameter("stichTagDate", Constants.SQL_DATETIME_FORMAT.format(datetime.plusDays(1)));
 			gesuchStichtagQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchStichtagQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchStichtagQuery.getResultList();
@@ -199,10 +199,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		if (em != null) {
 			Query gesuchPeriodeQuery = em.createNamedQuery("GesuchZeitraumNativeSQLQuery");
-			gesuchPeriodeQuery.setParameter("fromDateTime", DateUtil.SQL_DATETIME_FORMAT.format(datetimeVon));
-			gesuchPeriodeQuery.setParameter("fromDate", DateUtil.SQL_DATE_FORMAT.format(datetimeVon));
-			gesuchPeriodeQuery.setParameter("toDateTime", DateUtil.SQL_DATETIME_FORMAT.format(datetimeBis));
-			gesuchPeriodeQuery.setParameter("toDate", DateUtil.SQL_DATE_FORMAT.format(datetimeBis));
+			gesuchPeriodeQuery.setParameter("fromDateTime", Constants.SQL_DATETIME_FORMAT.format(datetimeVon));
+			gesuchPeriodeQuery.setParameter("fromDate", Constants.SQL_DATE_FORMAT.format(datetimeVon));
+			gesuchPeriodeQuery.setParameter("toDateTime", Constants.SQL_DATETIME_FORMAT.format(datetimeBis));
+			gesuchPeriodeQuery.setParameter("toDate", Constants.SQL_DATE_FORMAT.format(datetimeBis));
 			gesuchPeriodeQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchPeriodeQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchPeriodeQuery.getResultList();
@@ -631,7 +631,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
 		List<VerfuegungZeitabschnitt> zeitabschnittList = persistence.getCriteriaResults(query);
-		return convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		final List<GesuchstellerKinderBetreuungDataRow> gesuchstellerKinderBetreuungDataRows = convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		gesuchstellerKinderBetreuungDataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer)
+			.thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
+		return gesuchstellerKinderBetreuungDataRows;
 	}
 
 	private List<GesuchstellerKinderBetreuungDataRow> convertToGesuchstellerKinderBetreuungDataRow(List<VerfuegungZeitabschnitt> zeitabschnittList) {
@@ -727,7 +730,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				row.setGs1EwpGesundhtl(row.getGs1EwpGesundhtl() + erwerbspensumJA.getPensum());
 			}
 			if (erwerbspensumJA.getZuschlagZuErwerbspensum()) {
-				row.setGs1EwpZuschlag(row.getGs1EwpZuschlag() + erwerbspensumJA.getPensum());
+				row.setGs1EwpZuschlag(row.getGs1EwpZuschlag() + erwerbspensumJA.getZuschlagsprozent());
 			}
 		}
 	}
@@ -765,7 +768,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				row.setGs2EwpGesundhtl(row.getGs2EwpGesundhtl() + erwerbspensumJA.getPensum());
 			}
 			if (erwerbspensumJA.getZuschlagZuErwerbspensum()) {
-				row.setGs2EwpZuschlag(row.getGs2EwpZuschlag() + erwerbspensumJA.getPensum());
+				row.setGs2EwpZuschlag(row.getGs2EwpZuschlag() + erwerbspensumJA.getZuschlagsprozent());
 			}
 		}
 	}
