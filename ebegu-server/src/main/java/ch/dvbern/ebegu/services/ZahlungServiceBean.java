@@ -146,7 +146,9 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		}
 		Collection<VerfuegungZeitabschnitt> verfuegungsZeitabschnitte = getVerfuegungsZeitabschnitteNachVerfuegungDatum(lastZahlungErstellt, zahlungsauftrag.getDatumGeneriert(), stichtagKorrekturen);
 		for (VerfuegungZeitabschnitt zeitabschnitt : verfuegungsZeitabschnitte) {
-			if (zeitabschnitt.getZahlungsstatus().isNeu()) {
+			if (!zeitabschnitt.getZahlungsstatus().isVerrechnet()) {
+				// Alle Korrekturen die nicht verrechnet sind muessen beruecksichtigt werden. Grund dafuer ist, dass sie auf dem Dokument
+				// aufgelistet werden muessen und zwar mit dem Flag IGNORIERT
 				createZahlungspositionenKorrekturUndNachzahlung(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 			}
 		}
@@ -284,7 +286,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 				createZahlungspositionKorrekturNeuerWert(zeitabschnittNeu, zahlung, vollkostenChanged);
 				for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnittOnVorgaengerVerfuegung) {
 					// Fuer die "alten" Verfuegungszeitabschnitte muessen Korrekturbuchungen erstellt werden
-					createZahlungspositionKorrekturAlterWert(verfuegungZeitabschnitt, zahlung, vollkostenChanged);
+					// Wenn die neuen Zeitabschnitte ignoriert sind, setzen wir die alten Zeitabschnitte auch als ignoriert
+					createZahlungspositionKorrekturAlterWert(verfuegungZeitabschnitt, zahlung, vollkostenChanged, zeitabschnittNeu.getZahlungsstatus().isIgnoriert());
 				}
 			}
 		} else { // Nachzahlungen bzw. Erstgesuche die rueckwirkend ausbezahlt werden muessen
@@ -312,12 +315,13 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	/**
 	 * Erstellt eine Zahlungsposition fuer eine Korrekturzahlung mit der Korrektur des *alten Wertes* (negiert)
 	 */
-	private void createZahlungspositionKorrekturAlterWert(@Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt, @Nonnull Zahlung zahlung, boolean vollkostenChanged) {
+	private void createZahlungspositionKorrekturAlterWert(@Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt, @Nonnull Zahlung zahlung, boolean vollkostenChanged,
+														  boolean ignoriert) {
 		Zahlungsposition korrekturPosition = new Zahlungsposition();
 		korrekturPosition.setVerfuegungZeitabschnitt(verfuegungZeitabschnitt);
 		korrekturPosition.setBetrag(verfuegungZeitabschnitt.getVerguenstigung().negate());
 		korrekturPosition.setZahlung(zahlung);
-		korrekturPosition.setIgnoriert(verfuegungZeitabschnitt.getZahlungsstatus().isIgnoriert());
+		korrekturPosition.setIgnoriert(ignoriert); // ignoriert kommt vom neuen Zeitabschnitt
 		ZahlungspositionStatus status = vollkostenChanged ? ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN : ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG;
 		korrekturPosition.setStatus(status);
 		zahlung.getZahlungspositionen().add(korrekturPosition);

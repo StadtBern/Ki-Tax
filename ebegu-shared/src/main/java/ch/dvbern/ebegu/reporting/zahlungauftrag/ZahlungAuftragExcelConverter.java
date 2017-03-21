@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -68,8 +69,9 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.vonDatum, zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.bisDatum, zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigBis());
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.bgPensum, BigDecimal.valueOf(zahlungsposition.getVerfuegungZeitabschnitt().getBgPensum())
-							.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+							.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.betragCHF, zahlungsposition.getBetrag());
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.isIgnoriert, zahlungsposition.isIgnoriert());
 					});
 			});
 
