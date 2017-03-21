@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.util.UploadFileInfo;
+import com.google.common.net.UrlEscapers;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -78,9 +79,13 @@ public final class RestUtil {
 			contentType = "application/octet-stream";
 		}
 		final byte[] bytes = Files.readAllBytes(filePath);
-
-		String urlEncodedFilename = URLEncoder.encode(fileMetadata.getFilename(), "UTF-8");
-		String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + urlEncodedFilename + '"';
+		//Prepare Headerfield Content-Disposition:
+		//we want percantage-encoding instead of url-encoding (spaces are %20 in percentage encoding but + in url-encoding)
+		String isoEncodedFilename = URLEncoder.encode(fileMetadata.getFilename(), "ISO-8859-1").replace("+", "%20");
+		String utfEncodedFilename = UrlEscapers.urlFragmentEscaper().escape(fileMetadata.getFilename()); //percantage encoding mit utf-8 und %20 fuer space statt +
+		String simpleFilename = "filename=\"" + isoEncodedFilename + "\"; "; //iso8859-1 (default) filename for old browsers
+		String filenameStarParam = "filename*=UTF-8''" + utfEncodedFilename;   //utf-8 url encoded filename https://tools.ietf.org/html/rfc5987
+		String disposition = (attachment ? "attachment; " : "inline;") + simpleFilename + filenameStarParam;
 
 		return Response.ok(bytes)
 			.header("Content-Disposition", disposition)
