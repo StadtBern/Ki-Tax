@@ -85,7 +85,7 @@ public class KindResource {
 
 	@Nullable
 	@GET
-	@Path("/{kindContainerId}")
+	@Path("/find/{kindContainerId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxKindContainer findKind(

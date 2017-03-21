@@ -1008,7 +1008,6 @@ export default class EbeguRestUtil {
         return kindContainerList;
     }
 
-
     public parseKindDublette(kindContainerTS: TSKindDublette, kindContainerFromServer: any): TSKindDublette {
         if (kindContainerFromServer) {
             kindContainerTS.gesuchId = kindContainerFromServer.gesuchId;

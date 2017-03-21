@@ -29,9 +29,6 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	@Inject
 	private GesuchService gesuchService;
 
-	@Inject
-	private BenutzerService benutzerService;
-
 
 	@Nonnull
 	@Override
