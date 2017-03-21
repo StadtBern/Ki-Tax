@@ -36,7 +36,11 @@
                     <td ng-bind="row.kindJA.nachname"></td>
                     <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td dv-show-element
-                        dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">{{vm.getDublettenInfo(row)}}</td>
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                        <span class="betreuung" ng-repeat="dublette in vm.getDubletten(row)"
+                              ng-click="vm.gotoKind(dublette)"
+                              ng-show="dublette.fallNummer">{{dublette.fallNummer}}</span>
+                    </td>
                     <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
                         <dv-loading-button type="button" button-click="vm.removeKind(row)"
                                            button-class="dv-btn-operation"

@@ -67,8 +67,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
         }
     }
 
-    getDublettenInfo(kindContainer: TSKindContainer) {
-        let text: string = '';
+    getDubletten(kindContainer: TSKindContainer) :TSKindDublette[] {
         if (this.kinderDubletten) {
             let dublettenForThisKind :TSKindDublette[] = [];
             for (let i = 0; i < this.kinderDubletten.length; i++) {
@@ -76,11 +75,13 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
                     dublettenForThisKind.push(this.kinderDubletten[i])
                 }
             }
-            for (let i = 0; i < dublettenForThisKind.length; i++) {
-                text += dublettenForThisKind[i].fallNummer;
-            }
+            return dublettenForThisKind;
         }
-        return text;
+        return undefined;
+    }
+
+    public gotoKind(dublette: TSKindDublette): void {
+        this.$state.go('gesuch.kind', {kindNumber: dublette.kindNummer, gesuchId: dublette.gesuchId});
     }
 
     private openKindView(kindNumber: number): void {
