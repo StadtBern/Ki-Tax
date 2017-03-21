@@ -20,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -76,7 +77,8 @@ public final class RestUtil {
 		}
 		final byte[] bytes = Files.readAllBytes(filePath);
 
-		String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + fileMetadata.getFilename() + '"';
+		String urlEncodedFilename = URLEncoder.encode(fileMetadata.getFilename(), "UTF-8");
+		String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + urlEncodedFilename + '"';
 
 		return Response.ok(bytes)
 			.header("Content-Disposition", disposition)
