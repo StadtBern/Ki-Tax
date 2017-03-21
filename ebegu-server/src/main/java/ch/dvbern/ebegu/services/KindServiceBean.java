@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -19,6 +20,7 @@ import java.util.*;
  */
 @Stateless
 @Local(KindService.class)
+@PermitAll
 public class KindServiceBean extends AbstractBaseService implements KindService {
 
 	@Inject
@@ -32,6 +34,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Nonnull
 	@Override
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
 	public KindContainer saveKind(@Nonnull KindContainer kind) {
 		Objects.requireNonNull(kind);
 		final KindContainer mergedKind = persistence.merge(kind);
@@ -41,6 +44,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Optional<KindContainer> findKind(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		KindContainer a =  persistence.find(KindContainer.class, key);
@@ -49,6 +53,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public List<KindContainer> findAllKinderFromGesuch(@Nonnull String gesuchId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindContainer> query = cb.createQuery(KindContainer.class);
@@ -61,6 +66,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	}
 
 	@Override
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
 	public void removeKind(@Nonnull String kindId) {
 		Objects.requireNonNull(kindId);
 		Optional<KindContainer> kindToRemoveOpt = findKind(kindId);
@@ -69,6 +75,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	}
 
 	@Override
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
 	public void removeKind(@Nonnull KindContainer kind) {
 		final String gesuchId = kind.getGesuch().getId();
 		persistence.remove(kind);
@@ -77,6 +84,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public List<KindContainer> getAllKinderWithMissingStatistics() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindContainer> query = cb.createQuery(KindContainer.class);

@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 public class JaxKindDubletteDTO  implements Serializable {
 
+	private static final long serialVersionUID = -1297026881674137397L;
 
 	private String gesuchId;
 	private long fallNummer;
