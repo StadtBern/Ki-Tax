@@ -122,8 +122,7 @@ export class DownloadRS {
      */
     public startDownload(accessToken: string, dokumentName: string, attachment: boolean, myWindow: Window) {
         if (myWindow) {
-            let name: string = accessToken + '/' + dokumentName;
-            let href: string = this.serviceURL + '/blobdata/' + name;
+            let href: string = this.serviceURL + '/blobdata/' + accessToken;
             if (attachment) {
                 // add MatrixParam for to download file instead of opening it inline
                 href = href + ';attachment=true;';
@@ -131,7 +130,7 @@ export class DownloadRS {
                 myWindow.focus();
             }
             //as soon as the window is ready send it to the download
-            this.redirectWindowToDownloadWhenReady(myWindow, href, name);
+            this.redirectWindowToDownloadWhenReady(myWindow, href, accessToken);
 
             //This would be the way to open file in new window (for now it's better to open in new tab)
             //this.$window.open(href, name, 'toolbar=0,location=0,menubar=0');

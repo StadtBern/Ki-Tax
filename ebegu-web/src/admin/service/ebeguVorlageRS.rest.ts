@@ -10,9 +10,10 @@ export class EbeguVorlageRS {
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', 'Upload', '$q'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', 'Upload', '$q', 'base64'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, private upload: any, private $q: IQService) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, private upload: any,
+                private $q: IQService, private base64: any) {
         this.serviceURL = REST_API + 'ebeguVorlage';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -30,12 +31,12 @@ export class EbeguVorlageRS {
         let restEbeguVorlage = {};
         restEbeguVorlage = this.ebeguRestUtil.ebeguVorlageToRestObject(restEbeguVorlage, ebeguVorlage);
         this.upload.json(restEbeguVorlage);
-
+        let encodedFilename = this.base64.encode(file.name);
         return this.upload.upload({
             url: this.serviceURL,
             method: 'POST',
             headers: {
-                'x-filename': file.name,
+                'x-filename': encodedFilename,
                 'x-vorlagekey': ebeguVorlage.name,
                 'x-gesuchsperiode': gesuchsperiodeID,
             },

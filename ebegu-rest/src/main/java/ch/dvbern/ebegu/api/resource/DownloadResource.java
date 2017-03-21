@@ -71,11 +71,10 @@ public class DownloadResource {
 
 
 	@GET
-	@Path("blobdata/{accessToken}/{filename}")
+	@Path("blobdata/{accessToken}")
 	//mimetyp wird in buildDownloadResponse erraten
 	public Response downloadByAccessToken(
 		@PathParam("accessToken") String blobAccessTokenParam,
-		@PathParam("filename") String filename,
 		@MatrixParam("attachment") @DefaultValue("false") boolean attachment,
 		@Context HttpServletRequest request) {
 
