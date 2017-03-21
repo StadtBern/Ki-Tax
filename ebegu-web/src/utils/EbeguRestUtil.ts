@@ -65,6 +65,7 @@ import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
 import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
 import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
 import TSZahlung from '../models/TSZahlung';
+import TSKindDublette from '../models/TSKindDublette';
 
 
 export default class EbeguRestUtil {
@@ -993,6 +994,29 @@ export default class EbeguRestUtil {
             restKind.pensumFachstelle = this.pensumFachstelleToRestObject({}, kind.pensumFachstelle);
         }
         return restKind;
+    }
+
+    public parseKindDubletteList(data: Array<any>): TSKindDublette[] {
+        let kindContainerList: TSKindDublette[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                kindContainerList[i] = this.parseKindDublette(new TSKindDublette(), data[i]);
+            }
+        } else {
+            kindContainerList[0] = this.parseKindDublette(new TSKindDublette(), data);
+        }
+        return kindContainerList;
+    }
+
+
+    public parseKindDublette(kindContainerTS: TSKindDublette, kindContainerFromServer: any): TSKindDublette {
+        if (kindContainerFromServer) {
+            kindContainerTS.gesuchId = kindContainerFromServer.gesuchId;
+            kindContainerTS.fallNummer = kindContainerFromServer.fallNummer;
+            kindContainerTS.kindNummer = kindContainerFromServer.kindNummer;
+            return kindContainerTS;
+        }
+        return undefined;
     }
 
     public parseKindContainerList(data: Array<any>): TSKindContainer[] {

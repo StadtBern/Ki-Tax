@@ -1,9 +1,7 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.dto.KindDubletteDTO;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -16,9 +14,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.criteria.*;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service fuer Kind
@@ -31,6 +27,9 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	private Persistence<KindContainer> persistence;
 	@Inject
 	private WizardStepService wizardStepService;
+
+	@Inject
+	private GesuchService gesuchService;
 
 
 	@Nonnull
@@ -94,6 +93,47 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 		query.where(predicateMutation, predicateFlag, predicateStatus);
 		query.orderBy(cb.desc(joinGesuch.get(Gesuch_.laufnummer)));
+		return persistence.getCriteriaResults(query);
+	}
+
+	@Override
+	@Nonnull
+	public List<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
+		List<KindDubletteDTO> dublettenOfAllKinder = new ArrayList<>();
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
+		if (gesuchOptional.isPresent()) {
+			Set<KindContainer> kindContainers = gesuchOptional.get().getKindContainers();
+			for (KindContainer kindContainer : kindContainers) {
+				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer);
+				dublettenOfAllKinder.addAll(kindDubletten);
+			}
+		}
+		return dublettenOfAllKinder;
+	}
+
+	private List<KindDubletteDTO> getKindDubletten(@Nonnull KindContainer kindContainer) {
+		// Wir suchen nach Name, Vorname und Geburtsdatum
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<KindDubletteDTO> query = cb.createQuery(KindDubletteDTO.class);
+
+		Root<KindContainer> root = query.from(KindContainer.class);
+		Join<KindContainer, Kind> joinKind = root.join(KindContainer_.kindJA, JoinType.LEFT);
+		Join<KindContainer, Gesuch> joinGesuch = root.join(KindContainer_.gesuch, JoinType.LEFT);
+
+		// Identische Merkmale
+		Predicate predicateName = cb.equal(joinKind.get(Kind_.nachname), kindContainer.getKindJA().getNachname());
+		Predicate predicateVorname = cb.equal(joinKind.get(Kind_.vorname), kindContainer.getKindJA().getVorname());
+		Predicate predicateGeburtsdatum = cb.equal(joinKind.get(Kind_.geburtsdatum), kindContainer.getKindJA().getGeburtsdatum());
+		// Aber nicht vom selben Fall
+		Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
+
+		query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall);
+
+		CriteriaQuery<KindDubletteDTO> distinct = query.multiselect(
+			joinGesuch.get(Gesuch_.id),
+			joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
+			root.get(KindContainer_.kindNummer)
+		).distinct(true);
 		return persistence.getCriteriaResults(query);
 	}
 }

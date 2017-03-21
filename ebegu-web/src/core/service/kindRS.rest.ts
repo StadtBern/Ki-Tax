@@ -2,6 +2,7 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
 import TSKindContainer from '../../models/TSKindContainer';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
+import TSKindDublette from '../../models/TSKindDublette';
 
 export default class KindRS {
     serviceURL: string;
@@ -51,6 +52,13 @@ export default class KindRS {
             .then((response) => {
                 this.wizardStepManager.findStepsFromGesuch(gesuchId);
                 return response;
+            });
+    }
+
+    public getKindDubletten(gesuchId: string): IPromise<TSKindDublette[]> {
+        return this.http.get(this.serviceURL + '/dubletten/' + encodeURIComponent(gesuchId))
+            .then((response: any) => {
+                return this.ebeguRestUtil.parseKindDubletteList(response.data);
             });
     }
 }

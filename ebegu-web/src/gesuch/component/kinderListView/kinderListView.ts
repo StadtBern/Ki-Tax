@@ -12,6 +12,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
+import TSKindDublette from '../../../models/TSKindDublette';
 let template = require('./kinderListView.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./kinderListView.less');
@@ -19,12 +20,17 @@ require('./kinderListView.less');
 
 export class KinderListViewComponentConfig implements IComponentOptions {
     transclude = false;
+    bindings: any = {
+        kinderDubletten: '<'
+    };
     template = template;
     controller = KinderListViewController;
     controllerAs = 'vm';
 }
 
 export class KinderListViewController extends AbstractGesuchViewController<any> {
+
+    kinderDubletten :TSKindDublette[] = [];
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog',
         'WizardStepManager', '$scope'];
@@ -59,6 +65,22 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
             kind.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
             this.openKindView(kind.kindNummer);
         }
+    }
+
+    getDublettenInfo(kindContainer: TSKindContainer) {
+        let text: string = '';
+        if (this.kinderDubletten) {
+            let dublettenForThisKind :TSKindDublette[] = [];
+            for (let i = 0; i < this.kinderDubletten.length; i++) {
+                if (this.kinderDubletten[i].kindNummer === kindContainer.kindNummer) {
+                    dublettenForThisKind.push(this.kinderDubletten[i])
+                }
+            }
+            for (let i = 0; i < dublettenForThisKind.length; i++) {
+                text += dublettenForThisKind[i].fallNummer;
+            }
+        }
+        return text;
     }
 
     private openKindView(kindNumber: number): void {

@@ -7,6 +7,7 @@ import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
 import MahnungRS from './service/mahnungRS.rest';
 import {TSEingangsart} from '../models/enums/TSEingangsart';
+import KindRS from '../core/service/kindRS.rest';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ILogService = angular.ILogService;
@@ -158,7 +159,7 @@ export class EbeguKinderListState implements IState {
 
     views: {[name: string]: IState} = {
         'gesuchViewPort': {
-            template: '<kinder-list-view>'
+            template: '<kinder-list-view kinder-dubletten="$resolve.kinderDubletten">'
         },
         'kommentarViewPort': {
             template: '<kommentar-view>'
@@ -166,7 +167,8 @@ export class EbeguKinderListState implements IState {
     };
 
     resolve = {
-        gesuch: getGesuchModelManager
+        gesuch: getGesuchModelManager,
+        kinderDubletten: getKinderDubletten
     };
 }
 
@@ -607,6 +609,14 @@ export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager,
     }
     $log.warn('no state params available fo page fallCreation, this is probably a bug');
     return $q.defer(gesuchModelManager.getGesuch());
+}
+
+getKinderDubletten.$inject = ['$stateParams', '$q', '$log', 'KindRS'];
+/* @ngInject */
+export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQService, $log: ILogService, KindRS: KindRS) {
+
+    let gesuchIdParam = $stateParams.gesuchId;
+    return KindRS.getKindDubletten(gesuchIdParam);
 }
 
 createEmptyMutation.$inject = ['GesuchModelManager', '$stateParams', '$q'];
