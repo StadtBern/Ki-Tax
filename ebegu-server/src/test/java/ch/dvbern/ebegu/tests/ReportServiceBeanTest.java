@@ -265,4 +265,15 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		// Der Benutzer System kommt nicht auf der Liste weil er SUPERADMIN ist
 	}
+
+	@Test
+	public void generateExcelReportGesuchstellerKinderBetreuung() throws Exception {
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchstellerKinderBetreuung(
+			LocalDate.of(2016, Month.JANUARY, 1),
+			LocalDate.of(2018, Month.DECEMBER, 31),
+			null);
+
+		assertNotNull(uploadFileInfo.getBytes());
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchstellerKinderBetreuung.xlsx");
+	}
 }

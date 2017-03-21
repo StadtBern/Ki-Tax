@@ -100,8 +100,19 @@ export class StatistikViewController {
                         });
                     break;
                 }
-                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
+                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getGesuchstellerKinderBetreuungReportExcel(
+                        this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                        .then((downloadFile: TSDownloadFile) => {
+
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
                     break;
+                }
                 case TSStatistikParameterType.ZAHLUNGEN_PERIODE:
                     if (this._statistikParameter.gesuchsperiode) {
                         let win: Window = this.downloadRS.prepareDownloadWindow();
