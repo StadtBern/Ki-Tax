@@ -11,6 +11,8 @@ import KindRS from '../core/service/kindRS.rest';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ILogService = angular.ILogService;
+import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../utils/TSRoleUtil';
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -611,12 +613,17 @@ export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager,
     return $q.defer(gesuchModelManager.getGesuch());
 }
 
-getKinderDubletten.$inject = ['$stateParams', '$q', '$log', 'KindRS'];
+getKinderDubletten.$inject = ['$stateParams', '$q', '$log', 'KindRS', 'AuthServiceRS'];
 /* @ngInject */
-export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQService, $log: ILogService, KindRS: KindRS) {
-
-    let gesuchIdParam = $stateParams.gesuchId;
-    return KindRS.getKindDubletten(gesuchIdParam);
+export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQService, $log: ILogService, KindRS: KindRS, authService: AuthServiceRS) {
+    let isAdmin: boolean = authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    if (isAdmin && $stateParams && $stateParams.gesuchId) {
+        let gesuchIdParam = $stateParams.gesuchId;
+        return KindRS.getKindDubletten(gesuchIdParam);
+    }
+    let deferred = $q.defer();
+    deferred.resolve(undefined);
+    return deferred.promise;
 }
 
 createEmptyMutation.$inject = ['GesuchModelManager', '$stateParams', '$q'];

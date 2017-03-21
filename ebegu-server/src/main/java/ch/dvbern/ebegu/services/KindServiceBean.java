@@ -2,14 +2,12 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.KindDubletteDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -30,6 +28,9 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Inject
 	private GesuchService gesuchService;
+
+	@Inject
+	private BenutzerService benutzerService;
 
 
 	@Nonnull
@@ -98,20 +99,24 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public List<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
 		List<KindDubletteDTO> dublettenOfAllKinder = new ArrayList<>();
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
+			// Nur das zuletzt gueltige Gesuch
+			List<String> idsOfLetztVerfuegteAntraege = gesuchService.getNeuesteVerfuegteAntraege(gesuchOptional.get().getGesuchsperiode());
 			Set<KindContainer> kindContainers = gesuchOptional.get().getKindContainers();
 			for (KindContainer kindContainer : kindContainers) {
-				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer);
+				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer, idsOfLetztVerfuegteAntraege);
 				dublettenOfAllKinder.addAll(kindDubletten);
 			}
 		}
 		return dublettenOfAllKinder;
 	}
 
-	private List<KindDubletteDTO> getKindDubletten(@Nonnull KindContainer kindContainer) {
+	@Nonnull
+	private List<KindDubletteDTO> getKindDubletten(@Nonnull KindContainer kindContainer, List<String> idsOfLetztVerfuegteAntraege) {
 		// Wir suchen nach Name, Vorname und Geburtsdatum
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindDubletteDTO> query = cb.createQuery(KindDubletteDTO.class);
@@ -126,10 +131,14 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		Predicate predicateGeburtsdatum = cb.equal(joinKind.get(Kind_.geburtsdatum), kindContainer.getKindJA().getGeburtsdatum());
 		// Aber nicht vom selben Fall
 		Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
+		// Gesuch mindestens freigegeben
+		Predicate predicateGesuchStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.IN_BEARBEITUNG_GS, AntragStatus.FREIGABEQUITTUNG).not();
+		// Nur das zuletzt gueltige Gesuch
+		Predicate predicateAktuellesGesuch = joinGesuch.get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
 
-		query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall);
+		query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateGesuchStatus, predicateAktuellesGesuch);
 
-		CriteriaQuery<KindDubletteDTO> distinct = query.multiselect(
+		query.multiselect(
 			joinGesuch.get(Gesuch_.id),
 			joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
 			root.get(KindContainer_.kindNummer)

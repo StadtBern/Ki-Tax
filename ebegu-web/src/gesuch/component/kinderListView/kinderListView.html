@@ -23,7 +23,9 @@
                     <th data-translate="VORNAME"></th>
                     <th data-translate="NAME"></th>
                     <th data-translate="GEBURTSDATUM"></th>
-                    <th data-translate="DUBLETTEN"></th>
+                    <th data-translate="DUBLETTEN"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -33,7 +35,8 @@
                     <td ng-bind="row.kindJA.vorname"></td>
                     <td ng-bind="row.kindJA.nachname"></td>
                     <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                    <td>{{vm.getDublettenInfo(row)}}</td>
+                    <td dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">{{vm.getDublettenInfo(row)}}</td>
                     <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
                         <dv-loading-button type="button" button-click="vm.removeKind(row)"
                                            button-class="dv-btn-operation"
