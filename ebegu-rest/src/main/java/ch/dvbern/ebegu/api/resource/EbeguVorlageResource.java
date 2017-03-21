@@ -38,7 +38,9 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -153,7 +155,8 @@ public class EbeguVorlageResource {
 		UploadFileInfo fileInfo = RestUtil.parseUploadFile(inputParts.stream().findAny().get());
 
 		// evil workaround, (Umlaute werden sonst nicht richtig übertragen!)
-		fileInfo.setFilename(filename);
+		String decodedFilenames = new String(Base64.getDecoder().decode(filename), Charset.forName("UTF-8"));
+		fileInfo.setFilename(decodedFilenames);
 
 		try (InputStream file = input.getFormDataPart(PART_FILE, InputStream.class, null)) {
 			fileInfo.setBytes(IOUtils.toByteArray(file));
