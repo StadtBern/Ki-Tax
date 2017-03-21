@@ -276,7 +276,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
 		List<VerfuegungZeitabschnitt> zeitabschnittList = persistence.getCriteriaResults(query);
-		return convertToKantonDataRow(zeitabschnittList);
+		List<KantonDataRow> kantonDataRowList = convertToKantonDataRow(zeitabschnittList);
+		kantonDataRowList.sort(Comparator.comparing(KantonDataRow::getBgNummer).thenComparing(KantonDataRow::getZeitabschnittVon));
+		return kantonDataRowList;
 	}
 
 	private void validateDateParams(Object datumVon, Object datumBis) {
