@@ -573,12 +573,16 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	private List<GesuchstellerKinderBetreuungDataRow> getReportDataGesuchstellerKinderBetreuung(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
 		List<VerfuegungZeitabschnitt> zeitabschnittList = getReportDataBetreuungen(datumVon, datumBis, gesuchsperiode);
-		return convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		List<GesuchstellerKinderBetreuungDataRow> dataRows = convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		dataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer).thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
+		return dataRows;
 	}
 
 	private List<GesuchstellerKinderBetreuungDataRow> getReportDataKinder(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
 		List<VerfuegungZeitabschnitt> zeitabschnittList = getReportDataBetreuungen(datumVon, datumBis, gesuchsperiode);
-		return convertToKinderDataRow(zeitabschnittList);
+		List<GesuchstellerKinderBetreuungDataRow> dataRows = convertToKinderDataRow(zeitabschnittList);
+		dataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer).thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
+		return dataRows;
 	}
 
 	@SuppressWarnings("PMD.NcssMethodCount")
@@ -638,10 +642,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
 		List<VerfuegungZeitabschnitt> zeitabschnittList = persistence.getCriteriaResults(query);
-		final List<GesuchstellerKinderBetreuungDataRow> gesuchstellerKinderBetreuungDataRows = convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
-		gesuchstellerKinderBetreuungDataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer)
-			.thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
-		return gesuchstellerKinderBetreuungDataRows;
+		return zeitabschnittList;
 	}
 
 	private void addStammdaten(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt) {
