@@ -615,6 +615,7 @@ export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager,
 
 getKinderDubletten.$inject = ['$stateParams', '$q', '$log', 'KindRS', 'AuthServiceRS'];
 /* @ngInject */
+// todo fragen wird dies nicht immer aufgerufen? warum nicht direkt in constructor?
 export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQService, $log: ILogService, KindRS: KindRS, authService: AuthServiceRS) {
     let isAdmin: boolean = authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
     if (isAdmin && $stateParams && $stateParams.gesuchId) {

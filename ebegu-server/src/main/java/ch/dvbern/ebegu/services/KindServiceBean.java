@@ -110,12 +110,16 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
 			// Nur das zuletzt gueltige Gesuch
+			//todo franzi dies sollte getNeuesteFreigegebeneAntraege sein
 			List<String> idsOfLetztVerfuegteAntraege = gesuchService.getNeuesteVerfuegteAntraege(gesuchOptional.get().getGesuchsperiode());
 			Set<KindContainer> kindContainers = gesuchOptional.get().getKindContainers();
 			for (KindContainer kindContainer : kindContainers) {
 				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer, idsOfLetztVerfuegteAntraege);
 				dublettenOfAllKinder.addAll(kindDubletten);
 			}
+		}
+		else {
+			throw new EbeguEntityNotFoundException("getKindDubletten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
 		}
 		return dublettenOfAllKinder;
 	}
@@ -130,12 +134,19 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		Join<KindContainer, Kind> joinKind = root.join(KindContainer_.kindJA, JoinType.LEFT);
 		Join<KindContainer, Gesuch> joinGesuch = root.join(KindContainer_.gesuch, JoinType.LEFT);
 
+		query.multiselect(
+			joinGesuch.get(Gesuch_.id),
+			joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
+			root.get(KindContainer_.kindNummer)
+		).distinct(true);
+
 		// Identische Merkmale
 		Predicate predicateName = cb.equal(joinKind.get(Kind_.nachname), kindContainer.getKindJA().getNachname());
 		Predicate predicateVorname = cb.equal(joinKind.get(Kind_.vorname), kindContainer.getKindJA().getVorname());
 		Predicate predicateGeburtsdatum = cb.equal(joinKind.get(Kind_.geburtsdatum), kindContainer.getKindJA().getGeburtsdatum());
 		// Aber nicht vom selben Fall
 		Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
+		// todo fragen -> dies kommt von getNeuesteVerfuegteAntraege also sie sind verfuegt
 		// Gesuch mindestens freigegeben
 		Predicate predicateGesuchStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.IN_BEARBEITUNG_GS, AntragStatus.FREIGABEQUITTUNG).not();
 		// Nur das zuletzt gueltige Gesuch
@@ -143,11 +154,6 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 		query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateGesuchStatus, predicateAktuellesGesuch);
 
-		query.multiselect(
-			joinGesuch.get(Gesuch_.id),
-			joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
-			root.get(KindContainer_.kindNummer)
-		).distinct(true);
 		return persistence.getCriteriaResults(query);
 	}
 }

@@ -68,6 +68,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     }
 
     getDubletten(kindContainer: TSKindContainer) :TSKindDublette[] {
+        // todo fragen -> wird dies sehr oft aufgerufen?
         if (this.kinderDubletten) {
             let dublettenForThisKind :TSKindDublette[] = [];
             for (let i = 0; i < this.kinderDubletten.length; i++) {
@@ -80,7 +81,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
         return undefined;
     }
 
-    public gotoKind(dublette: TSKindDublette): void {
+    public gotoKindDublette(dublette: TSKindDublette): void {
         this.$state.go('gesuch.kind', {kindNumber: dublette.kindNummer, gesuchId: dublette.gesuchId});
     }
 
@@ -113,6 +114,10 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
         return !this.isGesuchReadonly()
             && ((this.gesuchModelManager.getGesuch().isMutation() && (!kind.betreuungen || kind.betreuungen.length <= 0))
                 || !kind.kindJA.vorgaengerId);
+    }
+
+    public getColsNumber(): number {
+        return this.kinderDubletten? 5 : 4;
     }
 
 }
