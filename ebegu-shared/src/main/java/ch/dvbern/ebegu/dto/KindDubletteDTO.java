@@ -10,12 +10,14 @@ public class KindDubletteDTO {
 
 	private String gesuchId;
 	private long fallNummer;
-	private Integer kindNummer;
+	private Integer kindNummerOriginal;
+	private Integer kindNummerDublette;
 
-	public KindDubletteDTO(String gesuchId, long fallNummer, Integer kindNummer) {
+	public KindDubletteDTO(String gesuchId, long fallNummer, Integer kindNummerOriginal, Integer kindNummerDublette) {
 		this.gesuchId = gesuchId;
 		this.fallNummer = fallNummer;
-		this.kindNummer = kindNummer;
+		this.kindNummerOriginal = kindNummerOriginal;
+		this.kindNummerDublette = kindNummerDublette;
 	}
 
 	@SuppressFBWarnings("NM_CONFUSING")
@@ -36,11 +38,19 @@ public class KindDubletteDTO {
 		this.fallNummer = fallNummer;
 	}
 
-	public Integer getKindNummer() {
-		return kindNummer;
+	public Integer getKindNummerOriginal() {
+		return kindNummerOriginal;
 	}
 
-	public void setKindNummer(Integer kindNummer) {
-		this.kindNummer = kindNummer;
+	public void setKindNummerOriginal(Integer kindNummerOriginal) {
+		this.kindNummerOriginal = kindNummerOriginal;
+	}
+
+	public Integer getKindNummerDublette() {
+		return kindNummerDublette;
+	}
+
+	public void setKindNummerDublette(Integer kindNummerDublette) {
+		this.kindNummerDublette = kindNummerDublette;
 	}
 }

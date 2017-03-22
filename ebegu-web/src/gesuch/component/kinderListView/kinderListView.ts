@@ -71,7 +71,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
         if (this.kinderDubletten) {
             let dublettenForThisKind :TSKindDublette[] = [];
             for (let i = 0; i < this.kinderDubletten.length; i++) {
-                if (this.kinderDubletten[i].kindNummer === kindContainer.kindNummer) {
+                if (this.kinderDubletten[i].kindNummerOriginal === kindContainer.kindNummer) {
                     dublettenForThisKind.push(this.kinderDubletten[i])
                 }
             }
@@ -81,7 +81,7 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     }
 
     public gotoKindDublette(dublette: TSKindDublette): void {
-        this.$state.go('gesuch.kind', {kindNumber: dublette.kindNummer, gesuchId: dublette.gesuchId});
+        this.$state.go('gesuch.kind', {kindNumber: dublette.kindNummerDublette, gesuchId: dublette.gesuchId});
     }
 
     private openKindView(kindNumber: number): void {

@@ -136,6 +136,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		query.multiselect(
 			joinGesuch.get(Gesuch_.id),
 			joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
+			cb.literal(kindContainer.getKindNummer()),
 			root.get(KindContainer_.kindNummer)
 		).distinct(true);
 

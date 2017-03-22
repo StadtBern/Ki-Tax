@@ -1012,7 +1012,8 @@ export default class EbeguRestUtil {
         if (kindContainerFromServer) {
             kindContainerTS.gesuchId = kindContainerFromServer.gesuchId;
             kindContainerTS.fallNummer = kindContainerFromServer.fallNummer;
-            kindContainerTS.kindNummer = kindContainerFromServer.kindNummer;
+            kindContainerTS.kindNummerOriginal = kindContainerFromServer.kindNummerOriginal;
+            kindContainerTS.kindNummerDublette = kindContainerFromServer.kindNummerDublette;
             return kindContainerTS;
         }
         return undefined;

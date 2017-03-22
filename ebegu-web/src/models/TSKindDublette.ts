@@ -2,12 +2,14 @@ export default class TSKindDublette {
 
     private _gesuchId: string;
     private _fallNummer: number;
-    private _kindNummer: number;
+    private _kindNummerOriginal: number;
+    private _kindNummerDublette: number;
 
-    constructor(gesuchId?: string, fallNummer?: number, kindNummer?: number) {
+    constructor(gesuchId?: string, fallNummer?: number, kindNummerOriginal?: number, kindNummerDublette?: number) {
         this._gesuchId = gesuchId;
         this._fallNummer = fallNummer;
-        this._kindNummer = kindNummer;
+        this._kindNummerOriginal = kindNummerOriginal;
+        this._kindNummerDublette = kindNummerDublette;
     }
 
     get gesuchId(): string {
@@ -26,11 +28,19 @@ export default class TSKindDublette {
         this._fallNummer = value;
     }
 
-    get kindNummer(): number {
-        return this._kindNummer;
+    get kindNummerOriginal(): number {
+        return this._kindNummerOriginal;
     }
 
-    set kindNummer(value: number) {
-        this._kindNummer = value;
+    set kindNummerOriginal(value: number) {
+        this._kindNummerOriginal = value;
+    }
+
+    get kindNummerDublette(): number {
+        return this._kindNummerDublette;
+    }
+
+    set kindNummerDublette(value: number) {
+        this._kindNummerDublette = value;
     }
 }
