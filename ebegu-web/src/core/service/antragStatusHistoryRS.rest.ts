@@ -57,8 +57,6 @@ export default class AntragStatusHistoryRS {
                     this.log.debug('PARSING AntragStatusHistory REST object ', response.data);
                     return this.ebeguRestUtil.parseAntragStatusHistoryCollection(response.data);
                 });
-        } else {
-            this._lastChange = undefined;
         }
         return undefined;
     }

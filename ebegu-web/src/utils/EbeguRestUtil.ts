@@ -1717,6 +1717,7 @@ export default class EbeguRestUtil {
         }
         return wizardSteps;
     }
+
     public parseAntragStatusHistoryCollection (antragStatusHistoryCollection: Array<any>): TSAntragStatusHistory[] {
         let resultList: TSAntragStatusHistory[] = [];
         if (antragStatusHistoryCollection && Array.isArray(antragStatusHistoryCollection)) {
@@ -1728,6 +1729,7 @@ export default class EbeguRestUtil {
         }
         return resultList;
     }
+
     public parseAntragStatusHistory(antragStatusHistoryTS: TSAntragStatusHistory, antragStatusHistoryFromServer: any): TSAntragStatusHistory {
         this.parseAbstractEntity(antragStatusHistoryTS, antragStatusHistoryFromServer);
         antragStatusHistoryTS.gesuchId = antragStatusHistoryFromServer.gesuchId;

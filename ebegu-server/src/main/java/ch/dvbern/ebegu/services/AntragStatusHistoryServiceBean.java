@@ -11,7 +11,6 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.PreDestroy;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -111,6 +110,7 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 		Objects.requireNonNull(gesuch);
 		return criteriaQueryHelper.getEntitiesByAttribute(AntragStatusHistory.class, gesuch, AntragStatusHistory_.gesuch);
 	}
+
 	@Override
 	@Nonnull
 	public Collection<AntragStatusHistory> findAllAntragStatusHistoryByGPFall(@Nonnull Gesuchsperiode gesuchsperiode, Fall fall) {
@@ -121,7 +121,6 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("searchAntraege", "No User is logged in"));
 		UserRole role = user.getRole();
 
-
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<AntragStatusHistory> query = cb.createQuery(AntragStatusHistory.class);
 		Set<AntragStatus> antragStatuses = AntragStatus.allowedforRole(role);
@@ -130,7 +129,8 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 		Predicate fallPredicate = cb.equal(root.get(AntragStatusHistory_.gesuch).get(Gesuch_.fall), fall);
 		Predicate gesuchsperiodePredicate = cb.equal(root.get(AntragStatusHistory_.gesuch).get(Gesuch_.gesuchsperiode), gesuchsperiode);
 		Predicate rolePredicate = root.get(AntragStatusHistory_.gesuch).get(Gesuch_.status).in(antragStatuses);
-		query.where(fallPredicate, gesuchsperiodePredicate, rolePredicate).orderBy(cb.desc(root.get(AntragStatusHistory_.timestampErstellt)));
+		query.where(fallPredicate, gesuchsperiodePredicate, rolePredicate);
+		query.orderBy(cb.desc(root.get(AntragStatusHistory_.timestampErstellt)));
 		return persistence.getCriteriaResults(query);
 	}
 

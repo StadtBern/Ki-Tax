@@ -7,6 +7,8 @@ import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.AntragStatusHistoryService;
 import ch.dvbern.ebegu.services.FallService;
@@ -24,7 +26,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * REST Resource fuer die History von Gesuchen/Mutationen (Antraegen)
@@ -73,7 +74,8 @@ public class AntragStatusHistoryResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<JaxAntragStatusHistory> findAllAntragStatusHistoryByGesuch(
-		@Nonnull @NotNull @PathParam("gesuchsperiodeId") JaxId jaxGesuchsperiodeId, @Nonnull @NotNull @PathParam("fallId") JaxId jaxFallId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("gesuchsperiodeId") JaxId jaxGesuchsperiodeId,
+		@Nonnull @NotNull @PathParam("fallId") JaxId jaxFallId) throws EbeguException {
 
 		Validate.notNull(jaxGesuchsperiodeId.getId());
 		String gesuchsperiodeId = converter.toEntityId(jaxGesuchsperiodeId);
@@ -81,14 +83,15 @@ public class AntragStatusHistoryResource {
 		String fallId = converter.toEntityId(jaxFallId);
 
 		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
-		Optional<Fall> fall = fallService.findFall(fallId);
-
-		if (gesuchsperiode.isPresent() && fall.isPresent()) {
-			final Collection<AntragStatusHistory> statusHistory = antragStatusHistoryService.findAllAntragStatusHistoryByGPFall(gesuchsperiode.get(), fall.get());
-			if (statusHistory != null) {
-				return converter.antragStatusHistoryCollectionToJAX(statusHistory);
-			}
+		if (!gesuchsperiode.isPresent()) {
+			throw new EbeguEntityNotFoundException("findAllAntragStatusHistoryByGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxGesuchsperiodeId.getId());
 		}
-		return null;
+		Optional<Fall> fall = fallService.findFall(fallId);
+		if (!fall.isPresent()) {
+			throw new EbeguEntityNotFoundException("findAllAntragStatusHistoryByGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxFallId.getId());
+		}
+
+        final Collection<AntragStatusHistory> statusHistory = antragStatusHistoryService.findAllAntragStatusHistoryByGPFall(gesuchsperiode.get(), fall.get());
+		return converter.antragStatusHistoryCollectionToJAX(statusHistory);
 	}
 }
