@@ -39,7 +39,9 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,10 +81,10 @@ public class UploadResource {
 
 		request.setAttribute(InputPart.DEFAULT_CONTENT_TYPE_PROPERTY, "*/*; charset=UTF-8");
 
-		String[] filenames = getFilenamesFromHeader(request);
+		String[] encodedFilenames = getFilenamesFromHeader(request);
 
 		// check if filenames available
-		if (filenames == null || filenames.length == 0) {
+		if (encodedFilenames == null || encodedFilenames.length == 0) {
 			final String problemString = "filename must be given";
 			LOG.error(problemString);
 			return Response.serverError().entity(problemString).build();
@@ -123,7 +125,7 @@ public class UploadResource {
 
 		}
 
-		extractFilesFromInput(input, filenames, gesuchId, jaxDokumentGrund);
+		extractFilesFromInput(input, encodedFilenames, gesuchId, jaxDokumentGrund);
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId);
 		if (!gesuch.isPresent()) {
@@ -164,7 +166,7 @@ public class UploadResource {
 		return filenames;
 	}
 
-	private void extractFilesFromInput(MultipartFormDataInput input, String[] filenames, String gesuchId, JaxDokumentGrund jaxDokumentGrund) throws MimeTypeParseException, IOException {
+	private void extractFilesFromInput(MultipartFormDataInput input, String[] encodedFilenames, String gesuchId, JaxDokumentGrund jaxDokumentGrund) throws MimeTypeParseException, IOException {
 		int filecounter = 0;
 		String partrileName = PART_FILE + "[" + filecounter + "]";
 
@@ -174,8 +176,9 @@ public class UploadResource {
 			UploadFileInfo fileInfo = RestUtil.parseUploadFile(inputParts.stream().findAny().get());
 
 			// evil workaround, (Umlaute werden sonst nicht richtig übertragen!)
-			if (filenames[filecounter] != null) {
-				fileInfo.setFilename(filenames[filecounter]);
+			if (encodedFilenames[filecounter] != null) {
+				String decodedFilenamesJson = new String(Base64.getDecoder().decode(encodedFilenames[filecounter]), Charset.forName("UTF-8"));
+				fileInfo.setFilename(decodedFilenamesJson);
 			}
 
 			try (InputStream file = input.getFormDataPart(partrileName, InputStream.class, null)) {

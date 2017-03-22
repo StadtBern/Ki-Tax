@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -199,6 +200,27 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 			}
 		}
 		return mutation;
+	}
+
+	@Nullable
+	public GesuchstellerAdresse getWohnadresseAm(LocalDate stichtag) {
+		for (GesuchstellerAdresseContainer adresse : getAdressen()) {
+			if (AdresseTyp.WOHNADRESSE.equals(adresse.extractAdresseTyp()) && adresse.extractGueltigkeit().contains(stichtag)) {
+				return adresse.getGesuchstellerAdresseJA();
+			}
+		}
+		return null;
+	}
+
+	@Nonnull
+	public List<Erwerbspensum> getErwerbspensenAm(LocalDate stichtag) {
+		List<Erwerbspensum> erwerbspensenInZeitraum = new ArrayList<>();
+		for (ErwerbspensumContainer erwerbspensumContainer : getErwerbspensenContainersNotEmpty()) {
+			if (erwerbspensumContainer.getErwerbspensumJA().getGueltigkeit().contains(stichtag)) {
+				erwerbspensenInZeitraum.add(erwerbspensumContainer.getErwerbspensumJA());
+			}
+		}
+		return erwerbspensenInZeitraum;
 	}
 
 	@Nonnull

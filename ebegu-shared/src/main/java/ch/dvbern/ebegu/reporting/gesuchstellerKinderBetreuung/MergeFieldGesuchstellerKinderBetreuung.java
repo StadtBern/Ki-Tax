@@ -32,7 +32,7 @@ public enum MergeFieldGesuchstellerKinderBetreuung implements MergeField {
 
 	eingangsdatum(DATE_CONVERTER, Type.SIMPLE),
 	verfuegungsdatum(DATE_CONVERTER, Type.SIMPLE),
-	fallId(INTEGER_CONVERTER, Type.SIMPLE),
+	fallId(LONG_CONVERTER, Type.SIMPLE),
 
 	gs1Name(STRING_CONVERTER, Type.SIMPLE),
 	gs1Vorname(STRING_CONVERTER, Type.SIMPLE),
@@ -73,7 +73,7 @@ public enum MergeFieldGesuchstellerKinderBetreuung implements MergeField {
 	massgEinkVorFamilienabzug(BIGDECIMAL_CONVERTER, Type.SIMPLE),
 	familienabzug(BIGDECIMAL_CONVERTER, Type.SIMPLE),
 	massgEink(BIGDECIMAL_CONVERTER, Type.SIMPLE),
-	einkommensjahr(INTEGER_CONVERTER, Type.SIMPLE),
+	einkommensjahr(LONG_CONVERTER, Type.SIMPLE),
 	ekvVorhanden(BOOLEAN_X_CONVERTER, Type.SIMPLE),
 	stvGeprueft(BOOLEAN_X_CONVERTER, Type.SIMPLE),
 	veranlagt(BOOLEAN_X_CONVERTER, Type.SIMPLE),

@@ -17,10 +17,10 @@ import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
 import ch.dvbern.ebegu.reporting.kanton.KantonExcelConverter;
 import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
 import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenExcelConverter;
-import ch.dvbern.ebegu.reporting.lib.DateUtil;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragExcelConverter;
 import ch.dvbern.ebegu.reporting.zahlungauftrag.ZahlungAuftragPeriodeExcelConverter;
 import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -127,8 +127,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
-	@Inject
-	private GesuchstellerAdresseService gesuchstellerAdresseService;
 
 	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
@@ -147,7 +145,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 			Query gesuchStichtagQuery = em.createNamedQuery("GesuchStichtagNativeSQLQuery");
 			// Wir rechnen zum Stichtag einen Tag dazu, damit es bis 24.00 des Vorabends gilt.
-			gesuchStichtagQuery.setParameter("stichTagDate", DateUtil.SQL_DATETIME_FORMAT.format(datetime.plusDays(1)));
+			gesuchStichtagQuery.setParameter("stichTagDate", Constants.SQL_DATETIME_FORMAT.format(datetime.plusDays(1)));
 			gesuchStichtagQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchStichtagQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchStichtagQuery.getResultList();
@@ -200,10 +198,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		if (em != null) {
 			Query gesuchPeriodeQuery = em.createNamedQuery("GesuchZeitraumNativeSQLQuery");
-			gesuchPeriodeQuery.setParameter("fromDateTime", DateUtil.SQL_DATETIME_FORMAT.format(datetimeVon));
-			gesuchPeriodeQuery.setParameter("fromDate", DateUtil.SQL_DATE_FORMAT.format(datetimeVon));
-			gesuchPeriodeQuery.setParameter("toDateTime", DateUtil.SQL_DATETIME_FORMAT.format(datetimeBis));
-			gesuchPeriodeQuery.setParameter("toDate", DateUtil.SQL_DATE_FORMAT.format(datetimeBis));
+			gesuchPeriodeQuery.setParameter("fromDateTime", Constants.SQL_DATETIME_FORMAT.format(datetimeVon));
+			gesuchPeriodeQuery.setParameter("fromDate", Constants.SQL_DATE_FORMAT.format(datetimeVon));
+			gesuchPeriodeQuery.setParameter("toDateTime", Constants.SQL_DATETIME_FORMAT.format(datetimeBis));
+			gesuchPeriodeQuery.setParameter("toDate", Constants.SQL_DATE_FORMAT.format(datetimeBis));
 			gesuchPeriodeQuery.setParameter("gesuchPeriodeID", gesuchPeriodeID);
 			gesuchPeriodeQuery.setParameter("onlySchulamt", principalBean.isCallerInRole(SCHULAMT) ? 1 : 0);
 			results = gesuchPeriodeQuery.getResultList();
@@ -574,12 +572,16 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	private List<GesuchstellerKinderBetreuungDataRow> getReportDataGesuchstellerKinderBetreuung(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
 		List<VerfuegungZeitabschnitt> zeitabschnittList = getReportDataBetreuungen(datumVon, datumBis, gesuchsperiode);
-		return convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		List<GesuchstellerKinderBetreuungDataRow> dataRows = convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		dataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer).thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
+		return dataRows;
 	}
 
 	private List<GesuchstellerKinderBetreuungDataRow> getReportDataKinder(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
 		List<VerfuegungZeitabschnitt> zeitabschnittList = getReportDataBetreuungen(datumVon, datumBis, gesuchsperiode);
-		return convertToKinderDataRow(zeitabschnittList);
+		List<GesuchstellerKinderBetreuungDataRow> dataRows = convertToKinderDataRow(zeitabschnittList);
+		dataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer).thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
+		return dataRows;
 	}
 
 	private List<GesuchstellerKinderBetreuungDataRow> getReportDataGesuchsteller(@Nonnull LocalDate stichtag) throws IOException, URISyntaxException {
@@ -643,7 +645,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
-		return persistence.getCriteriaResults(query);
+		List<VerfuegungZeitabschnitt> zeitabschnittList = persistence.getCriteriaResults(query);
+		return zeitabschnittList;
 	}
 
 	@SuppressWarnings("PMD.NcssMethodCount")
@@ -718,19 +721,20 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Gesuchsteller gs1 = containerGS1.getGesuchstellerJA();
 		row.setGs1Name(gs1.getNachname());
 		row.setGs1Vorname(gs1.getVorname());
-		GesuchstellerAdresse gs1Adresse = gesuchstellerAdresseService.getCurrentWohnadresse(containerGS1.getId()).getGesuchstellerAdresseJA();
-		row.setGs1Strasse(gs1Adresse.getStrasse());
-		row.setGs1Hausnummer(gs1Adresse.getHausnummer());
-		row.setGs1Zusatzzeile(gs1Adresse.getZusatzzeile());
-		row.setGs1Plz(gs1Adresse.getPlz());
-		row.setGs1Ort(gs1Adresse.getOrt());
+		GesuchstellerAdresse gs1Adresse = containerGS1.getWohnadresseAm(row.getZeitabschnittVon());
+		if (gs1Adresse != null) {
+			row.setGs1Strasse(gs1Adresse.getStrasse());
+			row.setGs1Hausnummer(gs1Adresse.getHausnummer());
+			row.setGs1Zusatzzeile(gs1Adresse.getZusatzzeile());
+			row.setGs1Plz(gs1Adresse.getPlz());
+			row.setGs1Ort(gs1Adresse.getOrt());
+		}
 		row.setGs1EwkId(gs1.getZpvNumber());
 		row.setGs1Diplomatenstatus(gs1.isDiplomatenstatus());
 		// EWP Gesuchsteller 1
 
-		Set<ErwerbspensumContainer> erwerbspensenGS1 = containerGS1.getErwerbspensenContainersNotEmpty();
-		for (ErwerbspensumContainer erwerbspensumContainer : erwerbspensenGS1) {
-			Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
+		List<Erwerbspensum> erwerbspensenGS1 = containerGS1.getErwerbspensenAm(row.getZeitabschnittVon());
+		for (Erwerbspensum erwerbspensumJA : erwerbspensenGS1) {
 			if (Taetigkeit.ANGESTELLT.equals(erwerbspensumJA.getTaetigkeit())) {
 				row.setGs1EwpAngestellt(row.getGs1EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
@@ -747,7 +751,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				row.setGs1EwpGesundhtl(row.getGs1EwpGesundhtl() + erwerbspensumJA.getPensum());
 			}
 			if (erwerbspensumJA.getZuschlagZuErwerbspensum()) {
-				row.setGs1EwpZuschlag(row.getGs1EwpZuschlag() + erwerbspensumJA.getPensum());
+				row.setGs1EwpZuschlag(row.getGs1EwpZuschlag() + erwerbspensumJA.getZuschlagsprozent());
 			}
 		}
 	}
@@ -756,19 +760,19 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Gesuchsteller gs2 = containerGS2.getGesuchstellerJA();
 		row.setGs2Name(gs2.getNachname());
 		row.setGs2Vorname(gs2.getVorname());
-		GesuchstellerAdresse gs2Adresse = gesuchstellerAdresseService.getCurrentWohnadresse(containerGS2.getId()).getGesuchstellerAdresseJA();
-		row.setGs2Strasse(gs2Adresse.getStrasse());
-		row.setGs2Hausnummer(gs2Adresse.getHausnummer());
-		row.setGs2Zusatzzeile(gs2Adresse.getZusatzzeile());
-		row.setGs2Plz(gs2Adresse.getPlz());
-		row.setGs2Ort(gs2Adresse.getOrt());
+		GesuchstellerAdresse gs2Adresse = containerGS2.getWohnadresseAm(row.getZeitabschnittVon());
+		if (gs2Adresse != null) {
+			row.setGs2Strasse(gs2Adresse.getStrasse());
+			row.setGs2Hausnummer(gs2Adresse.getHausnummer());
+			row.setGs2Zusatzzeile(gs2Adresse.getZusatzzeile());
+			row.setGs2Plz(gs2Adresse.getPlz());
+			row.setGs2Ort(gs2Adresse.getOrt());
+		}
 		row.setGs2EwkId(gs2.getZpvNumber());
 		row.setGs2Diplomatenstatus(gs2.isDiplomatenstatus());
 		// EWP Gesuchsteller 2
-
-		Set<ErwerbspensumContainer> erwerbspensenGS2 = containerGS2.getErwerbspensenContainersNotEmpty();
-		for (ErwerbspensumContainer erwerbspensumContainer : erwerbspensenGS2) {
-			Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
+		List<Erwerbspensum> erwerbspensenGS2 = containerGS2.getErwerbspensenAm(row.getZeitabschnittVon());
+		for (Erwerbspensum erwerbspensumJA : erwerbspensenGS2) {
 			if (Taetigkeit.ANGESTELLT.equals(erwerbspensumJA.getTaetigkeit())) {
 				row.setGs2EwpAngestellt(row.getGs2EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
@@ -785,7 +789,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				row.setGs2EwpGesundhtl(row.getGs2EwpGesundhtl() + erwerbspensumJA.getPensum());
 			}
 			if (erwerbspensumJA.getZuschlagZuErwerbspensum()) {
-				row.setGs2EwpZuschlag(row.getGs2EwpZuschlag() + erwerbspensumJA.getPensum());
+				row.setGs2EwpZuschlag(row.getGs2EwpZuschlag() + erwerbspensumJA.getZuschlagsprozent());
 			}
 		}
 	}
@@ -862,6 +866,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
 
 		GesuchstellerKinderBetreuungDataRow row = new GesuchstellerKinderBetreuungDataRow();
+		// Betreuung
+		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
+		// Stammdaten
 		addStammdaten(row, zeitabschnitt);
 
 		// Gesuchsteller 1: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
@@ -883,8 +890,13 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			addGesuchsteller2ToGesuchstellerKinderBetreuungDataRow(row, gesuch.getGesuchsteller2());
 		}
 		// Familiensituation / Einkommen
-		row.setFamiliensituation(gesuch.getFamiliensituationContainer().extractFamiliensituation().getFamilienstatus());
-		row.setKardinalitaet(gesuch.getFamiliensituationContainer().extractFamiliensituation().getGesuchstellerKardinalitaet());
+		Familiensituation familiensituation = gesuch.getFamiliensituationContainer().getFamiliensituationAm(row.getZeitabschnittVon());
+		row.setFamiliensituation(familiensituation.getFamilienstatus());
+		if (familiensituation.hasSecondGesuchsteller()) {
+			row.setKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		} else {
+			row.setKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		}
 		row.setFamiliengroesse(zeitabschnitt.getFamGroesse());
 		row.setMassgEinkVorFamilienabzug(zeitabschnitt.getMassgebendesEinkommenVorAbzFamgr());
 		row.setFamilienabzug(zeitabschnitt.getAbzugFamGroesse());
@@ -897,8 +909,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		row.setVeranlagt(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().getSteuerveranlagungErhalten());
 		// Kind
 		addKindToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
-		// Betreuung
-		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
 		return row;
 	}
 

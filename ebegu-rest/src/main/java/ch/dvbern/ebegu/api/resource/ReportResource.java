@@ -36,7 +36,7 @@ import java.time.LocalDateTime;
 @Api
 public class ReportResource {
 
-	private static final String VALIDATION_MSG = "Das von-Datum muss vor dem bis-Datum sein.";
+	public static final String DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN = "Das von-Datum muss vor dem bis-Datum sein.";
 
 	@Inject
 	private ReportService reportService;
@@ -91,7 +91,7 @@ public class ReportResource {
 
 		if (!dateTimeTo.isAfter(dateTimeFrom)) {
 			throw new EbeguRuntimeException("getGesuchZeitraumReportExcel", "Fehler beim erstellen Report Gesuch Zeitraum"
-				, VALIDATION_MSG);
+				, DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchZeitraum(dateTimeFrom,
@@ -122,7 +122,7 @@ public class ReportResource {
 		LocalDate dateAuswertungBis = DateUtil.parseStringToDateOrReturnNow(auswertungBis);
 
 		if (!dateAuswertungBis.isAfter(dateAuswertungVon)) {
-			throw new EbeguRuntimeException("getKantonReportExcel", "Fehler beim erstellen Report Kanton", VALIDATION_MSG);
+			throw new EbeguRuntimeException("getKantonReportExcel", "Fehler beim erstellen Report Kanton", DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportKanton(dateAuswertungVon, dateAuswertungBis);
@@ -149,7 +149,7 @@ public class ReportResource {
 		LocalDate dateAuswertungBis = DateUtil.parseStringToDateOrReturnNow(auswertungBis);
 
 		if (!dateAuswertungBis.isAfter(dateAuswertungVon)) {
-			throw new EbeguRuntimeException("getMitarbeiterinnenReportExcel", "Fehler beim erstellen Report Mitarbeiterinnen", "Das von-Datum muss vor dem bis-Datum sein.");
+			throw new EbeguRuntimeException("getMitarbeiterinnenReportExcel", "Fehler beim erstellen Report Mitarbeiterinnen", DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportMitarbeiterinnen(dateAuswertungVon, dateAuswertungBis);
@@ -248,7 +248,7 @@ public class ReportResource {
 
 		if (!dateTo.isAfter(dateFrom)) {
 			throw new EbeguRuntimeException("getGesuchstellerKinderBetreuungReportExcel", "Fehler beim erstellen Report Gesuchsteller-Kinder-Betreuung"
-				, VALIDATION_MSG);
+				, DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchstellerKinderBetreuung(dateFrom, dateTo,
@@ -280,7 +280,7 @@ public class ReportResource {
 
 		if (!dateTo.isAfter(dateFrom)) {
 			throw new EbeguRuntimeException("getKinderReportExcel", "Fehler beim erstellen Report Kinder"
-				, VALIDATION_MSG);
+				, DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportKinder(dateFrom, dateTo,
