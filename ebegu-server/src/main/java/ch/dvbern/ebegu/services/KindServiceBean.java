@@ -110,8 +110,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
 			// Nur das zuletzt gueltige Gesuch
-			//todo franzi dies sollte getNeuesteFreigegebeneAntraege sein
-			List<String> idsOfLetztVerfuegteAntraege = gesuchService.getNeuesteVerfuegteAntraege(gesuchOptional.get().getGesuchsperiode());
+			List<String> idsOfLetztVerfuegteAntraege = gesuchService.getNeuesteFreigegebeneAntraege(gesuchOptional.get().getGesuchsperiode());
 			Set<KindContainer> kindContainers = gesuchOptional.get().getKindContainers();
 			for (KindContainer kindContainer : kindContainers) {
 				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer, idsOfLetztVerfuegteAntraege);
@@ -146,13 +145,10 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		Predicate predicateGeburtsdatum = cb.equal(joinKind.get(Kind_.geburtsdatum), kindContainer.getKindJA().getGeburtsdatum());
 		// Aber nicht vom selben Fall
 		Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
-		// todo fragen -> dies kommt von getNeuesteVerfuegteAntraege also sie sind verfuegt
-		// Gesuch mindestens freigegeben
-		Predicate predicateGesuchStatus = joinGesuch.get(Gesuch_.status).in(AntragStatus.IN_BEARBEITUNG_GS, AntragStatus.FREIGABEQUITTUNG).not();
 		// Nur das zuletzt gueltige Gesuch
 		Predicate predicateAktuellesGesuch = joinGesuch.get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
 
-		query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateGesuchStatus, predicateAktuellesGesuch);
+		query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateAktuellesGesuch);
 
 		return persistence.getCriteriaResults(query);
 	}

@@ -215,6 +215,12 @@ public interface GesuchService {
 	List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
+	 * Gibt pro Fall den neuesten freigegebenen (also für JA sichtbaren) Antrag für eine Gesuchsperiode zurück.
+	 */
+	@Nonnull
+	List<String> getNeuesteFreigegebeneAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
 	 * Gibt die Antrags-Ids aller Antraege zurueck, welche im uebergebenen Zeitraum verfuegt wurden.
 	 * Falls es mehrere fuer denselben Fall hat, wird nur der letzte (hoechste Laufnummer) zurueckgegeben
 	 */
