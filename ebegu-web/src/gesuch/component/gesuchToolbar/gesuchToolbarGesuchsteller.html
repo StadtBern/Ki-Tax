@@ -51,6 +51,14 @@
                   ng-bind="vmgs.getAntragTyp()"></span>
 
             <span flex=""></span>
+            <!-- Mitteilungen -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmgs.TSRoleUtil.getGesuchstellerJugendamtRoles()">
+                <button ng-click="vmx.openAlleVerfuegungen()"
+                        aria-label="{{TOOLBAR_ALLE_VERFUEGUNGEN | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_ALLE_VERFUEGUNGEN"></span>
+                </button>
+            </div>
 
             <!-- Mitteilungen -->
             <div dv-show-element

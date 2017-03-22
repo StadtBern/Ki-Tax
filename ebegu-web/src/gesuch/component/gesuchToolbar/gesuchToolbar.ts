@@ -441,4 +441,9 @@ export class GesuchToolbarController {
             fallId: this.fallid
         });
     }
+    public openAlleVerfuegungen(): void {
+        this.$state.go('alleVerfuegungen', {
+            fallId: this.fallid
+        });
+    }
 }

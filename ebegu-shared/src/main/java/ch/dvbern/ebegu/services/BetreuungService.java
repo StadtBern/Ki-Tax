@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
 
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
@@ -70,6 +71,13 @@ public interface BetreuungService {
 
 	@Nonnull
 	List<Betreuung> findAllBetreuungenFromGesuch(String gesuchId);
+
+	/**
+	 * @param fall Fall, dessen Verfuegungen zurueckgegeben werden
+	 * @return BetreuungList, welche zum Fall gehoeren oder null
+	 */
+	@Nonnull
+	List<Betreuung> findAllBetreuungenFromFall(@Nonnull Fall fall);
 
 	/**
 	 * Schliesst die Betreuung (Status GESCHLOSSEN_OHNE_VERFUEGUNG) ohne eine neue Verfuegung zu erstellen

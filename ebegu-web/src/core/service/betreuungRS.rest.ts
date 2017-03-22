@@ -31,6 +31,14 @@ export default class BetreuungRS {
             });
     }
 
+    public findAllBetreuungenFromFall(fallId: string): IPromise<TSBetreuung[]> {
+        return this.http.get(this.serviceURL + '/alleBetreuungen/' + encodeURIComponent(fallId))
+            .then((response: any) => {
+                this.log.debug('PARSING Betreuung REST object ', response.data);
+                return this.ebeguRestUtil.parseBetreuungList(response.data);
+            });
+    }
+
     public saveBetreuung(betreuung: TSBetreuung, kindId: string, gesuchId: string, abwesenheit: boolean): IPromise<TSBetreuung> {
         let restBetreuung = {};
         restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);

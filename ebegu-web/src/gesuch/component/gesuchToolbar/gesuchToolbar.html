@@ -52,6 +52,13 @@
             <span class="bold-menu" ng-if="!vmx.showAntragTypListNavigationMenu()" ng-bind="vmx.getAntragTyp()"></span>
 
             <span flex=""></span>
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getAllRolesButGesuchsteller()">
+                <button ng-click="vmx.openAlleVerfuegungen()"
+                        aria-label="{{TOOLBAR_ALLE_VERFUEGUNGEN | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_ALLE_VERFUEGUNGEN"></span>
+                </button>
+            </div>
 
             <!-- Mitteilungen -->
 
