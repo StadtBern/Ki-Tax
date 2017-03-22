@@ -1,7 +1,9 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,4 +39,7 @@ public interface AntragStatusHistoryService {
 
 	@Nonnull
 	Collection<AntragStatusHistory> findAllAntragStatusHistoryByGesuch(@Nonnull Gesuch gesuch);
+
+	@Nonnull
+	Collection<AntragStatusHistory> findAllAntragStatusHistoryByGPFall(@Nonnull Gesuchsperiode gesuchsperiode, Fall fall);
 }

@@ -48,6 +48,10 @@ export class TSRoleUtil {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.JURIST, TSRole.REVISOR];
     }
 
+    public static getJugendamtAndSchulamtRole(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.JURIST, TSRole.REVISOR, TSRole.SCHULAMT];
+    }
+
     public static getAdministratorJugendamtSchulamtRoles(): Array<TSRole> {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.SCHULAMT];
     }
