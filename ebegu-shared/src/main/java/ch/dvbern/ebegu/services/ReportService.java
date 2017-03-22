@@ -1,8 +1,11 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
+import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
 import ch.dvbern.lib.excelmerger.ExcelMergeException;
 import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
 import ch.dvbern.ebegu.util.UploadFileInfo;
@@ -52,6 +55,13 @@ public interface ReportService {
 	UploadFileInfo generateExcelReportKanton(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
 		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 
+	// MitarbeterInnen
+	List<MitarbeiterinnenDataRow> getReportMitarbeiterinnen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
+		throws IOException, URISyntaxException;
+
+	UploadFileInfo generateExcelReportMitarbeiterinnen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis)
+		throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
+
 	// Zahlungen
 
 	UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId) throws ExcelMergeException;
@@ -60,4 +70,9 @@ public interface ReportService {
 
 	UploadFileInfo generateExcelReportZahlungPeriode(String gesuchsperiodeId) throws ExcelMergeException;
 
+	// Gesuchsteller / Kinder / Betreuung
+
+	List<GesuchstellerKinderBetreuungDataRow> getReportDataGesuchstellerKinderBetreuung(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException;
+
+	UploadFileInfo generateExcelReportGesuchstellerKinderBetreuung(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable String gesuchPeriodeId) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException;
 }

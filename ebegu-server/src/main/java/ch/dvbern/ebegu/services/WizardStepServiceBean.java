@@ -288,15 +288,12 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					}
 
 					try {
-						if (wizardStep.getGesuch().getFall().getBesitzer() != null) {
-							//nur bei Online-Antrag
-							if (!wizardStep.getGesuch().isMutation()) {
-								// Erstgesuch
-								mailService.sendInfoVerfuegtGesuch(wizardStep.getGesuch());
-							} else {
-								// Mutation
-								mailService.sendInfoVerfuegtMutation(wizardStep.getGesuch());
-							}
+						if (!wizardStep.getGesuch().isMutation()) {
+							// Erstgesuch
+							mailService.sendInfoVerfuegtGesuch(wizardStep.getGesuch());
+						} else {
+							// Mutation
+							mailService.sendInfoVerfuegtMutation(wizardStep.getGesuch());
 						}
 					} catch (MailException e) {
 						LOG.error("Error sending Mail zu gesuchsteller", e);

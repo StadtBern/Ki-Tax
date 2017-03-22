@@ -57,8 +57,9 @@
             <artifactId>dvbern-lib-beanvalidation</artifactId>
         </dependency>
         <dependency>
-            <groupId>ch.dvbern.lib</groupId>
+            <groupId>ch.dvbern.lib.excelmerger</groupId>
             <artifactId>dvbern-lib-excelmerger-impl</artifactId>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

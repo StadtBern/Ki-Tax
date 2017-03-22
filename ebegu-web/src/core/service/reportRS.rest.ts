@@ -65,6 +65,18 @@ export class ReportRS {
             });
     }
 
+    public getMitarbeiterinnenReportExcel(auswertungVon: string, auswertungBis: string): IPromise<TSDownloadFile> {
+        let reportParams: string = this.httpParamSerializer({
+            auswertungVon: auswertungVon,
+            auswertungBis: auswertungBis
+        });
+        return this.http.get(this.serviceURL + '/excel/mitarbeiterinnen?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
     public getZahlungsauftragReportExcel(zahlungsauftragID: string): IPromise<TSDownloadFile> {
 
         let reportParams: string = this.httpParamSerializer({
@@ -91,10 +103,6 @@ export class ReportRS {
             });
     }
 
-    public getServiceName(): string {
-        return 'ReportRS';
-    }
-
     public getZahlungPeriodeReportExcel(gesuchsperiode: string): IPromise<TSDownloadFile> {
         let reportParams: string = this.httpParamSerializer({
             gesuchsperiodeID: gesuchsperiode
@@ -106,5 +114,23 @@ export class ReportRS {
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
             });
 
+    }
+
+    public getGesuchstellerKinderBetreuungReportExcel(auswertungVon: string, auswertungBis: string, gesuchPeriodeID: string): IPromise<TSDownloadFile> {
+        let reportParams: string = this.httpParamSerializer({
+            auswertungVon: auswertungVon,
+            auswertungBis: auswertungBis,
+            gesuchPeriodeID: gesuchPeriodeID
+        });
+        return this.http.get(this.serviceURL + '/excel/gesuchstellerkinderbetreuung?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+
+    }
+
+    public getServiceName(): string {
+        return 'ReportRS';
     }
 }
