@@ -126,8 +126,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
-	@Inject
-	private GesuchstellerAdresseService gesuchstellerAdresseService;
 
 	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
@@ -665,19 +663,20 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Gesuchsteller gs1 = containerGS1.getGesuchstellerJA();
 		row.setGs1Name(gs1.getNachname());
 		row.setGs1Vorname(gs1.getVorname());
-		GesuchstellerAdresse gs1Adresse = gesuchstellerAdresseService.getCurrentWohnadresse(containerGS1.getId()).getGesuchstellerAdresseJA();
-		row.setGs1Strasse(gs1Adresse.getStrasse());
-		row.setGs1Hausnummer(gs1Adresse.getHausnummer());
-		row.setGs1Zusatzzeile(gs1Adresse.getZusatzzeile());
-		row.setGs1Plz(gs1Adresse.getPlz());
-		row.setGs1Ort(gs1Adresse.getOrt());
+		GesuchstellerAdresse gs1Adresse = containerGS1.getWohnadresseAm(row.getZeitabschnittVon());
+		if (gs1Adresse != null) {
+			row.setGs1Strasse(gs1Adresse.getStrasse());
+			row.setGs1Hausnummer(gs1Adresse.getHausnummer());
+			row.setGs1Zusatzzeile(gs1Adresse.getZusatzzeile());
+			row.setGs1Plz(gs1Adresse.getPlz());
+			row.setGs1Ort(gs1Adresse.getOrt());
+		}
 		row.setGs1EwkId(gs1.getZpvNumber());
 		row.setGs1Diplomatenstatus(gs1.isDiplomatenstatus());
 		// EWP Gesuchsteller 1
 
-		Set<ErwerbspensumContainer> erwerbspensenGS1 = containerGS1.getErwerbspensenContainersNotEmpty();
-		for (ErwerbspensumContainer erwerbspensumContainer : erwerbspensenGS1) {
-			Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
+		List<Erwerbspensum> erwerbspensenGS1 = containerGS1.getErwerbspensenAm(row.getZeitabschnittVon());
+		for (Erwerbspensum erwerbspensumJA : erwerbspensenGS1) {
 			if (Taetigkeit.ANGESTELLT.equals(erwerbspensumJA.getTaetigkeit())) {
 				row.setGs1EwpAngestellt(row.getGs1EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
@@ -703,19 +702,19 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Gesuchsteller gs2 = containerGS2.getGesuchstellerJA();
 		row.setGs2Name(gs2.getNachname());
 		row.setGs2Vorname(gs2.getVorname());
-		GesuchstellerAdresse gs2Adresse = gesuchstellerAdresseService.getCurrentWohnadresse(containerGS2.getId()).getGesuchstellerAdresseJA();
-		row.setGs2Strasse(gs2Adresse.getStrasse());
-		row.setGs2Hausnummer(gs2Adresse.getHausnummer());
-		row.setGs2Zusatzzeile(gs2Adresse.getZusatzzeile());
-		row.setGs2Plz(gs2Adresse.getPlz());
-		row.setGs2Ort(gs2Adresse.getOrt());
+		GesuchstellerAdresse gs2Adresse = containerGS2.getWohnadresseAm(row.getZeitabschnittVon());
+		if (gs2Adresse != null) {
+			row.setGs2Strasse(gs2Adresse.getStrasse());
+			row.setGs2Hausnummer(gs2Adresse.getHausnummer());
+			row.setGs2Zusatzzeile(gs2Adresse.getZusatzzeile());
+			row.setGs2Plz(gs2Adresse.getPlz());
+			row.setGs2Ort(gs2Adresse.getOrt());
+		}
 		row.setGs2EwkId(gs2.getZpvNumber());
 		row.setGs2Diplomatenstatus(gs2.isDiplomatenstatus());
 		// EWP Gesuchsteller 2
-
-		Set<ErwerbspensumContainer> erwerbspensenGS2 = containerGS2.getErwerbspensenContainersNotEmpty();
-		for (ErwerbspensumContainer erwerbspensumContainer : erwerbspensenGS2) {
-			Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
+		List<Erwerbspensum> erwerbspensenGS2 = containerGS2.getErwerbspensenAm(row.getZeitabschnittVon());
+		for (Erwerbspensum erwerbspensumJA : erwerbspensenGS2) {
 			if (Taetigkeit.ANGESTELLT.equals(erwerbspensumJA.getTaetigkeit())) {
 				row.setGs2EwpAngestellt(row.getGs2EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
@@ -809,6 +808,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
 
 		GesuchstellerKinderBetreuungDataRow row = new GesuchstellerKinderBetreuungDataRow();
+		// Betreuung
+		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
+		// Stammdaten
 		addStammdaten(row, zeitabschnitt);
 
 		// Gesuchsteller 1: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
@@ -830,8 +832,13 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			addGesuchsteller2ToGesuchstellerKinderBetreuungDataRow(row, gesuch.getGesuchsteller2());
 		}
 		// Familiensituation / Einkommen
-		row.setFamiliensituation(gesuch.getFamiliensituationContainer().extractFamiliensituation().getFamilienstatus());
-		row.setKardinalitaet(gesuch.getFamiliensituationContainer().extractFamiliensituation().getGesuchstellerKardinalitaet());
+		Familiensituation familiensituation = gesuch.getFamiliensituationContainer().getFamiliensituationAm(row.getZeitabschnittVon());
+		row.setFamiliensituation(familiensituation.getFamilienstatus());
+		if (familiensituation.hasSecondGesuchsteller()) {
+			row.setKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		} else {
+			row.setKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		}
 		row.setFamiliengroesse(zeitabschnitt.getFamGroesse());
 		row.setMassgEinkVorFamilienabzug(zeitabschnitt.getMassgebendesEinkommenVorAbzFamgr());
 		row.setFamilienabzug(zeitabschnitt.getAbzugFamGroesse());
@@ -844,8 +851,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		row.setVeranlagt(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().getSteuerveranlagungErhalten());
 		// Kind
 		addKindToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
-		// Betreuung
-		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
 		return row;
 	}
 

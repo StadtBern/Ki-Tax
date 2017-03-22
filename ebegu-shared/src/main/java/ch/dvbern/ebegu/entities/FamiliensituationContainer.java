@@ -2,9 +2,11 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
+import java.time.LocalDate;
 
 /**
  * Entitaet zum Speichern von FamiliensituationContainer in der Datenbank.
@@ -78,5 +80,14 @@ public class FamiliensituationContainer extends AbstractEntity {
 	@Nullable
 	public Familiensituation extractFamiliensituation() {
 		return familiensituationJA;
+	}
+
+	@Nonnull
+	public Familiensituation getFamiliensituationAm(LocalDate stichtag) {
+		if (getFamiliensituationJA().getAenderungPer() == null || getFamiliensituationJA().getAenderungPer().isBefore(stichtag)) {
+			return getFamiliensituationJA();
+		} else {
+			return getFamiliensituationErstgesuch();
+		}
 	}
 }
