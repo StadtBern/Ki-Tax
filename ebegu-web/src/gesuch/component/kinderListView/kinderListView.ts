@@ -68,7 +68,6 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
     }
 
     getDubletten(kindContainer: TSKindContainer) :TSKindDublette[] {
-        // todo fragen -> wird dies sehr oft aufgerufen?
         if (this.kinderDubletten) {
             let dublettenForThisKind :TSKindDublette[] = [];
             for (let i = 0; i < this.kinderDubletten.length; i++) {
