@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.enums;
 
+import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.MergeFieldGesuchstellerKinderBetreuung;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.MergeFieldGesuchStichtag;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.MergeFieldGesuchZeitraum;
 import ch.dvbern.ebegu.reporting.kanton.MergeFieldKanton;
@@ -28,7 +29,9 @@ public enum ReportVorlage {
 	VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", Constants.DATA,
 		MergeFieldZahlungAuftrag.class),
 	VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE("/reporting/ZahlungAuftragPeriode.xlsx", "ZahlungAuftragPeriode.xlsx", Constants.DATA,
-		MergeFieldZahlungAuftragPeriode.class);
+		MergeFieldZahlungAuftragPeriode.class),
+	VORLAGE_REPORT_GESUCHSTELLER_KINDER_BETREUUNG("/reporting/GesuchstellerKinderBetreuung.xlsx", "GesuchstellerKinderBetreuung.xlsx", Constants.DATA,
+		MergeFieldGesuchstellerKinderBetreuung.class);
 
 	@Nonnull
 	private final String templatePath;

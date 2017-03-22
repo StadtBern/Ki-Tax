@@ -42,17 +42,17 @@ export class UserselectController {
     static $inject: string[] = ['UserRS', 'AuthServiceRS'];
     /* @ngInject */
     constructor(private userRS: UserRS, private authService: AuthServiceRS) {
-        this.updateUserList();
-        if (!this.initialAll) { //tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
-            this.selectedUser = authService.getPrincipal();
-        } else {
-            this.selectedUser = undefined;
-        }
-    }
 
+    }
 
     //wird von angular aufgerufen
     $onInit() {
+        this.updateUserList();
+        if (!this.initialAll) { //tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
+            this.selectedUser = this.authService.getPrincipal();
+        } else {
+            this.selectedUser = undefined;
+        }
         //initial nach aktuell eingeloggtem filtern
         if (this.smartTable && !this.initialAll) {
             this.smartTable.search(this.selectedUser.getFullName(), this.dvUsersearch);
