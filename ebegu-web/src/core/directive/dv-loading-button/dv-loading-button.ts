@@ -74,6 +74,10 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
 
     /* @ngInject */
     constructor(private $http: IHttpService, private $scope: any, private $timeout: ITimeoutService) {
+    }
+
+    //wird von angular aufgerufen
+    $onInit() {
         if (!this.type) {
             this.type = 'button'; //wenn kein expliziter type angegeben wurde nehmen wir default button
         }
@@ -86,7 +90,7 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
             this.buttonClick();  //falls ein button-click callback uebergeben wurde ausfuehren
 
             //timeout wird gebraucht damit der request nach dem disablen ueberhaupt uebermittelt wird
-            $timeout(() => {
+            this.$timeout(() => {
                 if (!this.forceWaitService) {
                     if (this.formCtrl) {  //wenn form-controller existiert
                         //button wird nur disabled wenn form valid
