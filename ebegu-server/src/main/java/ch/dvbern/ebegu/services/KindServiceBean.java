@@ -110,10 +110,10 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
 		if (gesuchOptional.isPresent()) {
 			// Nur das zuletzt gueltige Gesuch
-			List<String> idsOfLetztVerfuegteAntraege = gesuchService.getNeuesteFreigegebeneAntraege(gesuchOptional.get().getGesuchsperiode());
+			List<String> idsOfLetztFreigegebeneAntraege = gesuchService.getNeuesteFreigegebeneAntraege(gesuchOptional.get().getGesuchsperiode());
 			Set<KindContainer> kindContainers = gesuchOptional.get().getKindContainers();
 			for (KindContainer kindContainer : kindContainers) {
-				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer, idsOfLetztVerfuegteAntraege);
+				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer, idsOfLetztFreigegebeneAntraege);
 				dublettenOfAllKinder.addAll(kindDubletten);
 			}
 		}

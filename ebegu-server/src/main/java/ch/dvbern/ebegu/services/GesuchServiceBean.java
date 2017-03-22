@@ -1065,7 +1065,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
 
-		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.allowedforRole(UserRole.SACHBEARBEITER_JA));
 		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
 		Predicate predicateAntragStatus = join.get(AntragStatusHistory_.status).in(AntragStatus.allowedforRole(UserRole.SACHBEARBEITER_JA));
 		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
