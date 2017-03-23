@@ -1,10 +1,9 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.AntragStatusHistory;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.services.AntragStatusHistoryService;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -18,7 +17,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * Arquillian Tests fuer die Klasse AntragStatusHistoryService
@@ -33,6 +37,8 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	private AntragStatusHistoryService statusHistoryService;
 	@Inject
 	private Persistence<Gesuch> persistence;
+	@Inject
+	private GesuchService gesuchService;
 
 	private Gesuch gesuch;
 	private Benutzer benutzer;
@@ -79,6 +85,66 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void findLastStatusChangeNoChangeNullTest() {
 		Assert.assertNull(statusHistoryService.findLastStatusChange(gesuch));
+	}
+
+	@Test
+	public void  testFindAllAntragStatusHistoryByGPFall_NoFall() {
+		Fall fall = TestDataUtil.createDefaultFall();
+		Gesuchsperiode gesuchsperiode = TestDataUtil.createGesuchsperiode1718();
+
+		final Collection<AntragStatusHistory> allStatus = statusHistoryService.findAllAntragStatusHistoryByGPFall(gesuchsperiode, fall);
+
+		Assert.assertNotNull(allStatus);
+		Assert.assertEquals(0, allStatus.size());
+	}
+
+	@Test
+	public void  testFindAllAntragStatusHistoryByGPFall_NoChanges() {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+
+		final Collection<AntragStatusHistory> allStatus = statusHistoryService.findAllAntragStatusHistoryByGPFall(gesuch.getGesuchsperiode(), gesuch.getFall());
+
+		Assert.assertNotNull(allStatus);
+		Assert.assertEquals(0, allStatus.size());
+	}
+
+	@Test
+	public void  testFindAllAntragStatusHistoryByGPFall() {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch.setStatus(AntragStatus.VERFUEGT);
+		gesuchService.updateGesuch(gesuch, true);
+
+		final Collection<AntragStatusHistory> allStatus = statusHistoryService.findAllAntragStatusHistoryByGPFall(gesuch.getGesuchsperiode(), gesuch.getFall());
+
+		Assert.assertNotNull(allStatus);
+		Assert.assertEquals(1, allStatus.size());
+		Assert.assertEquals(AntragStatus.VERFUEGT, allStatus.iterator().next().getStatus());
+	}
+
+	@Test
+	public void  testFindAllAntragStatusHistoryByGPFall_Mutation() {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch.setStatus(AntragStatus.VERFUEGT);
+		final Gesuch gesuchVerfuegt = gesuchService.updateGesuch(gesuch, true);
+		Optional<Gesuch> mutation = gesuchService.antragMutieren(gesuchVerfuegt.getId(), LocalDate.of(1980, Month.MARCH, 25));
+
+		mutation.get().setStatus(AntragStatus.VERFUEGT);
+		gesuchService.updateGesuch(mutation.get(), true);
+
+		final Collection<AntragStatusHistory> allStatus = statusHistoryService
+			.findAllAntragStatusHistoryByGPFall(mutation.get().getGesuchsperiode(), mutation.get().getFall());
+
+		Assert.assertNotNull(allStatus);
+		Assert.assertEquals(2, allStatus.size());
+
+		final Iterator<AntragStatusHistory> iterator = allStatus.iterator();
+		final AntragStatusHistory first = iterator.next();
+		Assert.assertEquals(AntragStatus.VERFUEGT, first.getStatus());
+		Assert.assertEquals(mutation.get().getId(), first.getGesuch().getId());
+
+		final AntragStatusHistory second = iterator.next();
+		Assert.assertEquals(AntragStatus.VERFUEGT, second.getStatus());
+		Assert.assertEquals(gesuchVerfuegt.getId(), second.getGesuch().getId());
 	}
 
 }

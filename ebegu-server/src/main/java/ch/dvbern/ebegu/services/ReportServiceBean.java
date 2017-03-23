@@ -607,7 +607,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		predicatesToUse.add(predicateEnd);
 
 		if (gesuchsperiode != null) {
-			Predicate predicateGesuchsperiode = builder.equal(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode), gesuchsperiode);
+			Predicate predicateGesuchsperiode = builder.equal(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind)
+				.get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode), gesuchsperiode);
 			predicatesToUse.add(predicateGesuchsperiode);
 		}
 
@@ -619,7 +620,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				idsOfLetztVerfuegteAntraege.addAll(gesuchService.getNeuesteVerfuegteAntraege(gp));
 			}
 			if (!idsOfLetztVerfuegteAntraege.isEmpty()) {
-				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
+				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind)
+					.get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
 				predicatesToUse.add(predicateAktuellesGesuch);
 			} else {
 				return Collections.emptyList();

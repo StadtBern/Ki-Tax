@@ -1,0 +1,54 @@
+<gesuch-toolbar flex="nogrow" fallid="{{vm.fall.id}}"
+                on-verantwortlicher-change="vm.setVerantwortlicher(user)"
+                hide-mutation-button="{{true}}"
+                dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
+</gesuch-toolbar>
+
+<gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller" fallid="{{vm.fall.id}}"
+                              dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()">
+</gesuch-toolbar-gesuchsteller>
+
+<div class="verlaufView overflow-scroll" flex="auto">
+    <div class="row">
+        <div class="col-md-11">
+            <h3 data-translate="VERLAUF_LIST"></h3>
+        </div>
+        <div class="col-md-1 text-right">
+            <h3 ng-bind="vm.getVerlaufList() ? vm.getVerlaufList().length : 0"></h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 table-responsive">
+            <table st-table="displayedCollection" st-set-filter="verlaufFilter" st-safe-src="vm.getVerlaufList()"
+                   st-delay="20"
+                   class="table table-striped">
+                <thead>
+                <tr>
+                    <th st-sort="timestampErstellt" class="sortable" data-translate="DATUM_UPPER"></th>
+                    <th st-sort="id" class="sortable" data-translate="VERSION_UPPER"></th>
+                    <th st-sort="status" class="sortable" data-translate="AKTION_UPPER"></th>
+                    <th st-sort="benutzer" class="sortable" data-translate="BEARBEITER_UPPER"></th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single">
+                    <td class="ellipsis" ellipsis-tooltip="{{row.timestampErstellt  | amDateFormat : 'DD.MM.YYYY'}}"
+                        ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td class="ellipsis" ellipsis-tooltip="">{{vm.gesuche[row.gesuchId]}}</td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.status | translate}}" ng-bind="row.status | translate"></td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.benutzer.getFullName()}}" ng-bind="row.benutzer.getFullName()"></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="9" class="text-center">
+                        <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+
+        </div>
+    </div>
+</div>
