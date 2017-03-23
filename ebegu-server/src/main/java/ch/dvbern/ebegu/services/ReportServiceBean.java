@@ -586,7 +586,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	private List<GesuchstellerKinderBetreuungDataRow> getReportDataGesuchsteller(@Nonnull LocalDate stichtag) throws IOException, URISyntaxException {
 		List<VerfuegungZeitabschnitt> zeitabschnittList = getReportDataBetreuungen(stichtag);
-		return convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		List<GesuchstellerKinderBetreuungDataRow> dataRows = convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		dataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer).thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
+		return dataRows;
 	}
 
 	@SuppressWarnings("PMD.NcssMethodCount")
