@@ -17,7 +17,6 @@ import GlobalCacheService from '../../../gesuch/service/globalCacheService';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import ITranslateService = angular.translate.ITranslateService;
-import Moment = moment.Moment;
 import ITimeoutService = angular.ITimeoutService;
 let template = require('./parameterView.html');
 let style = require('./parameterView.less');

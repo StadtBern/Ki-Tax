@@ -13,6 +13,7 @@ import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import {IStateService} from 'angular-ui-router';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 let template = require('./dv-pendenzen-list.html');
 require('./dv-pendenzen-list.less');

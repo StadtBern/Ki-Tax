@@ -4,6 +4,7 @@ import TSUser from './TSUser';
 import {TSMitteilungTeilnehmerTyp} from './enums/TSMitteilungTeilnehmerTyp';
 import {TSMitteilungStatus} from './enums/TSMitteilungStatus';
 import TSBetreuung from './TSBetreuung';
+import * as moment from 'moment';
 
 export default class TSMitteilung extends TSAbstractEntity {
 

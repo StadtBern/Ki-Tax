@@ -23,6 +23,7 @@ import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;

@@ -7,6 +7,7 @@ import TSUser from '../../../models/TSUser';
 import UserRS from '../../../core/service/userRS.rest';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {ReindexRS} from '../../service/reindexRS.rest';
+import * as moment from 'moment';
 require('./testdatenView.less');
 let template = require('./testdatenView.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');

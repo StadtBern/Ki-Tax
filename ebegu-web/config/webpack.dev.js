@@ -6,7 +6,9 @@ var commonConfig = require('./webpack.common.js'); //The settings that are commo
 /**
  * Webpack Plugins
  */
-var DefinePlugin = require('webpack/lib/DefinePlugin');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const LoaderOptionsPlugin = require("webpack/lib/LoaderOptionsPlugin");
 
 /**
  * Webpack Constants
@@ -25,10 +27,7 @@ const METADATA = webpackMerge(commonConfig.metadata, {
 
 module.exports = webpackMerge(commonConfig,  {
 
-    // Switch loaders to debug mode.
-    //
-    // See: http://webpack.github.io/docs/configuration.html#debug
-    debug: true,
+
     // Developer tool to enhance debugging
     //
     // See: http://webpack.github.io/docs/configuration.html#devtool
@@ -63,6 +62,13 @@ module.exports = webpackMerge(commonConfig,  {
     },
 
     plugins: [
+        new LoaderOptionsPlugin({
+           debug: true
+         }),
+        new ExtractTextPlugin({
+          filename: '[name].css'
+         }),
+
 
 
         // Plugin: DefinePlugin
@@ -76,7 +82,7 @@ module.exports = webpackMerge(commonConfig,  {
         new DefinePlugin({
             'ENV': JSON.stringify(METADATA.ENV),
             'HMR': METADATA.HMR,
-            'VERSION': JSON.stringify(METADATA.version),
+            // 'VERSION': JSON.stringify(METADATA.version),
             'BUILDTSTAMP': JSON.stringify(METADATA.buildtstamp),
             'process.env': {
                 'ENV': JSON.stringify(METADATA.ENV),
@@ -90,11 +96,11 @@ module.exports = webpackMerge(commonConfig,  {
     // Description: An extensible linter for the TypeScript language.
     //
     // See: https://github.com/wbuchwalter/tslint-loader
-    tslint: {
-        emitErrors: false,
-        failOnHint: false,
-        resourcePath: 'src'
-    },
+    // tslint: {
+    //     emitErrors: false,
+    //     failOnHint: false,
+    //     resourcePath: 'src'
+    // },
 
     // Webpack Development Server configuration
     // Description: The webpack-dev-server is a little node.js Express server.
@@ -118,7 +124,7 @@ module.exports = webpackMerge(commonConfig,  {
         }
     },
     node: {
-        global: 'window',
+        global: true,
         crypto: 'empty',
         process: true,
         module: false,

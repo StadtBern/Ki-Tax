@@ -10,6 +10,7 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 let template = require('./dv-antrag-list.html');
 require('./dv-antrag-list.less');

@@ -2,6 +2,7 @@
     "compilerOptions": {
         "target": "es5",
         "module": "amd",
+        "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "sourceMap": true,
@@ -9,13 +10,17 @@
         "removeComments": false,
         "preserveConstEnums": true,
         "noImplicitReturns": true,
+        "allowSyntheticDefaultImports": true,
         "outDir": "temp/js"
     },
 
     "files": [
-        "typings/browser.d.ts",
-        "src/bootstrap.ts",
-        "src/declarations.d.ts"
+        "customDeclarations/declarations.d.ts",
+        "customDeclarations/override.d.ts"
+    ],
+    "exclude": [
+        "node_modules/*",
+        "**/*-aot.ts"
     ],
     "compileOnSave": false,
     "buildOnSave": false

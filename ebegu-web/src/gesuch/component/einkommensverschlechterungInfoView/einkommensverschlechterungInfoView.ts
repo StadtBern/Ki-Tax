@@ -14,6 +14,7 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {TSRole} from '../../../models/enums/TSRole';
 import TSEinkommensverschlechterungInfoContainer from '../../../models/TSEinkommensverschlechterungInfoContainer';
 import EinkommensverschlechterungInfoRS from '../../service/einkommensverschlechterungInfoRS.rest';
+import * as moment from 'moment';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;

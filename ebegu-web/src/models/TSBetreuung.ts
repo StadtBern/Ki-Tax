@@ -6,6 +6,7 @@ import TSVerfuegung from './TSVerfuegung';
 import TSAbwesenheitContainer from './TSAbwesenheitContainer';
 import TSGesuchsperiode from './TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
+import * as moment from 'moment';
 
 export default class TSBetreuung extends TSAbstractEntity {
 
