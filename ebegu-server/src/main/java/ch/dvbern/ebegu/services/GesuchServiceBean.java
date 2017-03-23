@@ -1043,6 +1043,44 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		ids.addAll(stringGesuchMap.keySet());
 		return ids;
 	}
+
+	@Override
+	@Nonnull
+	public List<String> getNeuesteFreigegebeneAntraege(@Nonnull Gesuchsperiode gesuchsperiode) {
+		List<String> ids = new ArrayList<>();
+		Collection<Fall> allFaelle = fallService.getAllFalle();
+		for (Fall fall : allFaelle) {
+			Optional<String> idsFuerGesuch = getNeustesFreigegebenesGesuchIdFuerGesuch(gesuchsperiode, fall);
+			idsFuerGesuch.ifPresent(ids::add);
+		}
+		return ids;
+	}
+
+	@Nonnull
+	private Optional<String> getNeustesFreigegebenesGesuchIdFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<String> query = cb.createQuery(String.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
+
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.allowedforRole(UserRole.SACHBEARBEITER_JA));
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateAntragStatus = join.get(AntragStatusHistory_.status).in(AntragStatus.allowedforRole(UserRole.SACHBEARBEITER_JA));
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
+
+		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
+		query.select(root.get(Gesuch_.id));
+		query.orderBy(cb.desc(join.get(AntragStatusHistory_.timestampVon))); // Das mit dem neuesten Verfuegungsdatum
+		List<String> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		String gesuchId = criteriaResults.get(0);
+
+		return Optional.of(gesuchId);
+	}
 }
 
 
