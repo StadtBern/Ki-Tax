@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow
 import ch.dvbern.lib.excelmerger.ExcelMergeException;
 import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
 import ch.dvbern.ebegu.util.UploadFileInfo;
-import ch.dvbern.lib.excelmerger.ExcelMergeException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
