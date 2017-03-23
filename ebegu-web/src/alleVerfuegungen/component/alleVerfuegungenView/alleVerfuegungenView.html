@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-md-12 table-responsive">
             <div ng-if="vm.getAlleVerfuegungen().length == 0" data-translate="VERFUEGUNGEN_NOCH_KEINE"> </div>
-            <table st-table="displayedCollection" st-set-filter="verfuegungenFilter" st-safe-src="vm.getAlleVerfuegungen()"
+            <table st-table="displayedCollection" st-safe-src="vm.getAlleVerfuegungen()"
                    st-delay="20"
                    class="table table-striped" ng-if="vm.getAlleVerfuegungen().length > 0">
                 <thead>

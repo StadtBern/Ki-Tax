@@ -2,23 +2,20 @@ import IComponentOptions = angular.IComponentOptions;
 import TSFall from '../../../models/TSFall';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import TSGesuch from '../../../models/TSGesuch';
 import TSAntragStatusHistory from '../../../models/TSAntragStatusHistory';
-import EbeguUtil from '../../../utils/EbeguUtil';
 import {IAlleVerfuegungenStateParams} from '../../alleVerfuegungen.route';
 import FallRS from '../../../gesuch/service/fallRS.rest';
-import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
-import IPromise = angular.IPromise;
-import IQService = angular.IQService;
-import IFormController = angular.IFormController;
-import IStateService = angular.ui.IStateService;
 import TSBetreuung from '../../../models/TSBetreuung';
 import BetreuungRS from '../../../core/service/betreuungRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TSDownloadFile from '../../../models/TSDownloadFile';
-import ILogService = angular.ILogService;
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import IPromise = angular.IPromise;
+import IQService = angular.IQService;
+import IFormController = angular.IFormController;
+import IStateService = angular.ui.IStateService;
+import ILogService = angular.ILogService;
 
 let template = require('./alleVerfuegungenView.html');
 require('./alleVerfuegungenView.less');
@@ -37,15 +34,15 @@ export class AlleVerfuegungenViewController {
     itemsByPage: number = 20;
     TSRoleUtil = TSRoleUtil;
 
-    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', '$q', 'FallRS', 'GesuchRS', 'EbeguUtil', 'BetreuungRS', 'GesuchModelManager', 'DownloadRS', '$log'];
+    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', '$q', 'FallRS', 'BetreuungRS', 'GesuchModelManager', 'DownloadRS', '$log'];
     /* @ngInject */
     constructor(private $state: IStateService, private $stateParams: IAlleVerfuegungenStateParams,
-                private authServiceRS: AuthServiceRS,
-                private $q: IQService, private fallRS: FallRS, private gesuchRS: GesuchRS, private ebeguUtil: EbeguUtil, private betreuungRS: BetreuungRS, private gesuchModelManager: GesuchModelManager, private downloadRS: DownloadRS, private $log: ILogService) {
-        this.initViewModel();
+                private authServiceRS: AuthServiceRS, private $q: IQService, private fallRS: FallRS,
+                private betreuungRS: BetreuungRS, private gesuchModelManager: GesuchModelManager,
+                private downloadRS: DownloadRS, private $log: ILogService) {
     }
 
-    private initViewModel() {
+    $onInit() {
         if (this.$stateParams.fallId) {
             this.fallRS.findFall(this.$stateParams.fallId).then((response) => {
                 this.fall = response;
@@ -95,6 +92,7 @@ export class AlleVerfuegungenViewController {
     public showVerfuegungPdfLink(betreuung: TSBetreuung): boolean {
         return !(TSBetreuungsstatus.NICHT_EINGETRETEN === betreuung.betreuungsstatus);
     }
+
     public openVerfuegungPDF(betreuung: TSBetreuung): void {
         let win: Window = this.downloadRS.prepareDownloadWindow();
         this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
