@@ -111,7 +111,8 @@ export default class TSVerfuegung extends TSAbstractEntity {
         for (let i = 0; i < this._zeitabschnitte.length; i++) {
             if (this._zeitabschnitte[i].sameVerfuegungsdaten !== true
                 && (this._zeitabschnitte[i].zahlungsstatus === TSVerfuegungZeitabschnittZahlungsstatus.VERRECHNET
-                    || this._zeitabschnitte[i].zahlungsstatus === TSVerfuegungZeitabschnittZahlungsstatus.IGNORIERT)) {
+                    || this._zeitabschnitte[i].zahlungsstatus === TSVerfuegungZeitabschnittZahlungsstatus.IGNORIERT
+                || this._zeitabschnitte[i].zahlungsstatus === TSVerfuegungZeitabschnittZahlungsstatus.IGNORIEREND)) {
                 return false;
             }
         }

@@ -29,6 +29,7 @@ public enum MergeFieldZahlungAuftrag implements MergeField {
 	bisDatum(DATE_CONVERTER, Type.SIMPLE),
 	bgPensum(BIGDECIMAL_CONVERTER, Type.SIMPLE),
 	betragCHF(BIGDECIMAL_CONVERTER, Type.SIMPLE),
+	isKorrektur(BOOLEAN_X_CONVERTER, Type.SIMPLE),
 	isIgnoriert(BOOLEAN_X_CONVERTER, Type.SIMPLE);
 
 

@@ -148,7 +148,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		for (VerfuegungZeitabschnitt zeitabschnitt : verfuegungsZeitabschnitte) {
 			if (!zeitabschnitt.getZahlungsstatus().isVerrechnet()) {
 				// Alle Korrekturen die nicht verrechnet sind muessen beruecksichtigt werden. Grund dafuer ist, dass sie auf dem Dokument
-				// aufgelistet werden muessen und zwar mit dem Flag IGNORIERT
+				// aufgelistet werden muessen und zwar mit dem Flag IGNORIEREND
 				createZahlungspositionenKorrekturUndNachzahlung(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 			}
 		}
@@ -287,7 +287,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 				for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnittOnVorgaengerVerfuegung) {
 					// Fuer die "alten" Verfuegungszeitabschnitte muessen Korrekturbuchungen erstellt werden
 					// Wenn die neuen Zeitabschnitte ignoriert sind, setzen wir die alten Zeitabschnitte auch als ignoriert
-					createZahlungspositionKorrekturAlterWert(verfuegungZeitabschnitt, zahlung, vollkostenChanged, zeitabschnittNeu.getZahlungsstatus().isIgnoriert());
+					createZahlungspositionKorrekturAlterWert(verfuegungZeitabschnitt, zahlung, vollkostenChanged,
+						zeitabschnittNeu.getZahlungsstatus().isIgnoriertIgnorierend());
 				}
 			}
 		} else { // Nachzahlungen bzw. Erstgesuche die rueckwirkend ausbezahlt werden muessen
@@ -303,11 +304,14 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		zahlungsposition.setVerfuegungZeitabschnitt(zeitabschnitt);
 		zahlungsposition.setBetrag(zeitabschnitt.getVerguenstigung());
 		zahlungsposition.setZahlung(zahlung);
-		zahlungsposition.setIgnoriert(zeitabschnitt.getZahlungsstatus().isIgnoriert());
+		zahlungsposition.setIgnoriert(zeitabschnitt.getZahlungsstatus().isIgnoriertIgnorierend());
 		ZahlungspositionStatus status = vollkostenChanged ? ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN : ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG;
 		zahlungsposition.setStatus(status);
-		if (!zeitabschnitt.getZahlungsstatus().isIgnoriert()) { // Den Status nur ueberschreiben, wenn nicht ignoriert
+		if (!zeitabschnitt.getZahlungsstatus().isIgnoriertIgnorierend()) {
 			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET);
+		}
+		else if (zeitabschnitt.getZahlungsstatus().isIgnorierend()) {
+			zeitabschnitt.setZahlungsstatus(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT);
 		}
 		zahlung.getZahlungspositionen().add(zahlungsposition);
 	}

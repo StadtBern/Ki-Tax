@@ -12,6 +12,7 @@ package ch.dvbern.ebegu.reporting.zahlungauftrag;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
 import ch.dvbern.lib.excelmerger.ExcelConverter;
 import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -71,6 +72,7 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.bgPensum, BigDecimal.valueOf(zahlungsposition.getVerfuegungZeitabschnitt().getBgPensum())
 							.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.betragCHF, zahlungsposition.getBetrag());
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.isKorrektur, !ZahlungspositionStatus.NORMAL.equals(zahlungsposition.getStatus()));
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.isIgnoriert, zahlungsposition.isIgnoriert());
 					});
 			});
