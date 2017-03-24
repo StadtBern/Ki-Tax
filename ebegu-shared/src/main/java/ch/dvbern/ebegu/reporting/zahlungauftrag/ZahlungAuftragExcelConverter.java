@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +35,7 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 	@Override
 	public void applyAutoSize(@Nonnull Sheet sheet) {
 		sheet.autoSizeColumn(0); // institution
-		sheet.autoSizeColumn(1); // name
+//		sheet.autoSizeColumn(1); // name
 		sheet.autoSizeColumn(2); // vorname
 		sheet.autoSizeColumn(3); // gebDatum
 		sheet.autoSizeColumn(4); // verfuegung
@@ -44,10 +46,15 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 	}
 
 	@Nonnull
-	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<Zahlung> data, @Nonnull Locale lang, UserRole userRole, Collection<Institution> allowedInst) {
+	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<Zahlung> data, @Nonnull Locale lang, UserRole userRole, Collection<Institution> allowedInst,
+										   String beschrieb, LocalDateTime datumGeneriert, LocalDate datumFaellig) {
 		checkNotNull(data);
 
 		ExcelMergerDTO sheet = new ExcelMergerDTO();
+
+		sheet.addValue(MergeFieldZahlungAuftrag.beschrieb, beschrieb);
+		sheet.addValue(MergeFieldZahlungAuftrag.generiertAm, datumGeneriert);
+		sheet.addValue(MergeFieldZahlungAuftrag.faelligAm, datumFaellig);
 
 		data.stream()
 			.filter(zahlung -> {
