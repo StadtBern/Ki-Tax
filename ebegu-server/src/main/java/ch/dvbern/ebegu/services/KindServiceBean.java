@@ -124,7 +124,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	}
 
 	@Nonnull
-	private List<KindDubletteDTO> getKindDubletten(@Nonnull KindContainer kindContainer, List<String> idsOfLetztVerfuegteAntraege) {
+	private List<KindDubletteDTO> getKindDubletten(@Nonnull KindContainer kindContainer, List<String> idsOfLetztFreigegebeneAntraege) {
 		// Wir suchen nach Name, Vorname und Geburtsdatum
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindDubletteDTO> query = cb.createQuery(KindDubletteDTO.class);
@@ -147,7 +147,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		// Aber nicht vom selben Fall
 		Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
 		// Nur das zuletzt gueltige Gesuch
-		Predicate predicateAktuellesGesuch = joinGesuch.get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
+		Predicate predicateAktuellesGesuch = joinGesuch.get(Gesuch_.id).in(idsOfLetztFreigegebeneAntraege);
 
 		query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateAktuellesGesuch);
 

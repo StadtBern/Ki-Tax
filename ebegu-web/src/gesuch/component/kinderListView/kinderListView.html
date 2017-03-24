@@ -39,7 +39,7 @@
                         dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
                         <span class="betreuung" ng-repeat="dublette in vm.getDubletten(row)"
                               ng-click="vm.gotoKindDublette(dublette); $event.stopPropagation()"
-                              ng-show="dublette.fallNummer" ng-bind="dublette.fallNummer + ' '"></span>
+                              ng-show="dublette.fallNummer" ng-bind="vm.getFallNummer(dublette) + ($last ? ' ' : ', ')"></span>
                     </td>
                     <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
                         <dv-loading-button type="button" button-click="vm.removeKind(row)"
