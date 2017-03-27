@@ -146,9 +146,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		}
 		Collection<VerfuegungZeitabschnitt> verfuegungsZeitabschnitte = getVerfuegungsZeitabschnitteNachVerfuegungDatum(lastZahlungErstellt, zahlungsauftrag.getDatumGeneriert(), stichtagKorrekturen);
 		for (VerfuegungZeitabschnitt zeitabschnitt : verfuegungsZeitabschnitte) {
-			if (!zeitabschnitt.getZahlungsstatus().isVerrechnet()) {
-				// Alle Korrekturen die nicht verrechnet sind muessen beruecksichtigt werden. Grund dafuer ist, dass sie auf dem Dokument
-				// aufgelistet werden muessen und zwar mit dem Flag IGNORIEREND
+			if (zeitabschnitt.getZahlungsstatus().isIgnorierend() || zeitabschnitt.getZahlungsstatus().isNeu()) {
 				createZahlungspositionenKorrekturUndNachzahlung(zeitabschnitt, zahlungsauftrag, zahlungProInstitution);
 			}
 		}

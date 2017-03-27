@@ -92,9 +92,11 @@ public class VerfuegungUtil {
 				if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET;
 				}
-				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT) ||
-					zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND)) {
+				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND;
+				}
+				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT)) {
+					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT;
 				}
 			}
 		}
