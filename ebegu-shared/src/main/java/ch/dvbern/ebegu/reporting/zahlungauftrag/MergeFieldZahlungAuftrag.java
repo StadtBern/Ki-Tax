@@ -20,6 +20,10 @@ public enum MergeFieldZahlungAuftrag implements MergeField {
 
 	repeatZahlungAuftragRow(REPEAT_ROW_CONVERTER, Type.REPEAT_ROW),
 
+	beschrieb(STRING_CONVERTER, Type.SIMPLE),
+	generiertAm(DATETIME_CONVERTER, Type.SIMPLE),
+	faelligAm(DATE_CONVERTER, Type.SIMPLE),
+
 	institution(STRING_CONVERTER, Type.SIMPLE),
 	name(STRING_CONVERTER, Type.SIMPLE),
 	vorname(STRING_CONVERTER, Type.SIMPLE),
@@ -28,7 +32,9 @@ public enum MergeFieldZahlungAuftrag implements MergeField {
 	vonDatum(DATE_CONVERTER, Type.SIMPLE),
 	bisDatum(DATE_CONVERTER, Type.SIMPLE),
 	bgPensum(BIGDECIMAL_CONVERTER, Type.SIMPLE),
-	betragCHF(BIGDECIMAL_CONVERTER, Type.SIMPLE);
+	betragCHF(BIGDECIMAL_CONVERTER, Type.SIMPLE),
+	isKorrektur(BOOLEAN_X_CONVERTER, Type.SIMPLE),
+	isIgnoriert(BOOLEAN_X_CONVERTER, Type.SIMPLE);
 
 
 	@Nonnull
