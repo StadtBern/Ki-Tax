@@ -142,6 +142,18 @@ export class ReportRS {
             });
     }
 
+    public getGesuchstellerReportExcel(stichtag: string): IPromise<TSDownloadFile> {
+        let reportParams: string = this.httpParamSerializer({
+            stichtag: stichtag
+        });
+        return this.http.get(this.serviceURL + '/excel/gesuchsteller?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+
     public getServiceName(): string {
         return 'ReportRS';
     }
