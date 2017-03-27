@@ -1667,6 +1667,7 @@ export default class EbeguRestUtil {
             zeitabschnitt.kategorieKeinPensum = zeitabschnittTS.kategorieKeinPensum;
             zeitabschnitt.zuSpaetEingereicht = zeitabschnittTS.zuSpaetEingereicht;
             zeitabschnitt.sameVerfuegungsdaten = zeitabschnittTS.sameVerfuegungsdaten;
+            zeitabschnitt.sameVerguenstigung = zeitabschnittTS.sameVerguenstigung;
             return zeitabschnitt;
         }
         return undefined;
@@ -1696,6 +1697,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.kategorieKeinPensum = zeitabschnittFromServer.kategorieKeinPensum;
             verfuegungZeitabschnittTS.zuSpaetEingereicht = zeitabschnittFromServer.zuSpaetEingereicht;
             verfuegungZeitabschnittTS.sameVerfuegungsdaten = zeitabschnittFromServer.sameVerfuegungsdaten;
+            verfuegungZeitabschnittTS.sameVerguenstigung = zeitabschnittFromServer.sameVerguenstigung;
             return verfuegungZeitabschnittTS;
         }
         return undefined;

@@ -495,7 +495,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
 			.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
 
-		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getBeschrieb() + ".xlsx");
+		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getBeschrieb(),
+			zahlungsauftrag.getDatumGeneriert(), zahlungsauftrag.getDatumFaellig());
 	}
 
 	@Override
@@ -509,10 +510,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		reportData.add(zahlung);
 
-		return getUploadFileInfoZahlung(reportData, "Zahlungen_" + zahlung.getInstitutionStammdaten().getInstitution().getName() + ".xlsx");
+		return getUploadFileInfoZahlung(reportData, "Zahlungen_" + zahlung.getInstitutionStammdaten().getInstitution().getName(),
+			zahlung.getZahlungsauftrag().getDatumGeneriert(), zahlung.getZahlungsauftrag().getDatumFaellig());
 	}
 
-	private UploadFileInfo getUploadFileInfoZahlung(List<Zahlung> reportData, String excelFileName) throws ExcelMergeException {
+	private UploadFileInfo getUploadFileInfoZahlung(List<Zahlung> reportData, String excelFileName, LocalDateTime datumGeneriert, LocalDate datumFaellig) throws ExcelMergeException {
 		final ReportVorlage reportVorlage = ReportVorlage.VORLAGE_REPORT_ZAHLUNG_AUFTRAG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportVorlage.getTemplatePath());
@@ -523,7 +525,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 
-		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), principalBean.discoverMostPrivilegedRole(), allowedInst);
+		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(),
+			principalBean.discoverMostPrivilegedRole(), allowedInst, "Detailpositionen der Zahlung " + excelFileName,
+			datumGeneriert, datumFaellig);
 
 		mergeData(sheet, excelMergerDTO, reportVorlage.getMergeFields());
 		zahlungAuftragExcelConverter.applyAutoSize(sheet);
@@ -531,7 +535,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		byte[] bytes = createWorkbook(workbook);
 
 		return fileSaverService.save(bytes,
-			excelFileName,
+			excelFileName + ".xlsx",
 			TEMP_REPORT_FOLDERNAME,
 			getContentTypeForExport());
 	}

@@ -77,10 +77,13 @@ public class Zahlung extends AbstractEntity implements Comparable<Zahlung>{
 		this.zahlungspositionen = zahlungspositionen;
 	}
 
+	/**
+	 * Addiert die Betraege aller Zahlungspositionen die nicht ignoriert sind.
+	 */
 	public BigDecimal getBetragTotalZahlung() {
 		BigDecimal total = BigDecimal.ZERO;
 		for (Zahlungsposition zahlungsposition : zahlungspositionen) {
-			if (zahlungsposition.getStatus().isAuszuzahlen()) {
+			if (!zahlungsposition.isIgnoriert()) {
 				total = MathUtil.DEFAULT.add(total, zahlungsposition.getBetrag());
 			}
 		}
