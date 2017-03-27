@@ -33,6 +33,8 @@ public enum ReportVorlage {
 	VORLAGE_REPORT_GESUCHSTELLER_KINDER_BETREUUNG("/reporting/GesuchstellerKinderBetreuung.xlsx", "GesuchstellerKinderBetreuung.xlsx", Constants.DATA,
 		MergeFieldGesuchstellerKinderBetreuung.class),
 	VORLAGE_REPORT_KINDER("/reporting/Kinder.xlsx", "Kinder.xlsx", Constants.DATA,
+		MergeFieldGesuchstellerKinderBetreuung.class),
+	VORLAGE_REPORT_GESUCHSTELLER("/reporting/Gesuchsteller.xlsx", "Gesuchsteller.xlsx", Constants.DATA,
 		MergeFieldGesuchstellerKinderBetreuung.class);
 
 	@Nonnull

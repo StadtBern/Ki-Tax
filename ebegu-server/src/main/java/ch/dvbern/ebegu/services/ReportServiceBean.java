@@ -75,6 +75,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	public static final String NICHT_GEFUNDEN = "' nicht gefunden";
 	public static final String VORLAGE = "Vorlage '";
+	private static final String VALIDIERUNG_STICHTAG = "Das Argument 'stichtag' darf nicht leer sein";
 	private static final String VALIDIERUNG_DATUM_VON = "Das Argument 'datumVon' darf nicht leer sein";
 	private static final String VALIDIERUNG_DATUM_BIS = "Das Argument 'datumBis' darf nicht leer sein";
 
@@ -587,6 +588,13 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		return dataRows;
 	}
 
+	private List<GesuchstellerKinderBetreuungDataRow> getReportDataGesuchsteller(@Nonnull LocalDate stichtag) throws IOException, URISyntaxException {
+		List<VerfuegungZeitabschnitt> zeitabschnittList = getReportDataBetreuungen(stichtag);
+		List<GesuchstellerKinderBetreuungDataRow> dataRows = convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		dataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer).thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
+		return dataRows;
+	}
+
 	@SuppressWarnings("PMD.NcssMethodCount")
 	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
 		validateDateParams(datumVon, datumBis);
@@ -647,6 +655,58 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
 		List<VerfuegungZeitabschnitt> zeitabschnittList = persistence.getCriteriaResults(query);
 		return zeitabschnittList;
+	}
+
+	@SuppressWarnings("PMD.NcssMethodCount")
+	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate stichtag) throws IOException, URISyntaxException {
+		Validate.notNull(stichtag, VALIDIERUNG_STICHTAG);
+
+		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
+		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
+		final CriteriaQuery<VerfuegungZeitabschnitt> query = builder.createQuery(VerfuegungZeitabschnitt.class);
+		query.distinct(true);
+		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
+		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+
+		// Stichtag
+		Predicate intervalPredicate = builder.between(builder.literal(stichtag),
+			root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb),
+			root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis));
+		predicatesToUse.add(intervalPredicate);
+
+		// nur das neuest verfuegte Gesuch
+		Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.getGesuchsperiodeAm(stichtag);
+		if (gesuchsperiodeOptional.isPresent()) {
+			List<String> idsOfLetztVerfuegteAntraege = new ArrayList<>();
+			idsOfLetztVerfuegteAntraege.addAll(gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiodeOptional.get()));
+			if (!idsOfLetztVerfuegteAntraege.isEmpty()) {
+				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
+				predicatesToUse.add(predicateAktuellesGesuch);
+			} else {
+				return Collections.emptyList();
+			}
+		} else {
+			return Collections.emptyList();
+		}
+
+		// Sichtbarkeit nach eingeloggtem Benutzer
+		boolean isInstitutionsbenutzer = principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_INSTITUTION, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
+		if (isInstitutionsbenutzer) {
+			Collection<Institution> allowedInstitutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+			Predicate predicateAllowedInstitutionen = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(allowedInstitutionen);
+			predicatesToUse.add(predicateAllowedInstitutionen);
+		}
+		boolean isSchulamtBenutzer = principalBean.isCallerInAnyOfRole(UserRole.SCHULAMT);
+		if (isSchulamtBenutzer) {
+			Predicate predicateSchulamt = builder.equal(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp) , BetreuungsangebotTyp.TAGESSCHULE);
+			predicatesToUse.add(predicateSchulamt);
+		} else {
+			Predicate predicateNotSchulamt = builder.notEqual(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp) , BetreuungsangebotTyp.TAGESSCHULE);
+			predicatesToUse.add(predicateNotSchulamt);
+		}
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
+		return persistence.getCriteriaResults(query);
 	}
 
 	private void addStammdaten(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt) {
@@ -926,6 +986,33 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		// Betreuung
 		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
 		return row;
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SCHULAMT})
+	public UploadFileInfo generateExcelReportGesuchsteller(@Nonnull LocalDate stichtag) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+		Validate.notNull(stichtag, VALIDIERUNG_STICHTAG);
+
+		final ReportVorlage reportResource = ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
+		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
+
+		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
+		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
+
+		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataGesuchsteller(stichtag);
+		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderBetreuungExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), stichtag);
+
+		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
+		gesuchstellerKinderBetreuungExcelConverter.applyAutoSize(sheet);
+
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportResource.getDefaultExportFilename(),
+			TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
 	}
 
 	private void runStatisticsBetreuung() {
