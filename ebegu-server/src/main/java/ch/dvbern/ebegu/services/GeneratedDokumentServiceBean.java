@@ -461,7 +461,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.PAIN001;
 
-		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, zahlungsauftrag.getBeschrieb());
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, zahlungsauftrag.getFilename());
 
 		if (!forceCreation && !ZahlungauftragStatus.ENTWURF.equals(zahlungsauftrag.getStatus())) {
 			persistedDokument = (Pain001Dokument) getWriteProtectedDokument(zahlungsauftrag.getId(), dokumentTyp, fileNameForGeneratedDokumentTyp);
