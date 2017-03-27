@@ -1,30 +1,26 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.KindContainer_;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.dto.KindDubletteDTO;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.criteria.*;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service fuer Kind
  */
 @Stateless
 @Local(KindService.class)
+@PermitAll
 public class KindServiceBean extends AbstractBaseService implements KindService {
 
 	@Inject
@@ -32,9 +28,13 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	@Inject
 	private WizardStepService wizardStepService;
 
+	@Inject
+	private GesuchService gesuchService;
+
 
 	@Nonnull
 	@Override
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
 	public KindContainer saveKind(@Nonnull KindContainer kind) {
 		Objects.requireNonNull(kind);
 		final KindContainer mergedKind = persistence.merge(kind);
@@ -44,6 +44,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public Optional<KindContainer> findKind(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		KindContainer a =  persistence.find(KindContainer.class, key);
@@ -52,6 +53,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
+	@PermitAll
 	public List<KindContainer> findAllKinderFromGesuch(@Nonnull String gesuchId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindContainer> query = cb.createQuery(KindContainer.class);
@@ -64,6 +66,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	}
 
 	@Override
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
 	public void removeKind(@Nonnull String kindId) {
 		Objects.requireNonNull(kindId);
 		Optional<KindContainer> kindToRemoveOpt = findKind(kindId);
@@ -72,6 +75,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	}
 
 	@Override
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
 	public void removeKind(@Nonnull KindContainer kind) {
 		final String gesuchId = kind.getGesuch().getId();
 		persistence.remove(kind);
@@ -80,6 +84,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA})
 	public List<KindContainer> getAllKinderWithMissingStatistics() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindContainer> query = cb.createQuery(KindContainer.class);
@@ -94,6 +99,58 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 		query.where(predicateMutation, predicateFlag, predicateStatus);
 		query.orderBy(cb.desc(joinGesuch.get(Gesuch_.laufnummer)));
+		return persistence.getCriteriaResults(query);
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA})
+	public List<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
+		List<KindDubletteDTO> dublettenOfAllKinder = new ArrayList<>();
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
+		if (gesuchOptional.isPresent()) {
+			// Nur das zuletzt gueltige Gesuch
+			List<String> idsOfLetztFreigegebeneAntraege = gesuchService.getNeuesteFreigegebeneAntraege(gesuchOptional.get().getGesuchsperiode());
+			Set<KindContainer> kindContainers = gesuchOptional.get().getKindContainers();
+			for (KindContainer kindContainer : kindContainers) {
+				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer, idsOfLetztFreigegebeneAntraege);
+				dublettenOfAllKinder.addAll(kindDubletten);
+			}
+		}
+		else {
+			throw new EbeguEntityNotFoundException("getKindDubletten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
+		}
+		return dublettenOfAllKinder;
+	}
+
+	@Nonnull
+	private List<KindDubletteDTO> getKindDubletten(@Nonnull KindContainer kindContainer, List<String> idsOfLetztFreigegebeneAntraege) {
+		// Wir suchen nach Name, Vorname und Geburtsdatum
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<KindDubletteDTO> query = cb.createQuery(KindDubletteDTO.class);
+
+		Root<KindContainer> root = query.from(KindContainer.class);
+		Join<KindContainer, Kind> joinKind = root.join(KindContainer_.kindJA, JoinType.LEFT);
+		Join<KindContainer, Gesuch> joinGesuch = root.join(KindContainer_.gesuch, JoinType.LEFT);
+
+		query.multiselect(
+			joinGesuch.get(Gesuch_.id),
+			joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
+			cb.literal(kindContainer.getKindNummer()),
+			root.get(KindContainer_.kindNummer)
+		).distinct(true);
+
+		// Identische Merkmale
+		Predicate predicateName = cb.equal(joinKind.get(Kind_.nachname), kindContainer.getKindJA().getNachname());
+		Predicate predicateVorname = cb.equal(joinKind.get(Kind_.vorname), kindContainer.getKindJA().getVorname());
+		Predicate predicateGeburtsdatum = cb.equal(joinKind.get(Kind_.geburtsdatum), kindContainer.getKindJA().getGeburtsdatum());
+		// Aber nicht vom selben Fall
+		Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
+		// Nur das zuletzt gueltige Gesuch
+		Predicate predicateAktuellesGesuch = joinGesuch.get(Gesuch_.id).in(idsOfLetztFreigegebeneAntraege);
+
+		query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateAktuellesGesuch);
+
 		return persistence.getCriteriaResults(query);
 	}
 }

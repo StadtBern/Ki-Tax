@@ -23,7 +23,7 @@ describe('kinderListView', function () {
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
         kinderListViewController = new KinderListViewController(null, gesuchModelManager,
-            null, null, null, wizardStepManager, scope );
+            null, null, null, wizardStepManager, scope, null);
     }));
 
     beforeEach(function () {
