@@ -494,7 +494,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
 			.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
 
-		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getBeschrieb(),
+		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getFilename(),
 			zahlungsauftrag.getDatumGeneriert(), zahlungsauftrag.getDatumFaellig());
 	}
 
