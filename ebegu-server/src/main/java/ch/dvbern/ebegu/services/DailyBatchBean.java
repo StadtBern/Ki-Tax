@@ -31,6 +31,9 @@ public class DailyBatchBean implements DailyBatch {
 	@Inject
 	private Persistence<AbstractEntity> persistence;
 
+	@Inject
+	private GesuchService gesuchService;
+
 
 	@Override
 	@Asynchronous
@@ -54,5 +57,35 @@ public class DailyBatchBean implements DailyBatch {
 		// vom Mandant nicht mehr zur Verfuegung steht.
 		persistence.getEntityManager().flush();
 		return booleanAsyncResult;
+	}
+
+	@Override
+	@Asynchronous
+	public void runBatchWarnungGesuchNichtFreigegeben() {
+		try {
+			gesuchService.warnGesuchNichtFreigegeben();
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch-Job WarnungGesuchNichtFreigegeben konnte nicht durchgefuehrt werden!", e);
+		}
+	}
+
+	@Override
+	@Asynchronous
+	public void runBatchWarnungFreigabequittungFehlt() {
+		try {
+			gesuchService.warnFreigabequittungFehlt();
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch-Job WarnungFreigabequittungFehlt konnte nicht durchgefuehrt werden!", e);
+		}
+	}
+
+	@Override
+	@Asynchronous
+	public void runBatchGesucheLoeschen() {
+		try {
+			gesuchService.deleteGesucheOhneFreigabeOderQuittung();
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch-Job GesucheLoeschen konnte nicht durchgefuehrt werden!", e);
+		}
 	}
 }

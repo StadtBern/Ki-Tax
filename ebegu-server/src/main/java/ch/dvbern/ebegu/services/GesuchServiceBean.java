@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusToInBearbeitungJAInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
@@ -77,6 +78,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private BooleanAuthorizer booleanAuthorizer;
 	@Inject
 	private PrincipalBean principalBean;
+	@Inject
+	private MailService mailService;
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
 
 
 	@Nonnull
@@ -1080,6 +1085,132 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		String gesuchId = criteriaResults.get(0);
 
 		return Optional.of(gesuchId);
+	}
+
+	@Override
+	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
+	public int warnGesuchNichtFreigegeben() {
+
+		Integer anzahlMonateBisWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_FREIGABE);
+		Integer anzahlMonateBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
+		if (anzahlMonateBisWarnungFreigabe == null || anzahlMonateBisLoeschungNachWarnungFreigabe == null) {
+			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben", "ANZAHL_MONATE_BIS_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE not defined");
+		}
+
+		LocalDateTime stichtag = LocalDate.now().atStartOfDay().minusMonths(anzahlMonateBisWarnungFreigabe);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.IN_BEARBEITUNG_GS);
+
+		// Irgendwann am Stichtag erstellt:
+		Predicate predicateDatum1 = cb.greaterThanOrEqualTo(root.get(Gesuch_.timestampErstellt), stichtag);
+		Predicate predicateDatum2 = cb.lessThan(root.get(Gesuch_.timestampErstellt), stichtag.plusDays(1));
+
+		query.where(predicateStatus, predicateDatum1, predicateDatum2);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> gesucheNichtAbgeschlossenSeit = persistence.getCriteriaResults(query);
+
+		for (Gesuch gesuch : gesucheNichtAbgeschlossenSeit) {
+			try {
+				mailService.sendWarnungGesuchNichtFreigegeben(gesuch, anzahlMonateBisLoeschungNachWarnungFreigabe);
+			} catch (MailException e) {
+				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+			}
+		}
+		return gesucheNichtAbgeschlossenSeit.size();
+	}
+
+	@Override
+	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
+	public int warnFreigabequittungFehlt() {
+
+		Integer anzahlMonateBisWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG);
+		if (anzahlMonateBisWarnungQuittung == null) {
+			throw new EbeguRuntimeException("warnFreigabequittungFehlt", "ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG not defined");
+		}
+
+		LocalDate stichtag = LocalDate.now().minusMonths(anzahlMonateBisWarnungQuittung);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.FREIGABEQUITTUNG);
+		Predicate predicateDatum = cb.equal(root.get(Gesuch_.freigabeDatum), stichtag);
+
+		query.where(predicateStatus, predicateDatum);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> gesucheNichtAbgeschlossenSeit = persistence.getCriteriaResults(query);
+
+		for (Gesuch gesuch : gesucheNichtAbgeschlossenSeit) {
+			try {
+				mailService.sendWarnungFreigabequittungFehlt(gesuch);
+			} catch (MailException e) {
+				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+			}
+		}
+		return gesucheNichtAbgeschlossenSeit.size();
+	}
+
+	@Override
+	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
+	public int deleteGesucheOhneFreigabeOderQuittung() {
+
+		Integer anzahlMonateBisWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_FREIGABE);
+		Integer anzahlMonateBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
+		Integer anzahlMonateBisWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG);
+		Integer anzahlMonateBisLoeschungNachWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
+		if (anzahlMonateBisWarnungFreigabe == null || anzahlMonateBisLoeschungNachWarnungFreigabe == null ||
+			anzahlMonateBisWarnungQuittung == null || anzahlMonateBisLoeschungNachWarnungQuittung == null) {
+			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben", "ANZAHL_MONATE_BIS_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG not defined");
+		}
+
+		LocalDateTime stichtagFehlendeFreigabe = LocalDate.now().atStartOfDay()
+			.minusMonths(anzahlMonateBisWarnungFreigabe)
+			.minusMonths(anzahlMonateBisLoeschungNachWarnungFreigabe);
+		LocalDate stichtagFehlendeQuittung = LocalDate.now()
+			.minusMonths(anzahlMonateBisWarnungQuittung)
+			.minusMonths(anzahlMonateBisLoeschungNachWarnungQuittung);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		// Entweder IN_BEARBEITUNG_GS und vor stichtagFehlendeFreigabe erstellt
+		Predicate predicateStatusNichtFreigegeben = cb.equal(root.get(Gesuch_.status), AntragStatus.IN_BEARBEITUNG_GS);
+		// Irgendwann am Stichtag erstellt:
+		Predicate predicateDatumNichtFreigegeben1 = cb.greaterThanOrEqualTo(root.get(Gesuch_.timestampErstellt), stichtagFehlendeFreigabe);
+		Predicate predicateDatumNichtFreigegeben2 = cb.lessThan(root.get(Gesuch_.timestampErstellt), stichtagFehlendeFreigabe.plusDays(1));
+
+		Predicate predicateNichtFreigegeben = cb.and(predicateStatusNichtFreigegeben, predicateDatumNichtFreigegeben1, predicateDatumNichtFreigegeben2);
+
+		// Oder FREIGABEQUITTUNG und vor stichtagFehlendeQuittung freigegeben
+		Predicate predicateStatusFehlendeQuittung = cb.equal(root.get(Gesuch_.status), AntragStatus.FREIGABEQUITTUNG);
+		Predicate predicateDatumFehlendeQuittung = cb.equal(root.get(Gesuch_.freigabeDatum), stichtagFehlendeQuittung);
+		Predicate predicateFehlendeQuittung = cb.and(predicateStatusFehlendeQuittung, predicateDatumFehlendeQuittung);
+
+		Predicate predicateFehlendeFreigabeOrQuittung = cb.or(predicateNichtFreigegeben, predicateFehlendeQuittung);
+
+		query.where(predicateFehlendeFreigabeOrQuittung);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+		for (Gesuch gesuch : criteriaResults) {
+			try {
+				mailService.sendInfoGesuchGeloescht(gesuch);
+			} catch (MailException e) {
+				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+			}
+			removeGesuch(gesuch.getId());
+		}
+		return criteriaResults.size();
 	}
 }
 

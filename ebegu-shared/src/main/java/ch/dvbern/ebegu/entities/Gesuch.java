@@ -544,4 +544,11 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	public String getEingangsdatumFormated(){
 		return Constants.DATE_FORMATTER.format(eingangsdatum);
 	}
+
+	public String getFreigabedatumFormated(){
+		if (freigabeDatum != null) {
+			return Constants.DATE_FORMATTER.format(freigabeDatum);
+		}
+		return "";
+	}
 }

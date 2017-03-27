@@ -31,6 +31,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.PrivilegedAction;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
 
@@ -69,7 +70,11 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private InstitutionService institutionService;
 
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
+
 	private int anzahlObjekte = 0;
+
 
 	@Test
 	public void createGesuch() {
@@ -621,8 +626,74 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 
+	@Test
+	public void testWarnungFehlendeQuittung() throws Exception {
+		insertApplicationProperties();
+		createGesuchFreigabequittung(LocalDate.now().minusMonths(2).minusDays(1));
+		createGesuchFreigabequittung(LocalDate.now().minusMonths(2));
+		createGesuchFreigabequittung(LocalDate.now().minusMonths(2).plusDays(1));
+
+		Assert.assertEquals(1, gesuchService.warnFreigabequittungFehlt());
+	}
+
+	@Test
+	public void testWarnungNichtFreigegeben() throws Exception {
+		insertApplicationProperties();
+		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2).minusDays(1));
+		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2));
+		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2).plusDays(1));
+
+		Assert.assertEquals(1, gesuchService.warnGesuchNichtFreigegeben());
+	}
+
+	@Test
+	public void testDeleteGesucheOhneFreigabeOderQuittung() throws Exception {
+		insertApplicationProperties();
+		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4).minusDays(1));
+		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4));
+		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4).plusDays(1));
+		createGesuchFreigabequittung(LocalDate.now().minusMonths(4).minusDays(1));
+		createGesuchFreigabequittung(LocalDate.now().minusMonths(4));
+		createGesuchFreigabequittung(LocalDate.now().minusMonths(4).plusDays(1));
+
+		Assert.assertEquals(6, gesuchService.getAllGesuche().size());
+		Assert.assertEquals(2, gesuchService.deleteGesucheOhneFreigabeOderQuittung());
+		Assert.assertEquals(4, gesuchService.getAllGesuche().size());
+	}
+
+
 	// HELP METHOD
 
+	private void insertApplicationProperties() {
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_FREIGABE, "2");
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG, "2");
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE, "2");
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG, "2");
+	}
+
+	private Gesuch createGesuchInBearbeitungGS(LocalDateTime timestampErstellt) {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+		gesuch.setTimestampErstellt(timestampErstellt);
+		gesuch.setEingangsart(Eingangsart.ONLINE);
+		gesuch.getFall().setBesitzer(TestDataUtil.createAndPersistBenutzer(persistence));
+		persistence.merge(gesuch.getFall());
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
+		gesuch.getGesuchsteller1().getGesuchstellerJA().setMail("franziska.herger@dvbern.ch");
+		return persistence.merge(gesuch);
+	}
+
+	private Gesuch createGesuchFreigabequittung(LocalDate datumFreigabe) {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch.setStatus(AntragStatus.FREIGABEQUITTUNG);
+		gesuch.setFreigabeDatum(datumFreigabe);
+		gesuch.setEingangsart(Eingangsart.ONLINE);
+		gesuch.getFall().setBesitzer(TestDataUtil.createAndPersistBenutzer(persistence));
+		persistence.merge(gesuch.getFall());
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
+		gesuch.getGesuchsteller1().getGesuchstellerJA().setMail("franziska.herger@dvbern.ch");
+		return persistence.merge(gesuch);
+	}
 
 	/**
 	 * Schreibt alle Ids von AbstractEntities (rekursiv vom Gesuch) ins Set.

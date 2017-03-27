@@ -124,6 +124,51 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 		}
 	}
 
+	@Override
+	public void sendWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, int anzahlMonate) throws MailException {
+		if (doSendMail(gesuch)) {
+			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getWarnungGesuchNichtFreigegeben(gesuch, gesuchsteller, mailaddress, anzahlMonate);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer WarnungGesuchNichtFreigegeben wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendWarnungGesuchNichtFreigegeben because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
+	@Override
+	public void sendWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch) throws MailException {
+		if (doSendMail(gesuch)) {
+			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getWarnungFreigabequittungFehlt(gesuch, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer WarnungFreigabequittungFehlt wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendWarnungFreigabequittungFehlt because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
+	@Override
+	public void sendInfoGesuchGeloescht(@Nonnull Gesuch gesuch) throws MailException {
+		if (doSendMail(gesuch)) {
+			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoGesuchGeloescht(gesuch, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoGesuchGeloescht wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoGesuchGeloescht because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
 	/**
 	 * Hier wird an einer Stelle definiert, an welche Benutzergruppen ein Mail geschickt werden soll.
 	 */

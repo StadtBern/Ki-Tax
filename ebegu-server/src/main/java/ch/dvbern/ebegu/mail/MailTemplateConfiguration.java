@@ -66,6 +66,18 @@ public class MailTemplateConfiguration {
 		return processTemplateGesuch("InfoMahnung.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
 
+	public String getWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail, int anzahlMonate) {
+		return processTemplateGesuch("WarnungGesuchNichtFreigegeben.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail), toArgumentPair("anzahlMonate", anzahlMonate));
+	}
+
+	public String getWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processTemplateGesuch("WarnungFreigabequittungFehlt.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	}
+
+	public String getInfoGesuchGeloescht(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processTemplateGesuch("InfoGesuchGeloescht.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	}
+
 	private String processTemplateGesuch(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, @Nonnull Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "gesuch", gesuch };
