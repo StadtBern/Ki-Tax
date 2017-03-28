@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ebegu</artifactId>
+        <groupId>ch.dvbern.ebegu</groupId>
+        <version>1.1.2-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ebegu-ws</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-shared</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>2.1.4</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <wsdlDirectory>${basedir}/src/main/wsdl</wsdlDirectory>
+                    <wsdlFiles>
+                        <wsdlFile>Stadt_Bern_E-BEGU_Personensuche_v1.2.wsdl</wsdlFile>
+                    </wsdlFiles>
+                    <verbose>true</verbose>
+                    <sourceDestDir>${project.build.directory}/generated-sources/jax-ws</sourceDestDir>
+                    <verbose>true</verbose>
+                    <sei />
+                    <inlineSchemas>true</inlineSchemas>
+                    <bindingFiles>
+                        <bindingFile>${basedir}/src/main/wsdl/jaxb-bindings.xjb</bindingFile>
+                    </bindingFiles>
+                    <vmArgs>
+                        <vmArg>-Djavax.xml.accessExternalSchema = all</vmArg>
+                    </vmArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
