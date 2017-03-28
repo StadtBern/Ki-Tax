@@ -47,9 +47,6 @@
                     <bindingFiles>
                         <bindingFile>${basedir}/src/main/wsdl/jaxb-bindings.xjb</bindingFile>
                     </bindingFiles>
-                    <vmArgs>
-                        <vmArg>-Djavax.xml.accessExternalSchema = all</vmArg>
-                    </vmArgs>
                 </configuration>
             </plugin>
         </plugins>
