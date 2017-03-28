@@ -17,7 +17,10 @@ export enum TSAntragStatus {
     PLATZBESTAETIGUNG_WARTEN = <any> 'PLATZBESTAETIGUNG_WARTEN',
     VERFUEGEN = <any> 'VERFUEGEN',
     VERFUEGT = <any> 'VERFUEGT',
-    BESCHWERDE_HAENGIG = <any> 'BESCHWERDE_HAENGIG'
+    BESCHWERDE_HAENGIG = <any> 'BESCHWERDE_HAENGIG',
+    PRUEFUNG_STV = <any> 'PRUEFUNG_STV',
+    IN_BEARBEITUNG_STV = <any> 'IN_BEARBEITUNG_STV',
+    GEPRUEFT_STV = <any> 'GEPRUEFT_STV'
 }
 
 export const IN_BEARBEITUNG_BASE_NAME = 'IN_BEARBEITUNG';
@@ -42,7 +45,10 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
         TSAntragStatus.VERFUEGEN,
         TSAntragStatus.VERFUEGT,
-        TSAntragStatus.BESCHWERDE_HAENGIG
+        TSAntragStatus.BESCHWERDE_HAENGIG,
+        TSAntragStatus.PRUEFUNG_STV,
+        TSAntragStatus.IN_BEARBEITUNG_STV,
+        TSAntragStatus.GEPRUEFT_STV
     ];
 }
 

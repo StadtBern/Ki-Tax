@@ -422,6 +422,9 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		if (isAllowedSchulamt(entity)) {
 			return true;
 		}
+		if (isAllowedSteueramt(entity)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -440,6 +443,13 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	private boolean isAllowedSchulamt(Gesuch entity) {
 		if (principalBean.isCallerInRole(SCHULAMT)) {
 			return entity.hasBetreuungOfSchulamt() && entity.getStatus().isReadableBySchulamtSachbearbeiter();
+		}
+		return false;
+	}
+
+	private boolean isAllowedSteueramt(Gesuch entity) {
+		if (principalBean.isCallerInRole(STEUERAMT)) {
+			return entity.getStatus().isReadableBySteueramt();
 		}
 		return false;
 	}

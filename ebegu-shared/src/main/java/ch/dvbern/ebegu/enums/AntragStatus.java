@@ -25,7 +25,10 @@ public enum AntragStatus {
     GEPRUEFT,
     VERFUEGEN,
     VERFUEGT,
-	BESCHWERDE_HAENGIG;
+	BESCHWERDE_HAENGIG,
+	PRUEFUNG_STV,
+	IN_BEARBEITUNG_STV,
+	GEPRUEFT_STV;
 
     private static final Set<AntragStatus> all = EnumSet.allOf(AntragStatus.class);
     private static final Set<AntragStatus> none = EnumSet.noneOf(AntragStatus.class);
@@ -36,6 +39,7 @@ public enum AntragStatus {
     private static final Set<AntragStatus> forSchulamtRole = EnumSet.range(NUR_SCHULAMT, VERFUEGT);
     private static final Set<AntragStatus> forJuristRole = forSachbearbeiterJugendamtRole;
     private static final Set<AntragStatus> forRevisorRole = forAdminRole;
+    private static final Set<AntragStatus> forSteueramt = EnumSet.range(PRUEFUNG_STV, GEPRUEFT_STV);
 
     // range ist etwas gefaehrlich, da man sehr vorsichtig sein muss, in welcher Reihenfolge man die Werte schreibt. Ausserdem kann man
 	// kein range mit Ausnahmen machen. In diesem Fall ist es deshalb besser ein .of zu benutzen
@@ -91,7 +95,7 @@ public enum AntragStatus {
             case SACHBEARBEITER_JA: return forSachbearbeiterJugendamtRole;
             case SACHBEARBEITER_TRAEGERSCHAFT: return forSachbearbeiterTraegerschaftRole;
             case SCHULAMT: return forSchulamtRole;
-            case STEUERAMT: return none;
+            case STEUERAMT: return forSteueramt;
             default: return none;
         }
     }
@@ -144,5 +148,12 @@ public enum AntragStatus {
 	 */
 	public boolean isReadableBySchulamtSachbearbeiter() {
 		return !(this.isAnyOfInBearbeitungGS());
+	}
+
+	/**
+	 * Steueramt darf nur die Status lesen die fuer es gemeint sind
+	 */
+	public boolean isReadableBySteueramt() {
+		return forSteueramt.contains(this);
 	}
 }
