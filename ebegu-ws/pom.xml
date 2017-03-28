@@ -43,10 +43,7 @@
                         <wsdlFile>Stadt_Bern_E-BEGU_Personensuche_v1.2.wsdl</wsdlFile>
                     </wsdlFiles>
                     <verbose>true</verbose>
-                    <sourceDestDir>${project.build.directory}/generated-sources/jax-ws</sourceDestDir>
-                    <verbose>true</verbose>
                     <sei />
-                    <inlineSchemas>true</inlineSchemas>
                     <bindingFiles>
                         <bindingFile>${basedir}/src/main/wsdl/jaxb-bindings.xjb</bindingFile>
                     </bindingFiles>
