@@ -85,9 +85,9 @@ public interface VerfuegungService {
 
 	/**
 	 * Sucht den Zeitabschnitt / die Zeitabschnitte mit demselben Zeitraum auf der Vorgängerverfügung,
-	 * und die verrechnet oder ignoriert sind (letzteres aufgrund mitgegebenem Flag)
+	 * und die verrechnet oder ignoriert sind
 	 */
 	@Nonnull
 	List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu,
-																					  @Nonnull Betreuung betreuungNeu, boolean includeIgnored);
+																					  @Nonnull Betreuung betreuungNeu);
 }
