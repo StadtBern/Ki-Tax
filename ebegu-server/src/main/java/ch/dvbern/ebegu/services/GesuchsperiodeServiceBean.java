@@ -126,4 +126,19 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		Gesuchsperiode criteriaSingleResult = persistence.getCriteriaSingleResult(query);
 		return Optional.ofNullable(criteriaSingleResult);
 	}
+
+	@Override
+	@Nonnull
+	@PermitAll
+	public Collection<Gesuchsperiode> getGesuchsperiodenBetween(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);
+		Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
+
+		Predicate predicateStart = cb.lessThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb), datumBis);
+		Predicate predicateEnd = cb.greaterThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis), datumVon);
+
+		query.where(predicateStart, predicateEnd);
+		return persistence.getCriteriaResults(query);
+	}
 }

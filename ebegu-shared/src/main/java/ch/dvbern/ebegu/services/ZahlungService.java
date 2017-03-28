@@ -3,7 +3,9 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 
+import javax.annotation.Nonnull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -12,10 +14,12 @@ import java.util.Optional;
  */
 public interface ZahlungService {
 
+
 	/**
 	 * Ermittelt alle im aktuellen Monat gueltigen Verfuegungen, sowie aller seit dem letzten Auftrag eingeganegenen
 	 * Mutationen.
 	 * Der Zahlungsauftrag hat den initialen Status ENTWURF
+	 * Als datumGeneriert wird "Jetzt" verwendet
 	 */
 	Zahlungsauftrag zahlungsauftragErstellen(LocalDate datumFaelligkeit, String beschreibung);
 
@@ -26,6 +30,13 @@ public interface ZahlungService {
 	Zahlungsauftrag zahlungsauftragAktualisieren(String auftragId, LocalDate datumFaelligkeit, String beschreibung);
 
 	/**
+	 * Ermittelt alle im aktuellen Monat gueltigen Verfuegungen, sowie aller seit dem letzten Auftrag eingeganegenen
+	 * Mutationen.
+	 * Der Zahlungsauftrag hat den initialen Status ENTWURF
+	 */
+	Zahlungsauftrag zahlungsauftragErstellen(LocalDate datumFaelligkeit, String beschreibung, LocalDateTime datumGeneriert);
+
+	/**
 	 * Nachdem alle Daten kontrolliert wurden, wird der Zahlungsauftrag ausgeloest. Danach kann er nicht mehr
 	 * geloescht werden
 	 */
@@ -33,9 +44,13 @@ public interface ZahlungService {
 
 	/**
 	 * Sucht einen einzelnen Zahlungsauftrag.
-	 * TODO (team) im JaxBConverter aufgrund Berechtigung des Benutzers Zahlungen entfernen!
 	 */
 	Optional<Zahlungsauftrag> findZahlungsauftrag(String auftragId);
+
+	/**
+	 * Gibt die Zahlung mit der uebergebenen Id zurueck.
+	 */
+	Optional<Zahlung> findZahlung(String zahlungId);
 
 	/**
 	 * Loescht einen Zahlungsauftrag (nur im Status ENTWURF moeglich)
@@ -43,20 +58,21 @@ public interface ZahlungService {
 	void deleteZahlungsauftrag(String auftragId);
 
 	/**
-	 * Gibt alle Zahlungsauftraege zurueck TODO (team) evt. muessen wir dann hier einschraenken, sonst waechst die liste unendlich...
-	 * TODO (team) im JaxBConverter aufgrund Berechtigung des Benutzers Zahlungen entfernen!
+	 * Gibt alle Zahlungsauftraege zurueck
 	 */
 	Collection<Zahlungsauftrag> getAllZahlungsauftraege();
 
 	/**
-	 * Erstellt ein ISO-20022-File mit den Zahlunspositionen des gewaehlten Auftrags.
+	 * Gibt alle Zahlungsauftraege zurueck
 	 */
-	String createIsoFile(String auftragId);
+	Optional<Zahlungsauftrag> findLastZahlungsauftrag();
 
 	/**
 	 * Eine Kita kann/muss den Zahlungseingang bestaetigen
 	 */
 	Zahlung zahlungBestaetigen(String zahlungId);
 
+
+	Collection<Zahlungsauftrag> getZahlungsauftraegeInPeriode(LocalDate von, @Nonnull LocalDate bis);
 
 }

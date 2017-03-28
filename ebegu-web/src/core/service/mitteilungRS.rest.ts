@@ -151,8 +151,18 @@ export default class MitteilungRS {
                 'Content-Type': 'application/json'
             }
         }).then((response: any) => {
-            this.log.debug('PARSING mitteilung REST object ', response.data);
+            this.log.debug('PARSING Betreuungsmitteilung REST object ', response.data);
             return this.ebeguRestUtil.parseBetreuungsmitteilung(new TSBetreuungsmitteilung(), response.data);
+        });
+    }
+
+    public applyBetreuungsmitteilung(betreuungsmitteilungId: string): IPromise<string> {
+        return this.http.put(this.serviceURL + '/applybetreuungsmitteilung/' + betreuungsmitteilungId, null, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return response.data;
         });
     }
 
@@ -183,8 +193,12 @@ export default class MitteilungRS {
                 if (i > 1) {
                     message += '\n';
                 }
-                message += this.$translate.instant('MUTATIONSMELDUNG_PENSUM') + i + this.$translate.instant('MUTATIONSMELDUNG_VOM')
-                    + DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb, 'DD.MM.YYYY')
+                let datumAb: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
+                let datumBis: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigBis, 'DD.MM.YYYY');
+                datumBis = datumBis ? datumBis : DateUtil.momentToLocalDateFormat(betreuung.gesuchsperiode.gueltigkeit.gueltigBis, 'DD.MM.YYYY'); // by default Ende der Periode
+                message += this.$translate.instant('MUTATIONSMELDUNG_PENSUM') + i
+                    + this.$translate.instant('MUTATIONSMELDUNG_VON') + datumAb
+                    + this.$translate.instant('MUTATIONSMELDUNG_BIS') + datumBis
                     + ': ' + betpenContainer.betreuungspensumJA.pensum + '%';
             }
             i++;

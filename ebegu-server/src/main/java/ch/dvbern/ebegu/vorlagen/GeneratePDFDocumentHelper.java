@@ -83,6 +83,7 @@ public class GeneratePDFDocumentHelper {
 			DOCXMergeEngine docxme = new DOCXMergeEngine(mergeSource.getClass().getName());
 
 			byte[] mergedDocx = docxme.getDocument(new ByteArrayInputStream(docxTemplate), mergeSource);
+//			save(mergedDocx);
 			byte[] mergedPdf = generatePDFDocument(mergedDocx);
 			PdfReader reader = new PdfReader(mergedPdf);
 			int numOfPDFPages = reader.getNumberOfPages();
@@ -110,6 +111,29 @@ public class GeneratePDFDocumentHelper {
 			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[]{});
 		}
 	}
+
+	/**
+	 * Speichert das Zwischenresultat der PDF Generierung (Word mit ersetzten Tags)
+	 * im Temp-Folder. Zum Debuggen.
+	 */
+	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod", "UPM_UNCALLED_PRIVATE_METHOD", "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"})
+//	private boolean save(byte[] content) {
+//		UUID uuid = UUID.randomUUID();
+//		String tempDir = System.getProperty("java.io.tmpdir");
+//		final String absoluteFilePath = tempDir + "/" + uuid + ".docx";
+//		Path file = Paths.get(absoluteFilePath);
+//		try {
+//			if (!Files.exists(file.getParent())) {
+//				Files.createDirectories(file.getParent());
+//				LOGGER.info("Save Word-file in FileSystem: " + absoluteFilePath);
+//			}
+//			Files.write(file, content);
+//		} catch (IOException e) {
+//			LOGGER.info("Can't save file in FileSystem: ");
+//			return false;
+//		}
+//		return true;
+//	}
 
 	private void setXDocReportPDFWriterOptions(@Nonnull PdfWriter pdfWriter) {
 		pdfWriter.setPdfVersion(PdfWriter.PDF_VERSION_1_4);

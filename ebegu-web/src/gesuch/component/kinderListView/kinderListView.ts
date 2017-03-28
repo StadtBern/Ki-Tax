@@ -12,6 +12,8 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
+import TSKindDublette from '../../../models/TSKindDublette';
+import EbeguUtil from '../../../utils/EbeguUtil';
 let template = require('./kinderListView.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./kinderListView.less');
@@ -19,6 +21,9 @@ require('./kinderListView.less');
 
 export class KinderListViewComponentConfig implements IComponentOptions {
     transclude = false;
+    bindings: any = {
+        kinderDubletten: '<'
+    };
     template = template;
     controller = KinderListViewController;
     controllerAs = 'vm';
@@ -26,12 +31,14 @@ export class KinderListViewComponentConfig implements IComponentOptions {
 
 export class KinderListViewController extends AbstractGesuchViewController<any> {
 
+    kinderDubletten: TSKindDublette[] = [];
+
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog',
-        'WizardStepManager', '$scope'];
+        'WizardStepManager', '$scope', 'CONSTANTS'];
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $translate: ITranslateService, private DvDialog: DvDialog,
-                wizardStepManager: WizardStepManager, $scope: IScope) {
+                wizardStepManager: WizardStepManager, $scope: IScope, private CONSTANTS: any) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER);
         this.initViewModel();
     }
@@ -61,8 +68,30 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
         }
     }
 
+    getDubletten(kindContainer: TSKindContainer): TSKindDublette[] {
+        if (this.kinderDubletten) {
+            let dublettenForThisKind: TSKindDublette[] = [];
+            for (let i = 0; i < this.kinderDubletten.length; i++) {
+                if (this.kinderDubletten[i].kindNummerOriginal === kindContainer.kindNummer) {
+                    dublettenForThisKind.push(this.kinderDubletten[i]);
+                }
+            }
+            return dublettenForThisKind;
+        }
+        return undefined;
+    }
+
+    public gotoKindDublette(dublette: TSKindDublette): void {
+        let url = this.$state.href('gesuch.kind', {kindNumber: dublette.kindNummerDublette, gesuchId: dublette.gesuchId});
+        window.open(url, '_blank');
+    }
+
     private openKindView(kindNumber: number): void {
         this.$state.go('gesuch.kind', {kindNumber: kindNumber, gesuchId: this.getGesuchId()});
+    }
+
+    public getFallNummer(dublette: TSKindDublette): string {
+        return EbeguUtil.addZerosToNumber(dublette.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
     }
 
     removeKind(kind: any): void {
@@ -72,9 +101,9 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
             deleteText: 'KIND_LOESCHEN_BESCHREIBUNG'
         })
             .then(() => {   //User confirmed removal
-                let kindNumber: number = this.gesuchModelManager.findKind(kind);
-                if (kindNumber > 0) {
-                    this.gesuchModelManager.setKindIndex(kindNumber);
+                let kindIndex: number = this.gesuchModelManager.findKind(kind);
+                if (kindIndex >= 0) {
+                    this.gesuchModelManager.setKindIndex(kindIndex);
                     this.gesuchModelManager.removeKind();
                 }
             });
@@ -90,6 +119,10 @@ export class KinderListViewController extends AbstractGesuchViewController<any> 
         return !this.isGesuchReadonly()
             && ((this.gesuchModelManager.getGesuch().isMutation() && (!kind.betreuungen || kind.betreuungen.length <= 0))
                 || !kind.kindJA.vorgaengerId);
+    }
+
+    public getColsNumber(): number {
+        return this.kinderDubletten ? 5 : 4;
     }
 
 }

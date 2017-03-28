@@ -17,6 +17,7 @@ import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
+import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
@@ -28,6 +29,7 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
         onVerantwortlicherChange: '&',
         fallid: '@',
         isDashboardScreen: '@',
+        hideMutationButton: '@'
     };
 
     template = templateX;
@@ -41,6 +43,7 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
         gesuchid: '@',
         fallid: '@',
         isDashboardScreen: '@',
+        hideMutationButton: '@'
     };
     template = templateGS;
     controller = GesuchToolbarController;
@@ -55,6 +58,7 @@ export class GesuchToolbarController {
     gesuchid: string;
     fallid: string;
     isDashboardScreen: boolean;
+    hideMutationButton: boolean;
     TSRoleUtil: any;
 
     onVerantwortlicherChange: (attr: any) => void;
@@ -119,9 +123,9 @@ export class GesuchToolbarController {
                 }
             });
             //watcher fuer status change
-            if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            if (this.gesuchModelManager && this.getGesuch()) {
                 $scope.$watch(() => {
-                    return this.gesuchModelManager.getGesuch().status;
+                    return this.getGesuch().status;
                 }, (newValue, oldValue) => {
                     if ((newValue !== oldValue) && (isAnyStatusOfVerfuegt(newValue))) {
                         this.updateAntragDTOList();
@@ -143,6 +147,11 @@ export class GesuchToolbarController {
                         this.antragMutierenPossible(); //neu berechnen ob mutieren moeglich ist
                     }
                 }
+            });
+            // Wenn eine Mutationsmitteilung uebernommen wird und deshalb eine neue Mutation erstellt wird, muss
+            // die toolbar aktualisisert werden, damit diese Mutation auf der Liste erscheint
+            $scope.$on(TSMitteilungEvent[TSMitteilungEvent.MUTATIONSMITTEILUNG_NEUE_MUTATION], () => {
+                this.updateAntragDTOList();
             });
         }
     }
@@ -352,9 +361,16 @@ export class GesuchToolbarController {
         return newest;
     }
 
+    /**
+     * Institutionen werden zum Screen Betreuungen geleitet, waehrend alle anderen Benutzer zu fallCreation gehen
+     */
     private goToOpenGesuch(gesuchId: string): void {
         if (gesuchId) {
-            this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
+            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+                this.$state.go('gesuch.betreuungen', {gesuchId: gesuchId});
+            } else {
+                this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
+            }
         }
     }
 
@@ -423,6 +439,12 @@ export class GesuchToolbarController {
     public openMitteilungen(): void {
         this.$state.go('mitteilungen', {
             fallId: this.fallid
+        });
+    }
+
+    public openVerlauf(): void {
+        this.$state.go('verlauf', {
+            gesuchId: this.getGesuch().id
         });
     }
 }

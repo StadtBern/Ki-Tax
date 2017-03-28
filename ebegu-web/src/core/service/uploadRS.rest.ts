@@ -10,10 +10,11 @@ export class UploadRS {
     ebeguRestUtil: EbeguRestUtil;
     q: IQService;
 
-    static $inject = ['$http', 'REST_API', '$log', 'Upload', 'EbeguRestUtil', '$q'];
+    static $inject = ['$http', 'REST_API', '$log', 'Upload', 'EbeguRestUtil', '$q', 'base64'];
 
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, $log: ILogService, private upload: any, ebeguRestUtil: EbeguRestUtil, $q: IQService) {
+    constructor($http: IHttpService, REST_API: string, $log: ILogService, private upload: any, ebeguRestUtil: EbeguRestUtil,
+                $q: IQService, private base64: any) {
         this.serviceURL = REST_API + 'upload';
         this.http = $http;
         this.log = $log;
@@ -29,7 +30,10 @@ export class UploadRS {
 
         let names: string [] = [];
         for (let file of files) {
-            names.push(file.name);
+            if (file) {
+                let encodedFilename = this.base64.encode(file.name);
+                names.push(encodedFilename);
+            }
         }
 
         return this.upload.upload({
@@ -51,7 +55,7 @@ export class UploadRS {
         }, (evt: any) => {
             let loaded: number = evt.loaded;
             let total: number = evt.total;
-            var progressPercentage: number = 100.0 * loaded / total;
+            let progressPercentage: number = 100.0 * loaded / total;
             console.log('progress: ' + progressPercentage + '% ');
             return this.q.defer().notify();
         });

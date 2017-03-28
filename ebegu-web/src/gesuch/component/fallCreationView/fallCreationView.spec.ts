@@ -20,7 +20,7 @@ describe('fallCreationView', function () {
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
-        TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($injector.get('$httpBackend'));
+        TestDataUtil.mockLazyGesuchModelManagerHttpCalls($injector.get('$httpBackend'));
         $state = $injector.get('$state');
         $q = $injector.get('$q');
         $rootScope = $injector.get('$rootScope');
@@ -39,11 +39,15 @@ describe('fallCreationView', function () {
     describe('nextStep', () => {
         it('submitted but rejected -> it does not go to the next step', () => {
             spyOn($state, 'go');
-            spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.reject({}));
+            let reject = $q.reject({}).catch( () => {
+                //need to catch rejected promise
+            });
+            spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue(reject);
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
             fallCreationview.save();
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
+            expect($state.go).not.toHaveBeenCalled();
         });
         it('should submit the form and go to the next page', () => {
             spyOn($state, 'go');
@@ -62,21 +66,21 @@ describe('fallCreationView', function () {
         });
     });
     describe('getTitle', () => {
-        it('should return Art der Mutation', () => {
+        it('should return Änderung Ihrer Daten', () => {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
-            expect(fallCreationview.getTitle()).toBe('Erstellen einer Mutation');
+            expect(fallCreationview.getTitle()).toBe('Änderung Ihrer Daten');
         });
-        it('should return Erstgesuch der Periode', () => {
+        it('should return Ki-Tax – Erstgesuch der Periode', () => {
             let gesuchsperiode: TSGesuchsperiode = TestDataUtil.createGesuchsperiode20162017();
             spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuchsperiode);
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(true);
-            expect(fallCreationview.getTitle()).toBe('Erstgesuch der Periode 2016/17');
+            expect(fallCreationview.getTitle()).toBe('Ki-Tax – Erstgesuch der Periode 2016/17');
         });
-        it('should return Erstgesuch', () => {
+        it('should return Ki-Tax – Erstgesuch', () => {
             spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(false);
-            expect(fallCreationview.getTitle()).toBe('Erstgesuch');
+            expect(fallCreationview.getTitle()).toBe('Ki-Tax – Erstgesuch');
         });
     });
 });

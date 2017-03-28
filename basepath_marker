@@ -1,2 +1,0 @@
-todo team das kann entfernt werden soabld die checkstyle rules in sonar geladen werden koennen ueber die url.
-Aktuell laedt das pmd plugin externe regeln nur wenn man einen absoluten Pfad angibt.

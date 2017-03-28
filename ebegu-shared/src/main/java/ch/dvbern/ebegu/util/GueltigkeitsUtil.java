@@ -120,7 +120,7 @@ public final class GueltigkeitsUtil {
 	 * @return alle verbleibenden entities
 	 */
 	@Nonnull
-	public static <T extends Gueltigkeit> Collection<T> removeFromCollection(@Nonnull final Collection<T> existingEntities, @Nonnull T entityToRemove, @Nonnull PreceedingDateRange precedingDateRange) { // TODO unit test
+	public static <T extends Gueltigkeit> Collection<T> removeFromCollection(@Nonnull final Collection<T> existingEntities, @Nonnull T entityToRemove, @Nonnull PreceedingDateRange precedingDateRange) {
 		if (precedingDateRange == PreceedingDateRange.EXTEND_TO_DELETED) {
 			Optional<T> preceding = findPreceding(existingEntities, entityToRemove);
 			if (preceding.isPresent()) {
@@ -138,7 +138,7 @@ public final class GueltigkeitsUtil {
 	 * @return alle Entities, die geloescht wurden
 	 */
 	@Nonnull
-	public static <T extends Gueltigkeit> List<T> removeEntitiesAb(@Nonnull final Collection<T> existingEntities, @Nonnull LocalDate bisEinschliesslich) { // TODO unit test
+	public static <T extends Gueltigkeit> List<T> removeEntitiesAb(@Nonnull final Collection<T> existingEntities, @Nonnull LocalDate bisEinschliesslich) {
 		// ggf. entity am Zeitpunkt verkuerzen
 		existingEntities.stream()
 			.filter(k -> k.getGueltigkeit().contains(bisEinschliesslich))

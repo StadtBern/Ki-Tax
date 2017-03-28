@@ -1,7 +1,6 @@
 import {EbeguWebMitteilungen} from '../../mitteilungen.module';
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {MitteilungenViewController} from './mitteilungenView';
 import {TSMitteilungTeilnehmerTyp} from '../../../models/enums/TSMitteilungTeilnehmerTyp';
 import {TSMitteilungStatus} from '../../../models/enums/TSMitteilungStatus';
 import TSUser from '../../../models/TSUser';
@@ -9,12 +8,12 @@ import {TSRole} from '../../../models/enums/TSRole';
 import {IMitteilungenStateParams} from '../../mitteilungen.route';
 import FallRS from '../../../gesuch/service/fallRS.rest';
 import TSFall from '../../../models/TSFall';
-import IScope = angular.IScope;
-import IQService = angular.IQService;
 import TSMitteilung from '../../../models/TSMitteilung';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import {DVMitteilungListController} from '../../../core/component/dv-mitteilung-list/dv-mitteilung-list';
 import BetreuungRS from '../../../core/service/betreuungRS.rest';
+import IScope = angular.IScope;
+import IQService = angular.IQService;
 
 describe('mitteilungenView', function () {
 
@@ -63,7 +62,6 @@ describe('mitteilungenView', function () {
             spyOn(authServiceRS, 'isRole').and.returnValue(true);
 
             createMitteilungForUser(gesuchsteller);
-
             compareCommonAttributes(gesuchsteller);
             expect(controller.getCurrentMitteilung().empfaenger).toBe(verantwortlicher);
             expect(controller.getCurrentMitteilung().senderTyp).toBe(TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
@@ -171,8 +169,9 @@ describe('mitteilungenView', function () {
         spyOn(fallRS, 'findFall').and.returnValue($q.when(fall));
         spyOn(mitteilungRS, 'getMitteilungenForCurrentRolleForFall').and.returnValue($q.when([{}]));
         spyOn(mitteilungRS, 'setAllNewMitteilungenOfFallGelesen').and.returnValue($q.when([{}]));
-
-        controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q, null, $rootScope, undefined, undefined);
+        controller = new DVMitteilungListController(stateParams, mitteilungRS, authServiceRS, fallRS, betreuungRS, $q, null,
+            $rootScope, undefined, undefined, undefined, undefined);
+        controller.$onInit();   // hack, muesste wohl eher so gehen   http://stackoverflow.com/questions/38631204/how-to-trigger-oninit-or-onchanges-implictly-in-unit-testing-angular-component
         $rootScope.$apply();
     }
 

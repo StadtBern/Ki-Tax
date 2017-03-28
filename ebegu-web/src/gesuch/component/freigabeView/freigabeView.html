@@ -15,7 +15,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <p data-translate="FREIGABEQUITTUNG_ERFOLG_TEXT"
-                          data-translate-value-freigabedatum="{{vm.getFreigabeDatum()}}"></p>
+                       data-translate-value-freigabedatum="{{vm.getFreigabeDatum()}}"></p>
                 </div>
                 <div class="col-md-12" ng-if="vm.isFreigabequittungAusstehend()">
                     <p data-translate="FREIGABEQUITTUNG_AUSSTEHEND_TEXT"></p>
@@ -82,15 +82,15 @@
                     <div class="col-xs-12 dv-input-container-question">
                         <div class=" checkbox">
                             <md-checkbox ng-model="vm.bestaetigungFreigabequittung" name="bestaetigungFreigabequittung"
-                                         aria-label="bestaetigungFreigabequittung"
+                                         aria-label="{{'FREIGABEQUITTUNG_DRUCKEN_TEXT'|translate}}"
                                          ng-required="vm.isFreigebenClicked">
                                 <span data-translate="FREIGABEQUITTUNG_DRUCKEN_TEXT"></span>
                             </md-checkbox>
                             <div class="dv-error-messages">
-                                <div ng-messages="vm.form.bestaetigungFreigabequittung.$error" role="alert"
+                                <div ng-messages="vm.form.bestaetigungFreigabequittung.$error"
                                      class="error">
                                     <div ng-message="required" data-translate="ERROR_BESTAETIGUNG_REQUIRED"
-                                         for="vm.form.bestaetigungFreigabequittung.$error"></div>
+                                         for="vm.form.bestaetigungFreigabequittung.$error" role="alert"></div>
                                 </div>
                             </div>
                         </div>

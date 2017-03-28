@@ -15,7 +15,6 @@ import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.Optional;
 
 
 /**
@@ -38,40 +37,98 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch) throws MailException {
-		Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
-		String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
-		if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
-			String message = mailTemplateConfig.getInfoBetreuungenBestaetigt(gesuch, gesuchsteller, mailaddress);
-			sendMessageWithTemplate(message, mailaddress);
-			LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress);
-		} else {
-			LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 or mailaddr is null");
+		if (doSendMail(gesuch)) {
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoBetreuungenBestaetigt(gesuch, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 or mailaddr is null");
+			}
 		}
 	}
 
 	@Override
 	public void sendInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung) throws MailException {
-		Gesuchsteller gesuchsteller = extractGesuchsteller1(betreuung.extractGesuch());
-		String mailaddress = fallService.getCurrentEmailAddress(betreuung.extractGesuch().getFall().getId()).orElse(null);
-		if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
-			String message = mailTemplateConfig.getInfoBetreuungAbgelehnt(betreuung, gesuchsteller, mailaddress);
-			sendMessageWithTemplate(message, mailaddress);
-			LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress);
-		} else {
-			LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 or mailaddress is null");
+		if (doSendMail(betreuung.extractGesuch())) {
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(betreuung.extractGesuch());
+			String mailaddress = fallService.getCurrentEmailAddress(betreuung.extractGesuch().getFall().getId()).orElse(null);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoBetreuungAbgelehnt(betreuung, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 or mailaddress is null");
+			}
 		}
 	}
 
 	@Override
 	public void sendInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung) throws MailException {
-		String mailaddress = fallService.getCurrentEmailAddress(mitteilung.getFall().getId()).orElse(null);
-		if (StringUtils.isNotEmpty(mailaddress)) {
-			String message = mailTemplateConfig.getInfoMitteilungErhalten(mitteilung, mailaddress);
-			sendMessageWithTemplate(message, mailaddress);
-			LOG.debug("Email fuer InfoMitteilungErhalten wurde versendet an" + mailaddress);
-		} else {
-			LOG.warn("skipping sendInfoMitteilungErhalten because Mitteilungsempfaenger is null");
+		if (doSendMail(mitteilung.getBetreuung().extractGesuch())) {
+			String mailaddress = fallService.getCurrentEmailAddress(mitteilung.getFall().getId()).orElse(null);
+			if (StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoMitteilungErhalten(mitteilung, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoMitteilungErhalten wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoMitteilungErhalten because Mitteilungsempfaenger is null");
+			}
 		}
+	}
+
+	@Override
+	public void sendInfoVerfuegtGesuch(@Nonnull Gesuch gesuch) throws MailException {
+		if (doSendMail(gesuch)) {
+			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoVerfuegtGesuch(gesuch, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoVerfuegtGesuch wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoVerfuegtGesuch because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
+	@Override
+	public void sendInfoVerfuegtMutation(@Nonnull Gesuch gesuch) throws MailException {
+		if (doSendMail(gesuch)) {
+			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoVerfuegtMutaion(gesuch, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoVerfuegtMutation wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoVerfuegtMutation because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
+	@Override
+	public void sendInfoMahnung(@Nonnull Gesuch gesuch) throws MailException {
+		if (doSendMail(gesuch)) {
+			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+			Gesuchsteller gesuchsteller = extractGesuchsteller1(gesuch);
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoMahnung(gesuch, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoMahnung wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping sendInfoMahnung because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
+	/**
+	 * Hier wird an einer Stelle definiert, an welche Benutzergruppen ein Mail geschickt werden soll.
+	 */
+	private boolean doSendMail(Gesuch gesuch) {
+		return gesuch.getFall().getBesitzer() != null;
 	}
 
 	private Gesuchsteller extractGesuchsteller1(@Nonnull Gesuch gesuch) {

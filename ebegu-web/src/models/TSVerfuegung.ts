@@ -1,26 +1,25 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import TSVerfuegungZeitabschnitt from './TSVerfuegungZeitabschnitt';
+import {TSVerfuegungZeitabschnittZahlungsstatus} from './enums/TSVerfuegungZeitabschnittZahlungsstatus';
 
 export default class TSVerfuegung extends TSAbstractEntity {
 
     private _generatedBemerkungen: string;
     private _manuelleBemerkungen: string;
     private _zeitabschnitte: Array<TSVerfuegungZeitabschnitt>;
-    private _sameVerfuegungsdaten: boolean;
     private _kategorieNormal: boolean;
     private _kategorieMaxEinkommen: boolean;
     private _kategorieKeinPensum: boolean;
     private _kategorieZuschlagZumErwerbspensum: boolean;
     private _kategorieNichtEintreten: boolean;
 
-    constructor(generatedBemerkungen?: string, manuelleBemerkungen?: string, zeitabschnitte?: Array<TSVerfuegungZeitabschnitt>, sameVerfuegungsdaten?: boolean,
+    constructor(generatedBemerkungen?: string, manuelleBemerkungen?: string, zeitabschnitte?: Array<TSVerfuegungZeitabschnitt>,
                 kategorieNormal?: boolean, kategorieMaxEinkommen?: boolean, kategorieKeinPensum?: boolean, kategorieZuschlagZumErwerbspensum?: boolean,
                 kategorieNichtEintreten?: boolean) {
         super();
         this._generatedBemerkungen = generatedBemerkungen;
         this._manuelleBemerkungen = manuelleBemerkungen;
         this._zeitabschnitte = zeitabschnitte;
-        this._sameVerfuegungsdaten = sameVerfuegungsdaten;
         this._kategorieNormal = kategorieNormal;
         this._kategorieMaxEinkommen = kategorieMaxEinkommen;
         this._kategorieKeinPensum = kategorieKeinPensum;
@@ -50,14 +49,6 @@ export default class TSVerfuegung extends TSAbstractEntity {
 
     set zeitabschnitte(value: Array<TSVerfuegungZeitabschnitt>) {
         this._zeitabschnitte = value;
-    }
-
-    get sameVerfuegungsdaten(): boolean {
-        return this._sameVerfuegungsdaten;
-    }
-
-    set sameVerfuegungsdaten(value: boolean) {
-        this._sameVerfuegungsdaten = value;
     }
 
     get kategorieNormal(): boolean {
@@ -98,5 +89,33 @@ export default class TSVerfuegung extends TSAbstractEntity {
 
     set kategorieNichtEintreten(value: boolean) {
         this._kategorieNichtEintreten = value;
+    }
+
+    /**
+     * Checks whether all Zeitabschnitte have the same data as the previous (vorgaenger) Verfuegung.
+     */
+    public areSameVerfuegungsdaten(): boolean {
+        for (let i = 0; i < this._zeitabschnitte.length; i++) {
+            if (this._zeitabschnitte[i].sameVerfuegungsdaten !== true) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks whether all Zeitabschnitte that have been paid (verrechnet or ignored)
+     * have the same Verguenstigung as the previous (vorgaenger) Verfuegung.
+     */
+    public isSameVerrechneteVerguenstigung(): boolean {
+        for (let i = 0; i < this._zeitabschnitte.length; i++) {
+            if (this._zeitabschnitte[i].sameVerguenstigung !== true
+                && (this._zeitabschnitte[i].zahlungsstatus === TSVerfuegungZeitabschnittZahlungsstatus.VERRECHNET
+                    || this._zeitabschnitte[i].zahlungsstatus === TSVerfuegungZeitabschnittZahlungsstatus.IGNORIERT
+                || this._zeitabschnitte[i].zahlungsstatus === TSVerfuegungZeitabschnittZahlungsstatus.IGNORIEREND)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

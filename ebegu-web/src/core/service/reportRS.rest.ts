@@ -1,7 +1,7 @@
 import {IHttpParamSerializer, ILogService} from 'angular';
+import TSDownloadFile from '../../models/TSDownloadFile';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import IPromise = angular.IPromise;
-import TSDownloadFile from "../../models/TSDownloadFile";
-import EbeguRestUtil from "../../utils/EbeguRestUtil";
 import IHttpService = angular.IHttpService;
 
 export class ReportRS {
@@ -51,8 +51,110 @@ export class ReportRS {
             });
     }
 
+    public getKantonReportExcel(auswertungVon: string, auswertungBis: string): IPromise<TSDownloadFile> {
+
+        let reportParams: string = this.httpParamSerializer({
+            auswertungVon: auswertungVon,
+            auswertungBis: auswertungBis
+        });
+
+        return this.http.get(this.serviceURL + '/excel/kanton?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getMitarbeiterinnenReportExcel(auswertungVon: string, auswertungBis: string): IPromise<TSDownloadFile> {
+        let reportParams: string = this.httpParamSerializer({
+            auswertungVon: auswertungVon,
+            auswertungBis: auswertungBis
+        });
+        return this.http.get(this.serviceURL + '/excel/mitarbeiterinnen?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getZahlungsauftragReportExcel(zahlungsauftragID: string): IPromise<TSDownloadFile> {
+
+        let reportParams: string = this.httpParamSerializer({
+            zahlungsauftragID: zahlungsauftragID
+        });
+
+        return this.http.get(this.serviceURL + '/excel/zahlungsauftrag?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getZahlungReportExcel(zahlungID: string): IPromise<TSDownloadFile> {
+
+        let reportParams: string = this.httpParamSerializer({
+            zahlungID: zahlungID
+        });
+
+        return this.http.get(this.serviceURL + '/excel/zahlung?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getZahlungPeriodeReportExcel(gesuchsperiode: string): IPromise<TSDownloadFile> {
+        let reportParams: string = this.httpParamSerializer({
+            gesuchsperiodeID: gesuchsperiode
+        });
+
+        return this.http.get(this.serviceURL + '/excel/zahlungperiode?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+
+    }
+
+    public getGesuchstellerKinderBetreuungReportExcel(auswertungVon: string, auswertungBis: string, gesuchPeriodeID: string): IPromise<TSDownloadFile> {
+        let reportParams: string = this.httpParamSerializer({
+            auswertungVon: auswertungVon,
+            auswertungBis: auswertungBis,
+            gesuchPeriodeID: gesuchPeriodeID
+        });
+        return this.http.get(this.serviceURL + '/excel/gesuchstellerkinderbetreuung?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getKinderReportExcel(auswertungVon: string, auswertungBis: string, gesuchPeriodeID: string): IPromise<TSDownloadFile> {
+        let reportParams: string = this.httpParamSerializer({
+            auswertungVon: auswertungVon,
+            auswertungBis: auswertungBis,
+            gesuchPeriodeID: gesuchPeriodeID
+        });
+        return this.http.get(this.serviceURL + '/excel/kinder?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getGesuchstellerReportExcel(stichtag: string): IPromise<TSDownloadFile> {
+        let reportParams: string = this.httpParamSerializer({
+            stichtag: stichtag
+        });
+        return this.http.get(this.serviceURL + '/excel/gesuchsteller?' + reportParams)
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+
     public getServiceName(): string {
         return 'ReportRS';
     }
-
 }

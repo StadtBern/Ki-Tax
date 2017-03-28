@@ -63,6 +63,9 @@ import TSQuickSearchResult from '../models/dto/TSQuickSearchResult';
 import TSSearchResultEntry from '../models/dto/TSSearchResultEntry';
 import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
 import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
+import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
+import TSZahlung from '../models/TSZahlung';
+import TSKindDublette from '../models/TSKindDublette';
 
 
 export default class EbeguRestUtil {
@@ -802,7 +805,6 @@ export default class EbeguRestUtil {
         if (containerFromServer) {
             this.parseAbstractEntity(containerTS, containerFromServer);
             containerTS.jahr = containerFromServer.jahr;
-            //todo hefr nur initialisieren wenn noetig?
             containerTS.finanzielleSituationGS = this.parseFinanzielleSituation(containerTS.finanzielleSituationGS || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationGS);
             containerTS.finanzielleSituationJA = this.parseFinanzielleSituation(containerTS.finanzielleSituationJA || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationJA);
             return containerTS;
@@ -977,6 +979,7 @@ export default class EbeguRestUtil {
         restKindContainer.betreuungen = this.betreuungListToRestObject(kindContainer.betreuungen);
         restKindContainer.kindNummer = kindContainer.kindNummer;
         restKindContainer.nextNumberBetreuung = kindContainer.nextNumberBetreuung;
+        restKindContainer.kindMutiert = kindContainer.kindMutiert;
         return restKindContainer;
     }
 
@@ -991,6 +994,29 @@ export default class EbeguRestUtil {
             restKind.pensumFachstelle = this.pensumFachstelleToRestObject({}, kind.pensumFachstelle);
         }
         return restKind;
+    }
+
+    public parseKindDubletteList(data: Array<any>): TSKindDublette[] {
+        let kindContainerList: TSKindDublette[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                kindContainerList[i] = this.parseKindDublette(new TSKindDublette(), data[i]);
+            }
+        } else {
+            kindContainerList[0] = this.parseKindDublette(new TSKindDublette(), data);
+        }
+        return kindContainerList;
+    }
+
+    public parseKindDublette(kindContainerTS: TSKindDublette, kindContainerFromServer: any): TSKindDublette {
+        if (kindContainerFromServer) {
+            kindContainerTS.gesuchId = kindContainerFromServer.gesuchId;
+            kindContainerTS.fallNummer = kindContainerFromServer.fallNummer;
+            kindContainerTS.kindNummerOriginal = kindContainerFromServer.kindNummerOriginal;
+            kindContainerTS.kindNummerDublette = kindContainerFromServer.kindNummerDublette;
+            return kindContainerTS;
+        }
+        return undefined;
     }
 
     public parseKindContainerList(data: Array<any>): TSKindContainer[] {
@@ -1013,6 +1039,7 @@ export default class EbeguRestUtil {
             kindContainerTS.betreuungen = this.parseBetreuungList(kindContainerFromServer.betreuungen);
             kindContainerTS.kindNummer = kindContainerFromServer.kindNummer;
             kindContainerTS.nextNumberBetreuung = kindContainerFromServer.nextNumberBetreuung;
+            kindContainerTS.kindMutiert = kindContainerFromServer.kindMutiert;
             return kindContainerTS;
         }
         return undefined;
@@ -1093,6 +1120,8 @@ export default class EbeguRestUtil {
         restBetreuung.gesuchId = betreuung.gesuchId;
         restBetreuung.gesuchsperiode = this.gesuchsperiodeToRestObject({}, betreuung.gesuchsperiode);
         restBetreuung.betreuungNummer = betreuung.betreuungNummer;
+        restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
+        restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
         return restBetreuung;
     }
 
@@ -1166,6 +1195,8 @@ export default class EbeguRestUtil {
             betreuungTS.kindNummer = betreuungFromServer.kindNummer;
             betreuungTS.gesuchId = betreuungFromServer.gesuchId;
             betreuungTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), betreuungFromServer.gesuchsperiode);
+            betreuungTS.betreuungMutiert = betreuungFromServer.betreuungMutiert;
+            betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
             return betreuungTS;
         }
         return undefined;
@@ -1564,7 +1595,6 @@ export default class EbeguRestUtil {
             verfuegungTS.generatedBemerkungen = verfuegungFromServer.generatedBemerkungen;
             verfuegungTS.manuelleBemerkungen = verfuegungFromServer.manuelleBemerkungen;
             verfuegungTS.zeitabschnitte = this.parseVerfuegungZeitabschnitte(verfuegungFromServer.zeitabschnitte);
-            verfuegungTS.sameVerfuegungsdaten = verfuegungFromServer.sameVerfuegungsdaten;
             verfuegungTS.kategorieKeinPensum = verfuegungFromServer.kategorieKeinPensum;
             verfuegungTS.kategorieMaxEinkommen = verfuegungFromServer.kategorieMaxEinkommen;
             verfuegungTS.kategorieNichtEintreten = verfuegungFromServer.kategorieNichtEintreten;
@@ -1581,7 +1611,6 @@ export default class EbeguRestUtil {
             verfuegung.generatedBemerkungen = verfuegungTS.generatedBemerkungen;
             verfuegung.manuelleBemerkungen = verfuegungTS.manuelleBemerkungen;
             verfuegung.zeitabschnitte = this.zeitabschnittListToRestObject(verfuegungTS.zeitabschnitte);
-            verfuegung.sameVerfuegungsdaten = verfuegungTS.sameVerfuegungsdaten;
             verfuegung.kategorieKeinPensum = verfuegungTS.kategorieKeinPensum;
             verfuegung.kategorieMaxEinkommen = verfuegungTS.kategorieMaxEinkommen;
             verfuegung.kategorieNichtEintreten = verfuegungTS.kategorieNichtEintreten;
@@ -1637,6 +1666,8 @@ export default class EbeguRestUtil {
             zeitabschnitt.kategorieMaxEinkommen = zeitabschnittTS.kategorieMaxEinkommen;
             zeitabschnitt.kategorieKeinPensum = zeitabschnittTS.kategorieKeinPensum;
             zeitabschnitt.zuSpaetEingereicht = zeitabschnittTS.zuSpaetEingereicht;
+            zeitabschnitt.sameVerfuegungsdaten = zeitabschnittTS.sameVerfuegungsdaten;
+            zeitabschnitt.sameVerguenstigung = zeitabschnittTS.sameVerguenstigung;
             return zeitabschnitt;
         }
         return undefined;
@@ -1665,6 +1696,8 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.kategorieMaxEinkommen = zeitabschnittFromServer.kategorieMaxEinkommen;
             verfuegungZeitabschnittTS.kategorieKeinPensum = zeitabschnittFromServer.kategorieKeinPensum;
             verfuegungZeitabschnittTS.zuSpaetEingereicht = zeitabschnittFromServer.zuSpaetEingereicht;
+            verfuegungZeitabschnittTS.sameVerfuegungsdaten = zeitabschnittFromServer.sameVerfuegungsdaten;
+            verfuegungZeitabschnittTS.sameVerguenstigung = zeitabschnittFromServer.sameVerguenstigung;
             return verfuegungZeitabschnittTS;
         }
         return undefined;
@@ -1709,6 +1742,18 @@ export default class EbeguRestUtil {
             wizardSteps[0] = this.parseWizardStep(new TSWizardStep(), data);
         }
         return wizardSteps;
+    }
+
+    public parseAntragStatusHistoryCollection (antragStatusHistoryCollection: Array<any>): TSAntragStatusHistory[] {
+        let resultList: TSAntragStatusHistory[] = [];
+        if (antragStatusHistoryCollection && Array.isArray(antragStatusHistoryCollection)) {
+            for (let i = 0; i < antragStatusHistoryCollection.length; i++) {
+                resultList[i] = this.parseAntragStatusHistory(new TSAntragStatusHistory(), antragStatusHistoryCollection[i]);
+            }
+        } else {
+            resultList[0] = this.parseAntragStatusHistory(new TSAntragStatusHistory(), antragStatusHistoryCollection);
+        }
+        return resultList;
     }
 
     public parseAntragStatusHistory(antragStatusHistoryTS: TSAntragStatusHistory, antragStatusHistoryFromServer: any): TSAntragStatusHistory {
@@ -1939,6 +1984,7 @@ export default class EbeguRestUtil {
     public betreuungsmitteilungToRestObject(restBetreuungsmitteilung: any, tsBetreuungsmitteilung: TSBetreuungsmitteilung): any {
         if (tsBetreuungsmitteilung) {
             this.mitteilungToRestObject(restBetreuungsmitteilung, tsBetreuungsmitteilung);
+            restBetreuungsmitteilung.applied = tsBetreuungsmitteilung.applied;
             if (tsBetreuungsmitteilung.betreuungspensen) {
                 restBetreuungsmitteilung.betreuungspensen = [];
                 tsBetreuungsmitteilung.betreuungspensen.forEach(betreuungspensum => {
@@ -1954,6 +2000,7 @@ export default class EbeguRestUtil {
     public parseBetreuungsmitteilung(tsBetreuungsmitteilung: TSBetreuungsmitteilung, betreuungsmitteilungFromServer: any): TSBetreuungsmitteilung {
         if (betreuungsmitteilungFromServer) {
             this.parseMitteilung(tsBetreuungsmitteilung, betreuungsmitteilungFromServer);
+            tsBetreuungsmitteilung.applied = betreuungsmitteilungFromServer.applied;
             if (betreuungsmitteilungFromServer.betreuungspensen) {
                 tsBetreuungsmitteilung.betreuungspensen = [];
                 for (let i = 0; i < betreuungsmitteilungFromServer.betreuungspensen.length; i++) {
@@ -1968,5 +2015,55 @@ export default class EbeguRestUtil {
 
     private isBetreuungsmitteilung(mitteilung: any): boolean {
         return mitteilung.betreuungspensen !== undefined;
+    }
+
+    public parseZahlungsauftragList(data: any): TSZahlungsauftrag[] {
+        let zahlungsauftrag: TSZahlungsauftrag[] = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                zahlungsauftrag[i] = this.parseZahlungsauftrag(new TSZahlungsauftrag(), data[i]);
+            }
+        }
+        return zahlungsauftrag;
+    }
+
+
+    public parseZahlungsauftrag(tsZahlungsauftrag: TSZahlungsauftrag, zahlungsauftragFromServer: any): TSZahlungsauftrag {
+        if (zahlungsauftragFromServer) {
+            this.parseDateRangeEntity(tsZahlungsauftrag, zahlungsauftragFromServer);
+
+            tsZahlungsauftrag.status = zahlungsauftragFromServer.status;
+            tsZahlungsauftrag.beschrieb = zahlungsauftragFromServer.beschrieb;
+            tsZahlungsauftrag.datumFaellig = DateUtil.localDateToMoment(zahlungsauftragFromServer.datumFaellig);
+            tsZahlungsauftrag.datumGeneriert = DateUtil.localDateTimeToMoment(zahlungsauftragFromServer.datumGeneriert);
+            tsZahlungsauftrag.betragTotalAuftrag = zahlungsauftragFromServer.betragTotalAuftrag;
+            tsZahlungsauftrag.zahlungen = this.parseZahlungen(zahlungsauftragFromServer.zahlungen);
+
+            return tsZahlungsauftrag;
+        }
+        return undefined;
+    }
+
+    public parseZahlungen(data: any): TSZahlung[] {
+        let zahlungen: TSZahlung[] = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                zahlungen[i] = this.parseZahlung(new TSZahlung(), data[i]);
+            }
+        }
+        return zahlungen;
+    }
+
+    public parseZahlung(tsZahlung: TSZahlung, zahlungFromServer: any): TSZahlung {
+        if (zahlungFromServer) {
+            this.parseAbstractEntity(tsZahlung, zahlungFromServer);
+
+            tsZahlung.betragTotalZahlung = zahlungFromServer.betragTotalZahlung;
+            tsZahlung.institutionsName = zahlungFromServer.institutionsName;
+            tsZahlung.status = zahlungFromServer.status;
+
+            return tsZahlung;
+        }
+        return undefined;
     }
 }

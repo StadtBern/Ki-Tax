@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.Betreuung;
 
 import javax.annotation.Nonnull;
@@ -77,4 +78,17 @@ public interface BetreuungService {
 	@Nonnull
 	Betreuung schliessenOhneVerfuegen(@Nonnull Betreuung betreuung);
 
+	/**
+	 * Gibt alle Betreuungen zurueck, welche Mutationen betreffen, die verfügt sind und deren
+	 * betreuungMutiert-Flag noch nicht gesetzt sind
+	 */
+	@Nonnull
+	List<Betreuung> getAllBetreuungenWithMissingStatistics();
+
+	/**
+	 * Gibt alle Abwesenheiten zurueck, welche Mutationen betreffen, die verfügt sind und deren
+	 * abwesenheitMutiert-Flag noch nicht gesetzt sind
+	 */
+	@Nonnull
+	List<Abwesenheit> getAllAbwesenheitenWithMissingStatistics();
 }

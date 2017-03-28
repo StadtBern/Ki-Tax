@@ -2,16 +2,18 @@
 <html>
 <head>
     <base href="">
-    <title></title>
+    <title>Ki-Tax</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta charset="utf-8">
     <!--font-->
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600,400italic' rel='stylesheet'
           type='text/css'>
+    <link rel="shortcut icon" type="image/x-icon" href="http://www.bern.ch/favicon.ico" />
 </head>
 <body class="ebegu" md-no-ink ng-class="{loaded:true}" style="opacity: 0;" dv-barcode-listener>
 
 <div id="Intro" class="logo-bern">
+    <dv-countdown  dv-show-element  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-countdown>
     <dv-home-icon></dv-home-icon>
     <dv-quicksearchbox      dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT']"></dv-quicksearchbox>
     <dv-pulldown-user-menu  dv-show-element  dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SCHULAMT']"></dv-pulldown-user-menu>
@@ -39,6 +41,10 @@
                        data-translate="MENU_FALL_EROEFFNEN"></a>
                 </li>
                 <li ui-sref-active="active" dv-show-element
+                    dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA' ,'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
+                    <a ui-sref="zahlungsauftrag" data-translate="MENU_ZAHLUNG"></a>
+                </li>
+                <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT']">
                     <a ui-sref="faelle" data-translate="MENU_ALL_FAELLE"></a>
                 </li>
@@ -48,7 +54,7 @@
                 </li>
                 <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA']">
-                    <dv-posteingang></dv-posteingang>
+                    <dv-posteingang ui-sref="posteingang"></dv-posteingang>
                 </li>
             </ul>
         </div> <!--/.nav-collapse -->

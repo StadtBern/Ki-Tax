@@ -12,7 +12,7 @@ export class TSRoleUtil {
 
     public static getAllRoles(): Array<string> {
         let result: Array<string> = [];
-        for (var prop in TSRole) {
+        for (let prop in TSRole) {
             if ((isNaN(parseInt(prop)))) {
                 result.push(prop);
             }
@@ -46,6 +46,10 @@ export class TSRoleUtil {
 
     public static getJugendamtRole(): Array<TSRole> {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.JURIST, TSRole.REVISOR];
+    }
+
+    public static getJugendamtAndSchulamtRole(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.JURIST, TSRole.REVISOR, TSRole.SCHULAMT];
     }
 
     public static getAdministratorJugendamtSchulamtRoles(): Array<TSRole> {

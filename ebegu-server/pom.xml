@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -29,19 +29,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--todo team ich kommentiere das mal aus weil ich glaube das es im shared schon drin ist-->
-        <!--<dependency>-->
-        <!--<groupId>org.hibernate</groupId>-->
-        <!--<artifactId>hibernate-envers</artifactId>-->
-        <!--<version>${version.hibernate}</version>-->
-        <!--<exclusions>-->
-        <!--<exclusion>-->
-        <!--&lt;!&ndash; mit dom4j kann orm.xml nicht geparst werden &ndash;&gt;-->
-        <!--<groupId>dom4j</groupId>-->
-        <!--<artifactId>dom4j</artifactId>-->
-        <!--</exclusion>-->
-        <!--</exclusions>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
@@ -78,6 +65,11 @@
         <dependency>
             <groupId>ch.dvbern.lib</groupId>
             <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.dvbern.lib</groupId>
+            <artifactId>dvbern-lib-iso20022-impl</artifactId>
         </dependency>
 
         <dependency>
@@ -123,8 +115,8 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-              <scope>test</scope>
-           </dependency>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>
             <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>

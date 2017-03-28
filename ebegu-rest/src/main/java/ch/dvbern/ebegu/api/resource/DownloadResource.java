@@ -58,6 +58,9 @@ public class DownloadResource {
 	private GesuchService gesuchService;
 
 	@Inject
+	private ZahlungService zahlungService;
+
+	@Inject
 	private ExportService exportService;
 
 	@Inject
@@ -71,11 +74,10 @@ public class DownloadResource {
 
 
 	@GET
-	@Path("blobdata/{accessToken}/{filename}")
+	@Path("blobdata/{accessToken}")
 	//mimetyp wird in buildDownloadResponse erraten
 	public Response downloadByAccessToken(
 		@PathParam("accessToken") String blobAccessTokenParam,
-		@PathParam("filename") String filename,
 		@MatrixParam("attachment") @DefaultValue("false") boolean attachment,
 		@Context HttpServletRequest request) {
 
@@ -346,10 +348,37 @@ public class DownloadResource {
 		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 
 		return this.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
-
 	}
 
+	@Nonnull
+	@GET
+	@Path("/{zahlungsauftragId}/PAIN001/generated")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getPain001AccessTokenGeneratedDokument(
+		@Nonnull @Valid @PathParam("zahlungsauftragId") JaxId jaxId,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
 
+		Validate.notNull(jaxId.getId());
+		String ip = getIP(request);
+
+		final Optional<Zahlungsauftrag> zahlungsauftrag = zahlungService.findZahlungsauftrag(converter.toEntityId(jaxId));
+		if (zahlungsauftrag.isPresent()) {
+
+			Pain001Dokument persistedDokument = generatedDokumentService
+				.getPain001DokumentAccessTokenGeneratedDokument(zahlungsauftrag.get(), false);
+			if (persistedDokument == null) {
+				return Response.noContent().build();
+
+			}
+			return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+
+		}
+		throw new EbeguEntityNotFoundException("getPain001AccessTokenGeneratedDokument",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "ZahlungsauftragId invalid: " + jaxId.getId());
+	}
+
+	@Nonnull
 	public Response getFileDownloadResponse(UriInfo uriInfo, String ip, FileMetadata fileMetadata) {
 		final DownloadFile downloadFile = downloadFileService.create(fileMetadata, ip);
 

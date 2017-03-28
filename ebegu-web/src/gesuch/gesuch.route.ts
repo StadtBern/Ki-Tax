@@ -7,9 +7,12 @@ import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
 import MahnungRS from './service/mahnungRS.rest';
 import {TSEingangsart} from '../models/enums/TSEingangsart';
+import KindRS from '../core/service/kindRS.rest';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ILogService = angular.ILogService;
+import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../utils/TSRoleUtil';
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -158,7 +161,7 @@ export class EbeguKinderListState implements IState {
 
     views: {[name: string]: IState} = {
         'gesuchViewPort': {
-            template: '<kinder-list-view>'
+            template: '<kinder-list-view kinder-dubletten="$resolve.kinderDubletten">'
         },
         'kommentarViewPort': {
             template: '<kommentar-view>'
@@ -166,7 +169,8 @@ export class EbeguKinderListState implements IState {
     };
 
     resolve = {
-        gesuch: getGesuchModelManager
+        gesuch: getGesuchModelManager,
+        kinderDubletten: getKinderDubletten
     };
 }
 
@@ -564,8 +568,10 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
     if ($stateParams) {
         let gesuchIdParam = $stateParams.gesuchId;
         if (gesuchIdParam) {
-            if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParam) {
+            if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParam
+                || gesuchModelManager.getGesuch().emptyMutation) {
                 // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId ueberreinstimmt wird das gesuch neu geladen
+                // Ebenfalls soll das Gesuch immer neu geladen werden, wenn es sich beim Gesuch im Gesuchmodelmanager um eine leere Mutation handelt
                 berechnungsManager.clear();
                 return gesuchModelManager.openGesuch(gesuchIdParam);
             } else {
@@ -605,6 +611,20 @@ export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager,
     }
     $log.warn('no state params available fo page fallCreation, this is probably a bug');
     return $q.defer(gesuchModelManager.getGesuch());
+}
+
+getKinderDubletten.$inject = ['$stateParams', '$q', '$log', 'KindRS', 'AuthServiceRS'];
+/* @ngInject */
+// todo fragen wird dies nicht immer aufgerufen? warum nicht direkt in constructor?
+export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQService, $log: ILogService, KindRS: KindRS, authService: AuthServiceRS) {
+    let isAdmin: boolean = authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    if (isAdmin && $stateParams && $stateParams.gesuchId) {
+        let gesuchIdParam = $stateParams.gesuchId;
+        return KindRS.getKindDubletten(gesuchIdParam);
+    }
+    let deferred = $q.defer();
+    deferred.resolve(undefined);
+    return deferred.promise;
 }
 
 createEmptyMutation.$inject = ['GesuchModelManager', '$stateParams', '$q'];

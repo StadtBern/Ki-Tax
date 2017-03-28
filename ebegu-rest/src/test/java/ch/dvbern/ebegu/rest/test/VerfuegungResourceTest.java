@@ -49,7 +49,7 @@ public class VerfuegungResourceTest extends AbstractEbeguRestLoginTest {
 		verfuegungJax.setGeneratedBemerkungen("genBemerkung");
 		verfuegungJax.setManuelleBemerkungen("manBemerkung");
 
-		final JaxVerfuegung persistedVerfuegung = verfuegungResource.saveVerfuegung(new JaxId(gesuch.getId()), new JaxId(betreuung.getId()), verfuegungJax);
+		final JaxVerfuegung persistedVerfuegung = verfuegungResource.saveVerfuegung(new JaxId(gesuch.getId()), new JaxId(betreuung.getId()), false, verfuegungJax);
 
 		Assert.assertEquals(verfuegungJax.getGeneratedBemerkungen(), persistedVerfuegung.getGeneratedBemerkungen());
 		Assert.assertEquals(verfuegungJax.getManuelleBemerkungen(), persistedVerfuegung.getManuelleBemerkungen());

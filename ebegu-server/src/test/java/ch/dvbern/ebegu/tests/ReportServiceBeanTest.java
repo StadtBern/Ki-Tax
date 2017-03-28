@@ -7,24 +7,31 @@ import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.ReportService;
-import ch.dvbern.ebegu.services.WizardStepService;
+import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
+import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -43,7 +50,7 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	private ReportService reportService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence<?> persistence;
 
 	@Inject
 	private InstitutionService institutionService;
@@ -55,66 +62,106 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	private WizardStepService wizardStepService;
 
 	@Inject
+	private ZahlungService zahlungService;
+
+	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Before
 	public void init() {
 		// Aufbau der Testdaten:
-		// 5 Fälle, 6 Gesuche (d.h. 1 Gesuch mit Mutation)
+		// 7 Fälle, 10 Gesuche (d.h. 3 Gesuch mit Mutation)
 		// Je einmal Mahnung, Beschwerde, Nicht-Freigegeben, Nicht-Eintreten, Abwesenheit
 		Collection<Mandant> allMandant = criteriaQueryHelper.getAll(Mandant.class);
-		Collection<Gesuchsperiode> allGesuchsperiode = criteriaQueryHelper.getAll(Gesuchsperiode.class); //1
-		Collection<Fall> allFall = criteriaQueryHelper.getAll(Fall.class);//6
-		Collection<Gesuch> allGesuch = criteriaQueryHelper.getAll(Gesuch.class);//7
+		Collection<Gesuchsperiode> allGesuchsperiode = criteriaQueryHelper.getAll(Gesuchsperiode.class);
+		Collection<Fall> allFall = criteriaQueryHelper.getAll(Fall.class);
+		Collection<Gesuch> allGesuch = criteriaQueryHelper.getAll(Gesuch.class);
 
 		Assert.assertEquals("1 Mandant aus File, einer aus Superklasse", 2, allMandant.size());
 		Assert.assertEquals(1, allGesuchsperiode.size());
-		Assert.assertEquals(6, allFall.size());
-		Assert.assertEquals(7, allGesuch.size());
+		Assert.assertEquals(7, allFall.size());
+		Assert.assertEquals(10, allGesuch.size());
 	}
 
 	@Test
-	@Ignore //TODO (medu): Test laeuft im Moment nicht durch, da Mutationen Betreuung und Abwesenheit immer fuer alle Betreuungen des Gesuchs gezaehlt werden!
 	public void testGetReportDataGesuchStichtag() throws Exception {
 		List<GesuchStichtagDataRow> reportData = reportService.getReportDataGesuchStichtag(LocalDateTime.now(), null);
 
-		assertNotNull(reportData);
-		// Wir haben je 1 Gesuch mit Mahnung, 1 Gesuch mit Beschwerde und 1 nicht freigegebenes Gesuch
-		assertEquals(4, reportData.size());
-		// Fall 105 mit 2 Betreuungen: Mahnung
-		assertGesuchStichtagDataRow(reportData.get(0), "17.000105.2.1", 0, 1, 0);
-		assertGesuchStichtagDataRow(reportData.get(1), "17.000105.1.1", 0, 1, 0);
-		// Fall 107 mit 1 Betreuung: Nicht freigegeben
-		assertGesuchStichtagDataRow(reportData.get(2), "17.000107.1.1", 1, 0, 0);
-		// Fall 104 mit 1 Betreuung: Beschwerde
-		assertGesuchStichtagDataRow(reportData.get(3), "17.000104.1.1", 0, 0, 1);
+		List<GesuchStichtagDataRow> rowsSorted = reportData
+			.stream()
+			.sorted(Comparator.comparing(GesuchStichtagDataRow::getBgNummer).thenComparing(GesuchStichtagDataRow::getGesuchLaufNr))
+			.collect(Collectors.toList());
+
+		assertNotNull(rowsSorted);
+		// Wir haben je 1 Gesuch mit Mahnung, 1 Gesuch mit Beschwerde
+		assertEquals(2, rowsSorted.size());
+		// Fall 103: Mahnung
+		assertGesuchStichtagDataRow(rowsSorted.get(0), "17.000103.1.1", 0, 1, 0);
+		// Fall 104: Beschwerde
+		assertGesuchStichtagDataRow(rowsSorted.get(1), "17.000104.1.1", 0, 0, 1);
 	}
 
 	@Test
-	@Ignore //TODO (medu): Test laeuft im Moment nicht durch, da Mutationen Betreuung und Abwesenheit immer fuer alle Betreuungen des Gesuchs gezaehlt werden!
 	public void testGetReportDataGesuchZeitraumTest() throws Exception {
 		List<GesuchZeitraumDataRow> reportData = reportService.getReportDataGesuchZeitraum(
-			LocalDateTime.now().minusDays(1),
-			LocalDateTime.now().plusDays(1),
+			LocalDateTime.of(2016, Month.JANUARY, 1, 0, 0, 0),
+			LocalDateTime.of(2017, Month.DECEMBER, 31, 0, 0, 0),
 			null);
 
-		assertNotNull(reportData);
-		assertEquals(7, reportData.size());
-		// Fall 102 mit2 Betreuungen, Erstgesuch plus Mutation. Die zweite Betreuung kam in der Mutation dazu
-		// Fall 102: Betreuung 1: Kommt einmal im Gesuch (verfügt) und einmal in der Mutation vor (Mutation Betreuung und Abwesenheit)
-		// Mutation
-		assertGesuchZeitraumDataRow(reportData.get(0), "17.000102.1.1", 1, 1, 0, 0, 0, 0, 0);
-		// Erstgesuch
-		assertGesuchZeitraumDataRow(reportData.get(1), "17.000102.1.1", 0, 0, 0, 0, 1, 1, 0);
-		// Fall 102: Betreuung 2: Erst in Mutation hinzugekommen
-		assertGesuchZeitraumDataRow(reportData.get(0), "17.000102.1.2", 1, 1, 0, 0, 0, 0, 0);
+		List<GesuchZeitraumDataRow> rowsSorted = reportData
+			.stream()
+			.sorted(Comparator.comparing(GesuchZeitraumDataRow::getBgNummer).thenComparing(GesuchZeitraumDataRow::getGesuchLaufNr))
+			.collect(Collectors.toList());
+
+		assertNotNull(rowsSorted);
+		assertEquals(15, rowsSorted.size());
+
+		// 101 Verfuegt mit Nicht eintreten
+		// 102 Normal Verfuegt
+		// 103 Mahnung
+		// 104: Verfuegt mit Beschwerde
+		// 105: Neues Kind mit Betreuung
+		// 106: Abwesenheit
+		// 107: Kind Name
+
+		// Fall 101: Verfuegt mit nichtEintreten
+		// Betreuung 1: Verfuegt mit Nicht-Eintreten
+		assertGesuchZeitraumDataRow(rowsSorted.get(0), "17.000101.1.1", 0, 0, 0, 0, 0, 1, 0, 1);
+		// Betreuung 2: Verfuegt normal
+		assertGesuchZeitraumDataRow(rowsSorted.get(1), "17.000101.1.2", 0, 0, 0,0, 0, 1, 0, 0);
+
+		// Fall 102: Normal verfuegt, 2 Kinder
+		assertGesuchZeitraumDataRow(rowsSorted.get(2), "17.000102.1.1", 0, 0, 0,0, 0, 1, 1, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(3), "17.000102.2.1", 0, 0, 0,0, 0, 1, 1, 0);
+
+		// Fall 103: Mahnung
+		assertGesuchZeitraumDataRow(rowsSorted.get(4), "17.000103.1.1", 0, 0, 0,1, 0, 0, 0, 0);
+
 		// Fall 104: Verfuegt, mit Beschwerde
-		assertGesuchZeitraumDataRow(reportData.get(1), "17.000104.1.1", 0, 0, 0, 1, 1, 1, 0);
-		// Fall 106: Verfuegt mit Nicht-Eintreten
-		assertGesuchZeitraumDataRow(reportData.get(1), "17.000106.1.1", 0, 0, 0, 0, 1, 0, 1);
-		// Fall 105 mit 2 Kindern mit je 1 Betreuung: Mahnung
-		assertGesuchZeitraumDataRow(reportData.get(1), "17.000105.1.1", 0, 0, 1, 0, 0, 0, 0);
-		assertGesuchZeitraumDataRow(reportData.get(1), "17.000105.2.1", 0, 0, 1, 0, 0, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(5), "17.000104.1.1", 0, 0, 0,0, 1, 1, 0, 0);
+
+		// Fall 105:
+		// Erstgesuch
+		assertGesuchZeitraumDataRow(rowsSorted.get(6), "17.000105.1.1", 0, 0, 0,0, 0, 1, 1, 0);
+		// Mutation
+		// Kind 1: Schon im Erstgesuch vorhanden, in Mutation unverändert
+		assertGesuchZeitraumDataRow(rowsSorted.get(7), "17.000105.1.1", 0, 0, 0,0, 0, 1, 1, 0);
+		// Kind 2: Neu auf Mutation inkl. Betreuung
+		assertGesuchZeitraumDataRow(rowsSorted.get(8), "17.000105.2.1", 0, 1, 1,0, 0, 1, 1, 0);
+
+		// Fall 106: Mutation mit Abwesenheit
+		// Erstgesuch
+		assertGesuchZeitraumDataRow(rowsSorted.get(9), "17.000106.1.1", 0, 0, 0,0, 0, 1, 1, 0);
+		// Mutation
+		assertGesuchZeitraumDataRow(rowsSorted.get(10), "17.000106.1.1", 1, 0, 0,0, 0, 1, 1, 0);
+
+		// Fall 107: Mutation Kind Name
+		// Betreuung 1
+		assertGesuchZeitraumDataRow(rowsSorted.get(11), "17.000107.1.1", 0, 0, 0,0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(12), "17.000107.1.1", 0, 0, 1,0, 0, 1, 0, 0);
+		// Betreuung 2
+		assertGesuchZeitraumDataRow(rowsSorted.get(13), "17.000107.1.2", 0, 0, 0,0, 0, 1, 0, 0);
+		assertGesuchZeitraumDataRow(rowsSorted.get(14), "17.000107.1.2", 0, 0, 1,0, 0, 1, 0, 0);
 	}
 
 	private void assertGesuchStichtagDataRow(GesuchStichtagDataRow row, String bgNummer, Integer nichtFreigegeben, Integer mahnung, Integer beschwerde) {
@@ -126,13 +173,14 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	private void assertGesuchZeitraumDataRow(GesuchZeitraumDataRow row, String bgNummer,
-											 Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung,
+											 Integer anzahlMutationAbwesenheit, Integer anzahlMutationBetreuung, Integer anzahlMutationKind,
 											 Integer anzahlMahnungen, Integer anzahlBeschwerde, Integer anzahlVerfuegungen,
 											 Integer anzahlVerfuegungenNormal, Integer anzahlVerfuegungenNichtEintreten) {
 		assertNotNull(row);
 		assertEquals(bgNummer, row.getBgNummer());
 		assertEquals(anzahlMutationAbwesenheit, row.getAnzahlMutationAbwesenheit());
 		assertEquals(anzahlMutationBetreuung, row.getAnzahlMutationBetreuung());
+		assertEquals(anzahlMutationKind, row.getAnzahlMutationKinder());
 		assertEquals(anzahlMahnungen, row.getAnzahlMahnungen());
 		assertEquals(anzahlBeschwerde, row.getAnzahlBeschwerde());
 		assertEquals(anzahlVerfuegungen, row.getAnzahlVerfuegungen());
@@ -147,7 +195,6 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 			null);
 
 		assertNotNull(uploadFileInfo.getBytes());
-
 		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchStichtag.xlsx");
 	}
 
@@ -160,5 +207,73 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		assertNotNull(uploadFileInfo.getBytes());
 		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchZeitraum.xlsx");
+	}
+
+	@Test
+	public void generateExcelReportZahlungAuftrag() throws Exception {
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportZahlungAuftrag("5a1fde7d-991a-4aef-8de2-43387db4f87d");
+
+		assertNotNull(uploadFileInfo);
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportZahlungAuftrag.xlsx");
+	}
+
+	@Test
+	public void generateExcelReportKanton() throws Exception {
+		Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
+		for (Gesuch gesuch : allGesuche) {
+			if (gesuch.getStatus().isAnyStatusOfVerfuegt()) {
+				System.out.println("verfuegtes Gesuch: " + gesuch.getId());
+			}
+		}
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportKanton(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE);
+
+		assertNotNull(uploadFileInfo.getBytes());
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportKanton.xlsx");
+	}
+
+	@Test
+	public void testGenerateExcelReportMitarbeiterinnen() throws Exception {
+		gesuchService.getAllGesuche();
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportMitarbeiterinnen(TestDataUtil.START_PERIODE, TestDataUtil.ENDE_PERIODE);
+
+		assertNotNull(uploadFileInfo.getBytes());
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportMitarbeiterinnen.xlsx");
+	}
+
+	@Test
+	public void testGetReportMitarbeiterinnen() throws Exception {
+		final List<MitarbeiterinnenDataRow> reportMitarbeiterinnen = reportService.getReportMitarbeiterinnen(LocalDate.of(1000, 1, 1), TestDataUtil.ENDE_PERIODE);
+		Assert.assertNotNull(reportMitarbeiterinnen);
+		Assert.assertEquals(3, reportMitarbeiterinnen.size());
+
+		//case with only Gesuche als Verantwortlicher
+		Assert.assertEquals("Blaser", reportMitarbeiterinnen.get(0).getName());
+		Assert.assertEquals(BigDecimal.valueOf(2), reportMitarbeiterinnen.get(0).getVerantwortlicheGesuche());
+		Assert.assertEquals(BigDecimal.ZERO, reportMitarbeiterinnen.get(0).getVerfuegungenAusgestellt());
+
+		//case with only verfuegte Gesuche
+		Assert.assertEquals("Bogabante", reportMitarbeiterinnen.get(1).getName());
+		Assert.assertEquals(BigDecimal.ZERO, reportMitarbeiterinnen.get(1).getVerantwortlicheGesuche());
+		Assert.assertEquals(BigDecimal.ONE, reportMitarbeiterinnen.get(1).getVerfuegungenAusgestellt());
+
+		//case with both verfuegte Gesuche und Gesuche als Verantwortlicher
+		Assert.assertEquals("Superuser", reportMitarbeiterinnen.get(2).getName());
+		Assert.assertEquals(BigDecimal.valueOf(7), reportMitarbeiterinnen.get(2).getVerantwortlicheGesuche());
+		Assert.assertEquals(BigDecimal.valueOf(9), reportMitarbeiterinnen.get(2).getVerfuegungenAusgestellt()); // 8 VERFUEGT 1 BESCHWERDE_HAENGIG
+
+		// case with no Gesuche at all are not shown
+
+		// Der Benutzer System kommt nicht auf der Liste weil er SUPERADMIN ist
+	}
+
+	@Test
+	public void generateExcelReportGesuchstellerKinderBetreuung() throws Exception {
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchstellerKinderBetreuung(
+			LocalDate.of(2016, Month.JANUARY, 1),
+			LocalDate.of(2018, Month.DECEMBER, 31),
+			null);
+
+		assertNotNull(uploadFileInfo.getBytes());
+		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchstellerKinderBetreuung.xlsx");
 	}
 }

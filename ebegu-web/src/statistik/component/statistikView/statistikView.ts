@@ -28,14 +28,15 @@ export class StatistikViewController {
     private _gesuchsperioden: Array<TSGesuchsperiode>;
     TSRole: any;
     TSRoleUtil: any;
-    private DATETIME_PARAM_FORMAT: string = 'YYYY-MM-DD HH:mm:ss';
+    private DATETIME_PARAM_FORMAT: string = 'YYYY-MM-DD HH:mm:ss'; //TODO (team) wieso hier DateTime???
+    private DATE_PARAM_FORMAT: string = 'YYYY-MM-DD';
 
     static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportRS', 'DownloadRS'];
 
     constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService, private reportRS: ReportRS, private downloadRS: DownloadRS) {
     }
 
-    $onInit(){
+    $onInit() {
         this._statistikParameter = new TSStatistikParameter();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
             this._gesuchsperioden = response;
@@ -74,13 +75,75 @@ export class StatistikViewController {
                         });
                     break;
                 }
-                case TSStatistikParameterType.KINDER:
+                case TSStatistikParameterType.KINDER: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getKinderReportExcel(
+                        this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                        .then((downloadFile: TSDownloadFile) => {
+
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
                     break;
-                case TSStatistikParameterType.GESUCHSTELLER:
+                }
+                case TSStatistikParameterType.GESUCHSTELLER: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getGesuchstellerReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT))
+                        .then((downloadFile: TSDownloadFile) => {
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
                     break;
-                case TSStatistikParameterType.KANTON:
+                }
+                case TSStatistikParameterType.KANTON: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
+                        .then((downloadFile: TSDownloadFile) => {
+
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
                     break;
-                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
+                }
+                case TSStatistikParameterType.MITARBEITERINNEN: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getMitarbeiterinnenReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
+                        .then((downloadFile: TSDownloadFile) => {
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
+                    break;
+                }
+                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getGesuchstellerKinderBetreuungReportExcel(
+                        this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                        .then((downloadFile: TSDownloadFile) => {
+
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
+                    break;
+                }
+                case TSStatistikParameterType.ZAHLUNGEN_PERIODE:
+                    if (this._statistikParameter.gesuchsperiode) {
+                        let win: Window = this.downloadRS.prepareDownloadWindow();
+                        this.reportRS.getZahlungPeriodeReportExcel(
+                            this._statistikParameter.gesuchsperiode)
+                            .then((downloadFile: TSDownloadFile) => {
+
+                                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                            });
+                    } else {
+                        this.$log.warn('gesuchsperiode muss gewählt sein');
+                    }
                     break;
                 default:
                     this.$log.debug('default, Type not recognized');

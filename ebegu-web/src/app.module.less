@@ -15,6 +15,13 @@
 @import 'style/mixins.less';
 @import 'style/mediaqueries.less';
 @import 'style/typography.less';
+
+dv-posteingang {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
 /* Add Component LESS Above */
 .loaded {
     opacity: 1 !important;
@@ -67,6 +74,7 @@ body {
 .overflow-hidden {
     overflow: hidden;
 }
+
 .overflow-auto {
     overflow: auto;
 }
@@ -106,8 +114,10 @@ body {
     z-index: @z-index-navbar;
 }
 
-dv-home-icon {
-    margin-left: auto;
+dv-home-icon, dv-countdown {
+    &:first-child {
+        margin-left: auto;
+    }
     display: flex;
     width: @navbar-height;
     text-align: center;
@@ -125,7 +135,12 @@ dv-pulldown-user-menu {
     background-position: left 0.7rem center;
 }
 
-.logo-house {
+.logo-house, .dv-countdown-countdown {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -o-user-select: none;
     vertical-align: middle;
     padding: 0;
     height: @navbar-height;
@@ -134,6 +149,11 @@ dv-pulldown-user-menu {
     &:hover {
         background-color: @contrast-light;
     }
+}
+
+.dv-countdown-countdown:hover {
+    background-color: transparent;
+    cursor: default;
 }
 
 .logo-text {
@@ -166,7 +186,7 @@ dv-pulldown-user-menu {
     background-color: @background-error-color;
 }
 
-//todo das braucht es wohl gar nicht mehr
+//todo (mrra) das braucht es wohl gar nicht mehr
 .form-horizontal {
     dv-error-messages {
         padding-left: 0.1rem;
@@ -224,7 +244,7 @@ md-dialog.md-default-theme, md-dialog {
 
 .md-virtual-repeat-container.md-autocomplete-suggestions-container {
     max-height: 99999999px !important;
-    z-index: @z-index-mobile-toolbar; //todo mara das ist wohl nicht so gut
+    z-index: @z-index-mobile-toolbar; //todo (mrra) Kannst du das  anschauen? das ist evtl. nicht so gut
     box-shadow: none;
 }
 
@@ -254,7 +274,7 @@ dv-quicksearchbox {
 
         md-autocomplete-wrap {
             height: @navbar-height;
-            input{
+            input {
                 transition: all 0.5s ease;
             }
 

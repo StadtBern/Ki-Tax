@@ -9,8 +9,8 @@
  */
 package ch.dvbern.ebegu.reporting.gesuchstichtag;
 
-import ch.dvbern.ebegu.reporting.lib.ExcelConverter;
-import ch.dvbern.ebegu.reporting.lib.ExcelMergerDTO;
+import ch.dvbern.lib.excelmerger.ExcelConverter;
+import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import javax.annotation.Nonnull;
@@ -40,6 +40,7 @@ public class GeuschStichtagExcelConverter implements ExcelConverter {
 		data.forEach(dataRow -> {
 				ExcelMergerDTO excelRowGroup = sheet.createGroup(MergeFieldGesuchStichtag.repeatGesuchStichtagRow);
 				excelRowGroup.addValue(MergeFieldGesuchStichtag.bgNummer, dataRow.getBgNummer());
+				excelRowGroup.addValue(MergeFieldGesuchStichtag.gesuchLaufNr, dataRow.getGesuchLaufNr());
 				excelRowGroup.addValue(MergeFieldGesuchStichtag.institution, dataRow.getInstitution());
 				excelRowGroup.addValue(MergeFieldGesuchStichtag.betreuungsTyp, dataRow.getBetreuungsTyp());
 				excelRowGroup.addValue(MergeFieldGesuchStichtag.periode, dataRow.getPeriode());

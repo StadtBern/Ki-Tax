@@ -12,9 +12,15 @@
         background: none;
     }
     margin-bottom: 1rem;
-    padding:0 1.5rem 0;
+    padding: 0 1.5rem 0;
+    *{
+        padding: 0 !important;
+    }
 }
-
+.md-dense :not(.md-dense-disabled) .md-button:not(.md-dense-disabled){
+    min-height: 4rem !important;
+    line-height: 4rem !important;
+}
 .menu-item-link {
     .menu-item-link();
     background: @secondary;
@@ -35,7 +41,7 @@
         background: none;
         .menu-item-link();
         padding: 0 2rem 0;
-        &:hover, &.md-default-theme:not([disabled]).md-focused, &:not([disabled]).md-focused,&:focus{
+        &:hover, &.md-default-theme:not([disabled]).md-focused, &:not([disabled]).md-focused, &:focus {
             background: none;
             outline: 0;
             -webkit-box-shadow: none;
@@ -66,7 +72,7 @@
         .menu-item-link();
         background: none;
         padding: 0 2rem 0;
-        &:hover, &.md-default-theme:not([disabled]).md-focused, &:not([disabled]).md-focused, &:focus{
+        &:hover, &.md-default-theme:not([disabled]).md-focused, &:not([disabled]).md-focused, &:focus {
             background: @primary-dark;
             outline: 0;
             -webkit-box-shadow: none;
@@ -109,7 +115,7 @@
     span:first-child {
         margin-top: 2rem;
     }
-    a:last-child {
+    a:last-child, span:last-child {
         margin-bottom: 2rem;
     }
 
@@ -232,7 +238,7 @@
             margin: 0;
 
             &:hover, &:focus {
-                background: @primary;
+                background: @primary-dark;
                 outline: 0;
                 -webkit-box-shadow: none;
                 box-shadow: none;
@@ -293,10 +299,10 @@
     background: @primary;
     .gesuchsperioden-container {
         width: 100%;
-        display:block;
+        display: block;
     }
     button.gesuchsperiode-button, button.antrag-typ-datum-button {
-        & > span  {
+        & > span {
             .ebeguBold();
             letter-spacing: 0.15rem;
             font-size: 1.6rem;

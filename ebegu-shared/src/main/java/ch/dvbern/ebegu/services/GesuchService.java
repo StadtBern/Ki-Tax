@@ -215,9 +215,19 @@ public interface GesuchService {
 	List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
+	 * Gibt pro Fall den neuesten freigegebenen Antrag für eine Gesuchsperiode zurück.
+	 * Es wird *keine* Leseberechtigung geprüft, d.h. es werden sowohl JA-Angebote wie auch Nur-Schulamt
+	 * zurückgegeben!
+	 */
+	@Nonnull
+	List<String> getNeuesteFreigegebeneAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
 	 * Gibt die Antrags-Ids aller Antraege zurueck, welche im uebergebenen Zeitraum verfuegt wurden.
 	 * Falls es mehrere fuer denselben Fall hat, wird nur der letzte (hoechste Laufnummer) zurueckgegeben
 	 */
 	@Nonnull
 	List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis);
+
+	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 }

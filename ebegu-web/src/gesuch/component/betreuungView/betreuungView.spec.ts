@@ -48,6 +48,7 @@ describe('betreuungView', function () {
         $stateParams = $injector.get('$stateParams');
         spyOn(gesuchModelManager, 'getKindToWorkWith').and.returnValue(kind);
         spyOn(gesuchModelManager, 'convertKindNumberToKindIndex').and.returnValue(0);
+        spyOn(gesuchModelManager, 'isNeuestesGesuch').and.returnValue($q.when(true));
         // model = betreuung;
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.callFake(() => {
              // wenn betreuung view ihr model schon kopiert hat geben wir das zurueck, sonst sind wir noch im constructor der view und geben betreuung zurueck
@@ -60,7 +61,7 @@ describe('betreuungView', function () {
         wizardStepManager = $injector.get('WizardStepManager');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
             $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS,
-            wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), undefined);
+            wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), $injector.get('$log'));
         betreuungView.model = betreuung;
 
         betreuungView.form = TestDataUtil.createDummyForm();
@@ -216,6 +217,7 @@ describe('betreuungView', function () {
         spyOn($state, 'go');
         spyOn(gesuchModelManager, 'saveBetreuung').and.returnValue(promiseResponse);
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+        TestDataUtil.mockLazyGesuchModelManagerHttpCalls($httpBackend);
         betreuungView.platzAnfordern();
         $rootScope.$apply();
         expect(gesuchModelManager.saveBetreuung).toHaveBeenCalled();

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungStatus;
 import ch.dvbern.ebegu.util.MathUtil;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 @Audited
 @Entity
-public class Zahlung extends AbstractEntity {
+public class Zahlung extends AbstractEntity implements Comparable<Zahlung>{
 
 	private static final long serialVersionUID = 8975199813240034719L;
 
@@ -76,18 +77,24 @@ public class Zahlung extends AbstractEntity {
 		this.zahlungspositionen = zahlungspositionen;
 	}
 
-	public BigDecimal getTotal() {
+	/**
+	 * Addiert die Betraege aller Zahlungspositionen die nicht ignoriert sind.
+	 */
+	public BigDecimal getBetragTotalZahlung() {
 		BigDecimal total = BigDecimal.ZERO;
 		for (Zahlungsposition zahlungsposition : zahlungspositionen) {
-			if (zahlungsposition.getStatus().isAuszuzahlen()) {
+			if (!zahlungsposition.isIgnoriert()) {
 				total = MathUtil.DEFAULT.add(total, zahlungsposition.getBetrag());
 			}
 		}
 		return total;
 	}
 
-	//TODO: Schlauer Zahlugstext finden
-	public String getZahlungstext() {
-		return getTotal() + " " + getInstitutionStammdaten().getInstitution().getName();
+	@Override
+	public int compareTo(@Nonnull Zahlung o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getInstitutionStammdaten().getInstitution().getName(), o.getInstitutionStammdaten().getInstitution().getName());
+		builder.append(this.getZahlungsauftrag().getDatumFaellig(), o.getZahlungsauftrag().getDatumFaellig());
+		return builder.toComparison();
 	}
 }

@@ -9,7 +9,9 @@ import javax.persistence.ManyToOne;
 
 /**
  * Entity fuer BetreuungsmitteilungPensum.
+ * Note: this class has a natural ordering that is inconsistent with equals.
  */
+@SuppressWarnings("ComparableImplementedButEqualsNotOverridden")
 @Audited
 @Entity
 public class BetreuungsmitteilungPensum extends AbstractPensumEntity implements Comparable<BetreuungsmitteilungPensum> {

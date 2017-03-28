@@ -168,7 +168,7 @@ public class FedletSamlServlet extends HttpServlet {
 	 * Wir haben per proeprty eine email definiert dem wir immer Super-User zuweisen
 	 */
 	private void checkForSuperuserMail(Benutzer benutzer) {
-		if (benutzer.getEmail().equals(superUserEmail)) {
+		if (benutzer.getEmail().equalsIgnoreCase(superUserEmail)) {
 			benutzer.setRole(UserRole.SUPER_ADMIN);
 		}
 	}
@@ -220,18 +220,16 @@ public class FedletSamlServlet extends HttpServlet {
 		// Cookie to store auth_token, HTTP-Only Cookie --> Protection from XSS
 		Cookie authCookie = new Cookie(AuthDataUtil.COOKIE_AUTH_TOKEN, userAuth.getAuthToken());
 		authCookie.setComment("authentication");
-//			authCookie.setDomain(".");
 		authCookie.setPath(COOKIE_PATH);
 		authCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
 		boolean useSecureCookies = this.configuration.isClientUsingHTTPS();
-		authCookie.setSecure(useSecureCookies);    //todo fuer dev env loesung finden oder configurierbar machen
+		authCookie.setSecure(useSecureCookies);
 		authCookie.setHttpOnly(true);
 		response.addCookie(authCookie);
 
 		// Readable Cookie for XSRF Protection (the Cookie can only be read from our Domain)
 		Cookie xsrfCookie = new Cookie(AuthDataUtil.COOKIE_XSRF_TOKEN, userAuth.getXsrfToken());
 		xsrfCookie.setComment("xsfr prevention");
-//			xsrfCookie.setDomain(".");
 		xsrfCookie.setPath(COOKIE_PATH);
 		xsrfCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
         xsrfCookie.setSecure(useSecureCookies);
@@ -243,7 +241,6 @@ public class FedletSamlServlet extends HttpServlet {
 		JaxAuthAccessElement element = converter.authAccessElementToJax(userAuth);
 		Cookie principalCookie = new Cookie(AuthDataUtil.COOKIE_PRINCIPAL, encodeAuthAccessElement(element));
 		principalCookie.setComment("principal");
-//			principalCookie.setDomain(".");
 		principalCookie.setPath(COOKIE_PATH);
 		principalCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
 		principalCookie.setSecure(useSecureCookies);

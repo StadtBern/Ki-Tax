@@ -5,25 +5,22 @@ import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
 import ch.dvbern.ebegu.enums.ZahlungStatus;
 import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.GesuchsperiodeService;
-import ch.dvbern.ebegu.services.TestfaelleService;
-import ch.dvbern.ebegu.services.ZahlungService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJBException;
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -52,21 +49,22 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
+	private VerfuegungService verfuegungService;
+
+	@Inject
 	private Persistence<?> persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 	private Gesuchsperiode gesuchsperiode;
-	private int JAHR_1, JAHR_2;
 	private LocalDate DATUM_FAELLIG = LocalDate.now().plusDays(3);
 
 
 	@Before
 	public void init() {
 		gesuchsperiode = createGesuchsperiode(true);
-		Mandant mandant = insertInstitutionen();
-		createBenutzer(mandant);
+		insertInstitutionen();
 		TestDataUtil.prepareParameters(gesuchsperiode.getGueltigkeit(), persistence);
 	}
 
@@ -97,14 +95,14 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void zahlungsauftragErstellenNormal() throws Exception {
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 
 		Assert.assertNotNull(zahlungsauftrag);
 		Assert.assertNotNull(zahlungsauftrag.getZahlungen());
 		Assert.assertFalse(zahlungsauftrag.getZahlungen().isEmpty());
 	}
 
-	@Test(expected = EJBException.class)
+	@Test(expected = EbeguRuntimeException.class)
 	public void zahlungsauftragErstellenZweiEntwuerfe() {
 		zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Entwurf 1");
 		// Es darf kein zweiter Auftrag erstellt werden, solange der erste nicht freigegeben ist
@@ -112,20 +110,32 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
+	public void zahlungsauftragErstellenMitNachzahlung() {
+		createGesuch(true);
+		// Anzahl Zahlungen: Anzahl Monate seit Periodenbeginn, inkl. dem aktuellen
+		long countMonate = ChronoUnit.MONTHS.between(gesuchsperiode.getGueltigkeit().getGueltigAb(), LocalDate.now()) + 1;
+
+		// Die erste Zahlung ueberhaupt wird normal durchgefuehrt
+		Zahlungsauftrag zahlungsauftrag1 = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Normaler Auftrag");
+		assertZahlungErstgesuch(countMonate, zahlungsauftrag1);
+
+		// Fuer die 2. Zahlung, die eine repetition ist, werden auch neue Gesuche beruecksichtigt, obwohl ihre Abschnitte in der Vergangenheit liegen
+		createGesuch(true);
+		// Zahlung ausloesen
+		Zahlungsauftrag zahlungsauftrag2 = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "nachtraeglicher Auftrag");
+		assertZahlungErstgesuch(countMonate, zahlungsauftrag2);
+	}
+
+	@SuppressWarnings("ReuseOfLocalVariable")
+	@Test
 	public void zahlungsauftragErstellenMitKorrektur() throws Exception {
 		Gesuch erstgesuch = createGesuch(true);
 		// Anzahl Zahlungen: Anzahl Monate seit Periodenbeginn, inkl. dem aktuellen
-		long countMonate = ChronoUnit.MONTHS.between(gesuchsperiode.getGueltigkeit().getGueltigAb(), LocalDate.now())+1;
+		long countMonate = ChronoUnit.MONTHS.between(gesuchsperiode.getGueltigkeit().getGueltigAb(), LocalDate.now()) + 1;
 
 		// Zahlung ausloesen
 		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Normaler Auftrag");
-		assertZahlungsauftrag(zahlungsauftrag, 1);
-		Zahlung zahlung = zahlungsauftrag.getZahlungen().get(0);
-		assertZahlung(zahlung, countMonate);
-		for (int i = 0; i < countMonate; i++) {
-			assertZahlungsdetail(zahlung.getZahlungspositionen().get(i), ZahlungspositionStatus.NORMAL, 1289.30);
-		}
-		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
+		assertZahlungErstgesuch(countMonate, zahlungsauftrag);
 
 		// Jetzt sollten keine offenen mehr vorhanden sein:
 		zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Normaler Auftrag wiederholt");
@@ -133,35 +143,35 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
 
 		// Eine (verfuegte) Mutation erstellen, welche rueckwirkende Auswirkungen hat auf Vollkosten
-		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), true);
+		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb());
 		zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Auftrag mit Mutation der Vollkosten (Betreuungspensum)");
 		assertZahlungsauftrag(zahlungsauftrag, 1);
-		zahlung = zahlungsauftrag.getZahlungen().get(0);
-		assertZahlung(zahlung, countMonate*2);
+		Zahlung zahlung = zahlungsauftrag.getZahlungen().get(0);
+		assertZahlung(zahlung, countMonate * 2);
 		for (int i = 0; i < countMonate; i++) {
-			int position = i*2;
+			int position = i * 2;
 			// Pro Monat gibt es eine Korrekturbuchung und eine Neubuchung
 			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position), ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, 1074.40);
-			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position+1), ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, -1289.30d);
+			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position + 1), ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, -1289.30d);
 		}
 		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
 
 		// Eine weitere (verfuegte) Mutation, welche den Elternbeitrag erhoeht:
-		createMutationEinkommen(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), true);
+		createMutationEinkommen(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb());
 		zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Auftrag mit Mutation des Lohns (Elternbeitrag)");
 		assertZahlungsauftrag(zahlungsauftrag, 1);
 		zahlung = zahlungsauftrag.getZahlungen().get(0);
-		assertZahlung(zahlung, countMonate*2);
+		assertZahlung(zahlung, countMonate * 2);
 		for (int i = 0; i < countMonate; i++) {
-			int position = i*2;
+			int position = i * 2;
 			// Pro Monat gibt es eine Korrekturbuchung und eine Neubuchung
 			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position), ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG, 923.40);
-			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position+1), ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG, -1074.40d);
+			assertZahlungsdetail(zahlung.getZahlungspositionen().get(position + 1), ZahlungspositionStatus.KORREKTUR_ELTERNBEITRAG, -1074.40d);
 		}
 		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
 
 		// Eine (NICHT verfuegte) Mutation erstellen -> Keine Auswirkungen!
-		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), false);
+		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb());
 		zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Auftrag ohne neue Mutation");
 		assertZahlungsauftrag(zahlungsauftrag, 0);
 	}
@@ -185,10 +195,20 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET, zahlungsposition.getVerfuegungZeitabschnitt().getZahlungsstatus());
 	}
 
+	private void assertZahlungErstgesuch(long countMonate, Zahlungsauftrag zahlungsauftrag) {
+		assertZahlungsauftrag(zahlungsauftrag, 1);
+		Zahlung zahlung = zahlungsauftrag.getZahlungen().get(0);
+		assertZahlung(zahlung, countMonate);
+		for (int i = 0; i < countMonate; i++) {
+			assertZahlungsdetail(zahlung.getZahlungspositionen().get(i), ZahlungspositionStatus.NORMAL, 1289.30);
+		}
+		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
+	}
+
 	@Test
 	public void zahlungsauftragAusloesen() throws Exception {
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 
 		Assert.assertEquals(ZahlungauftragStatus.ENTWURF, zahlungService.findZahlungsauftrag(zahlungsauftrag.getId()).get().getStatus());
 		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
@@ -198,7 +218,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void findZahlungsauftrag() throws Exception {
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 
 		Assert.assertTrue(zahlungService.findZahlungsauftrag(zahlungsauftrag.getId()).isPresent());
 		Assert.assertFalse(zahlungService.findZahlungsauftrag("ungueltigeId").isPresent());
@@ -207,7 +227,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void deleteZahlungsauftrag() throws Exception {
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 
 		Assert.assertTrue(zahlungService.findZahlungsauftrag(zahlungsauftrag.getId()).isPresent());
 		zahlungService.deleteZahlungsauftrag(zahlungsauftrag.getId());
@@ -219,17 +239,20 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertTrue(zahlungService.getAllZahlungsauftraege().isEmpty());
 
 		createGesuch(true);
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
 		Assert.assertFalse(zahlungService.getAllZahlungsauftraege().isEmpty());
 	}
 
 	@Test
 	public void zahlungBestaetigen() throws Exception {
+		createGesuch(true);
+		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
+
+		Assert.assertNotNull(zahlungsauftrag);
 		// Anzahl Zahlungen: Anzahl Monate seit Periodenbeginn, inkl. dem aktuellen
 		long countMonate = ChronoUnit.MONTHS.between(gesuchsperiode.getGueltigkeit().getGueltigAb(), LocalDate.now())+1;
 		createGesuch(true);
 
-		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag");
 		assertZahlungsauftrag(zahlungsauftrag, 1);
 		Zahlung zahlung = zahlungsauftrag.getZahlungen().get(0);
 		assertZahlung(zahlung, countMonate);
@@ -240,10 +263,9 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(ZahlungStatus.BESTAETIGT, zahlung.getStatus());
 	}
 
+	@Override
 	protected Gesuchsperiode createGesuchsperiode(boolean active) {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createCurrentGesuchsperiode();
-		JAHR_1 = gesuchsperiode.getBasisJahrPlus1();
-		JAHR_2 = gesuchsperiode.getBasisJahrPlus2();
 		gesuchsperiode.setActive(active);
 		return gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 	}
@@ -257,7 +279,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 			erstgesuch.getGesuchsperiode().getId(), LocalDate.of(TestDataUtil.PERIODE_JAHR_1, Month.DECEMBER, 15), LocalDate.of(TestDataUtil.PERIODE_JAHR_2, Month.JANUARY, 15), verfuegen);
 	}
 
-	private Gesuch createMutationBetreuungspensum(Gesuch erstgesuch, LocalDate eingangsdatum, boolean verfuegen) {
+	private Gesuch createMutationBetreuungspensum(Gesuch erstgesuch, LocalDate eingangsdatum) {
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(erstgesuch.getId(), eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
@@ -269,19 +291,30 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 				}
 			}
 			gesuchService.createGesuch(mutation);
-			testfaelleService.gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
+			// es muss mit verfuegungService.verfuegen verfuegt werden, damit der Zahlungsstatus der Zeitabschnitte richtig gesetzt wird. So wird auch dies getestet
+			testfaelleService.gesuchVerfuegenUndSpeichern(false, mutation, true);
+			verfuegungService.calculateVerfuegung(mutation);
+			for (Betreuung betreuung : betreuungs) {
+				verfuegungService.verfuegen(betreuung.getVerfuegung(), betreuung.getId(), false);
+			}
 			return mutation;
 		}
 		return gesuchOptional.orElse(null);
 	}
 
-	private Gesuch createMutationEinkommen(Gesuch erstgesuch, LocalDate eingangsdatum, boolean verfuegen) {
+	private Gesuch createMutationEinkommen(Gesuch erstgesuch, LocalDate eingangsdatum) {
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(erstgesuch.getId(), eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			mutation.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(60000d));
 			gesuchService.createGesuch(mutation);
-			testfaelleService.gesuchVerfuegenUndSpeichern(verfuegen, mutation, true);
+			// es muss mit verfuegungService.verfuegen verfuegt werden, damit der Zahlungsstatus der Zeitabschnitte richtig gesetzt wird. So wird auch dies getestet
+			testfaelleService.gesuchVerfuegenUndSpeichern(false, mutation, true);
+			verfuegungService.calculateVerfuegung(mutation);
+			List<Betreuung> betreuungs = mutation.extractAllBetreuungen();
+			for (Betreuung betreuung : betreuungs) {
+				verfuegungService.verfuegen(betreuung.getVerfuegung(), betreuung.getId(), false);
+			}
 			return mutation;
 		}
 		return gesuchOptional.orElse(null);

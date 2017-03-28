@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.dto.KindDubletteDTO;
 import ch.dvbern.ebegu.entities.KindContainer;
 
 import javax.annotation.Nonnull;
@@ -44,4 +45,17 @@ public interface KindService {
 	 * @param kind
 	 */
 	void removeKind(@Nonnull KindContainer kind);
+
+	/**
+	 * Gibt alle Kinder zurueck, welche Mutationen betreffen, die verfügt sind und deren
+	 * kindMutiert-Flag noch nicht gesetzt sind
+	 */
+	@Nonnull
+	List<KindContainer> getAllKinderWithMissingStatistics();
+
+	/**
+	 * Sucht Kinder mit gleichen Merkmalen in anderen Faellen.
+	 */
+	@Nonnull
+	List<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId);
 }

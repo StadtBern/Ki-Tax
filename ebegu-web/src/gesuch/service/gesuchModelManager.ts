@@ -8,7 +8,7 @@ import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
-import {IPromise, IDeferred, ILogService, IQService, IRootScopeService} from 'angular';
+import {IPromise, ILogService, IQService, IRootScopeService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
 import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensverschlechterungContainer';
@@ -85,12 +85,6 @@ export default class GesuchModelManager {
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService,
                 private adresseRS: AdresseRS, private $q: IQService, private CONSTANTS: any, private $rootScope: IRootScopeService) {
 
-        this.fachstellenList = [];
-        this.activInstitutionenList = [];
-        this.activeGesuchsperiodenList = [];
-        this.updateFachstellenList();
-        this.updateActiveInstitutionenList();
-        this.updateActiveGesuchsperiodenList();
 
         $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
             this.setGesuch(undefined);
@@ -104,7 +98,7 @@ export default class GesuchModelManager {
      * Fuer Institutionen z.B. wird das Gesuch nur mit den relevanten Daten geholt
      */
     public openGesuch(gesuchId: string): IPromise<TSGesuch> {
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) { // Superadmin muss als "normale" Benutzer betrachtet werden
             return this.gesuchRS.findGesuchForInstitution(gesuchId)
                 .then((response: TSGesuch) => {
                     return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(bla => {
@@ -264,7 +258,8 @@ export default class GesuchModelManager {
 
     public reloadGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
-            return this.gesuch = gesuchResponse;
+            this.setGesuch(gesuchResponse);
+            return this.gesuch;
         });
     }
 
@@ -300,7 +295,6 @@ export default class GesuchModelManager {
             .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    //todo reviewer frage team: muessen wir hier das gesuch wirklich separat speichern? wir brauchen die antwort gar nicht
                     this.getStammdatenToWorkWith().showUmzug = tempShowUmzug;
                     return this.getStammdatenToWorkWith();
                 });
@@ -392,14 +386,26 @@ export default class GesuchModelManager {
     }
 
     public getFachstellenList(): Array<TSFachstelle> {
+        if (this.fachstellenList === undefined) {
+            this.fachstellenList = []; // init empty while we wait for promise
+            this.updateFachstellenList();
+        }
         return this.fachstellenList;
     }
 
     public getActiveInstitutionenList(): Array<TSInstitutionStammdaten> {
+        if (this.activInstitutionenList === undefined) {
+            this.activInstitutionenList = []; // init empty while we wait for promise
+            this.updateActiveInstitutionenList();
+        }
         return this.activInstitutionenList;
     }
 
     public getAllActiveGesuchsperioden(): Array<TSGesuchsperiode> {
+        if (this.activeGesuchsperiodenList === undefined) {
+            this.activeGesuchsperiodenList = []; // init empty while we wait for promise
+            this.updateActiveGesuchsperiodenList();
+        }
         return this.activeGesuchsperiodenList;
     }
 
@@ -532,6 +538,7 @@ export default class GesuchModelManager {
         } else {
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
         }
+        this.gesuch.emptyMutation = true;
     }
 
     private initAntrag(antragTyp: TSAntragTyp, eingangsart: TSEingangsart): void {
@@ -945,7 +952,6 @@ export default class GesuchModelManager {
             let error: TSExceptionReport = new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, msg, kinderWithVerfuegungen);
             this.errorService.addDvbError(error);
         }
-        //todo beim fragen warum nicht einfach die ganze liste austauschen? Wegen der Reihenfolge?
         let numOfAssigned = 0;
         for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
             for (let j = 0; j < kinderWithVerfuegungen.length; j++) {
@@ -974,8 +980,9 @@ export default class GesuchModelManager {
 
     }
 
-    public saveVerfuegung(): IPromise<TSVerfuegung> {
-        return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response: TSVerfuegung) => {
+    public saveVerfuegung(ignorieren: boolean): IPromise<TSVerfuegung> {
+        return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id, ignorieren)
+            .then((response: TSVerfuegung) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
             this.calculateGesuchStatus();
@@ -1280,7 +1287,6 @@ export default class GesuchModelManager {
         return jaAngeboteFound;
     }
 
-    //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
         if (this.getGesuch()) {
             let text = '';

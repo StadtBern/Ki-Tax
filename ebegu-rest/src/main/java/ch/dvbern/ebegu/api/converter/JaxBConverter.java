@@ -11,6 +11,7 @@ import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.date.DateConvertUtils;
@@ -24,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -87,8 +89,7 @@ public class JaxBConverter {
 
 	@Nonnull
 	public String toEntityId(@Nonnull final JaxId resourceId) {
-		// TODO wahrscheinlich besser manuell auf NULL pruefen und gegebenenfalls eine IllegalArgumentException werfen
-		return Objects.requireNonNull(resourceId.getId());
+		return Validate.notNull(resourceId.getId());
 	}
 
 	@Nonnull
@@ -886,12 +887,10 @@ public class JaxBConverter {
 			}
 
 		} else {
-			//todo homa ebegu 82 review wie reagieren wir hier
 			throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
-//			institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), new Mandant()));
 		}
 
-//		Institution ist nicht required!
+		// Institution ist nicht required!
 		if (institutionJAXP.getTraegerschaft() != null) {
 			if (institutionJAXP.getTraegerschaft().getId() != null) {
 				final Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(institutionJAXP.getTraegerschaft().getId());
@@ -1402,6 +1401,8 @@ public class JaxBConverter {
 			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
 		}
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
+		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
+		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
@@ -1590,6 +1591,8 @@ public class JaxBConverter {
 		if (betreuungFromServer.getVerfuegung() != null) {
 			jaxBetreuung.setVerfuegung(verfuegungToJax(betreuungFromServer.getVerfuegung()));
 		}
+		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
+		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
 		return jaxBetreuung;
 	}
 
@@ -1605,20 +1608,17 @@ public class JaxBConverter {
 			convertAbstractFieldsToJAX(verfuegung, jaxVerfuegung);
 			jaxVerfuegung.setGeneratedBemerkungen(verfuegung.getGeneratedBemerkungen());
 			jaxVerfuegung.setManuelleBemerkungen(verfuegung.getManuelleBemerkungen());
-			jaxVerfuegung.setSameVerfuegungsdaten(verfuegung.isSameVerfuegungsdaten());
 			jaxVerfuegung.setKategorieZuschlagZumErwerbspensum(verfuegung.isKategorieZuschlagZumErwerbspensum());
 			jaxVerfuegung.setKategorieKeinPensum(verfuegung.isKategorieKeinPensum());
 			jaxVerfuegung.setKategorieMaxEinkommen(verfuegung.isKategorieMaxEinkommen());
 			jaxVerfuegung.setKategorieNichtEintreten(verfuegung.isKategorieNichtEintreten());
 			jaxVerfuegung.setKategorieNormal(verfuegung.isKategorieNormal());
 
-			if (verfuegung.getZeitabschnitte() != null) {
-				jaxVerfuegung.getZeitabschnitte().addAll(
-					verfuegung.getZeitabschnitte()
-						.stream()
-						.map(this::verfuegungZeitabschnittToJax)
-						.collect(Collectors.toList()));
-			}
+			jaxVerfuegung.getZeitabschnitte().addAll(
+				verfuegung.getZeitabschnitte()
+					.stream()
+					.map(this::verfuegungZeitabschnittToJax)
+					.collect(Collectors.toList()));
 
 			return jaxVerfuegung;
 		}
@@ -1637,7 +1637,6 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(jaxVerfuegung, verfuegung);
 		verfuegung.setGeneratedBemerkungen(jaxVerfuegung.getGeneratedBemerkungen());
 		verfuegung.setManuelleBemerkungen(jaxVerfuegung.getManuelleBemerkungen());
-		verfuegung.setSameVerfuegungsdaten(jaxVerfuegung.isSameVerfuegungsdaten());
 		verfuegung.setKategorieZuschlagZumErwerbspensum(jaxVerfuegung.isKategorieZuschlagZumErwerbspensum());
 		verfuegung.setKategorieKeinPensum(jaxVerfuegung.isKategorieKeinPensum());
 		verfuegung.setKategorieMaxEinkommen(jaxVerfuegung.isKategorieMaxEinkommen());
@@ -1697,6 +1696,8 @@ public class JaxBConverter {
 			jaxZeitabschn.setKategorieZuschlagZumErwerbspensum(zeitabschnitt.isKategorieZuschlagZumErwerbspensum());
 			jaxZeitabschn.setZuSpaetEingereicht(zeitabschnitt.isZuSpaetEingereicht());
 			jaxZeitabschn.setZahlungsstatus(zeitabschnitt.getZahlungsstatus());
+			jaxZeitabschn.setSameVerfuegungsdaten(zeitabschnitt.isSameVerfuegungsdaten());
+			jaxZeitabschn.setSameVerguenstigung(zeitabschnitt.isSameVerguenstigung());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1726,6 +1727,8 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setKategorieZuschlagZumErwerbspensum(jaxVerfuegungZeitabschnitt.isKategorieZuschlagZumErwerbspensum());
 		verfuegungZeitabschnitt.setZuSpaetEingereicht(jaxVerfuegungZeitabschnitt.isZuSpaetEingereicht());
 		verfuegungZeitabschnitt.setZahlungsstatus(jaxVerfuegungZeitabschnitt.getZahlungsstatus());
+		verfuegungZeitabschnitt.setSameVerfuegungsdaten(jaxVerfuegungZeitabschnitt.isSameVerfuegungsdaten());
+		verfuegungZeitabschnitt.setSameVerguenstigung(jaxVerfuegungZeitabschnitt.isSameVerguenstigung());
 		return verfuegungZeitabschnitt;
 	}
 
@@ -2043,7 +2046,15 @@ public class JaxBConverter {
 		return jaxAntragStatusHistory;
 
 	}
-
+	public Collection<JaxAntragStatusHistory> antragStatusHistoryCollectionToJAX(Collection<AntragStatusHistory> antragStatusHistoryCollection) {
+		final Collection<JaxAntragStatusHistory> jaxContainers = new ArrayList<>();
+		if (antragStatusHistoryCollection != null) {
+			for (final AntragStatusHistory antragStatusHistory : antragStatusHistoryCollection) {
+				jaxContainers.add(antragStatusHistoryToJAX(antragStatusHistory));
+			}
+		}
+		return jaxContainers;
+	}
 	/**
 	 * transformiert ein gesuch in ein JaxAntragDTO unter beruecksichtigung der rollen und erlaubten institutionen
 	 */
@@ -2084,7 +2095,6 @@ public class JaxBConverter {
 		antrag.setFallNummer(gesuch.getFall().getFallNummer());
 		antrag.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().extractNachname() : "");
 		antrag.setEingangsdatum(gesuch.getEingangsdatum());
-		//todo team, hier das datum des letzten statusuebergangs verwenden?
 		antrag.setAenderungsdatum(gesuch.getTimestampMutiert());
 		antrag.setAntragTyp(gesuch.getTyp());
 		antrag.setStatus(AntragStatusConverterUtil.convertStatusToDTO(gesuch, gesuch.getStatus()));
@@ -2149,7 +2159,7 @@ public class JaxBConverter {
 	private Set<String> createKinderList(Set<KindContainer> kindContainers) {
 		Set<String> resultSet = new HashSet<>();
 		kindContainers.forEach(kindContainer -> {
-				resultSet.add(kindContainer.getKindJA().getVorname());
+			resultSet.add(kindContainer.getKindJA().getVorname());
 		});
 		return resultSet;
 	}
@@ -2169,7 +2179,7 @@ public class JaxBConverter {
 
 		Set<String> resultSet = new HashSet<>();
 		jaxKindContainers.forEach(kindContainer -> {
-				resultSet.add(kindContainer.getKindJA().getVorname());
+			resultSet.add(kindContainer.getKindJA().getVorname());
 		});
 		return resultSet;
 	}
@@ -2281,6 +2291,7 @@ public class JaxBConverter {
 
 		mitteilungToEntity(mitteilungJAXP, betreuungsmitteilung);
 
+		betreuungsmitteilung.setApplied(mitteilungJAXP.getApplied());
 		if (mitteilungJAXP.getBetreuungspensen() != null) {
 			betreuungsmitteilung.setBetreuungspensen(new HashSet<>());
 			for (JaxBetreuungsmitteilungPensum jaxBetreuungspensum : mitteilungJAXP.getBetreuungspensen()) {
@@ -2295,6 +2306,8 @@ public class JaxBConverter {
 	public JaxBetreuungsmitteilung betreuungsmitteilungToJAX(Betreuungsmitteilung persistedMitteilung) {
 		final JaxBetreuungsmitteilung jaxBetreuungsmitteilung = new JaxBetreuungsmitteilung();
 		mitteilungToJAX(persistedMitteilung, jaxBetreuungsmitteilung);
+
+		jaxBetreuungsmitteilung.setApplied(persistedMitteilung.isApplied());
 		if (persistedMitteilung.getBetreuungspensen() != null) {
 			jaxBetreuungsmitteilung.setBetreuungspensen(new ArrayList<>());
 			for (BetreuungsmitteilungPensum betreuungspensum : persistedMitteilung.getBetreuungspensen()) {
@@ -2302,5 +2315,56 @@ public class JaxBConverter {
 			}
 		}
 		return jaxBetreuungsmitteilung;
+	}
+
+	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag) {
+		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag);
+		return jaxZahlungsauftrag;
+	}
+
+	private JaxZahlungsauftrag getJaxZahlungsauftrag(Zahlungsauftrag persistedZahlungsauftrag) {
+		final JaxZahlungsauftrag jaxZahlungsauftrag = new JaxZahlungsauftrag();
+		convertAbstractDateRangedFieldsToJAX(persistedZahlungsauftrag, jaxZahlungsauftrag);
+		jaxZahlungsauftrag.setStatus(persistedZahlungsauftrag.getStatus());
+		jaxZahlungsauftrag.setBeschrieb(persistedZahlungsauftrag.getBeschrieb());
+		jaxZahlungsauftrag.setBetragTotalAuftrag(persistedZahlungsauftrag.getBetragTotalAuftrag());
+		jaxZahlungsauftrag.setDatumFaellig(persistedZahlungsauftrag.getDatumFaellig());
+		jaxZahlungsauftrag.setDatumGeneriert(persistedZahlungsauftrag.getDatumGeneriert());
+
+		jaxZahlungsauftrag.getZahlungen().addAll(
+			persistedZahlungsauftrag.getZahlungen()
+				.stream()
+				.map(this::zahlungToJAX)
+				.collect(Collectors.toList()));
+		return jaxZahlungsauftrag;
+	}
+
+	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag, UserRole userRole, Collection<Institution> allowedInst) {
+		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag);
+
+		// nur die Zahlungen welche inst sehen darf
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
+			RestUtil.purgeZahlungenOfInstitutionen(jaxZahlungsauftrag, allowedInst);
+		}
+
+		// es muss nochmal das Auftragstotal berechnet werden. Diesmal nur mit den erlaubten Zahlungen
+		BigDecimal total = BigDecimal.ZERO;
+		for (JaxZahlung zahlung : jaxZahlungsauftrag.getZahlungen()) {
+			total = MathUtil.DEFAULT.add(total, zahlung.getBetragTotalZahlung());
+		}
+		jaxZahlungsauftrag.setBetragTotalAuftrag(total);
+
+		return jaxZahlungsauftrag;
+	}
+
+	public JaxZahlung zahlungToJAX(final Zahlung persistedZahlung) {
+		final JaxZahlung jaxZahlungs = new JaxZahlung();
+		convertAbstractFieldsToJAX(persistedZahlung, jaxZahlungs);
+		jaxZahlungs.setStatus(persistedZahlung.getStatus());
+		jaxZahlungs.setBetragTotalZahlung(persistedZahlung.getBetragTotalZahlung());
+		jaxZahlungs.setInstitutionsName(persistedZahlung.getInstitutionStammdaten().getInstitution().getName());
+		jaxZahlungs.setInstitutionsId(persistedZahlung.getInstitutionStammdaten().getInstitution().getId());
+
+		return jaxZahlungs;
 	}
 }

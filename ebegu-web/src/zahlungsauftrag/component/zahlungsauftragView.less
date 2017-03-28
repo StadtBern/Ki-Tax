@@ -1,0 +1,35 @@
+@import '../../style/variables.less';
+@import '../../style/mixins.less';
+
+.zahlungsauftragView {
+    padding:3rem;
+    tr.errorrow td {
+        background-color: pink;
+    }
+    .symbol {
+        padding:0;
+
+       .dvb-loading-button, button {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-align: left;
+
+        }
+        &.text-center{
+            button{
+                text-align: center;
+            }
+        }
+    }
+    .row-edit, .row-ausloesen {
+        width: 5rem;
+    }
+    .zahlungen-form {
+        background: @contrast-light;
+        padding-top: 4rem;
+        padding-bottom: 1rem;
+        margin-bottom: 4rem;
+    }
+}
+

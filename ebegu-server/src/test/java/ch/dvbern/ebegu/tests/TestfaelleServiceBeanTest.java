@@ -73,7 +73,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	/**
 	 * Wenn true werden die Testergebnisse neu in die Testfiles geschrieben. Muss für testen immer false sein!
 	 */
-	private final static boolean writeToFile = false;
+	private static final boolean writeToFile = false;
 
 	@Before
 	public void init() {
@@ -128,6 +128,12 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	@Test
 	public void testVerfuegung_UmzugAusInAusBern() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.UmzugAusInAusBern, true, true);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
+	}
+
+	@Test
+	public void testVerfuegung_UmzugVorGesuchsperiode() {
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.UmzugVorGesuchsperiode, true, true);
 		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
 	}
 

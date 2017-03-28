@@ -23,7 +23,7 @@ export class ApplicationPropertyRS {
     }
 
     isDevMode(): IPromise<boolean> {
-        return this.http.get(this.serviceURL + '/public/devmode').then((response) => {
+        return this.http.get(this.serviceURL + '/public/devmode',  {cache: true }).then((response) => {
             return response.data;
         });
     }
@@ -66,5 +66,10 @@ export class ApplicationPropertyRS {
         );
     }
 
+    isZahlungenTestMode(): IPromise<boolean> {
+        return this.http.get(this.serviceURL + '/public/zahlungentestmode',  {cache: true }).then((response) => {
+            return response.data;
+        });
+    }
 }
 

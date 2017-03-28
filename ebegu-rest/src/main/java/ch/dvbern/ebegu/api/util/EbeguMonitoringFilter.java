@@ -20,10 +20,8 @@ public class EbeguMonitoringFilter extends MonitoringFilter {
 	@Override
 	protected String getRequestName(@Nonnull HttpServletRequest request) {
 		String defaultName = super.getRequestName(request);
-		// Unsere IDs aus den Resourcen entfernen und durch Platzhalter ersetzen
-		String name = ID_PATTERN.matcher(defaultName).replaceAll("/{id}");
-		// for future use: UUIDs
-		name = UUID_PATTERN.matcher(name).replaceAll("/{uuid}");
+		String name = UUID_PATTERN.matcher(defaultName).replaceAll("/{uuid}");
+		name = ID_PATTERN.matcher(name).replaceAll("/{id}");
 		return name;
 	}
 }

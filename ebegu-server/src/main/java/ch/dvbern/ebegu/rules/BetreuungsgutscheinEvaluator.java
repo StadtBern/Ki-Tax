@@ -10,6 +10,7 @@ import ch.dvbern.ebegu.rules.initalizer.RestanspruchInitializer;
 import ch.dvbern.ebegu.rules.util.BemerkungsMerger;
 import ch.dvbern.ebegu.util.BetreuungComparator;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.VerfuegungUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,14 +26,13 @@ import java.util.List;
  */
 public class BetreuungsgutscheinEvaluator {
 
-	private boolean isDebug = true; // TODO (team) ApplicationProperty machen!
+	private boolean isDebug = true;
 
 	private List<Rule> rules = new LinkedList<>();
 
 	private RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
 	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
 	private MutationsMerger mutationsMerger = new MutationsMerger();
-	private VerfuegungsVergleicher verfuegungsVergleicher = new VerfuegungsVergleicher();
 	private AbschlussNormalizer abschlussNormalizer = new AbschlussNormalizer();
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
@@ -170,7 +170,10 @@ public class BetreuungsgutscheinEvaluator {
 					betreuung.getVerfuegung().setGeneratedBemerkungen(bemerkungenToShow);
 
 					// Ueberpruefen, ob sich die Verfuegungsdaten veraendert haben
-					betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung));
+					VerfuegungUtil.setIsSameVerfuegungsdaten(betreuung.getVerfuegung());
+
+					// Zahlungsstatus aus vorgaenger uebernehmen
+					VerfuegungUtil.setZahlungsstatus(betreuung.getVerfuegung());
 				}
 			}
 		}
@@ -215,6 +218,7 @@ public class BetreuungsgutscheinEvaluator {
 		return restanspruchZeitabschnitte;
 	}
 
+	@SuppressWarnings("LoopStatementThatDoesntLoop")
 	private Betreuung getFirstBetreuungOfGesuch(Gesuch gesuch) {
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {

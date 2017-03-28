@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.MathUtil;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -9,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,7 +22,7 @@ import java.util.List;
  */
 @Audited
 @Entity
-public class Zahlungsauftrag extends AbstractDateRangedEntity {
+public class Zahlungsauftrag extends AbstractDateRangedEntity implements Comparable<Zahlungsauftrag>{
 
 
 	private static final long serialVersionUID = 5758088668232796741L;
@@ -42,11 +45,6 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = false, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String beschrieb;
-
-	@NotNull
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Column(nullable = false, length = Constants.DB_TEXTAREA_LENGTH)
-	private String filecontent; // TODO (team) im EntityListener sicherstellen, dass nach auslösung nicht mehr verändert
 
 	@Nonnull
 	@Valid
@@ -86,14 +84,6 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 		this.beschrieb = beschrieb;
 	}
 
-	public String getFilecontent() {
-		return filecontent;
-	}
-
-	public void setFilecontent(String filecontent) {
-		this.filecontent = filecontent;
-	}
-
 	@Nonnull
 	public List<Zahlung> getZahlungen() {
 		return zahlungen;
@@ -101,5 +91,24 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity {
 
 	public void setZahlungen(@Nonnull List<Zahlung> zahlungen) {
 		this.zahlungen = zahlungen;
+	}
+
+	public BigDecimal getBetragTotalAuftrag() {
+		BigDecimal total = BigDecimal.ZERO;
+		for (Zahlung zahlung : zahlungen) {
+				total = MathUtil.DEFAULT.add(total, zahlung.getBetragTotalZahlung());
+		}
+		return total;
+	}
+
+	@Override
+	public int compareTo(@Nonnull Zahlungsauftrag o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getDatumFaellig(), o.getDatumFaellig());
+		return builder.toComparison();
+	}
+
+	public String getFilename() {
+		return "Zahlungslauf_" + Constants.SQL_DATE_FORMAT.format(getDatumGeneriert());
 	}
 }

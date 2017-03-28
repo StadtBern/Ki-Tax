@@ -232,7 +232,6 @@ public class AbstractBGRechnerTest {
 
 				Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
 				Assert.assertEquals(MathUtil.GANZZAHL.from(MathUtil.DEFAULT.from(113745.70)), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
-				// TODO (team) Die TAGI-Berechnungen scheinen noch nicht zu stimmen
 				// Erster Monat
 				VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
 				assertZeitabschnitt(august, 60, 60, 60, 1000.45, 362.75, 637.70);
@@ -407,11 +406,11 @@ public class AbstractBGRechnerTest {
 		VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
 		assertZeitabschnittFinanzdaten(august, 70000.00, 2015, 0, 70000, 2);
 		// Letzter Monat vor EKV
-		VerfuegungZeitabschnitt oktober = verfuegung.getZeitabschnitte().get(1);
-		assertZeitabschnittFinanzdaten(oktober, 70000.00, 2015, 0, 70000, 2);
-		// Erster Monat nach EKV
 		VerfuegungZeitabschnitt november = verfuegung.getZeitabschnitte().get(2);
-		assertZeitabschnittFinanzdaten(november, 49000, 2016, 0, 49000, 2);
+		assertZeitabschnittFinanzdaten(november, 70000.00, 2015, 0, 70000, 2);
+		// Erster Monat nach EKV
+		VerfuegungZeitabschnitt dezember = verfuegung.getZeitabschnitte().get(3);
+		assertZeitabschnittFinanzdaten(dezember, 49000, 2016, 0, 49000, 2);
 		// Letzter Monat
 		VerfuegungZeitabschnitt juli = verfuegung.getZeitabschnitte().get(11);
 		assertZeitabschnittFinanzdaten(juli, 49000, 2016, 0, 49000, 2);
@@ -428,11 +427,11 @@ public class AbstractBGRechnerTest {
 		VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
 		assertZeitabschnittFinanzdaten(august, 100000, 2015, 11280, 88720, 3);
 		// Letzter Monat vor EKV
-		VerfuegungZeitabschnitt oktober = verfuegung.getZeitabschnitte().get(1);
-		assertZeitabschnittFinanzdaten(oktober, 100000, 2015, 11280, 88720, 3);
-		// Erster Monat nach EKV
 		VerfuegungZeitabschnitt november = verfuegung.getZeitabschnitte().get(2);
-		assertZeitabschnittFinanzdaten(november, 49000, 2016, 11280, 37720, 3);
+		assertZeitabschnittFinanzdaten(november, 100000, 2015, 11280, 88720, 3);
+		// Erster Monat nach EKV
+		VerfuegungZeitabschnitt dezember = verfuegung.getZeitabschnitte().get(3);
+		assertZeitabschnittFinanzdaten(dezember, 49000, 2016, 11280, 37720, 3);
 		// Letzter Monat
 		VerfuegungZeitabschnitt juli = verfuegung.getZeitabschnitte().get(11);
 		assertZeitabschnittFinanzdaten(juli, 49000, 2016, 11280, 37720, 3);

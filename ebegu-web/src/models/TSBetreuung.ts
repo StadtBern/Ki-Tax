@@ -5,6 +5,7 @@ import TSBetreuungspensumContainer from './TSBetreuungspensumContainer';
 import TSVerfuegung from './TSVerfuegung';
 import TSAbwesenheitContainer from './TSAbwesenheitContainer';
 import TSGesuchsperiode from './TSGesuchsperiode';
+import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 
 export default class TSBetreuung extends TSAbstractEntity {
 
@@ -23,13 +24,16 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _kindNummer: number;
     private _gesuchId: string;
     private _gesuchsperiode: TSGesuchsperiode;
+    private _betreuungMutiert: boolean;
+    private _abwesenheitMutiert: boolean;
 
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, abwesenheitContainers?: Array<TSAbwesenheitContainer>,
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,
                 grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment, kindFullname?: string,
-                kindNummer?: number, gesuchId?: string, gesuchsperiode?: TSGesuchsperiode) {
+                kindNummer?: number, gesuchId?: string, gesuchsperiode?: TSGesuchsperiode,
+                betreuungMutiert?: boolean, abwesenheitMutiert?: boolean) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -46,6 +50,8 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._kindNummer = kindNummer;
         this._gesuchId = gesuchId;
         this._gesuchsperiode = gesuchsperiode;
+        this._betreuungMutiert = betreuungMutiert;
+        this._abwesenheitMutiert = abwesenheitMutiert;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -166,5 +172,28 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     set gesuchsperiode(value: TSGesuchsperiode) {
         this._gesuchsperiode = value;
+    }
+
+    get betreuungMutiert(): boolean {
+        return this._betreuungMutiert;
+    }
+
+    set betreuungMutiert(value: boolean) {
+        this._betreuungMutiert = value;
+    }
+
+    get abwesenheitMutiert(): boolean {
+        return this._abwesenheitMutiert;
+    }
+
+    set abwesenheitMutiert(value: boolean) {
+        this._abwesenheitMutiert = value;
+    }
+
+    public isAngebotKITA(): boolean {
+        if (this.institutionStammdaten && this.institutionStammdaten.betreuungsangebotTyp) {
+            return this.institutionStammdaten.betreuungsangebotTyp === TSBetreuungsangebotTyp.KITA;
+        }
+        return false;
     }
 }

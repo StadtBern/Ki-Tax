@@ -22,6 +22,8 @@ describe('MitteilungRS', function () {
     let $q: IQService;
     let wizardStepManager: WizardStepManager;
     let $rootScope: IRootScopeService;
+    let fall: TSFall;
+    let betreuung: TSBetreuung;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -33,6 +35,9 @@ describe('MitteilungRS', function () {
         wizardStepManager = $injector.get('WizardStepManager');
         $q = $injector.get('$q');
         $rootScope = $injector.get('$rootScope');
+        fall = new TSFall();
+        betreuung = new TSBetreuung();
+        betreuung.betreuungNummer = 123;
     }));
 
     describe('Public API', function () {
@@ -45,9 +50,6 @@ describe('MitteilungRS', function () {
     });
     describe('sendbetreuungsmitteilung', function () {
         it('should create the betreuungsmitteilung and send it', function () {
-            let fall: TSFall = new TSFall();
-            let betreuung: TSBetreuung = new TSBetreuung();
-            betreuung.betreuungNummer = 123;
             let restMitteilung: any = {};
 
             spyOn(ebeguRestUtil, 'betreuungsmitteilungToRestObject').and.returnValue(restMitteilung);
@@ -61,6 +63,26 @@ describe('MitteilungRS', function () {
             expect(result).toBeDefined();
             result.then(response => {
                 expect(response).toBe(betreuung);
+            });
+            $rootScope.$apply();
+
+        });
+    });
+    describe('applybetreuungsmitteilung', function () {
+        it('should call the services to apply the betreuungsmitteilung', function () {
+            let mitteilung: TSBetreuungsmitteilung = new TSBetreuungsmitteilung();
+            mitteilung.id = '987654321';
+
+            spyOn(ebeguRestUtil, 'parseBetreuungsmitteilung').and.returnValue(betreuung);
+            $httpBackend.expectPUT(mitteilungRS.serviceURL + '/applybetreuungsmitteilung/' + mitteilung.id, null).respond($q.when({id: '123456'}));
+
+            let result: IPromise<any> = mitteilungRS.applyBetreuungsmitteilung(mitteilung.id);
+            $httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(result).toBeDefined();
+            result.then(response => {
+                expect(response).toEqual({id: '123456'});
             });
             $rootScope.$apply();
 

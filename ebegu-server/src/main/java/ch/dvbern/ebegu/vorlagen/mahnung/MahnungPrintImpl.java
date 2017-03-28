@@ -120,8 +120,7 @@ public class MahnungPrintImpl extends BriefPrintImpl implements ManhungPrint {
 
 	@Override
 	public String getKontaktStelle() {
-		//TODO: this text should be dynamic and depends on a certain requirement being met
-		return "Montag bis Donnerstag von 13.00–17.00 Uhr unter der Telefonnummer 031 321 51 15";
+		return "während der Bürozeiten zur Verfügung (Telefonnummer 031 321 51 15 und per E-Mail kinderbetreuung@bern.ch)";
 	}
 
 }

@@ -3,11 +3,13 @@ package ch.dvbern.ebegu.api.util;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
 import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.util.UploadFileInfo;
+import com.google.common.net.UrlEscapers;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -20,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -76,8 +79,13 @@ public final class RestUtil {
 			contentType = "application/octet-stream";
 		}
 		final byte[] bytes = Files.readAllBytes(filePath);
-
-		String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + fileMetadata.getFilename() + '"';
+		//Prepare Headerfield Content-Disposition:
+		//we want percantage-encoding instead of url-encoding (spaces are %20 in percentage encoding but + in url-encoding)
+		String isoEncodedFilename = URLEncoder.encode(fileMetadata.getFilename(), "ISO-8859-1").replace("+", "%20");
+		String utfEncodedFilename = UrlEscapers.urlFragmentEscaper().escape(fileMetadata.getFilename()); //percantage encoding mit utf-8 und %20 fuer space statt +
+		String simpleFilename = "filename=\"" + isoEncodedFilename + "\"; "; //iso8859-1 (default) filename for old browsers
+		String filenameStarParam = "filename*=UTF-8''" + utfEncodedFilename;   //utf-8 url encoded filename https://tools.ietf.org/html/rfc5987
+		String disposition = (attachment ? "attachment; " : "inline;") + simpleFilename + filenameStarParam;
 
 		return Response.ok(bytes)
 			.header("Content-Disposition", disposition)
@@ -129,4 +137,13 @@ public final class RestUtil {
 		return Response.status(Response.Status.FORBIDDEN).build();
 	}
 
+	public static void purgeZahlungenOfInstitutionen(JaxZahlungsauftrag jaxZahlungsauftrag, Collection<Institution> allowedInst) {
+		if (!allowedInst.isEmpty()) {
+			jaxZahlungsauftrag.getZahlungen().removeIf(zahlung ->
+				allowedInst.stream().noneMatch(institution ->
+					institution.getId().equals(zahlung.getInstitutionsId())
+				)
+			);
+		}
+	}
 }

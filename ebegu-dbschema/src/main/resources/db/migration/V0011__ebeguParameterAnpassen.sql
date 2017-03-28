@@ -1,0 +1,11 @@
+update ebegu_parameter set VALUE = '12.03' where id = '5676f112-e16b-4356-b6d6-6c80082c6de1';
+update ebegu_parameter set VALUE = '42970' where id = '56a7e7db-3503-46b7-b41f-18216c0ec787';
+update ebegu_parameter set VALUE = '160280' where id = '5de5b68b-127b-487d-b4a4-7c6539d4b3be';
+update ebegu_parameter set VALUE = '9.25' where id = '606551d2-d55b-4407-bf69-c3080fe8c50b';
+update ebegu_parameter set VALUE = '3800' where id = '6c7af5ff-58f7-4e8f-9e70-9009bb1f1b92';
+update ebegu_parameter set VALUE = '5960' where id = '71a6c200-f249-4796-8784-10376a9fbd67';
+update ebegu_parameter set VALUE = '7040' where id = '97eed21d-5c4e-4883-a2ac-1a0d9f17e5b6';
+update ebegu_parameter set VALUE = '8.00' where id = 'a5cd4af5-52d0-4831-b596-7f7507aab973';
+update ebegu_parameter set VALUE = '8.00' where id = 'a679e03e-58e2-446e-a7ee-bbadc87b7c90';
+update ebegu_parameter set VALUE = '0.76' where id = 'ccda60ff-7d67-4a65-be2c-db03bab1a9d5';
+update ebegu_parameter set VALUE = '7580' where id = 'ccdd3efd-e829-4b3c-bc1c-28c8c3a463a2';

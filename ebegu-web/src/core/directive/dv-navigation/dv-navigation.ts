@@ -196,8 +196,8 @@ export class NavigatorController {
 
         this.errorService.clearAll();
 
-        //TODO: All diese Sonderregel sollten in getNextStep() vom wizardStepManager sein, damit die gleiche
-        // Funktionalität für isButtonDisable wie für die Navigation existiert. Siehe https://support.dvbern.ch/browse/EBEGU-688
+        // Improvement?: All diese Sonderregel koennten in getNextStep() vom wizardStepManager sein, damit die gleiche
+        // Funktionalität für isButtonDisable wie für die Navigation existiert.
         if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()
             && (this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
             this.navigateToStep(TSWizardStepName.GESUCHSTELLER, '2');

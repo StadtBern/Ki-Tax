@@ -29,6 +29,7 @@ import java.util.UUID;
 		@ConstructorResult(targetClass = GesuchStichtagDataRow.class,
 			columns = {
 				@ColumnResult(name = "bgNummer", type = String.class),
+				@ColumnResult(name = "gesuchLaufNr", type = Integer.class),
 				@ColumnResult(name = "institution", type = String.class),
 				@ColumnResult(name = "betreuungsTyp", type = String.class),
 				@ColumnResult(name = "periode", type = String.class),
@@ -41,6 +42,7 @@ import java.util.UUID;
 		@ConstructorResult(targetClass = GesuchZeitraumDataRow.class,
 			columns = {
 				@ColumnResult(name = "bgNummer", type = String.class),
+				@ColumnResult(name = "gesuchLaufNr", type = Integer.class),
 				@ColumnResult(name = "institution", type = String.class),
 				@ColumnResult(name = "betreuungsTyp", type = String.class),
 				@ColumnResult(name = "periode", type = String.class),
@@ -203,32 +205,6 @@ public abstract class AbstractEntity implements Serializable {
 	public boolean isNew() {
 		return timestampErstellt == null;
 	}
-
-	/**
-	 * //todo team probably delete this
-	 * Hilfsmethode fuer toString(): Wenn beim Debugging eine JPA-Referenz schon detached ist,
-	 * kann nicht mehr auf den Wert zugegriffen werden und es kommt eine Exception.
-	 * Diese Methode faengt die Exception ab und gibt einen fixen Text zurueck.
-	 * <pre>
-	 * {@code
-	 * 	public String toString() {
-	 * 		return MoreObjects.toStringHelper(this)
-	 * 			.add("id", getId())
-	 * 			.add("kontaktperson", getSilent(() -> kontaktperson))
-	 * 			.add("kind", getSilent(() -> kind))
-	 * 			.toString();
-	 * 	}
-	 * }
-	 * </pre>
-	 */
-/*	protected <T extends Serializable> String getSilent(Supplier<T> supplier) {
-		try {
-			return String.valueOf(supplier.get());
-		} catch (RuntimeException ignored) {
-			return "<unknown>";
-		}
-	}*/
-
 
 	@Override
 	public String toString() {
