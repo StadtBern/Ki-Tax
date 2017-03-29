@@ -311,6 +311,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case ADMIN:
 			case REVISOR:
 				break;
+			case STEUERAMT:
+				break;
 			case SACHBEARBEITER_JA:
 			case JURIST:
 				// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.

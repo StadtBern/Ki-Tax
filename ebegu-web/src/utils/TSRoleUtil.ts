@@ -81,6 +81,12 @@ export class TSRoleUtil {
         );
     }
 
+    public static getAllRolesButSteueramt(): Array<string> {
+        return TSRoleUtil.getAllRoles().filter(element =>
+            element !== TSRole[TSRole.STEUERAMT]
+        );
+    }
+
     public static getSchulamtOnlyRoles(): Array<TSRole> {
         return [TSRole.SCHULAMT];
     }

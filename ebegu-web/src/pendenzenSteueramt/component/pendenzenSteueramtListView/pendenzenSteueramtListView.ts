@@ -1,12 +1,12 @@
 import IComponentOptions = angular.IComponentOptions;
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
-import {TSAntragStatus, getTSAntragStatusValues} from '../../../models/enums/TSAntragStatus';
-import PendenzSteueramtRS from '../../service/pendenzSteueramtRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
-import EbeguUtil from '../../../utils/EbeguUtil';
+import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
+import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
+import IPromise = angular.IPromise;
+import ILogService = angular.ILogService;
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./pendenzenSteueramtListView.html');
 
 export class PendenzenSteueramtListViewComponentConfig implements IComponentOptions {
@@ -18,54 +18,20 @@ export class PendenzenSteueramtListViewComponentConfig implements IComponentOpti
 
 export class PendenzenSteueramtListViewController {
 
-    private pendenzenList: Array<TSAntragDTO>;
-    activeGesuchsperiodenList: Array<string>;
-    itemsByPage: number = 20;
-    numberOfPages: number = 1;
+    totalResultCount: string = '-';
+    TSRoleUtil: any;
 
 
-    static $inject: string[] = ['GesuchsperiodeRS', 'PendenzSteueramtRS', 'GesuchModelManager', '$state', 'EbeguUtil', 'CONSTANTS'];
+    static $inject: string[] = ['GesuchModelManager', '$state', '$log', 'GesuchRS'];
 
-    constructor(private gesuchsperiodeRS: GesuchsperiodeRS, public pendenzSteueramtRS: PendenzSteueramtRS, private gesuchModelManager: GesuchModelManager,
-                private $state: IStateService, private ebeguUtil: EbeguUtil, private CONSTANTS: any) {
+    constructor(private gesuchModelManager: GesuchModelManager, private $state: IStateService, private $log: ILogService,
+                private gesuchRS: GesuchRS) {
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     $onInit() {
-        this.initViewModel();
     }
 
-    private initViewModel() {
-        this.updatePendenzenList();
-        this.updateActiveGesuchsperiodenList();
-    }
-
-    private updatePendenzenList() {
-        this.pendenzSteueramtRS.getPendenzenList().then((response: any) => {
-            this.pendenzenList = angular.copy(response);
-            this.numberOfPages = this.pendenzenList.length / this.itemsByPage;
-        });
-    }
-
-    public getPendenzenList(): Array<TSAntragDTO> {
-        return this.pendenzenList;
-    }
-
-    public updateActiveGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
-            this.activeGesuchsperiodenList = [];
-            response.forEach((gesuchsperiode: TSGesuchsperiode) => {
-                this.activeGesuchsperiodenList.push(gesuchsperiode.gesuchsperiodeString);
-            });
-        });
-    }
-
-    public getAntragStatus(): Array<TSAntragStatus> {
-        return getTSAntragStatusValues();
-    }
-
-    public addZerosToFallnummer(fallnummer: number): string {
-        return this.ebeguUtil.addZerosToNumber(fallnummer, this.CONSTANTS.FALLNUMMER_LENGTH);
-    }
 
     public editpendenzSteueramt(pendenz: TSAntragDTO, event: any): void {
         if (pendenz) {
@@ -73,6 +39,15 @@ export class PendenzenSteueramtListViewController {
             this.openPendenz(pendenz, isCtrlKeyPressed);
         }
     }
+
+    public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
+        this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
+        return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
+            this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : undefined;
+            return response;
+        });
+
+    };
 
     private openPendenz(pendenz: TSAntragDTO, isCtrlKeyPressed: boolean) {
         this.gesuchModelManager.clearGesuch();
@@ -86,4 +61,5 @@ export class PendenzenSteueramtListViewController {
             this.$state.go('gesuch.familiensituation', navObj);
         }
     }
+
 }
