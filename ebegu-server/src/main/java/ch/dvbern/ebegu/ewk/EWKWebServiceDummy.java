@@ -40,20 +40,32 @@ public class EWKWebServiceDummy implements IEWKWebService {
 	private static final String ID_MARC_SCHMID = "1000028027";
 	private static final String ID_SIMONE_MEIER = "1000348433";
 	private static final String ID_FRANZISKA_HERGER = "1000233097";
+	private static final String ID_SANDRA_ANDEREGG = "1000197262";
+	private static final String ID_HERBERT_GERBER = "1000637396";
+
+	private static final String FILE_MARC_SCHMID = "marc.schmid.xml";
+	private static final String FILE_SIMONE_MEIER = "simone.meier.xml";
+	private static final String FILE_FRANZISKA_HERGER = "franziska.herger.xml";
+	private static final String FILE_SANDRA_ANDEREGG = "sandra.anderegg.xml";
+	private static final String FILE_HERBERT_GERBER = "herbert.gerber.xml";
+	private static final String FILE_NO_RESULT = "noresult.xml";
 
 	@Nonnull
 	@Override
 	public EWKResultat suchePerson(@Nonnull String id) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
 		PersonenSucheResp response = null;
 		if (ID_MARC_SCHMID.equals(id)) {
-			response = parse("marc.schmid.xml");
+			response = parse(FILE_MARC_SCHMID);
 		} else if (ID_SIMONE_MEIER.equals(id)) {
-			response = parse("simone.meier.xml");
+			response = parse(FILE_SIMONE_MEIER);
 		} else if (ID_FRANZISKA_HERGER.equals(id)) {
-			response = parse("franziska.herger.xml");
+			response = parse(FILE_FRANZISKA_HERGER);
+		} else if (ID_SANDRA_ANDEREGG.equals(id)) {
+			response = parse(FILE_SANDRA_ANDEREGG);
+		} else if (ID_HERBERT_GERBER.equals(id)) {
+			response = parse(FILE_HERBERT_GERBER);
 		} else {
-			// Default: Marc Schmid
-			response = parse("marc.schmid.xml");
+			response = parse(FILE_NO_RESULT);
 		}
 		return EWKConverter.convertFromEWK(response);
 	}
@@ -63,14 +75,16 @@ public class EWKWebServiceDummy implements IEWKWebService {
 	public EWKResultat suchePerson(@Nonnull String name, @Nonnull String vorname, @Nonnull LocalDate geburtsdatum, @Nonnull Geschlecht geschlecht) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
 		PersonenSucheResp response = null;
 		if ("Schmid".equalsIgnoreCase(name)) {
-			response = parse("marc.schmid.xml");
+			response = parse(FILE_MARC_SCHMID);
 		} else if ("Meier".equalsIgnoreCase(name)) {
-			response = parse("simone.meier.xml");
+			response = parse(FILE_SIMONE_MEIER);
 		} else if ("Herger".equalsIgnoreCase(name)) {
-			response = parse("franziska.herger.xml");
+			response = parse(FILE_FRANZISKA_HERGER);
+		} else if ("Anderegg".equalsIgnoreCase(name)) {
+			response = parse(FILE_SANDRA_ANDEREGG);
 		} else {
 			// Default: Marc Schmid
-			response = parse("marc.schmid.xml");
+			response = parse(FILE_HERBERT_GERBER);
 		}
 		return EWKConverter.convertFromEWK(response);
 	}

@@ -1,0 +1,12 @@
+<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP:Header/>
+   <SOAP:Body xmlns:egov="http://bern.ch/E_GOV/E_BEGU/EGOV_002">
+      <ns1:PersonenSuche_Resp xmlns:ns1="http://bern.ch/E_GOV/E_BEGU/EGOV_002">
+         <AnzahlTreffer>0</AnzahlTreffer>
+         <ReturnMessage>
+            <Code>01</Code>
+            <Text>Es konnte keine Person gefunden werden.</Text>
+         </ReturnMessage>
+      </ns1:PersonenSuche_Resp>
+   </SOAP:Body>
+</SOAP:Envelope>
