@@ -121,7 +121,7 @@
                             </td>
                             <!-- BetragTotalAuftrag -->
                             <td class="ellipsis" ellipsis-tooltip="{{row.betragTotalAuftrag}}"
-                                ng-bind="row.betragTotalAuftrag"></td>
+                                ng-bind="row.betragTotalAuftrag | currency : '' : 2"></td>
                             <!-- beschrieb -->
                             <td ng-if="!vm.isEditMode(row.id)" class="ellipsis" ellipsis-tooltip="{{row.beschrieb}}"
                                 ng-bind="row.beschrieb"></td>

@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -52,9 +53,11 @@ public class VerfuegungUtil {
 				Optional<VerfuegungZeitabschnitt> oldSameZeitabschnitt = findZeitabschnittSameGueltigkeit(zeitabschnitteGSM, newZeitabschnitt);
 				if (oldSameZeitabschnitt.isPresent()) {
 					newZeitabschnitt.setSameVerfuegungsdaten(newZeitabschnitt.isSamePersistedValues(oldSameZeitabschnitt.get()));
+					newZeitabschnitt.setSameVerguenstigung(Objects.equals(newZeitabschnitt.getVerguenstigung(), oldSameZeitabschnitt.get().getVerguenstigung()));
 				}
 				else { // no Zeitabschnitt with the same Gueltigkeit has been found, so it must be different
 					newZeitabschnitt.setSameVerfuegungsdaten(false);
+					newZeitabschnitt.setSameVerguenstigung(false);
 				}
 			}
 		}
@@ -88,6 +91,9 @@ public class VerfuegungUtil {
 				// wir gehen davon aus, dass Zahlung immer fuer einen ganzen Monat gemacht werden, deswegen reicht es wenn ein Zeitabschnitt VERRECHNET bzw. IGNORIERT ist
 				if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.VERRECHNET;
+				}
+				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND)) {
+					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIEREND;
 				}
 				else if (zeitabschnittGSM.getZahlungsstatus().equals(VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT)) {
 					return VerfuegungsZeitabschnittZahlungsstatus.IGNORIERT;

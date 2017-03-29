@@ -9,7 +9,4 @@ public enum ZahlungspositionStatus {
 	KORREKTUR_VOLLKOSTEN,
 	KORREKTUR_ELTERNBEITRAG;
 
-	public boolean isAuszuzahlen() {
-		return NORMAL.equals(this) || KORREKTUR_VOLLKOSTEN.equals(this);
-	}
 }

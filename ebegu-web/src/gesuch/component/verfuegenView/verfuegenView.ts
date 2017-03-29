@@ -44,7 +44,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
     private verfuegungen: TSVerfuegung[] = [];
     private showSchemas: boolean;
     private sameVerfuegungsdaten: boolean;
-    private sameVerrechneteVerfuegungdaten: boolean;
+    private sameVerrechneteVerguenstigung: boolean;
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
@@ -136,9 +136,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
      * the new verfuegung. Returns true if they are the same
      */
     private setSameVerrechneteVerfuegungdaten(): void {
-        this.sameVerrechneteVerfuegungdaten = false; // by default
+        this.sameVerrechneteVerguenstigung = false; // by default
         if (this.getVerfuegenToWorkWith()) {
-            this.sameVerrechneteVerfuegungdaten = this.getVerfuegenToWorkWith().isSameVerrechneteVerfuegungdaten();
+            this.sameVerrechneteVerguenstigung = this.getVerfuegenToWorkWith().isSameVerrechneteVerguenstigung();
         }
     }
 
@@ -146,14 +146,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         return this.sameVerfuegungsdaten;
     }
 
-    private isSameVerrechneteVerfuegungdaten(): boolean {
-        return this.sameVerrechneteVerfuegungdaten;
+    private isSameVerrechneteVerguenstigung(): boolean {
+        return this.sameVerrechneteVerguenstigung;
     }
 
     public save(): void {
         if (this.isGesuchValid()) {
             // wenn Erstgesuch, not KITA oder die neue Verfuegung dieselben Daten hat, wird sie nur gespeichert
-            if (!this.getBetreuung().isAngebotKITA() || this.isSameVerrechneteVerfuegungdaten() || !this.isMutation()) {
+            if (!this.getBetreuung().isAngebotKITA() || this.isSameVerrechneteVerguenstigung() || !this.isMutation()) {
                 this.saveVerfuegung().then(() => {
                     this.generateVerfuegungDokument();
                 });

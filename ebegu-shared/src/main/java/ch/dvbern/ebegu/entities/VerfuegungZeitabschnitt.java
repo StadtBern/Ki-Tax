@@ -43,6 +43,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Transient
 	private boolean sameVerfuegungsdaten;
 
+	// Dieser Wert wird gebraucht, um zu wissen ob die Korrektur relevant fuer die Zahlungen ist, da nur wenn die
+	// Verguenstigung sich geaendert hat, muss man die Korrektur beruecksichtigen
+	@Transient
+	private boolean sameVerguenstigung;
+
 	@Transient
 	private Integer erwerbspensumGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
@@ -510,6 +515,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
 		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
+	}
+
+	public boolean isSameVerguenstigung() {
+		return sameVerguenstigung;
+	}
+
+	public void setSameVerguenstigung(boolean sameVerguenstigung) {
+		this.sameVerguenstigung = sameVerguenstigung;
 	}
 
 	/**

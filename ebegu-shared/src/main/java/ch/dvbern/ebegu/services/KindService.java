@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.dto.KindDubletteDTO;
 import ch.dvbern.ebegu.entities.KindContainer;
 
 import javax.annotation.Nonnull;
@@ -51,4 +52,10 @@ public interface KindService {
 	 */
 	@Nonnull
 	List<KindContainer> getAllKinderWithMissingStatistics();
+
+	/**
+	 * Sucht Kinder mit gleichen Merkmalen in anderen Faellen.
+	 */
+	@Nonnull
+	List<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId);
 }

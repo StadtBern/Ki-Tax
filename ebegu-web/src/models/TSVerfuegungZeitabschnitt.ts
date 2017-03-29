@@ -25,13 +25,15 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
     private _kategorieZuschlagZumErwerbspensum: boolean;
     private _zuSpaetEingereicht: boolean;
     private _sameVerfuegungsdaten: boolean;
+    private _sameVerguenstigung: boolean;
 
 
     constructor(erwerbspensumGS1?: number, erwerbspensumGS2?: number, betreuungspensum?: number, fachstellenpensum?: number,
                 anspruchspensumRest?: number, anspruchberechtigtesPensum?: number, bgPensum?: number, betreuungsstunden?: number, vollkosten?: number,
                 elternbeitrag?: number, abzugFamGroesse?: number, massgebendesEinkommen?: number, bemerkungen?: string,
                 zahlungsstatus?: TSVerfuegungZeitabschnittZahlungsstatus, gueltigkeit?: TSDateRange, famGroesse?: number, einkommensjahr?: number, kategorieMaxEinkommen?: boolean,
-                kategorieKeinPensum?: boolean, kategorieZuschlagZumErwerbspensum?: boolean, sameVerfuegungsdaten?: boolean) {
+                kategorieKeinPensum?: boolean, kategorieZuschlagZumErwerbspensum?: boolean, sameVerfuegungsdaten?: boolean,
+                sameVerguenstigung?: boolean) {
         super(gueltigkeit);
         this._erwerbspensumGS1 = erwerbspensumGS1;
         this._erwerbspensumGS2 = erwerbspensumGS2;
@@ -53,6 +55,7 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._kategorieKeinPensum = kategorieKeinPensum;
         this._kategorieZuschlagZumErwerbspensum = kategorieZuschlagZumErwerbspensum;
         this._sameVerfuegungsdaten = sameVerfuegungsdaten;
+        this._sameVerguenstigung = sameVerguenstigung;
     }
 
     get erwerbspensumGS1(): number {
@@ -221,5 +224,13 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
 
     set sameVerfuegungsdaten(value: boolean) {
         this._sameVerfuegungsdaten = value;
+    }
+
+    get sameVerguenstigung(): boolean {
+        return this._sameVerguenstigung;
+    }
+
+    set sameVerguenstigung(value: boolean) {
+        this._sameVerguenstigung = value;
     }
 }

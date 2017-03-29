@@ -12,6 +12,7 @@ package ch.dvbern.ebegu.reporting.zahlungauftrag;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
 import ch.dvbern.lib.excelmerger.ExcelConverter;
 import ch.dvbern.lib.excelmerger.ExcelMergerDTO;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,6 +20,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -31,7 +35,7 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 	@Override
 	public void applyAutoSize(@Nonnull Sheet sheet) {
 		sheet.autoSizeColumn(0); // institution
-		sheet.autoSizeColumn(1); // name
+//		sheet.autoSizeColumn(1); // name
 		sheet.autoSizeColumn(2); // vorname
 		sheet.autoSizeColumn(3); // gebDatum
 		sheet.autoSizeColumn(4); // verfuegung
@@ -42,10 +46,15 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 	}
 
 	@Nonnull
-	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<Zahlung> data, @Nonnull Locale lang, UserRole userRole, Collection<Institution> allowedInst) {
+	public ExcelMergerDTO toExcelMergerDTO(@Nonnull List<Zahlung> data, @Nonnull Locale lang, UserRole userRole, Collection<Institution> allowedInst,
+										   String beschrieb, LocalDateTime datumGeneriert, LocalDate datumFaellig) {
 		checkNotNull(data);
 
 		ExcelMergerDTO sheet = new ExcelMergerDTO();
+
+		sheet.addValue(MergeFieldZahlungAuftrag.beschrieb, beschrieb);
+		sheet.addValue(MergeFieldZahlungAuftrag.generiertAm, datumGeneriert);
+		sheet.addValue(MergeFieldZahlungAuftrag.faelligAm, datumFaellig);
 
 		data.stream()
 			.filter(zahlung -> {
@@ -68,8 +77,10 @@ public class ZahlungAuftragExcelConverter implements ExcelConverter {
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.vonDatum, zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.bisDatum, zahlungsposition.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigBis());
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.bgPensum, BigDecimal.valueOf(zahlungsposition.getVerfuegungZeitabschnitt().getBgPensum())
-							.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+							.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
 						excelRowGroup.addValue(MergeFieldZahlungAuftrag.betragCHF, zahlungsposition.getBetrag());
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.isKorrektur, !ZahlungspositionStatus.NORMAL.equals(zahlungsposition.getStatus()));
+						excelRowGroup.addValue(MergeFieldZahlungAuftrag.isIgnoriert, zahlungsposition.isIgnoriert());
 					});
 			});
 
