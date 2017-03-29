@@ -65,6 +65,7 @@ import TSBetreuungsmitteilung from '../models/TSBetreuungsmitteilung';
 import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum';
 import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
 import TSZahlung from '../models/TSZahlung';
+import TSKindDublette from '../models/TSKindDublette';
 
 
 export default class EbeguRestUtil {
@@ -995,6 +996,29 @@ export default class EbeguRestUtil {
         return restKind;
     }
 
+    public parseKindDubletteList(data: Array<any>): TSKindDublette[] {
+        let kindContainerList: TSKindDublette[] = [];
+        if (data && Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                kindContainerList[i] = this.parseKindDublette(new TSKindDublette(), data[i]);
+            }
+        } else {
+            kindContainerList[0] = this.parseKindDublette(new TSKindDublette(), data);
+        }
+        return kindContainerList;
+    }
+
+    public parseKindDublette(kindContainerTS: TSKindDublette, kindContainerFromServer: any): TSKindDublette {
+        if (kindContainerFromServer) {
+            kindContainerTS.gesuchId = kindContainerFromServer.gesuchId;
+            kindContainerTS.fallNummer = kindContainerFromServer.fallNummer;
+            kindContainerTS.kindNummerOriginal = kindContainerFromServer.kindNummerOriginal;
+            kindContainerTS.kindNummerDublette = kindContainerFromServer.kindNummerDublette;
+            return kindContainerTS;
+        }
+        return undefined;
+    }
+
     public parseKindContainerList(data: Array<any>): TSKindContainer[] {
         let kindContainerList: TSKindContainer[] = [];
         if (data && Array.isArray(data)) {
@@ -1643,6 +1667,7 @@ export default class EbeguRestUtil {
             zeitabschnitt.kategorieKeinPensum = zeitabschnittTS.kategorieKeinPensum;
             zeitabschnitt.zuSpaetEingereicht = zeitabschnittTS.zuSpaetEingereicht;
             zeitabschnitt.sameVerfuegungsdaten = zeitabschnittTS.sameVerfuegungsdaten;
+            zeitabschnitt.sameVerguenstigung = zeitabschnittTS.sameVerguenstigung;
             return zeitabschnitt;
         }
         return undefined;
@@ -1672,6 +1697,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.kategorieKeinPensum = zeitabschnittFromServer.kategorieKeinPensum;
             verfuegungZeitabschnittTS.zuSpaetEingereicht = zeitabschnittFromServer.zuSpaetEingereicht;
             verfuegungZeitabschnittTS.sameVerfuegungsdaten = zeitabschnittFromServer.sameVerfuegungsdaten;
+            verfuegungZeitabschnittTS.sameVerguenstigung = zeitabschnittFromServer.sameVerguenstigung;
             return verfuegungZeitabschnittTS;
         }
         return undefined;
@@ -1716,6 +1742,18 @@ export default class EbeguRestUtil {
             wizardSteps[0] = this.parseWizardStep(new TSWizardStep(), data);
         }
         return wizardSteps;
+    }
+
+    public parseAntragStatusHistoryCollection (antragStatusHistoryCollection: Array<any>): TSAntragStatusHistory[] {
+        let resultList: TSAntragStatusHistory[] = [];
+        if (antragStatusHistoryCollection && Array.isArray(antragStatusHistoryCollection)) {
+            for (let i = 0; i < antragStatusHistoryCollection.length; i++) {
+                resultList[i] = this.parseAntragStatusHistory(new TSAntragStatusHistory(), antragStatusHistoryCollection[i]);
+            }
+        } else {
+            resultList[0] = this.parseAntragStatusHistory(new TSAntragStatusHistory(), antragStatusHistoryCollection);
+        }
+        return resultList;
     }
 
     public parseAntragStatusHistory(antragStatusHistoryTS: TSAntragStatusHistory, antragStatusHistoryFromServer: any): TSAntragStatusHistory {

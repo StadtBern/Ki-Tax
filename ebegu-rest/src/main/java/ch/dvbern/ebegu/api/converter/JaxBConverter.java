@@ -1711,6 +1711,7 @@ public class JaxBConverter {
 			jaxZeitabschn.setZuSpaetEingereicht(zeitabschnitt.isZuSpaetEingereicht());
 			jaxZeitabschn.setZahlungsstatus(zeitabschnitt.getZahlungsstatus());
 			jaxZeitabschn.setSameVerfuegungsdaten(zeitabschnitt.isSameVerfuegungsdaten());
+			jaxZeitabschn.setSameVerguenstigung(zeitabschnitt.isSameVerguenstigung());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1741,6 +1742,7 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setZuSpaetEingereicht(jaxVerfuegungZeitabschnitt.isZuSpaetEingereicht());
 		verfuegungZeitabschnitt.setZahlungsstatus(jaxVerfuegungZeitabschnitt.getZahlungsstatus());
 		verfuegungZeitabschnitt.setSameVerfuegungsdaten(jaxVerfuegungZeitabschnitt.isSameVerfuegungsdaten());
+		verfuegungZeitabschnitt.setSameVerguenstigung(jaxVerfuegungZeitabschnitt.isSameVerguenstigung());
 		return verfuegungZeitabschnitt;
 	}
 
@@ -2058,7 +2060,15 @@ public class JaxBConverter {
 		return jaxAntragStatusHistory;
 
 	}
-
+	public Collection<JaxAntragStatusHistory> antragStatusHistoryCollectionToJAX(Collection<AntragStatusHistory> antragStatusHistoryCollection) {
+		final Collection<JaxAntragStatusHistory> jaxContainers = new ArrayList<>();
+		if (antragStatusHistoryCollection != null) {
+			for (final AntragStatusHistory antragStatusHistory : antragStatusHistoryCollection) {
+				jaxContainers.add(antragStatusHistoryToJAX(antragStatusHistory));
+			}
+		}
+		return jaxContainers;
+	}
 	/**
 	 * transformiert ein gesuch in ein JaxAntragDTO unter beruecksichtigung der rollen und erlaubten institutionen
 	 */

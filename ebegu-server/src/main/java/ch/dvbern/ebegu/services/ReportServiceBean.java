@@ -75,6 +75,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	public static final String NICHT_GEFUNDEN = "' nicht gefunden";
 	public static final String VORLAGE = "Vorlage '";
+	private static final String VALIDIERUNG_STICHTAG = "Das Argument 'stichtag' darf nicht leer sein";
 	private static final String VALIDIERUNG_DATUM_VON = "Das Argument 'datumVon' darf nicht leer sein";
 	private static final String VALIDIERUNG_DATUM_BIS = "Das Argument 'datumBis' darf nicht leer sein";
 
@@ -126,8 +127,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
-	@Inject
-	private GesuchstellerAdresseService gesuchstellerAdresseService;
 
 	private static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	private static final String TEMP_REPORT_FOLDERNAME = "tempReports";
@@ -496,7 +495,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
 			.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
 
-		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getBeschrieb() + ".xlsx");
+		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getFilename(), zahlungsauftrag.getBeschrieb(),
+			zahlungsauftrag.getDatumGeneriert(), zahlungsauftrag.getDatumFaellig());
 	}
 
 	@Override
@@ -510,10 +510,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		reportData.add(zahlung);
 
-		return getUploadFileInfoZahlung(reportData, "Zahlungen_" + zahlung.getInstitutionStammdaten().getInstitution().getName() + ".xlsx");
+		return getUploadFileInfoZahlung(reportData, zahlung.getZahlungsauftrag().getFilename() + "_" + zahlung.getInstitutionStammdaten().getInstitution().getName(),
+			zahlung.getZahlungsauftrag().getBeschrieb(), zahlung.getZahlungsauftrag().getDatumGeneriert(), zahlung.getZahlungsauftrag().getDatumFaellig());
 	}
 
-	private UploadFileInfo getUploadFileInfoZahlung(List<Zahlung> reportData, String excelFileName) throws ExcelMergeException {
+	private UploadFileInfo getUploadFileInfoZahlung(List<Zahlung> reportData, String excelFileName, String bezeichnung, LocalDateTime datumGeneriert, LocalDate datumFaellig) throws ExcelMergeException {
 		final ReportVorlage reportVorlage = ReportVorlage.VORLAGE_REPORT_ZAHLUNG_AUFTRAG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportVorlage.getTemplatePath());
@@ -524,7 +525,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 
-		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), principalBean.discoverMostPrivilegedRole(), allowedInst);
+		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(),
+			principalBean.discoverMostPrivilegedRole(), allowedInst, "Detailpositionen der Zahlung " + bezeichnung,
+			datumGeneriert, datumFaellig);
 
 		mergeData(sheet, excelMergerDTO, reportVorlage.getMergeFields());
 		zahlungAuftragExcelConverter.applyAutoSize(sheet);
@@ -532,7 +535,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		byte[] bytes = createWorkbook(workbook);
 
 		return fileSaverService.save(bytes,
-			excelFileName,
+			excelFileName + ".xlsx",
 			TEMP_REPORT_FOLDERNAME,
 			getContentTypeForExport());
 	}
@@ -571,12 +574,30 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			getContentTypeForExport());
 	}
 
+	private List<GesuchstellerKinderBetreuungDataRow> getReportDataGesuchstellerKinderBetreuung(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
+		List<VerfuegungZeitabschnitt> zeitabschnittList = getReportDataBetreuungen(datumVon, datumBis, gesuchsperiode);
+		List<GesuchstellerKinderBetreuungDataRow> dataRows = convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		dataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer).thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
+		return dataRows;
+	}
+
+	private List<GesuchstellerKinderBetreuungDataRow> getReportDataKinder(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
+		List<VerfuegungZeitabschnitt> zeitabschnittList = getReportDataBetreuungen(datumVon, datumBis, gesuchsperiode);
+		List<GesuchstellerKinderBetreuungDataRow> dataRows = convertToKinderDataRow(zeitabschnittList);
+		dataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer).thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
+		return dataRows;
+	}
+
+	private List<GesuchstellerKinderBetreuungDataRow> getReportDataGesuchsteller(@Nonnull LocalDate stichtag) throws IOException, URISyntaxException {
+		List<VerfuegungZeitabschnitt> zeitabschnittList = getReportDataBetreuungen(stichtag);
+		List<GesuchstellerKinderBetreuungDataRow> dataRows = convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
+		dataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer).thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
+		return dataRows;
+	}
+
 	@SuppressWarnings("PMD.NcssMethodCount")
-	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR})
-	public List<GesuchstellerKinderBetreuungDataRow> getReportDataGesuchstellerKinderBetreuung(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
-		Validate.notNull(datumVon, VALIDIERUNG_DATUM_VON);
-		Validate.notNull(datumBis, VALIDIERUNG_DATUM_BIS);
+	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable Gesuchsperiode gesuchsperiode) throws IOException, URISyntaxException {
+		validateDateParams(datumVon, datumBis);
 
 		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
 		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
@@ -592,7 +613,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		predicatesToUse.add(predicateEnd);
 
 		if (gesuchsperiode != null) {
-			Predicate predicateGesuchsperiode = builder.equal(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode), gesuchsperiode);
+			Predicate predicateGesuchsperiode = builder.equal(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind)
+				.get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode), gesuchsperiode);
 			predicatesToUse.add(predicateGesuchsperiode);
 		}
 
@@ -603,6 +625,60 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			for (Gesuchsperiode gp : relevanteGesuchsperioden) {
 				idsOfLetztVerfuegteAntraege.addAll(gesuchService.getNeuesteVerfuegteAntraege(gp));
 			}
+			if (!idsOfLetztVerfuegteAntraege.isEmpty()) {
+				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind)
+					.get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
+				predicatesToUse.add(predicateAktuellesGesuch);
+			} else {
+				return Collections.emptyList();
+			}
+		} else {
+			return Collections.emptyList();
+		}
+
+		// Sichtbarkeit nach eingeloggtem Benutzer
+		boolean isInstitutionsbenutzer = principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_INSTITUTION, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
+		if (isInstitutionsbenutzer) {
+			Collection<Institution> allowedInstitutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+			Predicate predicateAllowedInstitutionen = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(allowedInstitutionen);
+			predicatesToUse.add(predicateAllowedInstitutionen);
+		}
+		boolean isSchulamtBenutzer = principalBean.isCallerInAnyOfRole(UserRole.SCHULAMT);
+		if (isSchulamtBenutzer) {
+			Predicate predicateSchulamt = builder.equal(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp) , BetreuungsangebotTyp.TAGESSCHULE);
+			predicatesToUse.add(predicateSchulamt);
+		} else {
+			Predicate predicateNotSchulamt = builder.notEqual(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp) , BetreuungsangebotTyp.TAGESSCHULE);
+			predicatesToUse.add(predicateNotSchulamt);
+		}
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
+		List<VerfuegungZeitabschnitt> zeitabschnittList = persistence.getCriteriaResults(query);
+		return zeitabschnittList;
+	}
+
+	@SuppressWarnings("PMD.NcssMethodCount")
+	private List<VerfuegungZeitabschnitt> getReportDataBetreuungen(@Nonnull LocalDate stichtag) throws IOException, URISyntaxException {
+		Validate.notNull(stichtag, VALIDIERUNG_STICHTAG);
+
+		// Alle Verfuegungszeitabschnitte zwischen datumVon und datumBis. Aber pro Fall immer nur das zuletzt verfuegte.
+		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
+		final CriteriaQuery<VerfuegungZeitabschnitt> query = builder.createQuery(VerfuegungZeitabschnitt.class);
+		query.distinct(true);
+		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
+		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+
+		// Stichtag
+		Predicate intervalPredicate = builder.between(builder.literal(stichtag),
+			root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb),
+			root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis));
+		predicatesToUse.add(intervalPredicate);
+
+		// nur das neuest verfuegte Gesuch
+		Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.getGesuchsperiodeAm(stichtag);
+		if (gesuchsperiodeOptional.isPresent()) {
+			List<String> idsOfLetztVerfuegteAntraege = new ArrayList<>();
+			idsOfLetztVerfuegteAntraege.addAll(gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiodeOptional.get()));
 			if (!idsOfLetztVerfuegteAntraege.isEmpty()) {
 				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
 				predicatesToUse.add(predicateAktuellesGesuch);
@@ -630,90 +706,43 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
-		List<VerfuegungZeitabschnitt> zeitabschnittList = persistence.getCriteriaResults(query);
-		final List<GesuchstellerKinderBetreuungDataRow> gesuchstellerKinderBetreuungDataRows = convertToGesuchstellerKinderBetreuungDataRow(zeitabschnittList);
-		gesuchstellerKinderBetreuungDataRows.sort(Comparator.comparing(GesuchstellerKinderBetreuungDataRow::getBgNummer)
-			.thenComparing(GesuchstellerKinderBetreuungDataRow::getZeitabschnittVon));
-		return gesuchstellerKinderBetreuungDataRows;
+		return persistence.getCriteriaResults(query);
 	}
 
-	private List<GesuchstellerKinderBetreuungDataRow> convertToGesuchstellerKinderBetreuungDataRow(List<VerfuegungZeitabschnitt> zeitabschnittList) {
-		List<GesuchstellerKinderBetreuungDataRow> dataRowList = new ArrayList<>();
-		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
-			Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
-
-			GesuchstellerKinderBetreuungDataRow row = new GesuchstellerKinderBetreuungDataRow();
-			row.setInstitution(zeitabschnitt.getVerfuegung().getBetreuung().getInstitutionStammdaten().getInstitution().getName());
-			row.setBetreuungsTyp(zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungsangebotTyp());
-			row.setPeriode(gesuch.getGesuchsperiode().getGesuchsperiodeString());
-			row.setEingangsdatum(gesuch.getEingangsdatum());
-			for (AntragStatusHistory antragStatusHistory : gesuch.getAntragStatusHistories()) {
-				if (AntragStatus.VERFUEGT.equals(antragStatusHistory.getStatus()) ||
-					AntragStatus.NUR_SCHULAMT.equals(antragStatusHistory.getStatus())) {
-					row.setVerfuegungsdatum(antragStatusHistory.getTimestampVon().toLocalDate());
-				}
+	private void addStammdaten(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt) {
+		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
+		row.setInstitution(zeitabschnitt.getVerfuegung().getBetreuung().getInstitutionStammdaten().getInstitution().getName());
+		row.setBetreuungsTyp(zeitabschnitt.getVerfuegung().getBetreuung().getBetreuungsangebotTyp());
+		row.setPeriode(gesuch.getGesuchsperiode().getGesuchsperiodeString());
+		row.setEingangsdatum(gesuch.getEingangsdatum());
+		for (AntragStatusHistory antragStatusHistory : gesuch.getAntragStatusHistories()) {
+			if (AntragStatus.VERFUEGT.equals(antragStatusHistory.getStatus()) ||
+				AntragStatus.NUR_SCHULAMT.equals(antragStatusHistory.getStatus())) {
+				row.setVerfuegungsdatum(antragStatusHistory.getTimestampVon().toLocalDate());
 			}
-			row.setFallId(Integer.parseInt(""+gesuch.getFall().getFallNummer()));
-			row.setBgNummer(zeitabschnitt.getVerfuegung().getBetreuung().getBGNummer());
-
-			// Gesuchsteller 1: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
-			row.setGs1EwpAngestellt(0);
-			row.setGs1EwpAusbildung(0);
-			row.setGs1EwpSelbstaendig(0);
-			row.setGs1EwpRav(0);
-			row.setGs1EwpGesundhtl(0);
-			row.setGs1EwpZuschlag(0);
-			addGesuchsteller1ToGesuchstellerKinderBetreuungDataRow(row, gesuch.getGesuchsteller1());
-			// Gesuchsteller 2: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
-			row.setGs2EwpAngestellt(0);
-			row.setGs2EwpAusbildung(0);
-			row.setGs2EwpSelbstaendig(0);
-			row.setGs2EwpRav(0);
-			row.setGs2EwpGesundhtl(0);
-			row.setGs2EwpZuschlag(0);
-			if (gesuch.getGesuchsteller2() != null) {
-				addGesuchsteller2ToGesuchstellerKinderBetreuungDataRow(row, gesuch.getGesuchsteller2());
-			}
-			// Familiensituation / Einkommen
-			row.setFamiliensituation(gesuch.getFamiliensituationContainer().extractFamiliensituation().getFamilienstatus());
-			row.setKardinalitaet(gesuch.getFamiliensituationContainer().extractFamiliensituation().getGesuchstellerKardinalitaet());
-			row.setFamiliengroesse(zeitabschnitt.getFamGroesse());
-			row.setMassgEinkVorFamilienabzug(zeitabschnitt.getMassgebendesEinkommenVorAbzFamgr());
-			row.setFamilienabzug(zeitabschnitt.getAbzugFamGroesse());
-			row.setMassgEink(zeitabschnitt.getMassgebendesEinkommen());
-			row.setEinkommensjahr(zeitabschnitt.getEinkommensjahr());
-			if (gesuch.getEinkommensverschlechterungInfoContainer() != null) {
-				row.setEkvVorhanden(gesuch.getEinkommensverschlechterungInfoContainer().getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung());
-			}
-			row.setStvGeprueft(Boolean.FALSE); //TODO (team) haben wir noch nicht
-			row.setVeranlagt(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().getSteuerveranlagungErhalten());
-			// Kind
-			addKindToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
-			// Betreuung
-			addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
-
-			dataRowList.add(row);
 		}
-		return dataRowList;
+		row.setFallId(Integer.parseInt(""+gesuch.getFall().getFallNummer()));
+		row.setBgNummer(zeitabschnitt.getVerfuegung().getBetreuung().getBGNummer());
 	}
 
 	private void addGesuchsteller1ToGesuchstellerKinderBetreuungDataRow(GesuchstellerKinderBetreuungDataRow row, GesuchstellerContainer containerGS1) {
 		Gesuchsteller gs1 = containerGS1.getGesuchstellerJA();
 		row.setGs1Name(gs1.getNachname());
 		row.setGs1Vorname(gs1.getVorname());
-		GesuchstellerAdresse gs1Adresse = gesuchstellerAdresseService.getCurrentWohnadresse(containerGS1.getId()).getGesuchstellerAdresseJA();
-		row.setGs1Strasse(gs1Adresse.getStrasse());
-		row.setGs1Hausnummer(gs1Adresse.getHausnummer());
-		row.setGs1Zusatzzeile(gs1Adresse.getZusatzzeile());
-		row.setGs1Plz(gs1Adresse.getPlz());
-		row.setGs1Ort(gs1Adresse.getOrt());
+		GesuchstellerAdresse gs1Adresse = containerGS1.getWohnadresseAm(row.getZeitabschnittVon());
+		if (gs1Adresse != null) {
+			row.setGs1Strasse(gs1Adresse.getStrasse());
+			row.setGs1Hausnummer(gs1Adresse.getHausnummer());
+			row.setGs1Zusatzzeile(gs1Adresse.getZusatzzeile());
+			row.setGs1Plz(gs1Adresse.getPlz());
+			row.setGs1Ort(gs1Adresse.getOrt());
+		}
 		row.setGs1EwkId(gs1.getZpvNumber());
 		row.setGs1Diplomatenstatus(gs1.isDiplomatenstatus());
 		// EWP Gesuchsteller 1
 
-		Set<ErwerbspensumContainer> erwerbspensenGS1 = containerGS1.getErwerbspensenContainersNotEmpty();
-		for (ErwerbspensumContainer erwerbspensumContainer : erwerbspensenGS1) {
-			Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
+		List<Erwerbspensum> erwerbspensenGS1 = containerGS1.getErwerbspensenAm(row.getZeitabschnittVon());
+		for (Erwerbspensum erwerbspensumJA : erwerbspensenGS1) {
 			if (Taetigkeit.ANGESTELLT.equals(erwerbspensumJA.getTaetigkeit())) {
 				row.setGs1EwpAngestellt(row.getGs1EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
@@ -739,19 +768,19 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Gesuchsteller gs2 = containerGS2.getGesuchstellerJA();
 		row.setGs2Name(gs2.getNachname());
 		row.setGs2Vorname(gs2.getVorname());
-		GesuchstellerAdresse gs2Adresse = gesuchstellerAdresseService.getCurrentWohnadresse(containerGS2.getId()).getGesuchstellerAdresseJA();
-		row.setGs2Strasse(gs2Adresse.getStrasse());
-		row.setGs2Hausnummer(gs2Adresse.getHausnummer());
-		row.setGs2Zusatzzeile(gs2Adresse.getZusatzzeile());
-		row.setGs2Plz(gs2Adresse.getPlz());
-		row.setGs2Ort(gs2Adresse.getOrt());
+		GesuchstellerAdresse gs2Adresse = containerGS2.getWohnadresseAm(row.getZeitabschnittVon());
+		if (gs2Adresse != null) {
+			row.setGs2Strasse(gs2Adresse.getStrasse());
+			row.setGs2Hausnummer(gs2Adresse.getHausnummer());
+			row.setGs2Zusatzzeile(gs2Adresse.getZusatzzeile());
+			row.setGs2Plz(gs2Adresse.getPlz());
+			row.setGs2Ort(gs2Adresse.getOrt());
+		}
 		row.setGs2EwkId(gs2.getZpvNumber());
 		row.setGs2Diplomatenstatus(gs2.isDiplomatenstatus());
 		// EWP Gesuchsteller 2
-
-		Set<ErwerbspensumContainer> erwerbspensenGS2 = containerGS2.getErwerbspensenContainersNotEmpty();
-		for (ErwerbspensumContainer erwerbspensumContainer : erwerbspensenGS2) {
-			Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
+		List<Erwerbspensum> erwerbspensenGS2 = containerGS2.getErwerbspensenAm(row.getZeitabschnittVon());
+		for (Erwerbspensum erwerbspensumJA : erwerbspensenGS2) {
 			if (Taetigkeit.ANGESTELLT.equals(erwerbspensumJA.getTaetigkeit())) {
 				row.setGs2EwpAngestellt(row.getGs2EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
@@ -797,7 +826,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR})
 	public UploadFileInfo generateExcelReportGesuchstellerKinderBetreuung(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable String gesuchPeriodeId) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 		Validate.notNull(datumVon, VALIDIERUNG_DATUM_VON);
 		Validate.notNull(datumBis, VALIDIERUNG_DATUM_BIS);
@@ -805,7 +834,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final ReportVorlage reportResource = ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER_KINDER_BETREUUNG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
-		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + "' nicht gefunden");
+		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
 
 		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
 		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
@@ -820,6 +849,160 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataGesuchstellerKinderBetreuung(datumVon, datumBis, gesuchsperiode);
 		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderBetreuungExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), datumVon, datumBis, gesuchsperiode);
+
+		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
+		gesuchstellerKinderBetreuungExcelConverter.applyAutoSize(sheet);
+
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportResource.getDefaultExportFilename(),
+			TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
+	}
+
+	private List<GesuchstellerKinderBetreuungDataRow> convertToGesuchstellerKinderBetreuungDataRow(List<VerfuegungZeitabschnitt> zeitabschnittList) {
+		List<GesuchstellerKinderBetreuungDataRow> dataRowList = new ArrayList<>();
+		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
+			GesuchstellerKinderBetreuungDataRow row = createRowForGesuchstellerKinderBetreuungReport(zeitabschnitt);
+			dataRowList.add(row);
+		}
+		return dataRowList;
+	}
+
+	private GesuchstellerKinderBetreuungDataRow createRowForGesuchstellerKinderBetreuungReport(VerfuegungZeitabschnitt zeitabschnitt) {
+		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
+
+		GesuchstellerKinderBetreuungDataRow row = new GesuchstellerKinderBetreuungDataRow();
+		// Betreuung
+		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
+		// Stammdaten
+		addStammdaten(row, zeitabschnitt);
+
+		// Gesuchsteller 1: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
+		row.setGs1EwpAngestellt(0);
+		row.setGs1EwpAusbildung(0);
+		row.setGs1EwpSelbstaendig(0);
+		row.setGs1EwpRav(0);
+		row.setGs1EwpGesundhtl(0);
+		row.setGs1EwpZuschlag(0);
+		addGesuchsteller1ToGesuchstellerKinderBetreuungDataRow(row, gesuch.getGesuchsteller1());
+		// Gesuchsteller 2: Prozent-Felder initialisieren, damit im Excel das Total sicher berechnet werden kann
+		row.setGs2EwpAngestellt(0);
+		row.setGs2EwpAusbildung(0);
+		row.setGs2EwpSelbstaendig(0);
+		row.setGs2EwpRav(0);
+		row.setGs2EwpGesundhtl(0);
+		row.setGs2EwpZuschlag(0);
+		if (gesuch.getGesuchsteller2() != null) {
+			addGesuchsteller2ToGesuchstellerKinderBetreuungDataRow(row, gesuch.getGesuchsteller2());
+		}
+		// Familiensituation / Einkommen
+		Familiensituation familiensituation = gesuch.getFamiliensituationContainer().getFamiliensituationAm(row.getZeitabschnittVon());
+		row.setFamiliensituation(familiensituation.getFamilienstatus());
+		if (familiensituation.hasSecondGesuchsteller()) {
+			row.setKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		} else {
+			row.setKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		}
+		row.setFamiliengroesse(zeitabschnitt.getFamGroesse());
+		row.setMassgEinkVorFamilienabzug(zeitabschnitt.getMassgebendesEinkommenVorAbzFamgr());
+		row.setFamilienabzug(zeitabschnitt.getAbzugFamGroesse());
+		row.setMassgEink(zeitabschnitt.getMassgebendesEinkommen());
+		row.setEinkommensjahr(zeitabschnitt.getEinkommensjahr());
+		if (gesuch.getEinkommensverschlechterungInfoContainer() != null) {
+			row.setEkvVorhanden(gesuch.getEinkommensverschlechterungInfoContainer().getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung());
+		}
+		row.setStvGeprueft(Boolean.FALSE); //TODO (team) haben wir noch nicht
+		row.setVeranlagt(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().getSteuerveranlagungErhalten());
+		// Kind
+		addKindToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
+		return row;
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT})
+	public UploadFileInfo generateExcelReportKinder(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, @Nullable String gesuchPeriodeId) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+		Validate.notNull(datumVon, VALIDIERUNG_DATUM_VON);
+		Validate.notNull(datumBis, VALIDIERUNG_DATUM_BIS);
+
+		final ReportVorlage reportResource = ReportVorlage.VORLAGE_REPORT_KINDER;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
+		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
+
+		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
+		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
+
+		Gesuchsperiode gesuchsperiode = null;
+		if (gesuchPeriodeId != null) {
+			Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.findGesuchsperiode(gesuchPeriodeId);
+			if (gesuchsperiodeOptional.isPresent()) {
+				gesuchsperiode = gesuchsperiodeOptional.get();
+			}
+		}
+
+		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataKinder(datumVon, datumBis, gesuchsperiode);
+		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderBetreuungExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), datumVon, datumBis, gesuchsperiode);
+
+		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
+		gesuchstellerKinderBetreuungExcelConverter.applyAutoSize(sheet);
+
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportResource.getDefaultExportFilename(),
+			TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
+	}
+
+	private List<GesuchstellerKinderBetreuungDataRow> convertToKinderDataRow(List<VerfuegungZeitabschnitt> zeitabschnittList) {
+		List<GesuchstellerKinderBetreuungDataRow> dataRowList = new ArrayList<>();
+		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
+			GesuchstellerKinderBetreuungDataRow row = createRowForKinderReport(zeitabschnitt);
+			dataRowList.add(row);
+		}
+		return dataRowList;
+	}
+
+	private GesuchstellerKinderBetreuungDataRow createRowForKinderReport(VerfuegungZeitabschnitt zeitabschnitt) {
+		Gesuch gesuch = zeitabschnitt.getVerfuegung().getBetreuung().extractGesuch();
+
+		GesuchstellerKinderBetreuungDataRow row = new GesuchstellerKinderBetreuungDataRow();
+		addStammdaten(row, zeitabschnitt);
+
+		// Gesuchsteller 1
+		Gesuchsteller gs1 = gesuch.getGesuchsteller1().getGesuchstellerJA();
+		row.setGs1Name(gs1.getNachname());
+		row.setGs1Vorname(gs1.getVorname());
+		// Gesuchsteller 2
+		if (gesuch.getGesuchsteller2() != null) {
+			Gesuchsteller gs2 = gesuch.getGesuchsteller2().getGesuchstellerJA();
+			row.setGs2Name(gs2.getNachname());
+			row.setGs2Vorname(gs2.getVorname());
+		}
+		// Kind
+		addKindToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
+		// Betreuung
+		addBetreuungToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);
+		return row;
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, REVISOR, SCHULAMT})
+	public UploadFileInfo generateExcelReportGesuchsteller(@Nonnull LocalDate stichtag) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+		Validate.notNull(stichtag, VALIDIERUNG_STICHTAG);
+
+		final ReportVorlage reportResource = ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportResource.getTemplatePath());
+		Validate.notNull(is, VORLAGE + reportResource.getTemplatePath() + NICHT_GEFUNDEN);
+
+		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
+		Sheet sheet = workbook.getSheet(reportResource.getDataSheetName());
+
+		List<GesuchstellerKinderBetreuungDataRow> reportData = getReportDataGesuchsteller(stichtag);
+		ExcelMergerDTO excelMergerDTO = gesuchstellerKinderBetreuungExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(), stichtag);
 
 		mergeData(sheet, excelMergerDTO, reportResource.getMergeFields());
 		gesuchstellerKinderBetreuungExcelConverter.applyAutoSize(sheet);

@@ -39,7 +39,7 @@ public class EbeguConstraintValidationExceptionMapper extends AbstractEbeguExcep
 			List<MediaType> acceptedTypes = new ArrayList<>(resteasyViolationException.getAccept());
 			acceptedTypes.add(MediaType.APPLICATION_JSON_TYPE);
 			return ViolationReportCreator.
-				buildViolationReportResponse(resteasyViolationException, Status.INTERNAL_SERVER_ERROR, getAcceptMediaType(acceptedTypes));
+				buildViolationReportResponse(resteasyViolationException, Status.CONFLICT, getAcceptMediaType(acceptedTypes));
 		}
 		if (rootCause instanceof EJBAccessException) {
 			return RestUtil.sendErrorNotAuthorized();    // nackte 403 status antwort

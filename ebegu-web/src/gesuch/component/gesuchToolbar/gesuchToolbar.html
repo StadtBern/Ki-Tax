@@ -52,6 +52,14 @@
             <span class="bold-menu" ng-if="!vmx.showAntragTypListNavigationMenu()" ng-bind="vmx.getAntragTyp()"></span>
 
             <span flex=""></span>
+            <!--Verlauf-->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getJugendamtAndSchulamtRole()">
+                <button ng-click="vmx.openVerlauf()"
+                        aria-label="{{TOOLBAR_VERLAUF | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_VERLAUF"></span>
+                </button>
+            </div>
             <div dv-show-element
                  dv-show-allowed-roles="vmx.TSRoleUtil.getAllRolesButGesuchsteller()">
                 <button ng-click="vmx.openAlleVerfuegungen()"

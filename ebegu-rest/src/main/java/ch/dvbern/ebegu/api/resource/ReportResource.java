@@ -257,6 +257,58 @@ public class ReportResource {
 		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
 
 		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
+	}
 
+	@Nonnull
+	@GET
+	@Path("/excel/kinder")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getKinderReportExcel(
+		@QueryParam("auswertungVon") @Nonnull String auswertungVon,
+		@QueryParam("auswertungBis") @Nonnull String auswertungBis,
+		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo)
+		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+
+		String ip = downloadResource.getIP(request);
+
+		Validate.notNull(auswertungVon);
+		Validate.notNull(auswertungBis);
+		LocalDate dateFrom = DateUtil.parseStringToDateOrReturnNow(auswertungVon);
+		LocalDate dateTo = DateUtil.parseStringToDateOrReturnNow(auswertungBis);
+
+		if (!dateTo.isAfter(dateFrom)) {
+			throw new EbeguRuntimeException("getKinderReportExcel", "Fehler beim erstellen Report Kinder"
+				, DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
+		}
+
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportKinder(dateFrom, dateTo,
+			gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null);
+
+		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
+
+		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
+	}
+
+	@Nonnull
+	@GET
+	@Path("/excel/gesuchsteller")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getGesuchstellerReportExcel(
+		@QueryParam("stichtag") @Nonnull String stichtag,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo)
+		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException {
+
+		String ip = downloadResource.getIP(request);
+
+		Validate.notNull(stichtag);
+		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stichtag);
+
+		UploadFileInfo uploadFileInfo = reportService.generateExcelReportGesuchsteller(date);
+		DownloadFile downloadFileInfo = new DownloadFile(uploadFileInfo, ip);
+
+		return downloadResource.getFileDownloadResponse(uriInfo, ip, downloadFileInfo);
 	}
 }

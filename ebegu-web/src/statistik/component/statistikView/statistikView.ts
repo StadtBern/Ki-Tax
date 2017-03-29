@@ -75,10 +75,28 @@ export class StatistikViewController {
                         });
                     break;
                 }
-                case TSStatistikParameterType.KINDER:
+                case TSStatistikParameterType.KINDER: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getKinderReportExcel(
+                        this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
+                        this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
+                        .then((downloadFile: TSDownloadFile) => {
+
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
                     break;
-                case TSStatistikParameterType.GESUCHSTELLER:
+                }
+                case TSStatistikParameterType.GESUCHSTELLER: {
+                    let win: Window = this.downloadRS.prepareDownloadWindow();
+                    this.reportRS.getGesuchstellerReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT))
+                        .then((downloadFile: TSDownloadFile) => {
+                            this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                        });
                     break;
+                }
                 case TSStatistikParameterType.KANTON: {
                     let win: Window = this.downloadRS.prepareDownloadWindow();
                     this.reportRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),

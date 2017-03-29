@@ -9,6 +9,7 @@ import {EbeguWebFaelle} from './faelle/faelle.module';
 import {EbeguWebStatistik} from './statistik/statistik.module';
 import {EbeguWebGesuchstellerDashboard} from './gesuchstellerDashboard/gesuchstellerDashboard.module';
 import {EbeguWebMitteilungen} from './mitteilungen/mitteilungen.module';
+import {EbeguWebVerlauf} from './verlauf/verlauf.module';
 import {EbeguWebPosteingang} from './posteingang/posteingang.module';
 import {EbeguWebSearch} from './searchResult/search.module';
 import {EbeguWebZahlung} from './zahlung/zahlung.module';
@@ -17,4 +18,4 @@ import {EbeguWebAlleVerfuegungen} from './alleVerfuegungen/alleVerfuegungen.modu
 
 export default angular.module('ebeguWeb', [EbeguWebCore.name, EbeguWebAdmin.name, EbeguWebGesuch.name, EbeguWebPendenzen.name,
     EbeguWebPendenzenInstitution.name, EbeguWebFaelle.name, EbeguWebGesuchstellerDashboard.name, EbeguWebMitteilungen.name,
-    EbeguWebPosteingang.name, EbeguWebSearch.name,  EbeguWebStatistik.name, EbeguWebZahlung.name, EbeguWebZahlungsauftrag.name, EbeguWebAlleVerfuegungen.name]);
+    EbeguWebPosteingang.name, EbeguWebSearch.name,  EbeguWebStatistik.name, EbeguWebZahlung.name, EbeguWebZahlungsauftrag.name, EbeguWebAlleVerfuegungen.name, EbeguWebVerlauf.name]);

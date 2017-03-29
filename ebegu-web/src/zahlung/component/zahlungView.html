@@ -45,7 +45,7 @@
                             </dv-loading-button>
                         </td>
                         <td class="ellipsis" ellipsis-tooltip="{{row.betragTotalZahlung}}"
-                            ng-bind="row.betragTotalZahlung"></td>
+                            ng-bind="row.betragTotalZahlung | currency : '' : 2"></td>
                         <td class="ellipsis" ellipsis-tooltip="{{row.status}}" dv-show-element
                             dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA']">
                             <span ng-bind="row.status | translate"></span>

@@ -13,10 +13,11 @@ import IHttpProvider = angular.IHttpProvider;
 import ILogProvider = angular.ILogProvider;
 import ILocationProvider = angular.ILocationProvider;
 
-configure.$inject = ['$translateProvider', '$injector', '$httpProvider', '$mdThemingProvider', 'hotkeysProvider', '$logProvider', '$locationProvider'];
+configure.$inject = ['$translateProvider', '$injector', '$httpProvider', '$mdThemingProvider', 'hotkeysProvider', '$logProvider', '$locationProvider', '$qProvider'];
 /* @ngInject */
 export function configure($translateProvider: ITranslateProvider, $injector: IInjectorService, $httpProvider: IHttpProvider,
-                          $mdThemingProvider: IThemingProvider, hotkeysProvider: any, $logProvider: ILogProvider, $locationProvider: ILocationProvider) {
+                          $mdThemingProvider: IThemingProvider, hotkeysProvider: any, $logProvider: ILogProvider,
+                          $locationProvider: ILocationProvider, $qProvider: any) {
     //Translation Provider configuration
     let translProp = require('../assets/translations/translations_de.json');
 
@@ -57,4 +58,7 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
     if (ENV === 'production') {
         $logProvider.debugEnabled(false);
     }
+
+    // Disable "Possibly unhandled rejection:" from angular
+    $qProvider.errorOnUnhandledRejections(false);
 }
