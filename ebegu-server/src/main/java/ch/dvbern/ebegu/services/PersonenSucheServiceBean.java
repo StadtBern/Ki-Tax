@@ -6,7 +6,8 @@ import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
-import ch.dvbern.ebegu.ws.personensuche.service.IEWKWebService;
+import ch.dvbern.ebegu.ws.ewk.IEWKWebService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
@@ -41,6 +42,8 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 	private EbeguConfiguration config;
 
 
+	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod"})
+	@SuppressFBWarnings(value = {"SIC_INNER_SHOULD_BE_STATIC_ANON"})
 	@PostConstruct
 	private void resolveService() {
 		if (config.isPersonenSucheDisabled()) {
@@ -52,13 +55,13 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 
 	@Override
 	@Nonnull
-	public EWKResultat suchePerson(String id) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
+	public EWKResultat suchePerson(@Nonnull String id) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
 		return ewkService.suchePerson(id);
 	}
 
 	@Override
 	@Nonnull
-	public EWKResultat suchePerson(String name, String vorname, LocalDate geburtsdatum, Geschlecht geschlecht) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
+	public EWKResultat suchePerson(@Nonnull String name, @Nonnull String vorname, @Nonnull LocalDate geburtsdatum, @Nonnull Geschlecht geschlecht) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
 		return ewkService.suchePerson(name, vorname, geburtsdatum, geschlecht);
 	}
 

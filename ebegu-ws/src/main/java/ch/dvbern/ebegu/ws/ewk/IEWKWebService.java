@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.ws.personensuche.service;
+package ch.dvbern.ebegu.ws.ewk;
 
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.enums.Geschlecht;

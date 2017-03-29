@@ -8,7 +8,7 @@
  * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
  */
 
-package ch.dvbern.ebegu.ewk;
+package ch.dvbern.ebegu.ws.ewk;
 
 import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
 import ch.dvbern.ebegu.cdi.Dummy;
@@ -16,18 +16,17 @@ import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
-import ch.dvbern.ebegu.ws.personensuche.service.IEWKWebService;
+import com.google.common.io.ByteStreams;
 
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 
 /**
@@ -67,13 +66,13 @@ public class EWKWebServiceDummy implements IEWKWebService {
 		} else {
 			response = parse(FILE_NO_RESULT);
 		}
-		return EWKConverter.convertFromEWK(response);
+		return EWKConverter.convertFromEWK(response, EWKWebService.MAX_RESULTS_ID);
 	}
 
 	@Nonnull
 	@Override
 	public EWKResultat suchePerson(@Nonnull String name, @Nonnull String vorname, @Nonnull LocalDate geburtsdatum, @Nonnull Geschlecht geschlecht) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
-		PersonenSucheResp response = null;
+		PersonenSucheResp response;
 		if ("Schmid".equalsIgnoreCase(name)) {
 			response = parse(FILE_MARC_SCHMID);
 		} else if ("Meier".equalsIgnoreCase(name)) {
@@ -86,7 +85,7 @@ public class EWKWebServiceDummy implements IEWKWebService {
 			// Default: Marc Schmid
 			response = parse(FILE_HERBERT_GERBER);
 		}
-		return EWKConverter.convertFromEWK(response);
+		return EWKConverter.convertFromEWK(response, EWKWebService.MAX_RESULTS_NAME);
 	}
 
 	@Nonnull
@@ -97,14 +96,14 @@ public class EWKWebServiceDummy implements IEWKWebService {
 
 	private PersonenSucheResp parse(String filename) throws PersonenSucheServiceException {
 		try {
-			File file = new File("/home/hefr/workspaces/ebegu/ebegu-ws/src/main/resources/" + filename); //TODO Hefr abs pfad
-			String contents = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
+			byte[] bytes = ByteStreams.toByteArray(EWKWebServiceDummy.class.getResourceAsStream("/" + filename));
+			String contents = new String(bytes);
 			JAXBContext jaxbContext = JAXBContext.newInstance(PersonenSucheResp.class);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 			// Root-Element: PersonenSucheResp Hat kein @XmlRootElement-Annotation, darum muss hier angegeben werden, was wir zurueck erwarten
-			final JAXBElement o = unmarshaller.unmarshal(new StreamSource(new StringReader(contents)), PersonenSucheResp.class);
-			return (PersonenSucheResp) o.getValue();
-		} catch (Exception e) {
+			final JAXBElement<PersonenSucheResp> o = unmarshaller.unmarshal(new StreamSource(new StringReader(contents)), PersonenSucheResp.class);
+			return o.getValue();
+		} catch (IOException | JAXBException e) {
 			throw new PersonenSucheServiceException("Could not read file " + filename, e);
 		}
 	}

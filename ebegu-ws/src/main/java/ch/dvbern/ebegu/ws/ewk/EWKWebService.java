@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.ewk;
+package ch.dvbern.ebegu.ws.ewk;
 
 import ch.bern.e_gov.cra.ReturnMessage;
 import ch.bern.e_gov.e_begu.egov_002.PersonenSucheOB;
@@ -9,8 +9,6 @@ import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
-import ch.dvbern.ebegu.services.GesuchServiceBean;
-import ch.dvbern.ebegu.ws.personensuche.service.IEWKWebService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +34,8 @@ public class EWKWebService implements IEWKWebService {
 
 	private static final String TARGET_NAME_SPACE = "http://bern.ch/E_GOV/E_BEGU/EGOV_002";
 	private static final String SERVICE_NAME = "PersonenSuche_OB";
-	private static final BigInteger MAX_RESULTS_ID = new BigInteger("1");
-	private static final BigInteger MAX_RESULTS_NAME = new BigInteger("10");
+	public static final BigInteger MAX_RESULTS_ID = BigInteger.ONE;
+	public static final BigInteger MAX_RESULTS_NAME = BigInteger.TEN;
 	private static final String RETURN_CODE_OKAY = "00";
 
 	private static final Logger logger = LoggerFactory.getLogger(EWKWebService.class.getSimpleName());
@@ -62,7 +60,7 @@ public class EWKWebService implements IEWKWebService {
 		if (response.getAnzahlTreffer().intValue() > 1) {
 			throw new PersonenSucheServiceException("Mehr als eine Person gefunden mit ID " + id);
 		}
-		return EWKConverter.convertFromEWK(response);
+		return EWKConverter.convertFromEWK(response, MAX_RESULTS_ID);
 	}
 
 	@Nonnull
@@ -81,7 +79,7 @@ public class EWKWebService implements IEWKWebService {
 			throw new PersonenSucheServiceException("Response war NULL, es muss aber immer eine Antwort zurueckkommen");
 		}
 		handleResponseStatus(response);
-		return EWKConverter.convertFromEWK(response);
+		return EWKConverter.convertFromEWK(response, MAX_RESULTS_NAME);
 	}
 
 	@Nonnull
@@ -99,7 +97,7 @@ public class EWKWebService implements IEWKWebService {
 			throw new PersonenSucheServiceException("Response war NULL, es muss aber immer eine Antwort zurueckkommen");
 		}
 		handleResponseStatus(response);
-		return EWKConverter.convertFromEWK(response);
+		return EWKConverter.convertFromEWK(response, MAX_RESULTS_NAME);
 	}
 
 	/**

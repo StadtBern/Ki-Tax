@@ -14,7 +14,7 @@ import java.util.List;
 public class EWKPerson {
 
 	private String personID;
-	private EWKEinwohnercode einwohnercode;
+	private List<EWKEinwohnercode> einwohnercodes = new ArrayList<>();
 	private String nachname;
 	private String ledigname;
 	private String vorname;
@@ -29,10 +29,7 @@ public class EWKPerson {
 	private String bewilligungsart;
 	private String bewilligungsartTxt;
 	private LocalDate bewilligungBis;
-
-    private EWKAdresse wohnadresse;
-    private EWKAdresse zuzugsadresse;
-    private EWKAdresse wegzugsadresse;
+	private List<EWKAdresse> adressen = new ArrayList<>();
 
     private List<EWKBeziehung> beziehungen = new ArrayList<>();
 
@@ -45,12 +42,12 @@ public class EWKPerson {
 		this.personID = personID;
 	}
 
-	public EWKEinwohnercode getEinwohnercode() {
-		return einwohnercode;
+	public List<EWKEinwohnercode> getEinwohnercodes() {
+		return einwohnercodes;
 	}
 
-	public void setEinwohnercode(EWKEinwohnercode einwohnercode) {
-		this.einwohnercode = einwohnercode;
+	public void setEinwohnercodes(List<EWKEinwohnercode> einwohnercodes) {
+		this.einwohnercodes = einwohnercodes;
 	}
 
 	public String getNachname() {
@@ -165,28 +162,12 @@ public class EWKPerson {
 		this.bewilligungBis = bewilligungBis;
 	}
 
-	public EWKAdresse getWohnadresse() {
-		return wohnadresse;
+	public List<EWKAdresse> getAdressen() {
+		return adressen;
 	}
 
-	public void setWohnadresse(EWKAdresse wohnadresse) {
-		this.wohnadresse = wohnadresse;
-	}
-
-	public EWKAdresse getZuzugsadresse() {
-		return zuzugsadresse;
-	}
-
-	public void setZuzugsadresse(EWKAdresse zuzugsadresse) {
-		this.zuzugsadresse = zuzugsadresse;
-	}
-
-	public EWKAdresse getWegzugsadresse() {
-		return wegzugsadresse;
-	}
-
-	public void setWegzugsadresse(EWKAdresse wegzugsadresse) {
-		this.wegzugsadresse = wegzugsadresse;
+	public void setAdressen(List<EWKAdresse> adressen) {
+		this.adressen = adressen;
 	}
 
 	public List<EWKBeziehung> getBeziehungen() {
