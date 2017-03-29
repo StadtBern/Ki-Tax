@@ -43,6 +43,10 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_BACKGROUND_COLOR = "ebegu.background.color";
 	public static final String EBEGU_DUMP_DBUNIT_XML = "ebegu.dump.dbunit.xml";
 	private static final String EBEGU_ZAHLUNGEN_TEST_MODE = "ebegu.zahlungen.test.mode";
+	private static final String EBEGU_PERSONENSUCHE_DISABLED = "ebegu.personensuche.disabled";
+	private static final String EBEGU_PERSONENSUCHE_ENDPOINT = "ebegu.personensuche.endpoint";
+	private static final String EBEGU_PERSONENSUCHE_USERNAME = "ebegu.personensuche.username";
+	private static final String EBEGU_PERSONENSUCHE_PASSWORD = "ebegu.personensuche.password";
 
 	public EbeguConfigurationImpl() {
 
@@ -141,5 +145,25 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	@Override
 	public boolean getIsZahlungenTestMode() {
 		return getBoolean(EBEGU_ZAHLUNGEN_TEST_MODE, false) && getIsDevmode();
+	}
+
+	@Override
+	public boolean isPersonenSucheDisabled() {
+		return getBoolean(EBEGU_PERSONENSUCHE_DISABLED, true);
+	}
+
+	@Override
+	public String getPersonenSucheEndpoint() {
+		return getString(EBEGU_PERSONENSUCHE_ENDPOINT);
+	}
+
+	@Override
+	public String getPersonenSucheUsername() {
+		return getString(EBEGU_PERSONENSUCHE_USERNAME);
+	}
+
+	@Override
+	public String getPersonenSuchePassword() {
+		return getString(EBEGU_PERSONENSUCHE_PASSWORD);
 	}
 }

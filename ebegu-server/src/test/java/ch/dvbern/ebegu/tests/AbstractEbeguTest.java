@@ -88,6 +88,8 @@ public abstract class AbstractEbeguTest {
 			.addPackages(true, "ch/dvbern/ebegu/tests")
 			.addPackages(true, "ch/dvbern/ebegu/tests/util")
 			.addPackages(true, "ch/dvbern/ebegu/mail")
+			.addPackages(true, "ch/dvbern/ebegu/ws/personensuche/service")
+			.addPackages(true, "ch/dvbern/ebegu/ewk")
 			// .addPackages(true, "ch/dvbern/ebegu/enums")
 			.addClasses(AbstractEbeguLoginTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
 			.addPackages(true, "ch/dvbern/ebegu/services/authentication")
