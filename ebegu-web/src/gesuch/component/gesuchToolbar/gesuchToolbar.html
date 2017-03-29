@@ -49,7 +49,12 @@
                 </md-menu-content>
             </md-menu>
 
-            <span class="bold-menu" ng-if="!vmx.showAntragTypListNavigationMenu()" ng-bind="vmx.getAntragTyp()"></span>
+            <span ng-if="!vmx.showAntragTypListNavigationMenu()">
+                 <button ng-click="vmx.goToOpenGesuch(vmx.getGesuch().id)"
+                         aria-label="vmx.getAntragTyp()" style="text-align: center;">
+                    <span ng-bind="vmx.getAntragTyp()" class="bold-menu" ></span>
+                </button>
+            </span>
 
             <span flex=""></span>
             <!--Verlauf-->
