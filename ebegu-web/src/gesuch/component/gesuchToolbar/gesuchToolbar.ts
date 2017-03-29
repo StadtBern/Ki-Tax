@@ -167,6 +167,13 @@ export class GesuchToolbarController {
         return !this.isDashboardScreen && !angular.equals(this.antragTypList, {});
     }
 
+    public showOtherStuff(): boolean {
+        if (this.getGesuch()) {
+            return true;
+        }
+        return false;
+    }
+
     public showKontaktMenu(): boolean {
         if (this.getGesuch() && this.getGesuch().gesuchsteller1) {
             return true;
@@ -366,7 +373,7 @@ export class GesuchToolbarController {
      */
     private goToOpenGesuch(gesuchId: string): void {
         if (gesuchId) {
-            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
                 this.$state.go('gesuch.betreuungen', {gesuchId: gesuchId});
             } else {
                 this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});

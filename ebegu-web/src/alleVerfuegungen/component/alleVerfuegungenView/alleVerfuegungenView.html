@@ -28,7 +28,7 @@
                     <th st-sort="kindFullname" class="sortable text-uppercase" data-translate="KIND"></th>
                     <th st-sort="institutionStammdaten.institution.name" class="sortable text-uppercase" data-translate="BETREUUNG"></th>
                     <th data-translate="ID"></th>
-                    <th st-sort="verfuegung.timestampErstellt" class="sortable text-uppercase" data-translate="DATUM"></th>
+                    <th st-sort="verfuegung.timestampErstellt" class="sortable text-uppercase" data-translate="VERFUEGUNGS_DATUM"></th>
                     <th st-sort="gesuchsperiode.gesuchsperiodeString" class="sortable text-uppercase" data-translate="GESUCHSPERIODEN"></th>
                     <th width="5%"></th>
 
@@ -50,6 +50,10 @@
                         </button>
                     </td>
                     <td class="symbol" ng-if="!vm.showVerfuegungPdfLink(row)">
+                        <button type="button" ng-click="vm.openNichteintretenPDF(row)"
+                                class="dv-btn-operation">
+                            <i class="fa fa-download"></i>
+                        </button>
                     </td>
                 </tr>
 
