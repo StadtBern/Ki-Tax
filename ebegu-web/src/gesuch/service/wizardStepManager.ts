@@ -224,8 +224,12 @@ export default class WizardStepManager {
      * @returns {boolean}
      */
     public isNextStepEnabled(gesuch: TSGesuch): boolean {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles()) && this.currentStepName === TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG) {
+            // todo team dies if ist ein Hack. Das Problem ist, dass der Step EKV der letzte fuer das Steueramt ist, und da er substeps hat,
+            // ist es sehr schwierig zu wissen, wann man darf und wann nicht. Wir sollten die ganze Funktionalitaet von Steps verbessern
+            return true;
+        }
         return this.isStepAvailableViaBtn(this.getNextStep(gesuch), gesuch);
-        // return this.getStepByName(this.getNextStep(gesuch)).verfuegbar;
     }
 
     public getNextStep(gesuch: TSGesuch): TSWizardStepName {

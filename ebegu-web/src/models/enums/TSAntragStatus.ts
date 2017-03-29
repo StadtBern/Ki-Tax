@@ -88,7 +88,8 @@ export function isAtLeastFreigegebenOrFreigabequittung(status: TSAntragStatus): 
 
 export function isAnyStatusOfVerfuegt(status: TSAntragStatus): boolean {
     return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN ||
-        status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG;
+        status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG || status === TSAntragStatus.PRUEFUNG_STV
+        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV;
 }
 
 /**
