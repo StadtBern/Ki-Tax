@@ -1,3 +1,4 @@
+
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
@@ -541,6 +542,33 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		final List<Gesuch> allGesuche_2 = gesuchService.getAllGesucheForFallAndPeriod(gesuch1516_1.getFall(), gesuch1415_1.getGesuchsperiode());
 		Assert.assertEquals(1, allGesuche_2.size());
+	}
+
+	@Test
+	public void testGetPendenzenForSteueramtUser() {
+		final Fall fall = fallService.saveFall(TestDataUtil.createDefaultFall());
+		final Gesuchsperiode gesuchsperiode1516 = TestDataUtil.createCustomGesuchsperiode(2015, 2016);
+		final Gesuchsperiode periodeToUpdate = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
+
+		Gesuch gesuchVerfuegt = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
+		persistence.persist(gesuchVerfuegt);
+
+		Gesuch gesuchSTV = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.PRUEFUNG_STV);
+		persistence.persist(gesuchSTV);
+
+		Gesuch gesuchGeprueftSTV = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.GEPRUEFT_STV);
+		persistence.persist(gesuchGeprueftSTV);
+
+		Gesuch gesuchBearbeitungSTV = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_STV);
+		persistence.persist(gesuchBearbeitungSTV);
+
+		final List<Gesuch> pendenzenSTV = gesuchService.getPendenzenForSteueramtUser();
+		Assert.assertNotNull(pendenzenSTV);
+		Assert.assertEquals(2, pendenzenSTV.size());
+		for (Gesuch pendenz : pendenzenSTV) {
+			Assert.assertTrue(pendenz.getStatus().equals(AntragStatus.IN_BEARBEITUNG_STV)
+				|| pendenz.getStatus().equals(AntragStatus.PRUEFUNG_STV));
+		}
 	}
 
 	@Test

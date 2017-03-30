@@ -24,6 +24,8 @@ public enum Betreuungsstatus {
 	private static final Set<Betreuungsstatus> none = EnumSet.noneOf(Betreuungsstatus.class);
 
 	private static final Set<Betreuungsstatus> forSachbearbeiterInstitutionRole = EnumSet.of(WARTEN, VERFUEGT, BESTAETIGT, ABGEWIESEN, NICHT_EINGETRETEN, GEKUENDIGT_VOR_EINTRITT, GESCHLOSSEN_OHNE_VERFUEGUNG);
+	public static final Set<Betreuungsstatus> hasVerfuegung = EnumSet.of(VERFUEGT, NICHT_EINGETRETEN);
+
 	private static final Set<Betreuungsstatus> forSachbearbeiterTraegerschaftRole = forSachbearbeiterInstitutionRole;
 
 
