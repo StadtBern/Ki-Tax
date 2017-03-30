@@ -1566,6 +1566,20 @@ public class JaxBConverter {
 		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
 		return jaxBetreuungspensum;
 	}
+	/**
+	 * converts the given betreuungList into a JaxBetreuungList
+	 *
+	 * @param betreuungList
+	 * @return List with Betreuung DTOs
+	 */
+	public Collection<JaxBetreuung> betreuungListToJax(Collection<Betreuung> betreuungList) {
+		Collection<JaxBetreuung> returnList = new ArrayList<>();
+		betreuungList.forEach(betreuung -> {
+			returnList.add(betreuungToJAX(betreuung));
+		});
+		return returnList;
+	}
+
 
 	public JaxBetreuung betreuungToJAX(final Betreuung betreuungFromServer) {
 		final JaxBetreuung jaxBetreuung = new JaxBetreuung();
@@ -1623,20 +1637,6 @@ public class JaxBConverter {
 			return jaxVerfuegung;
 		}
 		return null;
-	}
-
-	/**
-	 * converts the given betreuungList into a JaxBetreuungList
-	 *
-	 * @param betreuungList
-	 * @return List with Betreuung DTOs
-	 */
-	public Collection<JaxBetreuung> betreuungListToJax(Collection<Betreuung> betreuungList) {
-		Collection<JaxBetreuung> returnList = new ArrayList<>();
-		betreuungList.forEach(betreuung -> {
-			returnList.add(betreuungToJAX(betreuung));
-		});
-		return returnList;
 	}
 
 	/**
