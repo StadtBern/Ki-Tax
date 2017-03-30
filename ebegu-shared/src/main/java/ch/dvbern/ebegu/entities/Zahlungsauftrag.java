@@ -107,4 +107,8 @@ public class Zahlungsauftrag extends AbstractDateRangedEntity implements Compara
 		builder.append(this.getDatumFaellig(), o.getDatumFaellig());
 		return builder.toComparison();
 	}
+
+	public String getFilename() {
+		return "Zahlungslauf_" + Constants.SQL_DATE_FORMAT.format(getDatumGeneriert());
+	}
 }

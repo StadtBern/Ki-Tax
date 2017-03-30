@@ -101,6 +101,12 @@ public interface GesuchService {
 	List<Gesuch> getAntraegeByCurrentBenutzer();
 
 	/**
+	 * Gibt alle Antraege zurueck, die eine Pendenz fuer das Steueramt sind
+	 */
+	@Nonnull
+	List<Gesuch> getPendenzenForSteueramtUser();
+
+	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
 	 *
 	 * @param antragSearch
@@ -213,6 +219,14 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Gibt pro Fall den neuesten freigegebenen Antrag für eine Gesuchsperiode zurück.
+	 * Es wird *keine* Leseberechtigung geprüft, d.h. es werden sowohl JA-Angebote wie auch Nur-Schulamt
+	 * zurückgegeben!
+	 */
+	@Nonnull
+	List<String> getNeuesteFreigegebeneAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Gibt die Antrags-Ids aller Antraege zurueck, welche im uebergebenen Zeitraum verfuegt wurden.

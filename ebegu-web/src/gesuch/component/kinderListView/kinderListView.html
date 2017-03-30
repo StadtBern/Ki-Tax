@@ -23,6 +23,9 @@
                     <th data-translate="VORNAME"></th>
                     <th data-translate="NAME"></th>
                     <th data-translate="GEBURTSDATUM"></th>
+                    <th data-translate="DUBLETTEN"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -32,6 +35,12 @@
                     <td ng-bind="row.kindJA.vorname"></td>
                     <td ng-bind="row.kindJA.nachname"></td>
                     <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                        <span class="betreuung" ng-repeat="dublette in vm.getDubletten(row)"
+                              ng-click="vm.gotoKindDublette(dublette); $event.stopPropagation()"
+                              ng-show="dublette.fallNummer" ng-bind="vm.getFallNummer(dublette) + ($last ? ' ' : ', ')"></span>
+                    </td>
                     <td ng-click="$event.stopPropagation()" ng-if="vm.canRemoveKind(row)">
                         <dv-loading-button type="button" button-click="vm.removeKind(row)"
                                            button-class="dv-btn-operation"
@@ -43,7 +52,7 @@
                     <td ng-if="!vm.canRemoveKind(row)"></td>
                 </tr>
                 <tr ng-if="vm.getKinderList().length === 0">
-                    <td colspan="4" class="empty-table" data-translate="KINDER_NOCH_KEINE"></td>
+                    <td colspan="{{vm.getColsNumber()}}" class="empty-table" data-translate="KINDER_NOCH_KEINE"></td>
                 </tr>
                 </tbody>
             </table>

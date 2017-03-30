@@ -1,0 +1,71 @@
+<gesuch-toolbar flex="nogrow" fallid="{{vm.fall.id}}"
+                on-verantwortlicher-change="vm.setVerantwortlicher(user)"
+                hide-mutation-button="{{true}}"
+                dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
+</gesuch-toolbar>
+
+<gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller" fallid="{{vm.fall.id}}"
+                              dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()">
+</gesuch-toolbar-gesuchsteller>
+
+<div class="alleVerfuegungenView overflow-scroll" flex="auto">
+    <div class="row">
+        <div class="col-md-11">
+            <h3 data-translate="ALLE_VERFUEGUNGEN_LIST"></h3>
+        </div>
+        <div class="col-md-1 text-right">
+            <h3 ng-bind="vm.getAlleVerfuegungen() ? vm.getAlleVerfuegungen().length : 0"></h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 table-responsive">
+            <div ng-if="vm.getAlleVerfuegungen().length == 0" data-translate="VERFUEGUNGEN_NOCH_KEINE"> </div>
+            <table st-table="displayedCollection" st-safe-src="vm.getAlleVerfuegungen()"
+                   st-delay="20"
+                   class="table table-striped" ng-if="vm.getAlleVerfuegungen().length > 0">
+                <thead>
+                <tr>
+                    <th st-sort="kindFullname" class="sortable text-uppercase" data-translate="KIND"></th>
+                    <th st-sort="institutionStammdaten.institution.name" class="sortable text-uppercase" data-translate="BETREUUNG"></th>
+                    <th data-translate="ID"></th>
+                    <th st-sort="verfuegung.timestampErstellt" class="sortable text-uppercase" data-translate="VERFUEGUNGS_DATUM"></th>
+                    <th st-sort="gesuchsperiode.gesuchsperiodeString" class="sortable text-uppercase" data-translate="GESUCHSPERIODEN"></th>
+                    <th width="5%"></th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                    ng-click="vm.openVerfuegung(row.betreuungNummer, row.kindNummer, row.gesuchId)">
+                    <td class="ellipsis" ellipsis-tooltip="{{row.kindFullname}}" ng-bind="row.kindFullname"></td>
+                     <td class="ellipsis" ellipsis-tooltip="{{row.institutionStammdaten.institution.name}}" ng-bind="row.institutionStammdaten.institution.name"></td>
+                    <td ng-bind="vm.ebeguUtil.calculateBetreuungsId(row.gesuchsperiode, vm.fall, row.kindNummer, row.betreuungNummer)"></td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.timestampErstellt  | amDateFormat : 'DD.MM.YYYY'}}"
+                        ng-bind="row.verfuegung.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.gesuchsperiode.gesuchsperiodeString}}" ng-bind="row.gesuchsperiode.gesuchsperiodeString"></td>
+                    <td class="symbol" ng-click="$event.stopPropagation()" ng-if="vm.showVerfuegungPdfLink(row)">
+                        <button type="button" ng-click="vm.openVerfuegungPDF(row)"
+                                class="dv-btn-operation">
+                            <i class="fa fa-download"></i>
+                        </button>
+                    </td>
+                    <td class="symbol" ng-if="!vm.showVerfuegungPdfLink(row)">
+                        <button type="button" ng-click="vm.openNichteintretenPDF(row)"
+                                class="dv-btn-operation">
+                            <i class="fa fa-download"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="9" class="text-center">
+                        <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

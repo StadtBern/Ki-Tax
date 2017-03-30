@@ -24,12 +24,12 @@ describe('einkommensverschlechterungResultateView', function () {
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
-    var component: any;
-    var scope: angular.IScope;
-    var $componentController: any;
-    var stateParams: any;
-    var consta: any;
-    var errorservice: any;
+    let component: any;
+    let scope: angular.IScope;
+    let $componentController: any;
+    let stateParams: any;
+    let consta: any;
+    let errorservice: any;
     let wizardStepManager: WizardStepManager;
     let $rootScope: IScope;
 
@@ -60,7 +60,7 @@ describe('einkommensverschlechterungResultateView', function () {
 
     it('should be defined', function () {
         spyOn(berechnungsManager, 'calculateEinkommensverschlechterung').and.returnValue({});
-        var bindings: {};
+        let bindings: {};
         component = $componentController('einkommensverschlechterungResultateView', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });
@@ -68,7 +68,7 @@ describe('einkommensverschlechterungResultateView', function () {
     describe('calculateVeraenderung', () => {
         beforeEach(function () {
             ekvrvc = new EinkommensverschlechterungResultateViewController(stateParams, gesuchModelManager,
-                berechnungsManager, consta, errorservice, wizardStepManager, null, $rootScope);
+                berechnungsManager, consta, errorservice, wizardStepManager, null, $rootScope, null);
             ekvrvc.model = new TSFinanzModel(gesuchModelManager.getBasisjahr(), gesuchModelManager.isGesuchsteller2Required(), null, null);
             ekvrvc.model.copyEkvDataFromGesuch(gesuchModelManager.getGesuch());
             ekvrvc.model.copyFinSitDataFromGesuch(gesuchModelManager.getGesuch());

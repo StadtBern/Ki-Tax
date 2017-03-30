@@ -234,6 +234,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@Nonnull
+	@RolesAllowed(value = {UserRoleName.STEUERAMT, UserRoleName.SUPER_ADMIN})
+	public List<Gesuch> getPendenzenForSteueramtUser() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicate = root.get(Gesuch_.status).in(AntragStatus.allowedforRole(UserRole.STEUERAMT));
+		query.where(predicate);
+		query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
+
+		List<Gesuch> gesuche = persistence.getCriteriaResults(query);
+		authorizer.checkReadAuthorizationGesuche(gesuche);
+		return gesuche;
+	}
+
+	@Override
 	@PermitAll
 	public Pair<Long, List<Gesuch>> searchAntraege(@Nonnull AntragTableFilterDTO antragTableFilterDto) {
 		Pair<Long, List<Gesuch>> result;
@@ -293,6 +310,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case SUPER_ADMIN:
 			case ADMIN:
 			case REVISOR:
+				break;
+			case STEUERAMT:
 				break;
 			case SACHBEARBEITER_JA:
 			case JURIST:
@@ -1042,6 +1061,44 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Map<String, Gesuch> stringGesuchMap = EbeguUtil.groupByFallAndSelectNewestAntrag(criteriaResults);
 		ids.addAll(stringGesuchMap.keySet());
 		return ids;
+	}
+
+	@Override
+	@Nonnull
+	public List<String> getNeuesteFreigegebeneAntraege(@Nonnull Gesuchsperiode gesuchsperiode) {
+		List<String> ids = new ArrayList<>();
+		Collection<Fall> allFaelle = fallService.getAllFalle();
+		for (Fall fall : allFaelle) {
+			Optional<String> idsFuerGesuch = getNeustesFreigegebenesGesuchIdFuerGesuch(gesuchsperiode, fall);
+			idsFuerGesuch.ifPresent(ids::add);
+		}
+		return ids;
+	}
+
+	@Nonnull
+	private Optional<String> getNeustesFreigegebenesGesuchIdFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<String> query = cb.createQuery(String.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
+
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateAntragStatus = join.get(AntragStatusHistory_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
+
+		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
+		query.select(root.get(Gesuch_.id));
+		query.orderBy(cb.desc(join.get(AntragStatusHistory_.timestampVon))); // Das mit dem neuesten Verfuegungsdatum
+		List<String> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		String gesuchId = criteriaResults.get(0);
+
+		return Optional.of(gesuchId);
 	}
 }
 

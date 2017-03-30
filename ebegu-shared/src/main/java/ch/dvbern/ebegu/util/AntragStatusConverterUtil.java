@@ -62,6 +62,12 @@ public class AntragStatusConverterUtil {
 				return AntragStatusDTO.VERFUEGT;
 			case BESCHWERDE_HAENGIG:
 				return AntragStatusDTO.BESCHWERDE_HAENGIG;
+			case PRUEFUNG_STV:
+				return AntragStatusDTO.PRUEFUNG_STV;
+			case IN_BEARBEITUNG_STV:
+				return AntragStatusDTO.IN_BEARBEITUNG_STV;
+			case GEPRUEFT_STV:
+				return AntragStatusDTO.GEPRUEFT_STV;
 			default:
 				return null;
 		}
@@ -131,6 +137,12 @@ public class AntragStatusConverterUtil {
 				return AntragStatus.VERFUEGT;
 			case BESCHWERDE_HAENGIG:
 				return AntragStatus.BESCHWERDE_HAENGIG;
+			case PRUEFUNG_STV:
+				return AntragStatus.PRUEFUNG_STV;
+			case IN_BEARBEITUNG_STV:
+				return AntragStatus.IN_BEARBEITUNG_STV;
+			case GEPRUEFT_STV:
+				return AntragStatus.GEPRUEFT_STV;
 			default:
 				return null;
 		}

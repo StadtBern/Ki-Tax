@@ -1,6 +1,6 @@
 var webpack = require('webpack');
 var helpers = require('./helpers');
-var loaders = require('./loaders');
+var loaderRules = require('./rules');
 var fs = require('fs');
 var xml2js = require('xml2js');
 
@@ -19,15 +19,14 @@ var currentTime = new Date();
 /**
  * Webpack Plugins
  */
-var CopyWebpackPlugin = require('copy-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-// var ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
 /**
  * Webpack Constants
  */
 const METADATA = {
-    title: 'ebegu Webpack from DV Bern',
+    title: 'seed Webpack from DV Bern',
     baseUrl: '/',
     version: parsedversion,
     buildtstamp: currentTime.toISOString() || ''
@@ -40,10 +39,12 @@ const METADATA = {
  */
 module.exports = {
 
+
+
     // Static metadata for index.html
     //
     // See: (custom attribute)
-    metadata: METADATA,
+    // metadata: METADATA,
 
     // Cache generated modules and chunks to improve performance for multiple incremental builds.
     // This is enabled by default in watch mode.
@@ -59,7 +60,7 @@ module.exports = {
     // change dvbern
     entry: {
         // 'polyfills': './src/polyfills.ts',
-        // 'vendor': './src/vendor.ts',
+        'vendor': './src/vendor.ts',
         'main': './src/bootstrap.ts'
     },
 
@@ -67,18 +68,12 @@ module.exports = {
     //
     // See: http://webpack.github.io/docs/configuration.html#resolve
     resolve: {
+        modules:[helpers.root('src'), 'node_modules'],
 
         // An array of extensions that should be used to resolve modules.
         //
         // See: http://webpack.github.io/docs/configuration.html#resolve-extensions
-        extensions: ['', '.ts', '.js'],
-
-        // Make sure root is src
-        root: helpers.root('src'),
-
-        // remove other default values
-        modulesDirectories: ['node_modules'],
-
+        extensions: ['.ts', '.js']
     },
 
     // Options affecting the normal modules.
@@ -86,40 +81,14 @@ module.exports = {
     // See: http://webpack.github.io/docs/configuration.html#module
     module: {
 
-        // An array of applied pre and post loaders.
-        //
-        // See: http://webpack.github.io/docs/configuration.html#module-preloaders-module-postloaders
-        preLoaders: [
-
-            // Tslint loader support for *.ts files
-            //
-            // See: https://github.com/wbuchwalter/tslint-loader
-            // { test: /\.ts$/, loader: 'tslint-loader', exclude: [ helpers.root('node_modules') ] },
-
-            // Source map loader support for *.js files
-            // Extracts SourceMaps for source files that as added as sourceMappingURL comment.
-            //
-            // See: https://github.com/webpack/source-map-loader
-            {
-                test: /\.js$/,
-                loader: 'source-map-loader',
-                exclude: [
-                    // these packages have problems with their sourcemaps
-                    helpers.root('node_modules/rxjs'),
-                    //helpers.root('node_modules/@angular2-material')
-                ]
-            }
-
-        ],
-
         // An array of automatically applied loaders.
         //
         // IMPORTANT: The loaders here are resolved relative to the resource which they are applied to.
         // This means they are not resolved relative to the configuration file.
         //
         // See: http://webpack.github.io/docs/configuration.html#module-loaders
-        loaders: loaders
-
+        // loaders: loaders
+        rules: loaderRules
     },
 
     // Add additional plugins to the compiler.
@@ -139,16 +108,9 @@ module.exports = {
         // Description: Do type checking in a separate process, so webpack don't need to wait.
         //
         // See: https://github.com/s-panferov/awesome-typescript-loader#forkchecker-boolean-defaultfalse
-        //new ForkCheckerPlugin(),
-        // Is now native, and is not required to be called
+        // new ForkCheckerPlugin(),
 
-        // Plugin: OccurenceOrderPlugin
-        // Description: Varies the distribution of the ids to get the smallest id length
-        // for often used ids.
-        //
-        // See: https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
-        // See: https://github.com/webpack/docs/wiki/optimization#minimize
-        new webpack.optimize.OccurenceOrderPlugin(true),
+
 
         // Plugin: CommonsChunkPlugin
         // Description: Shares common code between the pages.
@@ -182,9 +144,18 @@ module.exports = {
             chunksSortMode: helpers.packageSort(['polyfills', 'vendor', 'main'])
         }),
 
-/*        new ExtractTextPlugin('style.css', {
-            allChunks: true
-        })*/
+        new DefinePlugin({
+            'ENV': JSON.stringify(METADATA.ENV),
+            'HMR': METADATA.HMR,
+            'VERSION': JSON.stringify(METADATA.version),
+            'BUILDTSTAMP': JSON.stringify(METADATA.buildtstamp),
+            'process.env': {
+                'ENV': JSON.stringify(METADATA.ENV),
+                'NODE_ENV': JSON.stringify(METADATA.ENV),
+                'HMR': METADATA.HMR,
+                'VERSION': JSON.stringify(METADATA.version)
+            }
+        })
 
     ],
 
@@ -193,7 +164,7 @@ module.exports = {
     //
     // See: https://webpack.github.io/docs/configuration.html#node
     node: {
-        global: 'window',
+        global: true,
         crypto: 'empty',
         module: false,
         clearImmediate: false,

@@ -13,6 +13,8 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import TSFinanzModel from '../../../models/TSFinanzModel';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./einkommensverschlechterungResultateView.html');
 require('./einkommensverschlechterungResultateView.less');
 
@@ -33,11 +35,11 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     resultatProzent: string;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'WizardStepManager', '$q', '$scope'];
+        'WizardStepManager', '$q', '$scope', 'AuthServiceRS'];
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungResultateStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope) {
+                wizardStepManager: WizardStepManager, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         let parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
         this.model = new TSFinanzModel(this.gesuchModelManager.getBasisjahr(), this.gesuchModelManager.isGesuchsteller2Required(), null, parsedBasisJahrPlusNum);
@@ -224,5 +226,17 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         // Letztes Jahr haengt von den eingegebenen Daten ab
         return (this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 2)
             || (!this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 1);
+    }
+
+    /**
+     * Da fuer STEUERAMT der Step EINKOMMENSVERSCHLECHTERUNG der letzte ist, muss man den Button next verstecken, wenn wir
+     * wirklich im LastEinkVersStep sind.
+     * Fuer alle andere rollen wird der Button immer eingeblendet
+     */
+    public isSteueramtLetzterStep(): boolean {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles())) {
+            return this.isLastEinkVersStep();
+        }
+        return false;
     }
 }

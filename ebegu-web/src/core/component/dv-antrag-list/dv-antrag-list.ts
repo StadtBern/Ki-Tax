@@ -10,7 +10,10 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
+import * as moment from 'moment';
 import Moment = moment.Moment;
+import IDocumentService = angular.IDocumentService;
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./dv-antrag-list.html');
 require('./dv-antrag-list.less');
 
@@ -59,6 +62,7 @@ export class DVAntragListController {
     onFilterChange: (changedTableState: any) => IPromise<any>;
     onEdit: (pensumToEdit: any) => void;
     onAdd: () => void;
+    TSRoleUtil: any;
 
     static $inject: any[] = ['EbeguUtil', '$filter', '$log', 'InstitutionRS', 'GesuchsperiodeRS', 'CONSTANTS'];
     /* @ngInject */
@@ -67,6 +71,7 @@ export class DVAntragListController {
                 private CONSTANTS: any) {
         this.removeButtonTitle = 'Eintrag entfernen';
         this.initViewModel();
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private initViewModel() {
@@ -139,7 +144,7 @@ export class DVAntragListController {
         } else {
             this.$log.info('no callback function spcified for filtering');
         }
-    };
+    }
 
     public getAntragTypen(): Array<TSAntragTyp> {
         return getTSAntragTypValues();
@@ -191,8 +196,8 @@ export class DVAntragListController {
 
     public isActionsVisible() {
         return this.actionVisible === 'true';
-
     }
+
 }
 
 

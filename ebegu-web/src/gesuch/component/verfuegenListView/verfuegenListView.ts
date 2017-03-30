@@ -400,7 +400,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         if (this.getGesuch().hasFSDokument) {
             return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
         }
-        return;
+        return undefined;
     }
 
     public showBeschwerdeHaengig(): boolean {

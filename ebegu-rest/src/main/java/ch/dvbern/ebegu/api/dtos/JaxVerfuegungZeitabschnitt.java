@@ -84,6 +84,8 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
 	private boolean sameVerfuegungsdaten;
 
+	private boolean sameVerguenstigung;
+
 	public Integer getErwerbspensumGS1() {
 		return erwerbspensumGS1;
 	}
@@ -250,5 +252,13 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
 	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
 		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
+	}
+
+	public boolean isSameVerguenstigung() {
+		return sameVerguenstigung;
+	}
+
+	public void setSameVerguenstigung(boolean sameVerguenstigung) {
+		this.sameVerguenstigung = sameVerguenstigung;
 	}
 }

@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "amd",
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "noImplicitReturns": true,
+        "allowSyntheticDefaultImports": true,
+        "outDir": "temp/js"
+    },
+
+    "files": [
+        "customDeclarations/declarations.d.ts",
+        "customDeclarations/override.d.ts"
+    ],
+    "exclude": [
+        "node_modules/*",
+        "**/*-aot.ts"
+    ],
+    "compileOnSave": false,
+    "buildOnSave": false
+}

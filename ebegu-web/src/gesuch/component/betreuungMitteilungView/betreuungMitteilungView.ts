@@ -6,6 +6,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {IStateService} from 'angular-ui-router';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import IScope = angular.IScope;
 import IFormController = angular.IFormController;
@@ -30,7 +31,7 @@ export class BetreuungMitteilungViewController extends AbstractGesuchViewControl
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
     }
 
-    public cancel() : void {
+    public cancel(): void {
         this.$state.go('gesuch.betreuungen', { gesuchId: this.getGesuchId() });
     }
 }

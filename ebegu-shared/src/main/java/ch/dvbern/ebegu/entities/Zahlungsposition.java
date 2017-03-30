@@ -88,6 +88,7 @@ public class Zahlungsposition extends AbstractEntity implements Comparable<Zahlu
 	@Override
 	public int compareTo(@Nonnull Zahlungsposition o) {
 		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getVerfuegungZeitabschnitt().getVerfuegung().getBetreuung().getBGNummer(), o.getVerfuegungZeitabschnitt().getVerfuegung().getBetreuung().getBGNummer());
 		builder.append(this.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb(), o.getVerfuegungZeitabschnitt().getGueltigkeit().getGueltigAb());
 		builder.append(this.getBetrag(), o.getBetrag());
 		return builder.toComparison();

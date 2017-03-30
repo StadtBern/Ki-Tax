@@ -13,11 +13,12 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import * as moment from 'moment';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
-import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
@@ -366,7 +367,7 @@ export class GesuchToolbarController {
      */
     private goToOpenGesuch(gesuchId: string): void {
         if (gesuchId) {
-            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
                 this.$state.go('gesuch.betreuungen', {gesuchId: gesuchId});
             } else {
                 this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
@@ -445,6 +446,11 @@ export class GesuchToolbarController {
     public openVerlauf(): void {
         this.$state.go('verlauf', {
             gesuchId: this.getGesuch().id
+        });
+    }
+    public openAlleVerfuegungen(): void {
+        this.$state.go('alleVerfuegungen', {
+            fallId: this.fallid
         });
     }
 }
