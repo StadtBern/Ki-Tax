@@ -39,7 +39,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	private String telefonAusland;
 
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
-	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist
+	private String ewkPersonId;
 
 	@NotNull
 	private boolean diplomatenstatus;
@@ -81,12 +81,12 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		this.telefonAusland = telefonAusland;
 	}
 
-	public String getZpvNumber() {
-		return zpvNumber;
+	public String getEwkPersonId() {
+		return ewkPersonId;
 	}
 
-	public void setZpvNumber(final String zpvNumber) {
-		this.zpvNumber = zpvNumber;
+	public void setEwkPersonId(final String ewkPersonId) {
+		this.ewkPersonId = ewkPersonId;
 	}
 
 	public boolean isDiplomatenstatus() {
@@ -103,7 +103,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		mutation.setMobile(this.getMobile());
 		mutation.setTelefon(this.getTelefon());
 		mutation.setTelefonAusland(this.getTelefonAusland());
-		mutation.setZpvNumber(this.getZpvNumber());
+		mutation.setEwkPersonId(this.getEwkPersonId());
 		mutation.setDiplomatenstatus(this.isDiplomatenstatus());
 		return mutation;
 	}

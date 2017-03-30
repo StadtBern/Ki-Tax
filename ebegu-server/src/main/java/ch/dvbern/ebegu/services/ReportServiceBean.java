@@ -737,7 +737,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setGs1Plz(gs1Adresse.getPlz());
 			row.setGs1Ort(gs1Adresse.getOrt());
 		}
-		row.setGs1EwkId(gs1.getZpvNumber());
+		row.setGs1EwkId(gs1.getEwkPersonId());
 		row.setGs1Diplomatenstatus(gs1.isDiplomatenstatus());
 		// EWP Gesuchsteller 1
 
@@ -776,7 +776,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setGs2Plz(gs2Adresse.getPlz());
 			row.setGs2Ort(gs2Adresse.getOrt());
 		}
-		row.setGs2EwkId(gs2.getZpvNumber());
+		row.setGs2EwkId(gs2.getEwkPersonId());
 		row.setGs2Diplomatenstatus(gs2.isDiplomatenstatus());
 		// EWP Gesuchsteller 2
 		List<Erwerbspensum> erwerbspensenGS2 = containerGS2.getErwerbspensenAm(row.getZeitabschnittVon());

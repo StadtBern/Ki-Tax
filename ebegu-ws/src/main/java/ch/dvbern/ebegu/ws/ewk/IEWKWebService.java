@@ -27,7 +27,7 @@ public interface IEWKWebService {
 	EWKResultat suchePerson(@Nonnull String name, @Nonnull String vorname, @Nonnull LocalDate geburtsdatum, @Nonnull Geschlecht geschlecht) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException;
 
 	/**
-	 * Sucht eine Person im EWK, mit allen Angaben ausser Vorname
+	 * Sucht eine Person im EWK, anhand Nachname, Geburtsdatum und Geschlecht
 	 */
 	@Nonnull
 	EWKResultat suchePerson(@Nonnull String name, @Nonnull LocalDate geburtsdatum, @Nonnull Geschlecht geschlecht) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException;

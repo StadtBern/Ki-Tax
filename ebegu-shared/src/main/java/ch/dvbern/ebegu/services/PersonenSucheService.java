@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.dto.personensuche.EWKPerson;
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
@@ -12,6 +14,20 @@ import java.time.LocalDate;
  * Service für die Personensuche
  */
 public interface PersonenSucheService {
+
+	/**
+	 * Sucht den uebergebenen Gesuchsteller im EWK.
+	 * Falls die Suche eindeutig ist, wird die ewkPersonenId auf dem Gesuchsteller gesetzt
+	 */
+	@Nonnull
+	EWKResultat suchePerson(@Nonnull Gesuchsteller gesuchsteller) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException;
+
+	/**
+	 * Verknuepft die uebergebene EWK-Person mit dem Gesuchsteller: Setzt die ewkPersonenId auf
+	 * dem Gesuchsteller
+	 */
+	@Nonnull
+	Gesuchsteller selectPerson(@Nonnull Gesuchsteller gesuchsteller, @Nonnull EWKPerson ewkPerson);
 
 	/**
 	 * Sucht eine Person im EWK, anhand eindeutiger PersonenID

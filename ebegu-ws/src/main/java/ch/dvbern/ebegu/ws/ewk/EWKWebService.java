@@ -19,12 +19,17 @@ import javax.inject.Inject;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.MessageContext;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Diese Klasse ruft den PersonenSuche Webservice des EWK auf
@@ -131,23 +136,44 @@ public class EWKWebService implements IEWKWebService {
 	}
 
 	private void initPersonenSucheServicePort() throws PersonenSucheServiceException {
+		logger.info("Initialising PersonenSucheService:");
 		if (port == null) {
 			String endpointURL = config.getPersonenSucheEndpoint();
+			String username = config.getPersonenSucheUsername();
+			String password = config.getPersonenSuchePassword();
 			if (StringUtils.isEmpty(endpointURL)) {
-				logger.warn("Es wurde keine Endpunkt URL definiert fuer den PersonenSuche Service");
+				throw new PersonenSucheServiceException("Es wurde keine Endpunkt URL definiert fuer den PersonenSuche Service");
 			}
+			if (StringUtils.isEmpty(username)) {
+				throw new PersonenSucheServiceException("Es wurde keine Username definiert fuer den PersonenSuche Service");
+			}
+			if (StringUtils.isEmpty(password)) {
+				throw new PersonenSucheServiceException("Es wurde keine Passwort definiert fuer den PersonenSuche Service");
+			}
+			logger.info("PersonenSucheService Endpoint: " + endpointURL);
+			logger.info("PersonenSucheService Username: " + username);
 			try {
 				final URL url = new URI(endpointURL + "?wsdl").toURL();
+				logger.info("PersonenSucheService URL: " + url);
+				logger.info("PersonenSucheService TargetNameSpace: " + TARGET_NAME_SPACE);
+				logger.info("PersonenSucheService ServiceName: " + SERVICE_NAME);
 				final QName qname = new QName(TARGET_NAME_SPACE, SERVICE_NAME);
+				logger.info("PersonenSucheService QName: " + qname);
 				final Service service = Service.create(url, qname);
+				logger.info("PersonenSucheService Service created: " + service);
 				port = service.getPort(PersonenSucheOB.class);
+				logger.info("PersonenSucheService Port created: " + port);
 				final BindingProvider bp = (BindingProvider) port;
 				bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointURL);
+				bp.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
+				bp.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+				logger.info("PersonenSucheService Context Properties set (Endpoint, Username, Password)");
 			} catch (MalformedURLException | URISyntaxException | RuntimeException e) {
 				port = null;
 				logger.error("PersonenSucheOB-Service konnte nicht initialisiert werden: ", e);
 				throw new PersonenSucheServiceException("Could not create service port for endpoint " + endpointURL, e);
 			}
 		}
+		logger.info("PersonenSucheService erfolgreich initialisiert");
 	}
 }

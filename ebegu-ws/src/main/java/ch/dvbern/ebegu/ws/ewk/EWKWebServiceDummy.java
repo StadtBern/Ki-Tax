@@ -82,7 +82,6 @@ public class EWKWebServiceDummy implements IEWKWebService {
 		} else if ("Anderegg".equalsIgnoreCase(name)) {
 			response = parse(FILE_SANDRA_ANDEREGG);
 		} else {
-			// Default: Marc Schmid
 			response = parse(FILE_HERBERT_GERBER);
 		}
 		return EWKConverter.convertFromEWK(response, EWKWebService.MAX_RESULTS_NAME);

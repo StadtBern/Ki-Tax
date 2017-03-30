@@ -305,7 +305,7 @@ public class JaxBConverter {
 		gesuchsteller.setTelefon(gesuchstellerJAXP.getTelefon());
 		gesuchsteller.setMobile(gesuchstellerJAXP.getMobile());
 		gesuchsteller.setTelefonAusland(gesuchstellerJAXP.getTelefonAusland());
-		gesuchsteller.setZpvNumber(gesuchstellerJAXP.getZpvNumber());
+		gesuchsteller.setEwkPersonId(gesuchstellerJAXP.getEwkPersonId());
 		gesuchsteller.setDiplomatenstatus(gesuchstellerJAXP.isDiplomatenstatus());
 		return gesuchsteller;
 	}
@@ -436,7 +436,7 @@ public class JaxBConverter {
 		jaxGesuchsteller.setTelefon(persistedGesuchsteller.getTelefon());
 		jaxGesuchsteller.setMobile(persistedGesuchsteller.getMobile());
 		jaxGesuchsteller.setTelefonAusland(persistedGesuchsteller.getTelefonAusland());
-		jaxGesuchsteller.setZpvNumber(persistedGesuchsteller.getZpvNumber());
+		jaxGesuchsteller.setEwkPersonId(persistedGesuchsteller.getEwkPersonId());
 		jaxGesuchsteller.setDiplomatenstatus(persistedGesuchsteller.isDiplomatenstatus());
 		return jaxGesuchsteller;
 	}
