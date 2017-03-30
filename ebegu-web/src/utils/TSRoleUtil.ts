@@ -82,6 +82,10 @@ export class TSRoleUtil {
         return [TSRole.GESUCHSTELLER];
     }
 
+    public static getSteueramtOnlyRoles(): Array<TSRole> {
+        return [TSRole.STEUERAMT];
+    }
+
     public static getAllRolesForKommentarSpalte(): Array<TSRole> {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.STEUERAMT, TSRole.SCHULAMT];
     }
