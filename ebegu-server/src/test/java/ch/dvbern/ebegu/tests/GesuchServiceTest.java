@@ -540,7 +540,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void test() {
+	public void testGetPendenzenForSteueramtUser() {
 		final Fall fall = fallService.saveFall(TestDataUtil.createDefaultFall());
 		final Gesuchsperiode gesuchsperiode1516 = TestDataUtil.createCustomGesuchsperiode(2015, 2016);
 		final Gesuchsperiode periodeToUpdate = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode1516);
@@ -559,10 +559,9 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		final List<Gesuch> pendenzenSTV = gesuchService.getPendenzenForSteueramtUser();
 		Assert.assertNotNull(pendenzenSTV);
-		Assert.assertEquals(3, pendenzenSTV.size());
+		Assert.assertEquals(2, pendenzenSTV.size());
 		for (Gesuch pendenz : pendenzenSTV) {
 			Assert.assertTrue(pendenz.getStatus().equals(AntragStatus.IN_BEARBEITUNG_STV)
-				|| pendenz.getStatus().equals(AntragStatus.GEPRUEFT_STV)
 				|| pendenz.getStatus().equals(AntragStatus.PRUEFUNG_STV));
 		}
 	}
