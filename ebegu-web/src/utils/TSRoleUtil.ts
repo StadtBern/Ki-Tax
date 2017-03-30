@@ -36,6 +36,10 @@ export class TSRoleUtil {
         return [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
     }
 
+    public static getTraegerschaftInstitutionSteueramtOnlyRoles(): Array<TSRole> {
+        return [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, TSRole.STEUERAMT];
+    }
+
     public static getGesuchstellerJugendamtRoles(): Array<TSRole> {
         return [TSRole.SUPER_ADMIN, TSRole.GESUCHSTELLER, TSRole.SACHBEARBEITER_JA, TSRole.ADMIN];
     }
@@ -70,6 +74,19 @@ export class TSRoleUtil {
         );
     }
 
+    public static getAllRolesButTraegerschaftInstitutionSteueramt(): Array<string> {
+        return TSRoleUtil.getAllRoles().filter(element =>
+            element !== TSRole[TSRole.SACHBEARBEITER_INSTITUTION] && element !== TSRole[TSRole.SACHBEARBEITER_TRAEGERSCHAFT]
+            && element !== TSRole[TSRole.STEUERAMT]
+        );
+    }
+
+    public static getAllRolesButSteueramt(): Array<string> {
+        return TSRoleUtil.getAllRoles().filter(element =>
+            element !== TSRole[TSRole.STEUERAMT]
+        );
+    }
+
     public static getSchulamtOnlyRoles(): Array<TSRole> {
         return [TSRole.SCHULAMT];
     }
@@ -80,6 +97,10 @@ export class TSRoleUtil {
 
     public static getGesuchstellerOnlyRoles(): Array<TSRole> {
         return [TSRole.GESUCHSTELLER];
+    }
+
+    public static getSteueramtOnlyRoles(): Array<TSRole> {
+        return [TSRole.STEUERAMT];
     }
 
     public static getAllRolesForKommentarSpalte(): Array<TSRole> {

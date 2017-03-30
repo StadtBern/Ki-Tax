@@ -495,7 +495,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
 			.orElseThrow(() -> new EbeguEntityNotFoundException("generateExcelReportZahlungAuftrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, auftragId));
 
-		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getBeschrieb(),
+		return getUploadFileInfoZahlung(zahlungsauftrag.getZahlungen(), zahlungsauftrag.getFilename(), zahlungsauftrag.getBeschrieb(),
 			zahlungsauftrag.getDatumGeneriert(), zahlungsauftrag.getDatumFaellig());
 	}
 
@@ -510,11 +510,11 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		reportData.add(zahlung);
 
-		return getUploadFileInfoZahlung(reportData, "Zahlungen_" + zahlung.getInstitutionStammdaten().getInstitution().getName(),
-			zahlung.getZahlungsauftrag().getDatumGeneriert(), zahlung.getZahlungsauftrag().getDatumFaellig());
+		return getUploadFileInfoZahlung(reportData, zahlung.getZahlungsauftrag().getFilename() + "_" + zahlung.getInstitutionStammdaten().getInstitution().getName(),
+			zahlung.getZahlungsauftrag().getBeschrieb(), zahlung.getZahlungsauftrag().getDatumGeneriert(), zahlung.getZahlungsauftrag().getDatumFaellig());
 	}
 
-	private UploadFileInfo getUploadFileInfoZahlung(List<Zahlung> reportData, String excelFileName, LocalDateTime datumGeneriert, LocalDate datumFaellig) throws ExcelMergeException {
+	private UploadFileInfo getUploadFileInfoZahlung(List<Zahlung> reportData, String excelFileName, String bezeichnung, LocalDateTime datumGeneriert, LocalDate datumFaellig) throws ExcelMergeException {
 		final ReportVorlage reportVorlage = ReportVorlage.VORLAGE_REPORT_ZAHLUNG_AUFTRAG;
 
 		InputStream is = ReportServiceBean.class.getResourceAsStream(reportVorlage.getTemplatePath());
@@ -526,7 +526,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		Collection<Institution> allowedInst = institutionService.getAllowedInstitutionenForCurrentBenutzer();
 
 		ExcelMergerDTO excelMergerDTO = zahlungAuftragExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault(),
-			principalBean.discoverMostPrivilegedRole(), allowedInst, "Detailpositionen der Zahlung " + excelFileName,
+			principalBean.discoverMostPrivilegedRole(), allowedInst, "Detailpositionen der Zahlung " + bezeichnung,
 			datumGeneriert, datumFaellig);
 
 		mergeData(sheet, excelMergerDTO, reportVorlage.getMergeFields());

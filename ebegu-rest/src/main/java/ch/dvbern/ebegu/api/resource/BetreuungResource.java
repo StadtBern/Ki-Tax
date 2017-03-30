@@ -4,13 +4,16 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BetreuungService;
+import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.KindService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -26,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +45,8 @@ public class BetreuungResource {
 	private BetreuungService betreuungService;
 	@Inject
 	private KindService kindService;
+	@Inject
+	private FallService fallService;
 	@Inject
 	private JaxBConverter converter;
 
@@ -169,5 +175,33 @@ public class BetreuungResource {
 		}
 		throw new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungJAXPId.getId());
 	}
+
+	@ApiOperation(value = "gets all Betreuungen for a Fall across all Gesuchperioden")
+	@Nullable
+	@GET
+	@Path("/alleBetreuungen/{fallId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findAllBetreuungenWithVerfuegungFromFall(
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Optional<Fall> fallOptional = fallService.findFall(converter.toEntityId(fallId));
+
+
+		if (!fallOptional.isPresent()) {
+			return null;
+		}
+		Fall fall = fallOptional.get();
+
+		Collection<Betreuung> betreuungCollection = betreuungService.findAllBetreuungenWithVerfuegungFromFall(fall);
+		Collection<JaxBetreuung> jaxBetreuungList = converter.betreuungListToJax(betreuungCollection);
+
+
+		return Response.ok(jaxBetreuungList).build();
+
+	}
+
 
 }
