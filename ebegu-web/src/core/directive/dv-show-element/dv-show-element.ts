@@ -51,7 +51,7 @@ export class DVShowElement implements IDirective {
         scope.$watch(attributes['dvShowExpression'], (newValue: any, oldValue: any) => {
             controller.dvExpression = newValue;
         }, true);
-    };
+    }
 
     /**
      * Diese Methode darf nur einmal aufgerufen werden.

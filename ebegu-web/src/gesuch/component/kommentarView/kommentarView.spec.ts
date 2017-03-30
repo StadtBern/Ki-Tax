@@ -12,9 +12,9 @@ describe('kommentarView', function () {
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
-    let component : any;
-    let scope : angular.IScope;
-    let $componentController : any;
+    let component: any;
+    let scope: angular.IScope;
+    let $componentController: any;
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');

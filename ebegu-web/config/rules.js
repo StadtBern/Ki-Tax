@@ -17,12 +17,6 @@ module.exports = [
         enforce: 'pre',
         loader: 'tslint-loader',
         options: {
-            configuration: {
-                rules: {
-                    quotemark: [true, 'single', 'avoid-escape']
-                }
-            },
-
             // can specify a custom config file relative to current directory or with absolute path
             // 'tslint-custom.json'
             configFile: 'tslint.json',

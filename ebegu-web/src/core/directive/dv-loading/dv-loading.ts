@@ -23,7 +23,7 @@ export class DVLoading implements IDirective {
 
             }
         });
-    };
+    }
 
     static factory(): IDirectiveFactory {
         const directive = () => new DVLoading();

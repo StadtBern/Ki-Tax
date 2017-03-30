@@ -368,7 +368,7 @@ export default class GesuchModelManager {
         }
     }
 
-    public convertKindNumberToKindIndex(kindNumber : number) : number {
+    public convertKindNumberToKindIndex(kindNumber: number): number {
         for (let i = 0; i < this.getGesuch().kindContainers.length; i++) {
             if (this.getGesuch().kindContainers[i].kindNummer === kindNumber) {
                 return i;
@@ -377,7 +377,7 @@ export default class GesuchModelManager {
         return -1;
     }
 
-    public convertBetreuungNumberToBetreuungIndex(betreuungNumber : number) : number {
+    public convertBetreuungNumberToBetreuungIndex(betreuungNumber: number): number {
         for (let i = 0; i < this.getKindToWorkWith().betreuungen.length; i++) {
             if (this.getKindToWorkWith().betreuungen[i].betreuungNummer === betreuungNumber) {
                 return i;

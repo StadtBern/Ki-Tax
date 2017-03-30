@@ -47,7 +47,7 @@ export class PendenzenSteueramtListViewController {
             return response;
         });
 
-    };
+    }
 
     private openPendenz(pendenz: TSAntragDTO, isCtrlKeyPressed: boolean) {
         this.gesuchModelManager.clearGesuch();

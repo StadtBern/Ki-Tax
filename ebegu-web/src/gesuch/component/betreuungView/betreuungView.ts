@@ -62,7 +62,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
         this.mutationsmeldungModel = undefined;
         this.isMutationsmeldungStatus = false;
-        let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
+        let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
             if ($stateParams.betreuungNumber) {

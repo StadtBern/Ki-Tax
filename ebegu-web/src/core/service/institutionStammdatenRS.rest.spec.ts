@@ -12,7 +12,7 @@ import * as moment from 'moment';
 
 describe('institutionStammdatenRS', function () {
 
-    var institutionStammdatenRS: InstitutionStammdatenRS;
+    let institutionStammdatenRS: InstitutionStammdatenRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockInstitutionStammdaten: TSInstitutionStammdaten;

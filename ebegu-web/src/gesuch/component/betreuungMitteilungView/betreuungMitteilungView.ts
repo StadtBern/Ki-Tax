@@ -31,7 +31,7 @@ export class BetreuungMitteilungViewController extends AbstractGesuchViewControl
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
     }
 
-    public cancel() : void {
+    public cancel(): void {
         this.$state.go('gesuch.betreuungen', { gesuchId: this.getGesuchId() });
     }
 }

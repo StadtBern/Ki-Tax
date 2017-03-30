@@ -54,7 +54,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.VERFUEGEN);
 
-        let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
+        let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
         if (kindIndex === -1) {
             this.$log.error('Kind konnte nicht gefunden werden');
         }

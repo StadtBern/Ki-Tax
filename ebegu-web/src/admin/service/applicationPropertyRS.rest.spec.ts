@@ -111,7 +111,7 @@ describe('ApplicationPropertyRS', function () {
                 });
                 $httpBackend.flush();
 
-                for (var i = 0; i < list.length; i++) {
+                for (let i = 0; i < list.length; i++) {
                     let mockArray = [mockApplicationPropertyRest];
                     expect(list[i].name).toEqual(mockArray[i].name);
                     expect(list[i].value).toEqual(mockArray[i].value);

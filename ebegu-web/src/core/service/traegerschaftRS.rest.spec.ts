@@ -6,7 +6,7 @@ import {TraegerschaftRS} from './traegerschaftRS.rest';
 
 describe('institutionStammdatenRS', function () {
 
-    var traegerschaftRS: TraegerschaftRS;
+    let traegerschaftRS: TraegerschaftRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockTraegerschaft: TSTraegerschaft;

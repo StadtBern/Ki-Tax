@@ -34,8 +34,7 @@ export function PendenzFilter($filter: any, ebeguUtil: EbeguUtil, CONSTANTS: any
             return standardComparator(actual, expected);
         }
 
-        var output = filterFilter(array, expression, customComparator);
-        return output;
+        return filterFilter(array, expression, customComparator);
     };
 
     function compareDates (actual: any, expected: any): boolean {

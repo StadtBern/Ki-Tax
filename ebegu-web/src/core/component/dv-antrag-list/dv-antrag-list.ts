@@ -144,7 +144,7 @@ export class DVAntragListController {
         } else {
             this.$log.info('no callback function spcified for filtering');
         }
-    };
+    }
 
     public getAntragTypen(): Array<TSAntragTyp> {
         return getTSAntragTypValues();
