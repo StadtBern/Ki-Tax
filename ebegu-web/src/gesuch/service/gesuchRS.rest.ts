@@ -7,6 +7,7 @@ import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import DateUtil from '../../utils/DateUtil';
+import * as moment from 'moment';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;

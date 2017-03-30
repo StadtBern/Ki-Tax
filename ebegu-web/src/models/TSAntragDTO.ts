@@ -3,6 +3,7 @@ import {TSAntragTyp} from './enums/TSAntragTyp';
 import {TSAntragStatus} from './enums/TSAntragStatus';
 import {TSEingangsart} from './enums/TSEingangsart';
 import EbeguUtil from '../utils/EbeguUtil';
+import * as moment from 'moment';
 
 export default class TSAntragDTO {
 

@@ -84,7 +84,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     private initDevModeParameter() {
         this.applicationPropertyRS.isDevMode().then((response: boolean) => {
             // Simulation nur fuer SuperAdmin freischalten
-            let isSuperadmin : boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorRoles());
+            let isSuperadmin: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorRoles());
             // Die Simulation ist nur im Dev-Mode moeglich und nur, wenn das Gesuch im Status FREIGABEQUITTUNG ist
             this.showGesuchFreigebenSimulationButton = (response && this.isGesuchInStatus(TSAntragStatus.FREIGABEQUITTUNG) && isSuperadmin);
         });

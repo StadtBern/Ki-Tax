@@ -40,7 +40,7 @@ export class MitteilungenViewController {
         }
     }
 
-    public cancel() : void {
+    public cancel(): void {
         if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getGesuchstellerOnlyRoles())) {
             this.$state.go('gesuchstellerDashboard');
         } else {

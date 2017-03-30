@@ -5,6 +5,7 @@ import TSFall from '../models/TSFall';
 import DateUtil from './DateUtil';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import TSBetreuungsnummerParts from '../models/dto/TSBetreuungsnummerParts';
+import * as moment from 'moment';
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
 

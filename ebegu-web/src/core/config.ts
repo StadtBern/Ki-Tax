@@ -1,11 +1,11 @@
 import 'angular';
 import 'angular-translate';
 import 'angular-unsavedchanges';
-import {ITranslateProvider} from 'angular-translate';
 import 'angular-hotkeys';
 import HttpErrorInterceptor from './errors/service/HttpErrorInterceptor';
 import HttpAuthInterceptor from '../authentication/service/HttpAuthInterceptor';
 import HttpResponseInterceptor from './service/HttpResponseInterceptor';
+import ITranslateProvider = angular.translate.ITranslateProvider;
 
 import IInjectorService = angular.auto.IInjectorService;
 import IThemingProvider = angular.material.IThemingProvider;
