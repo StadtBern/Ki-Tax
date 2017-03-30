@@ -28,5 +28,5 @@ export default class HttpAuthInterceptor implements IHttpInterceptor {
                 return this.$q.reject(response);
         }
         return this.$q.reject(response);
-    };
+    }
 }

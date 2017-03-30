@@ -10,7 +10,7 @@ import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 describe('kinderListView', function () {
 
     let gesuchModelManager: GesuchModelManager;
-    let scope : angular.IScope;
+    let scope: angular.IScope;
     let kinderListViewController: KinderListViewController;
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));

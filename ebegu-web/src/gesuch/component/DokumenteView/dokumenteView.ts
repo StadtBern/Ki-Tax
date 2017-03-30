@@ -105,7 +105,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
 
     addUploadedDokuments(dokumentGrund: any, dokumente: TSDokumentGrund[]): void {
         this.$log.debug('addUploadedDokuments called');
-        var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
+        let index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
 
         if (index > -1) {
             this.$log.debug('add dokument to dokumentList');
@@ -123,7 +123,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
 
     removeDokument(dokumentGrund: TSDokumentGrund, dokument: TSDokument, dokumente: TSDokumentGrund[]) {
 
-        var index = EbeguUtil.getIndexOfElementwithID(dokument, dokumentGrund.dokumente);
+        let index = EbeguUtil.getIndexOfElementwithID(dokument, dokumentGrund.dokumente);
 
         if (index > -1) {
             this.$log.debug('add dokument to dokumentList');
@@ -136,7 +136,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
 
             if (returnedDG) {
                 // replace existing object in table with returned if returned not null
-                var index = EbeguUtil.getIndexOfElementwithID(returnedDG, dokumente);
+                let index = EbeguUtil.getIndexOfElementwithID(returnedDG, dokumente);
                 if (index > -1) {
                     this.$log.debug('update dokumentGrund in dokumentList');
                     dokumente[index] = dokumentGrund;
@@ -148,7 +148,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
                 }
             } else {
                 // delete object in table with sended if returned is null
-                var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
+                let index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
                 if (index > -1) {
                     this.$log.debug('remove dokumentGrund in dokumentList');
                     dokumente.splice(index, 1);

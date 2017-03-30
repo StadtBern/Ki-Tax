@@ -14,10 +14,12 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSRole} from '../../../models/enums/TSRole';
 import DateUtil from '../../../utils/DateUtil';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import * as moment from 'moment';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
+import Moment = moment.Moment;
 
 
 let template = require('./kindView.html');
@@ -46,7 +48,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
                 wizardStepManager: WizardStepManager, private $q: IQService, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.KINDER);
         if ($stateParams.kindNumber) {
-            let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber));
+            let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber));
             if (kindIndex >= 0) {
                 this.model = angular.copy(this.gesuchModelManager.getGesuch().kindContainers[kindIndex]);
                 this.gesuchModelManager.setKindIndex(kindIndex);
@@ -54,7 +56,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         } else {
             //wenn kind nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
             this.model = this.initEmptyKind(undefined);
-            let kindIndex : number = this.gesuchModelManager.getGesuch().kindContainers ? this.gesuchModelManager.getGesuch().kindContainers.length : 0;
+            let kindIndex: number = this.gesuchModelManager.getGesuch().kindContainers ? this.gesuchModelManager.getGesuch().kindContainers.length : 0;
             this.gesuchModelManager.setKindIndex(kindIndex);
         }
         this.initViewModel();
@@ -167,9 +169,9 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         return this.gesuchModelManager.getGesuchsperiodeBegin();
     }
 
-    public getTextFachstelleKorrekturJA() : string {
+    public getTextFachstelleKorrekturJA(): string {
         if (this.getContainer().kindGS && this.getContainer().kindGS.pensumFachstelle) {
-            let fachstelle : TSPensumFachstelle = this.getContainer().kindGS.pensumFachstelle;
+            let fachstelle: TSPensumFachstelle = this.getContainer().kindGS.pensumFachstelle;
             let vonText = DateUtil.momentToLocalDateFormat(fachstelle.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
             let bisText = fachstelle.gueltigkeit.gueltigBis ? DateUtil.momentToLocalDateFormat(fachstelle.gueltigkeit.gueltigBis, 'DD.MM.YYYY') : '31.12.9999';
             return this.$translate.instant('JA_KORREKTUR_FACHSTELLE', {
@@ -182,7 +184,7 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
         }
     }
 
-    private initEmptyKind(kindNumber: number) : TSKindContainer {
+    private initEmptyKind(kindNumber: number): TSKindContainer {
         let tsKindContainer = new TSKindContainer(undefined, new TSKind());
         tsKindContainer.kindNummer = kindNumber;
         return tsKindContainer;

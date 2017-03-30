@@ -6,6 +6,8 @@ import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import {TSDateRange} from '../../models/types/TSDateRange';
 import DateUtil from '../../utils/DateUtil';
 import TestDataUtil from '../../utils/TestDataUtil';
+import * as moment from 'moment';
+
 
 describe('gesuchsperiodeRS', function () {
 

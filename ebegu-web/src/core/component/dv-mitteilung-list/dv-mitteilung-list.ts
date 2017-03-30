@@ -18,12 +18,12 @@ import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
-import Moment = moment.Moment;
+import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
+
 import IFormController = angular.IFormController;
 import IQService = angular.IQService;
 import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
-import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');

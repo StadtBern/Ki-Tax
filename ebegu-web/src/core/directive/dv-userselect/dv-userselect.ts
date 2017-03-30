@@ -2,6 +2,7 @@ import {IDirective, IDirectiveFactory} from 'angular';
 import TSUser from '../../../models/TSUser';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import UserRS from '../../service/userRS.rest';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import INgModelController = angular.INgModelController;
 let template = require('./dv-userselect.html');

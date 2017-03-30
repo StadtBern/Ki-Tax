@@ -3,6 +3,7 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import DateUtil from '../../utils/DateUtil';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
+import * as moment from 'moment';
 
 export class InstitutionStammdatenRS {
     serviceURL: string;

@@ -2,6 +2,7 @@ import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
 import {TSPensumFachstelle} from './TSPensumFachstelle';
 import {TSKinderabzug} from './enums/TSKinderabzug';
+import * as moment from 'moment';
 
 export default class TSKind extends TSAbstractPersonEntity {
 

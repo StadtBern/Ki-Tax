@@ -1,4 +1,3 @@
-/// <reference path="../../../../typings/browser.d.ts" />
 describe('dvRadioContainer', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.core'));
