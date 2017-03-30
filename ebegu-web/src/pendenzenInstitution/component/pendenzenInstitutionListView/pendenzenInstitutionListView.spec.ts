@@ -55,7 +55,7 @@ describe('pendenzenInstitutionListView', function () {
                 let mockPendenz: TSPendenzInstitution = mockGetPendenzenList();
                 mockRestCalls();
                 pendenzInstitutionListViewController = new PendenzenInstitutionListViewController(pendenzInstitutionRS, undefined, $filter,
-                    institutionRS, institutionStammdatenRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
+                    institutionRS, institutionStammdatenRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state);
 
                 $scope.$apply();
                 expect(pendenzInstitutionRS.getPendenzenList).toHaveBeenCalled();

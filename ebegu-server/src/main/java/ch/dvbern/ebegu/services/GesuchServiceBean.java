@@ -234,6 +234,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@Nonnull
+	@RolesAllowed(value = {UserRoleName.STEUERAMT, UserRoleName.SUPER_ADMIN})
+	public List<Gesuch> getPendenzenForSteueramtUser() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicate = root.get(Gesuch_.status).in(AntragStatus.allowedforRole(UserRole.STEUERAMT));
+		query.where(predicate);
+		query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
+
+		List<Gesuch> gesuche = persistence.getCriteriaResults(query);
+		authorizer.checkReadAuthorizationGesuche(gesuche);
+		return gesuche;
+	}
+
+	@Override
 	@PermitAll
 	public Pair<Long, List<Gesuch>> searchAntraege(@Nonnull AntragTableFilterDTO antragTableFilterDto) {
 		Pair<Long, List<Gesuch>> result;
@@ -293,6 +310,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case SUPER_ADMIN:
 			case ADMIN:
 			case REVISOR:
+				break;
+			case STEUERAMT:
 				break;
 			case SACHBEARBEITER_JA:
 			case JURIST:

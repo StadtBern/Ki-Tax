@@ -23,6 +23,7 @@ export class DvPosteingangController {
     constructor(private mitteilungRS: MitteilungRS, private $rootScope: IRootScopeService, private authServiceRS: AuthServiceRS) {
         this.getAmountNewMitteilungen();
 
+        // todo team Dies muss nach jedem LOGOUT entfernt werden
         // call every 5 minutes (5*60*1000)
         setInterval(() => this.getAmountNewMitteilungen(), 300000);
 

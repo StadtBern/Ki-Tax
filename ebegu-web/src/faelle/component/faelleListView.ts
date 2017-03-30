@@ -3,7 +3,6 @@ import {IStateService} from 'angular-ui-router';
 import GesuchRS from '../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
 import BerechnungsManager from '../../gesuch/service/berechnungsManager';
-import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
@@ -58,10 +57,6 @@ export class FaelleListViewController {
 
     public getAntragList(): Array<TSAntragDTO> {
         return this.antragList;
-    }
-
-    public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return gesuchsperiode.gesuchsperiodeString;
     }
 
     /**

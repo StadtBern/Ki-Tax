@@ -38,12 +38,12 @@ export class PendenzenInstitutionListViewController {
 
 
     static $inject: string[] = ['PendenzInstitutionRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'InstitutionStammdatenRS', 'GesuchsperiodeRS',
-        'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state', 'CONSTANTS'];
+        'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state'];
 
-    constructor(public pendenzRS: PendenzInstitutionRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
+    constructor(public pendenzInstitutionRS: PendenzInstitutionRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
                 private institutionRS: InstitutionRS, private institutionStammdatenRS: InstitutionStammdatenRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
-                private $state: IStateService, private CONSTANTS: any) {
+                private $state: IStateService) {
         this.initViewModel();
     }
 
@@ -55,7 +55,7 @@ export class PendenzenInstitutionListViewController {
     }
 
     private updatePendenzenList() {
-        this.pendenzRS.getPendenzenList().then((response: any) => {
+        this.pendenzInstitutionRS.getPendenzenList().then((response: any) => {
             this.pendenzenList = angular.copy(response);
             this.numberOfPages = this.pendenzenList.length / this.itemsByPage;
         });
@@ -65,7 +65,7 @@ export class PendenzenInstitutionListViewController {
         this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
             this.activeGesuchsperiodenList = [];
             response.forEach((gesuchsperiode: TSGesuchsperiode) => {
-                this.activeGesuchsperiodenList.push(this.getGesuchsperiodeAsString(gesuchsperiode));
+                this.activeGesuchsperiodenList.push(gesuchsperiode.gesuchsperiodeString);
             });
         });
     }
@@ -84,10 +84,6 @@ export class PendenzenInstitutionListViewController {
 
     public getPendenzenList(): Array<TSPendenzInstitution> {
         return this.pendenzenList;
-    }
-
-    public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return gesuchsperiode.gesuchsperiodeString;
     }
 
     public editPendenzInstitution(pendenz: TSPendenzInstitution, event: any): void {
