@@ -52,6 +52,11 @@
 		<property name="ebegu.openidm.loginwithtoken.enabled" value="true"/>
 		<property name="ebegu.openam.url" value="https://elogin-test.bern.ch"/>
 		<property name="hibernate.search.default.indexBase" value="${jboss.server.data.dir}/lucene-index"/>
+		<!-- EWK Personensuche -->
+		<property name="ebegu.personensuche.disabled" value="true"/>
+		<property name="ebegu.personensuche.endpoint" value="https://dbs1019.bgov.ch:50001/XISOAPAdapter/MessageServlet?senderParty=&amp;senderService=E_BEGU_QAS&amp;receiverParty=&amp;receiverService=&amp;interface=PersonenSuche_OB&amp;interfaceNamespace=http://bern.ch/E_GOV/E_BEGU/EGOV_002"/>
+		<property name="ebegu.personensuche.username" value="E_BEGU_t"/>
+		<property name="ebegu.personensuche.password" value="8+&quot;8i4&quot;ax#8*ew"/>
     </system-properties>
 
 
