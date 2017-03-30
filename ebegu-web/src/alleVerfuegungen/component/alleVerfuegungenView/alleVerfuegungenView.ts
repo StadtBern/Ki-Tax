@@ -16,6 +16,7 @@ import IQService = angular.IQService;
 import IFormController = angular.IFormController;
 import IStateService = angular.ui.IStateService;
 import ILogService = angular.ILogService;
+import EbeguUtil from '../../../utils/EbeguUtil';
 
 let template = require('./alleVerfuegungenView.html');
 require('./alleVerfuegungenView.less');
@@ -34,10 +35,10 @@ export class AlleVerfuegungenViewController {
     itemsByPage: number = 20;
     TSRoleUtil = TSRoleUtil;
 
-    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', 'FallRS', 'BetreuungRS', 'GesuchModelManager', 'DownloadRS', '$log'];
+    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', 'FallRS', 'EbeguUtil', 'BetreuungRS', 'GesuchModelManager', 'DownloadRS', '$log'];
     /* @ngInject */
     constructor(private $state: IStateService, private $stateParams: IAlleVerfuegungenStateParams,
-                private authServiceRS: AuthServiceRS, private fallRS: FallRS,
+                private authServiceRS: AuthServiceRS, private fallRS: FallRS, private ebeguUtil: EbeguUtil,
                 private betreuungRS: BetreuungRS, private gesuchModelManager: GesuchModelManager,
                 private downloadRS: DownloadRS, private $log: ILogService) {
     }
