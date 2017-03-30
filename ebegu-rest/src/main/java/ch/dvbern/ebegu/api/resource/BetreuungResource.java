@@ -182,7 +182,7 @@ public class BetreuungResource {
 	@Path("/alleBetreuungen/{fallId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findAllBetreuungenFromFall(
+	public Response findAllBetreuungenWithVerfuegungFromFall(
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallId,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -195,7 +195,7 @@ public class BetreuungResource {
 		}
 		Fall fall = fallOptional.get();
 
-		Collection<Betreuung> betreuungCollection = betreuungService.findAllBetreuungenFromFall(fall);
+		Collection<Betreuung> betreuungCollection = betreuungService.findAllBetreuungenWithVerfuegungFromFall(fall);
 		Collection<JaxBetreuung> jaxBetreuungList = converter.betreuungListToJax(betreuungCollection);
 
 

@@ -34,10 +34,10 @@ export class AlleVerfuegungenViewController {
     itemsByPage: number = 20;
     TSRoleUtil = TSRoleUtil;
 
-    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', '$q', 'FallRS', 'BetreuungRS', 'GesuchModelManager', 'DownloadRS', '$log'];
+    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', 'FallRS', 'BetreuungRS', 'GesuchModelManager', 'DownloadRS', '$log'];
     /* @ngInject */
     constructor(private $state: IStateService, private $stateParams: IAlleVerfuegungenStateParams,
-                private authServiceRS: AuthServiceRS, private $q: IQService, private fallRS: FallRS,
+                private authServiceRS: AuthServiceRS, private fallRS: FallRS,
                 private betreuungRS: BetreuungRS, private gesuchModelManager: GesuchModelManager,
                 private downloadRS: DownloadRS, private $log: ILogService) {
     }
@@ -50,7 +50,7 @@ export class AlleVerfuegungenViewController {
                     this.cancel();
                 }
 
-                    this.betreuungRS.findAllBetreuungenFromFall(this.fall.id).then((response) => {
+                    this.betreuungRS.findAllBetreuungenWithVerfuegungFromFall(this.fall.id).then((response) => {
                     response.forEach((item) => {
                         this.alleVerfuegungen.push(item);
 

@@ -167,13 +167,6 @@ export class GesuchToolbarController {
         return !this.isDashboardScreen && !angular.equals(this.antragTypList, {});
     }
 
-    public showOtherStuff(): boolean {
-        if (this.getGesuch()) {
-            return true;
-        }
-        return false;
-    }
-
     public showKontaktMenu(): boolean {
         if (this.getGesuch() && this.getGesuch().gesuchsteller1) {
             return true;

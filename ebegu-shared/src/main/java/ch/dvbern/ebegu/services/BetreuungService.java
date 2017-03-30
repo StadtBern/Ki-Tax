@@ -73,11 +73,11 @@ public interface BetreuungService {
 	List<Betreuung> findAllBetreuungenFromGesuch(String gesuchId);
 
 	/**
-	 * @param fall Fall, dessen Verfuegungen zurueckgegeben werden
+	 * @param fall Fall, dessen verfuegte Betreuungen zurueckgegeben werden
 	 * @return BetreuungList, welche zum Fall gehoeren oder null
 	 */
 	@Nonnull
-	List<Betreuung> findAllBetreuungenFromFall(@Nonnull Fall fall);
+	List<Betreuung> findAllBetreuungenWithVerfuegungFromFall(@Nonnull Fall fall);
 
 	/**
 	 * Schliesst die Betreuung (Status GESCHLOSSEN_OHNE_VERFUEGUNG) ohne eine neue Verfuegung zu erstellen
