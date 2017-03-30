@@ -16,14 +16,14 @@ const LoaderOptionsPlugin = require("webpack/lib/LoaderOptionsPlugin");
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 const HMR = helpers.hasProcessFlag('hot');
 //* to allow everybody to access the server
-const METADATA = webpackMerge(commonConfig.metadata, {
+const METADATA = {
     title: 'ebegu Webpack',
     baseUrl: '/',
     host: '0.0.0.0',
     port: 3000,
     ENV: ENV,
     HMR: HMR
-});
+};
 
 module.exports = webpackMerge(commonConfig,  {
 

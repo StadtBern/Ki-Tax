@@ -23,7 +23,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 /**
- * Webpack Constants todo homa, leider koennen wir diesen wert nicht mehr auf den module export setzen
+ * Webpack Constants
  */
 const METADATA = {
     title: 'seed Webpack from DV Bern',
@@ -60,7 +60,7 @@ module.exports = {
     // change dvbern
     entry: {
         // 'polyfills': './src/polyfills.ts',
-        // 'vendor': './src/vendor.ts',
+        'vendor': './src/vendor.ts',
         'main': './src/bootstrap.ts'
     },
 

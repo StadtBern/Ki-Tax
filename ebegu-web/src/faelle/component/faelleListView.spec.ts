@@ -116,8 +116,8 @@ describe('faelleListView', function () {
             gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS, $q);
 
         let tsGesuch = new TSGesuch();
-        spyOn(gesuchRS, "findGesuch").and.returnValue($q.when(tsGesuch));
-        spyOn(gesuchRS, "findGesuchForInstitution").and.returnValue($q.when(tsGesuch));
+        spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));
+        spyOn(gesuchRS, 'findGesuchForInstitution').and.returnValue($q.when(tsGesuch));
 
         faelleListViewController.editFall(mockAntrag, undefined);
         $scope.$apply();
