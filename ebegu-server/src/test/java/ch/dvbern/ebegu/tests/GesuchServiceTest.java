@@ -657,21 +657,27 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void testWarnungFehlendeQuittung() throws Exception {
 		insertApplicationProperties();
-		createGesuchFreigabequittung(LocalDate.now().minusMonths(2).minusDays(1));
-		createGesuchFreigabequittung(LocalDate.now().minusMonths(2));
-		createGesuchFreigabequittung(LocalDate.now().minusMonths(2).plusDays(1));
+		Gesuch gesuch1 = createGesuchFreigabequittung(LocalDate.now().minusMonths(2).minusDays(1));
+		Gesuch gesuch2 = createGesuchFreigabequittung(LocalDate.now().minusMonths(2));
+		Gesuch gesuch3 = createGesuchFreigabequittung(LocalDate.now().minusMonths(2).plusDays(1));
 
-		Assert.assertEquals(1, gesuchService.warnFreigabequittungFehlt());
+		Assert.assertEquals(2, gesuchService.warnFreigabequittungFehlt());
+		Assert.assertTrue(gesuchService.findGesuch(gesuch1.getId()).get().isGewarntFehlendeQuittung());
+		Assert.assertTrue(gesuchService.findGesuch(gesuch2.getId()).get().isGewarntFehlendeQuittung());
+		Assert.assertFalse(gesuchService.findGesuch(gesuch3.getId()).get().isGewarntFehlendeQuittung());
 	}
 
 	@Test
 	public void testWarnungNichtFreigegeben() throws Exception {
 		insertApplicationProperties();
-		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2).minusDays(1));
-		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2));
-		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2).plusDays(1));
+		Gesuch gesuch1 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2).minusDays(1));
+		Gesuch gesuch2 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2));
+		Gesuch gesuch3 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2).plusDays(1));
 
-		Assert.assertEquals(1, gesuchService.warnGesuchNichtFreigegeben());
+		Assert.assertEquals(2, gesuchService.warnGesuchNichtFreigegeben());
+		Assert.assertTrue(gesuchService.findGesuch(gesuch1.getId()).get().isGewarntNichtFreigegeben());
+		Assert.assertTrue(gesuchService.findGesuch(gesuch2.getId()).get().isGewarntNichtFreigegeben());
+		Assert.assertFalse(gesuchService.findGesuch(gesuch3.getId()).get().isGewarntNichtFreigegeben());
 	}
 
 	@Test
@@ -683,10 +689,12 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		createGesuchFreigabequittung(LocalDate.now().minusMonths(4).minusDays(1));
 		createGesuchFreigabequittung(LocalDate.now().minusMonths(4));
 		createGesuchFreigabequittung(LocalDate.now().minusMonths(4).plusDays(1));
+		gesuchService.warnGesuchNichtFreigegeben();
+		gesuchService.warnFreigabequittungFehlt();
 
 		Assert.assertEquals(6, gesuchService.getAllGesuche().size());
-		Assert.assertEquals(2, gesuchService.deleteGesucheOhneFreigabeOderQuittung());
-		Assert.assertEquals(4, gesuchService.getAllGesuche().size());
+		Assert.assertEquals(4, gesuchService.deleteGesucheOhneFreigabeOderQuittung());
+		Assert.assertEquals(2, gesuchService.getAllGesuche().size());
 	}
 
 

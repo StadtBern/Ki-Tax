@@ -128,8 +128,12 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Column(nullable = false)
 	private boolean gesperrtWegenBeschwerde = false;
 
-	@Transient
-	private AntragStatus orginalAntragStatus;
+	@Column(nullable = false)
+	private boolean gewarntNichtFreigegeben = false;
+
+	@Column(nullable = false)
+	private boolean gewarntFehlendeQuittung = false;
+
 
 	public Gesuch() {
 	}
@@ -257,14 +261,6 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.status = status;
 	}
 
-	public AntragStatus getOrginalStatus() {
-		return orginalAntragStatus;
-	}
-
-	public void setOrginalStatus(AntragStatus orginalAntragStatus) {
-		this.orginalAntragStatus = orginalAntragStatus;
-	}
-
 	public AntragTyp getTyp() {
 		return typ;
 	}
@@ -337,6 +333,22 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	public void setFinanzDatenDTO_zuZweit(FinanzDatenDTO finanzDatenDTO_zuZweit) {
 		this.finanzDatenDTO_zuZweit = finanzDatenDTO_zuZweit;
+	}
+
+	public boolean isGewarntNichtFreigegeben() {
+		return gewarntNichtFreigegeben;
+	}
+
+	public void setGewarntNichtFreigegeben(boolean gewarntNichtFreigegeben) {
+		this.gewarntNichtFreigegeben = gewarntNichtFreigegeben;
+	}
+
+	public boolean isGewarntFehlendeQuittung() {
+		return gewarntFehlendeQuittung;
+	}
+
+	public void setGewarntFehlendeQuittung(boolean gewarntFehlendeQuittung) {
+		this.gewarntFehlendeQuittung = gewarntFehlendeQuittung;
 	}
 
 	@SuppressWarnings("ObjectEquality")
@@ -504,6 +516,9 @@ public class Gesuch extends AbstractEntity implements Searchable{
 				mutation.addDokumentGrund(dokumentGrund.copyForMutation(new DokumentGrund()));
 			}
 		}
+		mutation.setGesperrtWegenBeschwerde(false);
+		mutation.setGewarntNichtFreigegeben(false);
+		mutation.setGewarntFehlendeQuittung(false);
 		return mutation;
 	}
 

@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @Stateless
 @Local(GesuchService.class)
 @PermitAll
-@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "LocalVariableNamingConvention"})
 public class GesuchServiceBean extends AbstractBaseService implements GesuchService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
@@ -1116,25 +1116,29 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben", "ANZAHL_MONATE_BIS_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE not defined");
 		}
 
-		LocalDateTime stichtag = LocalDate.now().atStartOfDay().minusMonths(anzahlMonateBisWarnungFreigabe);
+		// Stichtag ist EndeTag -> Plus 1 Tag und dann less statt lessOrEqual
+		LocalDateTime stichtag = LocalDate.now().minusMonths(anzahlMonateBisWarnungFreigabe).atStartOfDay().plusDays(1);
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
 		Root<Gesuch> root = query.from(Gesuch.class);
+		// Status in Bearbeitung GS
 		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.IN_BEARBEITUNG_GS);
-
 		// Irgendwann am Stichtag erstellt:
-		Predicate predicateDatum1 = cb.greaterThanOrEqualTo(root.get(Gesuch_.timestampErstellt), stichtag);
-		Predicate predicateDatum2 = cb.lessThan(root.get(Gesuch_.timestampErstellt), stichtag.plusDays(1));
+		Predicate predicateDatum = cb.lessThan(root.get(Gesuch_.timestampErstellt), stichtag);
+		// Noch nicht gewarnt
+		Predicate predicateNochNichtGewarnt = cb.equal(root.get(Gesuch_.gewarntNichtFreigegeben), Boolean.FALSE);
 
-		query.where(predicateStatus, predicateDatum1, predicateDatum2);
+		query.where(predicateStatus, predicateDatum, predicateNochNichtGewarnt);
 		query.select(root);
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
 		List<Gesuch> gesucheNichtAbgeschlossenSeit = persistence.getCriteriaResults(query);
 
 		for (Gesuch gesuch : gesucheNichtAbgeschlossenSeit) {
 			try {
+				gesuch.setGewarntNichtFreigegeben(true);
+				updateGesuch(gesuch, false);
 				mailService.sendWarnungGesuchNichtFreigegeben(gesuch, anzahlMonateBisLoeschungNachWarnungFreigabe);
 			} catch (MailException e) {
 				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
@@ -1159,15 +1163,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Root<Gesuch> root = query.from(Gesuch.class);
 		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.FREIGABEQUITTUNG);
-		Predicate predicateDatum = cb.equal(root.get(Gesuch_.freigabeDatum), stichtag);
+		Predicate predicateDatum = cb.lessThanOrEqualTo(root.get(Gesuch_.freigabeDatum), stichtag);
+		// Noch nicht gewarnt
+		Predicate predicateNochNichtGewarnt = cb.equal(root.get(Gesuch_.gewarntFehlendeQuittung), Boolean.FALSE);
 
-		query.where(predicateStatus, predicateDatum);
+		query.where(predicateStatus, predicateDatum, predicateNochNichtGewarnt);
 		query.select(root);
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
 		List<Gesuch> gesucheNichtAbgeschlossenSeit = persistence.getCriteriaResults(query);
 
 		for (Gesuch gesuch : gesucheNichtAbgeschlossenSeit) {
 			try {
+				gesuch.setGewarntFehlendeQuittung(true);
+				updateGesuch(gesuch, false);
 				mailService.sendWarnungFreigabequittungFehlt(gesuch);
 			} catch (MailException e) {
 				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
@@ -1189,9 +1197,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben", "ANZAHL_MONATE_BIS_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG not defined");
 		}
 
-		LocalDateTime stichtagFehlendeFreigabe = LocalDate.now().atStartOfDay()
+		// Stichtag ist EndeTag -> Plus 1 Tag und dann less statt lessOrEqual
+		LocalDateTime stichtagFehlendeFreigabe = LocalDate.now()
 			.minusMonths(anzahlMonateBisWarnungFreigabe)
-			.minusMonths(anzahlMonateBisLoeschungNachWarnungFreigabe);
+			.minusMonths(anzahlMonateBisLoeschungNachWarnungFreigabe).atStartOfDay().plusDays(1);
 		LocalDate stichtagFehlendeQuittung = LocalDate.now()
 			.minusMonths(anzahlMonateBisWarnungQuittung)
 			.minusMonths(anzahlMonateBisLoeschungNachWarnungQuittung);
@@ -1203,16 +1212,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		// Entweder IN_BEARBEITUNG_GS und vor stichtagFehlendeFreigabe erstellt
 		Predicate predicateStatusNichtFreigegeben = cb.equal(root.get(Gesuch_.status), AntragStatus.IN_BEARBEITUNG_GS);
-		// Irgendwann am Stichtag erstellt:
-		Predicate predicateDatumNichtFreigegeben1 = cb.greaterThanOrEqualTo(root.get(Gesuch_.timestampErstellt), stichtagFehlendeFreigabe);
-		Predicate predicateDatumNichtFreigegeben2 = cb.lessThan(root.get(Gesuch_.timestampErstellt), stichtagFehlendeFreigabe.plusDays(1));
-
-		Predicate predicateNichtFreigegeben = cb.and(predicateStatusNichtFreigegeben, predicateDatumNichtFreigegeben1, predicateDatumNichtFreigegeben2);
+		Predicate predicateDatumNichtFreigegeben = cb.lessThan(root.get(Gesuch_.timestampErstellt), stichtagFehlendeFreigabe);
+		Predicate predicateGewarntNichtFreigegeben = cb.equal(root.get(Gesuch_.gewarntNichtFreigegeben), Boolean.TRUE);
+		Predicate predicateNichtFreigegeben = cb.and(predicateStatusNichtFreigegeben, predicateDatumNichtFreigegeben, predicateGewarntNichtFreigegeben);
 
 		// Oder FREIGABEQUITTUNG und vor stichtagFehlendeQuittung freigegeben
 		Predicate predicateStatusFehlendeQuittung = cb.equal(root.get(Gesuch_.status), AntragStatus.FREIGABEQUITTUNG);
-		Predicate predicateDatumFehlendeQuittung = cb.equal(root.get(Gesuch_.freigabeDatum), stichtagFehlendeQuittung);
-		Predicate predicateFehlendeQuittung = cb.and(predicateStatusFehlendeQuittung, predicateDatumFehlendeQuittung);
+		Predicate predicateDatumFehlendeQuittung = cb.lessThanOrEqualTo(root.get(Gesuch_.freigabeDatum), stichtagFehlendeQuittung);
+		Predicate predicateGewarntFehlendeQuittung = cb.equal(root.get(Gesuch_.gewarntFehlendeQuittung), Boolean.TRUE);
+		Predicate predicateFehlendeQuittung = cb.and(predicateStatusFehlendeQuittung, predicateDatumFehlendeQuittung, predicateGewarntFehlendeQuittung);
 
 		Predicate predicateFehlendeFreigabeOrQuittung = cb.or(predicateNichtFreigegeben, predicateFehlendeQuittung);
 
