@@ -59,22 +59,29 @@
             <span flex=""></span>
             <!--Verlauf-->
             <div dv-show-element
-                 dv-show-allowed-roles="vmx.TSRoleUtil.getJugendamtAndSchulamtRole()">
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getJugendamtAndSchulamtRole()" dv-show-expression="!vmx.getGesuch().isNew()">
                 <button ng-click="vmx.openVerlauf()"
                         aria-label="{{TOOLBAR_VERLAUF | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_VERLAUF"></span>
                 </button>
             </div>
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getAllRolesButGesuchsteller()" dv-show-expression="!vmx.getGesuch().isNew()">
+                <button ng-click="vmx.openAlleVerfuegungen()"
+                        aria-label="{{TOOLBAR_ALLE_VERFUEGUNGEN | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_ALLE_VERFUEGUNGEN"></span>
+                </button>
+            </div>
+
             <!-- Mitteilungen -->
 
             <div dv-show-element
-                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtRoles()">
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtRoles()"  dv-show-expression="!vmx.getGesuch().isNew()">
                 <button ng-click="vmx.openMitteilungen()"
                         aria-label="{{TOOLBAR_MITTEILUNGEN | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
                 </button>
             </div>
-
 
             <!-- Mutieren -->
             <div dv-show-element
