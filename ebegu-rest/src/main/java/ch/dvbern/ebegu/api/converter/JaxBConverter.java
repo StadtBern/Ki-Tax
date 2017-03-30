@@ -1566,6 +1566,20 @@ public class JaxBConverter {
 		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
 		return jaxBetreuungspensum;
 	}
+	/**
+	 * converts the given betreuungList into a JaxBetreuungList
+	 *
+	 * @param betreuungList
+	 * @return List with Betreuung DTOs
+	 */
+	public Collection<JaxBetreuung> betreuungListToJax(Collection<Betreuung> betreuungList) {
+		Collection<JaxBetreuung> returnList = new ArrayList<>();
+		betreuungList.forEach(betreuung -> {
+			returnList.add(betreuungToJAX(betreuung));
+		});
+		return returnList;
+	}
+
 
 	public JaxBetreuung betreuungToJAX(final Betreuung betreuungFromServer) {
 		final JaxBetreuung jaxBetreuung = new JaxBetreuung();
@@ -2057,24 +2071,31 @@ public class JaxBConverter {
 	}
 	/**
 	 * transformiert ein gesuch in ein JaxAntragDTO unter beruecksichtigung der rollen und erlaubten institutionen
+	 * - Fuer die Rolle Steueramt werden saemtlichen Daten von den Kindern nicht geladen
+	 * - Fuer die Rolle Institution/Traegerschaft werden nur die relevanten Institutionen und Angebote geladen
 	 */
 	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, UserRole userRole, Collection<Institution> allowedInst) {
 		//wir koennen nicht mit den container auf dem gesuch arbeiten weil das gesuch attached ist. hibernate
 		//wuerde uns dann die kinder wegloeschen, daher besser transformieren
 		Collection<JaxKindContainer> jaxKindContainers = new ArrayList<>(gesuch.getKindContainers().size());
-		for (final KindContainer kind : gesuch.getKindContainers()) {
-			jaxKindContainers.add(kindContainerToJAX(kind));
-		}
 
 		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
-		antrag.setKinder(createKinderList(jaxKindContainers));
+
+		if (!userRole.equals(UserRole.STEUERAMT)) {
+			for (final KindContainer kind : gesuch.getKindContainers()) {
+				jaxKindContainers.add(kindContainerToJAX(kind));
+			}
+			antrag.setKinder(createKinderList(jaxKindContainers));
+		}
 
 		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
 			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(jaxKindContainers, allowedInst);
 		}
 
-		antrag.setAngebote(createAngeboteList(jaxKindContainers));
-		antrag.setInstitutionen(createInstitutionenList(jaxKindContainers));
+		if (!userRole.equals(UserRole.STEUERAMT)) {
+			antrag.setAngebote(createAngeboteList(jaxKindContainers));
+			antrag.setInstitutionen(createInstitutionenList(jaxKindContainers));
+		}
 
 		return antrag;
 	}

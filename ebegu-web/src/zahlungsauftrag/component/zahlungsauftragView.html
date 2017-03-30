@@ -6,7 +6,7 @@
             <div class="row" dv-show-element dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
                 <div class="col-md-8 col-md-offset-2">
                     <div class="row zahlungen-form" layout="row">
-                        <div ng-class="{'col-md-4': !vm.devMode,'col-md-3': vm.devMode}">
+                        <div ng-class="{'col-md-4': !vm.testMode,'col-md-3': vm.testMode}">
                             <div class="form-group">
                                 <label class="md-no-float" for="faelligkeitsdatum"
                                        data-translate="ZAHLUNG_FAELLIGKEITSDATUM"></label>
@@ -30,7 +30,7 @@
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
-                        <div ng-class="{'col-md-4': !vm.devMode,'col-md-3': vm.devMode}">
+                        <div ng-class="{'col-md-4': !vm.testMode,'col-md-3': vm.testMode}">
                             <div class="form-group">
                                 <label class="md-no-float" data-translate="ZAHLUNG_BESCHRIEB"
                                        for="beschrieb"></label>
@@ -41,10 +41,9 @@
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
-                        <div ng-class="{'col-md-4': !vm.devMode,'col-md-3': vm.devMode}" flex layout="row" layout-align="center center">
+                        <div ng-class="{'col-md-4': !vm.testMode,'col-md-3': vm.testMode}" flex layout="row" layout-align="center center">
                             <button ng-click="vm.createZahlungsauftrag()"
-                                    aria-label="{{ZAHLUNG_ERSTELLEN | translate}}"
-                            >
+                                    aria-label="{{ZAHLUNG_ERSTELLEN | translate}}">
                                 <span data-translate="ZAHLUNG_ERSTELLEN"></span>
                             </button>
                         </div>

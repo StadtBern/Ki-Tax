@@ -5,35 +5,20 @@
                 <h3 data-translate="PENDENZEN_LIST"></h3>
             </div>
             <div class="col-md-1 text-right">
-                <h3 ng-bind="vm.getPendenzenList() ? vm.getPendenzenList().length : 0"></h3>
+                <h3 ng-bind="vm.totalResultCount"></h3>
             </div>
         </div>
+
         <div class="row">
-            <div class="col-md-12 table-responsive">
-
-                <table st-table="displayedCollection" st-safe-src="vm.getPendenzenList()"  st-delay="20"
-                       class="table table-striped fixedtable">
-                    <thead>
-                    <tr>
-                    </tr>
-                    <tr>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-click="vm.editpendenzSteueramt(row, $event)">
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                        <td colspan="9" class="text-center">
-                            <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
-                        </td>
-                    </tr>
-                    </tfoot>
-                </table>
-
+            <div class="col-md-12">
+                <dv-antrag-list
+                    on-filter-change="vm.passFilterToServer(tableState)"
+                    on-edit="vm.editpendenzSteueramt(antrag, event)"
+                    table-id="pendenzenTable"
+                    add-button-visible="false"
+                    action-visible="false">
+                </dv-antrag-list>
             </div>
-
         </div>
     </div>
 </div>

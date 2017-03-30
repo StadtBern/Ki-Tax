@@ -6,6 +6,7 @@ import EbeguUtil from '../utils/EbeguUtil';
 import * as moment from 'moment';
 
 export default class TSAntragDTO {
+
     private _antragId: string;
     private _fallNummer: number;
     private _familienName: string;

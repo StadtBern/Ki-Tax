@@ -6,9 +6,9 @@ import PendenzRS from './PendenzRS.rest';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 
-describe('pendenzRS', function () {
+describe('pendenzInstitutionRS', function () {
 
-    var pendenzRS: PendenzRS;
+    let pendenzRS: PendenzRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockPendenz: TSAntragDTO;

@@ -12,7 +12,6 @@ import io.swagger.annotations.Api;
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
@@ -88,6 +87,16 @@ public class PendenzResource {
 		return pendenzenList;
 	}
 
+	@Nonnull
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/steueramt")
+	public List<JaxAntragDTO> getAllPendenzenSteueramt() {
+		List<Gesuch> antraege = gesuchService.getPendenzenForSteueramtUser();
+		return convertToAntragDTOList(antraege);
+	}
+
 	/**
 	 * Gibt eine Liste der Faelle des Gesuchstellers zurueck.
 	 */
@@ -98,8 +107,14 @@ public class PendenzResource {
 	@Path("/gesuchsteller")
 	public List<JaxAntragDTO> getAllAntraegeGesuchsteller() {
 		List<Gesuch> antraege = gesuchService.getAntraegeByCurrentBenutzer();
+		return convertToAntragDTOList(antraege);
+	}
+
+
+	@Nonnull
+	private List<JaxAntragDTO> convertToAntragDTOList(List<Gesuch> antraege) {
 		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
-		antraege.stream().forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch)));
+		antraege.forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch)));
 		return pendenzenList;
 	}
 }

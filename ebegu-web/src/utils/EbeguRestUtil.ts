@@ -1165,7 +1165,7 @@ export default class EbeguRestUtil {
         return restAbwesenheit;
     }
 
-    private parseBetreuungList(betreuungen: Array<any>): TSBetreuung[] {
+    public parseBetreuungList(betreuungen: Array<any>): TSBetreuung[] {
         let resultList: TSBetreuung[] = [];
         if (betreuungen && Array.isArray(betreuungen)) {
             for (let i = 0; i < betreuungen.length; i++) {

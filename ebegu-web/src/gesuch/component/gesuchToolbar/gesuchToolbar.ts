@@ -367,7 +367,7 @@ export class GesuchToolbarController {
      */
     private goToOpenGesuch(gesuchId: string): void {
         if (gesuchId) {
-            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionRoles())) {
+            if (this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
                 this.$state.go('gesuch.betreuungen', {gesuchId: gesuchId});
             } else {
                 this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
@@ -446,6 +446,11 @@ export class GesuchToolbarController {
     public openVerlauf(): void {
         this.$state.go('verlauf', {
             gesuchId: this.getGesuch().id
+        });
+    }
+    public openAlleVerfuegungen(): void {
+        this.$state.go('alleVerfuegungen', {
+            fallId: this.fallid
         });
     }
 }

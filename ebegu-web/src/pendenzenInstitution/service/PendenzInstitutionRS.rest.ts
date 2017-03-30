@@ -24,7 +24,7 @@ export default class PendenzInstitutionRS {
     public getPendenzenList(): IPromise<Array<TSPendenzInstitution>> {
         return this.http.get(this.serviceURL)
             .then((response: any) => {
-                this.log.debug('PARSING pendenz REST object ', response.data);
+                this.log.debug('PARSING pendenzenInstitution REST object ', response.data);
                 return this.ebeguRestUtil.parsePendenzenInstitution(response.data);
             });
     }
