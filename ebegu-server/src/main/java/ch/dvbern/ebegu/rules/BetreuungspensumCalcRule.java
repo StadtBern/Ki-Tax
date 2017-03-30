@@ -2,9 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.MathUtil;
 
 import javax.annotation.Nonnull;
 
@@ -29,13 +27,10 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 			betreuungspensum = 100;
 		}
 		// Fachstelle: Wird in einer separaten Rule behandelt
-		int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();
-		int roundedPensumFachstelle = MathUtil.roundIntToTens(pensumFachstelle);
-		// Wenn keine Fachstelle  -> Anspruch setzen fuer Schulkinder; bei Kleinkindern muss nichts gemacht werden
-		if (roundedPensumFachstelle <= 0 && betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
+		// Anspruch setzen fuer Schulkinder; bei Kleinkindern muss nichts gemacht werden
+		if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
 			// Schulkind-Angebote: Sie erhalten IMMER soviel, wie sie wollen. Der Restanspruch wird nicht tangiert
 			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(betreuungspensum);
 		}
 	}
-
 }
