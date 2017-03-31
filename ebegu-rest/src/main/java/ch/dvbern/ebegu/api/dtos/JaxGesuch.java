@@ -41,6 +41,10 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	private boolean gesperrtWegenBeschwerde;
 
+	private boolean gewarntNichtFreigegeben;
+
+	private boolean gewarntFehlendeQuittung;
+
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -123,6 +127,22 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setGesperrtWegenBeschwerde(boolean gesperrtWegenBeschwerde) {
 		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
+	}
+
+	public boolean isGewarntNichtFreigegeben() {
+		return gewarntNichtFreigegeben;
+	}
+
+	public void setGewarntNichtFreigegeben(boolean gewarntNichtFreigegeben) {
+		this.gewarntNichtFreigegeben = gewarntNichtFreigegeben;
+	}
+
+	public boolean isGewarntFehlendeQuittung() {
+		return gewarntFehlendeQuittung;
+	}
+
+	public void setGewarntFehlendeQuittung(boolean gewarntFehlendeQuittung) {
+		this.gewarntFehlendeQuittung = gewarntFehlendeQuittung;
 	}
 }
 

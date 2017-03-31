@@ -609,6 +609,8 @@ export default class EbeguRestUtil {
         restGesuch.laufnummer = gesuch.laufnummer;
         restGesuch.hasFSDokument = gesuch.hasFSDokument;
         restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
+        restGesuch.gewarntNichtFreigegeben = gesuch.gewarntNichtFreigegeben;
+        restGesuch.gewarntFehlendeQuittung = gesuch.gewarntFehlendeQuittung;
         return restGesuch;
     }
 
@@ -625,6 +627,8 @@ export default class EbeguRestUtil {
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;
             gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
             gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
+            gesuchTS.gewarntNichtFreigegeben = gesuchFromServer.gewarntNichtFreigegeben;
+            gesuchTS.gewarntFehlendeQuittung = gesuchFromServer.gewarntFehlendeQuittung;
             return gesuchTS;
         }
         return undefined;

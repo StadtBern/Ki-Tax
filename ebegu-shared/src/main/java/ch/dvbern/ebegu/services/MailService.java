@@ -46,4 +46,19 @@ public interface MailService {
 	 * Sendet eine Email mit der Information, dass eine Mahnung versendet wurde.
 	 */
 	void sendInfoMahnung(@Nonnull Gesuch gesuch) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
+	 */
+	void sendWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, int anzahlMonate) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
+	 */
+	void sendWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch) throws MailException;
+
+	/**
+	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
+	 */
+	void sendInfoGesuchGeloescht(@Nonnull Gesuch gesuch) throws MailException;
 }

@@ -678,7 +678,8 @@ public class JaxBConverter {
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
-
+		antrag.setGewarntNichtFreigegeben(antragJAXP.isGewarntNichtFreigegeben());
+		antrag.setGewarntFehlendeQuittung(antragJAXP.isGewarntFehlendeQuittung());
 		return antrag;
 	}
 
@@ -801,6 +802,8 @@ public class JaxBConverter {
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
+		jaxGesuch.setGewarntNichtFreigegeben(persistedGesuch.isGewarntNichtFreigegeben());
+		jaxGesuch.setGewarntFehlendeQuittung(persistedGesuch.isGewarntFehlendeQuittung());
 
 		return jaxGesuch;
 	}

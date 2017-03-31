@@ -36,4 +36,19 @@ public class DailyBatchScheduler {
 			LOGGER.error("Batch-Job Mahnung Fristablauf konnte nicht durchgefuehrt werden!", e);
 		}
 	}
+
+	@Schedule(second = "59", minute = "10", hour = "22", persistent = false)
+	public void runBatchWarnungGesuchNichtFreigegeben() {
+		dailyBatch.runBatchWarnungGesuchNichtFreigegeben();
+	}
+
+	@Schedule(second = "59", minute = "30", hour = "22", persistent = false)
+	public void runBatchWarnungFreigabequittungFehlt() {
+		dailyBatch.runBatchWarnungFreigabequittungFehlt();
+	}
+
+	@Schedule(second = "59", minute = "50", hour = "22", persistent = false)
+	public void runBatchGesucheLoeschen() {
+		dailyBatch.runBatchGesucheLoeschen();
+	}
 }
