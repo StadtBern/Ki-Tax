@@ -1135,16 +1135,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
 		List<Gesuch> gesucheNichtAbgeschlossenSeit = persistence.getCriteriaResults(query);
 
+		int anzahl = gesucheNichtAbgeschlossenSeit.size();
 		for (Gesuch gesuch : gesucheNichtAbgeschlossenSeit) {
 			try {
+				mailService.sendWarnungGesuchNichtFreigegeben(gesuch, anzahlMonateBisLoeschungNachWarnungFreigabe);
 				gesuch.setGewarntNichtFreigegeben(true);
 				updateGesuch(gesuch, false);
-				mailService.sendWarnungGesuchNichtFreigegeben(gesuch, anzahlMonateBisLoeschungNachWarnungFreigabe);
 			} catch (MailException e) {
 				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				anzahl--;
 			}
 		}
-		return gesucheNichtAbgeschlossenSeit.size();
+		return anzahl;
 	}
 
 	@Override
@@ -1172,16 +1174,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
 		List<Gesuch> gesucheNichtAbgeschlossenSeit = persistence.getCriteriaResults(query);
 
+		int anzahl = gesucheNichtAbgeschlossenSeit.size();
 		for (Gesuch gesuch : gesucheNichtAbgeschlossenSeit) {
 			try {
+				mailService.sendWarnungFreigabequittungFehlt(gesuch);
 				gesuch.setGewarntFehlendeQuittung(true);
 				updateGesuch(gesuch, false);
-				mailService.sendWarnungFreigabequittungFehlt(gesuch);
 			} catch (MailException e) {
 				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				anzahl--;
 			}
 		}
-		return gesucheNichtAbgeschlossenSeit.size();
+		return anzahl;
 	}
 
 	@Override
@@ -1229,15 +1233,17 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
 
 		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+		int anzahl = criteriaResults.size();
 		for (Gesuch gesuch : criteriaResults) {
 			try {
 				mailService.sendInfoGesuchGeloescht(gesuch);
+				removeGesuch(gesuch.getId());
 			} catch (MailException e) {
 				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				anzahl--;
 			}
-			removeGesuch(gesuch.getId());
 		}
-		return criteriaResults.size();
+		return anzahl;
 	}
 }
 

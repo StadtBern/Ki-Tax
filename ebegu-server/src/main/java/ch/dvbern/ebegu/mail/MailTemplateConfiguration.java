@@ -28,6 +28,7 @@ public class MailTemplateConfiguration {
 
 	private static final Locale DEFAULT_LOCALE = new Locale("de", "CH");
 	public static final String EMPFAENGER_MAIL = "empfaengerMail";
+	public static final String ANZAHL_MONATE = "anzahlMonate";
 
 	private final Configuration freeMarkerConfiguration;
 
@@ -67,7 +68,7 @@ public class MailTemplateConfiguration {
 	}
 
 	public String getWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail, int anzahlMonate) {
-		return processTemplateGesuch("WarnungGesuchNichtFreigegeben.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail), toArgumentPair("anzahlMonate", anzahlMonate));
+		return processTemplateGesuch("WarnungGesuchNichtFreigegeben.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail), toArgumentPair(ANZAHL_MONATE, anzahlMonate));
 	}
 
 	public String getWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {

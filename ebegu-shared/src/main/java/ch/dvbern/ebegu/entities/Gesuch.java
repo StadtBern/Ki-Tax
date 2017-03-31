@@ -566,4 +566,11 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		}
 		return "";
 	}
+
+	public Gesuchsteller extractGesuchsteller1() {
+		if (this.getGesuchsteller1() != null) {
+			return this.getGesuchsteller1().getGesuchstellerJA();
+		}
+		return null;
+	}
 }
