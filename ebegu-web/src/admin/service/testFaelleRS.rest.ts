@@ -1,7 +1,9 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IHttpPromise} from 'angular';
 import DateUtil from '../../utils/DateUtil';
+import * as moment from 'moment';
 import IPromise = angular.IPromise;
+
 
 export class TestFaelleRS {
     serviceURL: string;

@@ -2,8 +2,9 @@
     <div class="dv-select-style">
         <select st-input-event="change"
                 st-search="{{vm.dvUsersearch}}"
-                name={{vm.inputId}}"
-                id="{{vm.inputId}}"
+                ng-attr-id="{{vm.inputId}}"
+                ng-attr-name={{vm.inputId}}"
+
                 class="form-control"
                 ng-options="user.getFullName() for user in vm.userList | orderBy: 'nachname' track by user.getFullName()"
                 ng-model="vm.selectedUser">

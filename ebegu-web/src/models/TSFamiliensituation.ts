@@ -1,6 +1,7 @@
 import {TSFamilienstatus} from './enums/TSFamilienstatus';
 import {TSGesuchstellerKardinalitaet} from './enums/TSGesuchstellerKardinalitaet';
 import TSAbstractEntity from './TSAbstractEntity';
+import * as moment from 'moment';
 
 export default class TSFamiliensituation extends TSAbstractEntity {
 

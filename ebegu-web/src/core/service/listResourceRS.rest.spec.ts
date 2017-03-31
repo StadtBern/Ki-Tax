@@ -6,7 +6,7 @@ import IHttpBackendService = angular.IHttpBackendService;
 
 describe('ListResourceRS', function () {
 
-    var listResourceRS: ListResourceRS;
+    let listResourceRS: ListResourceRS;
 
     beforeEach(angular.mock.module('ebeguWeb.core'));
 

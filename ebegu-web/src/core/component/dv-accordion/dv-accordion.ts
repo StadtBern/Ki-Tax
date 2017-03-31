@@ -13,8 +13,8 @@ export class DvAccordionComponentConfig implements IComponentOptions {
 }
 
 export class DvAccordionController {
-    accordion : string[] = [];
-    allowMultipleSections : boolean;
+    accordion: string[] = [];
+    allowMultipleSections: boolean;
     static $inject: any[] = [];
 
     /* @ngInject */

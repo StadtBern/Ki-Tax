@@ -1,6 +1,7 @@
-import {IComponentOptions, IFilterService} from 'angular';
+import {IComponentOptions} from 'angular';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import PendenzRS from '../../service/PendenzRS.rest';
+import * as moment from 'moment';
 import ITimeoutService = angular.ITimeoutService;
 import Moment = moment.Moment;
 let template = require('./pendenzenListView.html');

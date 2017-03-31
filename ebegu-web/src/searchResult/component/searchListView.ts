@@ -28,8 +28,8 @@ export class SearchListViewController {
 
     static $inject: string[] = [ '$log', '$stateParams', 'SearchIndexRS', 'EbeguUtil'];
 
-    constructor(private $log: ILogService,  $stateParams : ISearchResultateStateParams,
-                private searchIndexRS : SearchIndexRS, private ebeguUtil: EbeguUtil) {
+    constructor(private $log: ILogService,  $stateParams: ISearchResultateStateParams,
+                private searchIndexRS: SearchIndexRS, private ebeguUtil: EbeguUtil) {
         this.searchString = $stateParams.searchString;
         this.initViewModel();
 

@@ -51,9 +51,10 @@ describe('MitteilungRS', function () {
     describe('sendbetreuungsmitteilung', function () {
         it('should create the betreuungsmitteilung and send it', function () {
             let restMitteilung: any = {};
-
+            let bm: TSBetreuungsmitteilung  = new TSBetreuungsmitteilung();
+            bm.betreuung = betreuung;
             spyOn(ebeguRestUtil, 'betreuungsmitteilungToRestObject').and.returnValue(restMitteilung);
-            spyOn(ebeguRestUtil, 'parseBetreuungsmitteilung').and.returnValue(betreuung);
+            spyOn(ebeguRestUtil, 'parseBetreuungsmitteilung').and.returnValue(bm);
             $httpBackend.expectPUT(mitteilungRS.serviceURL + '/sendbetreuungsmitteilung', restMitteilung).respond($q.when(restMitteilung));
 
             let result: IPromise<TSBetreuungsmitteilung> = mitteilungRS.sendbetreuungsmitteilung(fall, betreuung);
@@ -62,7 +63,7 @@ describe('MitteilungRS', function () {
 
             expect(result).toBeDefined();
             result.then(response => {
-                expect(response).toBe(betreuung);
+                expect(response.betreuung).toBe(betreuung);
             });
             $rootScope.$apply();
 

@@ -1,4 +1,4 @@
-import {IComponentOptions, IPromise, IScope, IQService} from 'angular';
+import {IComponentOptions, IPromise, IQService, IScope} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
@@ -10,6 +10,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./fallCreationView.html');
@@ -32,7 +33,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     showError: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
-        'WizardStepManager', '$translate', '$q', '$scope' , 'AuthServiceRS'];
+        'WizardStepManager', '$translate', '$q', '$scope', 'AuthServiceRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
@@ -99,6 +100,14 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             if (gesuchsperiodeList[i].id === this.gesuchsperiodeId) {
                 this.getGesuchModel().gesuchsperiode = gesuchsperiodeList[i];
             }
+        }
+    }
+
+    public isGesuchsperiodeActive(): boolean {
+        if (this.gesuchModelManager.getGesuchsperiode()) {
+            return this.gesuchModelManager.getGesuchsperiode().active;
+        } else {
+            return true;
         }
     }
 

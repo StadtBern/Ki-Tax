@@ -23,14 +23,14 @@ import GlobalCacheService from '../../service/globalCacheService';
 import {EbeguParameterRS} from '../../../admin/service/ebeguParameterRS.rest';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import ITranslateService = angular.translate.ITranslateService;
-let template = require('./erwerbspensumView.html');
+let template: string = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
 
 export class ErwerbspensumViewComponentConfig implements IComponentOptions {
     transclude: boolean;
     bindings: any;
-    template: string | Function;
+    template: string ;
     controller: any;
     controllerAs: string;
 

@@ -52,7 +52,7 @@ export class FaelleListViewController {
             return response;
         });
 
-    };
+    }
 
 
     public getAntragList(): Array<TSAntragDTO> {
@@ -67,7 +67,7 @@ export class FaelleListViewController {
      */
     public editFall(antrag: TSAntragDTO, event: any): void {
         if (antrag) {
-            let isCtrlKeyPressed : boolean = (event && event.ctrlKey);
+            let isCtrlKeyPressed: boolean = (event && event.ctrlKey);
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
                 // Reload Gesuch in gesuchModelManager on Init in fallCreationView because it has been changed since last time
                 this.gesuchModelManager.clearGesuch();

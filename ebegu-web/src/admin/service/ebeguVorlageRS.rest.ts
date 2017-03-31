@@ -51,7 +51,7 @@ export class EbeguVorlageRS {
         }, (evt: any) => {
             let loaded: number = evt.loaded;
             let total: number = evt.total;
-            var progressPercentage: number = 100.0 * loaded / total;
+            let progressPercentage: number = 100.0 * loaded / total;
             console.log('progress: ' + progressPercentage + '% ');
             return this.$q.defer().notify();
         });

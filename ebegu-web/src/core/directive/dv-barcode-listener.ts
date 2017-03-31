@@ -5,6 +5,7 @@ import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import ErrorService from '../errors/service/ErrorService';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;

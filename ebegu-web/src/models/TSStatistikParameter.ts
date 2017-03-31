@@ -1,5 +1,5 @@
 import TSAbstractEntity from './TSAbstractEntity';
-import TSGesuchsperiode from './TSGesuchsperiode';
+import * as moment from 'moment';
 
 
 export default class TSStatistikParameter extends TSAbstractEntity {
