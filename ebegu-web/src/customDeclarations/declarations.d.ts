@@ -1,6 +1,4 @@
-//Hier fuegen wir unsere custom types ein
-
-declare function require(string: string): any;
+// declare function require(string: string): any;
 
 // Extra variables that live on Global that will be replaced by webpack DefinePlugin
 declare let ENV: string;

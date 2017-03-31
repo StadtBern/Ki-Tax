@@ -4,6 +4,7 @@ import TSGesuchsperiode from './TSGesuchsperiode';
 import {TSAntragStatus} from './enums/TSAntragStatus';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 import {TSEingangsart} from './enums/TSEingangsart';
+import * as moment from 'moment';
 
 export default class TSAbstractAntragEntity extends TSAbstractEntity {
 

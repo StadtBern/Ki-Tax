@@ -9,7 +9,7 @@ import {TSMandant} from '../../models/TSMandant';
 
 describe('institutionRS', function () {
 
-    var institutionRS: InstitutionRS;
+    let institutionRS: InstitutionRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockInstitution: TSInstitution;

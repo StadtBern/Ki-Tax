@@ -52,4 +52,23 @@ public enum ApplicationPropertyKey {
 	 */
 	DEBTOR_IBAN_GEBUEHREN,
 
+	/**
+	 *  Anzahl Monate nach Erstellungsdatum bis der GS gewarnt wird, wenn er nicht freigibt
+	 */
+	ANZAHL_MONATE_BIS_WARNUNG_FREIGABE,
+
+	/**
+	 * Anzahl Monate nach Freigabe bis der GS gewarnt wird, wenn er Quittung nicht schickt
+	 */
+	ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG,
+
+	/**
+	 * Anzahl Monate nach Warnung bis Gesuch geloescht wird, wenn er nicht freigibt
+	 */
+	ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE,
+
+	/**
+	 * Anzahl Monate nach Warnung bis Gesuch geloescht wird, wenn er Quittung nicht schickt
+	 */
+	ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG;
 }

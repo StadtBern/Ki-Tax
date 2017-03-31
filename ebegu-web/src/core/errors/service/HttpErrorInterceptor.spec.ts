@@ -54,7 +54,7 @@ describe('httpErrorInterceptor', function () {
     });
 
     describe('API usage', function () {
-        var deferred: IDeferred<any>, successHandler: any, errorHandler: any;
+        let deferred: IDeferred<any>, successHandler: any, errorHandler: any;
         beforeEach(function () {
             deferred = $q.defer();
             successHandler = jasmine.createSpy('successHandler');

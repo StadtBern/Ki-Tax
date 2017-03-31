@@ -1,6 +1,7 @@
 import TSGesuchsperiode from './TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import TSInstitution from './TSInstitution';
+import * as moment from 'moment';
 
 export default class TSPendenzInstitution {
 

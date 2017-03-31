@@ -3,6 +3,7 @@ import {IHttpService, IPromise, ILogService} from 'angular';
 import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import DateUtil from '../../utils/DateUtil';
 import TSZahlung from '../../models/TSZahlung';
+import * as moment from 'moment';
 
 export default class ZahlungRS {
     serviceURL: string;

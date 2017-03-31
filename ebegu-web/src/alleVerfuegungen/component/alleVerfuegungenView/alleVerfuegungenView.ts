@@ -96,7 +96,7 @@ export class AlleVerfuegungenViewController {
 
     public openVerfuegungPDF(betreuung: TSBetreuung): void {
         let win: Window = this.downloadRS.prepareDownloadWindow();
-        this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
+        this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(betreuung.gesuchId,
             betreuung.id, false, '')
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);

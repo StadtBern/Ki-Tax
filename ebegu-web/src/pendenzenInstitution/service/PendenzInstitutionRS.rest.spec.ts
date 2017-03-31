@@ -7,7 +7,7 @@ import TSPendenzInstitution from '../../models/TSPendenzInstitution';
 
 describe('pendenzInstitutionRS', function () {
 
-    var pendenzInstitutionRS: PendenzInstitutionRS;
+    let pendenzInstitutionRS: PendenzInstitutionRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
     let mockPendenzInstitution: TSPendenzInstitution;

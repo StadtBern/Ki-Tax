@@ -10,6 +10,7 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import IDocumentService = angular.IDocumentService;
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
@@ -143,7 +144,7 @@ export class DVAntragListController {
         } else {
             this.$log.info('no callback function spcified for filtering');
         }
-    };
+    }
 
     public getAntragTypen(): Array<TSAntragTyp> {
         return getTSAntragTypValues();

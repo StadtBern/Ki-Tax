@@ -748,7 +748,7 @@ public final class TestDataUtil {
 		persistence.persist(traegerschaft);
 		final Mandant mandant = TestDataUtil.createDefaultMandant();
 		persistence.persist(mandant);
-		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, "satraeg", traegerschaft, null, mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, UUID.randomUUID().toString(), traegerschaft, null, mandant);
 		persistence.persist(benutzer);
 		return benutzer;
 	}
