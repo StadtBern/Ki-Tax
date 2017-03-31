@@ -1,16 +1,36 @@
 package ch.dvbern.ebegu.dto.personensuche;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
  * Enum für Einwohnercodes aus dem EWK
  */
-public class EWKEinwohnercode {
+@XmlRootElement(name = "ewkEinwohnercode")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class EWKEinwohnercode implements Serializable {
+
+	private static final long serialVersionUID = 4199345504567527849L;
 
 	private String code;
+
 	private String codeTxt;
+
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate gueltigVon;
+
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate gueltigBis;
+
+
+	public EWKEinwohnercode() {
+	}
 
 	public String getCode() {
 		return code;

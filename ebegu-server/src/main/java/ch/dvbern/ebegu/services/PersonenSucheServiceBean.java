@@ -66,7 +66,7 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 	@Nonnull
 	public EWKResultat suchePerson(@Nonnull Gesuchsteller gesuchsteller) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
 		Validate.notNull(gesuchsteller, "Gesuchsteller muss gesetzt sein");
-		Validate.isTrue(gesuchsteller.isNew(), "Gesuchsteller muss zuerst gespeichert werden!");
+		Validate.isTrue(!gesuchsteller.isNew(), "Gesuchsteller muss zuerst gespeichert werden!");
 		if (StringUtils.isNotEmpty(gesuchsteller.getEwkPersonId())) {
 			return suchePerson(gesuchsteller.getEwkPersonId());
 		} else {

@@ -1,27 +1,56 @@
 
 package ch.dvbern.ebegu.dto.personensuche;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 
 /**
  * DTO für Adressen aus dem EWK
  */
-public class EWKAdresse {
+@XmlRootElement(name = "ewkAdresse")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class EWKAdresse implements Serializable {
 
-    protected String adresstyp;
+	private static final long serialVersionUID = -2070439419700535368L;
+
+	protected String adresstyp;
+
     protected String adresstypTxt;
+
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
     protected LocalDate gueltigVon;
+
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
     protected LocalDate gueltigBis;
+
     protected String coName;
+
     protected String postfach;
+
     protected String bfSGemeinde;
+
     protected String strasse;
+
     protected String hausnummer;
+
     protected String postleitzahl;
+
     protected String ort;
+
     protected String kanton;
+
     protected String land;
+
+
+	public EWKAdresse() {
+	}
 
 	public String getAdresstyp() {
 		return adresstyp;

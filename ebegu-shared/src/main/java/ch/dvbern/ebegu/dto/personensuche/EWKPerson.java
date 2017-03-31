@@ -1,8 +1,14 @@
 
 package ch.dvbern.ebegu.dto.personensuche;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.Geschlecht;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,28 +17,54 @@ import java.util.List;
 /**
  * DTO für Personen aus dem EWK
  */
-public class EWKPerson {
+@XmlRootElement(name = "ewkPerson")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class EWKPerson implements Serializable {
+
+	private static final long serialVersionUID = -3920969107353572301L;
 
 	private String personID;
+
 	private List<EWKEinwohnercode> einwohnercodes = new ArrayList<>();
+
 	private String nachname;
+
 	private String ledigname;
+
 	private String vorname;
+
 	private String rufname;
+
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate geburtsdatum;
+
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate zuzugsdatum;
+
 	private String nationalitaet;
+
 	private String zivilstand;
+
 	private String zivilstandTxt;
+
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate zivilstandsdatum;
+
 	private Geschlecht geschlecht;
+
 	private String bewilligungsart;
+
 	private String bewilligungsartTxt;
+
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate bewilligungBis;
+
 	private List<EWKAdresse> adressen = new ArrayList<>();
 
     private List<EWKBeziehung> beziehungen = new ArrayList<>();
 
+	public EWKPerson() {
+	}
 
 	public String getPersonID() {
 		return personID;

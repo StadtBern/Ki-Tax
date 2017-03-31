@@ -11,35 +11,16 @@
 package ch.dvbern.ebegu.errors;
 
 
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+
 /**
  * Exception für Fehler,welche vom EWK-Service geliefert werden
  */
-public class PersonenSucheServiceBusinessException extends Exception {
+public class PersonenSucheServiceBusinessException extends EbeguException {
 
 	private static final long serialVersionUID = 5438097529958118878L;
 
-	private String code;
-	private String text;
-
-	public PersonenSucheServiceBusinessException(final String code, final String text) {
-		super("Code=" + code + ", Text=" + text);
-		this.code = code;
-		this.text = text;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
-		this.text = text;
+	public PersonenSucheServiceBusinessException(final String methodname, final String code, final String text) {
+		super(methodname, "Code=" + code + ", Text=" + text, ErrorCodeEnum.ERROR_PERSONENSUCHE_BUSINESS, code, text);
 	}
 }

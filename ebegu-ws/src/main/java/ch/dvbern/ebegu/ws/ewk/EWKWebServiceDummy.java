@@ -17,6 +17,8 @@ import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
 import com.google.common.io.ByteStreams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
@@ -48,6 +50,8 @@ public class EWKWebServiceDummy implements IEWKWebService {
 	private static final String FILE_SANDRA_ANDEREGG = "sandra.anderegg.xml";
 	private static final String FILE_HERBERT_GERBER = "herbert.gerber.xml";
 	private static final String FILE_NO_RESULT = "noresult.xml";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(EWKWebServiceDummy.class.getSimpleName());
 
 	@Nonnull
 	@Override
@@ -81,6 +85,14 @@ public class EWKWebServiceDummy implements IEWKWebService {
 			response = parse(FILE_FRANZISKA_HERGER);
 		} else if ("Anderegg".equalsIgnoreCase(name)) {
 			response = parse(FILE_SANDRA_ANDEREGG);
+		} else if ("PersonenSucheServiceException".equalsIgnoreCase(name)) {
+			PersonenSucheServiceException e = new PersonenSucheServiceException("suchePerson", "PersonenSucheServiceException aufgetreten");
+			LOGGER.error("Absichtlich provozierter Fehler bei Personensuche im Dummy-Service", e);
+			throw e;
+		} else if ("PersonenSucheServiceBusinessException".equalsIgnoreCase(name)) {
+			PersonenSucheServiceBusinessException e = new PersonenSucheServiceBusinessException("suchePerson", "01", "Ein Fehler");
+			LOGGER.error("Absichtlich provozierter Fehler bei Personensuche im Dummy-Service", e);
+			throw e;
 		} else {
 			response = parse(FILE_HERBERT_GERBER);
 		}
@@ -103,7 +115,7 @@ public class EWKWebServiceDummy implements IEWKWebService {
 			final JAXBElement<PersonenSucheResp> o = unmarshaller.unmarshal(new StreamSource(new StringReader(contents)), PersonenSucheResp.class);
 			return o.getValue();
 		} catch (IOException | JAXBException e) {
-			throw new PersonenSucheServiceException("Could not read file " + filename, e);
+			throw new PersonenSucheServiceException("parse", "Could not read file " + filename, e);
 		}
 	}
 }

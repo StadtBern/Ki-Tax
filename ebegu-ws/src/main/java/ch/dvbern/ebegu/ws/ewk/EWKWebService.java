@@ -19,17 +19,12 @@ import javax.inject.Inject;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import javax.xml.ws.handler.MessageContext;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Diese Klasse ruft den PersonenSuche Webservice des EWK auf
@@ -59,11 +54,11 @@ public class EWKWebService implements IEWKWebService {
 
 		PersonenSucheResp response = getService().personenSucheOB(request);
 		if (response == null) {
-			throw new PersonenSucheServiceException("Response war NULL, es muss aber immer eine Antwort zurueckkommen");
+			throw new PersonenSucheServiceException("suchePerson", "Response war NULL, es muss aber immer eine Antwort zurueckkommen");
 		}
 		handleResponseStatus(response);
 		if (response.getAnzahlTreffer().intValue() > 1) {
-			throw new PersonenSucheServiceException("Mehr als eine Person gefunden mit ID " + id);
+			throw new PersonenSucheServiceException("suchePerson", "Mehr als eine Person gefunden mit ID " + id);
 		}
 		return EWKConverter.convertFromEWK(response, MAX_RESULTS_ID);
 	}
@@ -81,7 +76,7 @@ public class EWKWebService implements IEWKWebService {
 
 		PersonenSucheResp response = getService().personenSucheOB(request);
 		if (response == null) {
-			throw new PersonenSucheServiceException("Response war NULL, es muss aber immer eine Antwort zurueckkommen");
+			throw new PersonenSucheServiceException("suchePerson", "Response war NULL, es muss aber immer eine Antwort zurueckkommen");
 		}
 		handleResponseStatus(response);
 		return EWKConverter.convertFromEWK(response, MAX_RESULTS_NAME);
@@ -99,7 +94,7 @@ public class EWKWebService implements IEWKWebService {
 
 		PersonenSucheResp response = getService().personenSucheOB(request);
 		if (response == null) {
-			throw new PersonenSucheServiceException("Response war NULL, es muss aber immer eine Antwort zurueckkommen");
+			throw new PersonenSucheServiceException("suchePerson", "Response war NULL, es muss aber immer eine Antwort zurueckkommen");
 		}
 		handleResponseStatus(response);
 		return EWKConverter.convertFromEWK(response, MAX_RESULTS_NAME);
@@ -112,13 +107,13 @@ public class EWKWebService implements IEWKWebService {
 		ReturnMessage returnMessage = response.getReturnMessage();
 		if (returnMessage == null) {
 			logger.error("Das Statusobjekt aus der Response vom SARI Service war null, dies ist unerwartet und darf nicht vorkommen");
-			throw new PersonenSucheServiceException("Status der Response muss gesetzt sein");
+			throw new PersonenSucheServiceException("handleResponseStatus", "Status der Response muss gesetzt sein");
 		}
 		//wenn der Status nicht 0 ist ist es ein Fehler
 		if (!RETURN_CODE_OKAY.equals(returnMessage.getCode())) {
-			String msg = "Fehler bei Webservice Aufruf: " + returnMessage.getCode() + " / " + returnMessage.getText();
+			String msg = "EWK: Fehler bei Webservice Aufruf: " + returnMessage.getCode() + " / " + returnMessage.getText();
 			logger.error(msg);
-			throw new PersonenSucheServiceBusinessException(returnMessage.getCode(), returnMessage.getText());
+			throw new PersonenSucheServiceBusinessException("handleResponseStatus", returnMessage.getCode(), returnMessage.getText());
 		} else {
 			logger.debug("Response indicates SUCCESS");
 		}
@@ -142,13 +137,13 @@ public class EWKWebService implements IEWKWebService {
 			String username = config.getPersonenSucheUsername();
 			String password = config.getPersonenSuchePassword();
 			if (StringUtils.isEmpty(endpointURL)) {
-				throw new PersonenSucheServiceException("Es wurde keine Endpunkt URL definiert fuer den PersonenSuche Service");
+				throw new PersonenSucheServiceException("initPersonenSucheServicePort", "Es wurde keine Endpunkt URL definiert fuer den PersonenSuche Service");
 			}
 			if (StringUtils.isEmpty(username)) {
-				throw new PersonenSucheServiceException("Es wurde keine Username definiert fuer den PersonenSuche Service");
+				throw new PersonenSucheServiceException("initPersonenSucheServicePort", "Es wurde keine Username definiert fuer den PersonenSuche Service");
 			}
 			if (StringUtils.isEmpty(password)) {
-				throw new PersonenSucheServiceException("Es wurde keine Passwort definiert fuer den PersonenSuche Service");
+				throw new PersonenSucheServiceException("initPersonenSucheServicePort", "Es wurde keine Passwort definiert fuer den PersonenSuche Service");
 			}
 			logger.info("PersonenSucheService Endpoint: " + endpointURL);
 			logger.info("PersonenSucheService Username: " + username);
@@ -171,7 +166,7 @@ public class EWKWebService implements IEWKWebService {
 			} catch (MalformedURLException | URISyntaxException | RuntimeException e) {
 				port = null;
 				logger.error("PersonenSucheOB-Service konnte nicht initialisiert werden: ", e);
-				throw new PersonenSucheServiceException("Could not create service port for endpoint " + endpointURL, e);
+				throw new PersonenSucheServiceException("initPersonenSucheServicePort", "Could not create service port for endpoint " + endpointURL, e);
 			}
 		}
 		logger.info("PersonenSucheService erfolgreich initialisiert");

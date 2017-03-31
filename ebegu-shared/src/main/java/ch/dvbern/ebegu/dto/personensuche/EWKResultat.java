@@ -1,16 +1,30 @@
 package ch.dvbern.ebegu.dto.personensuche;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * DTO für Resultate aus dem EWK
  */
-public class EWKResultat {
+@XmlRootElement(name = "ewkResultat")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class EWKResultat implements Serializable {
+
+	private static final long serialVersionUID = 3663123555068820247L;
 
 	private int maxResultate;
+
 	private int anzahlResultate;
+
 	private List<EWKPerson> personen = new ArrayList<>();
+
+
+	public EWKResultat() {
+	}
 
 	public int getMaxResultate() {
 		return maxResultate;
