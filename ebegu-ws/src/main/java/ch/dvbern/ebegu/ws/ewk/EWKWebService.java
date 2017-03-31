@@ -39,6 +39,8 @@ public class EWKWebService implements IEWKWebService {
 	private static final String RETURN_CODE_OKAY = "00";
 
 	private static final Logger logger = LoggerFactory.getLogger(EWKWebService.class.getSimpleName());
+	public static final String METHOD_NAME_SUCHE_PERSON = "suchePerson";
+	public static final String METHOD_NAME_INIT_PERSONEN_SUCHE = "initPersonenSucheServicePort";
 
 	@Inject
 	private EbeguConfiguration config;
@@ -54,11 +56,11 @@ public class EWKWebService implements IEWKWebService {
 
 		PersonenSucheResp response = getService().personenSucheOB(request);
 		if (response == null) {
-			throw new PersonenSucheServiceException("suchePerson", "Response war NULL, es muss aber immer eine Antwort zurueckkommen");
+			throw new PersonenSucheServiceException(METHOD_NAME_SUCHE_PERSON, "Response war NULL, es muss aber immer eine Antwort zurueckkommen");
 		}
 		handleResponseStatus(response);
 		if (response.getAnzahlTreffer().intValue() > 1) {
-			throw new PersonenSucheServiceException("suchePerson", "Mehr als eine Person gefunden mit ID " + id);
+			throw new PersonenSucheServiceException(METHOD_NAME_SUCHE_PERSON, "Mehr als eine Person gefunden mit ID " + id);
 		}
 		return EWKConverter.convertFromEWK(response, MAX_RESULTS_ID);
 	}
@@ -76,7 +78,7 @@ public class EWKWebService implements IEWKWebService {
 
 		PersonenSucheResp response = getService().personenSucheOB(request);
 		if (response == null) {
-			throw new PersonenSucheServiceException("suchePerson", "Response war NULL, es muss aber immer eine Antwort zurueckkommen");
+			throw new PersonenSucheServiceException(METHOD_NAME_SUCHE_PERSON, "Response war NULL, es muss aber immer eine Antwort zurueckkommen");
 		}
 		handleResponseStatus(response);
 		return EWKConverter.convertFromEWK(response, MAX_RESULTS_NAME);
@@ -94,7 +96,7 @@ public class EWKWebService implements IEWKWebService {
 
 		PersonenSucheResp response = getService().personenSucheOB(request);
 		if (response == null) {
-			throw new PersonenSucheServiceException("suchePerson", "Response war NULL, es muss aber immer eine Antwort zurueckkommen");
+			throw new PersonenSucheServiceException(METHOD_NAME_SUCHE_PERSON, "Response war NULL, es muss aber immer eine Antwort zurueckkommen");
 		}
 		handleResponseStatus(response);
 		return EWKConverter.convertFromEWK(response, MAX_RESULTS_NAME);
@@ -137,13 +139,13 @@ public class EWKWebService implements IEWKWebService {
 			String username = config.getPersonenSucheUsername();
 			String password = config.getPersonenSuchePassword();
 			if (StringUtils.isEmpty(endpointURL)) {
-				throw new PersonenSucheServiceException("initPersonenSucheServicePort", "Es wurde keine Endpunkt URL definiert fuer den PersonenSuche Service");
+				throw new PersonenSucheServiceException(METHOD_NAME_INIT_PERSONEN_SUCHE, "Es wurde keine Endpunkt URL definiert fuer den PersonenSuche Service");
 			}
 			if (StringUtils.isEmpty(username)) {
-				throw new PersonenSucheServiceException("initPersonenSucheServicePort", "Es wurde keine Username definiert fuer den PersonenSuche Service");
+				throw new PersonenSucheServiceException(METHOD_NAME_INIT_PERSONEN_SUCHE, "Es wurde keine Username definiert fuer den PersonenSuche Service");
 			}
 			if (StringUtils.isEmpty(password)) {
-				throw new PersonenSucheServiceException("initPersonenSucheServicePort", "Es wurde keine Passwort definiert fuer den PersonenSuche Service");
+				throw new PersonenSucheServiceException(METHOD_NAME_INIT_PERSONEN_SUCHE, "Es wurde keine Passwort definiert fuer den PersonenSuche Service");
 			}
 			logger.info("PersonenSucheService Endpoint: " + endpointURL);
 			logger.info("PersonenSucheService Username: " + username);
@@ -166,7 +168,7 @@ public class EWKWebService implements IEWKWebService {
 			} catch (MalformedURLException | URISyntaxException | RuntimeException e) {
 				port = null;
 				logger.error("PersonenSucheOB-Service konnte nicht initialisiert werden: ", e);
-				throw new PersonenSucheServiceException("initPersonenSucheServicePort", "Could not create service port for endpoint " + endpointURL, e);
+				throw new PersonenSucheServiceException(METHOD_NAME_INIT_PERSONEN_SUCHE, "Could not create service port for endpoint " + endpointURL, e);
 			}
 		}
 		logger.info("PersonenSucheService erfolgreich initialisiert");

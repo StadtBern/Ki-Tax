@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.services.PersonenSucheService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -13,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ejb.EJBException;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
@@ -20,6 +22,7 @@ import java.time.Month;
 /**
  * Arquillian Tests fuer den PersonenSuche Service
  */
+@SuppressWarnings("InstanceMethodNamingConvention")
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
@@ -29,6 +32,9 @@ public class PersonenSucheServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
 	private PersonenSucheService personenSucheService;
+
+	@Inject
+	private Persistence<Gesuchsteller> persistence;
 
 	@Test
 	public void suchePersonById() throws Exception {
@@ -53,9 +59,16 @@ public class PersonenSucheServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(0, ewkResultat.getAnzahlResultate());
 	}
 
+	@Test (expected = EJBException.class)
+	public void suchePersonByGesuchstellerNochNichtGespeichert() throws Exception {
+		Gesuchsteller defaultGesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+		personenSucheService.suchePerson(defaultGesuchsteller);
+	}
+
 	@Test
 	public void suchePersonByGesuchsteller() throws Exception {
 		Gesuchsteller defaultGesuchsteller = TestDataUtil.createDefaultGesuchsteller();
+		defaultGesuchsteller = persistence.merge(defaultGesuchsteller);
 		EWKResultat ewkResultat = personenSucheService.suchePerson(defaultGesuchsteller);
 		Assert.assertNotNull(ewkResultat);
 		Assert.assertEquals(2, ewkResultat.getAnzahlResultate()); // Als default kommt Herbert Gerber zurueck, dort sind zwei Personen drinn
