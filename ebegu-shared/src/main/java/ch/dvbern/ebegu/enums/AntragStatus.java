@@ -64,6 +64,8 @@ public enum AntragStatus {
 		VERFUEGEN,
 		VERFUEGT,
 		BESCHWERDE_HAENGIG,
+		PRUEFUNG_STV,
+		IN_BEARBEITUNG_STV,
 		GEPRUEFT_STV);
 
 	public static final Set<AntragStatus> FOR_SCHULAMT_ROLE = EnumSet.of(

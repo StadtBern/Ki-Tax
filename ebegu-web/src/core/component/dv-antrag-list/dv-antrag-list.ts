@@ -1,7 +1,10 @@
 import {IComponentOptions, IFilterService, IPromise, ILogService} from 'angular';
 import TSAbstractAntragEntity from '../../../models/TSAbstractAntragEntity';
 import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
-import {TSAntragStatus, getTSAntragStatusValues} from '../../../models/enums/TSAntragStatus';
+import {
+    TSAntragStatus, getTSAntragStatusValues,
+    getTSAntragStatusValuesByRole
+} from '../../../models/enums/TSAntragStatus';
 import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
 import TSAntragDTO from '../../../models/TSAntragDTO';
@@ -14,6 +17,7 @@ import * as moment from 'moment';
 import Moment = moment.Moment;
 import IDocumentService = angular.IDocumentService;
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 let template = require('./dv-antrag-list.html');
 require('./dv-antrag-list.less');
 
@@ -64,11 +68,11 @@ export class DVAntragListController {
     onAdd: () => void;
     TSRoleUtil: any;
 
-    static $inject: any[] = ['EbeguUtil', '$filter', '$log', 'InstitutionRS', 'GesuchsperiodeRS', 'CONSTANTS'];
+    static $inject: any[] = ['EbeguUtil', '$filter', '$log', 'InstitutionRS', 'GesuchsperiodeRS', 'CONSTANTS', 'AuthServiceRS'];
     /* @ngInject */
     constructor(private ebeguUtil: EbeguUtil, private $filter: IFilterService, private $log: ILogService,
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private CONSTANTS: any) {
+                private CONSTANTS: any, private authServiceRS: AuthServiceRS) {
         this.removeButtonTitle = 'Eintrag entfernen';
         this.initViewModel();
         this.TSRoleUtil = TSRoleUtil;
@@ -155,7 +159,7 @@ export class DVAntragListController {
      * @returns {Array<TSAntragStatus>}
      */
     public getAntragStatus(): Array<TSAntragStatus> {
-        return getTSAntragStatusValues();
+        return getTSAntragStatusValuesByRole(this.authServiceRS.getPrincipalRole());
     }
 
     /**

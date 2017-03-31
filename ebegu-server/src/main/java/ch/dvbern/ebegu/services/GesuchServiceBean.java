@@ -375,8 +375,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 			if (predicateObjectDto.getStatus() != null) {
 				// Achtung, hier muss von Client zu Server Status konvertiert werden!
-				AntragStatus antragStatus = AntragStatusConverterUtil.convertStatusToEntity(AntragStatusDTO.valueOf(predicateObjectDto.getStatus()));
-				predicates.add(cb.equal(root.get(Gesuch_.status), antragStatus));
+				Collection<AntragStatus> antragStatus = AntragStatusConverterUtil.convertStatusToEntityForRole(AntragStatusDTO.valueOf(predicateObjectDto.getStatus()), role);
+				predicates.add(root.get(Gesuch_.status).in(antragStatus));
 			}
 			if (predicateObjectDto.getAngebote() != null) {
 				predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.valueOf(predicateObjectDto.getAngebote())));

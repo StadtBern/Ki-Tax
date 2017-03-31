@@ -2069,6 +2069,17 @@ public class JaxBConverter {
 		}
 		return jaxContainers;
 	}
+	public void disguiseStatus(Gesuch gesuch, JaxAntragDTO antrag){
+		switch (gesuch.getStatus()) {
+			case PRUEFUNG_STV:
+			case GEPRUEFT_STV:
+			case IN_BEARBEITUNG_STV:
+				antrag.setStatus(AntragStatusDTO.VERFUEGT);
+				break;
+			default:
+				break;
+		}
+	}
 	/**
 	 * transformiert ein gesuch in ein JaxAntragDTO unter beruecksichtigung der rollen und erlaubten institutionen
 	 * - Fuer die Rolle Steueramt werden saemtlichen Daten von den Kindern nicht geladen
@@ -2090,6 +2101,12 @@ public class JaxBConverter {
 
 		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
 			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(jaxKindContainers, allowedInst);
+			disguiseStatus(gesuch,antrag);
+		}
+
+		//nicht sicher ob notwendig
+		if (UserRole.GESUCHSTELLER.equals(userRole)) {
+			disguiseStatus(gesuch,antrag);
 		}
 
 		if (!userRole.equals(UserRole.STEUERAMT)) {
@@ -2100,12 +2117,13 @@ public class JaxBConverter {
 		return antrag;
 	}
 
-
+	//Abklaeren ob nur von Gesuchsteller verwendet
 	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch) {
 		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
 		antrag.setKinder(createKinderList(gesuch.getKindContainers()));
 		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
 		antrag.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
+		disguiseStatus(gesuch,antrag);
 		return antrag;
 	}
 

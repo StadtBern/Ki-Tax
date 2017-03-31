@@ -1,3 +1,4 @@
+import {TSRole} from './TSRole';
 export enum TSAntragStatus {
     IN_BEARBEITUNG_GS = <any> 'IN_BEARBEITUNG_GS',
     FREIGABEQUITTUNG = <any> 'FREIGABEQUITTUNG',
@@ -50,6 +51,39 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.IN_BEARBEITUNG_STV,
         TSAntragStatus.GEPRUEFT_STV
     ];
+}
+export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragStatus> {
+    switch (userrole) {
+        case TSRole.STEUERAMT:
+            return [
+                TSAntragStatus.GEPRUEFT_STV,
+                TSAntragStatus.PRUEFUNG_STV,
+                TSAntragStatus.IN_BEARBEITUNG_STV
+            ];
+        case TSRole.SACHBEARBEITER_JA:
+            return [
+                TSAntragStatus.FREIGEGEBEN,
+                TSAntragStatus.ZURUECKGEWIESEN,
+                TSAntragStatus.ERSTE_MAHNUNG,
+                TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+                TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN,
+                TSAntragStatus.ZWEITE_MAHNUNG,
+                TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+                TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN,
+                TSAntragStatus.IN_BEARBEITUNG_JA,
+                TSAntragStatus.GEPRUEFT,
+                TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN,
+                TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
+                TSAntragStatus.VERFUEGEN,
+                TSAntragStatus.VERFUEGT,
+                TSAntragStatus.BESCHWERDE_HAENGIG,
+                TSAntragStatus.PRUEFUNG_STV,
+                TSAntragStatus.IN_BEARBEITUNG_STV,
+                TSAntragStatus.GEPRUEFT_STV
+            ];
+        default:
+            return getTSAntragStatusValues();
+    }
 }
 
 /**
