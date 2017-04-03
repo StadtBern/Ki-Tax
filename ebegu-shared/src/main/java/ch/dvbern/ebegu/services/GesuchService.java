@@ -236,4 +236,25 @@ public interface GesuchService {
 	List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis);
 
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Schickt eine E-Mail an alle Gesuchsteller, die ihr Gesuch innerhalb einer konfigurierbaren Frist nach
+	 * Erstellung nicht freigegeben haben.
+	 * Gibt die Anzahl Warnungen zurueck.
+	 */
+	int warnGesuchNichtFreigegeben();
+
+	/**
+	 * Schickt eine E-Mail an alle Gesuchsteller, die die Freigabequittung innerhalb einer konfigurierbaren Frist nach
+	 * Freigabe des Gesuchs nicht geschickt haben.
+	 * Gibt die Anzahl Warnungen zurueck.
+	 */
+	int warnFreigabequittungFehlt();
+
+	/**
+	 * Löscht alle Gesuche, die nach einer konfigurierbaren Frist nach Erstellung nicht freigegeben bzw. nach Freigabe
+	 * die Quittung nicht geschickt haben. Schickt dem Gesuchsteller eine E-Mail.
+	 * Gibt die Anzahl Warnungen zurueck.
+	 */
+	int deleteGesucheOhneFreigabeOderQuittung();
 }

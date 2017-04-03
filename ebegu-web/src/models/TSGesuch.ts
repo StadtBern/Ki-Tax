@@ -22,6 +22,8 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _laufnummer: number;
     private _hasFSDokument: boolean = true;
     private _gesperrtWegenBeschwerde: boolean = false;
+    private _gewarntNichtFreigegeben: boolean = false;
+    private _gewarntFehlendeQuittung: boolean = false;
 
     // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutationskopie (Wichitg für laden des Gesuchs bei Navigation)
     private _emptyMutation: boolean = false;
@@ -113,6 +115,22 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set emptyMutation(value: boolean) {
         this._emptyMutation = value;
+    }
+
+    get gewarntNichtFreigegeben(): boolean {
+        return this._gewarntNichtFreigegeben;
+    }
+
+    set gewarntNichtFreigegeben(value: boolean) {
+        this._gewarntNichtFreigegeben = value;
+    }
+
+    get gewarntFehlendeQuittung(): boolean {
+        return this._gewarntFehlendeQuittung;
+    }
+
+    set gewarntFehlendeQuittung(value: boolean) {
+        this._gewarntFehlendeQuittung = value;
     }
 
     /**

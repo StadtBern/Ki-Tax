@@ -31,6 +31,9 @@ public class DailyBatchBean implements DailyBatch {
 	@Inject
 	private Persistence<AbstractEntity> persistence;
 
+	@Inject
+	private GesuchService gesuchService;
+
 
 	@Override
 	@Asynchronous
@@ -54,5 +57,38 @@ public class DailyBatchBean implements DailyBatch {
 		// vom Mandant nicht mehr zur Verfuegung steht.
 		persistence.getEntityManager().flush();
 		return booleanAsyncResult;
+	}
+
+	@Override
+	@Asynchronous
+	public void runBatchWarnungGesuchNichtFreigegeben() {
+		try {
+			final int anzahl = gesuchService.warnGesuchNichtFreigegeben();
+			LOGGER.info("Es wurden " + anzahl + " Gesuche gefunden, die noch nicht freigegeben wurden");
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch-Job WarnungGesuchNichtFreigegeben konnte nicht durchgefuehrt werden!", e);
+		}
+	}
+
+	@Override
+	@Asynchronous
+	public void runBatchWarnungFreigabequittungFehlt() {
+		try {
+			final int anzahl = gesuchService.warnFreigabequittungFehlt();
+			LOGGER.info("Es wurden " + anzahl + " Gesuche gefunden, bei denen die Freigabequittung fehlt");
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch-Job WarnungFreigabequittungFehlt konnte nicht durchgefuehrt werden!", e);
+		}
+	}
+
+	@Override
+	@Asynchronous
+	public void runBatchGesucheLoeschen() {
+		try {
+			final int anzahl = gesuchService.deleteGesucheOhneFreigabeOderQuittung();
+			LOGGER.info("Es wurden " + anzahl + " Gesuche ohne Freigabe oder Quittung gefunden, die geloescht werden muessen");
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch-Job GesucheLoeschen konnte nicht durchgefuehrt werden!", e);
+		}
 	}
 }
