@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -10,6 +11,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
+import ch.dvbern.ebegu.services.PersonenSucheService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -37,6 +39,10 @@ public class GesuchstellerResource {
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
+
+	@Inject
+	private PersonenSucheService personenSucheService;
+
 	@Inject
 	private GesuchService gesuchService;
 
@@ -78,7 +84,6 @@ public class GesuchstellerResource {
 
 	}
 
-
 	@Nullable
 	@GET
 	@Path("/{gesuchstellerId}")
@@ -99,4 +104,21 @@ public class GesuchstellerResource {
 		return converter.gesuchstellerContainerToJAX(gesuchstellerToReturn);
 	}
 
+	@Nullable
+	@GET
+	@Path("/ewk/{gesuchstellerId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public EWKResultat suchePerson(
+		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerJAXPId) throws EbeguException {
+
+		Validate.notNull(gesuchstellerJAXPId.getId());
+		String gesuchstellerID = converter.toEntityId(gesuchstellerJAXPId);
+		Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerID);
+
+		GesuchstellerContainer gesuchstellerToReturn = optional.get();
+		if (!optional.isPresent()) {
+			return null;
+		}
+		return personenSucheService.suchePerson(gesuchstellerToReturn.getGesuchstellerJA());
+	}
 }

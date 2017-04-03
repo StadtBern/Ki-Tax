@@ -2,6 +2,7 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
+import TSEWKResultat from '../../models/TSEWKResultat';
 
 export default class GesuchstellerRS {
     serviceURL: string;
@@ -40,7 +41,14 @@ export default class GesuchstellerRS {
                 this.log.debug('PARSING gesuchsteller REST object ', response.data);
                 return this.ebeguRestUtil.parseGesuchstellerContainer(new TSGesuchstellerContainer(), response.data);
             });
+    }
 
+    public suchePerson(gesuchstellerID: string): IPromise<TSEWKResultat> {
+        return this.http.get(this.serviceURL + '/ewk/' + encodeURIComponent(gesuchstellerID))
+            .then((response: any) => {
+                this.log.debug('PARSING ewkResultat REST object ', response.data);
+                return this.ebeguRestUtil.parseEWKResultat(new TSEWKResultat(), response.data);
+            });
     }
 
     public getServiceName(): string {
