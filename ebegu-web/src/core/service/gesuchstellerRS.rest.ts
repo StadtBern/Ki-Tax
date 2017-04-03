@@ -36,7 +36,7 @@ export default class GesuchstellerRS {
     }
 
     public findGesuchsteller(gesuchstellerID: string): IPromise<TSGesuchstellerContainer> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchstellerID))
+        return this.http.get(this.serviceURL + '/find/' + encodeURIComponent(gesuchstellerID))
             .then((response: any) => {
                 this.log.debug('PARSING gesuchsteller REST object ', response.data);
                 return this.ebeguRestUtil.parseGesuchstellerContainer(new TSGesuchstellerContainer(), response.data);
