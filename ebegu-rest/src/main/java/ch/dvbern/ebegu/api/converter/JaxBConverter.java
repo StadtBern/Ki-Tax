@@ -675,6 +675,7 @@ public class JaxBConverter {
 		}
 
 		antrag.setBemerkungen(antragJAXP.getBemerkungen());
+		antrag.setBemerkungenSTV(antragJAXP.getBemerkungenSTV());
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
@@ -799,6 +800,7 @@ public class JaxBConverter {
 			jaxGesuch.setEinkommensverschlechterungInfoContainer(this.einkommensverschlechterungInfoContainerToJAX(persistedGesuch.getEinkommensverschlechterungInfoContainer()));
 		}
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
+		jaxGesuch.setBemerkungenSTV(persistedGesuch.getBemerkungenSTV());
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
