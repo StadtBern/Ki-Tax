@@ -227,12 +227,14 @@ export class KommentarViewController {
 
     public selectPersonGS1(person: TSEWKPerson): void {
         this.gesuchstellerRS.selectPerson(this.getGesuchsteller1().id, person.personID).then(response => {
+            this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA.ewkPersonId = person.personID;
             this.gesuchModelManager.ewkPersonGS1 = person;
         });
     }
 
     public selectPersonGS2(person: TSEWKPerson): void {
         this.gesuchstellerRS.selectPerson(this.getGesuchsteller2().id, person.personID).then(response => {
+            this.gesuchModelManager.getGesuch().gesuchsteller2.gesuchstellerJA.ewkPersonId = person.personID;
             this.gesuchModelManager.ewkPersonGS2 = person;
         });
     }
