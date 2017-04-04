@@ -44,10 +44,6 @@ export class KommentarViewComponentConfig implements IComponentOptions {
 export class KommentarViewController {
 
     dokumentePapiergesuch: TSDokumentGrund;
-    private ewkResultatGS1: TSEWKResultat;
-    private ewkResultatGS2: TSEWKResultat;
-    private ewkPersonGS1: TSEWKPerson;
-    private ewkPersonGS2: TSEWKPerson;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
         'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', 'GesuchstellerRS'];
@@ -215,7 +211,7 @@ export class KommentarViewController {
 
     public searchGesuchsteller1(): void {
        this.gesuchstellerRS.suchePerson(this.getGesuchsteller1().id).then(response => {
-           this.ewkResultatGS1 = response;
+           this.gesuchModelManager.ewkResultatGS1 = response;
        }).catch((exception) => {
            this.$log.error('there was an error searching the person in EWK ', exception);
        });
@@ -223,7 +219,7 @@ export class KommentarViewController {
 
     public searchGesuchsteller2(): void {
         this.gesuchstellerRS.suchePerson(this.getGesuchsteller2().id).then(response => {
-            this.ewkResultatGS2 = response;
+            this.gesuchModelManager.ewkResultatGS2 = response;
         }).catch((exception) => {
             this.$log.error('there was an error searching the person in EWK ', exception);
         });
@@ -231,13 +227,13 @@ export class KommentarViewController {
 
     public selectPersonGS1(person: TSEWKPerson): void {
         this.gesuchstellerRS.selectPerson(this.getGesuchsteller1().id, person.personID).then(response => {
-            this.ewkPersonGS1 = person;
+            this.gesuchModelManager.ewkPersonGS1 = person;
         });
     }
 
     public selectPersonGS2(person: TSEWKPerson): void {
         this.gesuchstellerRS.selectPerson(this.getGesuchsteller2().id, person.personID).then(response => {
-            this.ewkPersonGS2 = person;
+            this.gesuchModelManager.ewkPersonGS2 = person;
         });
     }
 
