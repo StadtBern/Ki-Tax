@@ -19,6 +19,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _familiensituationContainer: TSFamiliensituationContainer;
     private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
     private _bemerkungen: string;
+    private _bemerkungenSTV: string;
     private _laufnummer: number;
     private _hasFSDokument: boolean = true;
     private _gesperrtWegenBeschwerde: boolean = false;
@@ -75,6 +76,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set bemerkungen(value: string) {
         this._bemerkungen = value;
+    }
+
+    get bemerkungenSTV(): string {
+        return this._bemerkungenSTV;
+    }
+
+    set bemerkungenSTV(value: string) {
+        this._bemerkungenSTV = value;
     }
 
     get laufnummer(): number {
