@@ -112,10 +112,17 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+	// Hier werden die Bemerkungen gespeichert, die das JA fuer die STV eintraegt
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungenSTV;
+
+	// Hier werden die Bemerkungen gespeichert, die die STV eingibt
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String bemerkungenPruefungSTV;
 
 	@Nullable
 	@Valid
@@ -233,6 +240,15 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	public void setBemerkungenSTV(@Nullable String bemerkungenSTV) {
 		this.bemerkungenSTV = bemerkungenSTV;
+	}
+
+	@Nullable
+	public String getBemerkungenPruefungSTV() {
+		return bemerkungenPruefungSTV;
+	}
+
+	public void setBemerkungenPruefungSTV(@Nullable String bemerkungenPruefungSTV) {
+		this.bemerkungenPruefungSTV = bemerkungenPruefungSTV;
 	}
 
 	public Fall getFall() {

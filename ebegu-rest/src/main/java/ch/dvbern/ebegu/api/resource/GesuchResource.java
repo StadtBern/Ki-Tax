@@ -248,6 +248,30 @@ public class GesuchResource {
 
 	@Nullable
 	@PUT
+	@Path("/bemerkungPruefungSTV/{gesuchId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateBemerkungPruefungSTV(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull String bemerkungPruefungSTV,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(gesuchJAXPId.getId());
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
+
+		if (gesuchOptional.isPresent()) {
+			gesuchOptional.get().setBemerkungenPruefungSTV(bemerkungPruefungSTV);
+
+			gesuchService.updateGesuch(gesuchOptional.get(), false);
+
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("updateBemerkungPruefungSTV", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
+	}
+
+	@Nullable
+	@PUT
 	@Path("/status/{gesuchId}/{statusDTO}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

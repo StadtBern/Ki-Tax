@@ -21,6 +21,8 @@ import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
@@ -38,6 +40,7 @@ export class KommentarViewComponentConfig implements IComponentOptions {
 export class KommentarViewController {
 
     dokumentePapiergesuch: TSDokumentGrund;
+    TSRoleUtil: any;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
         'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window'];
@@ -50,6 +53,7 @@ export class KommentarViewController {
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
         }
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private getPapiergesuchFromServer(): IPromise<TSDokumenteDTO> {
@@ -75,6 +79,13 @@ export class KommentarViewController {
         if (!this.isGesuchUnsaved()) {
             // Bemerkungen auf dem Gesuch werden nur gespeichert, wenn das gesuch schon persisted ist!
             this.gesuchRS.updateBemerkung(this.getGesuch().id, this.getGesuch().bemerkungen);
+        }
+    }
+
+    public saveBemerkungPruefungSTV(): void {
+        if (!this.isGesuchUnsaved()) {
+            // Bemerkungen auf dem Gesuch werden nur gespeichert, wenn das gesuch schon persisted ist!
+            this.gesuchRS.updateBemerkungPruefungSTV(this.getGesuch().id, this.getGesuch().bemerkungenPruefungSTV);
         }
     }
 
@@ -177,6 +188,10 @@ export class KommentarViewController {
 
     public isGesuchReadonly(): boolean {
         return this.gesuchModelManager.isGesuchReadonly();
+    }
+
+    public isInBearbeitungSTV(): boolean {
+        return this.gesuchModelManager.getGesuch().status === TSAntragStatus.IN_BEARBEITUNG_STV;
     }
 
 }

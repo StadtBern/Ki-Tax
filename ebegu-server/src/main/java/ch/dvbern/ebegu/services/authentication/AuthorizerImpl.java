@@ -173,6 +173,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			return;
 		}
 		boolean allowedJAORGS = isWriteAuthorized(gesuch, principalBean.getPrincipal().getName());
+
 		//Wir pruefen schulamt separat (schulamt darf schulamt-only Gesuche vom Status FREIGABEQUITTUNG zum Status SCHULAMT schieben)
 		boolean allowedSchulamt = false;
 		if (!allowedJAORGS && principalBean.isCallerInRole(SCHULAMT)
@@ -180,7 +181,14 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			allowedSchulamt = true;
 		}
 
-		if (!allowedJAORGS && !allowedSchulamt) {
+		//Wir pruefen steueramt separat (steueramt darf nur das Gesuch speichern wenn es im Status PRUEFUNG_STV oder IN_BEARBEITUNG_STV ist)
+		boolean allowedSteueramt = false;
+		if (!allowedJAORGS && ! allowedSchulamt && principalBean.isCallerInRole(STEUERAMT)
+			&& (AntragStatus.PRUEFUNG_STV.equals(gesuch.getStatus()) || AntragStatus.IN_BEARBEITUNG_STV.equals(gesuch.getStatus()))) {
+			allowedSteueramt = true;
+		}
+
+		if (!allowedJAORGS && !allowedSchulamt && !allowedSteueramt) {
 			throwViolation(gesuch);
 		}
 	}

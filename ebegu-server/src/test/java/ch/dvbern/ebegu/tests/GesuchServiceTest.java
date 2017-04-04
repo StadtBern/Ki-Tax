@@ -473,13 +473,39 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
+	public void testStatusuebergangToInBearbeitungSTV_VERFUEGT() {
+		//wenn das Gesuch nicht im Status PRUEFUNG_STV ist, wird nichts gemacht
+		Gesuch gesuch = persistNewEntity(AntragStatus.VERFUEGT, Eingangsart.ONLINE);
+		gesuch = persistence.find(Gesuch.class, gesuch.getId());
+		Assert.assertEquals(AntragStatus.VERFUEGT, gesuch.getStatus());
+		loginAsSteueramt();
+		//durch findGesuch setzt der {@link UpdateStatusInterceptor} den Status um
+		Optional<Gesuch> foundGesuch = gesuchService.findGesuch(gesuch.getId());
+		Assert.assertTrue(foundGesuch.isPresent());
+		Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus());
+	}
+
+	@Test
+	public void testStatusuebergangToInBearbeitungSTV_PRUEFUNGSTV() {
+		//Wenn das Gesuch im Status PRUEFUNG_STV ist, wechselt der Status beim Ablesen auf IN_BEARBEITUNG_STV
+		Gesuch gesuch = persistNewEntity(AntragStatus.PRUEFUNG_STV, Eingangsart.ONLINE);
+		gesuch = persistence.find(Gesuch.class, gesuch.getId());
+		Assert.assertEquals(AntragStatus.PRUEFUNG_STV, gesuch.getStatus());
+		loginAsSteueramt();
+		//durch findGesuch setzt der {@link UpdateStatusInterceptor} den Status um
+		Optional<Gesuch> foundGesuch = gesuchService.findGesuch(gesuch.getId());
+		Assert.assertTrue(foundGesuch.isPresent());
+		Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_STV, foundGesuch.get().getStatus());
+	}
+
+	@Test
 	public void testStatusuebergangToInBearbeitungJAIFFreigegeben() {
 		//bei Freigegeben soll ein lesen eines ja benutzers dazu fuehren dass das gesuch in bearbeitung ja wechselt
 		Gesuch gesuch = persistNewEntity(AntragStatus.FREIGEGEBEN, Eingangsart.ONLINE);
 		gesuch = persistence.find(Gesuch.class, gesuch.getId());
 		Assert.assertEquals(AntragStatus.FREIGEGEBEN, gesuch.getStatus());
 		loginAsSachbearbeiterJA();
-		//durch findGesuch setzt der {@link UpdateStatusToInBearbeitungJAInterceptor} den Status um
+		//durch findGesuch setzt der {@link UpdateStatusInterceptor} den Status um
 		Optional<Gesuch> foundGesuch = gesuchService.findGesuch(gesuch.getId());
 		Assert.assertTrue(foundGesuch.isPresent());
 		Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, foundGesuch.get().getStatus());
