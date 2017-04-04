@@ -5,7 +5,7 @@ import WizardStepManager from './service/wizardStepManager';
 import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
 import EbeguUtil from '../utils/EbeguUtil';
-import {TSAntragStatus, IN_BEARBEITUNG_BASE_NAME} from '../models/enums/TSAntragStatus';
+import {IN_BEARBEITUNG_BASE_NAME, TSAntragStatus} from '../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
 import TSGesuch from '../models/TSGesuch';
 import TSUser from '../models/TSUser';
@@ -120,10 +120,23 @@ export class GesuchRouteController {
         }
         let isUserGesuchsteller: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles());
         let isUserJA: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getJugendamtRole());
+        let isUserSTV: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles());
 
         if (toTranslate === TSAntragStatus.IN_BEARBEITUNG_GS && isUserGesuchsteller
             || toTranslate === TSAntragStatus.IN_BEARBEITUNG_JA && isUserJA) {
             return this.ebeguUtil.translateString(IN_BEARBEITUNG_BASE_NAME);
+        }
+        switch (toTranslate) {
+            case TSAntragStatus.GEPRUEFT_STV:
+            case TSAntragStatus.IN_BEARBEITUNG_STV:
+            case TSAntragStatus.PRUEFUNG_STV:
+                if (!isUserJA && !isUserSTV) {
+                    return this.ebeguUtil.translateString('VERFUEGT');
+                }
+                break;
+            default:
+                break;
+
         }
 
         if ((toTranslate === TSAntragStatus.NUR_SCHULAMT || toTranslate === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN)
