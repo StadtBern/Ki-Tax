@@ -112,6 +112,11 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String bemerkungenSTV;
+
 	@Nullable
 	@Valid
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "gesuch")
@@ -219,6 +224,15 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	@Nullable
+	public String getBemerkungenSTV() {
+		return bemerkungenSTV;
+	}
+
+	public void setBemerkungenSTV(@Nullable String bemerkungenSTV) {
+		this.bemerkungenSTV = bemerkungenSTV;
 	}
 
 	public Fall getFall() {
