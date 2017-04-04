@@ -151,8 +151,9 @@ public class AntragStatusConverterUtil {
 		}
 	}
 	public static Collection<AntragStatus> convertStatusToEntityForRole(AntragStatusDTO statusDTO, UserRole userrole) {
-		Collection<AntragStatus> tmp = new ArrayList<AntragStatus>();
+		Collection<AntragStatus> tmp = new ArrayList<>();
 		switch (userrole) {
+			case GESUCHSTELLER:
 			case SACHBEARBEITER_INSTITUTION:
 			case SACHBEARBEITER_TRAEGERSCHAFT: {
 				tmp.add(convertStatusToEntity(statusDTO));

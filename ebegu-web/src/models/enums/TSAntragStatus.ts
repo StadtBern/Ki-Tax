@@ -56,31 +56,20 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
     switch (userrole) {
         case TSRole.STEUERAMT:
             return [
-                TSAntragStatus.GEPRUEFT_STV,
                 TSAntragStatus.PRUEFUNG_STV,
                 TSAntragStatus.IN_BEARBEITUNG_STV
             ];
         case TSRole.SACHBEARBEITER_JA:
-            return [
-                TSAntragStatus.FREIGEGEBEN,
-                TSAntragStatus.ZURUECKGEWIESEN,
-                TSAntragStatus.ERSTE_MAHNUNG,
-                TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
-                TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN,
-                TSAntragStatus.ZWEITE_MAHNUNG,
-                TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
-                TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN,
-                TSAntragStatus.IN_BEARBEITUNG_JA,
-                TSAntragStatus.GEPRUEFT,
-                TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN,
-                TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
-                TSAntragStatus.VERFUEGEN,
-                TSAntragStatus.VERFUEGT,
-                TSAntragStatus.BESCHWERDE_HAENGIG,
-                TSAntragStatus.PRUEFUNG_STV,
-                TSAntragStatus.IN_BEARBEITUNG_STV,
-                TSAntragStatus.GEPRUEFT_STV
-            ];
+        case TSRole.ADMIN:
+        case TSRole.REVISOR:
+        case TSRole.JURIST:
+            return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
+                && element !== TSAntragStatus.FREIGABEQUITTUNG && element !== TSAntragStatus.NUR_SCHULAMT
+                && element !== TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN));
+        case TSRole.SACHBEARBEITER_INSTITUTION:
+        case TSRole.SACHBEARBEITER_TRAEGERSCHAFT:
+            return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.PRUEFUNG_STV
+            && element !== TSAntragStatus.IN_BEARBEITUNG_STV && element !== TSAntragStatus.GEPRUEFT_STV));
         default:
             return getTSAntragStatusValues();
     }
@@ -90,8 +79,8 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
  * Gibt alle Werte zurueck ausser VERFUEGT. Diese Werte sind die, die bei der Pendenzenliste notwendig sind
  * @returns {TSAntragStatus[]}
  */
-export function getTSAntragStatusPendenzValues(): Array<TSAntragStatus> {
-    return getTSAntragStatusValues().filter(element => element !== TSAntragStatus.VERFUEGT);
+export function getTSAntragStatusPendenzValues(userrole: TSRole): Array<TSAntragStatus> {
+    return getTSAntragStatusValuesByRole(userrole).filter(element => element !== TSAntragStatus.VERFUEGT);
 }
 
 export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {

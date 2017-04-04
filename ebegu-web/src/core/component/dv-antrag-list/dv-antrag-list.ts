@@ -2,8 +2,7 @@ import {IComponentOptions, IFilterService, IPromise, ILogService} from 'angular'
 import TSAbstractAntragEntity from '../../../models/TSAbstractAntragEntity';
 import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
 import {
-    TSAntragStatus, getTSAntragStatusValues,
-    getTSAntragStatusValuesByRole
+    TSAntragStatus, getTSAntragStatusValuesByRole
 } from '../../../models/enums/TSAntragStatus';
 import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
