@@ -11,7 +11,7 @@
             </dv-input-container>
         </div>
 
-        <div class="ewkGS1" ng-if="vm.getGesuchsteller1()">
+        <div ng-if="vm.getGesuchsteller1()">
             <!-- Gesuchsteller 1 -->
             <label class="md-no-float" ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller1())"></label>
             <!-- Suche starten -->
@@ -24,20 +24,35 @@
                     data-translate="EWK_ANZAHL_ERGEBNISSE"
                     data-translate-value-resultate="{{vm.ewkResultatGS1.anzahlResultate}}"></label>
             <!-- Resultat-Liste -->
-
-            <md-radio-group ng-model="vm.ewkPersonGS1" >
-                <md-radio-button ng-repeat="person in vm.ewkResultatGS1.personen" ng-value="person"
-                                 aria-label="person.getShortDescription()">{{person.getShortDescription()}}
-                </md-radio-button>
-            </md-radio-group>
-
-
+            <md-radio-group ng-model="vm.ewkPersonGS1">
             <div class="md-no-float" ng-repeat="person in vm.ewkResultatGS1.personen">
                 <label ng-bind="person.getShortDescription()" ng-click="vm.showDetail(person)"></label>
-                <md-checkbox name="selectedPerson" aria-label="selectedPerson"
-                             ng-click="vm.selectPerson(vm.getGesuchsteller1(), person)">
-                </md-checkbox>
+                <md-radio-button ng-value="person"  ng-click="vm.selectPersonGS1(person)"
+                                 aria-label="person.getShortDescription()"></md-radio-button>
             </div>
+            </md-radio-group>
+        </div>
+
+        <div ng-if="vm.getGesuchsteller2()">
+            <!-- Gesuchsteller 2 -->
+            <label class="md-no-float" ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller2())"></label>
+            <!-- Suche starten -->
+            <dv-loading-button type="submit" button-click="vm.searchGesuchsteller2()"
+                               class="kommentar-button" aria-label="{{'EWK_ABFRAGE_STARTEN' | translate}}">
+                <span data-translate="EWK_ABFRAGE_STARTEN"></span>
+            </dv-loading-button>
+            <!-- Anzahl Resultate -->
+            <label ng-if="vm.ewkResultatGS2"
+                   data-translate="EWK_ANZAHL_ERGEBNISSE"
+                   data-translate-value-resultate="{{vm.ewkResultatGS2.anzahlResultate}}"></label>
+            <!-- Resultat-Liste -->
+            <md-radio-group ng-model="vm.ewkPersonGS2">
+                <div class="md-no-float" ng-repeat="person in vm.ewkResultatGS2.personen">
+                    <label ng-bind="person.getShortDescription()" ng-click="vm.showDetail(person)"></label>
+                    <md-radio-button ng-value="person"  ng-click="vm.selectPersonGS2(person)"
+                                     aria-label="person.getShortDescription()"></md-radio-button>
+                </div>
+            </md-radio-group>
         </div>
 
 

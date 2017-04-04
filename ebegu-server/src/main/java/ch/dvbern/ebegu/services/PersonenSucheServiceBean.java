@@ -85,10 +85,7 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 	public Gesuchsteller selectPerson(@Nonnull Gesuchsteller gesuchsteller, @Nonnull String ewkPersonID) {
 		Validate.notNull(gesuchsteller, "Gesuchsteller muss gesetzt sein");
 		Validate.notNull(ewkPersonID, "ewkPersonID muss gesetzt sein");
-		Validate.isTrue(gesuchsteller.isNew(), "Gesuchsteller muss zuerst gespeichert werden!");
-		if (StringUtils.isNotEmpty(gesuchsteller.getEwkPersonId()) && !gesuchsteller.getEwkPersonId().equals(ewkPersonID)) {
-			throw new EbeguRuntimeException("selectPerson", "Die Person " + gesuchsteller.getId() + " ist schon mit der Person " + gesuchsteller.getEwkPersonId() + " verknüpft");
-		}
+		Validate.isTrue(!gesuchsteller.isNew(), "Gesuchsteller muss zuerst gespeichert werden!");
 		gesuchsteller.setEwkPersonId(ewkPersonID);
 		return persistence.merge(gesuchsteller);
 	}

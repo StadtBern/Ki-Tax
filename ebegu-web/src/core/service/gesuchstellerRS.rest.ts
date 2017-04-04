@@ -45,16 +45,20 @@ export default class GesuchstellerRS {
             });
     }
 
-    public suchePerson(gesuchstellerID: string): IPromise<TSEWKResultat> {
-        return this.http.get(this.serviceURL + '/ewk/' + encodeURIComponent(gesuchstellerID))
+    public suchePerson(gesuchstellerContainerID: string): IPromise<TSEWKResultat> {
+        return this.http.get(this.serviceURL + '/ewk/' + encodeURIComponent(gesuchstellerContainerID))
             .then((response: any) => {
                 this.log.debug('PARSING ewkResultat REST object ', response.data);
                 return this.ebeguRestUtil.parseEWKResultat(new TSEWKResultat(), response.data);
             });
     }
 
-    public selectPerson(gesuchstellerID: string, ewkPersonID: string): IPromise<TSGesuchsteller> {
-        return this.http.put(this.serviceURL + '/ewk/' + encodeURIComponent(gesuchstellerID),  + encodeURIComponent(ewkPersonID))
+    public selectPerson(gesuchstellerContainerID: string, ewkPersonID: string): IPromise<TSGesuchsteller> {
+        return this.http.put(this.serviceURL + '/ewk/' + encodeURIComponent(gesuchstellerContainerID) + '/' +  encodeURIComponent(ewkPersonID), {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
             .then((response: any) => {
                 this.log.debug('PARSING ewkResultat REST object ', response.data);
                 return this.ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), response.data);

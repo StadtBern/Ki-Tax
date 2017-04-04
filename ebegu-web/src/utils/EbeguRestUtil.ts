@@ -381,6 +381,7 @@ export default class EbeguRestUtil {
             restGesuchsteller.telefon = gesuchsteller.telefon || undefined;
             restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland || undefined;
             restGesuchsteller.diplomatenstatus = gesuchsteller.diplomatenstatus;
+            restGesuchsteller.ewkPersonId = gesuchsteller.ewkPersonId;
             return restGesuchsteller;
         }
         return undefined;
@@ -394,10 +395,10 @@ export default class EbeguRestUtil {
             gesuchstellerTS.telefon = gesuchstellerFromServer.telefon;
             gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
             gesuchstellerTS.diplomatenstatus = gesuchstellerFromServer.diplomatenstatus;
+            gesuchstellerTS.ewkPersonId = gesuchstellerFromServer.ewkPersonId;
             return gesuchstellerTS;
         }
         return undefined;
-
     }
 
     public parseErwerbspensumContainer(erwerbspensumContainer: TSErwerbspensumContainer, ewpContFromServer: any): TSErwerbspensumContainer {

@@ -17,10 +17,10 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {EwkPersonController} from '../../dialog/EwkPersonController';
 import {OkHtmlDialogController} from '../../dialog/OkHtmlDialogController';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
-import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import GesuchstellerRS from '../../../core/service/gesuchstellerRS.rest';
 import TSEWKResultat from '../../../models/TSEWKResultat';
 import TSEWKPerson from '../../../models/TSEWKPerson';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
@@ -47,6 +47,7 @@ export class KommentarViewController {
     private ewkResultatGS1: TSEWKResultat;
     private ewkResultatGS2: TSEWKResultat;
     private ewkPersonGS1: TSEWKPerson;
+    private ewkPersonGS2: TSEWKPerson;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
         'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', 'GesuchstellerRS'];
@@ -188,37 +189,55 @@ export class KommentarViewController {
         return this.gesuchModelManager.isGesuchReadonly();
     }
 
-    public getGesuchsteller1(): TSGesuchsteller {
-        if (this.gesuchModelManager.getGesuch()
-            && this.gesuchModelManager.getGesuch().gesuchsteller1
-            && this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA
-            && !this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA.isNew()) {
-            return this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA;
+    public getGesuchsteller1(): TSGesuchstellerContainer {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1) {
+            return this.gesuchModelManager.getGesuch().gesuchsteller1;
         }
         return undefined;
     }
 
-    public getGesuchstellerTitle(gesuchsteller: TSGesuchsteller): string {
-        if (gesuchsteller) {
-            if (gesuchsteller.ewkPersonId) {
-                return gesuchsteller.getFullName() + ' (' + gesuchsteller.ewkPersonId + ')';
+    public getGesuchsteller2(): TSGesuchstellerContainer {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2) {
+            return this.gesuchModelManager.getGesuch().gesuchsteller2;
+        }
+        return undefined;
+    }
+
+    public getGesuchstellerTitle(gesuchsteller: TSGesuchstellerContainer): string {
+        if (gesuchsteller && gesuchsteller.gesuchstellerJA) {
+            if (gesuchsteller.gesuchstellerJA.ewkPersonId) {
+                return gesuchsteller.gesuchstellerJA.getFullName() + ' (' + gesuchsteller.gesuchstellerJA.ewkPersonId + ')';
             }
-            return gesuchsteller.getFullName();
+            return gesuchsteller.gesuchstellerJA.getFullName();
         }
         return undefined;
     }
 
     public searchGesuchsteller1(): void {
-       this.gesuchstellerRS.suchePerson(this.gesuchModelManager.getGesuch().gesuchsteller1.id).then(response => {
+       this.gesuchstellerRS.suchePerson(this.getGesuchsteller1().id).then(response => {
            this.ewkResultatGS1 = response;
        }).catch((exception) => {
            this.$log.error('there was an error searching the person in EWK ', exception);
        });
     }
 
-    public selectPerson(gesuchsteller: TSGesuchsteller, person: TSEWKPerson): void {
-        this.gesuchstellerRS.selectPerson(gesuchsteller.id, person.personID).then(response => {
+    public searchGesuchsteller2(): void {
+        this.gesuchstellerRS.suchePerson(this.getGesuchsteller2().id).then(response => {
+            this.ewkResultatGS2 = response;
+        }).catch((exception) => {
+            this.$log.error('there was an error searching the person in EWK ', exception);
+        });
+    }
+
+    public selectPersonGS1(person: TSEWKPerson): void {
+        this.gesuchstellerRS.selectPerson(this.getGesuchsteller1().id, person.personID).then(response => {
             this.ewkPersonGS1 = person;
+        });
+    }
+
+    public selectPersonGS2(person: TSEWKPerson): void {
+        this.gesuchstellerRS.selectPerson(this.getGesuchsteller2().id, person.personID).then(response => {
+            this.ewkPersonGS2 = person;
         });
     }
 
