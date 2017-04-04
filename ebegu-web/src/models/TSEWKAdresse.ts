@@ -144,4 +144,8 @@ export default class TSEWKAdresse extends TSAbstractEntity {
     set land(value: string) {
         this._land = value;
     }
+
+    public getShortDescription(): string {
+        return this.strasse + ' ' + this.hausnummer + ', ' + this.postleitzahl + ' ' + this.ort;
+    }
 }

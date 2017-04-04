@@ -14,8 +14,13 @@ import WizardStepManager from '../../service/wizardStepManager';
 import TSWizardStep from '../../../models/TSWizardStep';
 import GlobalCacheService from '../../service/globalCacheService';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {EwkPersonController} from '../../dialog/EwkPersonController';
 import {OkHtmlDialogController} from '../../dialog/OkHtmlDialogController';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import GesuchstellerRS from '../../../core/service/gesuchstellerRS.rest';
+import TSEWKResultat from '../../../models/TSEWKResultat';
+import TSEWKPerson from '../../../models/TSEWKPerson';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
@@ -24,6 +29,7 @@ import ITranslateService = angular.translate.ITranslateService;
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
+let ewkPersonTemplate = require('../../../gesuch/dialog/ewkPersonTemplate.html');
 
 export class KommentarViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -38,14 +44,17 @@ export class KommentarViewComponentConfig implements IComponentOptions {
 export class KommentarViewController {
 
     dokumentePapiergesuch: TSDokumentGrund;
+    private ewkResultatGS1: TSEWKResultat;
+    private ewkResultatGS2: TSEWKResultat;
+    private ewkPersonGS1: TSEWKPerson;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
-        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window'];
+        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', 'GesuchstellerRS'];
     /* @ngInject */
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
                 private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
                 private uploadRS: UploadRS, private wizardStepManager: WizardStepManager, private globalCacheService: GlobalCacheService,
-                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService) {
+                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService, private gesuchstellerRS: GesuchstellerRS) {
 
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
@@ -179,4 +188,43 @@ export class KommentarViewController {
         return this.gesuchModelManager.isGesuchReadonly();
     }
 
+    public getGesuchsteller1(): TSGesuchsteller {
+        if (this.gesuchModelManager.getGesuch()
+            && this.gesuchModelManager.getGesuch().gesuchsteller1
+            && this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA
+            && !this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA.isNew()) {
+            return this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA;
+        }
+        return undefined;
+    }
+
+    public getGesuchstellerTitle(gesuchsteller: TSGesuchsteller): string {
+        if (gesuchsteller) {
+            if (gesuchsteller.ewkPersonId) {
+                return gesuchsteller.getFullName() + ' (' + gesuchsteller.ewkPersonId + ')';
+            }
+            return gesuchsteller.getFullName();
+        }
+        return undefined;
+    }
+
+    public searchGesuchsteller1(): void {
+       this.gesuchstellerRS.suchePerson(this.gesuchModelManager.getGesuch().gesuchsteller1.id).then(response => {
+           this.ewkResultatGS1 = response;
+       }).catch((exception) => {
+           this.$log.error('there was an error searching the person in EWK ', exception);
+       });
+    }
+
+    public selectPerson(gesuchsteller: TSGesuchsteller, person: TSEWKPerson): void {
+        this.gesuchstellerRS.selectPerson(gesuchsteller.id, person.personID).then(response => {
+            this.ewkPersonGS1 = person;
+        });
+    }
+
+    public showDetail(person: TSEWKPerson): void {
+        this.dvDialog.showDialogFullscreen(ewkPersonTemplate, EwkPersonController, {
+            person: person
+        });
+    }
 }

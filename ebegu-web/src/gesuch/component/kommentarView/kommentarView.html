@@ -10,6 +10,37 @@
                         </textarea>
             </dv-input-container>
         </div>
+
+        <div class="ewkGS1" ng-if="vm.getGesuchsteller1()">
+            <!-- Gesuchsteller 1 -->
+            <label class="md-no-float" ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller1())"></label>
+            <!-- Suche starten -->
+            <dv-loading-button type="submit" button-click="vm.searchGesuchsteller1()"
+                               class="kommentar-button" aria-label="{{'EWK_ABFRAGE_STARTEN' | translate}}">
+                <span data-translate="EWK_ABFRAGE_STARTEN"></span>
+            </dv-loading-button>
+            <!-- Anzahl Resultate -->
+            <label ng-if="vm.ewkResultatGS1"
+                    data-translate="EWK_ANZAHL_ERGEBNISSE"
+                    data-translate-value-resultate="{{vm.ewkResultatGS1.anzahlResultate}}"></label>
+            <!-- Resultat-Liste -->
+
+            <md-radio-group ng-model="vm.ewkPersonGS1" >
+                <md-radio-button ng-repeat="person in vm.ewkResultatGS1.personen" ng-value="person"
+                                 aria-label="person.getShortDescription()">{{person.getShortDescription()}}
+                </md-radio-button>
+            </md-radio-group>
+
+
+            <div class="md-no-float" ng-repeat="person in vm.ewkResultatGS1.personen">
+                <label ng-bind="person.getShortDescription()" ng-click="vm.showDetail(person)"></label>
+                <md-checkbox name="selectedPerson" aria-label="selectedPerson"
+                             ng-click="vm.selectPerson(vm.getGesuchsteller1(), person)">
+                </md-checkbox>
+            </div>
+        </div>
+
+
         <span flex=""></span>
         <!--bemerkungen Verfügung-->
         <div class="kommentarBottom">

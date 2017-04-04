@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxGesuchstellerContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -120,5 +121,25 @@ public class GesuchstellerResource {
 			return null;
 		}
 		return personenSucheService.suchePerson(gesuchstellerToReturn.getGesuchstellerJA());
+	}
+
+	@Nullable
+	@PUT
+	@Path("/ewk/{gesuchstellerId}/{ewkPersonId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Gesuchsteller selectPerson(
+		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerJAXPId,
+		@Nonnull @NotNull @PathParam("ewkPersonId") JaxId ewkPersonJAXPId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(gesuchstellerJAXPId.getId());
+		Validate.notNull(ewkPersonJAXPId.getId());
+		String gesuchstellerID = converter.toEntityId(gesuchstellerJAXPId);
+		String ewkPersonID = converter.toEntityId(ewkPersonJAXPId);
+		Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerID);
+
+		GesuchstellerContainer gesuchstellerToReturn = optional.get();
+		return optional.map(gesuchstellerContainer -> personenSucheService.selectPerson(gesuchstellerToReturn.getGesuchstellerJA(), ewkPersonID)).orElse(null);
 	}
 }

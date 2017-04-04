@@ -78,7 +78,7 @@ public class PersonenSucheServiceTest extends AbstractEbeguLoginTest {
 	public void sucheSelectPerson() throws Exception {
 		Gesuchsteller gs = TestDataUtil.createDefaultGesuchsteller();
 		EWKResultat ewkResultat1 = personenSucheService.suchePerson(ID_MARC_SCHMID);
-		Gesuchsteller gsMerged = personenSucheService.selectPerson(gs, ewkResultat1.getPersonen().get(0));
+		Gesuchsteller gsMerged = personenSucheService.selectPerson(gs, ewkResultat1.getPersonen().get(0).getPersonID());
 		Assert.assertNotNull(gsMerged);
 		Assert.assertEquals(ID_MARC_SCHMID, gsMerged.getEwkPersonId());
 	}

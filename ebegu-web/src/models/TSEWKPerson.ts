@@ -198,4 +198,24 @@ export default class TSEWKPerson extends TSAbstractEntity {
     set beziehungen(value: Array<TSEWKBeziehung>) {
         this._beziehungen = value;
     }
+
+    public getWohnadresse(): TSEWKAdresse {
+        for (let adresse of this.adressen) {
+            if (adresse.adresstyp === '1') {
+                return adresse;
+            }
+        }
+        return undefined;
+    }
+
+    public getShortDescription(): string {
+        let description: string;
+        description = this.vorname + ' ';
+        description += this.nachname + ', ';
+        description += this.geburtsdatum.format('DD.MM.YYYY') + ', ';
+        if (this.getWohnadresse()) {
+            description += this.getWohnadresse().getShortDescription();
+        }
+        return description;
+    }
 }
