@@ -18,9 +18,9 @@ import {EwkPersonController} from '../../dialog/EwkPersonController';
 import {OkHtmlDialogController} from '../../dialog/OkHtmlDialogController';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import GesuchstellerRS from '../../../core/service/gesuchstellerRS.rest';
-import TSEWKResultat from '../../../models/TSEWKResultat';
 import TSEWKPerson from '../../../models/TSEWKPerson';
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
@@ -44,6 +44,7 @@ export class KommentarViewComponentConfig implements IComponentOptions {
 export class KommentarViewController {
 
     dokumentePapiergesuch: TSDokumentGrund;
+    TSRoleUtil: any;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
         'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', 'GesuchstellerRS'];
@@ -56,6 +57,7 @@ export class KommentarViewController {
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
         }
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private getPapiergesuchFromServer(): IPromise<TSDokumenteDTO> {
