@@ -491,7 +491,7 @@ public class GesuchResource {
 		}
 
 		gesuch.get().setStatus(AntragStatus.GEPRUEFT_STV);
-		// todo imanol set flag
+		gesuch.get().setGeprueftSTV(true);
 
 		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch.get(), true);
 		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();

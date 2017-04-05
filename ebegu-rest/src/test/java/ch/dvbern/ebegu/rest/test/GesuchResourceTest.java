@@ -186,6 +186,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 		Assert.assertTrue(entity instanceof JaxGesuch);
 		final JaxGesuch jaxGesuch = (JaxGesuch) entity;
 		Assert.assertEquals(AntragStatusDTO.GEPRUEFT_STV, jaxGesuch.getStatus());
+		Assert.assertTrue(jaxGesuch.isGeprueftSTV());
 	}
 
 	@Test

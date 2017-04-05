@@ -609,6 +609,7 @@ export default class EbeguRestUtil {
         restGesuch.bemerkungenSTV = gesuch.bemerkungenSTV;
         restGesuch.bemerkungenPruefungSTV = gesuch.bemerkungenPruefungSTV;
         restGesuch.laufnummer = gesuch.laufnummer;
+        restGesuch.geprueftSTV = gesuch.geprueftSTV;
         restGesuch.hasFSDokument = gesuch.hasFSDokument;
         restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
         restGesuch.gewarntNichtFreigegeben = gesuch.gewarntNichtFreigegeben;
@@ -629,6 +630,7 @@ export default class EbeguRestUtil {
             gesuchTS.bemerkungenSTV = gesuchFromServer.bemerkungenSTV;
             gesuchTS.bemerkungenPruefungSTV = gesuchFromServer.bemerkungenPruefungSTV;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;
+            gesuchTS.geprueftSTV = gesuchFromServer.geprueftSTV;
             gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
             gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
             gesuchTS.gewarntNichtFreigegeben = gesuchFromServer.gewarntNichtFreigegeben;

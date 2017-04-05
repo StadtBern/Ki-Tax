@@ -43,6 +43,8 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	private int laufnummer;
 
+	private boolean geprueftSTV;
+
 	private boolean hasFSDokument;
 
 	private boolean gesperrtWegenBeschwerde;
@@ -134,6 +136,14 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setLaufnummer(@Nullable int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	public boolean isGeprueftSTV() {
+		return geprueftSTV;
+	}
+
+	public void setGeprueftSTV(boolean geprueftSTV) {
+		this.geprueftSTV = geprueftSTV;
 	}
 
 	@Nullable

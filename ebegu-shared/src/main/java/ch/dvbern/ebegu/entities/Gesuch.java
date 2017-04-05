@@ -135,6 +135,9 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	private int laufnummer = 0;
 
 	@Column(nullable = false)
+	private boolean geprueftSTV = false;
+
+	@Column(nullable = false)
 	private boolean hasFSDokument = true;
 
 	@Column(nullable = false)
@@ -322,6 +325,14 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	public void setLaufnummer(int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	public boolean isGeprueftSTV() {
+		return geprueftSTV;
+	}
+
+	public void setGeprueftSTV(boolean geprueftSTV) {
+		this.geprueftSTV = geprueftSTV;
 	}
 
 	public boolean isHasFSDokument() {
