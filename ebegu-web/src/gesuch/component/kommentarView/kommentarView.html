@@ -29,7 +29,7 @@
                 <div class="md-no-float" ng-repeat="person in vm.gesuchModelManager.ewkResultatGS1.personen">
                     <label ng-bind="person.getShortDescription()" ng-click="vm.showDetail(person)"></label>
                     <md-radio-button ng-value="person"  ng-click="vm.selectPersonGS1(person)"
-                                     aria-label="person.getShortDescription()"></md-radio-button>
+                                     aria-label="person.getShortDescription()" ng-if="vm.gesuchModelManager.ewkResultatGS1.anzahlResultate > 1"></md-radio-button>
                 </div>
                 </md-radio-group>
             </div>
@@ -50,7 +50,7 @@
                     <div class="md-no-float" ng-repeat="person in vm.gesuchModelManager.ewkResultatGS2.personen">
                         <label ng-bind="person.getShortDescription()" ng-click="vm.showDetail(person)"></label>
                         <md-radio-button ng-value="person"  ng-click="vm.selectPersonGS2(person)"
-                                         aria-label="person.getShortDescription()"></md-radio-button>
+                                         aria-label="person.getShortDescription()" ng-if="vm.gesuchModelManager.ewkResultatGS2.anzahlResultate > 1"></md-radio-button>
                     </div>
                 </md-radio-group>
             </div>
