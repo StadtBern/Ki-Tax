@@ -164,8 +164,8 @@ public class SearchIndexResource {
 				JaxAntragDTO jaxAntragDTO;
 				if (isInstOrTraegerschaft) { //fuer institutionen und traegerschaften nur erlaubte inst mitgeben
 					jaxAntragDTO = this.converter.gesuchToAntragDTO(gesuch, principalBean.getBenutzer().getRole(), allowedInst);
-				} else{
-					jaxAntragDTO = this.converter.gesuchToAntragDTO(gesuch);
+				} else {
+					jaxAntragDTO = this.converter.gesuchToAntragDTO(gesuch, principalBean.getBenutzer().getRole());
 				}
 				searchEnry.setAntragDTO(jaxAntragDTO);
 				String fullNameGS1 = gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().extractFullName() : "";

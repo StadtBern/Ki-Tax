@@ -24,9 +24,11 @@ import DateUtil from '../../../utils/DateUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import GesuchRS from '../../service/gesuchRS.rest';
+import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
+let bemerkungDialogTempl = require('../../dialog/bemerkungenDialogTemplate.html');
 
 
 export class VerfuegenListViewComponentConfig implements IComponentOptions {
@@ -241,6 +243,23 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public isFristAbgelaufen(mahnung: TSMahnung): boolean {
         return mahnung.datumFristablauf.isBefore(DateUtil.today());
+    }
+
+    public sendToSteuerverwaltung(): IPromise<TSGesuch> {
+        return this.DvDialog.showDialog(bemerkungDialogTempl, BemerkungenDialogController, {
+            title: 'SEND_TO_STV'
+        }).then((bemerkung: string) => {
+            return this.gesuchRS.sendGesuchToSTV(this.getGesuch().id, bemerkung).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                return this.gesuchModelManager.getGesuch();
+            });
+        });
+    }
+
+    public showSendToSteuerverwaltung(): boolean {
+        //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt keine Beschwerden erstellen darf
+        // todo imanol -> && not_yet_sent_to_stv
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT);
     }
 
     public showErsteMahnungErstellen(): boolean {

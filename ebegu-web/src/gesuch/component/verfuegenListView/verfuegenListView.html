@@ -18,7 +18,7 @@
                             <thead>
                             <tr>
                                 <th data-translate="KIND" width="35%"></th>
-                                <th data-translate="BETREUUNG"width="25%"></th>
+                                <th data-translate="BETREUUNG" width="25%"></th>
                                 <th data-translate="ID" width="20%"></th>
                                 <th data-translate="STATUS" width="20%"></th>
                             </tr>
@@ -162,6 +162,11 @@
                                    aria-label="{{'VERFUEGUNG_STARTEN_UPPER' | translate}}"
                                    ng-if="vm.showVerfuegenStarten()">
                     <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
+                </dv-loading-button>
+                <dv-loading-button button-click="vm.sendToSteuerverwaltung()"
+                                   aria-label="{{'SEND_TO_STV_UPPER' | translate}}"
+                                   ng-if="vm.showSendToSteuerverwaltung()">
+                    <span data-translate="SEND_TO_STV_UPPER"></span>
                 </dv-loading-button>
                 <dv-loading-button button-click="vm.ersteMahnungErstellen()"
                                    aria-label="{{'ERSTE_MAHNUNG_UPPER' | translate}}"

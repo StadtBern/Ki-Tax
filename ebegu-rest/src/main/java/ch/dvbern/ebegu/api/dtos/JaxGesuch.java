@@ -35,6 +35,9 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private String bemerkungen;
 
+	@Nullable
+	private String bemerkungenSTV;
+
 	private int laufnummer;
 
 	private boolean hasFSDokument;
@@ -101,6 +104,15 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	@Nullable
+	public String getBemerkungenSTV() {
+		return bemerkungenSTV;
+	}
+
+	public void setBemerkungenSTV(@Nullable String bemerkungenSTV) {
+		this.bemerkungenSTV = bemerkungenSTV;
 	}
 
 	@Nullable
