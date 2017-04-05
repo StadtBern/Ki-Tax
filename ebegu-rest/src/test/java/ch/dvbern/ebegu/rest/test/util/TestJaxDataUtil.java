@@ -28,7 +28,7 @@ public class TestJaxDataUtil {
 		jaxGesuchsteller.setGeschlecht(Geschlecht.MAENNLICH);
 		jaxGesuchsteller.setMobile("+41 78 987 65 54");
 		jaxGesuchsteller.setTelefonAusland("+49 12 123 42 12");
-		jaxGesuchsteller.setZpvNumber("1234");
+		jaxGesuchsteller.setEwkPersonId("1234");
 
 		jaxGesuchstellerContainer.setAdressen(createTestJaxAdressenList(null));
 		jaxGesuchstellerContainer.setGesuchstellerJA(jaxGesuchsteller);

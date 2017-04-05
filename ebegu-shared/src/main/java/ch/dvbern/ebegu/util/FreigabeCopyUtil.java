@@ -173,7 +173,7 @@ public class FreigabeCopyUtil {
 		gesuchstellerGS.setMobile(gesuchstellerJA.getMobile());
 		gesuchstellerGS.setTelefon(gesuchstellerJA.getTelefon());
 		gesuchstellerGS.setTelefonAusland(gesuchstellerJA.getTelefonAusland());
-		gesuchstellerGS.setZpvNumber(gesuchstellerJA.getZpvNumber());
+		gesuchstellerGS.setEwkPersonId(gesuchstellerJA.getEwkPersonId());
 		gesuchstellerGS.setDiplomatenstatus(gesuchstellerJA.isDiplomatenstatus());
 	}
 

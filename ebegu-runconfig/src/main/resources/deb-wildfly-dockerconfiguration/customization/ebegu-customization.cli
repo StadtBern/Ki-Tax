@@ -71,6 +71,7 @@ xa-data-source add \
 /system-property=ebegu.mail.smtp.port:add(value=25)
 /system-property=ebegu.mail.disabled:add(value=false)
 /system-property=ebegu.hostname:add(value=ebegu.dvbern.ch/web/#)
+/system-property=ebegu.personensuche.disabled:add(value=true)
 
 
 #Helperskripts
