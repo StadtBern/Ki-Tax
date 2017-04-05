@@ -10,7 +10,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.services.interceptors.UpdateStatusToInBearbeitungJAInterceptor;
+import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.EbeguUtil;
@@ -113,7 +113,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@PermitAll
-	@Interceptors(UpdateStatusToInBearbeitungJAInterceptor.class)
+	@Interceptors(UpdateStatusInterceptor.class)
 	public Optional<Gesuch> findGesuch(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Gesuch gesuch = persistence.find(Gesuch.class, key);
@@ -236,23 +236,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			return gesuche;
 		}
 		return Collections.emptyList();
-	}
-
-	@Override
-	@Nonnull
-	@RolesAllowed(value = {UserRoleName.STEUERAMT, UserRoleName.SUPER_ADMIN})
-	public List<Gesuch> getPendenzenForSteueramtUser() {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-
-		Root<Gesuch> root = query.from(Gesuch.class);
-		Predicate predicate = root.get(Gesuch_.status).in(AntragStatus.allowedforRole(UserRole.STEUERAMT));
-		query.where(predicate);
-		query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
-
-		List<Gesuch> gesuche = persistence.getCriteriaResults(query);
-		authorizer.checkReadAuthorizationGesuche(gesuche);
-		return gesuche;
 	}
 
 	@Override

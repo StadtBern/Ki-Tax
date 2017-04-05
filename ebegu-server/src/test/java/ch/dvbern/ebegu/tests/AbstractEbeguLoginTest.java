@@ -88,6 +88,18 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		persistence.persist(schulamt);
 	}
 
+	protected void loginAsSteueramt() {
+		try {
+			createLoginContext("steueramt", "steueramt").login();
+		} catch (LoginException e) {
+			LOG.error("could not login as steueramt for tests");
+		}
+
+		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
+		Benutzer steueramt = TestDataUtil.createBenutzer(UserRole.STEUERAMT, "steueramt", null, null, mandant);
+		persistence.persist(steueramt);
+	}
+
 	protected void loginAsSachbearbeiterJA() {
 		try {
 			createLoginContext("saja", "saja").login();

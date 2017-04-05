@@ -245,20 +245,19 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return mahnung.datumFristablauf.isBefore(DateUtil.today());
     }
 
-    public sendToSteuerverwaltung(): IPromise<TSGesuch> {
-        return this.DvDialog.showDialog(bemerkungDialogTempl, BemerkungenDialogController, {
+    public sendToSteuerverwaltung(): void {
+        this.DvDialog.showDialog(bemerkungDialogTempl, BemerkungenDialogController, {
             title: 'SEND_TO_STV'
         }).then((bemerkung: string) => {
-            return this.gesuchRS.sendGesuchToSTV(this.getGesuch().id, bemerkung).then((gesuch: TSGesuch) => {
+            this.gesuchRS.sendGesuchToSTV(this.getGesuch().id, bemerkung).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
-                return this.gesuchModelManager.getGesuch();
+                this.$state.go('pendenzen');
             });
         });
     }
 
     public showSendToSteuerverwaltung(): boolean {
-        //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt keine Beschwerden erstellen darf
-        // todo imanol -> && not_yet_sent_to_stv
+        //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt das Gesuch nicht pruefen lassen darf
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT);
     }
 
