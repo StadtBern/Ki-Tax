@@ -10,6 +10,12 @@ export class TSRoleUtil {
         );
     }
 
+    public static getAllRolesButGesuchstellerAndSteueramt(): Array<string> {
+        return TSRoleUtil.getAllRoles().filter(element =>
+            element !== TSRole[TSRole.GESUCHSTELLER] && element !== TSRole[TSRole.STEUERAMT]
+        );
+    }
+
     public static getAllRoles(): Array<string> {
         let result: Array<string> = [];
         for (let prop in TSRole) {
