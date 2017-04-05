@@ -210,4 +210,9 @@ export class KommentarViewController {
         });
     }
 
+    public showBemerkungenPruefungSTV(): boolean {
+        return this.getGesuch().geprueftSTV === true || this.getGesuch().status === TSAntragStatus.PRUEFUNG_STV || this.getGesuch().status === TSAntragStatus.IN_BEARBEITUNG_STV
+            || this.getGesuch().status === TSAntragStatus.GEPRUEFT_STV;
+    }
+
 }

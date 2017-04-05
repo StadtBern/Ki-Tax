@@ -23,7 +23,9 @@
                 </dv-input-container>
             </div>
         </div>
-        <div>
+        <div  dv-show-element
+              dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSteueramtRoles()"
+              dv-show-expression="vm.showBemerkungenPruefungSTV()">
             <div>
                 <dv-input-container class="form-group kommentar-feld">
                     <label class="md-no-float" for="kommentarPruefungSTV" data-translate="BEMERKUNGEN_PRUEFUNG_STV"></label>
