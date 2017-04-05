@@ -17,7 +17,6 @@ import java.math.BigInteger;
 public class EWKConverter {
 
 	public static final String MANN = "M";
-	public static final String FRAU = "W";
 
 	public static EWKResultat convertFromEWK(@Nonnull PersonenSucheResp response, BigInteger maxResults) {
 		EWKResultat resultat = new EWKResultat();

@@ -76,18 +76,6 @@ public final class ServerMessageUtil {
 		return getMessage(getKey(e), args);
 	}
 
-
-	/**
-	 * Uebersetzt einen Enum-Wert
-	 */
-	@Nonnull
-	public static String translateEnumValue(@Nullable final Enum<?> e, Locale locale) {
-		if (e == null) {
-			return StringUtils.EMPTY;
-		}
-		return getMessage(getKey(e),locale);
-	}
-
 	/**
 	 * Uebersetzt einen Enum-Wert
 	 */
