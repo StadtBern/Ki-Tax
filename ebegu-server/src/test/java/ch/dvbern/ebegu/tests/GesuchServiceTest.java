@@ -480,9 +480,13 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(AntragStatus.VERFUEGT, gesuch.getStatus());
 		loginAsSteueramt();
 		//durch findGesuch setzt der {@link UpdateStatusInterceptor} den Status um
-		Optional<Gesuch> foundGesuch = gesuchService.findGesuch(gesuch.getId());
-		Assert.assertTrue(foundGesuch.isPresent());
-		Assert.assertEquals(AntragStatus.VERFUEGT, foundGesuch.get().getStatus());
+		try {
+			gesuchService.findGesuch(gesuch.getId());
+			Assert.fail("It should crash because STV has no rights to see VERFUEGT");
+		} catch(EJBAccessException e) {
+			// nop
+		}
+
 	}
 
 	@Test
@@ -588,10 +592,16 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Gesuch gesuchBearbeitungSTV = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_STV);
 		persistence.persist(gesuchBearbeitungSTV);
 
-		final List<Gesuch> pendenzenSTV = gesuchService.getPendenzenForSteueramtUser();
+		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
+		filterDTO.getSort().setPredicate("fallNummer");
+		filterDTO.getSort().setReverse(true);
+
+		loginAsSteueramt();
+		final Pair<Long, List<Gesuch>> pendenzenSTV = gesuchService.searchAntraege(filterDTO);
+
 		Assert.assertNotNull(pendenzenSTV);
-		Assert.assertEquals(2, pendenzenSTV.size());
-		for (Gesuch pendenz : pendenzenSTV) {
+		Assert.assertEquals(2, pendenzenSTV.getKey().intValue());
+		for (Gesuch pendenz : pendenzenSTV.getValue()) {
 			Assert.assertTrue(pendenz.getStatus().equals(AntragStatus.IN_BEARBEITUNG_STV)
 				|| pendenz.getStatus().equals(AntragStatus.PRUEFUNG_STV));
 		}

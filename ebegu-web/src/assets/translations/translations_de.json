@@ -959,5 +959,8 @@
     "ARIA_REMOVE_ERWERBSPENSUM" : "Das Erwerbspensum dieser Zeile entfernen",
     "ARIA_ADD_ERWERBSPENSUM" : "Ein neues Erwerbspensum erfassen",
     "ARIA_KONTAKT_MENU" : "Kontakt des Jugendamtes",
-    "BEMERKUNGEN_DIALOG": "Bemerkungen"
+    "BEMERKUNGEN_DIALOG": "Bemerkungen",
+    "FREIGABE_JA": "FREIGABE JUGENDAMT",
+    "FREIGABE_JA_BESCHREIBUNG": "Möchten Sie wirklich die Bearbeitung beenden und das Gesuch fürs Jugendamt freigeben?",
+    "BEMERKUNGEN_STV_JA": "Bemerkungen vom Jugendamt"
 }

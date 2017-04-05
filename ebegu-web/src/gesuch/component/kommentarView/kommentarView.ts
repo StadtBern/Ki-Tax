@@ -23,9 +23,12 @@ import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {IStateService} from 'angular-ui-router';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
+let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 
 export class KommentarViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -43,12 +46,13 @@ export class KommentarViewController {
     TSRoleUtil: any;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
-        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window'];
+        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', '$state'];
     /* @ngInject */
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
                 private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
                 private uploadRS: UploadRS, private wizardStepManager: WizardStepManager, private globalCacheService: GlobalCacheService,
-                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService) {
+                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService,
+                private $state: IStateService) {
 
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
@@ -192,6 +196,18 @@ export class KommentarViewController {
 
     public isInBearbeitungSTV(): boolean {
         return this.gesuchModelManager.getGesuch().status === TSAntragStatus.IN_BEARBEITUNG_STV;
+    }
+
+    public freigebenSTV(): void {
+        this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'FREIGABE_JA',
+            deleteText: 'FREIGABE_JA_BESCHREIBUNG'
+        }).then(() => {
+            return this.gesuchRS.gesuchBySTVFreigeben(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                this.$state.go('pendenzenSteueramt');
+            });
+        });
     }
 
 }

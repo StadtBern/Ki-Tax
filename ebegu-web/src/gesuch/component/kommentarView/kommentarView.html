@@ -1,5 +1,5 @@
 <div class="kommentarView">
-    <form role="form" name="vm.form" class="" novalidate layout="column">
+    <form role="form" name="form" class="" novalidate layout="column">
         <!--bemerkungen intern-->
         <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()">
             <div class="kommentarTop">
@@ -13,6 +13,16 @@
             </div>
         </div>
 
+        <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
+            <div>
+                <dv-input-container class="form-group kommentar-feld">
+                    <label class="md-no-float" for="kommentarSTV_JA" data-translate="BEMERKUNGEN_STV_JA"></label>
+                    <textarea md-no-autogrow class="form-control" rows="4" id="kommentarSTV_JA"
+                              ng-model="vm.getGesuch().bemerkungenSTV" maxlength="1000"
+                              ng-disabled="true"></textarea>
+                </dv-input-container>
+            </div>
+        </div>
         <div>
             <div>
                 <dv-input-container class="form-group kommentar-feld">
@@ -22,9 +32,18 @@
                               ng-model="vm.getGesuch().bemerkungenPruefungSTV" maxlength="1000"
                               dv-enable-element
                               dv-enable-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()"
-                              dv-enable-expression="vm.isInBearbeitungSTV()">
-                        </textarea>
+                              dv-enable-expression="vm.isInBearbeitungSTV()"></textarea>
                 </dv-input-container>
+            </div>
+        </div>
+
+        <div layout="row" layout-align="center"
+             dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
+            <div>
+                <dv-loading-button button-click="vm.freigebenSTV()" button-class="centered-btn" type="reset"
+                                   aria-label="{{'FREIGABE_JA' | translate}}">
+                    <span data-translate="FREIGABE_JA"></span>
+                </dv-loading-button>
             </div>
         </div>
 

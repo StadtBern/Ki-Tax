@@ -101,12 +101,6 @@ public interface GesuchService {
 	List<Gesuch> getAntraegeByCurrentBenutzer();
 
 	/**
-	 * Gibt alle Antraege zurueck, die eine Pendenz fuer das Steueramt sind
-	 */
-	@Nonnull
-	List<Gesuch> getPendenzenForSteueramtUser();
-
-	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
 	 *
 	 * @param antragSearch

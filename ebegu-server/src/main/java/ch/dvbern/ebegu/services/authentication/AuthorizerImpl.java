@@ -184,7 +184,8 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		//Wir pruefen steueramt separat (steueramt darf nur das Gesuch speichern wenn es im Status PRUEFUNG_STV oder IN_BEARBEITUNG_STV ist)
 		boolean allowedSteueramt = false;
 		if (!allowedJAORGS && ! allowedSchulamt && principalBean.isCallerInRole(STEUERAMT)
-			&& (AntragStatus.PRUEFUNG_STV.equals(gesuch.getStatus()) || AntragStatus.IN_BEARBEITUNG_STV.equals(gesuch.getStatus()))) {
+			&& (AntragStatus.PRUEFUNG_STV.equals(gesuch.getStatus()) || AntragStatus.IN_BEARBEITUNG_STV.equals(gesuch.getStatus())
+			|| AntragStatus.GEPRUEFT_STV.equals(gesuch.getStatus()))) {
 			allowedSteueramt = true;
 		}
 

@@ -115,7 +115,8 @@ public enum AntragStatus {
 		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN,
-		BESCHWERDE_HAENGIG);
+		BESCHWERDE_HAENGIG,
+		GEPRUEFT_STV);
 
 	public static final Set<AntragStatus> FOR_KIND_DUBLETTEN = EnumSet.of(
 		NUR_SCHULAMT,
@@ -213,9 +214,9 @@ public enum AntragStatus {
 	}
 
 	/**
-	 * Steueramt darf nur die Status lesen die fuer es gemeint sind
+	 * Steueramt darf nur die Status lesen die fuer es gemeint sind und auch den Status GEPRUEFT_STV
 	 */
 	public boolean isReadableBySteueramt() {
-		return forSteueramt.contains(this);
+		return forSteueramt.contains(this) || this.equals(GEPRUEFT_STV);
 	}
 }
