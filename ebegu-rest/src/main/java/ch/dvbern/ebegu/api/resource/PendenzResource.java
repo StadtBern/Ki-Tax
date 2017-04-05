@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -35,6 +36,9 @@ public class PendenzResource {
 	@Inject
 	private BetreuungService betreuungService;
 
+	@Inject
+	private PrincipalBean principalBean;
+
 
 	/**
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck. Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
@@ -48,7 +52,7 @@ public class PendenzResource {
 
 		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
 		gesucheList.stream().filter(gesuch -> gesuch.getFall() != null)
-			.forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch)));
+			.forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole())));
 		return pendenzenList;
 	}
 
@@ -104,7 +108,7 @@ public class PendenzResource {
 	@Nonnull
 	private List<JaxAntragDTO> convertToAntragDTOList(List<Gesuch> antraege) {
 		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
-		antraege.forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch)));
+		antraege.forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch, principalBean.discoverMostPrivilegedRole())));
 		return pendenzenList;
 	}
 }

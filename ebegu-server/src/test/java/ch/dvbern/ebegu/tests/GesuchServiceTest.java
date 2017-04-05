@@ -586,6 +586,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Gesuch gesuchSTV = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.PRUEFUNG_STV);
 		persistence.persist(gesuchSTV);
 
+		//todo imanol remove this because STV doesn't see this. This is a pendenz for JA
 		Gesuch gesuchGeprueftSTV = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.GEPRUEFT_STV);
 		persistence.persist(gesuchGeprueftSTV);
 
