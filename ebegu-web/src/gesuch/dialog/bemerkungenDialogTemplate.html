@@ -1,0 +1,28 @@
+<md-dialog md-theme="default" aria-label="bestätigen" ng-class="vm.css" class="md-default-theme md-transition-in"
+           role="dialog" tabindex="-1" aria-describedby="dialogContent">
+
+    <md-dialog-content class="md-dialog-content" role="document" tabindex="-1" id="dialogContent">
+        <h2 class="md-title ng-binding"  ng-bind="vm.title"></h2>
+
+        <form role="form" name="vm.form" class="" novalidate layout="column">
+            <dv-input-container class="form-group kommentar-feld">
+                <label class="md-no-float" for="kommentarDialog" data-translate="BEMERKUNGEN_DIALOG"></label>
+                <textarea md-no-autogrow class="form-control" rows="4" id="kommentarDialog"
+                          ng-model="vm.bemerkungen" maxlength="1000">
+                        </textarea>
+            </dv-input-container>
+        </form>
+    </md-dialog-content>
+
+    <md-dialog-actions layout-align="center center">
+        <button class="ng-scope md-default-theme " type="button"
+                ng-click="vm.cancel()" aria-label="{{'LABEL_NEIN' | translate}}" style="">
+            <span class="ng-binding ng-scope" data-translate="LABEL_NEIN"></span>
+        </button>
+        <button class="md-default-theme " type="button"
+                ng-click="vm.hide()" md-autofocus="dialog.$type==='alert'" aria-label="{{'LABEL_JA' | translate}}">
+            <span class="ng-binding ng-scope" data-translate="LABEL_JA"></span>
+        </button>
+    </md-dialog-actions>
+
+</md-dialog>

@@ -606,6 +606,7 @@ export default class EbeguRestUtil {
         restGesuch.gesuchsteller2 = this.gesuchstellerContainerToRestObject({}, gesuch.gesuchsteller2);
         restGesuch.familiensituationContainer = this.familiensituationContainerToRestObject({}, gesuch.familiensituationContainer);
         restGesuch.bemerkungen = gesuch.bemerkungen;
+        restGesuch.bemerkungenSTV = gesuch.bemerkungenSTV;
         restGesuch.laufnummer = gesuch.laufnummer;
         restGesuch.hasFSDokument = gesuch.hasFSDokument;
         restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
@@ -624,6 +625,7 @@ export default class EbeguRestUtil {
             gesuchTS.familiensituationContainer = this.parseFamiliensituationContainer(new TSFamiliensituationContainer(), gesuchFromServer.familiensituationContainer);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
+            gesuchTS.bemerkungenSTV = gesuchFromServer.bemerkungenSTV;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;
             gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
             gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
