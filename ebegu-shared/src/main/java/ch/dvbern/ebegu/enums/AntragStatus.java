@@ -217,6 +217,7 @@ public enum AntragStatus {
 	 * Steueramt darf nur die Status lesen die fuer es gemeint sind und auch den Status GEPRUEFT_STV
 	 */
 	public boolean isReadableBySteueramt() {
+		// GEPRUEFT_STV ist dabei, weil es beim Freigeben schon in diesem Status ist
 		return forSteueramt.contains(this) || this.equals(GEPRUEFT_STV);
 	}
 }

@@ -44,7 +44,7 @@ public class UpdateStatusInterceptor {
 
 	@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 	@AroundInvoke
-	public Object maybeChangeGesuchstatusToInBearbeitungJA(InvocationContext ctx) throws Exception {
+	public Object maybeChangeGesuchstatusToInBearbeitung(InvocationContext ctx) throws Exception {
 
 		if (ctx.getParameters() != null && ctx.getParameters().length != 0) {
 			String gesuchID = ctx.getParameters()[0] instanceof String ? (String) ctx.getParameters()[0] : null;

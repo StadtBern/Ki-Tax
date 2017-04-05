@@ -486,7 +486,6 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		} catch(EJBAccessException e) {
 			// nop
 		}
-
 	}
 
 	@Test
