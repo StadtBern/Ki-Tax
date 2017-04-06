@@ -42,4 +42,9 @@ public interface AntragStatusHistoryService {
 
 	@Nonnull
 	Collection<AntragStatusHistory> findAllAntragStatusHistoryByGPFall(@Nonnull Gesuchsperiode gesuchsperiode, Fall fall);
+
+	/**
+	 * Prueft dass die letzte Statusaenderung auf BESCHWERDE_HAENGIG war und dann gibt die vorletzte Statusaenderung zurueck.
+	 */
+	AntragStatusHistory findLastStatusChangeBeforeBeschwerde(Gesuch gesuch);
 }

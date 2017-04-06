@@ -9,7 +9,10 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {
+    TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt,
+    isAnyStatusOfVerfuegtButSchulamt
+} from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
@@ -438,8 +441,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public showBeschwerdeHaengig(): boolean {
         let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-        //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt keine Beschwerden erstellen darf
-        return TSAntragStatus.VERFUEGT === status && !this.getGesuch().gesperrtWegenBeschwerde;
+        // Schulamt Status duerfen keine Beschwerde starten
+        return isAnyStatusOfVerfuegtButSchulamt(status) && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public showBeschwerdeAbschliessen(): boolean {
