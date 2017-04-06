@@ -76,7 +76,7 @@ describe('mitteilungenView', function () {
 
             createMitteilungForUser(sachbearbeiter_ja);
 
-            compareCommonAttributes(sachbearbeiter_ja);
+            compareCommonAttributes(sachbearbeiter_ja); // TODO (hefr) hier
             expect(controller.getCurrentMitteilung().empfaenger).toBe(besitzer);
             expect(controller.getCurrentMitteilung().empfaengerTyp).toBe(TSMitteilungTeilnehmerTyp.GESUCHSTELLER);
             expect(controller.getCurrentMitteilung().senderTyp).toBe(TSMitteilungTeilnehmerTyp.JUGENDAMT);

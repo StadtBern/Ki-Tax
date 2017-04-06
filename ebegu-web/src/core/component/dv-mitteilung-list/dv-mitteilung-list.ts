@@ -112,8 +112,9 @@ export class DVMitteilungListController {
         // Wenn der Fall keinen Besitzer hat, darf auch keine Nachricht geschrieben werden
         // Ausser wir sind Institutionsbenutzer
         let isGesuchsteller: boolean = this.authServiceRS.isRole(TSRole.GESUCHSTELLER);
+        let isJugendamtAndFallHasBesitzer: boolean = this.fall.besitzer && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
         let isInstitutionsUser: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
-        if (isGesuchsteller || isInstitutionsUser) {
+        if (isGesuchsteller || isJugendamtAndFallHasBesitzer || isInstitutionsUser) {
             if (this.betreuung) {
                 this.mitteilungRS.getEntwurfForCurrentRolleForBetreuung(this.betreuung.id).then((entwurf: TSMitteilung) => {
                     if (entwurf) {
