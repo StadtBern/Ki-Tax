@@ -17,15 +17,15 @@ export class DvPosteingangComponentConfig implements IComponentOptions {
 export class DvPosteingangController {
 
     amountMitteilungen: number = 0;
+    reloadAmountMitteilungenInterval: number;
 
     static $inject: any[] = ['MitteilungRS', '$rootScope', 'AuthServiceRS'];
 
     constructor(private mitteilungRS: MitteilungRS, private $rootScope: IRootScopeService, private authServiceRS: AuthServiceRS) {
         this.getAmountNewMitteilungen();
 
-        // todo team Dies muss nach jedem LOGOUT entfernt werden
         // call every 5 minutes (5*60*1000)
-        setInterval(() => this.getAmountNewMitteilungen(), 300000);
+        this.reloadAmountMitteilungenInterval = setInterval(() => this.getAmountNewMitteilungen(), 300000);
 
         this.$rootScope.$on('POSTEINGANG_MAY_CHANGED', (event: any) => {
             this.getAmountNewMitteilungen();
@@ -35,6 +35,11 @@ export class DvPosteingangController {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles())) {
                 this.getAmountNewMitteilungen();
             }
+        });
+
+        // Das Interval muss nach jedem LOGOUT entfernt werden, um zu vermeiden dass es bei Benutzern auftritt die keinen Mitteilungen haben
+        this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
+            clearInterval(this.reloadAmountMitteilungenInterval);
         });
     }
 

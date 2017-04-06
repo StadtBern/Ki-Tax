@@ -2,6 +2,183 @@
 @import '../style/mixins.less';
 @import '../style/organisms/sidenav.less';
 
+#ewk {
+    display: flex;
+    color: @contrast-darkest;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    z-index: @z-index-sidenav;
+    width: 57rem;
+    min-width: 55rem;
+    max-width: 100%;
+    background: @contrast-lightest;
+    top: (@navbar-height*2) + 4rem;
+    padding:2rem;
+}
+.ewk-content{
+    padding:0;
+    overflow:unset;
+}
+.ewk-button {
+    padding:2rem;
+}
+dv-accordion.ewk > ng-transclude > dv-accordion-tab {
+    &.is-chosen {
+        & > .dv-accordion-tab-title {
+            color: @success;
+            &:after {
+                font-family: FontAwesome;
+                content: "\f00c";
+                float: right;
+            }
+            &.tab-open, &:hover {
+                background: @success-light;
+                color: @success-dark;
+            }
+        }
+    }
+
+    & > .dv-accordion-tab-title {
+        padding: 1rem;
+        color: @contrast-darkest;
+        background: @contrast-lightest;
+        border-top: 1px solid @contrast-darkest;
+
+
+        &.tab-open, &:hover {
+            background: @contrast-light;
+            color: @contrast-darkest;
+
+        }
+    }
+    & > .dv-accordion-tab-content {
+        overflow: hidden;
+        opacity: 1;
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 500rem;
+        background: @contrast-light;
+        padding: 0 2rem 0;
+        & > tab-body > * {
+            margin: 0;
+            .ewk-label {
+                .ebeguBold();
+                -webkit-touch-callout: none; /* iOS Safari */
+                -webkit-user-select: none; /* Safari*/
+                -khtml-user-select: none; /* Konqueror */
+                -moz-user-select: none; /* Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none;
+                &:after {
+                    content: " : "
+                }
+            }
+
+        }
+        &.ng-hide-add {
+            max-height: 500rem;
+            transition: all 1s ease;
+        }
+        &.ng-hide-add.ng-hide-add-active {
+            max-height: 0;
+        }
+        &.ng-hide-remove {
+            transition: all 1s ease;
+            max-height: 0;
+        }
+        &.ng-hide-remove.ng-hide-remove-active {
+            max-height: 500rem;
+        }
+    }
+}
+
+dv-accordion.ewksubsub,
+dv-accordion.ewksub {
+    .dv-accordion-tab-title {
+        color: @contrast-darkest;
+        background: transparent;
+        width: auto;
+        padding-left: 2rem;
+        margin-left: -2rem;
+        margin-right: -2rem;
+        .ebeguBold();
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari*/
+        -khtml-user-select: none; /* Konqueror */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+        transition: none;
+        &:before {
+            font-family: FontAwesome;
+            content: "\f0fe";
+        }
+        &.tab-open {
+            color: @contrast-darkest;
+            background: @contrast-light;
+            &:before {
+                font-family: FontAwesome;
+                content: "\f146";
+            }
+        }
+    }
+    .dv-accordion-tab-content {
+        overflow: hidden;
+        opacity: 1;
+        display: block;
+        width: auto;
+        height: auto;
+        max-height: 50rem;
+        background: @contrast-light;
+        padding-left: 4rem;
+        margin-left: -2rem;
+        margin-right: -2rem;
+        & > tab-body > * {
+            margin: 0;
+            .ewk-label {
+                .ebeguBold();
+                &:after {
+                    content: " : "
+                }
+            }
+
+        }
+        &.ng-hide-add {
+            max-height: 50rem;
+            transition: all 1s ease;
+        }
+        &.ng-hide-add.ng-hide-add-active {
+            max-height: 0;
+        }
+        &.ng-hide-remove {
+            transition: all 1s ease;
+            max-height: 0;
+        }
+        &.ng-hide-remove.ng-hide-remove-active {
+            max-height: 50rem;
+        }
+    }
+
+}
+
+dv-accordion.ewksubsub {
+    .dv-accordion-tab-content {
+        padding-left: 6rem;
+        margin-left: -4rem;
+        margin-right: 0;
+    }
+    .dv-accordion-tab-title {
+        color: @contrast-darkest;
+        background: transparent;
+        width: auto;
+        padding-left: 4rem;
+        margin-left: -4rem;
+        margin-right: 0;
+    }
+}
+
 .mainTitle {
     margin-top: 0;
 }
@@ -175,10 +352,10 @@
     }
     & > div {
         height: 1px;
-        min-height:100%;
+        min-height: 100%;
         & > * {
             height: 1px;
-            min-height:100%;
+            min-height: 100%;
             .gesuchModul {
                 min-height: 100%;
                 & div {
@@ -216,9 +393,11 @@
         position: static;
     }
 }
-.betreuung-table-header{
-   width: 40rem;
+
+.betreuung-table-header {
+    width: 40rem;
 }
+
 .betreuung-status {
     position: relative !important;
     div {
@@ -243,7 +422,7 @@
         left: 0;
     }
     &.verfuegenView.NICHT_EINGETRETEN {
-        border-bottom:1px solid @contrast-darkest;
+        border-bottom: 1px solid @contrast-darkest;
     }
     &.BESTAETIGT .betreuung-bar {
         border-color: @success;
