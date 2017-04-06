@@ -258,7 +258,7 @@
                     data-translate="EWK_ANZAHL_ERGEBNISSE"
                     data-translate-value-resultate="{{vm.getEWKResultat(n).anzahlResultate}}"></h3>
                 <h3 ng-if="vm.getEWKResultat(n).isTooManyResults()"
-                    class="alert alert-danger"
+                    class="well well-status-abgewiesen"
                     data-translate="EWK_TOO_MANY"
                     data-translate-value-n="{{vm.getEWKResultat(n).maxResultate}}"
                     data-translate-value-i="{{vm.getEWKResultat(n).anzahlResultate}}" ></h3>
