@@ -13,6 +13,52 @@
             </div>
         </div>
 
+        <div class="kommentarEwk" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                    dv-show-expression="!vm.gesuchModelManager.isGesuchReadonly()">
+            <div ng-if="vm.getGesuchsteller1()">
+                <!-- Gesuchsteller 1 -->
+                <label class="md-no-float" ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller1())"></label>
+                <!-- Suche starten -->
+                <dv-loading-button type="submit" button-click="vm.searchGesuchsteller1()"
+                                   class="kommentar-button" aria-label="{{'EWK_ABFRAGE_STARTEN' | translate}}">
+                    <span data-translate="EWK_ABFRAGE_STARTEN"></span>
+                </dv-loading-button>
+                <!-- Anzahl Resultate -->
+                <label ng-if="vm.gesuchModelManager.ewkResultatGS1"
+                        data-translate="EWK_ANZAHL_ERGEBNISSE"
+                        data-translate-value-resultate="{{vm.gesuchModelManager.ewkResultatGS1.anzahlResultate}}"></label>
+                <!-- Resultat-Liste -->
+                <md-radio-group ng-model="vm.gesuchModelManager.ewkPersonGS1">
+                <div class="md-no-float" ng-repeat="person in vm.gesuchModelManager.ewkResultatGS1.personen">
+                    <label ng-bind="person.getShortDescription()" ng-click="vm.showDetail(person)"></label>
+                    <md-radio-button ng-value="person"  ng-click="vm.selectPersonGS1(person)"
+                                     aria-label="person.getShortDescription()" ng-if="vm.gesuchModelManager.ewkResultatGS1.anzahlResultate > 1"></md-radio-button>
+                </div>
+                </md-radio-group>
+            </div>
+            <div ng-if="vm.getGesuchsteller2()">
+                <!-- Gesuchsteller 2 -->
+                <label class="md-no-float" ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller2())"></label>
+                <!-- Suche starten -->
+                <dv-loading-button type="submit" button-click="vm.searchGesuchsteller2()"
+                                   class="kommentar-button" aria-label="{{'EWK_ABFRAGE_STARTEN' | translate}}">
+                    <span data-translate="EWK_ABFRAGE_STARTEN"></span>
+                </dv-loading-button>
+                <!-- Anzahl Resultate -->
+                <label ng-if="vm.gesuchModelManager.ewkResultatGS2"
+                       data-translate="EWK_ANZAHL_ERGEBNISSE"
+                       data-translate-value-resultate="{{vm.gesuchModelManager.ewkResultatGS2.anzahlResultate}}"></label>
+                <!-- Resultat-Liste -->
+                <md-radio-group ng-model="vm.gesuchModelManager.ewkPersonGS2">
+                    <div class="md-no-float" ng-repeat="person in vm.gesuchModelManager.ewkResultatGS2.personen">
+                        <label ng-bind="person.getShortDescription()" ng-click="vm.showDetail(person)"></label>
+                        <md-radio-button ng-value="person"  ng-click="vm.selectPersonGS2(person)"
+                                         aria-label="person.getShortDescription()" ng-if="vm.gesuchModelManager.ewkResultatGS2.anzahlResultate > 1"></md-radio-button>
+                    </div>
+                </md-radio-group>
+            </div>
+        </div>
+
         <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
             <div>
                 <dv-input-container class="form-group kommentar-feld">

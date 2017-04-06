@@ -27,7 +27,7 @@ public interface PersonenSucheService {
 	 * dem Gesuchsteller
 	 */
 	@Nonnull
-	Gesuchsteller selectPerson(@Nonnull Gesuchsteller gesuchsteller, @Nonnull EWKPerson ewkPerson);
+	Gesuchsteller selectPerson(@Nonnull Gesuchsteller gesuchsteller, @Nonnull String ewkPersonID);
 
 	/**
 	 * Sucht eine Person im EWK, anhand eindeutiger PersonenID
