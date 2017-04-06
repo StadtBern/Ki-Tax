@@ -19,6 +19,8 @@ import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
 import ListResourceRS from '../../../core/service/listResourceRS.rest';
 import TSLand from '../../../models/types/TSLand';
+import AbstractAdminViewController from '../../abstractAdminView';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -37,7 +39,7 @@ export class InstitutionViewComponentConfig implements IComponentOptions {
     controllerAs: string = 'vm';
 }
 
-export class InstitutionViewController {
+export class InstitutionViewController extends AbstractAdminViewController {
 
     institutionRS: InstitutionRS;
     institutionStammdatenRS: InstitutionStammdatenRS;
@@ -55,10 +57,11 @@ export class InstitutionViewController {
     laenderList: TSLand[];
 
 
-    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog', 'ListResourceRS'];
+    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog', 'ListResourceRS', 'AuthServiceRS'];
     /* @ngInject */
     constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS,
-                private errorService: ErrorService, private dvDialog: DvDialog, listResourceRS: ListResourceRS) {
+                private errorService: ErrorService, private dvDialog: DvDialog, listResourceRS: ListResourceRS, authServiceRS: AuthServiceRS) {
+        super(authServiceRS);
         this.institutionRS = institutionRS;
         this.ebeguUtil = ebeguUtil;
         this.institutionStammdatenRS = institutionStammdatenRS;

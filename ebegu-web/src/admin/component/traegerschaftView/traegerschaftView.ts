@@ -9,6 +9,8 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import AbstractAdminViewController from '../../abstractAdminView';
 let template = require('./traegerschaftView.html');
 let style = require('./traegerschaftView.less');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
@@ -24,15 +26,16 @@ export class TraegerschaftViewComponentConfig implements IComponentOptions {
     controllerAs: string = 'vm';
 }
 
-export class TraegerschaftViewController {
+export class TraegerschaftViewController extends AbstractAdminViewController {
 
     traegerschaftRS: TraegerschaftRS;
     traegerschaften: TSTraegerschaft[];
     newTraegerschaft: TSTraegerschaft = null;
 
-    static $inject = ['TraegerschaftRS', 'ErrorService', 'DvDialog'];
+    static $inject = ['TraegerschaftRS', 'ErrorService', 'DvDialog', 'AuthServiceRS'];
     /* @ngInject */
-    constructor(TraegerschaftRS: TraegerschaftRS, private errorService: ErrorService, private dvDialog: DvDialog) {
+    constructor(TraegerschaftRS: TraegerschaftRS, private errorService: ErrorService, private dvDialog: DvDialog, authServiceRS: AuthServiceRS) {
+        super(authServiceRS);
         this.traegerschaftRS = TraegerschaftRS;
     }
 

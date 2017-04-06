@@ -6,7 +6,7 @@
             </div>
 
             <form role="form" name="form" class="" unsaved-warning-form novalidate>
-
+                <fieldset ng-disabled="vm.isReadonly()">
 
                 <!--Tabelle zum anzeigen aller Institutionen-->
                 <div class="row">
@@ -33,7 +33,7 @@
 
                                 <td ng-click="$event.stopPropagation()">
                                     <dv-loading-button type="button" button-click="vm.removeInstitution(row)"
-                                                       button-class="dv-btn-sm">
+                                                       button-class="dv-btn-sm" button-disabled="vm.isReadonly()">
                                         <i class="fa fa-minus">
                                         </i>
                                     </dv-loading-button>
@@ -48,7 +48,7 @@
                 </div>
 
                 <!--Knöpfe unterhalb der Tabelle zum anzeigen aller Institutionen-->
-                <div class="row">
+                <div class="row" ng-if="!vm.isReadonly()">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-6">
@@ -156,7 +156,7 @@
                                             <td ng-click="$event.stopPropagation()">
                                                 <dv-loading-button type="button"
                                                                    button-click="vm.removeInstitutionStammdaten(row)"
-                                                                   button-class="dv-btn-sm">
+                                                                   button-class="dv-btn-sm" button-disabled="vm.isReadonly()">
                                                     <i class="fa fa-minus">
                                                     </i>
                                                 </dv-loading-button>
@@ -170,7 +170,7 @@
                                     </table>
 
                                     <!--Knöpfe unterhalb der Tabelle zum Anzeigen aller Institutions-Stammdaten-->
-                                    <div class="row">
+                                    <div class="row" ng-if="!vm.isReadonly()">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <!--Knopf zum hinzufügen einer InstitutionStammdaten zur Institution-->
@@ -412,7 +412,7 @@
 
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" ng-if="!vm.isReadonly()">
                     <div class="col-md-6">
                         <br/>
                         <!--Knopf zum synchronisieren der  Institutionen-->
@@ -423,7 +423,7 @@
                         </dv-loading-button>
                     </div>
                 </div>
-
+                </fieldset>
             </form>
         </div>
     </div>

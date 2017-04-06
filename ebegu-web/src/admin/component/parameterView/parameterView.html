@@ -34,332 +34,337 @@
                 <div class="col-md-12">
                     <form ng-submit="form.$valid && vm.submit()" name="form" role="form" novalidate
                           unsaved-warning-form>
-                        <!-- Gesuchsperiode Detail -->
-                        <div ng-if="vm.gesuchsperiode">
-                            <div class="row">
-                                <div class=" col-md-6 form-group">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <label class="md-no-float" data-translate="GESUCHSPERIODE_GUELTIG_AB"
-                                                   for="gueltigAb_ID"></label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <dv-datepicker input-id="gueltigAb_ID" name="gueltigAb"
-                                                           ng-model="vm.gesuchsperiode.gueltigkeit.gueltigAb"
-                                                           ng-required="true"
-                                                           class="input-element"
-                                                           ng-disabled="!vm.gesuchsperiode.isNew()">
-                                            </dv-datepicker>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8 col-md-offset-4">
-                                            <dv-error-messages for="form.gueltigAb.$error"></dv-error-messages>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <div class="row">
-                                        <div class="col-md-4"><label class="md-no-float"
-                                                                     data-translate="GESUCHSPERIODE_GUELTIG_BIS"
-                                                                     for="gueltigBis_ID"></label></div>
-                                        <div class="col-md-8">
-                                            <dv-datepicker input-id="gueltigBis_ID" name="gueltigBis"
-                                                           ng-model="vm.gesuchsperiode.gueltigkeit.gueltigBis"
-                                                           ng-required="true"
-                                                           class="input-element contrast"
-                                                           ng-disabled="!vm.gesuchsperiode.isNew()">
-                                            </dv-datepicker>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8 col-md-offset-4">
-                                            <dv-error-messages for="form.gueltigBis.$error"></dv-error-messages>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <fieldset ng-disabled="vm.isReadonly()">
 
-                            <div class="row marginTop10">
-                                <div class="col-md-6">
-                                    <div class="checkbox">
-                                        <md-checkbox ng-model="vm.gesuchsperiode.active" id="active"
-                                                     name="active"
-                                                     aria-label="{{'GESUCHSPERIODE_AKTIV' | translate}}"
-                                                     class="">
-                                            <span data-translate="GESUCHSPERIODE_AKTIV"></span>
-                                        </md-checkbox>
-                                        <dv-error-messages for="form.active.$error"></dv-error-messages>
+                            <!-- Gesuchsperiode Detail -->
+                            <div ng-if="vm.gesuchsperiode">
+                                <div class="row">
+                                    <div class=" col-md-6 form-group">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="md-no-float" data-translate="GESUCHSPERIODE_GUELTIG_AB"
+                                                       for="gueltigAb_ID"></label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <dv-datepicker input-id="gueltigAb_ID" name="gueltigAb"
+                                                               ng-model="vm.gesuchsperiode.gueltigkeit.gueltigAb"
+                                                               ng-required="true"
+                                                               class="input-element"
+                                                               ng-disabled="!vm.gesuchsperiode.isNew()">
+                                                </dv-datepicker>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-4">
+                                                <dv-error-messages for="form.gueltigAb.$error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <div class="row">
+                                            <div class="col-md-4"><label class="md-no-float"
+                                                                         data-translate="GESUCHSPERIODE_GUELTIG_BIS"
+                                                                         for="gueltigBis_ID"></label></div>
+                                            <div class="col-md-8">
+                                                <dv-datepicker input-id="gueltigBis_ID" name="gueltigBis"
+                                                               ng-model="vm.gesuchsperiode.gueltigkeit.gueltigBis"
+                                                               ng-required="true"
+                                                               class="input-element contrast"
+                                                               ng-disabled="!vm.gesuchsperiode.isNew()">
+                                                </dv-datepicker>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-4">
+                                                <dv-error-messages for="form.gueltigBis.$error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row marginTop10">
+                                    <div class="col-md-6">
+                                        <div class="checkbox">
+                                            <md-checkbox ng-model="vm.gesuchsperiode.active" id="active"
+                                                         name="active"
+                                                         aria-label="{{'GESUCHSPERIODE_AKTIV' | translate}}"
+                                                         class="" ng-disabled="vm.isReadonly()">
+                                                <span data-translate="GESUCHSPERIODE_AKTIV"></span>
+                                            </md-checkbox>
+                                            <dv-error-messages for="form.active.$error"></dv-error-messages>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Gesuchsperiode Buttons -->
-                        <div class="row">
-                            <div class="col-md-2" ng-if="!vm.gesuchsperiode">
-                                <dv-loading-button type="button" button-click="vm.createGesuchsperiode()"
-                                                   button-class="">
-                                    <i class="glyphicon glyphicon-plus">
-                                    </i> add item
-                                </dv-loading-button>
-                            </div>
-                            <div class="col-md-2" ng-if="vm.gesuchsperiode">
-                                <dv-loading-button type="button" button-click="vm.saveGesuchsperiode()"
-                                                   button-class="color-success">
+                            <!-- Gesuchsperiode Buttons -->
+                            <div class="row" ng-if="!vm.isReadonly()">
+                                <div class="col-md-2" ng-if="!vm.gesuchsperiode">
+                                    <dv-loading-button type="button" button-click="vm.createGesuchsperiode()"
+                                                       button-class="">
+                                        <i class="glyphicon glyphicon-plus">
+                                        </i> add item
+                                    </dv-loading-button>
+                                </div>
+                                <div class="col-md-2" ng-if="vm.gesuchsperiode">
+                                    <dv-loading-button type="button" button-click="vm.saveGesuchsperiode()"
+                                                       button-class="color-success">
                         <span
                             ng-bind="vm.gesuchsperiode.isNew() ? ('SAVE' | translate) : ('UPDATE' | translate)"></span>
-                                </dv-loading-button>
-                            </div>
-                            <div class="col-md-2" ng-if="vm.gesuchsperiode">
-                                <a href="javascript:;" id="cancelLink" class="dv-btn" unsaved-warning-clear
-                                   ng-click="vm.cancelGesuchsperiode(); form.$setPristine();form.$setUntouched();">
-                                    <span data-translate="CANCEL"></span>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- Liste der Parameter der Gesuchsperiode -->
-                        <div ng-if="vm.gesuchsperiode && !vm.gesuchsperiode.isNew()" class="row marginTop20">
-                            <div class="col-md-12">
-                                <div class="row viewTitle">
-                                    <div class="col-md-12">
-                                        <h1>
-                                            <!--<span data-translate="PARAMETER_PRO_GESUCHSPERIODE"-->
-                                            <!--data-translate-value-periodeVon="vm.gesuchsperiode.gueltigkeit.gueltigAb |  amDateFormat : 'DD.MM.YYYY'">-->
-                                            <!--</span>-->
-                                            <span data-translate="PARAMETER_PRO_GESUCHSPERIODE"></span>
-                                            <span
-                                                ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigAb | amDateFormat:'DD.MM.YYYY'"></span>
-                                            <span>bis</span>
-                                            <span
-                                                ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigBis | amDateFormat:'DD.MM.YYYY'"></span>
-                                        </h1>
-                                        <hr class="header"/>
-                                    </div>
+                                    </dv-loading-button>
                                 </div>
-                                <!-- Parameter-Liste (repeater) -->
-                                <div ng-repeat="paramgp in vm.ebeguParameterListGesuchsperiode" class="row">
-                                    <div class="col-md-12 form-group">
-                                        <div class="row">
-                                            <div class="col-md-9">
-                                                <label data-translate="{{paramgp.name}}" class="md-no-float"
-                                                       for="propertyName_{{paramgp.name}}"></label>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <input id="propertyName_{{paramgp.name}}" type="text"
-                                                       name="propertyName_{{paramgp.name}}"
-                                                       ng-model="paramgp.value"
-                                                       dv-max-length class="input-element" required
-                                                       ng-disabled="vm.gesuchsperiode.active">
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3 col-md-offset-9">
-                                                <dv-error-messages for="form['propertyName_' + paramgp.name].$error"
-                                                                   class="error"></dv-error-messages>
-                                            </div>
+                                <div class="col-md-2" ng-if="vm.gesuchsperiode">
+                                    <a href="javascript:;" id="cancelLink" class="dv-btn" unsaved-warning-clear
+                                       ng-click="vm.cancelGesuchsperiode(); form.$setPristine();form.$setUntouched();">
+                                        <span data-translate="CANCEL"></span>
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- Liste der Parameter der Gesuchsperiode -->
+                            <div ng-if="vm.gesuchsperiode && !vm.gesuchsperiode.isNew()" class="row marginTop20">
+                                <div class="col-md-12">
+                                    <div class="row viewTitle">
+                                        <div class="col-md-12">
+                                            <h1>
+                                                <!--<span data-translate="PARAMETER_PRO_GESUCHSPERIODE"-->
+                                                <!--data-translate-value-periodeVon="vm.gesuchsperiode.gueltigkeit.gueltigAb |  amDateFormat : 'DD.MM.YYYY'">-->
+                                                <!--</span>-->
+                                                <span data-translate="PARAMETER_PRO_GESUCHSPERIODE"></span>
+                                                <span
+                                                    ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigAb | amDateFormat:'DD.MM.YYYY'"></span>
+                                                <span>bis</span>
+                                                <span
+                                                    ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigBis | amDateFormat:'DD.MM.YYYY'"></span>
+                                            </h1>
+                                            <hr class="header"/>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- Parameter pro Gesuchsperiode Buttons-->
-                                <div class="row">
-                                    <div class="col-md-12" ng-if="vm.gesuchsperiode">
-                                        <dv-loading-button type="button"
-                                                           button-click="vm.saveParameterByGesuchsperiode()"
-                                                           button-class="color-success">
+                                    <!-- Parameter-Liste (repeater) -->
+                                    <div ng-repeat="paramgp in vm.ebeguParameterListGesuchsperiode" class="row">
+                                        <div class="col-md-12 form-group">
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    <label data-translate="{{paramgp.name}}" class="md-no-float"
+                                                           for="propertyName_{{paramgp.name}}"></label>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input id="propertyName_{{paramgp.name}}" type="text"
+                                                           name="propertyName_{{paramgp.name}}"
+                                                           ng-model="paramgp.value"
+                                                           dv-max-length class="input-element" required
+                                                           ng-disabled="vm.gesuchsperiode.active">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3 col-md-offset-9">
+                                                    <dv-error-messages for="form['propertyName_' + paramgp.name].$error"
+                                                                       class="error"></dv-error-messages>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Parameter pro Gesuchsperiode Buttons-->
+                                    <div class="row" ng-if="!vm.isReadonly()">
+                                        <div class="col-md-12" ng-if="vm.gesuchsperiode">
+                                            <dv-loading-button type="button"
+                                                               button-click="vm.saveParameterByGesuchsperiode()"
+                                                               button-class="color-success">
                                             <span ng-bind="(vm.ebeguParameterListGesuchsperiode && vm.ebeguParameterListGesuchsperiode[0].isNew())
                                                              ? ('SAVE' | translate) : ('UPDATE' | translate)"></span>
-                                        </dv-loading-button>
+                                            </dv-loading-button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row marginTop30">
-                                    <div class="col-md-12">
-                                        <h1 class="mainTitle">
-                                            <!--<span data-translate="PARAMETER_PRO_GESUCHSPERIODE"-->
-                                            <!--data-translate-value-periodeVon="vm.gesuchsperiode.gueltigkeit.gueltigAb |  amDateFormat : 'DD.MM.YYYY'">-->
-                                            <!--</span>-->
-                                            <span data-translate="VORLAGE_PRO_GESUCHSPERIODE"></span>
-                                            <span
-                                                ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigAb | amDateFormat:'DD.MM.YYYY'"></span>
-                                            <span>bis</span>
-                                            <span
-                                                ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigBis | amDateFormat:'DD.MM.YYYY'"></span>
-                                        </h1>
+                                    <div class="row marginTop30">
+                                        <div class="col-md-12">
+                                            <h1 class="mainTitle">
+                                                <!--<span data-translate="PARAMETER_PRO_GESUCHSPERIODE"-->
+                                                <!--data-translate-value-periodeVon="vm.gesuchsperiode.gueltigkeit.gueltigAb |  amDateFormat : 'DD.MM.YYYY'">-->
+                                                <!--</span>-->
+                                                <span data-translate="VORLAGE_PRO_GESUCHSPERIODE"></span>
+                                                <span
+                                                    ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigAb | amDateFormat:'DD.MM.YYYY'"></span>
+                                                <span>bis</span>
+                                                <span
+                                                    ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigBis | amDateFormat:'DD.MM.YYYY'"></span>
+                                            </h1>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <!-- Vorlage-Liste -->
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table st-table="table" st-safe-src="vm.ebeguVorlageListGesuchsperiode"
-                                               class="table table-striped" width="100%">
+                                    <!-- Vorlage-Liste -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table st-table="table" st-safe-src="vm.ebeguVorlageListGesuchsperiode"
+                                                   class="table table-striped" width="100%">
 
-                                            <tbody>
-                                            <tr ng-repeat="row in table">
+                                                <tbody>
+                                                <tr ng-repeat="row in table">
 
-                                                <td ng-click="$event.stopPropagation()" width="50%">
-                                                    <a ng-bind="row.name | translate"
-                                                       ngf-select="vm.uploadAnhaenge($files, row)"
-                                                       ngf-multiple="false"
-                                                       ngf-max-size="'10MB'" ngf-max-total-size="100MB"
-                                                       ngf-drop="vm.uploadAnhaenge($files, row)"
-                                                       ngf-drag-over-class="'dragover'"
-                                                       aria-hidden="true" style="color: black"></a>
-                                                </td>
+                                                    <td ng-click="$event.stopPropagation()" width="50%">
+                                                        <a ng-bind="row.name | translate"
+                                                           ngf-select="vm.uploadAnhaenge($files, row)"
+                                                           ngf-multiple="false"
+                                                           ngf-max-size="'10MB'" ngf-max-total-size="100MB"
+                                                           ngf-drop="vm.uploadAnhaenge($files, row)"
+                                                           ngf-drag-over-class="'dragover'"
+                                                           ng-if="!vm.isReadonly()"
+                                                           aria-hidden="true" style="color: black"></a>
+                                                        <span ng-if="vm.isReadonly()">{{row.name | translate}}</span>
+                                                    </td>
 
-                                                <td ng-bind="row.vorlage.filename" width="22%"></td>
-                                                <td ng-bind="row.vorlage.timestampMutiert | amDateFormat : 'DD.MM.YYYY'"
-                                                    width="10%"></td>
-                                                <td ng-bind="row.vorlage.filesize" width="10%"></td>
-                                                <td width="2%">
+                                                    <td ng-bind="row.vorlage.filename" width="22%"></td>
+                                                    <td ng-bind="row.vorlage.timestampMutiert | amDateFormat : 'DD.MM.YYYY'"
+                                                        width="10%"></td>
+                                                    <td ng-bind="row.vorlage.filesize" width="10%"></td>
+                                                    <td width="2%">
                                 <span ng-click="vm.download(row,true)" class="fa fa-download" aria-hidden="true"
                                       style="color: black" ng-if="vm.hasVorlage(row)"></span>
-                                                    <span class="fa fa-download" aria-hidden="true"
-                                                          style="color: lightgray"
-                                                          ng-if="!vm.hasVorlage(row)"></span>
-                                                </td>
-                                                <td width="2%">
+                                                        <span class="fa fa-download" aria-hidden="true"
+                                                              style="color: lightgray"
+                                                              ng-if="!vm.hasVorlage(row)"></span>
+                                                    </td>
+                                                    <td width="2%">
                                 <span ng-click="vm.download(row,false)" class="fa fa-eye" aria-hidden="true"
                                       style="color: black" ng-if="vm.hasVorlage(row)"></span>
-                                                    <span class="fa fa-eye" aria-hidden="true" style="color: lightgray"
-                                                          ng-if="!vm.hasVorlage(row)"></span>
-                                                </td>
-                                                <td width="2%">
+                                                        <span class="fa fa-eye" aria-hidden="true" style="color: lightgray"
+                                                              ng-if="!vm.hasVorlage(row)"></span>
+                                                    </td>
+                                                    <td width="2%">
                                 <span ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
                                       style="color: black" ng-if="vm.hasVorlage(row)"></span>
-                                                    <span class="fa fa-trash" aria-hidden="true"
-                                                          style="color: lightgray"
-                                                          ng-if="!vm.hasVorlage(row)"></span>
-                                                </td>
+                                                        <span class="fa fa-trash" aria-hidden="true"
+                                                              style="color: lightgray"
+                                                              ng-if="!vm.hasVorlage(row)"></span>
+                                                    </td>
 
-                                                <td width="2%">
-                                                    <i ng-if="!vm.hasVorlage(row)" class="fa fa-circle"
-                                                       aria-hidden="true"
-                                                       style="color: red"></i>
-                                                    <i ng-if="vm.hasVorlage(row)" class="fa fa-check" aria-hidden="true"
-                                                       style="color: green"></i>
-                                                </td>
-                                            </tbody>
-                                        </table>
+                                                    <td width="2%">
+                                                        <i ng-if="!vm.hasVorlage(row)" class="fa fa-circle"
+                                                           aria-hidden="true"
+                                                           style="color: red"></i>
+                                                        <i ng-if="vm.hasVorlage(row)" class="fa fa-check" aria-hidden="true"
+                                                           style="color: green"></i>
+                                                    </td>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Parameter pro Jahr -->
-                        <div class="row marginTop40">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-md-12 form-group">
-                                        <h1>
-                                            <span data-translate="PARAMETER_PRO_JAHR"></span>
-                                        </h1>
+                            <!-- Parameter pro Jahr -->
+                            <div class="row marginTop40">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12 form-group">
+                                            <h1>
+                                                <span data-translate="PARAMETER_PRO_JAHR"></span>
+                                            </h1>
+                                        </div>
                                     </div>
-                                </div>
 
 
-                                <!-- Gesuchsperioden Tabelle fuer Jahresparameter -->
-                                <div class="row">
-                                    <div class="col-md-12 table-responsive">
-                                        <table st-table="dispCollection" st-safe-src="vm.ebeguJahresabhParameter"
-                                               st-delay="20"
-                                               class="table table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th data-translate="GESUCHSPERIODE_GUELTIG_AB"></th>
-                                                <th data-translate="GESUCHSPERIODE_GUELTIG_BIS"></th>
-                                                <th data-translate="Name"></th>
-                                                <th data-translate="Wert"></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr ng-repeat="row in dispCollection" st-select-row="row"
-                                                st-select-mode="single"
-                                                ng-click="vm.jahresabhParamSelected(row)">
-                                                <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
-                                                <td ng-bind="row.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
-                                                <td ng-bind="row.name | translate"></td>
-                                                <td ng-bind="row.value"></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                                    <!-- Gesuchsperioden Tabelle fuer Jahresparameter -->
+                                    <div class="row">
+                                        <div class="col-md-12 table-responsive">
+                                            <table st-table="dispCollection" st-safe-src="vm.ebeguJahresabhParameter"
+                                                   st-delay="20"
+                                                   class="table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th data-translate="GESUCHSPERIODE_GUELTIG_AB"></th>
+                                                    <th data-translate="GESUCHSPERIODE_GUELTIG_BIS"></th>
+                                                    <th data-translate="Name"></th>
+                                                    <th data-translate="Wert"></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr ng-repeat="row in dispCollection" st-select-row="row"
+                                                    st-select-mode="single"
+                                                    ng-click="vm.jahresabhParamSelected(row)">
+                                                    <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
+                                                    <td ng-bind="row.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
+                                                    <td ng-bind="row.name | translate"></td>
+                                                    <td ng-bind="row.value"></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <!-- Auswahl Jahr -->
-                                <div ng-if="vm.jahr">
-                                <div class="row marginTop10">
-                                    <div class="col-md-12 form-group">
+                                    <!-- Auswahl Jahr -->
+                                    <div ng-if="vm.jahr && !vm.isReadonly()">
+                                        <div class="row marginTop10">
+                                            <div class="col-md-12 form-group">
 
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label class="md-no-float" data-translate="PARAMETER_JAHR"
-                                                       for="jahr"></label>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label class="md-no-float" data-translate="PARAMETER_JAHR"
+                                                               for="jahr"></label>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <input id="jahr" type="text" name="jahr" ng-disabled="true" ng-model="vm.jahr"
+                                                               class="input-element"
+                                                               required
+                                                               ng-change="vm.jahrChanged()">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <!-- Parameter Liste -->
+                                        <div class="row marginTop10" ng-repeat="param in vm.ebeguParameterListJahr">
+                                            <div class="col-md-12 form-group">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label data-translate="{{param.name}}" class="md-no-float"
+                                                               for="propertyName_{{param.key}}"></label>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <input id="propertyName_{{param.key}}" type="text"
+                                                               name="propertyName_{{param.key}}"
+                                                               ng-model="param.value"
+                                                               dv-max-length class="input-element" required
+                                                               ng-disabled="vm.param.timestampErstellt">
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <dv-datepicker class="input-element"
+                                                                       ng-model="param.gueltigkeit.gueltigAb"
+                                                                       ng-disabled="true"></dv-datepicker>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <dv-datepicker class="input-element"
+                                                                       ng-model="param.gueltigkeit.gueltigBis"
+                                                                       ng-disabled="true"></dv-datepicker>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-offset-4 col-md-2">
+                                                        <dv-error-messages for="form.propertyName_param.key.$error"
+                                                                           class="error"></dv-error-messages>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Buttons Parameter pro Jahr -->
+                                        <div class="row" ng-if="vm.jahr">
+                                            <div class="col-md-2">
+                                                <dv-loading-button type="button" button-click="vm.saveParameterByJahr()"
+                                                                   button-class="">
+                                                    <span data-translate="SAVE"></span>
+                                                </dv-loading-button>
                                             </div>
                                             <div class="col-md-2">
-                                                <input id="jahr" type="text" name="jahr" ng-disabled="true" ng-model="vm.jahr"
-                                                       class="input-element"
-                                                       required
-                                                       ng-change="vm.jahrChanged()">
+                                                <a href="javascript:;" id="cancelJahresabhLink" class="dv-btn" unsaved-warning-clear
+                                                   ng-click="vm.cancelJahresabhaengig(); form.$setPristine();form.$setUntouched();">
+                                                    <span data-translate="CANCEL"></span>
+                                                </a>
                                             </div>
                                         </div>
-
                                     </div>
-                                </div>
-                                <!-- Parameter Liste -->
-                                <div class="row marginTop10" ng-repeat="param in vm.ebeguParameterListJahr">
-                                    <div class="col-md-12 form-group">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label data-translate="{{param.name}}" class="md-no-float"
-                                                       for="propertyName_{{param.key}}"></label>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <input id="propertyName_{{param.key}}" type="text"
-                                                       name="propertyName_{{param.key}}"
-                                                       ng-model="param.value"
-                                                       dv-max-length class="input-element" required
-                                                       ng-disabled="vm.param.timestampErstellt">
-                                            </div>
-                                            <div class="col-md-3">
-                                                <dv-datepicker class="input-element"
-                                                               ng-model="param.gueltigkeit.gueltigAb"
-                                                               ng-disabled="true"></dv-datepicker>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <dv-datepicker class="input-element"
-                                                               ng-model="param.gueltigkeit.gueltigBis"
-                                                               ng-disabled="true"></dv-datepicker>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-offset-4 col-md-2">
-                                                <dv-error-messages for="form.propertyName_param.key.$error"
-                                                                   class="error"></dv-error-messages>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Buttons Parameter pro Jahr -->
-                                <div class="row" ng-if="vm.jahr">
-                                    <div class="col-md-2">
-                                        <dv-loading-button type="button" button-click="vm.saveParameterByJahr()"
-                                                           button-class="">
-                                            <span data-translate="SAVE"></span>
-                                        </dv-loading-button>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <a href="javascript:;" id="cancelJahresabhLink" class="dv-btn" unsaved-warning-clear
-                                           ng-click="vm.cancelJahresabhaengig(); form.$setPristine();form.$setUntouched();">
-                                            <span data-translate="CANCEL"></span>
-                                        </a>
-                                    </div>
-                                </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row marginTop40">
-                            <span>&nbsp;</span>
-                        </div>
+                            <div class="row marginTop40">
+                                <span>&nbsp;</span>
+                            </div>
+                        </fieldset>
                     </form>
                 </div>
             </div>
