@@ -756,6 +756,7 @@
     "ABZUG_AUFGRUND_FAM_GROESSE": "Abzug (aufgrund Familiengrösse {{famgroesse}})",
     "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen",
     "BEMERKUNGEN_INTERN": "Interner Kommentar verfassen",
+    "BEMERKUNGEN_PRUEFUNG_STV": "Bemerkung der Steuerverwaltung",
     "BEMERKUNGEN_VERFUEGUNG": "Bemerkungen zur Verfügung",
     "PAPIERGESUCH_OEFFNEN": "PAPIERGESUCH ÖFFNEN",
     "PAPIERGESUCH_LADEN": "PAPIERGESUCH SPEICHERN",
@@ -959,6 +960,9 @@
     "ARIA_ADD_ERWERBSPENSUM" : "Ein neues Erwerbspensum erfassen",
     "ARIA_KONTAKT_MENU" : "Kontakt des Jugendamtes",
     "BEMERKUNGEN_DIALOG": "Bemerkungen",
+    "FREIGABE_JA": "FREIGABE JUGENDAMT",
+    "FREIGABE_JA_BESCHREIBUNG": "Möchten Sie wirklich die Bearbeitung beenden und das Gesuch fürs Jugendamt freigeben?",
+    "BEMERKUNGEN_STV_JA": "Bemerkungen vom Jugendamt"
     "EWK_ABFRAGE_STARTEN": "EWK Abfrage starten",
     "EWK_ANZAHL_ERGEBNISSE": " {{resultate}} Ergebnis(se)",
     "EWK_PERSON_ID": "Person ID",

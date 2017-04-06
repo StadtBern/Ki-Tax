@@ -1,14 +1,16 @@
 <div class="kommentarView">
-    <form role="form" name="vm.form" class="" novalidate layout="column">
+    <form role="form" name="form" class="" novalidate layout="column">
         <!--bemerkungen intern-->
-        <div class="kommentarTop">
-            <dv-input-container class="form-group kommentar-feld">
-                <label class="md-no-float" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
-                <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
-                          ng-blur="vm.saveStepBemerkung()"
-                          ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000">
+        <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()">
+            <div class="kommentarTop">
+                <dv-input-container class="form-group kommentar-feld">
+                    <label class="md-no-float" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
+                    <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
+                              ng-blur="vm.saveStepBemerkung()" name="kommentarIntern"
+                              ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000">
                         </textarea>
-            </dv-input-container>
+                </dv-input-container>
+            </div>
         </div>
 
         <div class="kommentarEwk" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
@@ -57,32 +59,69 @@
             </div>
         </div>
 
-
-        <span flex=""></span>
-        <!--bemerkungen Verfügung-->
-        <div class="kommentarBottom">
-            <dv-input-container class="form-group kommentar-feld">
-                <label class="md-no-float" for="kommentarVerfuegung"
-                       data-translate="BEMERKUNGEN_VERFUEGUNG"></label>
-                <textarea md-no-autogrow class="form-control" rows="4" id="kommentarVerfuegung"
-                          ng-blur="vm.saveBemerkungZurVerfuegung()"
-                          ng-disabled="vm.isGesuchReadonly()"
-                          ng-model="vm.getGesuch().bemerkungen" maxlength="1000">
-                        </textarea>
-            </dv-input-container>
+        <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
+            <div>
+                <dv-input-container class="form-group kommentar-feld">
+                    <label class="md-no-float" for="kommentarSTV_JA" data-translate="BEMERKUNGEN_STV_JA"></label>
+                    <textarea md-no-autogrow class="form-control" rows="4" id="kommentarSTV_JA"
+                              ng-model="vm.getGesuch().bemerkungenSTV" maxlength="1000" name="kommentarSTV_JA"
+                              ng-disabled="true"></textarea>
+                </dv-input-container>
+            </div>
+        </div>
+        <div  dv-show-element
+              dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSteueramtRoles()"
+              dv-show-expression="vm.showBemerkungenPruefungSTV()">
+            <div>
+                <dv-input-container class="form-group kommentar-feld">
+                    <label class="md-no-float" for="kommentarPruefungSTV" data-translate="BEMERKUNGEN_PRUEFUNG_STV"></label>
+                    <textarea md-no-autogrow class="form-control" rows="4" id="kommentarPruefungSTV"
+                              ng-blur="vm.saveBemerkungPruefungSTV()" name="kommentarPruefungSTV"
+                              ng-model="vm.getGesuch().bemerkungenPruefungSTV" maxlength="1000"
+                              dv-enable-element
+                              dv-enable-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()"
+                              dv-enable-expression="vm.isInBearbeitungSTV()"></textarea>
+                </dv-input-container>
+            </div>
         </div>
 
-        <div class="kommentarButton" ng-if="!vm.isGesuchUnsaved()">
-            <div ng-if="vm.hasPapiergesuch()" ng-click="vm.download()" class="dv-btn kommentar-button">
-                <span data-translate="PAPIERGESUCH_OEFFNEN"></span>
+        <div layout="row" layout-align="center"
+             dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
+            <div>
+                <dv-loading-button button-click="vm.freigebenSTV()" button-class="centered-btn" type="submit"
+                                   aria-label="{{'FREIGABE_JA' | translate}}">
+                    <span data-translate="FREIGABE_JA"></span>
+                </dv-loading-button>
+            </div>
+        </div>
+
+        <span flex=""></span>
+        <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()">
+            <!--bemerkungen Verfügung-->
+            <div class="kommentarBottom">
+                <dv-input-container class="form-group kommentar-feld">
+                    <label class="md-no-float" for="kommentarVerfuegung"
+                           data-translate="BEMERKUNGEN_VERFUEGUNG"></label>
+                    <textarea md-no-autogrow class="form-control" rows="4" id="kommentarVerfuegung"
+                              ng-blur="vm.saveBemerkungZurVerfuegung()" name="kommentarVerfuegung"
+                              ng-disabled="vm.isGesuchReadonly()"
+                              ng-model="vm.getGesuch().bemerkungen" maxlength="1000">
+                        </textarea>
+                </dv-input-container>
             </div>
 
-            <div ng-if="!vm.hasPapiergesuch() && !vm.isGesuchReadonly()"
-                 ngf-select="vm.upload($files)" ngf-multiple="false"
-                 ngf-drop="vm.upload($files)"
-                 ngf-drag-over-class="'dragover'"
-                 class="dv-btn kommentar-button">
-                <span data-translate="PAPIERGESUCH_LADEN"></span>
+            <div class="kommentarButton" ng-if="!vm.isGesuchUnsaved()">
+                <div ng-if="vm.hasPapiergesuch()" ng-click="vm.download()" class="dv-btn kommentar-button">
+                    <span data-translate="PAPIERGESUCH_OEFFNEN"></span>
+                </div>
+
+                <div ng-if="!vm.hasPapiergesuch() && !vm.isGesuchReadonly()"
+                     ngf-select="vm.upload($files)" ngf-multiple="false"
+                     ngf-drop="vm.upload($files)"
+                     ngf-drag-over-class="'dragover'"
+                     class="dv-btn kommentar-button">
+                    <span data-translate="PAPIERGESUCH_LADEN"></span>
+                </div>
             </div>
         </div>
     </form>

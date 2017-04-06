@@ -28,10 +28,15 @@ import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
 import IRootScopeService = angular.IRootScopeService;
 import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {IStateService} from 'angular-ui-router';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 let ewkPersonTemplate = require('../../../gesuch/dialog/ewkPersonTemplate.html');
+let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 
 export class KommentarViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -49,13 +54,13 @@ export class KommentarViewController {
     TSRoleUtil: any;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
-        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', 'GesuchstellerRS', '$rootScope'];
+        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', 'GesuchstellerRS', '$rootScope', '$state'];
     /* @ngInject */
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
                 private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
                 private uploadRS: UploadRS, private wizardStepManager: WizardStepManager, private globalCacheService: GlobalCacheService,
                 private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService, private gesuchstellerRS: GesuchstellerRS,
-                private $rootScope: IRootScopeService) {
+                private $rootScope: IRootScopeService, private $state: IStateService) {
 
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
@@ -86,6 +91,13 @@ export class KommentarViewController {
         if (!this.isGesuchUnsaved()) {
             // Bemerkungen auf dem Gesuch werden nur gespeichert, wenn das gesuch schon persisted ist!
             this.gesuchRS.updateBemerkung(this.getGesuch().id, this.getGesuch().bemerkungen);
+        }
+    }
+
+    public saveBemerkungPruefungSTV(): void {
+        if (!this.isGesuchUnsaved()) {
+            // Bemerkungen auf dem Gesuch werden nur gespeichert, wenn das gesuch schon persisted ist!
+            this.gesuchRS.updateBemerkungPruefungSTV(this.getGesuch().id, this.getGesuch().bemerkungenPruefungSTV);
         }
     }
 
@@ -188,6 +200,27 @@ export class KommentarViewController {
 
     public isGesuchReadonly(): boolean {
         return this.gesuchModelManager.isGesuchReadonly();
+    }
+
+    public isInBearbeitungSTV(): boolean {
+        return this.gesuchModelManager.getGesuch().status === TSAntragStatus.IN_BEARBEITUNG_STV;
+    }
+
+    public freigebenSTV(): void {
+        this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'FREIGABE_JA',
+            deleteText: 'FREIGABE_JA_BESCHREIBUNG'
+        }).then(() => {
+            return this.gesuchRS.gesuchBySTVFreigeben(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                this.$state.go('pendenzenSteueramt');
+            });
+        });
+    }
+
+    public showBemerkungenPruefungSTV(): boolean {
+        return this.getGesuch().geprueftSTV === true || this.getGesuch().status === TSAntragStatus.PRUEFUNG_STV || this.getGesuch().status === TSAntragStatus.IN_BEARBEITUNG_STV
+            || this.getGesuch().status === TSAntragStatus.GEPRUEFT_STV;
     }
 
     public getGesuchsteller1(): TSGesuchstellerContainer {

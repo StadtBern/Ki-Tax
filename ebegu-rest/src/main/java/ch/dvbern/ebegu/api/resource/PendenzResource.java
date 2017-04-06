@@ -91,16 +91,6 @@ public class PendenzResource {
 		return pendenzenList;
 	}
 
-	@Nonnull
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/steueramt")
-	public List<JaxAntragDTO> getAllPendenzenSteueramt() {
-		List<Gesuch> antraege = gesuchService.getPendenzenForSteueramtUser();
-		return convertToAntragDTOList(antraege);
-	}
-
 	/**
 	 * Gibt eine Liste der Faelle des Gesuchstellers zurueck.
 	 */
