@@ -96,7 +96,6 @@ public final class TestDataUtil {
 		gesuchsteller.setMail("tim.tester@example.com");
 		gesuchsteller.setMobile("076 309 30 58");
 		gesuchsteller.setTelefon("031 378 24 24");
-		gesuchsteller.setZpvNumber("0761234567897");
 		return gesuchsteller;
 	}
 

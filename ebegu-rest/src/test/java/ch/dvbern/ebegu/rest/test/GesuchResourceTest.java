@@ -166,6 +166,41 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
+	public void testGesuchBySTVFreigeben_NotExistingGesuch() {
+		try {
+			gesuchResource.gesuchBySTVFreigeben(new JaxId("dfafdasf"), null, null);
+			Assert.fail("Das Gesuch existiert nicht. Muss eine Exception werfen");
+		} catch (EbeguEntityNotFoundException e) {
+			//nop
+		}
+	}
+
+	@Test
+	public void testGesuchBySTVFreigeben() throws EbeguException {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.IN_BEARBEITUNG_STV);
+
+		final Response response = gesuchResource.gesuchBySTVFreigeben(new JaxId(gesuch.getId()), null, null);
+
+		final Object entity = response.getEntity();
+		Assert.assertTrue(entity instanceof JaxGesuch);
+		final JaxGesuch jaxGesuch = (JaxGesuch) entity;
+		Assert.assertEquals(AntragStatusDTO.GEPRUEFT_STV, jaxGesuch.getStatus());
+		Assert.assertTrue(jaxGesuch.isGeprueftSTV());
+	}
+
+	@Test
+	public void testGesuchBySTVFreigeben_NotInBearbeitungSTV() {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		try {
+			gesuchResource.sendGesuchToSTV(new JaxId(gesuch.getId()), null, null, null);
+			Assert.fail("Das Gesuch ist nicht In Bearbeitung STV. Muss eine Exception werfen");
+		} catch (EbeguRuntimeException e) {
+			//nop
+		}
+	}
+
+	@Test
 	public void testSendGesuchToSTV_NotExistingGesuch() {
 		try {
 			gesuchResource.sendGesuchToSTV(new JaxId("dfafdasf"), null, null, null);

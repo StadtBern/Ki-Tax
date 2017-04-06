@@ -147,6 +147,11 @@
            <groupId>org.hibernate</groupId>
            <artifactId>hibernate-search-orm</artifactId>
         </dependency>
+        <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-ws</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 
