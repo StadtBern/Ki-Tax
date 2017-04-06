@@ -15,6 +15,8 @@ import javax.inject.Inject;
 import javax.persistence.criteria.*;
 import java.util.*;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
+
 /**
  * Service fuer Kind
  */
@@ -34,7 +36,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Nonnull
 	@Override
-	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public KindContainer saveKind(@Nonnull KindContainer kind) {
 		Objects.requireNonNull(kind);
 		final KindContainer mergedKind = persistence.merge(kind);
@@ -66,7 +68,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	}
 
 	@Override
-	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
+	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public void removeKind(@Nonnull String kindId) {
 		Objects.requireNonNull(kindId);
 		Optional<KindContainer> kindToRemoveOpt = findKind(kindId);
@@ -75,7 +77,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	}
 
 	@Override
-	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
+	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER})
 	public void removeKind(@Nonnull KindContainer kind) {
 		final String gesuchId = kind.getGesuch().getId();
 		persistence.remove(kind);
@@ -84,7 +86,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA})
+	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, REVISOR})
 	public List<KindContainer> getAllKinderWithMissingStatistics() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindContainer> query = cb.createQuery(KindContainer.class);
@@ -104,7 +106,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA})
+	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA})
 	public List<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
 		List<KindDubletteDTO> dublettenOfAllKinder = new ArrayList<>();
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);

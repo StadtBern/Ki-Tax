@@ -21,6 +21,10 @@ export default class AuthenticationUtil {
             $state.go('pendenzenSteueramt');
         } else if (TSRoleUtil.getGesuchstellerOnlyRoles().indexOf(user.role) > -1) {
             $state.go('gesuchstellerDashboard');
+        } else if (TSRoleUtil.getJuristOnlyRoles().indexOf(user.role) > -1) {
+            $state.go('faelle');
+        } else if (TSRoleUtil.getRevisorOnlyRoles().indexOf(user.role) > -1) {
+            $state.go('faelle');
         } else {
             console.error('Achtung, keine Startpage definiert fuer Rolle ', user.getRoleKey(), ', nehme gesuchstellerDashboard');
             $state.go('gesuchstellerDashboard');

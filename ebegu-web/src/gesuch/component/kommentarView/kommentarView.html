@@ -1,13 +1,14 @@
 <div class="kommentarView">
     <form role="form" name="form" class="" novalidate layout="column">
         <!--bemerkungen intern-->
-        <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()">
+        <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtAndSchulamtRole()">
             <div class="kommentarTop">
                 <dv-input-container class="form-group kommentar-feld">
                     <label class="md-no-float" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
                     <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
                               ng-blur="vm.saveStepBemerkung()" name="kommentarIntern"
-                              ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000">
+                              ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000"
+                              dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()">
                         </textarea>
                 </dv-input-container>
             </div>
@@ -24,7 +25,7 @@
             </div>
         </div>
         <div  dv-show-element
-              dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSteueramtRoles()"
+              dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtAndSchulamtRole()"
               dv-show-expression="vm.showBemerkungenPruefungSTV()">
             <div>
                 <dv-input-container class="form-group kommentar-feld">

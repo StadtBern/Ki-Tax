@@ -37,6 +37,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	private static final UserRole[] JA_OR_ADM = {ADMIN, SACHBEARBEITER_JA};
 	private static final UserRole[] OTHER_AMT_ROLES = {REVISOR, JURIST, STEUERAMT};
+	private static final UserRole[] JA_ADM_OTHER_AMT_ROLES = {ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, STEUERAMT};
 
 	@Inject
 	private PrincipalBean principalBean;
@@ -130,7 +131,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		validateMandantMatches(fall);
 		//berechtigte Rollen pruefen
 		UserRole[] allowedRoles = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
-			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT};
+			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT, JURIST, REVISOR};
 		if (principalBean.isCallerInAnyOfRole(allowedRoles)) {
 			return true;
 		}
@@ -434,6 +435,9 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		if (isAllowedSteueramt(entity)) {
 			return true;
 		}
+		if (isAllowedJuristOrRevisor(entity)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -446,7 +450,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
 			return entity.getStatus().isReadableByJugendamtSteueramt();
 		}
-		return false;
+		return isAllowedJuristOrRevisor(entity);
 	}
 
 	private boolean isAllowedSchulamt(Gesuch entity) {
@@ -463,6 +467,16 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		return false;
 	}
 
+	private boolean isAllowedJuristOrRevisor(Gesuch gesuch) {
+		if (principalBean.isCallerInRole(JURIST)) {
+			return gesuch.getStatus().isReadableByJurist();
+		}
+		if (principalBean.isCallerInRole(REVISOR)) {
+			return gesuch.getStatus().isReadableByRevisor();
+		}
+		return false;
+	}
+
 
 	//this method is named slightly wrong because it only checks write authorization for Admins SachbearbeiterJA and GS
 	private boolean isWriteAuthorized(Supplier<Gesuch> gesuchSupplier, String principalName) {
@@ -471,7 +485,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			return true;
 		}
 		Gesuch gesuch = gesuchSupplier.get();
-		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
+		if (principalBean.isCallerInAnyOfRole(JA_ADM_OTHER_AMT_ROLES)) {
 			return gesuch.getStatus().isReadableByJugendamtSteueramt() || AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus());
 		}
 

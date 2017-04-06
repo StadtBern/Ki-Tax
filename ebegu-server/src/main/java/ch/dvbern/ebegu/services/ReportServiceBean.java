@@ -489,7 +489,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
 	public UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId) throws ExcelMergeException {
 
 		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
@@ -500,7 +500,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
 	public UploadFileInfo generateExcelReportZahlung(String zahlungId) throws ExcelMergeException {
 
 		List<Zahlung> reportData = new ArrayList<>();
@@ -541,7 +541,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, REVISOR})
 	public UploadFileInfo generateExcelReportZahlungPeriode(@Nonnull String gesuchsperiodeId) throws ExcelMergeException {
 
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId)

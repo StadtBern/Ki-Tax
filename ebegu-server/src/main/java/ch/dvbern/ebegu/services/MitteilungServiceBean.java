@@ -168,7 +168,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
 	public Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 		return getMitteilungenForCurrentRolle(Mitteilung_.fall, fall);
@@ -433,7 +433,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			}
 			case SUPER_ADMIN:
 			case ADMIN:
-			case SACHBEARBEITER_JA: {
+			case SACHBEARBEITER_JA:
+			case JURIST:
+			case REVISOR:{
 				return MitteilungTeilnehmerTyp.JUGENDAMT;
 			}
 			default:
