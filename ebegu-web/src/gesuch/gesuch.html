@@ -235,4 +235,233 @@
          layout-align="stretch center">
         <div ui-view="kommentarViewPort" flex="100"></div>
     </div>
+    <md-sidenav class="md-sidenav-right" md-component-id="ewk" id="ewk"
+                md-disable-backdrop md-whiteframe="4" md-is-open="vm.openEwkSidenav">
+        <button ng-click="vm.closeSidenav('ewk')" class="dv-btn-operation" style="width:2rem; margin-left:auto;">
+            <i class="fa fa-times"></i>
+        </button>
+        <h2>EWK Abfragen</h2>
+
+        <md-content class="ewk-content">
+            <div ng-repeat=" n in [1,2]" ng-if="vm.getGesuchsteller(n)">
+
+                <h3 ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller(n))"></h3>
+                <button type="button" class="dv-btn-operation"
+                        ng-click="vm.searchGesuchsteller(n)">
+                    <i class="fa fa-search"></i>
+                    <span data-translate="EWK_ABFRAGE_BUTTON"
+                          data-translate-value-name="{{vm.getGesuchsteller(n).gesuchstellerJA.getFullName()}}"></span>
+
+                </button>
+                <!-- Anzahl Resultate -->
+                <h3 ng-if="vm.getEWKResultat(n)"
+                    data-translate="EWK_ANZAHL_ERGEBNISSE"
+                    data-translate-value-resultate="{{vm.getEWKResultat(n).anzahlResultate}}"></h3>
+                <h3 ng-if="vm.getEWKResultat(n).isTooManyResults()"
+                    class="well well-status-abgewiesen"
+                    data-translate="EWK_TOO_MANY"
+                    data-translate-value-n="{{vm.getEWKResultat(n).maxResultate}}"
+                    data-translate-value-i="{{vm.getEWKResultat(n).anzahlResultate}}" ></h3>
+                <!-- Resultat-Liste -->
+                <dv-accordion class="ewk" allow-multiple-sections="false">
+                    <dv-accordion-tab
+                        ng-repeat="person in vm.getEWKResultat(n).personen"
+                        tabid="{{person.personID}}"
+                        ng-class="{'is-chosen': vm.checkEWKPerson(person,n)}">
+                        <tab-title>
+                            {{person.getShortDescription()}}
+                        </tab-title>
+                        <tab-body>
+
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_PERSON_ID"></span><span
+                                ng-bind="person.personID"></span>
+                            </div>
+                            <div ng-repeat="code in person.einwohnercodes">
+                                <span class="ewk-label" data-translate="EWK_EINWOHNERCODE"></span><span
+                                ng-bind="code.codeTxt"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_NACHNAME"></span><span
+                                ng-bind="person.nachname"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_VORNAME"></span><span
+                                ng-bind="person.vorname"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_RUFNAME"></span><span
+                                ng-bind="person.rufname"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_GEBURTSDATUM"></span><span
+                                ng-bind="person.geburtsdatum | amDateFormat: 'DD.MM.YYYY'"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_ZUZUGSDATUM"></span><span
+                                ng-bind="person.zuzugsdatum | amDateFormat: 'DD.MM.YYYY'"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_NATIONALITAET"></span><span
+                                ng-bind="person.nationalitaet"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_ZIVILSTAND"></span><span
+                                ng-bind="person.zivilstandTxt"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_ZIVILSTAND_DATUM"></span><span
+                                ng-bind="person.zivilstandsdatum | amDateFormat: 'DD.MM.YYYY'"></span>
+                            </div>
+                            <div>
+                                <span class="ewk-label" data-translate="EWK_GESCHLECHT"></span><span
+                                ng-bind="person.geschlecht | translate"></span>
+                            </div>
+                            <dv-accordion class="ewksub" allow-multiple-sections="true">
+                                <dv-accordion-tab
+                                    ng-repeat="adresse in person.adressen"
+                                    tabid="{{adresse}}">
+                                    <tab-title>
+                                        {{adresse.adresstypTxt}}
+                                    </tab-title>
+                                    <tab-body>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_ADRESSE_GUELTIGAB"></span><span
+                                            ng-bind="adresse.gueltigVon | amDateFormat: 'DD.MM.YYYY'"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_ADRESSE_GUELTIGBIS"></span><span
+                                            ng-bind="adresse.gueltigBis | amDateFormat: 'DD.MM.YYYY'"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label"
+                                                  data-translate="EWK_ADRESSE_BFSGEMEINDE"></span><span
+                                            ng-bind="adresse.bfSGemeinde"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_ADRESSE_STRASSE"></span><span
+                                            ng-bind="adresse.strasse"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_ADRESSE_HAUSNUMMER"></span><span
+                                            ng-bind="adresse.hausnummer"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_ADRESSE_PLZ"></span><span
+                                            ng-bind="adresse.postleitzahl"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_ADRESSE_ORT"></span><span
+                                            ng-bind="adresse.ort"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_ADRESSE_KANTON"></span><span
+                                            ng-bind="adresse.kanton"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_ADRESSE_LAND"></span><span
+                                            ng-bind="adresse.land"></span>
+                                        </div>
+                                    </tab-body>
+
+                                </dv-accordion-tab>
+                            </dv-accordion>
+                            <dv-accordion class="ewksub" allow-multiple-sections="true">
+                                <dv-accordion-tab
+                                    ng-repeat="beziehung in person.beziehungen"
+                                    tabid="{{beziehung}}">
+                                    <tab-title>
+                                        {{beziehung.beziehungstypTxt}}
+                                    </tab-title>
+                                    <tab-body>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_PERSON_ID"></span><span
+                                            ng-bind="beziehung.personID"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_NACHNAME"></span><span
+                                            ng-bind="beziehung.nachname"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_VORNAME"></span><span
+                                            ng-bind="beziehung.vorname"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_RUFNAME"></span><span
+                                            ng-bind="beziehung.rufname"></span>
+                                        </div>
+                                        <div>
+                                            <span class="ewk-label" data-translate="EWK_GEBURTSDATUM"></span><span
+                                            ng-bind="beziehung.geburtsdatum | amDateFormat: 'DD.MM.YYYY'"></span>
+                                        </div>
+                                        <dv-accordion class="ewksubsub" allow-multiple-sections="true">
+                                            <dv-accordion-tab
+                                                tabid="{{beziehung.adresse}}">
+                                                <tab-title>
+                                                    {{beziehung.adresse.adresstypTxt}}
+                                                </tab-title>
+                                                <tab-body>
+                                                    <div>
+                                                        <span class="ewk-label"
+                                                              data-translate="EWK_ADRESSE_GUELTIGAB"></span><span
+                                                        ng-bind="beziehung.adresse.gueltigVon | amDateFormat: 'DD.MM.YYYY'"></span>
+
+                                                    </div>
+                                                    <div>
+                                                        <span class="ewk-label"
+                                                              data-translate="EWK_ADRESSE_GUELTIGBIS"></span><span
+                                                        ng-bind="beziehung.adresse.gueltigBis | amDateFormat: 'DD.MM.YYYY'"></span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="ewk-label"
+                                                              data-translate="EWK_ADRESSE_BFSGEMEINDE"></span><span
+                                                        ng-bind="beziehung.adresse.bfSGemeinde"></span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="ewk-label"
+                                                              data-translate="EWK_ADRESSE_STRASSE"></span><span
+                                                        ng-bind="beziehung.adresse.strasse"></span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="ewk-label"
+                                                              data-translate="EWK_ADRESSE_HAUSNUMMER"></span><span
+                                                        ng-bind="beziehung.adresse.hausnummer"></span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="ewk-label" data-translate="EWK_ADRESSE_PLZ"></span><span
+                                                        ng-bind="beziehung.adresse.postleitzahl"></span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="ewk-label" data-translate="EWK_ADRESSE_ORT"></span><span
+                                                        ng-bind="beziehung.adresse.ort"></span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="ewk-label"
+                                                              data-translate="EWK_ADRESSE_KANTON"></span><span
+                                                        ng-bind="beziehung.adresse.kanton"></span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="ewk-label"
+                                                              data-translate="EWK_ADRESSE_LAND"></span><span
+                                                        ng-bind="beziehung.adresse.land"></span>
+                                                    </div>
+                                                </tab-body>
+                                            </dv-accordion-tab>
+                                        </dv-accordion>
+                                    </tab-body>
+                                </dv-accordion-tab>
+                            </dv-accordion>
+                            <div class="ewk-button"  layout="row" layout-align="center center">
+                                <button ng-if="!vm.checkEWKPerson(person,n)"
+                                        ng-click="vm.selectPerson(person,n)">
+
+                                                <span data-translate="EWK_LINK"></span>
+                                </button>
+                            </div>
+                        </tab-body>
+                    </dv-accordion-tab>
+                </dv-accordion>
+            </div>
+        </md-content>
+    </md-sidenav>
 </div>

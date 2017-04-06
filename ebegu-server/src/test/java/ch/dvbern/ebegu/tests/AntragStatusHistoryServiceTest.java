@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.AntragStatusHistoryService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -145,6 +146,47 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 		final AntragStatusHistory second = iterator.next();
 		Assert.assertEquals(AntragStatus.VERFUEGT, second.getStatus());
 		Assert.assertEquals(gesuchVerfuegt.getId(), second.getGesuch().getId());
+	}
+
+	@Test
+	public void testFindLastStatusChangeBeforeBeschwerde_NoBeschwerde() {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch.setStatus(AntragStatus.VERFUEGT);
+		gesuchService.updateGesuch(gesuch, true);
+
+		try {
+			statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);
+			Assert.fail("It should throw an exception because the gesuch is not in status BESCHWERDE_HAENGIG");
+		} catch(EbeguRuntimeException e) {
+			// nop
+		}
+	}
+
+	@Test
+	public void testFindLastStatusChangeBeforeBeschwerde_LessThanTwoPreviousStatus() {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch.setStatus(AntragStatus.BESCHWERDE_HAENGIG);
+		gesuchService.updateGesuch(gesuch, true);
+
+		try {
+			statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);
+			Assert.fail("It should throw an exception because the gesuch has only one status change");
+		} catch(EbeguRuntimeException e) {
+			// nop
+		}
+	}
+
+	@Test
+	public void testFindLastStatusChangeBeforeBeschwerde() {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch.setStatus(AntragStatus.VERFUEGT);
+		final Gesuch gesuchVerfuegt = gesuchService.updateGesuch(gesuch, true);
+		gesuchService.setBeschwerdeHaengigForPeriode(gesuchVerfuegt);
+
+		final AntragStatusHistory previousStatus = statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);
+
+		Assert.assertNotNull(previousStatus);
+		Assert.assertEquals(AntragStatus.VERFUEGT, previousStatus.getStatus());
 	}
 
 }
