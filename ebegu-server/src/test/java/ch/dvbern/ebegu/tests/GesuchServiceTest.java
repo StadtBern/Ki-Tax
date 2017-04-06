@@ -657,15 +657,18 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		final Gesuchsperiode otherPeriod = 	gesuchsperiodeService.saveGesuchsperiode(TestDataUtil.createCustomGesuchsperiode(2014, 2015));
 
-		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.VERFUEGT);
+		Gesuch gesuch1516_1 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
 		persistence.persist(gesuch1516_1);
 		Gesuch gesuch1516_2 = TestDataUtil.createGesuch(fall, periodeToUpdate, AntragStatus.IN_BEARBEITUNG_JA);
 		persistence.persist(gesuch1516_2);
 		Gesuch gesuch1415_1 = TestDataUtil.createGesuch(fall, otherPeriod, AntragStatus.IN_BEARBEITUNG_JA);
 		persistence.persist(gesuch1415_1);
 
-		gesuchService.setBeschwerdeHaengigForPeriode(gesuch1516_1);
-		gesuchService.removeBeschwerdeHaengigForPeriode(gesuch1516_1);
+		gesuch1516_1.setStatus(AntragStatus.VERFUEGT);
+		final Gesuch gesuch1516_1_verfuegt = gesuchService.updateGesuch(gesuch1516_1, true);
+
+		gesuchService.setBeschwerdeHaengigForPeriode(gesuch1516_1_verfuegt);
+		gesuchService.removeBeschwerdeHaengigForPeriode(gesuch1516_1_verfuegt);
 
 		// Pruefen dass nur die Gesuche der gegebenen Periode den Status BESCHWERDE_HAENGIG haben
 		final List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(gesuch1516_1.getFall().getId());

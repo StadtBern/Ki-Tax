@@ -163,6 +163,20 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
+	public void testFindLastStatusChangeBeforeBeschwerde_LessThanTwoPreviousStatus() {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch.setStatus(AntragStatus.BESCHWERDE_HAENGIG);
+		gesuchService.updateGesuch(gesuch, true);
+
+		try {
+			statusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuch);
+			Assert.fail("It should throw an exception because the gesuch has only one status change");
+		} catch(EbeguRuntimeException e) {
+			// nop
+		}
+	}
+
+	@Test
 	public void testFindLastStatusChangeBeforeBeschwerde() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuch.setStatus(AntragStatus.VERFUEGT);

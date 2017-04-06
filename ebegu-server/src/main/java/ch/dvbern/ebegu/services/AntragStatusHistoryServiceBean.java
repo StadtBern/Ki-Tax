@@ -131,10 +131,10 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 		final CriteriaQuery<AntragStatusHistory> query = createQueryAllAntragStatusHistoryProGesuch(gesuch);
 
 		final List<AntragStatusHistory> lastTwoChanges = persistence.getEntityManager().createQuery(query).setMaxResults(2).getResultList();
-		if (!AntragStatus.BESCHWERDE_HAENGIG.equals(lastTwoChanges.get(0).getStatus())) {
+		if (lastTwoChanges.size() < 2 || !AntragStatus.BESCHWERDE_HAENGIG.equals(lastTwoChanges.get(0).getStatus())) {
 			throw new EbeguRuntimeException("findLastStatusChangeBeforeBeschwerde", ErrorCodeEnum.ERROR_NOT_FROM_STATUS_BESCHWERDE, gesuch.getId());
 		}
-		return lastTwoChanges.get(1); //
+		return lastTwoChanges.get(1); // returns the previous status before Beschwerde_Haengig
 	}
 
 	/**
