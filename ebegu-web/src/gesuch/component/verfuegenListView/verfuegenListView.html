@@ -168,6 +168,11 @@
                                    ng-if="vm.showSendToSteuerverwaltung()">
                     <span data-translate="SEND_TO_STV_UPPER"></span>
                 </dv-loading-button>
+                <dv-loading-button button-click="vm.stvPruefungAbschliessen()"
+                                   aria-label="{{'STV_PRUEFUNG_ABSCHLIESSEN_UPPER' | translate}}"
+                                   ng-if="vm.showSTVPruefungAbschliessen()">
+                    <span data-translate="STV_PRUEFUNG_ABSCHLIESSEN_UPPER"></span>
+                </dv-loading-button>
                 <dv-loading-button button-click="vm.ersteMahnungErstellen()"
                                    aria-label="{{'ERSTE_MAHNUNG_UPPER' | translate}}"
                                    ng-if="vm.showErsteMahnungErstellen()">

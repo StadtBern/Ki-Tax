@@ -728,12 +728,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	public Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
-		allGesucheForFall.iterator().forEachRemaining(gesuch1 -> {
-			if (gesuch.equals(gesuch1) && AntragStatus.BESCHWERDE_HAENGIG.equals(gesuch1.getStatus())) {
-				gesuch1.setStatus(AntragStatus.VERFUEGT);
+		allGesucheForFall.iterator().forEachRemaining(gesuchLoop -> {
+			if (gesuch.equals(gesuchLoop) && AntragStatus.BESCHWERDE_HAENGIG.equals(gesuchLoop.getStatus())) {
+				final AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuchLoop);
+				gesuchLoop.setStatus(lastStatusChange.getStatus());
 			}
-			gesuch1.setGesperrtWegenBeschwerde(false);
-			updateGesuch(gesuch1, true);
+			gesuchLoop.setGesperrtWegenBeschwerde(false);
+			updateGesuch(gesuchLoop, true);
 		});
 		return gesuch;
 	}

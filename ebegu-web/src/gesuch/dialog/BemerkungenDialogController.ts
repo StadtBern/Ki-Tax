@@ -8,11 +8,11 @@ export class BemerkungenDialogController {
     title: string;
     bemerkungen: string;
 
-    static $inject = ['$mdDialog', '$translate', 'title'];
+    static $inject = ['$mdDialog', '$translate', 'title', 'bemerkungen'];
 
-    constructor(private $mdDialog: IDialogService, $translate: ITranslateService, title: string) {
+    constructor(private $mdDialog: IDialogService, $translate: ITranslateService, title: string, bemerkungen: string) {
         this.title = $translate.instant(title);
-        this.bemerkungen = '';
+        this.bemerkungen = bemerkungen;
     }
 
     public hide(): IPromise<any> {

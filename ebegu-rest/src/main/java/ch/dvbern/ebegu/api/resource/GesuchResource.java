@@ -496,6 +496,34 @@ public class GesuchResource {
 
 	}
 
+	@ApiOperation(value = "Setzt das gegebene Gesuch als VERFUEGT und das Flag geprueftSTV als true")
+	@Nullable
+	@POST
+	@Path("/stvPruefungAbschliessen/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response stvPruefungAbschliessen(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(antragId);
+
+		Gesuch gesuch = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("stvPruefungAbschliessen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId()));
+
+		if (!AntragStatus.GEPRUEFT_STV.equals(gesuch.getStatus())) {
+			// Wir vergewissern uns dass das Gesuch im Status IN_BEARBEITUNG_STV ist, da sonst kann es nicht fuer das JA freigegeben werden
+			throw new EbeguRuntimeException("stvPruefungAbschliessen", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_STV_ALLOWED, "Status ist: " + gesuch.getStatus());
+		}
+
+		gesuch.setStatus(AntragStatus.VERFUEGT);
+		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true);
+		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
+
+	}
+
 	@ApiOperation(value = "Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag gesperrtWegenBeschwerde auf false")
 	@Nullable
 	@POST
