@@ -211,6 +211,7 @@ export class GesuchRouteController {
     public getActiveElement(): TSWizardStepName {
         return this.wizardStepManager.getCurrentStepName();
     }
+
     public getGesuchstellerTitle(gesuchsteller: TSGesuchstellerContainer): string {
         if (gesuchsteller && gesuchsteller.gesuchstellerJA) {
             if (gesuchsteller.gesuchstellerJA.ewkPersonId) {
@@ -220,6 +221,7 @@ export class GesuchRouteController {
         }
         return undefined;
     }
+
     public getGesuchsteller(n: number): TSGesuchstellerContainer {
         switch (n) {
             case 1:
@@ -247,6 +249,7 @@ export class GesuchRouteController {
                 return undefined;
         }
     }
+
     public getEWKPerson(n: number): TSEWKPerson {
         switch (n) {
             case 1:
@@ -257,6 +260,7 @@ export class GesuchRouteController {
                 return undefined;
         }
     }
+
     public checkEWKPerson(person: TSEWKPerson, n: number): boolean {
         switch (n) {
             case 1:
@@ -267,6 +271,7 @@ export class GesuchRouteController {
                 return false;
         }
     }
+
     public searchGesuchsteller(n: number): void {
         this.gesuchstellerRS.suchePerson(this.getGesuchsteller(n).id).then(response => {
             switch (n) {
@@ -289,6 +294,7 @@ export class GesuchRouteController {
             this.$log.error('there was an error searching the person in EWK ', exception);
         });
     }
+
     public selectPerson(person: TSEWKPerson, n: number): void {
         this.gesuchstellerRS.selectPerson(this.getGesuchsteller(n).id, person.personID).then(response => {
             switch (n) {
