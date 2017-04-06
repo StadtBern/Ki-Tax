@@ -1,3 +1,4 @@
 export enum TSGesuchEvent {
     STATUS_VERFUEGT = <any> 'STATUS_VERFUEGT',
+    EWK_PERSON_SELECTED = <any> 'EWK_PERSON_SELECTED'
 }

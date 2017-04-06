@@ -81,7 +81,7 @@ describe('GesuchstellerRS', function () {
         describe('findGesuchsteller', () => {
             it('should return the gesuchsteller by id', () => {
                     let foundGesuchsteller: TSGesuchstellerContainer;
-                    $httpBackend.expectGET(gesuchstellerRS.serviceURL + '/' + mockGesuchsteller.id);
+                    $httpBackend.expectGET(gesuchstellerRS.serviceURL + '/id/' + mockGesuchsteller.id).respond(mockGesuchsteller);
 
                     gesuchstellerRS.findGesuchsteller(mockGesuchsteller.id).then((result) => {
                         foundGesuchsteller = result;

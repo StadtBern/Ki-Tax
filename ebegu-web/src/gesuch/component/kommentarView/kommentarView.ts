@@ -14,20 +14,27 @@ import WizardStepManager from '../../service/wizardStepManager';
 import TSWizardStep from '../../../models/TSWizardStep';
 import GlobalCacheService from '../../service/globalCacheService';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {EwkPersonController} from '../../dialog/EwkPersonController';
 import {OkHtmlDialogController} from '../../dialog/OkHtmlDialogController';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
+import GesuchstellerRS from '../../../core/service/gesuchstellerRS.rest';
+import TSEWKPerson from '../../../models/TSEWKPerson';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import IRootScopeService = angular.IRootScopeService;
+import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {IStateService} from 'angular-ui-router';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
+let ewkPersonTemplate = require('../../../gesuch/dialog/ewkPersonTemplate.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 
 export class KommentarViewComponentConfig implements IComponentOptions {
@@ -46,13 +53,13 @@ export class KommentarViewController {
     TSRoleUtil: any;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
-        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', '$state'];
+        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', 'GesuchstellerRS', '$rootScope', '$state'];
     /* @ngInject */
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
                 private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
                 private uploadRS: UploadRS, private wizardStepManager: WizardStepManager, private globalCacheService: GlobalCacheService,
-                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService,
-                private $state: IStateService) {
+                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService, private gesuchstellerRS: GesuchstellerRS,
+                private $rootScope: IRootScopeService, private $state: IStateService) {
 
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
@@ -215,4 +222,65 @@ export class KommentarViewController {
             || this.getGesuch().status === TSAntragStatus.GEPRUEFT_STV;
     }
 
+    public getGesuchsteller1(): TSGesuchstellerContainer {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1) {
+            return this.gesuchModelManager.getGesuch().gesuchsteller1;
+        }
+        return undefined;
+    }
+
+    public getGesuchsteller2(): TSGesuchstellerContainer {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2) {
+            return this.gesuchModelManager.getGesuch().gesuchsteller2;
+        }
+        return undefined;
+    }
+
+    public getGesuchstellerTitle(gesuchsteller: TSGesuchstellerContainer): string {
+        if (gesuchsteller && gesuchsteller.gesuchstellerJA) {
+            if (gesuchsteller.gesuchstellerJA.ewkPersonId) {
+                return gesuchsteller.gesuchstellerJA.getFullName() + ' (' + gesuchsteller.gesuchstellerJA.ewkPersonId + ')';
+            }
+            return gesuchsteller.gesuchstellerJA.getFullName();
+        }
+        return undefined;
+    }
+
+    public searchGesuchsteller1(): void {
+       this.gesuchstellerRS.suchePerson(this.getGesuchsteller1().id).then(response => {
+           this.gesuchModelManager.ewkResultatGS1 = response;
+       }).catch((exception) => {
+           this.$log.error('there was an error searching the person in EWK ', exception);
+       });
+    }
+
+    public searchGesuchsteller2(): void {
+        this.gesuchstellerRS.suchePerson(this.getGesuchsteller2().id).then(response => {
+            this.gesuchModelManager.ewkResultatGS2 = response;
+        }).catch((exception) => {
+            this.$log.error('there was an error searching the person in EWK ', exception);
+        });
+    }
+
+    public selectPersonGS1(person: TSEWKPerson): void {
+        this.gesuchstellerRS.selectPerson(this.getGesuchsteller1().id, person.personID).then(response => {
+            this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA.ewkPersonId = person.personID;
+            this.gesuchModelManager.ewkPersonGS1 = person;
+            this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], 1, person.personID);
+        });
+    }
+
+    public selectPersonGS2(person: TSEWKPerson): void {
+        this.gesuchstellerRS.selectPerson(this.getGesuchsteller2().id, person.personID).then(response => {
+            this.gesuchModelManager.getGesuch().gesuchsteller2.gesuchstellerJA.ewkPersonId = person.personID;
+            this.gesuchModelManager.ewkPersonGS2 = person;
+            this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], 2, person.personID);
+        });
+    }
+
+    public showDetail(person: TSEWKPerson): void {
+        this.dvDialog.showDialogFullscreen(ewkPersonTemplate, EwkPersonController, {
+            person: person
+        });
+    }
 }

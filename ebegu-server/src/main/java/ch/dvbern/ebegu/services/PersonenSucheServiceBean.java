@@ -2,11 +2,9 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.cdi.Dummy;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.dto.personensuche.EWKPerson;
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.Geschlecht;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
 import ch.dvbern.ebegu.ws.ewk.IEWKWebService;
@@ -51,7 +49,7 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 	private Persistence<Gesuchsteller> persistence;
 
 
-	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod"})
+	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod", "IfStatementWithIdenticalBranches"})
 	@SuppressFBWarnings(value = {"SIC_INNER_SHOULD_BE_STATIC_ANON"})
 	@PostConstruct
 	private void resolveService() {
@@ -67,23 +65,27 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 	public EWKResultat suchePerson(@Nonnull Gesuchsteller gesuchsteller) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
 		Validate.notNull(gesuchsteller, "Gesuchsteller muss gesetzt sein");
 		Validate.isTrue(!gesuchsteller.isNew(), "Gesuchsteller muss zuerst gespeichert werden!");
+		EWKResultat resultat;
 		if (StringUtils.isNotEmpty(gesuchsteller.getEwkPersonId())) {
-			return suchePerson(gesuchsteller.getEwkPersonId());
+			resultat = suchePerson(gesuchsteller.getEwkPersonId());
 		} else {
-			return suchePerson(gesuchsteller.getNachname(), gesuchsteller.getGeburtsdatum(), gesuchsteller.getGeschlecht());
+			resultat = suchePerson(gesuchsteller.getNachname(), gesuchsteller.getGeburtsdatum(), gesuchsteller.getGeschlecht());
 		}
+		// Wenn es genau 1 Resultat gibt, wird dieses direkt gesetzt
+		if (resultat.getAnzahlResultate() == 1) {
+			gesuchsteller.setEwkPersonId(resultat.getPersonen().get(0).getPersonID());
+			persistence.merge(gesuchsteller);
+		}
+		return resultat;
 	}
 
 	@Override
 	@Nonnull
-	public Gesuchsteller selectPerson(@Nonnull Gesuchsteller gesuchsteller, @Nonnull EWKPerson ewkPerson) {
+	public Gesuchsteller selectPerson(@Nonnull Gesuchsteller gesuchsteller, @Nonnull String ewkPersonID) {
 		Validate.notNull(gesuchsteller, "Gesuchsteller muss gesetzt sein");
-		Validate.notNull(ewkPerson, "ewkPerson muss gesetzt sein");
-		Validate.isTrue(gesuchsteller.isNew(), "Gesuchsteller muss zuerst gespeichert werden!");
-		if (StringUtils.isNotEmpty(gesuchsteller.getEwkPersonId()) && !gesuchsteller.getEwkPersonId().equals(ewkPerson.getPersonID())) {
-			throw new EbeguRuntimeException("selectPerson", "Die Person " + gesuchsteller.getId() + " ist schon mit der Person " + gesuchsteller.getEwkPersonId() + " verknüpft");
-		}
-		gesuchsteller.setEwkPersonId(ewkPerson.getPersonID());
+		Validate.notNull(ewkPersonID, "ewkPersonID muss gesetzt sein");
+		Validate.isTrue(!gesuchsteller.isNew(), "Gesuchsteller muss zuerst gespeichert werden!");
+		gesuchsteller.setEwkPersonId(ewkPersonID);
 		return persistence.merge(gesuchsteller);
 	}
 

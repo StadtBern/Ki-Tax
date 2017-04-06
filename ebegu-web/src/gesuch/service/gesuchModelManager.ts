@@ -60,6 +60,8 @@ import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../models/TSAdresseContainer';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import * as moment from 'moment';
+import TSEWKResultat from '../../models/TSEWKResultat';
+import TSEWKPerson from '../../models/TSEWKPerson';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -71,6 +73,10 @@ export default class GesuchModelManager {
     private activInstitutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
+    ewkResultatGS1: TSEWKResultat;
+    ewkResultatGS2: TSEWKResultat;
+    ewkPersonGS1: TSEWKPerson;
+    ewkPersonGS2: TSEWKPerson;
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
@@ -162,6 +168,10 @@ export default class GesuchModelManager {
             this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
             this.setHiddenSteps();
         }
+        this.ewkPersonGS1 = undefined;
+        this.ewkPersonGS2 = undefined;
+        this.ewkResultatGS1 = undefined;
+        this.ewkResultatGS2 = undefined;
     }
 
     public getGesuch(): TSGesuch {
