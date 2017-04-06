@@ -247,7 +247,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public sendToSteuerverwaltung(): void {
         this.DvDialog.showDialog(bemerkungDialogTempl, BemerkungenDialogController, {
-            title: 'SEND_TO_STV'
+            title: 'SEND_TO_STV_CONFIRMATION'
         }).then((bemerkung: string) => {
             this.gesuchRS.sendGesuchToSTV(this.getGesuch().id, bemerkung).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
@@ -259,6 +259,21 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showSendToSteuerverwaltung(): boolean {
         //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt das Gesuch nicht pruefen lassen darf
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT);
+    }
+
+    public stvPruefungAbschliessen(): void {
+        this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'STV_PRUEFUNG_ABSCHLIESSEN_CONFIRMATION',
+            deleteText: ''
+        }).then((bemerkung: string) => {
+            this.gesuchRS.stvPruefungAbschliessen(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+            });
+        });
+    }
+
+    public showSTVPruefungAbschliessen(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT_STV);
     }
 
     public showErsteMahnungErstellen(): boolean {
