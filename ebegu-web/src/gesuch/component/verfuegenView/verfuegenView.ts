@@ -90,18 +90,18 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         }
 
         //if finanzielleSituationResultate is undefined/empty (this may happen if user presses reloads this page) then we recalculate it
-        if (angular.equals(this.berechnungsManager.finanzielleSituationResultate, {})) {
+        if (!this.berechnungsManager.finanzielleSituationResultate || angular.equals(this.berechnungsManager.finanzielleSituationResultate, {})) {
             this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch());
         }
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
             && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus1
-            && angular.equals(this.berechnungsManager.einkommensverschlechterungResultateBjP1, {})) {
+            && (!this.berechnungsManager.einkommensverschlechterungResultateBjP1 || angular.equals(this.berechnungsManager.einkommensverschlechterungResultateBjP1, {}))) {
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 1); //.then(() => {});
         }
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo()
             && this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2
-            && angular.equals(this.berechnungsManager.einkommensverschlechterungResultateBjP2, {})) {
+            && (!this.berechnungsManager.einkommensverschlechterungResultateBjP2 || angular.equals(this.berechnungsManager.einkommensverschlechterungResultateBjP2, {}))) {
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }

@@ -98,6 +98,14 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
+    public updateBemerkungPruefungSTV(gesuchID: string, bemerkungPruefungSTV: string): IHttpPromise<any> {
+        return this.http.put(this.serviceURL + '/bemerkungPruefungSTV/' + encodeURIComponent(gesuchID), bemerkungPruefungSTV, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
     public updateGesuchStatus(gesuchID: string, status: TSAntragStatus): IHttpPromise<any> {
         return this.http.put(this.serviceURL + '/status/' + encodeURIComponent(gesuchID) + '/' + status, null);
     }
@@ -133,6 +141,12 @@ export default class GesuchRS implements IEntityRS {
 
     public sendGesuchToSTV(antragId: string, bemerkungen: string): IPromise<TSGesuch> {
         return this.http.post(this.serviceURL + '/sendToSTV/' + encodeURIComponent(antragId), bemerkungen, null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
+
+    public gesuchBySTVFreigeben(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/freigebenSTV/' + encodeURIComponent(antragId), null).then((response) => {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
     }

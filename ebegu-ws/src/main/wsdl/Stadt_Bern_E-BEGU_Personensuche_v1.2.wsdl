@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="PersonenSuche_OB" targetNamespace="http://bern.ch/E_GOV/E_BEGU/EGOV_002"
+                  xmlns:p1="http://bern.ch/E_GOV/E_BEGU/EGOV_002"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:documentation/>
+    <!--<wsp:UsingPolicy wsdl:required="true"/>-->
+    <wsp:Policy wsu:Id="OP_PersonenSuche_OB"/>
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://bern.ch/E_GOV/E_BEGU/EGOV_002" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://bern.ch/E_GOV/E_BEGU/EGOV_002" xmlns:p5="http://bern.ch/E_GOV/CRA">
+            <xsd:import namespace="http://bern.ch/E_GOV/CRA"/>
+            <xsd:element name="PersonenSuche_Resp" type="PersonenSuche_Resp"/>
+            <xsd:element name="PersonenSuche_Req" type="PersonenSuche_Req"/>
+            <xsd:complexType name="PersonenInformationen">
+                <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/VersionID">058b92fde6da11e6c6810000008985aa</xsd:appinfo>
+                </xsd:annotation>
+                <xsd:sequence>
+                    <xsd:element name="PersonID" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d794d06b9111e6a6fb16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Einwohnercode" type="p5:Einwohnercode" maxOccurs="unbounded">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7b02f6b9111e69dd216d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Nachname" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7b0306b9111e6a05a16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Ledigname" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">4c9dacb3705111e6caf4ea661a96e65e
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Vorname" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7b0326b9111e6cfce16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Rufname" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7b0336b9111e6820216d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Geburtsdatum" type="xsd:date" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7b0346b9111e6cff316d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Zuzugsdatum" type="xsd:date" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7b0396b9111e6ba7b16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Nationalitaet" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">051ede6fe6da11e6c5f600ffdc3584bd
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:length value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Zivilstand" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7ccc16b9111e6b32416d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:length value="1"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Zivilstand_txt" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">051ede70e6da11e6ad5c00ffdc3584bd
+                            </xsd:appinfo>
+                            <xsd:documentation>Bezeichnung des Zivilstand Codes</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Zivilstandsdatum" type="xsd:date" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7ccc26b9111e69b0216d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Geschlecht" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7f4a76b9111e69c1616d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:length value="1"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Bewilligungsart" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7f4aa6b9111e6924716d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:length value="1"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Bewilligungsart_txt" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">051ede71e6da11e6c64f00ffdc3584bd
+                            </xsd:appinfo>
+                            <xsd:documentation>Bewilligungsart Bezeichnung</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="BewilligungBis" type="xsd:date" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c6d7f4ab6b9111e6cd9216d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Adresse" type="p5:Adresse" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">916ef7706b9211e6be2116d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Beziehung" type="p5:Beziehung" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">916ef7716b9211e6b53116d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="PersonenSuche_Req">
+                <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/VersionID">605a7c77a0e811e6ae0d0000008985aa</xsd:appinfo>
+                </xsd:annotation>
+                <xsd:sequence>
+                    <xsd:element name="PersonID" type="p5:PersonID" minOccurs="0" form="qualified">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">102f5b5a6b8a11e6913616d0c81eaeb9
+                            </xsd:appinfo>
+                            <xsd:documentation>Personen ID in Einwohnerkontrollloesung</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Nachname" type="xsd:string" minOccurs="0" form="qualified">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">102f5b5b6b8a11e6beb416d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Vorname" type="xsd:string" minOccurs="0" form="qualified">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">102f5b5c6b8a11e6807c16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Geburtsdatum" type="xsd:date" minOccurs="0" form="qualified">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">102f5b5d6b8a11e6a26416d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Geschlecht" type="p5:Geschlecht" minOccurs="0" form="qualified">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">102f5b5e6b8a11e699ff16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="MaxTreffer" type="xsd:positiveInteger" form="qualified">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">102f5b616b8a11e6bc9116d0c81eaeb9
+                            </xsd:appinfo>
+                            <xsd:documentation>maximale Suchtreffer</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="PersonenSuche_Resp">
+                <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/VersionID">22e7d75f705211e6c4090000008985aa</xsd:appinfo>
+                </xsd:annotation>
+                <xsd:sequence>
+                    <xsd:element name="AnzahlTreffer" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c36002df704211e6bed5ea661a96e65e
+                            </xsd:appinfo>
+                            <xsd:documentation>Suchergebnis Anzahl Treffer</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Person" type="PersonenInformationen" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">c36002e0704211e68cbaea661a96e65e
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="ReturnMessage" type="p5:ReturnMessage">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">27b231c0704e11e6c3beea661a96e65e
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+        <xsd:schema targetNamespace="http://bern.ch/E_GOV/CRA" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://bern.ch/E_GOV/CRA">
+            <xsd:simpleType name="PersonID">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="DE">Personen ID in Einwohnerkontrollloesung</xsd:documentation>
+                    <xsd:appinfo source="http://sap.com/xi/VersionID">24a1eccf6b8d11e68cea0000008985aa</xsd:appinfo>
+                </xsd:annotation>
+                <xsd:restriction base="xsd:string">
+                    <xsd:length value="10"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType name="Geschlecht">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="DE">Geschlecht</xsd:documentation>
+                    <xsd:appinfo source="http://sap.com/xi/VersionID">6ffd50d16b8e11e688fb0000008985aa</xsd:appinfo>
+                    <xsd:appinfo source="http://sap.com/esi/RepresentationTerm">Code</xsd:appinfo>
+                    <xsd:appinfo source="http://sap.com/esi/FixedValues">true</xsd:appinfo>
+                </xsd:annotation>
+                <xsd:restriction base="xsd:token">
+                    <xsd:length value="1"/>
+                    <xsd:enumeration value="M"/>
+                    <xsd:enumeration value="W"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:complexType name="Einwohnercode">
+                <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/VersionID">48d6c7cea0de11e6876d0000008985aa</xsd:appinfo>
+                </xsd:annotation>
+                <xsd:sequence>
+                    <xsd:element name="Code">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">d4603790703d11e69763ea661a96e65e
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:length value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Code_txt" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">48cc11d3a0de11e69be2da7f600dcd23
+                            </xsd:appinfo>
+                            <xsd:documentation>Code Bezeichnung</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="GueltigVon" type="xsd:date">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">d4603791703d11e6b289ea661a96e65e
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="GueltigBis" type="xsd:date">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">d4603792703d11e6964bea661a96e65e
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ReturnMessage">
+                <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/VersionID">f607bb76704d11e6845c0000008985aa</xsd:appinfo>
+                </xsd:annotation>
+                <xsd:sequence>
+                    <xsd:element name="Code">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">f581759e704d11e682caea661a96e65e
+                            </xsd:appinfo>
+                            <xsd:documentation>Ergebniscode 00 = erfolgreich, andere Fehler</xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:length value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Text" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">77d13aed705211e6cce1ea661a96e65e
+                            </xsd:appinfo>
+                            <xsd:documentation>Detailinformationen zum Code</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Beziehung">
+                <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/VersionID">f77f8f9fa0de11e6b4c20000008985aa</xsd:appinfo>
+                </xsd:annotation>
+                <xsd:sequence>
+                    <xsd:element name="Beziehungstyp">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">2eba74a46b8e11e6970516d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:length value="1"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Beziehungstyp_txt" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">f78264a8a0de11e6c750da7f600dcd23
+                            </xsd:appinfo>
+                            <xsd:documentation>Beziehungstyp Bezeichnung</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="PersonID" type="PersonID">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">2eba74a56b8e11e6c6f316d0c81eaeb9
+                            </xsd:appinfo>
+                            <xsd:documentation>Personen ID in Einwohnerkontrollloesung</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Nachname" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">2eba74a66b8e11e6a41416d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Ledigname" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">2eba74a76b8e11e6a22d16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Vorname" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">2eba864a6b8e11e6b6e716d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Rufname" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">2eba864b6b8e11e6959416d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Geburtsdatum" type="xsd:date" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">2eba864c6b8e11e68ca716d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Adresse" type="Adresse" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">9c43796c6b9311e6868a16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Adresse">
+                <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/VersionID">dfee76bba0de11e6a5530000008985aa</xsd:appinfo>
+                </xsd:annotation>
+                <xsd:sequence>
+                    <xsd:element name="Adresstyp">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bba6b8f11e6ac8116d0c81eaeb9
+                            </xsd:appinfo>
+                            <xsd:documentation>z.B. Wohn- (1), Korrespondenz- (2), Wegzugsadresse (3), Zuzug
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:length value="1"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Adresstyp_txt" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">dff89216a0de11e68696da7f600dcd23
+                            </xsd:appinfo>
+                            <xsd:documentation>Adresstyp Bezeichnung</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="GueltigVon" type="xsd:date">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bbb6b8f11e6cb3516d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="GueltigBis" type="xsd:date">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bbc6b8f11e6a88a16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="CO_Name" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bbd6b8f11e6cf7816d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Postfach" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bbe6b8f11e69dac16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="BfS_Gemeinde" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bbf6b8f11e6bab816d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Strasse" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bc06b8f11e68b1116d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Hausnummer" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bc16b8f11e68c9a16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Postleitzahl" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bc26b8f11e687c816d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Ort" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bc36b8f11e6a69216d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Kanton" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bc46b8f11e6c93616d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:length value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Land" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo source="http://sap.com/xi/TextID">87247bc56b8f11e6a82c16d0c81eaeb9
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:length value="2"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="PersonenSuche_Req">
+        <wsdl:documentation/>
+        <wsdl:part name="PersonenSuche_Req" element="p1:PersonenSuche_Req"/>
+    </wsdl:message>
+    <wsdl:message name="PersonenSuche_Resp">
+        <wsdl:documentation/>
+        <wsdl:part name="PersonenSuche_Resp" element="p1:PersonenSuche_Resp"/>
+    </wsdl:message>
+    <wsdl:portType name="PersonenSuche_OB">
+        <wsdl:documentation/>
+        <wsdl:operation name="PersonenSuche_OB">
+            <wsdl:documentation/>
+            <wsp:Policy>
+                <wsp:PolicyReference URI="#OP_PersonenSuche_OB"/>
+            </wsp:Policy>
+            <wsdl:input message="p1:PersonenSuche_Req"/>
+            <wsdl:output message="p1:PersonenSuche_Resp"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="PersonenSuche_OBBinding" type="p1:PersonenSuche_OB">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"
+                      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+        <wsdl:operation name="PersonenSuche_OB">
+            <soap:operation soapAction="http://sap.com/xi/WebService/soap1.1"
+                            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            <wsdl:input>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="PersonenSuche_OBService">
+        <wsdl:port name="HTTP_Port" binding="p1:PersonenSuche_OBBinding">
+            <soap:address
+                    location="http://dbs1019.bgov.ch:50000/XISOAPAdapter/MessageServlet?senderParty=&amp;senderService=E_BEGU_QAS&amp;receiverParty=&amp;receiverService=&amp;interface=PersonenSuche_OB&amp;interfaceNamespace=http%3A%2F%2Fbern.ch%2FE_GOV%2FE_BEGU%2FEGOV_002"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+        </wsdl:port>
+        <wsdl:port name="HTTPS_Port" binding="p1:PersonenSuche_OBBinding">
+            <soap:address
+                    location="https://dbs1019.bgov.ch:50001/XISOAPAdapter/MessageServlet?senderParty=&amp;senderService=E_BEGU_QAS&amp;receiverParty=&amp;receiverService=&amp;interface=PersonenSuche_OB&amp;interfaceNamespace=http%3A%2F%2Fbern.ch%2FE_GOV%2FE_BEGU%2FEGOV_002"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

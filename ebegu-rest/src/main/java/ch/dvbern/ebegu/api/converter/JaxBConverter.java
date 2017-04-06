@@ -305,7 +305,7 @@ public class JaxBConverter {
 		gesuchsteller.setTelefon(gesuchstellerJAXP.getTelefon());
 		gesuchsteller.setMobile(gesuchstellerJAXP.getMobile());
 		gesuchsteller.setTelefonAusland(gesuchstellerJAXP.getTelefonAusland());
-		gesuchsteller.setZpvNumber(gesuchstellerJAXP.getZpvNumber());
+		gesuchsteller.setEwkPersonId(gesuchstellerJAXP.getEwkPersonId());
 		gesuchsteller.setDiplomatenstatus(gesuchstellerJAXP.isDiplomatenstatus());
 		return gesuchsteller;
 	}
@@ -436,7 +436,7 @@ public class JaxBConverter {
 		jaxGesuchsteller.setTelefon(persistedGesuchsteller.getTelefon());
 		jaxGesuchsteller.setMobile(persistedGesuchsteller.getMobile());
 		jaxGesuchsteller.setTelefonAusland(persistedGesuchsteller.getTelefonAusland());
-		jaxGesuchsteller.setZpvNumber(persistedGesuchsteller.getZpvNumber());
+		jaxGesuchsteller.setEwkPersonId(persistedGesuchsteller.getEwkPersonId());
 		jaxGesuchsteller.setDiplomatenstatus(persistedGesuchsteller.isDiplomatenstatus());
 		return jaxGesuchsteller;
 	}
@@ -676,7 +676,9 @@ public class JaxBConverter {
 
 		antrag.setBemerkungen(antragJAXP.getBemerkungen());
 		antrag.setBemerkungenSTV(antragJAXP.getBemerkungenSTV());
+		antrag.setBemerkungenPruefungSTV(antragJAXP.getBemerkungenPruefungSTV());
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
+		antrag.setGeprueftSTV(antragJAXP.isGeprueftSTV());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
 		antrag.setGewarntNichtFreigegeben(antragJAXP.isGewarntNichtFreigegeben());
@@ -801,7 +803,9 @@ public class JaxBConverter {
 		}
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
 		jaxGesuch.setBemerkungenSTV(persistedGesuch.getBemerkungenSTV());
+		jaxGesuch.setBemerkungenPruefungSTV(persistedGesuch.getBemerkungenPruefungSTV());
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
+		jaxGesuch.setGeprueftSTV(persistedGesuch.isGeprueftSTV());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
 		jaxGesuch.setGewarntNichtFreigegeben(persistedGesuch.isGewarntNichtFreigegeben());

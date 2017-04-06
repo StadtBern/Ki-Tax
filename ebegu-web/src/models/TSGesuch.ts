@@ -20,7 +20,9 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
     private _bemerkungen: string;
     private _bemerkungenSTV: string;
+    private _bemerkungenPruefungSTV: string;
     private _laufnummer: number;
+    private _geprueftSTV: boolean = true;
     private _hasFSDokument: boolean = true;
     private _gesperrtWegenBeschwerde: boolean = false;
     private _gewarntNichtFreigegeben: boolean = false;
@@ -86,12 +88,28 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._bemerkungenSTV = value;
     }
 
+    get bemerkungenPruefungSTV(): string {
+        return this._bemerkungenPruefungSTV;
+    }
+
+    set bemerkungenPruefungSTV(value: string) {
+        this._bemerkungenPruefungSTV = value;
+    }
+
     get laufnummer(): number {
         return this._laufnummer;
     }
 
     set laufnummer(value: number) {
         this._laufnummer = value;
+    }
+
+    get geprueftSTV(): boolean {
+        return this._geprueftSTV;
+    }
+
+    set geprueftSTV(value: boolean) {
+        this._geprueftSTV = value;
     }
 
     get hasFSDokument(): boolean {

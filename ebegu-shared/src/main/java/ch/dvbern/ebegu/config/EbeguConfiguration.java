@@ -122,4 +122,24 @@ public interface EbeguConfiguration {
 	 * @return true wenn sich die Applikation im Testmodus fuer Zahlungen befindet, false sonst
 	 */
 	boolean getIsZahlungenTestMode();
+
+	/**
+	 * Gibt zurueck, ob der Dummy-Service für die EWK-Abfragen benutzt werden soll.
+	 */
+	boolean isPersonenSucheDisabled();
+
+	/**
+	 * Gibt den Endpoint des EWK-Services zurueck.
+	 */
+	String getPersonenSucheEndpoint();
+
+	/**
+	 * Gibt den Usernamen für den EWK-Service zurueck.
+	 */
+	String getPersonenSucheUsername();
+
+	/**
+	 * Gibt das Passwort für den EWK-Service zurueck.
+	 */
+	String getPersonenSuchePassword();
 }
