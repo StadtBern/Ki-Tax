@@ -26,6 +26,8 @@ import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
+import IRootScopeService = angular.IRootScopeService;
+import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
@@ -47,12 +49,13 @@ export class KommentarViewController {
     TSRoleUtil: any;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
-        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', 'GesuchstellerRS'];
+        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', 'GesuchstellerRS', '$rootScope'];
     /* @ngInject */
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
                 private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
                 private uploadRS: UploadRS, private wizardStepManager: WizardStepManager, private globalCacheService: GlobalCacheService,
-                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService, private gesuchstellerRS: GesuchstellerRS) {
+                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService, private gesuchstellerRS: GesuchstellerRS,
+                private $rootScope: IRootScopeService) {
 
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
@@ -231,6 +234,7 @@ export class KommentarViewController {
         this.gesuchstellerRS.selectPerson(this.getGesuchsteller1().id, person.personID).then(response => {
             this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA.ewkPersonId = person.personID;
             this.gesuchModelManager.ewkPersonGS1 = person;
+            this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], 1, person.personID);
         });
     }
 
@@ -238,6 +242,7 @@ export class KommentarViewController {
         this.gesuchstellerRS.selectPerson(this.getGesuchsteller2().id, person.personID).then(response => {
             this.gesuchModelManager.getGesuch().gesuchsteller2.gesuchstellerJA.ewkPersonId = person.personID;
             this.gesuchModelManager.ewkPersonGS2 = person;
+            this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], 2, person.personID);
         });
     }
 

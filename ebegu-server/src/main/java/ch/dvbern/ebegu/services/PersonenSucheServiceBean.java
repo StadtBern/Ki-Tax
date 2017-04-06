@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.Geschlecht;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
 import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
 import ch.dvbern.ebegu.ws.ewk.IEWKWebService;
@@ -50,7 +49,7 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 	private Persistence<Gesuchsteller> persistence;
 
 
-	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod"})
+	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod", "IfStatementWithIdenticalBranches"})
 	@SuppressFBWarnings(value = {"SIC_INNER_SHOULD_BE_STATIC_ANON"})
 	@PostConstruct
 	private void resolveService() {

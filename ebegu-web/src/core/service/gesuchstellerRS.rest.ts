@@ -3,7 +3,6 @@ import {IHttpService, IPromise, ILogService} from 'angular';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 import TSEWKResultat from '../../models/TSEWKResultat';
-import TSEWKPerson from '../../models/TSEWKPerson';
 import TSGesuchsteller from '../../models/TSGesuchsteller';
 
 export default class GesuchstellerRS {
@@ -38,7 +37,7 @@ export default class GesuchstellerRS {
     }
 
     public findGesuchsteller(gesuchstellerID: string): IPromise<TSGesuchstellerContainer> {
-        return this.http.get(this.serviceURL + '/find/' + encodeURIComponent(gesuchstellerID))
+        return this.http.get(this.serviceURL + '/id/' + encodeURIComponent(gesuchstellerID))
             .then((response: any) => {
                 this.log.debug('PARSING gesuchsteller REST object ', response.data);
                 return this.ebeguRestUtil.parseGesuchstellerContainer(new TSGesuchstellerContainer(), response.data);

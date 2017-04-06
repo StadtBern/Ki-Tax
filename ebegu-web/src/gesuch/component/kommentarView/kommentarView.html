@@ -11,7 +11,8 @@
             </dv-input-container>
         </div>
 
-        <div class="kommentarEwk" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+        <div class="kommentarEwk" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                    dv-show-expression="!vm.gesuchModelManager.isGesuchReadonly()">
             <div ng-if="vm.getGesuchsteller1()">
                 <!-- Gesuchsteller 1 -->
                 <label class="md-no-float" ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller1())"></label>

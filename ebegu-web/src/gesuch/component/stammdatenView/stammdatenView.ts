@@ -18,10 +18,12 @@ import TSAdresse from '../../../models/TSAdresse';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
 import IQService = angular.IQService;
 import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITranslateService = angular.translate.ITranslateService;
+import IRootScopeService = angular.IRootScopeService;
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -46,12 +48,12 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
 
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'CONSTANTS', '$q', '$scope', '$translate', 'AuthServiceRS'];
+        'CONSTANTS', '$q', '$scope', '$translate', 'AuthServiceRS', '$rootScope'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService, $scope: IScope,
-                private $translate: ITranslateService, private authServiceRS: AuthServiceRS) {
+                private $translate: ITranslateService, private authServiceRS: AuthServiceRS, private $rootScope: IRootScopeService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCHSTELLER);
         this.ebeguRestUtil = ebeguRestUtil;
         this.gesuchstellerNumber = parseInt($stateParams.gesuchstellerNumber, 10);
@@ -70,6 +72,12 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.getModel().showUmzug = this.getModel().showUmzug || this.getModel().isThereAnyUmzug();
         this.setLastVerfuegtesGesuch();
+
+        this.$rootScope.$on(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], (event: any, gsNummer: number, ewkId: string) => {
+            if (gsNummer === this.gesuchModelManager.gesuchstellerNumber) {
+                this.model.gesuchstellerJA.ewkPersonId = ewkId;
+            }
+        });
     }
 
     korrespondenzAdrClicked() {

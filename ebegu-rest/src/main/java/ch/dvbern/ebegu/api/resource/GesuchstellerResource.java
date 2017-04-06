@@ -87,11 +87,11 @@ public class GesuchstellerResource {
 
 	@Nullable
 	@GET
-	@Path("/{gesuchstellerId}")
+	@Path("/id/{gesuchstellerId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuchstellerContainer findGesuchsteller(
-		@Nonnull @NotNull JaxId gesuchstellerJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerJAXPId) throws EbeguException {
 
 		Validate.notNull(gesuchstellerJAXPId.getId());
 		String gesuchstellerID = converter.toEntityId(gesuchstellerJAXPId);
@@ -116,10 +116,10 @@ public class GesuchstellerResource {
 		String gesuchstellerID = converter.toEntityId(gesuchstellerJAXPId);
 		Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerID);
 
-		GesuchstellerContainer gesuchstellerToReturn = optional.get();
 		if (!optional.isPresent()) {
 			return null;
 		}
+		GesuchstellerContainer gesuchstellerToReturn = optional.get();
 		return personenSucheService.suchePerson(gesuchstellerToReturn.getGesuchstellerJA());
 	}
 
@@ -139,6 +139,9 @@ public class GesuchstellerResource {
 		String ewkPersonID = converter.toEntityId(ewkPersonJAXPId);
 		Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerID);
 
+		if (!optional.isPresent()) {
+			return null;
+		}
 		GesuchstellerContainer gesuchstellerToReturn = optional.get();
 		return optional.map(gesuchstellerContainer -> personenSucheService.selectPerson(gesuchstellerToReturn.getGesuchstellerJA(), ewkPersonID)).orElse(null);
 	}

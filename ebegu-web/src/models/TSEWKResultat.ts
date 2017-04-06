@@ -40,4 +40,8 @@ export default class TSEWKResultat extends TSAbstractEntity {
     set personen(value: Array<TSEWKPerson>) {
         this._personen = value;
     }
+
+    public isTooManyResults(): boolean {
+        return this.anzahlResultate > this.maxResultate;
+    }
 }
