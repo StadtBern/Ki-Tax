@@ -28,7 +28,6 @@ import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
 import IRootScopeService = angular.IRootScopeService;
 import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {IStateService} from 'angular-ui-router';
