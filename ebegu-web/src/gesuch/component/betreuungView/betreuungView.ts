@@ -467,20 +467,24 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * Prueft dass das Objekt existingMutationsMeldung existiert und dass es ein sentDatum hat. Das wird gebraucht,
      * um zu vermeiden, dass ein leeres Objekt als gueltiges Objekt erkannt wird
      */
-    public showExistingMutationsmeldungInfoBox(): boolean {
+    public showExistingBetreuungsmitteilungInfoBox(): boolean {
         return this.existingMutationsMeldung !== undefined && this.existingMutationsMeldung !== null
-            && this.existingMutationsMeldung.sentDatum !== undefined && this.existingMutationsMeldung.sentDatum !== null;
+            && this.existingMutationsMeldung.sentDatum !== undefined && this.existingMutationsMeldung.sentDatum !== null
+            && this.existingMutationsMeldung.applied !== true;
     }
 
-    public getDatumLastMutationsmeldung(): string {
-        if (this.showExistingMutationsmeldungInfoBox()) {
+    public getDatumLastBetreuungsmitteilung(): string {
+        if (this.showExistingBetreuungsmitteilungInfoBox()) {
             return DateUtil.momentToLocalDateFormat(this.existingMutationsMeldung.sentDatum, 'DD.MM.YYYY');
         }
         return '';
     }
 
-    public openExistingMutationsmeldung(): void {
-        // todo imanol open Mitteilung
+    public openExistingBetreuungsmitteilung(): void {
+        this.$state.go('gesuch.mitteilung', {
+            fallId: this.gesuchModelManager.getGesuch().fall.id,
+            betreuungId: this.getBetreuungModel().id
+        });
     }
 
     private findExistingBetreuungsmitteilung() {
