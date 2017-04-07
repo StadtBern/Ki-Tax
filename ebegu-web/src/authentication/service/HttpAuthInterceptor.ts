@@ -15,7 +15,7 @@ export default class HttpAuthInterceptor implements IHttpInterceptor {
         switch (response.status) {
             case 401:
                 // exclude requests from the login form
-                if (response.config && response.config.url === this.CONSTANTS.REST_API + '/api/v1/auth/login') {
+                if (response.config && response.config.url === this.CONSTANTS.REST_API + 'auth/login') {
                     return this.$q.reject(response);
                 }
                 // all requests that failed due to notAuthenticated are appended to httpBuffer. Use httpBuffer.retryAll to submit them.
