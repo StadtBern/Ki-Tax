@@ -465,12 +465,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
 
     /**
      * Prueft dass das Objekt existingMutationsMeldung existiert und dass es ein sentDatum hat. Das wird gebraucht,
-     * um zu vermeiden, dass ein leeres Objekt als gueltiges Objekt erkannt wird
+     * um zu vermeiden, dass ein leeres Objekt als gueltiges Objekt erkannt wird.
+     * Ausserdem muss die Meldung nicht applied sein und nicht den Status ERLEDIGT haben
      */
     public showExistingBetreuungsmitteilungInfoBox(): boolean {
         return this.existingMutationsMeldung !== undefined && this.existingMutationsMeldung !== null
             && this.existingMutationsMeldung.sentDatum !== undefined && this.existingMutationsMeldung.sentDatum !== null
-            && this.existingMutationsMeldung.applied !== true;
+            && this.existingMutationsMeldung.applied !== true && !this.existingMutationsMeldung.isErledigt();
     }
 
     public getDatumLastBetreuungsmitteilung(): string {

@@ -154,6 +154,7 @@ describe('betreuungView', function () {
         });
         describe('platzAbweisen()', () => {
             it('must change the status of the Betreuung to ABGEWIESEN and restore initial values of Betreuung', () => {
+                betreuungView.$onInit();
                 spyOn(gesuchModelManager, 'saveBetreuung').and.returnValue($q.when({}));
                 spyOn(gesuchModelManager, 'setBetreuungToWorkWith').and.stub();
                 betreuungView.model.erweiterteBeduerfnisse = true;
