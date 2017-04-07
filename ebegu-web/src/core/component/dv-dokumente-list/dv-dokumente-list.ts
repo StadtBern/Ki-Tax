@@ -11,6 +11,7 @@ import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogControl
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./dv-dokumente-list.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -156,6 +157,12 @@ export class DVDokumenteListController {
 
     public isGesuchReadonly(): boolean {
         return this.gesuchModelManager.isGesuchReadonly();
+    }
+
+    public isDokumenteUploadDisabled(): boolean {
+        // Dokument-Upload ist eigentlich in jedem Status möglich, aber nicht für alle Rollen. Also nicht
+        // gleichbedeutend mit readonly auf dem Gesuch
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles());
     }
 }
 
