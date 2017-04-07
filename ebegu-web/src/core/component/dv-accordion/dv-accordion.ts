@@ -8,20 +8,29 @@ export class DvAccordionComponentConfig implements IComponentOptions {
     controller = DvAccordionController;
     controllerAs = 'vma';
     bindings: any = {
-        allowMultipleSections: '<'
+        allowMultipleSections: '<',
+        selectedMitteilung: '<'
     };
 }
 
 export class DvAccordionController {
     accordion: string[] = [];
     allowMultipleSections: boolean;
+    selectedMitteilung: string;
     static $inject: any[] = [];
 
     /* @ngInject */
     constructor() {
     }
 
-    public toggleTab(i: string ): void {
+    $onChanges() {
+        // erlaubt dass man von Anfang an, eine Mitteilung oeffnet, wenn man eine bestimmte Mitteilung oeffnen will
+        if (this.selectedMitteilung) {
+            this.toggleTab(this.selectedMitteilung);
+        }
+    }
+
+    public toggleTab(i: string): void {
         if (this.isTagOpen(i)) {
             this.accordion.splice(this.accordion.indexOf(i), 1);
         } else {
