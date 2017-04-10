@@ -754,7 +754,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuch.getFall().setBesitzer(TestDataUtil.createAndPersistBenutzer(persistence));
 		persistence.merge(gesuch.getFall());
 		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
-		gesuch.getGesuchsteller1().getGesuchstellerJA().setMail("franziska.herger@dvbern.ch");
+		gesuch.getGesuchsteller1().getGesuchstellerJA().setMail("fanny.huber@dvbern.ch");
 		return persistence.merge(gesuch);
 	}
 
@@ -766,7 +766,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		gesuch.getFall().setBesitzer(TestDataUtil.createAndPersistBenutzer(persistence));
 		persistence.merge(gesuch.getFall());
 		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchstellerContainer(gesuch));
-		gesuch.getGesuchsteller1().getGesuchstellerJA().setMail("franziska.herger@dvbern.ch");
+		gesuch.getGesuchsteller1().getGesuchstellerJA().setMail("fanny.huber@dvbern.ch");
 		return persistence.merge(gesuch);
 	}
 

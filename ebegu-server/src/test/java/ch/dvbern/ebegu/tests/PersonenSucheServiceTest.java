@@ -28,7 +28,7 @@ import java.time.Month;
 @Transactional(TransactionMode.DISABLED)
 public class PersonenSucheServiceTest extends AbstractEbeguLoginTest {
 
-	private static final String ID_MARC_SCHMID = "1000028027";
+	private static final String ID_SCHUHMACHER = "1000028027";
 
 	@Inject
 	private PersonenSucheService personenSucheService;
@@ -38,18 +38,18 @@ public class PersonenSucheServiceTest extends AbstractEbeguLoginTest {
 
 	@Test
 	public void suchePersonById() throws Exception {
-		EWKResultat ewkResultat = personenSucheService.suchePerson(ID_MARC_SCHMID);
+		EWKResultat ewkResultat = personenSucheService.suchePerson(ID_SCHUHMACHER);
 		Assert.assertNotNull(ewkResultat);
 		Assert.assertEquals(1, ewkResultat.getAnzahlResultate());
-		Assert.assertEquals("Schmid", ewkResultat.getPersonen().get(0).getNachname());
+		Assert.assertEquals("Schuhmacher", ewkResultat.getPersonen().get(0).getNachname());
 	}
 
 	@Test
 	public void suchePersonByName() throws Exception {
-		EWKResultat ewkResultat = personenSucheService.suchePerson("Schmid", "Marc", LocalDate.of(1953, Month.MAY, 23), Geschlecht.MAENNLICH);
+		EWKResultat ewkResultat = personenSucheService.suchePerson("Schuhmacher", "Michael", LocalDate.of(1953, Month.MAY, 23), Geschlecht.MAENNLICH);
 		Assert.assertNotNull(ewkResultat);
 		Assert.assertEquals(1, ewkResultat.getAnzahlResultate());
-		Assert.assertEquals("Schmid", ewkResultat.getPersonen().get(0).getNachname());
+		Assert.assertEquals("Schuhmacher", ewkResultat.getPersonen().get(0).getNachname());
 	}
 
 	@Test
@@ -78,9 +78,9 @@ public class PersonenSucheServiceTest extends AbstractEbeguLoginTest {
 	public void sucheSelectPerson() throws Exception {
 		Gesuchsteller gs = TestDataUtil.createDefaultGesuchsteller();
 		gs = persistence.merge(gs);
-		EWKResultat ewkResultat1 = personenSucheService.suchePerson(ID_MARC_SCHMID);
+		EWKResultat ewkResultat1 = personenSucheService.suchePerson(ID_SCHUHMACHER);
 		Gesuchsteller gsMerged = personenSucheService.selectPerson(gs, ewkResultat1.getPersonen().get(0).getPersonID());
 		Assert.assertNotNull(gsMerged);
-		Assert.assertEquals(ID_MARC_SCHMID, gsMerged.getEwkPersonId());
+		Assert.assertEquals(ID_SCHUHMACHER, gsMerged.getEwkPersonId());
 	}
 }
