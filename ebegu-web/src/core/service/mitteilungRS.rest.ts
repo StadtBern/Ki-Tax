@@ -166,6 +166,14 @@ export default class MitteilungRS {
         });
     }
 
+    public getNewestBetreuungsmitteilung(betreuungId: string): IPromise<TSBetreuungsmitteilung> {
+        return this.http.get(this.serviceURL + '/newestBetreuunsmitteilung/' + betreuungId).then((response: any) => {
+            this.log.debug('PARSING Betreuungsmitteilung REST object ', response.data);
+            return this.ebeguRestUtil.parseBetreuungsmitteilung(new TSBetreuungsmitteilung(), response.data);
+        });
+    }
+
+
     private createBetreuungsmitteilung(fall: TSFall, betreuung: TSBetreuung): TSBetreuungsmitteilung {
         let mutationsmeldung: TSBetreuungsmitteilung = new TSBetreuungsmitteilung();
         mutationsmeldung.fall = fall;

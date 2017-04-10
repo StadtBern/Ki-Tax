@@ -399,6 +399,24 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		return gesuch;
 	}
 
+	@Override
+	public Optional<Betreuungsmitteilung> findNewestBetreuungsmitteilung(String betreuungId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuungsmitteilung> query = cb.createQuery(Betreuungsmitteilung.class);
+		Root<Betreuungsmitteilung> root = query.from(Betreuungsmitteilung.class);
+
+		Predicate predicateLinkedObject = cb.equal(root.get(Betreuungsmitteilung_.betreuung).get(Betreuung_.id), betreuungId);
+
+		query.orderBy(cb.desc(root.get(Betreuungsmitteilung_.sentDatum)));
+		query.where(predicateLinkedObject);
+
+		final List<Betreuungsmitteilung> result = persistence.getEntityManager().createQuery(query).setFirstResult(0).setMaxResults(1).getResultList();
+		if (result.isEmpty()) {
+			return Optional.empty();
+		}
+		return Optional.of(result.get(0));
+	}
+
 	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
 		final Optional<Betreuung> betreuungToChangeOpt = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getBetreuungNummer());
 		if (betreuungToChangeOpt.isPresent()) {

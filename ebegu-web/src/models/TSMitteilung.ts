@@ -136,4 +136,8 @@ export default class TSMitteilung extends TSAbstractEntity {
             return this.sender.getFullName();
         }
     }
+
+    public isErledigt(): boolean {
+        return this.mitteilungStatus === TSMitteilungStatus.ERLEDIGT;
+    }
 }
