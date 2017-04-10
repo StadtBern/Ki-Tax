@@ -34,7 +34,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoBetreuungenBestaetigt(@Nonnull Gesuch gesuch) throws MailException {
-		if (doSendMail(gesuch)) {
+		if (doSendMail(gesuch.getFall())) {
 			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
 			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
@@ -49,7 +49,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoBetreuungAbgelehnt(@Nonnull Betreuung betreuung) throws MailException {
-		if (doSendMail(betreuung.extractGesuch())) {
+		if (doSendMail(betreuung.extractGesuch().getFall())) {
 			Gesuchsteller gesuchsteller = betreuung.extractGesuch().extractGesuchsteller1();
 			String mailaddress = fallService.getCurrentEmailAddress(betreuung.extractGesuch().getFall().getId()).orElse(null);
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
@@ -78,7 +78,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoVerfuegtGesuch(@Nonnull Gesuch gesuch) throws MailException {
-		if (doSendMail(gesuch)) {
+		if (doSendMail(gesuch.getFall())) {
 			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
 			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
@@ -93,7 +93,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoVerfuegtMutation(@Nonnull Gesuch gesuch) throws MailException {
-		if (doSendMail(gesuch)) {
+		if (doSendMail(gesuch.getFall())) {
 			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
 			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
@@ -108,7 +108,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoMahnung(@Nonnull Gesuch gesuch) throws MailException {
-		if (doSendMail(gesuch)) {
+		if (doSendMail(gesuch.getFall())) {
 			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
 			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
@@ -123,7 +123,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, int anzahlMonate) throws MailException {
-		if (doSendMail(gesuch)) {
+		if (doSendMail(gesuch.getFall())) {
 			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
 			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
@@ -138,7 +138,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch) throws MailException {
-		if (doSendMail(gesuch)) {
+		if (doSendMail(gesuch.getFall())) {
 			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
 			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
@@ -153,7 +153,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoGesuchGeloescht(@Nonnull Gesuch gesuch) throws MailException {
-		if (doSendMail(gesuch)) {
+		if (doSendMail(gesuch.getFall())) {
 			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
 			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
@@ -171,13 +171,6 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	 */
 	private boolean doSendMail(Fall fall) {
 		return fall.getBesitzer() != null;
-	}
-
-	/**
-	 * Hier wird an einer Stelle definiert, an welche Benutzergruppen ein Mail geschickt werden soll.
-	 */
-	private boolean doSendMail(Gesuch gesuch) {
-		return gesuch.getFall().getBesitzer() != null;
 	}
 
 }
