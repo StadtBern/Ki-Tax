@@ -24,16 +24,18 @@ export class DvPosteingangController {
     constructor(private mitteilungRS: MitteilungRS, private $rootScope: IRootScopeService, private authServiceRS: AuthServiceRS) {
         this.getAmountNewMitteilungen();
 
-        // call every 5 minutes (5*60*1000)
-        this.reloadAmountMitteilungenInterval = setInterval(() => this.getAmountNewMitteilungen(), 300000);
-
         this.$rootScope.$on('POSTEINGANG_MAY_CHANGED', (event: any) => {
             this.getAmountNewMitteilungen();
         });
 
         this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
             if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles())) {
-                this.getAmountNewMitteilungen();
+                this.getAmountNewMitteilungen(); // call it a first time
+
+                if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole())) { // not for GS
+                    // call every 5 minutes (5*60*1000)
+                    this.reloadAmountMitteilungenInterval = setInterval(() => this.getAmountNewMitteilungen(), 300000);
+                }
             }
         });
 
