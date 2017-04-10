@@ -485,7 +485,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			return true;
 		}
 		Gesuch gesuch = gesuchSupplier.get();
-		if (principalBean.isCallerInAnyOfRole(JA_ADM_OTHER_AMT_ROLES)) {
+		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
 			return gesuch.getStatus().isReadableByJugendamtSteueramt() || AntragStatus.FREIGABEQUITTUNG.equals(gesuch.getStatus());
 		}
 

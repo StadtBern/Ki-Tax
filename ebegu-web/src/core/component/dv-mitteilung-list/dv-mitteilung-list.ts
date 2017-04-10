@@ -260,6 +260,8 @@ export class DVMitteilungListController {
             }
             case TSRole.SUPER_ADMIN:
             case TSRole.ADMIN:
+            case TSRole.JURIST:
+            case TSRole.REVISOR:
             case TSRole.SACHBEARBEITER_JA: {
                 return TSMitteilungTeilnehmerTyp.JUGENDAMT;
             }
