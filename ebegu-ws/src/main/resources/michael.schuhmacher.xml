@@ -8,9 +8,9 @@
 			<GueltigVon>1978-07-01</GueltigVon>
 			<GueltigBis>9999-12-31</GueltigBis>
 		</Einwohnercode>
-		<Nachname>Schmid</Nachname>
-		<Vorname>Marc</Vorname>
-		<Rufname>Marc</Rufname>
+		<Nachname>Schuhmacher</Nachname>
+		<Vorname>Michael</Vorname>
+		<Rufname>Michael</Rufname>
 		<Geburtsdatum>1953-05-23</Geburtsdatum>
 		<Zuzugsdatum>1978-07-01</Zuzugsdatum>
 		<Nationalitaet>CH</Nationalitaet>
@@ -46,7 +46,7 @@
 			<Beziehungstyp>1</Beziehungstyp>
 			<Beziehungstyp_txt>ist verheiratet mit</Beziehungstyp_txt>
 			<PersonID>1000311306</PersonID>
-			<Nachname>Schmid-Röthlisberger</Nachname>
+			<Nachname>Schuhmacher-Röthlisberger</Nachname>
 			<Ledigname>Röthlisberger</Ledigname>
 			<Vorname>Silvia Barbara</Vorname>
 			<Rufname>Silvia</Rufname>

@@ -38,15 +38,15 @@ import java.time.LocalDate;
 @Dependent
 public class EWKWebServiceDummy implements IEWKWebService {
 
-	private static final String ID_MARC_SCHMID = "1000028027";
+	private static final String ID_MICHAEL_SCHUHMACHER = "1000028027";
 	private static final String ID_SIMONE_MEIER = "1000348433";
-	private static final String ID_FRANZISKA_HERGER = "1000233097";
+	private static final String ID_FANNY_HUBER = "1000233097";
 	private static final String ID_SANDRA_ANDEREGG = "1000197262";
 	private static final String ID_HERBERT_GERBER = "1000637396";
 
-	private static final String FILE_MARC_SCHMID = "marc.schmid.xml";
+	private static final String FILE_MICHAEL_SCHUHMACHER = "michael.schuhmacher.xml";
 	private static final String FILE_SIMONE_MEIER = "simone.meier.xml";
-	private static final String FILE_FRANZISKA_HERGER = "franziska.herger.xml";
+	private static final String FILE_FANNY_HUBER = "fanny.huber.xml";
 	private static final String FILE_SANDRA_ANDEREGG = "sandra.anderegg.xml";
 	private static final String FILE_HERBERT_GERBER = "herbert.gerber.xml";
 	private static final String FILE_NO_RESULT = "noresult.xml";
@@ -57,12 +57,12 @@ public class EWKWebServiceDummy implements IEWKWebService {
 	@Override
 	public EWKResultat suchePerson(@Nonnull String id) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
 		PersonenSucheResp response = null;
-		if (ID_MARC_SCHMID.equals(id)) {
-			response = parse(FILE_MARC_SCHMID);
+		if (ID_MICHAEL_SCHUHMACHER.equals(id)) {
+			response = parse(FILE_MICHAEL_SCHUHMACHER);
 		} else if (ID_SIMONE_MEIER.equals(id)) {
 			response = parse(FILE_SIMONE_MEIER);
-		} else if (ID_FRANZISKA_HERGER.equals(id)) {
-			response = parse(FILE_FRANZISKA_HERGER);
+		} else if (ID_FANNY_HUBER.equals(id)) {
+			response = parse(FILE_FANNY_HUBER);
 		} else if (ID_SANDRA_ANDEREGG.equals(id)) {
 			response = parse(FILE_SANDRA_ANDEREGG);
 		} else if (ID_HERBERT_GERBER.equals(id)) {
@@ -77,12 +77,12 @@ public class EWKWebServiceDummy implements IEWKWebService {
 	@Override
 	public EWKResultat suchePerson(@Nonnull String name, @Nonnull String vorname, @Nonnull LocalDate geburtsdatum, @Nonnull Geschlecht geschlecht) throws PersonenSucheServiceException, PersonenSucheServiceBusinessException {
 		PersonenSucheResp response;
-		if ("Schmid".equalsIgnoreCase(name)) {
-			response = parse(FILE_MARC_SCHMID);
+		if ("Schuhmacher".equalsIgnoreCase(name)) {
+			response = parse(FILE_MICHAEL_SCHUHMACHER);
 		} else if ("Meier".equalsIgnoreCase(name)) {
 			response = parse(FILE_SIMONE_MEIER);
-		} else if ("Herger".equalsIgnoreCase(name)) {
-			response = parse(FILE_FRANZISKA_HERGER);
+		} else if ("Huber".equalsIgnoreCase(name)) {
+			response = parse(FILE_FANNY_HUBER);
 		} else if ("Anderegg".equalsIgnoreCase(name)) {
 			response = parse(FILE_SANDRA_ANDEREGG);
 		} else if ("PersonenSucheServiceException".equalsIgnoreCase(name)) {

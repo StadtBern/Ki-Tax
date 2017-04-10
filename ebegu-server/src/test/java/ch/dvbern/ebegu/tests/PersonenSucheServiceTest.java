@@ -41,15 +41,15 @@ public class PersonenSucheServiceTest extends AbstractEbeguLoginTest {
 		EWKResultat ewkResultat = personenSucheService.suchePerson(ID_MARC_SCHMID);
 		Assert.assertNotNull(ewkResultat);
 		Assert.assertEquals(1, ewkResultat.getAnzahlResultate());
-		Assert.assertEquals("Schmid", ewkResultat.getPersonen().get(0).getNachname());
+		Assert.assertEquals("Schuhmacher", ewkResultat.getPersonen().get(0).getNachname());
 	}
 
 	@Test
 	public void suchePersonByName() throws Exception {
-		EWKResultat ewkResultat = personenSucheService.suchePerson("Schmid", "Marc", LocalDate.of(1953, Month.MAY, 23), Geschlecht.MAENNLICH);
+		EWKResultat ewkResultat = personenSucheService.suchePerson("Schuhmacher", "Michael", LocalDate.of(1953, Month.MAY, 23), Geschlecht.MAENNLICH);
 		Assert.assertNotNull(ewkResultat);
 		Assert.assertEquals(1, ewkResultat.getAnzahlResultate());
-		Assert.assertEquals("Schmid", ewkResultat.getPersonen().get(0).getNachname());
+		Assert.assertEquals("Schuhmacher", ewkResultat.getPersonen().get(0).getNachname());
 	}
 
 	@Test

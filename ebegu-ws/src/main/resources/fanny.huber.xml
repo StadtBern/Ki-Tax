@@ -8,11 +8,11 @@
 			<GueltigVon>1994-01-29</GueltigVon>
 			<GueltigBis>9999-12-31</GueltigBis>
 		</Einwohnercode>
-		<Nachname>Herger</Nachname>
-		<Ledigname>Herger</Ledigname>
-		<Vorname>Franziska Barbara</Vorname>
-		<Rufname>Franziska</Rufname>
-		<Geburtsdatum>1975-04-09</Geburtsdatum>
+		<Nachname>Huber</Nachname>
+		<Ledigname>Huber</Ledigname>
+		<Vorname>Fanny Barbara</Vorname>
+		<Rufname>Fanny</Rufname>
+		<Geburtsdatum>1983-04-11</Geburtsdatum>
 		<Zuzugsdatum>1994-01-29</Zuzugsdatum>
 		<Nationalitaet>CH</Nationalitaet>
 		<Zivilstand>1</Zivilstand>
@@ -24,7 +24,7 @@
 			<GueltigVon>2010-07-01</GueltigVon>
 			<GueltigBis>9999-12-31</GueltigBis>
 			<BfS_Gemeinde>351</BfS_Gemeinde>
-			<Strasse>Sempachstrasse</Strasse>
+			<Strasse>Bahnhofstrasse</Strasse>
 			<Hausnummer>6</Hausnummer>
 			<Postleitzahl>3014</Postleitzahl>
 			<Ort>Bern</Ort>
@@ -51,10 +51,10 @@
 			<GueltigVon>2010-08-14</GueltigVon>
 			<GueltigBis>9999-12-31</GueltigBis>
 		</Einwohnercode>
-		<Nachname>Herger</Nachname>
-		<Ledigname>Herger</Ledigname>
-		<Vorname>Franziska</Vorname>
-		<Rufname>Franziska</Rufname>
+		<Nachname>Huber</Nachname>
+		<Ledigname>Huber</Ledigname>
+		<Vorname>Fanny</Vorname>
+		<Rufname>Fanny</Rufname>
 		<Geburtsdatum>1988-11-24</Geburtsdatum>
 		<Zuzugsdatum>2010-08-14</Zuzugsdatum>
 		<Nationalitaet>CH</Nationalitaet>
@@ -67,7 +67,7 @@
 			<GueltigVon>2010-08-14</GueltigVon>
 			<GueltigBis>9999-12-31</GueltigBis>
 			<BfS_Gemeinde>351</BfS_Gemeinde>
-			<Strasse>Winkelriedstrasse</Strasse>
+			<Strasse>Testweg</Strasse>
 			<Hausnummer>22</Hausnummer>
 			<Postleitzahl>3014</Postleitzahl>
 			<Ort>Bern</Ort>
@@ -83,7 +83,7 @@
 			<Strasse>Gosmertalweg</Strasse>
 			<Hausnummer>11</Hausnummer>
 			<Postleitzahl>6463</Postleitzahl>
-			<Ort>B�rglen UR</Ort>
+			<Ort>Bürglen UR</Ort>
 			<Kanton>UR</Kanton>
 			<Land>CH</Land>
 		</Adresse>

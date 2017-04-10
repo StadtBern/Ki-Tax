@@ -10,9 +10,9 @@
 		</Einwohnercode>
 		<Nachname>Anderegg Berger</Nachname>
 		<Ledigname>Anderegg</Ledigname>
-		<Vorname>Sandra Teremoana</Vorname>
+		<Vorname>Sandra Christina</Vorname>
 		<Rufname>Sandra</Rufname>
-		<Geburtsdatum>1974-05-05</Geburtsdatum>
+		<Geburtsdatum>1974-01-05</Geburtsdatum>
 		<Zuzugsdatum>1994-10-29</Zuzugsdatum>
 		<Nationalitaet>CH</Nationalitaet>
 		<Zivilstand>3</Zivilstand>
@@ -25,7 +25,7 @@
 			<GueltigVon>2002-09-29</GueltigVon>
 			<GueltigBis>9999-12-31</GueltigBis>
 			<BfS_Gemeinde>351</BfS_Gemeinde>
-			<Strasse>Militärstrasse</Strasse>
+			<Strasse>Testallee</Strasse>
 			<Hausnummer>63</Hausnummer>
 			<Postleitzahl>3014</Postleitzahl>
 			<Ort>Bern</Ort>
@@ -50,14 +50,14 @@
 			<Nachname>Berger</Nachname>
 			<Vorname>David</Vorname>
 			<Rufname>David</Rufname>
-			<Geburtsdatum>1972-06-26</Geburtsdatum>
+			<Geburtsdatum>1972-08-20</Geburtsdatum>
 			<Adresse>
 				<Adresstyp>1</Adresstyp>
 				<Adresstyp_txt>Wohnadresse</Adresstyp_txt>
 				<GueltigVon>2002-09-24</GueltigVon>
 				<GueltigBis>9999-12-31</GueltigBis>
 				<BfS_Gemeinde>351</BfS_Gemeinde>
-				<Strasse>Militärstrasse</Strasse>
+				<Strasse>Testallee</Strasse>
 				<Hausnummer>63</Hausnummer>
 				<Postleitzahl>3014</Postleitzahl>
 				<Ort>Bern</Ort>
@@ -73,14 +73,14 @@
 			<Ledigname>Berger</Ledigname>
 			<Vorname>Maria Stella</Vorname>
 			<Rufname>Maria</Rufname>
-			<Geburtsdatum>2010-10-02</Geburtsdatum>
+			<Geburtsdatum>2010-06-10</Geburtsdatum>
 			<Adresse>
 				<Adresstyp>1</Adresstyp>
 				<Adresstyp_txt>Wohnadresse</Adresstyp_txt>
 				<GueltigVon>2010-10-02</GueltigVon>
 				<GueltigBis>9999-12-31</GueltigBis>
 				<BfS_Gemeinde>351</BfS_Gemeinde>
-				<Strasse>Militärstrasse</Strasse>
+				<Strasse>Testallee</Strasse>
 				<Hausnummer>63</Hausnummer>
 				<Postleitzahl>3014</Postleitzahl>
 				<Ort>Bern</Ort>
