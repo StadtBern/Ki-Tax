@@ -483,7 +483,7 @@ export class EbeguFreigabeState implements IState {
 
 export class EbeguBetreuungMitteilungState implements IState {
     name = 'gesuch.mitteilung';
-    url = '/mitteilung/:fallId/:betreuungId';
+    url = '/mitteilung/:fallId/:betreuungId/:mitteilungId';
 
     views: {[name: string]: IState} = {
         'gesuchViewPort': {

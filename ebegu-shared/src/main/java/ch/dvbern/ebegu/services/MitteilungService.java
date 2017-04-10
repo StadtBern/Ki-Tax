@@ -73,4 +73,9 @@ public interface MitteilungService {
 	 * since normally you only need to know where the mitteilung was applied.
 	 */
 	Gesuch applyBetreuungsmitteilung(@NotNull Betreuungsmitteilung mitteilung);
+
+	/**
+	 * Returns the newest Betreuungsmitteilung for the given Betreuung
+	 */
+	Optional<Betreuungsmitteilung> findNewestBetreuungsmitteilung(String betreuungId);
 }

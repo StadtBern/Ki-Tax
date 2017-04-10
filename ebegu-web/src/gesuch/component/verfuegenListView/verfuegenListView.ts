@@ -255,7 +255,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         }).then((bemerkung: string) => {
             this.gesuchRS.sendGesuchToSTV(this.getGesuch().id, bemerkung).then((gesuch: TSGesuch) => {
                 this.gesuchModelManager.setGesuch(gesuch);
-                this.$state.go('pendenzen');
             });
         });
     }

@@ -28,4 +28,5 @@ export class EbeguMitteilungenStateState implements IState {
 export class IMitteilungenStateParams implements IStateParamsService {
     fallId: string;
     betreuungId: string;
+    mitteilungId: string;
 }

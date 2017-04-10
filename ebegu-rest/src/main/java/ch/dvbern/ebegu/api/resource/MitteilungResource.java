@@ -169,6 +169,28 @@ public class MitteilungResource {
 
 	@Nullable
 	@GET
+	@Path("/newestBetreuunsmitteilung/{betreuungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxMitteilung findNewestBetreuunsmitteilung(
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId JaxBetreuungId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(JaxBetreuungId.getId());
+		String betreuungId = converter.toEntityId(JaxBetreuungId);
+		Optional<Betreuung> optional = betreuungService.findBetreuung(betreuungId);
+
+		if (!optional.isPresent()) {
+			throw new EbeguEntityNotFoundException("findNewestBetreuunsmitteilung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId);
+		}
+
+		Optional<Betreuungsmitteilung> optBetMitteilung = mitteilungService.findNewestBetreuungsmitteilung(betreuungId);
+		return optBetMitteilung.map(mitteilung -> converter.betreuungsmitteilungToJAX(mitteilung)).orElse(null);
+	}
+
+	@Nullable
+	@GET
 	@Path("/forrole/fall/{fallId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

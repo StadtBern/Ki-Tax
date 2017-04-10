@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import javax.security.auth.login.LoginException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -270,6 +271,49 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		final BetreuungspensumContainer nextBetPensum = persistedBetreuung.get().getBetreuungspensumContainers().iterator().next();
 		Assert.assertEquals(new Integer(33), nextBetPensum.getBetreuungspensumJA().getPensum());
 		Assert.assertEquals(gueltigkeit, nextBetPensum.getBetreuungspensumJA().getGueltigkeit());
+	}
+
+	@Test
+	public void testFindNewestBetreuungsmitteilung_NoMitteilungExists() {
+		prepareDependentObjects();
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
+		final Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+
+		final Optional<Betreuungsmitteilung> optMitteilung = mitteilungService.findNewestBetreuungsmitteilung(betreuung.getId());
+
+		Assert.assertFalse(optMitteilung.isPresent());
+	}
+
+	@Test
+	public void testFindNewestBetreuungsmitteilung() {
+		prepareDependentObjects();
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
+		final Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+
+		loginAsSachbearbeiterInst("sainst", betreuung.getInstitutionStammdaten().getInstitution());
+
+		//create a first mitteilung
+		final Betreuungsmitteilung oldMitteilung = TestDataUtil.createBetreuungmitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.INSTITUTION);
+		oldMitteilung.setBetreuung(betreuung);
+		final Betreuungsmitteilung persistedFirstMitteilung = mitteilungService.sendBetreuungsmitteilung(oldMitteilung);
+		final LocalDateTime oldSentDatum = persistedFirstMitteilung.getSentDatum();
+
+		//create a second mitteilung, which will be the newest
+		final Betreuungsmitteilung newMitteilung = TestDataUtil.createBetreuungmitteilung(fall, empfaengerJA, MitteilungTeilnehmerTyp.JUGENDAMT,
+			sender, MitteilungTeilnehmerTyp.INSTITUTION);
+		newMitteilung.setBetreuung(betreuung);
+		final Betreuungsmitteilung persistedSecondMitteilung = mitteilungService.sendBetreuungsmitteilung(newMitteilung);
+		final LocalDateTime newestSentDatum = persistedSecondMitteilung.getSentDatum();
+
+		final Optional<Betreuungsmitteilung> optMitteilung = mitteilungService.findNewestBetreuungsmitteilung(betreuung.getId());
+
+		Assert.assertTrue(optMitteilung.isPresent());
+		Assert.assertEquals(betreuung, optMitteilung.get().getBetreuung());
+		Assert.assertEquals(MitteilungTeilnehmerTyp.INSTITUTION, optMitteilung.get().getSenderTyp());
+		Assert.assertEquals(MitteilungTeilnehmerTyp.JUGENDAMT, optMitteilung.get().getEmpfaengerTyp());
+		Assert.assertEquals(newestSentDatum, optMitteilung.get().getSentDatum());
+		Assert.assertNotEquals(oldSentDatum, optMitteilung.get().getSentDatum());
 	}
 
 
