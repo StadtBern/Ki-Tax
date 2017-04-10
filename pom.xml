@@ -158,7 +158,7 @@
             <dependency>
                 <groupId>ch.dvbern.lib.beanvalidation</groupId>
                 <artifactId>dvbern-lib-beanvalidation</artifactId>
-                <version>0.6</version>
+                <version>1.0.0</version>
             </dependency>
 
             <dependency>
