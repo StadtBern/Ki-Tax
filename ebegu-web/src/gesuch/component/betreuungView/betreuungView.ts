@@ -490,8 +490,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     private findExistingBetreuungsmitteilung() {
-        this.mitteilungRS.getNewestBetreuungsmitteilung(this.getBetreuungModel().id).then((response: TSBetreuungsmitteilung) => {
-            this.existingMutationsMeldung = response;
-        });
+        if (!this.getBetreuungModel().isNew()) {
+            this.mitteilungRS.getNewestBetreuungsmitteilung(this.getBetreuungModel().id).then((response: TSBetreuungsmitteilung) => {
+                this.existingMutationsMeldung = response;
+            });
+        }
     }
 }
