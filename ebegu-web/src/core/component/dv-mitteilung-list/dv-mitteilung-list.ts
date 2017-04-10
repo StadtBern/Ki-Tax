@@ -329,6 +329,10 @@ export class DVMitteilungListController {
         return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied !== true;
     }
 
+    public canApplyBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
+
     public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {
         if (mitteilung instanceof TSBetreuungsmitteilung) {
             this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {

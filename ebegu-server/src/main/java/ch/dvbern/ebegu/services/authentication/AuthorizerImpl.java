@@ -37,7 +37,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 
 	private static final UserRole[] JA_OR_ADM = {ADMIN, SACHBEARBEITER_JA};
 	private static final UserRole[] OTHER_AMT_ROLES = {REVISOR, JURIST, STEUERAMT};
-	private static final UserRole[] JA_ADM_OTHER_AMT_ROLES = {ADMIN, SACHBEARBEITER_JA, REVISOR, JURIST, STEUERAMT};
 
 	@Inject
 	private PrincipalBean principalBean;
