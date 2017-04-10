@@ -1175,7 +1175,7 @@ export default class GesuchModelManager {
      * checks if the gesuch is readonly for a given role based on its state
      */
     private isGesuchReadonlyForRole(): boolean {
-        if (this.authServiceRS.isRole(TSRole.SCHULAMT)) {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles())) {
             return true;  // schulamt hat immer nur readonly zugriff
         } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
             return isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter

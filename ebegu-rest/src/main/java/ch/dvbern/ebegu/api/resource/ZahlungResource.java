@@ -67,7 +67,7 @@ public class ZahlungResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxZahlungsauftrag> getAllZahlungsauftraege() {
-		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA)) {
+		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR)) {
 			return zahlungService.getAllZahlungsauftraege().stream()
 				.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag))
 				.collect(Collectors.toList());
@@ -99,7 +99,7 @@ public class ZahlungResource {
 	public JaxZahlungsauftrag findZahlungsauftrag(
 		@Nonnull @NotNull @PathParam("zahlungsauftragId") JaxId zahlungsauftragJAXPId) throws EbeguException {
 
-		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA)) {
+		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR)) {
 			Validate.notNull(zahlungsauftragJAXPId.getId());
 			String zahlungsauftragId = converter.toEntityId(zahlungsauftragJAXPId);
 			Optional<Zahlungsauftrag> optional = zahlungService.findZahlungsauftrag(zahlungsauftragId);

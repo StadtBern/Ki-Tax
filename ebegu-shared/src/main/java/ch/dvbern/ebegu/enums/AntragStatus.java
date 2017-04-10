@@ -84,11 +84,35 @@ public enum AntragStatus {
 		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN,
-		VERFUEGT);
+		VERFUEGT,
+		BESCHWERDE_HAENGIG,
+		PRUEFUNG_STV,
+		IN_BEARBEITUNG_STV,
+		GEPRUEFT_STV);
 
 	public static final Set<AntragStatus> FOR_STEUERAMT_ROLE = EnumSet.of(
 		PRUEFUNG_STV,
 		IN_BEARBEITUNG_STV);
+
+	public static final Set<AntragStatus> FOR_JURIST_REVISOR_ROLE = EnumSet.of(
+		NUR_SCHULAMT,
+		NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN,
+		FREIGEGEBEN,        // Freigabequittung im Jugendamt eingelesen ODER keine Quittung notwendig
+		IN_BEARBEITUNG_JA,
+		ZURUECKGEWIESEN,
+		ERSTE_MAHNUNG,
+		ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+		ERSTE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG,
+		ZWEITE_MAHNUNG_ABGELAUFEN,
+		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
+		GEPRUEFT,
+		VERFUEGEN,
+		VERFUEGT,
+		BESCHWERDE_HAENGIG,
+		PRUEFUNG_STV,
+		IN_BEARBEITUNG_STV,
+		GEPRUEFT_STV);
 
     private static final Set<AntragStatus> all = EnumSet.allOf(AntragStatus.class);
     private static final Set<AntragStatus> none = EnumSet.noneOf(AntragStatus.class);
@@ -97,8 +121,8 @@ public enum AntragStatus {
 	private static final Set<AntragStatus> forSachbearbeiterTraegerschaftRole = FOR_INSTITUTION_ROLE;
     private static final Set<AntragStatus> forSachbearbeiterJugendamtRole = FOR_ADMIN_ROLE;
     private static final Set<AntragStatus> forSchulamtRole = FOR_SCHULAMT_ROLE;
-    private static final Set<AntragStatus> forJuristRole = FOR_ADMIN_ROLE;
-    private static final Set<AntragStatus> forRevisorRole = FOR_ADMIN_ROLE;
+    private static final Set<AntragStatus> forJuristRole = FOR_JURIST_REVISOR_ROLE;
+    private static final Set<AntragStatus> forRevisorRole = FOR_JURIST_REVISOR_ROLE;
     private static final Set<AntragStatus> forSteueramt = FOR_STEUERAMT_ROLE;
 
     // range ist etwas gefaehrlich, da man sehr vorsichtig sein muss, in welcher Reihenfolge man die Werte schreibt. Ausserdem kann man
@@ -219,5 +243,13 @@ public enum AntragStatus {
 	public boolean isReadableBySteueramt() {
 		// GEPRUEFT_STV ist dabei, weil es beim Freigeben schon in diesem Status ist
 		return forSteueramt.contains(this) || this.equals(GEPRUEFT_STV);
+	}
+
+	public boolean isReadableByJurist() {
+		return forJuristRole.contains(this);
+	}
+
+	public boolean isReadableByRevisor() {
+		return forRevisorRole.contains(this);
 	}
 }

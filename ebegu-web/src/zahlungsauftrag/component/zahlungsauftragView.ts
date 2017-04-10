@@ -73,7 +73,9 @@ export class ZahlungsauftragViewController {
             }
             case TSRole.SUPER_ADMIN:
             case TSRole.ADMIN:
-            case TSRole.SACHBEARBEITER_JA: {
+            case TSRole.SACHBEARBEITER_JA:
+            case TSRole.JURIST:
+            case TSRole.REVISOR: {
                 this.zahlungRS.getAllZahlungsauftraege().then((response: any) => {
                     this.zahlungsauftragen = angular.copy(response);
                 });

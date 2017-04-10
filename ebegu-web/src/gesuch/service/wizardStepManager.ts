@@ -98,6 +98,7 @@ export default class WizardStepManager {
         this.allowedSteps = [];
         this.allowedSteps.push(TSWizardStepName.FAMILIENSITUATION);
         this.allowedSteps.push(TSWizardStepName.GESUCHSTELLER);
+        this.allowedSteps.push(TSWizardStepName.UMZUG);
         this.allowedSteps.push(TSWizardStepName.KINDER);
         this.allowedSteps.push(TSWizardStepName.FINANZIELLE_SITUATION);
         this.allowedSteps.push(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);

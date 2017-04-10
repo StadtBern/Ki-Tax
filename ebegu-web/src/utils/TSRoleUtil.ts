@@ -54,8 +54,16 @@ export class TSRoleUtil {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA];
     }
 
+    public static getAdministratorRevisorRole(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.REVISOR];
+    }
+
     public static getJugendamtRole(): Array<TSRole> {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.JURIST, TSRole.REVISOR];
+    }
+
+    public static getGesuchstellerJugendamtOtherAmtRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.JURIST, TSRole.REVISOR, TSRole.GESUCHSTELLER];
     }
 
     public static getJugendamtAndSchulamtRole(): Array<TSRole> {
@@ -66,8 +74,8 @@ export class TSRoleUtil {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.SCHULAMT];
     }
 
-    public static getAdministratorJugendamtSteueramtRoles(): Array<TSRole> {
-        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.STEUERAMT];
+    public static getAdministratorJugendamtSchulamtSteueramtRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.SCHULAMT, TSRole.STEUERAMT];
     }
 
     public static getAllButAdministratorJugendamtRole(): Array<string> {
@@ -113,7 +121,19 @@ export class TSRoleUtil {
         return [TSRole.STEUERAMT];
     }
 
+    public static getJuristOnlyRoles(): Array<TSRole> {
+        return [TSRole.JURIST];
+    }
+
+    public static getRevisorOnlyRoles(): Array<TSRole> {
+        return [TSRole.REVISOR];
+    }
+
+    public static getReadOnlyRoles(): Array<TSRole> {
+        return [TSRole.REVISOR, TSRole.JURIST, TSRole.SCHULAMT, TSRole.STEUERAMT];
+    }
+
     public static getAllRolesForKommentarSpalte(): Array<TSRole> {
-        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.STEUERAMT, TSRole.SCHULAMT];
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.STEUERAMT, TSRole.SCHULAMT, TSRole.JURIST, TSRole.REVISOR];
     }
 }

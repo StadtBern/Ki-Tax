@@ -84,12 +84,18 @@ export class DVMitteilungListController {
                     });
                 } else {
                     this.loadEntwurf();
-                    this.setAllMitteilungenGelesen().then((response) => {
+                    // Wenn JA oder Institution -> Neue Mitteilungen als gelesen markieren
+                    if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
+                        this.setAllMitteilungenGelesen().then((response) => {
+                            this.loadAllMitteilungen();
+                            if (this.$rootScope) {
+                                this.$rootScope.$emit('POSTEINGANG_MAY_CHANGED', null);
+                            }
+                        });
+                    } else {
+                        // Fuer Revisor und Jurist: Nur laden
                         this.loadAllMitteilungen();
-                        if (this.$rootScope) {
-                            this.$rootScope.$emit('POSTEINGANG_MAY_CHANGED', null);
-                        }
-                    });
+                    }
                 }
             });
         }
@@ -107,8 +113,10 @@ export class DVMitteilungListController {
     private loadEntwurf() {
         // Wenn der Fall keinen Besitzer hat, darf auch keine Nachricht geschrieben werden
         // Ausser wir sind Institutionsbenutzer
+        let isGesuchsteller: boolean = this.authServiceRS.isRole(TSRole.GESUCHSTELLER);
+        let isJugendamtAndFallHasBesitzer: boolean = this.fall.besitzer && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
         let isInstitutionsUser: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
-        if (this.fall.besitzer || isInstitutionsUser) {
+        if (isGesuchsteller || isJugendamtAndFallHasBesitzer || isInstitutionsUser) {
             if (this.betreuung) {
                 this.mitteilungRS.getEntwurfForCurrentRolleForBetreuung(this.betreuung.id).then((entwurf: TSMitteilung) => {
                     if (entwurf) {
@@ -254,6 +262,8 @@ export class DVMitteilungListController {
             }
             case TSRole.SUPER_ADMIN:
             case TSRole.ADMIN:
+            case TSRole.JURIST:
+            case TSRole.REVISOR:
             case TSRole.SACHBEARBEITER_JA: {
                 return TSMitteilungTeilnehmerTyp.JUGENDAMT;
             }
@@ -317,6 +327,10 @@ export class DVMitteilungListController {
 
     public isBetreuungsmitteilungNotApplied(mitteilung: TSMitteilung): boolean {
         return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied !== true;
+    }
+
+    public canApplyBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
     }
 
     public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {

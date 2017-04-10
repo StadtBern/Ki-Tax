@@ -59,7 +59,7 @@
                 <td width="5%" class="symbol" ng-click="$event.stopPropagation()"
                     ng-class="{'documents-vailable': vm.hasDokuments(row),'no-documents': !vm.hasDokuments(row),'no-color' : vm.sonstige}">
                     <a ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
-                       class="fa fa-upload" aria-hidden="true" style="color: black"></a>
+                       class="fa fa-upload" aria-hidden="true" style="color: black" ng-disabled="vm.isDokumenteUploadDisabled()"></a>
                 </td>
 
             </tr>
