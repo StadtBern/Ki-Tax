@@ -222,6 +222,15 @@ export class GesuchRouteController {
         return undefined;
     }
 
+    public showAbfrageForGesuchsteller(n: number): boolean {
+        let gs = this.getGesuchsteller(n);
+        if (gs && gs.gesuchstellerJA && !gs.gesuchstellerJA.isNew()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public getGesuchsteller(n: number): TSGesuchstellerContainer {
         switch (n) {
             case 1:

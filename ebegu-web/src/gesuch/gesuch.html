@@ -243,7 +243,7 @@
         <h2>EWK Abfragen</h2>
 
         <md-content class="ewk-content">
-            <div ng-repeat=" n in [1,2]" ng-if="vm.getGesuchsteller(n)">
+            <div ng-repeat=" n in [1,2]" ng-if="vm.showAbfrageForGesuchsteller(n)">
 
                 <h3 ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller(n))"></h3>
                 <button type="button" class="dv-btn-operation"
@@ -465,3 +465,4 @@
         </md-content>
     </md-sidenav>
 </div>
+

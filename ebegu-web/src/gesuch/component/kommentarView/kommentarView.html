@@ -14,7 +14,7 @@
         </div>
 
         <div class="kommentarEwk" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
-                    dv-show-expression="!vm.gesuchModelManager.isGesuchReadonly()">
+                    dv-show-expression="vm.showEwkAbfrage()">
             <div>
                 <button type="submit" ng-click="vm.toggleEwkSidenav()"
                                    class="kommentar-button" aria-label="{{'EWK_ABFRAGE_STARTEN' | translate}}">
