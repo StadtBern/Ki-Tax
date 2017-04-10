@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.mail.MailTemplateConfiguration;
 import org.apache.commons.lang.StringUtils;
@@ -67,7 +64,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 	@Override
 	public void sendInfoMitteilungErhalten(@Nonnull Mitteilung mitteilung) throws MailException {
-		if (doSendMail(mitteilung.getBetreuung().extractGesuch())) {
+		if (doSendMail(mitteilung.getFall())) {
 			String mailaddress = fallService.getCurrentEmailAddress(mitteilung.getFall().getId()).orElse(null);
 			if (StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getInfoMitteilungErhalten(mitteilung, mailaddress);
@@ -167,6 +164,13 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 				LOG.warn("skipping sendInfoGesuchGeloescht because Gesuchsteller 1 is null");
 			}
 		}
+	}
+
+	/**
+	 * Hier wird an einer Stelle definiert, an welche Benutzergruppen ein Mail geschickt werden soll.
+	 */
+	private boolean doSendMail(Fall fall) {
+		return fall.getBesitzer() != null;
 	}
 
 	/**

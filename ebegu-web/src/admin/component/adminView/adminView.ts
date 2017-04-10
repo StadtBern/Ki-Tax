@@ -3,6 +3,9 @@ import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {IHttpPromiseCallbackArg, IComponentOptions} from 'angular';
 import {ReindexRS} from '../../service/reindexRS.rest';
+import AbstractAdminViewController from '../../abstractAdminView';
+import IScope = angular.IScope;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 require('./adminView.less');
 let template = require('./adminView.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
@@ -18,8 +21,8 @@ export class AdminViewComponentConfig implements IComponentOptions {
     controllerAs: string = 'vm';
 }
 
-export class AdminViewController {
-    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH', 'EbeguRestUtil', 'ReindexRS'];
+export class AdminViewController extends AbstractAdminViewController {
+    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH', 'EbeguRestUtil', 'ReindexRS', 'AuthServiceRS'];
 
     length: number;
     applicationProperty: TSApplicationProperty;
@@ -30,7 +33,8 @@ export class AdminViewController {
 
     /* @ngInject */
     constructor(applicationPropertyRS: ApplicationPropertyRS, MAX_LENGTH: number, ebeguRestUtil: EbeguRestUtil,
-                private reindexRS: ReindexRS) {
+                private reindexRS: ReindexRS, authServiceRS: AuthServiceRS) {
+        super(authServiceRS);
         this.length = MAX_LENGTH;
         this.applicationProperty = undefined;
         this.applicationPropertyRS = applicationPropertyRS;
@@ -91,7 +95,6 @@ export class AdminViewController {
             }
         }
         return -1;
-
     }
 
     public startReindex() {

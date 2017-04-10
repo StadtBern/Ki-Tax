@@ -57,7 +57,9 @@ export class ZahlungViewController {
                 }
                 case TSRole.SUPER_ADMIN:
                 case TSRole.ADMIN:
-                case TSRole.SACHBEARBEITER_JA: {
+                case TSRole.SACHBEARBEITER_JA:
+                case TSRole.JURIST:
+                case TSRole.REVISOR: {
                     this.zahlungRS.getZahlungsauftrag(this.$stateParams.zahlungsauftragId).then((response) => {
                         this.zahlungsauftrag = response;
                     });

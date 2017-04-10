@@ -25,7 +25,7 @@
                     <th data-translate="GEBURTSDATUM"></th>
                     <th data-translate="DUBLETTEN"
                         dv-show-element
-                        dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"></th>
+                        dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtRole()"></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -36,7 +36,7 @@
                     <td ng-bind="row.kindJA.nachname"></td>
                     <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td dv-show-element
-                        dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                        dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtRole()">
                         <span class="betreuung" ng-repeat="dublette in vm.getDubletten(row)"
                               ng-click="vm.gotoKindDublette(dublette); $event.stopPropagation()"
                               ng-show="dublette.fallNummer" ng-bind="vm.getFallNummer(dublette) + ($last ? ' ' : ', ')"></span>

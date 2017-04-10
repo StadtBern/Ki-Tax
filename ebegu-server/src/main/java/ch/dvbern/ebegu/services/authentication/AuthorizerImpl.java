@@ -130,7 +130,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		validateMandantMatches(fall);
 		//berechtigte Rollen pruefen
 		UserRole[] allowedRoles = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
-			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT};
+			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT, JURIST, REVISOR};
 		if (principalBean.isCallerInAnyOfRole(allowedRoles)) {
 			return true;
 		}
@@ -434,6 +434,9 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		if (isAllowedSteueramt(entity)) {
 			return true;
 		}
+		if (isAllowedJuristOrRevisor(entity)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -446,7 +449,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
 			return entity.getStatus().isReadableByJugendamtSteueramt();
 		}
-		return false;
+		return isAllowedJuristOrRevisor(entity);
 	}
 
 	private boolean isAllowedSchulamt(Gesuch entity) {
@@ -459,6 +462,16 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	private boolean isAllowedSteueramt(Gesuch entity) {
 		if (principalBean.isCallerInRole(STEUERAMT)) {
 			return entity.getStatus().isReadableBySteueramt();
+		}
+		return false;
+	}
+
+	private boolean isAllowedJuristOrRevisor(Gesuch gesuch) {
+		if (principalBean.isCallerInRole(JURIST)) {
+			return gesuch.getStatus().isReadableByJurist();
+		}
+		if (principalBean.isCallerInRole(REVISOR)) {
+			return gesuch.getStatus().isReadableByRevisor();
 		}
 		return false;
 	}
