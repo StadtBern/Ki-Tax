@@ -992,5 +992,6 @@
     "EWK_ADRESSE_LAND": "Land",
     "EWK_BEZIEHUNG_TYP": "Beziehung",
     "STV_PRUEFUNG_ABSCHLIESSEN_UPPER": "PRÜFUNG ABSCHLIESSEN",
-    "STV_PRUEFUNG_ABSCHLIESSEN_CONFIRMATION": "Möchten Sie die Prüfung bei der Steuerverwaltung wirklich abschliessen?"
+    "STV_PRUEFUNG_ABSCHLIESSEN_CONFIRMATION": "Möchten Sie die Prüfung bei der Steuerverwaltung wirklich abschliessen?",
+    "EXISTING_MUTATIONSMELDUNG": "Am {{datumMutationsmeldung}} wurde zu dieser Betreuung eine Mutationsmeldung ans Jugendamt gesendet"
 }

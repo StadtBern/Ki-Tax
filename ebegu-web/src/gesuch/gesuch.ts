@@ -33,7 +33,7 @@ export class GesuchRouteController {
                 private wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService,
                 private authServiceRS: AuthServiceRS, private $mdSidenav: ng.material.ISidenavService, private CONSTANTS: any,
-    private gesuchstellerRS: GesuchstellerRS, private $log: ILogService, private $rootScope: IRootScopeService) {
+                private gesuchstellerRS: GesuchstellerRS, private $log: ILogService, private $rootScope: IRootScopeService) {
         //super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.loadLastStatusChange(this.gesuchModelManager.getGesuch());
         this.TSRole = TSRole;

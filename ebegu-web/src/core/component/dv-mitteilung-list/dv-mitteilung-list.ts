@@ -48,6 +48,7 @@ export class DVMitteilungListController {
     betreuung: TSBetreuung;
     form: IFormController;
 
+    paramSelectedMitteilungId: string;
     currentMitteilung: TSMitteilung;
     allMitteilungen: Array<TSMitteilung>;
     TSRole: any;
@@ -66,11 +67,12 @@ export class DVMitteilungListController {
         this.TSRoleUtil = TSRoleUtil;
         this.ebeguUtil = ebeguUtil;
     }
-    $onInit() {
-        this.initViewModel();
-    }
 
-    private initViewModel() {
+    $onInit() {
+        if (this.$stateParams.mitteilungId) {
+            // wenn man eine bestimmte Mitteilung oeffnen will, kann man ihr ID als parameter geben
+            this.paramSelectedMitteilungId = this.$stateParams.mitteilungId;
+        }
         if (this.$stateParams.fallId) {
             this.fallRS.findFall(this.$stateParams.fallId).then((response) => {
                 this.fall = response;
