@@ -353,7 +353,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@Nonnull
 	private Zahlung createZahlung(@Nonnull InstitutionStammdaten institution, @Nonnull Zahlungsauftrag zahlungsauftrag) {
 		Zahlung zahlung = new Zahlung();
-		zahlung.setStatus(ZahlungStatus.AUSGELOEST);
+		zahlung.setStatus(ZahlungStatus.ENTWURF);
 		zahlung.setInstitutionStammdaten(institution);
 		zahlung.setZahlungsauftrag(zahlungsauftrag);
 		zahlungsauftrag.getZahlungen().add(zahlung);
@@ -407,6 +407,10 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
 		zahlungsauftrag.setStatus(ZahlungauftragStatus.AUSGELOEST);
+		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
+			zahlung.setStatus(ZahlungStatus.AUSGELOEST);
+			persistence.merge(zahlung);
+		}
 		return persistence.merge(zahlungsauftrag);
 	}
 
