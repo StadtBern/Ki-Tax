@@ -215,8 +215,18 @@ describe('betreuungView', function () {
                 let gesuch: TSGesuch = initGesuch(TSAntragTyp.GESUCH, TSAntragStatus.PRUEFUNG_STV);
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
+            it('should be true if the Gesuch is gesperrtWegenBeschwerde though STV status', () => {
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.GESUCH, TSAntragStatus.PRUEFUNG_STV);
+                gesuch.gesperrtWegenBeschwerde = false;
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
+            });
             it('should be true if the Gesuch is a Mutation', () => {
                 let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
+            });
+            it('should be false if the Mutation is gesperrtWegenBeschwerde', () => {
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA);
+                gesuch.gesperrtWegenBeschwerde = false;
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
         });
@@ -226,6 +236,7 @@ describe('betreuungView', function () {
         let gesuch: TSGesuch = new TSGesuch();
         gesuch.typ = typ;
         gesuch.status = status;
+        gesuch.gesperrtWegenBeschwerde = false;
         spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
         return gesuch;
     }

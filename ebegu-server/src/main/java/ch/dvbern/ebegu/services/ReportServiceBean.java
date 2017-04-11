@@ -716,8 +716,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		row.setPeriode(gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		row.setEingangsdatum(gesuch.getEingangsdatum());
 		for (AntragStatusHistory antragStatusHistory : gesuch.getAntragStatusHistories()) {
-			if (AntragStatus.VERFUEGT.equals(antragStatusHistory.getStatus()) ||
-				AntragStatus.NUR_SCHULAMT.equals(antragStatusHistory.getStatus())) {
+			if (AntragStatus.getAllVerfuegtStates().contains(antragStatusHistory.getStatus())) {
 				row.setVerfuegungsdatum(antragStatusHistory.getTimestampVon().toLocalDate());
 			}
 		}

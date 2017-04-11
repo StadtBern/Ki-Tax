@@ -438,6 +438,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      */
     public isMutationsmeldungAllowed(): boolean {
         return (this.isMutation() || (isVerfuegtOrSTV(this.gesuchModelManager.getGesuch().status)))
+            && this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde !== true
             && this.isNewestGesuch
             && this.getBetreuungModel().betreuungsstatus !== TSBetreuungsstatus.WARTEN;
     }
