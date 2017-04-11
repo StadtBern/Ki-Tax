@@ -22,7 +22,7 @@ import {IBetreuungStateParams} from '../../gesuch.route';
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {isVerfuegtOrSTV} from '../../../models/enums/TSAntragStatus';
 import * as moment from 'moment';
 import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 import Moment = moment.Moment;
@@ -437,7 +437,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * sich um letztes bzw. neuestes Gesuch handeln
      */
     public isMutationsmeldungAllowed(): boolean {
-        return (this.isMutation() || (this.gesuchModelManager.getGesuch().status === TSAntragStatus.VERFUEGT))
+        return (this.isMutation() || (isVerfuegtOrSTV(this.gesuchModelManager.getGesuch().status)))
             && this.isNewestGesuch
             && this.getBetreuungModel().betreuungsstatus !== TSBetreuungsstatus.WARTEN;
     }

@@ -14,7 +14,10 @@ import DateUtil from '../../../utils/DateUtil';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {IBetreuungStateParams} from '../../gesuch.route';
+import TSGesuch from '../../../models/TSGesuch';
 import IFormController = angular.IFormController;
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 
 describe('betreuungView', function () {
 
@@ -44,6 +47,7 @@ describe('betreuungView', function () {
 
         betreuung = new TSBetreuung();
         betreuung.timestampErstellt = DateUtil.today();
+        betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
         kind = new TSKindContainer();
         $stateParams = $injector.get('$stateParams');
         spyOn(gesuchModelManager, 'getKindToWorkWith').and.returnValue(kind);
@@ -62,6 +66,8 @@ describe('betreuungView', function () {
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
             $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS,
             wizardStepManager, $stateParams, $injector.get('MitteilungRS'), $injector.get('DvDialog'), $injector.get('$log'));
+        betreuungView.$onInit();
+        $rootScope.$apply();
         betreuungView.model = betreuung;
 
         betreuungView.form = TestDataUtil.createDummyForm();
@@ -154,7 +160,6 @@ describe('betreuungView', function () {
         });
         describe('platzAbweisen()', () => {
             it('must change the status of the Betreuung to ABGEWIESEN and restore initial values of Betreuung', () => {
-                betreuungView.$onInit();
                 spyOn(gesuchModelManager, 'saveBetreuung').and.returnValue($q.when({}));
                 spyOn(gesuchModelManager, 'setBetreuungToWorkWith').and.stub();
                 betreuungView.model.erweiterteBeduerfnisse = true;
@@ -197,7 +202,33 @@ describe('betreuungView', function () {
                 expect(betreuungView.getBetreuungspensen().length).toEqual(0);
             });
         });
+        describe('isMutationsmeldungAllowed', () => {
+            it('should be false if the Gesuch is not a Mutation and is not verfuegt', () => {
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.GESUCH, TSAntragStatus.IN_BEARBEITUNG_JA);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
+            });
+            it('should be true if the Gesuch is not a Mutation but in Status Verfuegt', () => {
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.GESUCH, TSAntragStatus.VERFUEGT);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
+            });
+            it('should be true if the Gesuch is not a Mutation but in Status STV', () => {
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.GESUCH, TSAntragStatus.PRUEFUNG_STV);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
+            });
+            it('should be true if the Gesuch is a Mutation', () => {
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.MUTATION, TSAntragStatus.IN_BEARBEITUNG_JA);
+                expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
+            });
+        });
     });
+
+    function initGesuch(typ: TSAntragTyp, status: TSAntragStatus): TSGesuch {
+        let gesuch: TSGesuch = new TSGesuch();
+        gesuch.typ = typ;
+        gesuch.status = status;
+        spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
+        return gesuch;
+    }
 
     function createInstitutionStammdaten(iban: string, betAngTyp: TSBetreuungsangebotTyp) {
         let instStam1: TSInstitutionStammdaten = new TSInstitutionStammdaten();
