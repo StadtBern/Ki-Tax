@@ -16,7 +16,8 @@ export class DVUserselect implements IDirective {
         inputId: '@',
         dvUsersearch: '@',
         ngDisabled: '<',
-        initialAll: '='
+        initialAll: '=',
+        showSelectionAll: '='
         //initialAll -> tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
     };
     controller = UserselectController;
@@ -39,6 +40,7 @@ export class UserselectController {
     userList: Array<TSUser>;
     dvUsersearch: string;
     initialAll: boolean;
+    showSelectionAll: boolean;
 
     static $inject: string[] = ['UserRS', 'AuthServiceRS'];
     /* @ngInject */
@@ -58,6 +60,7 @@ export class UserselectController {
         if (this.smartTable && !this.initialAll) {
             this.smartTable.search(this.selectedUser.getFullName(), this.dvUsersearch);
         }
+        console.log('showSelectionAll ' , this.showSelectionAll);
     }
 
     private updateUserList() {

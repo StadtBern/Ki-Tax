@@ -22,6 +22,7 @@ export class DVPendenzenListConfig implements IComponentOptions {
         antraege: '<',
         itemsByPage: '<',
         initialAll: '=',
+        showSelectionAll: '=',
     };
 
     template = template;
@@ -35,6 +36,7 @@ export class DVPendenzenListController {
 
     itemsByPage: number;
     initialAll: boolean;
+    showSelectionAll: boolean;
 
     selectedBetreuungsangebotTyp: string;
     selectedAntragTyp: string;
