@@ -256,7 +256,8 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		assertZahlungsauftrag(zahlungsauftrag, 1);
 		Zahlung zahlung = zahlungsauftrag.getZahlungen().get(0);
 		assertZahlung(zahlung, countMonate);
-		Assert.assertEquals(ZahlungStatus.AUSGELOEST, zahlung.getStatus());
+		Assert.assertEquals(ZahlungStatus.ENTWURF, zahlung.getStatus());
+		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
 
 		zahlung = zahlungService.zahlungBestaetigen(zahlung.getId());
 		Assert.assertNotNull(zahlung);
