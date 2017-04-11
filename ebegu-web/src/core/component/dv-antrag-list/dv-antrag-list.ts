@@ -67,11 +67,12 @@ export class DVAntragListController {
     onAdd: () => void;
     TSRoleUtil: any;
 
-    static $inject: any[] = ['EbeguUtil', '$filter', '$log', 'InstitutionRS', 'GesuchsperiodeRS', 'CONSTANTS', 'AuthServiceRS'];
+    static $inject: any[] = ['EbeguUtil', '$filter', '$log', 'InstitutionRS', 'GesuchsperiodeRS', 'CONSTANTS', 'AuthServiceRS',
+        '$window'];
     /* @ngInject */
     constructor(private ebeguUtil: EbeguUtil, private $filter: IFilterService, private $log: ILogService,
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private CONSTANTS: any, private authServiceRS: AuthServiceRS) {
+                private CONSTANTS: any, private authServiceRS: AuthServiceRS, private $window: ng.IWindowService) {
         this.removeButtonTitle = 'Eintrag entfernen';
         this.initViewModel();
         this.TSRoleUtil = TSRoleUtil;
@@ -199,6 +200,16 @@ export class DVAntragListController {
 
     public isActionsVisible() {
         return this.actionVisible === 'true';
+    }
+
+    /**
+     * Provided there is a row with id antraegeHeadRow it will take this row to check how many
+     * columns there are. Therefore this row cannot have any colspan inside any cell and any other
+     * children but td or th
+     */
+    public getColumnsNumber(): number {
+        let element = this.$window.document.getElementById('antraegeHeadRow');
+        return element.childElementCount;
     }
 
 }

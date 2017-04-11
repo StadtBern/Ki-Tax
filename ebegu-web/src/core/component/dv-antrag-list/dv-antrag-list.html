@@ -8,7 +8,7 @@
                    title="{{vm.tableTitle}}">
                 <thead>
                 <!--Sortierspalten-->
-                <tr>
+                <tr id="antraegeHeadRow">
                     <th st-sort="fallNummer" class="sortable row-fallnr" data-translate="FALL_UPPER"></th>
                     <th st-sort="familienName" class="sortable row-name" data-translate="FAMILIE_UPPER"></th>
                     <th st-sort="kinder" class="sortable row-name" data-translate="KINDER_UPPER"
@@ -175,7 +175,7 @@
                 </tbody>
                 <tfoot>
                 <tr>
-                    <td class="text-center">
+                    <td colspan="{{vm.getColumnsNumber()}}" class="text-center">
                         <div st-pagination="" st-items-by-page="20" st-displayed-pages="10"></div>
                     </td>
                 </tr>
