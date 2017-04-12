@@ -10,9 +10,9 @@ export class TSRoleUtil {
         );
     }
 
-    public static getAllRolesButGesuchstellerAndSteueramt(): Array<string> {
+    public static getAllRolesForMenuAlleVerfuegungen(): Array<string> {
         return TSRoleUtil.getAllRoles().filter(element =>
-            element !== TSRole[TSRole.GESUCHSTELLER] && element !== TSRole[TSRole.STEUERAMT]
+            element !== TSRole[TSRole.SCHULAMT] && element !== TSRole[TSRole.STEUERAMT]
         );
     }
 

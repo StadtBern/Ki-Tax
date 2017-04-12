@@ -31,7 +31,7 @@ export class AlleVerfuegungenViewComponentConfig implements IComponentOptions {
 export class AlleVerfuegungenViewController {
 
     fall: TSFall;
-    alleVerfuegungen: Array<any> = new Array<any>();
+    alleVerfuegungen: Array<any> = [];
     itemsByPage: number = 20;
     TSRoleUtil = TSRoleUtil;
 
@@ -51,12 +51,11 @@ export class AlleVerfuegungenViewController {
                     this.cancel();
                 }
 
-                    this.betreuungRS.findAllBetreuungenWithVerfuegungFromFall(this.fall.id).then((response) => {
+                this.betreuungRS.findAllBetreuungenWithVerfuegungFromFall(this.fall.id).then((response) => {
                     response.forEach((item) => {
                         this.alleVerfuegungen.push(item);
-
                     });
-                        this.alleVerfuegungen = response;
+                    this.alleVerfuegungen = response;
                 });
             });
         } else {
