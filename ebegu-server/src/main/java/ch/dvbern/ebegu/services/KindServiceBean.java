@@ -39,6 +39,10 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public KindContainer saveKind(@Nonnull KindContainer kind) {
 		Objects.requireNonNull(kind);
+		if (!kind.isNew()) {
+			// Den Lucene-Index manuell nachführen, da es bei unidirektionalen Relationen nicht automatisch geschieht!
+			updateLuceneIndex(KindContainer.class, kind.getId());
+		}
 		final KindContainer mergedKind = persistence.merge(kind);
 		wizardStepService.updateSteps(kind.getGesuch().getId(), null, null, WizardStepName.KINDER);
 		return mergedKind;
