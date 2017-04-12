@@ -22,7 +22,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _bemerkungenSTV: string;
     private _bemerkungenPruefungSTV: string;
     private _laufnummer: number;
-    private _geprueftSTV: boolean = true;
+    private _geprueftSTV: boolean = false;
     private _hasFSDokument: boolean = true;
     private _gesperrtWegenBeschwerde: boolean = false;
     private _gewarntNichtFreigegeben: boolean = false;
