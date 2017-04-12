@@ -41,6 +41,7 @@ export class UserselectController {
     dvUsersearch: string;
     initialAll: boolean;
     showSelectionAll: boolean;
+    buttonClicked: () => void;
 
     static $inject: string[] = ['UserRS', 'AuthServiceRS'];
     /* @ngInject */
@@ -60,7 +61,9 @@ export class UserselectController {
         if (this.smartTable && !this.initialAll) {
             this.smartTable.search(this.selectedUser.getFullName(), this.dvUsersearch);
         }
-        console.log('showSelectionAll ' , this.showSelectionAll);
+        this.buttonClicked = () => {
+            console.log('Button clicked in dv-userselect: ' + this.selectedUser.getFullName());
+        };
     }
 
     private updateUserList() {
@@ -68,6 +71,4 @@ export class UserselectController {
             this.userList = angular.copy(response);
         });
     }
-
-
 }

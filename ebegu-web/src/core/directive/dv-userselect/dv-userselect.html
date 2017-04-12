@@ -4,6 +4,7 @@
                 st-search="{{vm.dvUsersearch}}"
                 ng-attr-id="{{vm.inputId}}"
                 ng-attr-name={{vm.inputId}}"
+                ng-change="vm.buttonClicked()"
 
                 class="form-control"
                 ng-options="user.getFullName() for user in vm.userList | orderBy: 'nachname' track by user.getFullName()"
