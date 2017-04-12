@@ -4,6 +4,7 @@ import PendenzRS from '../../service/PendenzRS.rest';
 import * as moment from 'moment';
 import ITimeoutService = angular.ITimeoutService;
 import Moment = moment.Moment;
+import TSUser from '../../../models/TSUser';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 
@@ -38,4 +39,8 @@ export class PendenzenListViewController {
         return this.pendenzenList;
     }
 
+    public userChanged(user: TSUser): void {
+        console.log('HERE WE ARE');
+        console.log('and the winner is: ' + user.getFullName());
+    }
 }

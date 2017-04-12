@@ -12,6 +12,7 @@ import {IStateService} from 'angular-ui-router';
 import * as moment from 'moment';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import Moment = moment.Moment;
+import TSUser from '../../../models/TSUser';
 let template = require('./dv-pendenzen-list.html');
 require('./dv-pendenzen-list.less');
 
@@ -23,6 +24,7 @@ export class DVPendenzenListConfig implements IComponentOptions {
         itemsByPage: '<',
         initialAll: '=',
         showSelectionAll: '=',
+        onUserChanged: '&'
     };
 
     template = template;
@@ -45,6 +47,7 @@ export class DVPendenzenListController {
     selectedGesuchsperiode: string;
     institutionenList: Array<TSInstitution>;
     gesuchsperiodenList: Array<string>;
+    onUserChanged: (user: any) => void;
 
 
     static $inject: string[] = ['EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
@@ -56,6 +59,11 @@ export class DVPendenzenListController {
     }
     $onInit() {
         this.initViewModel();
+    }
+
+    public userChanged(selectedUser: TSUser): void {
+        console.log('dv-pendenzen-list userChanged');
+        this.onUserChanged({user: selectedUser});
     }
 
     private initViewModel() {
