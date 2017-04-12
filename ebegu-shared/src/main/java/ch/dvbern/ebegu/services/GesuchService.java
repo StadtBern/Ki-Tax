@@ -6,10 +6,12 @@ import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.UserRoleName;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -73,11 +75,18 @@ public interface GesuchService {
 
 	/**
 	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
-	 *
 	 * @return Liste aller Gesuche aus der DB
 	 */
 	@Nonnull
 	Collection<Gesuch> getAllActiveGesuche();
+
+	/**
+	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
+	 * und die dem übergebenen Benutzer als "Verantwortliche Person" zugeteilt sind.
+	 * @return Liste aller Gesuche aus der DB
+	 */
+	@Nonnull
+	Collection<Gesuch> getAllActiveGesucheOfVerantwortlichePerson(String benutzername);
 
 	/**
 	 * entfernt ein Gesuch aus der Database
