@@ -485,6 +485,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public openExistingBetreuungsmitteilung(): void {
         this.$state.go('gesuch.mitteilung', {
             fallId: this.gesuchModelManager.getGesuch().fall.id,
+            gesuchId: this.gesuchModelManager.getGesuch().id,
             betreuungId: this.getBetreuungModel().id,
             mitteilungId: this.existingMutationsMeldung.id
         });
