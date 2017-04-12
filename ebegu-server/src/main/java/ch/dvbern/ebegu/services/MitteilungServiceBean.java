@@ -37,7 +37,8 @@ import static ch.dvbern.ebegu.enums.UserRoleName.*;
  */
 @Stateless
 @Local(MitteilungService.class)
-@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
+@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION,
+	SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT})
 @SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals"})
 public class MitteilungServiceBean extends AbstractBaseService implements MitteilungService {
 
@@ -168,7 +169,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, SCHULAMT})
 	public Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 		return getMitteilungenForCurrentRolle(Mitteilung_.fall, fall);
@@ -290,6 +291,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(Fall fall) {
 		Collection<Mitteilung> mitteilungen = getMitteilungenForCurrentRolle(fall);
 		for (Mitteilung mitteilung : mitteilungen) {
@@ -453,6 +455,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			case ADMIN:
 			case SACHBEARBEITER_JA:
 			case JURIST:
+			case SCHULAMT:
 			case REVISOR:{
 				return MitteilungTeilnehmerTyp.JUGENDAMT;
 			}

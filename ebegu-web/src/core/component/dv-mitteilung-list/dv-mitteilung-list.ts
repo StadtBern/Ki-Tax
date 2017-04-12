@@ -273,7 +273,14 @@ export class DVMitteilungListController {
     }
 
     private setAllMitteilungenGelesen(): IPromise<Array<TSMitteilung>> {
-        return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles())
+            || this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
+            return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
+        }
+        // wenn der Benutzer keine Rechte hat, die Mitteilungen als gelesen zu markieren, fake Promise zurueck
+        let deferred = this.$q.defer();
+        deferred.resolve(undefined);
+        return deferred.promise;
     }
 
     /**
