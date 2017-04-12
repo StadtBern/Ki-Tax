@@ -123,6 +123,11 @@ export function isAnyStatusOfVerfuegtButSchulamt(status: TSAntragStatus): boolea
         || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV;
 }
 
+export function isVerfuegtOrSTV(status: TSAntragStatus): boolean {
+    return status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.PRUEFUNG_STV
+        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV;
+}
+
 /**
  * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT or NUR_SCHULAMT
  * @returns {boolean}
