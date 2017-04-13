@@ -11,8 +11,8 @@ import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
 import {IStateService} from 'angular-ui-router';
 import * as moment from 'moment';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import Moment = moment.Moment;
 import TSUser from '../../../models/TSUser';
+import Moment = moment.Moment;
 let template = require('./dv-pendenzen-list.html');
 require('./dv-pendenzen-list.less');
 
@@ -62,7 +62,6 @@ export class DVPendenzenListController {
     }
 
     public userChanged(selectedUser: TSUser): void {
-        console.log('dv-pendenzen-list userChanged');
         this.onUserChanged({user: selectedUser});
     }
 

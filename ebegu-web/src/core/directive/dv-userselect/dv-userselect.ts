@@ -64,7 +64,6 @@ export class UserselectController {
             this.smartTable.search(this.selectedUser.getFullName(), this.dvUsersearch);
         }
         this.valueChanged = () => {
-            console.log('valueChanged in dv-userselect.ts');
             this.onUserChanged({user: this.selectedUser});
         };
     }
