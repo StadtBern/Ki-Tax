@@ -4,6 +4,8 @@ import PendenzRS from '../../service/PendenzRS.rest';
 import * as moment from 'moment';
 import ITimeoutService = angular.ITimeoutService;
 import Moment = moment.Moment;
+import TSUser from '../../../models/TSUser';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 
@@ -18,18 +20,19 @@ export class PendenzenListViewController {
 
     private pendenzenList: Array<TSAntragDTO>;
 
-    static $inject: string[] = ['PendenzRS', 'CONSTANTS'];
+    static $inject: string[] = ['PendenzRS', 'CONSTANTS', 'AuthServiceRS'];
 
-    constructor(public pendenzRS: PendenzRS, private CONSTANTS: any) {
+    constructor(public pendenzRS: PendenzRS, private CONSTANTS: any, private authServiceRS: AuthServiceRS) {
         this.initViewModel();
     }
 
     private initViewModel() {
-        this.updatePendenzenList();
+        // Initial werden die Pendenzen des eingeloggten Benutzers geladen
+        this.updatePendenzenList(this.authServiceRS.getPrincipal().username);
     }
 
-    private updatePendenzenList() {
-        this.pendenzRS.getPendenzenList().then((response: any) => {
+    private updatePendenzenList(username: string) {
+        this.pendenzRS.getPendenzenListForUser(username).then((response: any) => {
             this.pendenzenList = angular.copy(response);
         });
     }
@@ -38,4 +41,9 @@ export class PendenzenListViewController {
         return this.pendenzenList;
     }
 
+    public userChanged(user: TSUser): void {
+        if (user) {
+            this.updatePendenzenList(user.username);
+        }
+    }
 }

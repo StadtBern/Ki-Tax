@@ -16,7 +16,9 @@ export class DVUserselect implements IDirective {
         inputId: '@',
         dvUsersearch: '@',
         ngDisabled: '<',
-        initialAll: '='
+        initialAll: '=',
+        showSelectionAll: '=',
+        onUserChanged: '&'
         //initialAll -> tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
     };
     controller = UserselectController;
@@ -39,6 +41,9 @@ export class UserselectController {
     userList: Array<TSUser>;
     dvUsersearch: string;
     initialAll: boolean;
+    showSelectionAll: boolean;
+    valueChanged: () => void;           // Methode, die beim Klick auf die Combobox aufgerufen wird
+    onUserChanged: (user: any) => void; // Callback, welche aus obiger Methode aufgerufen werden soll
 
     static $inject: string[] = ['UserRS', 'AuthServiceRS'];
     /* @ngInject */
@@ -58,6 +63,9 @@ export class UserselectController {
         if (this.smartTable && !this.initialAll) {
             this.smartTable.search(this.selectedUser.getFullName(), this.dvUsersearch);
         }
+        this.valueChanged = () => {
+            this.onUserChanged({user: this.selectedUser});
+        };
     }
 
     private updateUserList() {
@@ -65,6 +73,4 @@ export class UserselectController {
             this.userList = angular.copy(response);
         });
     }
-
-
 }

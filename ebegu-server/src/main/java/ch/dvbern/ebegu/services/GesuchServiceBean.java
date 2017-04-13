@@ -1,27 +1,18 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.errors.MailException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
-import ch.dvbern.ebegu.types.DateRange_;
-import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
-import ch.dvbern.ebegu.util.EbeguUtil;
-import ch.dvbern.ebegu.util.FreigabeCopyUtil;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,12 +23,73 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
+import ch.dvbern.ebegu.entities.AbstractEntity_;
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.AntragStatusHistory_;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Fall_;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer_;
+import ch.dvbern.ebegu.entities.Gesuchsteller_;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
+import ch.dvbern.ebegu.entities.Institution_;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.entities.Kind_;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
+import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.FreigabeCopyUtil;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 
 /**
@@ -174,6 +226,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
 		query.where(predicateStatus);
+		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.fallNummer)));
+		return persistence.getCriteriaResults(query);
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA})
+	public Collection<Gesuch> getAllActiveGesucheOfVerantwortlichePerson(@Nonnull String benutzername) {
+		Validate.notNull(benutzername);
+		Benutzer benutzer = benutzerService.findBenutzer(benutzername).orElseThrow(() -> new EbeguEntityNotFoundException("getAllActiveGesucheOfVerantwortlichePerson", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, benutzername));
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
+		Predicate predicateVerantwortlicher = cb.equal(root.get(Gesuch_.fall).get(Fall_.verantwortlicher), benutzer);
+
+		query.where(predicateStatus, predicateVerantwortlicher);
 		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.fallNummer)));
 		return persistence.getCriteriaResults(query);
 	}
