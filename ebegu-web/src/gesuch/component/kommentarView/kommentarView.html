@@ -8,7 +8,7 @@
                     <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
                               ng-blur="vm.saveStepBemerkung()" name="kommentarIntern"
                               ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000"
-                              dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()">
+                              dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
                         </textarea>
                 </dv-input-container>
             </div>

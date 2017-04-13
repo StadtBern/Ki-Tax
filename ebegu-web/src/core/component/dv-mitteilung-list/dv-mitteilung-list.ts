@@ -85,7 +85,7 @@ export class DVMitteilungListController {
                 } else {
                     this.loadEntwurf();
                     // Wenn JA oder Institution -> Neue Mitteilungen als gelesen markieren
-                    if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtSchulamtRoles())) {
+                    if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles())) {
                         this.setAllMitteilungenGelesen().then((response) => {
                             this.loadAllMitteilungen();
                             if (this.$rootScope) {
@@ -273,8 +273,8 @@ export class DVMitteilungListController {
     }
 
     private setAllMitteilungenGelesen(): IPromise<Array<TSMitteilung>> {
-        return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
-    }
+            return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
+        }
 
     /**
      * Aendert den Status der gegebenen Mitteilung auf ERLEDIGT wenn es GELESEN war oder
