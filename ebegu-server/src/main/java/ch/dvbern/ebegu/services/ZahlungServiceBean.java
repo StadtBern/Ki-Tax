@@ -491,6 +491,23 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	}
 
+	@Override
+	@RolesAllowed(value = {SUPER_ADMIN})
+	public void deleteZahlungspositionenOfGesuch(@Nonnull Gesuch gesuch) {
+		Objects.requireNonNull(gesuch, "gesuch muss gesetzt sein");
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Zahlungsposition> query = cb.createQuery(Zahlungsposition.class);
+
+		Root<Zahlungsposition> root = query.from(Zahlungsposition.class);
+		Predicate predicates = cb.equal(root.get(Zahlungsposition_.verfuegungZeitabschnitt).get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch), gesuch);
+
+		query.where(predicates);
+		List<Zahlungsposition> zahlungspositionList = persistence.getCriteriaResults(query);
+		for (Zahlungsposition zahlungsposition : zahlungspositionList) {
+			persistence.remove(Zahlungsposition.class, zahlungsposition.getId());
+		}
+	}
+
 	@Nonnull
 	private Zahlungsauftrag zahlungauftragBestaetigenIfAllZahlungenBestaetigt(@Nonnull Zahlungsauftrag zahlungsauftrag) {
 		Objects.requireNonNull(zahlungsauftrag, "zahlungsauftrag darf nicht null sein");

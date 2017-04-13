@@ -82,6 +82,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private MailService mailService;
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
+	@Inject
+	private ZahlungService zahlungService;
 
 
 	@Nonnull
@@ -189,6 +191,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		generatedDokumentService.removeAllGeneratedDokumenteFromGesuch(gesToRemove);
 		dokumentGrundService.removeAllDokumentGrundeFromGesuch(gesToRemove);
 		antragStatusHistoryService.removeAllAntragStatusHistoryFromGesuch(gesToRemove);
+		zahlungService.deleteZahlungspositionenOfGesuch(gesToRemove);
 
 		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(gesToRemove);
