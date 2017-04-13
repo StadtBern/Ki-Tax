@@ -491,8 +491,12 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         });
     }
 
+    /**
+     * Sucht die neueste Betreuungsmitteilung fuer die aktuelle Betreuung. Da es nur fuer die Rollen
+     * INST und TRAEG relevant ist, wird es nur fuer diese Rollen geholt
+     */
     private findExistingBetreuungsmitteilung() {
-        if (!this.getBetreuungModel().isNew()) {
+        if (!this.getBetreuungModel().isNew() && this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
             this.mitteilungRS.getNewestBetreuungsmitteilung(this.getBetreuungModel().id).then((response: TSBetreuungsmitteilung) => {
                 this.existingMutationsMeldung = response;
             });

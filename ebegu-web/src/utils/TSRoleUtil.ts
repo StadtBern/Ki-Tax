@@ -10,9 +10,9 @@ export class TSRoleUtil {
         );
     }
 
-    public static getAllRolesButGesuchstellerAndSteueramt(): Array<string> {
+    public static getAllRolesForMenuAlleVerfuegungen(): Array<string> {
         return TSRoleUtil.getAllRoles().filter(element =>
-            element !== TSRole[TSRole.GESUCHSTELLER] && element !== TSRole[TSRole.STEUERAMT]
+            element !== TSRole[TSRole.SCHULAMT] && element !== TSRole[TSRole.STEUERAMT]
         );
     }
 
@@ -60,6 +60,10 @@ export class TSRoleUtil {
 
     public static getJugendamtRole(): Array<TSRole> {
         return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.JURIST, TSRole.REVISOR];
+    }
+
+    public static getGesuchstellerJugendamtSchulamtOtherAmtRoles(): Array<TSRole> {
+        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.JURIST, TSRole.REVISOR, TSRole.GESUCHSTELLER, TSRole.SCHULAMT];
     }
 
     public static getGesuchstellerJugendamtOtherAmtRoles(): Array<TSRole> {

@@ -66,7 +66,7 @@
                 </button>
             </div>
             <div dv-show-element
-                 dv-show-allowed-roles="vmx.TSRoleUtil.getAllRolesButGesuchstellerAndSteueramt()"
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getAllRolesForMenuAlleVerfuegungen()"
                  dv-show-expression="!vmx.getGesuch().isNew()">
                 <button ng-click="vmx.openAlleVerfuegungen()"
                         aria-label="{{TOOLBAR_ALLE_VERFUEGUNGEN | translate}}" style="text-align: center;">
@@ -76,7 +76,7 @@
 
             <!-- Mitteilungen -->
             <div dv-show-element
-                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtOtherAmtRoles()"  dv-show-expression="!vmx.getGesuch().isNew()">
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtSchulamtOtherAmtRoles()"  dv-show-expression="!vmx.getGesuch().isNew()">
                 <button ng-click="vmx.openMitteilungen()"
                         aria-label="{{TOOLBAR_MITTEILUNGEN | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_MITTEILUNGEN"></span>
