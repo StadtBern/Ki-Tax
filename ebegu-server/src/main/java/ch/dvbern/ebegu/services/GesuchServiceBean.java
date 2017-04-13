@@ -134,6 +134,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return persistence.getCriteriaResults(query);
 	}
 
+	@Nonnull
+	@Override
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA})
+	public Collection<Gesuch> getAllActiveGesucheOfVerantwortlichePerson(String benutzername) {
+		Validate.notNull(benutzername);
+		Benutzer benutzer = benutzerService.findBenutzer(benutzername).orElseThrow(() -> new EbeguEntityNotFoundException("getAllActiveGesucheOfVerantwortlichePerson", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, benutzername));
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
+		Predicate predicateVerantwortlicher = cb.equal(root.get(Gesuch_.fall).get(Fall_.verantwortlicher), benutzer);
+
+		query.where(predicateStatus, predicateVerantwortlicher);
+		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.fallNummer)));
+		return persistence.getCriteriaResults(query);
+	}
+
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN})
 	public void removeGesuch(@Nonnull String gesuchId) {

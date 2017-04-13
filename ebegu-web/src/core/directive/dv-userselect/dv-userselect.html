@@ -4,10 +4,12 @@
                 st-search="{{vm.dvUsersearch}}"
                 name={{vm.inputId}}"
                 id="{{vm.inputId}}"
+                ng-change="vm.valueChanged()"
+
                 class="form-control"
                 ng-options="user.getFullName() for user in vm.userList | orderBy: 'nachname' track by user.getFullName()"
                 ng-model="vm.selectedUser">
-            <option value="">{{"ALLE" | translate}}</option>
+            <option value="" ng-if="vm.showSelectionAll">{{"ALLE" | translate}}</option>
         </select>
     </div>
 </div>

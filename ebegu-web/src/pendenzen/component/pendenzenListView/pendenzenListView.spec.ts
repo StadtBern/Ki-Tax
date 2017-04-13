@@ -14,6 +14,8 @@ import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuch from '../../../models/TSGesuch';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import TSUser from '../../../models/TSUser';
 
 describe('pendenzenListView', function () {
 
@@ -31,6 +33,7 @@ describe('pendenzenListView', function () {
     let $state: IStateService;
     let CONSTANTS: any;
     let wizardStepManager: WizardStepManager;
+    let authServiceRS: AuthServiceRS;
 
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
@@ -49,6 +52,7 @@ describe('pendenzenListView', function () {
         $state = $injector.get('$state');
         CONSTANTS = $injector.get('CONSTANTS');
         wizardStepManager = $injector.get('WizardStepManager');
+        authServiceRS = $injector.get('AuthServiceRS');
     }));
 
     describe('API Usage', function () {
@@ -57,10 +61,10 @@ describe('pendenzenListView', function () {
                 let mockPendenz: TSAntragDTO = mockGetPendenzenList();
                 mockRestCalls();
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
-                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
+                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS, authServiceRS);
 
                 $scope.$apply();
-                expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
+                expect(pendenzRS.getPendenzenListForUser).toHaveBeenCalled();
 
                 let list: Array<TSAntragDTO> = pendenzListViewController.getPendenzenList();
                 expect(list).toBeDefined();
@@ -87,7 +91,7 @@ describe('pendenzenListView', function () {
                 spyOn($state, 'go');
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
-                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
+                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS, authServiceRS);
 
                 let tsGesuch = new TSGesuch();
                 spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));
@@ -95,7 +99,7 @@ describe('pendenzenListView', function () {
                 pendenzListViewController.editPendenzJA(mockPendenz, undefined); //pendenz wird eidtiert
                 $scope.$apply();
 
-                expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
+                expect(pendenzRS.getPendenzenListForUser).toHaveBeenCalled();
                 expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', {createNew: false, gesuchId: '66345345'});
 
             });
@@ -106,7 +110,9 @@ describe('pendenzenListView', function () {
         let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.GESUCH,
             undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
         let result: Array<TSAntragDTO> = [mockPendenz];
-        spyOn(pendenzRS, 'getPendenzenList').and.returnValue($q.when(result));
+        spyOn(pendenzRS, 'getPendenzenListForUser').and.returnValue($q.when(result));
+        let mockUser: TSUser = new TSUser('Eberhard', 'Gubler', 'ebegu');
+        spyOn(authServiceRS, 'getPrincipal').and.returnValue(mockUser);
         return mockPendenz;
     }
 

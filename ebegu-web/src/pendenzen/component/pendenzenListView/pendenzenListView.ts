@@ -15,6 +15,8 @@ import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import {TSAntragStatus, getTSAntragStatusPendenzValues} from '../../../models/enums/TSAntragStatus';
 import ITimeoutService = angular.ITimeoutService;
 import Moment = moment.Moment;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import TSUser from '../../../models/TSUser';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 
@@ -40,24 +42,25 @@ export class PendenzenListViewController {
 
 
     static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
-        'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state', 'CONSTANTS', 'UserRS', 'AuthServiceRS'];
+        'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state', 'CONSTANTS', 'AuthServiceRS'];
 
     constructor(public pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
-                private $state: IStateService, private CONSTANTS: any) {
+                private $state: IStateService, private CONSTANTS: any, private authServiceRS: AuthServiceRS) {
         this.initViewModel();
     }
 
     private initViewModel() {
-        this.updatePendenzenList();
+        // Initial werden die Pendenzen des eingeloggten Benutzers geladen
+        this.updatePendenzenList(this.authServiceRS.getPrincipal().username);
         this.updateInstitutionenList();
         this.updateGesuchsperiodenList();
     }
 
 
-    private updatePendenzenList() {
-        this.pendenzRS.getPendenzenList().then((response: any) => {
+    private updatePendenzenList(username: string) {
+        this.pendenzRS.getPendenzenListForUser(username).then((response: any) => {
             this.pendenzenList = angular.copy(response);
             this.numberOfPages = this.pendenzenList.length / this.itemsByPage;
         });
@@ -135,6 +138,12 @@ export class PendenzenListViewController {
             } else {
                 this.$state.go('gesuch.fallcreation', navObj);
             }
+        }
+    }
+
+    public userChanged(user: TSUser): void {
+        if (user) {
+            this.updatePendenzenList(user.username);
         }
     }
 }

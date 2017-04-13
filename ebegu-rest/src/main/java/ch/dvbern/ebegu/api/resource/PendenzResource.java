@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
 import io.swagger.annotations.Api;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
@@ -46,6 +47,25 @@ public class PendenzResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxAntragDTO> getAllPendenzenJA() {
 		Collection<Gesuch> gesucheList = gesuchService.getAllActiveGesuche();
+
+		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
+		gesucheList.stream().filter(gesuch -> gesuch.getFall() != null)
+			.forEach(gesuch -> pendenzenList.add(converter.gesuchToAntragDTO(gesuch)));
+		return pendenzenList;
+	}
+
+	/**
+	 * Gibt eine Liste mit allen Pendenzen des übergebenen Benutzers des JA zurueck.
+	 * Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
+	 */
+	@Nonnull
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("{benutzername}")
+	public List<JaxAntragDTO> getAllPendenzenJA(@Nonnull @NotNull @PathParam("benutzername") String benutzername) {
+		Validate.notNull(benutzername);
+		Collection<Gesuch> gesucheList = gesuchService.getAllActiveGesucheOfVerantwortlichePerson(benutzername);
 
 		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
 		gesucheList.stream().filter(gesuch -> gesuch.getFall() != null)
