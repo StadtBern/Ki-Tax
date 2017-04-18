@@ -346,7 +346,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
-	@RolesAllowed({SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed({SUPER_ADMIN, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung) {
 		Objects.requireNonNull(betreuungsmitteilung);
 		if (!MitteilungTeilnehmerTyp.INSTITUTION.equals(betreuungsmitteilung.getSenderTyp())) {
@@ -420,7 +420,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
-		final Optional<Betreuung> betreuungToChangeOpt = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getBetreuungNummer());
+		final Optional<Betreuung> betreuungToChangeOpt = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getKind().getKindNummer(), mitteilung.getBetreuung().getBetreuungNummer());
 		if (betreuungToChangeOpt.isPresent()) {
 			Betreuung existingBetreuung = betreuungToChangeOpt.get();
 			existingBetreuung.getBetreuungspensumContainers().clear();//delete all current Betreuungspensen before we add the modified list
