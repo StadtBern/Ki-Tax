@@ -17,8 +17,9 @@ import GlobalCacheService from '../../../gesuch/service/globalCacheService';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import ITranslateService = angular.translate.ITranslateService;
-import Moment = moment.Moment;
 import ITimeoutService = angular.ITimeoutService;
+import AbstractAdminViewController from '../../abstractAdminView';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 let template = require('./parameterView.html');
 let style = require('./parameterView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -30,10 +31,10 @@ export class ParameterViewComponentConfig implements IComponentOptions {
     controllerAs: string = 'vm';
 }
 
-export class ParameterViewController {
+export class ParameterViewController extends AbstractAdminViewController {
     static $inject = ['EbeguParameterRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$translate', 'EbeguVorlageRS',
         'EbeguUtil', 'DvDialog', 'DownloadRS', '$log', 'GlobalCacheService', 'GesuchModelManager', '$timeout',
-        '$window'];
+        '$window', 'AuthServiceRS'];
 
     ebeguParameterRS: EbeguParameterRS;
     ebeguRestUtil: EbeguRestUtil;
@@ -55,7 +56,8 @@ export class ParameterViewController {
                 private ebeguVorlageRS: EbeguVorlageRS, private ebeguUtil: EbeguUtil,
                 private dvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService,
                 private globalCacheService: GlobalCacheService, private gesuchModelManager: GesuchModelManager,
-                private $timeout: ITimeoutService, private $window: ng.IWindowService) {
+                private $timeout: ITimeoutService, private $window: ng.IWindowService, authServiceRS: AuthServiceRS) {
+        super(authServiceRS);
         this.ebeguParameterRS = ebeguParameterRS;
         this.ebeguRestUtil = ebeguRestUtil;
         $timeout(() => {
@@ -94,7 +96,7 @@ export class ParameterViewController {
         }
     }
 
-    jahresabhParamSelected(parameter : TSEbeguParameter) {
+    jahresabhParamSelected(parameter: TSEbeguParameter) {
         this.jahr = parameter.gueltigkeit.gueltigAb.get('year');
         this.jahrChanged();
     }

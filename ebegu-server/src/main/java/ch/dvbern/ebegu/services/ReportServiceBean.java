@@ -489,7 +489,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
 	public UploadFileInfo generateExcelReportZahlungAuftrag(String auftragId) throws ExcelMergeException {
 
 		Zahlungsauftrag zahlungsauftrag = zahlungService.findZahlungsauftrag(auftragId)
@@ -500,7 +500,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
 	public UploadFileInfo generateExcelReportZahlung(String zahlungId) throws ExcelMergeException {
 
 		List<Zahlung> reportData = new ArrayList<>();
@@ -541,7 +541,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	}
 
 	@Override
-	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, REVISOR})
 	public UploadFileInfo generateExcelReportZahlungPeriode(@Nonnull String gesuchsperiodeId) throws ExcelMergeException {
 
 		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId)
@@ -716,8 +716,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		row.setPeriode(gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		row.setEingangsdatum(gesuch.getEingangsdatum());
 		for (AntragStatusHistory antragStatusHistory : gesuch.getAntragStatusHistories()) {
-			if (AntragStatus.VERFUEGT.equals(antragStatusHistory.getStatus()) ||
-				AntragStatus.NUR_SCHULAMT.equals(antragStatusHistory.getStatus())) {
+			if (AntragStatus.getAllVerfuegtStates().contains(antragStatusHistory.getStatus())) {
 				row.setVerfuegungsdatum(antragStatusHistory.getTimestampVon().toLocalDate());
 			}
 		}
@@ -737,7 +736,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setGs1Plz(gs1Adresse.getPlz());
 			row.setGs1Ort(gs1Adresse.getOrt());
 		}
-		row.setGs1EwkId(gs1.getZpvNumber());
+		row.setGs1EwkId(gs1.getEwkPersonId());
 		row.setGs1Diplomatenstatus(gs1.isDiplomatenstatus());
 		// EWP Gesuchsteller 1
 
@@ -776,7 +775,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setGs2Plz(gs2Adresse.getPlz());
 			row.setGs2Ort(gs2Adresse.getOrt());
 		}
-		row.setGs2EwkId(gs2.getZpvNumber());
+		row.setGs2EwkId(gs2.getEwkPersonId());
 		row.setGs2Diplomatenstatus(gs2.isDiplomatenstatus());
 		// EWP Gesuchsteller 2
 		List<Erwerbspensum> erwerbspensenGS2 = containerGS2.getErwerbspensenAm(row.getZeitabschnittVon());

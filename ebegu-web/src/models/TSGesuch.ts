@@ -19,9 +19,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _familiensituationContainer: TSFamiliensituationContainer;
     private _einkommensverschlechterungInfoContainer: TSEinkommensverschlechterungInfoContainer;
     private _bemerkungen: string;
+    private _bemerkungenSTV: string;
+    private _bemerkungenPruefungSTV: string;
     private _laufnummer: number;
+    private _geprueftSTV: boolean = false;
     private _hasFSDokument: boolean = true;
     private _gesperrtWegenBeschwerde: boolean = false;
+    private _gewarntNichtFreigegeben: boolean = false;
+    private _gewarntFehlendeQuittung: boolean = false;
 
     // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutationskopie (Wichitg für laden des Gesuchs bei Navigation)
     private _emptyMutation: boolean = false;
@@ -75,12 +80,36 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._bemerkungen = value;
     }
 
+    get bemerkungenSTV(): string {
+        return this._bemerkungenSTV;
+    }
+
+    set bemerkungenSTV(value: string) {
+        this._bemerkungenSTV = value;
+    }
+
+    get bemerkungenPruefungSTV(): string {
+        return this._bemerkungenPruefungSTV;
+    }
+
+    set bemerkungenPruefungSTV(value: string) {
+        this._bemerkungenPruefungSTV = value;
+    }
+
     get laufnummer(): number {
         return this._laufnummer;
     }
 
     set laufnummer(value: number) {
         this._laufnummer = value;
+    }
+
+    get geprueftSTV(): boolean {
+        return this._geprueftSTV;
+    }
+
+    set geprueftSTV(value: boolean) {
+        this._geprueftSTV = value;
     }
 
     get hasFSDokument(): boolean {
@@ -113,6 +142,22 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set emptyMutation(value: boolean) {
         this._emptyMutation = value;
+    }
+
+    get gewarntNichtFreigegeben(): boolean {
+        return this._gewarntNichtFreigegeben;
+    }
+
+    set gewarntNichtFreigegeben(value: boolean) {
+        this._gewarntNichtFreigegeben = value;
+    }
+
+    get gewarntFehlendeQuittung(): boolean {
+        return this._gewarntFehlendeQuittung;
+    }
+
+    set gewarntFehlendeQuittung(value: boolean) {
+        this._gewarntFehlendeQuittung = value;
     }
 
     /**

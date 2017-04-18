@@ -18,12 +18,12 @@ import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
-import Moment = moment.Moment;
+import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
+
 import IFormController = angular.IFormController;
 import IQService = angular.IQService;
 import IWindowService = angular.IWindowService;
 import IRootScopeService = angular.IRootScopeService;
-import {TSMitteilungEvent} from '../../../models/enums/TSMitteilungEvent';
 let template = require('./dv-mitteilung-list.html');
 require('./dv-mitteilung-list.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -48,6 +48,7 @@ export class DVMitteilungListController {
     betreuung: TSBetreuung;
     form: IFormController;
 
+    paramSelectedMitteilungId: string;
     currentMitteilung: TSMitteilung;
     allMitteilungen: Array<TSMitteilung>;
     TSRole: any;
@@ -66,11 +67,12 @@ export class DVMitteilungListController {
         this.TSRoleUtil = TSRoleUtil;
         this.ebeguUtil = ebeguUtil;
     }
-    $onInit() {
-        this.initViewModel();
-    }
 
-    private initViewModel() {
+    $onInit() {
+        if (this.$stateParams.mitteilungId) {
+            // wenn man eine bestimmte Mitteilung oeffnen will, kann man ihr ID als parameter geben
+            this.paramSelectedMitteilungId = this.$stateParams.mitteilungId;
+        }
         if (this.$stateParams.fallId) {
             this.fallRS.findFall(this.$stateParams.fallId).then((response) => {
                 this.fall = response;
@@ -82,12 +84,18 @@ export class DVMitteilungListController {
                     });
                 } else {
                     this.loadEntwurf();
-                    this.setAllMitteilungenGelesen().then((response) => {
+                    // Wenn JA oder Institution -> Neue Mitteilungen als gelesen markieren
+                    if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerJugendamtRoles())) {
+                        this.setAllMitteilungenGelesen().then((response) => {
+                            this.loadAllMitteilungen();
+                            if (this.$rootScope) {
+                                this.$rootScope.$emit('POSTEINGANG_MAY_CHANGED', null);
+                            }
+                        });
+                    } else {
+                        // Fuer Revisor und Jurist: Nur laden
                         this.loadAllMitteilungen();
-                        if (this.$rootScope) {
-                            this.$rootScope.$emit('POSTEINGANG_MAY_CHANGED', null);
-                        }
-                    });
+                    }
                 }
             });
         }
@@ -105,8 +113,10 @@ export class DVMitteilungListController {
     private loadEntwurf() {
         // Wenn der Fall keinen Besitzer hat, darf auch keine Nachricht geschrieben werden
         // Ausser wir sind Institutionsbenutzer
+        let isGesuchsteller: boolean = this.authServiceRS.isRole(TSRole.GESUCHSTELLER);
+        let isJugendamtAndFallHasBesitzer: boolean = this.fall.besitzer && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
         let isInstitutionsUser: boolean = this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
-        if (this.fall.besitzer || isInstitutionsUser) {
+        if (isGesuchsteller || isJugendamtAndFallHasBesitzer || isInstitutionsUser) {
             if (this.betreuung) {
                 this.mitteilungRS.getEntwurfForCurrentRolleForBetreuung(this.betreuung.id).then((entwurf: TSMitteilung) => {
                     if (entwurf) {
@@ -252,6 +262,8 @@ export class DVMitteilungListController {
             }
             case TSRole.SUPER_ADMIN:
             case TSRole.ADMIN:
+            case TSRole.JURIST:
+            case TSRole.REVISOR:
             case TSRole.SACHBEARBEITER_JA: {
                 return TSMitteilungTeilnehmerTyp.JUGENDAMT;
             }
@@ -261,8 +273,8 @@ export class DVMitteilungListController {
     }
 
     private setAllMitteilungenGelesen(): IPromise<Array<TSMitteilung>> {
-        return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
-    }
+            return this.mitteilungRS.setAllNewMitteilungenOfFallGelesen(this.fall.id);
+        }
 
     /**
      * Aendert den Status der gegebenen Mitteilung auf ERLEDIGT wenn es GELESEN war oder
@@ -315,6 +327,10 @@ export class DVMitteilungListController {
 
     public isBetreuungsmitteilungNotApplied(mitteilung: TSMitteilung): boolean {
         return (mitteilung instanceof TSBetreuungsmitteilung) && (<TSBetreuungsmitteilung>mitteilung).applied !== true;
+    }
+
+    public canApplyBetreuungsmitteilung(mitteilung: TSMitteilung): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
     }
 
     public applyBetreuungsmitteilung(mitteilung: TSMitteilung): void {

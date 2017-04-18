@@ -1,26 +1,18 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.services.interceptors.UpdateStatusToInBearbeitungJAInterceptor;
-import ch.dvbern.ebegu.types.DateRange_;
-import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
-import ch.dvbern.ebegu.util.EbeguUtil;
-import ch.dvbern.ebegu.util.FreigabeCopyUtil;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,12 +23,73 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
+import ch.dvbern.ebegu.entities.AbstractEntity_;
+import ch.dvbern.ebegu.entities.AntragStatusHistory;
+import ch.dvbern.ebegu.entities.AntragStatusHistory_;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Fall_;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer;
+import ch.dvbern.ebegu.entities.GesuchstellerContainer_;
+import ch.dvbern.ebegu.entities.Gesuchsteller_;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
+import ch.dvbern.ebegu.entities.Institution_;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.entities.Kind_;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.Eingangsart;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.enums.UserRoleName;
+import ch.dvbern.ebegu.enums.WizardStepName;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
+import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
+import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.util.FreigabeCopyUtil;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 
 /**
@@ -45,7 +98,7 @@ import java.util.stream.Collectors;
 @Stateless
 @Local(GesuchService.class)
 @PermitAll
-@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "LocalVariableNamingConvention"})
 public class GesuchServiceBean extends AbstractBaseService implements GesuchService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
@@ -77,6 +130,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private BooleanAuthorizer booleanAuthorizer;
 	@Inject
 	private PrincipalBean principalBean;
+	@Inject
+	private MailService mailService;
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
+	@Inject
+	private ZahlungService zahlungService;
 
 
 	@Nonnull
@@ -108,7 +167,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	@Override
 	@PermitAll
-	@Interceptors(UpdateStatusToInBearbeitungJAInterceptor.class)
+	@Interceptors(UpdateStatusInterceptor.class)
 	public Optional<Gesuch> findGesuch(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Gesuch gesuch = persistence.find(Gesuch.class, key);
@@ -171,6 +230,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return persistence.getCriteriaResults(query);
 	}
 
+	@Nonnull
+	@Override
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA})
+	public Collection<Gesuch> getAllActiveGesucheOfVerantwortlichePerson(@Nonnull String benutzername) {
+		Validate.notNull(benutzername);
+		Benutzer benutzer = benutzerService.findBenutzer(benutzername).orElseThrow(() -> new EbeguEntityNotFoundException("getAllActiveGesucheOfVerantwortlichePerson", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, benutzername));
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
+		Predicate predicateVerantwortlicher = cb.equal(root.get(Gesuch_.fall).get(Fall_.verantwortlicher), benutzer);
+
+		query.where(predicateStatus, predicateVerantwortlicher);
+		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.fallNummer)));
+		return persistence.getCriteriaResults(query);
+	}
+
 	@Override
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN})
 	public void removeGesuch(@Nonnull String gesuchId) {
@@ -184,6 +263,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		generatedDokumentService.removeAllGeneratedDokumenteFromGesuch(gesToRemove);
 		dokumentGrundService.removeAllDokumentGrundeFromGesuch(gesToRemove);
 		antragStatusHistoryService.removeAllAntragStatusHistoryFromGesuch(gesToRemove);
+		zahlungService.deleteZahlungspositionenOfGesuch(gesToRemove);
 
 		//Finally remove the Gesuch when all other objects are really removed
 		persistence.remove(gesToRemove);
@@ -293,9 +373,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case SUPER_ADMIN:
 			case ADMIN:
 			case REVISOR:
+			case JURIST:
+				break;
+			case STEUERAMT:
 				break;
 			case SACHBEARBEITER_JA:
-			case JURIST:
 				// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
 				// Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
 				// zudem muss auch der status ensprechend sein
@@ -356,8 +438,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 			if (predicateObjectDto.getStatus() != null) {
 				// Achtung, hier muss von Client zu Server Status konvertiert werden!
-				AntragStatus antragStatus = AntragStatusConverterUtil.convertStatusToEntity(AntragStatusDTO.valueOf(predicateObjectDto.getStatus()));
-				predicates.add(cb.equal(root.get(Gesuch_.status), antragStatus));
+				Collection<AntragStatus> antragStatus = AntragStatusConverterUtil.convertStatusToEntityForRole(AntragStatusDTO.valueOf(predicateObjectDto.getStatus()), role);
+				predicates.add(root.get(Gesuch_.status).in(antragStatus));
 			}
 			if (predicateObjectDto.getAngebote() != null) {
 				predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.valueOf(predicateObjectDto.getAngebote())));
@@ -721,12 +803,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	public Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
-		allGesucheForFall.iterator().forEachRemaining(gesuch1 -> {
-			if (gesuch.equals(gesuch1) && AntragStatus.BESCHWERDE_HAENGIG.equals(gesuch1.getStatus())) {
-				gesuch1.setStatus(AntragStatus.VERFUEGT);
+		allGesucheForFall.iterator().forEachRemaining(gesuchLoop -> {
+			if (gesuch.equals(gesuchLoop) && AntragStatus.BESCHWERDE_HAENGIG.equals(gesuchLoop.getStatus())) {
+				final AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuchLoop);
+				gesuchLoop.setStatus(lastStatusChange.getStatus());
 			}
-			gesuch1.setGesperrtWegenBeschwerde(false);
-			updateGesuch(gesuch1, true);
+			gesuchLoop.setGesperrtWegenBeschwerde(false);
+			updateGesuch(gesuchLoop, true);
 		});
 		return gesuch;
 	}
@@ -1080,6 +1163,146 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		String gesuchId = criteriaResults.get(0);
 
 		return Optional.of(gesuchId);
+	}
+
+	@Override
+	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
+	public int warnGesuchNichtFreigegeben() {
+
+		Integer anzahlMonateBisWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_FREIGABE);
+		Integer anzahlMonateBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
+		if (anzahlMonateBisWarnungFreigabe == null || anzahlMonateBisLoeschungNachWarnungFreigabe == null) {
+			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben", "ANZAHL_MONATE_BIS_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE not defined");
+		}
+
+		// Stichtag ist EndeTag -> Plus 1 Tag und dann less statt lessOrEqual
+		LocalDateTime stichtag = LocalDate.now().minusMonths(anzahlMonateBisWarnungFreigabe).atStartOfDay().plusDays(1);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		// Status in Bearbeitung GS
+		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.IN_BEARBEITUNG_GS);
+		// Irgendwann am Stichtag erstellt:
+		Predicate predicateDatum = cb.lessThan(root.get(Gesuch_.timestampErstellt), stichtag);
+		// Noch nicht gewarnt
+		Predicate predicateNochNichtGewarnt = cb.equal(root.get(Gesuch_.gewarntNichtFreigegeben), Boolean.FALSE);
+
+		query.where(predicateStatus, predicateDatum, predicateNochNichtGewarnt);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> gesucheNichtAbgeschlossenSeit = persistence.getCriteriaResults(query);
+
+		int anzahl = gesucheNichtAbgeschlossenSeit.size();
+		for (Gesuch gesuch : gesucheNichtAbgeschlossenSeit) {
+			try {
+				mailService.sendWarnungGesuchNichtFreigegeben(gesuch, anzahlMonateBisLoeschungNachWarnungFreigabe);
+				gesuch.setGewarntNichtFreigegeben(true);
+				updateGesuch(gesuch, false);
+			} catch (MailException e) {
+				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				anzahl--;
+			}
+		}
+		return anzahl;
+	}
+
+	@Override
+	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
+	public int warnFreigabequittungFehlt() {
+
+		Integer anzahlMonateBisWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG);
+		if (anzahlMonateBisWarnungQuittung == null) {
+			throw new EbeguRuntimeException("warnFreigabequittungFehlt", "ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG not defined");
+		}
+
+		LocalDate stichtag = LocalDate.now().minusMonths(anzahlMonateBisWarnungQuittung);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.FREIGABEQUITTUNG);
+		Predicate predicateDatum = cb.lessThanOrEqualTo(root.get(Gesuch_.freigabeDatum), stichtag);
+		// Noch nicht gewarnt
+		Predicate predicateNochNichtGewarnt = cb.equal(root.get(Gesuch_.gewarntFehlendeQuittung), Boolean.FALSE);
+
+		query.where(predicateStatus, predicateDatum, predicateNochNichtGewarnt);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> gesucheNichtAbgeschlossenSeit = persistence.getCriteriaResults(query);
+
+		int anzahl = gesucheNichtAbgeschlossenSeit.size();
+		for (Gesuch gesuch : gesucheNichtAbgeschlossenSeit) {
+			try {
+				mailService.sendWarnungFreigabequittungFehlt(gesuch);
+				gesuch.setGewarntFehlendeQuittung(true);
+				updateGesuch(gesuch, false);
+			} catch (MailException e) {
+				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				anzahl--;
+			}
+		}
+		return anzahl;
+	}
+
+	@Override
+	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
+	public int deleteGesucheOhneFreigabeOderQuittung() {
+
+		Integer anzahlMonateBisWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_FREIGABE);
+		Integer anzahlMonateBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
+		Integer anzahlMonateBisWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG);
+		Integer anzahlMonateBisLoeschungNachWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
+		if (anzahlMonateBisWarnungFreigabe == null || anzahlMonateBisLoeschungNachWarnungFreigabe == null ||
+			anzahlMonateBisWarnungQuittung == null || anzahlMonateBisLoeschungNachWarnungQuittung == null) {
+			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben", "ANZAHL_MONATE_BIS_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG not defined");
+		}
+
+		// Stichtag ist EndeTag -> Plus 1 Tag und dann less statt lessOrEqual
+		LocalDateTime stichtagFehlendeFreigabe = LocalDate.now()
+			.minusMonths(anzahlMonateBisWarnungFreigabe)
+			.minusMonths(anzahlMonateBisLoeschungNachWarnungFreigabe).atStartOfDay().plusDays(1);
+		LocalDate stichtagFehlendeQuittung = LocalDate.now()
+			.minusMonths(anzahlMonateBisWarnungQuittung)
+			.minusMonths(anzahlMonateBisLoeschungNachWarnungQuittung);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		// Entweder IN_BEARBEITUNG_GS und vor stichtagFehlendeFreigabe erstellt
+		Predicate predicateStatusNichtFreigegeben = cb.equal(root.get(Gesuch_.status), AntragStatus.IN_BEARBEITUNG_GS);
+		Predicate predicateDatumNichtFreigegeben = cb.lessThan(root.get(Gesuch_.timestampErstellt), stichtagFehlendeFreigabe);
+		Predicate predicateGewarntNichtFreigegeben = cb.equal(root.get(Gesuch_.gewarntNichtFreigegeben), Boolean.TRUE);
+		Predicate predicateNichtFreigegeben = cb.and(predicateStatusNichtFreigegeben, predicateDatumNichtFreigegeben, predicateGewarntNichtFreigegeben);
+
+		// Oder FREIGABEQUITTUNG und vor stichtagFehlendeQuittung freigegeben
+		Predicate predicateStatusFehlendeQuittung = cb.equal(root.get(Gesuch_.status), AntragStatus.FREIGABEQUITTUNG);
+		Predicate predicateDatumFehlendeQuittung = cb.lessThanOrEqualTo(root.get(Gesuch_.freigabeDatum), stichtagFehlendeQuittung);
+		Predicate predicateGewarntFehlendeQuittung = cb.equal(root.get(Gesuch_.gewarntFehlendeQuittung), Boolean.TRUE);
+		Predicate predicateFehlendeQuittung = cb.and(predicateStatusFehlendeQuittung, predicateDatumFehlendeQuittung, predicateGewarntFehlendeQuittung);
+
+		Predicate predicateFehlendeFreigabeOrQuittung = cb.or(predicateNichtFreigegeben, predicateFehlendeQuittung);
+
+		query.where(predicateFehlendeFreigabeOrQuittung);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+		int anzahl = criteriaResults.size();
+		for (Gesuch gesuch : criteriaResults) {
+			try {
+				mailService.sendInfoGesuchGeloescht(gesuch);
+				removeGesuch(gesuch.getId());
+			} catch (MailException e) {
+				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				anzahl--;
+			}
+		}
+		return anzahl;
 	}
 }
 

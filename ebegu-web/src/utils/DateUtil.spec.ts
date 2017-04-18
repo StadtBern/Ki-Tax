@@ -17,8 +17,8 @@ describe('dateUtil', function () {
         });
 
         it('should return a valid moment', function () {
-            var actual = DateUtil.localDateTimeToMoment('1995-12-25T16:06:34.564');
-            var expected = moment('1995-12-25T16:06:34.564', 'YYYY-MM-DDTHH:mm:ss.SSS', true);
+            let actual = DateUtil.localDateTimeToMoment('1995-12-25T16:06:34.564');
+            let expected = moment('1995-12-25T16:06:34.564', 'YYYY-MM-DDTHH:mm:ss.SSS', true);
             expect(expected.isSame(actual)).toBeTruthy();
         });
     });

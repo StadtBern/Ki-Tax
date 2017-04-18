@@ -9,7 +9,10 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt} from '../../../models/enums/TSAntragStatus';
+import {
+    TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt,
+    isAnyStatusOfVerfuegtButSchulamt
+} from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
@@ -24,9 +27,11 @@ import DateUtil from '../../../utils/DateUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import GesuchRS from '../../service/gesuchRS.rest';
+import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
+let bemerkungDialogTempl = require('../../dialog/bemerkungenDialogTemplate.html');
 
 
 export class VerfuegenListViewComponentConfig implements IComponentOptions {
@@ -243,6 +248,37 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return mahnung.datumFristablauf.isBefore(DateUtil.today());
     }
 
+    public sendToSteuerverwaltung(): void {
+        this.DvDialog.showDialog(bemerkungDialogTempl, BemerkungenDialogController, {
+            title: 'SEND_TO_STV_CONFIRMATION',
+            bemerkungen: this.gesuchModelManager.getGesuch().bemerkungenSTV
+        }).then((bemerkung: string) => {
+            this.gesuchRS.sendGesuchToSTV(this.getGesuch().id, bemerkung).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+            });
+        });
+    }
+
+    public showSendToSteuerverwaltung(): boolean {
+        //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt das Gesuch nicht pruefen lassen darf
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT) && !this.getGesuch().gesperrtWegenBeschwerde;
+    }
+
+    public stvPruefungAbschliessen(): void {
+        this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'STV_PRUEFUNG_ABSCHLIESSEN_CONFIRMATION',
+            deleteText: ''
+        }).then((bemerkung: string) => {
+            this.gesuchRS.stvPruefungAbschliessen(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+            });
+        });
+    }
+
+    public showSTVPruefungAbschliessen(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT_STV) && !this.getGesuch().gesperrtWegenBeschwerde;
+    }
+
     public showErsteMahnungErstellen(): boolean {
         // Nur wenn keine offenen Mahnungen vorhanden!
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
@@ -400,13 +436,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         if (this.getGesuch().hasFSDokument) {
             return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
         }
-        return;
+        return undefined;
     }
 
     public showBeschwerdeHaengig(): boolean {
         let status: TSAntragStatus = this.getGesuch() ? this.getGesuch().status : TSAntragStatus.IN_BEARBEITUNG_GS;
-        //hier wird extra nur "VERFUEGT" gestestet statt alle verfuegten status weil das Schulamt keine Beschwerden erstellen darf
-        return TSAntragStatus.VERFUEGT === status && !this.getGesuch().gesperrtWegenBeschwerde;
+        // Schulamt Status duerfen keine Beschwerde starten
+        return isAnyStatusOfVerfuegtButSchulamt(status) && !this.getGesuch().gesperrtWegenBeschwerde;
     }
 
     public showBeschwerdeAbschliessen(): boolean {

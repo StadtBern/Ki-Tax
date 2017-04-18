@@ -1,18 +1,17 @@
 import {IComponentOptions, IFilterService} from 'angular';
-import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
-import {TSAntragStatus, getTSAntragStatusPendenzValues} from '../../../models/enums/TSAntragStatus';
-import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {getTSAntragTypValues, TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {getTSAntragStatusPendenzValues, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
 import TSAntragDTO from '../../../models/TSAntragDTO';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
-import PendenzRS from '../../../pendenzen/service/PendenzRS.rest';
-import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
-import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
-import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import {IStateService} from 'angular-ui-router';
+import * as moment from 'moment';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import TSUser from '../../../models/TSUser';
 import Moment = moment.Moment;
 let template = require('./dv-pendenzen-list.html');
 require('./dv-pendenzen-list.less');
@@ -24,6 +23,8 @@ export class DVPendenzenListConfig implements IComponentOptions {
         antraege: '<',
         itemsByPage: '<',
         initialAll: '=',
+        showSelectionAll: '=',
+        onUserChanged: '&'
     };
 
     template = template;
@@ -37,6 +38,7 @@ export class DVPendenzenListController {
 
     itemsByPage: number;
     initialAll: boolean;
+    showSelectionAll: boolean;
 
     selectedBetreuungsangebotTyp: string;
     selectedAntragTyp: string;
@@ -45,18 +47,22 @@ export class DVPendenzenListController {
     selectedGesuchsperiode: string;
     institutionenList: Array<TSInstitution>;
     gesuchsperiodenList: Array<string>;
+    onUserChanged: (user: any) => void;
 
 
-    static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
-        'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state', 'CONSTANTS', 'UserRS', 'AuthServiceRS'];
+    static $inject: string[] = ['EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
+        '$state', 'CONSTANTS', 'AuthServiceRS'];
 
-    constructor(public pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
+    constructor(private ebeguUtil: EbeguUtil, private $filter: IFilterService,
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
-                private $state: IStateService, private CONSTANTS: any) {
+                private $state: IStateService, private CONSTANTS: any, private authServiceRS: AuthServiceRS) {
     }
     $onInit() {
         this.initViewModel();
+    }
+
+    public userChanged(selectedUser: TSUser): void {
+        this.onUserChanged({user: selectedUser});
     }
 
     private initViewModel() {
@@ -73,7 +79,7 @@ export class DVPendenzenListController {
      * @returns {Array<TSAntragStatus>}
      */
     public getAntragStatus(): Array<TSAntragStatus> {
-        return getTSAntragStatusPendenzValues();
+        return getTSAntragStatusPendenzValues(this.authServiceRS.getPrincipalRole());
     }
 
     public getBetreuungsangebotTypen(): Array<TSBetreuungsangebotTyp> {

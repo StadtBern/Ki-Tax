@@ -59,6 +59,9 @@ import TSFamiliensituationContainer from '../../models/TSFamiliensituationContai
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../../models/TSAdresseContainer';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
+import * as moment from 'moment';
+import TSEWKResultat from '../../models/TSEWKResultat';
+import TSEWKPerson from '../../models/TSEWKPerson';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -70,6 +73,10 @@ export default class GesuchModelManager {
     private activInstitutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
+    ewkResultatGS1: TSEWKResultat;
+    ewkResultatGS2: TSEWKResultat;
+    ewkPersonGS1: TSEWKPerson;
+    ewkPersonGS2: TSEWKPerson;
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
@@ -123,9 +130,9 @@ export default class GesuchModelManager {
 
     /**
      * Mit den Daten vom Gesuch, werden die entsprechenden Steps der Liste hiddenSteps hinzugefuegt.
-     * Oder ggf. aus der Liste entfernt
+     * Oder ggf. aus der Liste entfernt (nur public fuer test)
      */
-    private setHiddenSteps(): void {
+    public setHiddenSteps(): void {
         if (this.gesuch) {
             //Freigabe
             if (this.gesuch.isOnlineGesuch()) {
@@ -161,6 +168,10 @@ export default class GesuchModelManager {
             this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
             this.setHiddenSteps();
         }
+        this.ewkPersonGS1 = undefined;
+        this.ewkPersonGS2 = undefined;
+        this.ewkResultatGS1 = undefined;
+        this.ewkResultatGS2 = undefined;
     }
 
     public getGesuch(): TSGesuch {
@@ -367,7 +378,7 @@ export default class GesuchModelManager {
         }
     }
 
-    public convertKindNumberToKindIndex(kindNumber : number) : number {
+    public convertKindNumberToKindIndex(kindNumber: number): number {
         for (let i = 0; i < this.getGesuch().kindContainers.length; i++) {
             if (this.getGesuch().kindContainers[i].kindNummer === kindNumber) {
                 return i;
@@ -376,7 +387,7 @@ export default class GesuchModelManager {
         return -1;
     }
 
-    public convertBetreuungNumberToBetreuungIndex(betreuungNumber : number) : number {
+    public convertBetreuungNumberToBetreuungIndex(betreuungNumber: number): number {
         for (let i = 0; i < this.getKindToWorkWith().betreuungen.length; i++) {
             if (this.getKindToWorkWith().betreuungen[i].betreuungNummer === betreuungNumber) {
                 return i;
@@ -1164,7 +1175,7 @@ export default class GesuchModelManager {
      * checks if the gesuch is readonly for a given role based on its state
      */
     private isGesuchReadonlyForRole(): boolean {
-        if (this.authServiceRS.isRole(TSRole.SCHULAMT)) {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles())) {
             return true;  // schulamt hat immer nur readonly zugriff
         } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
             return isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter

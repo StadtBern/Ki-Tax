@@ -37,7 +37,8 @@ import static ch.dvbern.ebegu.enums.UserRoleName.*;
  */
 @Stateless
 @Local(MitteilungService.class)
-@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
+@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION,
+	SACHBEARBEITER_TRAEGERSCHAFT, SCHULAMT})
 @SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals"})
 public class MitteilungServiceBean extends AbstractBaseService implements MitteilungService {
 
@@ -168,7 +169,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nonnull
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR, SCHULAMT})
 	public Collection<Mitteilung> getMitteilungenForCurrentRolle(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 		return getMitteilungenForCurrentRolle(Mitteilung_.fall, fall);
@@ -290,6 +291,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(Fall fall) {
 		Collection<Mitteilung> mitteilungen = getMitteilungenForCurrentRolle(fall);
 		for (Mitteilung mitteilung : mitteilungen) {
@@ -378,12 +380,12 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 		if (neustesGesuchOpt.isPresent()) {
 			final Gesuch neustesGesuch = neustesGesuchOpt.get();
-			if (!AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus()) && neustesGesuch.isMutation()) {
+			if (!AntragStatus.getVerfuegtAndSTVStates().contains(neustesGesuch.getStatus()) && neustesGesuch.isMutation()) {
 				//betreuungsaenderungen der bestehenden, offenen Mutation hinzufuegen (wenn wir hier sind muss es sich um ein PAPIER) Antrag handeln
 				applyBetreuungsmitteilungToMutation(neustesGesuch, mitteilung);
 				return neustesGesuch;
 			}
-			else if (AntragStatus.VERFUEGT.equals(neustesGesuch.getStatus())) {
+			else if (AntragStatus.getVerfuegtAndSTVStates().contains(neustesGesuch.getStatus())) {
 				// create Mutation if there is currently no Mutation
 				final Optional<Gesuch> mutationOpt = this.gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
 				if (mutationOpt.isPresent()) {
@@ -397,6 +399,24 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			}
 		}
 		return gesuch;
+	}
+
+	@Override
+	public Optional<Betreuungsmitteilung> findNewestBetreuungsmitteilung(String betreuungId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuungsmitteilung> query = cb.createQuery(Betreuungsmitteilung.class);
+		Root<Betreuungsmitteilung> root = query.from(Betreuungsmitteilung.class);
+
+		Predicate predicateLinkedObject = cb.equal(root.get(Betreuungsmitteilung_.betreuung).get(Betreuung_.id), betreuungId);
+
+		query.orderBy(cb.desc(root.get(Betreuungsmitteilung_.sentDatum)));
+		query.where(predicateLinkedObject);
+
+		final List<Betreuungsmitteilung> result = persistence.getEntityManager().createQuery(query).setFirstResult(0).setMaxResults(1).getResultList();
+		if (result.isEmpty()) {
+			return Optional.empty();
+		}
+		return Optional.of(result.get(0));
 	}
 
 	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
@@ -433,7 +453,10 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			}
 			case SUPER_ADMIN:
 			case ADMIN:
-			case SACHBEARBEITER_JA: {
+			case SACHBEARBEITER_JA:
+			case JURIST:
+			case SCHULAMT:
+			case REVISOR:{
 				return MitteilungTeilnehmerTyp.JUGENDAMT;
 			}
 			default:

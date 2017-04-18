@@ -9,6 +9,7 @@ import {TSZahlungsauftragsstatus} from '../../models/enums/TSZahlungsauftragstat
 import {ReportRS} from '../../core/service/reportRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import * as moment from 'moment';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
@@ -17,6 +18,7 @@ import IStateService = angular.ui.IStateService;
 import IFormController = angular.IFormController;
 let template = require('./zahlungsauftragView.html');
 require('./zahlungsauftragView.less');
+import Moment = moment.Moment;
 
 export class ZahlungsauftragViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -32,8 +34,8 @@ export class ZahlungsauftragViewController {
     private zahlungsauftragToEdit: TSZahlungsauftrag;
 
     beschrieb: string;
-    faelligkeitsdatum: moment.Moment;
-    datumGeneriert: moment.Moment;
+    faelligkeitsdatum: Moment;
+    datumGeneriert: Moment;
 
     itemsByPage: number = 12;
     testMode: boolean = false;
@@ -71,7 +73,9 @@ export class ZahlungsauftragViewController {
             }
             case TSRole.SUPER_ADMIN:
             case TSRole.ADMIN:
-            case TSRole.SACHBEARBEITER_JA: {
+            case TSRole.SACHBEARBEITER_JA:
+            case TSRole.JURIST:
+            case TSRole.REVISOR: {
                 this.zahlungRS.getAllZahlungsauftraege().then((response: any) => {
                     this.zahlungsauftragen = angular.copy(response);
                 });

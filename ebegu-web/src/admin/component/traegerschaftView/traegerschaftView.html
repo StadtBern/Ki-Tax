@@ -4,6 +4,7 @@
             <h1 data-translate="TRAEGERSCHAFT"></h1>
         </div>
         <form role="form" name="form" class="" unsaved-warning-form novalidate>
+            <fieldset ng-disabled="vm.isReadonly()">
 
             <div class="row">
                 <!--Tabelle zum anzeigen aller Traegerschaften-->
@@ -95,7 +96,7 @@
             </div>
 
             <!--Knopf unterhalb der Tabelle zum hinzufügen einer neuen Traegerschaft-->
-            <div class="row">
+            <div class="row" ng-if="!vm.isReadonly()">
                 <div class="col-md-2">
                     <dv-input-container class="form-group">
                         <dv-loading-button type="button"
@@ -108,7 +109,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" ng-if="!vm.isReadonly()">
                 <div class="col-md-3">
                     <br/>
                     <!--Knopf zum synchen traegerschaften -->
@@ -119,7 +120,7 @@
                     </dv-loading-button>
                 </div>
             </div>
-
+            </fieldset>
         </form>
     </div>
 </div>

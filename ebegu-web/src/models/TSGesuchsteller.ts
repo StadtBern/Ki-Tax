@@ -1,5 +1,7 @@
 import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
+import * as moment from 'moment';
+import Moment = moment.Moment;
 
 export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
@@ -8,16 +10,18 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _telefon: string;
     private _telefonAusland: string;
     private _diplomatenstatus: boolean;
+    private _ewkPersonId: string;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 email?: string, mobile?: string, telefon?: string, telefonAusland?: string,
-                diplomatenstatus?: boolean) {
+                diplomatenstatus?: boolean, ewkPersonId?: string) {
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._mail = email;
         this._mobile = mobile;
         this._telefon = telefon;
         this._telefonAusland = telefonAusland;
         this._diplomatenstatus = diplomatenstatus;
+        this._ewkPersonId = ewkPersonId;
     }
 
     public get mail(): string {
@@ -58,6 +62,14 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
     set diplomatenstatus(value: boolean) {
         this._diplomatenstatus = value;
+    }
+
+    get ewkPersonId(): string {
+        return this._ewkPersonId;
+    }
+
+    set ewkPersonId(value: string) {
+        this._ewkPersonId = value;
     }
 
     public getPhone(): string {

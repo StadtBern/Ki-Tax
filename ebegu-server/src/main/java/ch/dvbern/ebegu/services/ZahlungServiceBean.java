@@ -1,7 +1,57 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
+import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt_;
+import ch.dvbern.ebegu.entities.Verfuegung_;
+import ch.dvbern.ebegu.entities.Zahlung;
+import ch.dvbern.ebegu.entities.Zahlungsauftrag;
+import ch.dvbern.ebegu.entities.Zahlungsauftrag_;
+import ch.dvbern.ebegu.entities.Zahlungsposition;
+import ch.dvbern.ebegu.entities.Zahlungsposition_;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
+import ch.dvbern.ebegu.enums.ZahlungStatus;
+import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
+import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -10,21 +60,14 @@ import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.criteria.*;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
+import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
+import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
+import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 
 /**
@@ -45,7 +88,7 @@ import java.util.*;
  */
 @Stateless
 @Local(ZahlungService.class)
-@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
+@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
 @SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "SpringAutowiredFieldsWarningInspection", "InstanceMethodNamingConvention"})
 public class ZahlungServiceBean extends AbstractBaseService implements ZahlungService {
 
@@ -68,14 +111,14 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragErstellen(@Nonnull LocalDate datumFaelligkeit, @Nonnull String beschreibung) {
 		return zahlungsauftragErstellen(datumFaelligkeit, beschreibung, LocalDateTime.now());
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Zahlungsauftrag zahlungsauftragErstellen(@Nonnull LocalDate datumFaelligkeit, @Nonnull String beschreibung, @Nonnull LocalDateTime datumGeneriert) {
 		// Es darf immer nur ein Zahlungsauftrag im Status ENTWURF sein
 		Optional<Zahlungsauftrag> lastZahlungsauftrag = findLastZahlungsauftrag();
@@ -351,7 +394,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	@Nonnull
 	private Zahlung createZahlung(@Nonnull InstitutionStammdaten institution, @Nonnull Zahlungsauftrag zahlungsauftrag) {
 		Zahlung zahlung = new Zahlung();
-		zahlung.setStatus(ZahlungStatus.AUSGELOEST);
+		zahlung.setStatus(ZahlungStatus.ENTWURF);
 		zahlung.setInstitutionStammdaten(institution);
 		zahlung.setZahlungsauftrag(zahlungsauftrag);
 		zahlungsauftrag.getZahlungen().add(zahlung);
@@ -400,17 +443,24 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN})
 	public Zahlungsauftrag zahlungsauftragAusloesen(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
 		zahlungsauftrag.setStatus(ZahlungauftragStatus.AUSGELOEST);
+		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
+			if (!ZahlungStatus.ENTWURF.equals(zahlung.getStatus())) {
+				throw new IllegalArgumentException("Zahlung muss im Status ENTWURF sein, wenn der Auftrag ausgelöst wird: " + zahlung.getId());
+			}
+			zahlung.setStatus(ZahlungStatus.AUSGELOEST);
+			persistence.merge(zahlung);
+		}
 		return persistence.merge(zahlungsauftrag);
 	}
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
 	public Optional<Zahlungsauftrag> findZahlungsauftrag(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
@@ -419,7 +469,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
 	public Optional<Zahlung> findZahlung(@Nonnull String zahlungId) {
 		Objects.requireNonNull(zahlungId, "zahlungId muss gesetzt sein");
 		Zahlung zahlung = persistence.find(Zahlung.class, zahlungId);
@@ -427,7 +477,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	}
 
 	@Override
-	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public void deleteZahlungsauftrag(@Nonnull String auftragId) {
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Optional<Zahlungsauftrag> auftragOptional = findZahlungsauftrag(auftragId);
@@ -450,7 +500,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR})
 	public Collection<Zahlungsauftrag> getAllZahlungsauftraege() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Zahlungsauftrag.class));
 	}
@@ -458,7 +508,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_INSTITUTION, UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed(value = {SUPER_ADMIN, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Zahlung zahlungBestaetigen(@Nonnull String zahlungId) {
 		Objects.requireNonNull(zahlungId, "zahlungId muss gesetzt sein");
 		Zahlung zahlung = persistence.find(Zahlung.class, zahlungId);
@@ -480,6 +530,27 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
 
+	}
+
+	@Override
+	@RolesAllowed(value = {SUPER_ADMIN})
+	public void deleteZahlungspositionenOfGesuch(@Nonnull Gesuch gesuch) {
+		Objects.requireNonNull(gesuch, "gesuch muss gesetzt sein");
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Zahlungsposition> query = cb.createQuery(Zahlungsposition.class);
+
+		Root<Zahlungsposition> root = query.from(Zahlungsposition.class);
+		Predicate predicates = cb.equal(root.get(Zahlungsposition_.verfuegungZeitabschnitt)
+			.get(VerfuegungZeitabschnitt_.verfuegung)
+			.get(Verfuegung_.betreuung)
+			.get(Betreuung_.kind)
+			.get(KindContainer_.gesuch), gesuch);
+
+		query.where(predicates);
+		List<Zahlungsposition> zahlungspositionList = persistence.getCriteriaResults(query);
+		for (Zahlungsposition zahlungsposition : zahlungspositionList) {
+			persistence.remove(Zahlungsposition.class, zahlungsposition.getId());
+		}
 	}
 
 	@Nonnull

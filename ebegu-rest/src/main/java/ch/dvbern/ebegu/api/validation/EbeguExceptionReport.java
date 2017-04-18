@@ -126,7 +126,7 @@ public class EbeguExceptionReport {
 
 	public static Response buildResponse(Response.Status status, EbeguException ex,  Locale localeFromHeader, boolean addDebugInfo) {
 		Response.ResponseBuilder builder = setResponseHeaderAndStatus(status);
-		String translatedEnumMessage = ServerMessageUtil.translateEnumValue(ex.getErrorCodeEnum(), localeFromHeader);
+		String translatedEnumMessage = ServerMessageUtil.translateEnumValue(ex.getErrorCodeEnum(), localeFromHeader, ex.getArgs().toArray());
 		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(), ex.getErrorCodeEnum(), ex.getMethodName(), translatedEnumMessage, ex.getCustomMessage(), ex.getArgs());
 		if (addDebugInfo) {
 					addDevelopmentDebugInformation(exceptionReport, ex);
@@ -137,7 +137,7 @@ public class EbeguExceptionReport {
 
 	public static Response buildResponse(Response.Status status, EbeguRuntimeException ex, Locale localeFromHeader, boolean addDebugInfo) {
 		Response.ResponseBuilder builder = setResponseHeaderAndStatus(status);
-		String translatedEnumMessage = ServerMessageUtil.translateEnumValue(ex.getErrorCodeEnum(), localeFromHeader);
+		String translatedEnumMessage = ServerMessageUtil.translateEnumValue(ex.getErrorCodeEnum(), localeFromHeader, ex.getArgs().toArray());
 		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(), ex.getErrorCodeEnum(), ex.getMethodName(), translatedEnumMessage, ex.getCustomMessage(), ex.getArgs());
 		if (addDebugInfo) {
 			addDevelopmentDebugInformation(exceptionReport, ex);

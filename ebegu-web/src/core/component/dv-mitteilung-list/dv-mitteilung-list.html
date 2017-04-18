@@ -72,18 +72,19 @@
             </div>
             <div class="row">
                 <div class="col-xs-12">
-                    <dv-accordion class="mitteilungenList" allow-multiple-sections="true">
+                    <dv-accordion class="mitteilungenList" allow-multiple-sections="true"
+                                  selected-tab-id="vm.paramSelectedMitteilungId">
                         <div ng-if="vm.allMitteilungen.length === 0">
                             <span data-translate="MITTEILUNGEN_NOCH_KEINE"></span>
                         </div>
                         <dv-accordion-tab
                             ng-repeat="mitteilung in vm.allMitteilungen"
                             ng-class="{'mitteilungItem': true,
-                        'isSender': vm.isCurrentUserTypTheSenderTyp(mitteilung),
-                        'sadf': !vm.isCurrentUserTypTheSenderTyp(mitteilung),
-                        'institution': vm.isSenderTypInstitution(mitteilung),
-                        'jugendamt': vm.isSenderTypJugendamt(mitteilung),
-                        'gesuchsteller': vm.isSenderTypGesuchsteller(mitteilung)}"
+                            'isSender': vm.isCurrentUserTypTheSenderTyp(mitteilung),
+                            'sadf': !vm.isCurrentUserTypTheSenderTyp(mitteilung),
+                            'institution': vm.isSenderTypInstitution(mitteilung),
+                            'jugendamt': vm.isSenderTypJugendamt(mitteilung),
+                            'gesuchsteller': vm.isSenderTypGesuchsteller(mitteilung)}"
                             ng-value="mitteilung.username"
                             tabid="{{mitteilung.id}}">
                             <tab-title>
@@ -93,8 +94,8 @@
                                         <span class="subject" ng-bind="mitteilung.subject"></span>
                                     </div>
                                     <div>
-                        <span
-                            ng-bind="mitteilung.sentDatum | amDateFormat : 'DD.MM.YYYY / HH:mm'"></span>
+                                        <span
+                                            ng-bind="mitteilung.sentDatum | amDateFormat : 'DD.MM.YYYY / HH:mm'"></span>
                                     </div>
                                     <div>
                                         <span> Von: </span><span ng-bind="mitteilung.senderAsString"></span>
@@ -122,6 +123,7 @@
                                     <span class="formatted" ng-bind="mitteilung.message"></span>
                                     <dv-loading-button button-click="vm.applyBetreuungsmitteilung(mitteilung)" type="button"
                                                        button-class="dv-btn-mutation-hinzufuegen"
+                                                       button-disabled="!vm.canApplyBetreuungsmitteilung(mitteilung)"
                                                        ng-if="vm.isBetreuungsmitteilungNotApplied(mitteilung)">
                                         <span data-translate="MUTATIONSMELDUNG_APPLY"></span>
                                     </dv-loading-button>

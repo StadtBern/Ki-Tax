@@ -4,6 +4,7 @@ import TSUser from './TSUser';
 import {TSMitteilungTeilnehmerTyp} from './enums/TSMitteilungTeilnehmerTyp';
 import {TSMitteilungStatus} from './enums/TSMitteilungStatus';
 import TSBetreuung from './TSBetreuung';
+import * as moment from 'moment';
 
 export default class TSMitteilung extends TSAbstractEntity {
 
@@ -123,7 +124,7 @@ export default class TSMitteilung extends TSAbstractEntity {
     }
 
     get senderAsString(): string {
-        let senderAsString : string;
+        let senderAsString: string;
         if (this.sender.institution) {
             senderAsString = this.sender.institution.name + ', ';
         } else if (this.sender.traegerschaft) {
@@ -134,5 +135,9 @@ export default class TSMitteilung extends TSAbstractEntity {
         } else {
             return this.sender.getFullName();
         }
+    }
+
+    public isErledigt(): boolean {
+        return this.mitteilungStatus === TSMitteilungStatus.ERLEDIGT;
     }
 }

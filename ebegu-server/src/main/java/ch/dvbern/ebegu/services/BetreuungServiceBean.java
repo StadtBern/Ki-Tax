@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MailException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,6 +168,43 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		return persistence.getCriteriaResults(query);
 	}
 
+	@Nonnull
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
+	public List<Betreuung> findAllBetreuungenWithVerfuegungFromFall(@Nonnull Fall fall) {
+		Objects.requireNonNull(fall, "fall muss gesetzt sein");
+
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+
+
+		Root<Betreuung> root = query.from(Betreuung.class);
+		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
+
+		Predicate fallPredicate = cb.equal(root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.fall), fall);
+		predicatesToUse.add(fallPredicate);
+
+		Predicate predicateBetreuung = root.get(Betreuung_.betreuungsstatus).in(Betreuungsstatus.hasVerfuegung);
+		predicatesToUse.add(predicateBetreuung);
+
+		Predicate verfuegungPredicate = cb.isNotNull(root.get(Betreuung_.verfuegung));
+		predicatesToUse.add(verfuegungPredicate);
+
+		Collection<Institution> institutionen = institutionService.getAllowedInstitutionenForCurrentBenutzer();
+		Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
+		predicatesToUse.add(predicateInstitution);
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicatesToUse)).orderBy(cb.desc(root.get(Betreuung_.verfuegung).get(Verfuegung_.timestampErstellt)));
+
+		List<Betreuung> criteriaResults = persistence.getCriteriaResults(query);
+
+		criteriaResults.forEach(betreuung -> authorizer.checkReadAuthorization(betreuung));
+
+		return criteriaResults;
+	}
+
+
 	/**
 	 * Liest alle Betreuungen die zu einer der mitgegebenen Institution gehoeren und die im Status WARTEN sind
 	 *
@@ -213,6 +251,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
+	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, REVISOR})
 	public List<Betreuung> getAllBetreuungenWithMissingStatistics() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
@@ -232,6 +271,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
+	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, SCHULAMT, REVISOR})
 	public List<Abwesenheit> getAllAbwesenheitenWithMissingStatistics() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Abwesenheit> query = cb.createQuery(Abwesenheit.class);

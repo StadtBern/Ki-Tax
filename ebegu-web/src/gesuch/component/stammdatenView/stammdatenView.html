@@ -35,6 +35,7 @@
                             </div>
                         </div>
                     </div>
+
                     <!--Vorname/Name-->
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small">
@@ -61,8 +62,8 @@
                         </div>
                     </div>
 
-                    <!--Geburtsdatum-->
                     <div class="row">
+                        <!--Geburtsdatum-->
                         <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
@@ -74,6 +75,17 @@
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.geburtsdatum"
                                            ja="vm.getModel().gesuchstellerJA.geburtsdatum"></dv-bisher>
                                 <dv-error-messages for="vm.form.geburtsdatum.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                        <!-- Person ID aus EWK -->
+                        <div class="col-sm-12 dv-input-container-small" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorRoles()">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float" data-translate="EWK_PERSON_ID" for="personId">
+                                </label>
+                                <input id="personId" type="text" name="personId" ng-model="vm.getModelJA().ewkPersonId"
+                                       dv-max-length class="form-control input-dv">
+                                <dv-error-messages for="vm.form.ewkPersonId.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>

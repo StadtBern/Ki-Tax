@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 import {TSDateRange} from './types/TSDateRange';
 import TSZahlung from './TSZahlung';

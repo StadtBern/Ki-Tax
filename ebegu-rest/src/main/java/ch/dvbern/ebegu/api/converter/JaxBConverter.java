@@ -305,7 +305,7 @@ public class JaxBConverter {
 		gesuchsteller.setTelefon(gesuchstellerJAXP.getTelefon());
 		gesuchsteller.setMobile(gesuchstellerJAXP.getMobile());
 		gesuchsteller.setTelefonAusland(gesuchstellerJAXP.getTelefonAusland());
-		gesuchsteller.setZpvNumber(gesuchstellerJAXP.getZpvNumber());
+		gesuchsteller.setEwkPersonId(gesuchstellerJAXP.getEwkPersonId());
 		gesuchsteller.setDiplomatenstatus(gesuchstellerJAXP.isDiplomatenstatus());
 		return gesuchsteller;
 	}
@@ -436,7 +436,7 @@ public class JaxBConverter {
 		jaxGesuchsteller.setTelefon(persistedGesuchsteller.getTelefon());
 		jaxGesuchsteller.setMobile(persistedGesuchsteller.getMobile());
 		jaxGesuchsteller.setTelefonAusland(persistedGesuchsteller.getTelefonAusland());
-		jaxGesuchsteller.setZpvNumber(persistedGesuchsteller.getZpvNumber());
+		jaxGesuchsteller.setEwkPersonId(persistedGesuchsteller.getEwkPersonId());
 		jaxGesuchsteller.setDiplomatenstatus(persistedGesuchsteller.isDiplomatenstatus());
 		return jaxGesuchsteller;
 	}
@@ -675,10 +675,14 @@ public class JaxBConverter {
 		}
 
 		antrag.setBemerkungen(antragJAXP.getBemerkungen());
+		antrag.setBemerkungenSTV(antragJAXP.getBemerkungenSTV());
+		antrag.setBemerkungenPruefungSTV(antragJAXP.getBemerkungenPruefungSTV());
 		antrag.setLaufnummer(antragJAXP.getLaufnummer());
+		antrag.setGeprueftSTV(antragJAXP.isGeprueftSTV());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
-
+		antrag.setGewarntNichtFreigegeben(antragJAXP.isGewarntNichtFreigegeben());
+		antrag.setGewarntFehlendeQuittung(antragJAXP.isGewarntFehlendeQuittung());
 		return antrag;
 	}
 
@@ -798,9 +802,14 @@ public class JaxBConverter {
 			jaxGesuch.setEinkommensverschlechterungInfoContainer(this.einkommensverschlechterungInfoContainerToJAX(persistedGesuch.getEinkommensverschlechterungInfoContainer()));
 		}
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
+		jaxGesuch.setBemerkungenSTV(persistedGesuch.getBemerkungenSTV());
+		jaxGesuch.setBemerkungenPruefungSTV(persistedGesuch.getBemerkungenPruefungSTV());
 		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
+		jaxGesuch.setGeprueftSTV(persistedGesuch.isGeprueftSTV());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
+		jaxGesuch.setGewarntNichtFreigegeben(persistedGesuch.isGewarntNichtFreigegeben());
+		jaxGesuch.setGewarntFehlendeQuittung(persistedGesuch.isGewarntFehlendeQuittung());
 
 		return jaxGesuch;
 	}
@@ -1566,6 +1575,20 @@ public class JaxBConverter {
 		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
 		return jaxBetreuungspensum;
 	}
+	/**
+	 * converts the given betreuungList into a JaxBetreuungList
+	 *
+	 * @param betreuungList
+	 * @return List with Betreuung DTOs
+	 */
+	public Collection<JaxBetreuung> betreuungListToJax(Collection<Betreuung> betreuungList) {
+		Collection<JaxBetreuung> returnList = new ArrayList<>();
+		betreuungList.forEach(betreuung -> {
+			returnList.add(betreuungToJAX(betreuung));
+		});
+		return returnList;
+	}
+
 
 	public JaxBetreuung betreuungToJAX(final Betreuung betreuungFromServer) {
 		final JaxBetreuung jaxBetreuung = new JaxBetreuung();
@@ -2055,36 +2078,65 @@ public class JaxBConverter {
 		}
 		return jaxContainers;
 	}
+
+	public void disguiseStatus(Gesuch gesuch, JaxAntragDTO antrag, UserRole userRole) {
+		switch (userRole) {
+			case GESUCHSTELLER:
+			case SACHBEARBEITER_INSTITUTION:
+			case SACHBEARBEITER_TRAEGERSCHAFT:
+				switch (gesuch.getStatus()) {
+					case PRUEFUNG_STV:
+					case GEPRUEFT_STV:
+					case IN_BEARBEITUNG_STV:
+						antrag.setStatus(AntragStatusDTO.VERFUEGT);
+						break;
+					default:
+						break;
+				}
+				break;
+			default:
+				break;
+		}
+	}
 	/**
 	 * transformiert ein gesuch in ein JaxAntragDTO unter beruecksichtigung der rollen und erlaubten institutionen
+	 * - Fuer die Rolle Steueramt werden saemtlichen Daten von den Kindern nicht geladen
+	 * - Fuer die Rolle Institution/Traegerschaft werden nur die relevanten Institutionen und Angebote geladen
 	 */
 	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, UserRole userRole, Collection<Institution> allowedInst) {
 		//wir koennen nicht mit den container auf dem gesuch arbeiten weil das gesuch attached ist. hibernate
 		//wuerde uns dann die kinder wegloeschen, daher besser transformieren
 		Collection<JaxKindContainer> jaxKindContainers = new ArrayList<>(gesuch.getKindContainers().size());
-		for (final KindContainer kind : gesuch.getKindContainers()) {
-			jaxKindContainers.add(kindContainerToJAX(kind));
-		}
 
 		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
-		antrag.setKinder(createKinderList(jaxKindContainers));
+
+		if (!userRole.equals(UserRole.STEUERAMT)) {
+			for (final KindContainer kind : gesuch.getKindContainers()) {
+				jaxKindContainers.add(kindContainerToJAX(kind));
+			}
+			antrag.setKinder(createKinderList(jaxKindContainers));
+		}
 
 		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
 			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(jaxKindContainers, allowedInst);
 		}
 
-		antrag.setAngebote(createAngeboteList(jaxKindContainers));
-		antrag.setInstitutionen(createInstitutionenList(jaxKindContainers));
+		disguiseStatus(gesuch, antrag, userRole);
+
+		if (!userRole.equals(UserRole.STEUERAMT)) {
+			antrag.setAngebote(createAngeboteList(jaxKindContainers));
+			antrag.setInstitutionen(createInstitutionenList(jaxKindContainers));
+		}
 
 		return antrag;
 	}
 
-
-	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch) {
+	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch, UserRole userRole) {
 		JaxAntragDTO antrag = gesuchToAntragDTOBasic(gesuch);
 		antrag.setKinder(createKinderList(gesuch.getKindContainers()));
 		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
 		antrag.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
+		disguiseStatus(gesuch, antrag, userRole);
 		return antrag;
 	}
 

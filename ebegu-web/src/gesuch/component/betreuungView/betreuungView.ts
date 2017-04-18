@@ -22,7 +22,9 @@ import {IBetreuungStateParams} from '../../gesuch.route';
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {isVerfuegtOrSTV} from '../../../models/enums/TSAntragStatus';
+import * as moment from 'moment';
+import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 import Moment = moment.Moment;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;
@@ -48,6 +50,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     betreuungIndex: number;
     isMutationsmeldungStatus: boolean;
     mutationsmeldungModel: TSBetreuung;
+    existingMutationsMeldung: TSBetreuungsmitteilung;
     isNewestGesuch: boolean;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
@@ -55,17 +58,20 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams,
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $stateParams: IBetreuungStateParams,
                 private mitteilungRS: MitteilungRS, private dvDialog: DvDialog, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.BETREUUNG);
 
+    }
+
+    $onInit() {
         this.mutationsmeldungModel = undefined;
         this.isMutationsmeldungStatus = false;
-        let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt($stateParams.kindNumber, 10));
+        let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(parseInt(this.$stateParams.kindNumber, 10));
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
-            if ($stateParams.betreuungNumber) {
-                this.betreuungIndex = this.gesuchModelManager.convertBetreuungNumberToBetreuungIndex(parseInt($stateParams.betreuungNumber));
+            if (this.$stateParams.betreuungNumber) {
+                this.betreuungIndex = this.gesuchModelManager.convertBetreuungNumberToBetreuungIndex(parseInt(this.$stateParams.betreuungNumber));
                 this.model = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungIndex]);
                 this.initialBetreuung = angular.copy(this.gesuchModelManager.getKindToWorkWith().betreuungen[this.betreuungIndex]);
                 this.gesuchModelManager.setBetreuungIndex(this.betreuungIndex);
@@ -84,11 +90,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             // just to read!
             this.kindModel = this.gesuchModelManager.getKindToWorkWith();
         } else {
-            this.$log.error('There is no kind available with kind-number:' + $stateParams.kindNumber);
+            this.$log.error('There is no kind available with kind-number:' + this.$stateParams.kindNumber);
         }
         this.gesuchModelManager.isNeuestesGesuch().then((response: boolean) => {
             this.isNewestGesuch = response;
         });
+
+        this.findExistingBetreuungsmitteilung();
     }
 
     /**
@@ -429,7 +437,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
      * sich um letztes bzw. neuestes Gesuch handeln
      */
     public isMutationsmeldungAllowed(): boolean {
-        return (this.isMutation() || (this.gesuchModelManager.getGesuch().status === TSAntragStatus.VERFUEGT))
+        return (this.isMutation() || (isVerfuegtOrSTV(this.gesuchModelManager.getGesuch().status)))
+            && this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde !== true
             && this.isNewestGesuch
             && this.getBetreuungModel().betreuungsstatus !== TSBetreuungsstatus.WARTEN;
     }
@@ -451,6 +460,45 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                     this.mutationsmeldungModel = undefined;
                     this.$state.go('gesuch.betreuungen', {gesuchId: this.getGesuchId()});
                 });
+            });
+        }
+    }
+
+    /**
+     * Prueft dass das Objekt existingMutationsMeldung existiert und dass es ein sentDatum hat. Das wird gebraucht,
+     * um zu vermeiden, dass ein leeres Objekt als gueltiges Objekt erkannt wird.
+     * Ausserdem muss die Meldung nicht applied sein und nicht den Status ERLEDIGT haben
+     */
+    public showExistingBetreuungsmitteilungInfoBox(): boolean {
+        return this.existingMutationsMeldung !== undefined && this.existingMutationsMeldung !== null
+            && this.existingMutationsMeldung.sentDatum !== undefined && this.existingMutationsMeldung.sentDatum !== null
+            && this.existingMutationsMeldung.applied !== true && !this.existingMutationsMeldung.isErledigt();
+    }
+
+    public getDatumLastBetreuungsmitteilung(): string {
+        if (this.showExistingBetreuungsmitteilungInfoBox()) {
+            return DateUtil.momentToLocalDateFormat(this.existingMutationsMeldung.sentDatum, 'DD.MM.YYYY');
+        }
+        return '';
+    }
+
+    public openExistingBetreuungsmitteilung(): void {
+        this.$state.go('gesuch.mitteilung', {
+            fallId: this.gesuchModelManager.getGesuch().fall.id,
+            gesuchId: this.gesuchModelManager.getGesuch().id,
+            betreuungId: this.getBetreuungModel().id,
+            mitteilungId: this.existingMutationsMeldung.id
+        });
+    }
+
+    /**
+     * Sucht die neueste Betreuungsmitteilung fuer die aktuelle Betreuung. Da es nur fuer die Rollen
+     * INST und TRAEG relevant ist, wird es nur fuer diese Rollen geholt
+     */
+    private findExistingBetreuungsmitteilung() {
+        if (!this.getBetreuungModel().isNew() && this.authServiceRS.isOneOfRoles(TSRoleUtil.getTraegerschaftInstitutionOnlyRoles())) {
+            this.mitteilungRS.getNewestBetreuungsmitteilung(this.getBetreuungModel().id).then((response: TSBetreuungsmitteilung) => {
+                this.existingMutationsMeldung = response;
             });
         }
     }

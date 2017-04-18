@@ -130,7 +130,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		validateMandantMatches(fall);
 		//berechtigte Rollen pruefen
 		UserRole[] allowedRoles = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,
-			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT};
+			SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, SCHULAMT, STEUERAMT, JURIST, REVISOR};
 		if (principalBean.isCallerInAnyOfRole(allowedRoles)) {
 			return true;
 		}
@@ -173,6 +173,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			return;
 		}
 		boolean allowedJAORGS = isWriteAuthorized(gesuch, principalBean.getPrincipal().getName());
+
 		//Wir pruefen schulamt separat (schulamt darf schulamt-only Gesuche vom Status FREIGABEQUITTUNG zum Status SCHULAMT schieben)
 		boolean allowedSchulamt = false;
 		if (!allowedJAORGS && principalBean.isCallerInRole(SCHULAMT)
@@ -180,7 +181,15 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 			allowedSchulamt = true;
 		}
 
-		if (!allowedJAORGS && !allowedSchulamt) {
+		//Wir pruefen steueramt separat (steueramt darf nur das Gesuch speichern wenn es im Status PRUEFUNG_STV oder IN_BEARBEITUNG_STV ist)
+		boolean allowedSteueramt = false;
+		if (!allowedJAORGS && ! allowedSchulamt && principalBean.isCallerInRole(STEUERAMT)
+			&& (AntragStatus.PRUEFUNG_STV.equals(gesuch.getStatus()) || AntragStatus.IN_BEARBEITUNG_STV.equals(gesuch.getStatus())
+			|| AntragStatus.GEPRUEFT_STV.equals(gesuch.getStatus()))) {
+			allowedSteueramt = true;
+		}
+
+		if (!allowedJAORGS && !allowedSchulamt && !allowedSteueramt) {
 			throwViolation(gesuch);
 		}
 	}
@@ -422,6 +431,12 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		if (isAllowedSchulamt(entity)) {
 			return true;
 		}
+		if (isAllowedSteueramt(entity)) {
+			return true;
+		}
+		if (isAllowedJuristOrRevisor(entity)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -434,12 +449,29 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM)) {
 			return entity.getStatus().isReadableByJugendamtSteueramt();
 		}
-		return false;
+		return isAllowedJuristOrRevisor(entity);
 	}
 
 	private boolean isAllowedSchulamt(Gesuch entity) {
 		if (principalBean.isCallerInRole(SCHULAMT)) {
 			return entity.hasBetreuungOfSchulamt() && entity.getStatus().isReadableBySchulamtSachbearbeiter();
+		}
+		return false;
+	}
+
+	private boolean isAllowedSteueramt(Gesuch entity) {
+		if (principalBean.isCallerInRole(STEUERAMT)) {
+			return entity.getStatus().isReadableBySteueramt();
+		}
+		return false;
+	}
+
+	private boolean isAllowedJuristOrRevisor(Gesuch gesuch) {
+		if (principalBean.isCallerInRole(JURIST)) {
+			return gesuch.getStatus().isReadableByJurist();
+		}
+		if (principalBean.isCallerInRole(REVISOR)) {
+			return gesuch.getStatus().isReadableByRevisor();
 		}
 		return false;
 	}

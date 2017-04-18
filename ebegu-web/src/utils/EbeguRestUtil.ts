@@ -66,6 +66,11 @@ import TSBetreuungsmitteilungPensum from '../models/TSBetreuungsmitteilungPensum
 import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
 import TSZahlung from '../models/TSZahlung';
 import TSKindDublette from '../models/TSKindDublette';
+import TSEWKResultat from '../models/TSEWKResultat';
+import TSEWKPerson from '../models/TSEWKPerson';
+import TSEWKEinwohnercode from '../models/TSEWKEinwohnercode';
+import TSEWKAdresse from '../models/TSEWKAdresse';
+import TSEWKBeziehung from '../models/TSEWKBeziehung';
 
 
 export default class EbeguRestUtil {
@@ -376,6 +381,7 @@ export default class EbeguRestUtil {
             restGesuchsteller.telefon = gesuchsteller.telefon || undefined;
             restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland || undefined;
             restGesuchsteller.diplomatenstatus = gesuchsteller.diplomatenstatus;
+            restGesuchsteller.ewkPersonId = gesuchsteller.ewkPersonId;
             return restGesuchsteller;
         }
         return undefined;
@@ -389,10 +395,10 @@ export default class EbeguRestUtil {
             gesuchstellerTS.telefon = gesuchstellerFromServer.telefon;
             gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
             gesuchstellerTS.diplomatenstatus = gesuchstellerFromServer.diplomatenstatus;
+            gesuchstellerTS.ewkPersonId = gesuchstellerFromServer.ewkPersonId;
             return gesuchstellerTS;
         }
         return undefined;
-
     }
 
     public parseErwerbspensumContainer(erwerbspensumContainer: TSErwerbspensumContainer, ewpContFromServer: any): TSErwerbspensumContainer {
@@ -606,9 +612,14 @@ export default class EbeguRestUtil {
         restGesuch.gesuchsteller2 = this.gesuchstellerContainerToRestObject({}, gesuch.gesuchsteller2);
         restGesuch.familiensituationContainer = this.familiensituationContainerToRestObject({}, gesuch.familiensituationContainer);
         restGesuch.bemerkungen = gesuch.bemerkungen;
+        restGesuch.bemerkungenSTV = gesuch.bemerkungenSTV;
+        restGesuch.bemerkungenPruefungSTV = gesuch.bemerkungenPruefungSTV;
         restGesuch.laufnummer = gesuch.laufnummer;
+        restGesuch.geprueftSTV = gesuch.geprueftSTV;
         restGesuch.hasFSDokument = gesuch.hasFSDokument;
         restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
+        restGesuch.gewarntNichtFreigegeben = gesuch.gewarntNichtFreigegeben;
+        restGesuch.gewarntFehlendeQuittung = gesuch.gewarntFehlendeQuittung;
         return restGesuch;
     }
 
@@ -622,9 +633,14 @@ export default class EbeguRestUtil {
             gesuchTS.familiensituationContainer = this.parseFamiliensituationContainer(new TSFamiliensituationContainer(), gesuchFromServer.familiensituationContainer);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
+            gesuchTS.bemerkungenSTV = gesuchFromServer.bemerkungenSTV;
+            gesuchTS.bemerkungenPruefungSTV = gesuchFromServer.bemerkungenPruefungSTV;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;
+            gesuchTS.geprueftSTV = gesuchFromServer.geprueftSTV;
             gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
             gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
+            gesuchTS.gewarntNichtFreigegeben = gesuchFromServer.gewarntNichtFreigegeben;
+            gesuchTS.gewarntFehlendeQuittung = gesuchFromServer.gewarntFehlendeQuittung;
             return gesuchTS;
         }
         return undefined;
@@ -1165,7 +1181,7 @@ export default class EbeguRestUtil {
         return restAbwesenheit;
     }
 
-    private parseBetreuungList(betreuungen: Array<any>): TSBetreuung[] {
+    public parseBetreuungList(betreuungen: Array<any>): TSBetreuung[] {
         let resultList: TSBetreuung[] = [];
         if (betreuungen && Array.isArray(betreuungen)) {
             for (let i = 0; i < betreuungen.length; i++) {
@@ -2063,6 +2079,128 @@ export default class EbeguRestUtil {
             tsZahlung.status = zahlungFromServer.status;
 
             return tsZahlung;
+        }
+        return undefined;
+    }
+
+    public parseEWKResultat(ewkResultatTS: TSEWKResultat, ewkResultatFromServer: any) {
+        if (ewkResultatFromServer) {
+            ewkResultatTS.maxResultate = ewkResultatFromServer.maxResultate;
+            ewkResultatTS.anzahlResultate = ewkResultatFromServer.anzahlResultate;
+            ewkResultatTS.personen = this.parseEWKPersonList(ewkResultatFromServer.personen);
+            return ewkResultatTS;
+        }
+        return undefined;
+    }
+
+    private parseEWKPersonList(data: any): TSEWKPerson[] {
+        let personen: TSEWKPerson[] = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                personen[i] = this.parseEWKPerson(new TSEWKPerson(), data[i]);
+            }
+        }
+        return personen;
+    }
+
+    private parseEWKPerson(tsEWKPerson: TSEWKPerson, ewkPersonFromServer: any): TSEWKPerson {
+        if (ewkPersonFromServer) {
+           tsEWKPerson.personID = ewkPersonFromServer.personID;
+           tsEWKPerson.einwohnercodes = this.parseEWKEinwohnercodeList(ewkPersonFromServer.einwohnercodes);
+           tsEWKPerson.nachname = ewkPersonFromServer.nachname;
+           tsEWKPerson.ledigname = ewkPersonFromServer.ledigname;
+           tsEWKPerson.vorname = ewkPersonFromServer.vorname;
+           tsEWKPerson.rufname = ewkPersonFromServer.rufname;
+           tsEWKPerson.geburtsdatum = DateUtil.localDateToMoment(ewkPersonFromServer.geburtsdatum);
+           tsEWKPerson.zuzugsdatum = DateUtil.localDateToMoment(ewkPersonFromServer.zuzugsdatum);
+           tsEWKPerson.nationalitaet = ewkPersonFromServer.nationalitaet;
+           tsEWKPerson.zivilstand = ewkPersonFromServer.zivilstand;
+           tsEWKPerson.zivilstandTxt = ewkPersonFromServer.zivilstandTxt;
+           tsEWKPerson.zivilstandsdatum = DateUtil.localDateToMoment(ewkPersonFromServer.zivilstandsdatum);
+           tsEWKPerson.geschlecht = ewkPersonFromServer.geschlecht;
+           tsEWKPerson.bewilligungsart = ewkPersonFromServer.bewilligungsart;
+           tsEWKPerson.bewilligungsartTxt = ewkPersonFromServer.bewilligungsartTxt;
+           tsEWKPerson.bewilligungBis = DateUtil.localDateToMoment(ewkPersonFromServer.bewilligungBis);
+           tsEWKPerson.adressen = this.parseEWKAdresseList(ewkPersonFromServer.adressen);
+           tsEWKPerson.beziehungen = this.parseEWKBeziehungList(ewkPersonFromServer.beziehungen);
+            return tsEWKPerson;
+        }
+        return undefined;
+    }
+
+    private parseEWKEinwohnercodeList(data: any): TSEWKEinwohnercode[] {
+        let codes: TSEWKEinwohnercode[] = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                codes[i] = this.parseEWKEinwohnercode(new TSEWKEinwohnercode(), data[i]);
+            }
+        }
+        return codes;
+    }
+
+    private parseEWKEinwohnercode(tsEWKEinwohnercode: TSEWKEinwohnercode, ewkEinwohnercodeFromServer: any): TSEWKEinwohnercode {
+        if (ewkEinwohnercodeFromServer) {
+            tsEWKEinwohnercode.code = ewkEinwohnercodeFromServer.code;
+            tsEWKEinwohnercode.codeTxt = ewkEinwohnercodeFromServer.codeTxt;
+            tsEWKEinwohnercode.gueltigVon = DateUtil.localDateToMoment(ewkEinwohnercodeFromServer.gueltigVon);
+            tsEWKEinwohnercode.gueltigBis = DateUtil.localDateToMoment(ewkEinwohnercodeFromServer.gueltigBis);
+            return tsEWKEinwohnercode;
+        }
+        return undefined;
+    }
+
+    private parseEWKAdresseList(data: any): TSEWKAdresse[] {
+        let adressen: TSEWKAdresse[] = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                adressen[i] = this.parseEWKAdresse(new TSEWKAdresse(), data[i]);
+            }
+        }
+        return adressen;
+    }
+
+    private parseEWKAdresse(tsEWKAdresse: TSEWKAdresse, ewkAdresseFromServer: any): TSEWKAdresse {
+        if (ewkAdresseFromServer) {
+            tsEWKAdresse.adresstyp = ewkAdresseFromServer.adresstyp;
+            tsEWKAdresse.adresstypTxt = ewkAdresseFromServer.adresstypTxt;
+            tsEWKAdresse.gueltigVon = DateUtil.localDateToMoment(ewkAdresseFromServer.gueltigVon);
+            tsEWKAdresse.gueltigBis = DateUtil.localDateToMoment(ewkAdresseFromServer.gueltigBis);
+            tsEWKAdresse.coName = ewkAdresseFromServer.coName;
+            tsEWKAdresse.postfach = ewkAdresseFromServer.postfach;
+            tsEWKAdresse.bfSGemeinde = ewkAdresseFromServer.bfSGemeinde;
+            tsEWKAdresse.strasse = ewkAdresseFromServer.strasse;
+            tsEWKAdresse.hausnummer = ewkAdresseFromServer.hausnummer;
+            tsEWKAdresse.postleitzahl = ewkAdresseFromServer.postleitzahl;
+            tsEWKAdresse.ort = ewkAdresseFromServer.ort;
+            tsEWKAdresse.kanton = ewkAdresseFromServer.kanton;
+            tsEWKAdresse.land = ewkAdresseFromServer.land;
+            return tsEWKAdresse;
+        }
+        return undefined;
+    }
+
+    private parseEWKBeziehungList(data: any): TSEWKBeziehung[] {
+        let beziehungen: TSEWKBeziehung[] = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                beziehungen[i] = this.parseEWKBeziehung(new TSEWKBeziehung(), data[i]);
+            }
+        }
+        return beziehungen;
+    }
+
+    private parseEWKBeziehung(tsEWKBeziehung: TSEWKBeziehung, ewkBeziehungFromServer: any): TSEWKBeziehung {
+        if (ewkBeziehungFromServer) {
+            tsEWKBeziehung.beziehungstyp = ewkBeziehungFromServer.beziehungstyp;
+            tsEWKBeziehung.beziehungstypTxt = ewkBeziehungFromServer.beziehungstypTxt;
+            tsEWKBeziehung.personID = ewkBeziehungFromServer.personID;
+            tsEWKBeziehung.nachname = ewkBeziehungFromServer.nachname;
+            tsEWKBeziehung.ledigname = ewkBeziehungFromServer.ledigname;
+            tsEWKBeziehung.vorname = ewkBeziehungFromServer.vorname;
+            tsEWKBeziehung.rufname = ewkBeziehungFromServer.rufname;
+            tsEWKBeziehung.geburtsdatum = DateUtil.localDateToMoment(ewkBeziehungFromServer.geburtsdatum);
+            tsEWKBeziehung.adresse = this.parseEWKAdresse(new TSEWKAdresse(), ewkBeziehungFromServer.adresse);
+            return tsEWKBeziehung;
         }
         return undefined;
     }

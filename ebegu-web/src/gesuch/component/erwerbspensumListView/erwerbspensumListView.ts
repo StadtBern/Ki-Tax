@@ -15,7 +15,7 @@ import {TSBetreuungsangebotTypUtil} from '../../../utils/TSBetreuungsangebotTypU
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
-let template = require('./erwerbspensumListView.html');
+let template: string = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 require('./erwerbspensumListView.less');
 
@@ -23,7 +23,7 @@ require('./erwerbspensumListView.less');
 export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
     transclude: boolean;
     bindings: any;
-    template: string | Function;
+    template: string;
     controller: any;
     controllerAs: string;
 

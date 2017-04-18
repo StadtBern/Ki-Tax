@@ -112,6 +112,18 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+	// Hier werden die Bemerkungen gespeichert, die das JA fuer die STV eintraegt
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String bemerkungenSTV;
+
+	// Hier werden die Bemerkungen gespeichert, die die STV eingibt
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String bemerkungenPruefungSTV;
+
 	@Nullable
 	@Valid
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "gesuch")
@@ -123,13 +135,20 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	private int laufnummer = 0;
 
 	@Column(nullable = false)
+	private boolean geprueftSTV = false;
+
+	@Column(nullable = false)
 	private boolean hasFSDokument = true;
 
 	@Column(nullable = false)
 	private boolean gesperrtWegenBeschwerde = false;
 
-	@Transient
-	private AntragStatus orginalAntragStatus;
+	@Column(nullable = false)
+	private boolean gewarntNichtFreigegeben = false;
+
+	@Column(nullable = false)
+	private boolean gewarntFehlendeQuittung = false;
+
 
 	public Gesuch() {
 	}
@@ -217,6 +236,24 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.bemerkungen = bemerkungen;
 	}
 
+	@Nullable
+	public String getBemerkungenSTV() {
+		return bemerkungenSTV;
+	}
+
+	public void setBemerkungenSTV(@Nullable String bemerkungenSTV) {
+		this.bemerkungenSTV = bemerkungenSTV;
+	}
+
+	@Nullable
+	public String getBemerkungenPruefungSTV() {
+		return bemerkungenPruefungSTV;
+	}
+
+	public void setBemerkungenPruefungSTV(@Nullable String bemerkungenPruefungSTV) {
+		this.bemerkungenPruefungSTV = bemerkungenPruefungSTV;
+	}
+
 	public Fall getFall() {
 		return fall;
 	}
@@ -257,14 +294,6 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.status = status;
 	}
 
-	public AntragStatus getOrginalStatus() {
-		return orginalAntragStatus;
-	}
-
-	public void setOrginalStatus(AntragStatus orginalAntragStatus) {
-		this.orginalAntragStatus = orginalAntragStatus;
-	}
-
 	public AntragTyp getTyp() {
 		return typ;
 	}
@@ -296,6 +325,14 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	public void setLaufnummer(int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	public boolean isGeprueftSTV() {
+		return geprueftSTV;
+	}
+
+	public void setGeprueftSTV(boolean geprueftSTV) {
+		this.geprueftSTV = geprueftSTV;
 	}
 
 	public boolean isHasFSDokument() {
@@ -337,6 +374,22 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	public void setFinanzDatenDTO_zuZweit(FinanzDatenDTO finanzDatenDTO_zuZweit) {
 		this.finanzDatenDTO_zuZweit = finanzDatenDTO_zuZweit;
+	}
+
+	public boolean isGewarntNichtFreigegeben() {
+		return gewarntNichtFreigegeben;
+	}
+
+	public void setGewarntNichtFreigegeben(boolean gewarntNichtFreigegeben) {
+		this.gewarntNichtFreigegeben = gewarntNichtFreigegeben;
+	}
+
+	public boolean isGewarntFehlendeQuittung() {
+		return gewarntFehlendeQuittung;
+	}
+
+	public void setGewarntFehlendeQuittung(boolean gewarntFehlendeQuittung) {
+		this.gewarntFehlendeQuittung = gewarntFehlendeQuittung;
 	}
 
 	@SuppressWarnings("ObjectEquality")
@@ -504,6 +557,9 @@ public class Gesuch extends AbstractEntity implements Searchable{
 				mutation.addDokumentGrund(dokumentGrund.copyForMutation(new DokumentGrund()));
 			}
 		}
+		mutation.setGesperrtWegenBeschwerde(false);
+		mutation.setGewarntNichtFreigegeben(false);
+		mutation.setGewarntFehlendeQuittung(false);
 		return mutation;
 	}
 
@@ -543,5 +599,19 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	public String getEingangsdatumFormated(){
 		return Constants.DATE_FORMATTER.format(eingangsdatum);
+	}
+
+	public String getFreigabedatumFormated(){
+		if (freigabeDatum != null) {
+			return Constants.DATE_FORMATTER.format(freigabeDatum);
+		}
+		return "";
+	}
+
+	public Gesuchsteller extractGesuchsteller1() {
+		if (this.getGesuchsteller1() != null) {
+			return this.getGesuchsteller1().getGesuchstellerJA();
+		}
+		return null;
 	}
 }

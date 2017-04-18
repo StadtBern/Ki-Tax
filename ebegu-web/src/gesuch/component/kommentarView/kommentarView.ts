@@ -16,14 +16,21 @@ import GlobalCacheService from '../../service/globalCacheService';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {OkHtmlDialogController} from '../../dialog/OkHtmlDialogController';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
+import GesuchstellerRS from '../../../core/service/gesuchstellerRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {IStateService} from 'angular-ui-router';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import ICacheFactoryService = angular.ICacheFactoryService;
 import ITranslateService = angular.translate.ITranslateService;
+import IRootScopeService = angular.IRootScopeService;
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
+let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 
 export class KommentarViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -38,18 +45,21 @@ export class KommentarViewComponentConfig implements IComponentOptions {
 export class KommentarViewController {
 
     dokumentePapiergesuch: TSDokumentGrund;
+    TSRoleUtil: any;
 
     static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS',
-        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window'];
+        'WizardStepManager', 'GlobalCacheService', 'DvDialog', '$translate', '$window', 'GesuchstellerRS', '$rootScope', '$state', '$mdSidenav'];
     /* @ngInject */
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
                 private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
                 private uploadRS: UploadRS, private wizardStepManager: WizardStepManager, private globalCacheService: GlobalCacheService,
-                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService) {
+                private dvDialog: DvDialog, private $translate: ITranslateService, private $window: ng.IWindowService, private gesuchstellerRS: GesuchstellerRS,
+                private $rootScope: IRootScopeService, private $state: IStateService, private $mdSidenav: ng.material.ISidenavService) {
 
         if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
         }
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private getPapiergesuchFromServer(): IPromise<TSDokumenteDTO> {
@@ -70,11 +80,21 @@ export class KommentarViewController {
     getGesuch(): TSGesuch {
         return this.gesuchModelManager.getGesuch();
     }
+    public toggleEwkSidenav() {
+        this.$mdSidenav('ewk').toggle();
+    }
 
     public saveBemerkungZurVerfuegung(): void {
         if (!this.isGesuchUnsaved()) {
             // Bemerkungen auf dem Gesuch werden nur gespeichert, wenn das gesuch schon persisted ist!
             this.gesuchRS.updateBemerkung(this.getGesuch().id, this.getGesuch().bemerkungen);
+        }
+    }
+
+    public saveBemerkungPruefungSTV(): void {
+        if (!this.isGesuchUnsaved()) {
+            // Bemerkungen auf dem Gesuch werden nur gespeichert, wenn das gesuch schon persisted ist!
+            this.gesuchRS.updateBemerkungPruefungSTV(this.getGesuch().id, this.getGesuch().bemerkungenPruefungSTV);
         }
     }
 
@@ -179,4 +199,35 @@ export class KommentarViewController {
         return this.gesuchModelManager.isGesuchReadonly();
     }
 
+    public isInBearbeitungSTV(): boolean {
+        return this.gesuchModelManager.getGesuch().status === TSAntragStatus.IN_BEARBEITUNG_STV;
+    }
+
+    public showEwkAbfrage(): boolean {
+        if (!this.gesuchModelManager.isGesuchReadonly()
+            && this.gesuchModelManager.getGesuch()
+            && this.gesuchModelManager.getGesuch().gesuchsteller1
+            && !this.gesuchModelManager.getGesuch().gesuchsteller1.isNew()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public freigebenSTV(): void {
+        this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'FREIGABE_JA',
+            deleteText: 'FREIGABE_JA_BESCHREIBUNG'
+        }).then(() => {
+            return this.gesuchRS.gesuchBySTVFreigeben(this.getGesuch().id).then((gesuch: TSGesuch) => {
+                this.gesuchModelManager.setGesuch(gesuch);
+                this.$state.go('pendenzenSteueramt');
+            });
+        });
+    }
+
+    public showBemerkungenPruefungSTV(): boolean {
+        return this.getGesuch().geprueftSTV === true || this.getGesuch().status === TSAntragStatus.PRUEFUNG_STV || this.getGesuch().status === TSAntragStatus.IN_BEARBEITUNG_STV
+            || this.getGesuch().status === TSAntragStatus.GEPRUEFT_STV;
+    }
 }

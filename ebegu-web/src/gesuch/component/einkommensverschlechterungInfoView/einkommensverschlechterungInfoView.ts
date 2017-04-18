@@ -14,9 +14,12 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {TSRole} from '../../../models/enums/TSRole';
 import TSEinkommensverschlechterungInfoContainer from '../../../models/TSEinkommensverschlechterungInfoContainer';
 import EinkommensverschlechterungInfoRS from '../../service/einkommensverschlechterungInfoRS.rest';
+import * as moment from 'moment';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
@@ -47,12 +50,12 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'
-        , 'WizardStepManager', 'DvDialog', '$q', 'EinkommensverschlechterungInfoRS', '$scope'];
+        , 'WizardStepManager', 'DvDialog', '$q', 'EinkommensverschlechterungInfoRS', '$scope', 'AuthServiceRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog, private $q: IQService, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
-                $scope: IScope) {
+                $scope: IScope, private authServiceRS: AuthServiceRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         this.initialEinkVersInfo = angular.copy(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfoContainer);
         this.model = angular.copy(this.initialEinkVersInfo);
@@ -205,6 +208,13 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     private isConfirmationRequired(): boolean {
         return (this.initialEinkVersInfo && this.initialEinkVersInfo.einkommensverschlechterungInfoJA)
             && (!this.getEinkommensverschlechterungsInfo() || !this.getEinkommensverschlechterungsInfo().einkommensverschlechterung);
+    }
+
+    public isSteueramtLetzterStep(): boolean {
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles())) {
+            return !this.getEinkommensverschlechterungsInfo().einkommensverschlechterung;
+        }
+        return false;
     }
 
 }

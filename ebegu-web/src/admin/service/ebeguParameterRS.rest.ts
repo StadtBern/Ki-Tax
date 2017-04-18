@@ -3,6 +3,7 @@ import TSEbeguParameter from '../../models/TSEbeguParameter';
 import {IHttpService, IPromise} from 'angular';
 import {TSEbeguParameterKey} from '../../models/enums/TSEbeguParameterKey';
 import DateUtil from '../../utils/DateUtil';
+import * as moment from 'moment';
 import ICacheObject = angular.ICacheObject;
 
 

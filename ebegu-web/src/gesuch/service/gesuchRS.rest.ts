@@ -7,6 +7,7 @@ import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import DateUtil from '../../utils/DateUtil';
+import * as moment from 'moment';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -97,6 +98,14 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
+    public updateBemerkungPruefungSTV(gesuchID: string, bemerkungPruefungSTV: string): IHttpPromise<any> {
+        return this.http.put(this.serviceURL + '/bemerkungPruefungSTV/' + encodeURIComponent(gesuchID), bemerkungPruefungSTV, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
     public updateGesuchStatus(gesuchID: string, status: TSAntragStatus): IHttpPromise<any> {
         return this.http.put(this.serviceURL + '/status/' + encodeURIComponent(gesuchID) + '/' + status, null);
     }
@@ -126,6 +135,24 @@ export default class GesuchRS implements IEntityRS {
 
     public setBeschwerdeHaengig(antragId: string): IPromise<TSGesuch> {
         return this.http.post(this.serviceURL + '/setBeschwerde/' + encodeURIComponent(antragId), null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
+
+    public sendGesuchToSTV(antragId: string, bemerkungen: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/sendToSTV/' + encodeURIComponent(antragId), bemerkungen, null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
+
+    public gesuchBySTVFreigeben(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/freigebenSTV/' + encodeURIComponent(antragId), null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
+
+    public stvPruefungAbschliessen(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/stvPruefungAbschliessen/' + encodeURIComponent(antragId), null).then((response) => {
             return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
     }

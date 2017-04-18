@@ -483,7 +483,7 @@ export class EbeguFreigabeState implements IState {
 
 export class EbeguBetreuungMitteilungState implements IState {
     name = 'gesuch.mitteilung';
-    url = '/mitteilung/:fallId/:betreuungId';
+    url = '/mitteilung/:fallId/:gesuchId/:betreuungId/:mitteilungId';
 
     views: {[name: string]: IState} = {
         'gesuchViewPort': {
@@ -615,9 +615,9 @@ export function reloadGesuchModelManager(gesuchModelManager: GesuchModelManager,
 
 getKinderDubletten.$inject = ['$stateParams', '$q', '$log', 'KindRS', 'AuthServiceRS'];
 /* @ngInject */
-// todo fragen wird dies nicht immer aufgerufen? warum nicht direkt in constructor?
+// Die Kinderdubletten werden nur für JA-Mitarbeiter (inkl. Revisor und Jurist) angezeigt
 export function getKinderDubletten($stateParams: IGesuchStateParams, $q: IQService, $log: ILogService, KindRS: KindRS, authService: AuthServiceRS) {
-    let isAdmin: boolean = authService.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    let isAdmin: boolean = authService.isOneOfRoles(TSRoleUtil.getJugendamtRole());
     if (isAdmin && $stateParams && $stateParams.gesuchId) {
         let gesuchIdParam = $stateParams.gesuchId;
         return KindRS.getKindDubletten(gesuchIdParam);

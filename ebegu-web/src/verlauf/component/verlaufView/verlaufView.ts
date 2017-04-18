@@ -7,12 +7,11 @@ import {IVerlaufStateParams} from '../../verlauf.route';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import AntragStatusHistoryRS from '../../../core/service/antragStatusHistoryRS.rest';
 import TSAntragStatusHistory from '../../../models/TSAntragStatusHistory';
+import EbeguUtil from '../../../utils/EbeguUtil';
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
 import IFormController = angular.IFormController;
 import IStateService = angular.ui.IStateService;
-import TSAntragDTO from '../../../models/TSAntragDTO';
-import EbeguUtil from '../../../utils/EbeguUtil';
 
 let template = require('./verlaufView.html');
 require('./verlaufView.less');
@@ -34,14 +33,14 @@ export class VerlaufViewController {
     TSRoleUtil = TSRoleUtil;
     verlauf: Array<TSAntragStatusHistory>;
 
-    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', '$q', 'GesuchRS', 'AntragStatusHistoryRS', 'EbeguUtil'];
+    static $inject: string[] = ['$state', '$stateParams', 'AuthServiceRS', 'GesuchRS', 'AntragStatusHistoryRS', 'EbeguUtil'];
     /* @ngInject */
     constructor(private $state: IStateService, private $stateParams: IVerlaufStateParams,
-                private authServiceRS: AuthServiceRS, private $q: IQService, private gesuchRS: GesuchRS, private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil) {
-        this.initViewModel();
+                private authServiceRS: AuthServiceRS, private gesuchRS: GesuchRS,
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil) {
     }
 
-    private initViewModel() {
+    $onInit() {
         if (this.$stateParams.gesuchId) {
             this.gesuchRS.findGesuch(this.$stateParams.gesuchId).then((response) => {
                 this.gesuch = response;

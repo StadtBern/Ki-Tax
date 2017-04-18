@@ -1,7 +1,9 @@
 import {IComponentOptions, IFilterService, IPromise, ILogService} from 'angular';
 import TSAbstractAntragEntity from '../../../models/TSAbstractAntragEntity';
 import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
-import {TSAntragStatus, getTSAntragStatusValues} from '../../../models/enums/TSAntragStatus';
+import {
+    TSAntragStatus, getTSAntragStatusValuesByRole
+} from '../../../models/enums/TSAntragStatus';
 import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
 import TSAntragDTO from '../../../models/TSAntragDTO';
@@ -10,7 +12,11 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
+import * as moment from 'moment';
 import Moment = moment.Moment;
+import IDocumentService = angular.IDocumentService;
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 let template = require('./dv-antrag-list.html');
 require('./dv-antrag-list.less');
 
@@ -59,14 +65,17 @@ export class DVAntragListController {
     onFilterChange: (changedTableState: any) => IPromise<any>;
     onEdit: (pensumToEdit: any) => void;
     onAdd: () => void;
+    TSRoleUtil: any;
 
-    static $inject: any[] = ['EbeguUtil', '$filter', '$log', 'InstitutionRS', 'GesuchsperiodeRS', 'CONSTANTS'];
+    static $inject: any[] = ['EbeguUtil', '$filter', '$log', 'InstitutionRS', 'GesuchsperiodeRS', 'CONSTANTS', 'AuthServiceRS',
+        '$window'];
     /* @ngInject */
     constructor(private ebeguUtil: EbeguUtil, private $filter: IFilterService, private $log: ILogService,
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private CONSTANTS: any) {
+                private CONSTANTS: any, private authServiceRS: AuthServiceRS, private $window: ng.IWindowService) {
         this.removeButtonTitle = 'Eintrag entfernen';
         this.initViewModel();
+        this.TSRoleUtil = TSRoleUtil;
     }
 
     private initViewModel() {
@@ -139,7 +148,7 @@ export class DVAntragListController {
         } else {
             this.$log.info('no callback function spcified for filtering');
         }
-    };
+    }
 
     public getAntragTypen(): Array<TSAntragTyp> {
         return getTSAntragTypValues();
@@ -150,7 +159,7 @@ export class DVAntragListController {
      * @returns {Array<TSAntragStatus>}
      */
     public getAntragStatus(): Array<TSAntragStatus> {
-        return getTSAntragStatusValues();
+        return getTSAntragStatusValuesByRole(this.authServiceRS.getPrincipalRole());
     }
 
     /**
@@ -191,8 +200,18 @@ export class DVAntragListController {
 
     public isActionsVisible() {
         return this.actionVisible === 'true';
-
     }
+
+    /**
+     * Provided there is a row with id antraegeHeadRow it will take this row to check how many
+     * columns there are. Therefore this row cannot have any colspan inside any cell and any other
+     * children but td or th
+     */
+    public getColumnsNumber(): number {
+        let element = this.$window.document.getElementById('antraegeHeadRow');
+        return element.childElementCount;
+    }
+
 }
 
 

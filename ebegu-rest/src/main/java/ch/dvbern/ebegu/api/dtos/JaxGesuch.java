@@ -35,11 +35,23 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private String bemerkungen;
 
+	@Nullable
+	private String bemerkungenSTV;
+
+	@Nullable
+	private String bemerkungenPruefungSTV;
+
 	private int laufnummer;
+
+	private boolean geprueftSTV;
 
 	private boolean hasFSDokument;
 
 	private boolean gesperrtWegenBeschwerde;
+
+	private boolean gewarntNichtFreigegeben;
+
+	private boolean gewarntFehlendeQuittung;
 
 
 	public static long getSerialVersionUID() {
@@ -100,12 +112,38 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	}
 
 	@Nullable
+	public String getBemerkungenSTV() {
+		return bemerkungenSTV;
+	}
+
+	public void setBemerkungenSTV(@Nullable String bemerkungenSTV) {
+		this.bemerkungenSTV = bemerkungenSTV;
+	}
+
+	@Nullable
+	public String getBemerkungenPruefungSTV() {
+		return bemerkungenPruefungSTV;
+	}
+
+	public void setBemerkungenPruefungSTV(@Nullable String bemerkungenPruefungSTV) {
+		this.bemerkungenPruefungSTV = bemerkungenPruefungSTV;
+	}
+
+	@Nullable
 	public int getLaufnummer() {
 		return laufnummer;
 	}
 
 	public void setLaufnummer(@Nullable int laufnummer) {
 		this.laufnummer = laufnummer;
+	}
+
+	public boolean isGeprueftSTV() {
+		return geprueftSTV;
+	}
+
+	public void setGeprueftSTV(boolean geprueftSTV) {
+		this.geprueftSTV = geprueftSTV;
 	}
 
 	@Nullable
@@ -123,6 +161,22 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setGesperrtWegenBeschwerde(boolean gesperrtWegenBeschwerde) {
 		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
+	}
+
+	public boolean isGewarntNichtFreigegeben() {
+		return gewarntNichtFreigegeben;
+	}
+
+	public void setGewarntNichtFreigegeben(boolean gewarntNichtFreigegeben) {
+		this.gewarntNichtFreigegeben = gewarntNichtFreigegeben;
+	}
+
+	public boolean isGewarntFehlendeQuittung() {
+		return gewarntFehlendeQuittung;
+	}
+
+	public void setGewarntFehlendeQuittung(boolean gewarntFehlendeQuittung) {
+		this.gewarntFehlendeQuittung = gewarntFehlendeQuittung;
 	}
 }
 

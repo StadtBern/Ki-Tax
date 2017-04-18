@@ -13,12 +13,11 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
-import TSMitteilung from '../../../models/TSMitteilung';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import ILogService = angular.ILogService;
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
@@ -70,7 +69,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
 
 
     public createBetreuung(kind: TSKindContainer): void {
-        let kindIndex : number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
+        let kindIndex: number = this.gesuchModelManager.convertKindNumberToKindIndex(kind.kindNummer);
         if (kindIndex >= 0) {
             this.gesuchModelManager.setKindIndex(kindIndex);
             this.openBetreuungView(undefined, kind.kindNummer);
@@ -125,15 +124,16 @@ export class BetreuungListViewController extends AbstractGesuchViewController<an
         return !this.isGesuchReadonly() && !betreuung.vorgaengerId;
     }
 
-    private showMitteilung() : boolean {
+    private showMitteilung(): boolean {
         return this.authServiceRS.isOneOfRoles(this.TSRoleUtil.getTraegerschaftInstitutionOnlyRoles());
     }
 
-    private gotoMitteilung(betreuung : TSBetreuung) {
-        let entwurf : TSMitteilung = new TSMitteilung();
+    private gotoMitteilung(betreuung: TSBetreuung) {
         this.$state.go('gesuch.mitteilung', {
             fallId: this.gesuchModelManager.getGesuch().fall.id,
-            betreuungId: betreuung.id
+            gesuchId: this.gesuchModelManager.getGesuch().id,
+            betreuungId: betreuung.id,
+            mitteilungId: undefined
         });
     }
 }

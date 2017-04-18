@@ -2,6 +2,8 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 import TSGesuchstellerContainer from '../../models/TSGesuchstellerContainer';
+import TSEWKResultat from '../../models/TSEWKResultat';
+import TSGesuchsteller from '../../models/TSGesuchsteller';
 
 export default class GesuchstellerRS {
     serviceURL: string;
@@ -35,12 +37,31 @@ export default class GesuchstellerRS {
     }
 
     public findGesuchsteller(gesuchstellerID: string): IPromise<TSGesuchstellerContainer> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchstellerID))
+        return this.http.get(this.serviceURL + '/id/' + encodeURIComponent(gesuchstellerID))
             .then((response: any) => {
                 this.log.debug('PARSING gesuchsteller REST object ', response.data);
                 return this.ebeguRestUtil.parseGesuchstellerContainer(new TSGesuchstellerContainer(), response.data);
             });
+    }
 
+    public suchePerson(gesuchstellerContainerID: string): IPromise<TSEWKResultat> {
+        return this.http.get(this.serviceURL + '/ewk/' + encodeURIComponent(gesuchstellerContainerID))
+            .then((response: any) => {
+                this.log.debug('PARSING ewkResultat REST object ', response.data);
+                return this.ebeguRestUtil.parseEWKResultat(new TSEWKResultat(), response.data);
+            });
+    }
+
+    public selectPerson(gesuchstellerContainerID: string, ewkPersonID: string): IPromise<TSGesuchsteller> {
+        return this.http.put(this.serviceURL + '/ewk/' + encodeURIComponent(gesuchstellerContainerID) + '/' +  encodeURIComponent(ewkPersonID), {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((response: any) => {
+                this.log.debug('PARSING ewkResultat REST object ', response.data);
+                return this.ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), response.data);
+            });
     }
 
     public getServiceName(): string {

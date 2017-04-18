@@ -13,11 +13,13 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -28,6 +30,7 @@ import com.google.common.collect.ArrayListMultimap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -111,12 +114,10 @@ public class GesuchResource {
 		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
 
 		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
-
+		//only if status has changed: Muss ermittelt werden, BEVOR wir mergen!
+		final boolean saveInStatusHistory = gesuchFromDB.getStatus() != AntragStatusConverterUtil.convertStatusToEntity(gesuchJAXP.getStatus());
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
-		//only if status has changed
-		final boolean saveInStatusHistory = gesuchToMerge.getStatus() != AntragStatusConverterUtil.convertStatusToEntity(gesuchJAXP.getStatus());
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory);
-
 		return converter.gesuchToJAX(modifiedGesuch);
 	}
 
@@ -160,7 +161,7 @@ public class GesuchResource {
 			return null;
 		}
 		Gesuch gesuchToReturn = gesuchOptional.get();
-		JaxAntragDTO jaxAntragDTO = converter.gesuchToAntragDTO(gesuchToReturn);
+		JaxAntragDTO jaxAntragDTO = converter.gesuchToAntragDTO(gesuchToReturn, principalBean.discoverMostPrivilegedRole());
 		jaxAntragDTO.setFamilienName(gesuchToReturn.extractFullnamesString()); //hier volle Namen beider GS
 		return jaxAntragDTO;
 	}
@@ -241,6 +242,30 @@ public class GesuchResource {
 			return Response.ok().build();
 		}
 		throw new EbeguEntityNotFoundException("updateBemerkung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
+	}
+
+	@Nullable
+	@PUT
+	@Path("/bemerkungPruefungSTV/{gesuchId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateBemerkungPruefungSTV(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull String bemerkungPruefungSTV,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(gesuchJAXPId.getId());
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
+
+		if (gesuchOptional.isPresent()) {
+			gesuchOptional.get().setBemerkungenPruefungSTV(bemerkungPruefungSTV);
+
+			gesuchService.updateGesuch(gesuchOptional.get(), false);
+
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("updateBemerkungPruefungSTV", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
 	}
 
 	@Nullable
@@ -405,6 +430,98 @@ public class GesuchResource {
 			return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
 		}
 		throw new EbeguEntityNotFoundException("setBeschwerdeHaengig", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
+	}
+
+	@ApiOperation(value = "Setzt das gegebene Gesuch als PRUEFUNG_STV")
+	@Nullable
+	@POST
+	@Path("/sendToSTV/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response sendGesuchToSTV(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Nullable String bemerkungen,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
+
+		if (!gesuch.isPresent()) {
+			throw new EbeguEntityNotFoundException("sendGesuchToSTV", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
+		}
+		if (!AntragStatus.VERFUEGT.equals(gesuch.get().getStatus())) {
+			// Wir vergewissern uns dass das Gesuch im Status VERFUEGT ist, da sonst kann es nicht zum STV geschickt werden
+			throw new EbeguRuntimeException("sendGesuchToSTV", ErrorCodeEnum.ERROR_ONLY_VERFUEGT_ALLOWED, "Status ist: " + gesuch.get().getStatus());
+		}
+
+		gesuch.get().setStatus(AntragStatus.PRUEFUNG_STV);
+		if (StringUtils.isNotEmpty(bemerkungen)) {
+			gesuch.get().setBemerkungenSTV(bemerkungen);
+		}
+		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch.get(), true);
+		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
+
+	}
+
+	@ApiOperation(value = "Setzt das gegebene Gesuch als GEPRUEFT_STV und das Flag geprueftSTV als true")
+	@Nullable
+	@POST
+	@Path("/freigebenSTV/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response gesuchBySTVFreigeben(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragId);
+
+		if (!gesuch.isPresent()) {
+			throw new EbeguEntityNotFoundException("gesuchBySTVFreigeben", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
+		}
+		if (!AntragStatus.IN_BEARBEITUNG_STV.equals(gesuch.get().getStatus())) {
+			// Wir vergewissern uns dass das Gesuch im Status IN_BEARBEITUNG_STV ist, da sonst kann es nicht fuer das JA freigegeben werden
+			throw new EbeguRuntimeException("gesuchBySTVFreigeben", ErrorCodeEnum.ERROR_ONLY_IN_BEARBEITUNG_STV_ALLOWED, "Status ist: " + gesuch.get().getStatus());
+		}
+
+		gesuch.get().setStatus(AntragStatus.GEPRUEFT_STV);
+		gesuch.get().setGeprueftSTV(true);
+
+		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch.get(), true);
+		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
+
+	}
+
+	@ApiOperation(value = "Setzt das gegebene Gesuch als VERFUEGT und das Flag geprueftSTV als true")
+	@Nullable
+	@POST
+	@Path("/stvPruefungAbschliessen/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response stvPruefungAbschliessen(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(antragId);
+
+		Gesuch gesuch = gesuchOptional.orElseThrow(() -> new EbeguEntityNotFoundException("stvPruefungAbschliessen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId()));
+
+		if (!AntragStatus.GEPRUEFT_STV.equals(gesuch.getStatus())) {
+			// Wir vergewissern uns dass das Gesuch im Status IN_BEARBEITUNG_STV ist, da sonst kann es nicht fuer das JA freigegeben werden
+			throw new EbeguRuntimeException("stvPruefungAbschliessen", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_STV_ALLOWED, "Status ist: " + gesuch.getStatus());
+		}
+
+		gesuch.setStatus(AntragStatus.VERFUEGT);
+		Gesuch persistedGesuch = gesuchService.updateGesuch(gesuch, true);
+		return Response.ok(converter.gesuchToJAX(persistedGesuch)).build();
+
 	}
 
 	@ApiOperation(value = "Setzt das gegebene Gesuch als VERFUEGT und bei allen Gescuhen der Periode den Flag gesperrtWegenBeschwerde auf false")

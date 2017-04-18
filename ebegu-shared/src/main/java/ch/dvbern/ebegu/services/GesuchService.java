@@ -1,20 +1,22 @@
 package ch.dvbern.ebegu.services;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
-import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Service zum Verwalten von Gesuche
@@ -73,11 +75,18 @@ public interface GesuchService {
 
 	/**
 	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
-	 *
 	 * @return Liste aller Gesuche aus der DB
 	 */
 	@Nonnull
 	Collection<Gesuch> getAllActiveGesuche();
+
+	/**
+	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
+	 * und die dem übergebenen Benutzer als "Verantwortliche Person" zugeteilt sind.
+	 * @return Liste aller Gesuche aus der DB
+	 */
+	@Nonnull
+	Collection<Gesuch> getAllActiveGesucheOfVerantwortlichePerson(@Nonnull String benutzername);
 
 	/**
 	 * entfernt ein Gesuch aus der Database
@@ -230,4 +239,25 @@ public interface GesuchService {
 	List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis);
 
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Schickt eine E-Mail an alle Gesuchsteller, die ihr Gesuch innerhalb einer konfigurierbaren Frist nach
+	 * Erstellung nicht freigegeben haben.
+	 * Gibt die Anzahl Warnungen zurueck.
+	 */
+	int warnGesuchNichtFreigegeben();
+
+	/**
+	 * Schickt eine E-Mail an alle Gesuchsteller, die die Freigabequittung innerhalb einer konfigurierbaren Frist nach
+	 * Freigabe des Gesuchs nicht geschickt haben.
+	 * Gibt die Anzahl Warnungen zurueck.
+	 */
+	int warnFreigabequittungFehlt();
+
+	/**
+	 * Löscht alle Gesuche, die nach einer konfigurierbaren Frist nach Erstellung nicht freigegeben bzw. nach Freigabe
+	 * die Quittung nicht geschickt haben. Schickt dem Gesuchsteller eine E-Mail.
+	 * Gibt die Anzahl Warnungen zurueck.
+	 */
+	int deleteGesucheOhneFreigabeOderQuittung();
 }

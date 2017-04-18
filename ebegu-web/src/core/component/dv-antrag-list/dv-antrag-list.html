@@ -8,26 +8,46 @@
                    title="{{vm.tableTitle}}">
                 <thead>
                 <!--Sortierspalten-->
-                <tr>
+                <tr id="antraegeHeadRow">
                     <th st-sort="fallNummer" class="sortable row-fallnr" data-translate="FALL_UPPER"></th>
                     <th st-sort="familienName" class="sortable row-name" data-translate="FAMILIE_UPPER"></th>
-                    <th st-sort="kinder" class="sortable row-name" data-translate="KINDER_UPPER"></th>
+                    <th st-sort="kinder" class="sortable row-name" data-translate="KINDER_UPPER"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </th>
                     <th st-sort="antragTyp" class="sortable row-antrag" data-translate="TYP_UPPER"></th>
                     <th st-sort="gesuchsperiodeString" class="sortable row-periode" data-translate="PERIODE_UPPER"></th>
                     <th st-sort="aenderungsdatum" class="sortable row-geandert"
-                        data-translate="GEANDERT_UPPER"></th>
-
+                        data-translate="GEANDERT_UPPER" dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </th>
+                    <th st-sort="eingangssdatum" class="sortable row-geandert"
+                        data-translate="EINGANG_UPPER" dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
+                    </th>
                     <th st-sort="status" class="sortable row-status" data-translate="STATUS_UPPER"></th>
-                    <th st-sort="angebote" class="sortable row-angebot" data-translate="ANGEBOT_UPPER"></th>
-                    <th st-sort="institutionen" class="sortable row-inst" data-translate="INSTITUTION_UPPER"></th>
-                    <th st-sort="verantwortlicher" class="sortable row-ver" data-translate="VERANTWORTLICH_UPPER"></th>
+                    <th st-sort="angebote" class="sortable row-angebot" data-translate="ANGEBOT_UPPER"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </th>
+                    <th st-sort="institutionen" class="sortable row-inst" data-translate="INSTITUTION_UPPER"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </th>
+                    <th st-sort="verantwortlicher" class="sortable row-ver" data-translate="VERANTWORTLICH_UPPER"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </th>
                     <th class="row-action" ng-if="vm.isActionsVisible()"></th>
                 </tr>
                 <!--Filterspalten-->
                 <tr>
                     <th><input st-search="fallNummer" class="form-control" type="text" max="999999"/></th>
                     <th><input st-search="familienName" class="form-control" type="text"/></th>
-                    <th><input st-search="kinder" class="form-control" type="text"/></th>
+                    <th dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        <input st-search="kinder" class="form-control" type="text"/>
+                    </th>
                     <th>
                         <div class="dv-select-style">
                             <select st-input-event="change" name="antragTyp" id="antragTyp" st-search="antragTyp"
@@ -48,7 +68,14 @@
                             </select>
                         </div>
                     </th>
-                    <th><input st-search="aenderungsdatum" class="form-control" type="text"/></th>
+                    <th dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        <input st-search="aenderungsdatum" class="form-control" type="text"/>
+                    </th>
+                    <th dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
+                        <input st-search="eingangsdatum" class="form-control" type="text"/>
+                    </th>
                     <th>
                         <div class="dv-select-style">
                             <select st-input-event="change" name="antragStatus" id="antragStatus" st-search="status"
@@ -59,7 +86,8 @@
                             </select>
                         </div>
                     </th>
-                    <th>
+                    <th dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                         <div class="dv-select-style">
                             <select st-input-event="change" name="angebote" id="angebote" st-search="angebote"
                                     class="form-control"
@@ -69,7 +97,8 @@
                             </select>
                         </div>
                     </th>
-                    <th>
+                    <th dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                         <div class="dv-select-style">
                             <select st-input-event="change" name="institutionen" id="institutionen"
                                     st-search="institutionen" class="form-control"
@@ -79,8 +108,9 @@
                             </select>
                         </div>
                     </th>
-                    <th>
-                        <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher" initial-all="true"></dv-userselect>
+                    <th dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                        <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher" initial-all="true" show-selection-all="true"></dv-userselect>
                     </th>
                     <th ng-if="vm.isActionsVisible()"></th>
                 </tr>
@@ -92,7 +122,10 @@
                     <td class="ellipsis" ellipsis-tooltip="{{vm.addZerosToFallnummer(row.fallNummer)}}"
                         ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.familienName}}" ng-bind="row.familienName"></td>
-                    <td class="ellipsis" ellipsis-tooltip="{{row.kinder | arrayToString}}" ng-bind="row.kinder | arrayToString"></td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.kinder | arrayToString}}" ng-bind="row.kinder | arrayToString"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </td>
                     <td class="ellipsis" title="{{row.antragTyp | translate}}">
                         <i class="fa fa-desktop margin-ri" aria-hidden="true" ng-show="row.hasBesitzer()"></i>
                         <i class="fa fa-file-text-o" aria-hidden="true" ng-show="!row.hasBesitzer()"></i>
@@ -102,15 +135,29 @@
                         ellipsis-tooltip="{{row.gesuchsperiodeString}}"
                         ng-bind="row.gesuchsperiodeString"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'}}"
-                        ng-bind="row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                        ng-bind="row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
+                        ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getSteueramtOnlyRoles()">
+                    </td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.status | translate}}"
                         ng-bind="row.status | translate"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{vm.translateBetreuungsangebotTypList(row.angebote)}}"
-                        ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)">
+                        ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                     </td>
-                    <td class="ellipsis" ellipsis-tooltip="{{row.institutionen | arrayToString }}" ng-bind="row.institutionen | arrayToString"></td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.institutionen | arrayToString }}" ng-bind="row.institutionen | arrayToString"
+                        dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
-                        ng-bind="row.verantwortlicher"></td>
+                        ng-bind="row.verantwortlicher" dv-show-element
+                        dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
+                    </td>
 
 
                     <td class="ellipsis" ng-if="vm.isActionsVisible()">
@@ -128,7 +175,7 @@
                 </tbody>
                 <tfoot>
                 <tr>
-                    <td colspan="9" class="text-center">
+                    <td colspan="{{vm.getColumnsNumber()}}" class="text-center">
                         <div st-pagination="" st-items-by-page="20" st-displayed-pages="10"></div>
                     </td>
                 </tr>

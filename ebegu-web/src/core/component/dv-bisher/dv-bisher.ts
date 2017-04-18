@@ -1,7 +1,7 @@
 import {IComponentOptions} from 'angular';
-import * as moment from 'moment';
 import DateUtil from '../../../utils/DateUtil';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
+import * as moment from 'moment';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import ILogService = angular.ILogService;
