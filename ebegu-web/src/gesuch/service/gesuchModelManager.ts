@@ -38,7 +38,8 @@ import {
     TSAntragStatus,
     isAtLeastFreigegebenOrFreigabequittung,
     isStatusVerfuegenVerfuegt,
-    isAtLeastFreigegeben
+    isAtLeastFreigegeben,
+    isAnyStatusOfVerfuegt
 } from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
@@ -1170,7 +1171,7 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isKorrekturModusJugendamt(): boolean {
-        return isAtLeastFreigegeben(this.gesuch.status) && (TSEingangsart.ONLINE === this.getGesuch().eingangsart);
+        return isAtLeastFreigegeben(this.gesuch.status) && !isAnyStatusOfVerfuegt(this.gesuch.status) && (TSEingangsart.ONLINE === this.getGesuch().eingangsart);
     }
 
     /**
