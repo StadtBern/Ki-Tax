@@ -550,7 +550,7 @@ export default class GesuchModelManager {
         } else {
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
         }
-        this.gesuch.emptyMutation = true; //TODO brauchts mich???
+        this.gesuch.emptyCopy = true;
     }
 
     public initErneuerungsgesuch(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
@@ -567,7 +567,7 @@ export default class GesuchModelManager {
         } else {
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
         }
-        this.gesuch.emptyErneuerungsgesuch = true; //TODO brauchts mich???
+        this.gesuch.emptyCopy = true;
     }
 
     private initAntrag(antragTyp: TSAntragTyp, eingangsart: TSEingangsart): void {

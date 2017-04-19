@@ -28,9 +28,9 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _gewarntNichtFreigegeben: boolean = false;
     private _gewarntFehlendeQuittung: boolean = false;
 
-    // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutationskopie (Wichitg für laden des Gesuchs bei Navigation)
-    private _emptyMutation: boolean = false; //TODO brauchts mich?
-    private _emptyErneuerungsgesuch: boolean = false; //TODO brauchts mich?
+    // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutations- oder Erneuerungskopie
+    // (Wichtig für laden des Gesuchs bei Navigation)
+    private _emptyCopy: boolean = false;
 
 
     public get gesuchsteller1(): TSGesuchstellerContainer {
@@ -137,20 +137,12 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         return TSEingangsart.ONLINE === this.eingangsart;
     }
 
-    get emptyMutation(): boolean {
-        return this._emptyMutation;
+    get emptyCopy(): boolean {
+        return this._emptyCopy;
     }
 
-    set emptyMutation(value: boolean) {
-        this._emptyMutation = value;
-    }
-
-    get emptyErneuerungsgesuch(): boolean {
-        return this._emptyErneuerungsgesuch;
-    }
-
-    set emptyErneuerungsgesuch(value: boolean) {
-        this._emptyErneuerungsgesuch = value;
+    set emptyCopy(value: boolean) {
+        this._emptyCopy = value;
     }
 
     get gewarntNichtFreigegeben(): boolean {

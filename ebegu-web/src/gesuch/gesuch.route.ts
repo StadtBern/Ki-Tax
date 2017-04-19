@@ -588,9 +588,10 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
         let gesuchIdParam = $stateParams.gesuchId;
         if (gesuchIdParam) {
             if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParam
-                || gesuchModelManager.getGesuch().emptyMutation) {
+                || gesuchModelManager.getGesuch().emptyCopy) {
                 // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId ueberreinstimmt wird das gesuch neu geladen
                 // Ebenfalls soll das Gesuch immer neu geladen werden, wenn es sich beim Gesuch im Gesuchmodelmanager um eine leere Mutation handelt
+                // oder um ein leeres Erneuerungsgesuch
                 berechnungsManager.clear();
                 return gesuchModelManager.openGesuch(gesuchIdParam);
             } else {
