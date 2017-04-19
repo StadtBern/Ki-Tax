@@ -93,6 +93,16 @@
                 </button>
             </div>
 
+            <!-- Erneuerungsgesuch erstellen -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                 dv-show-expression="vmx.erneuernPossibleForCurrentAntrag && !vmx.hideMutationButton">
+                <button ng-click="vmx.antragErneuern()"
+                        aria-label="{{'TOOLBAR_ERNEUERN' | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_ERNEUERN"></span>
+                </button>
+            </div>
+
             <!--Kontakt-->
             <md-menu ng-if="vmx.showKontaktMenu()">
                 <button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">

@@ -1,11 +1,13 @@
 export enum TSAntragTyp {
-    GESUCH = <any> 'GESUCH',
-    MUTATION = <any> 'MUTATION'
+    GESUCH = <any> 'GESUCH', // TODO Hefr umbenennen!
+    MUTATION = <any> 'MUTATION',
+    ERNEUERUNGSGESUCH = <any> 'ERNEUERUNGSGESUCH'
 }
 
 export function getTSAntragTypValues(): Array<TSAntragTyp> {
     return [
         TSAntragTyp.GESUCH,
-        TSAntragTyp.MUTATION
+        TSAntragTyp.MUTATION,
+        TSAntragTyp.ERNEUERUNGSGESUCH
     ];
 }

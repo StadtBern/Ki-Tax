@@ -41,6 +41,7 @@ function getStates(): IState[] {
         new EbeguAbwesenheitState(),
         new EbeguNewFallState(),
         new EbeguMutationState(),
+        new EbeguErneuerungsgesuchState(),
         new EbeguVerfuegenListState(),
         new EbeguVerfuegenState(),
         new EbeguEinkommensverschlechterungInfoState(),
@@ -98,6 +99,24 @@ export class EbeguMutationState implements IState {
 
     resolve = {
         gesuch: createEmptyMutation
+    };
+}
+
+export class EbeguErneuerungsgesuchState implements IState {
+    name = 'gesuch.erneuerung';
+    url = '/erneuerung/:createErneuerung/:eingangsart/:gesuchsperiodeId/:gesuchId/:fallId';
+
+    views: {[name: string]: IState} = {
+        'gesuchViewPort': {
+            template: '<fall-creation-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
+
+    resolve = {
+        gesuch: createEmptyErneuerungsgesuch
     };
 }
 
@@ -636,6 +655,20 @@ export function createEmptyMutation(gesuchModelManager: GesuchModelManager, $sta
         let fallId = $stateParams.fallId;
         if (gesuchId && eingangsart) {
             gesuchModelManager.initMutation(gesuchId, eingangsart, gesuchsperiodeId, fallId);
+        }
+    }
+    return $q.defer(gesuchModelManager.getGesuch());
+}
+
+createEmptyErneuerungsgesuch.$inject = ['GesuchModelManager', '$stateParams', '$q'];
+export function createEmptyErneuerungsgesuch(gesuchModelManager: GesuchModelManager, $stateParams: INewFallStateParams, $q: any): IPromise<TSGesuch> {
+    if ($stateParams) {
+        let gesuchId = $stateParams.gesuchId;
+        let eingangsart = $stateParams.eingangsart;
+        let gesuchsperiodeId = $stateParams.gesuchsperiodeId;
+        let fallId = $stateParams.fallId;
+        if (gesuchId && eingangsart) {
+            gesuchModelManager.initErneuerungsgesuch(gesuchId, eingangsart, gesuchsperiodeId, fallId);
         }
     }
     return $q.defer(gesuchModelManager.getGesuch());

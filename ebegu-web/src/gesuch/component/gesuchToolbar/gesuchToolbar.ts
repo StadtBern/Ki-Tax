@@ -20,6 +20,7 @@ import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
 import {TSRole} from '../../../models/enums/TSRole';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
@@ -69,10 +70,12 @@ export class GesuchToolbarController {
     gesuchNavigationList: {[key: string]: Array<string>} = {};   //mapped z.B. '2006 / 2007' auf ein array mit den Namen der Antraege
     antragTypList: {[key: string]: TSAntragDTO} = {};
     mutierenPossibleForCurrentAntrag: boolean = false;
+    erneuernPossibleForCurrentAntrag: boolean = false;
+    neuesteGesuchsperiode: TSGesuchsperiode;
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
-        '$mdSidenav', '$log'];
+        '$mdSidenav', '$log', 'GesuchsperiodeRS'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
@@ -80,7 +83,8 @@ export class GesuchToolbarController {
                 private gesuchModelManager: GesuchModelManager,
                 private authServiceRS: AuthServiceRS,
                 private $mdSidenav: ng.material.ISidenavService,
-                private $log: ILogService) {
+                private $log: ILogService,
+                private gesuchsperiodeRS: GesuchsperiodeRS) {
 
     }
 
@@ -90,7 +94,10 @@ export class GesuchToolbarController {
         //add watchers
         this.addWatchers(this.$scope);
         this.TSRoleUtil = TSRoleUtil;
-
+        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: TSGesuchsperiode[]) => {
+            // Die neueste ist zuoberst
+            this.neuesteGesuchsperiode = response[0];
+        });
     }
 
     public toggleSidenav(componentId: string): void {
@@ -121,6 +128,7 @@ export class GesuchToolbarController {
                         this.gesuchsperiodeList = {};
                         this.antragList = [];
                         this.antragMutierenPossible(); //neu berechnen ob mutieren moeglich ist
+                        this.antragErneuernPossible();
                     }
                 }
             });
@@ -147,6 +155,7 @@ export class GesuchToolbarController {
                         this.gesuchsperiodeList = {};
                         this.antragList = [];
                         this.antragMutierenPossible(); //neu berechnen ob mutieren moeglich ist
+                        this.antragErneuernPossible();
                     }
                 }
             });
@@ -199,6 +208,7 @@ export class GesuchToolbarController {
                 this.updateGesuchNavigationList();
                 this.updateAntragTypList();
                 this.antragMutierenPossible();
+                this.antragErneuernPossible();
             });
         } else if (this.fallid) {
             this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
@@ -213,6 +223,7 @@ export class GesuchToolbarController {
                         this.updateGesuchNavigationList();
                         this.updateAntragTypList();
                         this.antragMutierenPossible();
+                        this.antragErneuernPossible();
                     });
                 }
             });
@@ -221,6 +232,7 @@ export class GesuchToolbarController {
             this.gesuchNavigationList = {};
             this.antragTypList = {};
             this.antragMutierenPossible();
+            this.antragErneuernPossible();
         }
     }
 
@@ -375,7 +387,8 @@ export class GesuchToolbarController {
             } else if (this.authServiceRS.isRole(TSRole.STEUERAMT)) {
                 this.$state.go('gesuch.familiensituation', {gesuchId: gesuchId});
             } else {
-                this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
+                this.$state.go('gesuch.fallcreation', {
+                    createNew: false, gesuchId: gesuchId});
             }
         }
     }
@@ -386,7 +399,7 @@ export class GesuchToolbarController {
         this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
     }
 
-    public antragMutierenPossible(): void {
+    private antragMutierenPossible(): void {
         if (this.antragList && this.antragList.length !== 0) {
             let mutierenGesperrt = false;
             for (let i = 0; i < this.antragList.length; i++) {
@@ -415,9 +428,46 @@ export class GesuchToolbarController {
             eingangsart = TSEingangsart.PAPIER;
         }
         this.$state.go('gesuch.mutation', {
-            createMutation: true, gesuchId: this.gesuchid,
-            fallId: this.getGesuch().fall.id, eingangsart: eingangsart,
+            createMutation: true,
+            gesuchId: this.gesuchid,
+            fallId: this.getGesuch().fall.id,
+            eingangsart: eingangsart,
             gesuchsperiodeId: this.getGesuch().gesuchsperiode.id
+        });
+    }
+
+    private antragErneuernPossible(): void {
+        if (this.antragList && this.antragList.length !== 0) {
+            let erneuernGesperrt = false;
+            for (let i = 0; i < this.antragList.length; i++) {
+                let antragItem: TSAntragDTO = this.antragList[i];
+                // Wir muessen nur die Antraege der aktuell ausgewaehlten Gesuchsperiode beachten
+                if (antragItem.gesuchsperiodeString === this.getGesuchsperiodeAsString(this.neuesteGesuchsperiode)) {
+                    // Es gibt schon (mindestens 1) Gesuch für die neueste Periode
+                    erneuernGesperrt = true;
+                    break;
+                }
+            }
+            this.erneuernPossibleForCurrentAntrag = !erneuernGesperrt;
+        } else {
+            this.erneuernPossibleForCurrentAntrag = false;
+        }
+    }
+
+    public antragErneuern(): void {
+        this.erneuernPossibleForCurrentAntrag = false;
+        let eingangsart: TSEingangsart;
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
+            eingangsart = TSEingangsart.ONLINE;
+        } else {
+            eingangsart = TSEingangsart.PAPIER;
+        }
+        this.$state.go('gesuch.erneuerung', {
+            createErneuerung: true,
+            gesuchId: this.gesuchid,
+            eingangsart: eingangsart,
+            gesuchsperiodeId: this.neuesteGesuchsperiode.id,
+            fallId: this.fallid
         });
     }
 

@@ -13,7 +13,7 @@
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
                     <!--Willkommnstext bei Erstgesuch-->
-                    <div ng-if="vm.gesuchModelManager.isErstgesuch()">
+                    <div ng-if="vm.gesuchModelManager.isGesuch()">
 
                         <h1 data-translate="ERSTGESUCH_WILLKOMMEN_TEXT"></h1>
                         <br>
@@ -24,7 +24,7 @@
                     </div>
 
                     <!--Mutationelemente auswaehlen. Nur fuer Mutationen-->
-                    <div ng-if="!vm.gesuchModelManager.isErstgesuch()">
+                    <div ng-if="!vm.gesuchModelManager.isGesuch()">
 
                         <h1 data-translate="MUTATION_AUSWAHL_TEXT_1"></h1>
                         <br>
@@ -53,7 +53,7 @@
 
                     <!--Gesuchsperioden. Nur fuer Erstgesuch-->
 
-                    <div ng-if="vm.gesuchModelManager.isErstgesuch() && vm.isGesuchsperiodeActive()">
+                    <div ng-if="vm.gesuchModelManager.isGesuch() && vm.isGesuchsperiodeActive()">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">

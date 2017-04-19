@@ -29,7 +29,8 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _gewarntFehlendeQuittung: boolean = false;
 
     // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutationskopie (Wichitg für laden des Gesuchs bei Navigation)
-    private _emptyMutation: boolean = false;
+    private _emptyMutation: boolean = false; //TODO brauchts mich?
+    private _emptyErneuerungsgesuch: boolean = false; //TODO brauchts mich?
 
 
     public get gesuchsteller1(): TSGesuchstellerContainer {
@@ -142,6 +143,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set emptyMutation(value: boolean) {
         this._emptyMutation = value;
+    }
+
+    get emptyErneuerungsgesuch(): boolean {
+        return this._emptyErneuerungsgesuch;
+    }
+
+    set emptyErneuerungsgesuch(value: boolean) {
+        this._emptyErneuerungsgesuch = value;
     }
 
     get gewarntNichtFreigegeben(): boolean {

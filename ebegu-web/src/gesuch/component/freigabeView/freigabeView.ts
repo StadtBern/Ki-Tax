@@ -69,7 +69,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public confirmationCallback(): void {
-        if (this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
+        if (this.gesuchModelManager.isGesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
             this.openFreigabequittungPDF(true);
         } else {
             this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
@@ -147,7 +147,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     private getZustelladresse(): TSZustelladresse {
-        if (this.gesuchModelManager.isErstgesuch()) {
+        if (this.gesuchModelManager.isGesuch()) {
             if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
                 return TSZustelladresse.SCHULAMT;
             } else {
@@ -167,6 +167,6 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
      * Ausserdem nur die Mutationen bei denen alle JA-Angebote neu sind, werden eine Freigabequittung haben
      */
     public isThereFreigabequittung(): boolean {
-        return this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew();
+        return this.gesuchModelManager.isGesuch() || this.gesuchModelManager.areAllJAAngeboteNew();
     }
 }

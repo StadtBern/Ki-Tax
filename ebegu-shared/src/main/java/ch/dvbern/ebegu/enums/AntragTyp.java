@@ -5,11 +5,12 @@ package ch.dvbern.ebegu.enums;
  */
 public enum AntragTyp {
 
-	GESUCH,
-	MUTATION;
+	GESUCH, //TODO (hefr) umbenennen nach ERSTGESUCH inkl. dbskript
+	MUTATION,
+	ERNEUERUNGSGESUCH;
 
 	public boolean isGesuch() {
-		return GESUCH.equals(this);
+		return GESUCH.equals(this) || ERNEUERUNGSGESUCH.equals(this);
 	}
 
 	public boolean isMutation() {
