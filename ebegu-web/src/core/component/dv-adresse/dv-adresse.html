@@ -152,7 +152,7 @@
                                  aria-label="{{'NICHT_IN_BERN_WOHNHAFT'|translate}}"
                                  dv-enable-element
                                  dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
-                                 dv-enable-expression="(!vm.isGesuchReadonly() && !vm.disableWohnadresseFor2GS()) || vm.gesuchModelManager.isKorrekturModusJugendamt()">
+                                 dv-enable-expression="vm.enableNichtInGemeinde()">
                         <span data-translate="NICHT_IN_BERN_WOHNHAFT"></span>
                     </md-checkbox>
                     <dv-error-messages for="adresseForm.adresseNichtInGemeinde.$error"
