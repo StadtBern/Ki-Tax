@@ -824,10 +824,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nullable LocalDate eingangsdatum) {
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
-			authorizer.checkWriteAuthorization(gesuch.get());
-			Optional<Gesuch> gesuchForErneuerungOpt = getNeustesGesuchFuerGesuch(gesuch.get());
-			Gesuch gesuchForErneuerung = gesuchForErneuerungOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragErneuern", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
-			return getErneuerungsgesuch(eingangsdatum, gesuchForErneuerung);
+			List<Gesuch> allGesucheForFallAndPeriod = getAllGesucheForFallAndPeriod(gesuch.get().getFall(), gesuch.get().getGesuchsperiode());
+			if (allGesucheForFallAndPeriod.isEmpty()) {
+				authorizer.checkWriteAuthorization(gesuch.get());
+				Optional<Gesuch> gesuchForErneuerungOpt = getNeustesGesuchFuerGesuch(gesuch.get());
+				Gesuch gesuchForErneuerung = gesuchForErneuerungOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragErneuern", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
+				return getErneuerungsgesuch(eingangsdatum, gesuchForErneuerung);
+			} else {
+				throw new EbeguRuntimeException("antragErneuern", ErrorCodeEnum.ERROR_EXISTING_ERNEUERUNGSGESUCH);
+			}
+
 		} else {
 			throw new EbeguEntityNotFoundException("antragErneuern", "Es existiert kein Antrag mit ID, kann kein Erneuerungsgesuch erstellen " + antragId, antragId);
 		}

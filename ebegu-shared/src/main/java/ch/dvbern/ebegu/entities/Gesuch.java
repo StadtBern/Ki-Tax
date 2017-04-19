@@ -61,7 +61,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private AntragTyp typ = AntragTyp.GESUCH;
+	private AntragTyp typ = AntragTyp.ERSTGESUCH;
 
 	@NotNull
 	@Column(nullable = false)

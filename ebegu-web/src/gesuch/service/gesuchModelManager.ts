@@ -480,7 +480,7 @@ export default class GesuchModelManager {
      */
     public initGesuch(forced: boolean, eingangsart: TSEingangsart) {
         if (forced || (!forced && !this.gesuch)) {
-            this.initAntrag(TSAntragTyp.GESUCH, eingangsart);
+            this.initAntrag(TSAntragTyp.ERSTGESUCH, eingangsart);
         }
         this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch());
     }
@@ -1238,7 +1238,7 @@ export default class GesuchModelManager {
      */
     public isGesuch(): boolean {
         if (this.gesuch) {
-            return this.gesuch.typ === TSAntragTyp.GESUCH || this.gesuch.typ === TSAntragTyp.ERNEUERUNGSGESUCH;
+            return this.gesuch.typ === TSAntragTyp.ERSTGESUCH || this.gesuch.typ === TSAntragTyp.ERNEUERUNGSGESUCH;
         }
         return true;
     }

@@ -37,7 +37,7 @@ describe('fallCreationView', function () {
             return form.$valid;
         });
         gesuch = new TSGesuch();
-        gesuch.typ = TSAntragTyp.GESUCH;
+        gesuch.typ = TSAntragTyp.ERSTGESUCH;
     }));
 
     describe('nextStep', () => {

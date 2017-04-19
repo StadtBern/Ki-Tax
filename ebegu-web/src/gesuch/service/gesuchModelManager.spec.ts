@@ -354,7 +354,7 @@ describe('gesuchModelManager', function () {
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
                 let gesuch: TSGesuch = new TSGesuch();
-                gesuch.typ = TSAntragTyp.GESUCH;
+                gesuch.typ = TSAntragTyp.ERSTGESUCH;
                 gesuch.gesuchsteller1 = TestDataUtil.createGesuchsteller('Julio', 'Iglesias');
                 gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('wohnstrasse', '1'));
                 gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('umzug', '2'));

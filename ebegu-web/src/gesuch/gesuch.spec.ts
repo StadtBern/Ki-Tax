@@ -22,7 +22,7 @@ describe('gesuch', function () {
             $injector.get('$translate'), $injector.get('AuthServiceRS'), $injector.get('$mdSidenav'), $injector.get('CONSTANTS'),
             undefined, undefined, undefined);
         gesuch = new TSGesuch();
-        gesuch.typ = TSAntragTyp.GESUCH;
+        gesuch.typ = TSAntragTyp.ERSTGESUCH;
     }));
 
     describe('getGesuchErstellenStepTitle', () => {
