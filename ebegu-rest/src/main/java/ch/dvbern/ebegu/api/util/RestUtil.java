@@ -1,5 +1,27 @@
 package ch.dvbern.ebegu.api.util;
 
+import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
+import ch.dvbern.ebegu.api.dtos.JaxInstitution;
+import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
+import ch.dvbern.ebegu.entities.FileMetadata;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.util.UploadFileInfo;
+import com.google.common.net.UrlEscapers;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
@@ -10,31 +32,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-
-import com.google.common.net.UrlEscapers;
-
-import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
-import ch.dvbern.ebegu.api.dtos.JaxInstitution;
-import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
-import ch.dvbern.ebegu.api.dtos.JaxZahlungsauftrag;
-import ch.dvbern.ebegu.entities.FileMetadata;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.util.UploadFileInfo;
 
 import static ch.dvbern.ebegu.api.EbeguApplicationV1.API_ROOT_PATH;
 
