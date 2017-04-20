@@ -424,7 +424,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		if (betreuungToChangeOpt.isPresent()) {
 			Betreuung existingBetreuung = betreuungToChangeOpt.get();
 			existingBetreuung.getBetreuungspensumContainers().clear();//delete all current Betreuungspensen before we add the modified list
-			for (final BetreuungsmitteilungPensum betPensumMitteilung : mitteilung.getBetreuungspensen()) {
+			List<BetreuungsmitteilungPensum> betreuungspensumList = new ArrayList(mitteilung.getBetreuungspensen());
+			Collections.sort(betreuungspensumList);
+			for (final BetreuungsmitteilungPensum betPensumMitteilung : betreuungspensumList) {
 				BetreuungspensumContainer betPenCont = new BetreuungspensumContainer();
 				betPenCont.setBetreuung(existingBetreuung);
 				Betreuungspensum betPensumJA = new Betreuungspensum(betPensumMitteilung);
