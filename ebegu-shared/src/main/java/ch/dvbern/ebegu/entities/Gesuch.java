@@ -143,11 +143,11 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Column(nullable = false)
 	private boolean gesperrtWegenBeschwerde = false;
 
-	@Column(nullable = false)
-	private boolean gewarntNichtFreigegeben = false;
+	@Column(nullable = true)
+	private LocalDate datumGewarntNichtFreigegeben;
 
-	@Column(nullable = false)
-	private boolean gewarntFehlendeQuittung = false;
+	@Column(nullable = true)
+	private LocalDate datumGewarntFehlendeQuittung;
 
 
 	public Gesuch() {
@@ -376,20 +376,20 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.finanzDatenDTO_zuZweit = finanzDatenDTO_zuZweit;
 	}
 
-	public boolean isGewarntNichtFreigegeben() {
-		return gewarntNichtFreigegeben;
+	public LocalDate getDatumGewarntNichtFreigegeben() {
+		return datumGewarntNichtFreigegeben;
 	}
 
-	public void setGewarntNichtFreigegeben(boolean gewarntNichtFreigegeben) {
-		this.gewarntNichtFreigegeben = gewarntNichtFreigegeben;
+	public void setDatumGewarntNichtFreigegeben(LocalDate datumGewarntNichtFreigegeben) {
+		this.datumGewarntNichtFreigegeben = datumGewarntNichtFreigegeben;
 	}
 
-	public boolean isGewarntFehlendeQuittung() {
-		return gewarntFehlendeQuittung;
+	public LocalDate getDatumGewarntFehlendeQuittung() {
+		return datumGewarntFehlendeQuittung;
 	}
 
-	public void setGewarntFehlendeQuittung(boolean gewarntFehlendeQuittung) {
-		this.gewarntFehlendeQuittung = gewarntFehlendeQuittung;
+	public void setDatumGewarntFehlendeQuittung(LocalDate datumGewarntFehlendeQuittung) {
+		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
 	}
 
 	@SuppressWarnings("ObjectEquality")
@@ -558,8 +558,8 @@ public class Gesuch extends AbstractEntity implements Searchable{
 			}
 		}
 		mutation.setGesperrtWegenBeschwerde(false);
-		mutation.setGewarntNichtFreigegeben(false);
-		mutation.setGewarntFehlendeQuittung(false);
+		mutation.setDatumGewarntNichtFreigegeben(null);
+		mutation.setDatumGewarntFehlendeQuittung(null);
 		return mutation;
 	}
 

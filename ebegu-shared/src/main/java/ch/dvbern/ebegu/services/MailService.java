@@ -50,12 +50,12 @@ public interface MailService {
 	/**
 	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
 	 */
-	void sendWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, int anzahlMonate) throws MailException;
+	void sendWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, int anzahlTageBisLoeschung) throws MailException;
 
 	/**
 	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
 	 */
-	void sendWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch) throws MailException;
+	void sendWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch, int anzahlTageBisLoeschung) throws MailException;
 
 	/**
 	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.

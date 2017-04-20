@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.Constants;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -15,6 +16,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,7 +30,8 @@ public class MailTemplateConfiguration {
 
 	private static final Locale DEFAULT_LOCALE = new Locale("de", "CH");
 	public static final String EMPFAENGER_MAIL = "empfaengerMail";
-	public static final String ANZAHL_MONATE = "anzahlMonate";
+	public static final String ANZAHL_TAGE = "anzahlTage";
+	public static final String DATUM_LOESCHUNG = "datumLoeschung";
 
 	private final Configuration freeMarkerConfiguration;
 
@@ -67,12 +70,16 @@ public class MailTemplateConfiguration {
 		return processTemplateGesuch("InfoMahnung.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
 
-	public String getWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail, int anzahlMonate) {
-		return processTemplateGesuch("WarnungGesuchNichtFreigegeben.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail), toArgumentPair(ANZAHL_MONATE, anzahlMonate));
+	public String getWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail, int anzahlTage) {
+		return processTemplateGesuch("WarnungGesuchNichtFreigegeben.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail), toArgumentPair(ANZAHL_TAGE, anzahlTage));
 	}
 
-	public String getWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
-		return processTemplateGesuch("WarnungFreigabequittungFehlt.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	public String getWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail, int anzahlTage) {
+		LocalDate datumLoeschung = LocalDate.now().plusDays(anzahlTage).minusDays(1);
+		return processTemplateGesuch("WarnungFreigabequittungFehlt.ftl", gesuch, gesuchsteller,
+			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
+			toArgumentPair(ANZAHL_TAGE, anzahlTage),
+			toArgumentPair(DATUM_LOESCHUNG, Constants.DATE_FORMATTER.format(datumLoeschung)));
 	}
 
 	public String getInfoGesuchGeloescht(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
