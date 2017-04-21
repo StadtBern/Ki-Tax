@@ -606,7 +606,7 @@
     "GESUCHSPERIODEN": "Gesuchsperiode",
     "GESUCHSPERIODE_GUELTIG_AB": "Beginn",
     "GESUCHSPERIODE_GUELTIG_BIS": "Ende",
-    "GESUCHSPERIODE_AKTIV": "Aktiv",
+    "GESUCHSPERIODE_STATUS": "Status",
     "PARAMETER_PRO_GESUCHSPERIODE": "E-BEGU Parameter für Gesuchsperiode",
     "VORLAGE_PRO_GESUCHSPERIODE": "E-BEGU Vorlagen für Gesuchsperiode",
     "PARAMETER_PRO_JAHR": "Jahresabhängige E-BEGU Parameter",

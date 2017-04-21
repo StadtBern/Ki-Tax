@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.jboss.arquillian.junit.Arquillian;
@@ -36,7 +37,7 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 		Collection<Gesuchsperiode> allGesuchsperioden = gesuchsperiodeService.getAllGesuchsperioden();
 		Assert.assertEquals(1, allGesuchsperioden.size());
 		Gesuchsperiode nextGesuchsperiode = allGesuchsperioden.iterator().next();
-		Assert.assertTrue(nextGesuchsperiode.getActive());
+		Assert.assertEquals(GesuchsperiodeStatus.AKTIV, nextGesuchsperiode.getStatus());
 	}
 
 	@Test
@@ -44,12 +45,12 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertNotNull(gesuchsperiodeService);
 		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true);
 		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(insertedGesuchsperiode.getId());
-		Assert.assertTrue(gesuchsperiode.get().getActive());
+		Assert.assertEquals(GesuchsperiodeStatus.AKTIV, gesuchsperiode.get().getStatus());
 
-		gesuchsperiode.get().setActive(false);
+		gesuchsperiode.get().setStatus(GesuchsperiodeStatus.GESCHLOSSEN);
 		Gesuchsperiode updateGesuchsperiode = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode.get());
-		Assert.assertFalse(updateGesuchsperiode.getActive());
-		Assert.assertFalse(gesuchsperiodeService.findGesuchsperiode(updateGesuchsperiode.getId()).get().getActive());
+		Assert.assertEquals(GesuchsperiodeStatus.GESCHLOSSEN, updateGesuchsperiode.getStatus());
+		Assert.assertEquals(GesuchsperiodeStatus.GESCHLOSSEN, gesuchsperiodeService.findGesuchsperiode(updateGesuchsperiode.getId()).get().getStatus());
 	}
 
 	@Test
@@ -82,7 +83,7 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 
 	private Gesuchsperiode insertNewEntity(boolean active) {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createDefaultGesuchsperiode();
-		gesuchsperiode.setActive(active);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 		return gesuchsperiode;
 	}

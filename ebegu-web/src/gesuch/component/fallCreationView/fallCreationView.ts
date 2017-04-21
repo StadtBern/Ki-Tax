@@ -13,6 +13,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
+import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -107,9 +108,9 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         }
     }
 
-    public isGesuchsperiodeActive(): boolean {
+    public isGesuchsperiodeActive(): boolean { //TODO (hefr) überprüfen!!!
         if (this.gesuchModelManager.getGesuchsperiode()) {
-            return this.gesuchModelManager.getGesuchsperiode().active;
+            return TSGesuchsperiodeStatus.AKTIV === this.gesuchModelManager.getGesuchsperiode().status;
         } else {
             return true;
         }

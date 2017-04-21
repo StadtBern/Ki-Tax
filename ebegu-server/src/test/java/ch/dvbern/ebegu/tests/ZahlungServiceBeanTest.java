@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
-import ch.dvbern.ebegu.enums.ZahlungStatus;
-import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
-import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.*;
@@ -267,7 +264,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Override
 	protected Gesuchsperiode createGesuchsperiode(boolean active) {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createCurrentGesuchsperiode();
-		gesuchsperiode.setActive(active);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		return gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 	}
 

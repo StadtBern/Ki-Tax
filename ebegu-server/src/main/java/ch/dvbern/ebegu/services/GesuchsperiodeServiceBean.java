@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -79,11 +80,11 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Override
 	@Nonnull
 	@PermitAll
-	public Collection<Gesuchsperiode> getAllActiveGesuchsperioden() {
+	public Collection<Gesuchsperiode> getAllActiveGesuchsperioden() { //TODO (hefr) überprüfen!!!
 		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuchsperiode> query = builder.createQuery(Gesuchsperiode.class);
 		final Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
-		query.where(builder.equal(root.get(Gesuchsperiode_.active), Boolean.TRUE));
+		query.where(builder.equal(root.get(Gesuchsperiode_.status), GesuchsperiodeStatus.AKTIV));
 		query.orderBy(builder.desc(root.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb)));
 		return persistence.getCriteriaResults(query);
 	}
@@ -94,7 +95,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Override
 	@Nonnull
 	@PermitAll
-	public Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() {
+	public Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() { //TODO (hefr) überprüfen!!!
 		// Alle Gesuchsperioden, die aktuell am laufen sind oder in der Zukunft liegen, d.h. deren Ende-Datum nicht in der Vergangenheit liegt
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);

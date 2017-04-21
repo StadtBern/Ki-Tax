@@ -20,6 +20,8 @@ import ITranslateService = angular.translate.ITranslateService;
 import ITimeoutService = angular.ITimeoutService;
 import AbstractAdminViewController from '../../abstractAdminView';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {getTSGesuchsperiodeStatusValues, TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./parameterView.html');
 let style = require('./parameterView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -67,7 +69,7 @@ export class ParameterViewController extends AbstractAdminViewController {
     }
 
     private readGesuchsperioden(): void {
-        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: Array<TSGesuchsperiode>) => {
+        this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: Array<TSGesuchsperiode>) => {
             this.gesuchsperiodenList =  response; //angular.copy(response);
         });
     }
@@ -102,7 +104,7 @@ export class ParameterViewController extends AbstractAdminViewController {
     }
 
     createGesuchsperiode(): void {
-        this.gesuchsperiode = new TSGesuchsperiode(false, new TSDateRange());
+        this.gesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.ENTWURF, new TSDateRange());
         if (this.gesuchsperiodenList) {
             let prevGesPer: TSGesuchsperiode = this.gesuchsperiodenList[this.gesuchsperiodenList.length - 1];
             this.gesuchsperiode.gueltigkeit.gueltigAb = prevGesPer.gueltigkeit.gueltigAb.clone().add('years', 1);
@@ -251,5 +253,37 @@ export class ParameterViewController extends AbstractAdminViewController {
         this.ebeguParameterRS.getJahresabhParameter().then((response: Array<TSEbeguParameter>) => {
             this.ebeguJahresabhParameter = response;
         });
+    }
+
+    getTSGesuchsperiodeStatusValues(): Array<TSGesuchsperiodeStatus> {
+        return getTSGesuchsperiodeStatusValues();
+    }
+
+    private periodenaParamsEditableForPeriode(gesuchsperiode: TSGesuchsperiode): boolean {
+        if (gesuchsperiode && gesuchsperiode.status) {
+            // Fuer SuperAdmin immer auch editierbar, wenn AKTIV oder INAKTIV, sonst nur ENTWURF
+            if (TSGesuchsperiodeStatus.GESCHLOSSEN === gesuchsperiode.status) {
+                return false;
+            } else if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSuperAdminRoles())) {
+                return true;
+            } else {
+                return TSGesuchsperiodeStatus.ENTWURF === gesuchsperiode.status;
+            }
+        }
+        return false;
+    }
+
+    public periodenaParamsEditable(): boolean {
+        return this.periodenaParamsEditableForPeriode(this.gesuchsperiode);
+    }
+
+    public jahresParamsEditable(): boolean {
+        // Wenn die Periode, die in dem Jahr *endet* noch ENTWURF ist
+        for (let gp of this.gesuchsperiodenList) {
+            if (gp.gueltigkeit.gueltigBis.year() === this.jahr) {
+                return this.periodenaParamsEditableForPeriode(gp);
+            }
+        }
+        return true;
     }
 }

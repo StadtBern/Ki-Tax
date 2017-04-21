@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.rest.test;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -35,7 +36,7 @@ public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 		JaxGesuchsperiode testJaxGesuchsperiode = TestJaxDataUtil.createTestJaxGesuchsperiode();
 		JaxGesuchsperiode jaxGesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuchsperiode, null, null);
 		Assert.assertNotNull(jaxGesuchsperiode);
-		Assert.assertEquals(testJaxGesuchsperiode.getActive(), jaxGesuchsperiode.getActive());
+		Assert.assertEquals(testJaxGesuchsperiode.getStatus(), jaxGesuchsperiode.getStatus());
 
 		findExistingObjectAndCompare(jaxGesuchsperiode);
 	}
@@ -56,7 +57,7 @@ public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 	@Test
 	public void getAllGesuchsperiodenTest() {
 		JaxGesuchsperiode testJaxGesuchsperiode = TestJaxDataUtil.createTestJaxGesuchsperiode();
-		testJaxGesuchsperiode.setActive(false);
+		testJaxGesuchsperiode.setStatus(GesuchsperiodeStatus.GESCHLOSSEN);
 		gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuchsperiode, null, null);
 
 		JaxGesuchsperiode jaxGesuchsperiode2 = gesuchsperiodeResource.saveGesuchsperiode(TestJaxDataUtil.createTestJaxGesuchsperiode(), null, null);
