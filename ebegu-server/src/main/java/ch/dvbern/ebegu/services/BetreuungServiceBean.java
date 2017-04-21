@@ -222,8 +222,10 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			Predicate predicateStatus = cb.equal(root.get(Betreuung_.betreuungsstatus), Betreuungsstatus.WARTEN);
 			// Institution
 			Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
+			// Gesuchsperiode darf nicht geschlossen sein
+			Predicate predicateGesuchsperiode = root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
 
-			query.where(predicateStatus, predicateInstitution);
+			query.where(predicateStatus, predicateInstitution, predicateGesuchsperiode);
 			List<Betreuung> betreuungen = persistence.getCriteriaResults(query);
 			authorizer.checkReadAuthorizationForAllBetreuungen(betreuungen);
 			return betreuungen;

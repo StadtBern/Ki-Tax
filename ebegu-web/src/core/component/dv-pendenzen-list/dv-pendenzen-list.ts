@@ -87,7 +87,7 @@ export class DVPendenzenListController {
     }
 
     public updateGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: any) => {
             this.gesuchsperiodenList = [];
             response.forEach((gesuchsperiode: TSGesuchsperiode) => {
                 this.gesuchsperiodenList.push(gesuchsperiode.gesuchsperiodeString);

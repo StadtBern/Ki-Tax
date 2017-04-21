@@ -62,7 +62,7 @@ export class PendenzenInstitutionListViewController {
     }
 
     public updateActiveGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: any) => {
             this.activeGesuchsperiodenList = [];
             response.forEach((gesuchsperiode: TSGesuchsperiode) => {
                 this.activeGesuchsperiodenList.push(gesuchsperiode.gesuchsperiodeString);

@@ -173,7 +173,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 
 		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
-		query.where(predicateStatus);
+		// Gesuchsperiode darf nicht geschlossen sein
+		Predicate predicateGesuchsperiode = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
+
+		query.where(predicateStatus, predicateGesuchsperiode);
 		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.fallNummer)));
 		return persistence.getCriteriaResults(query);
 	}
@@ -192,8 +195,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
 		Predicate predicateVerantwortlicher = cb.equal(root.get(Gesuch_.fall).get(Fall_.verantwortlicher), benutzer);
+		// Gesuchsperiode darf nicht geschlossen sein
+		Predicate predicateGesuchsperiode = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
 
-		query.where(predicateStatus, predicateVerantwortlicher);
+		query.where(predicateStatus, predicateVerantwortlicher, predicateGesuchsperiode);
 		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.fallNummer)));
 		return persistence.getCriteriaResults(query);
 	}

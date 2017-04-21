@@ -16,8 +16,10 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
@@ -80,13 +82,8 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Override
 	@Nonnull
 	@PermitAll
-	public Collection<Gesuchsperiode> getAllActiveGesuchsperioden() { //TODO (hefr) überprüfen!!!
-		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuchsperiode> query = builder.createQuery(Gesuchsperiode.class);
-		final Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
-		query.where(builder.equal(root.get(Gesuchsperiode_.status), GesuchsperiodeStatus.AKTIV));
-		query.orderBy(builder.desc(root.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb)));
-		return persistence.getCriteriaResults(query);
+	public Collection<Gesuchsperiode> getAllActiveGesuchsperioden() {
+		return getGesuchsperiodenImStatus(GesuchsperiodeStatus.AKTIV);
 	}
 
 	/**
@@ -95,21 +92,17 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Override
 	@Nonnull
 	@PermitAll
-	public Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() { //TODO (hefr) überprüfen!!!
-		// Alle Gesuchsperioden, die aktuell am laufen sind oder in der Zukunft liegen, d.h. deren Ende-Datum nicht in der Vergangenheit liegt
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);
-		Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
-		query.select(root);
+	public Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() {
+		return getGesuchsperiodenImStatus(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
+	}
 
-		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
-		Predicate predicate = cb.greaterThanOrEqualTo(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis), dateParam);
-
-		query.where(predicate);
-		TypedQuery<Gesuchsperiode> q = persistence.getEntityManager().createQuery(query);
-		q.setParameter(dateParam, LocalDate.now());
-		query.orderBy(cb.asc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
-		return q.getResultList();
+	private Collection<Gesuchsperiode> getGesuchsperiodenImStatus(GesuchsperiodeStatus... status) {
+		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuchsperiode> query = builder.createQuery(Gesuchsperiode.class);
+		final Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
+		query.where(root.get(Gesuchsperiode_.status).in(status));
+		query.orderBy(builder.desc(root.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb)));
+		return persistence.getCriteriaResults(query);
 	}
 
 	@Override

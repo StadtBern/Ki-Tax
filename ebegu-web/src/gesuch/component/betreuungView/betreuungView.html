@@ -426,7 +426,7 @@
 
                     <div dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                         dv-show-expression="vm.isBetreuungsstatusWarten()">
+                         dv-show-expression="vm.isBetreuungsstatusWarten() && !vm.isGesuchReadonly()">
 
                         <div ng-if="vm.isFromMutation()">
                             <dv-loading-button button-click="vm.gekuendigtVorEintritt()"
