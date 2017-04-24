@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.enums;
 
 /**
- * Typ von Mahnungen
+ * Gesuchsperiode Status
  */
 public enum GesuchsperiodeStatus {
 

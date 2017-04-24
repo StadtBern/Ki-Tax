@@ -22,7 +22,7 @@ export class TestFaelleRS {
         return 'TestFaelleRS';
     }
 
-    public createTestFallGS(testFall: string, gesuchsperiodeId: string, bestaetigt: boolean, verfuegen: boolean, username: string): IHttpPromise<String> { //TODO
+    public createTestFallGS(testFall: string, gesuchsperiodeId: string, bestaetigt: boolean, verfuegen: boolean, username: string): IHttpPromise<String> {
         return this.http.get(this.serviceURL + '/testfallgs/' + encodeURIComponent(testFall) + '/' + gesuchsperiodeId
             + '/' + bestaetigt + '/' + verfuegen + '/' + encodeURIComponent(username));
     }
@@ -34,7 +34,7 @@ export class TestFaelleRS {
 
 
 
-    public createTestFall(testFall: string, gesuchsperiodeId: string, bestaetigt: boolean, verfuegen: boolean): IHttpPromise<String> { //TODO
+    public createTestFall(testFall: string, gesuchsperiodeId: string, bestaetigt: boolean, verfuegen: boolean): IHttpPromise<String> {
         return this.http.get(this.serviceURL + '/testfall/' + encodeURIComponent(testFall) + '/' + gesuchsperiodeId + '/' + bestaetigt + '/' + verfuegen);
     }
 

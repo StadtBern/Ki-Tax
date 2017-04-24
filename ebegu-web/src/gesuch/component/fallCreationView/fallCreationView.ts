@@ -108,7 +108,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
         }
     }
 
-    public isGesuchsperiodeActive(): boolean { //TODO (hefr) überprüfen!!!
+    public isGesuchsperiodeActive(): boolean {
         if (this.gesuchModelManager.getGesuchsperiode()) {
             return TSGesuchsperiodeStatus.AKTIV === this.gesuchModelManager.getGesuchsperiode().status;
         } else {

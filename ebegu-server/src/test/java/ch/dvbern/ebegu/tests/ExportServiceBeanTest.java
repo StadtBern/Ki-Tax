@@ -55,7 +55,6 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 	private VerfuegungService verfuegungService;
 
 	private Gesuchsperiode gesuchsperiode;
-	private List<InstitutionStammdaten> institutionStammdatenList;
 
 
 	@Before
