@@ -713,9 +713,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		allGesucheForFall.iterator().forEachRemaining(gesuch1 -> {
 			if (gesuch.equals(gesuch1)) {
 				gesuch1.setStatus(AntragStatus.BESCHWERDE_HAENGIG);
+				updateGesuch(gesuch1, true);
 			}
-			gesuch1.setGesperrtWegenBeschwerde(true);
-			updateGesuch(gesuch1, true);
+			gesuch1.setGesperrtWegenBeschwerde(true); // Flag nicht über Service setzen, da u.U. Gesuch noch inBearbeitungGS
+			persistence.merge(gesuch1);
 		});
 		return gesuch;
 	}

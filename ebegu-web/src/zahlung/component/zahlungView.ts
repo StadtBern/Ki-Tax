@@ -2,19 +2,18 @@ import {IComponentOptions} from 'angular';
 import TSZahlung from '../../models/TSZahlung';
 import ZahlungRS from '../../core/service/zahlungRS.rest';
 import {IZahlungsauftragStateParams} from '../zahlung.route';
-import TSZahlungsauftrag from '../../models/TSZahlungsauftrag';
 import {DownloadRS} from '../../core/service/downloadRS.rest';
 import {ReportRS} from '../../core/service/reportRS.rest';
 import TSDownloadFile from '../../models/TSDownloadFile';
 import {TSRole} from '../../models/enums/TSRole';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import EbeguUtil from '../../utils/EbeguUtil';
+import {TSZahlungsstatus} from '../../models/enums/TSZahlungsstatus';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import IQService = angular.IQService;
 import IStateService = angular.ui.IStateService;
-import {TSZahlungsstatus} from '../../models/enums/TSZahlungsstatus';
 let template = require('./zahlungView.html');
 require('./zahlungView.less');
 
@@ -27,7 +26,7 @@ export class ZahlungViewComponentConfig implements IComponentOptions {
 
 export class ZahlungViewController {
 
-    private zahlungsauftrag: TSZahlungsauftrag;
+    private zahlungen: Array<TSZahlung>;
 
     itemsByPage: number = 20;
 
@@ -43,7 +42,7 @@ export class ZahlungViewController {
 
     private initViewModel() {
         if (this.$stateParams.zahlungsauftrag) {
-            this.zahlungsauftrag = this.$stateParams.zahlungsauftrag;
+            this.zahlungen = this.$stateParams.zahlungsauftrag.zahlungen;
         } else if (this.$stateParams.zahlungsauftragId) {
 
             switch (this.authServiceRS.getPrincipal().role) {
@@ -51,7 +50,9 @@ export class ZahlungViewController {
                 case TSRole.SACHBEARBEITER_INSTITUTION:
                 case TSRole.SACHBEARBEITER_TRAEGERSCHAFT: {
                     this.zahlungRS.getZahlungsauftragInstitution(this.$stateParams.zahlungsauftragId).then((response) => {
-                        this.zahlungsauftrag = response;
+                        this.zahlungen = response.zahlungen.filter((element) => {
+                            return element.betragTotalZahlung > 0;
+                        });
                     });
                     break;
                 }
@@ -61,7 +62,9 @@ export class ZahlungViewController {
                 case TSRole.JURIST:
                 case TSRole.REVISOR: {
                     this.zahlungRS.getZahlungsauftrag(this.$stateParams.zahlungsauftragId).then((response) => {
-                        this.zahlungsauftrag = response;
+                        this.zahlungen = response.zahlungen.filter((element) => {
+                            return element.betragTotalZahlung > 0;
+                        });
                     });
                     break;
                 }
@@ -69,10 +72,6 @@ export class ZahlungViewController {
                     break;
             }
         }
-    }
-
-    public getZahlungsauftrag(): TSZahlungsauftrag {
-        return this.zahlungsauftrag;
     }
 
     private gotToUebersicht(): void {
@@ -91,11 +90,11 @@ export class ZahlungViewController {
     public bestaetigen(zahlung: TSZahlung) {
         console.log('bestaetigen');
         this.zahlungRS.zahlungBestaetigen(zahlung.id).then((response: TSZahlung) => {
-            let index = EbeguUtil.getIndexOfElementwithID(response, this.zahlungsauftrag.zahlungen);
+            let index = EbeguUtil.getIndexOfElementwithID(response, this.zahlungen);
             if (index > -1) {
-                this.zahlungsauftrag.zahlungen[index] = response;
+                this.zahlungen[index] = response;
             }
-            this.ebeguUtil.handleSmarttablesUpdateBug(this.zahlungsauftrag.zahlungen);
+            this.ebeguUtil.handleSmarttablesUpdateBug(this.zahlungen);
         });
     }
 
