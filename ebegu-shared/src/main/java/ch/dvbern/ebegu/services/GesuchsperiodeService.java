@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
@@ -14,12 +15,17 @@ public interface GesuchsperiodeService {
 
 	/**
 	 * Erstellt eine neue Gesuchsperiode in der DB, falls der key noch nicht existiert
-	 *
-	 * @param gesuchsperiode die Gesuchsperiode als DTO
-	 * @return die gespeicherte Gesuchsperiode
 	 */
 	@Nonnull
 	Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Erstellt eine neue Gesuchsperiode in der DB, falls der key noch nicht existiert.
+	 * Aufgrund des letzten Status wird geprüft, ob der Statusübergang zulässig ist und ob
+	 * evt. weitere Aktionen durchgeführt werden müssen (z.B. E-Mails etc.)
+	 */
+	@Nonnull
+	Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull GesuchsperiodeStatus statusBisher);
 
 	/**
 	 * @param key PK (id) der Gesuchsperiode

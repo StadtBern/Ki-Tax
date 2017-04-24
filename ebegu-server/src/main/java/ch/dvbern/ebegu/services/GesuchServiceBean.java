@@ -1279,6 +1279,24 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 		return anzahl;
 	}
+
+	@Override
+	public boolean canGesuchsperiodeBeClosed(@Nonnull Gesuchsperiode gesuchsperiode) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		// Status verfuegt
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.VERFUEGT, AntragStatus.NUR_SCHULAMT, AntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN).not();
+		// Gesuchsperiode
+		final Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+
+		query.where(predicateStatus, predicateGesuchsperiode);
+		query.select(root);
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+		return criteriaResults.isEmpty();
+	}
 }
 
 

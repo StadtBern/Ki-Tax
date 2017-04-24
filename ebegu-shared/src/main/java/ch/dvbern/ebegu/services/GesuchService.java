@@ -259,4 +259,9 @@ public interface GesuchService {
 	 * Gibt die Anzahl Warnungen zurueck.
 	 */
 	int deleteGesucheOhneFreigabeOderQuittung();
+
+	/**
+	 * Prüft, ob alle Anträge dieser Periode im Status VERFUEGT oder NUR_SCHULAMT sind
+	 */
+	boolean canGesuchsperiodeBeClosed(@Nonnull Gesuchsperiode gesuchsperiode);
 }

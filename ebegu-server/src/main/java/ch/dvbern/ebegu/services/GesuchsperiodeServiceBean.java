@@ -1,16 +1,20 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -39,6 +43,11 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Inject
 	private Persistence<Gesuchsperiode> persistence;
 
+	@Inject
+	private PrincipalBean principalBean;
+
+	@Inject
+	private GesuchService gesuchService;
 
 	@Nonnull
 	@Override
@@ -46,6 +55,35 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Objects.requireNonNull(gesuchsperiode);
 		return persistence.merge(gesuchsperiode);
+	}
+
+
+	@Nonnull
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull GesuchsperiodeStatus statusBisher) {
+		// Überprüfen, ob der Statusübergang zulässig ist
+		if (statusBisher != null && !gesuchsperiode.getStatus().equals(statusBisher)) {
+			// Superadmin darf alles
+			if (!principalBean.isCallerInRole(UserRole.SUPER_ADMIN)) {
+				if (!isStatusUebergangValid(statusBisher, gesuchsperiode.getStatus())) {
+					throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_INVALID_STATUSUEBERGANG);
+				}
+				// Falls es ein Statuswechsel war, und der neue Status ist AKTIV -> Mail an alle Gesuchsteller schicken
+				// Nur wenn als JA-Admin. Superadmin kann die Periode auch "wiederöffnen", dann darf aber kein Mail mehr verschickt werden!
+				if (GesuchsperiodeStatus.AKTIV.equals(gesuchsperiode.getStatus())) {
+					// TODO (team): Mail schicken an Gesuchsteller
+				}
+				if (GesuchsperiodeStatus.GESCHLOSSEN.equals(gesuchsperiode.getStatus())) {
+					// Prüfen, dass ALLE Gesuche dieser Periode im Status "Verfügt" oder "Schulamt" sind. Sind noch
+					// Gesuce in Bearbeitung, oder in Beschwerde etc. darf nicht geschlossen werden!
+					if (!gesuchService.canGesuchsperiodeBeClosed(gesuchsperiode)) {
+						throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_CANNOT_BE_CLOSED);
+					}
+				}
+			}
+		}
+		return saveGesuchsperiode(gesuchsperiode);
 	}
 
 	@Nonnull
@@ -134,5 +172,17 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 		query.where(predicateStart, predicateEnd);
 		return persistence.getCriteriaResults(query);
+	}
+
+	private boolean isStatusUebergangValid(GesuchsperiodeStatus statusBefore, GesuchsperiodeStatus statusAfter) {
+		if (GesuchsperiodeStatus.ENTWURF.equals(statusBefore)) {
+			return GesuchsperiodeStatus.AKTIV.equals(statusAfter);
+		} else if (GesuchsperiodeStatus.AKTIV.equals(statusBefore)) {
+			return GesuchsperiodeStatus.INAKTIV.equals(statusAfter);
+		} else if (GesuchsperiodeStatus.INAKTIV.equals(statusBefore)) {
+			return GesuchsperiodeStatus.GESCHLOSSEN.equals(statusAfter);
+		} else {
+			return false;
+		}
 	}
 }

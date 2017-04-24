@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxAbstractDateRangedDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
@@ -56,9 +57,11 @@ public class GesuchsperiodeResource {
 			Optional<Gesuchsperiode> optional = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeJAXP.getId());
 			gesuchsperiode = optional.isPresent() ? optional.get() : new Gesuchsperiode();
 		}
+		// Überprüfen, ob der Statusübergang zulässig ist
+		GesuchsperiodeStatus gesuchsperiodeStatusBisher = gesuchsperiode.getStatus();
 
 		Gesuchsperiode convertedGesuchsperiode = converter.gesuchsperiodeToEntity(gesuchsperiodeJAXP, gesuchsperiode);
-		Gesuchsperiode persistedGesuchsperiode = this.gesuchsperiodeService.saveGesuchsperiode(convertedGesuchsperiode);
+		Gesuchsperiode persistedGesuchsperiode = this.gesuchsperiodeService.saveGesuchsperiode(convertedGesuchsperiode, gesuchsperiodeStatusBisher);
 
 		return converter.gesuchsperiodeToJAX(persistedGesuchsperiode);
 	}
