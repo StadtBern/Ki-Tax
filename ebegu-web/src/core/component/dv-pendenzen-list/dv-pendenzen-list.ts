@@ -11,6 +11,7 @@ import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
 import {IStateService} from 'angular-ui-router';
 import * as moment from 'moment';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import TSUser from '../../../models/TSUser';
 import Moment = moment.Moment;
 let template = require('./dv-pendenzen-list.html');
 require('./dv-pendenzen-list.less');
@@ -22,6 +23,8 @@ export class DVPendenzenListConfig implements IComponentOptions {
         antraege: '<',
         itemsByPage: '<',
         initialAll: '=',
+        showSelectionAll: '=',
+        onUserChanged: '&'
     };
 
     template = template;
@@ -35,6 +38,7 @@ export class DVPendenzenListController {
 
     itemsByPage: number;
     initialAll: boolean;
+    showSelectionAll: boolean;
 
     selectedBetreuungsangebotTyp: string;
     selectedAntragTyp: string;
@@ -43,6 +47,7 @@ export class DVPendenzenListController {
     selectedGesuchsperiode: string;
     institutionenList: Array<TSInstitution>;
     gesuchsperiodenList: Array<string>;
+    onUserChanged: (user: any) => void;
 
 
     static $inject: string[] = ['EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
@@ -54,6 +59,10 @@ export class DVPendenzenListController {
     }
     $onInit() {
         this.initViewModel();
+    }
+
+    public userChanged(selectedUser: TSUser): void {
+        this.onUserChanged({user: selectedUser});
     }
 
     private initViewModel() {

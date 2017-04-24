@@ -5,7 +5,9 @@ import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.util.JBossLoginContextFactory;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -74,6 +76,15 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
 
+	@Inject
+	private ZahlungService zahlungService;
+
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
+
+	@Inject
+	private TestfaelleService testfaelleService;
+
 	private int anzahlObjekte = 0;
 
 
@@ -106,14 +117,19 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	public void removeGesuchTest() {
 		Assert.assertNotNull(gesuchService);
 		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
+		insertInstitutionen();
+		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
+		Collection<InstitutionStammdaten> stammdaten = criteriaQueryHelper.getAll(InstitutionStammdaten.class);
+		Gesuch gesuch2 = testfaelleService.createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuch.getGesuchsperiode(), stammdaten), true, null);
 		final GeneratedDokument generatedDokument = TestDataUtil.createGeneratedDokument(gesuch);
 		persistence.persist(generatedDokument);
 		final DokumentGrund dokumentGrund = TestDataUtil.createDefaultDokumentGrund();
 		dokumentGrund.setGesuch(gesuch);
 		persistence.persist(dokumentGrund);
+		zahlungService.zahlungsauftragErstellen(LocalDate.now(), "Testauftrag", gesuch2.getGesuchsperiode().getGueltigkeit().getGueltigAb().plusMonths(1).atTime(0, 0, 0));
 
 		//check all objects exist
-		Assert.assertEquals(1, readGesucheAsAdmin().size());
+		Assert.assertEquals(2, readGesucheAsAdmin().size());
 		final List<WizardStep> wizardSteps = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
 		Assert.assertEquals(13, wizardSteps.size());
 		final Collection<AntragStatusHistory> allAntragStatHistory = antragStatusHistoryService.findAllAntragStatusHistoryByGesuch(gesuch);
@@ -122,10 +138,11 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(1, allDokGrund.size());
 		final Collection<GeneratedDokument> allGenDok = generatedDokumentService.findGeneratedDokumentsFromGesuch(gesuch);
 		Assert.assertEquals(1, allGenDok.size());
-
+		Collection<Zahlungsposition> zahlungspositionen = criteriaQueryHelper.getAll(Zahlungsposition.class);
+		Assert.assertEquals(2, zahlungspositionen.size());
 
 		gesuchService.removeGesuch(gesuch.getId());
-
+		gesuchService.removeGesuch(gesuch2.getId());
 
 		//check all objects don't exist anymore
 		final Collection<Gesuch> gesuche = readGesucheAsAdmin();
@@ -138,6 +155,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertEquals(0, allDokGrundRemoved.size());
 		final Collection<GeneratedDokument> allGenDokRemoved = generatedDokumentService.findGeneratedDokumentsFromGesuch(gesuch);
 		Assert.assertEquals(0, allGenDokRemoved.size());
+		Collection<Zahlungsposition> zahlungspositionenRemoved = criteriaQueryHelper.getAll(Zahlungsposition.class);
+		Assert.assertEquals(0, zahlungspositionenRemoved.size());
 	}
 
 	@Test

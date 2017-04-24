@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Zahlung;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
 
@@ -72,7 +73,14 @@ public interface ZahlungService {
 	 */
 	Zahlung zahlungBestaetigen(String zahlungId);
 
-
+	/**
+	 * Gibt alle Zahlungsaufträge des übergebenen Zeitraums zurück.
+	 */
 	Collection<Zahlungsauftrag> getZahlungsauftraegeInPeriode(LocalDate von, @Nonnull LocalDate bis);
+
+	/**
+	 * Entfernt alle Zahlungspositionen des übergebenen Gesuchs
+	 */
+	void deleteZahlungspositionenOfGesuch(@Nonnull Gesuch gesuch);
 
 }
