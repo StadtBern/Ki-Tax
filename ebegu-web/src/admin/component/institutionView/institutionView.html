@@ -6,8 +6,6 @@
             </div>
 
             <form role="form" name="form" class="" unsaved-warning-form novalidate>
-                <fieldset ng-disabled="vm.isReadonly()">
-
                 <!--Tabelle zum anzeigen aller Institutionen-->
                 <div class="row">
                     <div class="col-md-12 table-responsive">
@@ -78,6 +76,7 @@
                 </div>
                 <!--hier wird die ausgewählte Institution angezeigt. (neue oder ausgewählte)
                 Nur sichtbar wenn eine Institution gewählt ist oder eine neue angelegt werden soll-->
+                <fieldset ng-disabled="vm.isReadonly()">
                 <div class="row">
                     <div class="col-md-12" ng-if="vm.isSelectedInstitution()">
                         <div class="form-group">
