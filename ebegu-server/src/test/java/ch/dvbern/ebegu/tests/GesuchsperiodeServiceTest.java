@@ -83,7 +83,11 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 
 	private Gesuchsperiode insertNewEntity(boolean active) {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createDefaultGesuchsperiode();
-		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
+		if (active) {
+			gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
+		} else {
+			gesuchsperiode.setStatus(GesuchsperiodeStatus.ENTWURF);
+		}
 		gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 		return gesuchsperiode;
 	}
