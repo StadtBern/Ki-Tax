@@ -71,9 +71,6 @@ public class GesuchResource {
 	private BenutzerService benutzerService;
 
 	@Inject
-	private GesuchsperiodeService gesuchsperiodeService;
-
-	@Inject
 	private PrincipalBean principalBean;
 
 	@Inject

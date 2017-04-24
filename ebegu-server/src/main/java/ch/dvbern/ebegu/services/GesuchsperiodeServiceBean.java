@@ -12,9 +12,10 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -40,6 +41,8 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @PermitAll
 public class GesuchsperiodeServiceBean extends AbstractBaseService implements GesuchsperiodeService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(GesuchsperiodeServiceBean.class.getSimpleName());
+
 	@Inject
 	private Persistence<Gesuchsperiode> persistence;
 
@@ -61,9 +64,10 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Nonnull
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull GesuchsperiodeStatus statusBisher) {
 		// Überprüfen, ob der Statusübergang zulässig ist
-		if (statusBisher != null && !gesuchsperiode.getStatus().equals(statusBisher)) {
+		if (!gesuchsperiode.getStatus().equals(statusBisher)) {
 			// Superadmin darf alles
 			if (!principalBean.isCallerInRole(UserRole.SUPER_ADMIN)) {
 				if (!isStatusUebergangValid(statusBisher, gesuchsperiode.getStatus())) {
@@ -73,6 +77,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 				// Nur wenn als JA-Admin. Superadmin kann die Periode auch "wiederöffnen", dann darf aber kein Mail mehr verschickt werden!
 				if (GesuchsperiodeStatus.AKTIV.equals(gesuchsperiode.getStatus())) {
 					// TODO (team): Mail schicken an Gesuchsteller
+					LOGGER.debug("Gesuchsperiode wurde aktiv gesetzt: " + gesuchsperiode.getGesuchsperiodeString() + ": Gesuchsteller informieren");
 				}
 				if (GesuchsperiodeStatus.GESCHLOSSEN.equals(gesuchsperiode.getStatus())) {
 					// Prüfen, dass ALLE Gesuche dieser Periode im Status "Verfügt" oder "Schulamt" sind. Sind noch

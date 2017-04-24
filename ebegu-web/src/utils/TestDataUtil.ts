@@ -20,6 +20,7 @@ import TSAdresse from '../models/TSAdresse';
 import TSGesuchstellerContainer from '../models/TSGesuchstellerContainer';
 import TSAdresseContainer from '../models/TSAdresseContainer';
 import Moment = moment.Moment;
+import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
 
 export default class TestDataUtil {
 
@@ -99,7 +100,7 @@ export default class TestDataUtil {
 
     public static createGesuchsperiode20162017(): TSGesuchsperiode {
         let gueltigkeit: TSDateRange = new TSDateRange(moment('01.07.2016', 'DD.MM.YYYY'), moment('31.08.2017', 'DD.MM.YYYY'));
-        return new TSGesuchsperiode(true, gueltigkeit);
+        return new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, gueltigkeit);
     }
 
     public static createTSAntragDTO(antragTyp: TSAntragTyp, eingangsdatum: Moment): TSAntragDTO {

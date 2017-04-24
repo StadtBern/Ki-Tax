@@ -29,7 +29,7 @@ describe('gesuchsperiodeRS', function () {
 
     beforeEach(() => {
         date = DateUtil.today();
-        mockGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(date, date));
+        mockGesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, new TSDateRange(date, date));
         TestDataUtil.setAbstractFieldsUndefined(mockGesuchsperiode);
         mockGesuchsperiodeRest = ebeguRestUtil.gesuchsperiodeToRestObject({}, mockGesuchsperiode);
     });
@@ -103,7 +103,7 @@ describe('gesuchsperiodeRS', function () {
         });
         describe('updateGesuchsperiode', () => {
             it('should update a gesuchsperiode', () => {
-                mockGesuchsperiode.active = false;
+                mockGesuchsperiode.status = TSGesuchsperiodeStatus.AKTIV;
                 mockGesuchsperiodeRest = ebeguRestUtil.gesuchsperiodeToRestObject({}, mockGesuchsperiode);
                 let updatedGesuchsperiode: TSGesuchsperiode;
                 $httpBackend.expectPUT(gesuchsperiodeRS.serviceURL, mockGesuchsperiodeRest).respond(mockGesuchsperiodeRest);
