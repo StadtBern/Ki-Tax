@@ -6,6 +6,8 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import TSAdresseContainer from '../../../models/TSAdresseContainer';
 import ITranslateService = angular.translate.ITranslateService;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
 require('./dv-adresse.less');
 
 export class AdresseComponentConfig implements IComponentOptions {
@@ -25,7 +27,7 @@ export class AdresseComponentConfig implements IComponentOptions {
 
 
 export class DvAdresseController {
-    static $inject = ['AdresseRS', 'ListResourceRS', 'GesuchModelManager', '$translate'];
+    static $inject = ['AdresseRS', 'ListResourceRS', 'GesuchModelManager', '$translate', 'AuthServiceRS'];
 
     adresse: TSAdresseContainer;
     prefix: string;
@@ -40,7 +42,8 @@ export class DvAdresseController {
     bisherLand: string;
 
     /* @ngInject */
-    constructor(adresseRS: AdresseRS, listResourceRS: ListResourceRS, gesuchModelManager: GesuchModelManager, $translate: ITranslateService) {
+    constructor(adresseRS: AdresseRS, listResourceRS: ListResourceRS, gesuchModelManager: GesuchModelManager,
+                $translate: ITranslateService, private authServiceRS: AuthServiceRS) {
         this.TSRoleUtil = TSRoleUtil;
         this.adresseRS = adresseRS;
         this.gesuchModelManager = gesuchModelManager;
@@ -69,17 +72,6 @@ export class DvAdresseController {
         return this.gesuchModelManager.isGesuchReadonly();
     }
 
-    /**
-     *
-     * @returns {boolean}
-     */
-    public disableWohnadresseFor2GS(): boolean {
-        return (this.prefix !== 'umzug')
-            && (this.gesuchModelManager.getGesuch().isMutation() && (this.gesuchModelManager.getGesuchstellerNumber() === 1
-            || (this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== null
-            && this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== undefined)));
-    }
-
     public showDatumVon(): boolean {
         return this.adresse.showDatumVon;
     }
@@ -95,5 +87,10 @@ export class DvAdresseController {
         return '';
     }
 
+    public enableNichtInGemeinde(): boolean {
+        return !this.isGesuchReadonly()
+            && isAtLeastFreigegeben(this.gesuchModelManager.getGesuch().status)
+            && this.authServiceRS.isOneOfRoles(TSRoleUtil.getAdministratorJugendamtRole());
+    }
 }
 
