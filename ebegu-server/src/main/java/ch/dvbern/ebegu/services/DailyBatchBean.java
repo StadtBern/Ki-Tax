@@ -49,14 +49,19 @@ public class DailyBatchBean implements DailyBatch {
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Future<Boolean> runBatchMahnungFristablauf() {
-		mahnungService.fristAblaufTimer();
-		AsyncResult<Boolean> booleanAsyncResult = new AsyncResult<>(Boolean.TRUE);
-		// Hier hat's evtl. einen Bug im Wildfly, koennte aber auch korrekt sein:
-		// Ohne dieses explizite Flush wird der EM erst so spaet geflusht,
-		// das der Request-Scope nicht mehr aktiv ist und somit das @RequestScoped PrincipalBean fuer die validierung
-		// vom Mandant nicht mehr zur Verfuegung steht.
-		persistence.getEntityManager().flush();
-		return booleanAsyncResult;
+		try {
+			mahnungService.fristAblaufTimer();
+			AsyncResult<Boolean> booleanAsyncResult = new AsyncResult<>(Boolean.TRUE);
+			// Hier hat's evtl. einen Bug im Wildfly, koennte aber auch korrekt sein:
+			// Ohne dieses explizite Flush wird der EM erst so spaet geflusht,
+			// das der Request-Scope nicht mehr aktiv ist und somit das @RequestScoped PrincipalBean fuer die validierung
+			// vom Mandant nicht mehr zur Verfuegung steht.
+			persistence.getEntityManager().flush();
+			return booleanAsyncResult;
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch-Job Fristablauf konnte nicht durchgefuehrt werden!", e);
+			return new AsyncResult<>(Boolean.FALSE);
+		}
 	}
 
 	@Override
