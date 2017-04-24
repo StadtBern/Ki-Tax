@@ -298,7 +298,7 @@
                                                      name="erweiterteBeduerfnisse"
                                                      aria-label="{{'ERWEITERTE_BEDUERFNISSE'|translate}}" dv-enable-element
                                                      dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                                                     dv-enable-expression="(vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus">
+                                                     dv-enable-expression="!vm.isGesuchReadonly() && ((vm.isBetreuungsstatusWarten() && !vm.isSavingData) || vm.isMutationsmeldungStatus)">
                                             <span data-translate="ERWEITERTE_BEDUERFNISSE"></span>
                                         </md-checkbox>
                                         <dv-error-messages

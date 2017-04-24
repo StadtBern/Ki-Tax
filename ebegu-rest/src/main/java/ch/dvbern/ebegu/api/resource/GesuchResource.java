@@ -415,14 +415,11 @@ public class GesuchResource {
 		final String antragId = converter.toEntityId(antragJaxId);
 		final String gesuchsperiodeId = converter.toEntityId(gesuchsperiodeJaxId);
 
-		Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
-		Optional<Gesuch> gesuchOptional = gesuchService.antragErneuern(antragId, eingangsdatum);
-
-		if (!gesuchOptional.isPresent() || !gesuchsperiodeOptional.isPresent()) {
+		Optional<Gesuch> gesuchOptional = gesuchService.antragErneuern(antragId, gesuchsperiodeId, eingangsdatum);
+		if (!gesuchOptional.isPresent()) {
 			return Response.noContent().build();
 		}
 		Gesuch mutationToReturn = gesuchService.createGesuch(gesuchOptional.get());
-		mutationToReturn.setGesuchsperiode(gesuchsperiodeOptional.get());
 		return Response.ok(converter.gesuchToJAX(mutationToReturn)).build();
 	}
 

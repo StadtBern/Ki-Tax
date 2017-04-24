@@ -110,7 +110,8 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
 
     public isGesuchsperiodeActive(): boolean {
         if (this.gesuchModelManager.getGesuchsperiode()) {
-            return TSGesuchsperiodeStatus.AKTIV === this.gesuchModelManager.getGesuchsperiode().status;
+            return TSGesuchsperiodeStatus.AKTIV === this.gesuchModelManager.getGesuchsperiode().status
+                || TSGesuchsperiodeStatus.INAKTIV === this.gesuchModelManager.getGesuchsperiode().status;
         } else {
             return true;
         }
@@ -137,5 +138,11 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             return this.$translate.instant('WEITER_ONLY_UPPER');
         }
         return this.$translate.instant('WEITER_UPPER');
+    }
+
+    public isSelectedGesuchsperiodeInaktiv(): boolean {
+        return this.getGesuchModel() && this.getGesuchModel().gesuchsperiode
+            && this.getGesuchModel().gesuchsperiode.status === TSGesuchsperiodeStatus.INAKTIV
+            && this.getGesuchModel().isNew();
     }
 }

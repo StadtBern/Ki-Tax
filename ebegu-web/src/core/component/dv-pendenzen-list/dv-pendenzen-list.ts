@@ -71,7 +71,10 @@ export class DVPendenzenListController {
     }
 
     public getAntragTypen(): Array<TSAntragTyp> {
-        return getTSAntragTypValues();
+        return [
+            TSAntragTyp.ERSTGESUCH,
+            TSAntragTyp.MUTATION
+        ];
     }
 
     /**

@@ -151,7 +151,10 @@ export class DVAntragListController {
     }
 
     public getAntragTypen(): Array<TSAntragTyp> {
-        return getTSAntragTypValues();
+        return [
+            TSAntragTyp.ERSTGESUCH,
+            TSAntragTyp.MUTATION
+        ];
     }
 
     /**
