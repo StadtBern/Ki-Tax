@@ -32,7 +32,7 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
         onVerantwortlicherChange: '&',
         fallid: '@',
         isDashboardScreen: '@',
-        hideMutationButton: '@'
+        hideActionButtons: '@'
     };
 
     template = templateX;
@@ -46,7 +46,7 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
         gesuchid: '@',
         fallid: '@',
         isDashboardScreen: '@',
-        hideMutationButton: '@'
+        hideActionButtons: '@'
     };
     template = templateGS;
     controller = GesuchToolbarController;
@@ -61,7 +61,7 @@ export class GesuchToolbarController {
     gesuchid: string;
     fallid: string;
     isDashboardScreen: boolean;
-    hideMutationButton: boolean;
+    hideActionButtons: boolean;
     TSRoleUtil: any;
 
     onVerantwortlicherChange: (attr: any) => void;
@@ -71,7 +71,7 @@ export class GesuchToolbarController {
     antragTypList: {[key: string]: TSAntragDTO} = {};
     mutierenPossibleForCurrentAntrag: boolean = false;
     erneuernPossibleForCurrentAntrag: boolean = false;
-    neuesteGesuchsperiode: TSGesuchsperiode;
+    neuesteGesuchsperiode: TSGesuchsperiode; //todo fragen podria ser un problema cuando haya 2 perioden abiertos?
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',

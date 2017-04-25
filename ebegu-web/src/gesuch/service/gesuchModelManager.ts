@@ -537,27 +537,22 @@ export default class GesuchModelManager {
      * @param fallId
      */
     public initMutation(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string): void {
-        this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
-            this.gesuch.gesuchsperiode = periode;
-        });
-        this.initAntrag(TSAntragTyp.MUTATION, eingangsart);
-        this.fallRS.findFall(fallId).then(foundFall => {
-            this.gesuch.fall = foundFall;
-        });
-        this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
-        if (TSEingangsart.ONLINE === eingangsart) {
-            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
-        } else {
-            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
-        }
-        this.gesuch.emptyCopy = true;
+        this.initCopyOfGesuch(gesuchID, eingangsart, gesuchsperiodeId, fallId, TSAntragTyp.MUTATION);
     }
 
+    /**
+     * Diese Methode erstellt ein Fake-Erneuerungsgesuch als gesuch fuer das GesuchModelManager. Das Gesuch ist noch leer und hat
+     * das ID des Gesuchs aus dem es erstellt wurde.
+     */
     public initErneuerungsgesuch(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
+        this.initCopyOfGesuch(gesuchID, eingangsart, gesuchsperiodeId, fallId, TSAntragTyp.ERNEUERUNGSGESUCH);
+    }
+
+    private initCopyOfGesuch(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string, antragTyp: TSAntragTyp): void {
         this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
             this.gesuch.gesuchsperiode = periode;
         });
-        this.initAntrag(TSAntragTyp.ERNEUERUNGSGESUCH, eingangsart);
+        this.initAntrag(antragTyp, eingangsart);
         this.fallRS.findFall(fallId).then(foundFall => {
             this.gesuch.fall = foundFall;
         });
