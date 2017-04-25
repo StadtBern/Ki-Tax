@@ -912,7 +912,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		if (gesuch.getEinkommensverschlechterungInfoContainer() != null) {
 			row.setEkvVorhanden(gesuch.getEinkommensverschlechterungInfoContainer().getEinkommensverschlechterungInfoJA().getEinkommensverschlechterung());
 		}
-		row.setStvGeprueft(Boolean.FALSE); //TODO (team) haben wir noch nicht
+		row.setStvGeprueft(gesuch.isGeprueftSTV());
 		row.setVeranlagt(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().getSteuerveranlagungErhalten());
 		// Kind
 		addKindToGesuchstellerKinderBetreuungDataRow(row, zeitabschnitt);

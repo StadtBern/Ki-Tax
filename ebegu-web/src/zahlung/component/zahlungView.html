@@ -14,14 +14,14 @@
                 <h3 data-translate="ZAHLUNG"></h3>
             </div>
             <div class="col-md-1 text-right">
-                <h3 ng-bind="vm.getZahlungsauftrag().zahlungen ? vm.getZahlungsauftrag().zahlungen.length : 0"></h3>
+                <h3 ng-bind="vm.zahlungen ? vm.zahlungen.length : 0"></h3>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-safe-src="vm.getZahlungsauftrag().zahlungen"
+                <table st-table="displayedCollection" st-safe-src="vm.zahlungen"
                        st-delay="20"
                        class="table fixedtable table-striped">
                     <thead>
