@@ -13,6 +13,8 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -31,17 +33,22 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     // showError ist ein Hack damit, die Fehlermeldung fuer die Checkboxes nicht direkt beim Laden der Seite angezeigt wird
     // sondern erst nachdem man auf ein checkbox oder auf speichern geklickt hat
     showError: boolean = false;
+    private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
-        'WizardStepManager', '$translate', '$q', '$scope', 'AuthServiceRS'];
+        'WizardStepManager', '$translate', '$q', '$scope', 'AuthServiceRS', 'GesuchsperiodeRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
-                private $translate: ITranslateService, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS) {
+                private $translate: ITranslateService, private $q: IQService, $scope: IScope, private authServiceRS: AuthServiceRS,
+                private gesuchsperiodeRS: GesuchsperiodeRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.GESUCH_ERSTELLEN);
+        this.TSRoleUtil = TSRoleUtil;
+    }
+
+    $onInit() {
         this.readStateParams();
         this.initViewModel();
-        this.TSRoleUtil = TSRoleUtil;
     }
 
     private readStateParams() {
@@ -62,9 +69,9 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             }
         }
 
-        if (!this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
-            this.gesuchModelManager.updateActiveGesuchsperiodenList();
-        }
+        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: TSGesuchsperiode[]) => {
+            this.activeGesuchsperiodenList = angular.copy(response);
+        });
     }
 
     save(): IPromise<TSGesuch> {
@@ -91,7 +98,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     public getAllActiveGesuchsperioden() {
-        return this.gesuchModelManager.getAllActiveGesuchsperioden();
+        return this.activeGesuchsperiodenList;
     }
 
     public setSelectedGesuchsperiode(): void {

@@ -72,7 +72,6 @@ export default class GesuchModelManager {
     private betreuungIndex: number;
     private fachstellenList: Array<TSFachstelle>;
     private activInstitutionenList: Array<TSInstitutionStammdaten>;
-    private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
     ewkResultatGS1: TSEWKResultat;
     ewkResultatGS2: TSEWKResultat;
@@ -99,7 +98,6 @@ export default class GesuchModelManager {
             this.log.debug('Cleared gesuch on logout');
         });
     }
-
 
     /**
      * Je nach dem welche Rolle der Benutzer hat, wird das Gesuch aus der DB anders geholt.
@@ -232,12 +230,6 @@ export default class GesuchModelManager {
     public updateActiveInstitutionenList(): void {
         this.instStamRS.getAllActiveInstitutionStammdatenByDate(DateUtil.today()).then((response: TSInstitutionStammdaten[]) => {
             this.activInstitutionenList = response;
-        });
-    }
-
-    public updateActiveGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
-            this.activeGesuchsperiodenList = angular.copy(response);
         });
     }
 
@@ -411,14 +403,6 @@ export default class GesuchModelManager {
             this.updateActiveInstitutionenList();
         }
         return this.activInstitutionenList;
-    }
-
-    public getAllActiveGesuchsperioden(): Array<TSGesuchsperiode> {
-        if (this.activeGesuchsperiodenList === undefined) {
-            this.activeGesuchsperiodenList = []; // init empty while we wait for promise
-            this.updateActiveGesuchsperiodenList();
-        }
-        return this.activeGesuchsperiodenList;
     }
 
     public getStammdatenToWorkWith(): TSGesuchstellerContainer {
