@@ -1,11 +1,13 @@
 export enum TSAntragTyp {
-    GESUCH = <any> 'GESUCH',
-    MUTATION = <any> 'MUTATION'
+    ERSTGESUCH = <any> 'ERSTGESUCH',
+    MUTATION = <any> 'MUTATION',
+    ERNEUERUNGSGESUCH = <any> 'ERNEUERUNGSGESUCH'
 }
 
 export function getTSAntragTypValues(): Array<TSAntragTyp> {
     return [
-        TSAntragTyp.GESUCH,
-        TSAntragTyp.MUTATION
+        TSAntragTyp.ERSTGESUCH,
+        TSAntragTyp.MUTATION,
+        TSAntragTyp.ERNEUERUNGSGESUCH
     ];
 }

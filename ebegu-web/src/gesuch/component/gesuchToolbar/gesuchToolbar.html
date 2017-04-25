@@ -86,10 +86,20 @@
             <!-- Mutieren -->
             <div dv-show-element
                  dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtRoles()"
-                 dv-show-expression="vmx.mutierenPossibleForCurrentAntrag && !vmx.hideMutationButton">
+                 dv-show-expression="vmx.mutierenPossibleForCurrentAntrag && !vmx.hideActionButtons">
                 <button ng-click="vmx.antragMutieren()"
                         aria-label="{{'TOOLBAR_MUTIEREN' | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_MUTIEREN"></span>
+                </button>
+            </div>
+
+            <!-- Erneuerungsgesuch erstellen -->
+            <div dv-show-element
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                 dv-show-expression="vmx.erneuernPossibleForCurrentAntrag && !vmx.hideActionButtons">
+                <button ng-click="vmx.antragErneuern()"
+                        aria-label="{{'TOOLBAR_ERNEUERN' | translate}}" style="text-align: center;">
+                    <span data-translate="TOOLBAR_ERNEUERN"></span>
                 </button>
             </div>
 

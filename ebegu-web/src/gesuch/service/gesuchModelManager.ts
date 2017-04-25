@@ -480,7 +480,7 @@ export default class GesuchModelManager {
      */
     public initGesuch(forced: boolean, eingangsart: TSEingangsart) {
         if (forced || (!forced && !this.gesuch)) {
-            this.initAntrag(TSAntragTyp.GESUCH, eingangsart);
+            this.initAntrag(TSAntragTyp.ERSTGESUCH, eingangsart);
         }
         this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch());
     }
@@ -537,10 +537,22 @@ export default class GesuchModelManager {
      * @param fallId
      */
     public initMutation(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string): void {
+        this.initCopyOfGesuch(gesuchID, eingangsart, gesuchsperiodeId, fallId, TSAntragTyp.MUTATION);
+    }
+
+    /**
+     * Diese Methode erstellt ein Fake-Erneuerungsgesuch als gesuch fuer das GesuchModelManager. Das Gesuch ist noch leer und hat
+     * das ID des Gesuchs aus dem es erstellt wurde.
+     */
+    public initErneuerungsgesuch(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
+        this.initCopyOfGesuch(gesuchID, eingangsart, gesuchsperiodeId, fallId, TSAntragTyp.ERNEUERUNGSGESUCH);
+    }
+
+    private initCopyOfGesuch(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string, antragTyp: TSAntragTyp): void {
         this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
             this.gesuch.gesuchsperiode = periode;
         });
-        this.initAntrag(TSAntragTyp.MUTATION, eingangsart);
+        this.initAntrag(antragTyp, eingangsart);
         this.fallRS.findFall(fallId).then(foundFall => {
             this.gesuch.fall = foundFall;
         });
@@ -550,7 +562,7 @@ export default class GesuchModelManager {
         } else {
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
         }
-        this.gesuch.emptyMutation = true;
+        this.gesuch.emptyCopy = true;
     }
 
     private initAntrag(antragTyp: TSAntragTyp, eingangsart: TSEingangsart): void {
@@ -1219,15 +1231,25 @@ export default class GesuchModelManager {
      * Gibt true zurueck, wenn der Antrag ein Erstgesuchist. False bekommt man wenn der Antrag eine Mutation ist
      * By default (beim Fehler oder leerem Gesuch) wird auch true zurueckgegeben
      */
-    public isErstgesuch(): boolean {
+    public isGesuch(): boolean {
         if (this.gesuch) {
-            return this.gesuch.typ === TSAntragTyp.GESUCH;
+            return this.gesuch.typ === TSAntragTyp.ERSTGESUCH || this.gesuch.typ === TSAntragTyp.ERNEUERUNGSGESUCH;
         }
         return true;
     }
 
     public saveMutation(): IPromise<TSGesuch> {
         return this.gesuchRS.antragMutieren(this.gesuch.id, this.gesuch.eingangsdatum)
+            .then((response: TSGesuch) => {
+                this.setGesuch(response);
+                return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {
+                    return this.getGesuch();
+                });
+            });
+    }
+
+    public saveErneuerungsgesuch(): IPromise<TSGesuch> {
+        return this.gesuchRS.antragErneuern(this.gesuch.gesuchsperiode.id, this.gesuch.id, this.gesuch.eingangsdatum)
             .then((response: TSGesuch) => {
                 this.setGesuch(response);
                 return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {

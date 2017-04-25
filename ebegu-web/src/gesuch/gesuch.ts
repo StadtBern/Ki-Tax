@@ -19,6 +19,7 @@ import GesuchstellerRS from '../core/service/gesuchstellerRS.rest';
 import {ILogService, IRootScopeService} from '@types/angular';
 import TSEWKResultat from '../models/TSEWKResultat';
 import {TSGesuchEvent} from '../models/enums/TSGesuchEvent';
+import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 
 export class GesuchRouteController {
 
@@ -185,13 +186,15 @@ export class GesuchRouteController {
     }
 
     public getGesuchErstellenStepTitle(): string {
-        if (this.gesuchModelManager.isErstgesuch()) {
+        if (this.gesuchModelManager.isGesuch()) {
             if (this.getDateFromGesuch()) {
-                return this.$translate.instant('MENU_ERSTGESUCH_VOM', {
+                let key = (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) ? 'MENU_ERNEUERUNGSGESUCH_VOM' : 'MENU_ERSTGESUCH_VOM';
+                return this.$translate.instant(key, {
                     date: this.getDateFromGesuch()
                 });
             } else {
-                return this.$translate.instant('MENU_ERSTGESUCH');
+                let key = (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) ? 'MENU_ERNEUERUNGSGESUCH' : 'MENU_ERSTGESUCH';
+                return this.$translate.instant(key);
             }
         } else {
             if (this.getDateFromGesuch()) {

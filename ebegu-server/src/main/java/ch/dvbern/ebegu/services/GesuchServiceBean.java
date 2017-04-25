@@ -598,6 +598,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	@Nonnull
 	public List<String> getAllGesuchIDsForFall(String fallId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<String> query = cb.createQuery(String.class);
@@ -630,34 +631,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		query.where(fallPredicate, gesuchsperiodePredicate);
 		return persistence.getCriteriaResults(query);
-	}
-
-	@Override
-	public void updateLaufnummerOfAllGesucheOfFall(String fallId) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-		Root<Gesuch> root = query.from(Gesuch.class);
-		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
-		Predicate predicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
-		query.where(predicate);
-		query.orderBy(cb.asc(root.get(Gesuch_.timestampErstellt)));
-		TypedQuery<Gesuch> q = persistence.getEntityManager().createQuery(query);
-		q.setParameter(fallIdParam, fallId);
-		List<Gesuch> resultList = q.getResultList();
-
-		//Laufnummern einfuegen
-		if (!resultList.isEmpty()) {
-			int i = 0;
-			for (Gesuch gesuch : resultList) {
-				if (gesuch.getTyp() == AntragTyp.GESUCH) {
-					gesuch.setLaufnummer(0);
-				} else {
-					i++;
-					gesuch.setLaufnummer(i);
-				}
-				updateGesuch(gesuch, false);
-			}
-		}
 	}
 
 	@Override
@@ -776,10 +749,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN,
-		UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
-	public Optional<Gesuch> antragMutieren(@Nonnull String antragId,
-										   @Nullable LocalDate eingangsdatum) {
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
+	public Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nullable LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
@@ -794,7 +765,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen " + antragId, antragId);
 		}
-
 	}
 
 	@Override
@@ -836,22 +806,58 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return !criteriaResults.isEmpty();
 	}
 
-	private Optional<Gesuch> getGesuchMutation(@Nullable LocalDate eingangsdatum, Gesuch gesuchForMutation) {
-		if (gesuchForMutation != null) {
-			Eingangsart eingangsart;
-			if (this.principalBean.isCallerInRole(UserRole.GESUCHSTELLER)) {
-				eingangsart = Eingangsart.ONLINE;
-			} else {
-				eingangsart = Eingangsart.PAPIER;
-			}
-			Gesuch mutation = gesuchForMutation.copyForMutation(new Gesuch(), eingangsart);
-			if (eingangsdatum != null) {
-				mutation.setEingangsdatum(eingangsdatum);
-			}
-			return Optional.of(mutation);
-		} else {
-			throw new EbeguRuntimeException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen ");
+	private Optional<Gesuch> getGesuchMutation(@Nullable LocalDate eingangsdatum, @Nonnull Gesuch gesuchForMutation) {
+		Eingangsart eingangsart = calculateEingangsart();
+		Gesuch mutation = gesuchForMutation.copyForMutation(new Gesuch(), eingangsart);
+		if (eingangsdatum != null) {
+			mutation.setEingangsdatum(eingangsdatum);
 		}
+		return Optional.of(mutation);
+	}
+
+	@Nonnull
+	private Eingangsart calculateEingangsart() {
+		Eingangsart eingangsart;
+		if (this.principalBean.isCallerInRole(UserRole.GESUCHSTELLER)) {
+			eingangsart = Eingangsart.ONLINE;
+		} else {
+			eingangsart = Eingangsart.PAPIER;
+		}
+		return eingangsart;
+	}
+
+	@Override
+	@Nonnull
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
+	public Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nullable LocalDate eingangsdatum) {
+		Optional<Gesuch> gesuch = findGesuch(antragId);
+		if (gesuch.isPresent()) {
+			List<Gesuch> allGesucheForFallAndPeriod = getAllGesucheForFallAndPeriod(gesuch.get().getFall(), gesuch.get().getGesuchsperiode());
+			// todo fragen !isEmpty() ???? ist immer noch die alte Periode...
+			// todo fragen fehler beim Speichern
+			if (allGesucheForFallAndPeriod.isEmpty()) {
+				authorizer.checkWriteAuthorization(gesuch.get());
+				Optional<Gesuch> gesuchForErneuerungOpt = getNeustesGesuchFuerGesuch(gesuch.get());
+				Gesuch gesuchForErneuerung = gesuchForErneuerungOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragErneuern", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
+				return getErneuerungsgesuch(eingangsdatum, gesuchForErneuerung);
+			} else {
+				throw new EbeguRuntimeException("antragErneuern", ErrorCodeEnum.ERROR_EXISTING_ERNEUERUNGSGESUCH);
+			}
+
+		} else {
+			throw new EbeguEntityNotFoundException("antragErneuern", "Es existiert kein Antrag mit ID, kann kein Erneuerungsgesuch erstellen " + antragId, antragId);
+		}
+	}
+
+	private Optional<Gesuch> getErneuerungsgesuch(@Nullable LocalDate eingangsdatum, @Nonnull Gesuch gesuchForErneuerung) {
+		Eingangsart eingangsart = calculateEingangsart();
+		//TODO (hefr) Vorerst wird das ganze Gesuch analog Mutation kopiert, wird in spaeterem Task umgesetzt
+		Gesuch erneuerungsgesuch = gesuchForErneuerung.copyForMutation(new Gesuch(), eingangsart);
+		erneuerungsgesuch.setTyp(AntragTyp.ERNEUERUNGSGESUCH);
+		if (eingangsdatum != null) {
+			erneuerungsgesuch.setEingangsdatum(eingangsdatum);
+		}
+		return Optional.of(erneuerungsgesuch);
 	}
 
 	@Override
