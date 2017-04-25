@@ -265,7 +265,7 @@ export default class WizardStepManager {
         let step: TSWizardStep = this.getStepByName(stepName);
         if (step !== undefined) {
             return (this.isStepClickableForCurrentRole(step, gesuch)
-            || (gesuch.typ === TSAntragTyp.GESUCH && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT
+            || ((gesuch.typ === TSAntragTyp.ERSTGESUCH || gesuch.typ === TSAntragTyp.ERNEUERUNGSGESUCH) && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT
             && !(this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles()) && stepName === TSWizardStepName.VERFUEGEN))
             || (gesuch.typ === TSAntragTyp.MUTATION && step.wizardStepName === TSWizardStepName.FAMILIENSITUATION));
         }

@@ -57,7 +57,7 @@ public class PendenzResourceTest extends AbstractEbeguRestLoginTest {
 		angeboteList.add(BetreuungsangebotTyp.KITA);
 		Assert.assertEquals(angeboteList, pendenzenList.get(0).getAngebote());
 
-		Assert.assertEquals(AntragTyp.GESUCH, pendenzenList.get(0).getAntragTyp());
+		Assert.assertEquals(AntragTyp.ERSTGESUCH, pendenzenList.get(0).getAntragTyp());
 
 		Set<String> institutionen = new LinkedHashSet<>();
 		institutionen.add("Institution1");

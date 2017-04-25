@@ -26,12 +26,12 @@ describe('pendenzFilter', function () {
         gesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(ab, bis));
 
         pendenzArray = [];
-        pendenz1 = new TSAntragDTO('id1', 1, 'Hernandez', TSAntragTyp.GESUCH, ab, ab,
+        pendenz1 = new TSAntragDTO('id1', 1, 'Hernandez', TSAntragTyp.ERSTGESUCH, ab, ab,
             [TSBetreuungsangebotTyp.KITA], ['Instit1'], 'Juan Arbolado', TSAntragStatus.IN_BEARBEITUNG_JA,
             gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         pendenzArray.push(pendenz1);
 
-        pendenz2 = new TSAntragDTO('id2', 2, 'Perez', TSAntragTyp.GESUCH, ab, ab,
+        pendenz2 = new TSAntragDTO('id2', 2, 'Perez', TSAntragTyp.ERSTGESUCH, ab, ab,
             [TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit2'], 'Antonio Jimenez', TSAntragStatus.IN_BEARBEITUNG_JA,
             gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         pendenzArray.push(pendenz2);
@@ -58,7 +58,7 @@ describe('pendenzFilter', function () {
             expect(pendenzFilter(pendenzArray, {familienName: 'rrr'})).toEqual([]); // no familienname with this pattern
         });
         it('should return an array with only the elements of the given antragTyp', function () {
-            expect(pendenzFilter(pendenzArray, {antragTyp: TSAntragTyp.GESUCH})).toEqual([pendenz1, pendenz2]);
+            expect(pendenzFilter(pendenzArray, {antragTyp: TSAntragTyp.ERSTGESUCH})).toEqual([pendenz1, pendenz2]);
             expect(pendenzFilter(pendenzArray, {antragTyp: TSAntragTyp.MUTATION})).toEqual([pendenz3]);
             expect(pendenzFilter(pendenzArray, {antragTyp: ''})).toEqual([pendenz1, pendenz2, pendenz3]); // empty string returns all elements
             expect(pendenzFilter(pendenzArray, {antragTyp: 'error'})).toEqual([]);

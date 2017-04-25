@@ -143,9 +143,9 @@ FROM kind_container
 
   LEFT OUTER JOIN (
                     SELECT
-                      CASE WHEN eingangsart = 'ONLINE' AND typ = 'GESUCH'
+                      CASE WHEN eingangsart = 'ONLINE' AND (typ = 'ERSTGESUCH' OR typ = 'ERNEUERUNGSGESUCH')
                         THEN 1 END AnzahlGesuchOnline,
-                      CASE WHEN eingangsart = 'PAPIER' AND typ = 'GESUCH'
+                      CASE WHEN eingangsart = 'PAPIER' AND (typ = 'ERSTGESUCH' OR typ = 'ERNEUERUNGSGESUCH')
                         THEN 1 END AnzahlGesuchPapier,
                       CASE WHEN eingangsart = 'ONLINE' AND typ = 'MUTATION'
                         THEN 1 END AnzahlMutationOnline,

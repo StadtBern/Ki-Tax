@@ -83,12 +83,16 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
                 return this.$q.when(this.gesuchModelManager.getGesuch());
             }
             this.errorService.clearAll();
-            if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.MUTATION && this.gesuchModelManager.getGesuch().isNew()) {
-                this.berechnungsManager.clear();
-                return this.gesuchModelManager.saveMutation();
-            } else {
-                return this.gesuchModelManager.saveGesuchAndFall();
+            if (this.gesuchModelManager.getGesuch().isNew()) {
+                if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.MUTATION) {
+                    this.berechnungsManager.clear();
+                    return this.gesuchModelManager.saveMutation();
+                } else if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) {
+                    this.berechnungsManager.clear();
+                    return this.gesuchModelManager.saveErneuerungsgesuch();
+                }
             }
+            return this.gesuchModelManager.saveGesuchAndFall();
         }
         return undefined;
     }
@@ -119,13 +123,15 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     public getTitle(): string {
-        if (this.gesuchModelManager.isErstgesuch()) {
+        if (this.gesuchModelManager.isGesuch()) {
             if (this.gesuchModelManager.isGesuchSaved() && this.gesuchModelManager.getGesuchsperiode()) {
-                return this.$translate.instant('KITAX_ERSTGESUCH_PERIODE', {
+                let key = (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) ? 'KITAX_ERNEUERUNGSGESUCH_PERIODE' : 'KITAX_ERSTGESUCH_PERIODE';
+                return this.$translate.instant(key, {
                     periode: this.gesuchModelManager.getGesuchsperiode().gesuchsperiodeString
                 });
             } else {
-                return this.$translate.instant('KITAX_ERSTGESUCH');
+                let key = (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) ? 'KITAX_ERNEUERUNGSGESUCH' : 'KITAX_ERSTGESUCH';
+                return this.$translate.instant(key);
             }
         } else {
             return this.$translate.instant('ART_DER_MUTATION');

@@ -33,7 +33,7 @@ describe('wizardStepManager', function () {
     }));
 
     beforeEach(() => {
-        gesuchAntrag.typ = TSAntragTyp.GESUCH;
+        gesuchAntrag.typ = TSAntragTyp.ERSTGESUCH;
     });
 
     describe('construct the object', function() {

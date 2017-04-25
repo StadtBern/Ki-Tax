@@ -5,11 +5,12 @@ package ch.dvbern.ebegu.enums;
  */
 public enum AntragTyp {
 
-	GESUCH,
-	MUTATION;
+	ERSTGESUCH,
+	MUTATION,
+	ERNEUERUNGSGESUCH;
 
 	public boolean isGesuch() {
-		return GESUCH.equals(this);
+		return ERSTGESUCH.equals(this) || ERNEUERUNGSGESUCH.equals(this);
 	}
 
 	public boolean isMutation() {

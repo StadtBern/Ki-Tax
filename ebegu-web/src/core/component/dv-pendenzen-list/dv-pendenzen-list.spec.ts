@@ -85,7 +85,7 @@ describe('DVPendenzenList', function () {
     });
 
     function mockGetPendenzenList(): TSAntragDTO {
-        let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.GESUCH,
+        let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.ERSTGESUCH,
             undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
         let result: Array<TSAntragDTO> = [mockPendenz];
         spyOn(pendenzRS, 'getPendenzenList').and.returnValue($q.when(result));

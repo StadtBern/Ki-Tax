@@ -19,7 +19,8 @@ public class ReportServiceBeanSimpleTest {
 	public void testGesuchZeitraumQueryAssumptions() {
 		Assert.assertEquals("ONLINE", Eingangsart.ONLINE.name());
 		Assert.assertEquals("PAPIER", Eingangsart.PAPIER.name());
-		Assert.assertEquals("GESUCH", AntragTyp.GESUCH.name());
+		Assert.assertEquals("ERSTGESUCH", AntragTyp.ERSTGESUCH.name());
+		Assert.assertEquals("ERNEUERUNGSGESUCH", AntragTyp.ERNEUERUNGSGESUCH.name());
 		Assert.assertEquals("MUTATION", AntragTyp.MUTATION.name());
 
 		Assert.assertEquals("ABWESENHEIT", WizardStepName.ABWESENHEIT.name());
