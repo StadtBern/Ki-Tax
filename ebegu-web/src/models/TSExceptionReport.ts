@@ -1,5 +1,6 @@
 import {TSErrorType} from './enums/TSErrorType';
 import {TSErrorLevel} from './enums/TSErrorLevel';
+import {TSErrorAction} from './enums/TSErrorAction';
 
 export default class TSExceptionReport {
 
@@ -19,6 +20,8 @@ export default class TSExceptionReport {
     // fields for ViolationReports
     private _path: string;
 
+    private _action: TSErrorAction = undefined;
+
 
     /**
      *
@@ -32,6 +35,7 @@ export default class TSExceptionReport {
         this._severity = severity || null;
         this._msgKey = msgKey || null;
         this._argumentList = args || [];
+        this._action = undefined;
     }
 
 
@@ -146,6 +150,14 @@ export default class TSExceptionReport {
 
     set path(value: string) {
         this._path = value;
+    }
+
+    get action(): TSErrorAction {
+        return this._action;
+    }
+
+    set action(value: TSErrorAction) {
+        this._action = value;
     }
 
     public static createFromViolation(constraintType: string, message: string, path: string, value: string): TSExceptionReport {
