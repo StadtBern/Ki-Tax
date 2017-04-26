@@ -327,7 +327,7 @@ public final class TestDataUtil {
 		Betreuung betreuung = new Betreuung();
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
-		betreuung.setBetreuungspensumContainers(new HashSet<>());
+		betreuung.setBetreuungspensumContainers(new TreeSet<>());
 		betreuung.setAbwesenheitContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
 		return betreuung;
@@ -597,8 +597,7 @@ public final class TestDataUtil {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1718(), institutionStammdatenList);
 
-		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
-		return gesuch;
+		return persistAllEntities(persistence, eingangsdatum, testfall);
 	}
 
 	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
@@ -608,8 +607,7 @@ public final class TestDataUtil {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
 		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1718(), institutionStammdatenList);
 
-		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
-		return gesuch;
+		return persistAllEntities(persistence, eingangsdatum, testfall);
 	}
 
 
