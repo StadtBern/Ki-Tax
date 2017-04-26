@@ -1173,7 +1173,7 @@ export default class GesuchModelManager {
      * checks if the gesuch is readonly for a given role based on its state
      */
     private isGesuchReadonlyForRole(): boolean {
-        let periodeReadonly: boolean = this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN;
+        let periodeReadonly: boolean = this.isGesuchsperiodeReadonly();
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles())) {
             return true;  // schulamt hat immer nur readonly zugriff
         } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
@@ -1181,6 +1181,10 @@ export default class GesuchModelManager {
             return gesuchReadonly || periodeReadonly;
         }
         return periodeReadonly;
+    }
+
+    public isGesuchsperiodeReadonly(): boolean {
+        return this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN;
     }
 
     /**
