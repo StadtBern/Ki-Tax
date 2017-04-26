@@ -132,6 +132,7 @@ export class ParameterViewController extends AbstractAdminViewController {
                 });
             });
             this.gesuchsperiodeRS.updateActiveGesuchsperiodenList(); //reset gesuchperioden in manager
+            this.gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
         });
     }
 
@@ -166,6 +167,7 @@ export class ParameterViewController extends AbstractAdminViewController {
         }
         this.globalCacheService.getCache(TSCacheTyp.EBEGU_PARAMETER).removeAll();
         this.gesuchsperiodeRS.updateActiveGesuchsperiodenList();
+        this.gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
         this.gesuchsperiode = undefined;
     }
 

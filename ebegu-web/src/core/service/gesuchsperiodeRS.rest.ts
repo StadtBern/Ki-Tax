@@ -9,6 +9,7 @@ export default class GesuchsperiodeRS {
     log: ILogService;
 
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
+    private nichtAbgeschlosseneGesuchsperiodenList: Array<TSGesuchsperiode>;
 
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', '$q'];
     /* @ngInject */
@@ -78,9 +79,19 @@ export default class GesuchsperiodeRS {
         });
     }
 
-    public getAllNichtAbgeschlosseneGesuchsperioden(): IPromise<TSGesuchsperiode[]> {
+    public updateNichtAbgeschlosseneGesuchsperiodenList(): IPromise<TSGesuchsperiode[]> {
         return this.http.get(this.serviceURL + '/unclosed').then((response: any) => {
-            return this.ebeguRestUtil.parseGesuchsperioden(response.data);
+            let gesuchsperioden: TSGesuchsperiode[] = this.ebeguRestUtil.parseGesuchsperioden(response.data);
+            return this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(gesuchsperioden);
         });
+    }
+
+    public getAllNichtAbgeschlosseneGesuchsperioden(): IPromise<TSGesuchsperiode[]> {
+        if (!this.nichtAbgeschlosseneGesuchsperiodenList || this.nichtAbgeschlosseneGesuchsperiodenList.length <= 0) { // if the list is empty, reload it
+            return this.updateNichtAbgeschlosseneGesuchsperiodenList().then(() => {
+                return this.nichtAbgeschlosseneGesuchsperiodenList;
+            });
+        }
+        return this.$q.when(this.nichtAbgeschlosseneGesuchsperiodenList); // we need to return a promise
     }
 }

@@ -34,7 +34,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     // showError ist ein Hack damit, die Fehlermeldung fuer die Checkboxes nicht direkt beim Laden der Seite angezeigt wird
     // sondern erst nachdem man auf ein checkbox oder auf speichern geklickt hat
     showError: boolean = false;
-    private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
+    private nichtAbgeschlosseneGesuchsperiodenList: Array<TSGesuchsperiode>;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
         'WizardStepManager', '$translate', '$q', '$scope', 'AuthServiceRS', 'GesuchsperiodeRS'];
@@ -70,8 +70,8 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             }
         }
 
-        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: TSGesuchsperiode[]) => {
-            this.activeGesuchsperiodenList = angular.copy(response);
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: TSGesuchsperiode[]) => {
+            this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(response);
         });
     }
 
@@ -103,7 +103,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     public getAllActiveGesuchsperioden() {
-        return this.activeGesuchsperiodenList;
+        return this.nichtAbgeschlosseneGesuchsperiodenList;
     }
 
     public setSelectedGesuchsperiode(): void {

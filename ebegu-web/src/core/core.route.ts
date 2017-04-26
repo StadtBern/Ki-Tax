@@ -61,6 +61,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         }
         //since we will need these lists anyway we already load on login
         gesuchsperiodeRS.updateActiveGesuchsperiodenList();
+        gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
         gesuchModelManager.updateFachstellenList();
         gesuchModelManager.updateActiveInstitutionenList();
     });
