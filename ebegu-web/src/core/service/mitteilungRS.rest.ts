@@ -11,6 +11,7 @@ import TSBetreuungsmitteilung from '../../models/TSBetreuungsmitteilung';
 import TSBetreuungspensum from '../../models/TSBetreuungspensum';
 import ITranslateService = angular.translate.ITranslateService;
 import DateUtil from '../../utils/DateUtil';
+import TSBetreuungspensumContainer from '../../models/TSBetreuungspensumContainer';
 
 export default class MitteilungRS {
     serviceURL: string;
@@ -195,9 +196,15 @@ export default class MitteilungRS {
     private createNachrichtForMutationsmeldung(betreuung: TSBetreuung): string {
         let message: string = '';
         let i: number = 1;
-        betreuung.betreuungspensumContainers.forEach(betpenContainer => {
+        let betreuungspensumContainers: Array<TSBetreuungspensumContainer> = angular.copy(betreuung.betreuungspensumContainers); // to avoid changing something
+        betreuungspensumContainers
+            .sort(
+                (a: TSBetreuungspensumContainer, b: TSBetreuungspensumContainer) => {
+                    return DateUtil.compareDateTime(a.betreuungspensumJA.gueltigkeit.gueltigAb, b.betreuungspensumJA.gueltigkeit.gueltigAb);
+                }
+            ).forEach(betpenContainer => {
             if (betpenContainer.betreuungspensumJA) {
-                // Pensum 1 vom 1.8.2017: 80%
+                // z.B. -> Pensum 1 vom 1.8.2017 bis 31.07.2018: 80%
                 if (i > 1) {
                     message += '\n';
                 }
