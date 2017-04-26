@@ -12,6 +12,7 @@ import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
@@ -72,6 +73,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
+	@SortNatural
 	private Set<BetreuungspensumContainer> betreuungspensumContainers = new TreeSet<>();
 
 	@Valid

@@ -83,9 +83,9 @@ public final class RestUtil {
         String filename = fileMetadata.getFilename();
         //Prepare Headerfield Content-Disposition:
 		//we want percantage-encoding instead of url-encoding (spaces are %20 in percentage encoding but + in url-encoding)
-		String isoEncodedFilename = URLEncoder.encode(filename, "ISO-8859-1").replace("+", "%20");
+		String isoEncodedFilename = URLEncoder.encode(filename, "ISO-8859-1").replace("+", "%20"); //percantage encoding mit utf-8 und %20 fuer space statt +
 		// because of a bug in chrome, we replace all commas in filename
-		String utfEncodedFilename = UrlEscapers.urlFragmentEscaper().escape(filename.replace(",", "")); //percantage encoding mit utf-8 und %20 fuer space statt +
+		String utfEncodedFilename = UrlEscapers.urlFragmentEscaper().escape(filename).replace(",", "");
 		String simpleFilename = "filename=\"" + isoEncodedFilename + "\"; "; //iso8859-1 (default) filename for old browsers
 		String filenameStarParam = "filename*=UTF-8''" + utfEncodedFilename;   //utf-8 url encoded filename https://tools.ietf.org/html/rfc5987
 		String disposition = (attachment ? "attachment; " : "inline;") + simpleFilename + filenameStarParam;

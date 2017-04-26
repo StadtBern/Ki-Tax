@@ -42,6 +42,9 @@ export class GesuchstellerDashboardListViewController {
                 private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil,
                 private gesuchsperiodeRS: GesuchsperiodeRS, private fallRS: FallRS, private $translate: ITranslateService,
                 private mitteilungRS: MitteilungRS) {
+    }
+
+    $onInit() {
         this.initViewModel();
     }
 
@@ -78,7 +81,7 @@ export class GesuchstellerDashboardListViewController {
     }
 
     private updateActiveGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
+        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: TSGesuchsperiode[]) => {
             this._activeGesuchsperiodenList = angular.copy(response);
         });
     }

@@ -710,12 +710,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	public Gesuch setBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch) {
 		final List<Gesuch> allGesucheForFall = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuch.getGesuchsperiode());
-		allGesucheForFall.iterator().forEachRemaining(gesuch1 -> {
-			if (gesuch.equals(gesuch1)) {
-				gesuch1.setStatus(AntragStatus.BESCHWERDE_HAENGIG);
+		allGesucheForFall.iterator().forEachRemaining(gesuchLoop -> {
+			if (gesuch.equals(gesuchLoop)) {
+				gesuchLoop.setStatus(AntragStatus.BESCHWERDE_HAENGIG);
+				updateGesuch(gesuchLoop, true);
 			}
-			gesuch1.setGesperrtWegenBeschwerde(true);
-			updateGesuch(gesuch1, true);
+			gesuchLoop.setGesperrtWegenBeschwerde(true); // Flag nicht über Service setzen, da u.U. Gesuch noch inBearbeitungGS
+			persistence.merge(gesuchLoop);
 		});
 		return gesuch;
 	}
@@ -728,9 +729,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			if (gesuch.equals(gesuchLoop) && AntragStatus.BESCHWERDE_HAENGIG.equals(gesuchLoop.getStatus())) {
 				final AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChangeBeforeBeschwerde(gesuchLoop);
 				gesuchLoop.setStatus(lastStatusChange.getStatus());
+				updateGesuch(gesuchLoop, true);
 			}
-			gesuchLoop.setGesperrtWegenBeschwerde(false);
-			updateGesuch(gesuchLoop, true);
+			gesuchLoop.setGesperrtWegenBeschwerde(false); // Flag nicht über Service setzen, da u.U. Gesuch noch inBearbeitungGS
+			persistence.merge(gesuchLoop);
 		});
 		return gesuch;
 	}
@@ -805,17 +807,23 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	private Optional<Gesuch> getGesuchMutation(@Nullable LocalDate eingangsdatum, @Nonnull Gesuch gesuchForMutation) {
+		Eingangsart eingangsart = calculateEingangsart();
+		Gesuch mutation = gesuchForMutation.copyForMutation(new Gesuch(), eingangsart);
+		if (eingangsdatum != null) {
+			mutation.setEingangsdatum(eingangsdatum);
+		}
+		return Optional.of(mutation);
+	}
+
+	@Nonnull
+	private Eingangsart calculateEingangsart() {
 		Eingangsart eingangsart;
 		if (this.principalBean.isCallerInRole(UserRole.GESUCHSTELLER)) {
 			eingangsart = Eingangsart.ONLINE;
 		} else {
 			eingangsart = Eingangsart.PAPIER;
 		}
-		Gesuch mutation = gesuchForMutation.copyForMutation(new Gesuch(), eingangsart);
-		if (eingangsdatum != null) {
-			mutation.setEingangsdatum(eingangsdatum);
-		}
-		return Optional.of(mutation);
+		return eingangsart;
 	}
 
 	@Override
@@ -825,6 +833,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
 			List<Gesuch> allGesucheForFallAndPeriod = getAllGesucheForFallAndPeriod(gesuch.get().getFall(), gesuch.get().getGesuchsperiode());
+			// todo fragen !isEmpty() ???? ist immer noch die alte Periode...
+			// todo fragen fehler beim Speichern
 			if (allGesucheForFallAndPeriod.isEmpty()) {
 				authorizer.checkWriteAuthorization(gesuch.get());
 				Optional<Gesuch> gesuchForErneuerungOpt = getNeustesGesuchFuerGesuch(gesuch.get());
@@ -840,13 +850,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	private Optional<Gesuch> getErneuerungsgesuch(@Nullable LocalDate eingangsdatum, @Nonnull Gesuch gesuchForErneuerung) {
-		Eingangsart eingangsart;
-		if (this.principalBean.isCallerInRole(UserRole.GESUCHSTELLER)) {
-			eingangsart = Eingangsart.ONLINE;
-		} else {
-			eingangsart = Eingangsart.PAPIER;
-		}
-		//TODO (hefr) Vorerst wird das ganze Gesuch analog Mutation kopiert, wird in späterem Task umgesetzt
+		Eingangsart eingangsart = calculateEingangsart();
+		//TODO (hefr) Vorerst wird das ganze Gesuch analog Mutation kopiert, wird in spaeterem Task umgesetzt
 		Gesuch erneuerungsgesuch = gesuchForErneuerung.copyForMutation(new Gesuch(), eingangsart);
 		erneuerungsgesuch.setTyp(AntragTyp.ERNEUERUNGSGESUCH);
 		if (eingangsdatum != null) {

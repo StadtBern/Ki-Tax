@@ -473,7 +473,7 @@ export class NavigatorController {
             return true;
         }
         // otherwise check specifics
-        if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERSTGESUCH || this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) {
+        if (this.gesuchModelManager.isGesuch()) {
             if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
                 return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()
                     && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch());

@@ -61,11 +61,13 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
             ];
         case TSRole.SACHBEARBEITER_JA:
         case TSRole.ADMIN:
-        case TSRole.REVISOR:
-        case TSRole.JURIST:
             return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
                 && element !== TSAntragStatus.FREIGABEQUITTUNG && element !== TSAntragStatus.NUR_SCHULAMT
                 && element !== TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN));
+        case TSRole.REVISOR:
+        case TSRole.JURIST:
+            return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.IN_BEARBEITUNG_GS
+            && element !== TSAntragStatus.FREIGABEQUITTUNG));
         case TSRole.SACHBEARBEITER_INSTITUTION:
         case TSRole.SACHBEARBEITER_TRAEGERSCHAFT:
             return getTSAntragStatusValues().filter(element => (element !== TSAntragStatus.PRUEFUNG_STV

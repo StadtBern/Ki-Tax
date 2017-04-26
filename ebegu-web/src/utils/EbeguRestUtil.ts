@@ -1328,7 +1328,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public parseGesuchsperioden(data: any) {
+    public parseGesuchsperioden(data: any): TSGesuchsperiode[] {
         let gesuchsperioden: TSGesuchsperiode[] = [];
         if (data && Array.isArray(data)) {
             for (let i = 0; i < data.length; i++) {
