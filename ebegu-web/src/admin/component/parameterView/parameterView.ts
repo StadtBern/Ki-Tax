@@ -131,7 +131,7 @@ export class ParameterViewController extends AbstractAdminViewController {
                     this.updateJahresabhParamList();
                 });
             });
-            this.gesuchModelManager.updateActiveGesuchsperiodenList(); //reset gesuchperioden is manager
+            this.gesuchsperiodeRS.updateActiveGesuchsperiodenList(); //reset gesuchperioden in manager
         });
     }
 
@@ -165,7 +165,7 @@ export class ParameterViewController extends AbstractAdminViewController {
             this.ebeguParameterRS.saveEbeguParameter(param);
         }
         this.globalCacheService.getCache(TSCacheTyp.EBEGU_PARAMETER).removeAll();
-        this.gesuchModelManager.updateActiveGesuchsperiodenList();
+        this.gesuchsperiodeRS.updateActiveGesuchsperiodenList();
         this.gesuchsperiode = undefined;
     }
 

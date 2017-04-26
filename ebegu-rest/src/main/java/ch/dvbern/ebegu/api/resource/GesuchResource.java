@@ -404,7 +404,7 @@ public class GesuchResource {
 		Validate.notNull(gesuchsperiodeJaxId.getId());
 		Validate.notNull(antragJaxId.getId());
 
-		// Wenn der GS eine Mutation macht, ist das Eingangsdatum erst null. Wir muessen das Gesuch so erstellen
+		// Wenn der GS ein Erneuerungsgesuch macht, ist das Eingangsdatum erst null. Wir muessen das Gesuch so erstellen
 		LocalDate eingangsdatum = null;
 		if (stringDate != null && !stringDate.isEmpty()) {
 			eingangsdatum = DateUtil.parseStringToDateOrReturnNow(stringDate);
@@ -412,12 +412,12 @@ public class GesuchResource {
 		final String antragId = converter.toEntityId(antragJaxId);
 		final String gesuchsperiodeId = converter.toEntityId(gesuchsperiodeJaxId);
 
-		Optional<Gesuch> gesuchOptional = gesuchService.antragErneuern(antragId, gesuchsperiodeId, eingangsdatum);
-		if (!gesuchOptional.isPresent()) {
+		Optional<Gesuch> gesuchsperiodeOptional = gesuchService.antragErneuern(antragId, gesuchsperiodeId, eingangsdatum);
+		if (!gesuchsperiodeOptional.isPresent()) {
 			return Response.noContent().build();
 		}
-		Gesuch mutationToReturn = gesuchService.createGesuch(gesuchOptional.get());
-		return Response.ok(converter.gesuchToJAX(mutationToReturn)).build();
+		Gesuch gesuchToReturn = gesuchService.createGesuch(gesuchsperiodeOptional.get());
+		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
 	}
 
 	@ApiOperation(value = "Gibt den Antrag frei und bereitet ihn vor für die Bearbeitung durch das Jugendamt")

@@ -1,4 +1,4 @@
-import {IComponentOptions, IFilterService} from 'angular';
+import {IComponentOptions} from 'angular';
 import TSPendenzInstitution from '../../../models/TSPendenzInstitution';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -6,7 +6,6 @@ import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotT
 import TSInstitution from '../../../models/TSInstitution';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
-import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
@@ -37,12 +36,12 @@ export class PendenzenInstitutionListViewController {
     numberOfPages: number = 1;
 
 
-    static $inject: string[] = ['PendenzInstitutionRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'InstitutionStammdatenRS', 'GesuchsperiodeRS',
-        'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state'];
+    static $inject: string[] = ['PendenzInstitutionRS', 'EbeguUtil', 'InstitutionRS', 'InstitutionStammdatenRS', 'GesuchsperiodeRS',
+        'GesuchModelManager', 'BerechnungsManager', '$state'];
 
-    constructor(public pendenzInstitutionRS: PendenzInstitutionRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
-                private institutionRS: InstitutionRS, private institutionStammdatenRS: InstitutionStammdatenRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
+    constructor(public pendenzInstitutionRS: PendenzInstitutionRS, private ebeguUtil: EbeguUtil, private institutionRS: InstitutionRS,
+                private institutionStammdatenRS: InstitutionStammdatenRS, private gesuchsperiodeRS: GesuchsperiodeRS,
+                private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
                 private $state: IStateService) {
         this.initViewModel();
     }
@@ -62,11 +61,14 @@ export class PendenzenInstitutionListViewController {
     }
 
     public updateActiveGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: any) => {
-            this.activeGesuchsperiodenList = [];
-            response.forEach((gesuchsperiode: TSGesuchsperiode) => {
-                this.activeGesuchsperiodenList.push(gesuchsperiode.gesuchsperiodeString);
-            });
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: TSGesuchsperiode[]) => {
+            this.extractGesuchsperiodeStringList(response);
+        });
+    }
+
+    private extractGesuchsperiodeStringList(allActiveGesuchsperioden: TSGesuchsperiode[]) {
+        allActiveGesuchsperioden.forEach((gesuchsperiode: TSGesuchsperiode) => {
+            this.activeGesuchsperiodenList.push(gesuchsperiode.gesuchsperiodeString);
         });
     }
 

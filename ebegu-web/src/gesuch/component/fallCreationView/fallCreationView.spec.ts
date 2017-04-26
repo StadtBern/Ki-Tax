@@ -31,7 +31,7 @@ describe('fallCreationView', function () {
         form.$dirty = true;
         fallCreationview = new FallCreationViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
             $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'),
-            $injector.get('$translate'), $q, $rootScope, $injector.get('AuthServiceRS'));
+            $injector.get('$translate'), $q, $rootScope, $injector.get('AuthServiceRS'), $injector.get('GesuchsperiodeRS'));
         fallCreationview.form = form;
         spyOn(fallCreationview, 'isGesuchValid').and.callFake(function () {
             return form.$valid;
