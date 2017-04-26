@@ -1125,14 +1125,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
 	public int warnGesuchNichtFreigegeben() {
 
-		Integer anzahlMonateBisWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_FREIGABE);
-		Integer anzahlMonateBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
-		if (anzahlMonateBisWarnungFreigabe == null || anzahlMonateBisLoeschungNachWarnungFreigabe == null) {
-			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben", "ANZAHL_MONATE_BIS_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE not defined");
+		Integer anzahlTageBisWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_FREIGABE);
+		Integer anzahlTageBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
+		if (anzahlTageBisWarnungFreigabe == null || anzahlTageBisLoeschungNachWarnungFreigabe == null) {
+			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben",
+				ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_FREIGABE.name() + " or " +
+					ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE.name() + " not defined");
 		}
 
 		// Stichtag ist EndeTag -> Plus 1 Tag und dann less statt lessOrEqual
-		LocalDateTime stichtag = LocalDate.now().minusMonths(anzahlMonateBisWarnungFreigabe).atStartOfDay().plusDays(1);
+		LocalDateTime stichtag = LocalDate.now().minusDays(anzahlTageBisWarnungFreigabe).atStartOfDay().plusDays(1);
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -1143,7 +1145,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		// Irgendwann am Stichtag erstellt:
 		Predicate predicateDatum = cb.lessThan(root.get(Gesuch_.timestampErstellt), stichtag);
 		// Noch nicht gewarnt
-		Predicate predicateNochNichtGewarnt = cb.equal(root.get(Gesuch_.gewarntNichtFreigegeben), Boolean.FALSE);
+		Predicate predicateNochNichtGewarnt = cb.isNull(root.get(Gesuch_.datumGewarntNichtFreigegeben));
 
 		query.where(predicateStatus, predicateDatum, predicateNochNichtGewarnt);
 		query.select(root);
@@ -1153,8 +1155,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		int anzahl = gesucheNichtAbgeschlossenSeit.size();
 		for (Gesuch gesuch : gesucheNichtAbgeschlossenSeit) {
 			try {
-				mailService.sendWarnungGesuchNichtFreigegeben(gesuch, anzahlMonateBisLoeschungNachWarnungFreigabe);
-				gesuch.setGewarntNichtFreigegeben(true);
+				mailService.sendWarnungGesuchNichtFreigegeben(gesuch, anzahlTageBisLoeschungNachWarnungFreigabe);
+				gesuch.setDatumGewarntNichtFreigegeben(LocalDate.now());
 				updateGesuch(gesuch, false);
 			} catch (MailException e) {
 				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
@@ -1168,12 +1170,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
 	public int warnFreigabequittungFehlt() {
 
-		Integer anzahlMonateBisWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG);
-		if (anzahlMonateBisWarnungQuittung == null) {
-			throw new EbeguRuntimeException("warnFreigabequittungFehlt", "ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG not defined");
+		Integer anzahlTageBisWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG);
+		Integer anzahlTageBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
+		if (anzahlTageBisWarnungQuittung == null) {
+			throw new EbeguRuntimeException("warnFreigabequittungFehlt", ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG.name() + " not defined");
 		}
 
-		LocalDate stichtag = LocalDate.now().minusMonths(anzahlMonateBisWarnungQuittung);
+		LocalDate stichtag = LocalDate.now().minusDays(anzahlTageBisWarnungQuittung);
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -1182,7 +1185,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.FREIGABEQUITTUNG);
 		Predicate predicateDatum = cb.lessThanOrEqualTo(root.get(Gesuch_.freigabeDatum), stichtag);
 		// Noch nicht gewarnt
-		Predicate predicateNochNichtGewarnt = cb.equal(root.get(Gesuch_.gewarntFehlendeQuittung), Boolean.FALSE);
+		Predicate predicateNochNichtGewarnt = cb.isNull(root.get(Gesuch_.datumGewarntFehlendeQuittung));
 
 		query.where(predicateStatus, predicateDatum, predicateNochNichtGewarnt);
 		query.select(root);
@@ -1192,8 +1195,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		int anzahl = gesucheNichtAbgeschlossenSeit.size();
 		for (Gesuch gesuch : gesucheNichtAbgeschlossenSeit) {
 			try {
-				mailService.sendWarnungFreigabequittungFehlt(gesuch);
-				gesuch.setGewarntFehlendeQuittung(true);
+				mailService.sendWarnungFreigabequittungFehlt(gesuch, anzahlTageBisLoeschungNachWarnungFreigabe);
+				gesuch.setDatumGewarntFehlendeQuittung(LocalDate.now());
 				updateGesuch(gesuch, false);
 			} catch (MailException e) {
 				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
@@ -1207,22 +1210,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@RolesAllowed(value = {UserRoleName.SUPER_ADMIN})
 	public int deleteGesucheOhneFreigabeOderQuittung() {
 
-		Integer anzahlMonateBisWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_FREIGABE);
-		Integer anzahlMonateBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
-		Integer anzahlMonateBisWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG);
-		Integer anzahlMonateBisLoeschungNachWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
-		if (anzahlMonateBisWarnungFreigabe == null || anzahlMonateBisLoeschungNachWarnungFreigabe == null ||
-			anzahlMonateBisWarnungQuittung == null || anzahlMonateBisLoeschungNachWarnungQuittung == null) {
-			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben", "ANZAHL_MONATE_BIS_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE or ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG or ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG not defined");
+		Integer anzahlTageBisLoeschungNachWarnungFreigabe = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
+		Integer anzahlTageBisLoeschungNachWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
+		if (anzahlTageBisLoeschungNachWarnungFreigabe == null || anzahlTageBisLoeschungNachWarnungQuittung == null) {
+			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben",
+					ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE.name() + " or " +
+					ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG.name() + " not defined");
 		}
 
 		// Stichtag ist EndeTag -> Plus 1 Tag und dann less statt lessOrEqual
-		LocalDateTime stichtagFehlendeFreigabe = LocalDate.now()
-			.minusMonths(anzahlMonateBisWarnungFreigabe)
-			.minusMonths(anzahlMonateBisLoeschungNachWarnungFreigabe).atStartOfDay().plusDays(1);
+		LocalDate stichtagFehlendeFreigabe = LocalDate.now()
+			.minusDays(anzahlTageBisLoeschungNachWarnungFreigabe).plusDays(1);
 		LocalDate stichtagFehlendeQuittung = LocalDate.now()
-			.minusMonths(anzahlMonateBisWarnungQuittung)
-			.minusMonths(anzahlMonateBisLoeschungNachWarnungQuittung);
+			.minusDays(anzahlTageBisLoeschungNachWarnungQuittung);
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -1231,14 +1231,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		// Entweder IN_BEARBEITUNG_GS und vor stichtagFehlendeFreigabe erstellt
 		Predicate predicateStatusNichtFreigegeben = cb.equal(root.get(Gesuch_.status), AntragStatus.IN_BEARBEITUNG_GS);
-		Predicate predicateDatumNichtFreigegeben = cb.lessThan(root.get(Gesuch_.timestampErstellt), stichtagFehlendeFreigabe);
-		Predicate predicateGewarntNichtFreigegeben = cb.equal(root.get(Gesuch_.gewarntNichtFreigegeben), Boolean.TRUE);
+		Predicate predicateGewarntNichtFreigegeben = cb.isNotNull(root.get(Gesuch_.datumGewarntNichtFreigegeben));
+		Predicate predicateDatumNichtFreigegeben = cb.lessThan(root.get(Gesuch_.datumGewarntNichtFreigegeben), stichtagFehlendeFreigabe);
 		Predicate predicateNichtFreigegeben = cb.and(predicateStatusNichtFreigegeben, predicateDatumNichtFreigegeben, predicateGewarntNichtFreigegeben);
 
 		// Oder FREIGABEQUITTUNG und vor stichtagFehlendeQuittung freigegeben
 		Predicate predicateStatusFehlendeQuittung = cb.equal(root.get(Gesuch_.status), AntragStatus.FREIGABEQUITTUNG);
-		Predicate predicateDatumFehlendeQuittung = cb.lessThanOrEqualTo(root.get(Gesuch_.freigabeDatum), stichtagFehlendeQuittung);
-		Predicate predicateGewarntFehlendeQuittung = cb.equal(root.get(Gesuch_.gewarntFehlendeQuittung), Boolean.TRUE);
+		Predicate predicateGewarntFehlendeQuittung = cb.isNotNull(root.get(Gesuch_.datumGewarntFehlendeQuittung));
+		Predicate predicateDatumFehlendeQuittung = cb.lessThanOrEqualTo(root.get(Gesuch_.datumGewarntFehlendeQuittung), stichtagFehlendeQuittung);
+
 		Predicate predicateFehlendeQuittung = cb.and(predicateStatusFehlendeQuittung, predicateDatumFehlendeQuittung, predicateGewarntFehlendeQuittung);
 
 		Predicate predicateFehlendeFreigabeOrQuittung = cb.or(predicateNichtFreigegeben, predicateFehlendeQuittung);

@@ -10,6 +10,7 @@ import {TSEingangsart} from './enums/TSEingangsart';
 import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 import {TSAntragStatus} from './enums/TSAntragStatus';
+import * as moment from 'moment';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -25,8 +26,8 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _geprueftSTV: boolean = false;
     private _hasFSDokument: boolean = true;
     private _gesperrtWegenBeschwerde: boolean = false;
-    private _gewarntNichtFreigegeben: boolean = false;
-    private _gewarntFehlendeQuittung: boolean = false;
+    private _datumGewarntNichtFreigegeben: moment.Moment;
+    private _datumGewarntFehlendeQuittung: moment.Moment;
 
     // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutations- oder Erneuerungskopie
     // (Wichtig für laden des Gesuchs bei Navigation)
@@ -145,20 +146,20 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._emptyCopy = value;
     }
 
-    get gewarntNichtFreigegeben(): boolean {
-        return this._gewarntNichtFreigegeben;
+    get datumGewarntNichtFreigegeben(): moment.Moment {
+        return this._datumGewarntNichtFreigegeben;
     }
 
-    set gewarntNichtFreigegeben(value: boolean) {
-        this._gewarntNichtFreigegeben = value;
+    set datumGewarntNichtFreigegeben(value: moment.Moment) {
+        this._datumGewarntNichtFreigegeben = value;
     }
 
-    get gewarntFehlendeQuittung(): boolean {
-        return this._gewarntFehlendeQuittung;
+    get datumGewarntFehlendeQuittung(): moment.Moment {
+        return this._datumGewarntFehlendeQuittung;
     }
 
-    set gewarntFehlendeQuittung(value: boolean) {
-        this._gewarntFehlendeQuittung = value;
+    set datumGewarntFehlendeQuittung(value: moment.Moment) {
+        this._datumGewarntFehlendeQuittung = value;
     }
 
     /**

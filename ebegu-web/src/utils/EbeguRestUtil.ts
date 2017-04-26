@@ -618,8 +618,8 @@ export default class EbeguRestUtil {
         restGesuch.geprueftSTV = gesuch.geprueftSTV;
         restGesuch.hasFSDokument = gesuch.hasFSDokument;
         restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
-        restGesuch.gewarntNichtFreigegeben = gesuch.gewarntNichtFreigegeben;
-        restGesuch.gewarntFehlendeQuittung = gesuch.gewarntFehlendeQuittung;
+        restGesuch.datumGewarntNichtFreigegeben = DateUtil.momentToLocalDate(gesuch.datumGewarntNichtFreigegeben);
+        restGesuch.datumGewarntFehlendeQuittung = DateUtil.momentToLocalDate(gesuch.datumGewarntFehlendeQuittung);
         return restGesuch;
     }
 
@@ -639,8 +639,8 @@ export default class EbeguRestUtil {
             gesuchTS.geprueftSTV = gesuchFromServer.geprueftSTV;
             gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
             gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
-            gesuchTS.gewarntNichtFreigegeben = gesuchFromServer.gewarntNichtFreigegeben;
-            gesuchTS.gewarntFehlendeQuittung = gesuchFromServer.gewarntFehlendeQuittung;
+            gesuchTS.datumGewarntNichtFreigegeben = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntNichtFreigegeben);
+            gesuchTS.datumGewarntFehlendeQuittung = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntFehlendeQuittung);
             return gesuchTS;
         }
         return undefined;

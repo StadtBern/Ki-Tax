@@ -681,8 +681,8 @@ public class JaxBConverter {
 		antrag.setGeprueftSTV(antragJAXP.isGeprueftSTV());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
-		antrag.setGewarntNichtFreigegeben(antragJAXP.isGewarntNichtFreigegeben());
-		antrag.setGewarntFehlendeQuittung(antragJAXP.isGewarntFehlendeQuittung());
+		antrag.setDatumGewarntNichtFreigegeben(antragJAXP.getDatumGewarntNichtFreigegeben());
+		antrag.setDatumGewarntFehlendeQuittung(antragJAXP.getDatumGewarntFehlendeQuittung());
 		return antrag;
 	}
 
@@ -808,8 +808,8 @@ public class JaxBConverter {
 		jaxGesuch.setGeprueftSTV(persistedGesuch.isGeprueftSTV());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
-		jaxGesuch.setGewarntNichtFreigegeben(persistedGesuch.isGewarntNichtFreigegeben());
-		jaxGesuch.setGewarntFehlendeQuittung(persistedGesuch.isGewarntFehlendeQuittung());
+		jaxGesuch.setDatumGewarntNichtFreigegeben(persistedGesuch.getDatumGewarntNichtFreigegeben());
+		jaxGesuch.setDatumGewarntFehlendeQuittung(persistedGesuch.getDatumGewarntFehlendeQuittung());
 
 		return jaxGesuch;
 	}

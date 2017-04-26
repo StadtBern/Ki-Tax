@@ -86,6 +86,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	private TestfaelleService testfaelleService;
 
 	private int anzahlObjekte = 0;
+	public static final int ANZAHL_TAGE_BIS_WARNUNG_FREIGABE = 60;
+	public static final int ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG = 15;
+	public static final int ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE = 60;
+	public static final int ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG = 90;
 
 
 	@Test
@@ -715,40 +719,51 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void testWarnungFehlendeQuittung() throws Exception {
 		insertApplicationProperties();
-		Gesuch gesuch1 = createGesuchFreigabequittung(LocalDate.now().minusMonths(2).minusDays(1));
-		Gesuch gesuch2 = createGesuchFreigabequittung(LocalDate.now().minusMonths(2));
-		Gesuch gesuch3 = createGesuchFreigabequittung(LocalDate.now().minusMonths(2).plusDays(1));
+		Gesuch gesuch1 = createGesuchFreigabequittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG).minusDays(1));
+		Gesuch gesuch2 = createGesuchFreigabequittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG));
+		Gesuch gesuch3 = createGesuchFreigabequittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG).plusDays(1));
 
 		Assert.assertEquals(2, gesuchService.warnFreigabequittungFehlt());
-		Assert.assertTrue(gesuchService.findGesuch(gesuch1.getId()).get().isGewarntFehlendeQuittung());
-		Assert.assertTrue(gesuchService.findGesuch(gesuch2.getId()).get().isGewarntFehlendeQuittung());
-		Assert.assertFalse(gesuchService.findGesuch(gesuch3.getId()).get().isGewarntFehlendeQuittung());
+		Assert.assertNotNull(gesuchService.findGesuch(gesuch1.getId()).get().getDatumGewarntFehlendeQuittung());
+		Assert.assertNotNull(gesuchService.findGesuch(gesuch2.getId()).get().getDatumGewarntFehlendeQuittung());
+		Assert.assertNull(gesuchService.findGesuch(gesuch3.getId()).get().getDatumGewarntFehlendeQuittung());
 	}
 
 	@Test
 	public void testWarnungNichtFreigegeben() throws Exception {
 		insertApplicationProperties();
-		Gesuch gesuch1 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2).minusDays(1));
-		Gesuch gesuch2 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2));
-		Gesuch gesuch3 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2).plusDays(1));
+		Gesuch gesuch1 = createGesuchInBearbeitungGS(LocalDateTime.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_FREIGABE).minusDays(1));
+		Gesuch gesuch2 = createGesuchInBearbeitungGS(LocalDateTime.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_FREIGABE));
+		Gesuch gesuch3 = createGesuchInBearbeitungGS(LocalDateTime.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_FREIGABE).plusDays(1));
 
 		Assert.assertEquals(2, gesuchService.warnGesuchNichtFreigegeben());
-		Assert.assertTrue(gesuchService.findGesuch(gesuch1.getId()).get().isGewarntNichtFreigegeben());
-		Assert.assertTrue(gesuchService.findGesuch(gesuch2.getId()).get().isGewarntNichtFreigegeben());
-		Assert.assertFalse(gesuchService.findGesuch(gesuch3.getId()).get().isGewarntNichtFreigegeben());
+		Assert.assertNotNull(gesuchService.findGesuch(gesuch1.getId()).get().getDatumGewarntNichtFreigegeben());
+		Assert.assertNotNull(gesuchService.findGesuch(gesuch2.getId()).get().getDatumGewarntNichtFreigegeben());
+		Assert.assertNull(gesuchService.findGesuch(gesuch3.getId()).get().getDatumGewarntNichtFreigegeben());
 	}
 
 	@Test
 	public void testDeleteGesucheOhneFreigabeOderQuittung() throws Exception {
 		insertApplicationProperties();
-		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4).minusDays(1));
-		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4));
-		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4).plusDays(1));
-		createGesuchFreigabequittung(LocalDate.now().minusMonths(4).minusDays(1));
-		createGesuchFreigabequittung(LocalDate.now().minusMonths(4));
-		createGesuchFreigabequittung(LocalDate.now().minusMonths(4).plusDays(1));
-		gesuchService.warnGesuchNichtFreigegeben();
-		gesuchService.warnFreigabequittungFehlt();
+		Gesuch gesuch1 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4).minusDays(1));
+		Gesuch gesuch2 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4));
+		Gesuch gesuch3 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4).plusDays(1));
+		Gesuch gesuch4 = createGesuchFreigabequittung(LocalDate.now().minusMonths(4).minusDays(1));
+		Gesuch gesuch5 = createGesuchFreigabequittung(LocalDate.now().minusMonths(4));
+		Gesuch gesuch6 = createGesuchFreigabequittung(LocalDate.now().minusMonths(4).plusDays(1));
+
+		gesuch1.setDatumGewarntNichtFreigegeben(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE).minusDays(1));
+		gesuch2.setDatumGewarntNichtFreigegeben(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE));
+		gesuch3.setDatumGewarntNichtFreigegeben(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE).plusDays(1));
+		gesuch4.setDatumGewarntFehlendeQuittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG).minusDays(1));
+		gesuch5.setDatumGewarntFehlendeQuittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG));
+		gesuch6.setDatumGewarntFehlendeQuittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG).plusDays(1));
+		persistence.merge(gesuch1);
+		persistence.merge(gesuch2);
+		persistence.merge(gesuch3);
+		persistence.merge(gesuch4);
+		persistence.merge(gesuch5);
+		persistence.merge(gesuch6);
 
 		Assert.assertEquals(6, gesuchService.getAllGesuche().size());
 		Assert.assertEquals(4, gesuchService.deleteGesucheOhneFreigabeOderQuittung());
@@ -759,10 +774,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	// HELP METHOD
 
 	private void insertApplicationProperties() {
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_FREIGABE, "2");
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG, "2");
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE, "2");
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG, "2");
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_FREIGABE, ""+ANZAHL_TAGE_BIS_WARNUNG_FREIGABE);
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG, ""+ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG);
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE, ""+ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG, ""+ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
 	}
 
 	private Gesuch createGesuchInBearbeitungGS(LocalDateTime timestampErstellt) {
