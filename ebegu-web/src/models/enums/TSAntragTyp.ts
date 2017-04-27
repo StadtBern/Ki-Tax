@@ -11,3 +11,10 @@ export function getTSAntragTypValues(): Array<TSAntragTyp> {
         TSAntragTyp.ERNEUERUNGSGESUCH
     ];
 }
+
+export function getNormalizedTSAntragTypValues(): Array<TSAntragTyp> {
+    return [
+        TSAntragTyp.ERSTGESUCH,
+        TSAntragTyp.MUTATION
+    ];
+}
