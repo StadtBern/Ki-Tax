@@ -17,7 +17,8 @@ describe('dvbErrorMessages', function () {
     beforeEach(angular.mock.module('dvbAngular.errors'));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
-        controller = new DvErrorMessagesPanelComponent($injector.get('$rootScope'), $injector.get('ErrorService'));
+        controller = new DvErrorMessagesPanelComponent($injector.get('$rootScope'), $injector.get('ErrorService'),
+            undefined, undefined);
         spyOn(controller, 'show').and.returnValue({});
     }));
 
@@ -36,7 +37,7 @@ describe('dvbErrorMessages', function () {
             let errors: TSExceptionReport[] = [error];
             controller.displayMessages(undefined, errors);
 
-            expect(error.action).toBe(TSErrorAction.REMOVE_ANTRAG);
+            expect(error.action).toBe(TSErrorAction.REMOVE_ONLINE_ANTRAG);
         });
     });
 });

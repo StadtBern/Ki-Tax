@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguExistingMutationException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -766,7 +767,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			} else {
-				throw new EbeguRuntimeException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION);
+				throw new EbeguExistingMutationException("antragMutieren", antragId);
 			}
 		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen " + antragId, antragId);
@@ -788,7 +789,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer Fallnummer " + fallNummer));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			} else {
-				throw new EbeguRuntimeException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION);
+				throw new EbeguExistingMutationException("antragMutieren", "");
 			}
 		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "fall oder gesuchsperiode konnte nicht geladen werden  fallNr:" + fallNummer + "gsPerID" + gesuchsperiodeId);
@@ -1299,6 +1300,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.select(root);
 		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
 		return criteriaResults.isEmpty();
+	}
+
+	@Override
+	public void removeOnlineAntrag(@Nonnull String antragId) {
+		// remove neueste online Mutation
 	}
 }
 

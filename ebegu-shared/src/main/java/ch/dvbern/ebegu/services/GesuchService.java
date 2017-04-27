@@ -264,4 +264,11 @@ public interface GesuchService {
 	 * Prüft, ob alle Anträge dieser Periode im Status VERFUEGT oder NUR_SCHULAMT sind
 	 */
 	boolean canGesuchsperiodeBeClosed(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Sucht die neueste Online Mutation, die zu dem gegebenen Antrag gehoert und loescht sie.
+	 * Diese Mutation muss Online und noch nicht freigegeben sein
+	 * @param antragId das ID von einem der Antraege, zu denen die Mutation gehoert, die geloescht werden muss
+	 */
+	void removeOnlineAntrag(@Nonnull String antragId);
 }

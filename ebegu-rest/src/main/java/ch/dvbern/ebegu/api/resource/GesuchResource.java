@@ -587,4 +587,20 @@ public class GesuchResource {
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
 		return gesuchOptional.map(gesuch -> gesuchService.isNeustesGesuch(gesuch)).orElse(false);
 	}
+
+	@DELETE
+	@Path("/removeOnlineAntrag/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeOnlineAntrag(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJAXPId,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(antragJAXPId.getId());
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragJAXPId.getId());
+		if (gesuch.isPresent()) {
+			gesuchService.removeOnlineAntrag(converter.toEntityId(antragJAXPId));
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("removeOnlineAntrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + antragJAXPId.getId());
+	}
 }

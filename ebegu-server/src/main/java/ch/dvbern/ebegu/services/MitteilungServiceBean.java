@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.EbeguExistingMutationException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -373,7 +374,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		} catch (EJBTransactionRolledbackException exception) {
 			//Wenn der Sachbearbeiter den neusten Antrag nicht lesen darf ist es ein noch nicht freigegebener ONLINE Antrag
 			if(exception.getCause().getClass().equals(EJBAccessException.class)) {
-				throw new EbeguRuntimeException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, exception);
+				throw new EbeguExistingMutationException("applyBetreuungsmitteilung", gesuch.getId());
 			}
 			throw exception;
 		}

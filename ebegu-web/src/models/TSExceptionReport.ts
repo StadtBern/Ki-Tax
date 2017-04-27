@@ -15,6 +15,7 @@ export default class TSExceptionReport {
     private _customMessage: string;
     private _errorCodeEnum: string;
     private _stackTrace: string;
+    private _objectId: string;
     private _argumentList: any;
 
     // fields for ViolationReports
@@ -135,6 +136,14 @@ export default class TSExceptionReport {
         this._stackTrace = value;
     }
 
+    get objectId(): string {
+        return this._objectId;
+    }
+
+    set objectId(value: string) {
+        this._objectId = value;
+    }
+
     get argumentList(): any {
         return this._argumentList;
     }
@@ -168,8 +177,7 @@ export default class TSExceptionReport {
     }
 
     public static createClientSideError(severity: TSErrorLevel, msgKey: string, args: any): TSExceptionReport {
-        let report: TSExceptionReport = new TSExceptionReport(TSErrorType.CLIENT_SIDE, severity, msgKey, args);
-        return report;
+        return new TSExceptionReport(TSErrorType.CLIENT_SIDE, severity, msgKey, args);
     }
 
     /**
@@ -186,6 +194,7 @@ export default class TSExceptionReport {
         exceptionReport.stackTrace = data.stackTrace;
         exceptionReport.translatedMessage = msgToDisp;
         exceptionReport.customMessage = data.customMessage;
+        exceptionReport.objectId = data.objectId;
         exceptionReport.argumentList = data.argumentList;
         return exceptionReport;
 

@@ -1004,5 +1004,9 @@
     "EWK_BEZIEHUNG_TYP": "Beziehung",
     "STV_PRUEFUNG_ABSCHLIESSEN_UPPER": "PRÜFUNG ABSCHLIESSEN",
     "STV_PRUEFUNG_ABSCHLIESSEN_CONFIRMATION": "Möchten Sie die Prüfung bei der Steuerverwaltung wirklich abschliessen?",
-    "EXISTING_MUTATIONSMELDUNG": "Am {{datumMutationsmeldung}} wurde zu dieser Betreuung eine Mutationsmeldung ans Jugendamt gesendet"
+    "EXISTING_MUTATIONSMELDUNG": "Am {{datumMutationsmeldung}} wurde zu dieser Betreuung eine Mutationsmeldung ans Jugendamt gesendet",
+    "REMOVE_ONLINE_ANTRAG": "Online Mutation löschen",
+    "REMOVE_ONLINE_ANTRAG_CONFIRMATION": "Möchten Sie wirklich die Online Mutation löschen?",
+    "REMOVE_ONLINE_ANTRAG_BESCHREIBUNG": "Die Mutation wird endgültig gelöscht. Die Änderungen können nicht rückgängig gemacht werden."
+
 }

@@ -176,4 +176,11 @@ export default class GesuchRS implements IEntityRS {
                 return response.data;
             });
     }
+
+    public removeOnlineAntrag(gesuchID: string):  IPromise<boolean> {
+        return this.http.delete(this.serviceURL + '/removeOnlineAntrag/' + encodeURIComponent(gesuchID))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
 }

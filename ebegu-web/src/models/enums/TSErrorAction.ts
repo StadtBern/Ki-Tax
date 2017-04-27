@@ -1,3 +1,3 @@
 export enum TSErrorAction {
-    REMOVE_ANTRAG = <any> 'REMOVE_ANTRAG'
+    REMOVE_ONLINE_ANTRAG = <any> 'REMOVE_ONLINE_ANTRAG'
 }
