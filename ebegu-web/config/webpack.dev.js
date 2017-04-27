@@ -111,6 +111,7 @@ module.exports = webpackMerge(commonConfig,  {
     devServer: {
         port: METADATA.port,
         host: METADATA.host,
+        disableHostCheck: true,
         historyApiFallback: true,
         watchOptions: {
             aggregateTimeout: 300,
