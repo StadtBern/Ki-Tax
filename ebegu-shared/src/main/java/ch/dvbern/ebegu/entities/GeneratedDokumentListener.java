@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.PostLoad;
-import javax.persistence.PostUpdate;
 import javax.persistence.PreUpdate;
 
 public class GeneratedDokumentListener {
@@ -31,5 +30,4 @@ public class GeneratedDokumentListener {
 			throw new IllegalStateException("GeneratedDokument darf nicht mehr verändert werden wenn writeProtected!");
 		}
 	}
-
 }

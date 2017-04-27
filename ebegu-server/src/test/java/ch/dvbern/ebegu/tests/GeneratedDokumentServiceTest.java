@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.services.GeneratedDokumentService;
+import ch.dvbern.ebegu.services.GeneratedDokumentServiceBean;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -29,7 +30,7 @@ import java.time.Month;
 public class GeneratedDokumentServiceTest extends AbstractEbeguLoginTest {
 
 	@Inject
-	private GeneratedDokumentService generatedDokumentService;
+	private GeneratedDokumentServiceBean generatedDokumentService;
 	@Inject
 	private InstitutionService instService;
 	@Inject

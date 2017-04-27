@@ -27,14 +27,14 @@ public interface GeneratedDokumentService {
 	 * @param dokument
 	 * @return
 	 */
-	@Nonnull
-	GeneratedDokument saveGeneratedDokument(@Nonnull GeneratedDokument dokument);
+//	@Nonnull
+//	GeneratedDokument saveGeneratedDokument(@Nonnull GeneratedDokument dokument);
 
-	@Nullable
-	GeneratedDokument findGeneratedDokument(String gesuchId, String filename, String path);
+//	@Nullable
+//	GeneratedDokument findGeneratedDokument(String gesuchId, String filename, String path);
 
-	@Nonnull
-	GeneratedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName, boolean writeProtected) throws MimeTypeParseException;
+//	@Nonnull
+//	GeneratedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName, boolean writeProtected) throws MimeTypeParseException;
 
 	GeneratedDokument getFinSitDokumentAccessTokenGeneratedDokument(Gesuch gesuch,
 																	Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
@@ -56,5 +56,5 @@ public interface GeneratedDokumentService {
 
 	void removeAllGeneratedDokumenteFromGesuch(Gesuch gesuch);
 
-	Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch);
+//	Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch);
 }

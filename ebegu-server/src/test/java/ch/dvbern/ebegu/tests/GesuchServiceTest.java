@@ -61,7 +61,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private DokumentGrundService dokumentGrundService;
 	@Inject
-	private GeneratedDokumentService generatedDokumentService;
+	private GeneratedDokumentServiceBean generatedDokumentService;
 	@Inject
 	private FallService fallService;
 	@Inject
