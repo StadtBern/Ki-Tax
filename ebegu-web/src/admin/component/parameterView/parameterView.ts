@@ -106,7 +106,7 @@ export class ParameterViewController extends AbstractAdminViewController {
     createGesuchsperiode(): void {
         this.gesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.ENTWURF, new TSDateRange());
         if (this.gesuchsperiodenList) {
-            let prevGesPer: TSGesuchsperiode = this.gesuchsperiodenList[this.gesuchsperiodenList.length - 1];
+            let prevGesPer: TSGesuchsperiode = this.gesuchsperiodenList[0];
             this.gesuchsperiode.gueltigkeit.gueltigAb = prevGesPer.gueltigkeit.gueltigAb.clone().add('years', 1);
             this.gesuchsperiode.gueltigkeit.gueltigBis = prevGesPer.gueltigkeit.gueltigBis.clone().add('years', 1);
         }

@@ -153,7 +153,9 @@
         <div class="nav-row-verfuegen">
             <dv-navigation dv-previous="true" dv-next="false" dv-sub-step="1">
             </dv-navigation>
-            <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+            <div dv-show-element
+                 dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                 dv-show-expression="!vm.gesuchModelManager.isGesuchsperiodeReadonly()">
                 <dv-loading-button type="button" button-click="vm.setGesuchStatusGeprueft()"
                                    aria-label="{{'GEPRUEFT_UPPER' | translate}}" ng-if="vm.showGeprueft()">
                     <span data-translate="GEPRUEFT_UPPER"></span>

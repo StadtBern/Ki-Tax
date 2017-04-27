@@ -66,6 +66,10 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@RolesAllowed({SUPER_ADMIN, ADMIN})
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull GesuchsperiodeStatus statusBisher) {
+		if (gesuchsperiode.isNew() && !GesuchsperiodeStatus.ENTWURF.equals(gesuchsperiode.getStatus())) {
+			// Gesuchsperiode muss im Status ENTWURF erstellt werden
+			throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_INVALID_STATUSUEBERGANG);
+		}
 		// Überprüfen, ob der Statusübergang zulässig ist
 		if (!gesuchsperiode.getStatus().equals(statusBisher)) {
 			// Superadmin darf alles
@@ -73,8 +77,8 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 				if (!isStatusUebergangValid(statusBisher, gesuchsperiode.getStatus())) {
 					throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_INVALID_STATUSUEBERGANG);
 				}
-				// Falls es ein Statuswechsel war, und der neue Status ist AKTIV -> Mail an alle Gesuchsteller schicken
-				// Nur wenn als JA-Admin. Superadmin kann die Periode auch "wiederöffnen", dann darf aber kein Mail mehr verschickt werden!
+						// Falls es ein Statuswechsel war, und der neue Status ist AKTIV -> Mail an alle Gesuchsteller schicken
+						// Nur wenn als JA-Admin. Superadmin kann die Periode auch "wiederöffnen", dann darf aber kein Mail mehr verschickt werden!
 				if (GesuchsperiodeStatus.AKTIV.equals(gesuchsperiode.getStatus())) {
 					// TODO (team): Mail schicken an Gesuchsteller
 					LOGGER.debug("Gesuchsperiode wurde aktiv gesetzt: " + gesuchsperiode.getGesuchsperiodeString() + ": Gesuchsteller informieren");
