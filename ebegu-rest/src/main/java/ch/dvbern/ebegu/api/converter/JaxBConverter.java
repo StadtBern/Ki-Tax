@@ -1831,13 +1831,13 @@ public class JaxBConverter {
 	public JaxGesuchsperiode gesuchsperiodeToJAX(final Gesuchsperiode persistedGesuchsperiode) {
 		final JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
 		convertAbstractDateRangedFieldsToJAX(persistedGesuchsperiode, jaxGesuchsperiode);
-		jaxGesuchsperiode.setActive(persistedGesuchsperiode.getActive());
+		jaxGesuchsperiode.setStatus(persistedGesuchsperiode.getStatus());
 		return jaxGesuchsperiode;
 	}
 
 	public Gesuchsperiode gesuchsperiodeToEntity(final JaxGesuchsperiode jaxGesuchsperiode, final Gesuchsperiode gesuchsperiode) {
 		convertAbstractDateRangedFieldsToEntity(jaxGesuchsperiode, gesuchsperiode);
-		gesuchsperiode.setActive(jaxGesuchsperiode.getActive());
+		gesuchsperiode.setStatus(jaxGesuchsperiode.getStatus());
 		return gesuchsperiode;
 	}
 

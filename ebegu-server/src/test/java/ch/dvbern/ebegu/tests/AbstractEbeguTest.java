@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -141,7 +142,7 @@ public abstract class AbstractEbeguTest {
 	 */
 	protected Gesuchsperiode createGesuchsperiode(boolean active) {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createGesuchsperiode1718();
-		gesuchsperiode.setActive(active);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		return gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 	}
 

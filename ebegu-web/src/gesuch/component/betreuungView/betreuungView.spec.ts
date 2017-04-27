@@ -18,6 +18,8 @@ import TSGesuch from '../../../models/TSGesuch';
 import IFormController = angular.IFormController;
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 
 describe('betreuungView', function () {
 
@@ -237,6 +239,8 @@ describe('betreuungView', function () {
         gesuch.typ = typ;
         gesuch.status = status;
         gesuch.gesperrtWegenBeschwerde = false;
+        gesuch.gesuchsperiode = new TSGesuchsperiode();
+        gesuch.gesuchsperiode.status = TSGesuchsperiodeStatus.AKTIV;
         spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
         return gesuch;
     }

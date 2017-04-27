@@ -236,7 +236,7 @@ public class TestJaxDataUtil {
 		JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
 		jaxGesuchsperiode.setGueltigAb(LocalDate.now());
 		jaxGesuchsperiode.setGueltigBis(LocalDate.now().plusMonths(1));
-		jaxGesuchsperiode.setActive(true);
+		jaxGesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		return jaxGesuchsperiode;
 	}
 

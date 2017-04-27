@@ -141,7 +141,7 @@ public interface GesuchService {
 	 * letzte verfügte Antrag kopiert für das Erneuerungsgesuch
 	 */
 	@Nonnull
-	Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nullable LocalDate eingangsdatum);
+	Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nonnull String gesuchsperiodeId, @Nullable LocalDate eingangsdatum);
 
 	/**
 	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück,
@@ -259,4 +259,9 @@ public interface GesuchService {
 	 * Gibt die Anzahl Warnungen zurueck.
 	 */
 	int deleteGesucheOhneFreigabeOderQuittung();
+
+	/**
+	 * Prüft, ob alle Anträge dieser Periode im Status VERFUEGT oder NUR_SCHULAMT sind
+	 */
+	boolean canGesuchsperiodeBeClosed(@Nonnull Gesuchsperiode gesuchsperiode);
 }

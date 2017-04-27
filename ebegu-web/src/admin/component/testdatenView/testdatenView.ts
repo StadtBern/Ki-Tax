@@ -8,6 +8,8 @@ import UserRS from '../../../core/service/userRS.rest';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {ReindexRS} from '../../service/reindexRS.rest';
 import * as moment from 'moment';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 require('./testdatenView.less');
 let template = require('./testdatenView.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
@@ -22,7 +24,7 @@ export class TestdatenViewComponentConfig implements IComponentOptions {
 
 export class TestdatenViewController {
     static $inject = ['TestFaelleRS', 'DvDialog', 'UserRS',
-        'ErrorService', 'ReindexRS'];
+        'ErrorService', 'ReindexRS', 'GesuchsperiodeRS'];
 
     testFaelleRS: TestFaelleRS;
     fallId: number;
@@ -34,10 +36,12 @@ export class TestdatenViewController {
     selectedBesitzer: TSUser;
     gesuchstellerList: Array<TSUser>;
 
+    selectedGesuchsperiode: TSGesuchsperiode;
+    gesuchsperiodeList: Array<TSGesuchsperiode>;
 
     /* @ngInject */
     constructor(testFaelleRS: TestFaelleRS, private dvDialog: DvDialog, private userRS: UserRS,
-                private errorService: ErrorService, private reindexRS: ReindexRS) {
+                private errorService: ErrorService, private reindexRS: ReindexRS, private gesuchsperiodeRS: GesuchsperiodeRS) {
         this.testFaelleRS = testFaelleRS;
         this.fetchList();
     }
@@ -45,6 +49,9 @@ export class TestdatenViewController {
     fetchList() {
         this.userRS.getAllGesuchsteller().then((result: Array<TSUser>) => {
             this.gesuchstellerList = result;
+        });
+        this.gesuchsperiodeRS.getAllGesuchsperioden().then((result: Array<TSGesuchsperiode>) => {
+            this.gesuchsperiodeList = result;
         });
     }
 
@@ -64,14 +71,14 @@ export class TestdatenViewController {
             verfuegen = true;
         }
         if (this.selectedBesitzer) {
-            return this.createTestFallGS(testFall, bestaetigt, verfuegen, this.selectedBesitzer.username);
+            return this.createTestFallGS(testFall, this.selectedGesuchsperiode.id, bestaetigt, verfuegen, this.selectedBesitzer.username);
         } else {
-            return this.createTestFall(testFall, bestaetigt, verfuegen);
+            return this.createTestFall(testFall, this.selectedGesuchsperiode.id, bestaetigt, verfuegen);
         }
     }
 
-    private createTestFall(testFall: string, bestaetigt: boolean, verfuegen: boolean): IPromise<any> {
-        return this.testFaelleRS.createTestFall(testFall, bestaetigt, verfuegen).then((response) => {
+    private createTestFall(testFall: string, gesuchsperiodeId: string, bestaetigt: boolean, verfuegen: boolean): IPromise<any> {
+        return this.testFaelleRS.createTestFall(testFall, gesuchsperiodeId, bestaetigt, verfuegen).then((response) => {
             //einfach die letzten 36 zeichen der response als uuid betrachten, hacky ist aber nur fuer uns intern
             let uuidPartOfString = response.data ? response.data.slice(-36) : '';
             return this.dvDialog.showDialog(linkDialogTempl, LinkDialogController, {
@@ -83,8 +90,8 @@ export class TestdatenViewController {
         });
     }
 
-    private createTestFallGS(testFall: string, bestaetigt: boolean, verfuegen: boolean, username: string): IPromise<any> {
-        return this.testFaelleRS.createTestFallGS(testFall, bestaetigt, verfuegen, username).then((response) => {
+    private createTestFallGS(testFall: string, gesuchsperiodeId: string, bestaetigt: boolean, verfuegen: boolean, username: string): IPromise<any> {
+        return this.testFaelleRS.createTestFallGS(testFall, gesuchsperiodeId, bestaetigt, verfuegen, username).then((response) => {
             //einfach die letzten 36 zeichen der response als uuid betrachten, hacky ist aber nur fuer uns intern
             let uuidPartOfString = response.data ? response.data.slice(-36) : '';
             return this.dvDialog.showDialog(linkDialogTempl, LinkDialogController, {

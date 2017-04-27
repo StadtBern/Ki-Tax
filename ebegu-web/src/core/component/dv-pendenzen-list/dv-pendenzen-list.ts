@@ -1,5 +1,5 @@
 import {IComponentOptions, IFilterService} from 'angular';
-import {getTSAntragTypValues, TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {getNormalizedTSAntragTypValues, TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {getTSAntragStatusPendenzValues, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
@@ -71,7 +71,7 @@ export class DVPendenzenListController {
     }
 
     public getAntragTypen(): Array<TSAntragTyp> {
-        return getTSAntragTypValues();
+        return getNormalizedTSAntragTypValues();
     }
 
     /**
@@ -87,7 +87,7 @@ export class DVPendenzenListController {
     }
 
     public updateGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: any) => {
             this.gesuchsperiodenList = [];
             response.forEach((gesuchsperiode: TSGesuchsperiode) => {
                 this.gesuchsperiodenList.push(gesuchsperiode.gesuchsperiodeString);

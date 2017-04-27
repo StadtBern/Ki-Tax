@@ -15,6 +15,7 @@ import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -33,7 +34,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     // showError ist ein Hack damit, die Fehlermeldung fuer die Checkboxes nicht direkt beim Laden der Seite angezeigt wird
     // sondern erst nachdem man auf ein checkbox oder auf speichern geklickt hat
     showError: boolean = false;
-    private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
+    private nichtAbgeschlosseneGesuchsperiodenList: Array<TSGesuchsperiode>;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
         'WizardStepManager', '$translate', '$q', '$scope', 'AuthServiceRS', 'GesuchsperiodeRS'];
@@ -69,8 +70,8 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             }
         }
 
-        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: TSGesuchsperiode[]) => {
-            this.activeGesuchsperiodenList = angular.copy(response);
+        this.gesuchsperiodeRS.getAllNichtAbgeschlosseneGesuchsperioden().then((response: TSGesuchsperiode[]) => {
+            this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(response);
         });
     }
 
@@ -102,7 +103,7 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
     }
 
     public getAllActiveGesuchsperioden() {
-        return this.activeGesuchsperiodenList;
+        return this.nichtAbgeschlosseneGesuchsperiodenList;
     }
 
     public setSelectedGesuchsperiode(): void {
@@ -116,7 +117,8 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
 
     public isGesuchsperiodeActive(): boolean {
         if (this.gesuchModelManager.getGesuchsperiode()) {
-            return this.gesuchModelManager.getGesuchsperiode().active;
+            return TSGesuchsperiodeStatus.AKTIV === this.gesuchModelManager.getGesuchsperiode().status
+                || TSGesuchsperiodeStatus.INAKTIV === this.gesuchModelManager.getGesuchsperiode().status;
         } else {
             return true;
         }
@@ -143,5 +145,11 @@ export class FallCreationViewController extends AbstractGesuchViewController<any
             return this.$translate.instant('WEITER_ONLY_UPPER');
         }
         return this.$translate.instant('WEITER_UPPER');
+    }
+
+    public isSelectedGesuchsperiodeInaktiv(): boolean {
+        return this.getGesuchModel() && this.getGesuchModel().gesuchsperiode
+            && this.getGesuchModel().gesuchsperiode.status === TSGesuchsperiodeStatus.INAKTIV
+            && this.getGesuchModel().isNew();
     }
 }

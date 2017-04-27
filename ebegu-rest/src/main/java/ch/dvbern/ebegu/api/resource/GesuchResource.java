@@ -71,9 +71,6 @@ public class GesuchResource {
 	private BenutzerService benutzerService;
 
 	@Inject
-	private GesuchsperiodeService gesuchsperiodeService;
-
-	@Inject
 	private PrincipalBean principalBean;
 
 	@Inject
@@ -415,18 +412,11 @@ public class GesuchResource {
 		final String antragId = converter.toEntityId(antragJaxId);
 		final String gesuchsperiodeId = converter.toEntityId(gesuchsperiodeJaxId);
 
-		Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
+		Optional<Gesuch> gesuchsperiodeOptional = gesuchService.antragErneuern(antragId, gesuchsperiodeId, eingangsdatum);
 		if (!gesuchsperiodeOptional.isPresent()) {
 			return Response.noContent().build();
 		}
-
-		Optional<Gesuch> erneuerungsgesuchOptional = gesuchService.antragErneuern(antragId, eingangsdatum);
-		if (!erneuerungsgesuchOptional.isPresent()) {
-			return Response.noContent().build();
-		}
-
-		Gesuch gesuchToReturn = gesuchService.createGesuch(erneuerungsgesuchOptional.get());
-		gesuchToReturn.setGesuchsperiode(gesuchsperiodeOptional.get());
+		Gesuch gesuchToReturn = gesuchService.createGesuch(gesuchsperiodeOptional.get());
 		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
 	}
 

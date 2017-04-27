@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.tets.data.VerfuegungZeitabschnittData;
@@ -313,7 +314,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguLoginTest {
 	 */
 	protected Gesuchsperiode createGesuchsperiode(boolean active) {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createCustomGesuchsperiode(2016, 2017);
-		gesuchsperiode.setActive(active);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 		return gesuchsperiode;
 	}

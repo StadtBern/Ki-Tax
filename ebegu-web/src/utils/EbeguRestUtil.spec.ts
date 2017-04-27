@@ -39,6 +39,7 @@ import {TSVerfuegungZeitabschnittZahlungsstatus} from '../models/enums/TSVerfueg
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import Moment = moment.Moment;
+import {TSGesuchsperiodeStatus} from '../models/enums/TSGesuchsperiodeStatus';
 
 describe('EbeguRestUtil', function () {
 
@@ -365,7 +366,7 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseGesuchsperiode()', () => {
             it('should transfrom TSGesuchsperiode to REST Obj and back', () => {
-                let myGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
+                let myGesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(myGesuchsperiode);
 
                 let restGesuchsperiode = ebeguRestUtil.gesuchsperiodeToRestObject({}, myGesuchsperiode);
@@ -373,14 +374,14 @@ describe('EbeguRestUtil', function () {
 
                 let transformedGesuchsperiode: TSGesuchsperiode = ebeguRestUtil.parseGesuchsperiode(new TSGesuchsperiode(), restGesuchsperiode);
                 expect(transformedGesuchsperiode).toBeDefined();
-                expect(myGesuchsperiode.active).toBe(true);
+                expect(myGesuchsperiode.status).toBe(TSGesuchsperiodeStatus.AKTIV);
                 expect(myGesuchsperiode).toEqual(transformedGesuchsperiode);
 
             });
         });
         describe('parseAntragDTO()', () => {
             it('should transform TSAntragDTO to REST Obj and back', () => {
-                let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
+                let tsGesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
                 let myPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.ERSTGESUCH, DateUtil.today(), DateUtil.now(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
 

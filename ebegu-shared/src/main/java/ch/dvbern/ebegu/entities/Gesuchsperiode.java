@@ -1,11 +1,14 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.types.DateRange;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
@@ -20,14 +23,16 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 
 	@NotNull
 	@Column(nullable = false)
-	private Boolean active;
+	@Enumerated(EnumType.STRING)
+	private GesuchsperiodeStatus status = GesuchsperiodeStatus.ENTWURF;
 
-	public Boolean getActive() {
-		return active;
+
+	public GesuchsperiodeStatus getStatus() {
+		return status;
 	}
 
-	public void setActive(Boolean active) {
-		this.active = active;
+	public void setStatus(GesuchsperiodeStatus status) {
+		this.status = status;
 	}
 
 	public int getBasisJahr() {
@@ -45,15 +50,15 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
 	public boolean isSame(Gesuchsperiode otherGesuchsperiode) {
 		boolean dateRangeIsSame = super.isSame(otherGesuchsperiode);
-		boolean activeSame = Objects.equals(this.getActive(), otherGesuchsperiode.getActive());
-		return dateRangeIsSame && activeSame;
+		boolean statusSame = Objects.equals(this.getStatus(), otherGesuchsperiode.getStatus());
+		return dateRangeIsSame && statusSame;
 	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
 			.append("gueltigkeit", getGueltigkeit().toString())
-			.append("active", active)
+			.append("status", status.name())
 			.toString();
 	}
 

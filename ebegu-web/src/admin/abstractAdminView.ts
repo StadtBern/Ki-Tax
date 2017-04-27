@@ -11,7 +11,7 @@ export default class AbstractAdminViewController {
     TSRole: any;
     TSRoleUtil: any;
 
-    constructor(private authServiceRS: AuthServiceRS) {
+    constructor(public authServiceRS: AuthServiceRS) {
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
     }

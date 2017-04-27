@@ -6,6 +6,7 @@ import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp'
 import {TSDateRange} from '../../models/types/TSDateRange';
 import * as moment from 'moment';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSGesuchsperiodeStatus} from '../../models/enums/TSGesuchsperiodeStatus';
 
 describe('pendenzFilter', function () {
 
@@ -23,7 +24,7 @@ describe('pendenzFilter', function () {
 
         let ab = moment('31.08.2016', 'DD.MM.YYYY');
         let bis = moment('01.07.2017', 'DD.MM.YYYY');
-        gesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(ab, bis));
+        gesuchsperiode = new TSGesuchsperiode(TSGesuchsperiodeStatus.AKTIV, new TSDateRange(ab, bis));
 
         pendenzArray = [];
         pendenz1 = new TSAntragDTO('id1', 1, 'Hernandez', TSAntragTyp.ERSTGESUCH, ab, ab,

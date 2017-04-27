@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.dto.dataexport.v1.VerfuegungExportDTO;
 import ch.dvbern.ebegu.dto.dataexport.v1.VerfuegungenExportDTO;
 import ch.dvbern.ebegu.dto.dataexport.v1.ZeitabschnittExportDTO;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
@@ -54,7 +55,6 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 	private VerfuegungService verfuegungService;
 
 	private Gesuchsperiode gesuchsperiode;
-	private List<InstitutionStammdaten> institutionStammdatenList;
 
 
 	@Before
@@ -71,7 +71,7 @@ public class ExportServiceBeanTest extends AbstractEbeguLoginTest {
 	 */
 	protected Gesuchsperiode createGesuchsperiode(boolean active) {
 		gesuchsperiode = TestDataUtil.createCustomGesuchsperiode(2016, 2017);
-		gesuchsperiode.setActive(active);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		gesuchsperiode = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 		return gesuchsperiode;
 	}

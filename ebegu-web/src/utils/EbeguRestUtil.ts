@@ -1313,7 +1313,7 @@ export default class EbeguRestUtil {
     public gesuchsperiodeToRestObject(restGesuchsperiode: any, gesuchsperiode: TSGesuchsperiode): any {
         if (gesuchsperiode) {
             this.abstractDateRangeEntityToRestObject(restGesuchsperiode, gesuchsperiode);
-            restGesuchsperiode.active = gesuchsperiode.active;
+            restGesuchsperiode.status = gesuchsperiode.status;
             return restGesuchsperiode;
         }
         return undefined;
@@ -1322,7 +1322,7 @@ export default class EbeguRestUtil {
     public parseGesuchsperiode(gesuchsperiodeTS: TSGesuchsperiode, gesuchsperiodeFromServer: any): TSGesuchsperiode {
         if (gesuchsperiodeFromServer) {
             this.parseDateRangeEntity(gesuchsperiodeTS, gesuchsperiodeFromServer);
-            gesuchsperiodeTS.active = gesuchsperiodeFromServer.active;
+            gesuchsperiodeTS.status = gesuchsperiodeFromServer.status;
             return gesuchsperiodeTS;
         }
         return undefined;

@@ -173,7 +173,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 
 		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
-		query.where(predicateStatus);
+		// Gesuchsperiode darf nicht geschlossen sein
+		Predicate predicateGesuchsperiode = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
+
+		query.where(predicateStatus, predicateGesuchsperiode);
 		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.fallNummer)));
 		return persistence.getCriteriaResults(query);
 	}
@@ -192,8 +195,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN);
 		Predicate predicateVerantwortlicher = cb.equal(root.get(Gesuch_.fall).get(Fall_.verantwortlicher), benutzer);
+		// Gesuchsperiode darf nicht geschlossen sein
+		Predicate predicateGesuchsperiode = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV);
 
-		query.where(predicateStatus, predicateVerantwortlicher);
+		query.where(predicateStatus, predicateVerantwortlicher, predicateGesuchsperiode);
 		query.orderBy(cb.asc(root.get(Gesuch_.fall).get(Fall_.fallNummer)));
 		return persistence.getCriteriaResults(query);
 	}
@@ -371,7 +376,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					));
 			}
 			if (predicateObjectDto.getAntragTyp() != null) {
-				predicates.add(cb.equal(root.get(Gesuch_.typ), AntragTyp.valueOf(predicateObjectDto.getAntragTyp())));
+				List<AntragTyp> values = AntragTyp.getValuesForFilter(predicateObjectDto.getAntragTyp());
+				predicates.add(root.get(Gesuch_.typ).in(values));
 			}
 			if (predicateObjectDto.getGesuchsperiodeString() != null) {
 				String[] years = ensureYearFormat(predicateObjectDto.getGesuchsperiodeString());
@@ -829,30 +835,25 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@Nonnull
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN, UserRoleName.SACHBEARBEITER_JA, UserRoleName.GESUCHSTELLER})
-	public Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nullable LocalDate eingangsdatum) {
-		Optional<Gesuch> gesuch = findGesuch(antragId);
-		if (gesuch.isPresent()) {
-			List<Gesuch> allGesucheForFallAndPeriod = getAllGesucheForFallAndPeriod(gesuch.get().getFall(), gesuch.get().getGesuchsperiode());
-			// todo fragen !isEmpty() ???? ist immer noch die alte Periode...
-			// todo fragen fehler beim Speichern
-			if (allGesucheForFallAndPeriod.isEmpty()) {
-				authorizer.checkWriteAuthorization(gesuch.get());
-				Optional<Gesuch> gesuchForErneuerungOpt = getNeustesGesuchFuerGesuch(gesuch.get());
-				Gesuch gesuchForErneuerung = gesuchForErneuerungOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragErneuern", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
-				return getErneuerungsgesuch(eingangsdatum, gesuchForErneuerung);
-			} else {
-				throw new EbeguRuntimeException("antragErneuern", ErrorCodeEnum.ERROR_EXISTING_ERNEUERUNGSGESUCH);
-			}
-
+	public Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nonnull String gesuchsperiodeId, @Nullable LocalDate eingangsdatum) {
+		Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId).orElseThrow(() -> new EbeguEntityNotFoundException("findGesuchsperiode", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeId));
+		Gesuch gesuch = findGesuch(antragId).orElseThrow(() -> new EbeguEntityNotFoundException("antragErneuern", "Es existiert kein Antrag mit ID, kann kein Erneuerungsgesuch erstellen " + antragId, antragId));
+		List<Gesuch> allGesucheForFallAndPeriod = getAllGesucheForFallAndPeriod(gesuch.getFall(), gesuchsperiode);
+		if (allGesucheForFallAndPeriod.isEmpty()) {
+			authorizer.checkWriteAuthorization(gesuch);
+			Optional<Gesuch> gesuchForErneuerungOpt = getGesuchFuerErneuerungsantrag(gesuch.getFall());
+			Gesuch gesuchForErneuerung = gesuchForErneuerungOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragErneuern", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
+			return getErneuerungsgesuch(eingangsdatum, gesuchForErneuerung, gesuchsperiode);
 		} else {
-			throw new EbeguEntityNotFoundException("antragErneuern", "Es existiert kein Antrag mit ID, kann kein Erneuerungsgesuch erstellen " + antragId, antragId);
+			throw new EbeguRuntimeException("antragErneuern", ErrorCodeEnum.ERROR_EXISTING_ERNEUERUNGSGESUCH);
 		}
 	}
 
-	private Optional<Gesuch> getErneuerungsgesuch(@Nullable LocalDate eingangsdatum, @Nonnull Gesuch gesuchForErneuerung) {
+	private Optional<Gesuch> getErneuerungsgesuch(@Nullable LocalDate eingangsdatum, @Nonnull Gesuch gesuchForErneuerung, @Nonnull Gesuchsperiode gesuchsperiode) {
 		Eingangsart eingangsart = calculateEingangsart();
 		//TODO (hefr) Vorerst wird das ganze Gesuch analog Mutation kopiert, wird in spaeterem Task umgesetzt
 		Gesuch erneuerungsgesuch = gesuchForErneuerung.copyForMutation(new Gesuch(), eingangsart);
+		erneuerungsgesuch.setGesuchsperiode(gesuchsperiode);
 		erneuerungsgesuch.setTyp(AntragTyp.ERNEUERUNGSGESUCH);
 		if (eingangsdatum != null) {
 			erneuerungsgesuch.setEingangsdatum(eingangsdatum);
@@ -984,6 +985,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (checkReadAuthorization) {
 			authorizer.checkReadAuthorization(gesuch);
 		}
+		return Optional.of(gesuch);
+	}
+
+	@Nonnull
+	private Optional<Gesuch> getGesuchFuerErneuerungsantrag(@Nonnull Fall fall) {
+		authorizer.checkReadAuthorizationFall(fall);
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
+
+		query.where(predicateFall);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		Gesuch gesuch = criteriaResults.get(0);
 		return Optional.of(gesuch);
 	}
 
@@ -1260,6 +1281,24 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 		}
 		return anzahl;
+	}
+
+	@Override
+	public boolean canGesuchsperiodeBeClosed(@Nonnull Gesuchsperiode gesuchsperiode) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		// Status verfuegt
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.VERFUEGT, AntragStatus.NUR_SCHULAMT, AntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN).not();
+		// Gesuchsperiode
+		final Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+
+		query.where(predicateStatus, predicateGesuchsperiode);
+		query.select(root);
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
+		return criteriaResults.isEmpty();
 	}
 }
 

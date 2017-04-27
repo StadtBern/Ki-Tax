@@ -63,6 +63,7 @@ import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import * as moment from 'moment';
 import TSEWKResultat from '../../models/TSEWKResultat';
 import TSEWKPerson from '../../models/TSEWKPerson';
+import {TSGesuchsperiodeStatus} from '../../models/enums/TSGesuchsperiodeStatus';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -1172,12 +1173,18 @@ export default class GesuchModelManager {
      * checks if the gesuch is readonly for a given role based on its state
      */
     private isGesuchReadonlyForRole(): boolean {
+        let periodeReadonly: boolean = this.isGesuchsperiodeReadonly();
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles())) {
             return true;  // schulamt hat immer nur readonly zugriff
         } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
-            return isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
+            let gesuchReadonly: boolean = isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
+            return gesuchReadonly || periodeReadonly;
         }
-        return false;
+        return periodeReadonly;
+    }
+
+    public isGesuchsperiodeReadonly(): boolean {
+        return this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN;
     }
 
     /**

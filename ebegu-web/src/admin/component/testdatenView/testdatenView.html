@@ -8,7 +8,7 @@
 
             <!--selecton fuer parameter die bestimmen wie die testfaelle erzeugt werden-->
             <div class="row marginTop10">
-                <div class="col-sm-6 ">
+                <div class="col-sm-4 ">
                     <md-radio-group ng-model="vm.creationType" dv-suppress-form-submit-on-enter>
                         <md-radio-button value="warten">Betreuungen mit Zustand &#034;warten&#034;</md-radio-button>
                         <md-radio-button value="bestaetigt">Betreuungen mit Zustand &#034;bestätigt&#034;</md-radio-button>
@@ -25,6 +25,22 @@
                                     ng-model="vm.selectedBesitzer"
                                     class="form-control"
                                     ng-options="besitzer as besitzer.username for besitzer in vm.gesuchstellerList"
+                                    style="background:#F0F0F0;">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </dv-input-container>
+                </div>
+                <div class="col-sm-4 ">
+                    <dv-input-container class="form-group">
+                        <label class="md-no-float" for="besitzer">
+                            Gesuchsperiode wenn gewuenscht (sonst neueste)
+                        </label>
+                        <div class="dv-select-style">
+                            <select name="besitzer" id="periode"
+                                    ng-model="vm.selectedGesuchsperiode"
+                                    class="form-control"
+                                    ng-options="periode as periode.gesuchsperiodeString for periode in vm.gesuchsperiodeList"
                                     style="background:#F0F0F0;">
                                 <option value=""></option>
                             </select>
