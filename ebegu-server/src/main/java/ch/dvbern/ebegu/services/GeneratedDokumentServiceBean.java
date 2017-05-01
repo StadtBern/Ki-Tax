@@ -359,7 +359,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			if (persistedDokument == null) {
 				LOG.error("Das Dokument vom Typ: {} fuer Betreuungsnummer {} konnte unter dem Pfad {} " +
 					"nicht gefunden  werden obwohl es existieren muesste. Wird neu generiert!", GeneratedDokumentTyp.VERFUEGUNG.name(), bgNummer, expectedFilepath);
-				//TODO (hefr) throw new Excepiton!!!
 			}
 		}
 		// Wenn die Betreuung nicht verfuegt ist oder das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
