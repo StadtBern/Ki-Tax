@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.errors.EbeguExistingMutationException;
+import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -292,8 +292,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
+	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
-	public Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(Fall fall) {
+	public Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(@Nonnull Fall fall) {
 		Collection<Mitteilung> mitteilungen = getMitteilungenForCurrentRolle(fall);
 		for (Mitteilung mitteilung : mitteilungen) {
 			if (MitteilungStatus.NEU.equals(mitteilung.getMitteilungStatus())) {
@@ -304,7 +305,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
-	public Collection<Mitteilung> getNewMitteilungenForCurrentRolleAndFall(Fall fall) {
+	@Nonnull
+	public Collection<Mitteilung> getNewMitteilungenForCurrentRolleAndFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -374,7 +376,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		} catch (EJBTransactionRolledbackException exception) {
 			//Wenn der Sachbearbeiter den neusten Antrag nicht lesen darf ist es ein noch nicht freigegebener ONLINE Antrag
 			if(exception.getCause().getClass().equals(EJBAccessException.class)) {
-				throw new EbeguExistingMutationException("applyBetreuungsmitteilung", gesuch.getId());
+				throw new EbeguExistingAntragException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, gesuch.getId());
 			}
 			throw exception;
 		}

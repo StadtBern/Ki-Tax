@@ -339,7 +339,7 @@ public class GesuchResource {
 		Set<Gesuch> gesuchSet = new LinkedHashSet<>();
 		for (Gesuch gesuch : foundAntraege) {
 			List<Gesuch> antraege = fallToAntragMultimap.get(gesuch.getFall());
-			Collections.sort(antraege, (Comparator<Gesuch>) (o1, o2) -> o1.getEingangsdatum().compareTo(o2.getEingangsdatum()));
+			antraege.sort((Comparator<Gesuch>) (o1, o2) -> o1.getEingangsdatum().compareTo(o2.getEingangsdatum()));
 			gesuchSet.add(antraege.get(0)); //nur neusten zurueckgeben
 		}
 		return gesuchSet;
@@ -598,7 +598,7 @@ public class GesuchResource {
 		Validate.notNull(antragJAXPId.getId());
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragJAXPId.getId());
 		if (gesuch.isPresent()) {
-			gesuchService.removeOnlineAntrag(converter.toEntityId(antragJAXPId));
+			gesuchService.removeOnlineAntrag(gesuch.get());
 			return Response.ok().build();
 		}
 		throw new EbeguEntityNotFoundException("removeOnlineAntrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + antragJAXPId.getId());

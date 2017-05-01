@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.api.validation;
 
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.errors.EbeguExistingMutationException;
+import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -153,8 +153,8 @@ public class EbeguExceptionReport {
 		Response.ResponseBuilder builder = setResponseHeaderAndStatus(status);
 
 		String objectId = null;
-		if (ex instanceof EbeguExistingMutationException) {
-			objectId = ((EbeguExistingMutationException) ex).getGesuchId();
+		if (ex instanceof EbeguExistingAntragException) {
+			objectId = ((EbeguExistingAntragException) ex).getGesuchId();
 		}
 
 		String translatedEnumMessage = ServerMessageUtil.translateEnumValue(ex.getErrorCodeEnum(), localeFromHeader, ex.getArgs().toArray());

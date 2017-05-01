@@ -7,7 +7,7 @@ import ch.dvbern.ebegu.dto.suchfilter.smarttable.PredicateObjectDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguExistingMutationException;
+import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -85,6 +85,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private ApplicationPropertyService applicationPropertyService;
 	@Inject
 	private ZahlungService zahlungService;
+	@Inject
+	private SuperAdminService superAdminService;
 
 
 	@Nonnull
@@ -767,7 +769,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			} else {
-				throw new EbeguExistingMutationException("antragMutieren", antragId);
+				throw new EbeguExistingAntragException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, antragId);
 			}
 		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen " + antragId, antragId);
@@ -789,14 +791,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer Fallnummer " + fallNummer));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			} else {
-				throw new EbeguExistingMutationException("antragMutieren", "");
+				throw new EbeguExistingAntragException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, "");
 			}
 		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "fall oder gesuchsperiode konnte nicht geladen werden  fallNr:" + fallNummer + "gsPerID" + gesuchsperiodeId);
 		}
 	}
 
-	private boolean isThereAnyOpenMutation(Fall fall, Gesuchsperiode gesuchsperiode) {
+	private boolean isThereAnyOpenMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
+		List<Gesuch> criteriaResults = findExistingMutationen(fall, gesuchsperiode);
+		return !criteriaResults.isEmpty();
+	}
+
+	private List<Gesuch> findExistingMutationen(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
@@ -809,8 +816,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		query.where(predicateMutation, predicateStatus, predicateGesuchsperiode, predicateFall);
 		query.select(root);
-		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
-		return !criteriaResults.isEmpty();
+		return persistence.getCriteriaResults(query);
 	}
 
 	private Optional<Gesuch> getGesuchMutation(@Nullable LocalDate eingangsdatum, @Nonnull Gesuch gesuchForMutation) {
@@ -846,7 +852,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			Gesuch gesuchForErneuerung = gesuchForErneuerungOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragErneuern", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
 			return getErneuerungsgesuch(eingangsdatum, gesuchForErneuerung, gesuchsperiode);
 		} else {
-			throw new EbeguRuntimeException("antragErneuern", ErrorCodeEnum.ERROR_EXISTING_ERNEUERUNGSGESUCH);
+			throw new EbeguExistingAntragException("antragErneuern", ErrorCodeEnum.ERROR_EXISTING_ERNEUERUNGSGESUCH, antragId);
 		}
 	}
 
@@ -1303,8 +1309,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	public void removeOnlineAntrag(@Nonnull String antragId) {
-		// remove neueste online Mutation
+	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
+	public void removeOnlineAntrag(@Nonnull Gesuch antrag) {
+		List<Gesuch> criteriaResults = findExistingMutationen(antrag.getFall(), antrag.getGesuchsperiode());
+		if(criteriaResults.size() > 1) {
+			// It should be impossible that there are more than one open Mutation
+			throw new EbeguRuntimeException("removeOnlineAntrag", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
+		}
+		superAdminService.removeGesuch(criteriaResults.get(0).getId());
 	}
 }
 
