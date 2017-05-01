@@ -298,7 +298,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	private GeneratedDokument getDocumentIfExistsAndIsWriteProtected(@Nonnull Gesuch gesuch,  String fileNameForGeneratedDokumentTyp, @Nonnull Boolean forceCreation) {
 		Optional<GeneratedDokument> optionalDokument = getMaybeExistingGeneratedDokument(gesuch, fileNameForGeneratedDokumentTyp);
-		if (forceCreation && !optionalDokument.isPresent() && optionalDokument.get().isWriteProtected()) {
+		if (forceCreation && optionalDokument.isPresent() && optionalDokument.get().isWriteProtected()) {
 			// Dies ist ein Zustand, der eigentlich gar nicht vorkommen dürfte: Wir wollen explizit das Dokument neu
 			// erstellen (forceCreate), es ist aber writeProtected.
 			// Wir vermuten/hoffen, dass dies nur bei sehr schnellem Doppelklick vorkommen kann. Da der Benutzer mit
