@@ -4,11 +4,15 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
+import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.enums.Zustelladresse;
 import ch.dvbern.ebegu.errors.MergeDocException;
 
 import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Collection;
 
 /**
  * Service zum Verwalten von GeneratedDokumenten
@@ -16,6 +20,20 @@ import java.io.IOException;
 @SuppressWarnings("InstanceMethodNamingConvention")
 public interface GeneratedDokumentService {
 
+	/**
+	 * Erstellt ein neues GeneratedDokument wenn es noch nicht existiert und sonst aktualisiert das Bestehende
+	 *
+	 * @param dokument
+	 * @return
+	 */
+	@Nonnull
+	GeneratedDokument saveGeneratedDokument(@Nonnull GeneratedDokument dokument);
+
+	@Nullable
+	GeneratedDokument findGeneratedDokument(String gesuchId, String filename, String path);
+
+	@Nonnull
+	GeneratedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName, boolean writeProtected) throws MimeTypeParseException;
 
 	GeneratedDokument getFinSitDokumentAccessTokenGeneratedDokument(Gesuch gesuch,
 																	Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
@@ -37,4 +55,5 @@ public interface GeneratedDokumentService {
 
 	void removeAllGeneratedDokumenteFromGesuch(Gesuch gesuch);
 
+	Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch);
 }

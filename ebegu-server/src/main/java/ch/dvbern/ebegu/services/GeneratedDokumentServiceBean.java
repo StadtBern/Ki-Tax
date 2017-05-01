@@ -91,12 +91,14 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 
+	@Override
 	@Nonnull
 	public GeneratedDokument saveGeneratedDokument(@Nonnull GeneratedDokument dokument) {
 		Objects.requireNonNull(dokument);
 		return persistence.merge(dokument);
 	}
 
+	@Override
 	@Nullable
 	public GeneratedDokument findGeneratedDokument(String gesuchId, String filename, String path) {
 
@@ -125,6 +127,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	 * @return
 	 */
 	@Nonnull
+	@Override
 	public GeneratedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName, boolean writeProtected) throws MimeTypeParseException {
 
 		GeneratedDokument generatedDokument = this.findGeneratedDokument(gesuch.getId(),
@@ -480,9 +483,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 	}
 
-	/**
-	 * Public, weil im Test verwendet, aber nicht im Interface
-	 */
+	@Override
 	public Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
 		this.authorizer.checkReadAuthorization(gesuch);
