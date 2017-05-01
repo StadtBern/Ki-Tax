@@ -1164,9 +1164,9 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return isStatusVerfuegenVerfuegt(this.gesuch.status)
+        return this.gesuch && (isStatusVerfuegenVerfuegt(this.gesuch.status)
             || this.isGesuchReadonlyForRole()
-            || this.getGesuch().gesperrtWegenBeschwerde;
+            || this.getGesuch().gesperrtWegenBeschwerde);
     }
 
     /**
@@ -1184,7 +1184,7 @@ export default class GesuchModelManager {
     }
 
     public isGesuchsperiodeReadonly(): boolean {
-        return this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN;
+        return this.getGesuch() && this.getGesuch().gesuchsperiode && (this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN);
     }
 
     /**
