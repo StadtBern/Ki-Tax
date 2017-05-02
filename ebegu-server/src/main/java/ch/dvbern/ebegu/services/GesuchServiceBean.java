@@ -799,11 +799,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	private boolean isThereAnyOpenMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
-		List<Gesuch> criteriaResults = findExistingMutationen(fall, gesuchsperiode);
+		List<Gesuch> criteriaResults = findExistingOpenMutationen(fall, gesuchsperiode);
 		return !criteriaResults.isEmpty();
 	}
 
-	private List<Gesuch> findExistingMutationen(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
+	/**
+	 * Diese Methode gibt eine Liste zurueck. Diese Liste sollte aber maximal eine Mutation enthalten, da es unmoeglich ist,
+	 * mehrere offene Mutationen fuer dieselbe Gesuchsperiode zu haben.
+	 */
+	private List<Gesuch> findExistingOpenMutationen(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
@@ -1328,7 +1332,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public void removeOnlineMutation(@Nonnull Gesuch antrag) {
-		List<Gesuch> criteriaResults = findExistingMutationen(antrag.getFall(), antrag.getGesuchsperiode());
+		List<Gesuch> criteriaResults = findExistingOpenMutationen(antrag.getFall(), antrag.getGesuchsperiode());
 		if(criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Mutation
 			throw new EbeguRuntimeException("removeOnlineMutation", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);

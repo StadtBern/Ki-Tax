@@ -47,19 +47,7 @@ export class DvErrorMessagesPanelComponent {
 
     displayMessages = (event: any, errors: Array<TSExceptionReport>) => {
         this.errors = errors;
-        this.addActionToMessage();
         this.show();
-    }
-
-    private addActionToMessage(): void {
-        for (let error of this.errors) {
-            if (error.errorCodeEnum === 'ERROR_EXISTING_ONLINE_MUTATION') {
-                error.action = TSErrorAction.REMOVE_ONLINE_MUTATION;
-
-            } else if (error.errorCodeEnum === 'ERROR_EXISTING_ERNEUERUNGSGESUCH') {
-                error.action = TSErrorAction.REMOVE_ONLINE_ERNEUERUNGSGESUCH;
-            }
-        }
     }
 
     private executeAction(error: TSExceptionReport): void {
@@ -67,8 +55,8 @@ export class DvErrorMessagesPanelComponent {
             if (error.action === TSErrorAction.REMOVE_ONLINE_MUTATION) {
                 this.removeOnlineMutation(error.objectId);
 
-            } else if (error.action === TSErrorAction.REMOVE_ONLINE_ERNEUERUNGSGESUCH) {
-                this.removeOnlineErneuerungsgesuch(error.objectId, error.argumentList[1]);
+            } else if (error.action === TSErrorAction.REMOVE_ONLINE_ERNEUERUNGSGESUCH && error.argumentList.length > 0) {
+                this.removeOnlineErneuerungsgesuch(error.objectId, error.argumentList[0]);
             }
         }
         this.clear();

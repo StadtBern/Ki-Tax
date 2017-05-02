@@ -196,7 +196,17 @@ export default class TSExceptionReport {
         exceptionReport.customMessage = data.customMessage;
         exceptionReport.objectId = data.objectId;
         exceptionReport.argumentList = data.argumentList;
+        exceptionReport.addActionToMessage();
         return exceptionReport;
 
+    }
+
+    private addActionToMessage(): void {
+        if (this.errorCodeEnum === 'ERROR_EXISTING_ONLINE_MUTATION') {
+            this.action = TSErrorAction.REMOVE_ONLINE_MUTATION;
+
+        } else if (this.errorCodeEnum === 'ERROR_EXISTING_ERNEUERUNGSGESUCH') {
+            this.action = TSErrorAction.REMOVE_ONLINE_ERNEUERUNGSGESUCH;
+        }
     }
 }
