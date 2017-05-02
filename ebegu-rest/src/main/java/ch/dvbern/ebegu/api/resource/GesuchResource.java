@@ -65,6 +65,9 @@ public class GesuchResource {
 	private GesuchService gesuchService;
 
 	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
+
+	@Inject
 	private InstitutionService institutionService;
 
 	@Inject
@@ -589,18 +592,39 @@ public class GesuchResource {
 	}
 
 	@DELETE
-	@Path("/removeOnlineAntrag/{antragId}")
+	@Path("/removeOnlineMutation/{antragId}")
 	@Consumes(MediaType.WILDCARD)
-	public Response removeOnlineAntrag(
+	public Response removeOnlineMutation(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJAXPId,
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(antragJAXPId.getId());
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragJAXPId.getId());
 		if (gesuch.isPresent()) {
-			gesuchService.removeOnlineAntrag(gesuch.get());
+			gesuchService.removeOnlineMutation(gesuch.get());
 			return Response.ok().build();
 		}
-		throw new EbeguEntityNotFoundException("removeOnlineAntrag", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + antragJAXPId.getId());
+		throw new EbeguEntityNotFoundException("removeOnlineMutation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + antragJAXPId.getId());
+	}
+
+	@DELETE
+	@Path("/removeOnlineFolgegesuch/{antragId}/{gesuchsperiodeId}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeOnlineFolgegesuch(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJAXPId,
+		@Nonnull @NotNull @PathParam("gesuchsperiodeId") JaxId gesuchsperiodeJAXPId,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(antragJAXPId.getId());
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(antragJAXPId.getId());
+		if (!gesuch.isPresent()) {
+			throw new EbeguEntityNotFoundException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + antragJAXPId.getId());
+		}
+		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeJAXPId.getId());
+		if (!gesuchsperiode.isPresent()) {
+			throw new EbeguEntityNotFoundException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchsperiodeId invalid: " + gesuchsperiodeJAXPId.getId());
+		}
+		gesuchService.removeOnlineFolgegesuch(gesuch.get(), gesuchsperiode.get());
+		return Response.ok().build();
 	}
 }

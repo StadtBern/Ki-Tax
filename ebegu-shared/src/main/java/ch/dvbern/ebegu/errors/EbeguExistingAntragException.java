@@ -19,7 +19,13 @@ public class EbeguExistingAntragException extends EbeguRuntimeException {
 
 	public EbeguExistingAntragException(@Nullable String methodName, @Nonnull ErrorCodeEnum code,
 										@Nonnull String gesuchID, @Nonnull Serializable... args) {
-		super(methodName, code, code, args);
+		super(methodName, code, args);
+		this.gesuchId = gesuchID;
+	}
+
+	public EbeguExistingAntragException(@Nullable String methodName, @Nonnull ErrorCodeEnum code,
+										@Nullable Throwable cause, @Nonnull String gesuchID, @Nonnull Serializable... args) {
+		super(methodName, code, cause, args);
 		this.gesuchId = gesuchID;
 	}
 

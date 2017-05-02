@@ -37,7 +37,7 @@ describe('dvbErrorMessages', function () {
             let errors: TSExceptionReport[] = [error];
             controller.displayMessages(undefined, errors);
 
-            expect(error.action).toBe(TSErrorAction.REMOVE_ONLINE_ANTRAG);
+            expect(error.action).toBe(TSErrorAction.REMOVE_ONLINE_MUTATION);
         });
     });
 });

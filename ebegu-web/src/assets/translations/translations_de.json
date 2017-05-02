@@ -1005,8 +1005,10 @@
     "STV_PRUEFUNG_ABSCHLIESSEN_UPPER": "PRÜFUNG ABSCHLIESSEN",
     "STV_PRUEFUNG_ABSCHLIESSEN_CONFIRMATION": "Möchten Sie die Prüfung bei der Steuerverwaltung wirklich abschliessen?",
     "EXISTING_MUTATIONSMELDUNG": "Am {{datumMutationsmeldung}} wurde zu dieser Betreuung eine Mutationsmeldung ans Jugendamt gesendet",
-    "REMOVE_ONLINE_ANTRAG": "Online Mutation löschen",
-    "REMOVE_ONLINE_ANTRAG_CONFIRMATION": "Möchten Sie wirklich die Online Mutation löschen?",
-    "REMOVE_ONLINE_ANTRAG_BESCHREIBUNG": "Die Mutation wird endgültig gelöscht. Die Änderungen können nicht rückgängig gemacht werden."
-
+    "REMOVE_ONLINE_MUTATION": "Online Mutation löschen",
+    "REMOVE_ONLINE_MUTATION_CONFIRMATION": "Möchten Sie wirklich die Online Mutation löschen?",
+    "REMOVE_ONLINE_MUTATION_BESCHREIBUNG": "Die Mutation wird endgültig gelöscht. Die Änderungen können nicht rückgängig gemacht werden.",
+    "REMOVE_ONLINE_ERNEUERUNGSGESUCH": "Online Erneuerungsgesuch löschen",
+    "REMOVE_ONLINE_ERNEUERUNGSGESUCH_CONFIRMATION": "Möchten Sie wirklich das Online Folgegesuch löschen?",
+    "REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG": "Das Folgegesuch wird endgültig gelöscht. Die Änderungen können nicht rückgängig gemacht werden."
 }

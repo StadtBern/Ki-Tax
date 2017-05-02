@@ -54,24 +54,41 @@ export class DvErrorMessagesPanelComponent {
     private addActionToMessage(): void {
         for (let error of this.errors) {
             if (error.errorCodeEnum === 'ERROR_EXISTING_ONLINE_MUTATION') {
-                error.action = TSErrorAction.REMOVE_ONLINE_ANTRAG;
+                error.action = TSErrorAction.REMOVE_ONLINE_MUTATION;
+
+            } else if (error.errorCodeEnum === 'ERROR_EXISTING_ERNEUERUNGSGESUCH') {
+                error.action = TSErrorAction.REMOVE_ONLINE_ERNEUERUNGSGESUCH;
             }
         }
     }
 
     private executeAction(error: TSExceptionReport): void {
-        if (error.action && error.action === TSErrorAction.REMOVE_ONLINE_ANTRAG) {
-            this.removeOnlineAntrag(error.objectId);
+        if (error.action) {
+            if (error.action === TSErrorAction.REMOVE_ONLINE_MUTATION) {
+                this.removeOnlineMutation(error.objectId);
+
+            } else if (error.action === TSErrorAction.REMOVE_ONLINE_ERNEUERUNGSGESUCH) {
+                this.removeOnlineErneuerungsgesuch(error.objectId, error.argumentList[1]);
+            }
         }
         this.clear();
     }
 
-    private removeOnlineAntrag(objectId: string): void {
+    private removeOnlineMutation(objectId: string): void {
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-            title: 'REMOVE_ONLINE_ANTRAG_CONFIRMATION',
-            deleteText: 'REMOVE_ONLINE_ANTRAG_BESCHREIBUNG'
+            title: 'REMOVE_ONLINE_MUTATION_CONFIRMATION',
+            deleteText: 'REMOVE_ONLINE_MUTATION_BESCHREIBUNG'
         }).then(() => {   //User confirmed removal
-            this.gesuchRS.removeOnlineAntrag(objectId).then((response) => {});
+            this.gesuchRS.removeOnlineMutation(objectId).then((response) => {});
+        });
+    }
+
+    private removeOnlineErneuerungsgesuch(objectId: string, gesuchsperiodeId: string): void {
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            title: 'REMOVE_ONLINE_ERNEUERUNGSGESUCH_CONFIRMATION',
+            deleteText: 'REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG'
+        }).then(() => {   //User confirmed removal
+            this.gesuchRS.removeOnlineFolgegesuch(objectId, gesuchsperiodeId).then((response) => {});
         });
     }
 
