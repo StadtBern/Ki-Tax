@@ -29,7 +29,6 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
         gesuchid: '@',
-        onVerantwortlicherChange: '&',
         fallid: '@',
         isDashboardScreen: '@',
         hideActionButtons: '@'
@@ -63,8 +62,6 @@ export class GesuchToolbarController {
     isDashboardScreen: boolean;
     hideActionButtons: boolean;
     TSRoleUtil: any;
-
-    onVerantwortlicherChange: (attr: any) => void;
 
     gesuchsperiodeList: {[key: string]: Array<TSAntragDTO>} = {};
     gesuchNavigationList: {[key: string]: Array<string>} = {};   //mapped z.B. '2006 / 2007' auf ein array mit den Namen der Antraege
@@ -289,7 +286,10 @@ export class GesuchToolbarController {
      * @param verantwortlicher
      */
     public setVerantwortlicher(verantwortlicher: TSUser): void {
-        this.onVerantwortlicherChange({user: verantwortlicher});
+        if (verantwortlicher) {
+            this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
+            this.gesuchModelManager.updateFall();
+        }
         this.setUserAsFallVerantwortlicherLocal(verantwortlicher);
     }
 

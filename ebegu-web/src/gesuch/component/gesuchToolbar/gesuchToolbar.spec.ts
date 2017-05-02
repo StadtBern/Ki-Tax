@@ -77,9 +77,6 @@ describe('gesuchToolbar', function () {
             spyOn(gesuchModelManager, 'setUserAsFallVerantwortlicher');
             spyOn(gesuchModelManager, 'updateFall');
 
-            gesuchToolbarController.onVerantwortlicherChange = (verantwortlicher: any): any => {
-                expect(verantwortlicher['user']).toBeUndefined();
-            };
             gesuchToolbarController.setVerantwortlicher(undefined);
             expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(user);
         });
@@ -89,9 +86,6 @@ describe('gesuchToolbar', function () {
             spyOn(gesuchModelManager, 'updateFall');
 
             let newUser: TSUser = new TSUser('Adolfo', 'Contreras');
-            gesuchToolbarController.onVerantwortlicherChange = (verantwortlicher: any): any => {
-                expect(verantwortlicher['user']).toBe(newUser);
-            };
             gesuchToolbarController.setVerantwortlicher(newUser);
             expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(newUser);
         });
