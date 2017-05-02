@@ -142,4 +142,38 @@ export default class TestDataUtil {
         form.$setUntouched = () => {};
         return form;
     }
+
+    public static createValidationReport(): any {
+        return {
+            status: 400,
+            data: {
+                parameterViolations: [],
+                classViolations: [],
+                fieldViolations: [],
+                propertyViolations: [{
+                    constraintType: 'PARAMETER',
+                    path: 'markAsRead.arg1',
+                    message: 'Die Länge des Feldes muss zwischen 36 und 36 sein',
+                    value: '8a146418-ab12-456f-9b17-aad6990f51'
+                }],
+                returnValueViolations: []
+            }
+        };
+    }
+
+    public static createExceptionReport(): any {
+        return {
+            status: 500,
+            data: {
+                errorCodeEnum: 'ERROR_ENTITY_NOT_FOUND',
+                exceptionName: 'EbeguRuntimeException',
+                methodName: 'doTest',
+                stackTrace: null,
+                translatedMessage: '',
+                customMessage: 'test',
+                objectId: '44-55-66-77',
+                argumentList: null,
+            }
+        };
+    }
 }
