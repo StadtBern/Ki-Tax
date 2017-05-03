@@ -29,7 +29,8 @@
                         <th st-sort="institutionsName" class="sortable row-institutionsName"
                             data-translate="ZAHLUNG_INSTITUION_UPPER"></th>
                         <th data-translate="ZAHLUNG_DETAILPOSITIONEN_UPPER"></th>
-                        <th data-translate="ZAHLUNG_BETRAG_UPPER"></th>
+                        <th st-sort="betragTotalZahlung" class="sortable row-status"
+                            data-translate="ZAHLUNG_BETRAG_UPPER" id="betragTotalZahlung"></th>
                         <th st-sort="status" class="sortable row-status" data-translate="ZAHLUNG_STATUS_UPPER"></th>
 
                     </tr>
@@ -44,7 +45,7 @@
                                 <i class="fa fa-lg fa-file-excel-o"></i>
                             </dv-loading-button>
                         </td>
-                        <td class="ellipsis" ellipsis-tooltip="{{row.betragTotalZahlung}}"
+                        <td class="ellipsis numeric-column" ellipsis-tooltip="{{row.betragTotalZahlung}}"
                             ng-bind="row.betragTotalZahlung | currency : '' : 2"></td>
                         <td class="ellipsis" ellipsis-tooltip="{{row.status}}" dv-show-element
                             dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN', 'SACHBEARBEITER_JA', 'JURIST', 'REVISOR']">
