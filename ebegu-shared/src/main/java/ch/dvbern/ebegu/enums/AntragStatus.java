@@ -195,6 +195,10 @@ public enum AntragStatus {
 		return Arrays.asList(VERFUEGT, PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV);
 	}
 
+	public static Collection<AntragStatus> getInBearbeitungGSStates() {
+		return Arrays.asList(FREIGABEQUITTUNG, IN_BEARBEITUNG_GS);
+	}
+
 	/**
 	 * Ein verfuegtes Gesuch kann mehrere Status haben. Diese Methode immer anwenden um herauszufinden
 	 * ob ein Gesuch verfuegt ist.

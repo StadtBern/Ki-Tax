@@ -176,4 +176,19 @@ export default class GesuchRS implements IEntityRS {
                 return response.data;
             });
     }
+
+    public removeOnlineMutation(gesuchID: string):  IPromise<boolean> {
+        return this.http.delete(this.serviceURL + '/removeOnlineMutation/' + encodeURIComponent(gesuchID))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
+
+    public removeOnlineFolgegesuch(gesuchID: string, gesuchsperiodId: string): IPromise<boolean> {
+        return this.http.delete(this.serviceURL + '/removeOnlineFolgegesuch/' + encodeURIComponent(gesuchID)
+            + '/' + encodeURIComponent(gesuchsperiodId))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
 }

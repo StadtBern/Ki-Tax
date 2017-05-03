@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.validation;
 
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -35,6 +36,7 @@ public class EbeguExceptionReport {
 	private String customMessage;
 	private ErrorCodeEnum errorCodeEnum;
 	private String stackTrace;
+	private String objectId; // das ID vom betroffenen Objekt, wenn es eins gibt
 	private List<Serializable> argumentList = new ArrayList<>();
 
 //	public EbeguExceptionReport(EbeguException exception) {
@@ -58,13 +60,16 @@ public class EbeguExceptionReport {
 //	}
 
 
-	public EbeguExceptionReport(@Nullable String exceptionName, @Nullable ErrorCodeEnum errorCodeEnum, @Nullable String methodName, @Nullable String translatedMessage, @Nullable String customMessage, @Nullable List<Serializable> argumentList) {
+	public EbeguExceptionReport(@Nullable String exceptionName, @Nullable ErrorCodeEnum errorCodeEnum, @Nullable String methodName,
+								@Nullable String translatedMessage, @Nullable String customMessage, @Nullable String objectId,
+								@Nullable List<Serializable> argumentList) {
 		this.exceptionName = exceptionName;
 		this.errorCodeEnum = errorCodeEnum;
 		this.methodName = methodName;
 		this.translatedMessage = translatedMessage;
 		this.customMessage = customMessage;
 		this.argumentList = argumentList;
+		this.objectId = objectId;
 	}
 
 	public String getExceptionName() {
@@ -124,10 +129,19 @@ public class EbeguExceptionReport {
 		this.argumentList = argumentList;
 	}
 
-	public static Response buildResponse(Response.Status status, EbeguException ex,  Locale localeFromHeader, boolean addDebugInfo) {
+	public String getObjectId() {
+		return objectId;
+	}
+
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
+	}
+
+	public static Response buildResponse(Response.Status status, EbeguException ex, Locale localeFromHeader, boolean addDebugInfo) {
 		Response.ResponseBuilder builder = setResponseHeaderAndStatus(status);
 		String translatedEnumMessage = ServerMessageUtil.translateEnumValue(ex.getErrorCodeEnum(), localeFromHeader, ex.getArgs().toArray());
-		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(), ex.getErrorCodeEnum(), ex.getMethodName(), translatedEnumMessage, ex.getCustomMessage(), ex.getArgs());
+		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(), ex.getErrorCodeEnum(), ex.getMethodName(), translatedEnumMessage,
+			ex.getCustomMessage(), null, ex.getArgs());
 		if (addDebugInfo) {
 					addDevelopmentDebugInformation(exceptionReport, ex);
 				}
@@ -137,8 +151,15 @@ public class EbeguExceptionReport {
 
 	public static Response buildResponse(Response.Status status, EbeguRuntimeException ex, Locale localeFromHeader, boolean addDebugInfo) {
 		Response.ResponseBuilder builder = setResponseHeaderAndStatus(status);
+
+		String objectId = null;
+		if (ex instanceof EbeguExistingAntragException) {
+			objectId = ((EbeguExistingAntragException) ex).getGesuchId();
+		}
+
 		String translatedEnumMessage = ServerMessageUtil.translateEnumValue(ex.getErrorCodeEnum(), localeFromHeader, ex.getArgs().toArray());
-		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(), ex.getErrorCodeEnum(), ex.getMethodName(), translatedEnumMessage, ex.getCustomMessage(), ex.getArgs());
+		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(), ex.getErrorCodeEnum(),
+			ex.getMethodName(), translatedEnumMessage, ex.getCustomMessage(), objectId, ex.getArgs());
 		if (addDebugInfo) {
 			addDevelopmentDebugInformation(exceptionReport, ex);
 		}
