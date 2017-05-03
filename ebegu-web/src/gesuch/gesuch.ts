@@ -8,7 +8,6 @@ import EbeguUtil from '../utils/EbeguUtil';
 import {IN_BEARBEITUNG_BASE_NAME, TSAntragStatus} from '../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
 import TSGesuch from '../models/TSGesuch';
-import TSUser from '../models/TSUser';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import {TSRole} from '../models/enums/TSRole';
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
@@ -172,17 +171,6 @@ export class GesuchRouteController {
             return this.gesuchModelManager.getGesuch();
         }
         return undefined;
-    }
-
-    /**
-     * Sets the given user as the verantworlicher fuer den aktuellen Fall
-     * @param verantwortlicher
-     */
-    public setVerantwortlicher(verantwortlicher: TSUser): void {
-        if (verantwortlicher) {
-            this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
-            this.gesuchModelManager.updateFall();
-        }
     }
 
     public getGesuchErstellenStepTitle(): string {
