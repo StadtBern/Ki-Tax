@@ -1332,6 +1332,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public void removeOnlineMutation(@Nonnull Gesuch antrag) {
+		logDeletingOfGesuchstellerAntrag(antrag);
 		List<Gesuch> criteriaResults = findExistingOpenMutationen(antrag.getFall(), antrag.getGesuchsperiode());
 		if(criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Mutation
@@ -1343,12 +1344,22 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
 	public void removeOnlineFolgegesuch(@Nonnull Gesuch antrag, @Nonnull Gesuchsperiode gesuchsperiode) {
+		logDeletingOfGesuchstellerAntrag(antrag);
 		List<Gesuch> criteriaResults = findExistingFolgegesuch(antrag.getFall(), gesuchsperiode);
 		if(criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Folgegesuch for one period
 			throw new EbeguRuntimeException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
 		superAdminService.removeGesuch(criteriaResults.get(0).getId());
+	}
+
+	private void logDeletingOfGesuchstellerAntrag(@Nonnull Gesuch antrag) {
+		LOG.info("****************************************************");
+		LOG.info("Online Gesuch wird gelöscht:");
+		LOG.info("Benutzer: " + principalBean.getBenutzer().getUsername());
+		LOG.info("Fall: " + antrag.getFall().getFallNummer());
+		LOG.info("Gesuchsperiode: " + antrag.getGesuchsperiode().getGesuchsperiodeString());
+		LOG.info("****************************************************");
 	}
 }
 
