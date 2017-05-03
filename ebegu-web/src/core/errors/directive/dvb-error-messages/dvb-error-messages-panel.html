@@ -5,6 +5,11 @@
             <div ng-repeat="error in vm.errors | orderBy:'severity'">
                 <!--maybe we should think a bit harder when to display what but it seems to work for now-->
                 <div data-translate="{{error.msgKey}}" role="alert"></div>
+                <div id="action" ng-click="vm.executeAction(error)"
+                     data-translate="{{error.action}}"
+                     dv-show-element
+                     dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorRoles()"
+                     dv-show-expression="vm.isActionDefined(error)"></div>
             </div>
         </div>
         <a ng-show="vm.errors.length > 0" ng-click="vm.clear()"><i class="close-icon fa fa-times"></i></a>
