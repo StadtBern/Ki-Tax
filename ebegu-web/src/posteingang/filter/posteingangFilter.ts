@@ -18,7 +18,7 @@ export function PosteingangFilter($filter: any, ebeguUtil: EbeguUtil, CONSTANTS:
         function customComparator(actual: any, expected: any) {
             // Von
             if (expression.sender && expression.sender === expected) {
-                return actual.getFullName().indexOf(expected) >= 0;
+                return actual.getFullName().toUpperCase().indexOf(expected.toUpperCase()) >= 0;
             }
             // Fall-Nummer
             if (expression.fall && expression.fall.fallNummer && expression.fall.fallNummer === expected) {
@@ -27,19 +27,15 @@ export function PosteingangFilter($filter: any, ebeguUtil: EbeguUtil, CONSTANTS:
             }
             // Familie
             if (expression.fall && expression.fall.besitzer && expression.fall.besitzer === expected) {
-                return actual.getFullName().indexOf(expected) >= 0;
-            }
-            // Betreff
-            if (expression.subject && expression.subject === expected) {
-                return actual.indexOf(expected) >= 0;
+                return actual.getFullName().toUpperCase().indexOf(expected.toUpperCase()) >= 0;
             }
             // Datum gesendet
             if (expression.sentDatum && expression.sentDatum === expected) {
                 return compareDates(actual, expected);
             }
             // Verantwortlicher
-            if (expression.verantwortlicher) {
-                return actual.indexOf(expected) >= 0;
+            if (expression.empfaenger && expression.empfaenger === expected) {
+                return actual.getFullName().indexOf(expected) >= 0;
             }
             return standardComparator(actual, expected);
         }
