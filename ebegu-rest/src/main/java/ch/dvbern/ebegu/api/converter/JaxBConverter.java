@@ -899,7 +899,7 @@ public class JaxBConverter {
 			throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		}
 
-		// Institution ist nicht required!
+		// Traegerschaft ist nicht required!
 		if (institutionJAXP.getTraegerschaft() != null) {
 			if (institutionJAXP.getTraegerschaft().getId() != null) {
 				final Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(institutionJAXP.getTraegerschaft().getId());
@@ -911,6 +911,9 @@ public class JaxBConverter {
 			} else {
 				throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 			}
+		}
+		else {
+			institution.setTraegerschaft(null);
 		}
 		return institution;
 	}

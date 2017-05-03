@@ -112,6 +112,7 @@
                                                 ng-model="vm.getSelectedInstitution().traegerschaft"
                                                 ng-options="traegerschaft as traegerschaft.name for traegerschaft in vm.getTreagerschaftList() track by traegerschaft.id"
                                                 ng-required="false">
+                                            <option value=""></option>
                                         </select>
 
                                     <dv-error-messages for="form.traegerschaft_ID.$error"
