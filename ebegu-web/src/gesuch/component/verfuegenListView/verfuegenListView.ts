@@ -415,6 +415,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showVerfuegenStarten(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
             && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
+            && this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
             && !this.isGesuchReadonly();
         // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
@@ -424,8 +425,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showCloseWithoutAngebot(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
-            && !this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
-            && !this.gesuchModelManager.getGesuch().isThereAnyBetreuung();
+            && !this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
+            && !this.isGesuchReadonly();
     }
 
     public openFinanzielleSituationPDF(): void {
