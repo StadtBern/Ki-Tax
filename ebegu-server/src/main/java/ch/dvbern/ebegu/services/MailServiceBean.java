@@ -166,6 +166,21 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 		}
 	}
 
+	@Override
+	public void sendInfoFreischaltungGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Gesuch gesuch) throws MailException {
+		if (doSendMail(gesuch.getFall())) {
+			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoFreischaltungGesuchsperiode(gesuchsperiode, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoFreischaltungGesuchsperiode wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping InfoFreischaltungGesuchsperiode because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
 	/**
 	 * Hier wird an einer Stelle definiert, an welche Benutzergruppen ein Mail geschickt werden soll.
 	 */

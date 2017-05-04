@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -25,6 +26,10 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private GesuchsperiodeStatus status = GesuchsperiodeStatus.ENTWURF;
+
+	// Wir merken uns, wann die Periode aktiv geschalten wurde, damit z.B. die Mails nicht 2 mal verschickt werden
+	@Column(nullable = true)
+	private LocalDate datumAktiviert;
 
 
 	public GesuchsperiodeStatus getStatus() {
@@ -45,6 +50,14 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 
 	public int getBasisJahrPlus2() {
 		return getBasisJahr() + 2;
+	}
+
+	public LocalDate getDatumAktiviert() {
+		return datumAktiviert;
+	}
+
+	public void setDatumAktiviert(LocalDate datumAktiviert) {
+		this.datumAktiviert = datumAktiviert;
 	}
 
 	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
