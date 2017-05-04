@@ -219,8 +219,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
 
         }).then(() => {
-            this.gesuchModelManager.getGesuch().status = TSAntragStatus.KEIN_ANGEBOT;
-            return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+            return this.gesuchRS.closeWithoutAngebot(this.gesuchModelManager.getGesuch().id).then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                this.gesuchModelManager.setGesuch(response);
                 this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                 return this.refreshKinderListe().then(() => {
                     return this.createNeededPDFs(true).then(() => {

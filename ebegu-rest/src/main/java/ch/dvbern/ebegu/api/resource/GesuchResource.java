@@ -627,4 +627,27 @@ public class GesuchResource {
 		gesuchService.removeOnlineFolgegesuch(gesuch.get(), gesuchsperiode.get());
 		return Response.ok().build();
 	}
+
+	@ApiOperation(value = "Schilesst ein Gesuch ab, das kein Angebot hat")
+	@Nullable
+	@POST
+	@Path("/closeWithoutAngebot/{antragId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response closeWithoutAngebot(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(antragId);
+		if (!gesuchOptional.isPresent()) {
+			throw new EbeguEntityNotFoundException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + antragId);
+		}
+
+		Gesuch closedGesuch = gesuchService.closeWithoutAngebot(gesuchOptional.get());
+
+		return Response.ok(converter.gesuchToJAX(closedGesuch)).build();
+	}
 }

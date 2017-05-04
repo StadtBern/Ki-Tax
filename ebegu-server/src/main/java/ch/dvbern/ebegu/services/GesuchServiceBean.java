@@ -1356,6 +1356,21 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		superAdminService.removeGesuch(criteriaResults.get(0).getId());
 	}
 
+	@Override
+	public Gesuch closeWithoutAngebot(@Nonnull Gesuch gesuch) {
+		if (!gesuch.getStatus().equals(AntragStatus.GEPRUEFT)) {
+			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
+		}
+		if (!gesuch.extractAllBetreuungen().isEmpty()) {
+			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IF_NO_BETERUUNG);
+		}
+
+		gesuch.setStatus(AntragStatus.KEIN_ANGEBOT);
+		wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
+
+		return updateGesuch(gesuch, true);
+	}
+
 	private void logDeletingOfGesuchstellerAntrag(@Nonnull Gesuch antrag) {
 		LOG.info("****************************************************");
 		LOG.info("Online Gesuch wird gelöscht:");
