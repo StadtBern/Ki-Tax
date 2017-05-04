@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -104,17 +105,34 @@ public class Kind extends AbstractPersonEntity{
 		this.einschulung = einschulung;
 	}
 
-
-	public Kind copyForMutation(Kind mutation) {
+	@Nonnull
+	public Kind copyForMutation(@Nonnull Kind mutation) {
 		super.copyForMutation(mutation);
+		if (this.getPensumFachstelle() != null) {
+			mutation.setPensumFachstelle(this.getPensumFachstelle().copyForMutation(new PensumFachstelle()));
+		}
+		return copyForMutationOrErneuerung(mutation);
+	}
+
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
+	@Nonnull
+	public Kind copyForErneuerung(@Nonnull Kind folgegesuchKind, @Nonnull Gesuchsperiode gesuchsperiodeFolgegesuch) {
+		if (this.getPensumFachstelle() != null) {
+			// Fachstelle nur kopieren, wenn sie noch gueltig ist
+			if (!this.getPensumFachstelle().getGueltigkeit().endsBefore(gesuchsperiodeFolgegesuch.getGueltigkeit())) {
+				folgegesuchKind.setPensumFachstelle(this.getPensumFachstelle().copyForMutation(new PensumFachstelle()));
+			}
+		}
+		return copyForMutationOrErneuerung(folgegesuchKind);
+	}
+
+    @Nonnull
+	private Kind copyForMutationOrErneuerung(@Nonnull Kind mutation) {
 		mutation.setWohnhaftImGleichenHaushalt(this.getWohnhaftImGleichenHaushalt());
 		mutation.setKinderabzug(this.getKinderabzug());
 		mutation.setFamilienErgaenzendeBetreuung(this.getFamilienErgaenzendeBetreuung());
 		mutation.setMutterspracheDeutsch(this.getMutterspracheDeutsch());
 		mutation.setEinschulung(this.getEinschulung());
-		if (this.getPensumFachstelle() != null) {
-			mutation.setPensumFachstelle(this.getPensumFachstelle().copyForMutation(new PensumFachstelle()));
-		}
 		return mutation;
 	}
 
