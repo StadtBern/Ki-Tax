@@ -143,7 +143,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
      * wenn es nicht in ReadOnly modus ist
      */
     public canBeFreigegeben(): boolean {
-        return this.wizardStepManager.areAllStepsOK() &&
+        return this.wizardStepManager.areAllStepsOK(this.gesuchModelManager.getGesuch()) &&
             this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
             && !this.isGesuchReadonly() && this.isGesuchInStatus(TSAntragStatus.IN_BEARBEITUNG_GS);
     }

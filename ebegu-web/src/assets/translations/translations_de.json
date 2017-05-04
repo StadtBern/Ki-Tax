@@ -472,6 +472,7 @@
     "MAHNUNGEN_ZURUECKSTELLUNG": "MAHNUNGEN",
     "MAHNUNGEN": "Mahnungen",
     "VERFUEGUNG_STARTEN_UPPER": "VERFÜGUNG STARTEN",
+    "BEENDEN_OHNE_ANGEBOT_UPPER": "BEENDEN OHNE ANGEBOT",
     "VERFUEGEN_UPPER": "VERFÜGEN",
     "GENERATE_FINANZIELLEN_SITUATION": "Berechnung der finanziellen Situation als Beilage generieren",
     "INSTITUTION_UPPER": "INSTITUTION",
@@ -801,6 +802,7 @@
     "ABGESCHLOSSEN": "Abgeschlossen",
     "CONFIRM_GESUCH_STATUS_GEPRUEFT": "Möchten Sie das Gesuch wirklich als \"geprüft\" setzen?",
     "CONFIRM_GESUCH_STATUS_VERFUEGEN": "Möchten Sie den Verfügungsprozess wirklich starten?",
+    "CONFIRM_GESUCH_STATUS_KEIN_ANGEBOT": "Möchten Sie das Gesuch wirklich ohne Angebot beenden?",
     "BESCHREIBUNG_GESUCH_STATUS_WECHSELN": "Diese Änderung können Sie nicht mehr rückgängig machen",
     "BESCHREIBUNG_GESUCH_STATUS_WECHSELN_SCHULAMT": "Da das Gesuch nur Schulamtangebote hat, wird der Status automatisch auf \"schulamt\" gesetzt. Diese Änderung können Sie nicht mehr rückgängig machen.",
     "CONFIRM_SAVE_VERFUEGUNG": "Möchten Sie das Betreuungsangebot wirklich verfügen?",
@@ -1010,5 +1012,6 @@
     "REMOVE_ONLINE_MUTATION_BESCHREIBUNG": "Die Mutation wird endgültig gelöscht. Die Änderungen können nicht rückgängig gemacht werden.",
     "REMOVE_ONLINE_ERNEUERUNGSGESUCH": "Klicken Sie hier, um das Online Erneuerungsgesuch zu löschen",
     "REMOVE_ONLINE_ERNEUERUNGSGESUCH_CONFIRMATION": "Möchten Sie wirklich das Online Folgegesuch löschen?",
-    "REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG": "Das Folgegesuch wird endgültig gelöscht. Die Änderungen können nicht rückgängig gemacht werden."
+    "REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG": "Das Folgegesuch wird endgültig gelöscht. Die Änderungen können nicht rückgängig gemacht werden.",
+    "KEIN_ANGEBOT": "Kein Angebot"
 }

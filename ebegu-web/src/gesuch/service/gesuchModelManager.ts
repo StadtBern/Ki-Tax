@@ -1047,20 +1047,6 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Schaut dass mindestens eine Betreuung erfasst wurde.
-     * @returns {boolean}
-     */
-    public isThereAnyBetreuung(): boolean {
-        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
-        for (let kind of kinderWithBetreuungList) {
-            if (kind.betreuungen && kind.betreuungen.length > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Gibt true zurueck wenn es mindestens eine Betreuung gibt, dessen Status anders als VERFUEGT oder GESCHLOSSEN_OHNE_VERFUEGUNG oder SCHULAMT ist
      * @returns {boolean}
      */
@@ -1204,7 +1190,7 @@ export default class GesuchModelManager {
     public calculateNewStatus(status: TSAntragStatus): TSAntragStatus {
         if (TSAntragStatus.GEPRUEFT === status || TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN === status || TSAntragStatus.PLATZBESTAETIGUNG_WARTEN === status) {
             if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.NOK)) {
-                if (this.isThereAnyBetreuung()) {
+                if (this.getGesuch().isThereAnyBetreuung()) {
                     return TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN;
                 } else {
                     return TSAntragStatus.GEPRUEFT;

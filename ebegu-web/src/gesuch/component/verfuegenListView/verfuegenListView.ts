@@ -213,14 +213,31 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         });
     }
 
+    public closeWithoutAngebot(): IPromise<TSGesuch> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_GESUCH_STATUS_KEIN_ANGEBOT',
+            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+
+        }).then(() => {
+            this.gesuchModelManager.getGesuch().status = TSAntragStatus.KEIN_ANGEBOT;
+            return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
+                return this.refreshKinderListe().then(() => {
+                    return this.createNeededPDFs(true).then(() => {
+                        return this.gesuchModelManager.getGesuch();
+                    });
+                });
+            });
+        });
+    }
+
     public setGesuchStatusVerfuegen(): IPromise<TSGesuch> {
         //by default wird alles auf VERFUEGEN gesetzt, da es der normale Fall ist
         let newStatus: TSAntragStatus = TSAntragStatus.VERFUEGEN;
-        let deleteTextValue: string = 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN';
 
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
-            deleteText: deleteTextValue
+            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
         }).then(() => {
 
             this.gesuchModelManager.getGesuch().status = newStatus;
@@ -388,7 +405,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
      */
     public showGeprueft(): boolean {
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.wizardStepManager.areAllStepsOK() && this.mahnung === undefined && !this.isGesuchReadonly();
+            && this.wizardStepManager.areAllStepsOK(this.getGesuch()) && this.mahnung === undefined && !this.isGesuchReadonly();
     }
 
     /**
@@ -400,6 +417,15 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             && this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
             && !this.isGesuchReadonly();
         // && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
+    }
+
+    /**
+     * Nur wenn ein Gesuch keine Angebote hat und geprueft ist, kann man es ohne Angebote schliessen.
+     */
+    public showCloseWithoutAngebot(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
+            && !this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
+            && !this.gesuchModelManager.getGesuch().isThereAnyBetreuung();
     }
 
     public openFinanzielleSituationPDF(): void {

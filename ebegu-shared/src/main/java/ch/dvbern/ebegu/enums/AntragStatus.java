@@ -25,6 +25,7 @@ public enum AntragStatus {
     GEPRUEFT,
     VERFUEGEN,
     VERFUEGT,
+	KEIN_ANGEBOT,
 	BESCHWERDE_HAENGIG,
 	PRUEFUNG_STV,
 	IN_BEARBEITUNG_STV,
@@ -43,6 +44,7 @@ public enum AntragStatus {
 		GEPRUEFT,
 		VERFUEGEN,
 		VERFUEGT,
+		KEIN_ANGEBOT,
 		BESCHWERDE_HAENGIG,
 		PRUEFUNG_STV,
 		IN_BEARBEITUNG_STV,
@@ -109,6 +111,7 @@ public enum AntragStatus {
 		GEPRUEFT,
 		VERFUEGEN,
 		VERFUEGT,
+		KEIN_ANGEBOT,
 		BESCHWERDE_HAENGIG,
 		PRUEFUNG_STV,
 		IN_BEARBEITUNG_STV,
@@ -128,7 +131,8 @@ public enum AntragStatus {
     // range ist etwas gefaehrlich, da man sehr vorsichtig sein muss, in welcher Reihenfolge man die Werte schreibt. Ausserdem kann man
 	// kein range mit Ausnahmen machen. In diesem Fall ist es deshalb besser ein .of zu benutzen
 
-	public static final Set<AntragStatus> FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN = EnumSet.of(FREIGEGEBEN,
+	public static final Set<AntragStatus> FOR_SACHBEARBEITER_JUGENDAMT_PENDENZEN = EnumSet.of(
+		FREIGEGEBEN,
 		IN_BEARBEITUNG_JA,
 		ZURUECKGEWIESEN,
 		ERSTE_MAHNUNG,
@@ -139,6 +143,7 @@ public enum AntragStatus {
 		ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN,
 		GEPRUEFT,
 		VERFUEGEN,
+		KEIN_ANGEBOT,
 		BESCHWERDE_HAENGIG,
 		GEPRUEFT_STV);
 
@@ -157,6 +162,7 @@ public enum AntragStatus {
 		GEPRUEFT,
 		VERFUEGEN,
 		VERFUEGT,
+		KEIN_ANGEBOT,
 		BESCHWERDE_HAENGIG);
 
 	private static final Set<AntragStatus> inBearbeitung = EnumSet.range(IN_BEARBEITUNG_GS, IN_BEARBEITUNG_JA);
@@ -188,7 +194,7 @@ public enum AntragStatus {
 
 	public static Collection<AntragStatus> getAllVerfuegtStates() {
 		return Arrays.asList(VERFUEGT, NUR_SCHULAMT, NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, BESCHWERDE_HAENGIG,
-			PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV);
+			PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV, KEIN_ANGEBOT);
 	}
 
 	public static Collection<AntragStatus> getVerfuegtAndSTVStates() {

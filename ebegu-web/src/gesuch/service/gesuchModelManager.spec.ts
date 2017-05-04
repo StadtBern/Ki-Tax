@@ -194,14 +194,14 @@ describe('gesuchModelManager', function () {
         describe('exist at least one Betreuung among all kinder', function () {
             it('should return false for empty list', function() {
                 spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([]);
-                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(false);
+                expect(gesuchModelManager.getGesuch().isThereAnyBetreuung()).toBe(false);
             });
             it('should return false for a list with Kinder but no Betreuung', function() {
                 let kind: TSKindContainer = new TSKindContainer();
                 kind.kindJA = new TSKind();
                 kind.kindJA.familienErgaenzendeBetreuung = false;
                 spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([kind]);
-                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(false);
+                expect(gesuchModelManager.getGesuch().isThereAnyBetreuung()).toBe(false);
             });
             it('should return true for a list with Kinder needing Betreuung', function() {
                 let kind: TSKindContainer = new TSKindContainer();
@@ -210,7 +210,7 @@ describe('gesuchModelManager', function () {
                 let betreuung: TSBetreuung = new TSBetreuung();
                 kind.betreuungen = [betreuung];
                 spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([kind]);
-                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(true);
+                expect(gesuchModelManager.getGesuch().isThereAnyBetreuung()).toBe(true);
             });
         });
 
