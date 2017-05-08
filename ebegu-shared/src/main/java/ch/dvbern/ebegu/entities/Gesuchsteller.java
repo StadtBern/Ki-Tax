@@ -4,6 +4,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -97,8 +98,8 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		this.diplomatenstatus = diplomatenstatus;
 	}
 
-	public Gesuchsteller copyForMutation(Gesuchsteller mutation) {
-		super.copyForMutation(mutation);
+	@Nonnull
+	private Gesuchsteller copyForMutationOrErneuerung(@Nonnull Gesuchsteller mutation) {
 		mutation.setMail(this.getMail());
 		mutation.setMobile(this.getMobile());
 		mutation.setTelefon(this.getTelefon());
@@ -106,5 +107,17 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		mutation.setEwkPersonId(this.getEwkPersonId());
 		mutation.setDiplomatenstatus(this.isDiplomatenstatus());
 		return mutation;
+	}
+
+	@Nonnull
+	public Gesuchsteller copyForMutation(@Nonnull Gesuchsteller mutation) {
+		super.copyForMutation(mutation);
+		return copyForMutationOrErneuerung(mutation);
+	}
+
+	@Nonnull
+	public Gesuchsteller copyForErneuerung(@Nonnull Gesuchsteller mutation) {
+		super.copyForErneuerung(mutation);
+		return copyForMutationOrErneuerung(mutation);
 	}
 }

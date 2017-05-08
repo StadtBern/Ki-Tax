@@ -43,6 +43,7 @@ import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuc
 /**
  * Arquillian Tests fuer die Klasse GesuchService
  */
+@SuppressWarnings("LocalVariableNamingConvention")
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
@@ -395,12 +396,12 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		anzahlObjekte = 0;
 		Set<String> idsErstgesuch = new HashSet<>();
-		findAllIdsOfAbstractEntities(gesuchVerfuegt, idsErstgesuch);
+		findAllIdsOfAbstractEntities(gesuchVerfuegt, idsErstgesuch, false);
 		int anzahlObjekteErstgesuch = anzahlObjekte;
 
 		anzahlObjekte = 0;
 		Set<String> idsMutation = new HashSet<>();
-		findAllIdsOfAbstractEntities(mutation, idsMutation);
+		findAllIdsOfAbstractEntities(mutation, idsMutation, true);
 		int anzahlObjekteMutation = anzahlObjekte;
 
 		// Die Mutation hat immer 1 Objekte mehr als Erstgesuch, und die "FamiliensituationErstgesuch.
@@ -414,6 +415,52 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		if (!intersection.isEmpty()) {
 			// Die korrekterweise umgehaengten Ids rausnehmen
 			findAbstractEntitiesWithIds(gesuchVerfuegt, intersection);
+		}
+		// Jetzt sollten keine Ids mehr drinn sein.
+		Assert.assertTrue(intersection.isEmpty());
+	}
+
+	@Test
+	public void testAntragErneuern() throws Exception {
+
+		// Voraussetzung: Ich habe einen Antrag, er muss nicht verfuegt sein
+		Gesuch erstgesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		Gesuchsperiode gpFolgegesuch = new Gesuchsperiode();
+		gpFolgegesuch.getGueltigkeit().setGueltigAb(erstgesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().plusYears(1));
+		gpFolgegesuch.getGueltigkeit().setGueltigBis(erstgesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis().plusYears(1));
+		gpFolgegesuch = persistence.persist(gpFolgegesuch);
+		Optional<Gesuch> gesuchOptional = gesuchService.antragErneuern(erstgesuch.getId(), gpFolgegesuch.getId(), LocalDate.of(1980, Month.MARCH, 25));
+
+		Assert.assertTrue(gesuchOptional.isPresent());
+		Gesuch folgegesuch = gesuchOptional.get();
+
+		Assert.assertEquals(AntragTyp.ERNEUERUNGSGESUCH, folgegesuch.getTyp());
+		Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, folgegesuch.getStatus());
+		Assert.assertEquals(erstgesuch.getFall(), folgegesuch.getFall());
+		Assert.assertTrue(folgegesuch.isNew());
+
+		// Sicherstellen, dass alle Objekte kopiert und nicht referenziert sind.
+		// Anzahl erstellte Objekte zaehlen, es muessen im Gesuch und in der Mutation
+		// gleich viele sein
+
+		anzahlObjekte = 0;
+		Set<String> idsErstgesuch = new HashSet<>();
+		findAllIdsOfAbstractEntities(erstgesuch, idsErstgesuch, false);
+
+		anzahlObjekte = 0;
+		Set<String> idsFolgegesuch = new HashSet<>();
+		findAllIdsOfAbstractEntities(folgegesuch, idsFolgegesuch, false);
+		int anzahlObjekteMutation = anzahlObjekte;
+
+		Assert.assertEquals(8, anzahlObjekteMutation);
+
+		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
+		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
+		Set<String> intersection = new HashSet<>(idsErstgesuch);
+		intersection.retainAll(idsFolgegesuch);
+		if (!intersection.isEmpty()) {
+			// Die korrekterweise umgehaengten Ids rausnehmen
+			findAbstractEntitiesWithIds(erstgesuch, intersection);
 		}
 		// Jetzt sollten keine Ids mehr drinn sein.
 		Assert.assertTrue(intersection.isEmpty());
@@ -807,8 +854,12 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	/**
 	 * Schreibt alle Ids von AbstractEntities (rekursiv vom Gesuch) ins Set.
 	 */
-	private void findAllIdsOfAbstractEntities(AbstractEntity entity, Set<String> ids) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	private void findAllIdsOfAbstractEntities(AbstractEntity entity, Set<String> ids, boolean assertNoVorgaengerGesetzt) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		String id = BeanUtils.getProperty(entity, "id");
+		String vorgaengerId = BeanUtils.getProperty(entity, "vorgaengerId");
+		if (assertNoVorgaengerGesetzt && vorgaengerId == null) {
+			Assert.assertNull(vorgaengerId);
+		}
 		if (!ids.contains(id)) {
 			anzahlObjekte = anzahlObjekte + 1;
 			ids.add(id);
@@ -817,7 +868,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
 				Object property = bean.getProperty(entity, propertyDescriptor.getName());
 				if (property instanceof AbstractEntity) {
-					findAllIdsOfAbstractEntities((AbstractEntity) property, ids);
+					findAllIdsOfAbstractEntities((AbstractEntity) property, ids, assertNoVorgaengerGesetzt);
 				}
 			}
 		}
