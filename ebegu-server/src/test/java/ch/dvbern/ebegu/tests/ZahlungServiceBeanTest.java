@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * Tests fuer den Zahlungsservice
  */
-@SuppressWarnings({"LocalVariableNamingConvention", "InstanceMethodNamingConvention"})
+@SuppressWarnings({"LocalVariableNamingConvention", "InstanceMethodNamingConvention", "InstanceVariableNamingConvention"})
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
@@ -54,8 +54,15 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+	@Inject
+	private AntragStatusHistoryService antragStatusHistoryService;
+
 	private Gesuchsperiode gesuchsperiode;
-	private LocalDate DATUM_FAELLIG = LocalDate.now().plusDays(3);
+	private static final LocalDate DATUM_FAELLIG = LocalDate.now().plusDays(3);
+
+	private static final LocalDate DATUM_AUGUST = LocalDate.of(2016, Month.AUGUST, 20);
+	private static final LocalDate DATUM_SEPTEMBER = LocalDate.of(2016, Month.SEPTEMBER, 20);
+	private static final LocalDate DATUM_OKTOBER = LocalDate.of(2016, Month.OCTOBER, 20);
 
 
 	@Before
@@ -106,6 +113,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Entwurf 2");
 	}
 
+	@SuppressWarnings("JUnitTestMethodWithNoAssertions")
 	@Test
 	public void zahlungsauftragErstellenMitNachzahlung() {
 		createGesuch(true);
@@ -140,7 +148,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
 
 		// Eine (verfuegte) Mutation erstellen, welche rueckwirkende Auswirkungen hat auf Vollkosten
-		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb());
+		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), 50);
 		zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Auftrag mit Mutation der Vollkosten (Betreuungspensum)");
 		assertZahlungsauftrag(zahlungsauftrag, 1);
 		Zahlung zahlung = zahlungsauftrag.getZahlungen().get(0);
@@ -168,9 +176,84 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		zahlungService.zahlungsauftragAusloesen(zahlungsauftrag.getId());
 
 		// Eine (NICHT verfuegte) Mutation erstellen -> Keine Auswirkungen!
-		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb());
+		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), 50);
 		zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Auftrag ohne neue Mutation");
 		assertZahlungsauftrag(zahlungsauftrag, 0);
+	}
+
+	@Test
+	public void zahlungsauftragErstellenMitKorrekturMultiple() throws Exception {
+		Gesuch erstgesuch = createGesuch(true, DATUM_AUGUST.minusDays(1)); // Becker Yasmin, 01.08.2016 - 31.07.2017, EWP 60%
+
+		// Zahlung August ausloesen:
+		// Erwartet:    1 NORMALE Zahlung August
+		Zahlungsauftrag auftragAugust = zahlungService.zahlungsauftragErstellen(DATUM_AUGUST, "Zahlung August", DATUM_AUGUST.atStartOfDay());
+		Assert.assertEquals(1, auftragAugust.getZahlungen().size());
+		Assert.assertEquals(1, auftragAugust.getZahlungen().get(0).getZahlungspositionen().size());
+		Assert.assertEquals(ZahlungspositionStatus.NORMAL, auftragAugust.getZahlungen().get(0).getZahlungspositionen().get(0).getStatus());
+		zahlungService.zahlungsauftragAusloesen(auftragAugust.getId());
+
+		// Eine (verfuegte) Mutation erstellen, welche rueckwirkende Auswirkungen hat auf Vollkosten
+		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), 50, DATUM_AUGUST.plusWeeks(1));
+
+		// Zahlung September ausloesen:
+		// Erwartet:    1 NORMALE Zahlung September
+		//              2 KORREKTUREN August (Minus und Plus)
+		Zahlungsauftrag auftragSeptember = zahlungService.zahlungsauftragErstellen(DATUM_SEPTEMBER, "Zahlung September", DATUM_SEPTEMBER.atStartOfDay());
+		Assert.assertEquals(1, auftragSeptember.getZahlungen().size());
+		Assert.assertEquals(3, auftragSeptember.getZahlungen().get(0).getZahlungspositionen().size());
+		Assert.assertEquals(ZahlungspositionStatus.NORMAL, auftragSeptember.getZahlungen().get(0).getZahlungspositionen().get(0).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragSeptember.getZahlungen().get(0).getZahlungspositionen().get(1).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragSeptember.getZahlungen().get(0).getZahlungspositionen().get(2).getStatus());
+		zahlungService.zahlungsauftragAusloesen(auftragSeptember.getId());
+
+		// Eine (verfuegte) Mutation erstellen, welche rueckwirkende Auswirkungen hat auf Vollkosten
+		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), 40, DATUM_SEPTEMBER.plusWeeks(1));
+
+		// Zahlung Oktober ausloesen:
+		// Erwartet:    1 NORMALE Zahlung Oktober
+		//              2 KORREKTUREN September (Minus und Plus)
+		//              2 KORREKTUREN August (Minus und Plus)
+		Zahlungsauftrag auftragOktober = zahlungService.zahlungsauftragErstellen(DATUM_OKTOBER, "Zahlung Oktober", DATUM_OKTOBER.atStartOfDay());
+		Assert.assertEquals(1, auftragOktober.getZahlungen().size());
+		Assert.assertEquals(5, auftragOktober.getZahlungen().get(0).getZahlungspositionen().size());
+		Assert.assertEquals(ZahlungspositionStatus.NORMAL, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(0).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(1).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(2).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(3).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(4).getStatus());
+		zahlungService.zahlungsauftragAusloesen(auftragOktober.getId());
+	}
+
+	@Test
+	public void zahlungsauftragErstellenMitKorrekturMonatUeberspringen() throws Exception {
+		Gesuch erstgesuch = createGesuch(true, DATUM_AUGUST.minusDays(1)); // Becker Yasmin, 01.08.2016 - 31.07.2017, EWP 60%
+
+		// Zahlung August ausloesen
+		// Erwartet:    1 NORMALE Zahlung August
+		Zahlungsauftrag auftragAugust = zahlungService.zahlungsauftragErstellen(DATUM_AUGUST, "Zahlung August", DATUM_AUGUST.atStartOfDay());
+		Assert.assertEquals(1, auftragAugust.getZahlungen().size());
+		Assert.assertEquals(1, auftragAugust.getZahlungen().get(0).getZahlungspositionen().size());
+		Assert.assertEquals(ZahlungspositionStatus.NORMAL, auftragAugust.getZahlungen().get(0).getZahlungspositionen().get(0).getStatus());
+		zahlungService.zahlungsauftragAusloesen(auftragAugust.getId());
+
+		// Eine (verfuegte) Mutation erstellen, welche rueckwirkende Auswirkungen hat auf Vollkosten
+		createMutationBetreuungspensum(erstgesuch, gesuchsperiode.getGueltigkeit().getGueltigAb(), 50, DATUM_AUGUST.plusWeeks(1));
+
+		// Zahlung September wird nicht ausgeloest
+
+		// Zahlung Oktober ausloesen:
+		// Erwartet:    1 NORMALE Zahlung Oktober
+		//              1 NORMALE Zahlung September
+		//              2 KORREKTUREN August (Minus und Plus)
+		Zahlungsauftrag auftragOktober = zahlungService.zahlungsauftragErstellen(DATUM_OKTOBER, "Zahlung Oktober", DATUM_OKTOBER.atStartOfDay());
+		Assert.assertEquals(1, auftragOktober.getZahlungen().size());
+		Assert.assertEquals(4, auftragOktober.getZahlungen().get(0).getZahlungspositionen().size());
+		Assert.assertEquals(ZahlungspositionStatus.NORMAL, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(0).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.NORMAL, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(1).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(2).getStatus());
+		Assert.assertEquals(ZahlungspositionStatus.KORREKTUR_VOLLKOSTEN, auftragOktober.getZahlungen().get(0).getZahlungspositionen().get(3).getStatus());
+		zahlungService.zahlungsauftragAusloesen(auftragOktober.getId());
 	}
 
 	private void assertZahlungsauftrag(Zahlungsauftrag zahlungsauftrag, int anzahlZahlungen) {
@@ -268,6 +351,14 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		return gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 	}
 
+	private Gesuch createGesuch(boolean verfuegen, LocalDate verfuegungsdatum) {
+		Gesuch gesuch = createGesuch(verfuegen);
+		AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChange(gesuch);
+		lastStatusChange.setTimestampVon(verfuegungsdatum.atStartOfDay());
+		persistence.merge(lastStatusChange);
+		return gesuch;
+	}
+
 	private Gesuch createGesuch(boolean verfuegen) {
 		return testfaelleService.createAndSaveTestfaelle(TestfaelleService.BeckerNora, verfuegen, verfuegen);
 	}
@@ -277,7 +368,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 			erstgesuch.getGesuchsperiode().getId(), LocalDate.of(TestDataUtil.PERIODE_JAHR_1, Month.DECEMBER, 15), LocalDate.of(TestDataUtil.PERIODE_JAHR_2, Month.JANUARY, 15), verfuegen);
 	}
 
-	private Gesuch createMutationBetreuungspensum(Gesuch erstgesuch, LocalDate eingangsdatum) {
+	private Gesuch createMutationBetreuungspensum(Gesuch erstgesuch, LocalDate eingangsdatum, int pensum) {
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(erstgesuch.getId(), eingangsdatum);
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
@@ -285,7 +376,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 			for (Betreuung betreuung : betreuungs) {
 				Set<BetreuungspensumContainer> betreuungspensumContainers = betreuung.getBetreuungspensumContainers();
 				for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
-					betreuungspensumContainer.getBetreuungspensumJA().setPensum(50);
+					betreuungspensumContainer.getBetreuungspensumJA().setPensum(pensum);
 				}
 			}
 			gesuchService.createGesuch(mutation);
@@ -298,6 +389,14 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 			return mutation;
 		}
 		return gesuchOptional.orElse(null);
+	}
+
+	private Gesuch createMutationBetreuungspensum(Gesuch erstgesuch, LocalDate eingangsdatum, int pensum, LocalDate verfuegungsdatum) {
+		Gesuch gesuch = createMutationBetreuungspensum(erstgesuch, eingangsdatum, pensum);
+		AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChange(gesuch);
+		lastStatusChange.setTimestampVon(verfuegungsdatum.atStartOfDay());
+		persistence.merge(lastStatusChange);
+		return gesuch;
 	}
 
 	private Gesuch createMutationEinkommen(Gesuch erstgesuch, LocalDate eingangsdatum) {
