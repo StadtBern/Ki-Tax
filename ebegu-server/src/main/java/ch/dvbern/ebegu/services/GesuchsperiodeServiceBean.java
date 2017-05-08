@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
@@ -23,7 +24,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -49,6 +53,12 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Inject
 	private MailService mailService;
+
+	@Inject
+	private FallService fallService;
+
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Nonnull
 	@Override
@@ -129,12 +139,31 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	}
 
 	@Override
-	@RolesAllowed({SUPER_ADMIN, ADMIN})
-	public void removeGesuchsperiode(@Nonnull String gesuchsperiodeId) {
-		Objects.requireNonNull(gesuchsperiodeId);
-		Optional<Gesuchsperiode> gesuchsperiodeToRemove = findGesuchsperiode(gesuchsperiodeId);
-		gesuchsperiodeToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeGesuchsperiode", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeId));
-		persistence.remove(gesuchsperiodeToRemove.get());
+	@RolesAllowed({SUPER_ADMIN})
+	public void removeGesuchsperiode(@Nonnull String gesuchsPeriodeId) {
+		Optional<Gesuchsperiode> gesuchsperiodeOptional = findGesuchsperiode(gesuchsPeriodeId);
+		Gesuchsperiode gesuchsperiode = gesuchsperiodeOptional.orElseThrow(() -> new EbeguEntityNotFoundException("deleteGesuchsperiodeAndGesuche", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsPeriodeId));
+        LOGGER.info("Handling Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
+        if (gesuchsperiode.getStatus().equals(GesuchsperiodeStatus.GESCHLOSSEN)) {
+            Collection<Gesuch> gesucheOfPeriode = criteriaQueryHelper.getEntitiesByAttribute(Gesuch.class, gesuchsperiode, Gesuch_.gesuchsperiode);
+            for (Gesuch gesuch : gesucheOfPeriode) {
+                Fall fall = gesuch.getFall();
+                // Gesuch, WizardSteps, Mahnungen, Dokumente, AntragstatusHistory, Zahlungspositionen
+                LOGGER.info("Deleting Gesuch of Fall " + gesuch.getFall().getFallNummer());
+                gesuchService.removeGesuch(gesuch.getId());
+                // Feststellen, ob es das letzte Gesuch dieses Falles war
+                List<String> allGesuchIDsForFall = gesuchService.getAllGesuchIDsForFall(fall.getId());
+                if (allGesuchIDsForFall.isEmpty()) {
+                    LOGGER.info("This was the last Gesuch of Fall, deleting Fall " + fall.getFallNummer());
+                    fallService.removeFall(fall);
+                }
+            }
+            // Gesuchsperiode
+            LOGGER.info("Deleting Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
+            persistence.remove(gesuchsperiode);
+        } else {
+            throw new IllegalArgumentException("Cannot delete Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString() + " because it is not yet closed");
+        }
 	}
 
 	@Override

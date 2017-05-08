@@ -109,6 +109,11 @@ export class TestdatenViewController {
         });
     }
 
+    public removeGesuchsperiode() {
+        this.gesuchsperiodeRS.removeGesuchsperiode(this.selectedGesuchsperiode.id).then(() => {
+            this.errorService.addMesageAsInfo('Gesuchsperiode entfernt ' + this.selectedGesuchsperiode.gesuchsperiodeString);
+        });
+    }
 
     public mutiereFallHeirat(): IPromise<any> {
         return this.testFaelleRS.mutiereFallHeirat(this.fallId, '0621fb5d-a187-5a91-abaf-8a813c4d263a',

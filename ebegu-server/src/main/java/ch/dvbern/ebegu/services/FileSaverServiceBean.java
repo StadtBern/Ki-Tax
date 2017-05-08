@@ -4,12 +4,14 @@ import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.FileMetadata;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -26,7 +28,7 @@ import java.util.UUID;
 public class FileSaverServiceBean implements FileSaverService {
 
 
-	private static final Logger LOG = LoggerFactory.getLogger(FileSaverServiceBean.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FileSaverServiceBean.class.getSimpleName());
 
 
 	@Inject
@@ -128,6 +130,7 @@ public class FileSaverServiceBean implements FileSaverService {
 		try {
 			if (Files.exists(path)) {
 				Files.delete(path);
+
 				LOG.info("Delete file in FileSystem: " + dokumentPaths);
 			}
 		} catch (IOException e) {
@@ -137,4 +140,20 @@ public class FileSaverServiceBean implements FileSaverService {
 		return true;
 	}
 
+	@Override
+	public boolean removeAll(@Nonnull String gesuchId) {
+		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuchId + "/";
+		Path file = Paths.get(absoluteFilePath);
+		try {
+			if (Files.exists(file) && Files.isDirectory(file)) {
+				FileUtils.cleanDirectory(file.toFile());
+				Files.deleteIfExists(file);
+				LOG.info("Deleting directory : " + absoluteFilePath);
+			}
+			return true;
+		} catch (IOException e) {
+			LOG.info("Can't delete directory: " + absoluteFilePath, e);
+			return false;
+		}
+	}
 }

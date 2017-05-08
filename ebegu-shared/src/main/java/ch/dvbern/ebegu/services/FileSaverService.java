@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.util.UploadFileInfo;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -23,4 +24,6 @@ public interface FileSaverService {
 	UploadFileInfo save(byte[] bytes, String fileName, String folderName, MimeType contentType);
 
 	boolean copy(FileMetadata fileToCopy, String folderName);
+
+	boolean removeAll(@Nonnull String gesuchId);
 }

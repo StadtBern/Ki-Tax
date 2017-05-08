@@ -13,6 +13,7 @@ public interface DailyBatch {
 
 	void runBatchWarnungFreigabequittungFehlt();
 
-	void runBatchGesucheLoeschen() ;
+	void runBatchGesucheLoeschen();
 
+	void runBatchGesuchsperiodeLoeschen();
 }
