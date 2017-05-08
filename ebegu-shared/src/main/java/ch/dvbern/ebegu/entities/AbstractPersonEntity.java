@@ -7,6 +7,7 @@ import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -91,8 +92,20 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		return vorname + " " + nachname;
 	}
 
-	public AbstractPersonEntity copyForMutation(AbstractPersonEntity mutation) {
+	@Nonnull
+	public AbstractPersonEntity copyForMutation(@Nonnull AbstractPersonEntity mutation) {
 		super.copyForMutation(mutation);
+		return copyForMutationOrErneuerung(mutation);
+	}
+
+	@Nonnull
+	public AbstractPersonEntity copyForErneuerung(@Nonnull AbstractPersonEntity folgeEntity) {
+		super.copyForErneuerung(folgeEntity);
+		return copyForMutationOrErneuerung(folgeEntity);
+	}
+
+	@Nonnull
+	private AbstractPersonEntity copyForMutationOrErneuerung(@Nonnull AbstractPersonEntity mutation) {
 		mutation.setGeschlecht(this.getGeschlecht());
 		mutation.setVorname(this.getVorname());
 		mutation.setNachname(this.getNachname());

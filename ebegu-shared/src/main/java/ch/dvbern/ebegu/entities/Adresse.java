@@ -162,6 +162,17 @@ public class Adresse extends AbstractDateRangedEntity {
 
 	public Adresse copyForMutation(Adresse mutation) {
 		super.copyForMutation(mutation);
+		copyForMutationOrErneuerung(mutation);
+		return mutation;
+	}
+
+	public Adresse copyForErneuerung(Adresse mutation) {
+		super.copyForErneuerung(mutation);
+		copyForMutationOrErneuerung(mutation);
+		return mutation;
+	}
+
+	private void copyForMutationOrErneuerung(Adresse mutation) {
 		mutation.setStrasse(this.getStrasse());
 		mutation.setHausnummer(this.getHausnummer());
 		mutation.setZusatzzeile(this.getZusatzzeile());
@@ -170,6 +181,5 @@ public class Adresse extends AbstractDateRangedEntity {
 		mutation.setLand(this.getLand());
 		mutation.setGemeinde(this.getGemeinde());
 		mutation.setOrganisation(this.getOrganisation());
-		return mutation;
 	}
 }

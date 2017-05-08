@@ -12,6 +12,17 @@
             <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
+                    <!-- Bei neuen Gesuchen für inaktive Periode: Warnen -->
+                    <div ng-if="vm.isSelectedGesuchsperiodeInaktiv()" class="well well-status-warten">
+                        <h3 data-translate="GESUCHSPERIODE_INAKTIV_HINT">
+                        </h3>
+                    </div>
+                    <!-- Folgegesuch: Info, dass Daten uebernommen wurden -->
+                    <div ng-if="vm.gesuchModelManager.getGesuch().isFolgegesuch()" class="well well-status-warten">
+                        <h3 data-translate="FOLGEGESUCH_HINT">
+                        </h3>
+                    </div>
+
                     <!--Willkommnstext bei Erstgesuch-->
                     <div ng-if="vm.gesuchModelManager.isGesuch()">
 
@@ -32,12 +43,6 @@
                             {{"MUTATION_AUSWAHL_TEXT_2"|translate}} {{"MUTATION_AUSWAHL_TEXT_3"|translate}}
                         </p>
 
-                    </div>
-
-                    <!-- Bei neuen Gesuchen für inaktive Periode: Warnen -->
-                    <div ng-if="vm.isSelectedGesuchsperiodeInaktiv()" class="well well-status-warten">
-                        <h3 data-translate="GESUCHSPERIODE_INAKTIV_HINT">
-                        </h3>
                     </div>
 
                     <!--Eingangsdatum-->
