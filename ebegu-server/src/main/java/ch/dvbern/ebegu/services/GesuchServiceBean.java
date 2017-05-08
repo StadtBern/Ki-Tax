@@ -879,10 +879,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	private Optional<Gesuch> getErneuerungsgesuch(@Nullable LocalDate eingangsdatum, @Nonnull Gesuch gesuchForErneuerung, @Nonnull Gesuchsperiode gesuchsperiode) {
 		Eingangsart eingangsart = calculateEingangsart();
-		//TODO (hefr) Vorerst wird das ganze Gesuch analog Mutation kopiert, wird in spaeterem Task umgesetzt
-		Gesuch erneuerungsgesuch = gesuchForErneuerung.copyForMutation(new Gesuch(), eingangsart);
-		erneuerungsgesuch.setGesuchsperiode(gesuchsperiode);
-		erneuerungsgesuch.setTyp(AntragTyp.ERNEUERUNGSGESUCH);
+		Gesuch erneuerungsgesuch = gesuchForErneuerung.copyForErneuerung(new Gesuch(), gesuchsperiode, eingangsart);
 		if (eingangsdatum != null) {
 			erneuerungsgesuch.setEingangsdatum(eingangsdatum);
 		}

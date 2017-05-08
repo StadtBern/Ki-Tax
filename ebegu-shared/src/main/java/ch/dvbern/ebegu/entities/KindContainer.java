@@ -143,12 +143,10 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 		return compareToBuilder.toComparison();
 	}
 
-	public KindContainer copyForMutation(KindContainer mutation, @Nonnull Gesuch gesuchMutation) {
+	@Nonnull
+	public KindContainer copyForMutation(@Nonnull KindContainer mutation, @Nonnull Gesuch gesuchMutation) {
 		super.copyForMutation(mutation);
-		mutation.setGesuch(gesuchMutation);
-		mutation.setKindGS(null);
 		mutation.setKindJA(this.getKindJA().copyForMutation(new Kind()));
-		mutation.setKindNummer(this.getKindNummer());
 		mutation.setNextNumberBetreuung(this.getNextNumberBetreuung());
 		if (this.getBetreuungen() != null) {
 			mutation.setBetreuungen(new TreeSet<>());
@@ -156,6 +154,22 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 				mutation.getBetreuungen().add(betreuung.copyForMutation(new Betreuung(), mutation));
 			}
 		}
+		return copyForMutationOrErneuerung(mutation, gesuchMutation);
+	}
+
+	@Nonnull
+	public KindContainer copyForErneuerung(@Nonnull KindContainer mutation, @Nonnull Gesuch folgegesuch) {
+		super.copyForErneuerung(mutation);
+		mutation.setKindJA(this.getKindJA().copyForErneuerung(new Kind(), folgegesuch.getGesuchsperiode()));
+		mutation.setNextNumberBetreuung(1); // Betreuungen werden wieder ab 1 durchnummeriert
+		return copyForMutationOrErneuerung(mutation, folgegesuch);
+	}
+
+	@Nonnull
+	private KindContainer copyForMutationOrErneuerung(@Nonnull KindContainer mutation, @Nonnull Gesuch gesuchMutation) {
+		mutation.setGesuch(gesuchMutation);
+		mutation.setKindGS(null);
+		mutation.setKindNummer(this.getKindNummer());
 		mutation.setKindMutiert(null);
 		return mutation;
 	}

@@ -217,8 +217,15 @@ public abstract class AbstractEntity implements Serializable {
 		return vorgaengerId != null;
 	}
 
-	public AbstractEntity copyForMutation(AbstractEntity mutation) {
+	@Nonnull
+	public AbstractEntity copyForMutation(@Nonnull AbstractEntity mutation) {
 		mutation.setVorgaengerId(this.getId());
 		return mutation;
+	}
+
+	@Nonnull
+	public AbstractEntity copyForErneuerung(@Nonnull AbstractEntity folgeEntity) {
+		folgeEntity.setVorgaengerId(null); // Wir verlinken exlizit nicht mit der Vorperiode
+		return folgeEntity;
 	}
 }

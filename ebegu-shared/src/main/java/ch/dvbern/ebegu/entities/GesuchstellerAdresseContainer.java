@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.types.DateRange;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
 
@@ -128,14 +129,28 @@ public class GesuchstellerAdresseContainer extends AbstractEntity {
 		return this.gesuchstellerAdresseJA != null ? this.gesuchstellerAdresseJA.getOrganisation() : null;
 	}
 
-
-	public GesuchstellerAdresseContainer copyForMutation(GesuchstellerAdresseContainer mutation, GesuchstellerContainer gesuchstellerContainer) {
-		super.copyForMutation(mutation);
+	@Nonnull
+	private GesuchstellerAdresseContainer copyForMutationOrErneuerung(@Nonnull GesuchstellerAdresseContainer mutation, @Nonnull GesuchstellerContainer gesuchstellerContainer) {
 		mutation.setGesuchstellerContainer(gesuchstellerContainer);
 		mutation.setGesuchstellerAdresseGS(null);
+		return mutation;
+	}
+
+	@Nonnull
+	public GesuchstellerAdresseContainer copyForMutation(@Nonnull GesuchstellerAdresseContainer mutation, @Nonnull GesuchstellerContainer gesuchstellerContainer) {
+		super.copyForMutation(mutation);
 		if (this.getGesuchstellerAdresseJA() != null) {
 			mutation.setGesuchstellerAdresseJA(this.getGesuchstellerAdresseJA().copyForMutation(new GesuchstellerAdresse()));
 		}
-		return mutation;
+		return copyForMutationOrErneuerung(mutation, gesuchstellerContainer);
+	}
+
+	@Nonnull
+	public GesuchstellerAdresseContainer copyForErneuerung(@Nonnull GesuchstellerAdresseContainer mutation, @Nonnull GesuchstellerContainer gesuchstellerContainer) {
+		super.copyForErneuerung(mutation);
+		if (this.getGesuchstellerAdresseJA() != null) {
+			mutation.setGesuchstellerAdresseJA(this.getGesuchstellerAdresseJA().copyForErneuerung(new GesuchstellerAdresse()));
+		}
+		return copyForMutationOrErneuerung(mutation, gesuchstellerContainer);
 	}
 }
