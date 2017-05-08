@@ -54,6 +54,9 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+	@Inject
+	private AntragStatusHistoryService antragStatusHistoryService;
+
 	private Gesuchsperiode gesuchsperiode;
 	private static final LocalDate DATUM_FAELLIG = LocalDate.now().plusDays(3);
 
@@ -347,9 +350,6 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		return gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 	}
-
-	@Inject
-	private AntragStatusHistoryService antragStatusHistoryService;
 
 	private Gesuch createGesuch(boolean verfuegen, LocalDate verfuegungsdatum) {
 		Gesuch gesuch = createGesuch(verfuegen);
