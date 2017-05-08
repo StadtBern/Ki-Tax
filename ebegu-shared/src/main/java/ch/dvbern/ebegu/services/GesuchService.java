@@ -240,6 +240,12 @@ public interface GesuchService {
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 
 	/**
+	 * Gibt die jeweils letzt erstellten Antraege der uebergebenen Gesuchsperiode zurueck.
+	 */
+	@Nonnull
+	List<Gesuch> getNeuesteAntraegeForPeriod(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
 	 * Schickt eine E-Mail an alle Gesuchsteller, die ihr Gesuch innerhalb einer konfigurierbaren Frist nach
 	 * Erstellung nicht freigegeben haben.
 	 * Gibt die Anzahl Warnungen zurueck.
