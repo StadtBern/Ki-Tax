@@ -213,7 +213,7 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		for (GesuchstellerAdresseContainer gesuchstellerAdresse : this.getAdressen()) {
 			if (gesuchstellerAdresse.getGesuchstellerAdresseJA() != null) {
 				// Nur aktuelle und zukuenftige Adressen kopieren
-				if (!gesuchstellerAdresse.extractGueltigkeit().endsBefore(gesuchsperiodeFolgegesuch.getGueltigkeit())) {
+				if (!gesuchstellerAdresse.extractGueltigkeit().endsBefore(gesuchsperiodeFolgegesuch.getGueltigkeit().getGueltigAb())) {
 					GesuchstellerAdresseContainer adresseContainer = gesuchstellerAdresse.copyForErneuerung(new GesuchstellerAdresseContainer(), this);
 					folgegesuch.addAdresse(adresseContainer);
 				}

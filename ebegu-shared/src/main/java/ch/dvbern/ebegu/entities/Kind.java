@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Audited
 @Entity
-public class Kind extends AbstractPersonEntity{
+public class Kind extends AbstractPersonEntity {
 
 	private static final long serialVersionUID = -9032257320578372570L;
 
@@ -117,10 +117,11 @@ public class Kind extends AbstractPersonEntity{
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Nonnull
 	public Kind copyForErneuerung(@Nonnull Kind folgegesuchKind, @Nonnull Gesuchsperiode gesuchsperiodeFolgegesuch) {
+		super.copyForErneuerung(folgegesuchKind);
 		if (this.getPensumFachstelle() != null) {
 			// Fachstelle nur kopieren, wenn sie noch gueltig ist
-			if (!this.getPensumFachstelle().getGueltigkeit().endsBefore(gesuchsperiodeFolgegesuch.getGueltigkeit())) {
-				folgegesuchKind.setPensumFachstelle(this.getPensumFachstelle().copyForMutation(new PensumFachstelle()));
+			if (!this.getPensumFachstelle().getGueltigkeit().endsBefore(gesuchsperiodeFolgegesuch.getGueltigkeit().getGueltigAb())) {
+				folgegesuchKind.setPensumFachstelle(this.getPensumFachstelle().copyForErneuerung(new PensumFachstelle()));
 			}
 		}
 		return copyForMutationOrErneuerung(folgegesuchKind);
