@@ -37,4 +37,8 @@ public class EbeguConfigurationDummyImpl extends EbeguConfigurationImpl {
 		return "hallo@dvbern.ch";
 	}
 
+	@Override
+	public boolean getIsZahlungenTestMode() {
+		return true;
+	}
 }

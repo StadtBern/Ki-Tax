@@ -38,7 +38,7 @@ export default class DateUtil {
      * @param format format for the time
      * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. undefined when aMoment is invalid
      */
-    private static momentToLocalDateTimeFormat(aMoment: Moment, format: string): string {
+    public static momentToLocalDateTimeFormat(aMoment: Moment, format: string): string {
         if (!aMoment) {
             return undefined;
         }

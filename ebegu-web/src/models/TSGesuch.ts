@@ -130,14 +130,6 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._gesperrtWegenBeschwerde = value;
     }
 
-    public isMutation(): boolean {
-        return this.typ === TSAntragTyp.MUTATION;
-    }
-
-    public isOnlineGesuch(): boolean {
-        return TSEingangsart.ONLINE === this.eingangsart;
-    }
-
     get emptyCopy(): boolean {
         return this._emptyCopy;
     }
@@ -160,6 +152,18 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set datumGewarntFehlendeQuittung(value: moment.Moment) {
         this._datumGewarntFehlendeQuittung = value;
+    }
+
+    public isMutation(): boolean {
+        return this.typ === TSAntragTyp.MUTATION;
+    }
+
+    public isFolgegesuch(): boolean {
+        return this.typ === TSAntragTyp.ERNEUERUNGSGESUCH;
+    }
+
+    public isOnlineGesuch(): boolean {
+        return TSEingangsart.ONLINE === this.eingangsart;
     }
 
     /**

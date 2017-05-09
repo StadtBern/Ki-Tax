@@ -522,7 +522,8 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		familiensituationContainer.setFamiliensituationJA(new Familiensituation());
 	}
 
-	public Gesuch copyForMutation(Gesuch mutation, Eingangsart eingangsart) {
+	@Nonnull
+	public Gesuch copyForMutation(@Nonnull Gesuch mutation, @Nonnull Eingangsart eingangsart) {
 		super.copyForMutation(mutation);
 		mutation.setEingangsart(eingangsart);
 		mutation.setFall(this.getFall());
@@ -558,9 +559,43 @@ public class Gesuch extends AbstractEntity implements Searchable{
 			}
 		}
 		mutation.setGesperrtWegenBeschwerde(false);
+		mutation.setGeprueftSTV(false);
 		mutation.setDatumGewarntNichtFreigegeben(null);
 		mutation.setDatumGewarntFehlendeQuittung(null);
 		return mutation;
+	}
+
+	@Nonnull
+	public Gesuch copyForErneuerung(@Nonnull Gesuch folgegesuch, @Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Eingangsart eingangsart) {
+		super.copyForErneuerung(folgegesuch);
+		folgegesuch.setEingangsart(eingangsart);
+		folgegesuch.setFall(this.getFall());
+		folgegesuch.setGesuchsperiode(gesuchsperiode);
+		folgegesuch.setEingangsdatum(null);
+		folgegesuch.setStatus(eingangsart == Eingangsart.PAPIER ?  AntragStatus.IN_BEARBEITUNG_JA : AntragStatus.IN_BEARBEITUNG_GS);
+		folgegesuch.setTyp(AntragTyp.ERNEUERUNGSGESUCH);
+		folgegesuch.setLaufnummer(0); // Wir fangen für die neue Periode wieder mit 0 an
+
+		// Zuerst die Familiensituation kopieren, damit wir beim Kopieren der GS wissen, ob GS2 kopiert werden muss
+		if (this.getFamiliensituationContainer() != null) {
+			folgegesuch.setFamiliensituationContainer(this.getFamiliensituationContainer().copyForErneuerung(new FamiliensituationContainer()));
+		}
+
+		if (this.getGesuchsteller1() != null) {
+			folgegesuch.setGesuchsteller1(this.getGesuchsteller1().copyForErneuerung(new GesuchstellerContainer(), gesuchsperiode));
+		}
+		// Den zweiten GS nur kopieren, wenn er laut aktuellem Zivilstand noch benoetigt wird
+		if (this.getGesuchsteller2() != null && folgegesuch.getFamiliensituationContainer().getFamiliensituationJA().hasSecondGesuchsteller()) {
+			folgegesuch.setGesuchsteller2(this.getGesuchsteller2().copyForErneuerung(new GesuchstellerContainer(), gesuchsperiode));
+		}
+		for (KindContainer kindContainer : this.getKindContainers()) {
+			folgegesuch.addKindContainer(kindContainer.copyForErneuerung(new KindContainer(), folgegesuch));
+		}
+		folgegesuch.setGesperrtWegenBeschwerde(false);
+		folgegesuch.setGeprueftSTV(false);
+		folgegesuch.setDatumGewarntNichtFreigegeben(null);
+		folgegesuch.setDatumGewarntFehlendeQuittung(null);
+		return folgegesuch;
 	}
 
 	@Nonnull

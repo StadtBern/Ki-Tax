@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Gesuchsperiode_;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt_;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.enums.UserRole;
@@ -26,9 +23,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -51,6 +46,9 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Inject
 	private GesuchService gesuchService;
+
+	@Inject
+	private MailService mailService;
 
 	@Nonnull
 	@Override
@@ -77,18 +75,31 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 				if (!isStatusUebergangValid(statusBisher, gesuchsperiode.getStatus())) {
 					throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_INVALID_STATUSUEBERGANG);
 				}
-						// Falls es ein Statuswechsel war, und der neue Status ist AKTIV -> Mail an alle Gesuchsteller schicken
-						// Nur wenn als JA-Admin. Superadmin kann die Periode auch "wiederöffnen", dann darf aber kein Mail mehr verschickt werden!
-				if (GesuchsperiodeStatus.AKTIV.equals(gesuchsperiode.getStatus())) {
-					// TODO (team): Mail schicken an Gesuchsteller
-					LOGGER.debug("Gesuchsperiode wurde aktiv gesetzt: " + gesuchsperiode.getGesuchsperiodeString() + ": Gesuchsteller informieren");
-				}
-				if (GesuchsperiodeStatus.GESCHLOSSEN.equals(gesuchsperiode.getStatus())) {
-					// Prüfen, dass ALLE Gesuche dieser Periode im Status "Verfügt" oder "Schulamt" sind. Sind noch
-					// Gesuce in Bearbeitung, oder in Beschwerde etc. darf nicht geschlossen werden!
-					if (!gesuchService.canGesuchsperiodeBeClosed(gesuchsperiode)) {
-						throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_CANNOT_BE_CLOSED);
+			}
+			// Falls es ein Statuswechsel war, und der neue Status ist AKTIV -> Mail an alle Gesuchsteller schicken
+			// Nur, wenn die Gesuchsperiode noch nie auf aktiv geschaltet war.
+			if (GesuchsperiodeStatus.AKTIV.equals(gesuchsperiode.getStatus()) && gesuchsperiode.getDatumAktiviert() == null) {
+				Optional<Gesuchsperiode> lastGesuchsperiodeOptional = getGesuchsperiodeAm(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
+				if (lastGesuchsperiodeOptional.isPresent()) {
+					List<Gesuch> gesucheToSendMail = gesuchService.getNeuesteAntraegeForPeriod(lastGesuchsperiodeOptional.get());
+					int i = 0;
+					for (Gesuch gesuch : gesucheToSendMail) {
+						try {
+							mailService.sendInfoFreischaltungGesuchsperiode(gesuchsperiode, gesuch);
+							i++;
+						} catch (Exception e) {
+							LOGGER.error("Mail InfoMahnung konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+						}
 					}
+					gesuchsperiode.setDatumAktiviert(LocalDate.now());
+					LOGGER.info("Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString() + " wurde aktiv gesetzt: " + i + "/" + gesucheToSendMail.size() + " Gesuchsteller wurden potentiell informiert");
+				}
+			}
+			if (GesuchsperiodeStatus.GESCHLOSSEN.equals(gesuchsperiode.getStatus())) {
+				// Prüfen, dass ALLE Gesuche dieser Periode im Status "Verfügt" oder "Schulamt" sind. Sind noch
+				// Gesuce in Bearbeitung, oder in Beschwerde etc. darf nicht geschlossen werden!
+				if (!gesuchService.canGesuchsperiodeBeClosed(gesuchsperiode)) {
+					throw new EbeguRuntimeException("saveGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_CANNOT_BE_CLOSED);
 				}
 			}
 		}

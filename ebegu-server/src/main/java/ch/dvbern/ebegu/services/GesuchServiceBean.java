@@ -882,10 +882,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	private Optional<Gesuch> getErneuerungsgesuch(@Nullable LocalDate eingangsdatum, @Nonnull Gesuch gesuchForErneuerung, @Nonnull Gesuchsperiode gesuchsperiode) {
 		Eingangsart eingangsart = calculateEingangsart();
-		//TODO (hefr) Vorerst wird das ganze Gesuch analog Mutation kopiert, wird in spaeterem Task umgesetzt
-		Gesuch erneuerungsgesuch = gesuchForErneuerung.copyForMutation(new Gesuch(), eingangsart);
-		erneuerungsgesuch.setGesuchsperiode(gesuchsperiode);
-		erneuerungsgesuch.setTyp(AntragTyp.ERNEUERUNGSGESUCH);
+		Gesuch erneuerungsgesuch = gesuchForErneuerung.copyForErneuerung(new Gesuch(), gesuchsperiode, eingangsart);
 		if (eingangsdatum != null) {
 			erneuerungsgesuch.setEingangsdatum(eingangsdatum);
 		}
@@ -1145,6 +1142,38 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			idsFuerGesuch.ifPresent(ids::add);
 		}
 		return ids;
+	}
+
+	@Override
+	@Nonnull
+	public List<Gesuch> getNeuesteAntraegeForPeriod(@Nonnull Gesuchsperiode gesuchsperiode) {
+		List<Gesuch> ids = new ArrayList<>();
+		Collection<Fall> allFaelle = fallService.getAllFalle();
+		for (Fall fall : allFaelle) {
+			Optional<Gesuch> idsFuerGesuch = getNeuestesGesuchForFallAndPeriod(fall, gesuchsperiode);
+			idsFuerGesuch.ifPresent(ids::add);
+		}
+		return ids;
+	}
+
+	@Nonnull
+	private Optional<Gesuch> getNeuestesGesuchForFallAndPeriod(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
+		authorizer.checkReadAuthorizationFall(fall);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall), fall);
+		Predicate gesuchsperiodePredicate = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+
+		query.where(fallPredicate, gesuchsperiodePredicate);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		return Optional.of(criteriaResults.get(0));
 	}
 
 	@Nonnull

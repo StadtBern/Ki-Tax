@@ -484,6 +484,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         return '';
     }
 
+    public getTimeLastBetreuungsmitteilung(): string {
+        if (this.showExistingBetreuungsmitteilungInfoBox()) {
+            return DateUtil.momentToLocalDateTimeFormat(this.existingMutationsMeldung.sentDatum, 'HH:mm');
+        }
+        return '';
+    }
+
     public openExistingBetreuungsmitteilung(): void {
         this.$state.go('gesuch.mitteilung', {
             fallId: this.gesuchModelManager.getGesuch().fall.id,
