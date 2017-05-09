@@ -51,6 +51,8 @@ public interface MitteilungService {
 
 	void removeAllMitteilungenForFall(@Nonnull Fall fall);
 
+	void removeAllBetreuungMitteilungenForGesuch(@Nonnull Gesuch gesuch);
+
 	/**
 	 * Sucht alle Mitteilungen des uebergebenen Falls und fuer jede, die im Status NEU ist, wechselt
 	 * ihren Status auf GELESEN.

@@ -162,7 +162,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
             LOGGER.info("Deleting Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString());
             persistence.remove(gesuchsperiode);
         } else {
-            throw new IllegalArgumentException("Cannot delete Gesuchsperiode " + gesuchsperiode.getGesuchsperiodeString() + " because it is not yet closed");
+			throw new EbeguRuntimeException("removeGesuchsperiode", ErrorCodeEnum.ERROR_GESUCHSPERIODE_CANNOT_BE_REMOVED);
         }
 	}
 

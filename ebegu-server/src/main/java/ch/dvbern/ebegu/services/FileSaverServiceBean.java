@@ -141,7 +141,7 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	@Override
-	public boolean removeAll(@Nonnull String gesuchId) {
+	public boolean removeAllFromGesuch(@Nonnull String gesuchId) {
 		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuchId + "/";
 		Path file = Paths.get(absoluteFilePath);
 		try {
