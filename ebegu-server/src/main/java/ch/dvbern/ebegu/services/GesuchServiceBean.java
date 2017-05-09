@@ -222,7 +222,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		mahnungService.removeAllMahnungenFromGesuch(gesToRemove);
 		generatedDokumentService.removeAllGeneratedDokumenteFromGesuch(gesToRemove);
 		dokumentGrundService.removeAllDokumentGrundeFromGesuch(gesToRemove);
-		fileSaverService.removeAllFromGesuch(gesToRemove.getId());
+		fileSaverService.removeAllFromPath(gesToRemove.getId());
 		antragStatusHistoryService.removeAllAntragStatusHistoryFromGesuch(gesToRemove);
 		zahlungService.deleteZahlungspositionenOfGesuch(gesToRemove);
 		mitteilungService.removeAllBetreuungMitteilungenForGesuch(gesToRemove);
