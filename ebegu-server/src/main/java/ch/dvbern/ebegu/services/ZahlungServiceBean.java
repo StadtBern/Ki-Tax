@@ -70,6 +70,9 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
+	private FileSaverService fileSaverService;
+
+	@Inject
 	private EbeguConfiguration ebeguConfiguration;
 
 	@Override
@@ -511,9 +514,58 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 		query.where(predicates);
 		List<Zahlungsposition> zahlungspositionList = persistence.getCriteriaResults(query);
+
+		//remove Zahlungspositionen
+		Set<Zahlung> potenziellZuLoeschenZahlungenList = new HashSet<>();
 		for (Zahlungsposition zahlungsposition : zahlungspositionList) {
+			potenziellZuLoeschenZahlungenList.add(zahlungsposition.getZahlung()); // add the Zahlung to the set
+			zahlungsposition.getZahlung().getZahlungspositionen().remove(zahlungsposition);
 			persistence.remove(Zahlungsposition.class, zahlungsposition.getId());
 		}
+		Set<Zahlungsauftrag> zahlungsauftraegeList = removeAllEmptyZahlungen(potenziellZuLoeschenZahlungenList);
+		removeAllEmptyZahlungsauftraege(zahlungsauftraegeList);
+	}
+
+	/**
+	 * Goes through the given list and check whether the given Zahlungsauftrag is empty or not.
+	 * All empty Zahlungsauftraege are removed.
+	 */
+	private void removeAllEmptyZahlungsauftraege(Set<Zahlungsauftrag> zahlungsauftraegeList) {
+		for (Zahlungsauftrag zahlungsauftrag : zahlungsauftraegeList) {
+			if (zahlungsauftrag.getZahlungen().isEmpty()) {
+				removePAIN001FromZahlungsauftrag(zahlungsauftrag);
+				persistence.remove(Zahlungsauftrag.class, zahlungsauftrag.getId());
+			}
+		}
+	}
+
+	/**
+	 * Removes the Pain001Dokument that is linked with the given Zahlungsauftrag if it exists.
+	 */
+	private void removePAIN001FromZahlungsauftrag(Zahlungsauftrag zahlungsauftrag) {
+		final Collection<Pain001Dokument> pain001Dokument = criteriaQueryHelper.getEntitiesByAttribute(Pain001Dokument.class, zahlungsauftrag, Pain001Dokument_.zahlungsauftrag);
+		pain001Dokument.forEach(pain -> {
+			fileSaverService.removeAllFromSubfolder(pain.getZahlungsauftrag().getId());
+            persistence.remove(Pain001Dokument.class, pain.getId());
+		});
+	}
+
+	/**
+	 * Goes through the given list and check whether the given Zahlung is empty or not.
+	 * All empty Zahlungen are removed and all corresponding Zahlungsauftraege are added to the
+	 * Set that will be returned at the end of the function
+	 */
+	@Nonnull
+	private Set<Zahlungsauftrag> removeAllEmptyZahlungen(Set<Zahlung> potenziellZuLoeschenZahlungenList) {
+		Set<Zahlungsauftrag> potenziellZuLoeschenZahlungsauftraegeList = new HashSet<>();
+		for (Zahlung zahlung : potenziellZuLoeschenZahlungenList) {
+			if (zahlung.getZahlungspositionen().isEmpty()) {
+				potenziellZuLoeschenZahlungsauftraegeList.add(zahlung.getZahlungsauftrag());
+				zahlung.getZahlungsauftrag().getZahlungen().remove(zahlung);
+				persistence.remove(Zahlung.class, zahlung.getId());
+			}
+		}
+		return potenziellZuLoeschenZahlungsauftraegeList;
 	}
 
 	@Nonnull

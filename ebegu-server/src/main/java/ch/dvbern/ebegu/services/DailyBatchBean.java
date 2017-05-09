@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.security.PermitAll;
 import javax.ejb.*;
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collection;
 import java.util.concurrent.Future;
 
 /**
@@ -33,6 +38,9 @@ public class DailyBatchBean implements DailyBatch {
 
 	@Inject
 	private GesuchService gesuchService;
+
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
 
 
 	@Override
@@ -94,6 +102,20 @@ public class DailyBatchBean implements DailyBatch {
 			LOGGER.info("Es wurden " + anzahl + " Gesuche ohne Freigabe oder Quittung gefunden, die geloescht werden muessen");
 		} catch (RuntimeException e) {
 			LOGGER.error("Batch-Job GesucheLoeschen konnte nicht durchgefuehrt werden!", e);
+		}
+	}
+
+	@Override
+	public void runBatchGesuchsperiodeLoeschen() {
+		try {
+			LocalDate stichtag = LocalDate.now().minusYears(10);
+			LOGGER.info("Deleting Gesuchsperioden older than " + Constants.DATE_FORMATTER.format(stichtag));
+			Collection<Gesuchsperiode> gesuchsperiodenBetween = gesuchsperiodeService.getGesuchsperiodenBetween(LocalDate.of(1900, Month.JANUARY, 1), stichtag);
+			for (Gesuchsperiode gesuchsperiode : gesuchsperiodenBetween) {
+				gesuchsperiodeService.removeGesuchsperiode(gesuchsperiode.getId());
+			}
+		} catch (RuntimeException e) {
+			LOGGER.error("Batch-Job GesuchsperiodeLoeschen konnte nicht durchgefuehrt werden!", e);
 		}
 	}
 }
