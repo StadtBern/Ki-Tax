@@ -429,7 +429,7 @@ export class GesuchToolbarController {
         }
         this.$state.go('gesuch.mutation', {
             createMutation: true,
-            gesuchId: this.gesuchid,
+            gesuchId: this.getGesuchIdFuerMutationOrErneuerung(),
             fallId: this.getGesuch().fall.id,
             eingangsart: eingangsart,
             gesuchsperiodeId: this.getGesuch().gesuchsperiode.id
@@ -464,11 +464,24 @@ export class GesuchToolbarController {
         }
         this.$state.go('gesuch.erneuerung', {
             createErneuerung: true,
-            gesuchId: this.gesuchid,
+            gesuchId: this.getGesuchIdFuerMutationOrErneuerung(),
             eingangsart: eingangsart,
             gesuchsperiodeId: this.neuesteGesuchsperiode.id,
             fallId: this.fallid
         });
+    }
+
+    private getGesuchIdFuerMutationOrErneuerung(): string {
+        // GesuchId ermitteln fuer Mutation ermitteln: Falls wir auf der Verlauf-View sind, nehmen wir einfach
+        // irgendeines der Liste (es wird auf dem Server sichergestellt, dass die Mutation ab dem neuesten Gesuch
+        // der Periode gemacht wird)
+        let gesuchId;
+        if (this.gesuchid) {
+            gesuchId = this.gesuchid;
+        } else {
+            gesuchId = this.antragList ? this.antragList.pop().antragId : null;
+        }
+        return gesuchId;
     }
 
     private addAntragToList(antrag: TSGesuch): void {
