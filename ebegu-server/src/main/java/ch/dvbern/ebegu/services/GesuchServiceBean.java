@@ -516,7 +516,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	 * - SACHBEARBEITER_TRAEGERSCHAFT oder SACHBEARBEITER_INSTITUTION - werden nur diejenige Antraege zurueckgegeben,
 	 * die mindestens ein Angebot fuer die InstituionEn des Benutzers haben
 	 * - SCHULAMT - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von Typ Schulamt haben
-	 * - SACHBEARBEITER_JA oder ADMIN - werden nur diejenige Antraege zurueckgegeben, die mindestens ein Angebot von einem anderen Typ als Schulamt haben
+	 * - SACHBEARBEITER_JA oder ADMIN - werden nur diejenige Antraege zurueckgegeben, die ein Angebot von einem anderen
+	 * Typ als Schulamt haben oder ueberhaupt kein Angebot
 	 */
 	@Nonnull
 	@Override
@@ -575,7 +576,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			if (institutionstammdatenJoin != null) {
 				if (benutzer.getRole().equals(UserRole.ADMIN) || benutzer.getRole().equals(UserRole.SACHBEARBEITER_JA)) {
-					predicatesToUse.add(cb.notEqual(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+					final Predicate noSchulamt = cb.notEqual(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+					final Predicate noAngebote = cb.isNull(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp));
+					predicatesToUse.add(cb.or(noSchulamt, noAngebote));
 				}
 				if (benutzer.getRole().equals(UserRole.SCHULAMT)) {
 					predicatesToUse.add(cb.equal(institutionstammdatenJoin.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
@@ -1380,6 +1383,36 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			throw new EbeguRuntimeException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
 		superAdminService.removeGesuch(criteriaResults.get(0).getId());
+	}
+
+	@Override
+	public Gesuch closeWithoutAngebot(@Nonnull Gesuch gesuch) {
+		if (!gesuch.getStatus().equals(AntragStatus.GEPRUEFT)) {
+			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
+		}
+		if (!gesuch.extractAllBetreuungen().isEmpty()) {
+			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IF_NO_BETERUUNG);
+		}
+
+		gesuch.setStatus(AntragStatus.KEIN_ANGEBOT);
+		wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
+
+		return updateGesuch(gesuch, true);
+	}
+
+	@Override
+	public Gesuch verfuegenStarten(@Nonnull Gesuch gesuch) {
+		if (!gesuch.getStatus().equals(AntragStatus.GEPRUEFT)) {
+			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
+		}
+		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
+		}
+		else {
+			gesuch.setStatus(AntragStatus.VERFUEGEN);
+		}
+
+		return superAdminService.updateGesuch(gesuch, true);
 	}
 
 	private void logDeletingOfGesuchstellerAntrag(@Nonnull Gesuch antrag) {

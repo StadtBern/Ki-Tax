@@ -63,6 +63,8 @@ public class AntragStatusConverterUtil {
 				return AntragStatusDTO.VERFUEGEN;
 			case VERFUEGT:
 				return AntragStatusDTO.VERFUEGT;
+			case KEIN_ANGEBOT:
+				return AntragStatusDTO.KEIN_ANGEBOT;
 			case BESCHWERDE_HAENGIG:
 				return AntragStatusDTO.BESCHWERDE_HAENGIG;
 			case PRUEFUNG_STV:
@@ -138,6 +140,8 @@ public class AntragStatusConverterUtil {
 				return AntragStatus.VERFUEGEN;
 			case VERFUEGT:
 				return AntragStatus.VERFUEGT;
+			case KEIN_ANGEBOT:
+				return AntragStatus.KEIN_ANGEBOT;
 			case BESCHWERDE_HAENGIG:
 				return AntragStatus.BESCHWERDE_HAENGIG;
 			case PRUEFUNG_STV:

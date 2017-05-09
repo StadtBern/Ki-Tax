@@ -18,6 +18,7 @@ export enum TSAntragStatus {
     PLATZBESTAETIGUNG_WARTEN = <any> 'PLATZBESTAETIGUNG_WARTEN',
     VERFUEGEN = <any> 'VERFUEGEN',
     VERFUEGT = <any> 'VERFUEGT',
+    KEIN_ANGEBOT = <any> 'KEIN_ANGEBOT',
     BESCHWERDE_HAENGIG = <any> 'BESCHWERDE_HAENGIG',
     PRUEFUNG_STV = <any> 'PRUEFUNG_STV',
     IN_BEARBEITUNG_STV = <any> 'IN_BEARBEITUNG_STV',
@@ -46,6 +47,7 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
         TSAntragStatus.VERFUEGEN,
         TSAntragStatus.VERFUEGT,
+        TSAntragStatus.KEIN_ANGEBOT,
         TSAntragStatus.BESCHWERDE_HAENGIG,
         TSAntragStatus.PRUEFUNG_STV,
         TSAntragStatus.IN_BEARBEITUNG_STV,
@@ -78,11 +80,12 @@ export function getTSAntragStatusValuesByRole(userrole: TSRole): Array<TSAntragS
 }
 
 /**
- * Gibt alle Werte zurueck ausser VERFUEGT. Diese Werte sind die, die bei der Pendenzenliste notwendig sind
+ * Gibt alle Werte zurueck ausser VERFUEGT und KEIN_ANGEBOT.
+ * Diese Werte sind die, die bei der Pendenzenliste notwendig sind
  * @returns {TSAntragStatus[]}
  */
 export function getTSAntragStatusPendenzValues(userrole: TSRole): Array<TSAntragStatus> {
-    return getTSAntragStatusValuesByRole(userrole).filter(element => element !== TSAntragStatus.VERFUEGT);
+    return getTSAntragStatusValuesByRole(userrole).filter(element => (element !== TSAntragStatus.VERFUEGT && element !== TSAntragStatus.KEIN_ANGEBOT));
 }
 
 export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
@@ -103,6 +106,7 @@ export function isAtLeastFreigegeben(status: TSAntragStatus): boolean {
         TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
         TSAntragStatus.VERFUEGEN,
         TSAntragStatus.VERFUEGT,
+        TSAntragStatus.KEIN_ANGEBOT,
         TSAntragStatus.BESCHWERDE_HAENGIG,
         TSAntragStatus.PRUEFUNG_STV,
         TSAntragStatus.IN_BEARBEITUNG_STV,
@@ -117,17 +121,18 @@ export function isAtLeastFreigegebenOrFreigabequittung(status: TSAntragStatus): 
 export function isAnyStatusOfVerfuegt(status: TSAntragStatus): boolean {
     return status === TSAntragStatus.NUR_SCHULAMT || status === TSAntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN ||
         status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG || status === TSAntragStatus.PRUEFUNG_STV
-        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV;
+        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV || status === TSAntragStatus.KEIN_ANGEBOT;
 }
 
 export function isAnyStatusOfVerfuegtButSchulamt(status: TSAntragStatus): boolean {
     return status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.BESCHWERDE_HAENGIG || status === TSAntragStatus.PRUEFUNG_STV
-        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV;
+        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV || status === TSAntragStatus.KEIN_ANGEBOT;
 }
 
 export function isVerfuegtOrSTV(status: TSAntragStatus): boolean {
     return status === TSAntragStatus.VERFUEGT || status === TSAntragStatus.PRUEFUNG_STV
-        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV;
+        || status === TSAntragStatus.IN_BEARBEITUNG_STV || status === TSAntragStatus.GEPRUEFT_STV
+        || status === TSAntragStatus.KEIN_ANGEBOT;
 }
 
 /**

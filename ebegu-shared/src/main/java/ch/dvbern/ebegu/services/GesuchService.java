@@ -285,4 +285,18 @@ public interface GesuchService {
 	 * @param gesuchsperiode Gesuchsperiode in der das Folgegesuch gesucht werden muss
 	 */
 	void removeOnlineFolgegesuch(@Nonnull Gesuch antrag, @Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Schliesst ein Gesuch, das sich im Status GEPRUEFT befindet und kein Angebot hat
+	 * Das Gesuch bekommt den Status KEIN_ANGEBOT und der WizardStep VERFUEGEN den Status OK
+	 */
+	Gesuch closeWithoutAngebot(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Wenn das Gesuch nicht nur Schulangebote hat, wechselt der Status auf VERFUEGEN. Falls es
+	 * nur Schulangebote hat, wechselt der Status auf NUR_SCHULAMT, da es keine Verfuegung noetig ist
+	 * @param gesuch
+	 * @return
+	 */
+	Gesuch verfuegenStarten(@Nonnull Gesuch gesuch);
 }

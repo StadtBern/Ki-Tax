@@ -165,6 +165,11 @@
                                    ng-if="vm.showVerfuegenStarten()">
                     <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
                 </dv-loading-button>
+                <dv-loading-button button-click="vm.closeWithoutAngebot()"
+                                   aria-label="{{'BEENDEN_OHNE_ANGEBOT_UPPER' | translate}}"
+                                   ng-if="vm.showCloseWithoutAngebot()">
+                    <span data-translate="BEENDEN_OHNE_ANGEBOT_UPPER"></span>
+                </dv-loading-button>
                 <dv-loading-button button-click="vm.sendToSteuerverwaltung()"
                                    aria-label="{{'SEND_TO_STV_UPPER' | translate}}"
                                    ng-if="vm.showSendToSteuerverwaltung()">
