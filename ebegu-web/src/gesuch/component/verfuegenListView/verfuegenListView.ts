@@ -28,6 +28,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import GesuchRS from '../../service/gesuchRS.rest';
 import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
+import AuthenticationUtil from '../../../utils/AuthenticationUtil';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -232,16 +233,23 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     }
 
     public setGesuchStatusVerfuegen(): IPromise<TSGesuch> {
-        //by default wird alles auf VERFUEGEN gesetzt, da es der normale Fall ist
-        let newStatus: TSAntragStatus = TSAntragStatus.VERFUEGEN;
-
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
         }).then(() => {
 
-            this.gesuchModelManager.getGesuch().status = newStatus;
-            return this.gesuchModelManager.updateGesuch().then(() => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+            return this.gesuchRS.verfuegenStarten(this.gesuchModelManager.getGesuch().id).then((response) => {  // muss gespeichert werden um hasfsdokument zu aktualisieren
+                if (response.status === TSAntragStatus.NUR_SCHULAMT) {
+                    // If AntragStatus==NUR_SCHULAMT the Sachbearbeiter_JA has no rights to work with or even to see this gesuch any more
+                    // For this reason we have to navigate directly out of the gesuch once it has been saved. We navigate to the
+                    // default start page for the current role.
+                    // createNeededPDFs is not being called for the same reason. Anyway, the Gesuch vanishes for the role JA and is only
+                    // available for the role SCHULAMT, so JA doesn't need the PDFs to be created. When a Schulamt worker opens this Gesuch,
+                    // she can generate the PDFs by clicking on the corresponding links
+                    AuthenticationUtil.navigateToStartPageForRole(this.authServiceRs.getPrincipal(), this.$state);
+                    // No return needed because we have already navigated to the StartPage of the role
+                }
+                this.gesuchModelManager.setGesuch(response);
                 this.form.$setPristine(); // nach dem es gespeichert wird, muessen wir das Form wieder auf clean setzen
                 return this.refreshKinderListe().then(() => {
                     return this.createNeededPDFs(true).then(() => {

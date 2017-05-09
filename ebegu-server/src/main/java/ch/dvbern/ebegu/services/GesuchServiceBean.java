@@ -1400,6 +1400,21 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return updateGesuch(gesuch, true);
 	}
 
+	@Override
+	public Gesuch verfuegenStarten(@Nonnull Gesuch gesuch) {
+		if (!gesuch.getStatus().equals(AntragStatus.GEPRUEFT)) {
+			throw new EbeguRuntimeException("closeWithoutAngebot", ErrorCodeEnum.ERROR_ONLY_IN_GEPRUEFT_ALLOWED);
+		}
+		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
+		}
+		else {
+			gesuch.setStatus(AntragStatus.VERFUEGEN);
+		}
+
+		return superAdminService.updateGesuch(gesuch, true);
+	}
+
 	private void logDeletingOfGesuchstellerAntrag(@Nonnull Gesuch antrag) {
 		LOG.info("****************************************************");
 		LOG.info("Online Gesuch wird gelöscht:");
