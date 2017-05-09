@@ -516,13 +516,13 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		List<Zahlungsposition> zahlungspositionList = persistence.getCriteriaResults(query);
 
 		//remove Zahlungspositionen
-		Set<Zahlung> zahlungenList = new HashSet<>();
+		Set<Zahlung> potenziellZuLoeschenZahlungenList = new HashSet<>();
 		for (Zahlungsposition zahlungsposition : zahlungspositionList) {
-			zahlungenList.add(zahlungsposition.getZahlung()); // add the Zahlung to the set
+			potenziellZuLoeschenZahlungenList.add(zahlungsposition.getZahlung()); // add the Zahlung to the set
 			zahlungsposition.getZahlung().getZahlungspositionen().remove(zahlungsposition);
 			persistence.remove(Zahlungsposition.class, zahlungsposition.getId());
 		}
-		Set<Zahlungsauftrag> zahlungsauftraegeList = removeAllEmptyZahlungen(zahlungenList);
+		Set<Zahlungsauftrag> zahlungsauftraegeList = removeAllEmptyZahlungen(potenziellZuLoeschenZahlungenList);
 		removeAllEmptyZahlungsauftraege(zahlungsauftraegeList);
 	}
 
@@ -545,7 +545,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	private void removePAIN001FromZahlungsauftrag(Zahlungsauftrag zahlungsauftrag) {
 		final Collection<Pain001Dokument> pain001Dokument = criteriaQueryHelper.getEntitiesByAttribute(Pain001Dokument.class, zahlungsauftrag, Pain001Dokument_.zahlungsauftrag);
 		pain001Dokument.forEach(pain -> {
-			fileSaverService.removeAllFromPath(pain.getZahlungsauftrag().getId());
+			fileSaverService.removeAllFromSubfolder(pain.getZahlungsauftrag().getId());
             persistence.remove(Pain001Dokument.class, pain.getId());
 		});
 	}
@@ -556,16 +556,16 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	 * Set that will be returned at the end of the function
 	 */
 	@Nonnull
-	private Set<Zahlungsauftrag> removeAllEmptyZahlungen(Set<Zahlung> zahlungenList) {
-		Set<Zahlungsauftrag> zahlungsauftraegeList = new HashSet<>();
-		for (Zahlung zahlung : zahlungenList) {
+	private Set<Zahlungsauftrag> removeAllEmptyZahlungen(Set<Zahlung> potenziellZuLoeschenZahlungenList) {
+		Set<Zahlungsauftrag> potenziellZuLoeschenZahlungsauftraegeList = new HashSet<>();
+		for (Zahlung zahlung : potenziellZuLoeschenZahlungenList) {
 			if (zahlung.getZahlungspositionen().isEmpty()) {
-				zahlungsauftraegeList.add(zahlung.getZahlungsauftrag());
+				potenziellZuLoeschenZahlungsauftraegeList.add(zahlung.getZahlungsauftrag());
 				zahlung.getZahlungsauftrag().getZahlungen().remove(zahlung);
 				persistence.remove(Zahlung.class, zahlung.getId());
 			}
 		}
-		return zahlungsauftraegeList;
+		return potenziellZuLoeschenZahlungsauftraegeList;
 	}
 
 	@Nonnull

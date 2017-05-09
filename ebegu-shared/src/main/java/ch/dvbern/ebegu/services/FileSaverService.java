@@ -25,5 +25,5 @@ public interface FileSaverService {
 
 	boolean copy(FileMetadata fileToCopy, String folderName);
 
-	boolean removeAllFromPath(@Nonnull String gesuchId);
+	boolean removeAllFromSubfolder(@Nonnull String gesuchId);
 }
