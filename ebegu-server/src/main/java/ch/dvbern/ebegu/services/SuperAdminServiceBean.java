@@ -32,9 +32,9 @@ public class SuperAdminServiceBean implements SuperAdminService {
 	}
 
 	@Override
+	@Nonnull
 	@RolesAllowed(value = {SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory) {
 		return gesuchService.updateGesuch(gesuch, saveInStatusHistory);
 	}
-
 }

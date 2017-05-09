@@ -15,5 +15,10 @@ public interface SuperAdminService {
 	 */
 	void removeGesuch(@Nonnull String gesuchId);
 
+	/**
+	 * Speichert das Gesuch und speichert den Statuswechsel in der History falls saveInStatusHistory
+	 * gesetzt ist.
+	 */
+	@Nonnull
 	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
 }

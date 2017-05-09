@@ -313,7 +313,8 @@ export default class WizardStepManager {
             if (this.wizardSteps[i].wizardStepName === TSWizardStepName.BETREUUNG) {
                 if (!this.isStatusOk(this.wizardSteps[i].wizardStepStatus)
                     && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.PLATZBESTAETIGUNG
-                    && (this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.NOK && !gesuch.isThereAnyBetreuung())) {
+                    && (this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.NOK
+                    && !gesuch.isThereAnyBetreuung())) {
                     return false;
                 }
 

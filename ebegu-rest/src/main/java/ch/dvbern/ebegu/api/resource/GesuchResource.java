@@ -628,7 +628,7 @@ public class GesuchResource {
 		return Response.ok().build();
 	}
 
-	@ApiOperation(value = "Schilesst ein Gesuch ab, das kein Angebot hat")
+	@ApiOperation(value = "Schliesst ein Gesuch ab, das kein Angebot hat")
 	@Nullable
 	@POST
 	@Path("/closeWithoutAngebot/{antragId}")
@@ -651,7 +651,7 @@ public class GesuchResource {
 		return Response.ok(converter.gesuchToJAX(closedGesuch)).build();
 	}
 
-	@ApiOperation(value = "Aendert den Status des Gesuchs auf VERFUEGEN. Sollte es nur Schulangobte geben, dann wchselt auf NUR_SCHULAMT")
+	@ApiOperation(value = "Aendert den Status des Gesuchs auf VERFUEGEN. Sollte es nur Schulangebote geben, dann wechselt auf NUR_SCHULAMT")
 	@Nullable
 	@POST
 	@Path("/verfuegenStarten/{antragId}")
