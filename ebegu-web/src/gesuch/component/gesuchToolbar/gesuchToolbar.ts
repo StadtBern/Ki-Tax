@@ -22,6 +22,8 @@ import IScope = angular.IScope;
 import {TSRole} from '../../../models/enums/TSRole';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
+import FallRS from '../../service/fallRS.rest';
+import TSFall from '../../../models/TSFall';
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
@@ -32,7 +34,8 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
         gesuchid: '@',
         fallid: '@',
         isDashboardScreen: '@',
-        hideActionButtons: '@'
+        hideActionButtons: '@',
+        forceLoadingFromFall: '@'
     };
 
     template = templateX;
@@ -46,7 +49,8 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
         gesuchid: '@',
         fallid: '@',
         isDashboardScreen: '@',
-        hideActionButtons: '@'
+        hideActionButtons: '@',
+        forceLoadingFromFall: '@'
     };
     template = templateGS;
     controller = GesuchToolbarController;
@@ -63,17 +67,19 @@ export class GesuchToolbarController {
     isDashboardScreen: boolean;
     hideActionButtons: boolean;
     TSRoleUtil: any;
+    forceLoadingFromFall: boolean;
+    fall: TSFall;
 
     gesuchsperiodeList: {[key: string]: Array<TSAntragDTO>} = {};
     gesuchNavigationList: {[key: string]: Array<string>} = {};   //mapped z.B. '2006 / 2007' auf ein array mit den Namen der Antraege
     antragTypList: {[key: string]: TSAntragDTO} = {};
     mutierenPossibleForCurrentAntrag: boolean = false;
     erneuernPossibleForCurrentAntrag: boolean = false;
-    neuesteGesuchsperiode: TSGesuchsperiode; //todo fragen podria ser un problema cuando haya 2 perioden abiertos?
+    neuesteGesuchsperiode: TSGesuchsperiode;
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
-        '$mdSidenav', '$log', 'GesuchsperiodeRS'];
+        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
@@ -82,7 +88,8 @@ export class GesuchToolbarController {
                 private authServiceRS: AuthServiceRS,
                 private $mdSidenav: ng.material.ISidenavService,
                 private $log: ILogService,
-                private gesuchsperiodeRS: GesuchsperiodeRS) {
+                private gesuchsperiodeRS: GesuchsperiodeRS,
+                private fallRS: FallRS) {
 
     }
 
@@ -199,7 +206,8 @@ export class GesuchToolbarController {
     }
 
     public updateAntragDTOList(): void {
-        if (this.getGesuch() && this.getGesuch().id) {
+        this.updateFall();
+        if (!this.forceLoadingFromFall && this.getGesuch() && this.getGesuch().id) {
             this.gesuchRS.getAllAntragDTOForFall(this.getGesuch().fall.id).then((response) => {
                 this.antragList = angular.copy(response);
                 this.updateGesuchperiodeList();
@@ -212,9 +220,10 @@ export class GesuchToolbarController {
             this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
                 this.antragList = angular.copy(response);
                 if (response && response.length > 0) {
-                    this.gesuchRS.findGesuch(this.getNewest(this.antragList).antragId).then((response) => {
+                    let newest = this.getNewest(this.antragList);
+                    this.gesuchRS.findGesuch(newest.antragId).then((response) => {
                         if (!response) {
-                            this.$log.warn('Could not find gesuch for id ' + this.getNewest(this.antragList).antragId);
+                            this.$log.warn('Could not find gesuch for id ' + newest.antragId);
                         }
                         this.gesuchModelManager.setGesuch(angular.copy(response));
                         this.updateGesuchperiodeList();
@@ -223,15 +232,22 @@ export class GesuchToolbarController {
                         this.antragMutierenPossible();
                         this.antragErneuernPossible();
                     });
+                } else { // in this case there is no Gesuch for this fall, so we remove all content
+                    this.resetNavigationParameters();
                 }
             });
         } else {
-            this.gesuchsperiodeList = {};
-            this.gesuchNavigationList = {};
-            this.antragTypList = {};
-            this.antragMutierenPossible();
-            this.antragErneuernPossible();
+            this.resetNavigationParameters();
         }
+        this.forceLoadingFromFall = false; // reset it because it's not needed any more
+    }
+
+    private resetNavigationParameters() {
+        this.gesuchsperiodeList = {};
+        this.gesuchNavigationList = {};
+        this.antragTypList = {};
+        this.antragMutierenPossible();
+        this.antragErneuernPossible();
     }
 
     private updateGesuchperiodeList() {
@@ -320,8 +336,16 @@ export class GesuchToolbarController {
         return undefined;
     }
 
+    /**
+     * Tries to get the "gesuchName" out of the gesuch contained in the gesuchModelManager. If this doesn't
+     * succeed it gets the "gesuchName" out of the fall
+     */
     public getGesuchName(): string {
-        return this.gesuchModelManager.getGesuchName();
+        let gesuchName = this.gesuchModelManager.getGesuchName();
+        if (!gesuchName || gesuchName.length <= 0) {
+            gesuchName = this.ebeguUtil.getGesuchNameFromFall(this.fall);
+        }
+        return gesuchName;
     }
 
     public getGesuch(): TSGesuch {
@@ -511,15 +535,12 @@ export class GesuchToolbarController {
     }
 
     private hasBesitzer(): boolean {
-        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall) {
-            return this.getGesuch().fall.besitzer !== undefined && this.getGesuch().fall.besitzer !== null;
-        }
-        return false;
+        return this.fall && this.fall.besitzer !== null && this.fall.besitzer !== undefined;
     }
 
     private getBesitzer(): string {
-        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall) {
-            return this.getGesuch().fall.besitzer !== undefined && this.getGesuch().fall.besitzer.getFullName();
+        if (this.fall) {
+            return this.fall.besitzer.getFullName();
         }
         return '';
     }
@@ -538,6 +559,14 @@ export class GesuchToolbarController {
     public openAlleVerfuegungen(): void {
         this.$state.go('alleVerfuegungen', {
             fallId: this.fallid
+        });
+    }
+
+    private updateFall(): void {
+        this.fallRS.findFall(this.fallid).then((response: TSFall) => {
+            if (response) {
+                this.fall = response;
+            }
         });
     }
 }

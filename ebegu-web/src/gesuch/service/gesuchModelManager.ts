@@ -1299,18 +1299,7 @@ export default class GesuchModelManager {
     }
 
     public getGesuchName(): string {
-        if (this.getGesuch()) {
-            let text = '';
-            if (this.getGesuch().fall) {
-                text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
-            }
-            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.extractNachname()) {
-                text = text + ' ' + this.getGesuch().gesuchsteller1.extractNachname();
-            }
-            return text;
-        } else {
-            return '';
-        }
+        return this.ebeguUtil.getGesuchNameFromGesuch(this.gesuch);
     }
 
     public isNeuestesGesuch(): IPromise<boolean> {

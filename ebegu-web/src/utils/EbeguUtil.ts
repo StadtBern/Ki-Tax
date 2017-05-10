@@ -8,6 +8,7 @@ import TSBetreuungsnummerParts from '../models/dto/TSBetreuungsnummerParts';
 import * as moment from 'moment';
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
+import TSGesuch from '../models/TSGesuch';
 
 /**
  * Klasse die allgemeine utils Methoden implementiert
@@ -152,6 +153,39 @@ export default class EbeguUtil {
 
         for (let i = 0; i < numberOfCharacters; i++) {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+    }
+
+    /**
+     * Returns a string like "fallID GesuchstellerName". The name of the GS comes from the name of the
+     * first Gesuchsteller of the given Gesuch. This method should be used if possible instead of getGesuchNameFromFall
+     * because the name of the Gesuchsteller1 is suppoused to be more actual than the name of the owner.
+     */
+    public getGesuchNameFromGesuch(gesuch: TSGesuch): string {
+        let text = '';
+        if (gesuch) {
+            if (gesuch.fall) {
+                text = this.addZerosToNumber(gesuch.fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
+            }
+            if (gesuch.gesuchsteller1 && gesuch.gesuchsteller1.extractNachname()) {
+                text = text + ' ' + gesuch.gesuchsteller1.extractNachname();
+            }
+        }
+        return text;
+    }
+
+    /**
+     * Returns a string like "fallID GesuchstellerName". The name of the GS comes from the name of the
+     * owner of the given fall. Use this method instead of getGesuchNameFromGesuch only when there is no Gesuch but a fall
+     */
+    public getGesuchNameFromFall(fall: TSFall): string {
+        let text = '';
+        if (fall) {
+            text = this.addZerosToNumber(fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
+            if (fall.besitzer && fall.besitzer.getFullName()) {
+                text = text + ' ' + fall.besitzer.getFullName();
+            }
         }
         return text;
     }
