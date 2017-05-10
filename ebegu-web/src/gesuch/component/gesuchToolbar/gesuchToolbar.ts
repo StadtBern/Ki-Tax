@@ -474,14 +474,18 @@ export class GesuchToolbarController {
     private getGesuchIdFuerMutationOrErneuerung(): string {
         // GesuchId ermitteln fuer Mutation ermitteln: Falls wir auf der Verlauf-View sind, nehmen wir einfach
         // irgendeines der Liste (es wird auf dem Server sichergestellt, dass die Mutation ab dem neuesten Gesuch
-        // der Periode gemacht wird)
+        // der Periode gemacht wird), wichtig ist nur, dass es sich um die richtige Gesuchsperiode handelt.
         let gesuchId;
         if (this.gesuchid) {
-            gesuchId = this.gesuchid;
+            return this.gesuchid;
         } else {
-            gesuchId = this.antragList ? this.antragList.pop().antragId : null;
+            for (let obj of this.antragList) {
+                if (obj.gesuchsperiodeString === this.getCurrentGesuchsperiode()) {
+                    return obj.antragId;
+                }
+            }
         }
-        return gesuchId;
+        return null;
     }
 
     private addAntragToList(antrag: TSGesuch): void {
