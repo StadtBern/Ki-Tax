@@ -576,7 +576,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			Expression<Boolean> fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 			predicatesToUse.add(fallPredicate);
 
-			if (!benutzer.getRole().equals(UserRole.GESUCHSTELLER)) {
+			// Alle AUSSER Gesuchsteller, Institution und Trägerschaft muessen im Status eingeschraenkt werden,
+			// d.h. sie duerfen IN_BEARBEITUNG_GS und FREIGABEQUITTUNG NICHT sehen
+			if (!(benutzer.getRole().equals(UserRole.GESUCHSTELLER)
+				|| benutzer.getRole().equals(UserRole.SACHBEARBEITER_TRAEGERSCHAFT)
+				|| benutzer.getRole().equals(UserRole.SACHBEARBEITER_INSTITUTION))) {
 				// Nur GS darf ein Gesuch sehen, das sich im Status BEARBEITUNG_GS oder FREIGABEQUITTUNG befindet
 				predicatesToUse.add(root.get(Gesuch_.status).in(AntragStatus.IN_BEARBEITUNG_GS, AntragStatus.FREIGABEQUITTUNG).not());
 			}
@@ -1358,7 +1362,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 
 		// Status verfuegt
-		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.VERFUEGT, AntragStatus.NUR_SCHULAMT, AntragStatus.NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN).not();
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.ERLEDIGTE_PENDENZ).not();
 		// Gesuchsperiode
 		final Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
 

@@ -21,6 +21,7 @@ import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
 import {TSRole} from '../../../models/enums/TSRole';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
@@ -397,6 +398,22 @@ export class GesuchToolbarController {
     public setAntragTypDatum(antragTypDatumKey: string) {
         let selectedAntragTypGesuch = this.antragTypList[antragTypDatumKey];
         this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
+    }
+
+    public showButtonMutieren(): boolean {
+       if (this.hideActionButtons) {
+           return false;
+       }
+       if (this.getGesuch()) {
+           if (this.getGesuch().isNew()) {
+               return false;
+           }
+           // Wenn die Gesuchsperiode geschlossen ist, kann sowieso keine Mutation mehr gemacht werden
+           if (this.getGesuch().gesuchsperiode && this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN) {
+               return false;
+           }
+       }
+       return this.mutierenPossibleForCurrentAntrag;
     }
 
     private antragMutierenPossible(): void {
