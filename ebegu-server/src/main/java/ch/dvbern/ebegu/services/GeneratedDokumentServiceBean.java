@@ -50,7 +50,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 public class GeneratedDokumentServiceBean extends AbstractBaseService implements GeneratedDokumentService {
 
 
-	private static final Logger LOG = LoggerFactory.getLogger(GeneratedDokumentServiceBean.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GeneratedDokumentServiceBean.class.getSimpleName());
 
 	@Inject
 	private Persistence<GeneratedDokument> persistence;
@@ -524,9 +524,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN})
-	public void removeAllGeneratedDokumenteFromGesuch(Gesuch gesuch) {
+	public void removeAllGeneratedDokumenteFromGesuch(@Nonnull Gesuch gesuch) {
+		LOG.info("Searching GeneratedDokuments of Gesuch: " + gesuch.getFall().getFallNummer() + " / " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		Collection<GeneratedDokument> genDokFromGesuch = findGeneratedDokumentsFromGesuch(gesuch);
 		for (GeneratedDokument generatedDokument : genDokFromGesuch) {
+			LOG.info("Deleting Dokument: " + generatedDokument.getId());
 			persistence.remove(GeneratedDokument.class, generatedDokument.getId());
 		}
 	}

@@ -51,4 +51,9 @@ public class DailyBatchScheduler {
 	public void runBatchGesucheLoeschen() {
 		dailyBatch.runBatchGesucheLoeschen();
 	}
+
+	@Schedule(second = "59", minute = "10", hour = "21", dayOfMonth = "1", month = "8", persistent = false)
+	public void runBatchGesuchsperiodeLoeschen() {
+		dailyBatch.runBatchGesuchsperiodeLoeschen();
+	}
 }

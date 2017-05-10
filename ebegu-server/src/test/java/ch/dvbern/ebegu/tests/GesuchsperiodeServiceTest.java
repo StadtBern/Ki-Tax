@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -27,6 +28,8 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
+	@Inject
+	private Persistence<Gesuchsperiode> persistence;
 
 
 	@Test
@@ -60,6 +63,8 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 
 		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true);
 		Assert.assertEquals(1, gesuchsperiodeService.getAllGesuchsperioden().size());
+		insertedGesuchsperiode.setStatus(GesuchsperiodeStatus.GESCHLOSSEN);
+		persistence.merge(insertedGesuchsperiode);
 
 		gesuchsperiodeService.removeGesuchsperiode(insertedGesuchsperiode.getId());
 		Assert.assertEquals(0, gesuchsperiodeService.getAllGesuchsperioden().size());
@@ -88,7 +93,7 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguLoginTest {
 		} else {
 			gesuchsperiode.setStatus(GesuchsperiodeStatus.ENTWURF);
 		}
-		gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
+		gesuchsperiode = gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 		return gesuchsperiode;
 	}
 }

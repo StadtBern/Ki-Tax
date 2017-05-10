@@ -191,6 +191,33 @@
                 </div>
             </div>
 
+            <h2 class="marginTop20">
+                <span data-translate="Gesuchsperiode inkl. Gesuche loeschen"></span>
+            </h2>
+            <div class="row marginTop30">
+                <div class="col-sm-7 ">
+                    <dv-input-container class="form-group">
+                        <label class="md-no-float" for="besitzer">
+                            <span data-translate="GESUCHSPERIODEN"></span>
+                        </label>
+                        <div class="dv-select-style">
+                            <select name="besitzer" id="periodeLoeschen"
+                                    ng-model="vm.selectedGesuchsperiode"
+                                    class="form-control"
+                                    ng-options="periodeLoeschen as periodeLoeschen.gesuchsperiodeString for periodeLoeschen in vm.gesuchsperiodeList"
+                                    style="background:#F0F0F0;">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </dv-input-container>
+                </div>
+                <div class="col-sm-4 ">
+                    <dv-loading-button button-class="" button-click="vm.removeGesuchsperiode()" type="button">
+                        <span data-translate="DELETE"></span>
+                    </dv-loading-button>
+                </div>
+            </div>
+
             <!-- Mutieren -->
             <h2 class="marginTop20">
                 <span data-translate="Mutiere"></span>

@@ -416,4 +416,15 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 		}
 		return gesuchOptional.orElse(null);
 	}
+
+	@Test
+	public void testDeleteZahlungspositionenOfGesuch() throws Exception {
+		Gesuch gesuch = createGesuch(true);
+		zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());
+		Assert.assertFalse(zahlungService.getAllZahlungsauftraege().isEmpty());
+
+		zahlungService.deleteZahlungspositionenOfGesuch(gesuch);
+
+		Assert.assertTrue(zahlungService.getAllZahlungsauftraege().isEmpty());
+	}
 }
