@@ -164,6 +164,8 @@ public enum AntragStatus {
 		KEIN_ANGEBOT,
 		BESCHWERDE_HAENGIG);
 
+	public static final Set<AntragStatus> ERLEDIGTE_PENDENZ = EnumSet.of(VERFUEGT, NUR_SCHULAMT, NUR_SCHULAMT_DOKUMENTE_HOCHGELADEN, KEIN_ANGEBOT);
+
 	private static final Set<AntragStatus> inBearbeitung = EnumSet.range(IN_BEARBEITUNG_GS, IN_BEARBEITUNG_JA);
 
 
