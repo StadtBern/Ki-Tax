@@ -57,13 +57,19 @@ public class GesuchsperiodeResourceTest extends AbstractEbeguRestLoginTest {
 		JaxGesuchsperiode testJaxGesuchsperiode = TestJaxDataUtil.createTestJaxGesuchsperiode();
 		// Gesuchsperiode muss zuerst als ENTWURF gespeichert werden
 		testJaxGesuchsperiode.setStatus(GesuchsperiodeStatus.ENTWURF);
-		JaxGesuchsperiode jaxGesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuchsperiode, null, null);
+		testJaxGesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuchsperiode, null, null);
+		testJaxGesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
+		testJaxGesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuchsperiode, null, null);
+		testJaxGesuchsperiode.setStatus(GesuchsperiodeStatus.INAKTIV);
+		testJaxGesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuchsperiode, null, null);
+		testJaxGesuchsperiode.setStatus(GesuchsperiodeStatus.GESCHLOSSEN);
+		testJaxGesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuchsperiode, null, null);
 
-		findExistingObjectAndCompare(jaxGesuchsperiode);
+		findExistingObjectAndCompare(testJaxGesuchsperiode);
 
-		gesuchsperiodeResource.removeGesuchsperiode(converter.toJaxId(jaxGesuchsperiode), null);
+		gesuchsperiodeResource.removeGesuchsperiode(converter.toJaxId(testJaxGesuchsperiode), null);
 
-		JaxGesuchsperiode foundJaxGesuchsperiode = gesuchsperiodeResource.findGesuchsperiode(converter.toJaxId(jaxGesuchsperiode));
+		JaxGesuchsperiode foundJaxGesuchsperiode = gesuchsperiodeResource.findGesuchsperiode(converter.toJaxId(testJaxGesuchsperiode));
 		Assert.assertNull(foundJaxGesuchsperiode);
 	}
 

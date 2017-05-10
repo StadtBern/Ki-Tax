@@ -286,8 +286,28 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@RolesAllowed({SUPER_ADMIN, ADMIN})
 	public void removeAllMitteilungenForFall(@Nonnull Fall fall) {
 		Collection<Mitteilung> mitteilungen = criteriaQueryHelper.getEntitiesByAttribute(Mitteilung.class, fall, Mitteilung_.fall);
-		for (Mitteilung poscht : mitteilungen) {
-			persistence.remove(Mitteilung.class, poscht.getId());
+		for (Mitteilung mitteilung : mitteilungen) {
+			persistence.remove(Mitteilung.class, mitteilung.getId());
+		}
+	}
+
+	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	public void removeAllBetreuungMitteilungenForGesuch(@Nonnull Gesuch gesuch) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
+		Root<Mitteilung> root = query.from(Mitteilung.class);
+		final Join<Betreuung, KindContainer> join = root.join(Mitteilung_.betreuung, JoinType.LEFT)
+			.join(Betreuung_.kind, JoinType.LEFT);
+
+		Predicate gesuchPred = cb.equal(join.get(KindContainer_.gesuch), gesuch);
+		Predicate withBetreuungPred = cb.isNotNull(root.get(Mitteilung_.betreuung));
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, gesuchPred, withBetreuungPred));
+		final List<Mitteilung> mitteilungen = persistence.getCriteriaResults(query);
+
+		for (Mitteilung mitteilung : mitteilungen) {
+			persistence.remove(Mitteilung.class, mitteilung.getId());
 		}
 	}
 

@@ -43,11 +43,9 @@ public interface GesuchsperiodeService {
 	Collection<Gesuchsperiode> getAllGesuchsperioden();
 
 	/**
-	 * entfernt eine Gesuchsperiode aus der Database
-	 *
-	 * @param gesuchsperiode die Gesuchsperiode als DTO
+	 * Loescht alle Gesuchsperioden inkl. Gesuche und Dokumente, wenn die Gesuchsperiode mehr als 10 Jahre alt ist.
 	 */
-	void removeGesuchsperiode(@Nonnull String gesuchsperiode);
+	void removeGesuchsperiode(@Nonnull String gesuchsPeriodeId);
 
 	/**
 	 * Gibt alle aktiven Gesuchsperioden zurueck.
