@@ -496,13 +496,11 @@ export class GesuchToolbarController {
         if (this.gesuchid) {
             return this.gesuchid;
         } else {
-            for (let obj of this.antragList) {
-                if (obj.gesuchsperiodeString === this.getCurrentGesuchsperiode()) {
-                    return obj.antragId;
-                }
+            if (this.getGesuch()) {
+                return this.getGesuch().id;
             }
         }
-        return null;
+        return undefined;
     }
 
     private addAntragToList(antrag: TSGesuch): void {
