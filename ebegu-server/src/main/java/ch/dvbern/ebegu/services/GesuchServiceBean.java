@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 @Stateless
 @Local(GesuchService.class)
 @PermitAll
-@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "LocalVariableNamingConvention"})
+@SuppressWarnings(value = {"PMD.AvoidDuplicateLiterals", "LocalVariableNamingConvention", "PMD.NcssTypeCount"})
 public class GesuchServiceBean extends AbstractBaseService implements GesuchService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
