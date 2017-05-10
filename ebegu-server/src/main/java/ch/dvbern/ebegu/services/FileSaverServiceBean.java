@@ -50,12 +50,11 @@ public class FileSaverServiceBean implements FileSaverService {
 
 		Path file = Paths.get(absoluteFilePath);
 		try {
-
 			if (!Files.exists(file.getParent())) {
 				Files.createDirectories(file.getParent());
-				LOG.info("Save file in FileSystem: " + absoluteFilePath);
 			}
 			uploadFileInfo.setSize(Files.size(Files.write(file, uploadFileInfo.getBytes())));
+			LOG.info("Save file in FileSystem: " + absoluteFilePath);
 
 		} catch (IOException e) {
 			LOG.info("Can't save file in FileSystem: " + uploadFileInfo.getFilename(), e);
