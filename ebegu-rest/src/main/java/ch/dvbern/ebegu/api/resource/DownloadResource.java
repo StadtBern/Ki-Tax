@@ -170,7 +170,7 @@ public class DownloadResource {
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			GeneratedDokument generatedDokument = generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch.get(), forceCreation);
+			WriteProtectedDokument generatedDokument = generatedDokumentService.getFinSitDokumentAccessTokenGeneratedDokument(gesuch.get(), forceCreation);
 			if (generatedDokument == null) {
 				return Response.noContent().build();
 			}
@@ -206,7 +206,7 @@ public class DownloadResource {
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			GeneratedDokument generatedDokument = generatedDokumentService.getBegleitschreibenDokument(gesuch.get(), forceCreation);
+			WriteProtectedDokument generatedDokument = generatedDokumentService.getBegleitschreibenDokument(gesuch.get(), forceCreation);
 			if (generatedDokument == null) {
 				return Response.noContent().build();
 			}
@@ -236,7 +236,7 @@ public class DownloadResource {
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			GeneratedDokument generatedDokument = generatedDokumentService
+			WriteProtectedDokument generatedDokument = generatedDokumentService
 				.getFreigabequittungAccessTokenGeneratedDokument(gesuch.get(), forceCreation, Zustelladresse.valueOf(zustelladresse));
 			if (generatedDokument == null) {
 				return Response.noContent().build();
@@ -271,7 +271,7 @@ public class DownloadResource {
 			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum das Gesuch detachen
 			loadRelationsAndDetach(gesuchOptional.get());
 
-			GeneratedDokument persistedDokument = generatedDokumentService
+			WriteProtectedDokument persistedDokument = generatedDokumentService
 				.getVerfuegungDokumentAccessTokenGeneratedDokument(gesuchOptional.get(), betreuung, manuelleBemerkungen, forceCreation);
 			return getFileDownloadResponse(uriInfo, ip, persistedDokument);
 
@@ -296,7 +296,7 @@ public class DownloadResource {
 
 		Mahnung mahnung = converter.mahnungToEntity(jaxMahnung, new Mahnung());
 
-		GeneratedDokument persistedDokument = generatedDokumentService
+		WriteProtectedDokument persistedDokument = generatedDokumentService
 			.getMahnungDokumentAccessTokenGeneratedDokument(mahnung, forceCreation);
 
 		return getFileDownloadResponse(uriInfo, ip, persistedDokument);
@@ -319,7 +319,7 @@ public class DownloadResource {
 
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(jaxBetreuungId.getId());
 
-		GeneratedDokument persistedDokument = generatedDokumentService
+		WriteProtectedDokument persistedDokument = generatedDokumentService
 			.getNichteintretenDokumentAccessTokenGeneratedDokument(betreuung.get(), forceCreation);
 
 		return getFileDownloadResponse(uriInfo, ip, persistedDokument);
@@ -365,7 +365,7 @@ public class DownloadResource {
 		final Optional<Zahlungsauftrag> zahlungsauftrag = zahlungService.findZahlungsauftrag(converter.toEntityId(jaxId));
 		if (zahlungsauftrag.isPresent()) {
 
-			Pain001Dokument persistedDokument = generatedDokumentService
+			WriteProtectedDokument persistedDokument = generatedDokumentService
 				.getPain001DokumentAccessTokenGeneratedDokument(zahlungsauftrag.get(), false);
 			if (persistedDokument == null) {
 				return Response.noContent().build();
