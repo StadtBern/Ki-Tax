@@ -284,10 +284,17 @@ export default class GesuchModelManager {
      * @returns {IPromise<TSFall>}
      */
     public updateFall(): IPromise<TSFall> {
-        return this.fallRS.updateFall(this.gesuch.fall).then((fallResponse: any) => {
-            let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse);
-            return this.gesuch.fall = angular.copy(parsedFall);
-        });
+        if (this.gesuch && this.gesuch.fall) {
+            return this.fallRS.updateFall(this.gesuch.fall).then((fallResponse: any) => {
+                let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse);
+                return this.gesuch.fall = angular.copy(parsedFall);
+            });
+        } else {
+            this.log.warn('Es wurde versucht einen undefined Fall zu speichern');
+            let deferred = this.$q.defer();
+            deferred.resolve(undefined);
+            return deferred.promise;
+        }
     }
 
     /**

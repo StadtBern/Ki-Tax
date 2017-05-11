@@ -233,6 +233,7 @@ export class GesuchToolbarController {
                         this.antragErneuernPossible();
                     });
                 } else { // in this case there is no Gesuch for this fall, so we remove all content
+                    this.gesuchModelManager.setGesuch(new TSGesuch());
                     this.resetNavigationParameters();
                 }
             });
@@ -353,7 +354,6 @@ export class GesuchToolbarController {
     }
 
     public getCurrentGesuchsperiode(): string {
-
         if (this.getGesuch() && this.getGesuch().gesuchsperiode) {
             return this.getGesuchsperiodeAsString(this.getGesuch().gesuchsperiode);
         } else {
@@ -551,6 +551,10 @@ export class GesuchToolbarController {
         });
     }
 
+    public showVerlauf(): boolean {
+        return this.getGesuch() !== null && this.getGesuch() !== undefined && !this.getGesuch().isNew();
+    }
+
     public openVerlauf(): void {
         this.$state.go('verlauf', {
             gesuchId: this.getGesuch().id
@@ -563,10 +567,12 @@ export class GesuchToolbarController {
     }
 
     private updateFall(): void {
-        this.fallRS.findFall(this.fallid).then((response: TSFall) => {
-            if (response) {
-                this.fall = response;
-            }
-        });
+        if (this.fallid) {
+            this.fallRS.findFall(this.fallid).then((response: TSFall) => {
+                if (response) {
+                    this.fall = response;
+                }
+            });
+        }
     }
 }

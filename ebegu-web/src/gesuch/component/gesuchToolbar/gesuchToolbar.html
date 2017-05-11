@@ -59,7 +59,7 @@
             <span flex=""></span>
             <!--Verlauf-->
             <div dv-show-element
-                 dv-show-allowed-roles="vmx.TSRoleUtil.getJugendamtAndSchulamtRole()" dv-show-expression="!vmx.getGesuch().isNew()">
+                 dv-show-allowed-roles="vmx.TSRoleUtil.getJugendamtAndSchulamtRole()" dv-show-expression="vmx.showVerlauf()">
                 <button ng-click="vmx.openVerlauf()"
                         aria-label="{{TOOLBAR_VERLAUF | translate}}" style="text-align: center;">
                     <span data-translate="TOOLBAR_VERLAUF"></span>
