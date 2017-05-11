@@ -284,10 +284,17 @@ export default class GesuchModelManager {
      * @returns {IPromise<TSFall>}
      */
     public updateFall(): IPromise<TSFall> {
-        return this.fallRS.updateFall(this.gesuch.fall).then((fallResponse: any) => {
-            let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse);
-            return this.gesuch.fall = angular.copy(parsedFall);
-        });
+        if (this.gesuch && this.gesuch.fall) {
+            return this.fallRS.updateFall(this.gesuch.fall).then((fallResponse: any) => {
+                let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse);
+                return this.gesuch.fall = angular.copy(parsedFall);
+            });
+        } else {
+            this.log.warn('Es wurde versucht einen undefined Fall zu speichern');
+            let deferred = this.$q.defer();
+            deferred.resolve(undefined);
+            return deferred.promise;
+        }
     }
 
     /**
@@ -1299,18 +1306,7 @@ export default class GesuchModelManager {
     }
 
     public getGesuchName(): string {
-        if (this.getGesuch()) {
-            let text = '';
-            if (this.getGesuch().fall) {
-                text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
-            }
-            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.extractNachname()) {
-                text = text + ' ' + this.getGesuch().gesuchsteller1.extractNachname();
-            }
-            return text;
-        } else {
-            return '';
-        }
+        return this.ebeguUtil.getGesuchNameFromGesuch(this.gesuch);
     }
 
     public isNeuestesGesuch(): IPromise<boolean> {

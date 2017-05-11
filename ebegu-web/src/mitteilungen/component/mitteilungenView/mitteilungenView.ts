@@ -23,20 +23,18 @@ export class MitteilungenViewController {
 
     form: IFormController;
     fall: TSFall;
+    fallId: string;
     TSRoleUtil = TSRoleUtil;
 
     static $inject: string[] = ['$state', '$stateParams', 'FallRS', 'AuthServiceRS', '$q'];
     /* @ngInject */
     constructor(private $state: IStateService, private $stateParams: IMitteilungenStateParams,
                 private fallRS: FallRS, private authServiceRS: AuthServiceRS, private $q: IQService) {
-        this.initViewModel();
     }
 
-    private initViewModel() {
+    $onInit() {
         if (this.$stateParams.fallId) {
-            this.fallRS.findFall(this.$stateParams.fallId).then((response) => {
-                this.fall = response;
-            });
+            this.fallId = this.$stateParams.fallId;
         }
     }
 
