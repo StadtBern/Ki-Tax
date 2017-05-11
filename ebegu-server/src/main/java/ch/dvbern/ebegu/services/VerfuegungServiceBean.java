@@ -242,31 +242,6 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		return Optional.ofNullable(letztesVerfDatum);
 	}
 
-//	private BGRechnerParameterDTO loadCalculatorParameters(Mandant mandant, @Nonnull Gesuchsperiode gesuchsperiode) {
-//		Map<EbeguParameterKey, EbeguParameter> paramMap = ebeguParameterService.getEbeguParameterByGesuchsperiodeAsMap(gesuchsperiode);
-//		BGRechnerParameterDTO parameterDTO = new BGRechnerParameterDTO(paramMap, gesuchsperiode, mandant);
-//
-//		//Es gibt aktuell einen Parameter der sich aendert am Jahreswechsel
-//		int startjahr = gesuchsperiode.getGueltigkeit().getGueltigAb().getYear();
-//		int endjahr = gesuchsperiode.getGueltigkeit().getGueltigBis().getYear();
-//		Validate.isTrue(endjahr == startjahr + 1, "Startjahr " + startjahr + " muss ein Jahr vor Endjahr" + endjahr + " sein ");
-//		BigDecimal abgeltungJahr1 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, startjahr);
-//		BigDecimal abgeltungJahr2 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, endjahr);
-//		parameterDTO.setBeitragStadtProTagJahr1((abgeltungJahr1));
-//		parameterDTO.setBeitragStadtProTagJahr2((abgeltungJahr2));
-//		return parameterDTO;
-//	}
-
-//	@Nonnull
-//	private BigDecimal loadYearlyParameter(EbeguParameterKey key, int jahr) {
-//		Optional<EbeguParameter> result = ebeguParameterService.getEbeguParameterByKeyAndDate(key, LocalDate.of(jahr, 1, 1));
-//		if (!result.isPresent()) {
-//			LOG.error("Required yearly calculator parameter '{}' could not be loaded for year {}'", key, jahr);
-//			throw new EbeguEntityNotFoundException("loadCalculatorParameters", ErrorCodeEnum.ERROR_PARAMETER_NOT_FOUND, key);
-//		}
-//		return result.get().getValueAsBigDecimal();
-//	}
-
 	@Override
 	@Nonnull
 	public List<VerfuegungZeitabschnitt> findVerrechnetenZeitabschnittOnVorgaengerVerfuegung(@Nonnull VerfuegungZeitabschnitt zeitabschnittNeu,
