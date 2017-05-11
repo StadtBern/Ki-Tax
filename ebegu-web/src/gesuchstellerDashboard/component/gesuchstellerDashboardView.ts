@@ -42,6 +42,9 @@ export class GesuchstellerDashboardListViewController {
                 private authServiceRS: AuthServiceRS, private pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil,
                 private gesuchsperiodeRS: GesuchsperiodeRS, private fallRS: FallRS, private $translate: ITranslateService,
                 private mitteilungRS: MitteilungRS) {
+    }
+
+    $onInit() {
         this.initViewModel();
     }
 
@@ -78,7 +81,7 @@ export class GesuchstellerDashboardListViewController {
     }
 
     private updateActiveGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
+        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: TSGesuchsperiode[]) => {
             this._activeGesuchsperiodenList = angular.copy(response);
         });
     }
@@ -122,14 +125,26 @@ export class GesuchstellerDashboardListViewController {
                 });
             }
         } else {
-            // Noch kein Antrag vorhanden
-            this.$state.go('gesuch.fallcreation', {
-                createNew: true,
-                eingangsart: TSEingangsart.ONLINE,
-                gesuchId: null,
-                gesuchsperiodeId: periode.id,
-                fallId: this.fallId
-            });
+            // Noch kein Antrag für die Gesuchsperiode vorhanden
+            if (this.antragList && this.antragList.length > 0) {
+                // Aber schon mindestens einer für eine frühere Periode
+                this.$state.go('gesuch.erneuerung', {
+                    createErneuerung: true,
+                    gesuchId: this.antragList[0].antragId,
+                    eingangsart: TSEingangsart.ONLINE,
+                    gesuchsperiodeId: periode.id,
+                    fallId: this.fallId
+                });
+            } else {
+                // Dies ist das erste Gesuch
+                this.$state.go('gesuch.fallcreation', {
+                    createNew: true,
+                    eingangsart: TSEingangsart.ONLINE,
+                    gesuchId: null,
+                    gesuchsperiodeId: periode.id,
+                    fallId: this.fallId
+                });
+            }
         }
     }
 

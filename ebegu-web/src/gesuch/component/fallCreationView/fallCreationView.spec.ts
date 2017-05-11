@@ -6,6 +6,7 @@ import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSGesuch from '../../../models/TSGesuch';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 
 describe('fallCreationView', function () {
 
@@ -15,6 +16,7 @@ describe('fallCreationView', function () {
     let $q: IQService;
     let $rootScope: IScope;
     let form: any;
+    let gesuch: TSGesuch;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -29,11 +31,13 @@ describe('fallCreationView', function () {
         form.$dirty = true;
         fallCreationview = new FallCreationViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
             $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'),
-            $injector.get('$translate'), $q, $rootScope, $injector.get('AuthServiceRS'));
+            $injector.get('$translate'), $q, $rootScope, $injector.get('AuthServiceRS'), $injector.get('GesuchsperiodeRS'));
         fallCreationview.form = form;
         spyOn(fallCreationview, 'isGesuchValid').and.callFake(function () {
             return form.$valid;
         });
+        gesuch = new TSGesuch();
+        gesuch.typ = TSAntragTyp.ERSTGESUCH;
     }));
 
     describe('nextStep', () => {
@@ -67,19 +71,21 @@ describe('fallCreationView', function () {
     });
     describe('getTitle', () => {
         it('should return Änderung Ihrer Daten', () => {
-            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
+            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(false);
             expect(fallCreationview.getTitle()).toBe('Änderung Ihrer Daten');
         });
         it('should return Ki-Tax – Erstgesuch der Periode', () => {
             let gesuchsperiode: TSGesuchsperiode = TestDataUtil.createGesuchsperiode20162017();
             spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuchsperiode);
-            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(true);
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
             expect(fallCreationview.getTitle()).toBe('Ki-Tax – Erstgesuch der Periode 2016/17');
         });
         it('should return Ki-Tax – Erstgesuch', () => {
-            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuch').and.returnValue(true);
             spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(false);
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
             expect(fallCreationview.getTitle()).toBe('Ki-Tax – Erstgesuch');
         });
     });

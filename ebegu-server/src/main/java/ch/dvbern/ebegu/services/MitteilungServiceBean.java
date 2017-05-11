@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.EbeguExistingAntragException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -285,14 +286,35 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@RolesAllowed({SUPER_ADMIN, ADMIN})
 	public void removeAllMitteilungenForFall(@Nonnull Fall fall) {
 		Collection<Mitteilung> mitteilungen = criteriaQueryHelper.getEntitiesByAttribute(Mitteilung.class, fall, Mitteilung_.fall);
-		for (Mitteilung poscht : mitteilungen) {
-			persistence.remove(Mitteilung.class, poscht.getId());
+		for (Mitteilung mitteilung : mitteilungen) {
+			persistence.remove(Mitteilung.class, mitteilung.getId());
 		}
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN})
+	public void removeAllBetreuungMitteilungenForGesuch(@Nonnull Gesuch gesuch) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
+		Root<Mitteilung> root = query.from(Mitteilung.class);
+		final Join<Betreuung, KindContainer> join = root.join(Mitteilung_.betreuung, JoinType.LEFT)
+			.join(Betreuung_.kind, JoinType.LEFT);
+
+		Predicate gesuchPred = cb.equal(join.get(KindContainer_.gesuch), gesuch);
+		Predicate withBetreuungPred = cb.isNotNull(root.get(Mitteilung_.betreuung));
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, gesuchPred, withBetreuungPred));
+		final List<Mitteilung> mitteilungen = persistence.getCriteriaResults(query);
+
+		for (Mitteilung mitteilung : mitteilungen) {
+			persistence.remove(Mitteilung.class, mitteilung.getId());
+		}
+	}
+
+	@Override
+	@Nonnull
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, GESUCHSTELLER, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
-	public Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(Fall fall) {
+	public Collection<Mitteilung> setAllNewMitteilungenOfFallGelesen(@Nonnull Fall fall) {
 		Collection<Mitteilung> mitteilungen = getMitteilungenForCurrentRolle(fall);
 		for (Mitteilung mitteilung : mitteilungen) {
 			if (MitteilungStatus.NEU.equals(mitteilung.getMitteilungStatus())) {
@@ -303,7 +325,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
-	public Collection<Mitteilung> getNewMitteilungenForCurrentRolleAndFall(Fall fall) {
+	@Nonnull
+	public Collection<Mitteilung> getNewMitteilungenForCurrentRolleAndFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall, "fall muss gesetzt sein");
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -346,7 +369,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	@Override
-	@RolesAllowed({SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
+	@RolesAllowed({SUPER_ADMIN, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT})
 	public Betreuungsmitteilung sendBetreuungsmitteilung(Betreuungsmitteilung betreuungsmitteilung) {
 		Objects.requireNonNull(betreuungsmitteilung);
 		if (!MitteilungTeilnehmerTyp.INSTITUTION.equals(betreuungsmitteilung.getSenderTyp())) {
@@ -373,7 +396,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		} catch (EJBTransactionRolledbackException exception) {
 			//Wenn der Sachbearbeiter den neusten Antrag nicht lesen darf ist es ein noch nicht freigegebener ONLINE Antrag
 			if(exception.getCause().getClass().equals(EJBAccessException.class)) {
-				throw new EbeguRuntimeException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, exception);
+				throw new EbeguExistingAntragException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, exception, gesuch.getId());
 			}
 			throw exception;
 		}
@@ -420,7 +443,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	private Betreuungsmitteilung applyBetreuungsmitteilungToMutation(Gesuch gesuch, Betreuungsmitteilung mitteilung) {
-		final Optional<Betreuung> betreuungToChangeOpt = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getBetreuungNummer());
+		final Optional<Betreuung> betreuungToChangeOpt = gesuch.extractBetreuungsFromBetreuungNummer(mitteilung.getBetreuung().getKind().getKindNummer(), mitteilung.getBetreuung().getBetreuungNummer());
 		if (betreuungToChangeOpt.isPresent()) {
 			Betreuung existingBetreuung = betreuungToChangeOpt.get();
 			existingBetreuung.getBetreuungspensumContainers().clear();//delete all current Betreuungspensen before we add the modified list

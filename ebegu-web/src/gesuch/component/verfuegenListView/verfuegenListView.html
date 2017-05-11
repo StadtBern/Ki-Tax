@@ -153,7 +153,9 @@
         <div class="nav-row-verfuegen">
             <dv-navigation dv-previous="true" dv-next="false" dv-sub-step="1">
             </dv-navigation>
-            <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+            <div dv-show-element
+                 dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                 dv-show-expression="!vm.gesuchModelManager.isGesuchsperiodeReadonly()">
                 <dv-loading-button type="button" button-click="vm.setGesuchStatusGeprueft()"
                                    aria-label="{{'GEPRUEFT_UPPER' | translate}}" ng-if="vm.showGeprueft()">
                     <span data-translate="GEPRUEFT_UPPER"></span>
@@ -162,6 +164,11 @@
                                    aria-label="{{'VERFUEGUNG_STARTEN_UPPER' | translate}}"
                                    ng-if="vm.showVerfuegenStarten()">
                     <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
+                </dv-loading-button>
+                <dv-loading-button button-click="vm.closeWithoutAngebot()"
+                                   aria-label="{{'BEENDEN_OHNE_ANGEBOT_UPPER' | translate}}"
+                                   ng-if="vm.showCloseWithoutAngebot()">
+                    <span data-translate="BEENDEN_OHNE_ANGEBOT_UPPER"></span>
                 </dv-loading-button>
                 <dv-loading-button button-click="vm.sendToSteuerverwaltung()"
                                    aria-label="{{'SEND_TO_STV_UPPER' | translate}}"

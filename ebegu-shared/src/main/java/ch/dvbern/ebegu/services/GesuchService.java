@@ -1,26 +1,25 @@
 package ch.dvbern.ebegu.services;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service zum Verwalten von Gesuche
  */
+@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 public interface GesuchService {
 
 	/**
@@ -91,7 +90,7 @@ public interface GesuchService {
 	/**
 	 * entfernt ein Gesuch aus der Database
 	 *
-	 * @param gesuch der Gesuch zu entfernen
+	 * @param gesuchId der Gesuch zu entfernen
 	 */
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	void removeGesuch(@Nonnull String gesuchId);
@@ -112,7 +111,7 @@ public interface GesuchService {
 	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
 	 *
-	 * @param antragSearch
+	 * @param antragTableFilterDto
 	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
 	 */
 	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragTableFilterDto);
@@ -136,6 +135,13 @@ public interface GesuchService {
 	@Nonnull
 	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
 									@Nonnull LocalDate eingangsdatum);
+
+	/**
+	 * Erstellt ein Erneuerungsgesuch fuer die Gesuchsperiode und Fall des übergebenen Antrags. Es wird immer der
+	 * letzte verfügte Antrag kopiert für das Erneuerungsgesuch
+	 */
+	@Nonnull
+	Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nonnull String gesuchsperiodeId, @Nullable LocalDate eingangsdatum);
 
 	/**
 	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück,
@@ -165,13 +171,6 @@ public interface GesuchService {
 	@Nonnull
 	@Deprecated
 	Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch);
-
-	/**
-	 * fuellt die laufnummern der Gesuche/Mutationen eines Falls auf (nach timestamperstellt)
-	 *
-	 * @param fallId
-	 */
-	void updateLaufnummerOfAllGesucheOfFall(String fallId);
 
 	/**
 	 * Alle GesucheIDs des Gesuchstellers zurueckgeben fuer admin
@@ -241,6 +240,12 @@ public interface GesuchService {
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 
 	/**
+	 * Gibt die jeweils letzt erstellten Antraege der uebergebenen Gesuchsperiode zurueck.
+	 */
+	@Nonnull
+	List<Gesuch> getNeuesteAntraegeForPeriod(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
 	 * Schickt eine E-Mail an alle Gesuchsteller, die ihr Gesuch innerhalb einer konfigurierbaren Frist nach
 	 * Erstellung nicht freigegeben haben.
 	 * Gibt die Anzahl Warnungen zurueck.
@@ -260,4 +265,38 @@ public interface GesuchService {
 	 * Gibt die Anzahl Warnungen zurueck.
 	 */
 	int deleteGesucheOhneFreigabeOderQuittung();
+
+	/**
+	 * Prüft, ob alle Anträge dieser Periode im Status VERFUEGT oder NUR_SCHULAMT sind
+	 */
+	boolean canGesuchsperiodeBeClosed(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Sucht die neueste Online Mutation, die zu dem gegebenen Antrag gehoert und loescht sie.
+	 * Diese Mutation muss Online und noch nicht freigegeben sein. Diese Methode darf nur bei ADMIN oder SUPER_ADMIN
+	 * aufgerufen werden, wegen loescherechten wird es dann immer mir RunAs/SUPER_ADMIN) ausgefuehrt.
+	 * @param antrag Der Antraege, zu denen die Mutation gehoert, die geloescht werden muss
+	 */
+	void removeOnlineMutation(@Nonnull Gesuch antrag);
+
+	/**
+	 * Sucht ein Folgegesuch fuer den gegebenen Antrag in der gegebenen Gesuchsperiode
+	 * @param antrag Der Antraeg des Falles
+	 * @param gesuchsperiode Gesuchsperiode in der das Folgegesuch gesucht werden muss
+	 */
+	void removeOnlineFolgegesuch(@Nonnull Gesuch antrag, @Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Schliesst ein Gesuch, das sich im Status GEPRUEFT befindet und kein Angebot hat
+	 * Das Gesuch bekommt den Status KEIN_ANGEBOT und der WizardStep VERFUEGEN den Status OK
+	 */
+	Gesuch closeWithoutAngebot(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Wenn das Gesuch nicht nur Schulangebote hat, wechselt der Status auf VERFUEGEN. Falls es
+	 * nur Schulangebote hat, wechselt der Status auf NUR_SCHULAMT, da es keine Verfuegung noetig ist
+	 * @param gesuch
+	 * @return
+	 */
+	Gesuch verfuegenStarten(@Nonnull Gesuch gesuch);
 }

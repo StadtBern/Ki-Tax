@@ -2,10 +2,12 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.testfaelle.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -64,10 +66,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Override
 	@Nonnull
 	public StringBuilder createAndSaveTestfaelle(String fallid,
-												 Integer iterationCount,
 												 boolean betreuungenBestaetigt,
-												 boolean verfuegen) {
-		return this.createAndSaveTestfaelle(fallid, iterationCount, betreuungenBestaetigt, verfuegen, null);
+												 boolean verfuegen, @Nullable String gesuchsPeriodeId) {
+		return this.createAndSaveTestfaelle(fallid, 1, betreuungenBestaetigt, verfuegen, null, gesuchsPeriodeId);
 	}
 
 	@Nonnull
@@ -75,11 +76,16 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	public StringBuilder createAndSaveTestfaelle(String fallid,
 												 Integer iterationCount,
 												 boolean betreuungenBestaetigt,
-												 boolean verfuegen, Benutzer besitzer) {
+												 boolean verfuegen, Benutzer besitzer, @Nullable String gesuchsPeriodeId) {
 
 		iterationCount = (iterationCount == null || iterationCount == 0) ? 1 : iterationCount;
 
-		Gesuchsperiode gesuchsperiode = getGesuchsperiode();
+		Gesuchsperiode gesuchsperiode;
+		if (StringUtils.isNotEmpty(gesuchsPeriodeId)) {
+			gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsPeriodeId).orElseThrow(() -> new EbeguEntityNotFoundException("createAndSaveTestfaelle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsPeriodeId));
+		} else {
+			gesuchsperiode = getNeuesteGesuchsperiode();
+		}
 		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionsstammdatenForTestfaelle();
 
 		StringBuilder responseString = new StringBuilder("");
@@ -177,11 +183,11 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	public StringBuilder createAndSaveAsOnlineGesuch(@Nonnull String fallid,
 													 boolean betreuungenBestaetigt,
-													 boolean verfuegen, @Nonnull String username) {
+													 boolean verfuegen, @Nonnull String username, @Nullable String gesuchsPeriodeId) {
 
 		removeGesucheOfGS(username);
 		Benutzer benutzer = benutzerService.findBenutzer(username).orElse(benutzerService.getCurrentBenutzer().orElse(null));
-		return this.createAndSaveTestfaelle(fallid, 1, betreuungenBestaetigt, verfuegen, benutzer);
+		return this.createAndSaveTestfaelle(fallid, 1, betreuungenBestaetigt, verfuegen, benutzer, gesuchsPeriodeId);
 
 	}
 
@@ -192,7 +198,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 										  boolean betreuungenBestaetigt,
 										  boolean verfuegen) {
 
-		Gesuchsperiode gesuchsperiode = getGesuchsperiode();
+		Gesuchsperiode gesuchsperiode = getNeuesteGesuchsperiode();
 		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionsstammdatenForTestfaelle();
 
 		if (WaeltiDagmar.equals(fallid)) {
@@ -328,7 +334,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		return gesuchOptional.orElse(null);
 	}
 
-	private Gesuchsperiode getGesuchsperiode() {
+	private Gesuchsperiode getNeuesteGesuchsperiode() {
 		Collection<Gesuchsperiode> allActiveGesuchsperioden = gesuchsperiodeService.getAllActiveGesuchsperioden();
 		return allActiveGesuchsperioden.iterator().next();
 	}

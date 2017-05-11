@@ -10,6 +10,7 @@ import {TSEingangsart} from './enums/TSEingangsart';
 import {isSchulamt} from './enums/TSBetreuungsangebotTyp';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 import {TSAntragStatus} from './enums/TSAntragStatus';
+import * as moment from 'moment';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -25,11 +26,12 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _geprueftSTV: boolean = false;
     private _hasFSDokument: boolean = true;
     private _gesperrtWegenBeschwerde: boolean = false;
-    private _gewarntNichtFreigegeben: boolean = false;
-    private _gewarntFehlendeQuittung: boolean = false;
+    private _datumGewarntNichtFreigegeben: moment.Moment;
+    private _datumGewarntFehlendeQuittung: moment.Moment;
 
-    // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutationskopie (Wichitg für laden des Gesuchs bei Navigation)
-    private _emptyMutation: boolean = false;
+    // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutations- oder Erneuerungskopie
+    // (Wichtig für laden des Gesuchs bei Navigation)
+    private _emptyCopy: boolean = false;
 
 
     public get gesuchsteller1(): TSGesuchstellerContainer {
@@ -128,36 +130,40 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._gesperrtWegenBeschwerde = value;
     }
 
+    get emptyCopy(): boolean {
+        return this._emptyCopy;
+    }
+
+    set emptyCopy(value: boolean) {
+        this._emptyCopy = value;
+    }
+
+    get datumGewarntNichtFreigegeben(): moment.Moment {
+        return this._datumGewarntNichtFreigegeben;
+    }
+
+    set datumGewarntNichtFreigegeben(value: moment.Moment) {
+        this._datumGewarntNichtFreigegeben = value;
+    }
+
+    get datumGewarntFehlendeQuittung(): moment.Moment {
+        return this._datumGewarntFehlendeQuittung;
+    }
+
+    set datumGewarntFehlendeQuittung(value: moment.Moment) {
+        this._datumGewarntFehlendeQuittung = value;
+    }
+
     public isMutation(): boolean {
         return this.typ === TSAntragTyp.MUTATION;
     }
 
+    public isFolgegesuch(): boolean {
+        return this.typ === TSAntragTyp.ERNEUERUNGSGESUCH;
+    }
+
     public isOnlineGesuch(): boolean {
         return TSEingangsart.ONLINE === this.eingangsart;
-    }
-
-    get emptyMutation(): boolean {
-        return this._emptyMutation;
-    }
-
-    set emptyMutation(value: boolean) {
-        this._emptyMutation = value;
-    }
-
-    get gewarntNichtFreigegeben(): boolean {
-        return this._gewarntNichtFreigegeben;
-    }
-
-    set gewarntNichtFreigegeben(value: boolean) {
-        this._gewarntNichtFreigegeben = value;
-    }
-
-    get gewarntFehlendeQuittung(): boolean {
-        return this._gewarntFehlendeQuittung;
-    }
-
-    set gewarntFehlendeQuittung(value: boolean) {
-        this._gewarntFehlendeQuittung = value;
     }
 
     /**
@@ -261,5 +267,19 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     public canBeFreigegeben(): boolean {
         return this.status === TSAntragStatus.FREIGABEQUITTUNG;
+    }
+
+    /**
+     * Schaut dass mindestens eine Betreuung erfasst wurde.
+     * @returns {boolean}
+     */
+    public isThereAnyBetreuung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            if (kind.betreuungen && kind.betreuungen.length > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }

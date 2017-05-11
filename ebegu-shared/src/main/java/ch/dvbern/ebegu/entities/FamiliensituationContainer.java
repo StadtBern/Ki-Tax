@@ -38,7 +38,8 @@ public class FamiliensituationContainer extends AbstractEntity {
 	public FamiliensituationContainer() {
 	}
 
-	public FamiliensituationContainer copyForMutation(FamiliensituationContainer mutation, boolean toCopyisMutation) {
+	@Nonnull
+	public FamiliensituationContainer copyForMutation(@Nonnull FamiliensituationContainer mutation, boolean toCopyisMutation) {
 		super.copyForMutation(mutation);
 		mutation.setFamiliensituationGS(null);
 		mutation.setFamiliensituationJA(getFamiliensituationJA().copyForMutation(new Familiensituation()));
@@ -48,6 +49,14 @@ public class FamiliensituationContainer extends AbstractEntity {
 			mutation.setFamiliensituationErstgesuch(this.getFamiliensituationJA().copyForMutation(new Familiensituation()));
 		}
 		return mutation;
+	}
+
+	@Nonnull
+	public FamiliensituationContainer copyForErneuerung(@Nonnull FamiliensituationContainer folgeEntity) {
+		super.copyForErneuerung(folgeEntity);
+		folgeEntity.setFamiliensituationGS(null);
+		folgeEntity.setFamiliensituationJA(getFamiliensituationJA().copyForErneuerung(new Familiensituation()));
+		return folgeEntity;
 	}
 
 	@Nullable

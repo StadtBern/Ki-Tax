@@ -20,6 +20,10 @@ import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
 import {TSRole} from '../../../models/enums/TSRole';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
+import FallRS from '../../service/fallRS.rest';
+import TSFall from '../../../models/TSFall';
 let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
@@ -28,10 +32,10 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
         gesuchid: '@',
-        onVerantwortlicherChange: '&',
         fallid: '@',
         isDashboardScreen: '@',
-        hideMutationButton: '@'
+        hideActionButtons: '@',
+        forceLoadingFromFall: '@'
     };
 
     template = templateX;
@@ -45,7 +49,8 @@ export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOpti
         gesuchid: '@',
         fallid: '@',
         isDashboardScreen: '@',
-        hideMutationButton: '@'
+        hideActionButtons: '@',
+        forceLoadingFromFall: '@'
     };
     template = templateGS;
     controller = GesuchToolbarController;
@@ -60,19 +65,21 @@ export class GesuchToolbarController {
     gesuchid: string;
     fallid: string;
     isDashboardScreen: boolean;
-    hideMutationButton: boolean;
+    hideActionButtons: boolean;
     TSRoleUtil: any;
-
-    onVerantwortlicherChange: (attr: any) => void;
+    forceLoadingFromFall: boolean;
+    fall: TSFall;
 
     gesuchsperiodeList: {[key: string]: Array<TSAntragDTO>} = {};
     gesuchNavigationList: {[key: string]: Array<string>} = {};   //mapped z.B. '2006 / 2007' auf ein array mit den Namen der Antraege
     antragTypList: {[key: string]: TSAntragDTO} = {};
     mutierenPossibleForCurrentAntrag: boolean = false;
+    erneuernPossibleForCurrentAntrag: boolean = false;
+    neuesteGesuchsperiode: TSGesuchsperiode;
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         '$state', '$stateParams', '$scope', 'GesuchModelManager', 'AuthServiceRS',
-        '$mdSidenav', '$log'];
+        '$mdSidenav', '$log', 'GesuchsperiodeRS', 'FallRS'];
 
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
@@ -80,7 +87,9 @@ export class GesuchToolbarController {
                 private gesuchModelManager: GesuchModelManager,
                 private authServiceRS: AuthServiceRS,
                 private $mdSidenav: ng.material.ISidenavService,
-                private $log: ILogService) {
+                private $log: ILogService,
+                private gesuchsperiodeRS: GesuchsperiodeRS,
+                private fallRS: FallRS) {
 
     }
 
@@ -90,7 +99,10 @@ export class GesuchToolbarController {
         //add watchers
         this.addWatchers(this.$scope);
         this.TSRoleUtil = TSRoleUtil;
-
+        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: TSGesuchsperiode[]) => {
+            // Die neueste ist zuoberst
+            this.neuesteGesuchsperiode = response[0];
+        });
     }
 
     public toggleSidenav(componentId: string): void {
@@ -121,6 +133,7 @@ export class GesuchToolbarController {
                         this.gesuchsperiodeList = {};
                         this.antragList = [];
                         this.antragMutierenPossible(); //neu berechnen ob mutieren moeglich ist
+                        this.antragErneuernPossible();
                     }
                 }
             });
@@ -147,6 +160,7 @@ export class GesuchToolbarController {
                         this.gesuchsperiodeList = {};
                         this.antragList = [];
                         this.antragMutierenPossible(); //neu berechnen ob mutieren moeglich ist
+                        this.antragErneuernPossible();
                     }
                 }
             });
@@ -192,36 +206,49 @@ export class GesuchToolbarController {
     }
 
     public updateAntragDTOList(): void {
-        if (this.getGesuch() && this.getGesuch().id) {
+        this.updateFall();
+        if (!this.forceLoadingFromFall && this.getGesuch() && this.getGesuch().id) {
             this.gesuchRS.getAllAntragDTOForFall(this.getGesuch().fall.id).then((response) => {
                 this.antragList = angular.copy(response);
                 this.updateGesuchperiodeList();
                 this.updateGesuchNavigationList();
                 this.updateAntragTypList();
                 this.antragMutierenPossible();
+                this.antragErneuernPossible();
             });
         } else if (this.fallid) {
             this.gesuchRS.getAllAntragDTOForFall(this.fallid).then((response) => {
                 this.antragList = angular.copy(response);
                 if (response && response.length > 0) {
-                    this.gesuchRS.findGesuch(this.getNewest(this.antragList).antragId).then((response) => {
+                    let newest = this.getNewest(this.antragList);
+                    this.gesuchRS.findGesuch(newest.antragId).then((response) => {
                         if (!response) {
-                            this.$log.warn('Could not find gesuch for id ' + this.getNewest(this.antragList).antragId);
+                            this.$log.warn('Could not find gesuch for id ' + newest.antragId);
                         }
                         this.gesuchModelManager.setGesuch(angular.copy(response));
                         this.updateGesuchperiodeList();
                         this.updateGesuchNavigationList();
                         this.updateAntragTypList();
                         this.antragMutierenPossible();
+                        this.antragErneuernPossible();
                     });
+                } else { // in this case there is no Gesuch for this fall, so we remove all content
+                    this.gesuchModelManager.setGesuch(new TSGesuch());
+                    this.resetNavigationParameters();
                 }
             });
         } else {
-            this.gesuchsperiodeList = {};
-            this.gesuchNavigationList = {};
-            this.antragTypList = {};
-            this.antragMutierenPossible();
+            this.resetNavigationParameters();
         }
+        this.forceLoadingFromFall = false; // reset it because it's not needed any more
+    }
+
+    private resetNavigationParameters() {
+        this.gesuchsperiodeList = {};
+        this.gesuchNavigationList = {};
+        this.antragTypList = {};
+        this.antragMutierenPossible();
+        this.antragErneuernPossible();
     }
 
     private updateGesuchperiodeList() {
@@ -277,7 +304,10 @@ export class GesuchToolbarController {
      * @param verantwortlicher
      */
     public setVerantwortlicher(verantwortlicher: TSUser): void {
-        this.onVerantwortlicherChange({user: verantwortlicher});
+        if (verantwortlicher) {
+            this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
+            this.gesuchModelManager.updateFall();
+        }
         this.setUserAsFallVerantwortlicherLocal(verantwortlicher);
     }
 
@@ -307,8 +337,16 @@ export class GesuchToolbarController {
         return undefined;
     }
 
+    /**
+     * Tries to get the "gesuchName" out of the gesuch contained in the gesuchModelManager. If this doesn't
+     * succeed it gets the "gesuchName" out of the fall
+     */
     public getGesuchName(): string {
-        return this.gesuchModelManager.getGesuchName();
+        let gesuchName = this.gesuchModelManager.getGesuchName();
+        if (!gesuchName || gesuchName.length <= 0) {
+            gesuchName = this.ebeguUtil.getGesuchNameFromFall(this.fall);
+        }
+        return gesuchName;
     }
 
     public getGesuch(): TSGesuch {
@@ -316,7 +354,6 @@ export class GesuchToolbarController {
     }
 
     public getCurrentGesuchsperiode(): string {
-
         if (this.getGesuch() && this.getGesuch().gesuchsperiode) {
             return this.getGesuchsperiodeAsString(this.getGesuch().gesuchsperiode);
         } else {
@@ -375,7 +412,8 @@ export class GesuchToolbarController {
             } else if (this.authServiceRS.isRole(TSRole.STEUERAMT)) {
                 this.$state.go('gesuch.familiensituation', {gesuchId: gesuchId});
             } else {
-                this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
+                this.$state.go('gesuch.fallcreation', {
+                    createNew: false, gesuchId: gesuchId});
             }
         }
     }
@@ -386,7 +424,23 @@ export class GesuchToolbarController {
         this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
     }
 
-    public antragMutierenPossible(): void {
+    public showButtonMutieren(): boolean {
+       if (this.hideActionButtons) {
+           return false;
+       }
+       if (this.getGesuch()) {
+           if (this.getGesuch().isNew()) {
+               return false;
+           }
+           // Wenn die Gesuchsperiode geschlossen ist, kann sowieso keine Mutation mehr gemacht werden
+           if (this.getGesuch().gesuchsperiode && this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN) {
+               return false;
+           }
+       }
+       return this.mutierenPossibleForCurrentAntrag;
+    }
+
+    private antragMutierenPossible(): void {
         if (this.antragList && this.antragList.length !== 0) {
             let mutierenGesperrt = false;
             for (let i = 0; i < this.antragList.length; i++) {
@@ -415,10 +469,62 @@ export class GesuchToolbarController {
             eingangsart = TSEingangsart.PAPIER;
         }
         this.$state.go('gesuch.mutation', {
-            createMutation: true, gesuchId: this.gesuchid,
-            fallId: this.getGesuch().fall.id, eingangsart: eingangsart,
+            createMutation: true,
+            gesuchId: this.getGesuchIdFuerMutationOrErneuerung(),
+            fallId: this.getGesuch().fall.id,
+            eingangsart: eingangsart,
             gesuchsperiodeId: this.getGesuch().gesuchsperiode.id
         });
+    }
+
+    private antragErneuernPossible(): void {
+        if (this.antragList && this.antragList.length !== 0) {
+            let erneuernGesperrt = false;
+            for (let i = 0; i < this.antragList.length; i++) {
+                let antragItem: TSAntragDTO = this.antragList[i];
+                // Wir muessen nur die Antraege der aktuell ausgewaehlten Gesuchsperiode beachten
+                if (antragItem.gesuchsperiodeString === this.getGesuchsperiodeAsString(this.neuesteGesuchsperiode)) {
+                    // Es gibt schon (mindestens 1) Gesuch für die neueste Periode
+                    erneuernGesperrt = true;
+                    break;
+                }
+            }
+            this.erneuernPossibleForCurrentAntrag = !erneuernGesperrt;
+        } else {
+            this.erneuernPossibleForCurrentAntrag = false;
+        }
+    }
+
+    public antragErneuern(): void {
+        this.erneuernPossibleForCurrentAntrag = false;
+        let eingangsart: TSEingangsart;
+        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles())) {
+            eingangsart = TSEingangsart.ONLINE;
+        } else {
+            eingangsart = TSEingangsart.PAPIER;
+        }
+        this.$state.go('gesuch.erneuerung', {
+            createErneuerung: true,
+            gesuchId: this.getGesuchIdFuerMutationOrErneuerung(),
+            eingangsart: eingangsart,
+            gesuchsperiodeId: this.neuesteGesuchsperiode.id,
+            fallId: this.fallid
+        });
+    }
+
+    private getGesuchIdFuerMutationOrErneuerung(): string {
+        // GesuchId ermitteln fuer Mutation ermitteln: Falls wir auf der Verlauf-View sind, nehmen wir einfach
+        // irgendeines der Liste (es wird auf dem Server sichergestellt, dass die Mutation ab dem neuesten Gesuch
+        // der Periode gemacht wird), wichtig ist nur, dass es sich um die richtige Gesuchsperiode handelt.
+        let gesuchId;
+        if (this.gesuchid) {
+            return this.gesuchid;
+        } else {
+            if (this.getGesuch()) {
+                return this.getGesuch().id;
+            }
+        }
+        return undefined;
     }
 
     private addAntragToList(antrag: TSGesuch): void {
@@ -429,15 +535,12 @@ export class GesuchToolbarController {
     }
 
     private hasBesitzer(): boolean {
-        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall) {
-            return this.getGesuch().fall.besitzer !== undefined && this.getGesuch().fall.besitzer !== null;
-        }
-        return false;
+        return this.fall && this.fall.besitzer !== null && this.fall.besitzer !== undefined;
     }
 
     private getBesitzer(): string {
-        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall) {
-            return this.getGesuch().fall.besitzer !== undefined && this.getGesuch().fall.besitzer.getFullName();
+        if (this.fall) {
+            return this.fall.besitzer.getFullName();
         }
         return '';
     }
@@ -446,6 +549,10 @@ export class GesuchToolbarController {
         this.$state.go('mitteilungen', {
             fallId: this.fallid
         });
+    }
+
+    public showVerlauf(): boolean {
+        return this.getGesuch() !== null && this.getGesuch() !== undefined && !this.getGesuch().isNew();
     }
 
     public openVerlauf(): void {
@@ -457,5 +564,15 @@ export class GesuchToolbarController {
         this.$state.go('alleVerfuegungen', {
             fallId: this.fallid
         });
+    }
+
+    private updateFall(): void {
+        if (this.fallid) {
+            this.fallRS.findFall(this.fallid).then((response: TSFall) => {
+                if (response) {
+                    this.fall = response;
+                }
+            });
+        }
     }
 }

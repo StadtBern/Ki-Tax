@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.WriteProtectedDokument;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.services.GeneratedDokumentService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -44,7 +45,7 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguLoginTest {
 
 		generatedDokumentService.saveDokument(dokument);
 
-		final GeneratedDokument generatedDokument = generatedDokumentService.findGeneratedDokument(gesuch.getId(), dokument.getFilename(), dokument.getFilepfad());
+		final WriteProtectedDokument generatedDokument = generatedDokumentService.findGeneratedDokument(gesuch.getId(), dokument.getFilename(), dokument.getFilepfad());
 
 		Assert.assertNotNull(generatedDokument);
 		Assert.assertEquals(dokument, generatedDokument);

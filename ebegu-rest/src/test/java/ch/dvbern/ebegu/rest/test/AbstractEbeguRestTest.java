@@ -1,9 +1,12 @@
 package ch.dvbern.ebegu.rest.test;
 
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
+import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
 import ch.dvbern.ebegu.api.resource.authentication.AuthResource;
 import ch.dvbern.ebegu.api.resource.authentication.FedletSamlServlet;
 import ch.dvbern.ebegu.api.resource.authentication.FedletURLInitializer;
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.tets.util.LoginmoduleAndCacheSetupTask;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -23,6 +26,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.jboss.shrinkwrap.resolver.api.maven.strategy.RejectDependenciesStrategy;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.io.File;
 
 /**
@@ -35,6 +39,10 @@ import java.io.File;
 @Transactional(TransactionMode.DISABLED)
 @ServerSetup(LoginmoduleAndCacheSetupTask.class)
 public abstract class AbstractEbeguRestTest {
+
+
+	@Inject
+	private GesuchsperiodeResource gesuchsperiodeResource;
 
 
 	@Deployment
@@ -88,4 +96,35 @@ public abstract class AbstractEbeguRestTest {
 		return webArchive;
 	}
 
+	public JaxGesuchsperiode saveGesuchsperiodeInStatusEntwurf(JaxGesuchsperiode gesuchsperiode) {
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.ENTWURF);
+		return gesuchsperiodeResource.saveGesuchsperiode(gesuchsperiode, null, null);
+	}
+
+	public JaxGesuchsperiode saveGesuchsperiodeInStatusAktiv(JaxGesuchsperiode gesuchsperiode) {
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.ENTWURF);
+		gesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(gesuchsperiode, null, null);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
+		return gesuchsperiodeResource.saveGesuchsperiode(gesuchsperiode, null, null);
+	}
+
+	public JaxGesuchsperiode saveGesuchsperiodeInStatusInaktiv(JaxGesuchsperiode gesuchsperiode) {
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.ENTWURF);
+		gesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(gesuchsperiode, null, null);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
+		gesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(gesuchsperiode, null, null);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.INAKTIV);
+		return gesuchsperiodeResource.saveGesuchsperiode(gesuchsperiode, null, null);
+	}
+
+	public JaxGesuchsperiode saveGesuchsperiodeInStatusGesperrt(JaxGesuchsperiode gesuchsperiode) {
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.ENTWURF);
+		gesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(gesuchsperiode, null, null);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
+		gesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(gesuchsperiode, null, null);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.INAKTIV);
+		gesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(gesuchsperiode, null, null);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.GESCHLOSSEN);
+		return gesuchsperiodeResource.saveGesuchsperiode(gesuchsperiode, null, null);
+	}
 }

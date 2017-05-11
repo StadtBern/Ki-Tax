@@ -23,6 +23,7 @@ export default class DateUtil {
 
     /**
      * @param {Moment} aMoment time instance
+     * @param {string} format the format
      * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid
      */
     public static momentToLocalDateFormat(aMoment: Moment, format: string): string {
@@ -37,7 +38,7 @@ export default class DateUtil {
      * @param format format for the time
      * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. undefined when aMoment is invalid
      */
-    private static momentToLocalDateTimeFormat(aMoment: Moment, format: string): string {
+    public static momentToLocalDateTimeFormat(aMoment: Moment, format: string): string {
         if (!aMoment) {
             return undefined;
         }
@@ -72,5 +73,18 @@ export default class DateUtil {
 
     public static currentYear(): number {
         return moment().year();
+    }
+
+    /**
+     * Vergleicht 2 Moments. Date und Time werden beruecksichtigt.
+     */
+    public static compareDateTime(a: Moment, b: Moment): number {
+        if (a.isBefore(b)) {
+            return -1;
+        } else if (a.isSame(b)) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 }

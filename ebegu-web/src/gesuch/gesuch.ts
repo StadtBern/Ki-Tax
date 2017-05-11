@@ -8,7 +8,6 @@ import EbeguUtil from '../utils/EbeguUtil';
 import {IN_BEARBEITUNG_BASE_NAME, TSAntragStatus} from '../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
 import TSGesuch from '../models/TSGesuch';
-import TSUser from '../models/TSUser';
 import {TSRoleUtil} from '../utils/TSRoleUtil';
 import {TSRole} from '../models/enums/TSRole';
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
@@ -19,6 +18,7 @@ import GesuchstellerRS from '../core/service/gesuchstellerRS.rest';
 import {ILogService, IRootScopeService} from '@types/angular';
 import TSEWKResultat from '../models/TSEWKResultat';
 import {TSGesuchEvent} from '../models/enums/TSGesuchEvent';
+import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 
 export class GesuchRouteController {
 
@@ -173,25 +173,16 @@ export class GesuchRouteController {
         return undefined;
     }
 
-    /**
-     * Sets the given user as the verantworlicher fuer den aktuellen Fall
-     * @param verantwortlicher
-     */
-    public setVerantwortlicher(verantwortlicher: TSUser): void {
-        if (verantwortlicher) {
-            this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
-            this.gesuchModelManager.updateFall();
-        }
-    }
-
     public getGesuchErstellenStepTitle(): string {
-        if (this.gesuchModelManager.isErstgesuch()) {
+        if (this.gesuchModelManager.isGesuch()) {
             if (this.getDateFromGesuch()) {
-                return this.$translate.instant('MENU_ERSTGESUCH_VOM', {
+                let key = (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) ? 'MENU_ERNEUERUNGSGESUCH_VOM' : 'MENU_ERSTGESUCH_VOM';
+                return this.$translate.instant(key, {
                     date: this.getDateFromGesuch()
                 });
             } else {
-                return this.$translate.instant('MENU_ERSTGESUCH');
+                let key = (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.ERNEUERUNGSGESUCH) ? 'MENU_ERNEUERUNGSGESUCH' : 'MENU_ERSTGESUCH';
+                return this.$translate.instant(key);
             }
         } else {
             if (this.getDateFromGesuch()) {

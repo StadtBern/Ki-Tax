@@ -18,6 +18,8 @@ import TSGesuch from '../../../models/TSGesuch';
 import IFormController = angular.IFormController;
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 
 describe('betreuungView', function () {
 
@@ -204,19 +206,19 @@ describe('betreuungView', function () {
         });
         describe('isMutationsmeldungAllowed', () => {
             it('should be false if the Gesuch is not a Mutation and is not verfuegt', () => {
-                let gesuch: TSGesuch = initGesuch(TSAntragTyp.GESUCH, TSAntragStatus.IN_BEARBEITUNG_JA);
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.IN_BEARBEITUNG_JA);
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(false);
             });
             it('should be true if the Gesuch is not a Mutation but in Status Verfuegt', () => {
-                let gesuch: TSGesuch = initGesuch(TSAntragTyp.GESUCH, TSAntragStatus.VERFUEGT);
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.VERFUEGT);
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
             it('should be true if the Gesuch is not a Mutation but in Status STV', () => {
-                let gesuch: TSGesuch = initGesuch(TSAntragTyp.GESUCH, TSAntragStatus.PRUEFUNG_STV);
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.PRUEFUNG_STV);
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
             it('should be true if the Gesuch is gesperrtWegenBeschwerde though STV status', () => {
-                let gesuch: TSGesuch = initGesuch(TSAntragTyp.GESUCH, TSAntragStatus.PRUEFUNG_STV);
+                let gesuch: TSGesuch = initGesuch(TSAntragTyp.ERSTGESUCH, TSAntragStatus.PRUEFUNG_STV);
                 gesuch.gesperrtWegenBeschwerde = false;
                 expect(betreuungView.isMutationsmeldungAllowed()).toBe(true);
             });
@@ -237,6 +239,8 @@ describe('betreuungView', function () {
         gesuch.typ = typ;
         gesuch.status = status;
         gesuch.gesperrtWegenBeschwerde = false;
+        gesuch.gesuchsperiode = new TSGesuchsperiode();
+        gesuch.gesuchsperiode.status = TSGesuchsperiodeStatus.AKTIV;
         spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
         return gesuch;
     }

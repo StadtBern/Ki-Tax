@@ -38,7 +38,8 @@ import {
     TSAntragStatus,
     isAtLeastFreigegebenOrFreigabequittung,
     isStatusVerfuegenVerfuegt,
-    isAtLeastFreigegeben
+    isAtLeastFreigegeben,
+    isAnyStatusOfVerfuegt
 } from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
@@ -62,6 +63,7 @@ import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import * as moment from 'moment';
 import TSEWKResultat from '../../models/TSEWKResultat';
 import TSEWKPerson from '../../models/TSEWKPerson';
+import {TSGesuchsperiodeStatus} from '../../models/enums/TSGesuchsperiodeStatus';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -71,7 +73,6 @@ export default class GesuchModelManager {
     private betreuungIndex: number;
     private fachstellenList: Array<TSFachstelle>;
     private activInstitutionenList: Array<TSInstitutionStammdaten>;
-    private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
     ewkResultatGS1: TSEWKResultat;
     ewkResultatGS2: TSEWKResultat;
@@ -98,7 +99,6 @@ export default class GesuchModelManager {
             this.log.debug('Cleared gesuch on logout');
         });
     }
-
 
     /**
      * Je nach dem welche Rolle der Benutzer hat, wird das Gesuch aus der DB anders geholt.
@@ -234,12 +234,6 @@ export default class GesuchModelManager {
         });
     }
 
-    public updateActiveGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
-            this.activeGesuchsperiodenList = angular.copy(response);
-        });
-    }
-
     /**
      * Wenn das Gesuch schon gespeichert ist (timestampErstellt != null), wird dieses nur aktualisiert. Wenn es sich um ein neues Gesuch handelt
      * dann wird zuerst der Fall erstellt, dieser ins Gesuch kopiert und dann das Gesuch erstellt
@@ -290,10 +284,17 @@ export default class GesuchModelManager {
      * @returns {IPromise<TSFall>}
      */
     public updateFall(): IPromise<TSFall> {
-        return this.fallRS.updateFall(this.gesuch.fall).then((fallResponse: any) => {
-            let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse);
-            return this.gesuch.fall = angular.copy(parsedFall);
-        });
+        if (this.gesuch && this.gesuch.fall) {
+            return this.fallRS.updateFall(this.gesuch.fall).then((fallResponse: any) => {
+                let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse);
+                return this.gesuch.fall = angular.copy(parsedFall);
+            });
+        } else {
+            this.log.warn('Es wurde versucht einen undefined Fall zu speichern');
+            let deferred = this.$q.defer();
+            deferred.resolve(undefined);
+            return deferred.promise;
+        }
     }
 
     /**
@@ -412,14 +413,6 @@ export default class GesuchModelManager {
         return this.activInstitutionenList;
     }
 
-    public getAllActiveGesuchsperioden(): Array<TSGesuchsperiode> {
-        if (this.activeGesuchsperiodenList === undefined) {
-            this.activeGesuchsperiodenList = []; // init empty while we wait for promise
-            this.updateActiveGesuchsperiodenList();
-        }
-        return this.activeGesuchsperiodenList;
-    }
-
     public getStammdatenToWorkWith(): TSGesuchstellerContainer {
         if (this.gesuchstellerNumber === 2) {
             return this.gesuch.gesuchsteller2;
@@ -479,7 +472,7 @@ export default class GesuchModelManager {
      */
     public initGesuch(forced: boolean, eingangsart: TSEingangsart) {
         if (forced || (!forced && !this.gesuch)) {
-            this.initAntrag(TSAntragTyp.GESUCH, eingangsart);
+            this.initAntrag(TSAntragTyp.ERSTGESUCH, eingangsart);
         }
         this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch());
     }
@@ -536,10 +529,22 @@ export default class GesuchModelManager {
      * @param fallId
      */
     public initMutation(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string): void {
+        this.initCopyOfGesuch(gesuchID, eingangsart, gesuchsperiodeId, fallId, TSAntragTyp.MUTATION);
+    }
+
+    /**
+     * Diese Methode erstellt ein Fake-Erneuerungsgesuch als gesuch fuer das GesuchModelManager. Das Gesuch ist noch leer und hat
+     * das ID des Gesuchs aus dem es erstellt wurde.
+     */
+    public initErneuerungsgesuch(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string) {
+        this.initCopyOfGesuch(gesuchID, eingangsart, gesuchsperiodeId, fallId, TSAntragTyp.ERNEUERUNGSGESUCH);
+    }
+
+    private initCopyOfGesuch(gesuchID: string, eingangsart: TSEingangsart, gesuchsperiodeId: string, fallId: string, antragTyp: TSAntragTyp): void {
         this.gesuchsperiodeRS.findGesuchsperiode(gesuchsperiodeId).then(periode => {
             this.gesuch.gesuchsperiode = periode;
         });
-        this.initAntrag(TSAntragTyp.MUTATION, eingangsart);
+        this.initAntrag(antragTyp, eingangsart);
         this.fallRS.findFall(fallId).then(foundFall => {
             this.gesuch.fall = foundFall;
         });
@@ -549,7 +554,7 @@ export default class GesuchModelManager {
         } else {
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
         }
-        this.gesuch.emptyMutation = true;
+        this.gesuch.emptyCopy = true;
     }
 
     private initAntrag(antragTyp: TSAntragTyp, eingangsart: TSEingangsart): void {
@@ -1049,20 +1054,6 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Schaut dass mindestens eine Betreuung erfasst wurde.
-     * @returns {boolean}
-     */
-    public isThereAnyBetreuung(): boolean {
-        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
-        for (let kind of kinderWithBetreuungList) {
-            if (kind.betreuungen && kind.betreuungen.length > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Gibt true zurueck wenn es mindestens eine Betreuung gibt, dessen Status anders als VERFUEGT oder GESCHLOSSEN_OHNE_VERFUEGUNG oder SCHULAMT ist
      * @returns {boolean}
      */
@@ -1166,21 +1157,27 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isGesuchReadonly(): boolean {
-        return isStatusVerfuegenVerfuegt(this.gesuch.status)
+        return this.gesuch && (isStatusVerfuegenVerfuegt(this.gesuch.status)
             || this.isGesuchReadonlyForRole()
-            || this.getGesuch().gesperrtWegenBeschwerde;
+            || this.getGesuch().gesperrtWegenBeschwerde);
     }
 
     /**
      * checks if the gesuch is readonly for a given role based on its state
      */
     private isGesuchReadonlyForRole(): boolean {
+        let periodeReadonly: boolean = this.isGesuchsperiodeReadonly();
         if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getReadOnlyRoles())) {
             return true;  // schulamt hat immer nur readonly zugriff
         } else if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
-            return isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
+            let gesuchReadonly: boolean = isAtLeastFreigegebenOrFreigabequittung(this.getGesuch().status); //readonly fuer gs wenn gesuch freigegeben oder weiter
+            return gesuchReadonly || periodeReadonly;
         }
-        return false;
+        return periodeReadonly;
+    }
+
+    public isGesuchsperiodeReadonly(): boolean {
+        return this.getGesuch() && this.getGesuch().gesuchsperiode && (this.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN);
     }
 
     /**
@@ -1189,7 +1186,7 @@ export default class GesuchModelManager {
      * @returns {boolean}
      */
     public isKorrekturModusJugendamt(): boolean {
-        return isAtLeastFreigegeben(this.gesuch.status) && (TSEingangsart.ONLINE === this.getGesuch().eingangsart);
+        return isAtLeastFreigegeben(this.gesuch.status) && !isAnyStatusOfVerfuegt(this.gesuch.status) && (TSEingangsart.ONLINE === this.getGesuch().eingangsart);
     }
 
     /**
@@ -1200,7 +1197,7 @@ export default class GesuchModelManager {
     public calculateNewStatus(status: TSAntragStatus): TSAntragStatus {
         if (TSAntragStatus.GEPRUEFT === status || TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN === status || TSAntragStatus.PLATZBESTAETIGUNG_WARTEN === status) {
             if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.NOK)) {
-                if (this.isThereAnyBetreuung()) {
+                if (this.getGesuch().isThereAnyBetreuung()) {
                     return TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN;
                 } else {
                     return TSAntragStatus.GEPRUEFT;
@@ -1218,15 +1215,25 @@ export default class GesuchModelManager {
      * Gibt true zurueck, wenn der Antrag ein Erstgesuchist. False bekommt man wenn der Antrag eine Mutation ist
      * By default (beim Fehler oder leerem Gesuch) wird auch true zurueckgegeben
      */
-    public isErstgesuch(): boolean {
+    public isGesuch(): boolean {
         if (this.gesuch) {
-            return this.gesuch.typ === TSAntragTyp.GESUCH;
+            return this.gesuch.typ === TSAntragTyp.ERSTGESUCH || this.gesuch.typ === TSAntragTyp.ERNEUERUNGSGESUCH;
         }
         return true;
     }
 
     public saveMutation(): IPromise<TSGesuch> {
         return this.gesuchRS.antragMutieren(this.gesuch.id, this.gesuch.eingangsdatum)
+            .then((response: TSGesuch) => {
+                this.setGesuch(response);
+                return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {
+                    return this.getGesuch();
+                });
+            });
+    }
+
+    public saveErneuerungsgesuch(): IPromise<TSGesuch> {
+        return this.gesuchRS.antragErneuern(this.gesuch.gesuchsperiode.id, this.gesuch.id, this.gesuch.eingangsdatum)
             .then((response: TSGesuch) => {
                 this.setGesuch(response);
                 return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {
@@ -1299,18 +1306,7 @@ export default class GesuchModelManager {
     }
 
     public getGesuchName(): string {
-        if (this.getGesuch()) {
-            let text = '';
-            if (this.getGesuch().fall) {
-                text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
-            }
-            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.extractNachname()) {
-                text = text + ' ' + this.getGesuch().gesuchsteller1.extractNachname();
-            }
-            return text;
-        } else {
-            return '';
-        }
+        return this.ebeguUtil.getGesuchNameFromGesuch(this.gesuch);
     }
 
     public isNeuestesGesuch(): IPromise<boolean> {

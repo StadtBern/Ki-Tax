@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Mitteilung;
 import ch.dvbern.ebegu.errors.MailException;
 
@@ -50,15 +51,20 @@ public interface MailService {
 	/**
 	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
 	 */
-	void sendWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, int anzahlMonate) throws MailException;
+	void sendWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, int anzahlTageBisLoeschung) throws MailException;
 
 	/**
 	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
 	 */
-	void sendWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch) throws MailException;
+	void sendWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch, int anzahlTageBisLoeschung) throws MailException;
 
 	/**
 	 * Sendet eine Email mit der Information, dass ein Gesuch Verfügt wurde.
 	 */
 	void sendInfoGesuchGeloescht(@Nonnull Gesuch gesuch) throws MailException;
+
+	/**
+	 * Sendet eine Mail an den GS1 des übergebenen Gesuchs, dass die übergebene Gesuchsperiode eröffnet wurde.
+	 */
+	void sendInfoFreischaltungGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Gesuch gesuch) throws MailException;
 }

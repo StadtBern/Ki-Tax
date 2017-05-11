@@ -1,57 +1,8 @@
 package ch.dvbern.ebegu.services;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuung_;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
-import ch.dvbern.ebegu.entities.KindContainer_;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt_;
-import ch.dvbern.ebegu.entities.Verfuegung_;
-import ch.dvbern.ebegu.entities.Zahlung;
-import ch.dvbern.ebegu.entities.Zahlungsauftrag;
-import ch.dvbern.ebegu.entities.Zahlungsauftrag_;
-import ch.dvbern.ebegu.entities.Zahlungsposition;
-import ch.dvbern.ebegu.entities.Zahlungsposition_;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.VerfuegungsZeitabschnittZahlungsstatus;
-import ch.dvbern.ebegu.enums.ZahlungStatus;
-import ch.dvbern.ebegu.enums.ZahlungauftragStatus;
-import ch.dvbern.ebegu.enums.ZahlungspositionStatus;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -60,14 +11,23 @@ import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
-import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
-import static ch.dvbern.ebegu.enums.UserRoleName.REVISOR;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_INSTITUTION;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
-import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_TRAEGERSCHAFT;
-import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
+import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.criteria.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
+
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
 
 
 /**
@@ -108,6 +68,12 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
+
+	@Inject
+	private FileSaverService fileSaverService;
+
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
 
 	@Override
 	@Nonnull
@@ -155,8 +121,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 				// Wir beginnen am Anfang des Folgemonats des letzten Auftrags
 				zeitabschnittVon = lastZahlungErstellt.plusMonths(1).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate();
 			} else {
-				// Repetition, dh.der Monat ist schon ausgeloest. Wir nehmen den Anfang des aktuellen Monats
-				zeitabschnittVon = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+				// Repetition, dh.der Monat ist schon ausgeloest. Wir nehmen den Anfang des Monats
+				zeitabschnittVon = lastZahlungErstellt.with(TemporalAdjusters.firstDayOfMonth()).toLocalDate();
 				isRepetition = true;
 			}
 		} else {
@@ -179,11 +145,11 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		}
 		// Korrekturen
 		// Stichtag: Falls es eine Wiederholung des Auftrags ist, wurde der aktuelle Monat bereits ausbezahlt.
-		LocalDate stichtagKorrekturen = isRepetition ? zeitabschnittBis : zeitabschnittBis.minusMonths(1);
+		LocalDate stichtagKorrekturen = isRepetition ? zeitabschnittBis : zeitabschnittBis.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
 		// Die Korrekturzahlungen werden seit dem letzten Zahlungsauftrag beruecksichtigt. Falls wir im TEST-Mode sind
 		// und ein fiktives "DatumGeneriert" gewaehlt haben, nehmen wir als Datum des letzten Auftrags das timestampErstellt
 		// und nicht das (eventuell ebenfalls fiktive) datumGeneriert.
-		boolean isTestMode = datumGeneriert.isAfter(LocalDateTime.now());
+		boolean isTestMode = ebeguConfiguration.getIsZahlungenTestMode();
 		if (isTestMode) {
 			lastZahlungErstellt = Constants.START_OF_DATETIME;
 		}
@@ -548,9 +514,58 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 		query.where(predicates);
 		List<Zahlungsposition> zahlungspositionList = persistence.getCriteriaResults(query);
+
+		//remove Zahlungspositionen
+		Set<Zahlung> potenziellZuLoeschenZahlungenList = new HashSet<>();
 		for (Zahlungsposition zahlungsposition : zahlungspositionList) {
+			potenziellZuLoeschenZahlungenList.add(zahlungsposition.getZahlung()); // add the Zahlung to the set
+			zahlungsposition.getZahlung().getZahlungspositionen().remove(zahlungsposition);
 			persistence.remove(Zahlungsposition.class, zahlungsposition.getId());
 		}
+		Set<Zahlungsauftrag> zahlungsauftraegeList = removeAllEmptyZahlungen(potenziellZuLoeschenZahlungenList);
+		removeAllEmptyZahlungsauftraege(zahlungsauftraegeList);
+	}
+
+	/**
+	 * Goes through the given list and check whether the given Zahlungsauftrag is empty or not.
+	 * All empty Zahlungsauftraege are removed.
+	 */
+	private void removeAllEmptyZahlungsauftraege(Set<Zahlungsauftrag> zahlungsauftraegeList) {
+		for (Zahlungsauftrag zahlungsauftrag : zahlungsauftraegeList) {
+			if (zahlungsauftrag.getZahlungen().isEmpty()) {
+				removePAIN001FromZahlungsauftrag(zahlungsauftrag);
+				persistence.remove(Zahlungsauftrag.class, zahlungsauftrag.getId());
+			}
+		}
+	}
+
+	/**
+	 * Removes the Pain001Dokument that is linked with the given Zahlungsauftrag if it exists.
+	 */
+	private void removePAIN001FromZahlungsauftrag(Zahlungsauftrag zahlungsauftrag) {
+		final Collection<Pain001Dokument> pain001Dokument = criteriaQueryHelper.getEntitiesByAttribute(Pain001Dokument.class, zahlungsauftrag, Pain001Dokument_.zahlungsauftrag);
+		pain001Dokument.forEach(pain -> {
+			fileSaverService.removeAllFromSubfolder(pain.getZahlungsauftrag().getId());
+            persistence.remove(Pain001Dokument.class, pain.getId());
+		});
+	}
+
+	/**
+	 * Goes through the given list and check whether the given Zahlung is empty or not.
+	 * All empty Zahlungen are removed and all corresponding Zahlungsauftraege are added to the
+	 * Set that will be returned at the end of the function
+	 */
+	@Nonnull
+	private Set<Zahlungsauftrag> removeAllEmptyZahlungen(Set<Zahlung> potenziellZuLoeschenZahlungenList) {
+		Set<Zahlungsauftrag> potenziellZuLoeschenZahlungsauftraegeList = new HashSet<>();
+		for (Zahlung zahlung : potenziellZuLoeschenZahlungenList) {
+			if (zahlung.getZahlungspositionen().isEmpty()) {
+				potenziellZuLoeschenZahlungsauftraegeList.add(zahlung.getZahlungsauftrag());
+				zahlung.getZahlungsauftrag().getZahlungen().remove(zahlung);
+				persistence.remove(Zahlung.class, zahlung.getId());
+			}
+		}
+		return potenziellZuLoeschenZahlungsauftraegeList;
 	}
 
 	@Nonnull

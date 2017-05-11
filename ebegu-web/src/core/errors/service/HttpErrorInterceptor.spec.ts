@@ -5,38 +5,13 @@ import TSExceptionReport from '../../../models/TSExceptionReport';
 import IRootScopeService = angular.IRootScopeService;
 import IQService = angular.IQService;
 import IDeferred = angular.IDeferred;
+import TestDataUtil from '../../../utils/TestDataUtil';
 
 describe('httpErrorInterceptor', function () {
 
     let httpErrorInterceptor: HttpErrorInterceptor, $rootScope: IRootScopeService, $q: IQService;
 
-    let validationResponse: any = {
-        status: 400,
-        data: {
-            parameterViolations: [],
-            classViolations: [],
-            fieldViolations: [],
-            propertyViolations: [{
-                constraintType: 'PARAMETER',
-                path: 'markAsRead.arg1',
-                message: 'Die Länge des Feldes muss zwischen 36 und 36 sein',
-                value: '8a146418-ab12-456f-9b17-aad6990f51'
-            }],
-            returnValueViolations: []
-        }
-    };
-    let exceptionReportResponse: any = {
-        status: 500,
-        data: {
-            errorCodeEnum: 'ERROR_ENTITY_NOT_FOUND',
-            exceptionName: 'EbeguRuntimeException',
-            methodName: 'doTest',
-            stackTrace: null,
-            translatedMessage: '',
-            customMessage: 'test',
-            argumentList: null,
-        }
-    };
+
 
     beforeEach(angular.mock.module('dvbAngular.errors'));
 
@@ -63,6 +38,7 @@ describe('httpErrorInterceptor', function () {
         });
 
         it('should reject the response with a validation report', function () {
+            let validationResponse: any = TestDataUtil.createValidationReport();
             httpErrorInterceptor.responseError(validationResponse).then(function () {
                 deferred.resolve();
             }, function (errors) {
@@ -77,6 +53,7 @@ describe('httpErrorInterceptor', function () {
         });
 
         it('should reject the response containing an exceptionReport', function () {
+            let exceptionReportResponse: any = TestDataUtil.createExceptionReport();
             httpErrorInterceptor.responseError(exceptionReportResponse).then(function () {
                 deferred.resolve();
             }, function (error) {

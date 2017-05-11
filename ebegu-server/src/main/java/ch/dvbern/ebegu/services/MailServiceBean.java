@@ -122,12 +122,12 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
-	public void sendWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, int anzahlMonate) throws MailException {
+	public void sendWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, int anzahlTageBisLoeschung) throws MailException {
 		if (doSendMail(gesuch.getFall())) {
 			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
 			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
-				String message = mailTemplateConfig.getWarnungGesuchNichtFreigegeben(gesuch, gesuchsteller, mailaddress, anzahlMonate);
+				String message = mailTemplateConfig.getWarnungGesuchNichtFreigegeben(gesuch, gesuchsteller, mailaddress, anzahlTageBisLoeschung);
 				sendMessageWithTemplate(message, mailaddress);
 				LOG.debug("Email fuer WarnungGesuchNichtFreigegeben wurde versendet an" + mailaddress);
 			} else {
@@ -137,12 +137,12 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 	}
 
 	@Override
-	public void sendWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch) throws MailException {
+	public void sendWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch, int anzahlTageBisLoeschung) throws MailException {
 		if (doSendMail(gesuch.getFall())) {
 			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
 			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
-				String message = mailTemplateConfig.getWarnungFreigabequittungFehlt(gesuch, gesuchsteller, mailaddress);
+				String message = mailTemplateConfig.getWarnungFreigabequittungFehlt(gesuch, gesuchsteller, mailaddress, anzahlTageBisLoeschung);
 				sendMessageWithTemplate(message, mailaddress);
 				LOG.debug("Email fuer WarnungFreigabequittungFehlt wurde versendet an" + mailaddress);
 			} else {
@@ -162,6 +162,21 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 				LOG.debug("Email fuer InfoGesuchGeloescht wurde versendet an" + mailaddress);
 			} else {
 				LOG.warn("skipping sendInfoGesuchGeloescht because Gesuchsteller 1 is null");
+			}
+		}
+	}
+
+	@Override
+	public void sendInfoFreischaltungGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Gesuch gesuch) throws MailException {
+		if (doSendMail(gesuch.getFall())) {
+			String mailaddress = fallService.getCurrentEmailAddress(gesuch.getFall().getId()).orElse(null);
+			Gesuchsteller gesuchsteller = gesuch.extractGesuchsteller1();
+			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
+				String message = mailTemplateConfig.getInfoFreischaltungGesuchsperiode(gesuchsperiode, gesuchsteller, mailaddress);
+				sendMessageWithTemplate(message, mailaddress);
+				LOG.debug("Email fuer InfoFreischaltungGesuchsperiode wurde versendet an" + mailaddress);
+			} else {
+				LOG.warn("skipping InfoFreischaltungGesuchsperiode because Gesuchsteller 1 is null");
 			}
 		}
 	}

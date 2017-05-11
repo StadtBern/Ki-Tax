@@ -15,15 +15,17 @@ import ITimeoutService = angular.ITimeoutService;
 import ILocationService = angular.ILocationService;
 import ILogService = angular.ILogService;
 import IInjectorService = angular.auto.IInjectorService;
+import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$injector', '$rootScope', 'hotkeys',
-    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log' , 'ErrorService', 'GesuchModelManager'];
+    '$timeout', 'AuthServiceRS', '$state', '$location', '$window', '$log' , 'ErrorService', 'GesuchModelManager', 'GesuchsperiodeRS'];
 
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $injector: IInjectorService, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
                        authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService,
-                       $log: ILogService, errorService: ErrorService, gesuchModelManager: GesuchModelManager) {
+                       $log: ILogService, errorService: ErrorService, gesuchModelManager: GesuchModelManager,
+                       gesuchsperiodeRS: GesuchsperiodeRS) {
     // navigationLogger.toggle();
 
     // Fehler beim Navigieren ueber ui-route ins Log schreiben
@@ -58,7 +60,8 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
             mandantRS.getFirst();
         }
         //since we will need these lists anyway we already load on login
-        gesuchModelManager.updateActiveGesuchsperiodenList();
+        gesuchsperiodeRS.updateActiveGesuchsperiodenList();
+        gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
         gesuchModelManager.updateFachstellenList();
         gesuchModelManager.updateActiveInstitutionenList();
     });

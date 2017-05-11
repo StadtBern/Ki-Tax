@@ -12,8 +12,19 @@
             <form role="form" name="vm.form" class="" novalidate unsaved-warning-form>
                 <fieldset ng-disabled="vm.isGesuchReadonly()">
 
+                    <!-- Bei neuen Gesuchen für inaktive Periode: Warnen -->
+                    <div ng-if="vm.isSelectedGesuchsperiodeInaktiv()" class="well well-status-warten">
+                        <h3 data-translate="GESUCHSPERIODE_INAKTIV_HINT">
+                        </h3>
+                    </div>
+                    <!-- Folgegesuch: Info, dass Daten uebernommen wurden -->
+                    <div ng-if="vm.gesuchModelManager.getGesuch().isFolgegesuch()" class="well well-status-warten">
+                        <h3 data-translate="FOLGEGESUCH_HINT">
+                        </h3>
+                    </div>
+
                     <!--Willkommnstext bei Erstgesuch-->
-                    <div ng-if="vm.gesuchModelManager.isErstgesuch()">
+                    <div ng-if="vm.gesuchModelManager.isGesuch()">
 
                         <h1 data-translate="ERSTGESUCH_WILLKOMMEN_TEXT"></h1>
                         <br>
@@ -24,7 +35,7 @@
                     </div>
 
                     <!--Mutationelemente auswaehlen. Nur fuer Mutationen-->
-                    <div ng-if="!vm.gesuchModelManager.isErstgesuch()">
+                    <div ng-if="!vm.gesuchModelManager.isGesuch()">
 
                         <h1 data-translate="MUTATION_AUSWAHL_TEXT_1"></h1>
                         <br>
@@ -53,7 +64,7 @@
 
                     <!--Gesuchsperioden. Nur fuer Erstgesuch-->
 
-                    <div ng-if="vm.gesuchModelManager.isErstgesuch() && vm.isGesuchsperiodeActive()">
+                    <div ng-if="vm.gesuchModelManager.isGesuch() && vm.isGesuchsperiodeActive()">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">

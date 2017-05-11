@@ -1,6 +1,6 @@
 import {IComponentOptions, IFilterService, IPromise, ILogService} from 'angular';
 import TSAbstractAntragEntity from '../../../models/TSAbstractAntragEntity';
-import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
+import {TSAntragTyp, getNormalizedTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
 import {
     TSAntragStatus, getTSAntragStatusValuesByRole
 } from '../../../models/enums/TSAntragStatus';
@@ -151,7 +151,7 @@ export class DVAntragListController {
     }
 
     public getAntragTypen(): Array<TSAntragTyp> {
-        return getTSAntragTypValues();
+        return getNormalizedTSAntragTypValues();
     }
 
     /**

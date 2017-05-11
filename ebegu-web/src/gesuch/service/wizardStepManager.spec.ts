@@ -33,7 +33,7 @@ describe('wizardStepManager', function () {
     }));
 
     beforeEach(() => {
-        gesuchAntrag.typ = TSAntragTyp.GESUCH;
+        gesuchAntrag.typ = TSAntragTyp.ERSTGESUCH;
     });
 
     describe('construct the object', function() {
@@ -114,19 +114,33 @@ describe('wizardStepManager', function () {
     describe('areAllStepsOK', function() {
         it('returns true when all steps are OK', function() {
             createAllSteps(TSWizardStepStatus.OK);
-            expect(wizardStepManager.areAllStepsOK()).toBe(true);
+            let gesuch: TSGesuch = new TSGesuch();
+            spyOn(gesuch, 'isThereAnyBetreuung').and.returnValue(true);
+            expect(wizardStepManager.areAllStepsOK(gesuch)).toBe(true);
         });
         it('returns true when all steps are OK although Betreuung is still PLATZBESTAETIGUNG', function() {
             createAllSteps(TSWizardStepStatus.OK);
+            let gesuch: TSGesuch = new TSGesuch();
+            spyOn(gesuch, 'isThereAnyBetreuung').and.returnValue(true);
             wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
             wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.PLATZBESTAETIGUNG);
-            expect(wizardStepManager.areAllStepsOK()).toBe(true);
+            expect(wizardStepManager.areAllStepsOK(gesuch)).toBe(true);
+        });
+        it('returns true when step Betreuung is not OK but there is not any Betreuung', function() {
+            createAllSteps(TSWizardStepStatus.OK);
+            let gesuch: TSGesuch = new TSGesuch();
+            spyOn(gesuch, 'isThereAnyBetreuung').and.returnValue(false);
+            wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
+            wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.NOK);
+            expect(wizardStepManager.areAllStepsOK(gesuch)).toBe(true);
         });
         it('returns false when not all steps are OK', function() {
             createAllSteps(TSWizardStepStatus.OK);
-            wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
+            let gesuch: TSGesuch = new TSGesuch();
+            spyOn(gesuch, 'isThereAnyBetreuung').and.returnValue(true);
+            wizardStepManager.setCurrentStep(TSWizardStepName.FINANZIELLE_SITUATION);
             wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.NOK);
-            expect(wizardStepManager.areAllStepsOK()).toBe(false);
+            expect(wizardStepManager.areAllStepsOK(gesuch)).toBe(false);
         });
     });
     describe('hasStepGivenStatus', function() {

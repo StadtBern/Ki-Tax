@@ -69,7 +69,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public confirmationCallback(): void {
-        if (this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
+        if (this.gesuchModelManager.isGesuch() || this.gesuchModelManager.areAllJAAngeboteNew()) {
             this.openFreigabequittungPDF(true);
         } else {
             this.gesuchFreigeben(); //wenn keine freigabequittung noetig direkt freigeben
@@ -128,8 +128,10 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public getTextForFreigebenNotAllowed(): string {
-        if (this.isGesuchReadonly()) {
+        if (this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde) {
             return 'FREIGABEQUITTUNG_NOT_ALLOWED_BESCHWERDE_TEXT';
+        } else if (this.gesuchModelManager.isGesuchsperiodeReadonly()) {
+            return 'FREIGABEQUITTUNG_NOT_ALLOWED_GESUCHSPERIODE_TEXT';
         } else {
             return 'FREIGABEQUITTUNG_NOT_ALLOWED_TEXT';
         }
@@ -141,13 +143,13 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
      * wenn es nicht in ReadOnly modus ist
      */
     public canBeFreigegeben(): boolean {
-        return this.wizardStepManager.areAllStepsOK() &&
+        return this.wizardStepManager.areAllStepsOK(this.gesuchModelManager.getGesuch()) &&
             this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
             && !this.isGesuchReadonly() && this.isGesuchInStatus(TSAntragStatus.IN_BEARBEITUNG_GS);
     }
 
     private getZustelladresse(): TSZustelladresse {
-        if (this.gesuchModelManager.isErstgesuch()) {
+        if (this.gesuchModelManager.isGesuch()) {
             if (this.gesuchModelManager.areThereOnlySchulamtAngebote()) {
                 return TSZustelladresse.SCHULAMT;
             } else {
@@ -167,6 +169,6 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
      * Ausserdem nur die Mutationen bei denen alle JA-Angebote neu sind, werden eine Freigabequittung haben
      */
     public isThereFreigabequittung(): boolean {
-        return this.gesuchModelManager.isErstgesuch() || this.gesuchModelManager.areAllJAAngeboteNew();
+        return this.gesuchModelManager.isGesuch() || this.gesuchModelManager.areAllJAAngeboteNew();
     }
 }

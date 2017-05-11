@@ -73,7 +73,7 @@
                                 dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
                             <th data-translate="ZAHLUNG_DETAILPOSITIONEN_UPPER"></th>
                             <th st-sort="betragTotalAuftrag" class="sortable row-betragTotalAuftrag"
-                                data-translate="ZAHLUNG_TOTAL_UPPER"></th>
+                                data-translate="ZAHLUNG_TOTAL_UPPER" id="betragTotalAuftrag"></th>
                             <th st-sort="beschrieb" class="sortable row-beschrieb"
                                 data-translate="ZAHLUNG_BESCHRIEB_UPPER"></th>
                             <th st-sort="status" class="sortable row-status" data-translate="ZAHLUNG_STATUS_UPPER"></th>
@@ -119,7 +119,7 @@
                                 </dv-loading-button>
                             </td>
                             <!-- BetragTotalAuftrag -->
-                            <td class="ellipsis" ellipsis-tooltip="{{row.betragTotalAuftrag}}"
+                            <td class="ellipsis numeric-column" ellipsis-tooltip="{{row.betragTotalAuftrag}}"
                                 ng-bind="row.betragTotalAuftrag | currency : '' : 2"></td>
                             <!-- beschrieb -->
                             <td ng-if="!vm.isEditMode(row.id)" class="ellipsis" ellipsis-tooltip="{{row.beschrieb}}"

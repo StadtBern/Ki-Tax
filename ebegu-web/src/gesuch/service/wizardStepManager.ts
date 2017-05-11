@@ -265,7 +265,7 @@ export default class WizardStepManager {
         let step: TSWizardStep = this.getStepByName(stepName);
         if (step !== undefined) {
             return (this.isStepClickableForCurrentRole(step, gesuch)
-            || (gesuch.typ === TSAntragTyp.GESUCH && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT
+            || ((gesuch.typ === TSAntragTyp.ERSTGESUCH || gesuch.typ === TSAntragTyp.ERNEUERUNGSGESUCH) && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT
             && !(this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles()) && stepName === TSWizardStepName.VERFUEGEN))
             || (gesuch.typ === TSAntragTyp.MUTATION && step.wizardStepName === TSWizardStepName.FAMILIENSITUATION));
         }
@@ -297,7 +297,7 @@ export default class WizardStepManager {
                     }
                 }
             }
-            return this.areAllStepsOK();
+            return this.areAllStepsOK(gesuch);
         }
         return step.verfuegbar === true;  //wenn keine Sonderbedingung gehen wir davon aus dass der step nicht disabled ist
     }
@@ -308,11 +308,13 @@ export default class WizardStepManager {
      *  - Bei BETREUUNGEN darf es WARTEN sein
      *  - Der Status von VERFUEGEN wird gar nicht beruecksichtigt
      */
-    public areAllStepsOK(): boolean {
+    public areAllStepsOK(gesuch: TSGesuch): boolean {
         for (let i = 0; i < this.wizardSteps.length; i++) {
             if (this.wizardSteps[i].wizardStepName === TSWizardStepName.BETREUUNG) {
                 if (!this.isStatusOk(this.wizardSteps[i].wizardStepStatus)
-                    && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.PLATZBESTAETIGUNG) {
+                    && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.PLATZBESTAETIGUNG
+                    && (this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.NOK
+                    && !gesuch.isThereAnyBetreuung())) {
                     return false;
                 }
 

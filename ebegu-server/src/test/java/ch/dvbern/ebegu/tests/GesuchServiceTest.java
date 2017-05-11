@@ -43,6 +43,7 @@ import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuc
 /**
  * Arquillian Tests fuer die Klasse GesuchService
  */
+@SuppressWarnings("LocalVariableNamingConvention")
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
@@ -86,6 +87,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	private TestfaelleService testfaelleService;
 
 	private int anzahlObjekte = 0;
+	public static final int ANZAHL_TAGE_BIS_WARNUNG_FREIGABE = 60;
+	public static final int ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG = 15;
+	public static final int ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE = 60;
+	public static final int ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG = 90;
 
 
 	@Test
@@ -391,12 +396,12 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 
 		anzahlObjekte = 0;
 		Set<String> idsErstgesuch = new HashSet<>();
-		findAllIdsOfAbstractEntities(gesuchVerfuegt, idsErstgesuch);
+		findAllIdsOfAbstractEntities(gesuchVerfuegt, idsErstgesuch, false);
 		int anzahlObjekteErstgesuch = anzahlObjekte;
 
 		anzahlObjekte = 0;
 		Set<String> idsMutation = new HashSet<>();
-		findAllIdsOfAbstractEntities(mutation, idsMutation);
+		findAllIdsOfAbstractEntities(mutation, idsMutation, true);
 		int anzahlObjekteMutation = anzahlObjekte;
 
 		// Die Mutation hat immer 1 Objekte mehr als Erstgesuch, und die "FamiliensituationErstgesuch.
@@ -410,6 +415,52 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		if (!intersection.isEmpty()) {
 			// Die korrekterweise umgehaengten Ids rausnehmen
 			findAbstractEntitiesWithIds(gesuchVerfuegt, intersection);
+		}
+		// Jetzt sollten keine Ids mehr drinn sein.
+		Assert.assertTrue(intersection.isEmpty());
+	}
+
+	@Test
+	public void testAntragErneuern() throws Exception {
+
+		// Voraussetzung: Ich habe einen Antrag, er muss nicht verfuegt sein
+		Gesuch erstgesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		Gesuchsperiode gpFolgegesuch = new Gesuchsperiode();
+		gpFolgegesuch.getGueltigkeit().setGueltigAb(erstgesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().plusYears(1));
+		gpFolgegesuch.getGueltigkeit().setGueltigBis(erstgesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis().plusYears(1));
+		gpFolgegesuch = persistence.persist(gpFolgegesuch);
+		Optional<Gesuch> gesuchOptional = gesuchService.antragErneuern(erstgesuch.getId(), gpFolgegesuch.getId(), LocalDate.of(1980, Month.MARCH, 25));
+
+		Assert.assertTrue(gesuchOptional.isPresent());
+		Gesuch folgegesuch = gesuchOptional.get();
+
+		Assert.assertEquals(AntragTyp.ERNEUERUNGSGESUCH, folgegesuch.getTyp());
+		Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, folgegesuch.getStatus());
+		Assert.assertEquals(erstgesuch.getFall(), folgegesuch.getFall());
+		Assert.assertTrue(folgegesuch.isNew());
+
+		// Sicherstellen, dass alle Objekte kopiert und nicht referenziert sind.
+		// Anzahl erstellte Objekte zaehlen, es muessen im Gesuch und in der Mutation
+		// gleich viele sein
+
+		anzahlObjekte = 0;
+		Set<String> idsErstgesuch = new HashSet<>();
+		findAllIdsOfAbstractEntities(erstgesuch, idsErstgesuch, false);
+
+		anzahlObjekte = 0;
+		Set<String> idsFolgegesuch = new HashSet<>();
+		findAllIdsOfAbstractEntities(folgegesuch, idsFolgegesuch, false);
+		int anzahlObjekteMutation = anzahlObjekte;
+
+		Assert.assertEquals(8, anzahlObjekteMutation);
+
+		// Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
+		// werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
+		Set<String> intersection = new HashSet<>(idsErstgesuch);
+		intersection.retainAll(idsFolgegesuch);
+		if (!intersection.isEmpty()) {
+			// Die korrekterweise umgehaengten Ids rausnehmen
+			findAbstractEntitiesWithIds(erstgesuch, intersection);
 		}
 		// Jetzt sollten keine Ids mehr drinn sein.
 		Assert.assertTrue(intersection.isEmpty());
@@ -715,40 +766,51 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	@Test
 	public void testWarnungFehlendeQuittung() throws Exception {
 		insertApplicationProperties();
-		Gesuch gesuch1 = createGesuchFreigabequittung(LocalDate.now().minusMonths(2).minusDays(1));
-		Gesuch gesuch2 = createGesuchFreigabequittung(LocalDate.now().minusMonths(2));
-		Gesuch gesuch3 = createGesuchFreigabequittung(LocalDate.now().minusMonths(2).plusDays(1));
+		Gesuch gesuch1 = createGesuchFreigabequittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG).minusDays(1));
+		Gesuch gesuch2 = createGesuchFreigabequittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG));
+		Gesuch gesuch3 = createGesuchFreigabequittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG).plusDays(1));
 
 		Assert.assertEquals(2, gesuchService.warnFreigabequittungFehlt());
-		Assert.assertTrue(gesuchService.findGesuch(gesuch1.getId()).get().isGewarntFehlendeQuittung());
-		Assert.assertTrue(gesuchService.findGesuch(gesuch2.getId()).get().isGewarntFehlendeQuittung());
-		Assert.assertFalse(gesuchService.findGesuch(gesuch3.getId()).get().isGewarntFehlendeQuittung());
+		Assert.assertNotNull(gesuchService.findGesuch(gesuch1.getId()).get().getDatumGewarntFehlendeQuittung());
+		Assert.assertNotNull(gesuchService.findGesuch(gesuch2.getId()).get().getDatumGewarntFehlendeQuittung());
+		Assert.assertNull(gesuchService.findGesuch(gesuch3.getId()).get().getDatumGewarntFehlendeQuittung());
 	}
 
 	@Test
 	public void testWarnungNichtFreigegeben() throws Exception {
 		insertApplicationProperties();
-		Gesuch gesuch1 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2).minusDays(1));
-		Gesuch gesuch2 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2));
-		Gesuch gesuch3 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(2).plusDays(1));
+		Gesuch gesuch1 = createGesuchInBearbeitungGS(LocalDateTime.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_FREIGABE).minusDays(1));
+		Gesuch gesuch2 = createGesuchInBearbeitungGS(LocalDateTime.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_FREIGABE));
+		Gesuch gesuch3 = createGesuchInBearbeitungGS(LocalDateTime.now().minusDays(ANZAHL_TAGE_BIS_WARNUNG_FREIGABE).plusDays(1));
 
 		Assert.assertEquals(2, gesuchService.warnGesuchNichtFreigegeben());
-		Assert.assertTrue(gesuchService.findGesuch(gesuch1.getId()).get().isGewarntNichtFreigegeben());
-		Assert.assertTrue(gesuchService.findGesuch(gesuch2.getId()).get().isGewarntNichtFreigegeben());
-		Assert.assertFalse(gesuchService.findGesuch(gesuch3.getId()).get().isGewarntNichtFreigegeben());
+		Assert.assertNotNull(gesuchService.findGesuch(gesuch1.getId()).get().getDatumGewarntNichtFreigegeben());
+		Assert.assertNotNull(gesuchService.findGesuch(gesuch2.getId()).get().getDatumGewarntNichtFreigegeben());
+		Assert.assertNull(gesuchService.findGesuch(gesuch3.getId()).get().getDatumGewarntNichtFreigegeben());
 	}
 
 	@Test
 	public void testDeleteGesucheOhneFreigabeOderQuittung() throws Exception {
 		insertApplicationProperties();
-		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4).minusDays(1));
-		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4));
-		createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4).plusDays(1));
-		createGesuchFreigabequittung(LocalDate.now().minusMonths(4).minusDays(1));
-		createGesuchFreigabequittung(LocalDate.now().minusMonths(4));
-		createGesuchFreigabequittung(LocalDate.now().minusMonths(4).plusDays(1));
-		gesuchService.warnGesuchNichtFreigegeben();
-		gesuchService.warnFreigabequittungFehlt();
+		Gesuch gesuch1 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4).minusDays(1));
+		Gesuch gesuch2 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4));
+		Gesuch gesuch3 = createGesuchInBearbeitungGS(LocalDateTime.now().minusMonths(4).plusDays(1));
+		Gesuch gesuch4 = createGesuchFreigabequittung(LocalDate.now().minusMonths(4).minusDays(1));
+		Gesuch gesuch5 = createGesuchFreigabequittung(LocalDate.now().minusMonths(4));
+		Gesuch gesuch6 = createGesuchFreigabequittung(LocalDate.now().minusMonths(4).plusDays(1));
+
+		gesuch1.setDatumGewarntNichtFreigegeben(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE).minusDays(1));
+		gesuch2.setDatumGewarntNichtFreigegeben(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE));
+		gesuch3.setDatumGewarntNichtFreigegeben(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE).plusDays(1));
+		gesuch4.setDatumGewarntFehlendeQuittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG).minusDays(1));
+		gesuch5.setDatumGewarntFehlendeQuittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG));
+		gesuch6.setDatumGewarntFehlendeQuittung(LocalDate.now().minusDays(ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG).plusDays(1));
+		persistence.merge(gesuch1);
+		persistence.merge(gesuch2);
+		persistence.merge(gesuch3);
+		persistence.merge(gesuch4);
+		persistence.merge(gesuch5);
+		persistence.merge(gesuch6);
 
 		Assert.assertEquals(6, gesuchService.getAllGesuche().size());
 		Assert.assertEquals(4, gesuchService.deleteGesucheOhneFreigabeOderQuittung());
@@ -759,10 +821,10 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	// HELP METHOD
 
 	private void insertApplicationProperties() {
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_FREIGABE, "2");
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_WARNUNG_QUITTUNG, "2");
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE, "2");
-		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_MONATE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG, "2");
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_FREIGABE, ""+ANZAHL_TAGE_BIS_WARNUNG_FREIGABE);
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG, ""+ANZAHL_TAGE_BIS_WARNUNG_QUITTUNG);
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE, ""+ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE);
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG, ""+ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
 	}
 
 	private Gesuch createGesuchInBearbeitungGS(LocalDateTime timestampErstellt) {
@@ -792,8 +854,12 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	/**
 	 * Schreibt alle Ids von AbstractEntities (rekursiv vom Gesuch) ins Set.
 	 */
-	private void findAllIdsOfAbstractEntities(AbstractEntity entity, Set<String> ids) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	private void findAllIdsOfAbstractEntities(AbstractEntity entity, Set<String> ids, boolean assertNoVorgaengerGesetzt) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		String id = BeanUtils.getProperty(entity, "id");
+		String vorgaengerId = BeanUtils.getProperty(entity, "vorgaengerId");
+		if (assertNoVorgaengerGesetzt && vorgaengerId == null) {
+			Assert.assertNull(vorgaengerId);
+		}
 		if (!ids.contains(id)) {
 			anzahlObjekte = anzahlObjekte + 1;
 			ids.add(id);
@@ -802,7 +868,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 			for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
 				Object property = bean.getProperty(entity, propertyDescriptor.getName());
 				if (property instanceof AbstractEntity) {
-					findAllIdsOfAbstractEntities((AbstractEntity) property, ids);
+					findAllIdsOfAbstractEntities((AbstractEntity) property, ids, assertNoVorgaengerGesetzt);
 				}
 			}
 		}

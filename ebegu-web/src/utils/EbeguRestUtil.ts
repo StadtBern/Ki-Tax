@@ -618,8 +618,8 @@ export default class EbeguRestUtil {
         restGesuch.geprueftSTV = gesuch.geprueftSTV;
         restGesuch.hasFSDokument = gesuch.hasFSDokument;
         restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
-        restGesuch.gewarntNichtFreigegeben = gesuch.gewarntNichtFreigegeben;
-        restGesuch.gewarntFehlendeQuittung = gesuch.gewarntFehlendeQuittung;
+        restGesuch.datumGewarntNichtFreigegeben = DateUtil.momentToLocalDate(gesuch.datumGewarntNichtFreigegeben);
+        restGesuch.datumGewarntFehlendeQuittung = DateUtil.momentToLocalDate(gesuch.datumGewarntFehlendeQuittung);
         return restGesuch;
     }
 
@@ -639,8 +639,8 @@ export default class EbeguRestUtil {
             gesuchTS.geprueftSTV = gesuchFromServer.geprueftSTV;
             gesuchTS.hasFSDokument = gesuchFromServer.hasFSDokument;
             gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
-            gesuchTS.gewarntNichtFreigegeben = gesuchFromServer.gewarntNichtFreigegeben;
-            gesuchTS.gewarntFehlendeQuittung = gesuchFromServer.gewarntFehlendeQuittung;
+            gesuchTS.datumGewarntNichtFreigegeben = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntNichtFreigegeben);
+            gesuchTS.datumGewarntFehlendeQuittung = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntFehlendeQuittung);
             return gesuchTS;
         }
         return undefined;
@@ -1313,7 +1313,7 @@ export default class EbeguRestUtil {
     public gesuchsperiodeToRestObject(restGesuchsperiode: any, gesuchsperiode: TSGesuchsperiode): any {
         if (gesuchsperiode) {
             this.abstractDateRangeEntityToRestObject(restGesuchsperiode, gesuchsperiode);
-            restGesuchsperiode.active = gesuchsperiode.active;
+            restGesuchsperiode.status = gesuchsperiode.status;
             return restGesuchsperiode;
         }
         return undefined;
@@ -1322,13 +1322,13 @@ export default class EbeguRestUtil {
     public parseGesuchsperiode(gesuchsperiodeTS: TSGesuchsperiode, gesuchsperiodeFromServer: any): TSGesuchsperiode {
         if (gesuchsperiodeFromServer) {
             this.parseDateRangeEntity(gesuchsperiodeTS, gesuchsperiodeFromServer);
-            gesuchsperiodeTS.active = gesuchsperiodeFromServer.active;
+            gesuchsperiodeTS.status = gesuchsperiodeFromServer.status;
             return gesuchsperiodeTS;
         }
         return undefined;
     }
 
-    public parseGesuchsperioden(data: any) {
+    public parseGesuchsperioden(data: any): TSGesuchsperiode[] {
         let gesuchsperioden: TSGesuchsperiode[] = [];
         if (data && Array.isArray(data)) {
             for (let i = 0; i < data.length; i++) {

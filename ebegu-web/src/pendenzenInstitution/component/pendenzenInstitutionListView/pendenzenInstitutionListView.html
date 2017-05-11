@@ -33,7 +33,7 @@
                         <th><input st-search="typ" class="form-control" type="text"/></th>
                         <th>
                             <div class="dv-select-style">
-                                <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString" st-search="gesuchsperiodeString" class="form-control"
+                                <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString" st-search="gesuchsperiode.gesuchsperiodeString" class="form-control"
                                         ng-options="periode for periode in vm.activeGesuchsperiodenList track by periode"
                                         ng-model="vm.selectedGesuchsperiode">
                                     <option value="">{{"ALLE" | translate}}</option>

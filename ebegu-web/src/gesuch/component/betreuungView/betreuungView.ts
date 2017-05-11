@@ -28,6 +28,7 @@ import TSBetreuungsmitteilung from '../../../models/TSBetreuungsmitteilung';
 import Moment = moment.Moment;
 import IScope = angular.IScope;
 import ILogService = angular.ILogService;
+import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -440,7 +441,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         return (this.isMutation() || (isVerfuegtOrSTV(this.gesuchModelManager.getGesuch().status)))
             && this.gesuchModelManager.getGesuch().gesperrtWegenBeschwerde !== true
             && this.isNewestGesuch
-            && this.getBetreuungModel().betreuungsstatus !== TSBetreuungsstatus.WARTEN;
+            && this.getBetreuungModel().betreuungsstatus !== TSBetreuungsstatus.WARTEN
+            && this.gesuchModelManager.getGesuch().gesuchsperiode.status === TSGesuchsperiodeStatus.AKTIV;
     }
 
     public mutationsmeldungSenden(): void {
@@ -478,6 +480,13 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public getDatumLastBetreuungsmitteilung(): string {
         if (this.showExistingBetreuungsmitteilungInfoBox()) {
             return DateUtil.momentToLocalDateFormat(this.existingMutationsMeldung.sentDatum, 'DD.MM.YYYY');
+        }
+        return '';
+    }
+
+    public getTimeLastBetreuungsmitteilung(): string {
+        if (this.showExistingBetreuungsmitteilungInfoBox()) {
+            return DateUtil.momentToLocalDateTimeFormat(this.existingMutationsMeldung.sentDatum, 'HH:mm');
         }
         return '';
     }

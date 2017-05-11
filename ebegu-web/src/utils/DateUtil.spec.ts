@@ -22,4 +22,37 @@ describe('dateUtil', function () {
             expect(expected.isSame(actual)).toBeTruthy();
         });
     });
+    describe('compareDateTime()', function () {
+        it('DATETIME: a date should be before b date', function () {
+            let a = DateUtil.localDateTimeToMoment('1995-12-24T14:06:34.564');
+            let b = DateUtil.localDateTimeToMoment('1995-12-24T16:06:34.564');
+            expect(DateUtil.compareDateTime(a, b)).toBe(-1);
+        });
+        it('DATETIME: a date should be the same as b date', function () {
+            let a = DateUtil.localDateTimeToMoment('1995-12-24T16:06:34.564');
+            let b = DateUtil.localDateTimeToMoment('1995-12-24T16:06:34.564');
+            expect(DateUtil.compareDateTime(a, b)).toBe(0);
+        });
+        it('DATETIME: a date should be after b date', function () {
+            let a = DateUtil.localDateTimeToMoment('1995-12-24T18:06:34.564');
+            let b = DateUtil.localDateTimeToMoment('1995-12-24T16:06:34.564');
+            expect(DateUtil.compareDateTime(a, b)).toBe(1);
+        });
+
+        it('DATE: a date should be before b date', function () {
+            let a = DateUtil.localDateToMoment('1995-12-23');
+            let b = DateUtil.localDateToMoment('1995-12-24');
+            expect(DateUtil.compareDateTime(a, b)).toBe(-1);
+        });
+        it('DATE: a date should be the same as b date', function () {
+            let a = DateUtil.localDateToMoment('1995-12-24');
+            let b = DateUtil.localDateToMoment('1995-12-24');
+            expect(DateUtil.compareDateTime(a, b)).toBe(0);
+        });
+        it('DATE: a date should be after b date', function () {
+            let a = DateUtil.localDateToMoment('1995-12-25');
+            let b = DateUtil.localDateToMoment('1995-12-24');
+            expect(DateUtil.compareDateTime(a, b)).toBe(1);
+        });
+    });
 });

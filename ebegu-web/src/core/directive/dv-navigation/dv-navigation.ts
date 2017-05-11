@@ -5,7 +5,6 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./dv-navigation.html');
 let style = require('./dv-navigation.less');
@@ -473,13 +472,13 @@ export class NavigatorController {
             return true;
         }
         // otherwise check specifics
-        if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.GESUCH) {
+        if (this.gesuchModelManager.isGesuch()) {
             if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
                 return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()
                     && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch());
             }
             if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-                return !this.gesuchModelManager.isThereAnyBetreuung()
+                return !this.gesuchModelManager.getGesuch().isThereAnyBetreuung()
                     && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch());
             }
             if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {

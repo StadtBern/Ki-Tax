@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.rest.test;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
@@ -47,7 +48,7 @@ public class GesuchsperiodeConverterTest extends AbstractEbeguRestLoginTest {
 	private Gesuchsperiode createNewEntity(LocalDate ab, LocalDate bis) {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
 		gesuchsperiode.setGueltigkeit(new DateRange(ab, bis));
-		gesuchsperiode.setActive(true);
+		gesuchsperiode.setStatus(GesuchsperiodeStatus.AKTIV);
 		return gesuchsperiode;
 	}
 

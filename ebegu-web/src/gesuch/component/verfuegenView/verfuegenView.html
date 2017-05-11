@@ -223,13 +223,13 @@
                             </dv-loading-button>
                         </div>
                         <div
-                            ng-show="!vm.isSameVerfuegungsdaten() && vm.showVerfuegen() && vm.gesuchModelManager.isErstgesuch()">
+                            ng-show="!vm.isSameVerfuegungsdaten() && vm.showVerfuegen() && vm.gesuchModelManager.isGesuch()">
                             <dv-loading-button type="submit"
                                                button-click="vm.nichtEintreten()">
                                 <span data-translate="VERFUEGEN_NICHT_EINTRETEN_UPPER"></span>
                             </dv-loading-button>
                         </div>
-                        <div ng-show="!vm.isSameVerfuegungsdaten() && vm.showVerfuegen() && !vm.gesuchModelManager.isErstgesuch()">
+                        <div ng-show="!vm.isSameVerfuegungsdaten() && vm.showVerfuegen() && !vm.gesuchModelManager.isGesuch()">
                             <!--Mutation wird nicht akzeptiert -> schliessen ohne Verfuegung. Der Status ist passt meiner Meinung
                             nach nicht 100% aber im Moment passt der am besten. (siehe auch EBEGU-890) -->
                             <dv-loading-button type="submit"

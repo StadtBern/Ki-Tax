@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -65,10 +66,22 @@ public class GesuchstellerAdresse extends Adresse {
 		return AdresseTyp.KORRESPONDENZADRESSE.equals(this.getAdresseTyp());
 	}
 
-	public GesuchstellerAdresse copyForMutation(GesuchstellerAdresse mutation) {
-		super.copyForMutation(mutation);
+	@Nonnull
+	private GesuchstellerAdresse copyForMutationOrErneuerung(@Nonnull GesuchstellerAdresse mutation) {
 		mutation.setAdresseTyp(this.getAdresseTyp());
 		mutation.setNichtInGemeinde(this.nichtInGemeinde);
 		return mutation;
+	}
+
+	@Nonnull
+	public GesuchstellerAdresse copyForMutation(@Nonnull GesuchstellerAdresse mutation) {
+		super.copyForMutation(mutation);
+		return copyForMutationOrErneuerung(mutation);
+	}
+
+	@Nonnull
+	public GesuchstellerAdresse copyForErneuerung(@Nonnull GesuchstellerAdresse mutation) {
+		super.copyForErneuerung(mutation);
+		return copyForMutationOrErneuerung(mutation);
 	}
 }

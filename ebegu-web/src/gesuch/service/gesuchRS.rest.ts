@@ -123,6 +123,13 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
+    public antragErneuern(gesuchsperiodeId: string, antragId: string, dateParam: moment.Moment): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/erneuern/' + encodeURIComponent(gesuchsperiodeId) + '/' + encodeURIComponent(antragId), null,
+            {params: {date: DateUtil.momentToLocalDate(dateParam)}}).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
+
     public antragFreigeben(antragId: string, username: string): IPromise<TSGesuch> {
         return this.http.post(this.serviceURL + '/freigeben/' + encodeURIComponent(antragId), username, {
             headers: {
@@ -168,5 +175,32 @@ export default class GesuchRS implements IEntityRS {
             .then((response: any) => {
                 return response.data;
             });
+    }
+
+    public removeOnlineMutation(gesuchID: string):  IPromise<boolean> {
+        return this.http.delete(this.serviceURL + '/removeOnlineMutation/' + encodeURIComponent(gesuchID))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
+
+    public removeOnlineFolgegesuch(gesuchID: string, gesuchsperiodId: string): IPromise<boolean> {
+        return this.http.delete(this.serviceURL + '/removeOnlineFolgegesuch/' + encodeURIComponent(gesuchID)
+            + '/' + encodeURIComponent(gesuchsperiodId))
+            .then((response: any) => {
+                return response.data;
+            });
+    }
+
+    public closeWithoutAngebot(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/closeWithoutAngebot/' + encodeURIComponent(antragId), null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
+
+    public verfuegenStarten(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/verfuegenStarten/' + encodeURIComponent(antragId), null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
     }
 }

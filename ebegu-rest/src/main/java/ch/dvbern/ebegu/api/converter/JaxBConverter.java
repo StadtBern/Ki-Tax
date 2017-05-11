@@ -681,8 +681,8 @@ public class JaxBConverter {
 		antrag.setGeprueftSTV(antragJAXP.isGeprueftSTV());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
-		antrag.setGewarntNichtFreigegeben(antragJAXP.isGewarntNichtFreigegeben());
-		antrag.setGewarntFehlendeQuittung(antragJAXP.isGewarntFehlendeQuittung());
+		antrag.setDatumGewarntNichtFreigegeben(antragJAXP.getDatumGewarntNichtFreigegeben());
+		antrag.setDatumGewarntFehlendeQuittung(antragJAXP.getDatumGewarntFehlendeQuittung());
 		return antrag;
 	}
 
@@ -808,8 +808,8 @@ public class JaxBConverter {
 		jaxGesuch.setGeprueftSTV(persistedGesuch.isGeprueftSTV());
 		jaxGesuch.setHasFSDokument(persistedGesuch.isHasFSDokument());
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
-		jaxGesuch.setGewarntNichtFreigegeben(persistedGesuch.isGewarntNichtFreigegeben());
-		jaxGesuch.setGewarntFehlendeQuittung(persistedGesuch.isGewarntFehlendeQuittung());
+		jaxGesuch.setDatumGewarntNichtFreigegeben(persistedGesuch.getDatumGewarntNichtFreigegeben());
+		jaxGesuch.setDatumGewarntFehlendeQuittung(persistedGesuch.getDatumGewarntFehlendeQuittung());
 
 		return jaxGesuch;
 	}
@@ -899,7 +899,7 @@ public class JaxBConverter {
 			throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		}
 
-		// Institution ist nicht required!
+		// Traegerschaft ist nicht required!
 		if (institutionJAXP.getTraegerschaft() != null) {
 			if (institutionJAXP.getTraegerschaft().getId() != null) {
 				final Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(institutionJAXP.getTraegerschaft().getId());
@@ -911,6 +911,9 @@ public class JaxBConverter {
 			} else {
 				throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 			}
+		}
+		else {
+			institution.setTraegerschaft(null);
 		}
 		return institution;
 	}
@@ -1831,13 +1834,13 @@ public class JaxBConverter {
 	public JaxGesuchsperiode gesuchsperiodeToJAX(final Gesuchsperiode persistedGesuchsperiode) {
 		final JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
 		convertAbstractDateRangedFieldsToJAX(persistedGesuchsperiode, jaxGesuchsperiode);
-		jaxGesuchsperiode.setActive(persistedGesuchsperiode.getActive());
+		jaxGesuchsperiode.setStatus(persistedGesuchsperiode.getStatus());
 		return jaxGesuchsperiode;
 	}
 
 	public Gesuchsperiode gesuchsperiodeToEntity(final JaxGesuchsperiode jaxGesuchsperiode, final Gesuchsperiode gesuchsperiode) {
 		convertAbstractDateRangedFieldsToEntity(jaxGesuchsperiode, gesuchsperiode);
-		gesuchsperiode.setActive(jaxGesuchsperiode.getActive());
+		gesuchsperiode.setStatus(jaxGesuchsperiode.getStatus());
 		return gesuchsperiode;
 	}
 

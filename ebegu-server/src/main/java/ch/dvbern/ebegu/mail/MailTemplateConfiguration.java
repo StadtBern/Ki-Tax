@@ -1,11 +1,9 @@
 package ch.dvbern.ebegu.mail;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.Mitteilung;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.Constants;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -15,6 +13,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,7 +27,11 @@ public class MailTemplateConfiguration {
 
 	private static final Locale DEFAULT_LOCALE = new Locale("de", "CH");
 	public static final String EMPFAENGER_MAIL = "empfaengerMail";
-	public static final String ANZAHL_MONATE = "anzahlMonate";
+	public static final String ANZAHL_TAGE = "anzahlTage";
+	public static final String DATUM_LOESCHUNG = "datumLoeschung";
+	public static final String GESUCHSTELLER = "gesuchsteller";
+	public static final String GESUCHSPERIODE = "gesuchsperiode";
+	public static final String START_DATUM = "startDatum";
 
 	private final Configuration freeMarkerConfiguration;
 
@@ -67,39 +70,56 @@ public class MailTemplateConfiguration {
 		return processTemplateGesuch("InfoMahnung.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
 
-	public String getWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail, int anzahlMonate) {
-		return processTemplateGesuch("WarnungGesuchNichtFreigegeben.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail), toArgumentPair(ANZAHL_MONATE, anzahlMonate));
+	public String getWarnungGesuchNichtFreigegeben(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail, int anzahlTage) {
+		return processTemplateGesuch("WarnungGesuchNichtFreigegeben.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail), toArgumentPair(ANZAHL_TAGE, anzahlTage));
 	}
 
-	public String getWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
-		return processTemplateGesuch("WarnungFreigabequittungFehlt.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	public String getWarnungFreigabequittungFehlt(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail, int anzahlTage) {
+		LocalDate datumLoeschung = LocalDate.now().plusDays(anzahlTage).minusDays(1);
+		return processTemplateGesuch("WarnungFreigabequittungFehlt.ftl", gesuch, gesuchsteller,
+			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail),
+			toArgumentPair(ANZAHL_TAGE, anzahlTage),
+			toArgumentPair(DATUM_LOESCHUNG, Constants.DATE_FORMATTER.format(datumLoeschung)));
 	}
 
 	public String getInfoGesuchGeloescht(@Nonnull Gesuch gesuch, Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
 		return processTemplateGesuch("InfoGesuchGeloescht.ftl", gesuch, gesuchsteller, toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
 
+	public String getInfoFreischaltungGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode, @Nonnull Gesuchsteller gesuchsteller, @Nonnull String empfaengerMail) {
+		return processTemplate("InfoFreischaltungGesuchsperiode.ftl",
+			toArgumentPair(GESUCHSPERIODE, gesuchsperiode),
+			toArgumentPair(START_DATUM, Constants.DATE_FORMATTER.format(gesuchsperiode.getGueltigkeit().getGueltigAb())),
+			toArgumentPair(GESUCHSTELLER, gesuchsteller),
+			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
+	}
+
 	private String processTemplateGesuch(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, @Nonnull Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "gesuch", gesuch };
-		paramsToPass[paramsToPass.length - 2] = new Object[] { "gesuchsteller", gesuchsteller };
-		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
+		paramsToPass[paramsToPass.length - 2] = new Object[] { GESUCHSTELLER, gesuchsteller };
+		return doProcessTemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
 	private String processTemplateBetreuung(@Nonnull String nameOfTemplate, @Nonnull Betreuung betreuung, @Nonnull Gesuchsteller gesuchsteller, @Nonnull Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "betreuung", betreuung };
-		paramsToPass[paramsToPass.length - 2] = new Object[] { "gesuchsteller", gesuchsteller };
-		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
+		paramsToPass[paramsToPass.length - 2] = new Object[] { GESUCHSTELLER, gesuchsteller };
+		return doProcessTemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
 	private String processTemplateMitteilung(@Nonnull String nameOfTemplate, @Nonnull Mitteilung mitteilung, @Nonnull Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 1);
 		paramsToPass[paramsToPass.length - 1] = new Object[] { "mitteilung", mitteilung };
-		return processtemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
+		return doProcessTemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
 	}
 
-	private String processtemplate(@Nonnull final String name, @Nonnull Locale loc, final Object[]... extraValuePairs) {
+	private String processTemplate(@Nonnull String nameOfTemplate, @Nonnull Object[]... extraValuePairs) {
+		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length);
+		return doProcessTemplate(nameOfTemplate, DEFAULT_LOCALE, paramsToPass);
+	}
+
+	private String doProcessTemplate(@Nonnull final String name, @Nonnull Locale loc, final Object[]... extraValuePairs) {
 		try {
 			final Map<Object, Object> rootMap = new HashMap<>();
 			rootMap.put("configuration", ebeguConfiguration);
@@ -120,9 +140,9 @@ public class MailTemplateConfiguration {
 
 			return out.toString();
 		} catch (final IOException e) {
-			throw new EbeguRuntimeException("processtemplate()", String.format("Failed to load template %s.", name), e);
+			throw new EbeguRuntimeException("doProcessTemplate()", String.format("Failed to load template %s.", name), e);
 		} catch (final TemplateException e) {
-			throw new EbeguRuntimeException("processtemplate()", String.format("Failed to process template %s.", name), e);
+			throw new EbeguRuntimeException("doProcessTemplate()", String.format("Failed to process template %s.", name), e);
 		}
 	}
 

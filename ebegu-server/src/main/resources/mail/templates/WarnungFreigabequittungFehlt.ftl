@@ -1,5 +1,7 @@
 <#-- @ftlvariable name="gesuch" type="ch.dvbern.ebegu.entities.Gesuch" -->
 <#-- @ftlvariable name="gesuchsteller" type="ch.dvbern.ebegu.entities.Gesuchsteller" -->
+<#-- @ftlvariable name="anzahlTage" type="java.lang.String" -->
+<#-- @ftlvariable name="datumLoeschung" type="java.lang.String" -->
 <#-- @ftlvariable name="templateConfiguration" type="ch.dvbern.ebegu.mail.MailTemplateConfiguration" -->
 <#-- @ftlvariable name="configuration" type="ch.dvbern.ebegu.config.EbeguConfiguration" -->
 From: ${configuration.senderAddress}
@@ -20,11 +22,21 @@ ${templateConfiguration.mailCss}
 
 <div>
     <p>
-        Sehr geehrte Familie
+        Guten Tag
     </p>
     <p>
-        Am ${gesuch.getFreigabedatumFormated()} haben Sie über Ki-Tax ein Gesuch freigegeben. Die Freigabequittung wurde bis heute nicht eingereicht.
-        Dürfen wir Sie bitten, uns diese unterschrieben zuzustellen?
+        Sie haben via Ki-Tax Ihr Gesuch vollständig erfasst, besten Dank!
+    </p>
+    <p>
+        Leider ist Ihre Freigabequittung bisher nicht bei uns eingetroffen. Bitte schicken Sie uns das unterschriebene
+        Dokument spätestens bis zum ${datumLoeschung} per Post oder per Mail (<a href="mailto:kinderbetreuung@bern.ch">kinderbetreuung@bern.ch</a>).
+        Andernfalls erfolgt innert ${anzahlTage} Tagen eine automatische Löschung.
+    </p>
+    <p>
+        Falls Ihr Kind in eine Kita geht, beachten Sie bitte: Beim Gesuch um einen Betreuungsgutschein ist das Eingangsdatum entscheidend.
+    </p>
+    <p>
+        Bei Fragen stehen wir während den Bürozeiten gerne zur Verfügung (Tel. 031 321 51 15).
     </p>
     <p>
         Freundliche Grüsse <br/>

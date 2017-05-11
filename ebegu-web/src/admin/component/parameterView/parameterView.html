@@ -16,7 +16,7 @@
                         <tr>
                             <th data-translate="GESUCHSPERIODE_GUELTIG_AB"></th>
                             <th data-translate="GESUCHSPERIODE_GUELTIG_BIS"></th>
-                            <th data-translate="GESUCHSPERIODE_AKTIV"></th>
+                            <th data-translate="GESUCHSPERIODE_STATUS"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -24,7 +24,7 @@
                             ng-click="vm.gesuchsperiodeClicked(row)">
                             <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
                             <td ng-bind="row.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
-                            <td ng-bind="row.active ? ('LABEL_JA' | translate) : ('LABEL_NEIN' | translate)"></td>
+                            <td ng-bind="row.status"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -32,14 +32,13 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <form ng-submit="form.$valid && vm.submit()" name="form" role="form" novalidate
-                          unsaved-warning-form>
+                    <form ng-submit="form.$valid && vm.submit()" name="form" role="form" novalidate>
                         <fieldset ng-disabled="vm.isReadonly()">
 
                             <!-- Gesuchsperiode Detail -->
                             <div ng-if="vm.gesuchsperiode">
                                 <div class="row">
-                                    <div class=" col-md-6 form-group">
+                                    <div class="col-md-6 form-group">
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <label class="md-no-float" data-translate="GESUCHSPERIODE_GUELTIG_AB"
@@ -82,20 +81,31 @@
                                     </div>
                                 </div>
 
-                                <div class="row marginTop10">
-                                    <div class="col-md-6">
-                                        <div class="checkbox">
-                                            <md-checkbox ng-model="vm.gesuchsperiode.active" id="active"
-                                                         name="active"
-                                                         aria-label="{{'GESUCHSPERIODE_AKTIV' | translate}}"
-                                                         class="" ng-disabled="vm.isReadonly()">
-                                                <span data-translate="GESUCHSPERIODE_AKTIV"></span>
-                                            </md-checkbox>
-                                            <dv-error-messages for="form.active.$error"></dv-error-messages>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label data-translate="STATUS" for="gpstatus">
+                                                </label>
+                                            </div>
+                                            <div class="col-md-8 dv-select-style">
+                                                <select name="gpstatus" id="gpstatus"
+                                                        ng-model="vm.gesuchsperiode.status"
+                                                        class="form-control"
+                                                        ng-options="gpstatus as gpstatus for gpstatus in vm.getTSGesuchsperiodeStatusValues()"
+                                                        ng-required="true">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-4">
+                                                <dv-error-messages for="form.gpstatus.$error"></dv-error-messages>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Gesuchsperiode Buttons -->
                             <div class="row" ng-if="!vm.isReadonly()">
                                 <div class="col-md-2" ng-if="!vm.gesuchsperiode">
@@ -151,7 +161,7 @@
                                                            name="propertyName_{{paramgp.name}}"
                                                            ng-model="paramgp.value"
                                                            dv-max-length class="input-element" required
-                                                           ng-disabled="vm.gesuchsperiode.active">
+                                                           ng-disabled="!vm.periodenaParamsEditable()">
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -321,7 +331,7 @@
                                                                name="propertyName_{{param.key}}"
                                                                ng-model="param.value"
                                                                dv-max-length class="input-element" required
-                                                               ng-disabled="vm.param.timestampErstellt">
+                                                               ng-disabled="!vm.jahresParamsEditable()">
                                                     </div>
                                                     <div class="col-md-3">
                                                         <dv-datepicker class="input-element"

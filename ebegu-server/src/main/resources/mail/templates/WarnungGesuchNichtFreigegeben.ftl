@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="gesuch" type="ch.dvbern.ebegu.entities.Gesuch" -->
 <#-- @ftlvariable name="gesuchsteller" type="ch.dvbern.ebegu.entities.Gesuchsteller" -->
-<#-- @ftlvariable name="anzahlMonate" type="java.lang.String" -->
+<#-- @ftlvariable name="anzahlTage" type="java.lang.String" -->
 <#-- @ftlvariable name="templateConfiguration" type="ch.dvbern.ebegu.mail.MailTemplateConfiguration" -->
 <#-- @ftlvariable name="configuration" type="ch.dvbern.ebegu.config.EbeguConfiguration" -->
 From: ${configuration.senderAddress}
@@ -21,11 +21,19 @@ ${templateConfiguration.mailCss}
 
 <div>
     <p>
-        Sehr geehrte Familie
+        Guten Tag
     </p>
     <p>
-        Sie haben über Ki-Tax Ihr Gesuch für einen vergünstigten Betreuungsplatz nicht abgeschlossen respektive freigegeben.
-        Dürfen wir Sie bitten, dass Gesuch hier abzuschliessen und einzureichen? Ansonsten wird Ihr Gesuch in ${anzahlMonate} Monaten gelöscht.
+        Sie haben sich auf <a href="www.bern.ch/ki-tax">www.bern.ch/ki-tax</a> registriert. Sie haben Ihre Daten noch
+        nicht freigegeben.
+    </p>
+    <p>
+        Mit dieser Mail möchten wir Sie daran erinnern, Ihren Antrag rechtzeitig abzuschliessen. Die Freigabequittung muss
+        vor Beginn der Betreuung Ihres Kindes bei uns eingereicht werden, damit Sie Ihren Anspruch nicht verlieren. Ohne
+        eine Freigabe innert ${anzahlTage} Tagen erfolgt eine automatische Löschung.
+    </p>
+    <p>
+        Bei Fragen stehen wir während den Bürozeiten gerne zur Verfügung (Tel. 031 321 51 15).
     </p>
     <p>
         Freundliche Grüsse <br/>

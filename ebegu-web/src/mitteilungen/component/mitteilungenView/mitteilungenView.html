@@ -1,10 +1,10 @@
-<gesuch-toolbar flex="nogrow" fallid="{{vm.fall.id}}"
-                on-verantwortlicher-change="vm.setVerantwortlicher(user)"
-                hide-mutation-button="{{true}}"
+<gesuch-toolbar flex="nogrow" fallid="{{vm.fallId}}"
+                hide-action-buttons="{{true}}"
+                force-loading-from-fall="{{true}}"
                 dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
 </gesuch-toolbar>
 
-<gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller" fallid="{{vm.fall.id}}"
+<gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller" fallid="{{vm.fallId}}"
                               dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()">
 </gesuch-toolbar-gesuchsteller>
 

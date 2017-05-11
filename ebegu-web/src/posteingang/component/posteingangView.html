@@ -17,17 +17,17 @@
                     <thead>
                     <tr>
                         <!-- Von -->
-                        <th st-sort="sender" class="sortable row-sender" data-translate="POSTEINGANG_VON_UPPER"></th>
+                        <th st-sort="sender.getFullName()" class="sortable row-sender" data-translate="POSTEINGANG_VON_UPPER"></th>
                         <!-- Fall-Nummer -->
-                        <th st-sort="fallNummer" class="sortable row-fallNummer" data-translate="POSTEINGANG_FALL_UPPER"></th>
+                        <th st-sort="fall.fallNummer" class="sortable row-fallNummer" data-translate="POSTEINGANG_FALL_UPPER"></th>
                         <!-- Familie -->
-                        <th st-sort="besitzer" class="sortable row-besitzer" data-translate="POSTEINGANG_FAMILIE_UPPER"></th>
+                        <th st-sort="fall.besitzer.getFullName()" class="sortable row-besitzer" data-translate="POSTEINGANG_FAMILIE_UPPER"></th>
                         <!-- Betreff -->
                         <th st-sort="subject" class="sortable row-subject" data-translate="POSTEINGANG_BETREFF_UPPER"></th>
                         <!-- Datum -->
                         <th st-sort="sentDatum" class="sortable row-sentDatum" data-translate="POSTEINGANG_DATUM_UPPER"></th>
                         <!-- Verantwortliche Person -->
-                        <th st-sort="verantwortlicher" class="sortable row-verantwortlicher" data-translate="POSTEINGANG_VERANTWORTLICH_UPPER"></th>
+                        <th st-sort="empfaenger.getFullName()" class="sortable row-empfaenger" data-translate="POSTEINGANG_VERANTWORTLICH_UPPER"></th>
                     </tr>
                     <tr>
                         <!-- Von -->
@@ -42,7 +42,7 @@
                         <th><input st-search="sentDatum" class="form-control" type="text"/></th>
                         <!-- Verantwortliche Person -->
                         <th>
-                            <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher" initial-all="false" show-selection-all="true"></dv-userselect>
+                            <dv-userselect input-id="empfaenger" dv-usersearch="empfaenger" initial-all="false" show-selection-all="true"></dv-userselect>
                         </th>
                     </tr>
                     </thead>
@@ -64,7 +64,7 @@
                         <td class="ellipsis" ellipsis-tooltip="{{row.sentDatum | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.sentDatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <!-- Verantwortliche Person -->
-                        <td class="ellipsis" ellipsis-tooltip="{{row.empfaenger.getFullName()}}"
+                        <td class="ellipsis" ellipsis-tooltip="{{row.empfaenger}}"
                             ng-bind="row.empfaenger.getFullName()"></td>
                     </tr>
                     </tbody>

@@ -1,4 +1,4 @@
-import {IHttpService, ILogService, IPromise, IHttpPromise} from 'angular';
+import {IHttpService, ILogService, IPromise, IHttpPromise, IQService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 
@@ -8,9 +8,12 @@ export default class GesuchsperiodeRS {
     ebeguRestUtil: EbeguRestUtil;
     log: ILogService;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
+    private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
+    private nichtAbgeschlosseneGesuchsperiodenList: Array<TSGesuchsperiode>;
+
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', '$q'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService, private $q: IQService) {
         this.serviceURL = REST_API + 'gesuchsperioden';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -54,10 +57,20 @@ export default class GesuchsperiodeRS {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(gesuchsperiodeId));
     }
 
-    public getAllActiveGesuchsperioden(): IPromise<TSGesuchsperiode[]> {
+    public updateActiveGesuchsperiodenList(): IPromise<TSGesuchsperiode[]> {
         return this.http.get(this.serviceURL + '/active').then((response: any) => {
-            return this.ebeguRestUtil.parseGesuchsperioden(response.data);
+            let gesuchsperioden: TSGesuchsperiode[] = this.ebeguRestUtil.parseGesuchsperioden(response.data);
+            return this.activeGesuchsperiodenList = angular.copy(gesuchsperioden);
         });
+    }
+
+    public getAllActiveGesuchsperioden(): IPromise<TSGesuchsperiode[]> {
+        if (!this.activeGesuchsperiodenList || this.activeGesuchsperiodenList.length <= 0) { // if the list is empty, reload it
+            return this.updateActiveGesuchsperiodenList().then(() => {
+                return this.activeGesuchsperiodenList;
+            });
+        }
+        return this.$q.when(this.activeGesuchsperiodenList); // we need to return a promise
     }
 
     public getAllGesuchsperioden(): IPromise<TSGesuchsperiode[]> {
@@ -66,9 +79,19 @@ export default class GesuchsperiodeRS {
         });
     }
 
-    public getAllNichtAbgeschlosseneGesuchsperioden(): IPromise<TSGesuchsperiode[]> {
+    public updateNichtAbgeschlosseneGesuchsperiodenList(): IPromise<TSGesuchsperiode[]> {
         return this.http.get(this.serviceURL + '/unclosed').then((response: any) => {
-            return this.ebeguRestUtil.parseGesuchsperioden(response.data);
+            let gesuchsperioden: TSGesuchsperiode[] = this.ebeguRestUtil.parseGesuchsperioden(response.data);
+            return this.nichtAbgeschlosseneGesuchsperiodenList = angular.copy(gesuchsperioden);
         });
+    }
+
+    public getAllNichtAbgeschlosseneGesuchsperioden(): IPromise<TSGesuchsperiode[]> {
+        if (!this.nichtAbgeschlosseneGesuchsperiodenList || this.nichtAbgeschlosseneGesuchsperiodenList.length <= 0) { // if the list is empty, reload it
+            return this.updateNichtAbgeschlosseneGesuchsperiodenList().then(() => {
+                return this.nichtAbgeschlosseneGesuchsperiodenList;
+            });
+        }
+        return this.$q.when(this.nichtAbgeschlosseneGesuchsperiodenList); // we need to return a promise
     }
 }

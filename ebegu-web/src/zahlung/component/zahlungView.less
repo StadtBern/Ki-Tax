@@ -4,7 +4,7 @@
 .zahlungView {
     padding: 3rem;
     .symbol {
-        padding:0;
+        padding: 0 0 0 1em;
 
         .dvb-loading-button, button {
             display: block;
@@ -26,7 +26,6 @@
     }
 
     .mitteilung_neu {
-        //TODO: kana muss noch styles definieren
         td {
             font-weight: 900;
         }
@@ -46,5 +45,10 @@
                 vertical-align: middle;
             }
         }
+    }
+
+    #betragTotalZahlung, .numeric-column {
+        text-align: right;
+        padding-right: 5em;
     }
 }

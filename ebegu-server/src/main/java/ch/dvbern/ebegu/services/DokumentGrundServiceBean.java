@@ -7,6 +7,8 @@ import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,13 +36,17 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @PermitAll
 public class DokumentGrundServiceBean extends AbstractBaseService implements DokumentGrundService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(DokumentGrundServiceBean.class.getSimpleName());
+
 	@Inject
 	private Persistence<DokumentGrund> persistence;
+
 	@Inject
 	private WizardStepService wizardStepService;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
 	@Inject
 	private Authorizer authorizer;
 
@@ -105,11 +111,12 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 
 	@Override
 	@RolesAllowed({SUPER_ADMIN, ADMIN,})
-	public void removeAllDokumentGrundeFromGesuch(Gesuch gesuch) {
+	public void removeAllDokumentGrundeFromGesuch(@Nonnull Gesuch gesuch) {
+		LOGGER.info("Deleting Dokument-Gruende of Gesuch: " + gesuch.getFall() + " / " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
 		Collection<DokumentGrund> dokumentsFromGesuch = findAllDokumentGrundByGesuch(gesuch);
 		for (DokumentGrund dokument : dokumentsFromGesuch) {
+			LOGGER.info("Deleting DokumentGrund: " + dokument.getId());
 			persistence.remove(DokumentGrund.class, dokument.getId());
 		}
 	}
-
 }

@@ -1,10 +1,14 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -49,9 +53,13 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	private boolean gesperrtWegenBeschwerde;
 
-	private boolean gewarntNichtFreigegeben;
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumGewarntNichtFreigegeben;
 
-	private boolean gewarntFehlendeQuittung;
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumGewarntFehlendeQuittung;
 
 
 	public static long getSerialVersionUID() {
@@ -163,20 +171,22 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		this.gesperrtWegenBeschwerde = gesperrtWegenBeschwerde;
 	}
 
-	public boolean isGewarntNichtFreigegeben() {
-		return gewarntNichtFreigegeben;
+	@Nullable
+	public LocalDate getDatumGewarntNichtFreigegeben() {
+		return datumGewarntNichtFreigegeben;
 	}
 
-	public void setGewarntNichtFreigegeben(boolean gewarntNichtFreigegeben) {
-		this.gewarntNichtFreigegeben = gewarntNichtFreigegeben;
+	public void setDatumGewarntNichtFreigegeben(@Nullable LocalDate datumGewarntNichtFreigegeben) {
+		this.datumGewarntNichtFreigegeben = datumGewarntNichtFreigegeben;
 	}
 
-	public boolean isGewarntFehlendeQuittung() {
-		return gewarntFehlendeQuittung;
+	@Nullable
+	public LocalDate getDatumGewarntFehlendeQuittung() {
+		return datumGewarntFehlendeQuittung;
 	}
 
-	public void setGewarntFehlendeQuittung(boolean gewarntFehlendeQuittung) {
-		this.gewarntFehlendeQuittung = gewarntFehlendeQuittung;
+	public void setDatumGewarntFehlendeQuittung(@Nullable LocalDate datumGewarntFehlendeQuittung) {
+		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
 	}
 }
 
