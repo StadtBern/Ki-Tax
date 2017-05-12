@@ -1,17 +1,12 @@
 <div class="pendenzenListView">
     <div class="col-md-12">
         <div class="row">
-            <div class="col-md-11">
-                <h3 data-translate="PENDENZEN_LIST"></h3>
-            </div>
-            <div class="col-md-1 text-right">
-                <h3 ng-bind="vm.getPendenzenList() ? vm.getPendenzenList().length : 0"></h3>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <dv-pendenzen-list antraege="vm.getPendenzenList()" items-by-page="20" initial-all="false" show-selection-all="false" on-user-changed="vm.userChanged(user)"></dv-pendenzen-list>
+                <dv-pendenzen-list antraege="vm.getPendenzenList()" items-by-page="20" initial-all="false"
+                                   show-selection-all="false" on-user-changed="vm.userChanged(user)"
+                                   table-title="'PENDENZEN_LIST'">
+                </dv-pendenzen-list>
 
             </div>
 
