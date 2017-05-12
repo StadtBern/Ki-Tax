@@ -98,6 +98,7 @@ export class ZahlungsauftragViewController {
             this.zahlungRS.createZahlungsauftrag(this.beschrieb, this.faelligkeitsdatum, this.datumGeneriert).then((response: TSZahlungsauftrag) => {
                 this.zahlungsauftragen.push(response);
                 this.resetEditZahlungsauftrag();
+                this.resetForm();
             });
         }
     }
@@ -181,4 +182,14 @@ export class ZahlungsauftragViewController {
         return '';
     }
 
+    /**
+     * resets all three variables needed to create a Zahlung.
+     */
+    private resetForm(): void {
+        this.beschrieb = undefined;
+        this.faelligkeitsdatum = undefined;
+        this.datumGeneriert = undefined;
+        this.form.$setPristine();
+        this.form.$setUntouched();
+    }
 }
