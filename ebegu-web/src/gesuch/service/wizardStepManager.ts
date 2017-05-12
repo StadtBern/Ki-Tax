@@ -263,10 +263,11 @@ export default class WizardStepManager {
      */
     private isStepAvailableViaBtn(stepName: TSWizardStepName, gesuch: TSGesuch): boolean {
         let step: TSWizardStep = this.getStepByName(stepName);
+
         if (step !== undefined) {
             return (this.isStepClickableForCurrentRole(step, gesuch)
             || ((gesuch.typ === TSAntragTyp.ERSTGESUCH || gesuch.typ === TSAntragTyp.ERNEUERUNGSGESUCH) && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT
-            && !(this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerOnlyRoles()) && stepName === TSWizardStepName.VERFUEGEN))
+            && !(this.authServiceRS.isOneOfRoles(TSRoleUtil.getAllButAdministratorJugendamtRoleAsRoles()) && stepName === TSWizardStepName.VERFUEGEN))
             || (gesuch.typ === TSAntragTyp.MUTATION && step.wizardStepName === TSWizardStepName.FAMILIENSITUATION));
         }
         return false;  // wenn der step undefined ist geben wir mal verfuegbar zurueck

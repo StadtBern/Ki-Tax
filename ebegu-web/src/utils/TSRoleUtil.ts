@@ -1,4 +1,4 @@
-import {TSRole} from '../models/enums/TSRole';
+import {TSRole, getTSRoleValues} from '../models/enums/TSRole';
 /**
  * Hier findet man unterschiedliche Hilfsmethoden, um die Rollen von TSRole zu holen
  */
@@ -87,6 +87,14 @@ export class TSRoleUtil {
             element !== TSRole[TSRole.SACHBEARBEITER_JA] &&
             element !== TSRole[TSRole.ADMIN] &&
             element !== TSRole[TSRole.SUPER_ADMIN]
+        );
+    }
+
+    public static getAllButAdministratorJugendamtRoleAsRoles(): Array<TSRole> {
+        return getTSRoleValues().filter(element =>
+            element !== TSRole.SACHBEARBEITER_JA &&
+            element !== TSRole.ADMIN &&
+            element !== TSRole.SUPER_ADMIN
         );
     }
 
