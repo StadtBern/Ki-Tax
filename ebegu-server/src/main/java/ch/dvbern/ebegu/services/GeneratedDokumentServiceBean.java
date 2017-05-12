@@ -238,6 +238,14 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			return documentIfExistsAndIsWriteProtected;
 		}
 		WriteProtectedDokument persistedDokument = null;
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getAntragNummer());
+
+		GeneratedDokument documentIfExistsAndIsWriteProtected = getDocumentIfExistsAndIsWriteProtected(gesuch, fileNameForGeneratedDokumentTyp, forceCreation);
+		if (documentIfExistsAndIsWriteProtected != null) {
+			return documentIfExistsAndIsWriteProtected;
+		}
+
+		GeneratedDokument persistedDokument = null;
 		if (!forceCreation && gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
 			persistedDokument = getExistingGeneratedDokument(gesuch.getId(), GeneratedDokumentTyp.BEGLEITSCHREIBEN, fileNameForGeneratedDokumentTyp);
 		}
