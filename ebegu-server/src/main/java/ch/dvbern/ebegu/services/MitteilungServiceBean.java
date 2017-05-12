@@ -400,10 +400,13 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			}
 			throw exception;
 		}
-
 		if (neustesGesuchOpt.isPresent()) {
 			final Gesuch neustesGesuch = neustesGesuchOpt.get();
-			if (!AntragStatus.getVerfuegtAndSTVStates().contains(neustesGesuch.getStatus()) && neustesGesuch.isMutation()) {
+			// Sobald irgendein Antrag dieser Periode geperrt ist, darf keine Mutationsmeldungs-Mutation erstellt werden!
+			if (neustesGesuch.isGesperrtWegenBeschwerde()) {
+				throw new EbeguRuntimeException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_MUTATIONSMELDUNG_FALL_GESPERRT);
+			}
+			else if (!AntragStatus.getVerfuegtAndSTVStates().contains(neustesGesuch.getStatus()) && neustesGesuch.isMutation()) {
 				//betreuungsaenderungen der bestehenden, offenen Mutation hinzufuegen (wenn wir hier sind muss es sich um ein PAPIER) Antrag handeln
 				applyBetreuungsmitteilungToMutation(neustesGesuch, mitteilung);
 				return neustesGesuch;
@@ -418,7 +421,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				}
 			}
 			else {
-				throw new EbeguRuntimeException("applyBetreuungsmitteilung", "Fehler beim Erstellen einer Mutation", "Das Erstgesuch ist noch nicht Freigegeben");
+				throw new EbeguRuntimeException("applyBetreuungsmitteilung", ErrorCodeEnum.ERROR_MUTATIONSMELDUNG_GESUCH_NICHT_FREIGEGEBEN);
 			}
 		}
 		return gesuch;
