@@ -372,7 +372,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		PredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
 		if (predicateObjectDto != null) {
 			if (predicateObjectDto.getFallNummer() != null) {
-				predicates.add(cb.equal(fall.get(Fall_.fallNummer), Integer.valueOf(predicateObjectDto.readFallNummerAsNumber())));
+				// Die Fallnummer muss als String mit LIKE verglichen werden: Bei Eingabe von "14" soll der Fall "114" kommen
+				Expression<String> fallNummerAsString = fall.get(Fall_.fallNummer).as(String.class);
+				String fallNummerWithWildcards = "%" + predicateObjectDto.getFallNummer() + "%";
+				predicates.add(cb.like(fallNummerAsString, fallNummerWithWildcards));
 			}
 			if (predicateObjectDto.getFamilienName() != null) {
 				Join<Gesuch, GesuchstellerContainer> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
