@@ -448,7 +448,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case SEARCH:
 				query.select(root.get(Gesuch_.id))
 					.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-				constructOrderByClause(antragTableFilterDto, cb, query, root, betreuungen, kinder);
+				constructOrderByClause(antragTableFilterDto, cb, query, root, betreuungen, kinder, institutionstammdaten, institution);
 				break;
 			case COUNT:
 				query.select(cb.countDistinct(root.get(Gesuch_.id)))
@@ -481,7 +481,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 
-	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, SetJoin<KindContainer, Betreuung> betreuungen, Join<KindContainer, Kind> kinder) {
+	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, SetJoin<KindContainer, Betreuung> betreuungen, Join<KindContainer, Kind> kinder, Join<Betreuung, InstitutionStammdaten> institutionstammdaten, Join<InstitutionStammdaten, Institution> institution) {
 		Expression<?> expression;
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
 			switch (antragTableFilterDto.getSort().getPredicate()) {
@@ -507,10 +507,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					expression = root.get(Gesuch_.status);
 					break;
 				case "angebote":
-					expression = betreuungen.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp);
+					expression = institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp);
 					break;
 				case "institutionen":
-					expression = betreuungen.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).get(Institution_.name);
+					expression = institution.get(Institution_.name);
 					break;
 				case "verantwortlicher":
 					expression = root.get(Gesuch_.fall).get(Fall_.verantwortlicher);
