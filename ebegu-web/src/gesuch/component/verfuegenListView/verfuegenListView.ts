@@ -269,10 +269,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return false;
     }
 
-    public isFristAbgelaufen(mahnung: TSMahnung): boolean {
-        return mahnung.datumFristablauf.isBefore(DateUtil.today());
-    }
-
     public sendToSteuerverwaltung(): void {
         this.DvDialog.showDialog(bemerkungDialogTempl, BemerkungenDialogController, {
             title: 'SEND_TO_STV_CONFIRMATION',
