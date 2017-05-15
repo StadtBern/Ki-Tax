@@ -1,18 +1,19 @@
 <div class="pendenzenInstitutionListView">
-    <div class="col-md-12">
+    <div class="col-md-12" st-table="displayedCollection" st-set-filter="pendenzInstitutionFilter"
+         st-safe-src="vm.getPendenzenList()"  st-delay="20">
+
         <div class="row">
             <div class="col-md-11">
                 <h3 data-translate="PENDENZEN_LIST"></h3>
             </div>
             <div class="col-md-1 text-right">
-                <h3 ng-bind="vm.getPendenzenList() ? vm.getPendenzenList().length : 0"></h3>
+                <h3 ng-bind="(displayedCollection || [] ).length"></h3>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-set-filter="pendenzInstitutionFilter"  st-safe-src="vm.getPendenzenList()"  st-delay="20"
-                       class="table table-striped fixedtable">
+                <table class="table table-striped fixedtable">
                     <thead>
                     <tr>
                         <th st-sort="betreuungsNummer" class="sortable" data-translate="ID_UPPER"></th>

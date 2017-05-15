@@ -18,7 +18,7 @@ export class PendenzenSteueramtListViewComponentConfig implements IComponentOpti
 
 export class PendenzenSteueramtListViewController {
 
-    totalResultCount: string = '-';
+    totalResultCount: string = '0';
     TSRoleUtil: any;
 
 
@@ -43,7 +43,7 @@ export class PendenzenSteueramtListViewController {
     public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
         this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
         return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
-            this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : undefined;
+            this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : '0';
             return response;
         });
 
