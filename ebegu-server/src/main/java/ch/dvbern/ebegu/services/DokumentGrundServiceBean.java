@@ -19,6 +19,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,6 +50,13 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 	@Override
 	public DokumentGrund saveDokumentGrund(@Nonnull DokumentGrund dokumentGrund) {
 		Objects.requireNonNull(dokumentGrund);
+		if (dokumentGrund.getDokumente() != null) {
+			dokumentGrund.getDokumente().forEach(dokument -> {
+				if (dokument.getTimestampUpload() == null) {
+					dokument.setTimestampUpload(LocalDateTime.now());
+				}
+			});
+		}
 		final DokumentGrund mergedDokumentGrund = persistence.merge(dokumentGrund);
 		wizardStepService.updateSteps(mergedDokumentGrund.getGesuch().getId(), null, null, WizardStepName.DOKUMENTE);
 		return mergedDokumentGrund;

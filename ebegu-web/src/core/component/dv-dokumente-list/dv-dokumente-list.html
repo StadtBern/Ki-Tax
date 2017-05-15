@@ -89,7 +89,7 @@
                         <tr ng-repeat="dokument in table2">
                             <td ng-bind="dokument.filename"
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
-                            <td ng-bind="dokument.timestampMutiert | amDateFormat : 'DD.MM.YYYY'"
+                            <td ng-bind="dokument.timestampUpload | amDateFormat : 'DD.MM.YYYY'"
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
                             <td ng-bind="dokument.filesize"
                                 ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>

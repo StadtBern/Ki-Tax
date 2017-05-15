@@ -1461,6 +1461,7 @@ export default class EbeguRestUtil {
             dokument.filename = dokumentFromServer.filename;
             dokument.filepfad = dokumentFromServer.filepfad;
             dokument.filesize = dokumentFromServer.filesize;
+            dokument.timestampUpload = DateUtil.localDateTimeToMoment(dokumentFromServer.timestampUpload);
             return dokument;
         }
         return undefined;
@@ -1497,6 +1498,7 @@ export default class EbeguRestUtil {
             dokument.filename = dokumentTS.filename;
             dokument.filepfad = dokumentTS.filepfad;
             dokument.filesize = dokumentTS.filesize;
+            dokument.timestampUpload = DateUtil.momentToLocalDateTime(dokumentTS.timestampUpload);
             return dokument;
         }
         return undefined;
