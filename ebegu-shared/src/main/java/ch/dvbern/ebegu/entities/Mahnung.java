@@ -41,6 +41,15 @@ public class Mahnung extends AbstractEntity {
 	@Column(nullable = true, columnDefinition = "DATETIME(6)")
 	private LocalDateTime timestampAbgeschlossen;
 
+	/**
+	 * This parameter must be set to true when the Mahnung has already been treated,
+	 * so that we can distinguish between a Mahnung with a fristDatum in the past and a
+	 * Mahnung that has really been set as expired.
+	 */
+	@NotNull
+	@Column(nullable = false)
+	private Boolean abgelaufen = false;
+
 
 	public Gesuch getGesuch() {
 		return gesuch;
@@ -80,5 +89,13 @@ public class Mahnung extends AbstractEntity {
 
 	public void setTimestampAbgeschlossen(LocalDateTime timestampBeendet) {
 		this.timestampAbgeschlossen = timestampBeendet;
+	}
+
+	public Boolean getAbgelaufen() {
+		return abgelaufen;
+	}
+
+	public void setAbgelaufen(Boolean abgelaufen) {
+		this.abgelaufen = abgelaufen;
 	}
 }
