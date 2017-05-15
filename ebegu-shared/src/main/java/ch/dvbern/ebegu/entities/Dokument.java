@@ -2,11 +2,9 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
  * Entitaet zum Speichern von Dokumente in der Datenbank.
@@ -21,6 +19,10 @@ public class Dokument extends FileMetadata {
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_dokument_dokumentgrund_id"), nullable = false)
 	private DokumentGrund dokumentGrund;
+
+	@NotNull
+	@Column(nullable = false)
+	private LocalDateTime timestampUpload;
 
 
 	public Dokument() {
@@ -39,18 +41,28 @@ public class Dokument extends FileMetadata {
 		this.dokumentGrund = dokumentGrund;
 	}
 
+	public LocalDateTime getTimestampUpload() {
+		return timestampUpload;
+	}
+
+	public void setTimestampUpload(LocalDateTime timestampUpload) {
+		this.timestampUpload = timestampUpload;
+	}
+
 	@Override
 	public String toString() {
 		return "Dokument{" +
-			"dokumentName='" + getFilename() + '\'' +
-			", dokumentPfad='" + getFilepfad() + '\'' +
-			", dokumentSize='" + getFilesize() + '\'' +
-			'}';
+			"dokumentName='" + getFilename() + "\'" +
+			", dokumentPfad='" + getFilepfad() + "\'" +
+			", dokumentSize='" + getFilesize() + "\'" +
+			"}";
 	}
 
 	public Dokument copyForMutation(Dokument mutation, DokumentGrund dokumentGrundMutation) {
 		super.copyForMutation(mutation);
 		mutation.setDokumentGrund(dokumentGrundMutation);
+		mutation.setTimestampUpload(timestampUpload);
 		return mutation;
 	}
+
 }
