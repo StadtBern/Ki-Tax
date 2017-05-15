@@ -1683,6 +1683,7 @@ export default class EbeguRestUtil {
             restMahnung.datumFristablauf = DateUtil.momentToLocalDate(tsMahnung.datumFristablauf);
             restMahnung.bemerkungen = tsMahnung.bemerkungen;
             restMahnung.timestampAbgeschlossen = DateUtil.momentToLocalDateTime(tsMahnung.timestampAbgeschlossen);
+            restMahnung.abgelaufen = tsMahnung.abgelaufen;
             return restMahnung;
         }
         return undefined;
@@ -1709,6 +1710,7 @@ export default class EbeguRestUtil {
             tsMahnung.datumFristablauf = DateUtil.localDateToMoment(mahnungFromServer.datumFristablauf);
             tsMahnung.bemerkungen = mahnungFromServer.bemerkungen;
             tsMahnung.timestampAbgeschlossen = DateUtil.localDateTimeToMoment(mahnungFromServer.timestampAbgeschlossen);
+            tsMahnung.abgelaufen = mahnungFromServer.abgelaufen;
             return tsMahnung;
         }
         return undefined;

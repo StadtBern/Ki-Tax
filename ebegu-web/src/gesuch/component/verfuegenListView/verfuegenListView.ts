@@ -239,10 +239,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return false;
     }
 
-    public isFristAbgelaufen(mahnung: TSMahnung): boolean {
-        return mahnung.datumFristablauf.isBefore(DateUtil.today());
-    }
-
     public showErsteMahnungErstellen(): boolean {
         // Nur wenn keine offenen Mahnungen vorhanden!
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))

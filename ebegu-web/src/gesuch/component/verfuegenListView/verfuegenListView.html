@@ -100,9 +100,9 @@
                                   data-translate-value-date="{{mahn.timestampErstellt | amDateFormat : 'DD.MM.YYYY'}}"
                                   data-translate-value-fristablauf="{{mahn.datumFristablauf | amDateFormat : 'DD.MM.YYYY'}}"></span>
                             <span ng-if="mahn.timestampAbgeschlossen" data-translate="MAHNUNG_ABGESCHLOSSEN"></span>
-                            <span ng-if="!mahn.timestampAbgeschlossen && !vm.isFristAbgelaufen(mahn)"
+                            <span ng-if="!mahn.timestampAbgeschlossen && !mahn.abgelaufen"
                                   data-translate="MAHNUNG_OFFEN"></span>
-                            <span ng-if="!mahn.timestampAbgeschlossen && vm.isFristAbgelaufen(mahn)"
+                            <span ng-if="!mahn.timestampAbgeschlossen && mahn.abgelaufen"
                                   data-translate="MAHNUNG_NICHT_EINGETRETEN"></span>
                         </button>
                     </div>
