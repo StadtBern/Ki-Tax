@@ -2182,6 +2182,7 @@ public class JaxBConverter {
 		mahnung.setDatumFristablauf(jaxMahnung.getDatumFristablauf());
 		mahnung.setBemerkungen(jaxMahnung.getBemerkungen());
 		mahnung.setTimestampAbgeschlossen(jaxMahnung.getTimestampAbgeschlossen());
+		mahnung.setAbgelaufen(jaxMahnung.getAbgelaufen());
 		return mahnung;
 	}
 
@@ -2194,6 +2195,7 @@ public class JaxBConverter {
 		jaxMahnung.setDatumFristablauf(persistedMahnung.getDatumFristablauf());
 		jaxMahnung.setBemerkungen(persistedMahnung.getBemerkungen());
 		jaxMahnung.setTimestampAbgeschlossen(persistedMahnung.getTimestampAbgeschlossen());
+		jaxMahnung.setAbgelaufen(persistedMahnung.getAbgelaufen());
 		return jaxMahnung;
 	}
 
