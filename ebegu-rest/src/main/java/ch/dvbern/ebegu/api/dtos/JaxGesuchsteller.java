@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.util.Constants;
 
 import javax.validation.constraints.NotNull;
@@ -7,6 +8,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalDate;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -32,6 +35,9 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 	private String telefonAusland;
 
 	private String ewkPersonId;
+
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate ewkAbfrageDatum;
 
 
 	private boolean diplomatenstatus;
@@ -75,6 +81,14 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	public void setEwkPersonId(final String ewkPersonId) {
 		this.ewkPersonId = ewkPersonId;
+	}
+
+	public LocalDate getEwkAbfrageDatum() {
+		return ewkAbfrageDatum;
+	}
+
+	public void setEwkAbfrageDatum(LocalDate ewkAbfrageDatum) {
+		this.ewkAbfrageDatum = ewkAbfrageDatum;
 	}
 
 	public boolean isDiplomatenstatus() {

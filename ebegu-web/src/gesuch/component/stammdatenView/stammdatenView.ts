@@ -24,6 +24,7 @@ import IPromise = angular.IPromise;
 import IScope = angular.IScope;
 import ITranslateService = angular.translate.ITranslateService;
 import IRootScopeService = angular.IRootScopeService;
+import DateUtil from '../../../utils/DateUtil';
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -76,6 +77,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         this.$rootScope.$on(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], (event: any, gsNummer: number, ewkId: string) => {
             if (gsNummer === this.gesuchModelManager.gesuchstellerNumber) {
                 this.model.gesuchstellerJA.ewkPersonId = ewkId;
+                this.model.gesuchstellerJA.ewkAbfrageDatum = DateUtil.today();
             }
         });
     }
