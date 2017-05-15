@@ -1,4 +1,5 @@
 import TSFile from './TSFile';
+import * as moment from 'moment';
 
 export default class TSDokument extends TSFile {
 
