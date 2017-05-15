@@ -144,17 +144,18 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	public void fristAblaufTimer() {
 		// Es muessen alle ueberprueft werden, die noch aktiv sind und deren Ablaufdatum < NOW liegt
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);
 		Root<Mahnung> root = query.from(Mahnung.class);
 		query.distinct(true);
 
 		Predicate predicateAktiv = cb.isNull(root.get(Mahnung_.timestampAbgeschlossen));
+		Predicate predicateNochNichtAbgelaufenMarkiert = cb.isFalse(root.get(Mahnung_.abgelaufen));
 		Predicate predicateAbgelaufen = cb.lessThan(root.get(Mahnung_.datumFristablauf), LocalDate.now());
-		query.where(predicateAktiv, predicateAbgelaufen);
+		query.where(predicateAktiv, predicateNochNichtAbgelaufenMarkiert, predicateAbgelaufen);
 
-		query.select(root.get(Mahnung_.gesuch));
-		List<Gesuch> gesucheMitAbgelaufenenMahnungen = persistence.getCriteriaResults(query);
-		for (Gesuch gesuch : gesucheMitAbgelaufenenMahnungen) {
+		List<Mahnung> gesucheMitAbgelaufenenMahnungen = persistence.getCriteriaResults(query);
+		for (Mahnung mahnung : gesucheMitAbgelaufenenMahnungen) {
+			final Gesuch gesuch = mahnung.getGesuch();
 			if (AntragStatus.ERSTE_MAHNUNG.equals(gesuch.getStatus()) || AntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN.equals(gesuch.getStatus())) {
 				gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN);
 				gesuchService.updateGesuch(gesuch, true);
@@ -162,6 +163,8 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 				gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
 				gesuchService.updateGesuch(gesuch, true);
 			}
+			mahnung.setAbgelaufen(true);
+			persistence.merge(mahnung);
 		}
 	}
 

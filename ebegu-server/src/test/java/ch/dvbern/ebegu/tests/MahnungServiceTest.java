@@ -16,6 +16,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -141,15 +142,68 @@ public class MahnungServiceTest extends AbstractEbeguLoginTest {
 		persistence.merge(gesuchMitMahnung);
 		mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuchMitMahnung, LocalDate.now().plusWeeks(1), 3));
 
-		Gesuch gesuchMitAbgelaufenerMahnung = TestDataUtil.createAndPersistGesuch(persistence);
-		gesuchMitAbgelaufenerMahnung.setStatus(AntragStatus.ERSTE_MAHNUNG);
-		persistence.merge(gesuchMitAbgelaufenerMahnung);
-		mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuchMitAbgelaufenerMahnung, LocalDate.now().minusDays(1), 3));
+		Gesuch gesuchMitAbgelaufenerMahnung = createGesuchWithAbgelaufenerMahnung();
 
 		mahnungService.fristAblaufTimer();
 
 		Assert.assertEquals(AntragStatus.ERSTE_MAHNUNG, persistence.find(Gesuch.class, gesuchMitMahnung.getId()).getStatus());
 		Assert.assertEquals(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN, persistence.find(Gesuch.class, gesuchMitAbgelaufenerMahnung.getId()).getStatus());
+	}
+
+	@Test
+	public void fristAblaufTimerZweiteMahnungInFuture() {
+		TestDataUtil.createAndPersistBenutzer(persistence);
+		Gesuch gesuch = createGesuchWithAbgelaufenerMahnung();
+
+		mahnungService.fristAblaufTimer();
+		gesuch = persistence.find(Gesuch.class, gesuch.getId()); // needed because the method fristAblaufTimer has persisted it
+
+		Assert.assertEquals(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN, persistence.find(Gesuch.class, gesuch.getId()).getStatus());
+
+		gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG);
+		gesuch = persistence.merge(gesuch);
+		Mahnung secondMahnung = mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch,
+			LocalDate.now().plusWeeks(1), 3));
+
+		mahnungService.fristAblaufTimer();
+		gesuch = persistence.find(Gesuch.class, gesuch.getId()); // needed because the method fristAblaufTimer has persisted it
+		secondMahnung = persistence.find(Mahnung.class, secondMahnung.getId());
+
+		Assert.assertEquals(AntragStatus.ZWEITE_MAHNUNG, persistence.find(Gesuch.class, gesuch.getId()).getStatus());
+		Assert.assertFalse(secondMahnung.getAbgelaufen());
+	}
+
+	@Test
+	public void fristAblaufTimerZweiteMahnungInPast() {
+		TestDataUtil.createAndPersistBenutzer(persistence);
+		Gesuch gesuch = createGesuchWithAbgelaufenerMahnung();
+
+		mahnungService.fristAblaufTimer();
+		gesuch = persistence.find(Gesuch.class, gesuch.getId()); // needed because the method fristAblaufTimer has persisted it
+
+		Assert.assertEquals(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN, persistence.find(Gesuch.class, gesuch.getId()).getStatus());
+
+		gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG);
+		gesuch = persistence.merge(gesuch);
+		Mahnung secondMahnung = mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch,
+			LocalDate.now().minusDays(1), 3));
+
+		mahnungService.fristAblaufTimer();
+		gesuch = persistence.find(Gesuch.class, gesuch.getId()); // needed because the method fristAblaufTimer has persisted it
+		secondMahnung = persistence.find(Mahnung.class, secondMahnung.getId());
+
+		Assert.assertEquals(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN, persistence.find(Gesuch.class, gesuch.getId()).getStatus());
+		Assert.assertTrue(secondMahnung.getAbgelaufen());
+	}
+
+	@Nonnull
+	private Gesuch createGesuchWithAbgelaufenerMahnung() {
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG);
+		gesuch = persistence.merge(gesuch);
+		final Mahnung mahnung = mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ERSTE_MAHNUNG, gesuch,
+			LocalDate.now().minusDays(1), 3));
+		return mahnung.getGesuch();
 	}
 }
 
