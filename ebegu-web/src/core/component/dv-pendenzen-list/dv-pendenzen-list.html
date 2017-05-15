@@ -18,7 +18,7 @@
                         data-translate="EINGANG_UPPER"></th>
                     <th st-sort="status" class="sortable row-status" data-translate="STATUS_UPPER"></th>
                     <th st-sort="angebote" class="sortable row-angebot" data-translate="ANGEBOT_UPPER"></th>
-                    <th st-sort="institutionen" class="sortable row-inst" data-translate="INSTITUTION_UPPER"></th>
+                    <th st-sort="institutionen[0]" class="sortable row-inst" data-translate="INSTITUTION_UPPER"></th>
                     <th st-sort="verantwortlicher" class="sortable row-ver"
                         data-translate="VERANTWORTLICH_UPPER"></th>
                 </tr>
@@ -78,7 +78,9 @@
                         </div>
                     </th>
                     <th>
-                        <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher" initial-all="vm.initialAll" show-selection-all="vm.showSelectionAll" on-user-changed="vm.userChanged(user)"></dv-userselect>
+                        <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher"
+                                       initial-all="vm.initialAll" show-selection-all="vm.showSelectionAll"
+                                       on-user-changed="vm.userChanged(user)"></dv-userselect>
                     </th>
                 </tr>
                 </thead>
@@ -88,11 +90,12 @@
                     <td class="ellipsis" ellipsis-tooltip="{{vm.addZerosToFallnummer(row.fallNummer)}}"
                         ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.familienName}}" ng-bind="row.familienName"></td>
-                    <td class="ellipsis" ellipsis-tooltip="{{row.kinder | arrayToString}}" ng-bind="row.kinder | arrayToString"></td>
-                    <td class="ellipsis"  title="{{row.antragTyp | translate}}">
+                    <td class="ellipsis" ellipsis-tooltip="{{row.kinder | arrayToString}}"
+                        ng-bind="row.kinder | arrayToString"></td>
+                    <td class="ellipsis" title="{{row.antragTyp | translate}}">
                         <i class="fa fa-desktop" aria-hidden="true" ng-show="row.hasBesitzer()"></i>
                         <i class="fa fa-file-text-o" aria-hidden="true" ng-show="!row.hasBesitzer()"></i>
-                        <span  ng-bind="row.antragTyp | translate" class="marginLeft5"></span>
+                        <span ng-bind="row.antragTyp | translate" class="marginLeft5"></span>
                     </td>
                     <td class="ellipsis"
                         ellipsis-tooltip="{{row.gesuchsperiodeString}}"
@@ -104,7 +107,8 @@
                     <td class="ellipsis" ellipsis-tooltip="{{vm.translateBetreuungsangebotTypList(row.angebote)}}"
                         ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)">
                     </td>
-                    <td class="ellipsis" ellipsis-tooltip="{{row.institutionen | arrayToString}}" ng-bind="row.institutionen | arrayToString"></td>
+                    <td class="ellipsis" ellipsis-tooltip="{{row.institutionen | arrayToString}}"
+                        ng-bind="row.institutionen | arrayToString"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
                         ng-bind="row.verantwortlicher"></td>
                 </tr>
