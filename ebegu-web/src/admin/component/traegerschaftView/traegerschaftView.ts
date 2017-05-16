@@ -10,6 +10,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import AbstractAdminViewController from '../../abstractAdminView';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
+import EbeguUtil from '../../../utils/EbeguUtil';
 let template = require('./traegerschaftView.html');
 let style = require('./traegerschaftView.less');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
@@ -40,6 +41,16 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
 
     getTraegerschaftenList(): TSTraegerschaft[] {
         return this.traegerschaften;
+    }
+
+    removeTraegerschaft(traegerschaft: any): void {
+        this.traegerschaft = undefined;
+        this.traegerschaftRS.removeTraegerschaft(traegerschaft.id).then((response) => {
+            let index = EbeguUtil.getIndexOfElementwithID(traegerschaft, this.traegerschaften);
+            if (index > -1) {
+                this.traegerschaften.splice(index, 1);
+            }
+        });
     }
 
     createTraegerschaft(): void {

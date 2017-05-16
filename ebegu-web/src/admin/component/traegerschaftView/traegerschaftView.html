@@ -15,12 +15,18 @@
                             <tr>
                                 <th st-sort="name" class="sortable" data-translate="TRAEGERSCHAFT" width="95%"></th>
                                 <th width="5%"></th>
+                                <th width="5%"></th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr ng-repeat="row in displayedCollection" ng-click="vm.setSelectedTraegerschaft(row)">
                                 <td ng-bind="row.name"></td>
                                 <td></td>
+                                <td>
+                                    <dv-loading-button type="button" button-click="vm.removeTraegerschaft(row)" button-class=" btn-sm">
+                                        <i class="fa fa-minus"> </i>
+                                    </dv-loading-button>
+                                </td>
                             </tr>
                             <tr ng-if="!vm.traegerschaften.length && !vm.traegerschaft">
                                 <td colspan="4" class="empty-table" data-translate="TRAEGERSCHAFTEN_NOCH_KEINE"></td>
