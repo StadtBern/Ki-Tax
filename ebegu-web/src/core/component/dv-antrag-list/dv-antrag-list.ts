@@ -53,6 +53,11 @@ export class DVAntragListController {
     selectedAntragStatus: string;
     selectedInstitution: string;
     selectedGesuchsperiode: string;
+    selectedFallNummer: string;
+    selectedFamilienName: string;
+    selectedKinder: string;
+    selectedAenderungsdatum: string;
+    selectedEingangsdatum: string;
 
     tableId: string;
     tableTitle: string;

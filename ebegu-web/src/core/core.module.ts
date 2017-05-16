@@ -81,6 +81,8 @@ import ExportRS from '../gesuch/service/exportRS.rest';
 import {DvCountdownComponentConfig} from './component/dv-countdown/dv-countdown';
 import ZahlungRS from './service/zahlungRS.rest';
 import EwkRS from './service/ewkRS.rest';
+import DVSTPersist from './directive/dv-st-persist/dv-st-persist';
+import {DVDisplayElement} from './directive/dv-display-element/dv-display-element';
 
 let dynamicDependencies = function (): string[] {
 
@@ -175,7 +177,9 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvLoading', DVLoading.factory())
     .directive('dvLoadingButton', DVLoadingButton.factory())
     .directive('dvSubmitevent', DVSubmitevent.factory())
+    .directive('dvStPersist', DVSTPersist.factory())
     .directive('dvShowElement', DVShowElement.factory())
+    .directive('dvDisplayElement', DVDisplayElement.factory())
     .directive('dvEnableElement', DVEnableElement.factory())
     .directive('dvBarcodeListener', DVBarcodeListener.factory())
     .directive('dvTrimEmpty', DVTrimEmpty.factory())
