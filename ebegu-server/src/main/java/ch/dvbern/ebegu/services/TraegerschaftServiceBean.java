@@ -1,10 +1,5 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.api.client.OpenIdmRestService;
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.resource.InstitutionResource;
-import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.entities.Traegerschaft_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -35,8 +30,6 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-	@Inject
-	private InstitutionService institutionService;
 
 	@Nonnull
 	@Override
