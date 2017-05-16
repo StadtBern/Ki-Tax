@@ -74,6 +74,7 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 		// Wenn es genau 1 Resultat gibt, wird dieses direkt gesetzt
 		if (resultat.getAnzahlResultate() == 1) {
 			gesuchsteller.setEwkPersonId(resultat.getPersonen().get(0).getPersonID());
+			gesuchsteller.setEwkAbfrageDatum(LocalDate.now());
 			persistence.merge(gesuchsteller);
 		}
 		return resultat;
@@ -86,6 +87,7 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 		Validate.notNull(ewkPersonID, "ewkPersonID muss gesetzt sein");
 		Validate.isTrue(!gesuchsteller.isNew(), "Gesuchsteller muss zuerst gespeichert werden!");
 		gesuchsteller.setEwkPersonId(ewkPersonID);
+		gesuchsteller.setEwkAbfrageDatum(LocalDate.now());
 		return persistence.merge(gesuchsteller);
 	}
 

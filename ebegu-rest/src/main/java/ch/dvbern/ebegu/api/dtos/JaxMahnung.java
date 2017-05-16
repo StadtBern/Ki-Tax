@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.MahnungTyp;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,6 +38,9 @@ public class JaxMahnung extends JaxAbstractDTO {
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime timestampAbgeschlossen;
+
+	@NotNull
+	private Boolean abgelaufen = false;
 
 
 	@Nullable
@@ -82,5 +86,13 @@ public class JaxMahnung extends JaxAbstractDTO {
 
 	public void setTimestampAbgeschlossen(@Nullable LocalDateTime timestampAbgeschlossen) {
 		this.timestampAbgeschlossen = timestampAbgeschlossen;
+	}
+
+	public Boolean getAbgelaufen() {
+		return abgelaufen;
+	}
+
+	public void setAbgelaufen(Boolean abgelaufen) {
+		this.abgelaufen = abgelaufen;
 	}
 }

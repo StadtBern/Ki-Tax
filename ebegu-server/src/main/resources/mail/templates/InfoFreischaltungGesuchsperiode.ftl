@@ -24,7 +24,7 @@ ${templateConfiguration.mailCss}
         Guten Tag
     </p>
     <p>
-        Gerne möchten wir Sie mit dieser Mail informieren, dass die Gesuchperiode ab ${startDatum}
+        Gerne möchten wir Sie mit dieser Mail informieren, dass die Gesuchperiode ${gesuchsperiode.gesuchsperiodeString} ab sofort
         für die Erfassung Ihrer Daten in Ki-Tax offen steht. Weitere Informationen finden Sie unter:
         <a href="www.bern.ch/kinderbetreuung">www.bern.ch/kinderbetreuung</a> und
         <a href="www.bern.ch/kinderbetreuung/ki-tax">www.bern.ch/kinderbetreuung/ki-tax</a>.<br/>

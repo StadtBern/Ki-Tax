@@ -382,6 +382,7 @@ export default class EbeguRestUtil {
             restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland || undefined;
             restGesuchsteller.diplomatenstatus = gesuchsteller.diplomatenstatus;
             restGesuchsteller.ewkPersonId = gesuchsteller.ewkPersonId;
+            restGesuchsteller.ewkAbfrageDatum = DateUtil.momentToLocalDate(gesuchsteller.ewkAbfrageDatum);
             return restGesuchsteller;
         }
         return undefined;
@@ -396,6 +397,7 @@ export default class EbeguRestUtil {
             gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
             gesuchstellerTS.diplomatenstatus = gesuchstellerFromServer.diplomatenstatus;
             gesuchstellerTS.ewkPersonId = gesuchstellerFromServer.ewkPersonId;
+            gesuchstellerTS.ewkAbfrageDatum = DateUtil.localDateToMoment(gesuchstellerFromServer.ewkAbfrageDatum);
             return gesuchstellerTS;
         }
         return undefined;
@@ -1564,6 +1566,7 @@ export default class EbeguRestUtil {
             dokument.filename = dokumentFromServer.filename;
             dokument.filepfad = dokumentFromServer.filepfad;
             dokument.filesize = dokumentFromServer.filesize;
+            dokument.timestampUpload = DateUtil.localDateTimeToMoment(dokumentFromServer.timestampUpload);
             return dokument;
         }
         return undefined;
@@ -1600,6 +1603,7 @@ export default class EbeguRestUtil {
             dokument.filename = dokumentTS.filename;
             dokument.filepfad = dokumentTS.filepfad;
             dokument.filesize = dokumentTS.filesize;
+            dokument.timestampUpload = DateUtil.momentToLocalDateTime(dokumentTS.timestampUpload);
             return dokument;
         }
         return undefined;
@@ -1800,6 +1804,7 @@ export default class EbeguRestUtil {
             restMahnung.datumFristablauf = DateUtil.momentToLocalDate(tsMahnung.datumFristablauf);
             restMahnung.bemerkungen = tsMahnung.bemerkungen;
             restMahnung.timestampAbgeschlossen = DateUtil.momentToLocalDateTime(tsMahnung.timestampAbgeschlossen);
+            restMahnung.abgelaufen = tsMahnung.abgelaufen;
             return restMahnung;
         }
         return undefined;
@@ -1826,6 +1831,7 @@ export default class EbeguRestUtil {
             tsMahnung.datumFristablauf = DateUtil.localDateToMoment(mahnungFromServer.datumFristablauf);
             tsMahnung.bemerkungen = mahnungFromServer.bemerkungen;
             tsMahnung.timestampAbgeschlossen = DateUtil.localDateTimeToMoment(mahnungFromServer.timestampAbgeschlossen);
+            tsMahnung.abgelaufen = mahnungFromServer.abgelaufen;
             return tsMahnung;
         }
         return undefined;

@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collection;
 import java.util.Iterator;
@@ -560,6 +561,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguLoginTest {
 		dok1.setFilename("name");
 		dok1.setFilepfad("pfad");
 		dok1.setFilesize("23");
+		dok1.setTimestampUpload(LocalDateTime.now());
 		dok1.setDokumentGrund(dokGrund);
 		persistence.persist(dok1);
 	}

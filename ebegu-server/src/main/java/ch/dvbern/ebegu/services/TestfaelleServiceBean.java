@@ -588,6 +588,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		gesuchsteller.setMobile("076 309 30 58");
 		gesuchsteller.setTelefon("031 378 24 24");
 		gesuchsteller.setEwkPersonId("0761234567897");
+		gesuchsteller.setEwkAbfrageDatum(LocalDate.now());
 
 		gesuchsteller2.setGesuchstellerJA(gesuchsteller);
 		gesuchsteller2.addAdresse(createGesuchstellerAdresseHeirat(gesuchsteller2));

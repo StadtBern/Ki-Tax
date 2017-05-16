@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -41,6 +42,9 @@ public class Gesuchsteller extends AbstractPersonEntity {
 
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String ewkPersonId;
+
+	@Column(nullable = true)
+	private LocalDate ewkAbfrageDatum;
 
 	@NotNull
 	private boolean diplomatenstatus;
@@ -90,6 +94,14 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		this.ewkPersonId = ewkPersonId;
 	}
 
+	public LocalDate getEwkAbfrageDatum() {
+		return ewkAbfrageDatum;
+	}
+
+	public void setEwkAbfrageDatum(LocalDate ewkAbfrageDatum) {
+		this.ewkAbfrageDatum = ewkAbfrageDatum;
+	}
+
 	public boolean isDiplomatenstatus() {
 		return diplomatenstatus;
 	}
@@ -105,6 +117,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		mutation.setTelefon(this.getTelefon());
 		mutation.setTelefonAusland(this.getTelefonAusland());
 		mutation.setEwkPersonId(this.getEwkPersonId());
+		mutation.setEwkAbfrageDatum(this.getEwkAbfrageDatum());
 		mutation.setDiplomatenstatus(this.isDiplomatenstatus());
 		return mutation;
 	}

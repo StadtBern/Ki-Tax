@@ -10,7 +10,9 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {
-    TSAntragStatus, isAtLeastFreigegeben, isAnyStatusOfVerfuegt,
+    TSAntragStatus,
+    isAtLeastFreigegeben,
+    isAnyStatusOfVerfuegt,
     isAnyStatusOfVerfuegtButSchulamt
 } from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
@@ -23,7 +25,6 @@ import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
 import MahnungRS from '../../service/mahnungRS.rest';
 import TSGesuch from '../../../models/TSGesuch';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import DateUtil from '../../../utils/DateUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import GesuchRS from '../../service/gesuchRS.rest';
@@ -267,10 +268,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
             }
         }
         return false;
-    }
-
-    public isFristAbgelaufen(mahnung: TSMahnung): boolean {
-        return mahnung.datumFristablauf.isBefore(DateUtil.today());
     }
 
     public sendToSteuerverwaltung(): void {
