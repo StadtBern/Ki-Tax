@@ -21,6 +21,7 @@ import ListResourceRS from '../../../core/service/listResourceRS.rest';
 import TSLand from '../../../models/types/TSLand';
 import AbstractAdminViewController from '../../abstractAdminView';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import IQService = angular.IQService;
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -55,6 +56,7 @@ export class InstitutionViewController extends AbstractAdminViewController {
     betreuungsangebotValues: Array<any>;
     selectedInstitutionStammdatenBetreuungsangebot: any = null;
     laenderList: TSLand[];
+    errormessage: string = undefined;
 
 
     static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService', 'DvDialog', 'ListResourceRS', 'AuthServiceRS'];
@@ -88,6 +90,7 @@ export class InstitutionViewController extends AbstractAdminViewController {
         this.institutionStammdatenRS.getAllInstitutionStammdatenByInstitution(this.selectedInstitution.id).then((loadedInstStammdaten) => {
             this.instStammdatenList = loadedInstStammdaten;
         });
+        this.errormessage = undefined;
     }
 
     isCreateInstitutionsMode(): boolean {
@@ -168,6 +171,7 @@ export class InstitutionViewController extends AbstractAdminViewController {
     private resetInstitutionSelection() {
         this.selectedInstitution = null;
         this.isSelected = false;
+        this.errormessage = undefined;
     }
 
     getSelectedInstitutionStammdatenList(): TSInstitutionStammdaten[] {
@@ -233,6 +237,8 @@ export class InstitutionViewController extends AbstractAdminViewController {
                     this.instStammdatenList.splice(index, 1);
                 }
                 this.isSelectedStammdaten = false;
+            }).catch((ex) => {
+                this.errormessage = 'INSTITUTION_STAMMDATEN_DELETE_FAILED';
             });
         });
 

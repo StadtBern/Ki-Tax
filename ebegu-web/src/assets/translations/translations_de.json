@@ -652,6 +652,7 @@
     "INSTITUTION_SYNCHRONIZE": "Institutionen synchrnoisieren mit OpenIDM",
     "INSTITUTION_CREATE_SYNCHRONIZE": "Institution konnte nicht in OpenIDM erstellt werden",
     "INSTITUTION_UPDATE_SYNCHRONIZE": "Institution konnte nicht mit OpenIDM abgeglichen werden",
+    "INSTITUTION_STAMMDATEN_DELETE_FAILED": "Die Institutionsstammdaten konnten nicht gelöscht werden, da bereits Anträge verknüpft sind",
     "TRAEGERSCHAFTEN_SYNCHRONIZE": "Traegerschaften synchrnoisieren mit OpenIDM",
     "TRAEGERSCHAFT_CREATE_SYNCHRONIZE": "Traegerschaft konnte nicht in OpenIDM erstellt werden",
     "KEIN_ABZUG": "Nein",
