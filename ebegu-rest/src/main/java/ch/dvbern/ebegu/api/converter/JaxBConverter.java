@@ -1917,6 +1917,7 @@ public class JaxBConverter {
 	private JaxDokument dokumentToJax(Dokument dokument) {
 		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument, new JaxDokument());
 		convertFileToJax(dokument, jaxDokument);
+		jaxDokument.setTimestampUpload(dokument.getTimestampUpload());
 		return jaxDokument;
 	}
 
@@ -1973,6 +1974,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(jaxDokument, dokument);
 
 		dokument.setDokumentGrund(dokumentGrund);
+		dokument.setTimestampUpload(jaxDokument.getTimestampUpload());
 		convertFileToEnity(jaxDokument, dokument);
 		return dokument;
 	}

@@ -402,7 +402,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				);
 			}
 			if (predicateObjectDto.getEingangsdatum() != null) {
-				try {LocalDate searchDate = LocalDate.parse(predicateObjectDto.getEingangsdatum(), Constants.DATE_FORMATTER);
+				try {
+					LocalDate searchDate = LocalDate.parse(predicateObjectDto.getEingangsdatum(), Constants.DATE_FORMATTER);
 					predicates.add(cb.equal(root.get(Gesuch_.eingangsdatum), searchDate));
 				} catch (DateTimeParseException e) {
 					// Kein gueltiges Datum. Es kann kein Gesuch geben, welches passt. Wir geben leer zurueck
@@ -448,7 +449,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case SEARCH:
 				query.select(root.get(Gesuch_.id))
 					.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-				constructOrderByClause(antragTableFilterDto, cb, query, root, betreuungen, kinder, institutionstammdaten, institution);
+				constructOrderByClause(antragTableFilterDto, cb, query, root, kinder, institutionstammdaten, institution);
 				break;
 			case COUNT:
 				query.select(cb.countDistinct(root.get(Gesuch_.id)))
@@ -481,7 +482,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 
-	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, SetJoin<KindContainer, Betreuung> betreuungen, Join<KindContainer, Kind> kinder, Join<Betreuung, InstitutionStammdaten> institutionstammdaten, Join<InstitutionStammdaten, Institution> institution) {
+	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, Join<KindContainer, Kind> kinder, Join<Betreuung, InstitutionStammdaten> institutionstammdaten, Join<InstitutionStammdaten, Institution> institution) {
 		Expression<?> expression;
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
 			switch (antragTableFilterDto.getSort().getPredicate()) {
@@ -1326,7 +1327,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Integer anzahlTageBisLoeschungNachWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
 		if (anzahlTageBisLoeschungNachWarnungFreigabe == null || anzahlTageBisLoeschungNachWarnungQuittung == null) {
 			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben",
-					ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE.name() + " or " +
+				ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE.name() + " or " +
 					ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG.name() + " not defined");
 		}
 
@@ -1397,7 +1398,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public void removeOnlineMutation(@Nonnull Gesuch antrag) {
 		logDeletingOfGesuchstellerAntrag(antrag);
 		List<Gesuch> criteriaResults = findExistingOpenMutationen(antrag.getFall(), antrag.getGesuchsperiode());
-		if(criteriaResults.size() > 1) {
+		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Mutation
 			throw new EbeguRuntimeException("removeOnlineMutation", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
@@ -1409,7 +1410,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public void removeOnlineFolgegesuch(@Nonnull Gesuch antrag, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(antrag);
 		List<Gesuch> criteriaResults = findExistingFolgegesuch(antrag.getFall(), gesuchsperiode);
-		if(criteriaResults.size() > 1) {
+		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Folgegesuch for one period
 			throw new EbeguRuntimeException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
@@ -1438,8 +1439,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
-		}
-		else {
+		} else {
 			gesuch.setStatus(AntragStatus.VERFUEGEN);
 		}
 
