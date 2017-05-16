@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.api.client.OpenIdmRestService;
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.resource.InstitutionResource;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.entities.Traegerschaft_;
@@ -74,10 +78,6 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 		Validate.notNull(traegerschaftId);
 		Optional<Traegerschaft> traegerschaftOptional = findTraegerschaft(traegerschaftId);
 		Traegerschaft traegerschaft = traegerschaftOptional.orElseThrow(() -> new EbeguEntityNotFoundException("setInactive", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, traegerschaftId));
-		Collection<Institution> allInstitutionen = institutionService.getAllActiveInstitutionenFromTraegerschaft(traegerschaftId);
-		for (Institution institution : allInstitutionen) {
-			institutionService.setInstitutionInactive(institution.getId());
-		}
 		traegerschaft.setActive(false);
 		persistence.merge(traegerschaft);
 	}
