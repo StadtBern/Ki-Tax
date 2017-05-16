@@ -108,8 +108,8 @@ public class InstitutionStammdatenResource {
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(institutionStammdatenJAXPId.getId());
-		institutionStammdatenService.removeInstitutionStammdaten(converter.toEntityId(institutionStammdatenJAXPId));
-		return Response.ok().build();
+			institutionStammdatenService.removeInstitutionStammdaten(converter.toEntityId(institutionStammdatenJAXPId));
+			return Response.ok().build();
 	}
 
 	/**

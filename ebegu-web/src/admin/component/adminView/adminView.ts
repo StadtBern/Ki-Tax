@@ -4,8 +4,8 @@ import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {IHttpPromiseCallbackArg, IComponentOptions} from 'angular';
 import {ReindexRS} from '../../service/reindexRS.rest';
 import AbstractAdminViewController from '../../abstractAdminView';
-import IScope = angular.IScope;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import IScope = angular.IScope;
 require('./adminView.less');
 let template = require('./adminView.html');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
@@ -44,25 +44,12 @@ export class AdminViewController extends AbstractAdminViewController {
     submit(): void {
         //testen ob aktuelles property schon gespeichert ist
         if (this.applicationProperty.isNew()) {
-            this.applicationPropertyRS.update(this.applicationProperty.name, this.applicationProperty.value)
-                .then((response: any) => {
-                    let index = this.getIndexOfElementwithID(response.data);
-                    let items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
-                    if (items != null && items.length > 0) {
-                        this.applicationProperties[index] = items[0];
-                    }
-                });
+            this.applicationPropertyRS.update(this.applicationProperty.name, this.applicationProperty.value);
 
         } else {
-            this.applicationPropertyRS.create(this.applicationProperty.name, this.applicationProperty.value)
-                .then((response: any) => {
-                    let items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
-                    if (items != null && items.length > 0) {
-                        this.applicationProperties = this.applicationProperties.concat(items[0]);
-                    }
-                });
+            this.applicationPropertyRS.create(this.applicationProperty.name, this.applicationProperty.value);
         }
-        this.resetForm();
+        this.applicationProperty = undefined;
     }
 
     removeRow(row: TSApplicationProperty): void {
@@ -85,6 +72,9 @@ export class AdminViewController extends AbstractAdminViewController {
 
     resetForm(): void {
         this.applicationProperty = undefined;
+        this.applicationPropertyRS.getAllApplicationProperties().then(response => {
+            this.applicationProperties = response;
+        });
     }
 
     private getIndexOfElementwithID(prop: TSApplicationProperty) {
