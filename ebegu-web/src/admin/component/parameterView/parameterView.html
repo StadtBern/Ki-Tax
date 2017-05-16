@@ -93,7 +93,7 @@
                                                         ng-model="vm.gesuchsperiode.status"
                                                         class="form-control"
                                                         ng-options="gpstatus as gpstatus for gpstatus in vm.getTSGesuchsperiodeStatusValues()"
-                                                        ng-required="true">
+                                                        ng-required="true" ng-click="vm.setStatusChanged()">
                                                 </select>
                                             </div>
                                         </div>

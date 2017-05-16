@@ -51,6 +51,7 @@ export class ParameterViewController extends AbstractAdminViewController {
     ebeguVorlageListGesuchsperiode: TSEbeguVorlage[];
     ebeguParameterListJahr: TSEbeguParameter[]; // enthält alle Params für nur 1 Jahr
 
+    statusChanged: boolean = false;
 
     /* @ngInject */
     constructor(ebeguParameterRS: EbeguParameterRS, private gesuchsperiodeRS: GesuchsperiodeRS,
@@ -113,6 +114,21 @@ export class ParameterViewController extends AbstractAdminViewController {
     }
 
     saveGesuchsperiode(): void {
+        // Den Dialog nur aufrufen, wenn der Status geändert wurde (oder die GP neu ist)
+        if (this.gesuchsperiode.isNew() || this.statusChanged === true) {
+            let dialogText = this.getGesuchsperiodeSaveDialogText();
+            this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: 'GESUCHSPERIODE_DIALOG_TITLE',
+                deleteText: dialogText
+            }).then(() => {
+                this.doSave();
+            });
+        } else {
+            this.doSave();
+        }
+    }
+
+    private doSave(): void {
         this.gesuchsperiodeRS.updateGesuchsperiode(this.gesuchsperiode).then((response: TSGesuchsperiode) => {
             this.gesuchsperiode = response;
 
@@ -133,7 +149,27 @@ export class ParameterViewController extends AbstractAdminViewController {
             });
             this.gesuchsperiodeRS.updateActiveGesuchsperiodenList(); //reset gesuchperioden in manager
             this.gesuchsperiodeRS.updateNichtAbgeschlosseneGesuchsperiodenList();
+            this.statusChanged = false;
         });
+    }
+
+    setStatusChanged(): void {
+        this.statusChanged = true;
+    }
+
+    private getGesuchsperiodeSaveDialogText(): string {
+        if (this.gesuchsperiode.status === TSGesuchsperiodeStatus.ENTWURF) {
+            return 'GESUCHSPERIODE_DIALOG_TEXT_ENTWURF';
+        } else if (this.gesuchsperiode.status === TSGesuchsperiodeStatus.AKTIV) {
+            return 'GESUCHSPERIODE_DIALOG_TEXT_AKTIV';
+        } else if (this.gesuchsperiode.status === TSGesuchsperiodeStatus.INAKTIV) {
+            return 'GESUCHSPERIODE_DIALOG_TEXT_INAKTIV';
+        } else if (this.gesuchsperiode.status === TSGesuchsperiodeStatus.GESCHLOSSEN) {
+            return 'GESUCHSPERIODE_DIALOG_TEXT_GESCHLOSSEN';
+        } else {
+            this.$log.warn('Achtung, Status unbekannt: ', this.gesuchsperiode.status);
+            return null;
+        }
     }
 
     private getIndexOfElementwithID(gesuchsperiodeToSearch: TSGesuchsperiode): number {
