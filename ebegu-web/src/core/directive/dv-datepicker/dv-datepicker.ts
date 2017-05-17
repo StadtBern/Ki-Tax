@@ -15,8 +15,8 @@ export class DVDatepicker implements IDirective {
         placeholder: '@',
         ngDisabled: '<',
         dvOnBlur: '&?',
-        dvMinDate: '<', // Kann als String im Format allowedFormats oder als Moment angegeben werden
-        dvMaxDate: '<'  // Kann als String im Format allowedFormats oder als Moment angegeben werden
+        dvMinDate: '<?', // Kann als String im Format allowedFormats oder als Moment angegeben werden
+        dvMaxDate: '<?'  // Kann als String im Format allowedFormats oder als Moment angegeben werden
     };
     controller = DatepickerController;
     controllerAs = 'vm';
