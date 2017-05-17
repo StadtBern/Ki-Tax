@@ -2,19 +2,20 @@ import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuer
 import {DVAntragListController} from '../../component/dv-antrag-list/dv-antrag-list';
 import TSUser from '../../../models/TSUser';
 import UserRS from '../../service/userRS.rest';
+import {InstitutionRS} from '../../service/institutionRS.rest';
 
 /**
  * This directive allows saves a filter and sorting configuration to be saved after leaving the table
  */
 export default class DVSTPersist implements IDirective {
-    static $inject: string[] = ['UserRS'];
+    static $inject: string[] = ['UserRS', 'InstitutionRS'];
 
     restrict = 'A';
     require = ['^stTable', '^dvAntragList'];
     link: IDirectiveLinkFn;
 
     /* @ngInject */
-    constructor(private userRS: UserRS) {
+    constructor(private userRS: UserRS, private institutionRS: InstitutionRS) {
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrlArray: any) => {
             let nameSpace = attrs.dvStPersist;
             let stTableCtrl: any = ctrlArray[0];
@@ -39,19 +40,17 @@ export default class DVSTPersist implements IDirective {
                     antragListController.selectedGesuchsperiode = savedState.search.predicateObject.gesuchsperiodeString;
                     antragListController.selectedAntragStatus = savedState.search.predicateObject.status;
                     antragListController.selectedBetreuungsangebotTyp = savedState.search.predicateObject.angebote;
-                    antragListController.selectedInstitution = savedState.search.predicateObject.institutionen;
+                    this.setInstitutionFromName(antragListController, savedState.search.predicateObject.institutionen);
                     antragListController.selectedFallNummer = savedState.search.predicateObject.fallNummer;
                     antragListController.selectedFamilienName = savedState.search.predicateObject.familienName;
                     antragListController.selectedKinder = savedState.search.predicateObject.kinder;
                     antragListController.selectedAenderungsdatum = savedState.search.predicateObject.aenderungsdatum;
                     antragListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
-                    this.getUserFromName(antragListController, savedState.search.predicateObject.verantwortlicher);
+                    this.setUserFromName(antragListController, savedState.search.predicateObject.verantwortlicher);
                 }
                 let tableState = stTableCtrl.tableState();
 
-                // angular.extend(tableState, savedState);
-                // stTableCtrl.tableState().search = savedState.search;
-                tableState.search = savedState.search;
+                angular.extend(tableState, savedState);
                 stTableCtrl.pipe();
 
             }
@@ -63,8 +62,8 @@ export default class DVSTPersist implements IDirective {
      * while the dropdownlist is constructed using the object TSUser. So in order to be able to select the right user
      * with need the complete object and not only its Fullname.
      */
-    private getUserFromName(antragListController: DVAntragListController, verantwortlicherFullname: string): void {
-        if (verantwortlicherFullname) {
+    private setUserFromName(antragListController: DVAntragListController, verantwortlicherFullname: string): void {
+        if (verantwortlicherFullname && antragListController) {
             this.userRS.getBenutzerJAorAdmin().then((response: any) => {
                 let userList: TSUser[] = angular.copy(response);
                 if (userList) {
@@ -79,9 +78,28 @@ export default class DVSTPersist implements IDirective {
         }
     }
 
+    /**
+     * Extracts the Institution from the institutionList of the controller using the name that had been saved in the
+     * filter. This is needed because the filter saves the name and not the object.
+     */
+    private setInstitutionFromName(antragListController: DVAntragListController, institution: string): void {
+        if (institution && antragListController) {
+            this.institutionRS.getInstitutionenForCurrentBenutzer().then((institutionList: any) => {
+                if (institutionList) {
+                    for (let i = 0; i < institutionList.length; i++) {
+                        if (institutionList[i].name === institution) {
+                            antragListController.selectedInstitution = institutionList[i];
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
     static factory(): IDirectiveFactory {
-        const directive = (userRS: any) => new DVSTPersist(userRS);
-        directive.$inject = ['UserRS'];
+        const directive = (userRS: any, institutionRS: any) => new DVSTPersist(userRS, institutionRS);
+        directive.$inject = ['UserRS', 'InstitutionRS'];
         return directive;
     }
 }

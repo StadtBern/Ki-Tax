@@ -52,7 +52,7 @@ export class DVAntragListController {
     selectedBetreuungsangebotTyp: string;
     selectedAntragTyp: string;
     selectedAntragStatus: string;
-    selectedInstitution: string;
+    selectedInstitution: TSInstitution;
     selectedGesuchsperiode: string;
     selectedFallNummer: string;
     selectedFamilienName: string;
