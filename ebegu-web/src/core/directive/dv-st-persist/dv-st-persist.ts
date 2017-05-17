@@ -1,18 +1,20 @@
 import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuery, IAttributes} from 'angular';
 import {DVAntragListController} from '../../component/dv-antrag-list/dv-antrag-list';
+import TSUser from '../../../models/TSUser';
+import UserRS from '../../service/userRS.rest';
 
 /**
  * This directive allows saves a filter and sorting configuration to be saved after leaving the table
  */
 export default class DVSTPersist implements IDirective {
-    static $inject: string[] = [];
+    static $inject: string[] = ['UserRS'];
 
     restrict = 'A';
     require = ['^stTable', '^dvAntragList'];
     link: IDirectiveLinkFn;
 
     /* @ngInject */
-    constructor() {
+    constructor(private userRS: UserRS) {
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrlArray: any) => {
             let nameSpace = attrs.dvStPersist;
             let stTableCtrl: any = ctrlArray[0];
@@ -43,6 +45,7 @@ export default class DVSTPersist implements IDirective {
                     antragListController.selectedKinder = savedState.search.predicateObject.kinder;
                     antragListController.selectedAenderungsdatum = savedState.search.predicateObject.aenderungsdatum;
                     antragListController.selectedEingangsdatum = savedState.search.predicateObject.eingangsdatum;
+                    this.getUserFromName(antragListController, savedState.search.predicateObject.verantwortlicher);
                 }
                 let tableState = stTableCtrl.tableState();
 
@@ -55,8 +58,30 @@ export default class DVSTPersist implements IDirective {
         };
     }
 
+    /**
+     * Extracts the user out of her name. This method is needed because the filter saves the user using its name
+     * while the dropdownlist is constructed using the object TSUser. So in order to be able to select the right user
+     * with need the complete object and not only its Fullname.
+     */
+    private getUserFromName(antragListController: DVAntragListController, verantwortlicherFullname: string): void {
+        if (verantwortlicherFullname) {
+            this.userRS.getBenutzerJAorAdmin().then((response: any) => {
+                let userList: TSUser[] = angular.copy(response);
+                if (userList) {
+                    for (let i = 0; i < userList.length; i++) {
+                        if (userList[i] && userList[i].getFullName() === verantwortlicherFullname) {
+                            antragListController.selectedVerantwortlicher = userList[i];
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
     static factory(): IDirectiveFactory {
-        const directive = () => new DVSTPersist();
+        const directive = (userRS: any) => new DVSTPersist(userRS);
+        directive.$inject = ['UserRS'];
         return directive;
     }
 }

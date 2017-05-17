@@ -95,8 +95,8 @@
                     <th dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                         <div class="dv-select-style">
-                            <select st-input-event="change" name="angebote" id="angebote" st-search="angebote"
-                                    class="form-control"
+                            <select st-input-event="change" name="angebote" id="angebote"
+                                    st-search="angebote" class="form-control"
                                     ng-options="typ | translate for typ in vm.getBetreuungsangebotTypen() track by typ"
                                     ng-model="vm.selectedBetreuungsangebotTyp">
                                 <option value="">{{"ALLE" | translate}}</option>
@@ -117,7 +117,7 @@
                     <th dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                         <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher" initial-all="true"
-                                       show-selection-all="true"></dv-userselect>
+                                       show-selection-all="true" selected-user="vm.selectedVerantwortlicher"></dv-userselect>
                     </th>
                     <th ng-if="vm.isActionsVisible()"></th>
                 </tr>
@@ -157,7 +157,8 @@
                         dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                     </td>
-                    <td class="ellipsis" ellipsis-tooltip="{{row.institutionen | arrayToString }}" ng-bind="row.institutionen | arrayToString"
+                    <td class="ellipsis" ellipsis-tooltip="{{row.institutionen | arrayToString }}"
+                        ng-bind="row.institutionen | arrayToString"
                         dv-display-element
                         dv-display-allowed-roles="vm.TSRoleUtil.getAllRolesButSteueramt()">
                     </td>

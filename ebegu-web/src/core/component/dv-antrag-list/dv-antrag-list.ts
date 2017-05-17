@@ -17,6 +17,7 @@ import Moment = moment.Moment;
 import IDocumentService = angular.IDocumentService;
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import TSUser from '../../../models/TSUser';
 let template = require('./dv-antrag-list.html');
 require('./dv-antrag-list.less');
 
@@ -58,6 +59,7 @@ export class DVAntragListController {
     selectedKinder: string;
     selectedAenderungsdatum: string;
     selectedEingangsdatum: string;
+    selectedVerantwortlicher: TSUser;
 
     tableId: string;
     tableTitle: string;
