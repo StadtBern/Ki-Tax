@@ -16,7 +16,8 @@
                                                    data-translate="STICHTAG"></label>
                                             <dv-datepicker name="stichtag_gesuch" id="stichtag_gesuch"
                                                            ng-model="vm.statistikParameter.stichtag" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="gesuch_stichtag.stichtag_gesuch.$error"
                                                                class="error"></dv-error-messages>
@@ -62,7 +63,8 @@
                                             <label class="md-no-float" for="von_gesuch" data-translate="VON"></label>
                                             <dv-datepicker name="von_gesuch" id="von_gesuch"
                                                            ng-model="vm.statistikParameter.von" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="gesuch_zeitraum.von_gesuch.$error"
                                                                class="error"></dv-error-messages>
@@ -73,7 +75,8 @@
                                             <label class="md-no-float" for="bis_gesuch" data-translate="BIS"></label>
                                             <dv-datepicker name="bis_gesuch" id="bis_gesuch"
                                                            ng-model="vm.statistikParameter.bis" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="gesuch_zeitraum.bis_gesuch.$error"
                                                                class="error"></dv-error-messages>
@@ -155,7 +158,8 @@
                                             <label class="md-no-float" for="von_kinder" data-translate="VON"></label>
                                             <dv-datepicker name="von_kinder" id="von_kinder"
                                                            ng-model="vm.statistikParameter.von" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="kinder.von_kinder.$error"
                                                                class="error"></dv-error-messages>
@@ -166,7 +170,8 @@
                                             <label class="md-no-float" for="bis_kinder" data-translate="BIS"></label>
                                             <dv-datepicker name="bis_kinder" id="bis_kinder"
                                                            ng-model="vm.statistikParameter.bis" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="kinder.bis_kinder.$error"
                                                                class="error"></dv-error-messages>
@@ -213,7 +218,8 @@
                                                    data-translate="STICHTAG"></label>
                                             <dv-datepicker name="stichtag_gesuchsteller" id="stichtag_gesuchsteller"
                                                            ng-model="vm.statistikParameter.stichtag" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="gesuchsteller.stichtag_gesuchsteller.$error"
                                                                class="error"></dv-error-messages>
@@ -242,7 +248,8 @@
                                             <label class="md-no-float" for="von_kanton" data-translate="VON"></label>
                                             <dv-datepicker name="von_kanton" id="von_kanton"
                                                            ng-model="vm.statistikParameter.von" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="kanton.von_kanton.$error"
                                                                class="error"></dv-error-messages>
@@ -253,7 +260,8 @@
                                             <label class="md-no-float" for="bis_kanton" data-translate="BIS"></label>
                                             <dv-datepicker name="bis_kanton" id="bis_kanton"
                                                            ng-model="vm.statistikParameter.bis" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="kanton.bis_kanton.$error"
                                                                class="error"></dv-error-messages>
@@ -282,7 +290,8 @@
                                             <label class="md-no-float" for="von_mitarbeiterinnen" data-translate="VON"></label>
                                             <dv-datepicker name="von_mitarbeiterinnen" id="von_mitarbeiterinnen"
                                                            ng-model="vm.statistikParameter.von" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="mitarbeiterinnen.von_mitarbeiterinnen.$error"
                                                                class="error"></dv-error-messages>
@@ -293,7 +302,8 @@
                                             <label class="md-no-float" for="bis_mitarbeiterinnen" data-translate="BIS"></label>
                                             <dv-datepicker name="bis_mitarbeiterinnen" id="bis_mitarbeiterinnen"
                                                            ng-model="vm.statistikParameter.bis" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="mitarbeiterinnen.bis_mitarbeiterinnen.$error"
                                                                class="error"></dv-error-messages>
@@ -323,7 +333,8 @@
                                             <label class="md-no-float" for="von_betreuung" data-translate="VON"></label>
                                             <dv-datepicker name="von_betreuung"
                                                            ng-model="vm.statistikParameter.von" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="betreuung.von_betreuung.$error"
                                                                class="error"></dv-error-messages>
@@ -334,7 +345,8 @@
                                             <label class="md-no-float" for="bis_betreuung" data-translate="BIS"></label>
                                             <dv-datepicker name="bis_betreuung" id="bis_betreuung"
                                                            ng-model="vm.statistikParameter.bis" ng-required="true"
-                                                           class="input-element">
+                                                           class="input-element"
+                                                           dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
                                             </dv-datepicker>
                                             <dv-error-messages for="betreuung.bis_betreuung.$error"
                                                                class="error"></dv-error-messages>
