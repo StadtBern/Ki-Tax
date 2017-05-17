@@ -3,19 +3,21 @@ import {DVAntragListController} from '../../component/dv-antrag-list/dv-antrag-l
 import TSUser from '../../../models/TSUser';
 import UserRS from '../../service/userRS.rest';
 import {InstitutionRS} from '../../service/institutionRS.rest';
+import {DVsTPersistService} from '../../service/dVsTPersistService';
 
 /**
- * This directive allows saves a filter and sorting configuration to be saved after leaving the table
+ * This directive allows a filter and sorting configuration to be saved after leaving the table.
+ * The information will be stored in an angular-service, whi
  */
 export default class DVSTPersist implements IDirective {
-    static $inject: string[] = ['UserRS', 'InstitutionRS'];
+    static $inject: string[] = ['UserRS', 'InstitutionRS', 'DVsTPersistService'];
 
     restrict = 'A';
     require = ['^stTable', '^dvAntragList'];
     link: IDirectiveLinkFn;
 
     /* @ngInject */
-    constructor(private userRS: UserRS, private institutionRS: InstitutionRS) {
+    constructor(private userRS: UserRS, private institutionRS: InstitutionRS, private dVsTPersistService: DVsTPersistService) {
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrlArray: any) => {
             let nameSpace = attrs.dvStPersist;
             let stTableCtrl: any = ctrlArray[0];
@@ -26,15 +28,17 @@ export default class DVSTPersist implements IDirective {
                 return stTableCtrl.tableState();
             }, function (newValue, oldValue) {
                 if (newValue !== oldValue) {
-                    sessionStorage.setItem(nameSpace, JSON.stringify(newValue));
-                    // service.save();
+                    // sessionStorage.setItem(nameSpace, JSON.stringify(newValue));
+                    dVsTPersistService.saveData(nameSpace, newValue);
                 }
             }, true);
 
+            // if (sessionStorage.getItem(nameSpace)) {
+            // let savedState = JSON.parse(sessionStorage.getItem(nameSpace));
+
             //fetch the table state when the directive is loaded
-            if (sessionStorage.getItem(nameSpace)) {
-                let savedState = JSON.parse(sessionStorage.getItem(nameSpace));
-                // let savedState = service.load();
+            let savedState = dVsTPersistService.loadData(nameSpace);
+            if (savedState) {
                 if (savedState.search && savedState.search.predicateObject) { //update all objects of the model for the filters
                     antragListController.selectedAntragTyp = savedState.search.predicateObject.antragTyp;
                     antragListController.selectedGesuchsperiode = savedState.search.predicateObject.gesuchsperiodeString;
@@ -98,8 +102,8 @@ export default class DVSTPersist implements IDirective {
     }
 
     static factory(): IDirectiveFactory {
-        const directive = (userRS: any, institutionRS: any) => new DVSTPersist(userRS, institutionRS);
-        directive.$inject = ['UserRS', 'InstitutionRS'];
+        const directive = (userRS: any, institutionRS: any, dVsTPersistService: any) => new DVSTPersist(userRS, institutionRS, dVsTPersistService);
+        directive.$inject = ['UserRS', 'InstitutionRS', 'DVsTPersistService'];
         return directive;
     }
 }

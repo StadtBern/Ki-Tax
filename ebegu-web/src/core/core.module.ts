@@ -83,6 +83,7 @@ import ZahlungRS from './service/zahlungRS.rest';
 import EwkRS from './service/ewkRS.rest';
 import DVSTPersist from './directive/dv-st-persist/dv-st-persist';
 import {DVDisplayElement} from './directive/dv-display-element/dv-display-element';
+import {DVsTPersistService} from './service/dVsTPersistService';
 
 let dynamicDependencies = function (): string[] {
 
@@ -190,6 +191,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('WizardStepManager', WizardStepManager)
     .service('NavigationLogger', NavigationLogger)
     .service('SearchIndexRS', SearchIndexRS)
+    .service('DVsTPersistService', DVsTPersistService)
     .controller('DVElementController', DVRoleElementController)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
