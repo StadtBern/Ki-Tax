@@ -65,7 +65,7 @@ export class GesuchRouteController {
         if (step) {
             let status = step.wizardStepStatus;
             if (status === TSWizardStepStatus.MUTIERT) {
-                return 'fa-pencil green';
+                return 'fa-circle green';
             } else if (status === TSWizardStepStatus.OK) {
                 if (this.getGesuch().isMutation()) {
                     return '';
