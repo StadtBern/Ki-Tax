@@ -47,7 +47,6 @@ export class DvPosteingangController {
 
     private getAmountNewMitteilungen(): void {
         this.mitteilungRS.getAmountMitteilungenForCurrentBenutzer().then((response: number) => {
-            console.log(response);
             if (!response) {
                 response = 0;
             }

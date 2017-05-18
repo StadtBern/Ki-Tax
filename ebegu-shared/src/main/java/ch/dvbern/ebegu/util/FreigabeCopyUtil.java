@@ -174,6 +174,7 @@ public class FreigabeCopyUtil {
 		gesuchstellerGS.setTelefon(gesuchstellerJA.getTelefon());
 		gesuchstellerGS.setTelefonAusland(gesuchstellerJA.getTelefonAusland());
 		gesuchstellerGS.setEwkPersonId(gesuchstellerJA.getEwkPersonId());
+		gesuchstellerGS.setEwkAbfrageDatum(gesuchstellerJA.getEwkAbfrageDatum());
 		gesuchstellerGS.setDiplomatenstatus(gesuchstellerJA.isDiplomatenstatus());
 	}
 

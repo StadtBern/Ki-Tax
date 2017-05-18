@@ -78,8 +78,11 @@
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
+                    </div>
+
+                    <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
                         <!-- Person ID aus EWK -->
-                        <div class="col-sm-12 dv-input-container-small" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorRoles()">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="EWK_PERSON_ID" for="personId">
                                 </label>
@@ -88,6 +91,19 @@
                                 <dv-error-messages for="vm.form.ewkPersonId.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
+                        </div>
+                        <!-- Datum letzte EWK-Abfrage -->
+                        <div class="col-sm-12 dv-input-container-small">
+                        <dv-input-container class="form-group">
+                            <label class="md-no-float" data-translate="EWK_ABFRAGE_DATUM" for="abfrageDatum">
+                            </label>
+                            <dv-datepicker input-id="abfrageDatum" name="abfrageDatum"
+                                           ng-model="vm.getModelJA().ewkAbfrageDatum"
+                                           class="input-element" ng-disabled="true" placeholder="">
+                            </dv-datepicker>
+                            <dv-error-messages for="vm.form.ewkAbfrageDatum.$error"
+                                               class="error"></dv-error-messages>
+                        </dv-input-container>
                         </div>
                     </div>
 

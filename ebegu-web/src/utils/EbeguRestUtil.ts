@@ -382,6 +382,7 @@ export default class EbeguRestUtil {
             restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland || undefined;
             restGesuchsteller.diplomatenstatus = gesuchsteller.diplomatenstatus;
             restGesuchsteller.ewkPersonId = gesuchsteller.ewkPersonId;
+            restGesuchsteller.ewkAbfrageDatum = DateUtil.momentToLocalDate(gesuchsteller.ewkAbfrageDatum);
             return restGesuchsteller;
         }
         return undefined;
@@ -396,6 +397,7 @@ export default class EbeguRestUtil {
             gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
             gesuchstellerTS.diplomatenstatus = gesuchstellerFromServer.diplomatenstatus;
             gesuchstellerTS.ewkPersonId = gesuchstellerFromServer.ewkPersonId;
+            gesuchstellerTS.ewkAbfrageDatum = DateUtil.localDateToMoment(gesuchstellerFromServer.ewkAbfrageDatum);
             return gesuchstellerTS;
         }
         return undefined;

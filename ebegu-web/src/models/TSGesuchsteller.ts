@@ -11,10 +11,11 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _telefonAusland: string;
     private _diplomatenstatus: boolean;
     private _ewkPersonId: string;
+    private _ewkAbfrageDatum: moment.Moment;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 email?: string, mobile?: string, telefon?: string, telefonAusland?: string,
-                diplomatenstatus?: boolean, ewkPersonId?: string) {
+                diplomatenstatus?: boolean, ewkPersonId?: string, ewkAbfrageDatum?: moment.Moment) {
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._mail = email;
         this._mobile = mobile;
@@ -22,6 +23,7 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._telefonAusland = telefonAusland;
         this._diplomatenstatus = diplomatenstatus;
         this._ewkPersonId = ewkPersonId;
+        this._ewkAbfrageDatum = ewkAbfrageDatum;
     }
 
     public get mail(): string {
@@ -72,6 +74,14 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._ewkPersonId = value;
     }
 
+    get ewkAbfrageDatum(): moment.Moment {
+        return this._ewkAbfrageDatum;
+    }
+
+    set ewkAbfrageDatum(value: moment.Moment) {
+        this._ewkAbfrageDatum = value;
+    }
+
     public getPhone(): string {
         if (this.mobile) {
             return this.mobile;
@@ -81,6 +91,5 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
             return '';
         }
     }
-
 }
 
