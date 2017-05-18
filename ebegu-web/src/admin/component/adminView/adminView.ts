@@ -1,7 +1,7 @@
 import TSApplicationProperty from '../../../models/TSApplicationProperty';
 import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {IHttpPromiseCallbackArg, IComponentOptions} from 'angular';
+import {IComponentOptions} from 'angular';
 import {ReindexRS} from '../../service/reindexRS.rest';
 import AbstractAdminViewController from '../../abstractAdminView';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
@@ -50,16 +50,6 @@ export class AdminViewController extends AbstractAdminViewController {
             this.applicationPropertyRS.create(this.applicationProperty.name, this.applicationProperty.value);
         }
         this.applicationProperty = undefined;
-    }
-
-    removeRow(row: TSApplicationProperty): void {
-        this.applicationPropertyRS.remove(row.name).then((reponse: IHttpPromiseCallbackArg<any>) => {
-            let index = this.applicationProperties.indexOf(row);
-            if (index !== -1) {
-                this.applicationProperties.splice(index, 1);
-                this.resetForm();
-            }
-        });
     }
 
     createItem(): void {
