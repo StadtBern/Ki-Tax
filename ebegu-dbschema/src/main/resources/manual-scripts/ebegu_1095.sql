@@ -17,6 +17,6 @@ DELETE FROM kind
 WHERE id = 'ff831551-ff10-4bb1-b55b-4f30c068365c';
 
 UPDATE wizard_step
-SET timestamp_mutiert = now(), user_mutiert = 'gugler17', version = 10,
+SET timestamp_mutiert = now(), user_mutiert = 'gugler17',
   wizard_step_status  = 'OK'
 WHERE id = 'f7ac9098-a27b-42a8-b2fa-930c3efe1a41';
