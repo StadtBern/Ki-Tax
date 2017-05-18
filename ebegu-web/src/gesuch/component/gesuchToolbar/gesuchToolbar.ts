@@ -235,7 +235,7 @@ export class GesuchToolbarController {
                 } else {
                     // Wenn das Gesuch noch neu ist, sind wir noch ungespeichert auf der FallCreation-Seite
                     // In diesem Fall durfen wir das Gesuch nicht zuruecksetzen
-                    if (!this.gesuchModelManager.getGesuch().isNew()) {
+                    if (!this.gesuchModelManager.getGesuch() || !this.gesuchModelManager.getGesuch().isNew()) {
                         // in this case there is no Gesuch for this fall, so we remove all content
                         this.gesuchModelManager.setGesuch(new TSGesuch());
                         this.resetNavigationParameters();
