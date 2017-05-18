@@ -1,10 +1,20 @@
 <div class="dv-pendenzen-list">
-    <div class="row">
+    <div st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getPendenzenList()"
+         st-delay="20">
 
-        <div class="col-md-12 table-responsive">
+        <div class="row">
+            <div class="col-md-11">
+                <h3 data-translate="{{vm.tableTitle}}"></h3>
+            </div>
+            <div class="col-md-1 text-right">
+                <h3 ng-bind="(displayedCollection || [] ).length"></h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 table-responsive">
             <!--Tabelle-->
-            <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getPendenzenList()"
-                   st-delay="20"
+            <table
                    class="table table-striped fixedtable">
                 <thead>
                 <tr>
@@ -18,7 +28,7 @@
                         data-translate="EINGANG_UPPER"></th>
                     <th st-sort="status" class="sortable row-status" data-translate="STATUS_UPPER"></th>
                     <th st-sort="angebote" class="sortable row-angebot" data-translate="ANGEBOT_UPPER"></th>
-                    <th st-sort="institutionen" class="sortable row-inst" data-translate="INSTITUTION_UPPER"></th>
+                    <th st-sort="institutionen[0]" class="sortable row-inst" data-translate="INSTITUTION_UPPER"></th>
                     <th st-sort="verantwortlicher" class="sortable row-ver"
                         data-translate="VERANTWORTLICH_UPPER"></th>
                 </tr>
@@ -118,7 +128,7 @@
                 </tfoot>
             </table>
 
+            </div>
         </div>
     </div>
-
 </div>

@@ -14,6 +14,7 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -36,7 +37,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -372,7 +373,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		PredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
 		if (predicateObjectDto != null) {
 			if (predicateObjectDto.getFallNummer() != null) {
-				predicates.add(cb.equal(fall.get(Fall_.fallNummer), Integer.valueOf(predicateObjectDto.readFallNummerAsNumber())));
+				// Die Fallnummer muss als String mit LIKE verglichen werden: Bei Eingabe von "14" soll der Fall "114" kommen
+				Expression<String> fallNummerAsString = fall.get(Fall_.fallNummer).as(String.class);
+				String fallNummerWithWildcards = "%" + predicateObjectDto.getFallNummer() + "%";
+				predicates.add(cb.like(fallNummerAsString, fallNummerWithWildcards));
 			}
 			if (predicateObjectDto.getFamilienName() != null) {
 				Join<Gesuch, GesuchstellerContainer> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
@@ -398,7 +402,24 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				);
 			}
 			if (predicateObjectDto.getEingangsdatum() != null) {
-				predicates.add(cb.equal(root.get(Gesuch_.eingangsdatum), LocalDate.parse(predicateObjectDto.getEingangsdatum(), DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
+				try {
+					LocalDate searchDate = LocalDate.parse(predicateObjectDto.getEingangsdatum(), Constants.DATE_FORMATTER);
+					predicates.add(cb.equal(root.get(Gesuch_.eingangsdatum), searchDate));
+				} catch (DateTimeParseException e) {
+					// Kein gueltiges Datum. Es kann kein Gesuch geben, welches passt. Wir geben leer zurueck
+					return new ImmutablePair<>(0L, Collections.emptyList());
+				}
+			}
+			if (predicateObjectDto.getAenderungsdatum() != null) {
+				try {
+					// Wir wollen ohne Zeit vergleichen
+					Expression<LocalDate> timestampAsLocalDate = root.get(Gesuch_.timestampMutiert).as(LocalDate.class);
+					LocalDate searchDate = LocalDate.parse(predicateObjectDto.getAenderungsdatum(), Constants.DATE_FORMATTER);
+					predicates.add(cb.equal(timestampAsLocalDate, searchDate));
+				} catch (DateTimeParseException e) {
+					// Kein gueltiges Datum. Es kann kein Gesuch geben, welches passt. Wir geben leer zurueck
+					return new ImmutablePair<>(0L, Collections.emptyList());
+				}
 			}
 			if (predicateObjectDto.getStatus() != null) {
 				// Achtung, hier muss von Client zu Server Status konvertiert werden!
@@ -428,7 +449,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case SEARCH:
 				query.select(root.get(Gesuch_.id))
 					.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-				constructOrderByClause(antragTableFilterDto, cb, query, root, betreuungen, kinder);
+				constructOrderByClause(antragTableFilterDto, cb, query, root, kinder, institutionstammdaten, institution);
 				break;
 			case COUNT:
 				query.select(cb.countDistinct(root.get(Gesuch_.id)))
@@ -461,7 +482,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 
-	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, SetJoin<KindContainer, Betreuung> betreuungen, Join<KindContainer, Kind> kinder) {
+	private void constructOrderByClause(@Nonnull AntragTableFilterDTO antragTableFilterDto, CriteriaBuilder cb, CriteriaQuery query, Root<Gesuch> root, Join<KindContainer, Kind> kinder, Join<Betreuung, InstitutionStammdaten> institutionstammdaten, Join<InstitutionStammdaten, Institution> institution) {
 		Expression<?> expression;
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
 			switch (antragTableFilterDto.getSort().getPredicate()) {
@@ -487,10 +508,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					expression = root.get(Gesuch_.status);
 					break;
 				case "angebote":
-					expression = betreuungen.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp);
+					expression = institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp);
 					break;
 				case "institutionen":
-					expression = betreuungen.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).get(Institution_.name);
+					expression = institution.get(Institution_.name);
 					break;
 				case "verantwortlicher":
 					expression = root.get(Gesuch_.fall).get(Fall_.verantwortlicher);
@@ -1306,7 +1327,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Integer anzahlTageBisLoeschungNachWarnungQuittung = applicationPropertyService.findApplicationPropertyAsInteger(ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG);
 		if (anzahlTageBisLoeschungNachWarnungFreigabe == null || anzahlTageBisLoeschungNachWarnungQuittung == null) {
 			throw new EbeguRuntimeException("warnGesuchNichtFreigegeben",
-					ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE.name() + " or " +
+				ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_FREIGABE.name() + " or " +
 					ApplicationPropertyKey.ANZAHL_TAGE_BIS_LOESCHUNG_NACH_WARNUNG_QUITTUNG.name() + " not defined");
 		}
 
@@ -1377,7 +1398,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public void removeOnlineMutation(@Nonnull Gesuch antrag) {
 		logDeletingOfGesuchstellerAntrag(antrag);
 		List<Gesuch> criteriaResults = findExistingOpenMutationen(antrag.getFall(), antrag.getGesuchsperiode());
-		if(criteriaResults.size() > 1) {
+		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Mutation
 			throw new EbeguRuntimeException("removeOnlineMutation", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
@@ -1389,7 +1410,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public void removeOnlineFolgegesuch(@Nonnull Gesuch antrag, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(antrag);
 		List<Gesuch> criteriaResults = findExistingFolgegesuch(antrag.getFall(), gesuchsperiode);
-		if(criteriaResults.size() > 1) {
+		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Folgegesuch for one period
 			throw new EbeguRuntimeException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
 		}
@@ -1418,8 +1439,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
-		}
-		else {
+		} else {
 			gesuch.setStatus(AntragStatus.VERFUEGEN);
 		}
 

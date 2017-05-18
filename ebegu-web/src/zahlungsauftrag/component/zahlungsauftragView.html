@@ -41,7 +41,8 @@
                                                    class="error"></dv-error-messages>
                             </div>
                         </div>
-                        <div ng-class="{'col-md-4': !vm.testMode,'col-md-3': vm.testMode}" flex layout="row" layout-align="center center">
+                        <div ng-class="{'col-md-4': !vm.testMode,'col-md-3': vm.testMode}" flex layout="row"
+                             layout-align="center center">
                             <button ng-click="vm.createZahlungsauftrag()"
                                     aria-label="{{ZAHLUNG_ERSTELLEN | translate}}">
                                 <span data-translate="ZAHLUNG_ERSTELLEN"></span>
@@ -50,128 +51,129 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-11 ">
-                    <h3 data-translate="ZAHLUNGSAUFTRAEGE"></h3>
-                </div>
-                <div class="col-md-1 text-right">
-                    <h3 ng-bind="vm.getZahlungsauftragen() ? vm.getZahlungsauftragen().length : 0"></h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 table-responsive">
-
-                    <table st-table="displayedCollection" st-safe-src="vm.getZahlungsauftragen()"
-                           st-delay="20" class="table fixedtable table-striped">
-                        <thead>
-                        <tr>
-                            <th st-sort="datumFaellig" class="sortable row-datumFaellig"
-                                data-translate="ZAHLUNG_FAELLIGKEIT_UPPER"></th>
-                            <th st-sort-default="reverse" st-sort="datumGeneriert" class="sortable row-datumGeneriert"
-                                data-translate="ZAHLUNG_GENERIERT_UPPER"></th>
-                            <th data-translate="ZAHLUNG_PAIN001_UPPER" dv-show-element
-                                dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
-                            <th data-translate="ZAHLUNG_DETAILPOSITIONEN_UPPER"></th>
-                            <th st-sort="betragTotalAuftrag" class="sortable row-betragTotalAuftrag"
-                                data-translate="ZAHLUNG_TOTAL_UPPER" id="betragTotalAuftrag"></th>
-                            <th st-sort="beschrieb" class="sortable row-beschrieb"
-                                data-translate="ZAHLUNG_BESCHRIEB_UPPER"></th>
-                            <th st-sort="status" class="sortable row-status" data-translate="ZAHLUNG_STATUS_UPPER"></th>
-                            <th class="row-edit" dv-show-element dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
-                            <th class="row-ausloesen" dv-show-element
-                                dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="row in displayedCollection" ng-click="vm.gotoZahlung(row)"
-                            ng-class="vm.rowClass(row.id)">
-                            <!-- datumFaellig edit-->
-                            <td ng-if="vm.isEditMode(row.id)" ng-click="$event.stopPropagation()">
-                                <div class="form-group">
-                                    <dv-datepicker name="faelligkeitsdatumRow" id="faelligkeitsdatumRow"
-                                                   ng-model="vm.zahlungsauftragToEdit.datumFaellig" ng-required="true"
-                                                   class="input-element">
-                                    </dv-datepicker>
-                                    <div ng-messages="vm.form.faelligkeitsdatumRow.$error" role="alert"
-                                         class="error"></div>
-                                </div>
-                            </td>
-                            <!-- datumFaellig -->
-                            <td ng-if="!vm.isEditMode(row.id)"
-                                ellipsis-tooltip="{{row.datumFaellig | amDateFormat : 'DD.MM.YYYY'}}"
-                                ng-bind="row.datumFaellig | amDateFormat : 'DD.MM.YYYY'"></td>
-                            <!-- datumGeneriert -->
-                            <td ellipsis-tooltip="{{row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'}}"
-                                ng-bind="row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'"></td>
-                            <!-- downloadPain -->
-                            <td class="symbol" ng-click="$event.stopPropagation()" dv-show-element
-                                dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
-                                <dv-loading-button type="button" button-click="vm.downloadPain(row)"
-                                                   button-class="dv-btn-operation">
-                                    <i class="fa fa-lg fa-file-code-o"></i>
-                                </dv-loading-button>
-                            </td>
-                            <!-- downloadAllDetails -->
-                            <td class="symbol" ng-click="$event.stopPropagation()">
-                                <dv-loading-button type="button" button-click="vm.downloadAllDetails(row)"
-                                                   button-class="dv-btn-operation">
-                                    <i class="fa fa-lg fa-file-excel-o"></i>
-                                </dv-loading-button>
-                            </td>
-                            <!-- BetragTotalAuftrag -->
-                            <td class="ellipsis numeric-column" ellipsis-tooltip="{{row.betragTotalAuftrag}}"
-                                ng-bind="row.betragTotalAuftrag | currency : '' : 2"></td>
-                            <!-- beschrieb -->
-                            <td ng-if="!vm.isEditMode(row.id)" class="ellipsis" ellipsis-tooltip="{{row.beschrieb}}"
-                                ng-bind="row.beschrieb"></td>
-                            <!-- beschrieb edit -->
-                            <td ng-if="vm.isEditMode(row.id)" ng-click="$event.stopPropagation()">
-                                <div class="form-group">
-                                    <input id="beschriebRow" type="text" name="beschriebRow"
-                                           ng-model="vm.zahlungsauftragToEdit.beschrieb"
-                                           class="input-element" required>
-                                    <div ng-messages="vm.form.beschriebRow.$error" role="alert" class="error"></div>
-                                </div>
-                            </td>
-                            <!-- status -->
-                            <td class="ellipsis" ellipsis-tooltip="{{row.status}}">
-                                <span ng-bind="row.status | translate"></span>
-                            </td>
-                            <!-- edit / save button -->
-                            <td class="symbol text-center" ng-click="$event.stopPropagation()" dv-show-element
-                                dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
-                                <dv-loading-button ng-if="vm.isEditable(row.status) && !vm.isEditMode(row.id)"
-                                                   type="button" button-click="vm.edit(row)"
-                                                   button-class="dv-btn-operation">
-                                    <i class="fa fa-lg fa-pencil-square-o"></i>
-                                </dv-loading-button>
-                                <dv-loading-button ng-if="vm.isEditMode(row.id) && vm.isEditValid()"
-                                                   type="button" button-click="vm.save(row)"
-                                                   button-class="dv-btn-operation">
-                                    <i class="fa fa-lg fa-floppy-o"></i>
-                                </dv-loading-button>
-                            </td>
-                            <!-- ausloesen button -->
-                            <td class="symbol text-center" ng-click="$event.stopPropagation()" dv-show-element
-                                dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
-                                <dv-loading-button ng-if="vm.isEditable(row.status)"
-                                                   type="button" button-click="vm.ausloesen(row.id)"
-                                                   button-class="dv-btn-operation">
-                                    <i class="fa fa-lg fa-arrow-right" style="color: green"></i>
-                                </dv-loading-button>
-                            </td>
-                        </tr>
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <td colspan="6" class="text-center">
-                                <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
-                            </td>
-                        </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
         </form>
+
+        <div class="row">
+            <div class="col-md-11 ">
+                <h3 data-translate="ZAHLUNGSAUFTRAEGE"></h3>
+            </div>
+            <div class="col-md-1 text-right">
+                <h3 ng-bind="vm.getZahlungsauftragen() ? vm.getZahlungsauftragen().length : 0"></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 table-responsive">
+
+                <table st-table="displayedCollection" st-safe-src="vm.getZahlungsauftragen()"
+                       st-delay="20" class="table fixedtable table-striped">
+                    <thead>
+                    <tr>
+                        <th st-sort="datumFaellig" class="sortable row-datumFaellig"
+                            data-translate="ZAHLUNG_FAELLIGKEIT_UPPER"></th>
+                        <th st-sort-default="reverse" st-sort="datumGeneriert" class="sortable row-datumGeneriert"
+                            data-translate="ZAHLUNG_GENERIERT_UPPER"></th>
+                        <th data-translate="ZAHLUNG_PAIN001_UPPER" dv-show-element
+                            dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
+                        <th data-translate="ZAHLUNG_DETAILPOSITIONEN_UPPER"></th>
+                        <th st-sort="betragTotalAuftrag" class="sortable row-betragTotalAuftrag"
+                            data-translate="ZAHLUNG_TOTAL_UPPER" id="betragTotalAuftrag"></th>
+                        <th st-sort="beschrieb" class="sortable row-beschrieb"
+                            data-translate="ZAHLUNG_BESCHRIEB_UPPER"></th>
+                        <th st-sort="status" class="sortable row-status" data-translate="ZAHLUNG_STATUS_UPPER"></th>
+                        <th class="row-edit" dv-show-element dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
+                        <th class="row-ausloesen" dv-show-element
+                            dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in displayedCollection" ng-click="vm.gotoZahlung(row)"
+                        ng-class="vm.rowClass(row.id)">
+                        <!-- datumFaellig edit-->
+                        <td ng-if="vm.isEditMode(row.id)" ng-click="$event.stopPropagation()">
+                            <div class="form-group">
+                                <dv-datepicker name="faelligkeitsdatumRow" id="faelligkeitsdatumRow"
+                                               ng-model="vm.zahlungsauftragToEdit.datumFaellig" ng-required="true"
+                                               class="input-element">
+                                </dv-datepicker>
+                                <div ng-messages="vm.form.faelligkeitsdatumRow.$error" role="alert"
+                                     class="error"></div>
+                            </div>
+                        </td>
+                        <!-- datumFaellig -->
+                        <td ng-if="!vm.isEditMode(row.id)"
+                            ellipsis-tooltip="{{row.datumFaellig | amDateFormat : 'DD.MM.YYYY'}}"
+                            ng-bind="row.datumFaellig | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <!-- datumGeneriert -->
+                        <td ellipsis-tooltip="{{row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'}}"
+                            ng-bind="row.datumGeneriert | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <!-- downloadPain -->
+                        <td class="symbol" ng-click="$event.stopPropagation()" dv-show-element
+                            dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
+                            <dv-loading-button type="button" button-click="vm.downloadPain(row)"
+                                               button-class="dv-btn-operation">
+                                <i class="fa fa-lg fa-file-code-o"></i>
+                            </dv-loading-button>
+                        </td>
+                        <!-- downloadAllDetails -->
+                        <td class="symbol" ng-click="$event.stopPropagation()">
+                            <dv-loading-button type="button" button-click="vm.downloadAllDetails(row)"
+                                               button-class="dv-btn-operation">
+                                <i class="fa fa-lg fa-file-excel-o"></i>
+                            </dv-loading-button>
+                        </td>
+                        <!-- BetragTotalAuftrag -->
+                        <td class="ellipsis numeric-column" ellipsis-tooltip="{{row.betragTotalAuftrag}}"
+                            ng-bind="row.betragTotalAuftrag | currency : '' : 2"></td>
+                        <!-- beschrieb -->
+                        <td ng-if="!vm.isEditMode(row.id)" class="ellipsis" ellipsis-tooltip="{{row.beschrieb}}"
+                            ng-bind="row.beschrieb"></td>
+                        <!-- beschrieb edit -->
+                        <td ng-if="vm.isEditMode(row.id)" ng-click="$event.stopPropagation()">
+                            <div class="form-group">
+                                <input id="beschriebRow" type="text" name="beschriebRow"
+                                       ng-model="vm.zahlungsauftragToEdit.beschrieb"
+                                       class="input-element" required>
+                                <div ng-messages="vm.form.beschriebRow.$error" role="alert" class="error"></div>
+                            </div>
+                        </td>
+                        <!-- status -->
+                        <td class="ellipsis" ellipsis-tooltip="{{row.status}}">
+                            <span ng-bind="row.status | translate"></span>
+                        </td>
+                        <!-- edit / save button -->
+                        <td class="symbol text-center" ng-click="$event.stopPropagation()" dv-show-element
+                            dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
+                            <dv-loading-button ng-if="vm.isEditable(row.status) && !vm.isEditMode(row.id)"
+                                               type="button" button-click="vm.edit(row)"
+                                               button-class="dv-btn-operation">
+                                <i class="fa fa-lg fa-pencil-square-o"></i>
+                            </dv-loading-button>
+                            <dv-loading-button ng-if="vm.isEditMode(row.id) && vm.isEditValid()"
+                                               type="button" button-click="vm.save(row)"
+                                               button-class="dv-btn-operation">
+                                <i class="fa fa-lg fa-floppy-o"></i>
+                            </dv-loading-button>
+                        </td>
+                        <!-- ausloesen button -->
+                        <td class="symbol text-center" ng-click="$event.stopPropagation()" dv-show-element
+                            dv-show-allowed-roles="['ADMIN', 'SUPER_ADMIN']">
+                            <dv-loading-button ng-if="vm.isEditable(row.status)"
+                                               type="button" button-click="vm.ausloesen(row.id)"
+                                               button-class="dv-btn-operation">
+                                <i class="fa fa-lg fa-arrow-right" style="color: green"></i>
+                            </dv-loading-button>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
     </div>
 </div>

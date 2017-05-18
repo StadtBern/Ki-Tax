@@ -554,6 +554,7 @@ public final class TestDataUtil {
 		dokument.setFilename("testdokument");
 		dokument.setFilepfad("testpfad/");
 		dokument.setFilesize("123456");
+		dokument.setTimestampUpload(LocalDateTime.now());
 		dokumentGrund.getDokumente().add(dokument);
 		return dokumentGrund;
 	}
