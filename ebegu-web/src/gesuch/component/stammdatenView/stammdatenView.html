@@ -26,7 +26,7 @@
                                                     dv-enable-allowed-roles="vm.allowedRoles"
                                                     dv-enable-expression="!vm.isGesuchReadonly()"
                                                     aria-described-by="geschlecht"
-                                                    aria-label="{{ 'GESCHLECHT' |translate}}">
+                                                    aria-label="{{ 'GESCHLECHT' |translate}}" ng-click="vm.checkAllEwkRelevantDataPresent()">
                                 </dv-radio-container>
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.geschlecht"
                                            ja="vm.getModel().gesuchstellerJA.geschlecht"></dv-bisher>
@@ -42,7 +42,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="VORNAME" for="vorname_ID"></label>
                                 <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModelJA().vorname"
-                                       dv-max-length class="form-control input-dv" required>
+                                       dv-max-length class="form-control input-dv" required ng-blur="vm.checkAllEwkRelevantDataPresent()">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.vorname"
                                            ja="vm.getModel().gesuchstellerJA.vorname"></dv-bisher>
                                 <dv-error-messages for="vm.form.vorname.$error"
@@ -53,7 +53,7 @@
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
                                 <input id="name_ID" type="text" name="name" ng-model="vm.getModelJA().nachname"
-                                       dv-max-length class="form-control" required>
+                                       dv-max-length class="form-control" required ng-blur="vm.checkAllEwkRelevantDataPresent()">
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.nachname"
                                            ja="vm.getModel().gesuchstellerJA.nachname"></dv-bisher>
                                 <dv-error-messages for="vm.form.name.$error"
@@ -70,7 +70,7 @@
                                 </label>
                                 <dv-datepicker input-id="geburtsdatum_ID" name="geburtsdatum"
                                                ng-model="vm.getModelJA().geburtsdatum" ng-required="true"
-                                               class="input-element">
+                                               class="input-element" dv-on-blur="vm.checkAllEwkRelevantDataPresent()">
                                 </dv-datepicker>
                                 <dv-bisher gs="vm.getModel().gesuchstellerGS.geburtsdatum"
                                            ja="vm.getModel().gesuchstellerJA.geburtsdatum"></dv-bisher>
@@ -87,7 +87,7 @@
                                 <label class="md-no-float" data-translate="EWK_PERSON_ID" for="personId">
                                 </label>
                                 <input id="personId" type="text" name="personId" ng-model="vm.getModelJA().ewkPersonId"
-                                       dv-max-length class="form-control input-dv">
+                                       dv-max-length class="form-control input-dv" dv-on-blur="vm.checkAllEwkRelevantDataPresent()">
                                 <dv-error-messages for="vm.form.ewkPersonId.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>

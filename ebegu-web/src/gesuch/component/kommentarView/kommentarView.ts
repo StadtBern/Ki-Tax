@@ -203,17 +203,6 @@ export class KommentarViewController {
         return this.gesuchModelManager.getGesuch().status === TSAntragStatus.IN_BEARBEITUNG_STV;
     }
 
-    public showEwkAbfrage(): boolean {
-        if (!this.gesuchModelManager.isGesuchReadonly()
-            && this.gesuchModelManager.getGesuch()
-            && this.gesuchModelManager.getGesuch().gesuchsteller1
-            && !this.gesuchModelManager.getGesuch().gesuchsteller1.isNew()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public freigebenSTV(): void {
         this.dvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'FREIGABE_JA',

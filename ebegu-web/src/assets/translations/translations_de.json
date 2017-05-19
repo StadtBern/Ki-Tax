@@ -982,6 +982,7 @@
     "FREIGABE_JA_BESCHREIBUNG": "Möchten Sie wirklich die Bearbeitung beenden und das Gesuch fürs Jugendamt freigeben?",
     "BEMERKUNGEN_STV_JA": "Bemerkungen vom Jugendamt",
     "EWK_ABFRAGE_STARTEN": "EWK Abfrage starten",
+    "EWK_ABFRAGE_FEHLENDE_ANGABEN": "Bitte erfassen Sie Name, Vorname, Geburtsdatum und Geschlecht des Gesuchsteller, den Sie suchen möchten",
     "EWK_ANZAHL_ERGEBNISSE": " {{resultate}} Ergebnis(se)",
     "EWK_NOCH_KEINE": "Für {{name}} wurden noch keine Abfragen getätigt oder es wurden keine gefunden.",
     "EWK_LINK": "Mit Gesuchsteller/in verknüpfen",
