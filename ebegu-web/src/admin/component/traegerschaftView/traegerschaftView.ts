@@ -6,6 +6,7 @@ import {TraegerschaftRS} from '../../../core/service/traegerschaftRS.rest';
 import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import AbstractAdminViewController from '../../abstractAdminView';
 import IPromise = angular.IPromise;
@@ -15,6 +16,7 @@ let template = require('./traegerschaftView.html');
 let style = require('./traegerschaftView.less');
 let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
 let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
+let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 
 export class TraegerschaftViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -32,9 +34,10 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
     traegerschaften: TSTraegerschaft[];
     traegerschaft: TSTraegerschaft = undefined;
 
-    static $inject = ['TraegerschaftRS', 'ErrorService', 'DvDialog', 'AuthServiceRS'];
+    static $inject = ['TraegerschaftRS', 'ErrorService', 'DvDialog', 'AuthServiceRS', 'EbeguUtil'];
     /* @ngInject */
-    constructor(TraegerschaftRS: TraegerschaftRS, private errorService: ErrorService, private dvDialog: DvDialog, authServiceRS: AuthServiceRS) {
+    constructor(TraegerschaftRS: TraegerschaftRS, private errorService: ErrorService, private dvDialog: DvDialog,
+                authServiceRS: AuthServiceRS, private ebeguUtil: EbeguUtil) {
         super(authServiceRS);
         this.traegerschaftRS = TraegerschaftRS;
     }
@@ -44,13 +47,19 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
     }
 
     removeTraegerschaft(traegerschaft: any): void {
-        this.traegerschaft = undefined;
-        this.traegerschaftRS.removeTraegerschaft(traegerschaft.id).then((response) => {
-            let index = EbeguUtil.getIndexOfElementwithID(traegerschaft, this.traegerschaften);
-            if (index > -1) {
-                this.traegerschaften.splice(index, 1);
-            }
-        });
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            deleteText: '',
+            title: 'LOESCHEN_DIALOG_TITLE'
+        })
+            .then(() => {   //User confirmed removal
+                this.traegerschaft = undefined;
+                this.traegerschaftRS.removeTraegerschaft(traegerschaft.id).then((response) => {
+                    let index = EbeguUtil.getIndexOfElementwithID(traegerschaft, this.traegerschaften);
+                    if (index > -1) {
+                        this.traegerschaften.splice(index, 1);
+                    }
+                });
+            });
     }
 
     createTraegerschaft(): void {
@@ -61,9 +70,18 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
     saveTraegerschaft(form: IFormController): void {
         if (form.$valid) {
             this.errorService.clearAll();
+            let newTraegerschaft: boolean = this.traegerschaft.isNew();
             this.traegerschaftRS.createTraegerschaft(this.traegerschaft).then((traegerschaft: TSTraegerschaft) => {
-                this.traegerschaften.push(traegerschaft);
-                this.traegerschaft = null;
+                if (newTraegerschaft) {
+                    this.traegerschaften.push(traegerschaft);
+                } else {
+                    let index = EbeguUtil.getIndexOfElementwithID(traegerschaft, this.traegerschaften);
+                    if (index > -1) {
+                        this.traegerschaften[index] = traegerschaft;
+                        this.ebeguUtil.handleSmarttablesUpdateBug(this.traegerschaften);
+                    }
+                }
+                this.traegerschaft = undefined;
                 if (!traegerschaft.synchronizedWithOpenIdm) {
                     this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                         title: 'TRAEGERSCHAFT_CREATE_SYNCHRONIZE'
@@ -77,8 +95,8 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
         this.traegerschaft = undefined;
     }
 
-    setSelectedTraegerschaft(selected: any): void {
-        this.traegerschaft = selected;
+    setSelectedTraegerschaft(selected: TSTraegerschaft): void {
+        this.traegerschaft = angular.copy(selected);
     }
 
     private syncWithOpenIdm(): void {

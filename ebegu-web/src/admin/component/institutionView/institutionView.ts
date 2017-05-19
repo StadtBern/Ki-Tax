@@ -82,7 +82,7 @@ export class InstitutionViewController extends AbstractAdminViewController {
         return this.traegerschaften;
     }
 
-    setSelectedInstitution(institution: any): void {
+    setSelectedInstitution(institution: TSInstitution): void {
         this.selectedInstitution = institution;
         this.isSelected = true;
         this.selectedInstitutionStammdaten = null;
