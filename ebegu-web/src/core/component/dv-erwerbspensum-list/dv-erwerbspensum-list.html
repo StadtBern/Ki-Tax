@@ -22,8 +22,8 @@
                     <td ng-if="row.erwerbspensumJA.bezeichnung" ng-bind="row.erwerbspensumJA.bezeichnung"></td>
                     <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td ng-bind="(row.erwerbspensumJA.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY')== '31.12.9999' ? '': row.erwerbspensumJA.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
-                    <td ng-bind="row.erwerbspensumJA.pensum ?  row.erwerbspensumJA.pensum + '%' : ''"></td>
-                    <td ng-bind="row.erwerbspensumJA.zuschlagsprozent ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
+                    <td ng-bind="row.erwerbspensumJA.pensum + '%'"></td>
+                    <td ng-bind="row.erwerbspensumJA.zuschlagZuErwerbspensum ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
                     <td ng-if="vm.isRemoveAllowed(row)">
                         <dv-loading-button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
                                            button-class="dv-btn-operation" title="{{vm.removeButtonTitle}}"
@@ -48,7 +48,7 @@
             <dv-loading-button type="button" button-click="vm.addClicked()" button-class="dv-btn-operation"
                                button-disabled="!vm.addButtonEnabled">
                 <i class="fa fa-lg fa-plus-circle"></i>
-                </i> {{vm.addButtonText}}
+                 {{vm.addButtonText}}
             </dv-loading-button>
         </div>
     </div>
