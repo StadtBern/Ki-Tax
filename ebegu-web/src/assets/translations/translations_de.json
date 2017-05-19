@@ -526,7 +526,7 @@
     "EINGANGSDATUM": "Eingangsdatum",
     "MUTATION_AUSWAHL_TEXT_1": "Um Ihr Gesuch zu bearbeiten, klicken Sie bitte die Punkte an, die Sie ändern möchten.",
     "MUTATION_AUSWAHL_TEXT_2": "Navigieren Sie zum Abschnitt, den Sie bearbeiten möchten. Sie können sich Schritt für Schritt durch Ihr Gesuch klicken, um Ihre Angaben zu prüfen oder anzupassen.",
-    "MUTATION_AUSWAHL_TEXT_3": "Punkte, die Sie ändern, bekommen einen grünen Haken. Alle anderen Punkte bleiben gespeichert. Bitte klicken Sie nach den erfolgten Änderungen auf Freigabe.",
+    "MUTATION_AUSWAHL_TEXT_3": "Punkte, die Sie ändern, werden grün markiert. Alle anderen Punkte bleiben gespeichert. Bitte klicken Sie nach den erfolgten Änderungen auf Freigabe.",
     "PENSUM": "Pensum",
     "LABEL_FREIGEBEN": "Freigeben",
     "LABEL_JA": "Ja",
