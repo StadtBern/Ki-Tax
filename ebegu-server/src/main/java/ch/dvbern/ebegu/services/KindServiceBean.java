@@ -112,51 +112,50 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 	@Nonnull
 	@RolesAllowed(value = {ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR})
 	public List<KindDubletteDTO> getKindDubletten(@Nonnull String gesuchId) {
-		List<KindDubletteDTO> dublettenOfAllKinder = new ArrayList<>();
-		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
-		if (gesuchOptional.isPresent()) {
-			// Nur das zuletzt gueltige Gesuch
-			List<String> idsOfLetztFreigegebeneAntraege = gesuchService.getNeuesteFreigegebeneAntraege(gesuchOptional.get().getGesuchsperiode());
-			Set<KindContainer> kindContainers = gesuchOptional.get().getKindContainers();
-			for (KindContainer kindContainer : kindContainers) {
-				List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer, idsOfLetztFreigegebeneAntraege);
-				dublettenOfAllKinder.addAll(kindDubletten);
+			List<KindDubletteDTO> dublettenOfAllKinder = new ArrayList<>();
+			Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchId);
+			if (gesuchOptional.isPresent()) {
+				// Nur das zuletzt gueltige Gesuch
+				List<String> idsOfLetztFreigegebeneAntraege = gesuchService.getNeuesteFreigegebeneAntraege(gesuchOptional.get().getGesuchsperiode());
+				Set<KindContainer> kindContainers = gesuchOptional.get().getKindContainers();
+				for (KindContainer kindContainer : kindContainers) {
+					List<KindDubletteDTO> kindDubletten = getKindDubletten(kindContainer, idsOfLetztFreigegebeneAntraege);
+					dublettenOfAllKinder.addAll(kindDubletten);
+				}
+			} else {
+				throw new EbeguEntityNotFoundException("getKindDubletten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
 			}
-		}
-		else {
-			throw new EbeguEntityNotFoundException("getKindDubletten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId);
-		}
-		return dublettenOfAllKinder;
+			return dublettenOfAllKinder;
 	}
 
 	@Nonnull
 	private List<KindDubletteDTO> getKindDubletten(@Nonnull KindContainer kindContainer, List<String> idsOfLetztFreigegebeneAntraege) {
-		// Wir suchen nach Name, Vorname und Geburtsdatum
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<KindDubletteDTO> query = cb.createQuery(KindDubletteDTO.class);
+			// Wir suchen nach Name, Vorname und Geburtsdatum
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<KindDubletteDTO> query = cb.createQuery(KindDubletteDTO.class);
 
-		Root<KindContainer> root = query.from(KindContainer.class);
-		Join<KindContainer, Kind> joinKind = root.join(KindContainer_.kindJA, JoinType.LEFT);
-		Join<KindContainer, Gesuch> joinGesuch = root.join(KindContainer_.gesuch, JoinType.LEFT);
+			Root<KindContainer> root = query.from(KindContainer.class);
+			Join<KindContainer, Kind> joinKind = root.join(KindContainer_.kindJA, JoinType.LEFT);
+			Join<KindContainer, Gesuch> joinGesuch = root.join(KindContainer_.gesuch, JoinType.LEFT);
 
-		query.multiselect(
-			joinGesuch.get(Gesuch_.id),
-			joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
-			cb.literal(kindContainer.getKindNummer()),
-			root.get(KindContainer_.kindNummer)
-		).distinct(true);
+			query.multiselect(
+				joinGesuch.get(Gesuch_.id),
+				joinGesuch.get(Gesuch_.fall).get(Fall_.fallNummer),
+				cb.literal(kindContainer.getKindNummer()),
+				root.get(KindContainer_.kindNummer)
+			).distinct(true);
 
-		// Identische Merkmale
-		Predicate predicateName = cb.equal(joinKind.get(Kind_.nachname), kindContainer.getKindJA().getNachname());
-		Predicate predicateVorname = cb.equal(joinKind.get(Kind_.vorname), kindContainer.getKindJA().getVorname());
-		Predicate predicateGeburtsdatum = cb.equal(joinKind.get(Kind_.geburtsdatum), kindContainer.getKindJA().getGeburtsdatum());
-		// Aber nicht vom selben Fall
-		Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
-		// Nur das zuletzt gueltige Gesuch
-		Predicate predicateAktuellesGesuch = joinGesuch.get(Gesuch_.id).in(idsOfLetztFreigegebeneAntraege);
+			// Identische Merkmale
+			Predicate predicateName = cb.equal(joinKind.get(Kind_.nachname), kindContainer.getKindJA().getNachname());
+			Predicate predicateVorname = cb.equal(joinKind.get(Kind_.vorname), kindContainer.getKindJA().getVorname());
+			Predicate predicateGeburtsdatum = cb.equal(joinKind.get(Kind_.geburtsdatum), kindContainer.getKindJA().getGeburtsdatum());
+			// Aber nicht vom selben Fall
+			Predicate predicateOtherFall = cb.notEqual(joinGesuch.get(Gesuch_.fall), kindContainer.getGesuch().getFall());
+			// Nur das zuletzt gueltige Gesuch
+			Predicate predicateAktuellesGesuch = joinGesuch.get(Gesuch_.id).in(idsOfLetztFreigegebeneAntraege);
 
-		query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateAktuellesGesuch);
+			query.where(predicateName, predicateVorname, predicateGeburtsdatum, predicateOtherFall, predicateAktuellesGesuch);
 
-		return persistence.getCriteriaResults(query);
+			return persistence.getCriteriaResults(query);
 	}
 }

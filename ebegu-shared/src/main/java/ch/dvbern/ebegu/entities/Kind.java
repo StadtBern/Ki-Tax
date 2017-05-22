@@ -17,6 +17,12 @@ import java.util.Objects;
  */
 @Audited
 @Entity
+@Table(
+	indexes = {
+//		@Index(columnList = "nachname", name = "IX_kind_nachname"),
+//		@Index(columnList = "vorname", name = "IX_kind_vorname"),
+		@Index(columnList = "geburtsdatum", name = "IX_kind_geburtsdatum")
+	})
 public class Kind extends AbstractPersonEntity {
 
 	private static final long serialVersionUID = -9032257320578372570L;

@@ -246,6 +246,12 @@ public interface GesuchService {
 	List<Gesuch> getNeuesteAntraegeForPeriod(@Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
+	 * Gibt das neueste (zuletzt verfügte) Gesuch für eine Gesuchsperiode und einen Fall zurueck.
+	 */
+	@Nonnull
+	Optional<String> getNeustesFreigegebenesGesuchIdFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall);
+
+	/**
 	 * Schickt eine E-Mail an alle Gesuchsteller, die ihr Gesuch innerhalb einer konfigurierbaren Frist nach
 	 * Erstellung nicht freigegeben haben.
 	 * Gibt die Anzahl Warnungen zurueck.
@@ -299,4 +305,6 @@ public interface GesuchService {
 	 * @return
 	 */
 	Gesuch verfuegenStarten(@Nonnull Gesuch gesuch);
+
+	void postGesuchVerfuegen(@Nonnull Gesuch gesuch);
 }

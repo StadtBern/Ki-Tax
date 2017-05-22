@@ -13,10 +13,7 @@ import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
-import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
-import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.EbeguUtil;
-import ch.dvbern.ebegu.util.FreigabeCopyUtil;
+import ch.dvbern.ebegu.util.*;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -1129,7 +1126,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Nonnull
 	public List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode) {
 		List<String> ids = new ArrayList<>();
-		Collection<Fall> allFaelle = fallService.getAllFalle();
+		Collection<Fall> allFaelle = fallService.getAllFalle(false);
 		for (Fall fall : allFaelle) {
 			Optional<String> idsFuerGesuch = getNeustesVerfuegtesGesuchIdFuerGesuch(gesuchsperiode, fall);
 			idsFuerGesuch.ifPresent(ids::add);
@@ -1167,20 +1164,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@Nonnull
 	public List<String> getNeuesteFreigegebeneAntraege(@Nonnull Gesuchsperiode gesuchsperiode) {
-		List<String> ids = new ArrayList<>();
-		Collection<Fall> allFaelle = fallService.getAllFalle();
-		for (Fall fall : allFaelle) {
-			Optional<String> idsFuerGesuch = getNeustesFreigegebenesGesuchIdFuerGesuch(gesuchsperiode, fall);
-			idsFuerGesuch.ifPresent(ids::add);
-		}
-		return ids;
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<String> query = cb.createQuery(String.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+		Predicate predicateGueltig = cb.equal(root.get(Gesuch_.gueltig), Boolean.TRUE);
+
+		query.where(predicateStatus, predicateGesuchsperiode, predicateGueltig);
+		query.select(root.get(Gesuch_.id));
+		List<String> criteriaResults = persistence.getCriteriaResults(query, 1);
+		return criteriaResults;
 	}
 
 	@Override
 	@Nonnull
 	public List<Gesuch> getNeuesteAntraegeForPeriod(@Nonnull Gesuchsperiode gesuchsperiode) {
 		List<Gesuch> ids = new ArrayList<>();
-		Collection<Fall> allFaelle = fallService.getAllFalle();
+		Collection<Fall> allFaelle = fallService.getAllFalle(true);
 		for (Fall fall : allFaelle) {
 			Optional<Gesuch> idsFuerGesuch = getNeuestesGesuchForFallAndPeriod(fall, gesuchsperiode);
 			idsFuerGesuch.ifPresent(ids::add);
@@ -1208,30 +1211,29 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.of(criteriaResults.get(0));
 	}
 
+	@Override
 	@Nonnull
-	private Optional<String> getNeustesFreigegebenesGesuchIdFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
+	public Optional<String> getNeustesFreigegebenesGesuchIdFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
+        final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+        final CriteriaQuery<String> query = cb.createQuery(String.class);
 
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<Gesuch> root = query.from(Gesuch.class);
+        Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
 
-		Root<Gesuch> root = query.from(Gesuch.class);
-		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
+        Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
+        Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+        Predicate predicateAntragStatus = join.get(AntragStatusHistory_.status).in(AntragStatus.FIRST_STATUS_OF_VERFUEGT);
+        Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
 
-		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
-		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
-		Predicate predicateAntragStatus = join.get(AntragStatusHistory_.status).in(AntragStatus.FOR_KIND_DUBLETTEN);
-		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
-
-		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
-		query.select(root.get(Gesuch_.id));
-		query.orderBy(cb.desc(join.get(AntragStatusHistory_.timestampVon))); // Das mit dem neuesten Verfuegungsdatum
-		List<String> criteriaResults = persistence.getCriteriaResults(query, 1);
-		if (criteriaResults.isEmpty()) {
-			return Optional.empty();
-		}
-		String gesuchId = criteriaResults.get(0);
-
-		return Optional.of(gesuchId);
+        query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
+        query.select(root.get(Gesuch_.id));
+        query.orderBy(cb.desc(join.get(AntragStatusHistory_.timestampVon))); // Das mit dem neuesten Verfuegungsdatum
+        List<String> criteriaResults = persistence.getCriteriaResults(query, 1);
+        if (criteriaResults.isEmpty()) {
+            return Optional.<String>empty();
+        }
+        String gesuchId = criteriaResults.get(0);
+        return Optional.of(gesuchId);
 	}
 
 	@Override
@@ -1427,6 +1429,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 
 		gesuch.setStatus(AntragStatus.KEIN_ANGEBOT);
+		postGesuchVerfuegen(gesuch);
 		wizardStepService.setWizardStepOkay(gesuch.getId(), WizardStepName.VERFUEGEN);
 
 		return updateGesuch(gesuch, true);
@@ -1439,11 +1442,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
+			postGesuchVerfuegen(gesuch);
 		} else {
 			gesuch.setStatus(AntragStatus.VERFUEGEN);
 		}
 
 		return superAdminService.updateGesuch(gesuch, true);
+	}
+
+	@Override
+	public void postGesuchVerfuegen(@Nonnull Gesuch gesuch) {
+		Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = getNeustesVerfuegtesGesuchFuerGesuch(gesuch);
+		if (AntragStatus.FIRST_STATUS_OF_VERFUEGT.contains(gesuch.getStatus()) && gesuch.getDatumVerfuegt() == null) {
+			// Status ist neuerdings verfuegt, aber das Datum noch nicht gesetzt -> dies war der Statuswechsel
+			gesuch.setDatumVerfuegt(LocalDate.now());
+			gesuch.setGueltig(true);
+			if (neustesVerfuegtesGesuchFuerGesuch.isPresent() && !neustesVerfuegtesGesuchFuerGesuch.get().getId().equals(gesuch.getId())) {
+				neustesVerfuegtesGesuchFuerGesuch.get().setGueltig(false);
+				updateGesuch(neustesVerfuegtesGesuchFuerGesuch.get(), false);
+			}
+		}
 	}
 
 	private void logDeletingOfGesuchstellerAntrag(@Nonnull Gesuch antrag) {

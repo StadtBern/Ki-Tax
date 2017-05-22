@@ -47,7 +47,7 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 		Fall fall = TestDataUtil.createDefaultFall();
 		fallService.saveFall(fall);
 
-		Collection<Fall> allFalle = fallService.getAllFalle();
+		Collection<Fall> allFalle = fallService.getAllFalle(false);
 		Assert.assertEquals(1, allFalle.size());
 		Assert.assertEquals(1, allFalle.iterator().next().getFallNummer());
 
@@ -56,7 +56,7 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 		fallService.saveFall(secondFall);
 
 		//Wir erwarten das die Fallnummern 1 und 2 (bzw in PSQL 0 und 1 ) vergeben wurden
-		List<Fall> moreFaelle = new ArrayList<>(fallService.getAllFalle().stream()
+		List<Fall> moreFaelle = new ArrayList<>(fallService.getAllFalle(false).stream()
 			.sorted((o1, o2) -> Long.valueOf(o1.getFallNummer()).compareTo(Long.valueOf(o2.getFallNummer())))
 			.collect(Collectors.toList()));
 		Assert.assertEquals(2, moreFaelle.size());
@@ -90,10 +90,10 @@ public class FallServiceTest extends AbstractEbeguLoginTest {
 		Assert.assertNotNull(fallService);
 		Fall fall = TestDataUtil.createDefaultFall();
 		fallService.saveFall(fall);
-		Assert.assertEquals(1, fallService.getAllFalle().size());
+		Assert.assertEquals(1, fallService.getAllFalle(false).size());
 
 		fallService.removeFall(fall);
-		Assert.assertEquals(0, fallService.getAllFalle().size());
+		Assert.assertEquals(0, fallService.getAllFalle(false).size());
 	}
 
 	@Test

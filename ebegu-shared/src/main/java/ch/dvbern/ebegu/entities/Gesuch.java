@@ -149,6 +149,12 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	@Column(nullable = true)
 	private LocalDate datumGewarntFehlendeQuittung;
 
+	@Column(nullable = true)
+	private LocalDate datumVerfuegt;
+
+	@Column(nullable = false)
+	private boolean gueltig = false;
+
 
 	public Gesuch() {
 	}
@@ -392,6 +398,22 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
 	}
 
+	public LocalDate getDatumVerfuegt() {
+		return datumVerfuegt;
+	}
+
+	public void setDatumVerfuegt(LocalDate datumVerfuegt) {
+		this.datumVerfuegt = datumVerfuegt;
+	}
+
+	public boolean isGueltig() {
+		return gueltig;
+	}
+
+	public void setGueltig(boolean gueltig) {
+		this.gueltig = gueltig;
+	}
+
 	@SuppressWarnings("ObjectEquality")
 	public boolean isSame(Gesuch otherAntrag) {
 		if (this == otherAntrag) {
@@ -562,6 +584,8 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		mutation.setGeprueftSTV(false);
 		mutation.setDatumGewarntNichtFreigegeben(null);
 		mutation.setDatumGewarntFehlendeQuittung(null);
+		mutation.setDatumVerfuegt(null);
+		mutation.setGueltig(false);
 		return mutation;
 	}
 
@@ -595,6 +619,8 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		folgegesuch.setGeprueftSTV(false);
 		folgegesuch.setDatumGewarntNichtFreigegeben(null);
 		folgegesuch.setDatumGewarntFehlendeQuittung(null);
+		folgegesuch.setDatumVerfuegt(null);
+		folgegesuch.setGueltig(false);
 		return folgegesuch;
 	}
 

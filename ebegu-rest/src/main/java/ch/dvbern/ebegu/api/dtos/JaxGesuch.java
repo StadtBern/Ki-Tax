@@ -61,6 +61,12 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate datumGewarntFehlendeQuittung;
 
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumVerfuegt;
+
+	private boolean gueltig;
+
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -187,6 +193,23 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setDatumGewarntFehlendeQuittung(@Nullable LocalDate datumGewarntFehlendeQuittung) {
 		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
+	}
+
+	@Nullable
+	public LocalDate getDatumVerfuegt() {
+		return datumVerfuegt;
+	}
+
+	public void setDatumVerfuegt(@Nullable LocalDate datumVerfuegt) {
+		this.datumVerfuegt = datumVerfuegt;
+	}
+
+	public boolean isGueltig() {
+		return gueltig;
+	}
+
+	public void setGueltig(boolean gueltig) {
+		this.gueltig = gueltig;
 	}
 }
 
