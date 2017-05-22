@@ -16,15 +16,21 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.MessageContext;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Diese Klasse ruft den PersonenSuche Webservice des EWK auf
@@ -150,6 +156,7 @@ public class EWKWebService implements IEWKWebService {
 			logger.info("PersonenSucheService Endpoint: " + endpointURL);
 			logger.info("PersonenSucheService Username: " + username);
 			try {
+				// TODO (team) die WSDL-URL scheint falsch zu sein!
 				final URL url = new URI(endpointURL + "?wsdl").toURL();
 				logger.info("PersonenSucheService URL: " + url);
 				logger.info("PersonenSucheService TargetNameSpace: " + TARGET_NAME_SPACE);
@@ -161,7 +168,19 @@ public class EWKWebService implements IEWKWebService {
 				port = service.getPort(PersonenSucheOB.class);
 				logger.info("PersonenSucheService Port created: " + port);
 				final BindingProvider bp = (BindingProvider) port;
+
 				bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointURL);
+
+				Map<String, List<String>> headers = new HashMap<>();
+//				headers.put("Username", Collections.singletonList(username));
+//				headers.put("Password", Collections.singletonList(password));
+				// Direkt den Authorization-Header erstellen
+				String usernameAndPassword = username + ":" + password;
+				String authorizationHeaderName = "Authorization";
+				String authorizationHeaderValue = "Basic " + DatatypeConverter.printBase64Binary( usernameAndPassword.getBytes() );
+				headers.put(authorizationHeaderName, Collections.singletonList(authorizationHeaderValue));
+				bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
+
 				bp.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
 				bp.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
 				logger.info("PersonenSucheService Context Properties set (Endpoint, Username, Password)");
