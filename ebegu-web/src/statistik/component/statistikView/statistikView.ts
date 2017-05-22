@@ -14,7 +14,6 @@ import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import * as moment from 'moment';
 import Moment = moment.Moment;
-import DateUtil from '../../../utils/DateUtil';
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
