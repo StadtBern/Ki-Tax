@@ -11,7 +11,9 @@
         <div class="col-md-12">
             <form role="form" name="vm.form" class="" novalidate
                   unsaved-warning-form>
-                <fieldset ng-disabled="vm.isGesuchReadonly()">
+                <fieldset dv-enable-element
+                          dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                          dv-enable-expression="!vm.isGesuchReadonly()">
 
                     <!--Abwesenheiten-->
                     <div ng-repeat="abwesenheitInstance in vm.getAbwesenheiten()">
