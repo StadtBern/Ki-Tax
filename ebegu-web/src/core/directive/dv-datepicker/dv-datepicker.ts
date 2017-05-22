@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import Moment = moment.Moment;
 import INgModelController = angular.INgModelController;
 import ILogService = angular.ILogService;
+import DateUtil from '../../../utils/DateUtil';
 let template = require('./dv-datepicker.html');
 
 export class DVDatepicker implements IDirective {
@@ -58,6 +59,11 @@ export class DatepickerController {
     $onInit() {
         if (!this.ngModelCtrl) {
             return;
+        }
+
+        // Wenn kein Minimumdatum gesetzt ist, verwenden wir 01.01.1900 als Minimum
+        if (this.dvMinDate === undefined) {
+            this.dvMinDate = DateUtil.localDateToMoment('1900-01-01');
         }
 
         //wenn kein Placeholder gesetzt wird wird der standardplaceholder verwendet. kann mit placeholder="" ueberscrieben werden
