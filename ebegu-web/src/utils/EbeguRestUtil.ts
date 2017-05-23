@@ -622,7 +622,7 @@ export default class EbeguRestUtil {
         restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
         restGesuch.datumGewarntNichtFreigegeben = DateUtil.momentToLocalDate(gesuch.datumGewarntNichtFreigegeben);
         restGesuch.datumGewarntFehlendeQuittung = DateUtil.momentToLocalDate(gesuch.datumGewarntFehlendeQuittung);
-        restGesuch.datumVerfuegt = DateUtil.momentToLocalDate(gesuch.datumVerfuegt);
+        restGesuch.timestampVerfuegt = DateUtil.momentToLocalDateTime(gesuch.timestampVerfuegt);
         restGesuch.gueltig = gesuch.gueltig;
         return restGesuch;
     }
@@ -645,7 +645,7 @@ export default class EbeguRestUtil {
             gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
             gesuchTS.datumGewarntNichtFreigegeben = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntNichtFreigegeben);
             gesuchTS.datumGewarntFehlendeQuittung = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntFehlendeQuittung);
-            gesuchTS.datumVerfuegt = DateUtil.localDateToMoment(gesuchFromServer.datumVerfuegt);
+            gesuchTS.timestampVerfuegt = DateUtil.localDateTimeToMoment(gesuchFromServer.timestampVerfuegt);
             gesuchTS.gueltig = gesuchFromServer.gueltig;
             return gesuchTS;
         }

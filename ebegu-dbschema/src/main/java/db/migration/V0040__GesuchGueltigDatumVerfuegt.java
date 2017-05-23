@@ -62,7 +62,7 @@ public class V0040__GesuchGueltigDatumVerfuegt implements JdbcMigration {
 					.sorted(Comparator.comparing(AntragStatusHistory::getTimestampVon))
 					.findFirst();
 				if (historyOptional.isPresent()) {
-					gesuch.setDatumVerfuegt(historyOptional.get().getTimestampVon().toLocalDate());
+					gesuch.setTimestampVerfuegt(historyOptional.get().getTimestampVon());
 					gesuch.setGueltig(true);
 					LOGGER.info("Updating Gesuch: " + gesuch.getFall().getFallNummer() + " / " + gesuch.getGesuchsperiode().getGesuchsperiodeString() + " / " + gesuch.getId());
 					gesuchService.updateGesuch(gesuch, false);

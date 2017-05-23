@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-	private LocalDate datumVerfuegt;
+	private LocalDateTime timestampVerfuegt;
 
 	private boolean gueltig;
 
@@ -196,12 +197,12 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	}
 
 	@Nullable
-	public LocalDate getDatumVerfuegt() {
-		return datumVerfuegt;
+	public LocalDateTime getTimestampVerfuegt() {
+		return timestampVerfuegt;
 	}
 
-	public void setDatumVerfuegt(@Nullable LocalDate datumVerfuegt) {
-		this.datumVerfuegt = datumVerfuegt;
+	public void setTimestampVerfuegt(@Nullable LocalDateTime timestampVerfuegt) {
+		this.timestampVerfuegt = timestampVerfuegt;
 	}
 
 	public boolean isGueltig() {

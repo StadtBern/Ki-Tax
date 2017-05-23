@@ -22,6 +22,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -150,7 +151,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 	private LocalDate datumGewarntFehlendeQuittung;
 
 	@Column(nullable = true)
-	private LocalDate datumVerfuegt;
+	private LocalDateTime timestampVerfuegt;
 
 	@Column(nullable = false)
 	private boolean gueltig = false;
@@ -398,12 +399,12 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
 	}
 
-	public LocalDate getDatumVerfuegt() {
-		return datumVerfuegt;
+	public LocalDateTime getTimestampVerfuegt() {
+		return timestampVerfuegt;
 	}
 
-	public void setDatumVerfuegt(LocalDate datumVerfuegt) {
-		this.datumVerfuegt = datumVerfuegt;
+	public void setTimestampVerfuegt(LocalDateTime datumVerfuegt) {
+		this.timestampVerfuegt = datumVerfuegt;
 	}
 
 	public boolean isGueltig() {
@@ -584,7 +585,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		mutation.setGeprueftSTV(false);
 		mutation.setDatumGewarntNichtFreigegeben(null);
 		mutation.setDatumGewarntFehlendeQuittung(null);
-		mutation.setDatumVerfuegt(null);
+		mutation.setTimestampVerfuegt(null);
 		mutation.setGueltig(false);
 		return mutation;
 	}
@@ -619,7 +620,7 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		folgegesuch.setGeprueftSTV(false);
 		folgegesuch.setDatumGewarntNichtFreigegeben(null);
 		folgegesuch.setDatumGewarntFehlendeQuittung(null);
-		folgegesuch.setDatumVerfuegt(null);
+		folgegesuch.setTimestampVerfuegt(null);
 		folgegesuch.setGueltig(false);
 		return folgegesuch;
 	}

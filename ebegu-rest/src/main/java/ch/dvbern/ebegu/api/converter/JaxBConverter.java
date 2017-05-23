@@ -685,7 +685,7 @@ public class JaxBConverter {
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
 		antrag.setDatumGewarntNichtFreigegeben(antragJAXP.getDatumGewarntNichtFreigegeben());
 		antrag.setDatumGewarntFehlendeQuittung(antragJAXP.getDatumGewarntFehlendeQuittung());
-		antrag.setDatumVerfuegt(antragJAXP.getDatumVerfuegt());
+		antrag.setTimestampVerfuegt(antragJAXP.getTimestampVerfuegt());
 		antrag.setGueltig(antragJAXP.isGueltig());
 		return antrag;
 	}
@@ -814,7 +814,7 @@ public class JaxBConverter {
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
 		jaxGesuch.setDatumGewarntNichtFreigegeben(persistedGesuch.getDatumGewarntNichtFreigegeben());
 		jaxGesuch.setDatumGewarntFehlendeQuittung(persistedGesuch.getDatumGewarntFehlendeQuittung());
-		jaxGesuch.setDatumVerfuegt(persistedGesuch.getDatumVerfuegt());
+		jaxGesuch.setTimestampVerfuegt(persistedGesuch.getTimestampVerfuegt());
 		jaxGesuch.setGueltig(persistedGesuch.isGueltig());
 		return jaxGesuch;
 	}

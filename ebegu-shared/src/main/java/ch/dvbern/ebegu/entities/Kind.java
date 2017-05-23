@@ -19,8 +19,6 @@ import java.util.Objects;
 @Entity
 @Table(
 	indexes = {
-//		@Index(columnList = "nachname", name = "IX_kind_nachname"),
-//		@Index(columnList = "vorname", name = "IX_kind_vorname"),
 		@Index(columnList = "geburtsdatum", name = "IX_kind_geburtsdatum")
 	})
 public class Kind extends AbstractPersonEntity {

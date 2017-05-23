@@ -17,6 +17,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -459,6 +460,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 					verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId(), Betreuungsstatus.VERFUEGT);
 				});
 			});
+			gesuchService.postGesuchVerfuegen(gesuch);
 		}
 		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
 	}

@@ -353,6 +353,7 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	private Gesuch createGesuch(boolean verfuegen, LocalDate verfuegungsdatum) {
 		Gesuch gesuch = createGesuch(verfuegen);
+		gesuch.setTimestampVerfuegt(verfuegungsdatum.atStartOfDay());
 		AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChange(gesuch);
 		lastStatusChange.setTimestampVon(verfuegungsdatum.atStartOfDay());
 		persistence.merge(lastStatusChange);
@@ -393,6 +394,10 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 
 	private Gesuch createMutationBetreuungspensum(Gesuch erstgesuch, LocalDate eingangsdatum, int pensum, LocalDate verfuegungsdatum) {
 		Gesuch gesuch = createMutationBetreuungspensum(erstgesuch, eingangsdatum, pensum);
+		gesuchService.postGesuchVerfuegen(gesuch);
+		gesuch = gesuchService.findGesuch(gesuch.getId()).get();
+		gesuch.setTimestampVerfuegt(verfuegungsdatum.atStartOfDay());
+		gesuchService.updateGesuch(gesuch, false);
 		AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChange(gesuch);
 		lastStatusChange.setTimestampVon(verfuegungsdatum.atStartOfDay());
 		persistence.merge(lastStatusChange);
