@@ -512,6 +512,11 @@ export default class GesuchModelManager {
             } else {
                 this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
             }
+            //ewk zuruecksetzen
+            if (this.ewkRS) {
+                this.ewkRS.gesuchsteller1 = undefined;
+                this.ewkRS.gesuchsteller2 = undefined;
+            }
         }
 
         // this creates a list of promises and resolves them all. once all promises are resolved the .then function is triggered

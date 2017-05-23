@@ -11,6 +11,7 @@ import IScope = angular.IScope;
 import IQService = angular.IQService;
 import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
+import EwkRS from '../../../core/service/ewkRS.rest';
 
 describe('stammdatenView', function () {
 
@@ -20,6 +21,7 @@ describe('stammdatenView', function () {
     let $q: IQService;
     let $rootScope:  any;
     let $scope: IScope;
+    let ewkRS: EwkRS;
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
@@ -33,10 +35,11 @@ describe('stammdatenView', function () {
         gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
         $q = $injector.get('$q');
         $rootScope = $injector.get('$rootScope');
+        ewkRS = $injector.get('EwkRS');
         $scope = $rootScope.$new();
         stammdatenViewController = new StammdatenViewController($stateParams, undefined, gesuchModelManager,
             undefined, undefined, wizardStepManager, $injector.get('CONSTANTS'), $q, $scope, $injector.get('$translate'),
-            undefined, $rootScope);
+            undefined, $rootScope, ewkRS);
     }));
 
     describe('disableWohnadresseFor2GS', function () {

@@ -230,10 +230,10 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
     public checkAllEwkRelevantDataPresent(): void {
         if (this.getModelJA()) {
-            if (this.getModelJA().nachname &&
-                this.getModelJA().vorname &&
-                this.getModelJA().geschlecht &&
-                this.getModelJA().geburtsdatum) {
+            // if (this.getModelJA().nachname &&
+            //     this.getModelJA().vorname &&
+            //     this.getModelJA().geschlecht &&
+            //     this.getModelJA().geburtsdatum) {
                 if (this.gesuchModelManager.gesuchstellerNumber === 1) {
                     this.ewkRS.gesuchsteller1 = this.getModel();
                 } else if (this.gesuchModelManager.gesuchstellerNumber === 2) {
@@ -241,7 +241,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
                 } else {
                     console.log('Unbekannte Gesuchstellernummer', this.gesuchstellerNumber);
                 }
-            }
+            // }
         }
     }
 }

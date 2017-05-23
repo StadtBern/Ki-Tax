@@ -30,7 +30,11 @@ export default class EwkRS {
     }
 
     private ewkSearchAvailableGS(gesuchstellerContainer: TSGesuchstellerContainer): boolean {
-        if (gesuchstellerContainer && gesuchstellerContainer.gesuchstellerJA) {
+        if (gesuchstellerContainer && gesuchstellerContainer.gesuchstellerJA
+            && gesuchstellerContainer.gesuchstellerJA.nachname
+            && gesuchstellerContainer.gesuchstellerJA.vorname
+            && gesuchstellerContainer.gesuchstellerJA.geburtsdatum
+            && gesuchstellerContainer.gesuchstellerJA.geschlecht) {
             return true;
         }
         return false;
