@@ -22,9 +22,6 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -39,7 +36,7 @@ import java.util.Map;
 public class EWKWebService implements IEWKWebService {
 
 	private static final String TARGET_NAME_SPACE = "http://bern.ch/E_GOV/E_BEGU/EGOV_002";
-	private static final String SERVICE_NAME = "PersonenSuche_OB";
+	private static final String SERVICE_NAME = "PersonenSuche_OBService";
 	public static final BigInteger MAX_RESULTS_ID = BigInteger.ONE;
 	public static final BigInteger MAX_RESULTS_NAME = BigInteger.TEN;
 	private static final String RETURN_CODE_OKAY = "00";
@@ -156,8 +153,8 @@ public class EWKWebService implements IEWKWebService {
 			logger.info("PersonenSucheService Endpoint: " + endpointURL);
 			logger.info("PersonenSucheService Username: " + username);
 			try {
-				// TODO (team) die WSDL-URL scheint falsch zu sein!
-				final URL url = new URI(endpointURL + "?wsdl").toURL();
+				// WSDL wird mitgeliefert. Die EndpointURL?wsdl funktioniert so nicht.
+				final URL url = EWKWebService.class.getResource("/Stadt_Bern_E-BEGU_Personensuche_v1.2.wsdl");
 				logger.info("PersonenSucheService URL: " + url);
 				logger.info("PersonenSucheService TargetNameSpace: " + TARGET_NAME_SPACE);
 				logger.info("PersonenSucheService ServiceName: " + SERVICE_NAME);
@@ -171,20 +168,19 @@ public class EWKWebService implements IEWKWebService {
 
 				bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointURL);
 
+				// Authorization-Header setzen
 				Map<String, List<String>> headers = new HashMap<>();
-//				headers.put("Username", Collections.singletonList(username));
-//				headers.put("Password", Collections.singletonList(password));
-				// Direkt den Authorization-Header erstellen
 				String usernameAndPassword = username + ":" + password;
 				String authorizationHeaderName = "Authorization";
 				String authorizationHeaderValue = "Basic " + DatatypeConverter.printBase64Binary( usernameAndPassword.getBytes() );
 				headers.put(authorizationHeaderName, Collections.singletonList(authorizationHeaderValue));
 				bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
+				logger.info("PersonenSucheService Authorization Header set");
 
 				bp.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
 				bp.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
 				logger.info("PersonenSucheService Context Properties set (Endpoint, Username, Password)");
-			} catch (MalformedURLException | URISyntaxException | RuntimeException e) {
+			} catch (RuntimeException e) {
 				port = null;
 				logger.error("PersonenSucheOB-Service konnte nicht initialisiert werden: ", e);
 				throw new PersonenSucheServiceException(METHOD_NAME_INIT_PERSONEN_SUCHE, "Could not create service port for endpoint " + endpointURL, e);
