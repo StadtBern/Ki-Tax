@@ -895,7 +895,7 @@
     "FREIGABEQUITTUNG_AUSSTEHEND_TEXT": "Die unterschriebene Freigabequittung schicken uns Sie bitte per Post. Erst nach deren Eingang gilt Ihr Gesuch als eingereicht.",
     "FREIGEBEN": "Freigeben",
     "ERROR_BESTAETIGUNG_REQUIRED": "Bestätigen Sie bitte die Vollständigkeit der Angaben um den Antrag freizugeben",
-    "FREIGABEQUITTUNG_NOT_ALLOWED_TEXT": "Um den Antrag freigeben zu können müssen alle Schritte grün markiert sein und alle Plätze bestätigt sein. Geben Sie dafür bitte alle benötigten Daten ein.",
+    "FREIGABEQUITTUNG_NOT_ALLOWED_TEXT": "Um den Antrag freigeben zu können dürfen keine Schritte mehr rot markiert sein und alle Plätze bestätigt sein. Geben Sie dafür bitte alle benötigten Daten ein.",
     "FREIGABEQUITTUNG_NOT_ALLOWED_BESCHWERDE_TEXT": "Der Antrag ist zurzeit wegen Beschwerde gesperrt. Sie dürfen den Antrag erst freigeben, wenn die Beschwerde abgeschlossen wird.",
     "FREIGABEQUITTUNG_NOT_ALLOWED_GESUCHSPERIODE_TEXT": "Der Antrag kann nicht mehr freigegeben werden, da die Gesuchsperiode geschlossen wurde",
     "JA_KORREKTUR_FACHSTELLE": "Fachstelle {{name}} mit Pensum {{pensum}}, {{von}} – {{bis}}",
