@@ -2,6 +2,7 @@ import {IDirective, IDirectiveFactory} from 'angular';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 import INgModelController = angular.INgModelController;
+import ILogService = angular.ILogService;
 let template = require('./dv-datepicker.html');
 
 export class DVDatepicker implements IDirective {
@@ -13,7 +14,9 @@ export class DVDatepicker implements IDirective {
         ngRequired: '<',
         placeholder: '@',
         ngDisabled: '<',
-        dvOnBlur: '&?'
+        dvOnBlur: '&?',
+        dvMinDate: '<?', // Kann als String im Format allowedFormats oder als Moment angegeben werden
+        dvMaxDate: '<?'  // Kann als String im Format allowedFormats oder als Moment angegeben werden
     };
     controller = DatepickerController;
     controllerAs = 'vm';
@@ -27,17 +30,20 @@ export class DVDatepicker implements IDirective {
     }
 }
 export class DatepickerController {
-    static $inject: string[] = [];
+    static $inject: string[] = ['$log'];
     date: Date;
     ngModelCtrl: INgModelController;
     dateRequired: boolean;
     ngRequired: boolean;
     placeholder: string;
     dvOnBlur: () => void;
+    dvMinDate: any;
+    dvMaxDate: any;
     static allowedFormats: string[] = ['D.M.YYYY', 'DD.MM.YYYY'];
     static defaultFormat: string = 'DD.MM.YYYY';
 
-    constructor() {
+
+    constructor(private $log: ILogService) {
     }
 
     // beispiel wie man auf changes eines attributes von aussen reagieren kann
@@ -76,9 +82,46 @@ export class DatepickerController {
             if (!this.dateRequired && !viewValue) {
                 return true;
             }
-            let value = modelValue || DatepickerController.stringToMoment(viewValue);
-            return moment(value, DatepickerController.allowedFormats, true).isValid();
+            return this.getInputAsMoment(modelValue, viewValue).isValid();
         };
+        // Validator fuer Minimal-Datum
+        this.ngModelCtrl.$validators['dvMinDate'] = (modelValue: any, viewValue: any) => {
+            let result: boolean = true;
+            if (this.dvMinDate && viewValue) {
+                let minDateAsMoment: Moment = moment(this.dvMinDate, DatepickerController.allowedFormats, true);
+                if (minDateAsMoment.isValid()) {
+                    let inputAsMoment: Moment = this.getInputAsMoment(modelValue, viewValue);
+                    if (inputAsMoment && inputAsMoment.isBefore(minDateAsMoment)) {
+                        result = false;
+                    }
+                } else {
+                    this.$log.debug('min date is invalid', this.dvMinDate);
+                }
+            }
+            return result;
+        };
+        // Validator fuer Maximal-Datum
+        this.ngModelCtrl.$validators['dvMaxDate'] = (modelValue: any, viewValue: any) => {
+            let result: boolean = true;
+            if (this.dvMaxDate && viewValue) {
+                let maxDateAsMoment: Moment = moment(this.dvMaxDate, DatepickerController.allowedFormats, true);
+                if (maxDateAsMoment.isValid()) {
+                    let inputAsMoment: Moment = this.getInputAsMoment(modelValue, viewValue);
+                    if (inputAsMoment && inputAsMoment.isAfter(maxDateAsMoment)) {
+                        result = false;
+                    }
+                } else {
+                    this.$log.debug('max date is invalid', this.dvMaxDate);
+                }
+            }
+            return result;
+        };
+    }
+
+    private getInputAsMoment(modelValue: any, viewValue: any): Moment {
+        let value = modelValue || DatepickerController.stringToMoment(viewValue);
+        let inputdate: Moment =  moment(value, DatepickerController.allowedFormats, true);
+        return inputdate;
     }
 
     onBlur() {
@@ -106,6 +149,4 @@ export class DatepickerController {
         }
         return null;
     }
-
-
 }

@@ -12,6 +12,8 @@ import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
+import * as moment from 'moment';
+import Moment = moment.Moment;
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
@@ -30,6 +32,9 @@ export class StatistikViewController {
     TSRoleUtil: any;
     private DATETIME_PARAM_FORMAT: string = 'YYYY-MM-DD HH:mm:ss'; //TODO (team) wieso hier DateTime???
     private DATE_PARAM_FORMAT: string = 'YYYY-MM-DD';
+    // Statistiken sind nur moeglich ab Beginn der fruehesten Periode bis Ende der letzten Periode
+    private maxDate: Moment;
+    private minDate: Moment;
 
     static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportRS', 'DownloadRS'];
 
@@ -40,6 +45,10 @@ export class StatistikViewController {
         this._statistikParameter = new TSStatistikParameter();
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
             this._gesuchsperioden = response;
+            if (this._gesuchsperioden.length > 0) {
+                this.maxDate = this._gesuchsperioden[0].gueltigkeit.gueltigBis;
+                this.minDate = this._gesuchsperioden[this._gesuchsperioden.length - 1].gueltigkeit.gueltigAb;
+            }
         });
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
