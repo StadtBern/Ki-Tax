@@ -8,11 +8,13 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
 import ch.dvbern.ebegu.services.PersonenSucheService;
+import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -21,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -28,6 +31,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
+import java.time.LocalDate;
 import java.util.Optional;
 
 /**
@@ -107,20 +111,29 @@ public class GesuchstellerResource {
 
 	@Nullable
 	@GET
-	@Path("/ewk/{gesuchstellerId}")
+	@Path("/ewk/search/attributes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public EWKResultat suchePerson(
-		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerJAXPId) throws EbeguException {
+	public EWKResultat suchePersonByAttributes(
+            @QueryParam("nachname") String nachname,
+            @QueryParam("vorname") String vorname,
+            @QueryParam("geburtsdatum") String geburtsdatum,
+            @QueryParam("geschlecht") String geschlecht,
+            @Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguException {
+        Validate.notNull(nachname, "name must be set");
+        Validate.notNull(vorname, "vorname must be set");
+        Validate.notNull(geburtsdatum, "geburtsdatum must be set");
+        Validate.notNull(geschlecht, "geschlecht must be set");
+        LocalDate geburtsdatumDate = DateUtil.parseStringToDateOrReturnNow(geburtsdatum);
+        return personenSucheService.suchePerson(nachname, geburtsdatumDate, Geschlecht.valueOf(geschlecht));
+	}
 
-		Validate.notNull(gesuchstellerJAXPId.getId());
-		String gesuchstellerID = converter.toEntityId(gesuchstellerJAXPId);
-		Optional<GesuchstellerContainer> optional = gesuchstellerService.findGesuchsteller(gesuchstellerID);
-
-		if (!optional.isPresent()) {
-			return null;
-		}
-		GesuchstellerContainer gesuchstellerToReturn = optional.get();
-		return personenSucheService.suchePerson(gesuchstellerToReturn.getGesuchstellerJA());
+	@Nullable
+	@GET
+	@Path("/ewk/search/id/{personId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public EWKResultat suchePersonByPersonId(
+		    @Nonnull @NotNull @PathParam("personId") String personId) throws EbeguException {
+		return personenSucheService.suchePerson(personId);
 	}
 
 	@Nullable

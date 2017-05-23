@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>1.1.5</version>
+        <version>1.1.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -46,14 +46,14 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <wsdlDirectory>${basedir}/src/main/wsdl</wsdlDirectory>
+                    <wsdlDirectory>${basedir}/src/main/resources/wsdl</wsdlDirectory>
                     <wsdlFiles>
                         <wsdlFile>Stadt_Bern_E-BEGU_Personensuche_v1.2.wsdl</wsdlFile>
                     </wsdlFiles>
                     <verbose>true</verbose>
                     <sei />
                     <bindingFiles>
-                        <bindingFile>${basedir}/src/main/wsdl/jaxb-bindings.xjb</bindingFile>
+                        <bindingFile>${basedir}/src/main/resources/wsdl/jaxb-bindings.xjb</bindingFile>
                     </bindingFiles>
                 </configuration>
             </plugin>
