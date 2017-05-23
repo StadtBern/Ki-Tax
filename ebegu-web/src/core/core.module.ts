@@ -80,6 +80,7 @@ import DVSupressFormSubmitOnEnter from './directive/dv-suppress-form-submit-on-e
 import ExportRS from '../gesuch/service/exportRS.rest';
 import {DvCountdownComponentConfig} from './component/dv-countdown/dv-countdown';
 import ZahlungRS from './service/zahlungRS.rest';
+import EwkRS from './service/ewkRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -208,6 +209,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvAccordionTab', new DvAccordionTabComponentConfig())
     .service('MahnungRS', MahnungRS)
     .service('ReportRS', ReportRS)
+    .service('EwkRS', EwkRS)
     .filter('arrayToString', () => {
         return function (input: Array<string>) {
             return input.join(', ');

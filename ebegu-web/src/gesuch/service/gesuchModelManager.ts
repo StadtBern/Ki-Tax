@@ -64,6 +64,7 @@ import * as moment from 'moment';
 import TSEWKResultat from '../../models/TSEWKResultat';
 import TSEWKPerson from '../../models/TSEWKPerson';
 import {TSGesuchsperiodeStatus} from '../../models/enums/TSGesuchsperiodeStatus';
+import EwkRS from '../../core/service/ewkRS.rest';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -82,7 +83,7 @@ export default class GesuchModelManager {
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
         'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS',
-        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS', '$q', 'CONSTANTS', '$rootScope'];
+        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS', '$q', 'CONSTANTS', '$rootScope', 'EwkRS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -91,7 +92,7 @@ export default class GesuchModelManager {
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService,
-                private adresseRS: AdresseRS, private $q: IQService, private CONSTANTS: any, private $rootScope: IRootScopeService) {
+                private adresseRS: AdresseRS, private $q: IQService, private CONSTANTS: any, private $rootScope: IRootScopeService, private ewkRS: EwkRS) {
 
 
         $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGOUT_SUCCESS], () => {
@@ -167,6 +168,9 @@ export default class GesuchModelManager {
         if (this.gesuch) {
             this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
             this.setHiddenSteps();
+            // EWK Service mit bereits existierenden Daten initialisieren
+            this.ewkRS.gesuchsteller1 = this.gesuch.gesuchsteller1;
+            this.ewkRS.gesuchsteller2 = this.gesuch.gesuchsteller2;
         }
         this.ewkPersonGS1 = undefined;
         this.ewkPersonGS2 = undefined;
@@ -507,6 +511,11 @@ export default class GesuchModelManager {
                 this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_GS;
             } else {
                 this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA;
+            }
+            //ewk zuruecksetzen
+            if (this.ewkRS) {
+                this.ewkRS.gesuchsteller1 = undefined;
+                this.ewkRS.gesuchsteller2 = undefined;
             }
         }
 

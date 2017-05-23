@@ -19,6 +19,7 @@ import {ILogService, IRootScopeService} from '@types/angular';
 import TSEWKResultat from '../models/TSEWKResultat';
 import {TSGesuchEvent} from '../models/enums/TSGesuchEvent';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import EwkRS from '../core/service/ewkRS.rest';
 
 export class GesuchRouteController {
 
@@ -27,13 +28,14 @@ export class GesuchRouteController {
     openEwkSidenav: boolean;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-        'AntragStatusHistoryRS', '$translate', 'AuthServiceRS', '$mdSidenav', 'CONSTANTS', 'GesuchstellerRS', '$log', '$rootScope'];
+        'AntragStatusHistoryRS', '$translate', 'AuthServiceRS', '$mdSidenav', 'CONSTANTS', 'GesuchstellerRS', 'EwkRS', '$log', '$rootScope'];
     /* @ngInject */
     constructor(private gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService,
                 private authServiceRS: AuthServiceRS, private $mdSidenav: ng.material.ISidenavService, private CONSTANTS: any,
-                private gesuchstellerRS: GesuchstellerRS, private $log: ILogService, private $rootScope: IRootScopeService) {
+                private gesuchstellerRS: GesuchstellerRS, private ewkRS: EwkRS,
+                private $log: ILogService, private $rootScope: IRootScopeService) {
         //super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.loadLastStatusChange(this.gesuchModelManager.getGesuch());
         this.TSRole = TSRole;
@@ -216,13 +218,8 @@ export class GesuchRouteController {
         return undefined;
     }
 
-    public showAbfrageForGesuchsteller(n: number): boolean {
-        let gs = this.getGesuchsteller(n);
-        if (gs && gs.gesuchstellerJA && !gs.gesuchstellerJA.isNew()) {
-            return true;
-        } else {
-            return false;
-        }
+    public showAbfrageForGesuchsteller(n: any): boolean {
+        return this.ewkRS.ewkSearchAvailable(n);
     }
 
     public getGesuchsteller(n: number): TSGesuchstellerContainer {
@@ -267,16 +264,16 @@ export class GesuchRouteController {
     public checkEWKPerson(person: TSEWKPerson, n: number): boolean {
         switch (n) {
             case 1:
-                return (person.personID === this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA.ewkPersonId);
+                return (person.personID === this.ewkRS.gesuchsteller1.gesuchstellerJA.ewkPersonId);
             case 2:
-                return (person.personID === this.gesuchModelManager.getGesuch().gesuchsteller2.gesuchstellerJA.ewkPersonId);
+                return (person.personID === this.ewkRS.gesuchsteller2.gesuchstellerJA.ewkPersonId);
             default:
                 return false;
         }
     }
 
     public searchGesuchsteller(n: number): void {
-        this.gesuchstellerRS.suchePerson(this.getGesuchsteller(n).id).then(response => {
+        this.ewkRS.suchePerson(n).then(response => {
             switch (n) {
                 case 1:
                     this.gesuchModelManager.ewkResultatGS1 = response;
@@ -299,22 +296,19 @@ export class GesuchRouteController {
     }
 
     public selectPerson(person: TSEWKPerson, n: number): void {
-        this.gesuchstellerRS.selectPerson(this.getGesuchsteller(n).id, person.personID).then(response => {
-            switch (n) {
-                case 1:
-                    this.gesuchModelManager.getGesuch().gesuchsteller1.gesuchstellerJA.ewkPersonId = person.personID;
-                    this.gesuchModelManager.ewkPersonGS1 = person;
-                    this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], 1, person.personID);
-                    break;
-                case 2:
-                    this.gesuchModelManager.getGesuch().gesuchsteller2.gesuchstellerJA.ewkPersonId = person.personID;
-                    this.gesuchModelManager.ewkPersonGS2 = person;
-                    this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], 2, person.personID);
-                    break;
-                default:
-                    break;
-            }
-        });
+        this.ewkRS.selectPerson(n, person.personID);
+        switch (n) {
+            case 1:
+                this.gesuchModelManager.ewkPersonGS1 = person;
+                this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], 1, person.personID);
+                break;
+            case 2:
+                this.gesuchModelManager.ewkPersonGS2 = person;
+                this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], 2, person.personID);
+                break;
+            default:
+                break;
+        }
     }
 
     public isGesuchGesperrt(): boolean {
