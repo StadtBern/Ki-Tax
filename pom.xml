@@ -10,7 +10,7 @@
 
     <groupId>ch.dvbern.ebegu</groupId>
     <artifactId>ebegu</artifactId>
-    <version>1.1.6-SNAPSHOT</version>
+    <version>1.1.6</version>
     <packaging>pom</packaging>
 
     <name>eBEGU - Multimodule Project</name>
