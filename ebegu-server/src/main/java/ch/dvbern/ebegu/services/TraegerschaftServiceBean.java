@@ -30,6 +30,7 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+
 	@Nonnull
 	@Override
 	public Traegerschaft saveTraegerschaft(@Nonnull Traegerschaft traegerschaft) {
@@ -66,14 +67,11 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	}
 
 	@Override
-	public void setInactive(@Nonnull String traegerschftId) {
-		Validate.notNull(traegerschftId);
-		Optional<Traegerschaft> traegerschaftOptional = findTraegerschaft(traegerschftId);
-
-		Traegerschaft traegerschaft = traegerschaftOptional.orElseThrow(() -> new EbeguEntityNotFoundException("setInactive", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, traegerschftId));
+	public void setInactive(@Nonnull String traegerschaftId) {
+		Validate.notNull(traegerschaftId);
+		Optional<Traegerschaft> traegerschaftOptional = findTraegerschaft(traegerschaftId);
+		Traegerschaft traegerschaft = traegerschaftOptional.orElseThrow(() -> new EbeguEntityNotFoundException("setInactive", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, traegerschaftId));
 		traegerschaft.setActive(false);
 		persistence.merge(traegerschaft);
 	}
-
-
 }

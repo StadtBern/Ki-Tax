@@ -110,14 +110,6 @@ public interface EbeguConfiguration {
 	 */
 	String getEmailOfSuperUser();
 
-
-	/**
-	 * Hiermit kann die Hintergrundfarbe auf verschiedenen System per property eingestellt werden. Das sollte es uns ermoeglichen
-	 * Test und Produktion besser unterscheiden zu koennen
-	 * @return
-	 */
-	String getBackgroundColor();
-
 	/**
 	 * @return true wenn sich die Applikation im Testmodus fuer Zahlungen befindet, false sonst
 	 */
