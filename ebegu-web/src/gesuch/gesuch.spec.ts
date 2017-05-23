@@ -20,7 +20,7 @@ describe('gesuch', function () {
         gesuchRouteController = new GesuchRouteController(gesuchModelManager, $injector.get('BerechnungsManager'),
             $injector.get('WizardStepManager'), $injector.get('EbeguUtil'), $injector.get('AntragStatusHistoryRS'),
             $injector.get('$translate'), $injector.get('AuthServiceRS'), $injector.get('$mdSidenav'), $injector.get('CONSTANTS'),
-            undefined, undefined, undefined);
+            undefined, undefined, undefined, undefined);
         gesuch = new TSGesuch();
         gesuch.typ = TSAntragTyp.ERSTGESUCH;
     }));
