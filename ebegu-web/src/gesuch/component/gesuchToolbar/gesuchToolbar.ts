@@ -521,7 +521,6 @@ export class GesuchToolbarController {
         // GesuchId ermitteln fuer Mutation ermitteln: Falls wir auf der Verlauf-View sind, nehmen wir einfach
         // irgendeines der Liste (es wird auf dem Server sichergestellt, dass die Mutation ab dem neuesten Gesuch
         // der Periode gemacht wird), wichtig ist nur, dass es sich um die richtige Gesuchsperiode handelt.
-        let gesuchId;
         if (this.gesuchid) {
             return this.gesuchid;
         } else {

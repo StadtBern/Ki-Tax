@@ -24,6 +24,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -98,6 +99,7 @@ public class ApplicationPropertyResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxApplicationProperties> getAllApplicationProperties() {
 		return applicationPropertyService.getAllApplicationProperties().stream()
+			.sorted(Comparator.comparing(o -> o.getName().name()))
 			.map(ap -> converter.applicationPropertyToJAX(ap))
 			.collect(Collectors.toList());
 	}
