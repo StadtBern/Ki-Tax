@@ -25,7 +25,7 @@ export class FaelleListViewComponentConfig implements IComponentOptions {
 export class FaelleListViewController {
 
     private antragList: Array<TSAntragDTO>;
-    totalResultCount: string = '0';
+    // totalResultCount: string = '0';
 
 
     static $inject: string[] = ['$filter', 'GesuchRS', 'GesuchModelManager',
@@ -47,7 +47,7 @@ export class FaelleListViewController {
     public passFilterToServer = (tableFilterState: any): IPromise<TSAntragSearchresultDTO> => {
         this.$log.debug('Triggering ServerFiltering with Filter Object', tableFilterState);
         return this.gesuchRS.searchAntraege(tableFilterState).then((response: TSAntragSearchresultDTO) => {
-            this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : '0';
+            // this.totalResultCount = response.totalResultSize ? response.totalResultSize.toString() : '0';
             this.antragList = response.antragDTOs;
             return response;
         });

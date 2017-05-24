@@ -32,6 +32,20 @@ export class DVsTPersistService {
         return undefined;
     }
 
+    /**
+     * Deletes the given namespace from the list if it exists and returns true.
+     * If it doesn't exist it returns false
+     */
+    public deleteData(namespace: string): boolean {
+        for (let i = 0; i < this.persistedData.length; i++) {
+            if (this.persistedData[i].namespace === namespace) {
+                this.persistedData.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
+    }
+
     private findNamespace(namespace: string): TSSTPersistObject {
         for (let i = 0; i < this.persistedData.length; i++) {
             if (this.persistedData[i].namespace === namespace) {

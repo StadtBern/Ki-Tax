@@ -84,6 +84,7 @@ import EwkRS from './service/ewkRS.rest';
 import DVSTPersist from './directive/dv-st-persist/dv-st-persist';
 import {DVDisplayElement} from './directive/dv-display-element/dv-display-element';
 import {DVsTPersistService} from './service/dVsTPersistService';
+import DVSTResetSearch from './directive/dv-st-reset-search/dv-st-reset-search';
 
 let dynamicDependencies = function (): string[] {
 
@@ -179,6 +180,7 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvLoadingButton', DVLoadingButton.factory())
     .directive('dvSubmitevent', DVSubmitevent.factory())
     .directive('dvStPersist', DVSTPersist.factory())
+    .directive('dvStResetSearch', DVSTResetSearch.factory())
     .directive('dvShowElement', DVShowElement.factory())
     .directive('dvDisplayElement', DVDisplayElement.factory())
     .directive('dvEnableElement', DVEnableElement.factory())

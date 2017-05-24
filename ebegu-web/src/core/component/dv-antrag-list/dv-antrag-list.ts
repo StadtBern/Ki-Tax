@@ -218,7 +218,6 @@ export class DVAntragListController {
         let element = this.$window.document.getElementById('antraegeHeadRow');
         return element.childElementCount;
     }
-
 }
 
 

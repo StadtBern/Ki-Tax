@@ -36,5 +36,19 @@ describe('betreuungRS', function () {
             expect(dVsTPersistService.loadData(namespace_two)).toBeUndefined();
         });
     });
+    fdescribe('delete Data', function () {
+        it('delete non-existing namespace', function () {
+            dVsTPersistService.saveData(namespace_one, object1);
+
+            expect(dVsTPersistService.deleteData(namespace_two)).toBe(false);
+            expect(dVsTPersistService.loadData(namespace_one)).toEqual(object1);
+        });
+        it('delete non-existing namespace', function () {
+            dVsTPersistService.saveData(namespace_one, object1);
+
+            expect(dVsTPersistService.deleteData(namespace_one)).toBe(true);
+            expect(dVsTPersistService.loadData(namespace_one)).toBeUndefined();
+        });
+    });
 
 });

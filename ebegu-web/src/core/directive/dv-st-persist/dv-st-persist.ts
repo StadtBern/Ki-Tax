@@ -19,7 +19,7 @@ export default class DVSTPersist implements IDirective {
     /* @ngInject */
     constructor(private userRS: UserRS, private institutionRS: InstitutionRS, private dVsTPersistService: DVsTPersistService) {
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrlArray: any) => {
-            let nameSpace = attrs.dvStPersist;
+            let nameSpace: string = attrs.dvStPersist;
             let stTableCtrl: any = ctrlArray[0];
             let antragListController: DVAntragListController = ctrlArray[1];
 

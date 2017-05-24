@@ -1,11 +1,26 @@
 <div class="dv-antrag-list">
-    <div class="row">
-
+    <div class="row" dv-st-persist="{{vm.tableId}}"
+         st-table="vm.displayedCollection" st-delay="20"
+         st-pipe="vm.callServer">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-1">
+                    <h3 data-translate="{{vm.tableTitle}}"></h3>
+                </div>
+                <div class="col-md-1">
+                    <button type="button"
+                            aria-hidden="true" dv-st-reset-search>
+                        <i class="fa fa-undo"></i>
+                    </button>
+                </div>
+                <div class="col-md-10 text-right">
+                    <h3 ng-bind="(vm.displayedCollection || [] ).length"></h3>
+                </div>
+            </div>
+        </div>
         <div class="col-md-12 table-responsive">
             <!--Tabelle-->
-            <table dv-st-persist="{{vm.tableTitle}}"
-                   st-table="vm.displayedCollection" st-delay="20"
-                   st-pipe="vm.callServer" class="table fixedtable table-hover" id="{{vm.tableId}}"
+            <table class="table fixedtable table-hover" id="{{vm.tableId}}"
                    title="{{vm.tableTitle}}">
                 <thead>
                 <!--Sortierspalten-->
