@@ -1,4 +1,6 @@
 import {TSSTPersistObject} from '../../models/TSSTPersistObject';
+import {IRootScopeService} from 'angular';
+import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 
 /**
  * This service stores an array of TSSTPersistObject.
@@ -9,9 +11,16 @@ export class DVsTPersistService {
 
     persistedData: TSSTPersistObject[];
 
-    static $inject: any = [];
+    static $inject: any = ['$rootScope'];
     /* @ngInject */
-    constructor() {
+    constructor(private $rootScope: IRootScopeService) {
+        this.clearAll();
+        this.$rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
+            this.clearAll();
+        });
+    }
+
+    private clearAll() {
         this.persistedData = [];
     }
 

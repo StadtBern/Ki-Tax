@@ -20,6 +20,7 @@ export default class DVSTResetSearch implements IDirective {
                 return scope.$apply(function() {
                     let tableState = ctrl.tableState();
                     tableState.search.predicateObject = {};
+                    tableState.sort = {};
                     tableState.pagination.start = 0;
                     dVsTPersistService.deleteData(nameSpace);
                     return ctrl.pipe();

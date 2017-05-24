@@ -29,7 +29,7 @@ export class DVAntragListConfig implements IComponentOptions {
         onAdd: '&',
         onEdit: '&',
         onFilterChange: '&',
-        antraege: '<',
+        totalResultCount: '<',
         tableId: '@',
         tableTitle: '@',
         actionVisible: '@',
@@ -43,7 +43,7 @@ export class DVAntragListConfig implements IComponentOptions {
 
 export class DVAntragListController {
 
-    antraege: Array<TSAntragDTO> = []; //muss hier gesuch haben damit Felder die wir anzeigen muessen da sind
+    totalResultCount: number;
     displayedCollection: Array<TSAntragDTO> = []; //Liste die im Gui angezeigt wird
     pagination: any;
     gesuchsperiodenList: Array<string>;
@@ -98,16 +98,6 @@ export class DVAntragListController {
         if (this.addButtonVisible === undefined) {
             this.addButtonVisible = 'false';
         }
-        //clear selected
-        if (this.antraege) {
-            for (let i = 0; i < this.antraege.length; i++) {
-                let obj: any = this.antraege[i];
-                obj.isSelected = false;
-
-            }
-        }
-        this.displayedCollection.concat(this.antraege);
-        // this.callServer(undefined);
     }
 
     public updateInstitutionenList(): void {

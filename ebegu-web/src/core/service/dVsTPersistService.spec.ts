@@ -36,7 +36,7 @@ describe('betreuungRS', function () {
             expect(dVsTPersistService.loadData(namespace_two)).toBeUndefined();
         });
     });
-    fdescribe('delete Data', function () {
+    describe('delete Data', function () {
         it('delete non-existing namespace', function () {
             dVsTPersistService.saveData(namespace_one, object1);
 

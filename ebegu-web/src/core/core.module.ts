@@ -220,7 +220,10 @@ export const EbeguWebCore: angular.IModule = angular
     .service('EwkRS', EwkRS)
     .filter('arrayToString', () => {
         return function (input: Array<string>) {
-            return input.join(', ');
+            if (input) {
+                return input.join(', ');
+            }
+            return '';
         };
     });
 
