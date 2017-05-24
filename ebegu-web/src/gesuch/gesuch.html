@@ -245,6 +245,11 @@
         <h2>EWK Abfragen</h2>
 
         <md-content class="ewk-content">
+            <!-- Falls nicht mindestens der Gesuchsteller 1 erfasst ist, eine Info anzigen, wie man die
+            EWK Suche starten kann -->
+            <div ng-if="!vm.showAbfrageForGesuchsteller(1)"  class="well well-status-warten">
+                <h3 data-translate="EWK_ABFRAGE_FEHLENDE_ANGABEN"></h3>
+            </div>
             <div ng-repeat=" n in [1,2]" ng-if="vm.showAbfrageForGesuchsteller(n)">
 
                 <h3 ng-bind="vm.getGesuchstellerTitle(vm.getGesuchsteller(n))"></h3>
@@ -252,7 +257,7 @@
                         ng-click="vm.searchGesuchsteller(n)">
                     <i class="fa fa-search"></i>
                     <span data-translate="EWK_ABFRAGE_BUTTON"
-                          data-translate-value-name="{{vm.getGesuchsteller(n).gesuchstellerJA.getFullName()}}"></span>
+                          data-translate-value-name="{{vm.ewkRS.getGesuchsteller(n).gesuchstellerJA.getFullName()}}"></span>
 
                 </button>
                 <!-- Anzahl Resultate -->

@@ -14,6 +14,7 @@ import TSFall from '../../../models/TSFall';
 import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import IScope = angular.IScope;
+import FallRS from '../../service/fallRS.rest';
 
 describe('gesuchToolbar', function () {
 
@@ -32,6 +33,7 @@ describe('gesuchToolbar', function () {
     let user: TSUser;
     let $mdSidenav: ng.material.ISidenavService;
     let gesuchsperiodeRS: GesuchsperiodeRS;
+    let fallRS: FallRS;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -52,10 +54,11 @@ describe('gesuchToolbar', function () {
         user = new TSUser('Emiliano', 'Camacho');
         $stateParams.gesuchId = '123456789';
         gesuchsperiodeRS = $injector.get('GesuchsperiodeRS');
+        fallRS = $injector.get('FallRS');
 
         gesuchToolbarController = new GesuchToolbarController(userRS, ebeguUtil,
             CONSTANTS, gesuchRS, $state, $stateParams, $scope, gesuchModelManager,
-            authServiceRS, $mdSidenav, undefined, gesuchsperiodeRS);
+            authServiceRS, $mdSidenav, undefined, gesuchsperiodeRS, fallRS);
     }));
 
     describe('getVerantwortlicherFullName', () => {

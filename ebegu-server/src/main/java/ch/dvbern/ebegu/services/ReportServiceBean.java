@@ -51,6 +51,7 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,6 +79,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private static final String VALIDIERUNG_STICHTAG = "Das Argument 'stichtag' darf nicht leer sein";
 	private static final String VALIDIERUNG_DATUM_VON = "Das Argument 'datumVon' darf nicht leer sein";
 	private static final String VALIDIERUNG_DATUM_BIS = "Das Argument 'datumBis' darf nicht leer sein";
+	// Excel kann nicht mit Datum vor 1800 umgehen. Wir setzen auf 1900, wie Minimum im datepicker
+	private static final LocalDate MIN_DATE = LocalDate.of(1900, Month.JANUARY, 1);
 
 	@Inject
 	private GeuschStichtagExcelConverter geuschStichtagExcelConverter;
@@ -291,6 +294,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setName(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindJA().getNachname());
 			row.setVorname(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindJA().getVorname());
 			row.setGeburtsdatum(zeitabschnitt.getVerfuegung().getBetreuung().getKind().getKindJA().getGeburtsdatum());
+			if (row.getGeburtsdatum() == null || row.getGeburtsdatum().isBefore(MIN_DATE)) {
+				row.setGeburtsdatum(MIN_DATE);
+			}
 			row.setZeitabschnittVon(zeitabschnitt.getGueltigkeit().getGueltigAb());
 			row.setZeitabschnittBis(zeitabschnitt.getGueltigkeit().getGueltigBis());
 			row.setBgPensum(MathUtil.DEFAULT.from(zeitabschnitt.getBgPensum()));
@@ -773,6 +779,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		row.setKindName(kind.getNachname());
 		row.setKindVorname(kind.getVorname());
 		row.setKindGeburtsdatum(kind.getGeburtsdatum());
+		if (row.getKindGeburtsdatum() == null || row.getKindGeburtsdatum().isBefore(MIN_DATE)) {
+			row.setKindGeburtsdatum(MIN_DATE);
+		}
 		row.setKindFachstelle(kind.getPensumFachstelle() != null);
 		row.setKindErwBeduerfnisse(zeitabschnitt.getVerfuegung().getBetreuung().getErweiterteBeduerfnisse());
 		row.setKindDeutsch(kind.getMutterspracheDeutsch());
