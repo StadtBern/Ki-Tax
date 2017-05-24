@@ -1,0 +1,13 @@
+<div class="dv-downloadmenu-inner" ng-show="vm.display">
+
+    <span data-translate="BENUTZERHANDBUCH"></span>
+
+    <dv-loading-button type="button" button-click="vm.download()"
+                       button-class="dv-btn marginTop10">
+        <span data-translate="DOWNLOAD"></span>
+    </dv-loading-button>
+</div>
+<div ng-click="vm.toggleDisplay()" class="fa fa-question-circle dv-downloadmenu-question"
+     ng-class="{'dv-downloadmenu-question--active' : vm.display}">
+
+</div>

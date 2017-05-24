@@ -1024,5 +1024,6 @@
     "REMOVE_ONLINE_ERNEUERUNGSGESUCH_CONFIRMATION": "Möchten Sie wirklich das Online Folgegesuch löschen?",
     "REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG": "Das Folgegesuch wird endgültig gelöscht. Die Änderungen können nicht rückgängig gemacht werden.",
     "FOLGEGESUCH_HINT": "Die Stammdaten wurden aus dem letztjährigen Gesuch übernommen: Bitte prüfen Sie die übernommenen Daten.",
-    "KEIN_ANGEBOT": "Kein Angebot"
+    "KEIN_ANGEBOT": "Kein Angebot",
+    "BENUTZERHANDBUCH":"Benutzerhandbuch"
 }

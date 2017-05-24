@@ -81,6 +81,7 @@ import ExportRS from '../gesuch/service/exportRS.rest';
 import {DvCountdownComponentConfig} from './component/dv-countdown/dv-countdown';
 import ZahlungRS from './service/zahlungRS.rest';
 import EwkRS from './service/ewkRS.rest';
+import {DvDownloadmenuComponentConfig} from './component/dv-downloadmenu/dv-downloadmenu';
 
 let dynamicDependencies = function (): string[] {
 
@@ -196,6 +197,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
     .component('dvMobileNavigationToggle', new DvMobileNavigationToggleComponentConfig())
     .component('dvHomeIcon', new DvHomeIconComponentConfig())
+    .component('dvDownloadmenu', new DvDownloadmenuComponentConfig())
     .component('dvCountdown', new DvCountdownComponentConfig())
     .component('dvPosteingang', new DvPosteingangComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
