@@ -42,7 +42,7 @@
                 <span class="zuletzt" data-translate="ZULETZT_BEARBEITER"
                       data-translate-value-username="{{vm.getUserFullname()}}"></span>
                 <br>
-                <span class="zuletzt" ng-show="vm.getGesuch().gueltig"
+                <span class="zuletzt" ng-show="vm.isSuperAdmin() && vm.getGesuch().gueltig"
                       data-translate="GUELTIGES_GESUCH"></span>
                 <br>
                 <span class="gesperrt" ng-if="vm.isGesuchGesperrt()"

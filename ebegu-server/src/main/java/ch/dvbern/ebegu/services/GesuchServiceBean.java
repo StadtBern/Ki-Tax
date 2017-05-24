@@ -785,6 +785,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	 */
 	private AntragStatus calculateFreigegebenStatus(@Nonnull Gesuch gesuch) {
 		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			gesuch.setTimestampVerfuegt(LocalDateTime.now());
+			gesuch.setGueltig(true);
 			return AntragStatus.NUR_SCHULAMT;
 		}
 		return AntragStatus.FREIGEGEBEN;

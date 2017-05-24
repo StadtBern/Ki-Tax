@@ -832,6 +832,7 @@
     "EFFEKTIVE_BETREUUNG": "Effektive Betreuung",
     "ZULETZT_BEARBEITER": "zuletzt {{username}}",
     "GUELTIGES_GESUCH": "dies ist das aktuell gültige Gesuch",
+    "GUELTIGE_BETREUUNG": "Aktuell gültige Betreuung",
     "VORLAGE_MAHNUNG_1": "Vorlage erste Mahnung",
     "VORLAGE_MAHNUNG_2": "Vorlage zweite Mahnung",
     "VORLAGE_NICHT_EINTRETENSVERFUEGUNG": "Vorlage Nichteintretensverfügung",

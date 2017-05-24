@@ -21,6 +21,7 @@
                                 <th data-translate="BETREUUNG" width="25%"></th>
                                 <th data-translate="ID" width="20%"></th>
                                 <th data-translate="STATUS" width="20%"></th>
+                                <th data-translate="GUELTIGE_BETREUUNG" width="20%" ng-show="vm.isSuperAdmin()"></th>
                             </tr>
                             </thead>
                             <tbody ng-repeat="kindContainer in displayedCollection">
@@ -34,6 +35,9 @@
                                 <td class="betreuung-status ng-class:betreuung.betreuungsstatus;">
                                     <div ng-bind="betreuung.betreuungsstatus | translate"></div>
                                     <span class="betreuung-bar"></span>
+                                </td>
+                                <td ng-show="vm.isSuperAdmin()">
+                                    <span>{{betreuung.gueltig ? 'Ja' : 'Nein'}}</span>
                                 </td>
                             </tr>
                             </tbody>

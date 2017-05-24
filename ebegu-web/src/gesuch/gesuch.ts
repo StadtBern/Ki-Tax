@@ -321,4 +321,7 @@ export class GesuchRouteController {
         return false;
     }
 
+    public isSuperAdmin(): boolean {
+        return  this.authServiceRS.isRole(TSRole.SUPER_ADMIN);
+    }
 }

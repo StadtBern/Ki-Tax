@@ -34,7 +34,7 @@ public enum Betreuungsstatus {
 	}
 
 	public boolean isAnyStatusOfVerfuegt() {
-		return VERFUEGT.equals(this) || GEKUENDIGT_VOR_EINTRITT.equals(this);
+		return VERFUEGT.equals(this) || GEKUENDIGT_VOR_EINTRITT.equals(this) || SCHULAMT.equals(this);
 	}
 
 	@SuppressWarnings("Duplicates")

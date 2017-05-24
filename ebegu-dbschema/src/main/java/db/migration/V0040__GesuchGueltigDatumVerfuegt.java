@@ -3,6 +3,7 @@ package db.migration;
 import ch.dvbern.ebegu.dbschema.FlywayMigrationHelper;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.services.*;
 import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
 import org.slf4j.Logger;
@@ -72,6 +73,9 @@ public class V0040__GesuchGueltigDatumVerfuegt implements JdbcMigration {
 						if (betreuung.getVerfuegung() != null && betreuung.getBetreuungsstatus().isAnyStatusOfVerfuegt()) {
 							betreuung.setGueltig(true);
 							LOGGER.info("... gueltig");
+						} else if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.SCHULAMT)) {
+							betreuung.setGueltig(true);
+							LOGGER.info("... Schulamt");
 						} else {
 							// Evt. ist die Vorgaenger-Verfuegung die richtige
 							LOGGER.info("... nicht gueltig, ermittle Vorgaengerverfuegung");
