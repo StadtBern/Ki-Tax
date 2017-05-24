@@ -197,12 +197,6 @@ public interface GesuchService {
 	Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
 
 	/**
-	 * Gibt alle aktuellen Antrags-Ids zurueck, d.h. den letzten Antrag jedes Falles, fuer eine Gesuchsperiode
-	 */
-	@Nonnull
-	List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
-
-	/**
 	 * Gibt die Antrags-Ids aller Antraege zurueck, welche im uebergebenen Zeitraum verfuegt wurden.
 	 * Falls es mehrere fuer denselben Fall hat, wird nur der letzte (hoechste Laufnummer) zurueckgegeben
 	 */

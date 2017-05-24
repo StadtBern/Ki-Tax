@@ -1069,23 +1069,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	public List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<String> query = cb.createQuery(String.class);
-
-		Root<Gesuch> root = query.from(Gesuch.class);
-
-		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
-		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
-		Predicate predicateGueltig = cb.equal(root.get(Gesuch_.gueltig), Boolean.TRUE);
-
-		query.where(predicateStatus, predicateGesuchsperiode, predicateGueltig);
-		query.select(root.get(Gesuch_.id));
-		return persistence.getCriteriaResults(query);
-	}
-
-	@Override
-	@Nonnull
 	public List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis) {
 		List<String> ids = new ArrayList<>();
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();

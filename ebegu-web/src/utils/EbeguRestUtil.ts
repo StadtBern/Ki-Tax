@@ -1144,6 +1144,7 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungNummer = betreuung.betreuungNummer;
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
+        restBetreuung.gueltig = betreuung.gueltig;
         return restBetreuung;
     }
 
@@ -1219,6 +1220,7 @@ export default class EbeguRestUtil {
             betreuungTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), betreuungFromServer.gesuchsperiode);
             betreuungTS.betreuungMutiert = betreuungFromServer.betreuungMutiert;
             betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
+            betreuungTS.gueltig = betreuungFromServer.gueltig;
             return betreuungTS;
         }
         return undefined;

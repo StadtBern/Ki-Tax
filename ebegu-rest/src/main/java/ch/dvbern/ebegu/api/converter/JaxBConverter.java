@@ -1420,6 +1420,7 @@ public class JaxBConverter {
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
+		betreuung.setGueltig(betreuungJAXP.isGueltig());
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
@@ -1624,6 +1625,7 @@ public class JaxBConverter {
 		}
 		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
 		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
+		jaxBetreuung.setGueltig(betreuungFromServer.isGueltig());
 		return jaxBetreuung;
 	}
 

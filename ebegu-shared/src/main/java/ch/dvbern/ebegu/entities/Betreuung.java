@@ -119,6 +119,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 	@Column(nullable = true)
 	private Boolean abwesenheitMutiert;
 
+	@Column(nullable = false)
+	private boolean gueltig = false;
+
 
 	public Betreuung() {
 	}
@@ -239,6 +242,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 
 	public void setAbwesenheitMutiert(@Nullable Boolean abwesenheitMutiert) {
 		this.abwesenheitMutiert = abwesenheitMutiert;
+	}
+
+	public boolean isGueltig() {
+		return gueltig;
+	}
+
+	public void setGueltig(boolean gueltig) {
+		this.gueltig = gueltig;
 	}
 
 	public boolean isSame(Betreuung otherBetreuung, boolean inklAbwesenheiten, boolean inklStatus) {
@@ -364,6 +375,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung>, 
 		mutation.setDatumBestaetigung(this.getDatumBestaetigung());
 		mutation.setBetreuungMutiert(null);
 		mutation.setAbwesenheitMutiert(null);
+		mutation.setGueltig(false);
 		return mutation;
 	}
 

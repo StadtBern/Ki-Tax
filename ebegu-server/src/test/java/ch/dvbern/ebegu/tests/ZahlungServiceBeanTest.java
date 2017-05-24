@@ -73,30 +73,6 @@ public class ZahlungServiceBeanTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void findGesuchIdsOfAktuellerAntrag() throws Exception {
-		Gesuch verfuegtesGesuch = createGesuch(true);
-		Gesuch nichtVerfuegtesGesuch = createGesuch(false);
-
-		Gesuch erstgesuchMitMutation = createGesuch(true);
-		Gesuch nichtVerfuegteMutation = createMutation(erstgesuchMitMutation, false);
-
-		Gesuch erstgesuchMitVerfuegterMutation = createGesuch(true);
-		Gesuch verfuegteMutation = createMutation(erstgesuchMitVerfuegterMutation, true);
-
-		List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(verfuegtesGesuch.getGesuchsperiode());
-		Assert.assertNotNull(gesuchIdsOfAktuellerAntrag);
-
-		Assert.assertTrue(gesuchIdsOfAktuellerAntrag.contains(verfuegtesGesuch.getId()));
-		Assert.assertFalse(gesuchIdsOfAktuellerAntrag.contains(nichtVerfuegtesGesuch.getId()));
-
-		Assert.assertTrue(gesuchIdsOfAktuellerAntrag.contains(erstgesuchMitMutation.getId()));
-		Assert.assertFalse(gesuchIdsOfAktuellerAntrag.contains(nichtVerfuegteMutation.getId()));
-
-		Assert.assertFalse(gesuchIdsOfAktuellerAntrag.contains(erstgesuchMitVerfuegterMutation.getId()));
-		Assert.assertTrue(gesuchIdsOfAktuellerAntrag.contains(verfuegteMutation.getId()));
-	}
-
-	@Test
 	public void zahlungsauftragErstellenNormal() throws Exception {
 		createGesuch(true);
 		Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(DATUM_FAELLIG, "Testauftrag", LocalDateTime.now());

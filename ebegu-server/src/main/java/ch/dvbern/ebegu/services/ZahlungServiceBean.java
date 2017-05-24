@@ -64,12 +64,6 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 	private VerfuegungService verfuegungService;
 
 	@Inject
-	private GesuchService gesuchService;
-
-	@Inject
-	private GesuchsperiodeService gesuchsperiodeService;
-
-	@Inject
 	private FileSaverService fileSaverService;
 
 	@Inject
@@ -180,7 +174,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = cb.createQuery(VerfuegungZeitabschnitt.class);
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
-		Join<Verfuegung, Betreuung> joinBetreuung = root.join(VerfuegungZeitabschnitt_.verfuegung).join(Verfuegung_.betreuung);
+		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
+		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
 
 		List<Expression<Boolean>> predicates = new ArrayList<>();
 
@@ -194,18 +189,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Predicate predicateAngebot = cb.equal(joinBetreuung.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.KITA);
 		predicates.add(predicateAngebot);
 		// Nur neueste Verfuegung jedes Falls beachten
-		Optional<Gesuchsperiode> gesuchsperiodeAm = gesuchsperiodeService.getGesuchsperiodeAm(zeitabschnittBis);
-		if (gesuchsperiodeAm.isPresent()) {
-			List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiodeAm.get());
-			if (!gesuchIdsOfAktuellerAntrag.isEmpty()) {
-				Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
-				predicates.add(predicateAktuellesGesuch);
-			} else {
-				return Collections.emptyList();
-			}
-		} else {
-			throw new EbeguRuntimeException("getGueltigeVerfuegungZeitabschnitte", "Keine Gesuchsperiode gefunden fuer Stichtag " + Constants.DATE_FORMATTER.format(zeitabschnittBis));
-		}
+		Predicate predicateGueltig = cb.equal(joinBetreuung.get(Betreuung_.gueltig), Boolean.TRUE);
+		predicates.add(predicateGueltig);
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);
@@ -227,7 +212,10 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = cb.createQuery(VerfuegungZeitabschnitt.class);
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
-		Join<Verfuegung, Betreuung> joinBetreuung = root.join(VerfuegungZeitabschnitt_.verfuegung).join(Verfuegung_.betreuung);
+		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
+		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
+		Join<Betreuung, KindContainer> joinKindContainer = joinBetreuung.join(Betreuung_.kind);
+		Join<KindContainer, Gesuch> joinGesuch = joinKindContainer.join(KindContainer_.gesuch);
 
 		List<Expression<Boolean>> predicates = new ArrayList<>();
 
@@ -238,13 +226,11 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Predicate predicateAngebot = cb.equal(joinBetreuung.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.KITA);
 		predicates.add(predicateAngebot);
 		// Gesuche, welche seit dem letzten Zahlungslauf verfuegt wurden. Nur neueste Verfuegung jedes Falls beachten
-		List<String> gesuchIdsOfAktuellerAntrag = gesuchService.getNeuesteVerfuegteAntraege(datumVerfuegtVon, datumVerfuegtBis);
-		if (!gesuchIdsOfAktuellerAntrag.isEmpty()) {
-			Predicate predicateAktuellesGesuch = joinBetreuung.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchIdsOfAktuellerAntrag);
-			predicates.add(predicateAktuellesGesuch);
-		} else {
-			return Collections.emptyList();
-		}
+		Predicate predicateDatum = cb.between(joinGesuch.get(Gesuch_.timestampVerfuegt), cb.literal(datumVerfuegtVon), cb.literal(datumVerfuegtBis));
+		predicates.add(predicateDatum);
+		// Nur neueste Verfuegung jedes Falls beachten
+		Predicate predicateGueltig = cb.equal(joinBetreuung.get(Betreuung_.gueltig), Boolean.TRUE);
+		predicates.add(predicateGueltig);
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		return persistence.getCriteriaResults(query);

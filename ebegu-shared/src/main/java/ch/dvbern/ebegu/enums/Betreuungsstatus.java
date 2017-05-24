@@ -10,7 +10,7 @@ import java.util.Set;
 public enum Betreuungsstatus {
 
 	@Deprecated //wir glauben das gibts gar nicht mehr
-		AUSSTEHEND,
+	AUSSTEHEND,
 	WARTEN,
 	SCHULAMT,
 	ABGEWIESEN,
@@ -31,6 +31,10 @@ public enum Betreuungsstatus {
 
 	public boolean isGeschlossen() {
 		return VERFUEGT.equals(this) || GESCHLOSSEN_OHNE_VERFUEGUNG.equals(this) || NICHT_EINGETRETEN.equals(this);
+	}
+
+	public boolean isAnyStatusOfVerfuegt() {
+		return VERFUEGT.equals(this) || GEKUENDIGT_VOR_EINTRITT.equals(this);
 	}
 
 	@SuppressWarnings("Duplicates")
