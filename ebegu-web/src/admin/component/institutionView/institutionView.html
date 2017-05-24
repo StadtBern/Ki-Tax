@@ -125,6 +125,12 @@
                             <div ng-if="!vm.isCreateInstitutionsMode()" class="row">
                                 <div class="col-md-12">
 
+                                    <div class="row" ng-if="vm.errormessage">
+                                        <div  class="well well-status-warten">
+                                            <h3 data-translate="{{vm.errormessage}}"></h3>
+                                        </div>
+                                    </div>
+
                                     <!--Tabelle zum Anzeigen aller Institutions-Stammdaten-->
                                     <table st-table="displayedCollection"
                                            st-safe-src="vm.getSelectedInstitutionStammdatenList()"

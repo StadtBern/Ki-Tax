@@ -14,6 +14,7 @@ import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 import * as moment from 'moment';
 import Moment = moment.Moment;
+import DateUtil from '../../../utils/DateUtil';
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
@@ -47,7 +48,7 @@ export class StatistikViewController {
             this._gesuchsperioden = response;
             if (this._gesuchsperioden.length > 0) {
                 this.maxDate = this._gesuchsperioden[0].gueltigkeit.gueltigBis;
-                this.minDate = this._gesuchsperioden[this._gesuchsperioden.length - 1].gueltigkeit.gueltigAb;
+                this.minDate = DateUtil.localDateToMoment('2017-01-01');
             }
         });
         this.TSRole = TSRole;
