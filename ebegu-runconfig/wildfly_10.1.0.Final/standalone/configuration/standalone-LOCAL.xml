@@ -55,6 +55,7 @@
 		<!-- EWK Personensuche -->
 		<property name="ebegu.personensuche.disabled" value="true"/>
 		<property name="ebegu.personensuche.endpoint" value="https://dbs1019.bgov.ch:50001/XISOAPAdapter/MessageServlet?senderParty=&amp;senderService=E_BEGU_QAS&amp;receiverParty=&amp;receiverService=&amp;interface=PersonenSuche_OB&amp;interfaceNamespace=http://bern.ch/E_GOV/E_BEGU/EGOV_002"/>
+		<property name="ebegu.personensuche.wsdl" value="http://dbs0019.bgov.ch:50000/dir/wsdl?p=ic/b3563da22d373b9ab15f89d67216848a"/>
 		<property name="ebegu.personensuche.username" value="E_BEGU_t"/>
 		<property name="ebegu.personensuche.password" value="strenggeheim"/>
     </system-properties>
