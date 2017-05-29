@@ -81,10 +81,11 @@ import ExportRS from '../gesuch/service/exportRS.rest';
 import {DvCountdownComponentConfig} from './component/dv-countdown/dv-countdown';
 import ZahlungRS from './service/zahlungRS.rest';
 import EwkRS from './service/ewkRS.rest';
-import DVSTPersist from './directive/dv-st-persist/dv-st-persist';
 import {DVDisplayElement} from './directive/dv-display-element/dv-display-element';
 import {DVsTPersistService} from './service/dVsTPersistService';
 import DVSTResetSearch from './directive/dv-st-reset-search/dv-st-reset-search';
+import DVSTPersistAntraege from './directive/dv-st-persist-antraege/dv-st-persist-antraege';
+import DVSTPersistPendenzen from './directive/dv-st-persist-pendenzen/dv-st-persist-pendenzen';
 
 let dynamicDependencies = function (): string[] {
 
@@ -179,7 +180,8 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvLoading', DVLoading.factory())
     .directive('dvLoadingButton', DVLoadingButton.factory())
     .directive('dvSubmitevent', DVSubmitevent.factory())
-    .directive('dvStPersist', DVSTPersist.factory())
+    .directive('dvStPersistAntraege', DVSTPersistAntraege.factory())
+    .directive('dvStPersistPendenzen', DVSTPersistPendenzen.factory())
     .directive('dvStResetSearch', DVSTResetSearch.factory())
     .directive('dvShowElement', DVShowElement.factory())
     .directive('dvDisplayElement', DVDisplayElement.factory())

@@ -9,7 +9,7 @@ import {DVsTPersistService} from '../../service/dVsTPersistService';
  * This directive allows a filter and sorting configuration to be saved after leaving the table.
  * The information will be stored in an angular-service, whi
  */
-export default class DVSTPersist implements IDirective {
+export default class DVSTPersistAntraege implements IDirective {
     static $inject: string[] = ['UserRS', 'InstitutionRS', 'DVsTPersistService'];
 
     restrict = 'A';
@@ -19,7 +19,7 @@ export default class DVSTPersist implements IDirective {
     /* @ngInject */
     constructor(private userRS: UserRS, private institutionRS: InstitutionRS, private dVsTPersistService: DVsTPersistService) {
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrlArray: any) => {
-            let nameSpace: string = attrs.dvStPersist;
+            let nameSpace: string = attrs.dvStPersistAntraege;
             let stTableCtrl: any = ctrlArray[0];
             let antragListController: DVAntragListController = ctrlArray[1];
 
@@ -102,7 +102,7 @@ export default class DVSTPersist implements IDirective {
     }
 
     static factory(): IDirectiveFactory {
-        const directive = (userRS: any, institutionRS: any, dVsTPersistService: any) => new DVSTPersist(userRS, institutionRS, dVsTPersistService);
+        const directive = (userRS: any, institutionRS: any, dVsTPersistService: any) => new DVSTPersistAntraege(userRS, institutionRS, dVsTPersistService);
         directive.$inject = ['UserRS', 'InstitutionRS', 'DVsTPersistService'];
         return directive;
     }

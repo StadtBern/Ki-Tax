@@ -24,7 +24,9 @@ export class DVPendenzenListConfig implements IComponentOptions {
         itemsByPage: '<',
         initialAll: '=',
         showSelectionAll: '=',
+        totalResultCount: '<',
         onUserChanged: '&',
+        tableId: '@',
         tableTitle: '<'
     };
 
@@ -40,12 +42,18 @@ export class DVPendenzenListController {
     itemsByPage: number;
     initialAll: boolean;
     showSelectionAll: boolean;
+    tableId: string;
     tableTitle: string;
 
+    selectedVerantwortlicher: TSUser;
+    selectedEingangsdatum: string;
+    selectedKinder: string;
+    selectedFallNummer: string;
+    selectedFamilienName: string;
     selectedBetreuungsangebotTyp: string;
     selectedAntragTyp: string;
     selectedAntragStatus: string;
-    selectedInstitution: string;
+    selectedInstitution: TSInstitution;
     selectedGesuchsperiode: string;
     institutionenList: Array<TSInstitution>;
     gesuchsperiodenList: Array<string>;
