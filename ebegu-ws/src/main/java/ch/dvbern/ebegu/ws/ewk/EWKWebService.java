@@ -156,21 +156,25 @@ public class EWKWebService implements IEWKWebService {
 			logger.info("PersonenSucheService Endpoint: " + endpointURL);
 			logger.info("PersonenSucheService Username: " + username);
 
+			URL url;
 			try {
 				// Test der neu mitgeteilten WSDL-URL:
-				URL wsdl = new URL(wsdlURL);
-				logger.info("PersonenSucheService WSDL: " + wsdl);
-				Object content = wsdl.getContent();
+				url = new URL(wsdlURL);
+				logger.info("PersonenSucheService WSDL: " + url);
+				Object content = url.getContent();
 				logger.info("PersonenSucheService WSDL-Content: " + content);
 			} catch (IOException e) {
+				url = null;
 				logger.error("PersonenSucheService WSDL not found: ", e);
 			}
 
 			try {
-				// WSDL wird mitgeliefert. Die EndpointURL?wsdl funktioniert so nicht.
-				final URL url = EWKWebService.class.getResource("/wsdl/Stadt_Bern_E-BEGU_Personensuche_v1.2.wsdl");
-				Validate.notNull(url,"WSDL konnte unter der angegebenen URI nicht gefunden werden. Kann Service-Port nicht erstellen");
-				logger.info("PersonenSucheService URL: " + url);
+				if (url == null) {
+					// WSDL wird mitgeliefert. Die EndpointURL?wsdl funktioniert so nicht.
+					url = EWKWebService.class.getResource("/wsdl/Stadt_Bern_E-BEGU_Personensuche_v1.2.wsdl");
+					Validate.notNull(url, "WSDL konnte unter der angegebenen URI nicht gefunden werden. Kann Service-Port nicht erstellen");
+					logger.info("PersonenSucheService URL: " + url);
+				}
 				logger.info("PersonenSucheService TargetNameSpace: " + TARGET_NAME_SPACE);
 				logger.info("PersonenSucheService ServiceName: " + SERVICE_NAME);
 				final QName qname = new QName(TARGET_NAME_SPACE, SERVICE_NAME);
