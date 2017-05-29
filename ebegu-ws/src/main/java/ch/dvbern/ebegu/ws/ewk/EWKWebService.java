@@ -137,6 +137,7 @@ public class EWKWebService implements IEWKWebService {
 		return port;
 	}
 
+	@SuppressWarnings({"PMD.NcssMethodCount"})
 	private void initPersonenSucheServicePort() throws PersonenSucheServiceException {
 		logger.info("Initialising PersonenSucheService:");
 		if (port == null) {
