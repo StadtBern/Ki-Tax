@@ -53,6 +53,13 @@ export class PendenzenInstitutionListViewController {
         this.updateActiveGesuchsperiodenList();
     }
 
+    private getTotalResultCount(): number {
+        if (this.pendenzenList && this.pendenzenList.length) {
+            return this.pendenzenList.length;
+        }
+        return 0;
+    }
+
     private updatePendenzenList() {
         this.pendenzInstitutionRS.getPendenzenList().then((response: any) => {
             this.pendenzenList = angular.copy(response);

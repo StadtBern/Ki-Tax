@@ -4,16 +4,15 @@
          st-pipe="vm.callServer">
         <div class="col-md-12">
             <div class="row">
-                <div class="col-md-1">
-                    <h3 data-translate="{{vm.tableTitle}}"></h3>
+                <div class="col-md-10">
+                    <div id="titleText">
+                        <h3 data-translate="{{vm.tableTitle}}"></h3>
+                    </div>
+                    <div id="refreshIcon">
+                        <i class="fa fa-undo" dv-st-reset-search></i>
+                    </div>
                 </div>
-                <div class="col-md-1">
-                    <button type="button"
-                            aria-hidden="true" dv-st-reset-search>
-                        <i class="fa fa-undo"></i>
-                    </button>
-                </div>
-                <div class="col-md-10 text-right">
+                <div class="col-md-2 text-right">
                     <h3 ng-bind="vm.totalResultCount"></h3>
                 </div>
             </div>
