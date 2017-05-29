@@ -126,6 +126,11 @@ public interface EbeguConfiguration {
 	String getPersonenSucheEndpoint();
 
 	/**
+	 * URL des WSDLs des EWK-Services
+	 */
+	String getPersonenSucheWsdl();
+
+	/**
 	 * Gibt den Usernamen für den EWK-Service zurueck.
 	 */
 	String getPersonenSucheUsername();
