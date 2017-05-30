@@ -27,7 +27,7 @@ export class DvDownloadmenuController {
 
     public download(): void {
         let win: Window = this.downloadRS.prepareDownloadWindow();
-        this.downloadRS.getBegleitschreibenDokumentAccessTokenGeneratedDokument('4d163a0a-c73a-4aff-b061-22fb62f08419', false)
+        this.downloadRS.getAccessTokenBenutzerhandbuch()
             .then((downloadFile: TSDownloadFile) => {
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
             });

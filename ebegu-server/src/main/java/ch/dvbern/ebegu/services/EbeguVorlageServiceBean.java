@@ -1,17 +1,25 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
-import ch.dvbern.ebegu.entities.EbeguVorlage;
-import ch.dvbern.ebegu.entities.EbeguVorlage_;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Local;
@@ -21,6 +29,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -31,15 +43,22 @@ import java.util.*;
 @Local(EbeguVorlageService.class)
 public class EbeguVorlageServiceBean extends AbstractBaseService implements EbeguVorlageService {
 
+	private final Logger LOGGER = LoggerFactory.getLogger(EbeguVorlageServiceBean.class.getSimpleName());
+
 	@Inject
 	private Persistence<EbeguVorlage> persistence;
-
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Inject
 	private FileSaverService fileSaverService;
+
+	@Inject
+	private PrincipalBean principalBean;
+
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
 
 	@Nonnull
 	@Override
@@ -110,6 +129,27 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		return resultList;
 	}
 
+	@Nonnull
+	private Optional<EbeguVorlage> getNewestbeguVorlageByKey(EbeguVorlageKey key) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
+		Root<EbeguVorlage> root = query.from(EbeguVorlage.class);
+		query.select(root);
+
+		ParameterExpression<EbeguVorlageKey> dateAbParam = cb.parameter(EbeguVorlageKey.class, "key");
+		Predicate dateAbPredicate = cb.equal(root.get(EbeguVorlage_.name), dateAbParam);
+
+		query.orderBy(cb.desc(root.get(EbeguVorlage_.timestampErstellt)));
+		query.where(dateAbPredicate);
+		TypedQuery<EbeguVorlage> q = persistence.getEntityManager().createQuery(query);
+		q.setParameter(dateAbParam, key);
+
+		List<EbeguVorlage> resultList = q.getResultList();
+		if (CollectionUtils.isNotEmpty(resultList)) {
+			return Optional.of(resultList.get(0));
+		}
+		return Optional.empty();
+	}
 
 	@Override
 	@Nullable
@@ -159,6 +199,50 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 			}
 			saveEbeguVorlage(newVorlage);
 		});
+	}
+
+	@Override
+	public Vorlage getBenutzerhandbuch() {
+		UserRole userRole = principalBean.discoverMostPrivilegedRole();
+		EbeguVorlageKey key = null;
+		if (userRole != null) {
+			switch (userRole) {
+				case ADMIN:
+					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_ADMIN;
+					break;
+				default:
+					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_ADMIN;
+					break;
+			}
+		}
+
+		final Optional<EbeguVorlage> vorlageOptional = getNewestbeguVorlageByKey(key);
+		EbeguVorlage ebeguVorlage = null;
+		if (vorlageOptional.isPresent()) {
+			ebeguVorlage = vorlageOptional.get();
+		} else {
+			EbeguVorlage newVorlage = new EbeguVorlage(key, new DateRange());
+			ebeguVorlage = saveEbeguVorlage(newVorlage);
+		}
+		if (ebeguVorlage.getVorlage() != null) {
+			return ebeguVorlage.getVorlage();
+		} else {
+			try {
+				Vorlage vorlage = new Vorlage();
+				vorlage.setFilesize("10");
+				vorlage.setFilename(key.name() + ".pdf");
+				// Das Defaultfile lesen und im Filesystem ablegen
+				InputStream is = EbeguVorlageServiceBean.class.getResourceAsStream(key.getDefaultVorlagePath());
+				byte[] bytes = IOUtils.toByteArray(is);
+				String folder = "benutzerhandbuch";
+				UploadFileInfo benutzerhandbuch = fileSaverService.save(bytes, vorlage.getFilename(), folder);
+				vorlage.setFilepfad(benutzerhandbuch.getPathWithoutFileName() + File.separator + benutzerhandbuch.getActualFilename());
+				return vorlage;
+			} catch (IOException | MimeTypeParseException e) {
+				LOGGER.error("Could not save vorlage!", e);
+				throw new EbeguRuntimeException("getBenutzerhandbuch", "Could not create Benutzerhandbuch");
+			}
+		}
 	}
 
 	private Set<EbeguVorlage> getEmptyVorlagen(Collection<EbeguVorlage> persistedEbeguVorlagen) {

@@ -37,7 +37,10 @@ public enum EbeguVorlageKey {
 	VORLAGE_FINANZIELLE_SITUATION("/vorlagen/Berechnungsgrundlagen.docx"),
 
 	// Ein angebotsübergreifenden neutralen Begleitbrief zu den Verfügungen
-	VORLAGE_BEGLEITSCHREIBEN("/vorlagen/Begleitschreiben.docx");
+	VORLAGE_BEGLEITSCHREIBEN("/vorlagen/Begleitschreiben.docx"),
+
+	// Benutzerhandbuecher
+	VORLAGE_BENUTZERHANDBUCH_ADMIN("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Administrator.pdf");
 
 
 	private boolean proGesuchsperiode;

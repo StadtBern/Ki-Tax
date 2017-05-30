@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.EbeguVorlage;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Vorlage;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 
 import javax.annotation.Nonnull;
@@ -50,4 +51,8 @@ public interface EbeguVorlageService {
 
 	void copyEbeguVorlageListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
 
+	/**
+	 * Gibt fuer den eingeloggten Benutzer das richtige Benutzerhandbuch zurueck.
+	 */
+	Vorlage getBenutzerhandbuch();
 }
