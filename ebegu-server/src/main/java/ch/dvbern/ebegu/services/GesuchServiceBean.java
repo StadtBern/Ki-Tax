@@ -808,7 +808,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer ID " + antragId));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			} else {
-				throw new EbeguExistingAntragException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, antragId);
+				throw new EbeguExistingAntragException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION,
+					gesuch.get().getFall().getId(), gesuch.get().getGesuchsperiode().getId());
 			}
 		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen " + antragId, antragId);
@@ -830,7 +831,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				Gesuch gesuchForMutation = gesuchForMutationOpt.orElseThrow(() -> new EbeguEntityNotFoundException("antragMutieren", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Kein Verfuegtes Gesuch fuer Fallnummer " + fallNummer));
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			} else {
-				throw new EbeguExistingAntragException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, "");
+				throw new EbeguExistingAntragException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION, fall.get().getId(),
+					gesuchsperiodeId);
 			}
 		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "fall oder gesuchsperiode konnte nicht geladen werden  fallNr:" + fallNummer + "gsPerID" + gesuchsperiodeId);
@@ -912,7 +914,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			return getErneuerungsgesuch(eingangsdatum, gesuchForErneuerung, gesuchsperiode);
 		} else {
 			// must have the gesuchsperiodeID as first item in the arguments list
-			throw new EbeguExistingAntragException("antragErneuern", ErrorCodeEnum.ERROR_EXISTING_ERNEUERUNGSGESUCH, antragId, gesuchsperiodeId);
+			throw new EbeguExistingAntragException("antragErneuern", ErrorCodeEnum.ERROR_EXISTING_ERNEUERUNGSGESUCH,
+				gesuch.getFall().getId(), gesuchsperiodeId);
 		}
 	}
 
@@ -1258,9 +1261,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
-	public void removeOnlineMutation(@Nonnull Gesuch antrag) {
-		logDeletingOfGesuchstellerAntrag(antrag);
-		List<Gesuch> criteriaResults = findExistingOpenMutationen(antrag.getFall(), antrag.getGesuchsperiode());
+	public void removeOnlineMutation(@Nonnull Fall fall, Gesuchsperiode gesuchsperiode) {
+		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
+		List<Gesuch> criteriaResults = findExistingOpenMutationen(fall, gesuchsperiode);
 		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Mutation
 			throw new EbeguRuntimeException("removeOnlineMutation", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
@@ -1270,9 +1273,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@RolesAllowed(value = {UserRoleName.ADMIN, UserRoleName.SUPER_ADMIN})
-	public void removeOnlineFolgegesuch(@Nonnull Gesuch antrag, @Nonnull Gesuchsperiode gesuchsperiode) {
-		logDeletingOfGesuchstellerAntrag(antrag);
-		List<Gesuch> criteriaResults = findExistingFolgegesuch(antrag.getFall(), gesuchsperiode);
+	public void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
+		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
+		List<Gesuch> criteriaResults = findExistingFolgegesuch(fall, gesuchsperiode);
 		if (criteriaResults.size() > 1) {
 			// It should be impossible that there are more than one open Folgegesuch for one period
 			throw new EbeguRuntimeException("removeOnlineFolgegesuch", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS);
@@ -1339,12 +1342,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		}
 	}
 
-	private void logDeletingOfGesuchstellerAntrag(@Nonnull Gesuch antrag) {
+	private void logDeletingOfGesuchstellerAntrag(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		LOG.info("****************************************************");
 		LOG.info("Online Gesuch wird gelöscht:");
 		LOG.info("Benutzer: " + principalBean.getBenutzer().getUsername());
-		LOG.info("Fall: " + antrag.getFall().getFallNummer());
-		LOG.info("Gesuchsperiode: " + antrag.getGesuchsperiode().getGesuchsperiodeString());
+		LOG.info("Fall: " + fall.getFallNummer());
+		LOG.info("Gesuchsperiode: " + gesuchsperiode.getGesuchsperiodeString());
 		LOG.info("****************************************************");
 	}
 }

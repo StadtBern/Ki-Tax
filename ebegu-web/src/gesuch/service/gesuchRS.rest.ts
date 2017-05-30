@@ -177,16 +177,17 @@ export default class GesuchRS implements IEntityRS {
             });
     }
 
-    public removeOnlineMutation(gesuchID: string):  IPromise<boolean> {
-        return this.http.delete(this.serviceURL + '/removeOnlineMutation/' + encodeURIComponent(gesuchID))
+    public removeOnlineMutation(fallID: string, gesuchsperiodeId: string):  IPromise<boolean> {
+        return this.http.delete(this.serviceURL + '/removeOnlineMutation/' + encodeURIComponent(fallID)
+            + '/' + encodeURIComponent(gesuchsperiodeId))
             .then((response: any) => {
                 return response.data;
             });
     }
 
-    public removeOnlineFolgegesuch(gesuchID: string, gesuchsperiodId: string): IPromise<boolean> {
-        return this.http.delete(this.serviceURL + '/removeOnlineFolgegesuch/' + encodeURIComponent(gesuchID)
-            + '/' + encodeURIComponent(gesuchsperiodId))
+    public removeOnlineFolgegesuch(fallID: string, gesuchsperiodeId: string): IPromise<boolean> {
+        return this.http.delete(this.serviceURL + '/removeOnlineFolgegesuch/' + encodeURIComponent(fallID)
+            + '/' + encodeURIComponent(gesuchsperiodeId))
             .then((response: any) => {
                 return response.data;
             });
