@@ -18,7 +18,8 @@ export class DVUserselect implements IDirective {
         ngDisabled: '<',
         initialAll: '=',
         showSelectionAll: '=',
-        onUserChanged: '&'
+        onUserChanged: '&',
+        selectedUser: '=?'
         //initialAll -> tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
     };
     controller = UserselectController;
@@ -56,11 +57,9 @@ export class UserselectController {
         this.updateUserList();
         if (!this.initialAll) { //tritt nur ein, wenn explizit  { initial-all="true" } geschrieben ist
             this.selectedUser = this.authService.getPrincipal();
-        } else {
-            this.selectedUser = undefined;
         }
         //initial nach aktuell eingeloggtem filtern
-        if (this.smartTable && !this.initialAll) {
+        if (this.smartTable && !this.initialAll && this.selectedUser) {
             this.smartTable.search(this.selectedUser.getFullName(), this.dvUsersearch);
         }
         this.valueChanged = () => {
@@ -68,7 +67,7 @@ export class UserselectController {
         };
     }
 
-    private updateUserList() {
+    private updateUserList(): void {
         this.userRS.getBenutzerJAorAdmin().then((response: any) => {
             this.userList = angular.copy(response);
         });

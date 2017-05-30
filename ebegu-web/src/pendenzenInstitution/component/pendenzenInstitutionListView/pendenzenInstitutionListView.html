@@ -3,10 +3,15 @@
          st-safe-src="vm.getPendenzenList()"  st-delay="20">
 
         <div class="row">
-            <div class="col-md-11">
-                <h3 data-translate="PENDENZEN_LIST"></h3>
+            <div class="col-md-10">
+                <div id="titleText">
+                    <h3 data-translate="PENDENZEN_LIST"></h3>
+                </div>
+                <div id="refreshIcon">
+                    <i class="fa fa-undo" dv-st-reset-search></i>
+                </div>
             </div>
-            <div class="col-md-1 text-right">
+            <div class="col-md-2 text-right">
                 <h3 ng-bind="(displayedCollection || [] ).length"></h3>
             </div>
         </div>

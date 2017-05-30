@@ -1,3 +1,5 @@
+@import '../../../style/variables.less';
+
 .ellipsis {
     width: 5rem;
     white-space: nowrap;
@@ -6,5 +8,18 @@
     -o-text-overflow: ellipsis;
 }
 
+.fa-undo {
+    &:hover{
+        color:@primary;
+        cursor: pointer;
+    }
+}
 
+#titleText {
+    display: inline-block;
+}
 
+#refreshIcon {
+    margin-left: 1rem;
+    display: inline-block;
+}

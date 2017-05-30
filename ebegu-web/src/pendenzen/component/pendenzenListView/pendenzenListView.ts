@@ -19,6 +19,7 @@ export class PendenzenListViewComponentConfig implements IComponentOptions {
 export class PendenzenListViewController {
 
     private pendenzenList: Array<TSAntragDTO>;
+    totalResultCount: string = '0';
 
     static $inject: string[] = ['PendenzRS', 'CONSTANTS', 'AuthServiceRS'];
 
@@ -34,6 +35,11 @@ export class PendenzenListViewController {
     private updatePendenzenList(username: string) {
         this.pendenzRS.getPendenzenListForUser(username).then((response: any) => {
             this.pendenzenList = angular.copy(response);
+            if (this.pendenzenList && this.pendenzenList.length) {
+                this.totalResultCount = this.pendenzenList.length.toString();
+            } else {
+                this.totalResultCount = '0';
+            }
         });
     }
 

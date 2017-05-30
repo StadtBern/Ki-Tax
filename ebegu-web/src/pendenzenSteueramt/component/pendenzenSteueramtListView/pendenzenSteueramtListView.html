@@ -1,21 +1,14 @@
 <div class="pendenzenSteueramtListView">
     <div class="col-md-12">
         <div class="row">
-            <div class="col-md-11">
-                <h3 data-translate="PENDENZEN_LIST"></h3>
-            </div>
-            <div class="col-md-1 text-right">
-                <h3 ng-bind="vm.totalResultCount"></h3>
-            </div>
-        </div>
-
-        <div class="row">
             <div class="col-md-12">
                 <dv-antrag-list
+                    table-title="PENDENZEN_LIST"
                     on-filter-change="vm.passFilterToServer(tableState)"
                     on-edit="vm.editpendenzSteueramt(antrag, event)"
-                    table-id="pendenzenTable"
+                    table-id="pendenzenSTVTable"
                     add-button-visible="false"
+                    total-result-count="vm.totalResultCount"
                     action-visible="false">
                 </dv-antrag-list>
             </div>
