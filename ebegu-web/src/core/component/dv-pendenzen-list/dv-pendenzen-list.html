@@ -1,21 +1,25 @@
 <div class="dv-pendenzen-list">
     <div st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getPendenzenList()"
-         st-delay="20">
+         st-delay="20" dv-st-persist-pendenzen="{{vm.tableId}}">
 
         <div class="row">
-            <div class="col-md-11">
-                <h3 data-translate="{{vm.tableTitle}}"></h3>
+            <div class="col-md-10">
+                <div id="titleText">
+                    <h3 data-translate="{{vm.tableTitle}}"></h3>
+                </div>
+                <div id="refreshIcon">
+                    <i class="fa fa-undo" dv-st-reset-search></i>
+                </div>
             </div>
-            <div class="col-md-1 text-right">
-                <h3 ng-bind="(displayedCollection || [] ).length"></h3>
+            <div class="col-md-2 text-right">
+                <h3 ng-bind="vm.totalResultCount"></h3>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12 table-responsive">
             <!--Tabelle-->
-            <table
-                   class="table table-striped fixedtable">
+            <table class="table table-striped fixedtable">
                 <thead>
                 <tr>
                     <th st-sort="fallNummer" class="sortable row-fallnr" data-translate="FALL_UPPER"></th>
@@ -33,9 +37,12 @@
                         data-translate="VERANTWORTLICH_UPPER"></th>
                 </tr>
                 <tr>
-                    <th><input st-search="fallNummer" class="form-control" type="text"/></th>
-                    <th><input st-search="familienName" class="form-control" type="text"/></th>
-                    <th><input st-search="kinder" class="form-control" type="text"/></th>
+                    <th><input st-search="fallNummer" class="form-control" type="text"
+                               ng-model="vm.selectedFallNummer"/></th>
+                    <th><input st-search="familienName" class="form-control" type="text"
+                               ng-model="vm.selectedFamilienName"/></th>
+                    <th><input st-search="kinder" class="form-control" type="text"
+                               ng-model="vm.selectedKinder"/></th>
                     <th>
                         <div class="dv-select-style">
                             <select st-input-event="change" name="antragTyp" id="antragTyp" st-search="antragTyp"
@@ -56,7 +63,8 @@
                             </select>
                         </div>
                     </th>
-                    <th><input st-search="eingangsdatum" class="form-control" type="text"/></th>
+                    <th><input st-search="eingangsdatum" class="form-control" type="text"
+                               ng-model="vm.selectedEingangsdatum"/></th>
                     <th>
                         <div class="dv-select-style">
                             <select st-input-event="change" name="antragStatus" id="antragStatus" st-search="status"
@@ -88,7 +96,10 @@
                         </div>
                     </th>
                     <th>
-                        <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher" initial-all="vm.initialAll" show-selection-all="vm.showSelectionAll" on-user-changed="vm.userChanged(user)"></dv-userselect>
+                        <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher"
+                                       initial-all="vm.initialAll" show-selection-all="vm.showSelectionAll"
+                                       on-user-changed="vm.userChanged(user)"
+                                       selected-user="vm.selectedVerantwortlicher"></dv-userselect>
                     </th>
                 </tr>
                 </thead>
