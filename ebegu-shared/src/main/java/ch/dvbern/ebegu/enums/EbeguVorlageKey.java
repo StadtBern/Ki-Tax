@@ -40,7 +40,14 @@ public enum EbeguVorlageKey {
 	VORLAGE_BEGLEITSCHREIBEN("/vorlagen/Begleitschreiben.docx"),
 
 	// Benutzerhandbuecher
-	VORLAGE_BENUTZERHANDBUCH_ADMIN("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Administrator.pdf");
+	VORLAGE_BENUTZERHANDBUCH_ADMIN("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Administrator.pdf"),
+	VORLAGE_BENUTZERHANDBUCH_INSTITUTION("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Institution.pdf"),
+	VORLAGE_BENUTZERHANDBUCH_JUGENDAMT("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Jugendamt.pdf"),
+	VORLAGE_BENUTZERHANDBUCH_JURIST("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Jurist.pdf"),
+	VORLAGE_BENUTZERHANDBUCH_REVISOR("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Revisor.pdf"),
+	VORLAGE_BENUTZERHANDBUCH_SCHULAMT("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Schulamt.pdf"),
+	VORLAGE_BENUTZERHANDBUCH_STV("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Steuerverwaltung.pdf"),
+	VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT("/benutzerhandbuch/Ki-Tax Benutzerhandbuch - Rolle Trägerschaft.pdf");
 
 
 	private boolean proGesuchsperiode;

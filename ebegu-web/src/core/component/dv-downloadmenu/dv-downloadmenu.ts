@@ -30,6 +30,7 @@ export class DvDownloadmenuController {
         this.downloadRS.getAccessTokenBenutzerhandbuch()
             .then((downloadFile: TSDownloadFile) => {
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);
+                this.display = false;
             });
     }
 

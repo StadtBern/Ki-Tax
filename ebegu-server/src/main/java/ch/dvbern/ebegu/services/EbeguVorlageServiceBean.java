@@ -208,7 +208,29 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		if (userRole != null) {
 			switch (userRole) {
 				case ADMIN:
+				case SUPER_ADMIN:
 					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_ADMIN;
+					break;
+				case SACHBEARBEITER_JA:
+					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_JUGENDAMT;
+					break;
+				case SACHBEARBEITER_TRAEGERSCHAFT:
+					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT;
+					break;
+				case SACHBEARBEITER_INSTITUTION:
+					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_INSTITUTION;
+					break;
+				case JURIST:
+					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_JURIST;
+					break;
+				case REVISOR:
+					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_REVISOR;
+					break;
+				case STEUERAMT:
+					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_STV;
+					break;
+				case SCHULAMT:
+					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_SCHULAMT;
 					break;
 				default:
 					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_ADMIN;
