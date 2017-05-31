@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -30,7 +29,6 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -56,9 +54,6 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 
 	@Inject
 	private PrincipalBean principalBean;
-
-	@Inject
-	private EbeguConfiguration ebeguConfiguration;
 
 	@Nonnull
 	@Override
@@ -130,19 +125,19 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	}
 
 	@Nonnull
-	private Optional<EbeguVorlage> getNewestbeguVorlageByKey(EbeguVorlageKey key) {
+	private Optional<EbeguVorlage> getNewestEbeguVorlageByKey(EbeguVorlageKey key) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
 		Root<EbeguVorlage> root = query.from(EbeguVorlage.class);
 		query.select(root);
 
-		ParameterExpression<EbeguVorlageKey> dateAbParam = cb.parameter(EbeguVorlageKey.class, "key");
-		Predicate dateAbPredicate = cb.equal(root.get(EbeguVorlage_.name), dateAbParam);
+		ParameterExpression<EbeguVorlageKey> nameParam = cb.parameter(EbeguVorlageKey.class, "key");
+		Predicate namePredicate = cb.equal(root.get(EbeguVorlage_.name), nameParam);
 
 		query.orderBy(cb.desc(root.get(EbeguVorlage_.timestampErstellt)));
-		query.where(dateAbPredicate);
+		query.where(namePredicate);
 		TypedQuery<EbeguVorlage> q = persistence.getEntityManager().createQuery(query);
-		q.setParameter(dateAbParam, key);
+		q.setParameter(nameParam, key);
 
 		List<EbeguVorlage> resultList = q.getResultList();
 		if (CollectionUtils.isNotEmpty(resultList)) {
@@ -204,41 +199,9 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	@Override
 	public Vorlage getBenutzerhandbuch() {
 		UserRole userRole = principalBean.discoverMostPrivilegedRole();
-		EbeguVorlageKey key = null;
-		if (userRole != null) {
-			switch (userRole) {
-				case ADMIN:
-				case SUPER_ADMIN:
-					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_ADMIN;
-					break;
-				case SACHBEARBEITER_JA:
-					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_JUGENDAMT;
-					break;
-				case SACHBEARBEITER_TRAEGERSCHAFT:
-					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT;
-					break;
-				case SACHBEARBEITER_INSTITUTION:
-					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_INSTITUTION;
-					break;
-				case JURIST:
-					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_JURIST;
-					break;
-				case REVISOR:
-					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_REVISOR;
-					break;
-				case STEUERAMT:
-					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_STV;
-					break;
-				case SCHULAMT:
-					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_SCHULAMT;
-					break;
-				default:
-					key = EbeguVorlageKey.VORLAGE_BENUTZERHANDBUCH_ADMIN;
-					break;
-			}
-		}
+		EbeguVorlageKey key = EbeguVorlageKey.getBenutzerHandbuchKeyForRole(userRole);
 
-		final Optional<EbeguVorlage> vorlageOptional = getNewestbeguVorlageByKey(key);
+		final Optional<EbeguVorlage> vorlageOptional = getNewestEbeguVorlageByKey(key);
 		EbeguVorlage ebeguVorlage = null;
 		if (vorlageOptional.isPresent()) {
 			ebeguVorlage = vorlageOptional.get();
@@ -262,7 +225,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 				return vorlage;
 			} catch (IOException | MimeTypeParseException e) {
 				LOGGER.error("Could not save vorlage!", e);
-				throw new EbeguRuntimeException("getBenutzerhandbuch", "Could not create Benutzerhandbuch");
+				throw new EbeguRuntimeException("getBenutzerhandbuch", "Could not create Benutzerhandbuch", e);
 			}
 		}
 	}

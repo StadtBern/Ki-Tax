@@ -88,4 +88,32 @@ public enum EbeguVorlageKey {
 	public void setDefaultVorlagePath(String defaultVorlagePath) {
 		this.defaultVorlagePath = defaultVorlagePath;
 	}
+
+	@SuppressWarnings("OverlyComplexMethod")
+	public static EbeguVorlageKey getBenutzerHandbuchKeyForRole(UserRole userRole) {
+		if (userRole != null) {
+			switch (userRole) {
+				case ADMIN:
+				case SUPER_ADMIN:
+					return VORLAGE_BENUTZERHANDBUCH_ADMIN;
+				case SACHBEARBEITER_JA:
+					return VORLAGE_BENUTZERHANDBUCH_JUGENDAMT;
+				case SACHBEARBEITER_TRAEGERSCHAFT:
+					return VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT;
+				case SACHBEARBEITER_INSTITUTION:
+					return VORLAGE_BENUTZERHANDBUCH_INSTITUTION;
+				case JURIST:
+					return VORLAGE_BENUTZERHANDBUCH_JURIST;
+				case REVISOR:
+					return VORLAGE_BENUTZERHANDBUCH_REVISOR;
+				case STEUERAMT:
+					return VORLAGE_BENUTZERHANDBUCH_STV;
+				case SCHULAMT:
+					return VORLAGE_BENUTZERHANDBUCH_SCHULAMT;
+				default:
+					return null;
+			}
+		}
+		return null;
+	}
 }
