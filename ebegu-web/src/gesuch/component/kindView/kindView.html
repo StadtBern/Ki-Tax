@@ -67,7 +67,8 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                                 </label>
-                                <dv-datepicker input-id="geburtsdatum_ID" name="geburtsdatum"
+                                <dv-datepicker no-future
+                                               input-id="geburtsdatum_ID" name="geburtsdatum"
                                                ng-model="vm.getModel().geburtsdatum" ng-required="true"
                                                class="input-element"
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
