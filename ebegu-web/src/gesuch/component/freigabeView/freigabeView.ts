@@ -13,15 +13,14 @@ import DateUtil from '../../../utils/DateUtil';
 import {TSZustelladresse} from '../../../models/enums/TSZustelladresse';
 import {ApplicationPropertyRS} from '../../../admin/service/applicationPropertyRS.rest';
 import {FreigabeDialogController} from '../../dialog/FreigabeDialogController';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import ITranslateService = angular.translate.ITranslateService;
 import IFormController = angular.IFormController;
 import IScope = angular.IScope;
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
 let dialogTemplate = require('../../dialog/removeDialogTemplate.html');
-
 
 export class FreigabeViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -30,7 +29,6 @@ export class FreigabeViewComponentConfig implements IComponentOptions {
     controller = FreigabeViewController;
     controllerAs = 'vm';
 }
-
 
 export class FreigabeViewController extends AbstractGesuchViewController<any> {
 
@@ -45,7 +43,7 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, $scope: IScope, private applicationPropertyRS: ApplicationPropertyRS,
-                private $window: ng.IWindowService,  private authServiceRS: AuthServiceRS) {
+                private $window: ng.IWindowService, private authServiceRS: AuthServiceRS) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE);
         this.initViewModel();
@@ -146,6 +144,11 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         return this.wizardStepManager.areAllStepsOK(this.gesuchModelManager.getGesuch()) &&
             this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
             && !this.isGesuchReadonly() && this.isGesuchInStatus(TSAntragStatus.IN_BEARBEITUNG_GS);
+    }
+
+    public areThereAbgewieseneBetreuungen(): boolean {
+        return !this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.PLATZBESTAETIGUNG) ||
+            this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK);
     }
 
     private getZustelladresse(): TSZustelladresse {
