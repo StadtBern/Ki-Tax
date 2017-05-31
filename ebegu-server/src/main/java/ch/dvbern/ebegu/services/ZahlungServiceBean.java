@@ -14,6 +14,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -74,6 +75,9 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
+
+	@Inject
+	private GeneratedDokumentService generatedDokumentService;
 
 	@Override
 	@Nonnull
@@ -166,7 +170,27 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 			sb.append(" [Repetition]");
 		}
 		LOGGER.info(sb.toString());
+		calculateZahlungsauftrag(zahlungsauftrag);
 		return persistence.merge(zahlungsauftrag);
+	}
+
+	/**
+	 * Zahlungsauftrag wird einmalig berechnet. Danach koennen nur noch die Stammdaten der Institutionen
+	 * geaendert werden.
+	 */
+	private void calculateZahlungsauftrag(Zahlungsauftrag zahlungsauftrag) {
+		BigDecimal totalAuftrag = BigDecimal.ZERO;
+		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
+			BigDecimal totalZahlung = BigDecimal.ZERO;
+			for (Zahlungsposition zahlungsposition : zahlung.getZahlungspositionen()) {
+				if (!zahlungsposition.isIgnoriert()) {
+					totalZahlung = MathUtil.DEFAULT.add(totalZahlung, zahlungsposition.getBetrag());
+				}
+			}
+			zahlung.setBetragTotalZahlung(totalZahlung);
+			totalAuftrag = MathUtil.DEFAULT.add(totalAuftrag, totalZahlung);
+		}
+		zahlungsauftrag.setBetragTotalAuftrag(totalAuftrag);
 	}
 
 	/**
@@ -414,6 +438,13 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		Objects.requireNonNull(auftragId, "auftragId muss gesetzt sein");
 		Zahlungsauftrag zahlungsauftrag = persistence.find(Zahlungsauftrag.class, auftragId);
 		zahlungsauftrag.setStatus(ZahlungauftragStatus.AUSGELOEST);
+		// Jetzt muss noch das PAIN File erstellt werden. Nach dem Ausloesen kann dieses nicht mehr veraendert werden
+		try {
+			generatedDokumentService.getPain001DokumentAccessTokenGeneratedDokument(zahlungsauftrag, true);
+		} catch (MimeTypeParseException e) {
+			throw new IllegalStateException("Pain-File konnte nicht erstellt werden: " + auftragId);
+		}
+		//  return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
 		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
 			if (!ZahlungStatus.ENTWURF.equals(zahlung.getStatus())) {
 				throw new IllegalArgumentException("Zahlung muss im Status ENTWURF sein, wenn der Auftrag ausgelöst wird: " + zahlung.getId());

@@ -326,23 +326,46 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Nonnull
 	private Optional<WriteProtectedDokument> getMaybeExistingGeneratedDokument(String gesuchId, String fileNameForGeneratedDokumentTyp) {
-
 		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuchId;
-
 		final WriteProtectedDokument persistedDokument = findGeneratedDokument(gesuchId, fileNameForGeneratedDokumentTyp,
+			expectedFilepath);
+		return Optional.ofNullable(persistedDokument);
+	}
+
+	private Optional<WriteProtectedDokument> getMaybeExistingPain001Document(String zahlungsauftragId, String fileNameForGeneratedDokumentTyp) {
+		String expectedFilepath = ebeguConfiguration.getDocumentFilePath() + "/" + zahlungsauftragId;
+		final WriteProtectedDokument persistedDokument = findPain001Dokument(zahlungsauftragId, fileNameForGeneratedDokumentTyp,
 			expectedFilepath);
 		return Optional.ofNullable(persistedDokument);
 	}
 
 	private WriteProtectedDokument getDocumentIfExistsAndIsWriteProtected(String gesuchId, String fileNameForGeneratedDokumentTyp, @Nonnull Boolean forceCreation) {
 		Optional<WriteProtectedDokument> optionalDokument = getMaybeExistingGeneratedDokument(gesuchId, fileNameForGeneratedDokumentTyp);
-		if (forceCreation && optionalDokument.isPresent() && optionalDokument.get().isWriteProtected()) {
-			// Dies ist ein Zustand, der eigentlich gar nicht vorkommen dürfte: Wir wollen explizit das Dokument neu
-			// erstellen (forceCreate), es ist aber writeProtected.
-			// Wir vermuten/hoffen, dass dies nur bei sehr schnellem Doppelklick vorkommen kann. Da der Benutzer mit
-			// einer eventuellen Fehlermeldung sowieso nichts anfangen könnte, geben wir das bereits vorhandene
-			// Dokument zurück, loggen aber den Vorfall.
-			LOGGER.error("Achtung, es wurde versucht, ein Dokument mit WriteProtection neu zu erstellen. PersistedDokument-ID: " + optionalDokument.get().getId());
+		if (optionalDokument.isPresent() && optionalDokument.get().isWriteProtected()) {
+			if (forceCreation) {
+				// Dies ist ein Zustand, der eigentlich gar nicht vorkommen dürfte: Wir wollen explizit das Dokument neu
+				// erstellen (forceCreate), es ist aber writeProtected.
+				// Wir vermuten/hoffen, dass dies nur bei sehr schnellem Doppelklick vorkommen kann. Da der Benutzer mit
+				// einer eventuellen Fehlermeldung sowieso nichts anfangen könnte, geben wir das bereits vorhandene
+				// Dokument zurück, loggen aber den Vorfall.
+				LOGGER.error("Achtung, es wurde versucht, ein Dokument mit WriteProtection neu zu erstellen. PersistedDokument-ID: " + optionalDokument.get().getId());
+			}
+			return optionalDokument.get();
+		}
+		return null;
+	}
+
+	private WriteProtectedDokument getPain001DocumentIfExistsAndIsWriteProtected(String zahlungsauftragId, String fileNameForGeneratedDokumentTyp, @Nonnull Boolean forceCreation) {
+		Optional<WriteProtectedDokument> optionalDokument = getMaybeExistingPain001Document(zahlungsauftragId, fileNameForGeneratedDokumentTyp);
+		if (optionalDokument.isPresent() && optionalDokument.get().isWriteProtected()) {
+			if (forceCreation) {
+				// Dies ist ein Zustand, der eigentlich gar nicht vorkommen dürfte: Wir wollen explizit das Dokument neu
+				// erstellen (forceCreate), es ist aber writeProtected.
+				// Wir vermuten/hoffen, dass dies nur bei sehr schnellem Doppelklick vorkommen kann. Da der Benutzer mit
+				// einer eventuellen Fehlermeldung sowieso nichts anfangen könnte, geben wir das bereits vorhandene
+				// Dokument zurück, loggen aber den Vorfall.
+				LOGGER.error("Achtung, es wurde versucht, ein Dokument mit WriteProtection neu zu erstellen. PersistedDokument-ID: " + optionalDokument.get().getId());
+			}
 			return optionalDokument.get();
 		}
 		return null;
@@ -502,7 +525,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, zahlungsauftrag.getFilename());
 
 		if (!forceCreation && !ZahlungauftragStatus.ENTWURF.equals(zahlungsauftrag.getStatus())) {
-			persistedDokument = getDocumentIfExistsAndIsWriteProtected(zahlungsauftrag.getId(), fileNameForGeneratedDokumentTyp, forceCreation);
+			persistedDokument = getPain001DocumentIfExistsAndIsWriteProtected(zahlungsauftrag.getId(), fileNameForGeneratedDokumentTyp, forceCreation);
 		}
 
 		if (ZahlungauftragStatus.ENTWURF.equals(zahlungsauftrag.getStatus()) || persistedDokument == null) {
