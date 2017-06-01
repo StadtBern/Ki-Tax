@@ -8,6 +8,7 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import IScope = angular.IScope;
 let template = require('./dv-vorlage-list.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 
@@ -31,14 +32,27 @@ export class DVVorlageListController {
     proGesuchsperiode: boolean;
 
     static $inject: any[] = ['DownloadRS', '$log', 'EbeguVorlageRS', 'DvDialog',
-        'EbeguUtil'];
+        'EbeguUtil', '$scope'];
     /* @ngInject */
     constructor(private downloadRS: DownloadRS, private $log: ILogService,
                 private ebeguVorlageRS: EbeguVorlageRS, private dvDialog: DvDialog,
-                private ebeguUtil: EbeguUtil) {
+                private ebeguUtil: EbeguUtil, private $scope: IScope) {
     }
 
     $onInit() {
+        this.updateVorlageList();
+        if (this.proGesuchsperiode) {
+            this.$scope.$watch(() => {
+                return this.gesuchsperiode;
+            }, (newValue, oldValue) => {
+                if (newValue !== oldValue) {
+                    this.updateVorlageList();
+                }
+            });
+        }
+    }
+
+    private updateVorlageList() {
         if (this.proGesuchsperiode) {
             if (this.gesuchsperiode) {
                 this.ebeguVorlageRS.getEbeguVorlagenByGesuchsperiode(this.gesuchsperiode.id).then((response: TSEbeguVorlage[]) => {

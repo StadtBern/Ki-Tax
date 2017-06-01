@@ -248,9 +248,13 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		}
 	}
 
+	/**
+	 * Adds all empty Vorlagen to the list. It will only take into account those
+	 * Vorlage that are set to proGesuchsperiode=true
+	 */
 	private Set<EbeguVorlage> getEmptyVorlagen(Collection<EbeguVorlage> persistedEbeguVorlagen) {
 		Set<EbeguVorlage> emptyEbeguVorlagen = new HashSet<>();
-		final EbeguVorlageKey[] ebeguVorlageKeys = EbeguVorlageKey.values();
+		final EbeguVorlageKey[] ebeguVorlageKeys = EbeguVorlageKey.getAllKeysProGesuchsperiode();
 		for (EbeguVorlageKey ebeguVorlageKey : ebeguVorlageKeys) {
 			boolean exist = false;
 			for (EbeguVorlage ebeguVorlage : persistedEbeguVorlagen) {
