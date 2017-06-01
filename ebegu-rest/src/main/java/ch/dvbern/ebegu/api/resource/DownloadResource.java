@@ -72,6 +72,9 @@ public class DownloadResource {
 	@Inject
 	private Persistence<AbstractEntity> persistence;
 
+	@Inject
+	private EbeguVorlageService ebeguVorlageService;
+
 
 	@GET
 	@Path("blobdata/{accessToken}")
@@ -82,7 +85,6 @@ public class DownloadResource {
 		@Context HttpServletRequest request) {
 
 		String ip = getIP(request);
-
 
 		DownloadFile downloadFile = downloadFileService.getDownloadFileByAccessToken(blobAccessTokenParam);
 
@@ -142,6 +144,19 @@ public class DownloadResource {
 
 
 		return getFileDownloadResponse(uriInfo, ip, dokument);
+	}
+
+	@Nonnull
+	@GET
+	@Path("/BENUTZERHANDBUCH")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDokumentAccessTokenBenutzerhandbuch(
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException {
+
+		String ip = getIP(request);
+		FileMetadata benutzerhandbuch = ebeguVorlageService.getBenutzerhandbuch();
+		return getFileDownloadResponse(uriInfo, ip, benutzerhandbuch);
 	}
 
 	/**

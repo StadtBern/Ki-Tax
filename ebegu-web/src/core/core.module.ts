@@ -81,6 +81,13 @@ import ExportRS from '../gesuch/service/exportRS.rest';
 import {DvCountdownComponentConfig} from './component/dv-countdown/dv-countdown';
 import ZahlungRS from './service/zahlungRS.rest';
 import EwkRS from './service/ewkRS.rest';
+import {DVDisplayElement} from './directive/dv-display-element/dv-display-element';
+import {DVsTPersistService} from './service/dVsTPersistService';
+import DVSTResetSearch from './directive/dv-st-reset-search/dv-st-reset-search';
+import DVSTPersistAntraege from './directive/dv-st-persist-antraege/dv-st-persist-antraege';
+import DVSTPersistPendenzen from './directive/dv-st-persist-pendenzen/dv-st-persist-pendenzen';
+import {DvDownloadmenuComponentConfig} from './component/dv-downloadmenu/dv-downloadmenu';
+import {DVVorlageListConfig} from './component/dv-vorlage-list/dv-vorlage-list';
 
 let dynamicDependencies = function (): string[] {
 
@@ -175,7 +182,11 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvLoading', DVLoading.factory())
     .directive('dvLoadingButton', DVLoadingButton.factory())
     .directive('dvSubmitevent', DVSubmitevent.factory())
+    .directive('dvStPersistAntraege', DVSTPersistAntraege.factory())
+    .directive('dvStPersistPendenzen', DVSTPersistPendenzen.factory())
+    .directive('dvStResetSearch', DVSTResetSearch.factory())
     .directive('dvShowElement', DVShowElement.factory())
+    .directive('dvDisplayElement', DVDisplayElement.factory())
     .directive('dvEnableElement', DVEnableElement.factory())
     .directive('dvBarcodeListener', DVBarcodeListener.factory())
     .directive('dvTrimEmpty', DVTrimEmpty.factory())
@@ -186,6 +197,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('WizardStepManager', WizardStepManager)
     .service('NavigationLogger', NavigationLogger)
     .service('SearchIndexRS', SearchIndexRS)
+    .service('DVsTPersistService', DVsTPersistService)
     .controller('DVElementController', DVRoleElementController)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
@@ -196,11 +208,13 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
     .component('dvMobileNavigationToggle', new DvMobileNavigationToggleComponentConfig())
     .component('dvHomeIcon', new DvHomeIconComponentConfig())
+    .component('dvDownloadmenu', new DvDownloadmenuComponentConfig())
     .component('dvCountdown', new DvCountdownComponentConfig())
     .component('dvPosteingang', new DvPosteingangComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())
+    .component('dvVorlageList', new DVVorlageListConfig())
     .component('dvPendenzenList', new DVPendenzenListConfig())
     .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
     .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
@@ -212,7 +226,10 @@ export const EbeguWebCore: angular.IModule = angular
     .service('EwkRS', EwkRS)
     .filter('arrayToString', () => {
         return function (input: Array<string>) {
-            return input.join(', ');
+            if (input) {
+                return input.join(', ');
+            }
+            return '';
         };
     });
 

@@ -3,7 +3,7 @@ import {DVRoleElementController} from '../../controller/DVRoleElementController'
 
 
 /**
- * Attribute Directive um Elementen aus- und einblenden.
+ * Attribute Directive um Elementen aus- und einblenden. Erweitert ng-if
  * Die Direktive muss folgendermasse benutzt werden:
  *     dv-show-element - diese Attribute muss in jedem Element gesetzt werden, das die Direktive braucht
  *     dv-show-allowed-roles="[vm.TSRole.X, vm.TSRole.Y, ...]" - Array mit allen Rollen, für die das Element eingeblendet werden muss. Um diese Syntax

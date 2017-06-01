@@ -1,12 +1,18 @@
 package ch.dvbern.ebegu.ws.ewk;
 
-import java.math.BigInteger;
-import java.net.URL;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import ch.bern.e_gov.cra.ReturnMessage;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheOB;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheReq;
+import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
+import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
+import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
@@ -16,22 +22,14 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.dvbern.ebegu.config.EbeguConfiguration;
-import ch.dvbern.ebegu.dto.personensuche.EWKResultat;
-import ch.dvbern.ebegu.enums.Geschlecht;
-import ch.dvbern.ebegu.errors.PersonenSucheServiceBusinessException;
-import ch.dvbern.ebegu.errors.PersonenSucheServiceException;
-
-import ch.bern.e_gov.cra.ReturnMessage;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheOB;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheReq;
-import ch.bern.e_gov.e_begu.egov_002.PersonenSucheResp;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Diese Klasse ruft den PersonenSuche Webservice des EWK auf
@@ -139,10 +137,12 @@ public class EWKWebService implements IEWKWebService {
 		return port;
 	}
 
+	@SuppressWarnings({"PMD.NcssMethodCount"})
 	private void initPersonenSucheServicePort() throws PersonenSucheServiceException {
 		logger.info("Initialising PersonenSucheService:");
 		if (port == null) {
 			String endpointURL = config.getPersonenSucheEndpoint();
+			String wsdlURL = config.getPersonenSucheWsdl();
 			String username = config.getPersonenSucheUsername();
 			String password = config.getPersonenSuchePassword();
 			if (StringUtils.isEmpty(endpointURL)) {
@@ -156,11 +156,26 @@ public class EWKWebService implements IEWKWebService {
 			}
 			logger.info("PersonenSucheService Endpoint: " + endpointURL);
 			logger.info("PersonenSucheService Username: " + username);
+
+			URL url;
 			try {
-				// WSDL wird mitgeliefert. Die EndpointURL?wsdl funktioniert so nicht.
-				final URL url = EWKWebService.class.getResource("/wsdl/Stadt_Bern_E-BEGU_Personensuche_v1.2.wsdl");
-				Validate.notNull(url,"WSDL konnte unter der angegebenen URI nicht gefunden werden. Kann Service-Port nicht erstellen");
-				logger.info("PersonenSucheService URL: " + url);
+				// Test der neu mitgeteilten WSDL-URL:
+				url = new URL(wsdlURL);
+				logger.info("PersonenSucheService WSDL: " + url);
+				Object content = url.getContent();
+				logger.info("PersonenSucheService WSDL-Content: " + content);
+			} catch (IOException e) {
+				url = null;
+				logger.error("PersonenSucheService WSDL not found: ", e);
+			}
+
+			try {
+				if (url == null) {
+					// WSDL wird mitgeliefert. Die EndpointURL?wsdl funktioniert so nicht.
+					url = EWKWebService.class.getResource("/wsdl/Stadt_Bern_E-BEGU_Personensuche_v1.2.wsdl");
+					Validate.notNull(url, "WSDL konnte unter der angegebenen URI nicht gefunden werden. Kann Service-Port nicht erstellen");
+					logger.info("PersonenSucheService URL: " + url);
+				}
 				logger.info("PersonenSucheService TargetNameSpace: " + TARGET_NAME_SPACE);
 				logger.info("PersonenSucheService ServiceName: " + SERVICE_NAME);
 				final QName qname = new QName(TARGET_NAME_SPACE, SERVICE_NAME);

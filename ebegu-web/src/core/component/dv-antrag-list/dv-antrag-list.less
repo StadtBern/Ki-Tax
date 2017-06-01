@@ -1,3 +1,4 @@
+@import '../../../style/variables.less';
 
 .ellipsis {
     width: 5rem;
@@ -26,6 +27,23 @@
     .row-ver{
         width:100%;
     }
+    button {
+        height: 2rem;
+    }
 }
 
+.fa-undo {
+    &:hover{
+        color:@primary;
+        cursor: pointer;
+    }
+}
 
+#titleText {
+    display: inline-block;
+}
+
+#refreshIcon {
+    margin-left: 1rem;
+    display: inline-block;
+}
