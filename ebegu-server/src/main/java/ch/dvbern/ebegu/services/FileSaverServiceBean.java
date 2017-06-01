@@ -47,6 +47,7 @@ public class FileSaverServiceBean implements FileSaverService {
 		// Wir speichern der Name des Files nicht im FS. Kann sonst Probleme mit Umlauten geben
 		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + folderName + "/" + uuid + "." + ending;
 		uploadFileInfo.setPath(absoluteFilePath);
+		uploadFileInfo.setActualFilename(uuid + "." + ending);
 
 		Path file = Paths.get(absoluteFilePath);
 		try {
