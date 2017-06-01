@@ -6,17 +6,14 @@
                 <span data-translate="UMZUG_TITLE"></span>
             </h1>
             <hr class="header"/>
-            <p ng-if="!vm.isGesuchReadonly()" class="inlineHint" data-translate="UMZUG_HINT"></p>
+            <div ng-if="!vm.isGesuchReadonly()" >
+                <p dv-show-element
+                   dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerOnlyRoles()" class="inlineHint" data-translate="UMZUG_HINT"></p>
+                <p dv-show-element
+                   dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                   dv-show-expression="vm.gesuchModelManager.getGesuch().isMutation()" class="inlineHint" data-translate="UMZUG_LIST_HINT"></p>
+            </div>
         </div>
-    </div>
-
-    <div dv-show-element
-         dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-         dv-show-expression="vm.gesuchModelManager.getGesuch().isMutation()"
-         class="well well-status-warten">
-        <h3 data-translate="UMZUG_LIST_HINT">
-
-        </h3>
     </div>
 
     <div class="row">
