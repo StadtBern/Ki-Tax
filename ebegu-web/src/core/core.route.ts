@@ -47,7 +47,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
             }
         });
     $rootScope.$on('$stateChangeSuccess',  (event, toState, toParams, fromState, fromParams) => {
-        this.errorService.clearAll();
+        errorService.clearAll();
     });
 
     routerHelper.configureStates(getStates(), '/start');
