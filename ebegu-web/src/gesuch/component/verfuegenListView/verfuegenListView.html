@@ -31,7 +31,7 @@
                                 ng-click="vm.openVerfuegung(kindContainer, betreuung)">
                                 <td ng-bind="kindContainer.kindJA.getFullName()"></td>
                                 <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
-                                <td ng-bind="betreuung.institutionStammdaten.betreuungsangebotTyp |translate"></td>
+                                <td ng-bind="betreuung.institutionStammdaten.betreuungsangebotTyp | translate"></td>
                                 <td ng-bind="vm.ebeguUtil.calculateBetreuungsId(vm.getGesuchsperiode(), vm.getFall(), kindContainer.kindNummer, betreuung.betreuungNummer)"></td>
                                 <td class="betreuung-status ng-class:betreuung.betreuungsstatus;">
                                     <div ng-bind="betreuung.betreuungsstatus | translate"></div>
@@ -41,7 +41,7 @@
                             </tbody>
                             <tbody ng-if="vm.getKinderWithBetreuungList().length === 0">
                             <tr>
-                                <td colspan="4" class="empty-table" data-translate="VERFUEGUNGEN_NOCH_KEINE"></td>
+                                <td colspan="5" class="empty-table" data-translate="VERFUEGUNGEN_NOCH_KEINE"></td>
                             </tr>
                             </tbody>
                         </table>
