@@ -10,6 +10,8 @@ public class UploadFileInfo {
 
 	private String filename;
 
+	private String actualFilename;
+
 	private final MimeType contentType;
 
 	private byte[] bytes;
@@ -31,6 +33,14 @@ public class UploadFileInfo {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+
+	public String getActualFilename() {
+		return actualFilename;
+	}
+
+	public void setActualFilename(String actualFilename) {
+		this.actualFilename = actualFilename;
 	}
 
 	public MimeType getContentType() {
