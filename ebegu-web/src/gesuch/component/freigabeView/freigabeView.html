@@ -60,7 +60,11 @@
                     <span data-translate="{{vm.getTextForFreigebenNotAllowed()}}"></span>
                 </div>
             </div>
-
+            <div class="marginTop40" ng-if="vm.isThereAnyAbgewieseneBetreuung()">
+                <div  class="well well-status-warten">
+                    <h3 data-translate="HINT_BETREUUNGEN_LOESCHEN"></h3>
+                </div>
+            </div>
         </div>
 
         <div class="col-md-12" ng-if="vm.canBeFreigegeben()">
