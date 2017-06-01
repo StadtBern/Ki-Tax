@@ -47,7 +47,7 @@ public interface EbeguVorlageService {
 
 	Optional<EbeguVorlage> findById(@Nonnull final String id);
 
-	Collection<EbeguVorlage> getALLEbeguVorlageByDate(@Nonnull LocalDate date);
+	Collection<EbeguVorlage> getALLEbeguVorlageByDate(@Nonnull LocalDate date, boolean proGesuchsperiode);
 
 	void copyEbeguVorlageListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
 

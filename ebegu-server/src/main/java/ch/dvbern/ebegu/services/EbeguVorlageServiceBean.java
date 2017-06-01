@@ -115,7 +115,9 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		ParameterExpression<LocalDate> dateBisParam = cb.parameter(LocalDate.class, "dateBis");
 		Predicate dateBisPredicate = cb.equal(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis), dateBisParam);
 
-		query.where(dateAbPredicate, dateBisPredicate);
+		Predicate proGesuchsperiodePredicate = cb.isTrue(root.get(EbeguVorlage_.proGesuchsperiode));
+
+		query.where(dateAbPredicate, dateBisPredicate, proGesuchsperiodePredicate);
 		TypedQuery<EbeguVorlage> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(dateAbParam, gesuchsperiode.getGueltigkeit().getGueltigAb());
 		q.setParameter(dateBisParam, gesuchsperiode.getGueltigkeit().getGueltigBis());
@@ -176,14 +178,30 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 
 	@Nonnull
 	@Override
-	public Collection<EbeguVorlage> getALLEbeguVorlageByDate(@Nonnull LocalDate date) {
-		return new ArrayList<>(criteriaQueryHelper.getAllInInterval(EbeguVorlage.class, date));
+	public Collection<EbeguVorlage> getALLEbeguVorlageByDate(@Nonnull LocalDate date, boolean proGesuchsperiode) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
+		Root<EbeguVorlage> root = query.from(EbeguVorlage.class);
+		query.select(root);
+
+		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
+		Predicate intervalPredicate = cb.between(dateParam,
+			root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
+
+		Predicate proGesuchsperiodePredicate = cb.equal(root.get(EbeguVorlage_.proGesuchsperiode), proGesuchsperiode);
+
+		query.where(intervalPredicate, proGesuchsperiodePredicate);
+		TypedQuery<EbeguVorlage> q = persistence.getEntityManager().createQuery(query).setParameter(dateParam, date);
+		List<EbeguVorlage> resultList = q.getResultList();
+		return resultList;
 	}
 
 	@Override
 	public void copyEbeguVorlageListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		// Die Vorlagen des letzten Jahres suchen (datumAb -1 Tag)
-		Collection<EbeguVorlage> ebeguVorlageByDate = getALLEbeguVorlageByDate(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
+		Collection<EbeguVorlage> ebeguVorlageByDate = getALLEbeguVorlageByDate(
+			gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1), true);
 		ebeguVorlageByDate.addAll(getEmptyVorlagen(ebeguVorlageByDate));
 
 		ebeguVorlageByDate.stream().filter(lastYearVoralge -> lastYearVoralge.getName().isProGesuchsperiode()).forEach(lastYearVorlage -> {

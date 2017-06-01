@@ -12,6 +12,7 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.EbeguVorlageService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import io.swagger.annotations.Api;
 import org.apache.commons.io.IOUtils;
@@ -40,10 +41,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +57,7 @@ public class EbeguVorlageResource {
 	private static final String FILENAME_HEADER = "x-filename";
 	private static final String VORLAGE_KEY_HEADER = "x-vorlagekey";
 	private static final String GESUCHSPERIODE_HEADER = "x-gesuchsperiode";
+	private static final String PROGESUCHSPERIODE_HEADER = "x-progesuchsperiode";
 
 
 	private static final Logger LOG = LoggerFactory.getLogger(EbeguVorlageResource.class);
@@ -106,6 +106,24 @@ public class EbeguVorlageResource {
 		return Collections.emptyList();
 	}
 
+	@Nullable
+	@GET
+	@Path("/nogesuchsperiode/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxEbeguVorlage> getEbeguVorlagenWithoutGesuchsperiode() {
+
+		List<EbeguVorlage> persistedEbeguVorlagen = new ArrayList<>(ebeguVorlageService
+			.getALLEbeguVorlageByDate(LocalDate.now(), false));
+
+		Collections.sort(persistedEbeguVorlagen);
+
+		return persistedEbeguVorlagen.stream()
+			.map(ebeguVorlage -> converter.ebeguVorlageToJax(ebeguVorlage))
+			.collect(Collectors.toList());
+
+	}
+
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response save(@Context HttpServletRequest request, @Context UriInfo uriInfo, MultipartFormDataInput input)
@@ -132,18 +150,25 @@ public class EbeguVorlageResource {
 		}
 
 		String gesuchsperiodeId = request.getHeader(GESUCHSPERIODE_HEADER);
+		Boolean proGesuchsperiode = Boolean.valueOf(request.getHeader(PROGESUCHSPERIODE_HEADER));
 
-		// check if filename available
-		if (gesuchsperiodeId == null || gesuchsperiodeId.isEmpty()) {
-			final String problemString = "gesuchsperiodeId must be given";
-			LOG.error(problemString);
-			return Response.serverError().entity(problemString).build();
-		}
-		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
-		if (!gesuchsperiode.isPresent()) {
-			final String problemString = "gesuchsperiode not found on server";
-			LOG.error(problemString);
-			return Response.serverError().entity(problemString).build();
+		// check if it must be linked to a Gesuchsperiode. If not the dateRange will be set by default
+		LocalDate gueltigAb = Constants.START_OF_TIME;
+		LocalDate gueltigBis = Constants.END_OF_TIME;
+		if (proGesuchsperiode) {
+			if (gesuchsperiodeId == null || gesuchsperiodeId.isEmpty()) {
+				final String problemString = "gesuchsperiodeId must be given";
+				LOG.error(problemString);
+				return Response.serverError().entity(problemString).build();
+			}
+			Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
+			if (!gesuchsperiode.isPresent()) {
+				final String problemString = "gesuchsperiode not found on server";
+				LOG.error(problemString);
+				return Response.serverError().entity(problemString).build();
+			}
+			gueltigAb = gesuchsperiode.get().getGueltigkeit().getGueltigAb();
+			gueltigBis = gesuchsperiode.get().getGueltigkeit().getGueltigBis();
 		}
 
 
@@ -167,8 +192,9 @@ public class EbeguVorlageResource {
 
 		JaxEbeguVorlage jaxEbeguVorlage = new JaxEbeguVorlage();
 		jaxEbeguVorlage.setName(ebeguVorlageKey);
-		jaxEbeguVorlage.setGueltigAb(gesuchsperiode.get().getGueltigkeit().getGueltigAb());
-		jaxEbeguVorlage.setGueltigBis(gesuchsperiode.get().getGueltigkeit().getGueltigBis());
+		jaxEbeguVorlage.setGueltigAb(gueltigAb);
+		jaxEbeguVorlage.setGueltigBis(gueltigBis);
+		jaxEbeguVorlage.setProGesuchsperiode(proGesuchsperiode);
 		jaxEbeguVorlage.setVorlage(new JaxVorlage());
 		jaxEbeguVorlage.getVorlage().setFilename(fileInfo.getFilename());
 		jaxEbeguVorlage.getVorlage().setFilepfad(fileInfo.getPath());

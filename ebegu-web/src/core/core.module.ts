@@ -87,6 +87,7 @@ import DVSTResetSearch from './directive/dv-st-reset-search/dv-st-reset-search';
 import DVSTPersistAntraege from './directive/dv-st-persist-antraege/dv-st-persist-antraege';
 import DVSTPersistPendenzen from './directive/dv-st-persist-pendenzen/dv-st-persist-pendenzen';
 import {DvDownloadmenuComponentConfig} from './component/dv-downloadmenu/dv-downloadmenu';
+import {DVVorlageListConfig} from './component/dv-vorlage-list/dv-vorlage-list';
 
 let dynamicDependencies = function (): string[] {
 
@@ -213,6 +214,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig())
+    .component('dvVorlageList', new DVVorlageListConfig())
     .component('dvPendenzenList', new DVPendenzenListConfig())
     .component('dvQuicksearchbox', new DvQuicksearchboxComponentConfig())
     .component('dvSearchResultIcon', new DvSearchResultIconComponentConfig())
