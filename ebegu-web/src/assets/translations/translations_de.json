@@ -620,6 +620,7 @@
     "PARAMETER_PRO_GESUCHSPERIODE": "E-BEGU Parameter für Gesuchsperiode",
     "VORLAGE_PRO_GESUCHSPERIODE": "E-BEGU Vorlagen für Gesuchsperiode",
     "PARAMETER_PRO_JAHR": "Jahresabhängige E-BEGU Parameter",
+    "BENUTZERHANDBUCH_LIST": "Benutzerhandbücher",
     "PARAMETER_JAHR": "Jahr",
     "PARAM_FIXBETRAG_STADT_PRO_TAG_KITA": "Fixbeitrag der Stadt pro Tag",
     "PARAM_ANZAL_TAGE_MAX_KITA": "Anzahl Tage Kita Max",
@@ -1025,5 +1026,15 @@
     "REMOVE_ONLINE_ERNEUERUNGSGESUCH_CONFIRMATION": "Möchten Sie wirklich das Online Folgegesuch löschen?",
     "REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG": "Das Folgegesuch wird endgültig gelöscht. Die Änderungen können nicht rückgängig gemacht werden.",
     "FOLGEGESUCH_HINT": "Die Stammdaten wurden aus dem letztjährigen Gesuch übernommen: Bitte prüfen Sie die übernommenen Daten.",
-    "KEIN_ANGEBOT": "Kein Angebot"
+    "KEIN_ANGEBOT": "Kein Angebot",
+    "HINT_BETREUUNGEN_LOESCHEN": "Bitte löschen Sie das abgewiesene Betreuungsangebot (rot markiert), um Ihr Gesuch freigeben zu können.",
+    "BENUTZERHANDBUCH":"Benutzerhandbuch",
+    "VORLAGE_BENUTZERHANDBUCH_ADMIN": "Benutzerhandbuch Administrator",
+    "VORLAGE_BENUTZERHANDBUCH_INSTITUTION": "Benutzerhandbuch Institutionen",
+    "VORLAGE_BENUTZERHANDBUCH_JUGENDAMT": "Benutzerhandbuch Jugendamt",
+    "VORLAGE_BENUTZERHANDBUCH_JURIST": "Benutzerhandbuch Jurist",
+    "VORLAGE_BENUTZERHANDBUCH_REVISOR": "Benutzerhandbuch Revisor",
+    "VORLAGE_BENUTZERHANDBUCH_SCHULAMT": "Benutzerhandbuch Schulamt",
+    "VORLAGE_BENUTZERHANDBUCH_STV": "Benutzerhandbuch Steuerverwaltung",
+    "VORLAGE_BENUTZERHANDBUCH_TRAEGERSCHAFT": "Benutzerhandbuch Trägerschaften"
 }
