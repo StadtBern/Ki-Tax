@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.UploadFileInfo;
@@ -266,6 +265,4 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		}
 		return emptyEbeguVorlagen;
 	}
-
-
 }

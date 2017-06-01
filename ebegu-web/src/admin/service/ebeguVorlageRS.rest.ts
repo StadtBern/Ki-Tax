@@ -62,7 +62,6 @@ export class EbeguVorlageRS {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(ebeguVorlageID));
     }
 
-
     public getEbeguVorlagenWithoutGesuchsperiode(): IPromise<TSEbeguVorlage[]> {
         return this.http.get(this.serviceURL + '/nogesuchsperiode/')
             .then((response: any) => {

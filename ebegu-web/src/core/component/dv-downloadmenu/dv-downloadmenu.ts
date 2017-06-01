@@ -33,5 +33,4 @@ export class DvDownloadmenuController {
                 this.display = false;
             });
     }
-
 }

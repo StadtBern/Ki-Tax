@@ -121,7 +121,6 @@ public class EbeguVorlageResource {
 		return persistedEbeguVorlagen.stream()
 			.map(ebeguVorlage -> converter.ebeguVorlageToJax(ebeguVorlage))
 			.collect(Collectors.toList());
-
 	}
 
 	@POST

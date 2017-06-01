@@ -118,7 +118,8 @@ public enum EbeguVorlageKey {
 	}
 
 	public static EbeguVorlageKey[] getAllKeysProGesuchsperiode() {
-		return new EbeguVorlageKey[]{VORLAGE_MAHNUNG_1,
+		return new EbeguVorlageKey[] {
+			VORLAGE_MAHNUNG_1,
 			VORLAGE_MAHNUNG_2,
 			VORLAGE_VERFUEGUNG_KITA,
 			VORLAGE_NICHT_EINTRETENSVERFUEGUNG,
