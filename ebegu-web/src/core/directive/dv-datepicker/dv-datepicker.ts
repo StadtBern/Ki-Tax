@@ -42,7 +42,6 @@ export class DatepickerController {
     dvOnBlur: () => void;
     dvMinDate: any;
     dvMaxDate: any;
-    nowMoment: number;
     static allowedFormats: string[] = ['D.M.YYYY', 'DD.MM.YYYY'];
     static defaultFormat: string = 'DD.MM.YYYY';
 
@@ -114,13 +113,9 @@ export class DatepickerController {
                 let result: boolean = true;
                 if (viewValue) {
                     let maxDateAsMoment: Moment = moment(moment.now());
-                    if (maxDateAsMoment.isValid()) {
-                        let inputAsMoment: Moment = this.getInputAsMoment(modelValue, viewValue);
-                        if (inputAsMoment && inputAsMoment.isAfter(maxDateAsMoment)) {
-                            result = false;
-                        }
-                    } else {
-                        this.$log.debug('max date is invalid', this.dvMaxDate);
+                    let inputAsMoment: Moment = this.getInputAsMoment(modelValue, viewValue);
+                    if (inputAsMoment && inputAsMoment.isAfter(maxDateAsMoment)) {
+                        result = false;
                     }
                 }
                 return result;

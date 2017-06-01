@@ -39,7 +39,6 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
     showFachstelleGS: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
     allowedRoles: Array<TSRole>;
-    maxdate: number;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
         'ErrorService', 'WizardStepManager', '$q', '$translate'];
@@ -60,7 +59,6 @@ export class KindViewController extends AbstractGesuchViewController<TSKindConta
             let kindIndex: number = this.gesuchModelManager.getGesuch().kindContainers ? this.gesuchModelManager.getGesuch().kindContainers.length : 0;
             this.gesuchModelManager.setKindIndex(kindIndex);
         }
-        this.maxdate = moment.now();
         this.initViewModel();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
