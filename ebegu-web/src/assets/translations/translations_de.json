@@ -1026,7 +1026,7 @@
     "REMOVE_ONLINE_ERNEUERUNGSGESUCH_BESCHREIBUNG": "Das Folgegesuch wird endgültig gelöscht. Die Änderungen können nicht rückgängig gemacht werden.",
     "FOLGEGESUCH_HINT": "Die Stammdaten wurden aus dem letztjährigen Gesuch übernommen: Bitte prüfen Sie die übernommenen Daten.",
     "KEIN_ANGEBOT": "Kein Angebot",
-    "HINT_BETREUUNGEN_LOESCHEN": "Bitte löschen Sie das abgewiesene Betreuungsangebot (rot markiert), um Ihr Gesuch freigeben zu können."
+    "HINT_BETREUUNGEN_LOESCHEN": "Bitte löschen Sie das abgewiesene Betreuungsangebot (rot markiert), um Ihr Gesuch freigeben zu können.",
     "BENUTZERHANDBUCH":"Benutzerhandbuch",
     "VORLAGE_BENUTZERHANDBUCH_ADMIN": "Benutzerhandbuch Administrator",
     "VORLAGE_BENUTZERHANDBUCH_INSTITUTION": "Benutzerhandbuch Institutionen",
