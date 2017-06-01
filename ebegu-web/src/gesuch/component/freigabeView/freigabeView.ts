@@ -146,9 +146,8 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
             && !this.isGesuchReadonly() && this.isGesuchInStatus(TSAntragStatus.IN_BEARBEITUNG_GS);
     }
 
-    public areThereAbgewieseneBetreuungen(): boolean {
-        return !this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.PLATZBESTAETIGUNG) ||
-            this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK);
+    public isThereAnyAbgewieseneBetreuung(): boolean {
+        return this.gesuchModelManager.isThereAnyAbgewieseneBetreuung();
     }
 
     private getZustelladresse(): TSZustelladresse {
