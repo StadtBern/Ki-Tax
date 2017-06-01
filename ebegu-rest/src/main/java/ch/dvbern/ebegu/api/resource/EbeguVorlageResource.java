@@ -125,6 +125,7 @@ public class EbeguVorlageResource {
 	}
 
 	@POST
+	@SuppressWarnings("PMD.NcssMethodCount")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response save(@Context HttpServletRequest request, @Context UriInfo uriInfo, MultipartFormDataInput input)
 		throws IOException, ServletException, MimeTypeParseException, SQLException, EbeguException {

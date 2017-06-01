@@ -47,9 +47,6 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	private Persistence<EbeguVorlage> persistence;
 
 	@Inject
-	private CriteriaQueryHelper criteriaQueryHelper;
-
-	@Inject
 	private FileSaverService fileSaverService;
 
 	@Inject
