@@ -428,7 +428,7 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		try {
 			generatedDokumentService.getPain001DokumentAccessTokenGeneratedDokument(zahlungsauftrag, true);
 		} catch (MimeTypeParseException e) {
-			throw new IllegalStateException("Pain-File konnte nicht erstellt werden: " + auftragId);
+			throw new IllegalStateException("Pain-File konnte nicht erstellt werden: " + auftragId, e);
 		}
 		//  return this.downloadRS.getFinSitDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, true);
 		for (Zahlung zahlung : zahlungsauftrag.getZahlungen()) {
