@@ -59,6 +59,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private GeneratedDokumentService generatedDokumentService;
 	@Inject
 	private MailService mailService;
+	@Inject
+	private GesuchService gesuchService;
 
 	@Override
 	@Nonnull
@@ -279,6 +281,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
+					gesuchService.postGesuchVerfuegen(wizardStep.getGesuch());
 
 					// Hier wird das Gesuch oder die Mutation effektiv verfügt. Daher müssen hier noch andere Services gerufen werden!
 					try {

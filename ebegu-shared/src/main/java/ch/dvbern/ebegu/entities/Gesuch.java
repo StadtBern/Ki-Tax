@@ -22,6 +22,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -148,6 +149,12 @@ public class Gesuch extends AbstractEntity implements Searchable{
 
 	@Column(nullable = true)
 	private LocalDate datumGewarntFehlendeQuittung;
+
+	@Column(nullable = true)
+	private LocalDateTime timestampVerfuegt;
+
+	@Column(nullable = false)
+	private boolean gueltig = false;
 
 
 	public Gesuch() {
@@ -392,6 +399,22 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
 	}
 
+	public LocalDateTime getTimestampVerfuegt() {
+		return timestampVerfuegt;
+	}
+
+	public void setTimestampVerfuegt(LocalDateTime datumVerfuegt) {
+		this.timestampVerfuegt = datumVerfuegt;
+	}
+
+	public boolean isGueltig() {
+		return gueltig;
+	}
+
+	public void setGueltig(boolean gueltig) {
+		this.gueltig = gueltig;
+	}
+
 	@SuppressWarnings("ObjectEquality")
 	public boolean isSame(Gesuch otherAntrag) {
 		if (this == otherAntrag) {
@@ -562,6 +585,8 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		mutation.setGeprueftSTV(false);
 		mutation.setDatumGewarntNichtFreigegeben(null);
 		mutation.setDatumGewarntFehlendeQuittung(null);
+		mutation.setTimestampVerfuegt(null);
+		mutation.setGueltig(false);
 		return mutation;
 	}
 
@@ -595,6 +620,8 @@ public class Gesuch extends AbstractEntity implements Searchable{
 		folgegesuch.setGeprueftSTV(false);
 		folgegesuch.setDatumGewarntNichtFreigegeben(null);
 		folgegesuch.setDatumGewarntFehlendeQuittung(null);
+		folgegesuch.setTimestampVerfuegt(null);
+		folgegesuch.setGueltig(false);
 		return folgegesuch;
 	}
 

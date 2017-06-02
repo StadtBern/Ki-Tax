@@ -379,6 +379,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		// Voraussetzung: Ich habe einen verfuegten Antrag
 		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		gesuchVerfuegt.setStatus(AntragStatus.VERFUEGT);
+		gesuchVerfuegt.setGueltig(true);
+		gesuchVerfuegt.setTimestampVerfuegt(LocalDateTime.now());
 		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true);
 
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId(), LocalDate.of(1980, Month.MARCH, 25));
@@ -600,7 +602,8 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 	public void testJAAntragMutierenWhenOnlineMutationExists() {
 		loginAsGesuchsteller("gesuchst");
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
-
+		gesuch.setGueltig(true);
+		gesuch.setTimestampVerfuegt(LocalDateTime.now());
 		gesuch.setStatus(AntragStatus.VERFUEGT);
 		gesuch = gesuchService.updateGesuch(gesuch, true);
 		final Optional<Gesuch> optMutation = gesuchService.antragMutieren(gesuch.getId(), LocalDate.now());
