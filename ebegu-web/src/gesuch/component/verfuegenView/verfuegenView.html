@@ -233,7 +233,7 @@
                             <!--Mutation wird nicht akzeptiert -> schliessen ohne Verfuegung. Der Status ist passt meiner Meinung
                             nach nicht 100% aber im Moment passt der am besten. (siehe auch EBEGU-890) -->
                             <dv-loading-button type="submit"
-                                               button-click="vm.schliessenOhneVerfuegen()" button-disabled="vm.disableAblehnen()">
+                                               button-click="vm.schliessenOhneVerfuegen()" ng-if="!vm.disableAblehnen()">
                                 <span data-translate="VERFUEGEN_ABLEHNEN_UPPER"></span>
                             </dv-loading-button>
                         </div>

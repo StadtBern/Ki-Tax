@@ -90,6 +90,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private FileSaverService fileSaverService;
 	@Inject
 	private MitteilungService mitteilungService;
+	@Inject
+	private BetreuungService betreuungService;
 
 
 	@Nonnull
@@ -1304,6 +1306,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			postGesuchVerfuegen(gesuch);
 		} else {
 			gesuch.setStatus(AntragStatus.VERFUEGEN);
+		}
+
+		// In Fall von NUR_SCHULAMT-Angeboten werden diese nicht verfügt, d.h. ab "Verfügen starten"
+		// sind diese Betreuungen die letzt gültigen
+		final List<Betreuung> betreuungen = gesuch.extractAllBetreuungen();
+		for (Betreuung betreuung : betreuungen) {
+			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isSchulamt()) {
+				betreuung.setGueltig(true);
+				if (betreuung.getVorgaengerId() != null) {
+					Optional<Betreuung> vorgaengerBetreuungOptional = betreuungService.findBetreuung(betreuung.getVorgaengerId());
+					vorgaengerBetreuungOptional.ifPresent(vorgaenger -> vorgaenger.setGueltig(false));
+				}
+			}
 		}
 
 		return superAdminService.updateGesuch(gesuch, true);

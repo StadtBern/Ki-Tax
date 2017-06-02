@@ -50,8 +50,10 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.SCHULAMT)) {
 			// Wir setzen auch Schulamt-Betreuungen auf gueltig, for future use
 			betreuung.setGueltig(true);
-			Optional<Betreuung> vorgaengerBetreuungOptional = findBetreuung(betreuung.getVorgaengerId());
-			vorgaengerBetreuungOptional.ifPresent(vorgaenger -> vorgaenger.setGueltig(false));
+			if (betreuung.getVorgaengerId() != null) {
+				Optional<Betreuung> vorgaengerBetreuungOptional = findBetreuung(betreuung.getVorgaengerId());
+				vorgaengerBetreuungOptional.ifPresent(vorgaenger -> vorgaenger.setGueltig(false));
+			}
 		}
 		final Betreuung mergedBetreuung = persistence.merge(betreuung);
 
