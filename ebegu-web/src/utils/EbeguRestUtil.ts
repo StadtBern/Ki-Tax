@@ -622,6 +622,8 @@ export default class EbeguRestUtil {
         restGesuch.gesperrtWegenBeschwerde = gesuch.gesperrtWegenBeschwerde;
         restGesuch.datumGewarntNichtFreigegeben = DateUtil.momentToLocalDate(gesuch.datumGewarntNichtFreigegeben);
         restGesuch.datumGewarntFehlendeQuittung = DateUtil.momentToLocalDate(gesuch.datumGewarntFehlendeQuittung);
+        restGesuch.timestampVerfuegt = DateUtil.momentToLocalDateTime(gesuch.timestampVerfuegt);
+        restGesuch.gueltig = gesuch.gueltig;
         return restGesuch;
     }
 
@@ -643,6 +645,8 @@ export default class EbeguRestUtil {
             gesuchTS.gesperrtWegenBeschwerde = gesuchFromServer.gesperrtWegenBeschwerde;
             gesuchTS.datumGewarntNichtFreigegeben = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntNichtFreigegeben);
             gesuchTS.datumGewarntFehlendeQuittung = DateUtil.localDateToMoment(gesuchFromServer.datumGewarntFehlendeQuittung);
+            gesuchTS.timestampVerfuegt = DateUtil.localDateTimeToMoment(gesuchFromServer.timestampVerfuegt);
+            gesuchTS.gueltig = gesuchFromServer.gueltig;
             return gesuchTS;
         }
         return undefined;
@@ -1140,6 +1144,7 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungNummer = betreuung.betreuungNummer;
         restBetreuung.betreuungMutiert = betreuung.betreuungMutiert;
         restBetreuung.abwesenheitMutiert = betreuung.abwesenheitMutiert;
+        restBetreuung.gueltig = betreuung.gueltig;
         return restBetreuung;
     }
 
@@ -1215,6 +1220,7 @@ export default class EbeguRestUtil {
             betreuungTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), betreuungFromServer.gesuchsperiode);
             betreuungTS.betreuungMutiert = betreuungFromServer.betreuungMutiert;
             betreuungTS.abwesenheitMutiert = betreuungFromServer.abwesenheitMutiert;
+            betreuungTS.gueltig = betreuungFromServer.gueltig;
             return betreuungTS;
         }
         return undefined;

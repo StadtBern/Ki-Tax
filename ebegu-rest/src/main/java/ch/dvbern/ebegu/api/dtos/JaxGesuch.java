@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -60,6 +61,12 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate datumGewarntFehlendeQuittung;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDateTime timestampVerfuegt;
+
+	private boolean gueltig;
 
 
 	public static long getSerialVersionUID() {
@@ -187,6 +194,23 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setDatumGewarntFehlendeQuittung(@Nullable LocalDate datumGewarntFehlendeQuittung) {
 		this.datumGewarntFehlendeQuittung = datumGewarntFehlendeQuittung;
+	}
+
+	@Nullable
+	public LocalDateTime getTimestampVerfuegt() {
+		return timestampVerfuegt;
+	}
+
+	public void setTimestampVerfuegt(@Nullable LocalDateTime timestampVerfuegt) {
+		this.timestampVerfuegt = timestampVerfuegt;
+	}
+
+	public boolean isGueltig() {
+		return gueltig;
+	}
+
+	public void setGueltig(boolean gueltig) {
+		this.gueltig = gueltig;
 	}
 }
 

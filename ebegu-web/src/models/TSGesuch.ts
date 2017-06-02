@@ -29,6 +29,9 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _datumGewarntNichtFreigegeben: moment.Moment;
     private _datumGewarntFehlendeQuittung: moment.Moment;
 
+    private _timestampVerfuegt: moment.Moment;
+    private _gueltig: boolean;
+
     // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutations- oder Erneuerungskopie
     // (Wichtig für laden des Gesuchs bei Navigation)
     private _emptyCopy: boolean = false;
@@ -152,6 +155,22 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set datumGewarntFehlendeQuittung(value: moment.Moment) {
         this._datumGewarntFehlendeQuittung = value;
+    }
+
+    get timestampVerfuegt(): moment.Moment {
+        return this._timestampVerfuegt;
+    }
+
+    set timestampVerfuegt(value: moment.Moment) {
+        this._timestampVerfuegt = value;
+    }
+
+    get gueltig(): boolean {
+        return this._gueltig;
+    }
+
+    set gueltig(value: boolean) {
+        this._gueltig = value;
     }
 
     public isMutation(): boolean {

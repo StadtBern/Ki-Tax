@@ -6,9 +6,9 @@ import ch.dvbern.ebegu.util.Constants;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.persistence.Column;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -80,6 +80,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	@Nullable
 	private Boolean abwesenheitMutiert;
+
+	@Column(nullable = false)
+	private boolean gueltig = false;
 
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
@@ -223,6 +226,14 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setAbwesenheitMutiert(Boolean abwesenheitMutiert) {
 		this.abwesenheitMutiert = abwesenheitMutiert;
+	}
+
+	public boolean isGueltig() {
+		return gueltig;
+	}
+
+	public void setGueltig(boolean gueltig) {
+		this.gueltig = gueltig;
 	}
 
 	@Override

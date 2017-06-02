@@ -47,6 +47,14 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER})
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, @Nonnull Boolean isAbwesenheit) {
 		Objects.requireNonNull(betreuung);
+		if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.SCHULAMT)) {
+			// Wir setzen auch Schulamt-Betreuungen auf gueltig, for future use
+			betreuung.setGueltig(true);
+			if (betreuung.getVorgaengerId() != null) {
+				Optional<Betreuung> vorgaengerBetreuungOptional = findBetreuung(betreuung.getVorgaengerId());
+				vorgaengerBetreuungOptional.ifPresent(vorgaenger -> vorgaenger.setGueltig(false));
+			}
+		}
 		final Betreuung mergedBetreuung = persistence.merge(betreuung);
 
 		//jetzt noch wizard step updaten
