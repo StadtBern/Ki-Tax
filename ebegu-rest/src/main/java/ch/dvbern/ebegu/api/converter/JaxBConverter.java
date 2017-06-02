@@ -685,6 +685,8 @@ public class JaxBConverter {
 		antrag.setGesperrtWegenBeschwerde(antragJAXP.isGesperrtWegenBeschwerde());
 		antrag.setDatumGewarntNichtFreigegeben(antragJAXP.getDatumGewarntNichtFreigegeben());
 		antrag.setDatumGewarntFehlendeQuittung(antragJAXP.getDatumGewarntFehlendeQuittung());
+		antrag.setTimestampVerfuegt(antragJAXP.getTimestampVerfuegt());
+		antrag.setGueltig(antragJAXP.isGueltig());
 		return antrag;
 	}
 
@@ -812,7 +814,8 @@ public class JaxBConverter {
 		jaxGesuch.setGesperrtWegenBeschwerde(persistedGesuch.isGesperrtWegenBeschwerde());
 		jaxGesuch.setDatumGewarntNichtFreigegeben(persistedGesuch.getDatumGewarntNichtFreigegeben());
 		jaxGesuch.setDatumGewarntFehlendeQuittung(persistedGesuch.getDatumGewarntFehlendeQuittung());
-
+		jaxGesuch.setTimestampVerfuegt(persistedGesuch.getTimestampVerfuegt());
+		jaxGesuch.setGueltig(persistedGesuch.isGueltig());
 		return jaxGesuch;
 	}
 
@@ -1417,6 +1420,7 @@ public class JaxBConverter {
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
+		betreuung.setGueltig(betreuungJAXP.isGueltig());
 
 		//ACHTUNG: Verfuegung wird hier nicht synchronisiert aus sicherheitsgruenden
 		return betreuung;
@@ -1621,6 +1625,7 @@ public class JaxBConverter {
 		}
 		jaxBetreuung.setBetreuungMutiert(betreuungFromServer.getBetreuungMutiert());
 		jaxBetreuung.setAbwesenheitMutiert(betreuungFromServer.getAbwesenheitMutiert());
+		jaxBetreuung.setGueltig(betreuungFromServer.isGueltig());
 		return jaxBetreuung;
 	}
 

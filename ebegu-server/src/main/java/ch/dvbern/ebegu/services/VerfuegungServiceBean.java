@@ -137,6 +137,13 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		setVerfuegungsKategorien(verfuegung);
 		Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
 		betreuung.setBetreuungsstatus(betreuungsstatus);
+		// Gueltigkeit auf dem neuen setzen, auf der bisherigen entfernen
+		betreuung.setGueltig(true);
+		Optional<Verfuegung> vorgaengerVerfuegungOptional = findVorgaengerVerfuegung(betreuung);
+		if (vorgaengerVerfuegungOptional.isPresent()) {
+			Verfuegung vorgaengerVerfuegung = vorgaengerVerfuegungOptional.get();
+			vorgaengerVerfuegung.getBetreuung().setGueltig(false);
+		}
 		// setting all depending objects
 		verfuegung.setBetreuung(betreuung);
 		betreuung.setVerfuegung(verfuegung);

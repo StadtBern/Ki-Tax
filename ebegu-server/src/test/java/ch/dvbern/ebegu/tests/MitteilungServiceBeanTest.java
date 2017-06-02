@@ -243,6 +243,8 @@ public class MitteilungServiceBeanTest extends AbstractEbeguLoginTest {
 		// Wir erstellen ein Erstgesuch und mutieren es
 		final Gesuch gesuch1 = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.now());
 		gesuch1.setStatus(AntragStatus.VERFUEGT);
+		gesuch1.setGueltig(true);
+		gesuch1.setTimestampVerfuegt(LocalDateTime.now());
 		gesuchService.updateGesuch(gesuch1, true);
 		final Optional<Gesuch> mutationOpt = gesuchService.antragMutieren(gesuch1.getId(), LocalDate.now());
 		final Gesuch mutation = gesuchService.createGesuch(mutationOpt.get());

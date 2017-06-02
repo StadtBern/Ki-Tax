@@ -11,7 +11,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -144,14 +143,6 @@ public interface GesuchService {
 	Optional<Gesuch> antragErneuern(@Nonnull String antragId, @Nonnull String gesuchsperiodeId, @Nullable LocalDate eingangsdatum);
 
 	/**
-	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück,
-	 * ACHTUNG: Dies kann ein neueres oder aelteres als das uebergebene Gesuch sein, oder sogar das uebergebene
-	 * Gesuch selber!
-	 */
-	@Nonnull
-	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch);
-
-	/**
 	 * Gibt das neueste Gesuch der im selben Fall und Periode wie das gegebene Gesuch ist.
 	 * Es wird nach Erstellungsdatum geschaut
 	 * @param gesuch
@@ -159,18 +150,6 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	Optional<Gesuch> getNeustesGesuchFuerGesuch(@Nonnull Gesuch gesuch);
-
-	/**
-	 * Gibt das letzte verfuegte Gesuch zurueck, also rekursiv ueber die Vorgaenger, nie das uebergebene Gesuch.
-	 * @deprecated Diese Methode gibt das letzte verfuegte Gesuch zurueck. Dieses Gesuch muss nicht unbedignt
-	 * die richtigen Daten enthalten. Diese Methode sollte deshalb nur vorsichtig benutzt werden.
-	 * Z.B. wenn eine Betreuung im Status GESCHLOSSEN_OHNE_VERFUEGUNG ist, und wir diese Methode benutzen, wird dann die falsche
-	 * Verfuegung geholt
-	 * @return
-	 */
-	@Nonnull
-	@Deprecated
-	Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch);
 
 	/**
 	 * Alle GesucheIDs des Gesuchstellers zurueckgeben fuer admin
@@ -217,33 +196,15 @@ public interface GesuchService {
 	Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
 
 	/**
-	 * Gibt alle aktuellen Antrags-Ids zurueck, d.h. den letzten Antrag jedes Falles, fuer eine Gesuchsperiode
+	 * Gibt zurueck, ob es sich um das neueste Gesuch (egal welcher Status) handelt
 	 */
-	@Nonnull
-	List<String> getNeuesteVerfuegteAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
-
-	/**
-	 * Gibt pro Fall den neuesten freigegebenen Antrag für eine Gesuchsperiode zurück.
-	 * Es wird *keine* Leseberechtigung geprüft, d.h. es werden sowohl JA-Angebote wie auch Nur-Schulamt
-	 * zurückgegeben!
-	 */
-	@Nonnull
-	List<String> getNeuesteFreigegebeneAntraege(@Nonnull Gesuchsperiode gesuchsperiode);
-
-	/**
-	 * Gibt die Antrags-Ids aller Antraege zurueck, welche im uebergebenen Zeitraum verfuegt wurden.
-	 * Falls es mehrere fuer denselben Fall hat, wird nur der letzte (hoechste Laufnummer) zurueckgegeben
-	 */
-	@Nonnull
-	List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis);
-
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 
 	/**
-	 * Gibt die jeweils letzt erstellten Antraege der uebergebenen Gesuchsperiode zurueck.
+	 * Gibt das neueste (zuletzt verfügte) Gesuch für eine Gesuchsperiode und einen Fall zurueck.
 	 */
 	@Nonnull
-	List<Gesuch> getNeuesteAntraegeForPeriod(@Nonnull Gesuchsperiode gesuchsperiode);
+	Optional<String> getNeustesFreigegebenesGesuchIdFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall);
 
 	/**
 	 * Schickt eine E-Mail an alle Gesuchsteller, die ihr Gesuch innerhalb einer konfigurierbaren Frist nach
@@ -299,4 +260,6 @@ public interface GesuchService {
 	 * @return
 	 */
 	Gesuch verfuegenStarten(@Nonnull Gesuch gesuch);
+
+	void postGesuchVerfuegen(@Nonnull Gesuch gesuch);
 }

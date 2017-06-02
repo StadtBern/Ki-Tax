@@ -511,4 +511,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         // Aus performance Gründen wird hier daruf verzichtet das Gesuch neu zu persisten, nur weil das Flag ändert.
         this.form.$setPristine();
     }
+
+    public isSuperAdmin(): boolean {
+        return  this.authServiceRs.isRole(TSRole.SUPER_ADMIN);
+    }
 }

@@ -417,4 +417,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController<any> {
         let nichtNichteingetreten = !this.isBetreuungInStatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
         return nichtVerfuegt && !(mutation && nichtNichteingetreten);
     }
+
+    public disableAblehnen(): boolean {
+        // Der Button "ABLEHNEN" darf im Fall von "Gekündigt vor Eintritt" nicht angezeigt werden
+        return this.isBetreuungInStatus(TSBetreuungsstatus.GEKUENDIGT_VOR_EINTRITT);
+    }
 }

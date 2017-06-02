@@ -125,9 +125,6 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 	private KindService kindService;
 
 	@Inject
-	private GesuchService gesuchService;
-
-	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
 
@@ -255,6 +252,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = builder.createQuery(VerfuegungZeitabschnitt.class);
 		query.distinct(true);
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
+		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
+		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
 		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
 
 		// startAbschnitt <= datumBis && endeAbschnitt >= datumVon
@@ -262,18 +261,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		predicatesToUse.add(predicateStart);
 		Predicate predicateEnd = builder.greaterThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis), datumVon);
 		predicatesToUse.add(predicateEnd);
-
-		// nur das neuest verfuegte Gesuch
-        List<String> idsOfLetztVerfuegteAntraege = new ArrayList<>();
-        for (Gesuchsperiode gesuchsperiode : relevanteGesuchsperioden) {
-            idsOfLetztVerfuegteAntraege.addAll(gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiode));
-        }
-        if (!idsOfLetztVerfuegteAntraege.isEmpty()) {
-            Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
-            predicatesToUse.add(predicateAktuellesGesuch);
-        } else {
-            return Collections.emptyList();
-        }
+		// Nur neueste Verfuegung jedes Falls beachten
+		Predicate predicateGueltig = builder.equal(joinBetreuung.get(Betreuung_.gueltig), Boolean.TRUE);
+		predicatesToUse.add(predicateGueltig);
 
 		// Sichtbarkeit nach eingeloggtem Benutzer
 		boolean isInstitutionsbenutzer = principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_INSTITUTION, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
@@ -610,6 +600,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = builder.createQuery(VerfuegungZeitabschnitt.class);
 		query.distinct(true);
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
+		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
+		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
 		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
 
 		// startAbschnitt <= datumBis && endeAbschnitt >= datumVon
@@ -617,30 +609,15 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		predicatesToUse.add(predicateStart);
 		Predicate predicateEnd = builder.greaterThanOrEqualTo(root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis), datumVon);
 		predicatesToUse.add(predicateEnd);
-
+		// Gesuchsperiode
 		if (gesuchsperiode != null) {
 			Predicate predicateGesuchsperiode = builder.equal(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind)
 				.get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode), gesuchsperiode);
 			predicatesToUse.add(predicateGesuchsperiode);
 		}
-
-		// nur das neuest verfuegte Gesuch
-		Collection<Gesuchsperiode> relevanteGesuchsperioden = gesuchsperiodeService.getGesuchsperiodenBetween(datumVon, datumBis);
-		if (!relevanteGesuchsperioden.isEmpty()) {
-			List<String> idsOfLetztVerfuegteAntraege = new ArrayList<>();
-			for (Gesuchsperiode gp : relevanteGesuchsperioden) {
-				idsOfLetztVerfuegteAntraege.addAll(gesuchService.getNeuesteVerfuegteAntraege(gp));
-			}
-			if (!idsOfLetztVerfuegteAntraege.isEmpty()) {
-				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind)
-					.get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
-				predicatesToUse.add(predicateAktuellesGesuch);
-			} else {
-				return Collections.emptyList();
-			}
-		} else {
-			return Collections.emptyList();
-		}
+		// Nur neueste Verfuegung jedes Falls beachten
+		Predicate predicateGueltig = builder.equal(joinBetreuung.get(Betreuung_.gueltig), Boolean.TRUE);
+		predicatesToUse.add(predicateGueltig);
 
 		// Sichtbarkeit nach eingeloggtem Benutzer
 		boolean isInstitutionsbenutzer = principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_INSTITUTION, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
@@ -672,6 +649,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final CriteriaQuery<VerfuegungZeitabschnitt> query = builder.createQuery(VerfuegungZeitabschnitt.class);
 		query.distinct(true);
 		Root<VerfuegungZeitabschnitt> root = query.from(VerfuegungZeitabschnitt.class);
+		Join<VerfuegungZeitabschnitt, Verfuegung> joinVerfuegung = root.join(VerfuegungZeitabschnitt_.verfuegung);
+		Join<Verfuegung, Betreuung> joinBetreuung = joinVerfuegung.join(Verfuegung_.betreuung);
 		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
 
 		// Stichtag
@@ -679,21 +658,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigAb),
 			root.get(VerfuegungZeitabschnitt_.gueltigkeit).get(DateRange_.gueltigBis));
 		predicatesToUse.add(intervalPredicate);
-
-		// nur das neuest verfuegte Gesuch
-		Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.getGesuchsperiodeAm(stichtag);
-		if (gesuchsperiodeOptional.isPresent()) {
-			List<String> idsOfLetztVerfuegteAntraege = new ArrayList<>();
-			idsOfLetztVerfuegteAntraege.addAll(gesuchService.getNeuesteVerfuegteAntraege(gesuchsperiodeOptional.get()));
-			if (!idsOfLetztVerfuegteAntraege.isEmpty()) {
-				Predicate predicateAktuellesGesuch = root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(idsOfLetztVerfuegteAntraege);
-				predicatesToUse.add(predicateAktuellesGesuch);
-			} else {
-				return Collections.emptyList();
-			}
-		} else {
-			return Collections.emptyList();
-		}
+		// Nur neueste Verfuegung jedes Falls beachten
+		Predicate predicateGueltig = builder.equal(joinBetreuung.get(Betreuung_.gueltig), Boolean.TRUE);
+		predicatesToUse.add(predicateGueltig);
 
 		// Sichtbarkeit nach eingeloggtem Benutzer
 		boolean isInstitutionsbenutzer = principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_INSTITUTION, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
