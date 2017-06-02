@@ -18,9 +18,9 @@ import java.util.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @SuppressWarnings("unused")
-public class V0040__GesuchGueltigDatumVerfuegt implements JdbcMigration {
+public class V0041__GesuchGueltigDatumVerfuegt implements JdbcMigration {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(V0040__GesuchGueltigDatumVerfuegt.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(V0041__GesuchGueltigDatumVerfuegt.class);
 	public static final String SEPARATOR = " / ";
 
 	@Override

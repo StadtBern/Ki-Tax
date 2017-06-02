@@ -11,7 +11,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -197,12 +196,8 @@ public interface GesuchService {
 	Gesuch removeBeschwerdeHaengigForPeriode(@Nonnull Gesuch gesuch);
 
 	/**
-	 * Gibt die Antrags-Ids aller Antraege zurueck, welche im uebergebenen Zeitraum verfuegt wurden.
-	 * Falls es mehrere fuer denselben Fall hat, wird nur der letzte (hoechste Laufnummer) zurueckgegeben
+	 * Gibt zurueck, ob es sich um das neueste Gesuch (egal welcher Status) handelt
 	 */
-	@Nonnull
-	List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis);
-
 	boolean isNeustesGesuch(@Nonnull Gesuch gesuch);
 
 	/**

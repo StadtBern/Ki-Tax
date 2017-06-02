@@ -15,7 +15,6 @@ import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
@@ -1067,28 +1066,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		} else {
 			throw new EbeguRuntimeException("searchAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format yy oder yyyy sondern " + year);
 		}
-	}
-
-	@Override
-	@Nonnull
-	public List<String> getNeuesteVerfuegteAntraege(@Nonnull LocalDateTime verfuegtVon, @Nonnull LocalDateTime verfuegtBis) {
-		List<String> ids = new ArrayList<>();
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-
-		Root<Gesuch> root = query.from(Gesuch.class);
-
-		Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates());
-		Predicate predicateDatum = cb.between(root.get(Gesuch_.timestampVerfuegt), cb.literal(verfuegtVon), cb.literal(verfuegtBis));
-
-		query.where(predicateStatus, predicateDatum);
-		query.select(root);
-		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query);
-
-		// Jetzt kann es immer noch zwei Verfuegungen zum gleichen Fall geben -> nur die letzte beachten
-		Map<String, Gesuch> stringGesuchMap = EbeguUtil.groupByFallAndSelectNewestAntrag(criteriaResults);
-		ids.addAll(stringGesuchMap.keySet());
-		return ids;
 	}
 
 	@Override
