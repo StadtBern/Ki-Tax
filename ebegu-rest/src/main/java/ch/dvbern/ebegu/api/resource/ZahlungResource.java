@@ -69,7 +69,7 @@ public class ZahlungResource {
 	public List<JaxZahlungsauftrag> getAllZahlungsauftraege() {
 		if (principalBean.isCallerInAnyOfRole(ADMIN, SUPER_ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR)) {
 			return zahlungService.getAllZahlungsauftraege().stream()
-				.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag))
+				.map(zahlungsauftrag -> converter.zahlungsauftragToJAX(zahlungsauftrag, false))
 				.collect(Collectors.toList());
 		}
 		return Collections.emptyList();
@@ -107,7 +107,7 @@ public class ZahlungResource {
 			if (!optional.isPresent()) {
 				return null;
 			}
-			return converter.zahlungsauftragToJAX(optional.get());
+			return converter.zahlungsauftragToJAX(optional.get(), true);
 		}
 		return new JaxZahlungsauftrag();
 
@@ -152,7 +152,7 @@ public class ZahlungResource {
 		//Force creation and saving of ZahlungsFile Pain001
 		generatedDokumentService.getPain001DokumentAccessTokenGeneratedDokument(zahlungsauftrag, true);
 
-		return converter.zahlungsauftragToJAX(zahlungsauftrag);
+		return converter.zahlungsauftragToJAX(zahlungsauftrag, false);
 	}
 
 
@@ -176,7 +176,7 @@ public class ZahlungResource {
 
 		final Zahlungsauftrag zahlungsauftrag = zahlungService.zahlungsauftragErstellen(faelligkeitsdatum, beschrieb, datumGeneriert);
 
-		return converter.zahlungsauftragToJAX(zahlungsauftrag);
+		return converter.zahlungsauftragToJAX(zahlungsauftrag, false);
 	}
 
 	@Nullable
@@ -193,7 +193,7 @@ public class ZahlungResource {
 
 		final Zahlungsauftrag zahlungsauftragUpdated = zahlungService.zahlungsauftragAktualisieren(id, faelligkeitsdatum, beschrieb);
 
-		return converter.zahlungsauftragToJAX(zahlungsauftragUpdated);
+		return converter.zahlungsauftragToJAX(zahlungsauftragUpdated, false);
 	}
 
 	@Nullable

@@ -2385,12 +2385,12 @@ public class JaxBConverter {
 		return jaxBetreuungsmitteilung;
 	}
 
-	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag) {
-		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag);
+	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag, boolean convertZahlungen) {
+		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag, convertZahlungen);
 		return jaxZahlungsauftrag;
 	}
 
-	private JaxZahlungsauftrag getJaxZahlungsauftrag(Zahlungsauftrag persistedZahlungsauftrag) {
+	private JaxZahlungsauftrag getJaxZahlungsauftrag(Zahlungsauftrag persistedZahlungsauftrag, boolean convertZahlungen) {
 		final JaxZahlungsauftrag jaxZahlungsauftrag = new JaxZahlungsauftrag();
 		convertAbstractDateRangedFieldsToJAX(persistedZahlungsauftrag, jaxZahlungsauftrag);
 		jaxZahlungsauftrag.setStatus(persistedZahlungsauftrag.getStatus());
@@ -2399,17 +2399,19 @@ public class JaxBConverter {
 		jaxZahlungsauftrag.setDatumFaellig(persistedZahlungsauftrag.getDatumFaellig());
 		jaxZahlungsauftrag.setDatumGeneriert(persistedZahlungsauftrag.getDatumGeneriert());
 
-		jaxZahlungsauftrag.getZahlungen().addAll(
-			persistedZahlungsauftrag.getZahlungen()
-				.stream()
-				.filter(zahlung -> !zahlung.getZahlungspositionen().isEmpty())
-				.map(this::zahlungToJAX)
-				.collect(Collectors.toList()));
+		if (convertZahlungen) {
+			jaxZahlungsauftrag.getZahlungen().addAll(
+				persistedZahlungsauftrag.getZahlungen()
+					.stream()
+					.filter(zahlung -> !zahlung.getZahlungspositionen().isEmpty())
+					.map(this::zahlungToJAX)
+					.collect(Collectors.toList()));
+		}
 		return jaxZahlungsauftrag;
 	}
 
 	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag, UserRole userRole, Collection<Institution> allowedInst) {
-		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag);
+		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag, true);
 
 		// nur die Zahlungen welche inst sehen darf
 		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(userRole) || UserRole.SACHBEARBEITER_INSTITUTION.equals(userRole)) {
