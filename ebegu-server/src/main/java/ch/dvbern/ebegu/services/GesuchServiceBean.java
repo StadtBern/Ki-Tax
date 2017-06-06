@@ -809,7 +809,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				return getGesuchMutation(eingangsdatum, gesuchForMutation);
 			} else {
 				throw new EbeguExistingAntragException("antragMutieren", ErrorCodeEnum.ERROR_EXISTING_ONLINE_MUTATION,
-					gesuch.get().getFall().getId(), gesuch.get().getGesuchsperiode().getId());
+					gesuch.getFall().getId(), gesuch.getGesuchsperiode().getId());
 			}
 		} else {
 			throw new EbeguEntityNotFoundException("antragMutieren", "Es existiert kein Antrag mit ID, kann keine Mutation erstellen " + antragId, antragId);
